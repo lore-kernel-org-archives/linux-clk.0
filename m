@@ -1,65 +1,210 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Shawn Guo <shawnguo@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v2 4/8] clk: migrate the count of orphaned clocks at init
-Date: Thu, 15 Feb 2018 22:01:52 +0100
-Message-ID: <1970074.VYjjbDuVRv@diego>
-In-Reply-To: <20180214134340.17242-5-jbrunet@baylibre.com>
-References: <20180214134340.17242-1-jbrunet@baylibre.com> <20180214134340.17242-5-jbrunet@baylibre.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [PATCH RESEND V3 8/9] clk: imx: implement new clk_hw based APIs
+Date: Tue, 13 Feb 2018 21:28:13 +0800
+Message-ID: <1518528494-25723-9-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
+References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 14. Februar 2018, 14:43:36 CET schrieb Jerome Brunet:
-> The orphan clocks reparents should migrate any existing count from the
-> orphan clock to its new acestor clocks, otherwise we may have
-> inconsistent counts in the tree and end-up with gated critical clocks
-> 
-> Assuming we have two clocks, A and B.
-> * Clock A has CLK_IS_CRITICAL flag set.
-> * Clock B is an ancestor of A which can gate. Clock B gate is left
->   enabled by the bootloader.
-> 
-> Step 1: Clock A is registered. Since it is a critical clock, it is
-> enabled. The clock being still an orphan, no parent are enabled.
-> 
-> Step 2: Clock B is registered and reparented to clock A (potentially
-> through several other clocks). We are now in situation where the enable
-> count of clock A is 1 while the enable count of its ancestors is 0, which
-> is not good.
-> 
-> Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
-> clock B being 0, clock B is gated and and critical clock A actually gets
-> disabled.
-> 
-> This situation was found while adding fdiv_clk gates to the meson8b
-> platform.  These clocks parent clk81 critical clock, which is the mother
-> of all peripheral clocks in this system. Because of the issue described
-> here, the system is crashing when clk_disable_unused() is called.
-> 
-> The situation is solved by reverting
-> commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting during
-> registration"). To avoid breaking again the situation described in this
-> commit
-> description, enabling critical clock should be done before walking the
-> orphan list. This way, a parent critical clock may not be accidentally
-> disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
-> 
-> Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during
-> registration") Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Clock providers are recommended to use the new struct clk_hw based API,
+so implement IMX clk_hw based provider helpers functions to the new
+approach.
 
-On a rk3288-veyron Chromebook
-Tested-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-This made the hdmi on the machine work again with 4.16-rc1 .
-(hdmi-cec clock is sourced from the i2c connected pmic which provides
-the 32kHz clock needed)
+---
+ChangeLog:
+v2->v3:
+ * no changes
+v1->v2:  new patches
+---
+ drivers/clk/imx/clk.c | 22 ++++++++++++++++++
+ drivers/clk/imx/clk.h | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 84 insertions(+)
 
-So it would be really cool if this could make it into 4.16-rc :-)
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index 9074e69..1efed86 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -18,6 +18,16 @@ void __init imx_check_clocks(struct clk *clks[], unsigned int count)
+ 			       i, PTR_ERR(clks[i]));
+ }
+ 
++void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count)
++{
++	unsigned int i;
++
++	for (i = 0; i < count; i++)
++		if (IS_ERR(clks[i]))
++			pr_err("i.MX clk %u: register failed with %ld\n",
++			       i, PTR_ERR(clks[i]));
++}
++
+ static struct clk * __init imx_obtain_fixed_clock_from_dt(const char *name)
+ {
+ 	struct of_phandle_args phandle;
+@@ -49,6 +59,18 @@ struct clk * __init imx_obtain_fixed_clock(
+ 	return clk;
+ }
+ 
++struct clk_hw * __init imx_obtain_fixed_clk_hw(struct device_node *np,
++					       const char *name)
++{
++	struct clk *clk;
++
++	clk = of_clk_get_by_name(np, name);
++	if (IS_ERR(clk))
++		return ERR_PTR(-ENOENT);
++
++	return __clk_get_hw(clk);
++}
++
+ /*
+  * This fixups the register CCM_CSCMR1 write value.
+  * The write/read/divider values of the aclk_podf field
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 956155c..3d58420 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -8,6 +8,7 @@
+ extern spinlock_t imx_ccm_lock;
+ 
+ void imx_check_clocks(struct clk *clks[], unsigned int count);
++void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
+ void imx_register_uart_clocks(struct clk ** const clks[]);
+ 
+ extern void imx_cscmr1_fixup(u32 *val);
+@@ -54,6 +55,9 @@ struct clk *clk_register_gate2(struct device *dev, const char *name,
+ struct clk * imx_obtain_fixed_clock(
+ 			const char *name, unsigned long rate);
+ 
++struct clk_hw *imx_obtain_fixed_clk_hw(struct device_node *np,
++				       const char *name);
++
+ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+ 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
+ 
+@@ -90,6 +94,16 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rate)
++{
++	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
++}
++
++static inline struct clk_hw *imx_get_clk_hw_fixed(const char *name, int rate)
++{
++	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
++}
++
+ static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
+ 			u8 shift, u8 width, const char * const *parents,
+ 			int num_parents)
+@@ -113,6 +127,15 @@ static inline struct clk *imx_clk_divider(const char *name, const char *parent,
+ 			reg, shift, width, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_divider(const char *name,
++						const char *parent,
++						void __iomem *reg, u8 shift,
++						u8 width)
++{
++	return clk_hw_register_divider(NULL, name, parent, CLK_SET_RATE_PARENT,
++				       reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_divider_flags(const char *name,
+ 		const char *parent, void __iomem *reg, u8 shift, u8 width,
+ 		unsigned long flags)
+@@ -121,6 +144,15 @@ static inline struct clk *imx_clk_divider_flags(const char *name,
+ 			reg, shift, width, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_divider_flags(const char *name,
++						   const char *parent,
++						   void __iomem *reg, u8 shift,
++						   u8 width, unsigned long flags)
++{
++	return clk_hw_register_divider(NULL, name, parent, flags,
++				       reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_divider2(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift, u8 width)
+ {
+@@ -136,6 +168,13 @@ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
+ 			shift, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_gate(const char *name, const char *parent,
++					     void __iomem *reg, u8 shift)
++{
++	return clk_hw_register_gate(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++				    shift, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift)
+ {
+@@ -208,6 +247,17 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ 			reg, shift, width, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_mux2(const char *name, void __iomem *reg,
++					     u8 shift, u8 width,
++					     const char * const *parents,
++					     int num_parents)
++{
++	return clk_hw_register_mux(NULL, name, parents, num_parents,
++				   CLK_SET_RATE_NO_REPARENT |
++				   CLK_OPS_PARENT_ENABLE,
++				   reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+ 			void __iomem *reg, u8 shift, u8 width,
+ 			const char * const *parents, int num_parents,
+@@ -218,6 +268,18 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
+ 			&imx_ccm_lock);
+ }
+ 
++static inline struct clk_hw *imx_clk_hw_mux_flags(const char *name,
++						  void __iomem *reg, u8 shift,
++						  u8 width,
++						  const char * const *parents,
++						  int num_parents,
++						  unsigned long flags)
++{
++	return clk_hw_register_mux(NULL, name, parents, num_parents,
++				   flags | CLK_SET_RATE_NO_REPARENT,
++				   reg, shift, width, 0, &imx_ccm_lock);
++}
++
+ struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+ 		struct clk *div, struct clk *mux, struct clk *pll,
+ 		struct clk *step);
+-- 
+2.7.4
 
 
-Heiko
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
