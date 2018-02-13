@@ -1,316 +1,183 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43620 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030634AbeBNOAc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:32 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v3 09/10] DT: QCOM: Add cpufreq-dt to msm8996
-Date: Wed, 14 Feb 2018 15:59:51 +0200
-Message-Id: <1518616792-29028-10-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50427 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934231AbeBMLzZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Feb 2018 06:55:25 -0500
+MIME-Version: 1.0
+In-Reply-To: <9f7123d1-a14b-c51a-d7a8-63c58a3f83dd@gmail.com>
+References: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com>
+ <b421fae7-b807-5ed8-669d-6ba773ac3eca@gmail.com> <CAGb2v65qNOLRfQXMOoYzH1y-t+YDDhK_wAe1QUKs74Pzu8D84A@mail.gmail.com>
+ <9f7123d1-a14b-c51a-d7a8-63c58a3f83dd@gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 13 Feb 2018 19:55:02 +0800
+Message-ID: <CAGb2v67WNfx1p8o=no2uC6Z4hdxoXV2uVVdenxwudBTWKFsbRQ@mail.gmail.com>
+Subject: Re: BUG: A31s Not booting anymore
+To: Philipp Rossak <embed3d@gmail.com>
+Cc: linux-sunxi <linux-sunxi@googlegroups.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree frequency table for the MSM8996 to be
-used by the upstream cpufreq-dt driver with the clk-cpu-8996
-driver as infrastructure.
+On Tue, Feb 13, 2018 at 7:32 PM, Philipp Rossak <embed3d@gmail.com> wrote:
+>
+>
+> On 13.02.2018 03:59, Chen-Yu Tsai wrote:
+>>
+>> On Tue, Feb 13, 2018 at 9:25 AM, Philipp Rossak <embed3d@gmail.com> wrote:
+>>>
+>>>
+>>>
+>>> On 12.02.2018 19:21, Philipp Rossak wrote:
+>>>>
+>>>>
+>>>> Hey,
+>>>>
+>>>> When I try to boot my A31s (Bananapi M2) u-boot is showing only Starting
+>>>> kernel ... . After enabling the earlyprintk I could capture this log:
+>>>> [1].
+>>>>
+>>>> After reverting those 5 commits from Chen-Yu I was able to boot again:
+>>>>
+>>>>
+>>>> clk: sunxi-ng: Support fixed post-dividers on NM style clocks
+>>>> 7d333ef1cc1b8c8951f3a2c41f6406e2295d8be9
+>>>>
+>>>> clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
+>>>> 10e6eb4f2c5b35ae71c9bc0db83d74238719b453
+>>>>
+>>>> clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
+>>>> e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4
+>>>>
+>>>> clk: sunxi-ng: Support fixed post-dividers on MP style clocks
+>>>> 946797aa3f08e2f6f5992f3ec2be44791e9b9260
+>>>>
+>>>> clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module
+>>>> clocks
+>>>> 83fe3be4d1974f5f50c5e2039a1609f4960e8579
+>>>>
+>>>>
+>>>> I allready tried to fix it with making them save against zero:
+>>>>
+>>>> if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV && \
+>>>>           cmp->fixed_post_div with)
+>>>>                  rate *= cmp->fixed_post_div;
+>>>>
+>>>> But that didn't help.
+>>>>
+>>>> Any ideas?
+>>>>
+>>>> Regards,
+>>>> Philipp
+>>>>
+>>>> [1]: https://pastebin.com/64Fzzqvg
+>>>
+>>>
+>>>
+>>> It took me some time, but I have now a few more infos:
+>>>
+>>> Right now the code breaks at this point here [1], with this clock [2].
+>>> If we have a look now at the clock config [3], we see here a table which
+>>> is
+>>> an u8 array and also a fixed_predivs struct.
+>>
+>>
+>> The u8 array is for mapping the parents from the index in the parents
+>> array to the actual register value you listed below.
+>>
+>> How are you figuring out which clock is triggering this? Because that
+>> is not even the right type of clock. The backtrace you posted shows
+>> the error occurring in a DIV or M type clock, not the MP type you
+>> are pointing to.
+>>
+>> Could you add some noisy printk calls to the sunxi_ccu_probe()
+>> function in drivers/clk/sunxi-ng/ccu_common.c so it's much clearer
+>> which clock is failing?
+>
+>
+> Thats what I basically did to find out which clock is failing. This here are
+> the changes I'm doing [1]  and thats the dirty log [2]. It fails at clock NR
+> 155 which is this one [3] mentioned before.
+>
+>>
+>>
+>>>
+>>> If we have a look at the function call where it breaks [4], shouldn't the
+>>> table be a clk_div_table struct instead of an u8?
+>>
+>>
+>> The table argument is an option. Did you go through how the sunxi-ng
+>> driver
+>> calls this function? As mentioned above, you are looking at the wrong
+>> thing.
+>>
+>> Thanks
+>> ChenYu
+>
+>
+> I followed the failing call to this function (through the clock driver). As
+> you can see I added an additional printk statement to see where it fails.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/apq8096-db820c.dts  |   4 +-
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi |   2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi        | 188 ++++++++++++++++++++++++++-
- drivers/cpufreq/cpufreq-dt-platdev.c         |   3 +
- 4 files changed, 192 insertions(+), 5 deletions(-)
+I found the problem... wrong ops for the clock type. Likely a copy-paste
+error on my part. I'll send a patch later.
 
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-index 230e9c8..632cb42 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2014-2016, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2014-2016,2018 The Linux Foundation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -17,5 +17,5 @@
- 
- / {
- 	model = "Qualcomm Technologies, Inc. DB820c";
--	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc";
-+	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc", "qcom,apq8096";
- };
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-index 492a011..930f68b 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2014-2016, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2014-2016,2018 The Linux Foundation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 4b2afcc..0359197 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -1,4 +1,4 @@
--/* Copyright (c) 2014-2015, The Linux Foundation. All rights reserved.
-+/* Copyright (c) 2014-2015,2018 The Linux Foundation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -86,6 +86,8 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 			      compatible = "cache";
-@@ -98,6 +100,8 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 			next-level-cache = <&L2_0>;
- 		};
- 
-@@ -106,6 +110,8 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
- 			next-level-cache = <&L2_1>;
- 			L2_1: l2-cache {
- 			      compatible = "cache";
-@@ -118,6 +124,8 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x101>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
- 			next-level-cache = <&L2_1>;
- 		};
- 
-@@ -144,6 +152,182 @@
- 		};
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@307200000 {
-+			opp-hz = /bits/ 64 <  307200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@422400000 {
-+			opp-hz = /bits/ 64 <  422400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@480000000 {
-+			opp-hz = /bits/ 64 <  480000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@556800000 {
-+			opp-hz = /bits/ 64 <  556800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@652800000 {
-+			opp-hz = /bits/ 64 <  652800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@729600000 {
-+			opp-hz = /bits/ 64 <  729600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@844800000 {
-+			opp-hz = /bits/ 64 <  844800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@960000000 {
-+			opp-hz = /bits/ 64 <  960000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1036800000 {
-+			opp-hz = /bits/ 64 < 1036800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1113600000 {
-+			opp-hz = /bits/ 64 < 1113600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1190400000 {
-+			opp-hz = /bits/ 64 < 1190400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1228800000 {
-+			opp-hz = /bits/ 64 < 1228800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1324800000 {
-+			opp-hz = /bits/ 64 < 1324800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1401600000 {
-+			opp-hz = /bits/ 64 < 1401600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1478400000 {
-+			opp-hz = /bits/ 64 < 1478400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1593600000 {
-+			opp-hz = /bits/ 64 < 1593600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp@307200000 {
-+			opp-hz = /bits/ 64 <  307200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@403200000 {
-+			opp-hz = /bits/ 64 <  403200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@480000000 {
-+			opp-hz = /bits/ 64 <  480000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@556800000 {
-+			opp-hz = /bits/ 64 <  556800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@652800000 {
-+			opp-hz = /bits/ 64 <  652800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@729600000 {
-+			opp-hz = /bits/ 64 <  729600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@806400000 {
-+			opp-hz = /bits/ 64 <  806400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@883200000 {
-+			opp-hz = /bits/ 64 <  883200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@940800000 {
-+			opp-hz = /bits/ 64 <  940800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1036800000 {
-+			opp-hz = /bits/ 64 < 1036800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1113600000 {
-+			opp-hz = /bits/ 64 < 1113600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1190400000 {
-+			opp-hz = /bits/ 64 < 1190400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1248000000 {
-+			opp-hz = /bits/ 64 < 1248000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1324800000 {
-+			opp-hz = /bits/ 64 < 1324800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1401600000 {
-+			opp-hz = /bits/ 64 < 1401600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1478400000 {
-+			opp-hz = /bits/ 64 < 1478400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1552000000 {
-+			opp-hz = /bits/ 64 < 1552000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1632000000 {
-+			opp-hz = /bits/ 64 < 1632000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1708800000 {
-+			opp-hz = /bits/ 64 < 1708800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1785600000 {
-+			opp-hz = /bits/ 64 < 1785600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1824000000 {
-+			opp-hz = /bits/ 64 < 1824000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1920000000 {
-+			opp-hz = /bits/ 64 < 1920000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@1996800000 {
-+			opp-hz = /bits/ 64 < 1996800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@2073600000 {
-+			opp-hz = /bits/ 64 < 2073600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp@2150400000 {
-+			opp-hz = /bits/ 64 < 2150400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+
-+	};
- 	thermal-zones {
- 		cpu-thermal0 {
- 			polling-delay-passive = <250>;
-@@ -403,7 +587,7 @@
- 		};
- 
- 		kryocc: clock-controller@6400000 {
--			compatible = "qcom,apcc-msm8996";
-+			compatible = "qcom-msm8996-apcc";
- 			reg = <0x6400000 0x90000>;
- 			#clock-cells = <1>;
- 		};
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..b6cd0ae 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -95,6 +95,9 @@
- 	{ .compatible = "xlnx,zynq-7000", },
- 	{ .compatible = "xlnx,zynqmp", },
- 
-+	{ .compatible = "qcom,msm8996", },
-+	{ .compatible = "qcom,apq8096", },
-+
- 	{ }
- };
- 
--- 
-1.9.1
+Sorry for being so harsh on you.
 
+ChenYu
+
+> Regards,
+> Philipp
+>
+>>
+>>>
+>>> The a31s is the only board where we have this combination of a
+>>> fixed_predivs
+>>> and a table.
+>>>
+>>> Philipp
+>>>
+>>>
+>>> Related Clock source register A31s:
+>>>
+>>> 0000: OSC24MHz/750=32KHz
+>>> 0001: LOSC
+>>> 0010: OSC24MHz
+>>> 0011: /
+>>> 0100: /
+>>> 0101: /
+>>> 0110: /
+>>> 0111: /
+>>> 1000: /
+>>> 1001: /
+>>> 1010: /
+>>> 1011: AXICLK/4
+>>> 1100: /
+>>> 1101: AHB1CLK/4
+>>> 1110: /
+>>> 1111: /
+>>>
+>>>
+>>> [1]:
+>>>
+>>> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L89
+>>>
+>>> [2]:
+>>>
+>>> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L1137
+>>>
+>>> [3]:
+>>>
+>>> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L749
+>>>
+>>> [4]:
+>>>
+>>> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L93
+>>>
+>
+> [1]: https://pastebin.com/tvDunAWq
+> [2]: https://pastebin.com/SBn2VQLu
+> [3]:
+> http://lxr.bootlin.com/linux/v4.16-rc1/source/include/dt-bindings/clock/sun6i-a31-ccu.h#L187
