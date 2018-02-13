@@ -1,104 +1,197 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	"Geert Uytterhoeven" <geert+renesas@glider.be>, Wolfram Sang
-	<wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>, Ramesh Shanmugasundaram
-	<ramesh.shanmugasundaram@bp.renesas.com>
-Subject: RE: [RFC v4 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
-Date: Mon, 12 Feb 2018 10:31:06 +0000
-Message-ID: <TY1PR06MB0895E25D31BA11A42F24DF80C0F70@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-13-git-send-email-fabrizio.castro@bp.renesas.com>
- <20180207225356.pgirh2ohdsv7xdne@katana>
-In-Reply-To: <20180207225356.pgirh2ohdsv7xdne@katana>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <dinguyen@kernel.org>
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: dinguyen@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Subject: [PATCHv4 2/3] arm64: dts: stratix10: use clock bindings for the Stratix10 platform
+Date: Tue, 13 Feb 2018 04:04:45 -0600
+Message-Id: <1518516286-14428-2-git-send-email-dinguyen@kernel.org>
+In-Reply-To: <1518516286-14428-1-git-send-email-dinguyen@kernel.org>
+References: <1518516286-14428-1-git-send-email-dinguyen@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Wolfram,
+Use the clock bindings for the Stratix10 SoC. This includes changing the old
+binding of "intc,clk-s10-mgr" to "intel,stratix10-clkmgr". The reason that
+this can be done is that there are currently no clock driver for Stratix10,
+thus there are no consumers of the old binding. So changing the binding will
+not break any legacy code.
 
-thank you for your feedback!
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+v4:
+- remove '_' in name of clock nodes
+- use clock-controller in SoCDK node in dts file
+v3:
+- use the correct vendor prefix
+- explain the binding change
+v2:
+- use a single clock binding for the clock controller
+---
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 50 +++++++++++++++++++++-
+ .../boot/dts/altera/socfpga_stratix10_socdk.dts    | 10 +++++
+ 2 files changed, 58 insertions(+), 2 deletions(-)
 
-> Subject: Re: [RFC v4 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
->
->
-> > +#ifdef CONFIG_PM
-> > +static int rwdt_suspend(struct device *dev)
-> > +{
-> > +struct platform_device *pdev;
-> > +struct rwdt_priv *priv;
-> > +
-> > +pdev =3D to_platform_device(dev);
-> > +priv =3D platform_get_drvdata(pdev);
->
-> struct rwdt_priv *priv =3D dev_get_drvdata(dev);
->
-> ?
-
-will change
-
->
->
-> > +if (watchdog_active(&priv->wdev)) {
-> > +rwdt_write(priv, priv->cks, RWTCSRA);
-> > +}
-> > +return 0;
-> > +}
-> > +
-> > +static int rwdt_resume(struct device *dev)
-> > +{
-> > +struct platform_device *pdev;
-> > +struct rwdt_priv *priv;
-> > +
-> > +pdev =3D to_platform_device(dev);
-> > +priv =3D platform_get_drvdata(pdev);
->
-> ditto
-
-will change
-
->
-> > +if (watchdog_active(&priv->wdev)) {
-> > +rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
-> > +}
-> > +return 0;
-> > +}
-> > +
-> > +static const struct dev_pm_ops rwdt_pm =3D {
-> > +.suspend =3D rwdt_suspend,
-> > +.resume =3D rwdt_resume,
-> > +};
->
-> Use SIMPLE_DEV_PM_OPS macro (see stmp3xxx_rtc_wdt.c for an example) for
-> more compact code and...
->
-> > +#ifdef CONFIG_PM
-> > +.pm =3D &rwdt_pm,
-> > +#endif
->
-> ... removing this ifdeffery?
-
-will take out the ifdeffery
-
-
-Thanks,
-Fabrizio
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+index c89d0c30..5a6a699 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+@@ -17,6 +17,7 @@
+ /dts-v1/;
+ #include <dt-bindings/reset/altr,rst-mgr-s10.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/clock/stratix10-clock.h>
+ 
+ / {
+ 	compatible = "altr,socfpga-stratix10";
+@@ -92,9 +93,35 @@
+ 		interrupt-parent = <&intc>;
+ 		ranges = <0 0 0 0xffffffff>;
+ 
+-		clkmgr@ffd1000 {
+-			compatible = "altr,clk-mgr";
++		clkmgr: clock-controller@ffd10000 {
++			compatible = "intel,stratix10-clkmgr";
+ 			reg = <0xffd10000 0x1000>;
++			#clock-cells = <1>;
++
++			clocks {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
++					#clock-cells = <0>;
++					compatible = "fixed-clock";
++				};
++
++				cb_intosc_ls_clk: cb-intosc-ls-clk {
++					#clock-cells = <0>;
++					compatible = "fixed-clock";
++				};
++
++				f2s_free_clk: f2s-free-clk {
++					#clock-cells = <0>;
++					compatible = "fixed-clock";
++				};
++
++				osc1: osc1 {
++					#clock-cells = <0>;
++					compatible = "fixed-clock";
++				};
++			};
+ 		};
+ 
+ 		gmac0: ethernet@ff800000 {
+@@ -105,6 +132,8 @@
+ 			mac-address = [00 00 00 00 00 00];
+ 			resets = <&rst EMAC0_RESET>;
+ 			reset-names = "stmmaceth";
++			clocks = <&clkmgr STRATIX10_EMAC0_CLK>;
++			clock-names = "stmmaceth";
+ 			status = "disabled";
+ 		};
+ 
+@@ -116,6 +145,8 @@
+ 			mac-address = [00 00 00 00 00 00];
+ 			resets = <&rst EMAC1_RESET>;
+ 			reset-names = "stmmaceth";
++			clocks = <&clkmgr STRATIX10_EMAC1_CLK>;
++			clock-names = "stmmaceth";
+ 			status = "disabled";
+ 		};
+ 
+@@ -127,6 +158,8 @@
+ 			mac-address = [00 00 00 00 00 00];
+ 			resets = <&rst EMAC2_RESET>;
+ 			reset-names = "stmmaceth";
++			clocks = <&clkmgr STRATIX10_EMAC2_CLK>;
++			clock-names = "stmmaceth";
+ 			status = "disabled";
+ 		};
+ 
+@@ -229,6 +262,9 @@
+ 			fifo-depth = <0x400>;
+ 			resets = <&rst SDMMC_RESET>;
+ 			reset-names = "reset";
++			clocks = <&clkmgr STRATIX10_L4_MP_CLK>,
++				 <&clkmgr STRATIX10_SDMMC_CLK>;
++			clock-names = "biu", "ciu";
+ 			status = "disabled";
+ 		};
+ 
+@@ -288,24 +324,32 @@
+ 			compatible = "snps,dw-apb-timer";
+ 			interrupts = <0 113 4>;
+ 			reg = <0xffc03000 0x100>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
++			clock-names = "timer";
+ 		};
+ 
+ 		timer1: timer1@ffc03100 {
+ 			compatible = "snps,dw-apb-timer";
+ 			interrupts = <0 114 4>;
+ 			reg = <0xffc03100 0x100>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
++			clock-names = "timer";
+ 		};
+ 
+ 		timer2: timer2@ffd00000 {
+ 			compatible = "snps,dw-apb-timer";
+ 			interrupts = <0 115 4>;
+ 			reg = <0xffd00000 0x100>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
++			clock-names = "timer";
+ 		};
+ 
+ 		timer3: timer3@ffd00100 {
+ 			compatible = "snps,dw-apb-timer";
+ 			interrupts = <0 116 4>;
+ 			reg = <0xffd00100 0x100>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
++			clock-names = "timer";
+ 		};
+ 
+ 		uart0: serial0@ffc02000 {
+@@ -315,6 +359,7 @@
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+ 			resets = <&rst UART0_RESET>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -325,6 +370,7 @@
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+ 			resets = <&rst UART1_RESET>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+index 0007564..b7f0b6b 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+@@ -50,6 +50,16 @@
+ 		/* We expect the bootloader to fill in the reg */
+ 		reg = <0 0 0 0>;
+ 	};
++
++	soc {
++		clock-controller@ffd10000 {
++			clocks {
++				osc1 {
++					clock-frequency = <25000000>;
++				};
++			};
++		};
++	};
+ };
+ 
+ &gpio1 {
+-- 
+2.7.4
