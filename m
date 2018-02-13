@@ -1,102 +1,109 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH RESEND V3 0/9] clk: add imx7ulp clk support
-Date: Tue, 13 Feb 2018 21:28:05 +0800
-Message-ID: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37702 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933047AbeBMB0F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Feb 2018 20:26:05 -0500
+Subject: Re: BUG: A31s Not booting anymore
+From: Philipp Rossak <embed3d@gmail.com>
+To: linux-sunxi@googlegroups.com, maxime.ripard@free-electrons.com,
+        wens@csie.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+References: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com>
+Message-ID: <b421fae7-b807-5ed8-669d-6ba773ac3eca@gmail.com>
+Date: Tue, 13 Feb 2018 02:25:58 +0100
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a resend patch series.
-See the original one from here:
-[PATCH V3 00/10] clk: add imx7ulp clk support
-https://lkml.org/lkml/2018/1/19/351
-No function changes but remove the last one which is used for the test.
-Rebased against clk-next branch.
-
-This patch series intends to add imx7ulp clk support.
-
-i.MX7ULP Clock functions are under joint control of the System
-Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-modules, and Core Mode Controller (CMC)1 blocks
-
-The clocking scheme provides clear separation between M4 domain
-and A7 domain. Except for a few clock sources shared between two
-domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-and and the Fast IRC clock (FIRCLK), clock sources and clock
-management are separated and contained within each domain.
-
-M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
-
-Note: this series only adds A7 clock domain support as M4 clock
-domain will be handled by M4 seperately.
-
-Change Log:
-v2->v3:
- * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible racy
-   Others no changes.
-
-v1->v2:
- * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
- * use clk_hw apis to register clocks
- * use of_clk_add_hw_provider
- * split the clocks register process into two parts: early part for possible
-   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
-   the left normal peripheral clocks registered by a platform driver.
 
 
-Dong Aisheng (9):
-  clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
-  clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
-  clk: imx: add pllv4 support
-  clk: imx: add pfdv2 support
-  clk: imx: add composite clk support
-  dt-bindings: clock: add imx7ulp clock binding doc
-  clk: imx: make mux parent strings const
-  clk: imx: implement new clk_hw based APIs
-  clk: imx: add imx7ulp clk driver
+On 12.02.2018 19:21, Philipp Rossak wrote:
+> Hey,
+> 
+> When I try to boot my A31s (Bananapi M2) u-boot is showing only Starting 
+> kernel ... . After enabling the earlyprintk I could capture this log: [1].
+> 
+> After reverting those 5 commits from Chen-Yu I was able to boot again:
+> 
+> 
+> clk: sunxi-ng: Support fixed post-dividers on NM style clocks
+> 7d333ef1cc1b8c8951f3a2c41f6406e2295d8be9
+> 
+> clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
+> 10e6eb4f2c5b35ae71c9bc0db83d74238719b453
+> 
+> clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
+> e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4
+> 
+> clk: sunxi-ng: Support fixed post-dividers on MP style clocks
+> 946797aa3f08e2f6f5992f3ec2be44791e9b9260
+> 
+> clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
+> 83fe3be4d1974f5f50c5e2039a1609f4960e8579
+> 
+> 
+> I allready tried to fix it with making them save against zero:
+> 
+> if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV && \
+>          cmp->fixed_post_div with)
+>                 rate *= cmp->fixed_post_div;
+> 
+> But that didn't help.
+> 
+> Any ideas?
+> 
+> Regards,
+> Philipp
+> 
+> [1]: https://pastebin.com/64Fzzqvg
 
- .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++
- drivers/clk/clk-divider.c                          | 152 ++++++++++++++
- drivers/clk/clk-fractional-divider.c               |  10 +
- drivers/clk/imx/Makefile                           |   6 +-
- drivers/clk/imx/clk-busy.c                         |   2 +-
- drivers/clk/imx/clk-composite.c                    |  90 ++++++++
- drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
- drivers/clk/imx/clk-imx7ulp.c                      | 232 +++++++++++++++++++++
- drivers/clk/imx/clk-pfdv2.c                        | 207 ++++++++++++++++++
- drivers/clk/imx/clk-pllv4.c                        | 188 +++++++++++++++++
- drivers/clk/imx/clk.c                              |  22 ++
- drivers/clk/imx/clk.h                              |  92 +++++++-
- include/dt-bindings/clock/imx7ulp-clock.h          | 108 ++++++++++
- include/linux/clk-provider.h                       |  17 ++
- 14 files changed, 1180 insertions(+), 10 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
- create mode 100644 drivers/clk/imx/clk-composite.c
- create mode 100644 drivers/clk/imx/clk-imx7ulp.c
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
- create mode 100644 drivers/clk/imx/clk-pllv4.c
- create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
+It took me some time, but I have now a few more infos:
 
--- 
-2.7.4
+Right now the code breaks at this point here [1], with this clock [2].
+If we have a look now at the clock config [3], we see here a table which 
+is an u8 array and also a fixed_predivs struct.
+
+If we have a look at the function call where it breaks [4], shouldn't 
+the table be a clk_div_table struct instead of an u8?
+
+The a31s is the only board where we have this combination of a 
+fixed_predivs and a table.
+
+Philipp
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Related Clock source register A31s:
+
+0000: OSC24MHz/750=32KHz
+0001: LOSC
+0010: OSC24MHz
+0011: /
+0100: /
+0101: /
+0110: /
+0111: /
+1000: /
+1001: /
+1010: /
+1011: AXICLK/4
+1100: /
+1101: AHB1CLK/4
+1110: /
+1111: /
+
+
+[1]: 
+http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L89
+
+[2]: 
+http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L1137
+
+[3]: 
+http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L749
+
+[4]: 
+http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L93
+
