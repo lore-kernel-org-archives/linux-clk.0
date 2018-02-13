@@ -1,135 +1,301 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43612 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030497AbeBNOAc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:32 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v3 06/10] clk: qcom: cpu-8996: Add support to switch below 600Mhz
-Date: Wed, 14 Feb 2018 15:59:48 +0200
-Message-Id: <1518616792-29028-7-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [PATCH RESEND V3 4/9] clk: imx: add pfdv2 support
+Date: Tue, 13 Feb 2018 21:28:09 +0800
+Message-ID: <1518528494-25723-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
+References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+ shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+The pfdv2 is designed for PLL Fractional Divide (PFD) observed in System
+Clock Generation (SCG) module in IMX ULP SoC series. e.g. i.MX7ULP.
 
-The CPU clock controllers primary PLL operates on a single VCO range,
-between 600Mhz and 3Ghz. However the CPUs do support OPPs with
-frequencies between 300Mhz and 600Mhz. In order to support running the
-CPUs at those frequencies we end up having to lock the PLL at twice the
-rate and drive the CPU clk via the PLL/2 output and SMUX.
+NOTE pfdv2 can only be operated when clk is gated.
 
-So for frequencies above 600Mhz we follow the following path
- Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-and for frequencies between 300Mhz and 600Mhz we follow
- Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
- drivers/clk/qcom/clk-cpu-8996.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+ChangeLog:
+v2->v3:
+ * no changes
+v1->v2:
+ * change to readl_poll_timeout
+ * add pfd lock to protect share reg access between rate and enable/disable
+   operations and multiple pfd instances.
+ * use clk_hw_register
+---
+ drivers/clk/imx/Makefile    |   3 +-
+ drivers/clk/imx/clk-pfdv2.c | 207 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h       |   3 +
+ 3 files changed, 212 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/clk-pfdv2.c
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index 75bd014..854f327 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -28,6 +28,7 @@
- #define PLL_INDEX		1
- #define ACD_INDEX		2
- #define ALT_INDEX		3
-+#define DIV_2_THRESHOLD		600000000
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 2f00b03..9c04ae4 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -12,7 +12,8 @@ obj-y += \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
+ 	clk-pllv4.o \
+-	clk-pfd.o
++	clk-pfd.o \
++	clk-pfdv2.o
  
- static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-        [PLL_OFF_L_VAL] = 0x04,
-@@ -56,10 +57,11 @@
- 
- static const struct alpha_pll_config hfpll_config = {
- 	.l = 60,
--	.config_ctl_val = 0x200d4828,
-+	.config_ctl_val = 0x200D4AA8,
- 	.config_ctl_hi_val = 0x006,
- 	.pre_div_mask = BIT(12),
- 	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -101,7 +103,7 @@
- 	.vco_mask = 0x3 << 20,
- 	.config_ctl_val = 0x4001051b,
- 	.post_div_mask = 0x3 << 8,
--	.post_div_val = 0x1,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -142,6 +144,7 @@ struct clk_cpu_8996_mux {
- 	u32	width;
- 	struct notifier_block nb;
- 	struct clk_hw	*pll;
-+	struct clk_hw	*pll_div_2;
- 	struct clk_regmap clkr;
- };
- 
-@@ -192,6 +195,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	if (!cpuclk->pll)
- 		return -EINVAL;
- 
-+	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
-+		if (req->rate < (DIV_2_THRESHOLD / 2))
-+			return -EINVAL;
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
+new file mode 100644
+index 0000000..5421bdf
+--- /dev/null
++++ b/drivers/clk/imx/clk-pfdv2.c
+@@ -0,0 +1,207 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017 NXP
++ *
++ * Author: Dong Aisheng <aisheng.dong@nxp.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * http://www.opensource.org/licenses/gpl-license.html
++ * http://www.gnu.org/copyleft/gpl.html
++ */
 +
-+		parent = cpuclk->pll_div_2;
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++
++/**
++ * struct clk_pfdv2 - IMX PFD clock
++ * @clk_hw:	clock source
++ * @reg:	PFD register address
++ * @gate_bit:	Gate bit offset
++ * @vld_bit:	Valid bit offset
++ * @frac_off:	PLL Fractional Divider offset
++ */
++
++struct clk_pfdv2 {
++	struct clk_hw	hw;
++	void __iomem	*reg;
++	u8		gate_bit;
++	u8		vld_bit;
++	u8		frac_off;
++};
++
++#define to_clk_pfdv2(_hw) container_of(_hw, struct clk_pfdv2, hw)
++
++#define CLK_PFDV2_FRAC_MASK 0x3f
++
++#define LOCK_TIMEOUT_US		USEC_PER_MSEC
++
++static DEFINE_SPINLOCK(pfd_lock);
++
++static int clk_pfdv2_wait(struct clk_pfdv2 *pfd)
++{
++	u32 val;
++
++	return readl_poll_timeout(pfd->reg, val, val & pfd->vld_bit,
++				  0, LOCK_TIMEOUT_US);
++}
++
++static int clk_pfdv2_enable(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val &= ~pfd->gate_bit;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++
++	return clk_pfdv2_wait(pfd);
++}
++
++static void clk_pfdv2_disable(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val |= pfd->gate_bit;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++}
++
++static unsigned long clk_pfdv2_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	u64 tmp = parent_rate;
++	u8 frac;
++
++	frac = (readl_relaxed(pfd->reg) >> pfd->frac_off)
++		& CLK_PFDV2_FRAC_MASK;
++
++	if (!frac) {
++		pr_debug("clk_pfdv2: %s invalid pfd frac value 0\n",
++			 clk_hw_get_name(hw));
++		return 0;
 +	}
 +
- 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
- 	req->best_parent_hw = parent;
++	tmp *= 18;
++	do_div(tmp, frac);
++
++	return tmp;
++}
++
++static long clk_pfdv2_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *prate)
++{
++	u64 tmp = *prate;
++	u8 frac;
++
++	tmp = tmp * 18 + rate / 2;
++	do_div(tmp, rate);
++	frac = tmp;
++
++	if (frac < 12)
++		frac = 12;
++	else if (frac > 35)
++		frac = 35;
++
++	tmp = *prate;
++	tmp *= 18;
++	do_div(tmp, frac);
++
++	return tmp;
++}
++
++static int clk_pfdv2_is_enabled(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++
++	if (readl_relaxed(pfd->reg) & pfd->gate_bit)
++		return 0;
++
++	return 1;
++}
++
++static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u64 tmp = parent_rate;
++	u32 val;
++	u8 frac;
++
++	tmp = tmp * 18 + rate / 2;
++	do_div(tmp, rate);
++	frac = tmp;
++	if (frac < 12)
++		frac = 12;
++	else if (frac > 35)
++		frac = 35;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val &= ~(CLK_PFDV2_FRAC_MASK << pfd->frac_off);
++	val |= frac << pfd->frac_off;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++
++	return 0;
++}
++
++static const struct clk_ops clk_pfdv2_ops = {
++	.enable		= clk_pfdv2_enable,
++	.disable	= clk_pfdv2_disable,
++	.recalc_rate	= clk_pfdv2_recalc_rate,
++	.round_rate	= clk_pfdv2_round_rate,
++	.set_rate	= clk_pfdv2_set_rate,
++	.is_enabled     = clk_pfdv2_is_enabled,
++};
++
++struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
++			     void __iomem *reg, u8 idx)
++{
++	struct clk_init_data init;
++	struct clk_pfdv2 *pfd;
++	struct clk_hw *hw;
++	int ret;
++
++	WARN_ON(idx > 3);
++
++	pfd = kzalloc(sizeof(*pfd), GFP_KERNEL);
++	if (!pfd)
++		return ERR_PTR(-ENOMEM);
++
++	pfd->reg = reg;
++	pfd->gate_bit = 1 << ((idx + 1) * 8 - 1);
++	pfd->vld_bit = pfd->gate_bit - 1;
++	pfd->frac_off = idx * 8;
++
++	init.name = name;
++	init.ops = &clk_pfdv2_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = CLK_SET_RATE_GATE;
++
++	pfd->hw.init = &init;
++
++	hw = &pfd->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(pfd);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 52f7c9d..ccd7181 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -60,6 +60,9 @@ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+ struct clk *imx_clk_pfd(const char *name, const char *parent_name,
+ 		void __iomem *reg, u8 idx);
  
-@@ -203,13 +213,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- {
- 	int ret;
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+	struct clk_notifier_data *cnd = data;
- 
- 	switch (event) {
- 	case PRE_RATE_CHANGE:
- 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
- 		break;
- 	case POST_RATE_CHANGE:
--		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		if (cnd->new_rate < DIV_2_THRESHOLD)
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  DIV_2_INDEX);
-+		else
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  PLL_INDEX);
- 		break;
- 	default:
- 		ret = 0;
-@@ -262,6 +278,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.pll_div_2 = &pwrcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
-@@ -282,6 +299,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.pll_div_2 = &perfcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
++struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
++			     void __iomem *reg, u8 idx);
++
+ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 				 void __iomem *reg, u8 shift, u8 width,
+ 				 void __iomem *busy_reg, u8 busy_shift);
 -- 
-1.9.1
+2.7.4
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
