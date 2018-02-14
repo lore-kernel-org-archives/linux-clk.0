@@ -1,135 +1,101 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:43563 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750789AbeBIJzY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Feb 2018 04:55:24 -0500
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 2/2] clk: sprd: add RTC gate for SC9860
-Date: Fri,  9 Feb 2018 17:55:09 +0800
-Message-Id: <1518170109-15216-1-git-send-email-zhang.lyra@gmail.com>
-In-Reply-To: <1518169691-14870-2-git-send-email-zhang.lyra@gmail.com>
-References: <1518169691-14870-2-git-send-email-zhang.lyra@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <a.hajda@samsung.com>
+Subject: Re: [PATCH 4/7] clk: samsung: exynos5433: fix PLL rates
+To: Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin
+	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated
+ list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open
+ list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, "Chanwoo Choi
+ (gmail)" <cwchoi00@gmail.com>, =?UTF-8?B?7LWc7LCs7JqwIChzYW1zdW5nLmNvbSk=?=
+	<chanwoo@kernel.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <38a7fbdf-86c6-5447-697e-f3cc3f2103f1@samsung.com>
+Date: Wed, 14 Feb 2018 09:36:53 +0100
+MIME-Version: 1.0
+In-Reply-To: <5A83CD07.3060008@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+References: <20180213134032.30235-1-a.hajda@samsung.com>
+	<CGME20180213134101eucas1p1f9348abc0344594476bc8618c1006e31@eucas1p1.samsung.com>
+	<20180213134032.30235-5-a.hajda@samsung.com> <5A83CD07.3060008@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+On 14.02.2018 06:45, Chanwoo Choi wrote:
+> Hi Sylwester and Andrzej,
+>
+> Exynos5433 TRM shows different PLL frequency from the calculated value. Actually, I'm not sure which value is the correct value between TRM's value and real calculated value.
+>
+> If we only consider the equation, I agree that we have to replace them with real calculated value with equation. But, TRM shows the diagram of clock domain which contains the multiple IPs. And each diagram specifies the required source clock rate of each child IP. Maybe, this source clock rate might be calculated from the PLL rate provided by TRM. (even if it's different from real calculated value).
+>
+> Although the real rate is a little bit incorrect, we might better to keep PLL rate provided by TRM in order to get the required source clock of child IPs as the TRM. If we modify the PLL rate provided by TRM, the source clock rate of child IP might be different from TRM.
+>
+> Basically, I have no objection of this patch. Just I think that need to check it.
 
-Add a few gate clocks which are used for gating RTC for some
-devices on AON area of SC9860.
+After verifying documentation it seems that in case of fractional PLLs
+TRM shows rates with lower precision, so I wouldn't say in such case it
+is different.
+Only 667MHz frequency looks odd, but it seems to be a bug in TRM, I
+guess copy/paste bug from Exyons5430, where 667MHz rate was generated
+from different PMS coefficients.
+Android code has also tables proving it should be 666MHz [1].
 
-This patch has been tested on SC9860, with this patch and proper DT
-configurations, the watchdog can be initialized and work well.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- drivers/clk/sprd/sc9860-clk.c | 76 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+[1]:
+https://github.com/googyanas/Googy-Max-N4-Kernel/blob/master/drivers/clk/samsung/clk-exynos5433.c#L3260
 
-diff --git a/drivers/clk/sprd/sc9860-clk.c b/drivers/clk/sprd/sc9860-clk.c
-index ed5c027..9980ab5 100644
---- a/drivers/clk/sprd/sc9860-clk.c
-+++ b/drivers/clk/sprd/sc9860-clk.c
-@@ -959,6 +959,44 @@ static SPRD_SC_GATE_CLK(sdio2_2x_en,	"sdio2-2x-en",	"aon-apb", 0x13c,
- 			       0x1000, BIT(6), 0, 0);
- static SPRD_SC_GATE_CLK(emmc_2x_en,	"emmc-2x-en",	"aon-apb", 0x13c,
- 			       0x1000, BIT(9), 0, 0);
-+static SPRD_SC_GATE_CLK(arch_rtc_eb, "arch-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(0), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(kpb_rtc_eb, "kpb-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(1), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aon_syst_rtc_eb, "aon-syst-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(2), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_syst_rtc_eb, "ap-syst-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(3), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aon_tmr_rtc_eb, "aon-tmr-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(4), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_tmr0_rtc_eb, "ap-tmr0-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(5), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(eic_rtc_eb, "eic-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(6), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(eic_rtcdv5_eb, "eic-rtcdv5-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(7), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_wdg_rtc_eb, "ap-wdg-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(9), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_tmr1_rtc_eb, "ap-tmr1-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(15), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_tmr2_rtc_eb, "ap-tmr2-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(16), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(dcxo_tmr_rtc_eb, "dcxo-tmr-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(17), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(bb_cal_rtc_eb, "bb-cal-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(18), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(avs_big_rtc_eb, "avs-big-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(20), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(avs_lit_rtc_eb, "avs-lit-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(21), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(avs_gpu0_rtc_eb, "avs-gpu0-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(22), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(avs_gpu1_rtc_eb, "avs-gpu1-rtc-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(23), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(gpu_ts_eb, "gpu-ts-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(24), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(rtcdv10_eb, "rtcdv10-eb",	"aon-apb", 0x10,
-+		     0x1000, BIT(27), CLK_IGNORE_UNUSED, 0);
- 
- static struct sprd_clk_common *sc9860_aon_gate[] = {
- 	/* address base is 0x402e0000 */
-@@ -1030,6 +1068,25 @@ static struct sprd_clk_common *sc9860_aon_gate[] = {
- 	&sdio1_2x_en.common,
- 	&sdio2_2x_en.common,
- 	&emmc_2x_en.common,
-+	&arch_rtc_eb.common,
-+	&kpb_rtc_eb.common,
-+	&aon_syst_rtc_eb.common,
-+	&ap_syst_rtc_eb.common,
-+	&aon_tmr_rtc_eb.common,
-+	&ap_tmr0_rtc_eb.common,
-+	&eic_rtc_eb.common,
-+	&eic_rtcdv5_eb.common,
-+	&ap_wdg_rtc_eb.common,
-+	&ap_tmr1_rtc_eb.common,
-+	&ap_tmr2_rtc_eb.common,
-+	&dcxo_tmr_rtc_eb.common,
-+	&bb_cal_rtc_eb.common,
-+	&avs_big_rtc_eb.common,
-+	&avs_lit_rtc_eb.common,
-+	&avs_gpu0_rtc_eb.common,
-+	&avs_gpu1_rtc_eb.common,
-+	&gpu_ts_eb.common,
-+	&rtcdv10_eb.common,
- };
- 
- static struct clk_hw_onecell_data sc9860_aon_gate_hws = {
-@@ -1102,6 +1159,25 @@ static struct clk_hw_onecell_data sc9860_aon_gate_hws = {
- 		[CLK_SDIO1_2X_EN]	= &sdio1_2x_en.common.hw,
- 		[CLK_SDIO2_2X_EN]	= &sdio2_2x_en.common.hw,
- 		[CLK_EMMC_2X_EN]	= &emmc_2x_en.common.hw,
-+		[CLK_ARCH_RTC_EB]	= &arch_rtc_eb.common.hw,
-+		[CLK_KPB_RTC_EB]	= &kpb_rtc_eb.common.hw,
-+		[CLK_AON_SYST_RTC_EB]	= &aon_syst_rtc_eb.common.hw,
-+		[CLK_AP_SYST_RTC_EB]	= &ap_syst_rtc_eb.common.hw,
-+		[CLK_AON_TMR_RTC_EB]	= &aon_tmr_rtc_eb.common.hw,
-+		[CLK_AP_TMR0_RTC_EB]	= &ap_tmr0_rtc_eb.common.hw,
-+		[CLK_EIC_RTC_EB]	= &eic_rtc_eb.common.hw,
-+		[CLK_EIC_RTCDV5_EB]	= &eic_rtcdv5_eb.common.hw,
-+		[CLK_AP_WDG_RTC_EB]	= &ap_wdg_rtc_eb.common.hw,
-+		[CLK_AP_TMR1_RTC_EB]	= &ap_tmr1_rtc_eb.common.hw,
-+		[CLK_AP_TMR2_RTC_EB]	= &ap_tmr2_rtc_eb.common.hw,
-+		[CLK_DCXO_TMR_RTC_EB]	= &dcxo_tmr_rtc_eb.common.hw,
-+		[CLK_BB_CAL_RTC_EB]	= &bb_cal_rtc_eb.common.hw,
-+		[CLK_AVS_BIG_RTC_EB]	= &avs_big_rtc_eb.common.hw,
-+		[CLK_AVS_LIT_RTC_EB]	= &avs_lit_rtc_eb.common.hw,
-+		[CLK_AVS_GPU0_RTC_EB]	= &avs_gpu0_rtc_eb.common.hw,
-+		[CLK_AVS_GPU1_RTC_EB]	= &avs_gpu1_rtc_eb.common.hw,
-+		[CLK_GPU_TS_EB]		= &gpu_ts_eb.common.hw,
-+		[CLK_RTCDV10_EB]	= &rtcdv10_eb.common.hw,
- 	},
- 	.num	= CLK_AON_GATE_NUM,
- };
--- 
-2.7.4
+Regards
+Andrzej
 
+>
+> Regards,
+> Chanwoo Choi
+>
+> On 2018년 02월 13일 22:40, Andrzej Hajda wrote:
+>> Declared rates did not match rates generated by PLL.
+>> As a result driver behaved inconsitently.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos5433.c | 12 ++++++------
+>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+>> index db270908037a..335bebfa21c0 100644
+>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>> @@ -729,7 +729,7 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
+>>  	PLL_35XX_RATE(800000000U,  400, 6,  1),
+>>  	PLL_35XX_RATE(733000000U,  733, 12, 1),
+>>  	PLL_35XX_RATE(700000000U,  175, 3,  1),
+>> -	PLL_35XX_RATE(667000000U,  222, 4,  1),
+>> +	PLL_35XX_RATE(666000000U,  222, 4,  1),
+>>  	PLL_35XX_RATE(633000000U,  211, 4,  1),
+>>  	PLL_35XX_RATE(600000000U,  500, 5,  2),
+>>  	PLL_35XX_RATE(552000000U,  460, 5,  2),
+>> @@ -757,12 +757,12 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
+>>  /* AUD_PLL */
+>>  static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
+>>  	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
+>> -	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
+>> +	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
+>>  	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
+>> -	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
+>> -	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
+>> -	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
+>> -	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
+>> +	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
+>> +	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
+>> +	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
+>> +	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
+>>  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
+>>  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
+>>  	{ /* sentinel */ }
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
