@@ -1,78 +1,67 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	stable@vger.kernel.org,
-	Andi Kleen <ak@linux.intel.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: fix false-positive Wmaybe-uninitialized warning
-Date: Fri, 16 Feb 2018 16:27:47 +0100
-Message-Id: <20180216152807.1629038-1-arnd@arndb.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:42448 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030514AbeBNOAJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:09 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v3 00/10] clk: qcom: CPU clock driver for msm8996
+Date: Wed, 14 Feb 2018 15:59:42 +0200
+Message-Id: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When we build this driver with on x86-32, gcc produces a false-positive warning:
+[v3]
+ * Rebased on top of the latest PLL driver changes
+ * Addressed comment from Rob Herring for bindings
 
-drivers/clk/renesas/clk-sh73a0.c: In function 'sh73a0_cpg_clocks_init':
-drivers/clk/renesas/clk-sh73a0.c:155:10: error: 'parent_name' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-   return clk_register_fixed_factor(NULL, name, parent_name, 0,
+This series adds support for the CPU clocks on msm8996 devices.
 
-We can work around that warning by adding a fake initialization, I tried
-and failed to come up with any better workaround. This is currently one
-of few remaining warnings for a 4.14.y randconfig build, so it would be
-good to also have it backported at least to that version. Older versions
-have more randconfig warnings, so we might not care.
+The driver uses the existing PLL drivers and is required
+to control the CPU frequency scaling on the MSM8996.
 
-I had not noticed this earlier, because one patch in my randconfig test
-tree removes the '-ffreestanding' option on x86-32, and that avoids
-the warning. The -ffreestanding flag was originally global but moved
-into arch/i386 by Andi Kleen in commit 6edfba1b33c7 ("[PATCH] x86_64:
-Don't define string functions to builtin") as a 'temporary workaround'.
+A previous post of RFC can be found here
+https://patchwork.kernel.org/patch/10144485/
 
-Like many temporary hacks, this turned out to be rather long-lived, from
-all I can tell we still need a simple fix to asm/string_32.h before it
-can be removed, but I'm not sure about how to best do that.
+Ilia Lin (6):
+  soc: qcom: Separate kryo l2 accessors from PMU driver
+  clk: qcom: Add DT bindings for CPU clock driver for msm8996
+  clk: qcom: clk-cpu-8996: Prepare PLLs on probe
+  clk: qcom: Add ACD path to CPU clock driver for msm8996
+  DT: QCOM: Add cpufreq-dt to msm8996
+  DT: QCOM: Add thermal mitigation to msm8996
 
-Cc: stable@vger.kernel.org
-Cc: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/renesas/clk-sh73a0.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Rajendra Nayak (4):
+  clk: qcom: Make clk_alpha_pll_configure available to modules
+  clk: qcom: Add CPU clock driver for msm8996
+  clk: qcom: cpu-8996: Add support to switch to alternate PLL
+  clk: qcom: cpu-8996: Add support to switch below 600Mhz
 
-diff --git a/drivers/clk/renesas/clk-sh73a0.c b/drivers/clk/renesas/clk-sh73a0.c
-index eea38f6ea77e..3892346c4fcc 100644
---- a/drivers/clk/renesas/clk-sh73a0.c
-+++ b/drivers/clk/renesas/clk-sh73a0.c
-@@ -46,7 +46,7 @@ struct div4_clk {
- 	unsigned int shift;
- };
- 
--static struct div4_clk div4_clks[] = {
-+static const struct div4_clk div4_clks[] = {
- 	{ "zg", "pll0", CPG_FRQCRA, 16 },
- 	{ "m3", "pll1", CPG_FRQCRA, 12 },
- 	{ "b",  "pll1", CPG_FRQCRA,  8 },
-@@ -79,7 +79,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
- {
- 	const struct clk_div_table *table = NULL;
- 	unsigned int shift, reg, width;
--	const char *parent_name;
-+	const char *parent_name = NULL;
- 	unsigned int mult = 1;
- 	unsigned int div = 1;
- 
-@@ -135,7 +135,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
- 		shift = 24;
- 		width = 5;
- 	} else {
--		struct div4_clk *c;
-+		const struct div4_clk *c;
- 
- 		for (c = div4_clks; c->name; c++) {
- 			if (!strcmp(name, c->name)) {
+ .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
+ arch/arm64/Kconfig.platforms                       |   7 +
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   4 +-
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 286 ++++++++++-
+ drivers/clk/qcom/Kconfig                           |   8 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
+ drivers/clk/qcom/clk-cpu-8996.c                    | 554 +++++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+ drivers/perf/qcom_l2_pmu.c                         |  50 +-
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/kryo-l2-accessors.c               |  64 +++
+ include/soc/qcom/kryo-l2-accessors.h               |  22 +
+ 14 files changed, 956 insertions(+), 64 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+ create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+ create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+ create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+
 -- 
-2.9.0
+1.9.1
+
