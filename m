@@ -1,46 +1,116 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:54214 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753346AbeBVKy5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Feb 2018 05:54:57 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180221101527.25554-5-m.szyprowski@samsung.com>
-References: <CGME20180221101534eucas1p24db3c1d049d9ecd0de9c76a10bb58041@eucas1p2.samsung.com>
- <20180221101527.25554-1-m.szyprowski@samsung.com> <20180221101527.25554-5-m.szyprowski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 22 Feb 2018 11:54:55 +0100
-Message-ID: <CAJKOXPd8X3dS+h0g3+FYKX_DHiTJgy5N6aE6QeokmSqSeY-H3w@mail.gmail.com>
-Subject: Re: [PATCH 4/6] clk: samsung: exynos5250: Move PD-dependent clocks to
- Exynos5x sub-CMU driver
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com,
+	narmstrong@baylibre.com,
+	Jose.Abreu@synopsys.com
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v5 00/12] drm/sun4i: Add A83T HDMI support
+Date: Wed, 14 Feb 2018 21:08:54 +0100
+Message-Id: <20180214200906.31509-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 11:15 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Clocks related to DISP1 block require special handling for power domain
-> turn on/off sequences. Till now this was handled by Exynos power domain
-> driver, but that approach was limited only to some special cases. This
-> patch moves handling of those operations to clock controller driver.
-> This gives more flexibility and allows fine tune values of some
-> clock-specific registers. This patch moves handling of those mentioned
-> clocks to Exynos5x sub-CMU driver instantiated from Exynos5250 driver.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/Makefile              |  1 +
->  drivers/clk/samsung/clk-exynos5250.c      | 51 +++++++++++++++++++++----------
->  drivers/clk/samsung/clk-exynos5x-subcmu.c |  1 +
->  drivers/soc/samsung/pm_domains.c          |  1 +
->  4 files changed, 38 insertions(+), 16 deletions(-)
+This patch series implements support for A83T DW HDMI and PHY. Contrary to
+v1 series, this one is based on latest linux-next, since all needed patches
+were merged.
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+While exactly this combination of HDMI controller and PHY is not common in
+Allwinner SoCs, this patch series nevertheless makes groundwork for other
+SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H5.
+
+Please take a look.
 
 Best regards,
-Krzysztof
+Jernej
+
+Changes from v4:
+- Added Acked-by tag
+- DT patch doesn't add second example anymore
+- Removed unneeded properties from dtsi
+
+Changes from v3:
+- Collected tags
+- drop patch for changing NKMP formula
+- add patch to use 64 bit intermediate variable for calculating NKMP
+  clock rate and thus preventing overflow in some cases
+- rework DT bindings patch according Rob's suggestions
+- move TMDS clock from PHY to controller driver, since documentation
+  suggest such relationship
+
+Changes from v2:
+- Collected ACKs and Review-by tags
+- patch for deinit callback was replaced with the one which gives control
+  of drvdata to driver
+- fixed meson driver (renamed reset function)
+- prototypes for newly exported functions in dw_hdmi.h were reordered
+
+Changes from v1:
+- Collected ACKs
+- Separated bindings for controller and PHY
+- Split driver into two parts - controller and PHY
+- HDMI PHY driver now uses regmap for writes
+- added defines for PHY registers and bits
+- updated DT entries to accommodate new bindings
+- removed already merged clock patch
+- reworked first clock patch according to comments
+- added new clock patch which changes NKMP formula
+- split TCON patch in two, one for quirk and one for new compatible
+- reworked patch which exports DW HDMI PHY functions:
+  - remove "gen2" from some function names
+  - removed parameter from dw_hdmi_phy_reset()
+  - added address parameter to dw_hdmi_phy_i2c_set_addr()
+- updated most of commit messages
+
+Jernej Skrabec (12):
+  clk: sunxi-ng: Mask nkmp factors when setting register
+  clk: sunxi-ng: Use u64 for calculation of nkmp rate
+  drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
+  drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
+  drm/bridge/synopsys: dw-hdmi: don't clobber drvdata
+  dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
+  drm/sun4i: Add has_channel_0 TCON quirk
+  drm/sun4i: Add support for A83T second TCON
+  drm/sun4i: Add support for A83T second DE2 mixer
+  drm/sun4i: Implement A83T HDMI driver
+  ARM: dts: sun8i: a83t: Add HDMI display pipeline
+  ARM: dts: sun8i: a83t: Enable HDMI on BananaPi M3
+
+ .../bindings/display/sunxi/sun4i-drm.txt           |  61 ++++-
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts       |  25 ++
+ arch/arm/boot/dts/sun8i-a83t.dtsi                  | 108 ++++++++-
+ drivers/clk/sunxi-ng/ccu_nkmp.c                    |  42 +++-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  83 ++++---
+ drivers/gpu/drm/imx/dw_hdmi-imx.c                  |  13 +-
+ drivers/gpu/drm/meson/meson_dw_hdmi.c              |  22 +-
+ drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c             |  12 +-
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |  13 +-
+ drivers/gpu/drm/sun4i/Kconfig                      |   9 +
+ drivers/gpu/drm/sun4i/Makefile                     |   4 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  46 +++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              | 196 +++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              |  44 ++++
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             | 270 +++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                |  11 +
+ include/drm/bridge/dw_hdmi.h                       |  24 +-
+ 18 files changed, 896 insertions(+), 88 deletions(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+
+-- 
+2.16.1
