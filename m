@@ -1,51 +1,76 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 06/41] clk: davinci: Add platform information for TI
- DM365 PLL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-7-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <c80a7a0b-4fc8-6255-ce9e-9849d3ab7ac0@ti.com>
-Date: Thu, 1 Feb 2018 14:58:01 +0530
+Return-Path: <benjamin.gaignard@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-7-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180117093813.20227-1-benjamin.gaignard@st.com>
+References: <20180117093813.20227-1-benjamin.gaignard@st.com>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date: Wed, 14 Feb 2018 15:58:13 +0100
+Message-ID: <CA+M3ks75nSfy_+fZgbb=r9rps8aLNdzPKFc8uuqUJrvW7dCoEQ@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: stm32: add configuration flags for each of the
+ stm32 drivers
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+Cc: linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Benjamin Gaignard <benjamin.gaignard@st.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
-> +
-> +void __init dm365_pll_clk_init(void __iomem *pll1, void __iomem *pll2)
-> +{
-> +	const struct davinci_pll_sysclk_info *info;
-> +
-> +	davinci_pll_clk_register(&dm365_pll1_info, "ref_clk", pll1);
-> +
-> +	davinci_pll_auxclk_register("pll1_auxclk", pll1);
-> +
-> +	davinci_pll_sysclkbp_clk_register("pll1_sysclkbp", pll1);
-> +
-> +	davinci_pll_obsclk_register(&dm365_pll1_obsclk_info, pll1);
-> +
-> +	for (info = dm365_pll1_sysclk_info; info->name; info++)
-> +		davinci_pll_sysclk_register(info, pll1);
-> +
-> +	davinci_pll_clk_register(&dm365_pll2_info, "oscin", pll2);
+2018-01-17 10:38 GMT+01:00 Benjamin Gaignard <benjamin.gaignard@linaro.org>:
+> Add two configuration flags to be able to not compile all the time
+> stm32f and stm32h7 drivers when ARCH_STM32 is set.
+> That help to save some space on those small platforms.
+>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> Acked-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-As pointed out in other patches, I think we can remove "oscin" here and
-also get rid of clk_register_fixed_factor() for oscin in
-davinci_pll_clk_register().
+Gentle ping on this patch, thanks
 
-Rest of the patch looks good to me.
+Benjamin
 
-Thanks,
-Sekhar
+> ---
+>  drivers/clk/Kconfig  | 14 ++++++++++++++
+>  drivers/clk/Makefile |  4 ++--
+>  2 files changed, 16 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 1c4e1aa6767e..47243e8675c1 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -226,6 +226,20 @@ config COMMON_CLK_VC5
+>           This driver supports the IDT VersaClock 5 and VersaClock 6
+>           programmable clock generators.
+>
+> +config COMMON_CLK_STM32F
+> +       bool "Clock driver for stm32f4 and stm32f7 SoC families"
+> +       depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+> +       help
+> +       ---help---
+> +         Support for stm32f4 and stm32f7 SoC families clocks
+> +
+> +config COMMON_CLK_STM32H7
+> +       bool "Clock driver for stm32h7 SoC family"
+> +       depends on MACH_STM32H743
+> +       help
+> +       ---help---
+> +         Support for stm32h7 SoC family clocks
+> +
+>  source "drivers/clk/bcm/Kconfig"
+>  source "drivers/clk/hisilicon/Kconfig"
+>  source "drivers/clk/imgtec/Kconfig"
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index f7f761b02bed..956dce66587b 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -44,8 +44,8 @@ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+>  obj-$(CONFIG_COMMON_CLK_SI5351)                += clk-si5351.o
+>  obj-$(CONFIG_COMMON_CLK_SI514)         += clk-si514.o
+>  obj-$(CONFIG_COMMON_CLK_SI570)         += clk-si570.o
+> -obj-$(CONFIG_ARCH_STM32)               += clk-stm32f4.o
+> -obj-$(CONFIG_ARCH_STM32)               += clk-stm32h7.o
+> +obj-$(CONFIG_COMMON_CLK_STM32F)        += clk-stm32f4.o
+> +obj-$(CONFIG_COMMON_CLK_STM32H7)       += clk-stm32h7.o
+>  obj-$(CONFIG_ARCH_TANGO)               += clk-tango4.o
+>  obj-$(CONFIG_CLK_TWL6040)              += clk-twl6040.o
+>  obj-$(CONFIG_ARCH_U300)                        += clk-u300.o
+> --
+> 2.15.0
+>
