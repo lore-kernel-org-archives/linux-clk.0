@@ -1,71 +1,136 @@
-Return-Path: <s.nawrocki@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Subject: Re: [PATCH 2/3] clk: exynos5433: Allow audio subsystem clock rate
- propagation
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-	m.szyprowski@samsung.com
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <e0d88ac2-439b-8e6e-af32-310b53ca0693@samsung.com>
-Date: Mon, 12 Feb 2018 12:45:53 +0100
-In-reply-to: <5A7D4F92.100@samsung.com>
-References: <20180205142230.9755-1-s.nawrocki@samsung.com>
-	<CGME20180205142308epcas2p376f8656f7e421f8474938de788cea8db@epcas2p3.samsung.com>
-	<20180205142230.9755-2-s.nawrocki@samsung.com>
-	<5A7929C1.8040706@samsung.com>
-	<3fcfad37-4c8f-7375-b2c2-5154607aa47a@samsung.com>
-	<5A7D4F92.100@samsung.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/8] clk: divider: export clk_div_mask() helper
+Date: Wed, 14 Feb 2018 14:43:33 +0100
+Message-Id: <20180214134340.17242-2-jbrunet@baylibre.com>
+In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
+References: <20180214134340.17242-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chanwoo,
+Export clk_div_mask() in clk-provider header so every clock providers
+derived from the generic clock divider may share the definition instead
+of redefining it.
 
-On 02/09/2018 08:36 AM, Chanwoo Choi wrote:
-> On 2018년 02월 08일 00:18, Sylwester Nawrocki wrote:
->> On 02/06/2018 05:06 AM, Chanwoo Choi wrote:
->>>>  drivers/clk/samsung/clk-exynos5433.c | 22 +++++++++++-----------
->>>>  1 file changed, 11 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->>>> index 74b70ddab4d6..d74361736e64 100644
->>>> --- a/drivers/clk/samsung/clk-exynos5433.c
->>>> +++ b/drivers/clk/samsung/clk-exynos5433.c
->>>> @@ -246,14 +246,14 @@ static const struct samsung_fixed_rate_clock top_fixed_clks[] __initconst = {
->>>>  
->>>>  static const struct samsung_mux_clock top_mux_clks[] __initconst = {
->>>>  	/* MUX_SEL_TOP0 */
->>>> -	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
->>>> -			4, 1),
->>>> +	MUX_F(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
->>>> +	      4, 1, CLK_SET_RATE_PARENT, 0),
->>> If you add CLK_SET_RATE_PARENT to 'mout_aud_pll' and mout_aud_pll changes the rate,
->>> fout_aud_pll's rate will be changed. But, fout_aud_pll is also the parent
->>> of 'mout_aud_pll_user'. It might change the rate of children of mout_aud_pll_user.
->>> mout_aud_pll_user would not want to change the parent's clock.
->>>
->>>     fout_aud_pll                          2            2   196608009          0 0  
->>>        mout_aud_pll_user                  1            1   196608009          0 0  
->>>        mout_aud_pll                       0            0   196608009          0 0  
->> I'd say the range of changes is such that the consumers of the affected child 
->> clocks can cope and could adjust to the changed frequencies. Those consumer 
->> devices are all components/peripherals of the audio subsystem (LPASS) and, 
->
-> The mout_aud_pll_user has the child clock of serial_3.
-> serial_3 was used for bluetooth on TM2. If you change the aud_pll
-> with CLK_SET_RATE_PARENT, it might affect the bluetooth operation.
-> The bluetooth is only used for transfering the data.
-> 
-> Actually, I'm not sure that this patch might affect bluetooth operation or not.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
 
-You are right, the AUD PLL frequency adjustments would break the bluetooth's 
-operation. I double checked and in the downstream kernel only one AUD PLL 
-frequency can be set - 196608009. So I will drop this patch and add just
-a single PLL_36XX_RATE() entry for that frequency, the PMS values have been
-confirmed by the HW team. Only 48000/9600/192000 sample rates will then be 
-supported natively and others could be through software rate conversion.
+I have 's/div_mask/clk_div_mask' to avoid the conflict with
+tegra's divider, which also defines the macro div_mask() but does not
+actually derives from the generic divider.
 
+ drivers/clk/clk-divider.c    | 24 +++++++++++-------------
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 12 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index b49942b9fe50..3c98d2650fa3 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -28,12 +28,10 @@
+  * parent - fixed parent.  No clk_set_parent support
+  */
+ 
+-#define div_mask(width)	((1 << (width)) - 1)
+-
+ static unsigned int _get_table_maxdiv(const struct clk_div_table *table,
+ 				      u8 width)
+ {
+-	unsigned int maxdiv = 0, mask = div_mask(width);
++	unsigned int maxdiv = 0, mask = clk_div_mask(width);
+ 	const struct clk_div_table *clkt;
+ 
+ 	for (clkt = table; clkt->div; clkt++)
+@@ -57,12 +55,12 @@ static unsigned int _get_maxdiv(const struct clk_div_table *table, u8 width,
+ 				unsigned long flags)
+ {
+ 	if (flags & CLK_DIVIDER_ONE_BASED)
+-		return div_mask(width);
++		return clk_div_mask(width);
+ 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
+-		return 1 << div_mask(width);
++		return 1 << clk_div_mask(width);
+ 	if (table)
+ 		return _get_table_maxdiv(table, width);
+-	return div_mask(width) + 1;
++	return clk_div_mask(width) + 1;
+ }
+ 
+ static unsigned int _get_table_div(const struct clk_div_table *table,
+@@ -84,7 +82,7 @@ static unsigned int _get_div(const struct clk_div_table *table,
+ 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
+ 		return 1 << val;
+ 	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
+-		return val ? val : div_mask(width) + 1;
++		return val ? val : clk_div_mask(width) + 1;
+ 	if (table)
+ 		return _get_table_div(table, val);
+ 	return val + 1;
+@@ -109,7 +107,7 @@ static unsigned int _get_val(const struct clk_div_table *table,
+ 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
+ 		return __ffs(div);
+ 	if (flags & CLK_DIVIDER_MAX_AT_ZERO)
+-		return (div == div_mask(width) + 1) ? 0 : div;
++		return (div == clk_div_mask(width) + 1) ? 0 : div;
+ 	if (table)
+ 		return  _get_table_val(table, div);
+ 	return div - 1;
+@@ -141,7 +139,7 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
+ 	unsigned int val;
+ 
+ 	val = clk_readl(divider->reg) >> divider->shift;
+-	val &= div_mask(divider->width);
++	val &= clk_div_mask(divider->width);
+ 
+ 	return divider_recalc_rate(hw, parent_rate, val, divider->table,
+ 				   divider->flags, divider->width);
+@@ -353,7 +351,7 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	/* if read only, just return current value */
+ 	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+ 		bestdiv = clk_readl(divider->reg) >> divider->shift;
+-		bestdiv &= div_mask(divider->width);
++		bestdiv &= clk_div_mask(divider->width);
+ 		bestdiv = _get_div(divider->table, bestdiv, divider->flags,
+ 			divider->width);
+ 		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
+@@ -376,7 +374,7 @@ int divider_get_val(unsigned long rate, unsigned long parent_rate,
+ 
+ 	value = _get_val(table, div, flags, width);
+ 
+-	return min_t(unsigned int, value, div_mask(width));
++	return min_t(unsigned int, value, clk_div_mask(width));
+ }
+ EXPORT_SYMBOL_GPL(divider_get_val);
+ 
+@@ -399,10 +397,10 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		__acquire(divider->lock);
+ 
+ 	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
+-		val = div_mask(divider->width) << (divider->shift + 16);
++		val = clk_div_mask(divider->width) << (divider->shift + 16);
+ 	} else {
+ 		val = clk_readl(divider->reg);
+-		val &= ~(div_mask(divider->width) << divider->shift);
++		val &= ~(clk_div_mask(divider->width) << divider->shift);
+ 	}
+ 	val |= (u32)value << divider->shift;
+ 	clk_writel(val, divider->reg);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index f711be6e8c44..d8ba26d03332 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -399,6 +399,7 @@ struct clk_divider {
+ 	spinlock_t	*lock;
+ };
+ 
++#define clk_div_mask(width)	((1 << (width)) - 1)
+ #define to_clk_divider(_hw) container_of(_hw, struct clk_divider, hw)
+ 
+ #define CLK_DIVIDER_ONE_BASED		BIT(0)
 -- 
-Regards,
-Sylwester
+2.14.3
