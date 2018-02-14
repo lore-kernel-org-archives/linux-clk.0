@@ -1,167 +1,316 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v6 09/15] clk: qcom: Add KPSS ACC/GCC driver
-Date: Tue,  6 Feb 2018 09:38:22 +0530
-Message-Id: <1517890108-8140-10-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
-References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:43620 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030634AbeBNOAc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:32 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v3 09/10] DT: QCOM: Add cpufreq-dt to msm8996
+Date: Wed, 14 Feb 2018 15:59:51 +0200
+Message-Id: <1518616792-29028-10-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Add device tree frequency table for the MSM8996 to be
+used by the upstream cpufreq-dt driver with the clk-cpu-8996
+driver as infrastructure.
 
-The ACC and GCC regions present in KPSSv1 contain registers to
-control clocks and power to each Krait CPU and L2. For CPUfreq
-purposes probe these devices and expose a mux clock that chooses
-between PXO and PLL8.
-
-Cc: <devicetree@vger.kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
- drivers/clk/qcom/Kconfig    |  8 +++++
- drivers/clk/qcom/Makefile   |  1 +
- drivers/clk/qcom/kpss-xcc.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 96 insertions(+)
- create mode 100644 drivers/clk/qcom/kpss-xcc.c
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts  |   4 +-
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi        | 188 ++++++++++++++++++++++++++-
+ drivers/cpufreq/cpufreq-dt-platdev.c         |   3 +
+ 4 files changed, 192 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index bf14f56..8fca65d 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -235,6 +235,14 @@ config QCOM_HFPLL
- 	  Say Y if you want to support CPU frequency scaling on devices
- 	  such as MSM8974, APQ8084, etc.
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+index 230e9c8..632cb42 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2014-2016, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2014-2016,2018 The Linux Foundation. All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 and
+@@ -17,5 +17,5 @@
  
-+config KPSS_XCC
-+	tristate "KPSS Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the Krait ACC and GCC clock controllers. Say Y
-+	  if you want to support CPU frequency scaling on devices such
-+	  as MSM8960, APQ8064, etc.
+ / {
+ 	model = "Qualcomm Technologies, Inc. DB820c";
+-	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc";
++	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc", "qcom,apq8096";
+ };
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+index 492a011..930f68b 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2014-2016, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2014-2016,2018 The Linux Foundation. All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 and
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 4b2afcc..0359197 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -1,4 +1,4 @@
+-/* Copyright (c) 2014-2015, The Linux Foundation. All rights reserved.
++/* Copyright (c) 2014-2015,2018 The Linux Foundation. All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 and
+@@ -86,6 +86,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
+ 			next-level-cache = <&L2_0>;
+ 			L2_0: l2-cache {
+ 			      compatible = "cache";
+@@ -98,6 +100,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
+ 			next-level-cache = <&L2_0>;
+ 		};
+ 
+@@ -106,6 +110,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
+ 			next-level-cache = <&L2_1>;
+ 			L2_1: l2-cache {
+ 			      compatible = "cache";
+@@ -118,6 +124,8 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x101>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
+ 			next-level-cache = <&L2_1>;
+ 		};
+ 
+@@ -144,6 +152,182 @@
+ 		};
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
- config KRAIT_CLOCKS
- 	bool
- 	select KRAIT_L2_ACCESSORS
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index e1e96f6..24e598a 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -40,4 +40,5 @@ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-+obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
- obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
-new file mode 100644
-index 0000000..8590b5e
---- /dev/null
-+++ b/drivers/clk/qcom/kpss-xcc.c
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++		opp@307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@422400000 {
++			opp-hz = /bits/ 64 <  422400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@844800000 {
++			opp-hz = /bits/ 64 <  844800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@960000000 {
++			opp-hz = /bits/ 64 <  960000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1228800000 {
++			opp-hz = /bits/ 64 < 1228800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1593600000 {
++			opp-hz = /bits/ 64 < 1593600000 >;
++			clock-latency-ns = <200000>;
++		};
++	};
 +
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
-+static const char *aux_parents[] = {
-+	"pll8_vote",
-+	"pxo",
-+};
++		opp@307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@403200000 {
++			opp-hz = /bits/ 64 <  403200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@806400000 {
++			opp-hz = /bits/ 64 <  806400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@883200000 {
++			opp-hz = /bits/ 64 <  883200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@940800000 {
++			opp-hz = /bits/ 64 <  940800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1248000000 {
++			opp-hz = /bits/ 64 < 1248000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1552000000 {
++			opp-hz = /bits/ 64 < 1552000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1632000000 {
++			opp-hz = /bits/ 64 < 1632000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1708800000 {
++			opp-hz = /bits/ 64 < 1708800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1785600000 {
++			opp-hz = /bits/ 64 < 1785600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1824000000 {
++			opp-hz = /bits/ 64 < 1824000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1920000000 {
++			opp-hz = /bits/ 64 < 1920000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@1996800000 {
++			opp-hz = /bits/ 64 < 1996800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@2073600000 {
++			opp-hz = /bits/ 64 < 2073600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp@2150400000 {
++			opp-hz = /bits/ 64 < 2150400000 >;
++			clock-latency-ns = <200000>;
++		};
 +
-+static unsigned int aux_parent_map[] = {
-+	3,
-+	0,
-+};
++	};
+ 	thermal-zones {
+ 		cpu-thermal0 {
+ 			polling-delay-passive = <250>;
+@@ -403,7 +587,7 @@
+ 		};
+ 
+ 		kryocc: clock-controller@6400000 {
+-			compatible = "qcom,apcc-msm8996";
++			compatible = "qcom-msm8996-apcc";
+ 			reg = <0x6400000 0x90000>;
+ 			#clock-cells = <1>;
+ 		};
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 3b585e4..b6cd0ae 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -95,6 +95,9 @@
+ 	{ .compatible = "xlnx,zynq-7000", },
+ 	{ .compatible = "xlnx,zynqmp", },
+ 
++	{ .compatible = "qcom,msm8996", },
++	{ .compatible = "qcom,apq8096", },
 +
-+static const struct of_device_id kpss_xcc_match_table[] = {
-+	{ .compatible = "qcom,kpss-acc-v1", .data = (void *)1UL },
-+	{ .compatible = "qcom,kpss-gcc" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, kpss_xcc_match_table);
-+
-+static int kpss_xcc_driver_probe(struct platform_device *pdev)
-+{
-+	const struct of_device_id *id;
-+	struct clk *clk;
-+	struct resource *res;
-+	void __iomem *base;
-+	const char *name;
-+
-+	id = of_match_device(kpss_xcc_match_table, &pdev->dev);
-+	if (!id)
-+		return -ENODEV;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	if (id->data) {
-+		if (of_property_read_string_index(pdev->dev.of_node,
-+						  "clock-output-names",
-+						  0, &name))
-+			return -ENODEV;
-+		base += 0x14;
-+	} else {
-+		name = "acpu_l2_aux";
-+		base += 0x28;
-+	}
-+
-+	clk = clk_register_mux_table(&pdev->dev, name, aux_parents,
-+				     ARRAY_SIZE(aux_parents), 0, base, 0, 0x3,
-+				     0, aux_parent_map, NULL);
-+
-+	platform_set_drvdata(pdev, clk);
-+
-+	return PTR_ERR_OR_ZERO(clk);
-+}
-+
-+static int kpss_xcc_driver_remove(struct platform_device *pdev)
-+{
-+	clk_unregister_mux(platform_get_drvdata(pdev));
-+	return 0;
-+}
-+
-+static struct platform_driver kpss_xcc_driver = {
-+	.probe = kpss_xcc_driver_probe,
-+	.remove = kpss_xcc_driver_remove,
-+	.driver = {
-+		.name = "kpss-xcc",
-+		.of_match_table = kpss_xcc_match_table,
-+	},
-+};
-+module_platform_driver(kpss_xcc_driver);
-+
-+MODULE_DESCRIPTION("Krait Processor Sub System (KPSS) Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:kpss-xcc");
+ 	{ }
+ };
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
+
