@@ -1,70 +1,135 @@
-Return-Path: <krzk@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20180213134032.30235-8-a.hajda@samsung.com>
-References: <CGME20180213134104eucas1p133aff142a675b378c5d531ca20ef29c8@eucas1p1.samsung.com>
- <20180213134032.30235-1-a.hajda@samsung.com> <20180213134032.30235-8-a.hajda@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Tue, 13 Feb 2018 15:25:07 +0100
-Message-ID: <CAJKOXPepJYC8-mRm=k_-GdVn_ovJBK3UK9TkSpG0F8tviEgVvg@mail.gmail.com>
-Subject: Re: [PATCH 7/7] clk: samsung: add compile time PLL rate validators
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Kukjin Kim <kgene@kernel.org>,
-	"moderated list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:43612 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030497AbeBNOAc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:32 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v3 06/10] clk: qcom: cpu-8996: Add support to switch below 600Mhz
+Date: Wed, 14 Feb 2018 15:59:48 +0200
+Message-Id: <1518616792-29028-7-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 13, 2018 at 2:40 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> Rates declared in PLL rate tables should match exactly rates calculated
-> from PLL coefficients. To avoid possible mistakes we can use compile
-> time validation.
-> The patch introduces such validators and expands all initializers
-> with additional input frequency parameter, required to validate rates.
-> Since S3C24xx PLLs requires different validators two new macros have
-> been introduced to deal with it.
-> As the patch adds only compile time validators it should not have impact
-> on compiled code.
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Cool! One nit below.
+The CPU clock controllers primary PLL operates on a single VCO range,
+between 600Mhz and 3Ghz. However the CPUs do support OPPs with
+frequencies between 300Mhz and 600Mhz. In order to support running the
+CPUs at those frequencies we end up having to lock the PLL at twice the
+rate and drive the CPU clk via the PLL/2 output and SMUX.
 
-(...)
+So for frequencies above 600Mhz we follow the following path
+ Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
+and for frequencies between 300Mhz and 600Mhz we follow
+ Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
 
->
-> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-> index bbfa57b4e017..492d51691080 100644
-> --- a/drivers/clk/samsung/clk-exynos7.c
-> +++ b/drivers/clk/samsung/clk-exynos7.c
-> @@ -140,7 +140,7 @@ static const struct samsung_div_clock topc_div_clks[] __initconst = {
->  };
->
->  static const struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initconst = {
-> -       PLL_36XX_RATE(491519897, 20, 1, 0, 31457),
-> +       PLL_36XX_RATE(24 * MHZ, 491519897, 20, 1, 0, 31457),
->         {},
->  };
->
-> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-> index 61eb8abbfd9c..b1ee0e801d3e 100644
-> --- a/drivers/clk/samsung/clk-pll.h
-> +++ b/drivers/clk/samsung/clk-pll.h
-> @@ -41,35 +41,69 @@ enum samsung_pll_type {
->         pll_1460x,
->  };
->
-> -#define PLL_35XX_RATE(_rate, _m, _p, _s)                       \
-> +/*
-> + * To validate PLL rates we need compile time checker.
-> + * Since BUILD_BUG_ON does work with initializers, we need some replacement.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-I think you meant here:
-s/does/does not/
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 75bd014..854f327 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -28,6 +28,7 @@
+ #define PLL_INDEX		1
+ #define ACD_INDEX		2
+ #define ALT_INDEX		3
++#define DIV_2_THRESHOLD		600000000
+ 
+ static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
+        [PLL_OFF_L_VAL] = 0x04,
+@@ -56,10 +57,11 @@
+ 
+ static const struct alpha_pll_config hfpll_config = {
+ 	.l = 60,
+-	.config_ctl_val = 0x200d4828,
++	.config_ctl_val = 0x200D4AA8,
+ 	.config_ctl_hi_val = 0x006,
+ 	.pre_div_mask = BIT(12),
+ 	.post_div_mask = 0x3 << 8,
++	.post_div_val = 0x1 << 8,
+ 	.main_output_mask = BIT(0),
+ 	.early_output_mask = BIT(3),
+ };
+@@ -101,7 +103,7 @@
+ 	.vco_mask = 0x3 << 20,
+ 	.config_ctl_val = 0x4001051b,
+ 	.post_div_mask = 0x3 << 8,
+-	.post_div_val = 0x1,
++	.post_div_val = 0x1 << 8,
+ 	.main_output_mask = BIT(0),
+ 	.early_output_mask = BIT(3),
+ };
+@@ -142,6 +144,7 @@ struct clk_cpu_8996_mux {
+ 	u32	width;
+ 	struct notifier_block nb;
+ 	struct clk_hw	*pll;
++	struct clk_hw	*pll_div_2;
+ 	struct clk_regmap clkr;
+ };
+ 
+@@ -192,6 +195,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	if (!cpuclk->pll)
+ 		return -EINVAL;
+ 
++	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
++		if (req->rate < (DIV_2_THRESHOLD / 2))
++			return -EINVAL;
++
++		parent = cpuclk->pll_div_2;
++	}
++
+ 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
+ 	req->best_parent_hw = parent;
+ 
+@@ -203,13 +213,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ {
+ 	int ret;
+ 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++	struct clk_notifier_data *cnd = data;
+ 
+ 	switch (event) {
+ 	case PRE_RATE_CHANGE:
+ 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
+ 		break;
+ 	case POST_RATE_CHANGE:
+-		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		if (cnd->new_rate < DIV_2_THRESHOLD)
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  DIV_2_INDEX);
++		else
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  PLL_INDEX);
+ 		break;
+ 	default:
+ 		ret = 0;
+@@ -262,6 +278,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.pll_div_2 = &pwrcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+@@ -282,6 +299,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.pll_div_2 = &perfcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
+-- 
+1.9.1
 
-Anyway:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
