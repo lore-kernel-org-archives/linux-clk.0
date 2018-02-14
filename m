@@ -1,116 +1,190 @@
-Return-Path: <s.nawrocki@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Subject: Re: [PATCH 4/7] clk: samsung: exynos5433: fix PLL rates
-To: Chanwoo Choi <cw00.choi@samsung.com>, Andrzej Hajda
-	<a.hajda@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin
-	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated
- list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open
- list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, "Chanwoo Choi
- (gmail)" <cwchoi00@gmail.com>, =?UTF-8?B?7LWc7LCs7JqwIChzYW1zdW5nLmNvbSk=?=
-	<chanwoo@kernel.org>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <ffb3d61f-0460-677a-ff57-7aabdf1e131f@samsung.com>
-Date: Thu, 15 Feb 2018 15:23:03 +0100
-In-reply-to: <5A83CD07.3060008@samsung.com>
-References: <20180213134032.30235-1-a.hajda@samsung.com>
-	<CGME20180213134101eucas1p1f9348abc0344594476bc8618c1006e31@eucas1p1.samsung.com>
-	<20180213134032.30235-5-a.hajda@samsung.com> <5A83CD07.3060008@samsung.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com,
+	narmstrong@baylibre.com,
+	Jose.Abreu@synopsys.com
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v5 07/12] drm/sun4i: Add has_channel_0 TCON quirk
+Date: Wed, 14 Feb 2018 21:09:01 +0100
+Message-Id: <20180214200906.31509-8-jernej.skrabec@siol.net>
+In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
+References: <20180214200906.31509-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chanwoo,
+Some TCONs on newer SoCs doesn't support channel 0, since they are meant
+to be used only with TV or HDMI encoder.
 
-On 02/14/2018 06:45 AM, Chanwoo Choi wrote:
-> Exynos5433 TRM shows different PLL frequency from the calculated value. 
-> Actually, I'm not sure which value is the correct value between TRM's> value and real calculated value.
-> 
-> If we only consider the equation, I agree that we have to replace them > with real calculated value with equation. But, TRM shows the diagram of 
-> clock domain which contains the multiple IPs. And each diagram specifies
-> the required source clock rate of each child IP. Maybe, this source clock 
-> rate might be calculated from the PLL rate provided by TRM. (even if it's 
-> different from real calculated value).
-> 
-> Although the real rate is a little bit incorrect, we might better to keep 
-> PLL rate provided by TRM in order to get the required source clock of child 
-> IPs as the TRM. If we modify the PLL rate provided by TRM, the source clock 
-> rate of child IP might be different from TRM.
-> 
-> Basically, I have no objection of this patch. Just I think that need to 
-> check it.
+Prepare support for them with adding has_channel_0 quirk.
 
-In order to have the clk API behave properly we need to have in these tables
-frequency values matching the values returned by the recalc_rate callback 
-for given P, M, S, K coefficients.  Alternatively, we could decrease precision 
-of the PLL's recalc_rate() callbacks by rounding its return value, but I'm not 
-sure it's a good approach. It might be better to have clear indication which 
-P, M, S, K values yield higher frequency error, even though the differences at 
-those least significant digit positions might be meaningless, considering 
-frequency tolerance of the root oscillator itself. 
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 41 +++++++++++++++++++++++++++-----------
+ drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
+ 2 files changed, 30 insertions(+), 12 deletions(-)
 
-For example, difference of 10 Hz where Fout = 400 MHz is only 0.025 ppm 
-(0.0000025 %), when the tolerance of the root oscillator itself will be 
-usually in range 10...100 ppm.
-
-In the TRMs the least significant digits are simply ignored AFAIU. I guess
-we could apply similar rounding in the recalc_rate callback of the fractional 
-PLLs and the problem would also be solved, e.g.
-
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 1c4c7a3039f1..d7a265827e65 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -300,6 +300,8 @@ static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
-        do_div(fvco, (pdiv << sdiv));
-        fvco >>= 16;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 3c15cf24b503..32d9a5eb9e25 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -84,6 +84,7 @@ static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
  
-+       fvco = ((fvco + 50) / 100) * 100;
+ 	switch (channel) {
+ 	case 0:
++		WARN_ON(!tcon->quirks->has_channel_0);
+ 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
+ 				   SUN4I_TCON0_CTL_TCON_ENABLE,
+ 				   enabled ? SUN4I_TCON0_CTL_TCON_ENABLE : 0);
+@@ -276,6 +277,8 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
+ 	u8 clk_delay;
+ 	u32 reg, val = 0;
+ 
++	WARN_ON(!tcon->quirks->has_channel_0);
 +
-        return (unsigned long)fvco;
+ 	tcon->dclk_min_div = 7;
+ 	tcon->dclk_max_div = 7;
+ 	sun4i_tcon0_mode_set_common(tcon, mode);
+@@ -344,6 +347,8 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+ 	u8 clk_delay;
+ 	u32 val = 0;
+ 
++	WARN_ON(!tcon->quirks->has_channel_0);
++
+ 	tcon->dclk_min_div = 6;
+ 	tcon->dclk_max_div = 127;
+ 	sun4i_tcon0_mode_set_common(tcon, mode);
+@@ -570,10 +575,12 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+ 	}
+ 	clk_prepare_enable(tcon->clk);
+ 
+-	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
+-	if (IS_ERR(tcon->sclk0)) {
+-		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
+-		return PTR_ERR(tcon->sclk0);
++	if (tcon->quirks->has_channel_0) {
++		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
++		if (IS_ERR(tcon->sclk0)) {
++			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
++			return PTR_ERR(tcon->sclk0);
++		}
+ 	}
+ 
+ 	if (tcon->quirks->has_channel_1) {
+@@ -930,10 +937,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 		goto err_free_clocks;
+ 	}
+ 
+-	ret = sun4i_dclk_create(dev, tcon);
+-	if (ret) {
+-		dev_err(dev, "Couldn't create our TCON dot clock\n");
+-		goto err_free_clocks;
++	if (tcon->quirks->has_channel_0) {
++		ret = sun4i_dclk_create(dev, tcon);
++		if (ret) {
++			dev_err(dev, "Couldn't create our TCON dot clock\n");
++			goto err_free_clocks;
++		}
+ 	}
+ 
+ 	ret = sun4i_tcon_init_irq(dev, tcon);
+@@ -991,7 +1000,8 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 	return 0;
+ 
+ err_free_dotclock:
+-	sun4i_dclk_free(tcon);
++	if (tcon->quirks->has_channel_0)
++		sun4i_dclk_free(tcon);
+ err_free_clocks:
+ 	sun4i_tcon_free_clocks(tcon);
+ err_assert_reset:
+@@ -1005,7 +1015,8 @@ static void sun4i_tcon_unbind(struct device *dev, struct device *master,
+ 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
+ 
+ 	list_del(&tcon->list);
+-	sun4i_dclk_free(tcon);
++	if (tcon->quirks->has_channel_0)
++		sun4i_dclk_free(tcon);
+ 	sun4i_tcon_free_clocks(tcon);
  }
-
-I think we need a bit more detailed commit message for this patch series, 
-so it's clear what are the issues with current values. 
-
-> On 2018년 02월 13일 22:40, Andrzej Hajda wrote:
->> Declared rates did not match rates generated by PLL.
->> As a result driver behaved inconsitently.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos5433.c | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->> index db270908037a..335bebfa21c0 100644
->> --- a/drivers/clk/samsung/clk-exynos5433.c
->> +++ b/drivers/clk/samsung/clk-exynos5433.c
->> @@ -729,7 +729,7 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
->>  	PLL_35XX_RATE(800000000U,  400, 6,  1),
->>  	PLL_35XX_RATE(733000000U,  733, 12, 1),
->>  	PLL_35XX_RATE(700000000U,  175, 3,  1),
->> -	PLL_35XX_RATE(667000000U,  222, 4,  1),
->> +	PLL_35XX_RATE(666000000U,  222, 4,  1),
->>  	PLL_35XX_RATE(633000000U,  211, 4,  1),
->>  	PLL_35XX_RATE(600000000U,  500, 5,  2),
->>  	PLL_35XX_RATE(552000000U,  460, 5,  2),
->> @@ -757,12 +757,12 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
->>  /* AUD_PLL */
->>  static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
->>  	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
->> -	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
->> +	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
->>  	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
->> -	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
->> -	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
->> -	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
->> -	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
->> +	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
->> +	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
->> +	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
->> +	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
->>  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
->>  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
->>  	{ /* sentinel */ }
+ 
+@@ -1102,16 +1113,19 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
+ }
+ 
+ static const struct sun4i_tcon_quirks sun4i_a10_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.set_mux		= sun4i_a10_tcon_set_mux,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.set_mux		= sun5i_a13_tcon_set_mux,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.has_lvds_alt		= true,
+ 	.needs_de_be_mux	= true,
+@@ -1119,26 +1133,29 @@ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
+ };
+ 
+ static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	.needs_de_be_mux	= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun7i_a20_quirks = {
++	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+ 	/* Same display pipeline structure as A10 */
+ 	.set_mux		= sun4i_a10_tcon_set_mux,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
++	.has_channel_0		= true,
+ 	.has_lvds_alt		= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_a83t_lcd_quirks = {
+-	/* nothing is supported */
++	.has_channel_0		= true,
+ };
+ 
+ static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
+-	/* nothing is supported */
++	.has_channel_0		= true,
+ };
+ 
+ /* sun4i_drv uses this list to check if a device node is a TCON */
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index b761c7b823c5..78d55e7cd2b3 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -172,6 +172,7 @@
+ struct sun4i_tcon;
+ 
+ struct sun4i_tcon_quirks {
++	bool	has_channel_0;	/* a83t does not have channel 0 on second TCON */
+ 	bool	has_channel_1;	/* a33 does not have channel 1 */
+ 	bool	has_lvds_alt;	/* Does the LVDS clock have a parent other than the TCON clock? */
+ 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
+-- 
+2.16.1
