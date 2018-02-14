@@ -1,320 +1,273 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH RESEND V3 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk
- support
-Date: Tue, 13 Feb 2018 21:28:06 +0800
-Message-ID: <1518528494-25723-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
-References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:43616 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030632AbeBNOAc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:32 -0500
+From: Ilia Lin <ilialin@codeaurora.org>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: [PATCH v3 08/10] clk: qcom: Add ACD path to CPU clock driver for msm8996
+Date: Wed, 14 Feb 2018 15:59:50 +0200
+Message-Id: <1518616792-29028-9-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-For dividers with zero indicating clock is disabled, instead of giving a
-warning each time like "clkx: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not
-set" in exist code, we'd like to introduce enable/disable function for it.
-e.g.
-000b - Clock disabled
-001b - Divide by 1
-010b - Divide by 2
-...
+The PMUX for each duplex allows for selection of ACD clock source.
+The DVM (Dynamic Variation Monitor) will flag an error
+when a voltage droop event is detected. This flagged error
+enables ACD to provide a div-by-2 clock, sourced from the primary PLL.
+The duplex will be provided the divided clock
+until a pre-programmed delay has expired.
 
-Set rate when the clk is disabled will cache the rate request and only
-when the clk is enabled will the driver actually program the hardware to
-have the requested divider value. Similarly, when the clk is disabled we'll
-write a 0 there, but when the clk is enabled we'll restore whatever rate
-(divider) was chosen last.
+This change configures ACD during the probe and switches
+the PMUXes to the ACD clock source.
 
-It does mean that recalc rate will be sort of odd, because when the clk is
-off it will return 0, and when the clk is on it will return the right rate.
-So to make things work, we'll need to return the cached rate in recalc rate
-when the clk is off and read the hardware when the clk is on.
-
-NOTE for the default off divider, the recalc rate will still return 0 as
-there's still no proper preset rate. Enable such divider will give user
-a reminder error message.
-
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
-ChangeLog:
-v2->v3:
- * split normal and gate ops
- * fix the possible racy
-v1->v2:
- * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
----
- drivers/clk/clk-divider.c    | 152 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |   9 +++
- 2 files changed, 161 insertions(+)
+ drivers/clk/qcom/clk-cpu-8996.c | 110 ++++++++++++++++++++++++++++++++++------
+ 1 file changed, 95 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index b49942b..6143895 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -124,6 +124,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index b0a3b73..1552791 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -17,6 +17,7 @@
+ #include <linux/regmap.h>
+ #include <linux/clk-provider.h>
+ #include "clk-alpha-pll.h"
++#include <soc/qcom/kryo-l2-accessors.h>
  
- 	div = _get_div(table, val, flags, width);
- 	if (!div) {
-+		if (flags & CLK_DIVIDER_ZERO_GATE)
-+			return 0;
+ #define VCO(a, b, c) { \
+ 	.val = a,\
+@@ -29,6 +30,27 @@
+ #define ACD_INDEX		2
+ #define ALT_INDEX		3
+ #define DIV_2_THRESHOLD		600000000
++#define PWRCL_REG_OFFSET 0x0
++#define PERFCL_REG_OFFSET 0x80000
++#define MUX_OFFSET	0x40
++#define ALT_PLL_OFFSET	0x100
++#define SSSCTL_OFFSET 0x160
++/*
++APCy_QLL_SSSCTL value:
++SACDRCLEN=1
++SSWEN=1
++SSTRTEN=1
++SSTPAPMSWEN=1
++*/
++#define SSSCTL_VAL 0xF
 +
- 		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
- 			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
- 			clk_hw_get_name(hw));
-@@ -147,6 +150,34 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
- 				   divider->flags, divider->width);
- }
- 
-+static unsigned long clk_divider_gate_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long flags = 0;
-+	unsigned int val;
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	if (!clk_hw_is_enabled(hw)) {
-+		val = divider->cached_val;
-+	} else {
-+		val = clk_readl(divider->reg) >> divider->shift;
-+		val &= div_mask(divider->width);
-+	}
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+
-+	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-+				   divider->flags, divider->width);
-+}
-+
- static bool _is_valid_table_div(const struct clk_div_table *table,
- 							 unsigned int div)
- {
-@@ -415,6 +446,108 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
-+static int clk_divider_gate_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long flags = 0;
-+	int value;
-+	u32 val;
-+
-+	value = divider_get_val(rate, parent_rate, divider->table,
-+				divider->width, divider->flags);
-+	if (value < 0)
-+		return value;
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	if (clk_hw_is_enabled(hw)) {
-+		if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
-+			val = div_mask(divider->width) << (divider->shift + 16);
-+		} else {
-+			val = clk_readl(divider->reg);
-+			val &= ~(div_mask(divider->width) << divider->shift);
-+		}
-+		val |= (u32)value << divider->shift;
-+		clk_writel(val, divider->reg);
-+	} else {
-+		divider->cached_val = value;
-+	}
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+
-+	return 0;
-+}
-+
-+static int clk_divider_enable(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long flags = 0;
-+	u32 val;
-+
-+	if (!divider->cached_val) {
-+		pr_err("%s: no valid preset rate\n", clk_hw_get_name(hw));
-+		return -EINVAL;
-+	}
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	/* restore div val */
-+	val = clk_readl(divider->reg);
-+	val |= divider->cached_val << divider->shift;
-+	clk_writel(val, divider->reg);
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+
-+	return 0;
-+}
-+
-+static void clk_divider_disable(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long flags = 0;
-+	u32 val;
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	/* store the current div val */
-+	val = clk_readl(divider->reg) >> divider->shift;
-+	val &= div_mask(divider->width);
-+	divider->cached_val = val;
-+	clk_writel(0, divider->reg);
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+}
-+
-+static int clk_divider_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	u32 val;
-+
-+	val = clk_readl(divider->reg) >> divider->shift;
-+	val &= div_mask(divider->width);
-+
-+	return val ? 1 : 0;
-+}
-+
- const struct clk_ops clk_divider_ops = {
- 	.recalc_rate = clk_divider_recalc_rate,
- 	.round_rate = clk_divider_round_rate,
-@@ -422,6 +555,16 @@ const struct clk_ops clk_divider_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_divider_ops);
- 
-+const struct clk_ops clk_divider_gate_ops = {
-+	.recalc_rate = clk_divider_gate_recalc_rate,
-+	.round_rate = clk_divider_round_rate,
-+	.set_rate = clk_divider_gate_set_rate,
-+	.enable = clk_divider_enable,
-+	.disable = clk_divider_disable,
-+	.is_enabled = clk_divider_is_enabled,
++enum {
++	APC_BASE,
++	EFUSE_BASE,
++	NUM_BASES
 +};
-+EXPORT_SYMBOL_GPL(clk_divider_gate_ops);
 +
- const struct clk_ops clk_divider_ro_ops = {
- 	.recalc_rate = clk_divider_recalc_rate,
- 	.round_rate = clk_divider_round_rate,
-@@ -437,6 +580,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- 	struct clk_divider *div;
- 	struct clk_hw *hw;
- 	struct clk_init_data init;
-+	u32 val;
- 	int ret;
++static void __iomem *vbases[NUM_BASES];
  
- 	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
-@@ -454,6 +598,8 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- 	init.name = name;
- 	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
- 		init.ops = &clk_divider_ro_ops;
-+	else if (clk_divider_flags & CLK_DIVIDER_ZERO_GATE)
-+		init.ops = &clk_divider_gate_ops;
- 	else
- 		init.ops = &clk_divider_ops;
- 	init.flags = flags | CLK_IS_BASIC;
-@@ -469,6 +615,12 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- 	div->hw.init = &init;
- 	div->table = table;
- 
-+	if (div->flags & CLK_DIVIDER_ZERO_GATE) {
-+		val = clk_readl(reg) >> shift;
-+		val &= div_mask(width);
-+		div->cached_val = val;
-+	}
-+
- 	/* register the clock */
- 	hw = &div->hw;
- 	ret = clk_hw_register(dev, hw);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index f711be6..68ccd36 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -360,6 +360,7 @@ struct clk_div_table {
-  * @shift:	shift to the divider bit field
-  * @width:	width of the divider bit field
-  * @table:	array of value/divider pairs, last entry should have div = 0
-+ * @cached_val: cached div hw value used for CLK_DIVIDER_ZERO_GATE
-  * @lock:	register lock
-  *
-  * Clock with an adjustable divider affecting its output frequency.  Implements
-@@ -388,6 +389,12 @@ struct clk_div_table {
-  * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
-  *	except when the value read from the register is zero, the divisor is
-  *	2^width of the field.
-+ * CLK_DIVIDER_ZERO_GATE - For dividers which are like CLK_DIVIDER_ONE_BASED
-+ *	when the value read from the register is zero, it means the divisor
-+ *	is gated. For this case, the cached_val will be used to store the
-+ *	intermediate div for the normal rate operation, like set_rate/get_rate/
-+ *	recalc_rate. When the divider is ungated, the driver will actually
-+ *	program the hardware to have the requested divider value.
-  */
- struct clk_divider {
- 	struct clk_hw	hw;
-@@ -396,6 +403,7 @@ struct clk_divider {
- 	u8		width;
- 	u8		flags;
- 	const struct clk_div_table	*table;
-+	u32		cached_val;
- 	spinlock_t	*lock;
+ static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
+        [PLL_OFF_L_VAL] = 0x04,
+@@ -67,7 +89,7 @@
  };
  
-@@ -408,6 +416,7 @@ struct clk_divider {
- #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
- #define CLK_DIVIDER_READ_ONLY		BIT(5)
- #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
-+#define CLK_DIVIDER_ZERO_GATE		BIT(7)
+ static struct clk_alpha_pll perfcl_pll = {
+-	.offset = 0x80000,
++	.offset = PERFCL_REG_OFFSET,
+ 	.regs = prim_pll_regs,
+ 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
+ 	.clkr.hw.init = &(struct clk_init_data){
+@@ -79,7 +101,7 @@
+ };
  
- extern const struct clk_ops clk_divider_ops;
- extern const struct clk_ops clk_divider_ro_ops;
+ static struct clk_alpha_pll pwrcl_pll = {
+-	.offset = 0x0,
++	.offset = PWRCL_REG_OFFSET,
+ 	.regs = prim_pll_regs,
+ 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
+ 	.clkr.hw.init = &(struct clk_init_data){
+@@ -109,7 +131,7 @@
+ };
+ 
+ static struct clk_alpha_pll perfcl_alt_pll = {
+-	.offset = 0x80100,
++	.offset = PERFCL_REG_OFFSET + ALT_PLL_OFFSET,
+ 	.regs = alt_pll_regs,
+ 	.vco_table = alt_pll_vco_modes,
+ 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
+@@ -123,7 +145,7 @@
+ };
+ 
+ static struct clk_alpha_pll pwrcl_alt_pll = {
+-	.offset = 0x100,
++	.offset = PWRCL_REG_OFFSET + ALT_PLL_OFFSET,
+ 	.regs = alt_pll_regs,
+ 	.vco_table = alt_pll_vco_modes,
+ 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
+@@ -136,6 +158,8 @@
+ 	},
+ };
+ 
++static void qcom_cpu_clk_msm8996_acd_init(void);
++
+ /* Mux'es */
+ 
+ struct clk_cpu_8996_mux {
+@@ -218,6 +242,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	switch (event) {
+ 	case PRE_RATE_CHANGE:
+ 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		qcom_cpu_clk_msm8996_acd_init();
+ 		break;
+ 	case POST_RATE_CHANGE:
+ 		if (cnd->new_rate < DIV_2_THRESHOLD)
+@@ -225,7 +250,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 							  DIV_2_INDEX);
+ 		else
+ 			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
+-							  PLL_INDEX);
++							  ACD_INDEX);
+ 		break;
+ 	default:
+ 		ret = 0;
+@@ -242,7 +267,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux pwrcl_smux = {
+-	.reg = 0x40,
++	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 2,
+ 	.width = 2,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+@@ -258,7 +283,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux perfcl_smux = {
+-	.reg = 0x80040,
++	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 2,
+ 	.width = 2,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+@@ -274,7 +299,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux pwrcl_pmux = {
+-	.reg = 0x40,
++	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
+@@ -295,7 +320,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux perfcl_pmux = {
+-	.reg = 0x80040,
++	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
+@@ -399,10 +424,64 @@ struct clk_hw_clks {
+ 	return ret;
+ }
+ 
++#define CPU_AFINITY_MASK 0xFFF
++#define PWRCL_CPU_REG_MASK 0x3
++#define PERFCL_CPU_REG_MASK 0x103
++
++/* ACD static settings (HMSS HPG 7.2.2) */
++#define L2ACDCR_REG 0x580ULL
++#define L2ACDTD_REG 0x581ULL
++#define L2ACDDVMRC_REG 0x584ULL
++#define L2ACDSSCR_REG 0x589ULL
++#define ACDTD_VAL 0x00006A11
++#define ACDCR_VAL 0x002C5FFD
++#define ACDSSCR_VAL 0x00000601
++#define ACDDVMRC_VAL 0x000E0F0F
++
++static DEFINE_SPINLOCK(acd_lock);
++
++static void qcom_cpu_clk_msm8996_acd_init(void)
++{
++	u64 hwid;
++	unsigned long flags;
++
++	spin_lock_irqsave(&acd_lock, flags);
++
++	hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
++
++	/* Program ACD Tunable-Length Delay (TLD) */
++	set_l2_indirect_reg(L2ACDTD_REG, ACDTD_VAL);
++	/* Initial ACD for *this* cluster */
++	set_l2_indirect_reg(L2ACDDVMRC_REG, ACDDVMRC_VAL);
++	/* Program ACD soft start control bits. */
++	set_l2_indirect_reg(L2ACDSSCR_REG, ACDSSCR_VAL);
++
++	if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
++		/* Enable Soft Stop/Start */
++		if (vbases[APC_BASE])
++			writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
++					PWRCL_REG_OFFSET + SSSCTL_OFFSET);
++		/* Ensure SSSCTL config goes through before enabling ACD. */
++		mb();
++		/* Program ACD control bits */
++		set_l2_indirect_reg(L2ACDCR_REG, ACDCR_VAL);
++	}
++	if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) { //else {
++		/* Program ACD control bits */
++		set_l2_indirect_reg(L2ACDCR_REG, ACDCR_VAL);
++		/* Enable Soft Stop/Start */
++		if (vbases[APC_BASE])
++			writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
++					PERFCL_REG_OFFSET + SSSCTL_OFFSET);
++		/* Ensure SSSCTL config goes through before enabling ACD. */
++		mb();
++	}
++
++	spin_unlock_irqrestore(&acd_lock, flags);
++}
+ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+-	void __iomem *base;
+ 	struct resource *res;
+ 	struct regmap *regmap_cpu;
+ 	struct clk_hw_clks *hws;
+@@ -415,17 +494,17 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	hws = devm_kzalloc(dev, sizeof(*hws) + 2 * sizeof(struct clk_hw *),
++	hws = devm_kzalloc(dev, sizeof(*hws) + 4 * sizeof(struct clk_hw *),
+ 			   GFP_KERNEL);
+ 	if (!hws)
+ 		return -ENOMEM;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
++	vbases[APC_BASE] = devm_ioremap_resource(dev, res);
++	if (IS_ERR(vbases[APC_BASE]))
++		return PTR_ERR(vbases[APC_BASE]);
+ 
+-	regmap_cpu = devm_regmap_init_mmio(dev, base,
++	regmap_cpu = devm_regmap_init_mmio(dev, vbases[APC_BASE],
+ 					   &cpu_msm8996_regmap_config);
+ 	if (IS_ERR(regmap_cpu))
+ 		return PTR_ERR(regmap_cpu);
+@@ -433,6 +512,7 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ 	ret = qcom_cpu_clk_msm8996_register_clks(dev, hws, regmap_cpu);
+ 	if (ret)
+ 		return ret;
++	qcom_cpu_clk_msm8996_acd_init();
+ 
+ 	data->hws[0] = &pwrcl_pmux.clkr.hw;
+ 	data->hws[1] = &perfcl_pmux.clkr.hw;
 -- 
-2.7.4
+1.9.1
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
