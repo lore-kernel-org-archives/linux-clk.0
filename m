@@ -1,94 +1,50 @@
-Return-Path: <Claudiu.Beznea@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
-To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
-	<krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
-	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
-	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
-	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
-	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-	<mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
-	<daniel.thompson@linaro.org>, <jingoohan1@gmail.com>, <milo.kim@ti.com>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
-CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>,
-	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-	<linux-media@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>, Claudiu Beznea
-	<claudiu.beznea@microchip.com>
-Subject: [PATCH v3 09/10] pwm: add documentation for pwm push-pull mode
-Date: Thu, 22 Feb 2018 14:01:20 +0200
-Message-ID: <1519300881-8136-10-git-send-email-claudiu.beznea@microchip.com>
-In-Reply-To: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: claudiu.beznea@microchip.com
+Return-Path: <s.nawrocki@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Subject: Re: [PATCH 3/3] clk: exynos5433: Add CLK_IGNORE_UNUSED flag to
+ sclk_ioclk_i2s1_bclk
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <847021bf-d8b0-2070-86b3-fa63ce5e0517@samsung.com>
+Date: Wed, 14 Feb 2018 15:52:50 +0100
+In-reply-to: <5A792A2B.60603@samsung.com>
+References: <20180205142230.9755-1-s.nawrocki@samsung.com>
+	<CGME20180205142314epcas1p2c9b9bdcba33290a9528a1b24fbc849eb@epcas1p2.samsung.com>
+	<20180205142230.9755-3-s.nawrocki@samsung.com> <5A792A2B.60603@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add documentation for PWM push-pull mode.
+On 02/06/2018 05:08 AM, Chanwoo Choi wrote:
+> On 2018년 02월 05일 23:22, Sylwester Nawrocki wrote:
+>> The sclk_ioclk_i2s1_bclk clock is not currently handled by any driver
+>> and disabling this clock by the clk core prevents proper operation
+>> of the I2S1 block. CLK_IGNORE_UNUSED flag is added as a temporary fix.
+>>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos5433.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+>> index d74361736e64..15177f74e125 100644
+>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>> @@ -1680,7 +1680,7 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
+>>  			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
+>>  	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
+>>  			"ioclk_i2s1_bclk_in", ENABLE_SCLK_PERIC, 10,
+>> -			CLK_SET_RATE_PARENT, 0),
+>> +			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+>>  	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "sclk_spdif_peric",
+>>  			ENABLE_SCLK_PERIC, 8, CLK_SET_RATE_PARENT, 0),
+>>  	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
+>>
+> If any device driver handles the sclk_ioclk_i2s1_bclk on later,
+> CLK_IGNORE_UNUSED will be ignored. Looks good to me.
+> 
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/pwm/pwm.txt |  2 ++
- Documentation/pwm.txt                         | 16 ++++++++++++++++
- include/dt-bindings/pwm/pwm.h                 |  1 +
- 3 files changed, 19 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentation/devicetree/bindings/pwm/pwm.txt
-index c2b4b9ba0e3f..968dd786ad7c 100644
---- a/Documentation/devicetree/bindings/pwm/pwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm.txt
-@@ -49,6 +49,8 @@ Optionally, the pwm-specifier can encode a number of flags (defined in
- - PWM_DTMODE_COMPLEMENTARY: PWM complementary working mode (for PWM
- channels two outputs); if not specified, the default for PWM channel will
- be used
-+- PWM_DTMODE_PUSH_PULL: PWM push-pull working modes (for PWM channels with
-+two outputs); if not specified the default for PWM channel will be used
- 
- Example with optional PWM specifier for inverse polarity and complementary
- mode:
-diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
-index 59592f8cc381..174c371583b6 100644
---- a/Documentation/pwm.txt
-+++ b/Documentation/pwm.txt
-@@ -128,6 +128,22 @@ channel that was exported. The following properties will then be available:
-     PWML1   |__|  |__|  |__|  |__|
-             <--T-->
- 
-+    Push-pull mode - for PWM channels with two outputs; output waveforms
-+        for a PWM channel with 2 outputs, in push-pull mode, with normal
-+        polarity looks like this:
-+            __          __
-+    PWMH __|  |________|  |________
-+                  __          __
-+    PWML ________|  |________|  |__
-+           <--T-->
-+
-+    If polarity is inversed:
-+         __    ________    ________
-+    PWMH   |__|        |__|
-+         ________    ________    __
-+    PWML         |__|        |__|
-+           <--T-->
-+
-     Where T is the signal period.
- 
- Implementing a PWM driver
-diff --git a/include/dt-bindings/pwm/pwm.h b/include/dt-bindings/pwm/pwm.h
-index b4d61269aced..674dfdd59595 100644
---- a/include/dt-bindings/pwm/pwm.h
-+++ b/include/dt-bindings/pwm/pwm.h
-@@ -12,5 +12,6 @@
- 
- #define PWM_POLARITY_INVERTED			(1 << 0)
- #define PWM_DTMODE_COMPLEMENTARY		(1 << 1)
-+#define PWM_DTMODE_PUSH_PULL			(1 << 2)
- 
- #endif
--- 
-2.7.4
+Thanks, I have applied the patch to clk/samsung tree.
