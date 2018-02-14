@@ -1,321 +1,95 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>, Carlo Caione
-	<carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Yixun Lan <yixun.lan@amlogic.com>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] clk: meson-axg: Add AO Clock and Reset controller driver
-Date: Fri, 9 Feb 2018 15:00:26 +0800
-Message-ID: <20180209070026.193879-3-yixun.lan@amlogic.com>
-In-Reply-To: <20180209070026.193879-1-yixun.lan@amlogic.com>
-References: <20180209070026.193879-1-yixun.lan@amlogic.com>
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Wed, 14 Feb 2018 11:37:22 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Eric Anholt <eric@anholt.net>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ bcm-kernel-feedback-list@broadcom.com, Stephen Warren
+ <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>,
+ linux-rpi-kernel@lists.infradead.org, Mike Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: bcm2835: De-assert/assert PLL reset signal
+ when appropriate
+Message-ID: <20180214113722.6b9f578c@bbrezillon>
+In-Reply-To: <87po5f5x7l.fsf@anholt.net>
+References: <20180208134338.24590-1-boris.brezillon@bootlin.com>
+	<20180208134338.24590-3-boris.brezillon@bootlin.com>
+	<87po5f5x7l.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Adds a Clock and Reset controller driver for the Always-On part
-of the Amlogic Meson-AXG SoC.
+On Thu, 08 Feb 2018 15:15:42 +0000
+Eric Anholt <eric@anholt.net> wrote:
 
-Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/clk/meson/Makefile    |   2 +-
- drivers/clk/meson/axg-aoclk.c | 236 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/axg-aoclk.h |  25 +++++
- 3 files changed, 262 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/axg-aoclk.c
- create mode 100644 drivers/clk/meson/axg-aoclk.h
+> Boris Brezillon <boris.brezillon@bootlin.com> writes:
+> 
+> > In order to enable a PLL, not only the PLL has to be powered up and
+> > locked, but you also have to de-assert the reset signal. The last part
+> > was missing. Add it so PLLs that were not enabled by the FW/bootloader
+> > can be enabled from Linux.
+> >
+> > Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> > ---
+> >  drivers/clk/bcm/clk-bcm2835.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> > index a07f6451694a..6c5d4a8e426c 100644
+> > --- a/drivers/clk/bcm/clk-bcm2835.c
+> > +++ b/drivers/clk/bcm/clk-bcm2835.c
+> > @@ -602,6 +602,9 @@ static void bcm2835_pll_off(struct clk_hw *hw)
+> >  	const struct bcm2835_pll_data *data = pll->data;
+> >  
+> >  	spin_lock(&cprman->regs_lock);
+> > +	cprman_write(cprman, data->a2w_ctrl_reg,
+> > +		     cprman_read(cprman, data->a2w_ctrl_reg) &
+> > +		     ~A2W_PLL_CTRL_PRST_DISABLE);
+> >  	cprman_write(cprman, data->cm_ctrl_reg,
+> >  		     cprman_read(cprman, data->cm_ctrl_reg) |
+> >  		     CM_PLL_ANARST);  
+> 
+> For turning off, the FW just does the equivalent of:
+> 
+> 	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
+> 	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 11f99139b844..c7510744406a 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -6,6 +6,6 @@ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
--obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-+obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
- obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-new file mode 100644
-index 000000000000..832aa19dd76c
---- /dev/null
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -0,0 +1,236 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * AmLogic Meson-AXG Clock Controller Driver
-+ *
-+ * Copyright (c) 2016 Baylibre SAS.
-+ * Author: Michael Turquette <mturquette@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+#include <linux/init.h>
-+#include <linux/delay.h>
-+#include <dt-bindings/clock/axg-aoclkc.h>
-+#include <dt-bindings/reset/axg-aoclkc.h>
-+#include "clkc.h"
-+#include "axg-aoclk.h"
-+
-+struct axg_aoclk_reset_controller {
-+	struct reset_controller_dev reset;
-+	unsigned int *data;
-+	struct regmap *regmap;
-+};
-+
-+static int axg_aoclk_do_reset(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct axg_aoclk_reset_controller *reset =
-+		container_of(rcdev, struct axg_aoclk_reset_controller, reset);
-+
-+	return regmap_write(reset->regmap, AO_RTI_GEN_CNTL_REG0,
-+			    BIT(reset->data[id]));
-+}
-+
-+static const struct reset_control_ops axg_aoclk_reset_ops = {
-+	.reset = axg_aoclk_do_reset,
-+};
-+
-+#define AXG_AO_GATE(_name, _bit)					\
-+static struct clk_regmap _name##_ao = {					\
-+	.data = &(struct clk_regmap_gate_data) {			\
-+		.offset = (AO_RTI_GEN_CNTL_REG0),			\
-+		.bit_idx = (_bit),					\
-+	},								\
-+	.hw.init = &(struct clk_init_data) {				\
-+		.name = #_name "_ao",					\
-+		.ops = &clk_regmap_gate_ops,				\
-+		.parent_names = (const char *[]){ "clk81" },		\
-+		.num_parents = 1,					\
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-+	},								\
-+}
-+
-+AXG_AO_GATE(remote, 0);
-+AXG_AO_GATE(i2c_master, 1);
-+AXG_AO_GATE(i2c_slave, 2);
-+AXG_AO_GATE(uart1, 3);
-+AXG_AO_GATE(uart2, 5);
-+AXG_AO_GATE(ir_blaster, 6);
-+AXG_AO_GATE(saradc, 7);
-+
-+static struct clk_fixed_rate ao_alt_xtal = {
-+	.fixed_rate = 32000,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_alt_xtal",
-+		.num_parents = 0,
-+		.ops = &clk_fixed_rate_ops,
-+	},
-+};
-+
-+static struct clk_regmap ao_clk81 = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_RTI_PWR_CNTL_REG0,
-+		.mask = 0x1,
-+		.shift = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_clk81",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ "clk81", "ao_alt_xtal"},
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_mux = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_SAR_CLK,
-+		.mask = 0x3,
-+		.shift = 9,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_mux",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_names = (const char *[]){ "xtal", "ao_clk81" },
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = AO_SAR_CLK,
-+		.shift = 0,
-+		.width = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "axg_saradc_mux" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_gate = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = AO_SAR_CLK,
-+		.bit_idx = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_gate",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_names = (const char *[]){ "axg_saradc_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static unsigned int axg_aoclk_reset[] = {
-+	[RESET_AO_REMOTE] = 16,
-+	[RESET_AO_I2C_MASTER] = 18,
-+	[RESET_AO_I2C_SLAVE] = 19,
-+	[RESET_AO_UART1] = 17,
-+	[RESET_AO_UART2] = 22,
-+	[RESET_AO_IR_BLASTER] = 23,
-+};
-+
-+static struct clk_regmap *axg_aoclk_regmap[] = {
-+	[CLKID_AO_REMOTE]	= &remote_ao,
-+	[CLKID_AO_I2C_MASTER]	= &i2c_master_ao,
-+	[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao,
-+	[CLKID_AO_UART1]	= &uart1_ao,
-+	[CLKID_AO_UART2]	= &uart2_ao,
-+	[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao,
-+	[CLKID_AO_SAR_ADC]	= &saradc_ao,
-+	[CLKID_AO_CLK81]	= &ao_clk81,
-+	[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux,
-+	[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div,
-+	[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate,
-+};
-+
-+static struct clk_hw_onecell_data axg_aoclk_onecell_data = {
-+	.hws = {
-+		[CLKID_AO_REMOTE]	= &remote_ao.hw,
-+		[CLKID_AO_I2C_MASTER]	= &i2c_master_ao.hw,
-+		[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao.hw,
-+		[CLKID_AO_UART1]	= &uart1_ao.hw,
-+		[CLKID_AO_UART2]	= &uart2_ao.hw,
-+		[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao.hw,
-+		[CLKID_AO_SAR_ADC]	= &saradc_ao.hw,
-+		[CLKID_AO_CLK81]	= &ao_clk81.hw,
-+		[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux.hw,
-+		[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div.hw,
-+		[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate.hw,
-+		[CLKID_AO_ALT_XTAL]	= &ao_alt_xtal.hw,
-+	},
-+	.num = 12,
-+};
-+
-+static int axg_aoclkc_probe(struct platform_device *pdev)
-+{
-+	struct axg_aoclk_reset_controller *rstc;
-+	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	int ret, clkid;
-+
-+	rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
-+	if (!rstc)
-+		return -ENOMEM;
-+
-+	regmap = syscon_node_to_regmap(of_get_parent(dev->of_node));
-+	if (IS_ERR(regmap)) {
-+		dev_err(dev, "failed to get regmap\n");
-+		return -ENODEV;
-+	}
-+
-+	/* Reset Controller */
-+	rstc->regmap = regmap;
-+	rstc->data = axg_aoclk_reset;
-+	rstc->reset.ops = &axg_aoclk_reset_ops;
-+	rstc->reset.nr_resets = ARRAY_SIZE(axg_aoclk_reset);
-+	rstc->reset.of_node = dev->of_node;
-+	ret = devm_reset_controller_register(dev, &rstc->reset);
-+
-+	/*
-+	 * Populate regmap and register all clks
-+	 */
-+	for (clkid = 0; clkid < ARRAY_SIZE(axg_aoclk_regmap); clkid++) {
-+		axg_aoclk_regmap[clkid]->map = regmap;
-+
-+		ret = devm_clk_hw_register(dev,
-+					axg_aoclk_onecell_data.hws[clkid]);
-+		if (ret) {
-+			dev_err(dev, "clk register failed.\n");
-+			return ret;
-+		}
-+	}
-+
-+	/* Specific clocks */
-+	ret = devm_clk_hw_register(dev, &ao_alt_xtal.hw);
-+	if (ret) {
-+		dev_err(dev, "clk alt_xtal register failed.\n");
-+		return ret;
-+	}
-+
-+	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-+			&axg_aoclk_onecell_data);
-+}
-+
-+static const struct of_device_id axg_aoclkc_match_table[] = {
-+	{ .compatible = "amlogic,meson-axg-aoclkc" },
-+	{ }
-+};
-+
-+static struct platform_driver axg_aoclkc_driver = {
-+	.probe		= axg_aoclkc_probe,
-+	.driver		= {
-+		.name	= "axg-aoclkc",
-+		.of_match_table = axg_aoclkc_match_table,
-+	},
-+};
-+
-+builtin_platform_driver(axg_aoclkc_driver);
-diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
-new file mode 100644
-index 000000000000..70f82004d3db
---- /dev/null
-+++ b/drivers/clk/meson/axg-aoclk.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2017 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef __AXG_AOCLKC_H
-+#define __AXG_AOCLKC_H
-+
-+/* AO Configuration Clock registers offsets
-+ * Register offsets from the data sheet must be multiplied by 4.
-+ */
-+#define AO_RTI_PWR_CNTL_REG1	(0x03 << 2)
-+#define AO_RTI_PWR_CNTL_REG0	(0x04 << 2)
-+#define AO_RTI_GEN_CNTL_REG0	(0x10 << 2)
-+#define AO_OSCIN_CNTL		(0x16 << 2)
-+#define AO_CRT_CLK_CNTL1	(0x1a << 2)
-+#define AO_SAR_CLK		(0x24 << 2)
-+#define AO_RTC_ALT_CLK_CNTL0	(0x25 << 2)
-+#define AO_RTC_ALT_CLK_CNTL1	(0x26 << 2)
-+
-+#endif /* __AXG_AOCLKC_H */
+Hm, the write to ->a2w_ctrl_reg overwrites the 
+NDIV/PDIV values done in bcm2835_pll_set_rate(). So, either we do:
+
+	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
+	cprman_write(cprman, data->a2w_ctrl_reg,
+		     cprman_read(cprman, data->a2w_ctrl_reg) |
+		     A2W_PLL_CTRL_PWRDN);
+
+or we cache the pdiv/ndiv values in struct bcm2835_pll and only apply
+them in bcm2835_pll_on().
+
+I'd recommend going for the former to keep the changes easily
+backportable to older kernels.
+
+> 
+> How about we do that, instead?
+> 
+> > @@ -640,6 +643,10 @@ static int bcm2835_pll_on(struct clk_hw *hw)
+> >  		cpu_relax();
+> >  	}
+> >  
+> > +	cprman_write(cprman, data->a2w_ctrl_reg,
+> > +		     cprman_read(cprman, data->a2w_ctrl_reg) |
+> > +		     A2W_PLL_CTRL_PRST_DISABLE);
+> > +
+> >  	return 0;
+> >  }  
+> 
+> I agree with this hunk -- they drop PRST at the very end, after lock.
+
+
+
 -- 
-2.15.1
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
