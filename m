@@ -1,56 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:40706 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752515AbeBLSVn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Feb 2018 13:21:43 -0500
-To: linux-sunxi@googlegroups.com, maxime.ripard@free-electrons.com,
-        wens@csie.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-From: Philipp Rossak <embed3d@gmail.com>
-Subject: BUG: A31s Not booting anymore
-Message-ID: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com>
-Date: Mon, 12 Feb 2018 19:21:40 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] clk: samsung: Add git tree entry to MAINTAINERS
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, Chanwoo Choi
+	<cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, Tomasz Figa
+	<tomasz.figa@gmail.com>,
+	=?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?=
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <60c7f0d9-ec34-2e76-abfc-a195b0a12d95@samsung.com>
+Date: Wed, 14 Feb 2018 15:53:52 +0100
+MIME-version: 1.0
+In-reply-to: 
+	<CAJKOXPe5ndc6CMG+5Sr6JjLJiF2xztH5rzWm1Xnr77sL8osrmQ@mail.gmail.com>
+Content-type: text/plain; charset="utf-8"
+References: <CGME20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4@epcas1p4.samsung.com>
+	<20180205144158.10500-1-s.nawrocki@samsung.com>
+	<CAJKOXPe5ndc6CMG+5Sr6JjLJiF2xztH5rzWm1Xnr77sL8osrmQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hey,
+On 02/05/2018 04:17 PM, Krzysztof Kozlowski wrote:
+> On Mon, Feb 5, 2018 at 3:41 PM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+>> Add a missing git tree entry for drivers/clk/samsung.
+>>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> ---
+>>  MAINTAINERS | 1 +
+>>  1 file changed, 1 insertion(+)
+>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-When I try to boot my A31s (Bananapi M2) u-boot is showing only Starting 
-kernel ... . After enabling the earlyprintk I could capture this log: [1].
-
-After reverting those 5 commits from Chen-Yu I was able to boot again:
-
-
-clk: sunxi-ng: Support fixed post-dividers on NM style clocks
-7d333ef1cc1b8c8951f3a2c41f6406e2295d8be9
-
-clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
-10e6eb4f2c5b35ae71c9bc0db83d74238719b453
-
-clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
-e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4
-
-clk: sunxi-ng: Support fixed post-dividers on MP style clocks
-946797aa3f08e2f6f5992f3ec2be44791e9b9260
-
-clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
-83fe3be4d1974f5f50c5e2039a1609f4960e8579
-
-
-I allready tried to fix it with making them save against zero:
-
-if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV && \
-     	cmp->fixed_post_div with)
-                rate *= cmp->fixed_post_div;
-
-But that didn't help.
-
-Any ideas?
-
-Regards,
-Philipp
-
-[1]: https://pastebin.com/64Fzzqvg
+Thanks, I have applied the patch to clk/samsung tree.
