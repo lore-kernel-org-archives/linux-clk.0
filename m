@@ -1,146 +1,43 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org,
-	sricharan@codeaurora.org,
-	linux@arm.linux.org.uk
-Subject: [PATCH v8 07/15] clk: qcom: Add IPQ806X's HFPLLs
-Date: Tue, 27 Feb 2018 19:36:54 +0530
-Message-Id: <1519740422-3835-8-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:56946 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1032203AbeBNQWN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Feb 2018 11:22:13 -0500
+Date: Wed, 14 Feb 2018 08:22:10 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Paul Walmsley <paul@pwsan.com>, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] ARM: OMAP: clock: Fix debugfs_create_*() usage
+Message-ID: <20180214162210.GG6364@atomide.com>
+References: <1514906735-8977-1-git-send-email-geert+renesas@glider.be>
+ <20180109173734.tplddyd4d3akrzjr@darkstar.musicnaut.iki.fi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180109173734.tplddyd4d3akrzjr@darkstar.musicnaut.iki.fi>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+* Aaro Koskinen <aaro.koskinen@iki.fi> [180109 17:40]:
+> Hi,
+> 
+> On Tue, Jan 02, 2018 at 04:25:35PM +0100, Geert Uytterhoeven wrote:
+> > When exposing data access through debugfs, the correct
+> > debugfs_create_*() functions must be used, depending on data type.
+> > 
+> > Remove all casts from data pointers passed to debugfs_create_*()
+> > functions, as such casts prevent the compiler from flagging bugs.
+> > 
+> > Correct all wrong usage:
+> >   - clk.rate is unsigned long, not u32,
+> >   - clk.flags is u8, not u32, which exposed the successive
+> >     clk.rate_offset and clk.src_offset fields.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-Describe the HFPLLs present on IPQ806X devices.
+Applying into omap-for-v4.16/fixes thanks.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/qcom/gcc-ipq806x.c | 82 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
-
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index 28eb200..d571cf8 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -30,6 +30,7 @@
- #include "clk-pll.h"
- #include "clk-rcg.h"
- #include "clk-branch.h"
-+#include "clk-hfpll.h"
- #include "reset.h"
- 
- static struct clk_pll pll0 = {
-@@ -113,6 +114,84 @@
- 	},
- };
- 
-+static struct hfpll_data hfpll0_data = {
-+	.mode_reg = 0x3200,
-+	.l_reg = 0x3208,
-+	.m_reg = 0x320c,
-+	.n_reg = 0x3210,
-+	.config_reg = 0x3204,
-+	.status_reg = 0x321c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3214,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll0 = {
-+	.d = &hfpll0_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll0",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
-+};
-+
-+static struct hfpll_data hfpll1_data = {
-+	.mode_reg = 0x3240,
-+	.l_reg = 0x3248,
-+	.m_reg = 0x324c,
-+	.n_reg = 0x3250,
-+	.config_reg = 0x3244,
-+	.status_reg = 0x325c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll1 = {
-+	.d = &hfpll1_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll1",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
-+};
-+
-+static struct hfpll_data hfpll_l2_data = {
-+	.mode_reg = 0x3300,
-+	.l_reg = 0x3308,
-+	.m_reg = 0x330c,
-+	.n_reg = 0x3310,
-+	.config_reg = 0x3304,
-+	.status_reg = 0x331c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll_l2 = {
-+	.d = &hfpll_l2_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll_l2",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
-+};
-+
- static struct clk_pll pll14 = {
- 	.l_reg = 0x31c4,
- 	.m_reg = 0x31c8,
-@@ -2800,6 +2879,9 @@ enum {
- 	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
- 	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
- 	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
-+	[PLL9] = &hfpll0.clkr,
-+	[PLL10] = &hfpll1.clkr,
-+	[PLL12] = &hfpll_l2.clkr,
- };
- 
- static const struct qcom_reset_map gcc_ipq806x_resets[] = {
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Tony
