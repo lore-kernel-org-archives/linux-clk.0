@@ -1,88 +1,128 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f177.google.com ([74.125.82.177]:33143 "EHLO
-        mail-ot0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752115AbeBTQUC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Feb 2018 11:20:02 -0500
-Received: by mail-ot0-f177.google.com with SMTP id i6so3056457otf.0
-        for <linux-clk@vger.kernel.org>; Tue, 20 Feb 2018 08:20:02 -0800 (PST)
-MIME-Version: 1.0
-In-Reply-To: <CAOMZO5A3wD+uxbgCmKU0jQGzi_r7g-Qitv5Mz=WmQZA7ndn0tw@mail.gmail.com>
-References: <1516029708-17204-1-git-send-email-festevam@gmail.com>
- <1516097462.9022.7.camel@pengutronix.de> <CAOMZO5A3wD+uxbgCmKU0jQGzi_r7g-Qitv5Mz=WmQZA7ndn0tw@mail.gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 20 Feb 2018 13:20:01 -0300
-Message-ID: <CAOMZO5CLLrG8HkSqnV85jc7ZY4FEz1L78dXvhPLQYaF0AL=Mew@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: imx51-imx53: Fix UART4/5 registration on i.MX50
- and i.MX53
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH v2 4/8] clk: migrate the count of orphaned clocks at init
+Date: Wed, 14 Feb 2018 14:43:36 +0100
+Message-Id: <20180214134340.17242-5-jbrunet@baylibre.com>
+In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
+References: <20180214134340.17242-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Ping
+The orphan clocks reparents should migrate any existing count from the
+orphan clock to its new acestor clocks, otherwise we may have
+inconsistent counts in the tree and end-up with gated critical clocks
 
-On Tue, Feb 13, 2018 at 11:42 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> Hi Stephen,
->
-> On Tue, Jan 16, 2018 at 8:11 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
->> On Mon, 2018-01-15 at 13:21 -0200, Fabio Estevam wrote:
->>> From: Fabio Estevam <fabio.estevam@nxp.com>
->>>
->>> Since commit 59dc3d8c8673 ("clk: imx51: uart4, uart5 gates only exist on
->>> imx50, imx53") the following warnings are seen on i.MX53:
->>>
->>> [    2.776190] ------------[ cut here ]------------
->>> [    2.780948] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:811 clk_core_disable+0xc4/0xe0
->>> [    2.789145] Modules linked in:
->>> [    2.792236] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc7-next-20180115 #1
->>> [    2.799735] Hardware name: Freescale i.MX53 (Device Tree Support)
->>> [    2.805845] Backtrace:
->>> [    2.808329] [<c010d1a0>] (dump_backtrace) from [<c010d460>] (show_stack+0x18/0x1c)
->>> [    2.815919]  r7:00000000 r6:60000093 r5:00000000 r4:c10798d4
->>> [    2.821607] [<c010d448>] (show_stack) from [<c0a353ec>] (dump_stack+0xb4/0xe8)
->>> [    2.828854] [<c0a35338>] (dump_stack) from [<c0126144>] (__warn+0xf0/0x11c)
->>> [    2.835837]  r9:00000000 r8:0000032b r7:00000009 r6:c0d429f8 r5:00000000 r4:00000000
->>> [    2.843601] [<c0126054>] (__warn) from [<c0126288>] (warn_slowpath_null+0x44/0x50)
->>> [    2.851191]  r8:c1008908 r7:c0e08874 r6:c04bfac8 r5:0000032b r4:c0d429f8
->>> [    2.857913] [<c0126244>] (warn_slowpath_null) from [<c04bfac8>] (clk_core_disable+0xc4/0xe0)
->>> [    2.866369]  r6:dc02bb00 r5:dc02a980 r4:dc02a980
->>> [    2.871011] [<c04bfa04>] (clk_core_disable) from [<c04c0e54>] (clk_core_disable_lock+0x20/0x2c)
->>> [    2.879726]  r5:dc02a980 r4:80000013
->>> [    2.883323] [<c04c0e34>] (clk_core_disable_lock) from [<c04c0e84>] (clk_disable+0x24/0x28)
->>> [    2.891604]  r5:c0f6b3e4 r4:0000001c
->>> [    2.895209] [<c04c0e60>] (clk_disable) from [<c0f2340c>] (imx_clk_disable_uart+0x50/0x68)
->>> [    2.903412] [<c0f233bc>] (imx_clk_disable_uart) from [<c010277c>] (do_one_initcall+0x50/0x19c)
->>> [    2.912043]  r7:c0e08874 r6:c0f63854 r5:c0f233bc r4:ffffe000
->>> [    2.917726] [<c010272c>] (do_one_initcall) from [<c0f00f00>] (kernel_init_freeable+0x118/0x1d0)
->>> [    2.926447]  r9:c0f63858 r8:000000f0 r7:c0e08874 r6:c0f63854 r5:c107b500 r4:c0f75260
->>> [    2.934220] [<c0f00de8>] (kernel_init_freeable) from [<c0a4a5f0>] (kernel_init+0x10/0x118)
->>> [    2.942506]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0a4a5e0
->>> [    2.950351]  r4:00000000
->>> [    2.952908] [<c0a4a5e0>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
->>> [    2.960496] Exception stack(0xdc05dfb0 to 0xdc05dff8)
->>> [    2.965569] dfa0:                                     00000000 00000000 00000000 00000000
->>> [    2.973768] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->>> [    2.981965] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
->>> [    2.988596]  r5:c0a4a5e0 r4:00000000
->>> [    2.992188] ---[ end trace 346e26f708876edd ]---
->>> [    2.997420] ------------[ cut here ]------------
->>>
->>> In order to fix the problem UART4/5 registration needs to happen only on
->>> i.MX50 and i.MX53.
->>>
->>> So let mx51_clocks_init() register only UART1-3 and
->>> mx50_clocks_init()/mx53_clocks_init register all the UART1-5 ports.
->>>
->>> Fixes: 59dc3d8c8673 ("clk: imx51: uart4, uart5 gates only exist on imx50, imx53")
->>> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
->>
->> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
->
-> Do you plan to apply this one directly or should Shawn collect it?
->
-> Thanks
+Assuming we have two clocks, A and B.
+* Clock A has CLK_IS_CRITICAL flag set.
+* Clock B is an ancestor of A which can gate. Clock B gate is left
+  enabled by the bootloader.
+
+Step 1: Clock A is registered. Since it is a critical clock, it is
+enabled. The clock being still an orphan, no parent are enabled.
+
+Step 2: Clock B is registered and reparented to clock A (potentially
+through several other clocks). We are now in situation where the enable
+count of clock A is 1 while the enable count of its ancestors is 0, which
+is not good.
+
+Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
+clock B being 0, clock B is gated and and critical clock A actually gets
+disabled.
+
+This situation was found while adding fdiv_clk gates to the meson8b
+platform.  These clocks parent clk81 critical clock, which is the mother
+of all peripheral clocks in this system. Because of the issue described
+here, the system is crashing when clk_disable_unused() is called.
+
+The situation is solved by reverting
+commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration").
+To avoid breaking again the situation described in this commit
+description, enabling critical clock should be done before walking the
+orphan list. This way, a parent critical clock may not be accidentally
+disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
+
+Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration")
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 37 +++++++++++++++++++++----------------
+ 1 file changed, 21 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index a4b4e4d6df5e..cca05ea2c058 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2969,23 +2969,38 @@ static int __clk_core_init(struct clk_core *core)
+ 		rate = 0;
+ 	core->rate = core->req_rate = rate;
+ 
++	/*
++	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
++	 * don't get accidentally disabled when walking the orphan tree and
++	 * reparenting clocks
++	 */
++	if (core->flags & CLK_IS_CRITICAL) {
++		unsigned long flags;
++
++		clk_core_prepare(core);
++
++		flags = clk_enable_lock();
++		clk_core_enable(core);
++		clk_enable_unlock(flags);
++	}
++
+ 	/*
+ 	 * walk the list of orphan clocks and reparent any that newly finds a
+ 	 * parent.
+ 	 */
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+ 		struct clk_core *parent = __clk_init_parent(orphan);
+-		unsigned long flags;
+ 
+ 		/*
+-		 * we could call __clk_set_parent, but that would result in a
+-		 * redundant call to the .set_rate op, if it exists
++		 * We need to use __clk_set_parent_before() and _after() to
++		 * to properly migrate any prepare/enable count of the orphan
++		 * clock. This is important for CLK_IS_CRITICAL clocks, which
++		 * are enabled during init but might not have a parent yet.
+ 		 */
+ 		if (parent) {
+ 			/* update the clk tree topology */
+-			flags = clk_enable_lock();
+-			clk_reparent(orphan, parent);
+-			clk_enable_unlock(flags);
++			__clk_set_parent_before(orphan, parent);
++			__clk_set_parent_after(orphan, parent, NULL);
+ 			__clk_recalc_accuracies(orphan);
+ 			__clk_recalc_rates(orphan, 0);
+ 		}
+@@ -3002,16 +3017,6 @@ static int __clk_core_init(struct clk_core *core)
+ 	if (core->ops->init)
+ 		core->ops->init(core->hw);
+ 
+-	if (core->flags & CLK_IS_CRITICAL) {
+-		unsigned long flags;
+-
+-		clk_core_prepare(core);
+-
+-		flags = clk_enable_lock();
+-		clk_core_enable(core);
+-		clk_enable_unlock(flags);
+-	}
+-
+ 	kref_init(&core->ref);
+ out:
+ 	clk_pm_runtime_put(core);
+-- 
+2.14.3
