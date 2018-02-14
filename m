@@ -6,52 +6,46 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/8] clk: fix determine rate error with pass-through clock
-Date: Wed, 14 Feb 2018 14:43:35 +0100
-Message-Id: <20180214134340.17242-4-jbrunet@baylibre.com>
-In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
-References: <20180214134340.17242-1-jbrunet@baylibre.com>
+Subject: [PATCH v2 0/8] clk: helpers and fixes
+Date: Wed, 14 Feb 2018 14:43:32 +0100
+Message-Id: <20180214134340.17242-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-If we try to determine the rate of a pass-through clock (a clock which
-does not implement .round_rate() nor .determine_rate()),
-clk_core_round_rate_nolock() will directly forward the call to the
-parent clock. In the particular case where the pass-through actually
-does not have a parent, clk_core_round_rate_nolock() will directly
-return 0 with the requested rate still set to the initial request
-structure. This is interpreted as if the rate could be exactly achieved
-while it actually cannot be adjusted.
+This changset is consist of various patches I have recently sent
+for the clock framework. They are gathered here for your convinience.
 
-This become a real problem when this particular pass-through clock is
-the parent of a mux with the flag CLK_SET_RATE_PARENT set. The
-pass-through clock will always report an exact match, get picked and
-finally error when the rate is actually getting set.
+The first two changes exports helpers of the generic clocks (divider and
+mux). The goal is to avoid code duplication when writing clock driver
+derived from these generic clock drivers.
 
-This is fixed by setting the rate inside the req to 0 when core is NULL
-in clk_core_round_rate_nolock() (same as in __clk_determine_rate() when
-hw is NULL)
+The rest fixes various issues found in the clock framework while working on
+a rework of meson's clock controllers [0]
 
-Fixes: 0f6cc2b8e94d ("clk: rework calls to round and determine rate callbacks")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Changes since the v1s:
+ * dropped lpc32xx divider read-only patches as requested by
+   Vladimir Zapolskiy [2]
+ * Squashed generic divider read-only patches
+ * Squashed mux documentations patches
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0f686a9dac3e..a4b4e4d6df5e 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1125,8 +1125,10 @@ static int clk_core_round_rate_nolock(struct clk_core *core,
- {
- 	lockdep_assert_held(&prepare_lock);
- 
--	if (!core)
-+	if (!core) {
-+		req->rate = 0;
- 		return 0;
-+	}
- 
- 	clk_core_init_rate_req(core, req);
- 
+[0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.com
+[2]: https://lkml.kernel.org/r/54782a8f-9735-a574-d8e1-7ff3e9173229@mleia.com
+
+Jerome Brunet (8):
+  clk: divider: export clk_div_mask() helper
+  clk: mux: add helper function for index/value translation
+  clk: fix determine rate error with pass-through clock
+  clk: migrate the count of orphaned clocks at init
+  clk: call the clock init() callback before any other ops callback
+  clk: fix mux clock documentation
+  clk: divider: read-only divider can propagate rate change
+  clk: qcom: use divider_ro_round_rate helper
+
+ drivers/clk/clk-divider.c             | 58 ++++++++++++++++++---------
+ drivers/clk/clk-mux.c                 | 75 ++++++++++++++++++++---------------
+ drivers/clk/clk.c                     | 63 ++++++++++++++++-------------
+ drivers/clk/qcom/clk-regmap-divider.c | 20 +++-------
+ include/linux/clk-provider.h          | 23 ++++++++++-
+ 5 files changed, 146 insertions(+), 93 deletions(-)
+
 -- 
 2.14.3
