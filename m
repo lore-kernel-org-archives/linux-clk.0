@@ -1,149 +1,77 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v7 17/42] dt-bindings: clock: Add bindings for DA8XX CFGCHIP clocks
-Date: Mon, 19 Feb 2018 14:21:38 -0600
-Message-Id: <1519071723-31790-18-git-send-email-david@lechnology.com>
-In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 5/8] clk: call the clock init() callback before any other ops callback
+Date: Wed, 14 Feb 2018 14:43:37 +0100
+Message-Id: <20180214134340.17242-6-jbrunet@baylibre.com>
+In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
+References: <20180214134340.17242-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds a new binding for the clocks present in the CFGCHIP syscon
-registers in TI DA8XX SoCs.
+Some clocks may need to initialize things, whatever it is, before
+being able to properly operate. Move the .init() call before any
+other callback, such recalc_rate() or get_phase(), so the clock
+is properly setup before being used.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
 
-v7 changes:
-- none
+Stephen, Mike,
 
-v6 changes:
-- combine "dt-bindings: clock: Add bindings for DA8XX CFGCHIP gate clocks",
-  "dt-bindings: clock: Add binding for TI DA8XX CFGCHIP mux clocks" and
-  "dt-bindings: clock: Add bindings for TI DA8XX USB PHY clocks" into a single
-  file containing all CFGCHIP clocks bindings
-- added compatible = "ti,da830-div4p5ena"
-- added compatible = "ti,da850-async1-clksrc"
-- renamed other compatible strings
-- changed and added some clk-names strings
-- USB PHY clocks are combined into a single node with #clock-cells = <1>
+This change is addressing a problem I have with clock driver I'm working
+on. This driver needs the .init() callback to run first is order to answer
+correctly .get_phase(). It does not address an existing issue, not one
+that I'm aware of at least. This is why I did not put a Fixes tag.
 
+In any case, it makes sense to run init before running anything else.
 
- .../bindings/clock/ti/davinci/da8xx-cfgchip.txt    | 93 ++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+ drivers/clk/clk.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
-new file mode 100644
-index 0000000..1e03dce
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
-@@ -0,0 +1,93 @@
-+Binding for TI DA8XX/OMAP-L13X/AM17XX/AM18XX CFGCHIP clocks
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index cca05ea2c058..9d56be6ead39 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2929,6 +2929,17 @@ static int __clk_core_init(struct clk_core *core)
+ 		core->orphan = true;
+ 	}
+ 
++	/*
++	 * optional platform-specific magic
++	 *
++	 * The .init callback is not used by any of the basic clock types, but
++	 * exists for weird hardware that must perform initialization magic.
++	 * Please consider other ways of solving initialization problems before
++	 * using this callback, as its use is discouraged.
++	 */
++	if (core->ops->init)
++		core->ops->init(core->hw);
 +
-+TI DA8XX/OMAP-L13X/AM17XX/AM18XX SoCs contain a general purpose set of
-+registers call CFGCHIPn. Some of these registers function as clock
-+gates. This document describes the bindings for those clocks.
-+
-+All of the clock nodes described below must be child nodes of a CFGCHIP node
-+(compatible = "ti,da830-cfgchip").
-+
-+USB PHY clocks
-+--------------
-+Required properties:
-+- compatible: shall be "ti,da830-usb-phy-clocks".
-+- #clock-cells: from common clock binding; shall be set to 1.
-+- clocks: phandles to the parent clocks corresponding to clock-names
-+- clock-names: shall be "fck", "usb_refclkin", "auxclk"
-+
-+This node provides two clocks. The clock at index 0 is the USB 2.0 PHY 48MHz
-+clock and the clock at index 1 is the USB 1.1 PHY 48MHz clock.
-+
-+eHRPWM Time Base Clock (TBCLK)
-+------------------------------
-+Required properties:
-+- compatible: shall be "ti,da830-tbclksync".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandle to the parent clock
-+- clock-names: shall be "fck"
-+
-+PLL DIV4.5 divider
-+------------------
-+Required properties:
-+- compatible: shall be "ti,da830-div4p5ena".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandle to the parent clock
-+- clock-names: shall be "pll0_pllout"
-+
-+EMIFA clock source (ASYNC1)
-+---------------------------
-+Required properties:
-+- compatible: shall be "ti,da850-async1-clksrc".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandles to the parent clocks corresponding to clock-names
-+- clock-names: shall be "pll0_sysclk3", "div4.5"
-+
-+ASYNC3 clock source
-+-------------------
-+Required properties:
-+- compatible: shall be "ti,da850-async3-clksrc".
-+- #clock-cells: from common clock binding; shall be set to 0.
-+- clocks: phandles to the parent clocks corresponding to clock-names
-+- clock-names: shall be "pll0_sysclk2", "pll1_sysclk2"
-+
-+Examples:
-+
-+	cfgchip: syscon@1417c {
-+		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
-+		reg = <0x1417c 0x14>;
-+
-+		usb_phy_clk: usb-phy-clocks {
-+			compatible = "ti,da830-usb-phy-clocks";
-+			#clock-cells = <1>;
-+			clocks = <&psc1 1>, <&usb_refclkin>, <&pll0_auxclk>;
-+			clock-names = "fck", "usb_refclkin", "auxclk";
-+		};
-+		ehrpwm_tbclk: ehrpwm_tbclk {
-+			compatible = "ti,da830-tbclksync";
-+			#clock-cells = <0>;
-+			clocks = <&psc1 17>;
-+			clock-names = "fck";
-+		};
-+		div4p5_clk: div4.5 {
-+			compatible = "ti,da830-div4p5ena";
-+			#clock-cells = <0>;
-+			clocks = <&pll0_pllout>;
-+			clock-names = "pll0_pllout";
-+		};
-+		async1_clk: async1 {
-+			compatible = "ti,da850-async1-clksrc";
-+			#clock-cells = <0>;
-+			clocks = <&pll0_sysclk 3>, <&div4p5_clk>;
-+			clock-names = "pll0_sysclk3", "div4.5";
-+		};
-+		async3_clk: async3 {
-+			compatible = "ti,da850-async3-clksrc";
-+			#clock-cells = <0>;
-+			clocks = <&pll0_sysclk 2>, <&pll1_sysclk 2>;
-+			clock-names = "pll0_sysclk2", "pll1_sysclk2";
-+		};
-+	};
-+
-+Also see:
-+- Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
+ 	/*
+ 	 * Set clk's accuracy.  The preferred method is to use
+ 	 * .recalc_accuracy. For simple clocks and lazy developers the default
+@@ -3006,17 +3017,6 @@ static int __clk_core_init(struct clk_core *core)
+ 		}
+ 	}
+ 
+-	/*
+-	 * optional platform-specific magic
+-	 *
+-	 * The .init callback is not used by any of the basic clock types, but
+-	 * exists for weird hardware that must perform initialization magic.
+-	 * Please consider other ways of solving initialization problems before
+-	 * using this callback, as its use is discouraged.
+-	 */
+-	if (core->ops->init)
+-		core->ops->init(core->hw);
+-
+ 	kref_init(&core->ref);
+ out:
+ 	clk_pm_runtime_put(core);
 -- 
-2.7.4
+2.14.3
