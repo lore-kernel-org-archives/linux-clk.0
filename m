@@ -1,31 +1,67 @@
-Return-Path: <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
- Marcel Ziswiler <marcel.ziswiler@toradex.com>,
- Thierry Reding <thierry.reding@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
- linux-kernel@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-References: <20180222230451.15515-1-marcel@ziswiler.com>
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <98bfea14-de25-e764-94b4-2f0dd687149a@wwwdotorg.org>
-Date: Thu, 22 Feb 2018 16:47:56 -0700
-MIME-Version: 1.0
-In-Reply-To: <20180222230451.15515-1-marcel@ziswiler.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com,
+	narmstrong@baylibre.com,
+	Jose.Abreu@synopsys.com
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v5 03/12] drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
+Date: Wed, 14 Feb 2018 21:08:57 +0100
+Message-Id: <20180214200906.31509-4-jernej.skrabec@siol.net>
+In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
+References: <20180214200906.31509-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/22/2018 04:04 PM, Marcel Ziswiler wrote:
-> Turns out latest upstream U-Boot does not configure/enable pllu which
-> leaves it at some default rate of 500 kHz:
+Allwinner SoCs have dw hdmi controller v1.32a which exhibits same
+magenta line issue as i.MX6Q and i.MX6DL. Enable workaround for it.
 
-I assume this is only because U-Boot just happened not to access any USB 
-devices. In other words, if you break into the U-Boot boot flow and 
-explicitly initialize/access USB, then USB works both in U-Boot and in 
-the kernel even without this patch? If that's not the case, it seems 
-there's a bug in U-Boot.
+Tests show that one iteration is enough.
 
-Either way, I have no issue with this patch. I just want to make sure 
-there weren't other bugs in U-Boot that needed fixing.
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index a38db40ce990..7ca14d7325b5 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -1634,9 +1634,10 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+ 	 * then write one of the FC registers several times.
+ 	 *
+ 	 * The number of iterations matters and depends on the HDMI TX revision
+-	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
+-	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
+-	 * 4 and 1 iterations respectively.
++	 * (and possibly on the platform). So far i.MX6Q (v1.30a), i.MX6DL
++	 * (v1.31a) and multiple Allwinner SoCs (v1.32a) have been identified
++	 * as needing the workaround, with 4 iterations for v1.30a and 1
++	 * iteration for others.
+ 	 */
+ 
+ 	switch (hdmi->version) {
+@@ -1644,6 +1645,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
+ 		count = 4;
+ 		break;
+ 	case 0x131a:
++	case 0x132a:
+ 		count = 1;
+ 		break;
+ 	default:
+-- 
+2.16.1
