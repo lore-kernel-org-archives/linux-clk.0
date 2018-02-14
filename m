@@ -1,34 +1,89 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: samsung: Add git tree entry to MAINTAINERS
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org, Chanwoo Choi
-	<cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, Tomasz Figa
-	<tomasz.figa@gmail.com>,
-	=?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?=
-	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <60c7f0d9-ec34-2e76-abfc-a195b0a12d95@samsung.com>
-Date: Wed, 14 Feb 2018 15:53:52 +0100
-MIME-version: 1.0
-In-reply-to: 
-	<CAJKOXPe5ndc6CMG+5Sr6JjLJiF2xztH5rzWm1Xnr77sL8osrmQ@mail.gmail.com>
-Content-type: text/plain; charset="utf-8"
-References: <CGME20180205144215epcas1p4f7da6d58948bac6f4f313108596a0fb4@epcas1p4.samsung.com>
-	<20180205144158.10500-1-s.nawrocki@samsung.com>
-	<CAJKOXPe5ndc6CMG+5Sr6JjLJiF2xztH5rzWm1Xnr77sL8osrmQ@mail.gmail.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com,
+	narmstrong@baylibre.com,
+	Jose.Abreu@synopsys.com
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v5 01/12] clk: sunxi-ng: Mask nkmp factors when setting register
+Date: Wed, 14 Feb 2018 21:08:55 +0100
+Message-Id: <20180214200906.31509-2-jernej.skrabec@siol.net>
+In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
+References: <20180214200906.31509-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/05/2018 04:17 PM, Krzysztof Kozlowski wrote:
-> On Mon, Feb 5, 2018 at 3:41 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> Add a missing git tree entry for drivers/clk/samsung.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  MAINTAINERS | 1 +
->>  1 file changed, 1 insertion(+)
->
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Currently, if one of the factors isn't present, bit 0 gets always set to
+1. For example, A83T has NMP PLLs modelled as NKMP PLL without K. Since
+K is not specified, it's offset, width and shift is 0. Driver assumes
+that lowest value possible is 1, otherwise we would get division by 0.
+That situation causes that bit 0 is always set, which may change wanted
+clock rate.
 
-Thanks, I have applied the patch to clk/samsung tree.
+Fix that by masking every factor according to it's specified width.
+Factors with width set to 0 won't have any influence to final register
+value.
+
+Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index e58c95787f94..a99068a08315 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -134,6 +134,7 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			   unsigned long parent_rate)
+ {
+ 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
++	u32 n_mask, k_mask, m_mask, p_mask;
+ 	struct _ccu_nkmp _nkmp;
+ 	unsigned long flags;
+ 	u32 reg;
+@@ -149,18 +150,20 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	ccu_nkmp_find_best(parent_rate, rate, &_nkmp);
+ 
++	n_mask = GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
++	k_mask = GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
++	m_mask = GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
++	p_mask = GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
++
+ 	spin_lock_irqsave(nkmp->common.lock, flags);
+ 
+ 	reg = readl(nkmp->common.base + nkmp->common.reg);
+-	reg &= ~GENMASK(nkmp->n.width + nkmp->n.shift - 1, nkmp->n.shift);
+-	reg &= ~GENMASK(nkmp->k.width + nkmp->k.shift - 1, nkmp->k.shift);
+-	reg &= ~GENMASK(nkmp->m.width + nkmp->m.shift - 1, nkmp->m.shift);
+-	reg &= ~GENMASK(nkmp->p.width + nkmp->p.shift - 1, nkmp->p.shift);
+-
+-	reg |= (_nkmp.n - nkmp->n.offset) << nkmp->n.shift;
+-	reg |= (_nkmp.k - nkmp->k.offset) << nkmp->k.shift;
+-	reg |= (_nkmp.m - nkmp->m.offset) << nkmp->m.shift;
+-	reg |= ilog2(_nkmp.p) << nkmp->p.shift;
++	reg &= ~(n_mask | k_mask | m_mask | p_mask);
++
++	reg |= ((_nkmp.n - nkmp->n.offset) << nkmp->n.shift) & n_mask;
++	reg |= ((_nkmp.k - nkmp->k.offset) << nkmp->k.shift) & k_mask;
++	reg |= ((_nkmp.m - nkmp->m.offset) << nkmp->m.shift) & m_mask;
++	reg |= (ilog2(_nkmp.p) << nkmp->p.shift) & p_mask;
+ 
+ 	writel(reg, nkmp->common.base + nkmp->common.reg);
+ 
+-- 
+2.16.1
