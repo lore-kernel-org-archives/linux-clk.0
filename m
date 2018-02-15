@@ -1,91 +1,117 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Thu, 1 Feb 2018 11:25:20 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2 6/6] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
-Message-ID: <20180201092520.GV7031@tbergstrom-lnx.Nvidia.com>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
- <1516797938-32044-8-git-send-email-pdeschrijver@nvidia.com>
- <248eee6f-7f37-a5d1-8eff-116c3ef57751@nvidia.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@kernel.org>, <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 5/5] clk: ti: add support for clock latching to mux clocks
+Date: Thu, 15 Feb 2018 14:49:51 +0200
+Message-ID: <1518698991-10099-6-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
+References: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <248eee6f-7f37-a5d1-8eff-116c3ef57751@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 31, 2018 at 11:06:36AM +0000, Jon Hunter wrote:
-> 
-> On 24/01/18 12:45, Peter De Schrijver wrote:
-> > Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-> > support in this driver. Also allow for the case where the CPU voltage is
-> > controlled directly by the DFLL rather than by a separate regulator object.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  drivers/cpufreq/tegra124-cpufreq.c | 13 ++++++-------
-> >  1 file changed, 6 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> > index 4353025..d631dc4 100644
-> > --- a/drivers/cpufreq/tegra124-cpufreq.c
-> > +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> > @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
-> >  {
-> >  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-> >  	clk_disable_unprepare(priv->dfll_clk);
-> > -	regulator_sync_voltage(priv->vdd_cpu_reg);
-> > +	if (priv->vdd_cpu_reg)
-> > +		regulator_sync_voltage(priv->vdd_cpu_reg);
-> >  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
-> >  }
-> >  
-> > @@ -89,10 +90,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
-> >  		return -ENODEV;
-> >  
-> >  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
-> > -	if (IS_ERR(priv->vdd_cpu_reg)) {
-> > -		ret = PTR_ERR(priv->vdd_cpu_reg);
-> > -		goto out_put_np;
-> > -	}
-> > +	if (IS_ERR(priv->vdd_cpu_reg))
-> > +		priv->vdd_cpu_reg = NULL;
-> >  
-> 
-> For Tegra124, don't we still want to return an error here?
+Latching the clock settings is needed with certain clocks, where
+the setting is "cached" in HW before doing the actual re-programming
+of the clock source. This patch adds support for clock latching to
+the mux clock.
 
-Not necessarily. Also on Tegra124 the DFLL can use PWM and I think jetson TK1
-can be reworked to use this.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clock.h |  1 +
+ drivers/clk/ti/mux.c   | 13 ++++++++++---
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
-Peter.
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 62b108c..90b86aa 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -34,6 +34,7 @@ struct clk_omap_mux {
+ 	u32			*table;
+ 	u32			mask;
+ 	u8			shift;
++	s8			latch;
+ 	u8			flags;
+ };
+ 
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index d470580..69a4308 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -86,6 +86,7 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	}
+ 	val |= index << mux->shift;
+ 	ti_clk_ll_ops->clk_writel(val, &mux->reg);
++	ti_clk_latch(&mux->reg, mux->latch);
+ 
+ 	return 0;
+ }
+@@ -100,7 +101,7 @@ static struct clk *_register_mux(struct device *dev, const char *name,
+ 				 const char * const *parent_names,
+ 				 u8 num_parents, unsigned long flags,
+ 				 struct clk_omap_reg *reg, u8 shift, u32 mask,
+-				 u8 clk_mux_flags, u32 *table)
++				 s8 latch, u8 clk_mux_flags, u32 *table)
+ {
+ 	struct clk_omap_mux *mux;
+ 	struct clk *clk;
+@@ -121,6 +122,7 @@ static struct clk *_register_mux(struct device *dev, const char *name,
+ 	memcpy(&mux->reg, reg, sizeof(*reg));
+ 	mux->shift = shift;
+ 	mux->mask = mask;
++	mux->latch = latch;
+ 	mux->flags = clk_mux_flags;
+ 	mux->table = table;
+ 	mux->hw.init = &init;
+@@ -160,7 +162,7 @@ struct clk *ti_clk_register_mux(struct ti_clk *setup)
+ 		flags |= CLK_SET_RATE_PARENT;
+ 
+ 	return _register_mux(NULL, setup->name, mux->parents, mux->num_parents,
+-			     flags, &reg, mux->bit_shift, mask,
++			     flags, &reg, mux->bit_shift, mask, -EINVAL,
+ 			     mux_flags, NULL);
+ }
+ 
+@@ -179,6 +181,7 @@ static void of_mux_clk_setup(struct device_node *node)
+ 	u8 clk_mux_flags = 0;
+ 	u32 mask = 0;
+ 	u32 shift = 0;
++	s32 latch = -EINVAL;
+ 	u32 flags = CLK_SET_RATE_NO_REPARENT;
+ 
+ 	num_parents = of_clk_get_parent_count(node);
+@@ -197,6 +200,8 @@ static void of_mux_clk_setup(struct device_node *node)
+ 
+ 	of_property_read_u32(node, "ti,bit-shift", &shift);
+ 
++	of_property_read_u32(node, "ti,latch-bit", &latch);
++
+ 	if (of_property_read_bool(node, "ti,index-starts-at-one"))
+ 		clk_mux_flags |= CLK_MUX_INDEX_ONE;
+ 
+@@ -211,7 +216,8 @@ static void of_mux_clk_setup(struct device_node *node)
+ 	mask = (1 << fls(mask)) - 1;
+ 
+ 	clk = _register_mux(NULL, node->name, parent_names, num_parents,
+-			    flags, &reg, shift, mask, clk_mux_flags, NULL);
++			    flags, &reg, shift, mask, latch, clk_mux_flags,
++			    NULL);
+ 
+ 	if (!IS_ERR(clk))
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+@@ -234,6 +240,7 @@ struct clk_hw *ti_clk_build_component_mux(struct ti_clk_mux *setup)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	mux->shift = setup->bit_shift;
++	mux->latch = -EINVAL;
+ 
+ 	mux->reg.index = setup->module;
+ 	mux->reg.offset = setup->reg;
+-- 
+1.9.1
 
-> 
-> >  	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
-> >  	if (IS_ERR(priv->cpu_clk)) {
-> > @@ -148,7 +147,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
-> >  	clk_put(priv->cpu_clk);
-> >  out_put_vdd_cpu_reg:
-> >  	regulator_put(priv->vdd_cpu_reg);
-> > -out_put_np:
-> >  	of_node_put(np);
-> >  
-> >  	return ret;
-> > @@ -181,7 +179,8 @@ static int __init tegra_cpufreq_init(void)
-> >  	int ret;
-> >  	struct platform_device *pdev;
-> >  
-> > -	if (!of_machine_is_compatible("nvidia,tegra124"))
-> > +	if (!(of_machine_is_compatible("nvidia,tegra124")
-> > +		|| of_machine_is_compatible("nvidia,tegra210")))
-> >  		return -ENODEV;
-> >  
-> >  	/*
-> > 
-> 
-> Cheers
-> Jon
-> 
-> -- 
-> nvpublic
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
