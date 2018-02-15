@@ -1,140 +1,85 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 23 Feb 2018 23:22:06 +0800
-In-Reply-To: <20180223152038.2bflylwa6vj4gzfj@flea.lan>
-References: <20180223123555.64009-6-icenowy@aosc.io> <20180223123555.64009-7-icenowy@aosc.io> <20180223152038.2bflylwa6vj4gzfj@flea.lan>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-CC: Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <81D53DC5-7622-430E-A530-ED0DE5397DC3@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: use get_phase() if available
+Date: Thu, 15 Feb 2018 11:28:22 +0100
+Message-Id: <20180215102822.7721-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+When the get_phase() callback is available, we should use it
+instead of just relying the values cached, and assumed un-rounded,
+by the framework
 
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
 
-于 2018年2月23日 GMT+08:00 下午11:20:38, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Fri, Feb 23, 2018 at 08:35:54PM +0800, Icenowy Zheng wrote:
->> Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with
->its
->> memory map fully reworked and some high-speed peripherals (PCIe, USB
->> 3.0) introduced.
->> 
->> This commit adds the basical DTSI file of it, including the clock
->> support and UART support.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
->> ---
->> Changes in v3:
->> - SPDX license identifier fix.
->> 
->> Changes in v2:
->> - Add APB1 clock as PIO's APB clock.
->> - Switched to SPDX license identifier.
->> 
->>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 177
->+++++++++++++++++++++++++++
->>  1 file changed, 177 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> 
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> new file mode 100644
->> index 000000000000..4a6236bd9778
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> @@ -0,0 +1,177 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
->> +/*
->> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
->> + */
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/sun50i-h6-ccu.h>
->> +#include <dt-bindings/reset/sun50i-h6-ccu.h>
->> +
->> +/ {
->> +	interrupt-parent = <&gic>;
->> +	#address-cells = <1>;
->> +	#size-cells = <1>;
->> +
->> +	cpus {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		cpu0: cpu@0 {
->> +			compatible = "arm,cortex-a53", "arm,armv8";
->> +			device_type = "cpu";
->> +			reg = <0>;
->> +			enable-method = "psci";
->> +		};
->> +
->> +		cpu1: cpu@1 {
->> +			compatible = "arm,cortex-a53", "arm,armv8";
->> +			device_type = "cpu";
->> +			reg = <1>;
->> +			enable-method = "psci";
->> +		};
->> +
->> +		cpu2: cpu@2 {
->> +			compatible = "arm,cortex-a53", "arm,armv8";
->> +			device_type = "cpu";
->> +			reg = <2>;
->> +			enable-method = "psci";
->> +		};
->> +
->> +		cpu3: cpu@3 {
->> +			compatible = "arm,cortex-a53", "arm,armv8";
->> +			device_type = "cpu";
->> +			reg = <3>;
->> +			enable-method = "psci";
->> +		};
->> +	};
->> +
->> +	iosc: internal-osc-clk {
->> +		#clock-cells = <0>;
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <16000000>;
->> +		clock-accuracy = <300000000>;
->> +		clock-output-names = "iosc";
->> +	};
->
->You're not using it anywhere
->
->> +	osc24M: osc24M_clk {
->> +		#clock-cells = <0>;
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <24000000>;
->> +		clock-output-names = "osc24M";
->> +	};
->> +
->> +	osc32k: osc32k_clk {
->> +		#clock-cells = <0>;
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <32768>;
->> +		clock-output-names = "osc32k";
->> +	};
->> +
->> +	psci {
->> +		compatible = "arm,psci-0.2";
->> +		method = "smc";
->> +	};
->
->Is it needed? The bootloader should fill it with whatever version it
->has, shouldn't it?
+Hi Mike, Stephen,
 
-But we now use ATF rather than U-Boot PSCI. U-Boot will
-not fill ATF info.
+This changes applies on top of the phase fix I've sent [0]
 
-See A64/H5 device trees.
+[0]: https://lkml.kernel.org/r/20180215101958.22676-1-jbrunet@baylibre.com
 
->
->Thanks!
->Maxime
+ drivers/clk/clk.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b33d362239e7..bcd6ec980903 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2297,6 +2297,21 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
+ }
+ EXPORT_SYMBOL_GPL(clk_set_parent);
+ 
++static int clk_core_get_phase_nolock(struct clk_core *core)
++{
++	int ret;
++
++	if (!core->ops->get_phase)
++		return core->phase;
++
++	/* Update the phase if the callback is available */
++	ret = core->ops->get_phase(core->hw);
++	if (ret >= 0)
++		core->phase = ret;
++
++	return ret;
++}
++
+ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
+ {
+ 	int ret = -EINVAL;
+@@ -2314,12 +2329,16 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
+ 	if (core->ops->set_phase)
+ 		ret = core->ops->set_phase(core->hw, degrees);
+ 
+-	if (!ret)
++	if (!ret) {
+ 		core->phase = degrees;
+ 
++		/* Read back the phase in case it got rounded */
++		ret = clk_core_get_phase_nolock(core);
++	}
++
+ 	trace_clk_set_phase_complete(core, degrees);
+ 
+-	return ret;
++	return ret > 0 ? 0 : ret;
+ }
+ 
+ /**
+@@ -2375,7 +2394,7 @@ static int clk_core_get_phase(struct clk_core *core)
+ 	int ret;
+ 
+ 	clk_prepare_lock();
+-	ret = core->phase;
++	ret = clk_core_get_phase_nolock(core);
+ 	clk_prepare_unlock();
+ 
+ 	return ret;
+-- 
+2.14.3
