@@ -1,91 +1,146 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:34138 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752640AbeBZMnQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 07:43:16 -0500
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@kernel.org>, <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 4/5] clk: ti: add support for clock latching to divider clocks
+Date: Thu, 15 Feb 2018 14:49:50 +0200
+Message-ID: <1518698991-10099-5-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
+References: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAT8sRDNZKbcpXY+e98O+sJHw9vUM9bKvdmVZNuEEQoMdA@mail.gmail.com>
-References: <1519483851-31135-1-git-send-email-yamada.masahiro@socionext.com>
- <CAK8P3a26kkcmzT450326=xHXjynG=uNYi2w07w6T+T01zQOQag@mail.gmail.com> <CAK7LNAT8sRDNZKbcpXY+e98O+sJHw9vUM9bKvdmVZNuEEQoMdA@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 26 Feb 2018 13:43:14 +0100
-Message-ID: <CAK8P3a3zMG4wV9SWg78NGmk=BU9yq5paxZvJ=coHCWxVgNhO2w@mail.gmail.com>
-Subject: Re: [RFC PATCH] drivers: use 'depends on MFD_SYSCON' instead of
- 'select MFD_SYSCON'
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 26, 2018 at 12:53 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2018-02-26 17:43 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->> On Sat, Feb 24, 2018 at 3:50 PM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>> As Documentation/kbuild/kconfig-language.txt notes, 'select' should be
->>> used with care - it forces a lower limit of another symbol, ignoring
->>> the dependency.
->>>
->>> MFD_SYSCON depends on HAS_IOMEM, but several drivers with COMPILE_TEST
->>> select it.
->>>
->>> This causes unmet dependencies for architecture without HAS_IOMEM.
->>>
->>>   $ make ARCH=score randconfig
->>>   scripts/kconfig/conf  --randconfig Kconfig
->>>   KCONFIG_SEED=0x27C47F43
->>>   warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && ...)
->>>   selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
->>>
->>> Use 'depends on' to observe the dependency.
->>>
->>> This commit was created by the following command:
->>>
->>>   $ find drivers -name 'Kconfig*' | xargs sed -i -e \
->>>     's/select MFD_SYSCON$/depends on MFD_SYSCON/'
->>>
->>> Then, COMMON_CLK_NXP and S3C2410_WATCHDOG were fixed up manually.
->>>
->>> Also, make MFD_SYSCON 'default y' because some defconfig files may
->>> rely on someone select's MFD_SYSCON.
->>>
->>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>> ---
->>>
->>> If you have a better idea to fix 'unmet dependencies',
->>> please suggest.
->>
->> Changing 'select MFD_SYSCON' to 'depends on' will definitely break lots
->> of defconfig configurations, I'd rather not do that.
->
->
-> Could you explain why?
->
-> I set 'default y' for MFD_SYSCON.
->
-> Would it still break defconfig configurations?
+Latching the clock settings is needed with certain clocks, where
+the setting is "cached" in HW before doing the actual re-programming
+of the clock source. This patch adds support for clock latching to
+the divider clock.
 
-No, you are right, that would not break defconfigs, it would just mean one
-useless driver being enabled for many configurations that don't need it.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clock.h   |  1 +
+ drivers/clk/ti/divider.c | 26 ++++++++++++++++++++------
+ 2 files changed, 21 insertions(+), 6 deletions(-)
 
->> Only score, tile and um have some configurations that select 'NO_IOMEM'.
->> Score is getting removed now, tile might get removed later (we could make
->> PCI mandatory in the meantime to avoid that configuration), and I think for
->> um, we already have a workaround for the NO_IOMEM dependencies
->> (I forget the details).
->
-> I do not think this is a stable solution.
->
-> Or, do you mean to remove NO_IOMEM and HAS_IOMEM completely?
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 2f8af8f..62b108c 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -22,6 +22,7 @@ struct clk_omap_divider {
+ 	u8			shift;
+ 	u8			width;
+ 	u8			flags;
++	s8			latch;
+ 	const struct clk_div_table	*table;
+ };
+ 
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 77f93f6..aaa277d 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -263,6 +263,8 @@ static int ti_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	val |= value << divider->shift;
+ 	ti_clk_ll_ops->clk_writel(val, &divider->reg);
+ 
++	ti_clk_latch(&divider->reg, divider->latch);
++
+ 	return 0;
+ }
+ 
+@@ -276,7 +278,8 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 				     const char *parent_name,
+ 				     unsigned long flags,
+ 				     struct clk_omap_reg *reg,
+-				     u8 shift, u8 width, u8 clk_divider_flags,
++				     u8 shift, u8 width, s8 latch,
++				     u8 clk_divider_flags,
+ 				     const struct clk_div_table *table)
+ {
+ 	struct clk_omap_divider *div;
+@@ -305,6 +308,7 @@ static struct clk *_register_divider(struct device *dev, const char *name,
+ 	memcpy(&div->reg, reg, sizeof(*reg));
+ 	div->shift = shift;
+ 	div->width = width;
++	div->latch = latch;
+ 	div->flags = clk_divider_flags;
+ 	div->hw.init = &init;
+ 	div->table = table;
+@@ -420,6 +424,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+ 	div->table = _get_div_table_from_setup(setup, &div->width);
+ 
+ 	div->shift = setup->bit_shift;
++	div->latch = -EINVAL;
+ 
+ 	return &div->hw;
+ }
+@@ -452,7 +457,7 @@ struct clk *ti_clk_register_divider(struct ti_clk *setup)
+ 
+ 	clk = _register_divider(NULL, setup->name, div->parent,
+ 				flags, &reg, div->bit_shift,
+-				width, div_flags, table);
++				width, -EINVAL, div_flags, table);
+ 
+ 	if (IS_ERR(clk))
+ 		kfree(table);
+@@ -556,7 +561,7 @@ static int _get_divider_width(struct device_node *node,
+ 
+ static int __init ti_clk_divider_populate(struct device_node *node,
+ 	struct clk_omap_reg *reg, const struct clk_div_table **table,
+-	u32 *flags, u8 *div_flags, u8 *width, u8 *shift)
++	u32 *flags, u8 *div_flags, u8 *width, u8 *shift, s8 *latch)
+ {
+ 	u32 val;
+ 	int ret;
+@@ -570,6 +575,13 @@ static int __init ti_clk_divider_populate(struct device_node *node,
+ 	else
+ 		*shift = 0;
+ 
++	if (latch) {
++		if (!of_property_read_u32(node, "ti,latch-bit", &val))
++			*latch = val;
++		else
++			*latch = -EINVAL;
++	}
++
+ 	*flags = 0;
+ 	*div_flags = 0;
+ 
+@@ -606,17 +618,18 @@ static void __init of_ti_divider_clk_setup(struct device_node *node)
+ 	u8 clk_divider_flags = 0;
+ 	u8 width = 0;
+ 	u8 shift = 0;
++	s8 latch = -EINVAL;
+ 	const struct clk_div_table *table = NULL;
+ 	u32 flags = 0;
+ 
+ 	parent_name = of_clk_get_parent_name(node, 0);
+ 
+ 	if (ti_clk_divider_populate(node, &reg, &table, &flags,
+-				    &clk_divider_flags, &width, &shift))
++				    &clk_divider_flags, &width, &shift, &latch))
+ 		goto cleanup;
+ 
+ 	clk = _register_divider(NULL, node->name, parent_name, flags, &reg,
+-				shift, width, clk_divider_flags, table);
++				shift, width, latch, clk_divider_flags, table);
+ 
+ 	if (!IS_ERR(clk)) {
+ 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+@@ -639,7 +652,8 @@ static void __init of_ti_composite_divider_clk_setup(struct device_node *node)
+ 		return;
+ 
+ 	if (ti_clk_divider_populate(node, &div->reg, &div->table, &val,
+-				    &div->flags, &div->width, &div->shift) < 0)
++				    &div->flags, &div->width, &div->shift,
++				    NULL) < 0)
+ 		goto cleanup;
+ 
+ 	if (!ti_clk_add_component(node, &div->hw, CLK_COMPONENT_TYPE_DIVIDER))
+-- 
+1.9.1
 
-We could either leave it for arch/um only and have that deal with the
-issues (which I think we already have), or we could remove the options
-entirely.
-
-      Arnd
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
