@@ -1,75 +1,92 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	"Geert Uytterhoeven" <geert+renesas@glider.be>, Wolfram Sang
-	<wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>, "open
- list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-	<devicetree@vger.kernel.org>, Linux Watchdog Mailing List
-	<linux-watchdog@vger.kernel.org>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, linux-clk
-	<linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>, Ramesh Shanmugasundaram
-	<ramesh.shanmugasundaram@bp.renesas.com>
-Subject: RE: [RFC v4 13/26] watchdog: renesas_wdt: Add restart handler
-Date: Wed, 7 Feb 2018 15:55:24 +0000
-Message-ID: <TY1PR06MB0895BDC61E7C226E29AC6D11C0FC0@TY1PR06MB0895.apcprd06.prod.outlook.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-14-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdVZi0Vyz9+Z6TFeX3yh=rzRHBuNbgy1Nt4LhoLU8qK5KQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVZi0Vyz9+Z6TFeX3yh=rzRHBuNbgy1Nt4LhoLU8qK5KQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@kernel.org>, <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 2/5] clk: ti: add support for register read-modify-write low-level operation
+Date: Thu, 15 Feb 2018 14:49:48 +0200
+Message-ID: <1518698991-10099-3-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
+References: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-SGVsbG8gR2VlcnQsDQoNCj4gU3ViamVjdDogUmU6IFtSRkMgdjQgMTMvMjZdIHdhdGNoZG9nOiBy
-ZW5lc2FzX3dkdDogQWRkIHJlc3RhcnQgaGFuZGxlcg0KPg0KPiBIaSBGYWJyaXppbywNCg0KVGhh
-bmsgeW91IGZvciB5b3VyIGZlZWRiYWNrIQ0KDQo+DQo+IE9uIFdlZCwgSmFuIDMxLCAyMDE4IGF0
-IDc6MjQgUE0sIEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJwLnJlbmVzYXMu
-Y29tPiB3cm90ZToNCj4gPiBPbiBpV2F2ZSdzIGJvYXJkcyBpd2cyMGQgYW5kIGl3ZzIyZCB0aGUg
-b25seSB3YXkgdG8gcmVib290IHRoZSBzeXN0ZW0gaXMNCj4gPiBieSBtZWFucyBvZiB0aGUgd2F0
-Y2hkb2cuDQo+ID4gVGhpcyBwYXRjaCBhZGRzIGEgcmVzdGFydCBoYW5kbGVyIHRvIHJ3ZHRfb3Bz
-LCBhbmQgYWxzbyBtYWtlcyBzdXJlIHdlDQo+ID4ga2VlcCBpdHMgcHJpb3JpdHkgdG8gYSBtZWRp
-dW0gbGV2ZWwsIGluIG9yZGVyIHRvIG5vdCBvdmVycmlkZSBvdGhlciBtb3JlDQo+ID4gZWZmZWN0
-aXZlIGhhbmRsZXJzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxm
-YWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtZXNo
-IFNoYW5tdWdhc3VuZGFyYW0gPHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29t
-Pg0KPg0KPiA+IC0tLSBhL2RyaXZlcnMvd2F0Y2hkb2cvcmVuZXNhc193ZHQuYw0KPiA+ICsrKyBi
-L2RyaXZlcnMvd2F0Y2hkb2cvcmVuZXNhc193ZHQuYw0KPiA+IEBAIC0xMTgsNiArMTM2LDcgQEAg
-c3RhdGljIGNvbnN0IHN0cnVjdCB3YXRjaGRvZ19vcHMgcndkdF9vcHMgPSB7DQo+ID4gICAgICAg
-ICAuc3RvcCA9IHJ3ZHRfc3RvcCwNCj4gPiAgICAgICAgIC5waW5nID0gcndkdF9pbml0X3RpbWVv
-dXQsDQo+ID4gICAgICAgICAuZ2V0X3RpbWVsZWZ0ID0gcndkdF9nZXRfdGltZWxlZnQsDQo+ID4g
-KyAgICAgICAucmVzdGFydCA9IHJ3ZHRfcmVzdGFydCwNCj4gPiAgfTsNCj4gPg0KPiA+ICBzdGF0
-aWMgaW50IHJ3ZHRfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPiBAQCAt
-MTc2LDYgKzE5NSw3IEBAIHN0YXRpYyBpbnQgcndkdF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
-aWNlICpwZGV2KQ0KPiA+ICAgICAgICAgcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgcHJpdik7
-DQo+ID4gICAgICAgICB3YXRjaGRvZ19zZXRfZHJ2ZGF0YSgmcHJpdi0+d2RldiwgcHJpdik7DQo+
-ID4gICAgICAgICB3YXRjaGRvZ19zZXRfbm93YXlvdXQoJnByaXYtPndkZXYsIG5vd2F5b3V0KTsN
-Cj4gPiArICAgICAgIHdhdGNoZG9nX3NldF9yZXN0YXJ0X3ByaW9yaXR5KCZwcml2LT53ZGV2LCAx
-MjgpOw0KPg0KPiBHaXZlbiB3ZSB3YW50IHRvIHJlYm9vdCBSLUNhciBHZW4yIGJvYXJkcyBlcXVp
-cHBlZCB3aXRoIGEgc3VpdGFibGUgUE1JQw0KPiAoZS5nLiBEQTkwNjMpIHVzaW5nIHRoYXQgUE1J
-QywgSSB0aGluayB0aGUgcHJpb3JpdHkgc2hvdWxkIGJlIGxvd2VyICgwPyksDQo+IGNmci4NCg0K
-WWVzLCBjYW4gZG8sIEkgaGF2ZSBubyBzdHJvbmcgb3BpbmlvbiBhYm91dCB0aGlzLg0KSSdsbCB1
-c2UgcHJpb3JpdHkgMCBmb3IgdGhlIG5leHQgc3VibWlzc2lvbi4NCg0KVGhhbmtzLA0KRmFiDQoN
-Cj4NCj4gICogICAwOiAgIHVzZSB3YXRjaGRvZydzIHJlc3RhcnQgZnVuY3Rpb24gYXMgbGFzdCBy
-ZXNvcnQsIGhhcyBsaW1pdGVkIHJlc3RhcnQNCj4gICogICAgICAgIGNhcGFiaWxpZXMNCj4gICog
-ICAxMjg6IGRlZmF1bHQgcmVzdGFydCBoYW5kbGVyLCB1c2UgaWYgbm8gb3RoZXIgaGFuZGxlciBp
-cyBleHBlY3RlZCB0byBiZQ0KPiAgKiAgICAgICAgYXZhaWxhYmxlIGFuZC9vciBpZiByZXN0YXJ0
-IGlzIHN1ZmZpY2llbnQgdG8gcmVzdGFydCB0aGUgZW50aXJlIHN5c3RlbQ0KPiAgKiAgIDI1NTog
-cHJlZW1wdCBhbGwgb3RoZXIgaGFuZGxlcnMNCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+
-ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhv
-ZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgt
-bTY4ay5vcmcNCj4NCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBw
-ZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRv
-IGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRo
-YXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMN
-Cg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxs
-Ym9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVn
-aXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDku
-DQo=
+Useful for changing few bits on a register, this makes sure for example
+that the operation is done atomically in case of syscon.
+
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk.c   | 24 ++++++++++++++++++++++++
+ include/linux/clk/ti.h |  2 ++
+ 2 files changed, 26 insertions(+)
+
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index f4d6802..4efa2c9 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -55,6 +55,29 @@ static void clk_memmap_writel(u32 val, const struct clk_omap_reg *reg)
+ 		writel_relaxed(val, io->mem + reg->offset);
+ }
+ 
++static void _clk_rmw(u32 val, u32 mask, void __iomem *ptr)
++{
++	u32 v;
++
++	v = readl_relaxed(ptr);
++	v &= ~mask;
++	v |= val;
++	writel_relaxed(v, ptr);
++}
++
++static void clk_memmap_rmw(u32 val, u32 mask, const struct clk_omap_reg *reg)
++{
++	struct clk_iomap *io = clk_memmaps[reg->index];
++
++	if (reg->ptr) {
++		_clk_rmw(val, mask, reg->ptr);
++	} else if (io->regmap) {
++		regmap_update_bits(io->regmap, reg->offset, mask, val);
++	} else {
++		_clk_rmw(val, mask, io->mem + reg->offset);
++	}
++}
++
+ static u32 clk_memmap_readl(const struct clk_omap_reg *reg)
+ {
+ 	u32 val;
+@@ -89,6 +112,7 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
+ 	ti_clk_ll_ops = ops;
+ 	ops->clk_readl = clk_memmap_readl;
+ 	ops->clk_writel = clk_memmap_writel;
++	ops->clk_rmw = clk_memmap_rmw;
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index d18da83..9e86114 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -211,6 +211,7 @@ enum {
+  * struct ti_clk_ll_ops - low-level ops for clocks
+  * @clk_readl: pointer to register read function
+  * @clk_writel: pointer to register write function
++ * @clk_rmw: pointer to register read-modify-write function
+  * @clkdm_clk_enable: pointer to clockdomain enable function
+  * @clkdm_clk_disable: pointer to clockdomain disable function
+  * @clkdm_lookup: pointer to clockdomain lookup function
+@@ -226,6 +227,7 @@ enum {
+ struct ti_clk_ll_ops {
+ 	u32	(*clk_readl)(const struct clk_omap_reg *reg);
+ 	void	(*clk_writel)(u32 val, const struct clk_omap_reg *reg);
++	void	(*clk_rmw)(u32 val, u32 mask, const struct clk_omap_reg *reg);
+ 	int	(*clkdm_clk_enable)(struct clockdomain *clkdm, struct clk *clk);
+ 	int	(*clkdm_clk_disable)(struct clockdomain *clkdm,
+ 				     struct clk *clk);
+-- 
+1.9.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
