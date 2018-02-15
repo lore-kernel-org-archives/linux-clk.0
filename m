@@ -1,61 +1,70 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 00/11] clk: meson: second round of updates
-Date: Mon, 19 Feb 2018 12:21:35 +0100
-Message-Id: <20180219112146.21746-1-jbrunet@baylibre.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@kernel.org>, <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 3/5] clk: ti: add generic support for clock latching
+Date: Thu, 15 Feb 2018 14:49:49 +0200
+Message-ID: <1518698991-10099-4-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
+References: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This changeset applies on top of the previous updates series
-available here [0].
+Certain clocks require latching to be done, so that the actual
+settings get updated on the HW that generates the clock signal.
+One example of such a clock is the dra76x GMAC DPLL H14 output,
+which requires its divider settings to be latched when updated.
 
-Most of the changes proposed here are related to the plls of meson
-SoCs. Details can be found in each patches but, in nutshell, there
-is :
-* a bit of clean-up,
-* improved pll capabilities using the frac parameter,
-* several clocks added to model the tree more accurately.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk.c   | 14 ++++++++++++++
+ drivers/clk/ti/clock.h |  2 ++
+ 2 files changed, 16 insertions(+)
 
-Beware: patch #10 depends on this core clock framework fix: [1]
-As explained in the description on the patch, if the gates are
-added w/o this fix, the system will crash when
-clk_disable_unused() is called.
-
-[0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.com
-[1]: https://lkml.kernel.org/r/20180214134340.17242-5-jbrunet@baylibre.com
-
-Jerome Brunet (11):
-  clk: meson: add fractional part of meson8b fixed_pll
-  clk: meson: poke pll CNTL last
-  clk: meson: remove special gp0 lock loop
-  clk: meson: improve pll driver results with frac
-  clk: meson: add gp0 frac parameter for axg and gxl
-  clk: meson: add ROUND_CLOSEST to the pll driver
-  clk: meson: axg: add hifi clock bindings
-  clk: meson: axg: add hifi pll clock
-  clk: meson: add mpll pre-divider
-  clk: meson: add fdiv clock gates
-  clk: meson: clean-up clk81 clocks
-
- drivers/clk/meson/axg.c              | 184 +++++++++++++++++++++++++++++++----
- drivers/clk/meson/axg.h              |   8 +-
- drivers/clk/meson/clk-pll.c          | 154 ++++++++++++++++++-----------
- drivers/clk/meson/clkc.h             |  15 +--
- drivers/clk/meson/gxbb.c             | 141 +++++++++++++++++++++++----
- drivers/clk/meson/gxbb.h             |  10 +-
- drivers/clk/meson/meson8b.c          | 128 ++++++++++++++++++++----
- drivers/clk/meson/meson8b.h          |   8 +-
- include/dt-bindings/clock/axg-clkc.h |   1 +
- 9 files changed, 521 insertions(+), 128 deletions(-)
-
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 4efa2c9..7d22e1a 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -275,6 +275,20 @@ int ti_clk_get_reg_addr(struct device_node *node, int index,
+ 	return 0;
+ }
+ 
++void ti_clk_latch(struct clk_omap_reg *reg, s8 shift)
++{
++	u32 latch;
++
++	if (shift < 0)
++		return;
++
++	latch = 1 << shift;
++
++	ti_clk_ll_ops->clk_rmw(latch, latch, reg);
++	ti_clk_ll_ops->clk_rmw(0, latch, reg);
++	ti_clk_ll_ops->clk_readl(reg); /* OCP barrier */
++}
++
+ /**
+  * omap2_clk_provider_init - init master clock provider
+  * @parent: master node
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index d9b43bf..2f8af8f 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -194,6 +194,8 @@ struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
+ int ti_clk_add_alias(struct device *dev, struct clk *clk, const char *con);
+ void ti_clk_add_aliases(void);
+ 
++void ti_clk_latch(struct clk_omap_reg *reg, s8 shift);
++
+ struct clk_hw *ti_clk_build_component_mux(struct ti_clk_mux *setup);
+ 
+ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
 -- 
-2.14.3
+1.9.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
