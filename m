@@ -1,91 +1,63 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 00/16] Implement H3/H5 HDMI driver
-Date: Tue, 27 Feb 2018 23:26:45 +0100
-Message-Id: <20180227222701.9716-1-jernej.skrabec@siol.net>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1518697199.2883.91.camel@baylibre.com>
+Subject: Re: [PATCH v2] clk: Properly update prepare/enable count on orphan
+ clock reparent
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Marek Szyprowski
+	 <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Michael
+ Turquette <mturquette@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Dong
+ Aisheng <aisheng.dong@nxp.com>, Bartlomiej Zolnierkiewicz
+ <b.zolnierkie@samsung.com>,  Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 15 Feb 2018 13:19:59 +0100
+In-Reply-To: <20180127004917.GI28313@codeaurora.org>
+References: 
+	<CGME20180126091902eucas1p2b3ad9978e3ab09bd7a2bd9123c9eecaa@eucas1p2.samsung.com>
+	 <20180126091845.11902-1-m.szyprowski@samsung.com>
+	 <20180127004917.GI28313@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This series implements H3/H5 HDMI driver. It was tested on OrangePi 2 (H3),
-OrangePi Plus2e (H3) and OrangePi PC2 (H5) with many resolutions and it
-works well. Bug, which prevented correct operation for some resolutions,
-is also fixed.
+On Fri, 2018-01-26 at 16:49 -0800, Stephen Boyd wrote:
+> On 01/26, Marek Szyprowski wrote:
+> > If orphaned clock has been already prepared/enabled (for example if it or
+> > one of its children has CLK_IS_CRITICAL flag), then the prepare/enable
+> > counters of the newly assigned parent are not updated correctly. This
+> > might later cause warnings during changing clock parents.
+> 
+> This doesn't feel right. Perhaps we should delay enabling a clk
+> if it's CRITICAL until we adopt an orphaned clk.
 
-Code is based on linux-next, next-20180226 tag.
+It does not sounds right. A critical clock should be enabled as soon as
+possible, regardless of current knowledge of the clock tree.
 
-Best regards,
-Jernej
+How would you decide when is right time anyway ?
+The orphaned critical clock could be reparented to clock that is orphan itself,
+you would get into the same count issue again.
 
-Changes from v1:
-- Fixed build warning on arm64
-- Fixed condition in determine_rate function in HDMI PHY clock driver
-- Added defines for polarity settings in HDMI PHY
-- Added patch to skip LVDS code path altogether if TCON doesn't support it.
-- round_rate for NM PLLs now rounds to minimal rate if requested rate is
-  lower.
-- set_rate for NM PLLs doesn't fail if requested rate is lower than minimal
-  (round_rate is called before which already guarantees that rate is not
-   lower than minimal).
+> Good news is we
+> have orphan status tracking now so this should be pretty simple.
+> Otherwise migrating the count up is complicated and requires us
+> to call the prepare/enable ops on a critical clk and then keep
+> doing that each time it gets re-parented.
 
-Jernej Skrabec (16):
-  clk: sunxi-ng: Add check for minimal rate to NM PLLs
-  clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
-  clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
-  clk: sunxi-ng: h3: h5: export CLK_PLL_VIDEO
-  dt-bindings: display: sun4i-drm: Add compatibles for H3 HDMI pipeline
-  drm/sun4i: Don't process LVDS if TCON doesn't support it
-  drm/sun4i: Add support for H3 display engine
-  drm/sun4i: Add support for H3 mixer 0
-  drm/sun4i: Fix polarity configuration for DW HDMI PHY
-  drm/sun4i: Add support for variants to DW HDMI PHY
-  drm/sun4i: Move and expand DW HDMI PHY register macros
-  drm/sun4i: Add support for H3 HDMI PHY variant
-  drm/sun4i: Allow building on arm64
-  ARM: dts: sunxi: h3/h5: Add HDMI pipeline
-  ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
-  ARM64: dts: sun50i: h5: Enable HDMI output on H5 boards
+What is the problem with this ? We are going to have call those enable ops
+anyway. Whether it is done one at a time or all at once, does it really matter ?
 
- .../bindings/display/sunxi/sun4i-drm.txt           |   6 +
- arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    |  25 ++
- arch/arm/boot/dts/sun8i-h3-beelink-x2.dts          |  25 ++
- arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts |  25 ++
- arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts           |  25 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-2.dts          |  25 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       |  25 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-one.dts        |  24 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  25 ++
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 108 ++++++
- .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  |  25 ++
- .../dts/allwinner/sun50i-h5-orangepi-prime.dts     |  25 ++
- .../allwinner/sun50i-h5-orangepi-zero-plus2.dts    |  25 ++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |  32 +-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |   4 +-
- drivers/clk/sunxi-ng/ccu_nm.c                      |  11 +-
- drivers/clk/sunxi-ng/ccu_nm.h                      |  27 ++
- drivers/gpu/drm/sun4i/Kconfig                      |   2 +-
- drivers/gpu/drm/sun4i/Makefile                     |   1 +
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |   1 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 | 120 +++----
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              | 157 ++++++++-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             | 369 ++++++++++++++++++---
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c         | 132 ++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.c                |  12 +
- include/dt-bindings/clock/sun8i-h3-ccu.h           |   2 +
- 26 files changed, 1129 insertions(+), 129 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+> Do you have this case,
+> where some clk is marked as CRITICAL, and then we need to migrate
+> that enable/prepare count to the parent?
 
--- 
-2.16.2
+yes.
+
+> 
+> Hopefully it isn't the worser case, where the clk is handed out
+> to some consumer but it's still orphaned at that point, and then
+> we have little control over the migration of state to the parent.
+> 
+
+This should not be a problem if the clock reparenting  and count migration is
+done properly. To do  this, the __clk_set_parent_before() and
+__clk_set_parent_after() function look good to me,  have I missed anything ? 
