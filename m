@@ -1,42 +1,116 @@
-Return-Path: <pdeschrijver@nvidia.com>
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v3 11/11] arm64: dts: nvidia: Tegra210 CPU clock definition
-Date: Tue, 6 Feb 2018 18:34:12 +0200
-Message-ID: <1517934852-23255-12-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <s.nawrocki@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Subject: Re: [PATCH 4/7] clk: samsung: exynos5433: fix PLL rates
+To: Chanwoo Choi <cw00.choi@samsung.com>, Andrzej Hajda
+	<a.hajda@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin
+	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated
+ list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open
+ list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, "Chanwoo Choi
+ (gmail)" <cwchoi00@gmail.com>, =?UTF-8?B?7LWc7LCs7JqwIChzYW1zdW5nLmNvbSk=?=
+	<chanwoo@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <ffb3d61f-0460-677a-ff57-7aabdf1e131f@samsung.com>
+Date: Thu, 15 Feb 2018 15:23:03 +0100
+In-reply-to: <5A83CD07.3060008@samsung.com>
+References: <20180213134032.30235-1-a.hajda@samsung.com>
+	<CGME20180213134101eucas1p1f9348abc0344594476bc8618c1006e31@eucas1p1.samsung.com>
+	<20180213134032.30235-5-a.hajda@samsung.com> <5A83CD07.3060008@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Hi Chanwoo,
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index bc9851a..a7fddae 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1229,6 +1229,13 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a57";
- 			reg = <0>;
-+			clocks = <&tegra_car TEGRA210_CLK_CCLK_G>,
-+				 <&tegra_car TEGRA210_CLK_PLL_X>,
-+				 <&tegra_car TEGRA210_CLK_PLL_P_OUT_CPU>,
-+				 <&dfll>;
-+			clock-names = "cpu_g", "pll_x", "pll_p", "dfll";
-+			/* FIXME: what's the actual transition time? */
-+			clock-latency = <300000>;
- 		};
+On 02/14/2018 06:45 AM, Chanwoo Choi wrote:
+> Exynos5433 TRM shows different PLL frequency from the calculated value. 
+> Actually, I'm not sure which value is the correct value between TRM's> value and real calculated value.
+> 
+> If we only consider the equation, I agree that we have to replace them > with real calculated value with equation. But, TRM shows the diagram of 
+> clock domain which contains the multiple IPs. And each diagram specifies
+> the required source clock rate of each child IP. Maybe, this source clock 
+> rate might be calculated from the PLL rate provided by TRM. (even if it's 
+> different from real calculated value).
+> 
+> Although the real rate is a little bit incorrect, we might better to keep 
+> PLL rate provided by TRM in order to get the required source clock of child 
+> IPs as the TRM. If we modify the PLL rate provided by TRM, the source clock 
+> rate of child IP might be different from TRM.
+> 
+> Basically, I have no objection of this patch. Just I think that need to 
+> check it.
+
+In order to have the clk API behave properly we need to have in these tables
+frequency values matching the values returned by the recalc_rate callback 
+for given P, M, S, K coefficients.  Alternatively, we could decrease precision 
+of the PLL's recalc_rate() callbacks by rounding its return value, but I'm not 
+sure it's a good approach. It might be better to have clear indication which 
+P, M, S, K values yield higher frequency error, even though the differences at 
+those least significant digit positions might be meaningless, considering 
+frequency tolerance of the root oscillator itself. 
+
+For example, difference of 10 Hz where Fout = 400 MHz is only 0.025 ppm 
+(0.0000025 %), when the tolerance of the root oscillator itself will be 
+usually in range 10...100 ppm.
+
+In the TRMs the least significant digits are simply ignored AFAIU. I guess
+we could apply similar rounding in the recalc_rate callback of the fractional 
+PLLs and the problem would also be solved, e.g.
+
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 1c4c7a3039f1..d7a265827e65 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -300,6 +300,8 @@ static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
+        do_div(fvco, (pdiv << sdiv));
+        fvco >>= 16;
  
- 		cpu@1 {
--- 
-1.9.1
++       fvco = ((fvco + 50) / 100) * 100;
++
+        return (unsigned long)fvco;
+ }
+
+I think we need a bit more detailed commit message for this patch series, 
+so it's clear what are the issues with current values. 
+
+> On 2018년 02월 13일 22:40, Andrzej Hajda wrote:
+>> Declared rates did not match rates generated by PLL.
+>> As a result driver behaved inconsitently.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos5433.c | 12 ++++++------
+>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+>> index db270908037a..335bebfa21c0 100644
+>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>> @@ -729,7 +729,7 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
+>>  	PLL_35XX_RATE(800000000U,  400, 6,  1),
+>>  	PLL_35XX_RATE(733000000U,  733, 12, 1),
+>>  	PLL_35XX_RATE(700000000U,  175, 3,  1),
+>> -	PLL_35XX_RATE(667000000U,  222, 4,  1),
+>> +	PLL_35XX_RATE(666000000U,  222, 4,  1),
+>>  	PLL_35XX_RATE(633000000U,  211, 4,  1),
+>>  	PLL_35XX_RATE(600000000U,  500, 5,  2),
+>>  	PLL_35XX_RATE(552000000U,  460, 5,  2),
+>> @@ -757,12 +757,12 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
+>>  /* AUD_PLL */
+>>  static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
+>>  	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
+>> -	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
+>> +	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
+>>  	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
+>> -	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
+>> -	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
+>> -	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
+>> -	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
+>> +	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
+>> +	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
+>> +	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
+>> +	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
+>>  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
+>>  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
+>>  	{ /* sentinel */ }
