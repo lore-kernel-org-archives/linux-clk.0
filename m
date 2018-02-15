@@ -1,89 +1,71 @@
-Return-Path: <sricharan@codeaurora.org>
-Subject: Re: [PATCH v8 14/15] cpufreq: Add module to register cpufreq on Krait
- CPUs
-To: Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc: viresh.kumar@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
- andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, robh@kernel.org, linux@arm.linux.org.uk
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
- <1519740422-3835-15-git-send-email-sricharan@codeaurora.org>
- <87zi3ujx7c.fsf@bootlin.com>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <95e134a6-7992-e16f-dc55-df7af96b31b9@codeaurora.org>
-Date: Wed, 28 Feb 2018 11:04:26 +0530
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Thu, 15 Feb 2018 14:52:22 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
+	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+	architt@codeaurora.org, a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
+	Jose.Abreu@synopsys.com, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v5 00/12] drm/sun4i: Add A83T HDMI support
+Message-ID: <20180215135222.7ta2r22je3dun3lm@flea.lan>
+References: <20180214200906.31509-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-In-Reply-To: <87zi3ujx7c.fsf@bootlin.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hmkaczg3omrq4h5g"
+In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gregory,
 
-On 2/27/2018 8:28 PM, Gregory CLEMENT wrote:
-> Hi Sricharan,
->  
->  On mar., févr. 27 2018, Sricharan R <sricharan@codeaurora.org> wrote:
-> 
->> From: Stephen Boyd <sboyd@codeaurora.org>
->>
->> Register a cpufreq-generic device whenever we detect that a
->> "qcom,krait" compatible CPU is present in DT.
->>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->> [Sricharan: updated to use dev_pm_opp_set_prop_name and
->> 	    nvmem apis]
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->> ---
->>  drivers/cpufreq/Kconfig.arm          |  10 ++
->>  drivers/cpufreq/Makefile             |   3 +
->>  drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
->>  drivers/cpufreq/qcom-cpufreq.c       | 183 +++++++++++++++++++++++++++++++++++
->>  4 files changed, 201 insertions(+)
->>  create mode 100644 drivers/cpufreq/qcom-cpufreq.c
->>
->> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
->> index 3a88e33..826f9e7 100644
->> --- a/drivers/cpufreq/Kconfig.arm
->> +++ b/drivers/cpufreq/Kconfig.arm
->> @@ -133,6 +133,16 @@ config ARM_OMAP2PLUS_CPUFREQ
->>  	depends on ARCH_OMAP2PLUS
->>  	default ARCH_OMAP2PLUS
->>  
->> +config ARM_QCOM_CPUFREQ
->> +	bool "CPUfreq driver for the QCOM SoCs with KRAIT processors"
->> +	depends on ARCH_QCOM
->> +	select PM_OPP
->> +	help
->> +	  This enables the CPUFreq driver for Qualcomm SoCs with
->> +	  KRAIT processors.
->> +
->> +	  If in doubt, say N.
->> +
->>  config ARM_S3C_CPUFREQ
->>  	bool
->>  	help
->> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
->> index c60c1e1..21894f6 100644
->> --- a/drivers/cpufreq/Makefile
->> +++ b/drivers/cpufreq/Makefile
->> @@ -65,6 +65,9 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
->>  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
->>  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
->>  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
->> +obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
-> 
-> These 2 following lines don't seem related to the commit log:
->> +obj-$(CONFIG_ARM_S3C24XX_CPUFREQ)	+= s3c24xx-cpufreq.o
->> +obj-$(CONFIG_ARM_S3C24XX_CPUFREQ_DEBUGFS) += s3c24xx-cpufreq-debugfs.o
-> 
+--hmkaczg3omrq4h5g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- oops. Will remove. Rebase mistake. Thanks.
+On Wed, Feb 14, 2018 at 09:08:54PM +0100, Jernej Skrabec wrote:
+> This patch series implements support for A83T DW HDMI and PHY. Contrary to
+> v1 series, this one is based on latest linux-next, since all needed patch=
+es
+> were merged.
+>=20
+> While exactly this combination of HDMI controller and PHY is not common in
+> Allwinner SoCs, this patch series nevertheless makes groundwork for other
+> SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H=
+5.
+>=20
+> Please take a look.
 
-Regards,
- Sricharan-- 
+I've applied the two clk patches. I'm waiting for some review from
+Archit on the synopsys bridge before merging anything else.
 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
+
+--hmkaczg3omrq4h5g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqFkJUACgkQ0rTAlCFN
+r3Ttxw/+LBVtH/qfKjzG6L16Jur2rgZk5GZtfhatjnRwsCpSAjYmNEaG2kbhfSwI
+rlY4sY+kE7MY26PKnSNx4hlQ1EB4yAa2I4nkE34a9tDRcdWcl88vz4hrM84yLB7d
+BuIB/qcgkAVxVP8IcRM5bFfWZx1JkBm3JUF1Md8ZITdY/aGyc1hdga+aQjbOwEiO
+AdROg0k79xnkacbEwxv6DGvFU+NquEObvQ29hNGQqXutbzKr/N1OYjc5hw+uFbmz
+HaXtoZXRnywJGeIEakufxHqgvnMxUEQd3J0jOOK4b3ZPMIqA6in0qKEzfWAhivpn
+JxXO7nMeDh/t9OAf3eKheFc/m46vp6/G0TB6HMif/ZYeLOB+bcGQThfDH3C/inWR
+Qhs/ivYEVOCVo/Gdv8Y5lkMXQt5RUW1JJnC8x9phQAD3rBfCLkHX5LkDdPtffYtv
+XLAFwUet1Q2ixENP3nEBsBne013nDZbYG7jyIVHrTGcWECqxa+hIbf1JwNaH3AUd
+3QS3dLMV9rs9twqdUcnKITNRZIDr9k5rSRknAZTyCKl04z+8KP6QSwH8bV83Ak4v
+7V7rRdkm4McJwjWSRIQSWHRjswT83AaalFy47AiMq5cMaco0uNiN/HJVPIyO4ku9
+eBzpg1FQfq/LNEfG0o/bDjXBVe2Pa4tuGHmDfEgjklKRDTCG/gI=
+=aMPH
+-----END PGP SIGNATURE-----
+
+--hmkaczg3omrq4h5g--
