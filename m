@@ -1,33 +1,27 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 35/41] ARM: dm644x: Remove legacy clock init
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-36-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <1a9c5888-9e4f-53e3-dfc3-ffa4cf6f3ad5@ti.com>
-Date: Wed, 7 Feb 2018 19:16:56 +0530
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@kernel.org>, <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 0/5] clk: ti: add support for dra76x latched clocks
+Date: Thu, 15 Feb 2018 14:49:46 +0200
+Message-ID: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-36-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
-> This removes the unused legacy clock init code from
-> arch/arm/mach-davinci/dm644x.c.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+Hi,
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Certain clock settings on the dra76x SoC need to be latched for them
+to be properly programmed to the PRCM. For example, the setting for
+the dra76x GMAC DPLL H14 output is programmed via a register under
+the system control module, which doesn't get reflected automatically
+under the PRCM HW, and the latch bit is provided to synchronize the
+setting from SCM towards PRCM.
 
-Thanks,
-Sekhar
+-Tero
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
