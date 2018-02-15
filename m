@@ -1,132 +1,143 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:32545 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752875AbeB0KXr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Feb 2018 05:23:47 -0500
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1cEcBTiH7_gcUPZtsuRaeoOYaH3H4cYxkUBQiLMTMq=A@mail.gmail.com>
-References: <1519483851-31135-1-git-send-email-yamada.masahiro@socionext.com>
- <CAK8P3a26kkcmzT450326=xHXjynG=uNYi2w07w6T+T01zQOQag@mail.gmail.com>
- <CAK7LNAT8sRDNZKbcpXY+e98O+sJHw9vUM9bKvdmVZNuEEQoMdA@mail.gmail.com>
- <CAK8P3a3zMG4wV9SWg78NGmk=BU9yq5paxZvJ=coHCWxVgNhO2w@mail.gmail.com>
- <CAK7LNAQBLTk7rduT2eQQKRhRiGTw-8MRhpz2ZJdEwKTx=-zY-Q@mail.gmail.com> <CAK8P3a1cEcBTiH7_gcUPZtsuRaeoOYaH3H4cYxkUBQiLMTMq=A@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 27 Feb 2018 19:22:56 +0900
-Message-ID: <CAK7LNASOzMdk_ej-U_T3_m-OtseJUOs+TqUv-BqZFLvS3e0kww@mail.gmail.com>
-Subject: Re: [RFC PATCH] drivers: use 'depends on MFD_SYSCON' instead of
- 'select MFD_SYSCON'
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 4/8] clk: migrate the count of orphaned clocks at
+ init
+To: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd
+	<sboyd@codeaurora.org>, Shawn Guo <shawnguo@kernel.org>, Dong Aisheng
+	<aisheng.dong@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <7c9b0ac1-582c-9b25-4d62-844667e80507@samsung.com>
+Date: Thu, 15 Feb 2018 13:55:41 +0100
+MIME-version: 1.0
+In-reply-to: <20180214134340.17242-5-jbrunet@baylibre.com>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <20180214134340.17242-1-jbrunet@baylibre.com>
+	<20180214134340.17242-5-jbrunet@baylibre.com>
+	<CGME20180215125542eucas1p218f5797e7254c28d9a6437d579220e52@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-02-27 18:03 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
-> On Tue, Feb 27, 2018 at 1:46 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> 2018-02-26 21:43 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->>> On Mon, Feb 26, 2018 at 12:53 PM, Masahiro Yamada
->>> <yamada.masahiro@socionext.com> wrote:
->>>> 2018-02-26 17:43 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
->>>>> On Sat, Feb 24, 2018 at 3:50 PM, Masahiro Yamada
->>>>> <yamada.masahiro@socionext.com> wrote:
->>>>>> As Documentation/kbuild/kconfig-language.txt notes, 'select' should be
->>>>>> used with care - it forces a lower limit of another symbol, ignoring
->>>>>> the dependency.
->>>>>>
->>>>>> MFD_SYSCON depends on HAS_IOMEM, but several drivers with COMPILE_TEST
->>>>>> select it.
->>>>>>
->>>>>> This causes unmet dependencies for architecture without HAS_IOMEM.
->>>>>>
->>>>>>   $ make ARCH=score randconfig
->>>>>>   scripts/kconfig/conf  --randconfig Kconfig
->>>>>>   KCONFIG_SEED=0x27C47F43
->>>>>>   warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && ...)
->>>>>>   selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
->>>>>>
->>>>>> Use 'depends on' to observe the dependency.
->>>>>>
->>>>>> This commit was created by the following command:
->>>>>>
->>>>>>   $ find drivers -name 'Kconfig*' | xargs sed -i -e \
->>>>>>     's/select MFD_SYSCON$/depends on MFD_SYSCON/'
->>>>>>
->>>>>> Then, COMMON_CLK_NXP and S3C2410_WATCHDOG were fixed up manually.
->>>>>>
->>>>>> Also, make MFD_SYSCON 'default y' because some defconfig files may
->>>>>> rely on someone select's MFD_SYSCON.
->>>>>>
->>>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>>>> ---
->>>>>>
->>>>>> If you have a better idea to fix 'unmet dependencies',
->>>>>> please suggest.
->>>>>
->>>>> Changing 'select MFD_SYSCON' to 'depends on' will definitely break lots
->>>>> of defconfig configurations, I'd rather not do that.
->>>>
->>>>
->>>> Could you explain why?
->>>>
->>>> I set 'default y' for MFD_SYSCON.
->>>>
->>>> Would it still break defconfig configurations?
->>>
->>> No, you are right, that would not break defconfigs, it would just mean one
->>> useless driver being enabled for many configurations that don't need it.
->>
->> If we are unhappy about this,
->> we can send per-arch patches
->> to add CONFIG_MTD_SYSCON=y to defconfigs that need it.
->>
->> But, we need to decide what the right solution is.
+Hi Jerome,
+
+On 2018-02-14 14:43, Jerome Brunet wrote:
+> The orphan clocks reparents should migrate any existing count from the
+> orphan clock to its new acestor clocks, otherwise we may have
+> inconsistent counts in the tree and end-up with gated critical clocks
 >
-> I think for consistency, we should change the existing
-> 'depends on MFD_SYSCON' to 'select MFD_SYSCON'. This
-> matches what we do with REGMAP_MMIO.
+> Assuming we have two clocks, A and B.
+> * Clock A has CLK_IS_CRITICAL flag set.
+> * Clock B is an ancestor of A which can gate. Clock B gate is left
+>    enabled by the bootloader.
 >
-> MFD_SYSCON is really a thin wrapper around REGMAP_MMIO,
-> so I would keep using the same conventions here, even though
-> we normally prefer to not 'select' any user-visible options.
+> Step 1: Clock A is registered. Since it is a critical clock, it is
+> enabled. The clock being still an orphan, no parent are enabled.
 >
-> It might be possible to make MFD_SYSCON a silent symbol
-> as well, but we'd have to make sure that all users select the symbol
-> then.
+> Step 2: Clock B is registered and reparented to clock A (potentially
+> through several other clocks). We are now in situation where the enable
+> count of clock A is 1 while the enable count of its ancestors is 0, which
+> is not good.
 >
->         Arnd
+> Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
+> clock B being 0, clock B is gated and and critical clock A actually gets
+> disabled.
+>
+> This situation was found while adding fdiv_clk gates to the meson8b
+> platform.  These clocks parent clk81 critical clock, which is the mother
+> of all peripheral clocks in this system. Because of the issue described
+> here, the system is crashing when clk_disable_unused() is called.
+>
+> The situation is solved by reverting
+> commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration").
+> To avoid breaking again the situation described in this commit
+> description, enabling critical clock should be done before walking the
+> orphan list. This way, a parent critical clock may not be accidentally
+> disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
+>
+> Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration")
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-If we agree, I can send the following three patches.
+This patch fixes kernel oops on Exynos5422-based boards (Odroid XU3/XU4)
+mentioned in the following threads:
+https://patchwork.kernel.org/patch/10185357/
+https://www.spinics.net/lists/linux-samsung-soc/msg61766.html
 
+> ---
+>   drivers/clk/clk.c | 37 +++++++++++++++++++++----------------
+>   1 file changed, 21 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index a4b4e4d6df5e..cca05ea2c058 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2969,23 +2969,38 @@ static int __clk_core_init(struct clk_core *core)
+>   		rate = 0;
+>   	core->rate = core->req_rate = rate;
+>   
+> +	/*
+> +	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
+> +	 * don't get accidentally disabled when walking the orphan tree and
+> +	 * reparenting clocks
+> +	 */
+> +	if (core->flags & CLK_IS_CRITICAL) {
+> +		unsigned long flags;
+> +
+> +		clk_core_prepare(core);
+> +
+> +		flags = clk_enable_lock();
+> +		clk_core_enable(core);
+> +		clk_enable_unlock(flags);
+> +	}
+> +
+>   	/*
+>   	 * walk the list of orphan clocks and reparent any that newly finds a
+>   	 * parent.
+>   	 */
+>   	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+>   		struct clk_core *parent = __clk_init_parent(orphan);
+> -		unsigned long flags;
+>   
+>   		/*
+> -		 * we could call __clk_set_parent, but that would result in a
+> -		 * redundant call to the .set_rate op, if it exists
+> +		 * We need to use __clk_set_parent_before() and _after() to
+> +		 * to properly migrate any prepare/enable count of the orphan
+> +		 * clock. This is important for CLK_IS_CRITICAL clocks, which
+> +		 * are enabled during init but might not have a parent yet.
+>   		 */
+>   		if (parent) {
+>   			/* update the clk tree topology */
+> -			flags = clk_enable_lock();
+> -			clk_reparent(orphan, parent);
+> -			clk_enable_unlock(flags);
+> +			__clk_set_parent_before(orphan, parent);
+> +			__clk_set_parent_after(orphan, parent, NULL);
+>   			__clk_recalc_accuracies(orphan);
+>   			__clk_recalc_rates(orphan, 0);
+>   		}
+> @@ -3002,16 +3017,6 @@ static int __clk_core_init(struct clk_core *core)
+>   	if (core->ops->init)
+>   		core->ops->init(core->hw);
+>   
+> -	if (core->flags & CLK_IS_CRITICAL) {
+> -		unsigned long flags;
+> -
+> -		clk_core_prepare(core);
+> -
+> -		flags = clk_enable_lock();
+> -		clk_core_enable(core);
+> -		clk_enable_unlock(flags);
+> -	}
+> -
+>   	kref_init(&core->ref);
+>   out:
+>   	clk_pm_runtime_put(core);
 
-[1] Add "depends on HAS_IOMEM"
-    to all drivers selecting MFD_SYSCON
-    (Unmet dependencies will be fixed by this)
-
-[2] For consistency, convert existing "depends on MFD_SYSCON"
-    to "select MFD_SYSCON" + "depends on HAS_IOMEM"
-
-[3] Change MFD_SYSCON to user-unconfigurable option.
-    But, for COMPILE_TEST, allow users to enable it independently.
-    Like follows:
-
-    config MFD_SYSCON
-        bool "System Controller Register R/W Based on Regmap" if COMPILE_TEST
-        select REGMAP_MMIO
-        help
-          Select this option to enable accessing system control registers
-          via regmap.
-
-
-Is this OK?
-
-
+Best regards
 -- 
-Best Regards
-Masahiro Yamada
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
