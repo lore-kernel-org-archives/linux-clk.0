@@ -1,53 +1,106 @@
-Return-Path: <a.hajda@samsung.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
-	<krzk@kernel.org>, linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG
-	SOC CLOCK DRIVERS), linux-clk@vger.kernel.org (open list:COMMON CLK
-	FRAMEWORK)
-Subject: [PATCH v2 5/7] clk: samsung: exynos7: fix PLL rates
-Date: Fri, 16 Feb 2018 15:57:52 +0100
-Message-id: <20180216145754.14428-6-a.hajda@samsung.com>
-In-reply-to: <20180216145754.14428-1-a.hajda@samsung.com>
-References: <20180216145754.14428-1-a.hajda@samsung.com>
-	<CGME20180216145806eucas1p1e939d3138e29d3446df90e1a69ea9624@eucas1p1.samsung.com>
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Fri, 16 Feb 2018 15:54:55 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, Brian Norris
+ <computersforpeace@gmail.com>, Boris Brezillon
+ <boris.brezillon@bootlin.com>, Marek Vasut <marek.vasut@gmail.com>, Richard
+ Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+ linux-mtd@lists.infradead.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, Mike
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
+ <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Update Boris Brezillon email address
+Message-ID: <20180216155455.36168609@bbrezillon>
+In-Reply-To: <138ed639-992d-2d87-4dd4-973323cdcad7@partner.samsung.com>
+References: <CGME20180216104523epcas3p1c45769e365a181963f8328237d270854@epcas3p1.samsung.com>
+	<20180216104449.15546-1-boris.brezillon@bootlin.com>
+	<dbe89241-4d05-d369-2894-fdc0b2d80b80@partner.samsung.com>
+	<20180216121619.3edad6fb@bbrezillon>
+	<4086d3a7-c79d-6906-2778-caccd647ffe6@partner.samsung.com>
+	<20180216150050.6051cc26@bbrezillon>
+	<138ed639-992d-2d87-4dd4-973323cdcad7@partner.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Rates declared in PLL rate tables should match exactly rates calculated
-from PLL coefficients. If that is not the case, rate of parent might be being
-set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
+Adding back all the people that were Cc-ed on the initial email.
 
-To fix this issue declared rates are changed to exactly match rates generated
-by a PLL, as calculated from the P, M, S, K coefficients.
+On Fri, 16 Feb 2018 15:18:21 +0100
+Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/clk/samsung/clk-exynos7.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On 16.02.2018 15:00, Boris Brezillon wrote:
+> > On Fri, 16 Feb 2018 12:21:53 +0100
+> > Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+> >  =20
+> >> On 16.02.2018 12:16, Boris Brezillon wrote: =20
+> >>> On Fri, 16 Feb 2018 12:07:42 +0100
+> >>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+> >>>    =20
+> >>>> On 16.02.2018 11:44, Boris Brezillon wrote:   =20
+> >>>>> Free Electrons is now Bootlin.
+> >>>>>
+> >>>>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> >>>>> ---
+> >>>>> Note that I'm planning to take this patch through the MTD tree.
+> >>>>> ---
+> >>>>>  .mailmap    |  7 ++++---
+> >>>>>  MAINTAINERS | 10 +++++-----
+> >>>>>  2 files changed, 9 insertions(+), 8 deletions(-)
+> >>>>>
+> >>>>> diff --git a/.mailmap b/.mailmap
+> >>>>> index e18cab73e209..50c1d6bf36b2 100644
+> >>>>> --- a/.mailmap
+> >>>>> +++ b/.mailmap
+> >>>>> @@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
+> >>>>>  Ben Gardner <bgardner@wabtec.com>
+> >>>>>  Ben M Cahill <ben.m.cahill@intel.com>
+> >>>>>  Bj=C3=B6rn Steinbrink <B.Steinbrink@gmx.de>
+> >>>>> -Boris Brezillon <boris.brezillon@free-electrons.com>
+> >>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon.=
+dev@gmail.com>
+> >>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon@=
+overkiz.com>
+> >>>>> +Boris Brezillon <boris.brezillon@bootlin.com>
+> >>>>> +Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@fre=
+e-electrons.com>     =20
+> >>>>
+> >>>> ------------------------------------------------------------------ ?=
+?????????????????   =20
+> >>>
+> >>> Is there a problem with this line?
+> >>>    =20
+> >>
+> >> I think you want to delete all 'free-electrons', yet here you add this=
+ =20
+> >=20
+> > I'm clearly not a git expert, but according to man git-shortlog [1], the
+> > format I'm using here allows mailmap to replace the old email by the
+> > new one, which is exactly what I want.
+> >=20
+> > [1]https://git-scm.com/docs/git-shortlog
+> >  =20
+>=20
+> Ah, I see, but why do you send patch for .mailmap ?
+> it is your private file, not global one, I do not want mine .mailmap
+> to be replaced by yours :)
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 5931a4140c3d..bbfa57b4e017 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -140,7 +140,7 @@ static const struct samsung_div_clock topc_div_clks[] __initconst = {
- };
- 
- static const struct samsung_pll_rate_table pll1460x_24mhz_tbl[] __initconst = {
--	PLL_36XX_RATE(491520000, 20, 1, 0, 31457),
-+	PLL_36XX_RATE(491519897, 20, 1, 0, 31457),
- 	{},
- };
- 
--- 
-2.16.1
+No, it's not private, it's part of the git tree.
+
+> But beside this, you can use sed script
+>=20
+> sed -i -e 's/free-electrons/bootlin/g' .mailmap
+>=20
+> Please just resend this with patch for MAINTAINER's only
+>=20
+
+.mailmap is versioned for a good reason, and I don't see why I couldn't
+update entries for my emails, especially since those entries already
+existed before this patch.
+
+--=20
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
