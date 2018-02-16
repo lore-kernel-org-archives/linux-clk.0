@@ -1,70 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:56463 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752628AbeBCPut (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 3 Feb 2018 10:50:49 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 0/6] Initial Allwinner H6 support
-Date: Sat,  3 Feb 2018 23:49:36 +0800
-Message-Id: <20180203154942.63566-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
+	<krzk@kernel.org>, linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG
+	SOC CLOCK DRIVERS), linux-clk@vger.kernel.org (open list:COMMON CLK
+	FRAMEWORK)
+Subject: [PATCH v2 0/7] clk: samsung: fix PLL rates
+Date: Fri, 16 Feb 2018 15:57:47 +0100
+Message-id: <20180216145754.14428-1-a.hajda@samsung.com>
+References: <CGME20180216145803eucas1p2b75e6f26d2979ee129152f674a31e886@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support for the Allwinner H6 SoC.
+Hi,
 
-It's quite different from earlier Allwinner SoCs. For example, the
-memory map is refactored, and the CCU is rearranged. It's also the first
-Allwinner SoC with PCI Express interface, and the second one with USB
-3.0 (the first one is A80).
+This patchset fixes PLL clock rates in all Samsung PLLs, moreover it adds
+compile time validators to avoid such mistakes in the future.
+The patchset has been compile tested for all variants, and runtime tested on
+TM2 and Odroid XU3.
 
-This patchset adds the most basical support for it, including the main pin
-controller, the main CCU and the basical device tree.
+v2:
+- modified commit message of patches 1-6/7,
+- rebased,
+- added Acks,
+- patch is the same as v2 already posted in prev thread (except rebase changes).
 
-Icenowy Zheng (6):
-  pinctrl: sunxi: support pin controllers with holes among IRQ banks
-  pinctrl: sunxi: add support for the Allwinner H6 main pin controller
-  clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
-  clk: sunxi-ng: add support for the Allwinner H6 CCU
-  arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
-  arm64: allwinner: h6: add support for Pine H64 board
+Regards
+Andrzej
 
- .../devicetree/bindings/clock/sunxi-ccu.txt        |    1 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    1 +
- arch/arm64/boot/dts/allwinner/Makefile             |    1 +
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      |   30 +
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi       |  178 +++
- drivers/clk/sunxi-ng/Kconfig                       |    5 +
- drivers/clk/sunxi-ng/Makefile                      |    1 +
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c               | 1199 ++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-h6.h               |   57 +
- drivers/clk/sunxi-ng/ccu_nkmp.c                    |   20 +-
- drivers/clk/sunxi-ng/ccu_nkmp.h                    |    2 +
- drivers/pinctrl/sunxi/Kconfig                      |    4 +
- drivers/pinctrl/sunxi/Makefile                     |    1 +
- drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c          |  676 +++++++++++
- drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c          |    4 +-
- drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c          |    4 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c              |   16 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.h              |   41 +-
- include/dt-bindings/clock/sun50i-h6-ccu.h          |  125 ++
- include/dt-bindings/reset/sun50i-h6-ccu.h          |   74 ++
- 20 files changed, 2414 insertions(+), 26 deletions(-)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.h
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
- create mode 100644 include/dt-bindings/clock/sun50i-h6-ccu.h
- create mode 100644 include/dt-bindings/reset/sun50i-h6-ccu.h
+
+Andrzej Hajda (7):
+  clk: samsung: exynos3250: fix PLL rates
+  clk: samsung: exynos5250: fix PLL rates
+  clk: samsung: exynos5260: fix PLL rates
+  clk: samsung: exynos5433: fix PLL rates
+  clk: samsung: exynos7: fix PLL rates
+  clk: samsung: s3c2410: fix PLL rates
+  clk: samsung: add compile time PLL rate validators
+
+ drivers/clk/samsung/clk-exynos3250.c | 114 +++++++++++++++++-----------------
+ drivers/clk/samsung/clk-exynos4.c    | 102 +++++++++++++++---------------
+ drivers/clk/samsung/clk-exynos5250.c |  54 ++++++++--------
+ drivers/clk/samsung/clk-exynos5260.c |  90 +++++++++++++--------------
+ drivers/clk/samsung/clk-exynos5410.c |  20 +++---
+ drivers/clk/samsung/clk-exynos5420.c |  62 +++++++++----------
+ drivers/clk/samsung/clk-exynos5433.c | 116 +++++++++++++++++------------------
+ drivers/clk/samsung/clk-exynos7.c    |   2 +-
+ drivers/clk/samsung/clk-pll.h        |  48 ++++++++++++---
+ drivers/clk/samsung/clk-s3c2410.c    | 108 ++++++++++++++++----------------
+ 10 files changed, 372 insertions(+), 344 deletions(-)
 
 -- 
-2.15.1
-
+2.16.1
