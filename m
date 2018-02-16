@@ -1,103 +1,78 @@
-Return-Path: <dinguyen@kernel.org>
-Subject: Re: [PATCHv3 1/3] dt-bindings: documentation: add clock bindings
- information for Stratix10
-To: Rob Herring <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
- mturquette@baylibre.com, sboyd@codeaurora.org
-References: <1517847767-16053-1-git-send-email-dinguyen@kernel.org>
- <20180209024340.f7sijb7h5egdn675@rob-hp-laptop>
-From: Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <9b8ae02b-67d5-8d0a-2e35-cab85f89470d@kernel.org>
-Date: Fri, 9 Feb 2018 12:19:02 -0600
-MIME-Version: 1.0
-In-Reply-To: <20180209024340.f7sijb7h5egdn675@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	stable@vger.kernel.org,
+	Andi Kleen <ak@linux.intel.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: fix false-positive Wmaybe-uninitialized warning
+Date: Fri, 16 Feb 2018 16:27:47 +0100
+Message-Id: <20180216152807.1629038-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+When we build this driver with on x86-32, gcc produces a false-positive warning:
 
+drivers/clk/renesas/clk-sh73a0.c: In function 'sh73a0_cpg_clocks_init':
+drivers/clk/renesas/clk-sh73a0.c:155:10: error: 'parent_name' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+   return clk_register_fixed_factor(NULL, name, parent_name, 0,
 
-On 02/08/2018 08:43 PM, Rob Herring wrote:
-> On Mon, Feb 05, 2018 at 10:22:45AM -0600, Dinh Nguyen wrote:
->> Document that Stratix10 clock bindings, and add the clock header file. The
->> clock header is an enumeration of all the different clocks on the Stratix10
->> platform.
->>
->> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->> ---
->> v3:
->> - s/intc/intel for correct vendor prefix
->> - fixup node name to "intel,stratix10-clkmgr"
->> - document the required fixed-clock for oscillators
->> v2:
->> - use a single binding for the clock controller
->> ---
->>  .../devicetree/bindings/clock/intc_stratix10.txt   | 47 ++++++++++++
->>  include/dt-bindings/clock/stratix10-clock.h        | 85 ++++++++++++++++++++++
->>  2 files changed, 132 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
->>  create mode 100644 include/dt-bindings/clock/stratix10-clock.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/intc_stratix10.txt b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
->> new file mode 100644
->> index 0000000..8d218f4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
->> @@ -0,0 +1,47 @@
->> +Device Tree Clock bindings for Intel's SoCFPGA Stratix10 platform
->> +
->> +This binding uses the common clock binding[1].
->> +
->> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +
->> +Required properties:
->> +- compatible : shall be
->> +	"intel,stratix10-clkmgr"
->> +
->> +- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
->> +
->> +- #clock-cells : from common clock binding, shall be set to 1.
->> +
->> +- clocks : Should contain fixed-clock sources, such as oscillators.
->> +
->> +Example:
->> +	clkmgr: clock-controller@ffd10000 {
->> +		compatible = "intel,stratix10-clkmgr";
->> +		reg = <0xffd10000 0x1000>;
->> +		#clock-cells = <1>;
->> +
->> +		clocks {
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +
->> +			cb_intosc_hs_div2_clk: cb_intosc_hs_div2_clk {
-> 
-> Don't use '_' in node names.
-> 
+We can work around that warning by adding a fake initialization, I tried
+and failed to come up with any better workaround. This is currently one
+of few remaining warnings for a 4.14.y randconfig build, so it would be
+good to also have it backported at least to that version. Older versions
+have more randconfig warnings, so we might not care.
 
-Ok..
+I had not noticed this earlier, because one patch in my randconfig test
+tree removes the '-ffreestanding' option on x86-32, and that avoids
+the warning. The -ffreestanding flag was originally global but moved
+into arch/i386 by Andi Kleen in commit 6edfba1b33c7 ("[PATCH] x86_64:
+Don't define string functions to builtin") as a 'temporary workaround'.
 
->> +				#clock-cells = <0>;
->> +				compatible = "fixed-clock";
-> 
-> fixed clock with no frequency?
+Like many temporary hacks, this turned out to be rather long-lived, from
+all I can tell we still need a simple fix to asm/string_32.h before it
+can be removed, but I'm not sure about how to best do that.
 
-The frequency gets populated in the board's dts file. This provides for
-the scenario where different boards might use different oscillator
-frequencies.
+Cc: stable@vger.kernel.org
+Cc: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/renesas/clk-sh73a0.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-So in socfpga_stratix10, I would have:
-
-soc {
-	clock-controller@ffd10000 {
-		clocks {
-			osc1 {
-				clock-frequency = <25000000>;
-			};
-		};
-	};
-};
-
-Thanks,
-Dinh
+diff --git a/drivers/clk/renesas/clk-sh73a0.c b/drivers/clk/renesas/clk-sh73a0.c
+index eea38f6ea77e..3892346c4fcc 100644
+--- a/drivers/clk/renesas/clk-sh73a0.c
++++ b/drivers/clk/renesas/clk-sh73a0.c
+@@ -46,7 +46,7 @@ struct div4_clk {
+ 	unsigned int shift;
+ };
+ 
+-static struct div4_clk div4_clks[] = {
++static const struct div4_clk div4_clks[] = {
+ 	{ "zg", "pll0", CPG_FRQCRA, 16 },
+ 	{ "m3", "pll1", CPG_FRQCRA, 12 },
+ 	{ "b",  "pll1", CPG_FRQCRA,  8 },
+@@ -79,7 +79,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
+ {
+ 	const struct clk_div_table *table = NULL;
+ 	unsigned int shift, reg, width;
+-	const char *parent_name;
++	const char *parent_name = NULL;
+ 	unsigned int mult = 1;
+ 	unsigned int div = 1;
+ 
+@@ -135,7 +135,7 @@ sh73a0_cpg_register_clock(struct device_node *np, struct sh73a0_cpg *cpg,
+ 		shift = 24;
+ 		width = 5;
+ 	} else {
+-		struct div4_clk *c;
++		const struct div4_clk *c;
+ 
+ 		for (c = div4_clks; c->name; c++) {
+ 			if (!strcmp(name, c->name)) {
+-- 
+2.9.0
