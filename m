@@ -1,84 +1,53 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 2/6] clk: tegra: DT align parameter for CVB calculation
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
- <1516797938-32044-4-git-send-email-pdeschrijver@nvidia.com>
- <7066d1ff-6da4-203d-57ea-cf179fea17be@nvidia.com>
- <20180201103002.GY7031@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <98da869b-e3b5-d703-c2bd-c34a081dfbc8@nvidia.com>
-Date: Thu, 1 Feb 2018 10:54:15 +0000
-MIME-Version: 1.0
-In-Reply-To: <20180201103002.GY7031@tbergstrom-lnx.Nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
+	<krzk@kernel.org>, linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG
+	SOC CLOCK DRIVERS), linux-clk@vger.kernel.org (open list:COMMON CLK
+	FRAMEWORK)
+Subject: [PATCH v2 3/7] clk: samsung: exynos5260: fix PLL rates
+Date: Fri, 16 Feb 2018 15:57:50 +0100
+Message-id: <20180216145754.14428-4-a.hajda@samsung.com>
+In-reply-to: <20180216145754.14428-1-a.hajda@samsung.com>
+References: <20180216145754.14428-1-a.hajda@samsung.com>
+	<CGME20180216145805eucas1p14670777cd5339fda26b95c71b726f866@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Rates declared in PLL rate tables should match exactly rates calculated
+from PLL coefficients. If that is not the case, rate of parent might be being
+set not as expected. For instance, if in the PLL rates table we have
+a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
+callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
+will return 393216003. If we now attempt to set rate of a PLL's child divider
+clock to 393216000/2 its rate will be 131072001, rather than 196608000.
+That is the divider will be set to 3 instead of 2, because 393216003/2 is
+greater than 196608000.
 
-On 01/02/18 10:30, Peter De Schrijver wrote:
-> On Wed, Jan 31, 2018 at 10:43:04AM +0000, Jon Hunter wrote:
->>
->> On 24/01/18 12:45, Peter De Schrijver wrote:
->>> When using a PWM controlled regulator, the voltage step and offset are
->>> determined by the regulator IC in use. This is specified in DT rather
->>> than fixed in the CVB table. Hence pass this information to the CVB table
->>> calculation function. For backwards compatibility the table values are used
->>> if the corresponding parameter is 0.
->>>
->>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> ---
->>>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 23 +++++++++++++++++++++--
->>>  drivers/clk/tegra/cvb.c                    | 18 ++++++++++++++----
->>>  drivers/clk/tegra/cvb.h                    |  5 +++--
->>>  3 files changed, 38 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
->>> index 440eb8d..6205ce1 100644
->>> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
->>> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
->>> @@ -111,6 +111,7 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
->>>  	struct tegra_dfll_soc_data *soc;
->>>  	const struct of_device_id *of_id;
->>>  	const struct dfll_fcpu_data *fcpu_data;
->>> +	struct rail_alignment align;
->>>  
->>>  	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
->>>  	fcpu_data = of_id->data;
->>> @@ -135,12 +136,30 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
->>>  		return -ENODEV;
->>>  	}
->>>  
->>> +	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-offset-uv",
->>> +					&align.offset_uv);
->>> +	if (err < 0) {
->>> +		dev_err(&pdev->dev,
->>> +			"offset uv not found, default to table value\n");
->>> +		align.offset_uv = 0;
->>> +	}
->>> +
->>> +	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-step-uv",
->>> +					&align.step_uv);
->>> +	if (err < 0) {
->>> +		dev_err(&pdev->dev,
->>> +			"step uv not found, default to table value\n");
->>> +		align.step_uv = 0;
->>> +	}
->>> +
->>
->> I am a bit confused by this ...
->>
->> 1. Isn't this going to break Tegra124 DFLL support?
-> 
-> We fall back to the original behaviour in case the properties are missing, so
-> it should work.
+To fix this issue declared rates are changed to exactly match rates generated
+by a PLL, as calculated from the P, M, S, K coefficients.
 
-Ah yes. However, on Tegra124 now I see all this prints. Can't we only
-read these properties if using PWM?
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos5260.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers
-Jon
-
+diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
+index fd1d9bfc151b..8eae1752d700 100644
+--- a/drivers/clk/samsung/clk-exynos5260.c
++++ b/drivers/clk/samsung/clk-exynos5260.c
+@@ -65,7 +65,7 @@ static const struct samsung_pll_rate_table pll2650_24mhz_tbl[] __initconst = {
+ 	PLL_36XX_RATE(480000000, 160, 2, 2, 0),
+ 	PLL_36XX_RATE(432000000, 144, 2, 2, 0),
+ 	PLL_36XX_RATE(400000000, 200, 3, 2, 0),
+-	PLL_36XX_RATE(394073130, 459, 7, 2, 49282),
++	PLL_36XX_RATE(394073128, 459, 7, 2, 49282),
+ 	PLL_36XX_RATE(333000000, 111, 2, 2, 0),
+ 	PLL_36XX_RATE(300000000, 100, 2, 2, 0),
+ 	PLL_36XX_RATE(266000000, 266, 3, 3, 0),
 -- 
-nvpublic
+2.16.1
