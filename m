@@ -1,73 +1,115 @@
-Return-Path: <wsa-dev@sang-engineering.com>
-Date: Thu, 8 Feb 2018 00:11:56 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [RFC v4 14/26] ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
-Message-ID: <20180207231156.3o2eeymgb7eec3e3@katana>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-15-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ghjh2tvtbi7qarpp"
-In-Reply-To: <1517423070-24236-15-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45982 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752865AbeBPPfd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Feb 2018 10:35:33 -0500
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Subject: Re: [PATCH] Update Boris Brezillon email address
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Message-id: <9c05d969-b488-fbc4-4143-6446d8a6d7ab@partner.samsung.com>
+Date: Fri, 16 Feb 2018 16:35:27 +0100
+In-reply-to: <20180216155455.36168609@bbrezillon>
+References: <CGME20180216104523epcas3p1c45769e365a181963f8328237d270854@epcas3p1.samsung.com>
+        <20180216104449.15546-1-boris.brezillon@bootlin.com>
+        <dbe89241-4d05-d369-2894-fdc0b2d80b80@partner.samsung.com>
+        <20180216121619.3edad6fb@bbrezillon>
+        <4086d3a7-c79d-6906-2778-caccd647ffe6@partner.samsung.com>
+        <20180216150050.6051cc26@bbrezillon>
+        <138ed639-992d-2d87-4dd4-973323cdcad7@partner.samsung.com>
+        <20180216155455.36168609@bbrezillon>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 16.02.2018 15:54, Boris Brezillon wrote:
+> Adding back all the people that were Cc-ed on the initial email.
+> 
+> On Fri, 16 Feb 2018 15:18:21 +0100
+> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+> 
+>> On 16.02.2018 15:00, Boris Brezillon wrote:
+>>> On Fri, 16 Feb 2018 12:21:53 +0100
+>>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+>>>   
+>>>> On 16.02.2018 12:16, Boris Brezillon wrote:  
+>>>>> On Fri, 16 Feb 2018 12:07:42 +0100
+>>>>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+>>>>>     
+>>>>>> On 16.02.2018 11:44, Boris Brezillon wrote:    
+>>>>>>> Free Electrons is now Bootlin.
+>>>>>>>
+>>>>>>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+>>>>>>> ---
+>>>>>>> Note that I'm planning to take this patch through the MTD tree.
+>>>>>>> ---
+>>>>>>>  .mailmap    |  7 ++++---
+>>>>>>>  MAINTAINERS | 10 +++++-----
+>>>>>>>  2 files changed, 9 insertions(+), 8 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/.mailmap b/.mailmap
+>>>>>>> index e18cab73e209..50c1d6bf36b2 100644
+>>>>>>> --- a/.mailmap
+>>>>>>> +++ b/.mailmap
+>>>>>>> @@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
+>>>>>>>  Ben Gardner <bgardner@wabtec.com>
+>>>>>>>  Ben M Cahill <ben.m.cahill@intel.com>
+>>>>>>>  Björn Steinbrink <B.Steinbrink@gmx.de>
+>>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com>
+>>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon.dev@gmail.com>
+>>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon@overkiz.com>
+>>>>>>> +Boris Brezillon <boris.brezillon@bootlin.com>
+>>>>>>> +Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@free-electrons.com>      
+>>>>>>
+>>>>>> ------------------------------------------------------------------ ??????????????????    
+>>>>>
+>>>>> Is there a problem with this line?
+>>>>>     
+>>>>
+>>>> I think you want to delete all 'free-electrons', yet here you add this  
+>>>
+>>> I'm clearly not a git expert, but according to man git-shortlog [1], the
+>>> format I'm using here allows mailmap to replace the old email by the
+>>> new one, which is exactly what I want.
+>>>
+>>> [1]https://git-scm.com/docs/git-shortlog
+>>>   
+>>
+>> Ah, I see, but why do you send patch for .mailmap ?
+>> it is your private file, not global one, I do not want mine .mailmap
+>> to be replaced by yours :)
+> 
+> No, it's not private, it's part of the git tree.
+> 
+>> But beside this, you can use sed script
+>>
+>> sed -i -e 's/free-electrons/bootlin/g' .mailmap
+>>
+>> Please just resend this with patch for MAINTAINER's only
+>>
+> 
+> .mailmap is versioned for a good reason, and I don't see why I couldn't
+> update entries for my emails, especially since those entries already
+> existed before this patch.
 
---ghjh2tvtbi7qarpp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I am newbie, it looks you are right, sorry for questions.
 
-On Wed, Jan 31, 2018 at 06:24:18PM +0000, Fabrizio Castro wrote:
-> R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
-> its driver by default.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
+-- 
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
 
-Given the rest of the series works (same for the later patches):
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---ghjh2tvtbi7qarpp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7h7wACgkQFA3kzBSg
-KbbNhg/8CA58qpPJ8IG15ptynCnCyyFcFrz0ljGiJXpGcuL2MI1FBxN7gPc1BsqE
-kFOghwLAbv/meyZ4JjU1YjPMGm2Iqed0JAs1563VScCL0uoaCEjTo7RZnWTs1AFa
-x+fY4OQIpr4VqenJRhak/fGx0l8OPcgetXUoaSNyJzj3UWeLnDV2738tB0F48ggT
-RjKJdZguE/UmPMewIGUoyCgeS4U4qM7IfoQrygh1Phdg8Ia9rYlCW9oXb4ZzQdy8
-FPu5LVRlC8wHBccXiKuwmQxgDMp8Ve9NgTLVMSXAgckFv+WW0brqcUkMJrGPzGg8
-W1tlVq+8w2hNf/Kw6ZvjAAAI2a7315P4t7rn78AdfVu7oDHEYZimdJ4BobANDQ6m
-m41Jx3I85T5EtDiYqk9rWJ5ZqD9j8C3NJ3AqwZjfFsoiUV/gLjiEC7u71boy48wc
-YoDjVTyNhZCoLtljuPJTojSoZTwoNzCpd80wI+HqPzPxqph0m1ah0sufvY7Izpj5
-4/NcPErVPFL0g2VHx7fM7IHJRMS05V1yEcvA34lM78hJE83l7oYmnSGM25vy4RYI
-b65K4T9iKFpebv/EbJ82f7tWCEikdUvvjNaJEDh1FLX1S5yBOKml/409vG9aMQvF
-PoILsfiOq6tuvDySZmWnwUsshqZQjW4rrwGHYLLuadOAgoAQ0os=
-=krTo
------END PGP SIGNATURE-----
-
---ghjh2tvtbi7qarpp--
