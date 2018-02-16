@@ -1,107 +1,252 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Rob Herring <robh@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE
-	<alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        "gabriel.fernandez.st@gmail.com"
-	<gabriel.fernandez.st@gmail.com>,
-        Olivier BIDEAU <olivier.bideau@st.com>
-Subject: Re: [PATCH 01/14] dt-bindings: Document STM32MP1 Reset Clock
- Controller (RCC) bindings
-Date: Mon, 5 Feb 2018 07:01:29 +0000
-Message-ID: <19273eb9-0c8c-cd2a-d100-f25f25e93234@st.com>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
- <1517580222-23301-2-git-send-email-gabriel.fernandez@st.com>
- <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
-In-Reply-To: <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
+In-Reply-To: <0af79515-ed4f-a4c6-6358-2053e8fd1745@gmail.com>
+References: <20180214135612.21356-1-embed3d@gmail.com> <20180215141154.monvwx25awwetqrc@flea.lan>
+ <00ece3d8-52ac-c51d-1867-97f7fd84dadf@gmail.com> <CAGb2v67fP4-xxAAPWAa0+YtWY3xvQX=5XX7koq-h8USvT+YA-A@mail.gmail.com>
+ <0af79515-ed4f-a4c6-6358-2053e8fd1745@gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 16 Feb 2018 20:59:17 +0800
+Message-ID: <CAGb2v65ST6VuoOZ+=+RYMjA+u+cSv9T=9BraQChL4mfw7YikxA@mail.gmail.com>
+Subject: Re: [PATCH v3] rtc: ac100: Fix ac100 determine rate bug
+To: Philipp Rossak <embed3d@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Alessandro Zummo <a.zummo@towertech.it>,
+	alexandre.belloni@bootlin.com, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>, linux-rtc@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>, Mike Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgUm9iLA0KDQpUaGFua3MgZm9yIHJldmlld2luZy4NCg0KDQpPbiAwMi8wNS8yMDE4IDA3OjA5
-IEFNLCBSb2IgSGVycmluZyB3cm90ZToNCj4gT24gRnJpLCBGZWIgMDIsIDIwMTggYXQgMDM6MDM6
-MjlQTSArMDEwMCwgZ2FicmllbC5mZXJuYW5kZXpAc3QuY29tIHdyb3RlOg0KPj4gRnJvbTogR2Fi
-cmllbCBGZXJuYW5kZXogPGdhYnJpZWwuZmVybmFuZGV6QHN0LmNvbT4NCj4+DQo+PiBUaGUgUkND
-IGJsb2NrIGlzIHJlc3BvbnNpYmxlIG9mIHRoZSBtYW5hZ2VtZW50IG9mIHRoZSBjbG9jayBhbmQg
-cmVzZXQNCj4+IGdlbmVyYXRpb24gZm9yIHRoZSBjb21wbGV0ZSBjaXJjdWl0Lg0KPj4NCj4+IFNp
-Z25lZC1vZmYtYnk6IEdhYnJpZWwgRmVybmFuZGV6IDxnYWJyaWVsLmZlcm5hbmRlekBzdC5jb20+
-DQo+PiAtLS0NCj4+ICAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50
-eHQgICAgICAgfCA4NSArKysrKysrKysrKysrKysrKysrKysrDQo+PiAgIDEgZmlsZSBjaGFuZ2Vk
-LCA4NSBpbnNlcnRpb25zKCspDQo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9u
-L2RldmljZXRyZWUvYmluZGluZ3MvbWZkL3N0LHN0bTMyLXJjYy50eHQNCj4+DQo+PiBkaWZmIC0t
-Z2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9zdCxzdG0zMi1yY2Mu
-dHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9zdCxzdG0zMi1yY2Mu
-dHh0DQo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMC4uMjgwMTdhMQ0K
-Pj4gLS0tIC9kZXYvbnVsbA0KPj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL21mZC9zdCxzdG0zMi1yY2MudHh0DQo+PiBAQCAtMCwwICsxLDg1IEBADQo+PiArU1RNaWNy
-b2VsZWN0cm9uaWNzIFNUTTMyIFBlcmlwaGVyYWwgUmVzZXQgQ2xvY2sgQ29udHJvbGxlcg0KPj4g
-Kz09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT0NCj4+ICsNCj4+ICtUaGUgUkNDIElQIGlzIGJvdGggYSByZXNldCBhbmQgYSBjbG9jayBjb250
-cm9sbGVyLg0KPj4gKw0KPj4gK1BsZWFzZSBhbHNvIHJlZmVyIHRvIHJlc2V0LnR4dCBmb3IgY29t
-bW9uIHJlc2V0IGNvbnRyb2xsZXIgYmluZGluZyB1c2FnZS4NCj4+ICsNCj4+ICtQbGVhc2UgYWxz
-byByZWZlciB0byBjbG9jay1iaW5kaW5ncy50eHQgZm9yIGNvbW1vbiBjbG9jayBjb250cm9sbGVy
-DQo+PiArYmluZGluZyB1c2FnZS4NCj4+ICsNCj4+ICsNCj4+ICtSZXF1aXJlZCBwcm9wZXJ0aWVz
-Og0KPj4gKy0gY29tcGF0aWJsZTogInNpbXBsZS1tZmQiLCAic3lzY29uIg0KPg0KPj4gKy0gcmVn
-OiBzaG91bGQgYmUgcmVnaXN0ZXIgYmFzZSBhbmQgbGVuZ3RoIGFzIGRvY3VtZW50ZWQgaW4gdGhl
-IGRhdGFzaGVldA0KPj4gKw0KPj4gKy0gU3ViLW5vZGVzOg0KPj4gKyAgLSBjb21wYXRpYmxlOiAi
-c3Qsc3RtMzJtcDEtcmNjLWNsayINCj4+ICsJLSAjY2xvY2stY2VsbHM6IDEsIGRldmljZSBub2Rl
-cyBzaG91bGQgc3BlY2lmeSB0aGUgY2xvY2sgaW4gdGhlaXINCj4+ICsJICAiY2xvY2tzIiBwcm9w
-ZXJ0eSwgY29udGFpbmluZyBhIHBoYW5kbGUgdG8gdGhlIGNsb2NrIGRldmljZSBub2RlLA0KPj4g
-KwkgIGFuIGluZGV4IHNwZWNpZnlpbmcgdGhlIGNsb2NrIHRvIHVzZS4NCj4+ICsNCj4+ICsgIC0g
-Y29tcGF0aWJsZTogInN0LHN0bTMybXAxLXJjYy1yc3QiDQo+PiArCS0gI3Jlc2V0LWNlbGxzOiBT
-aGFsbCBiZSAxDQo+PiArDQo+PiArRXhhbXBsZToNCj4+ICsJcmNjOiByY2NANTAwMDAwMDAgew0K
-Pj4gKwkJY29tcGF0aWJsZSA9ICJzeXNjb24iLCAic2ltcGxlLW1mZCI7DQo+PiArCQlyZWcgPSA8
-MHg1MDAwMDAwMCAweDEwMDA+Ow0KPj4gKw0KPj4gKwkJcmNjX2NsazogcmNjLWNsa0A1MDAwMDAw
-MCB7DQo+PiArCQkJI2Nsb2NrLWNlbGxzID0gPDE+Ow0KPj4gKwkJCWNvbXBhdGlibGUgPSAic3Qs
-c3RtMzJtcDEtcmNjLWNsayI7DQo+PiArCQl9Ow0KPj4gKw0KPj4gKwkJcmNjX3JzdDogcmNjLXJl
-c2V0QDUwMDAwMDAwIHsNCj4gWW91IHNob3VsZCBub3QgaGF2ZSB0aGUgc2FtZSB1bml0LWFkZHJl
-c3MgdHdpY2UuDQo+DQo+IElNTywgdGhpcyBzaG91bGQganVzdCBiZToNCj4NCj4gCXJjYzogcmNj
-QDUwMDAwMDAwIHsNCj4gCQljb21wYXRpYmxlID0gInN0LXN0bTMybXAxLXJjYyI7DQo+IAkJcmVn
-ID0gPDB4NTAwMDAwMDAgMHgxMDAwPjsNCj4gCQkjY2xvY2stY2VsbHMgPSA8MT47DQo+IAkJI3Jl
-c2V0LWNlbGxzID0gPDE+Ow0KPiAJfTsNCj4NCj4gVGhlcmUncyBubyByZWFzb24gYSBub2RlIGNh
-bid0IHByb3ZpZGUgbW9yZSB0aGFuIDEgZnVuY3Rpb24uDQpSQ0MgaXMgYW4gZGVkaWNhdGVkIElQ
-IGZvciBjbG9ja3MgYW5kIHJlc2V0cywgYnV0IGFsc28gZm9yIHBvd2VyIA0KbWFuYWdlbWVudCAo
-cGF0Y2hlcyB3aWxsIGJlIHNlbnQgbGF0ZXIpDQpUaGVuIGkgbmVlZCB0byBwcm9iZSAzIGRyaXZl
-cnMgd2l0aCBzYW1lIElQLg0KSXQncyBhbHNvIGEgd2F5IHRvIGF2b2lkIHVzZSBvZiAnQ0xLX09G
-X0RFQ0xBUkVfRFJJVkVSJyBhbmQgaSBuZWVkIGl0IHRvIA0KcHJvYmUgdGhlIDN0aCBkcml2ZXIu
-DQoNCkJSDQpHYWJyaWVsDQoNCj4NCj4NCj4+ICsJCQkjcmVzZXQtY2VsbHMgPSA8MT47DQo+PiAr
-CQkJY29tcGF0aWJsZSA9ICJzdCxzdG0zMm1wMS1yY2MtcnN0IjsNCj4+ICsJCX07DQo+PiArCX07
-DQo+PiArDQo+PiArU3BlY2lmeWluZyBjbG9ja3MNCj4+ICs9PT09PT09PT09PT09PT09PQ0KPj4g
-Kw0KPj4gK0FsbCBhdmFpbGFibGUgY2xvY2tzIGFyZSBkZWZpbmVkIGFzIHByZXByb2Nlc3NvciBt
-YWNyb3MgaW4NCj4+ICtkdC1iaW5kaW5ncy9jbG9jay9zdG0zMm1wMS1jbGtzLmggaGVhZGVyIGFu
-ZCBjYW4gYmUgdXNlZCBpbiBkZXZpY2UNCj4+ICt0cmVlIHNvdXJjZXMuDQo+PiArDQo+PiArRXhh
-bXBsZToNCj4+ICsNCj4+ICsJLyogQWNjZXNzaW5nIERNQTEgY2xvY2sgKi8NCj4+ICsJLi4uIHsN
-Cj4+ICsJCWNsb2NrcyA9IDwmcmNjX2NsayBETUExPg0KPj4gKwl9Ow0KPj4gKw0KPj4gKwkvKiBB
-Y2Nlc3NpbmcgU1BJNiBrZXJuZWwgY2xvY2sgKi8NCj4+ICsJLi4uIHsNCj4+ICsJCWNsb2NrcyA9
-IDwmcmNjX2NsayBTUEk2X0s+DQo+PiArCX07DQo+IE90aGVyIHRoYW4gdGhlIHBhdGggdG8gaGVh
-ZGVyLCB0aGUgY2xvY2sgYmluZGluZyBleHBsYWlucyBhbGwgdGhpcy4gTm8NCj4gbmVlZCB0byBk
-dXBsaWNhdGUgaGVyZS4NCm9rDQo+PiArDQo+PiArU3BlY2lmeWluZyBzb2Z0cmVzZXQgY29udHJv
-bCBvZiBkZXZpY2VzDQo+PiArPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-DQo+PiArDQo+PiArRGV2aWNlIG5vZGVzIHNob3VsZCBzcGVjaWZ5IHRoZSByZXNldCBjaGFubmVs
-IHJlcXVpcmVkIGluIHRoZWlyICJyZXNldHMiDQo+PiArcHJvcGVydHksIGNvbnRhaW5pbmcgYSBw
-aGFuZGxlIHRvIHRoZSByZXNldCBkZXZpY2Ugbm9kZSBhbmQgYW4gaW5kZXggc3BlY2lmeWluZw0K
-Pj4gK3doaWNoIGNoYW5uZWwgdG8gdXNlLg0KPj4gK1RoZSBpbmRleCBpcyB0aGUgYml0IG51bWJl
-ciB3aXRoaW4gdGhlIFJDQyByZWdpc3RlcnMgYmFuaywgc3RhcnRpbmcgZnJvbSBSQ0MNCj4+ICti
-YXNlIGFkZHJlc3MuDQo+PiArSXQgaXMgY2FsY3VsYXRlZCBhczogaW5kZXggPSByZWdpc3Rlcl9v
-ZmZzZXQgLyA0ICogMzIgKyBiaXRfb2Zmc2V0Lg0KPj4gK1doZXJlIGJpdF9vZmZzZXQgaXMgdGhl
-IGJpdCBvZmZzZXQgd2l0aGluIHRoZSByZWdpc3Rlci4NCj4+ICsNCj4+ICtGb3IgZXhhbXBsZSBv
-biBTVE0zMk1QMSwgZm9yIExUREMgcmVzZXQ6DQo+PiArIGx0ZGMgPSBBUEI0X1JTVFNFVFJfb2Zm
-c2V0IC8gNCAqIDMyICsgTFREQ19iaXRfb2Zmc2V0DQo+PiArICAgICAgPSAweDE4MCAvIDQgKiAz
-MiArIDAgPSAzMDcyDQo+PiArDQo+PiArVGhlIGxpc3Qgb2YgdmFsaWQgaW5kaWNlcyBmb3IgU1RN
-MzJNUDEgaXMgYXZhaWxhYmxlIGluOg0KPj4gK2luY2x1ZGUvZHQtYmluZGluZ3MvcmVzZXQtY29u
-dHJvbGxlci9zdG0zMm1wMS1yZXNldHMuaA0KPj4gKw0KPj4gK1RoaXMgZmlsZSBpbXBsZW1lbnRz
-IGRlZmluZXMgbGlrZToNCj4+ICsjZGVmaW5lIExURENfUgkzMDcyDQo+PiArDQo+PiArZXhhbXBs
-ZToNCj4+ICsNCj4+ICsJbHRkYyB7DQo+PiArCQlyZXNldHMgPSA8JnJjY19yc3QgTFREQ19SPjsN
-Cj4+ICsJfTsNCj4+IC0tIA0KPj4gMS45LjENCj4+DQo=
+On Fri, Feb 16, 2018 at 8:49 PM, Philipp Rossak <embed3d@gmail.com> wrote:
+>
+>
+> On 16.02.2018 05:10, Chen-Yu Tsai wrote:
+>>
+>> On Fri, Feb 16, 2018 at 1:53 AM, Philipp Rossak <embed3d@gmail.com> wrote:
+>>>
+>>>
+>>>
+>>> On 15.02.2018 15:11, Maxime Ripard wrote:
+>>>>
+>>>>
+>>>> On Wed, Feb 14, 2018 at 02:56:12PM +0100, Philipp Rossak wrote:
+>>>>>
+>>>>>
+>>>>> This patch fixes a bug, that prevents the Allwinner A83T and the A80
+>>>>> from a successful boot.
+>>>>>
+>>>>> The bug is there since v4.16-rc1 and appeared after the clk branch was
+>>>>> merged.
+>>>>
+>>>>
+>>>>
+>>>> Out of curiosity, which patch has introduced this? I couldn't find any
+>>>> obvious match.
+>>>>
+>>>
+>>> I wasn't also n
+>>
+>>
+>> To be honest, I'm not sure why this is hitting you and not me.
+>> I have both A83T boards that have assigned-clock-rates set for
+>> the ac100 clock outputs for WiFi. I have them running 4.16-rc1
+>> and have not seen this. The device tree patches that add these
+>> are in 4.15.
+>>
+>
+> Now it is getting curious ... .
+> I already mentioned that bug in the sunxi-irc and someone else was hitting
+> that problem also...
+> I tested it also with the same toolchain you are using (gcc 7.3.0-1 Debian),
+> but that didn't made any difference.
+>
+> I don't think that issue is related with the Hardware, but to be on the save
+> side: Which Hardware version of the BPI-M3 do you have? I have version 1.2.
+>
+> Can someone else can confirm this bug?
+
+So I might have remembered wrong, as I just realized I have your
+patch in my a83t branches. I don't hit this on the A80, which also
+has the AC100, but doesn't use assigned-clock-rates in the device
+tree.
+
+Could you try rolling back to 4.15 and see if you still hit it?
+
+>
+>
+>>>
+>>>>> You can find the shortend trace below:
+>>>>>
+>>>>> Unable to handle kernel NULL pointer dereference at virtual address
+>>>>> 00000000
+>>>>> pgd = (ptrval)
+>>>>> [00000000] *pgd=00000000
+>>>>> Internal error: Oops: 5 [#1] SMP ARM
+>>>>> Modules linked in:
+>>>>> CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be
+>>>>> #2
+>>>>> Hardware name: Allwinner sun8i Family
+>>>>> Workqueue: events deferred_probe_work_func
+>>>>> PC is at clk_hw_get_rate+0x0/0x34
+>>>>> LR is at ac100_clkout_determine_rate+0x48/0x19c
+>>>>>
+>>>>> [ ... ]
+>>>>>
+>>>>> (clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
+>>>>> (ac100_clkout_determine_rate) from
+>>>>> (clk_core_set_rate_nolock+0x3c/0x1a0)
+>>>>> (clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
+>>>>> (clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
+>>>>> (of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
+>>>>>
+>>>>> To fix that bug, we first check if the return of the
+>>>>> clk_hw_get_parent_by_index is non zero. If it is zero we skip that
+>>>>> clock parent.
+>>>>>
+>>>>> The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
+>>>>>
+>>>>> Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
+>>>>>
+>>>>> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+>>>>> ---
+>>>>>
+>>>>> Changes in v3:
+>>>>>          * add information when the bug appeared
+>>>>>          * make the comment more clear
+>>>>> Changes in v2:
+>>>>>          * add tag Fixes: ... to commit message
+>>>>>          * add comment to if statement why we are doing this check
+>>>>>
+>>>>>    drivers/rtc/rtc-ac100.c | 19 ++++++++++++++++++-
+>>>>>    1 file changed, 18 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/rtc/rtc-ac100.c b/drivers/rtc/rtc-ac100.c
+>>>>> index 8ff9dc3fe5bf..2412aa2e8399 100644
+>>>>> --- a/drivers/rtc/rtc-ac100.c
+>>>>> +++ b/drivers/rtc/rtc-ac100.c
+>>>>> @@ -183,7 +183,24 @@ static int ac100_clkout_determine_rate(struct
+>>>>> clk_hw
+>>>>> *hw,
+>>>>>          for (i = 0; i < num_parents; i++) {
+>>>>>                  struct clk_hw *parent = clk_hw_get_parent_by_index(hw,
+>>>>> i);
+>>>>> -               unsigned long tmp, prate = clk_hw_get_rate(parent);
+>>>>> +               unsigned long tmp, prate;
+>>>>> +
+>>>>> +               /*
+>>>>> +                * The clock has two parents, one is a fixed clock
+>>>>> which
+>>>>> is
+>>>>> +                * internally registered by the ac100 driver. The other
+>>>>> parent
+>>>>> +                * is a clock from the codec side of the chip, which we
+>>>>> +                * properly declare and reference in the devicetree and
+>>>>> is
+>>>>> +                * not implemented in any driver right now.
+>>>>> +                * If the clock core looks for the parent of that
+>>>>> second
+>>>>> +                * missing clock, it can't one that is registered and
+>>>>> +                * returns NULL.
+>>>>> +                * Thus we need to check if the parent exists before
+>>>>> +                * we get the parent rate.
+>>>>> +                */
+>>>>> +               if (!parent)
+>>>>> +                       continue;
+>>>>
+>>>>
+>>>>
+>>>> I'm sorry, but I still don't get it. When you register that clock, you
+>>>> will give it two parents. Why would that change during the life of the
+>>>> clock?
+>>>>
+>>>> This really looks like a workaround rather than an actual fix.
+>>>>
+>>>> Maxime
+>>>>
+>>> I agree this is more a workaround!
+>>> A proper solution/fix would be to define the devicetree correct like
+>>> this:
+>>>
+>>> diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+>>> b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+>>> index 6550bf0e594b..6f56d429f17e 100644
+>>> --- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+>>> +++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+>>> @@ -175,11 +175,18 @@
+>>>                          compatible = "x-powers,ac100-rtc";
+>>>                          interrupt-parent = <&r_intc>;
+>>>                          interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+>>> -                       clocks = <&ac100_codec>;
+>>> +                       clocks = <&ac100_rtc_32k>;
+>>>                          #clock-cells = <1>;
+>>>                          clock-output-names = "cko1_rtc",
+>>>                                               "cko2_rtc",
+>>>                                               "cko3_rtc";
+>>> +
+>>> +                       ac100_rtc_32k: rtc-32k-oscillator {
+>>> +                               compatible = "fixed-clock";
+>>> +                               #clock-cells = <0>;
+>>> +                               clock-frequency  = <32768>;
+>>> +                               clock-output-names = "ac100-rtc-32k";
+>>> +                       };
+>>>                  };
+>>>          };
+>>>   };
+>>>
+>>> What do you think about that solution?
+>>
+>>
+>> That's not quite right either. As I mentioned before, the
+>> RTC block has two clock inputs, one 4MHz signal from the
+>> codec block, and one 32.768 kHz signal from an external
+>> crystal. The original device tree binding describes the
+>> first one, and the 32.768 kHz clock was registered by
+>> the RTC driver internally.
+>>
+>> If you're going to add the crystal clock, you still need
+>> to keep the codec one. Note that this does not fix what
+>> Maxime is asking you. I've already provided an explanation:
+>>
+>> The clock core allows registering clocks with not-yet-existing
+>> clock parents. Parents are matches by string names. If no
+>> clock by that name is registered yet, the clock core simply
+>> orphans the new clock if the unregistered parent is its
+>> current parent or simply ignores that parent if its not the
+>> current parent. This is entirely valid and is what we are
+>> counting on here, as we haven't implemented the codec-side
+>> driver.
+>>
+>> Note we also sort of depend on this behavior for sunxi-ng
+>> clocks, where in some cases we get circular dependencies
+>> between clock blocks.
+>>
+>> BTW, since this is mostly related to the clk subsystem,
+>> please CC the clk maintainers as well.
+>>
+>
+> Ok, I added also now the clk mailing list and maintainers.
+> As reference this here is the boot log [1].
+>
+> Im not sure if this in relation to this bug:
+> But, already with the 4.15 kernel I get from time to time some oops during
+> runtime on the a31s (bpi-m2) and all are clock related and causes a crash of
+> the system.
+
+Are you referring to the A31 CLK_OUT bug? That is an entirely separate
+bug in the A31/A31s CCU driver. The bug was there from the beginning,
+but did not cause a crash as the incompatible data structures had lined
+up in a way that the embedded data structure that was used by the incorrect
+clk ops was actually compatible. This changed with 4.16-rc1, as a new field
+was added to some of the clock types, breaking the alignment. I made some
+changes but have yet to write the commit log for it. Also I don't have any
+A31/A31s boards to test it on right now. I can send you the patch later.
+
+ChenYu
+
+>
+> Philipp
+>
+>
+>
+> [1]: https://pastebin.com/5c7hxjsS
