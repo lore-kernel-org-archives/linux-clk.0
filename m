@@ -1,52 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43208 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030432AbeBNOAN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:13 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v3 04/10] clk: qcom: Add DT bindings for CPU clock driver for msm8996
-Date: Wed, 14 Feb 2018 15:59:46 +0200
-Message-Id: <1518616792-29028-5-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
+	<krzk@kernel.org>, linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG
+	SOC CLOCK DRIVERS), linux-clk@vger.kernel.org (open list:COMMON CLK
+	FRAMEWORK)
+Subject: [PATCH v2 1/7] clk: samsung: exynos3250: fix PLL rates
+Date: Fri, 16 Feb 2018 15:57:48 +0100
+Message-id: <20180216145754.14428-2-a.hajda@samsung.com>
+In-reply-to: <20180216145754.14428-1-a.hajda@samsung.com>
+References: <20180216145754.14428-1-a.hajda@samsung.com>
+	<CGME20180216145804eucas1p2cbe4de00131e6b7bbd946d349dfc2b2d@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Rates declared in PLL rate tables should match exactly rates calculated
+from PLL coefficients. If that is not the case, rate of parent might be being
+set not as expected. For instance, if in the PLL rates table we have
+a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
+callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
+will return 393216003. If we now attempt to set rate of a PLL's child divider
+clock to 393216000/2 its rate will be 131072001, rather than 196608000.
+That is the divider will be set to 3 instead of 2, because 393216003/2 is
+greater than 196608000.
+
+To fix this issue declared rates are changed to exactly match rates generated
+by a PLL, as calculated from the P, M, S, K coefficients.
+
+In this patch an erroneous P value for 74176002 output frequency is also
+corrected.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+ drivers/clk/samsung/clk-exynos3250.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-new file mode 100644
-index 0000000..e7cf15a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-@@ -0,0 +1,17 @@
-+Qualcomm CPUSS clock controller for Kryo CPUs
-+----------------------------------------------------
-+
-+Required properties :
-+- compatible : shall contain only one of the following:
-+
-+			"qcom-msm8996-apcc"
-+
-+- reg : shall contain base register location and length
-+- #clock-cells : shall contain 1
-+
-+Example:
-+	kryocc: clock-controller@6400000 {
-+		compatible = "qcom-msm8996-apcc";
-+		reg = <0x6400000 0x90000>;
-+		#clock-cells = <1>;
-+	};
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 1b81e283f605..ed36728424a2 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -698,7 +698,7 @@ static const struct samsung_pll_rate_table exynos3250_epll_rates[] __initconst =
+ 	PLL_36XX_RATE(144000000,  96, 2, 3,     0),
+ 	PLL_36XX_RATE( 96000000, 128, 2, 4,     0),
+ 	PLL_36XX_RATE( 84000000, 112, 2, 4,     0),
+-	PLL_36XX_RATE( 80000004, 106, 2, 4, 43691),
++	PLL_36XX_RATE( 80000003, 106, 2, 4, 43691),
+ 	PLL_36XX_RATE( 73728000,  98, 2, 4, 19923),
+ 	PLL_36XX_RATE( 67737598, 270, 3, 5, 62285),
+ 	PLL_36XX_RATE( 65535999, 174, 2, 5, 49982),
+@@ -734,7 +734,7 @@ static const struct samsung_pll_rate_table exynos3250_vpll_rates[] __initconst =
+ 	PLL_36XX_RATE(148352005,  98, 2, 3, 59070),
+ 	PLL_36XX_RATE(108000000, 144, 2, 4,     0),
+ 	PLL_36XX_RATE( 74250000,  99, 2, 4,     0),
+-	PLL_36XX_RATE( 74176002,  98, 3, 4, 59070),
++	PLL_36XX_RATE( 74176002,  98, 2, 4, 59070),
+ 	PLL_36XX_RATE( 54054000, 216, 3, 5, 14156),
+ 	PLL_36XX_RATE( 54000000, 144, 2, 5,     0),
+ 	{ /* sentinel */ }
 -- 
-1.9.1
-
+2.16.1
