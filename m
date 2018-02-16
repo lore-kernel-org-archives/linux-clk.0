@@ -1,126 +1,122 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ve1eur01on0084.outbound.protection.outlook.com ([104.47.1.84]:20040
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750931AbeBXGFp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 24 Feb 2018 01:05:45 -0500
-From: Jacky Bai <ping.bai@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>
-CC: "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "jacky.baip@gmail.com" <jacky.baip@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3 2/4] driver: clk: imx: add new gate/gate2 wrapper
- funtion
-Date: Sat, 24 Feb 2018 06:05:39 +0000
-Message-ID: <HE1PR04MB311339152F018DB7D54CDD5B87C30@HE1PR04MB3113.eurprd04.prod.outlook.com>
-References: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
- <1517968819-12869-2-git-send-email-ping.bai@nxp.com>
- <20180224031232.GW3217@dragon>
-In-Reply-To: <20180224031232.GW3217@dragon>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Fri, 16 Feb 2018 16:51:47 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc: David Woodhouse <dwmw2@infradead.org>, Brian Norris
+ <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Richard
+ Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+ linux-mtd@lists.infradead.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org, Mike
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-clk@vger.kernel.org, David Airlie <airlied@linux.ie>, Daniel Vetter
+ <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Update Boris Brezillon email address
+Message-ID: <20180216165147.41c0d9e7@bbrezillon>
+In-Reply-To: <9c05d969-b488-fbc4-4143-6446d8a6d7ab@partner.samsung.com>
+References: <CGME20180216104523epcas3p1c45769e365a181963f8328237d270854@epcas3p1.samsung.com>
+	<20180216104449.15546-1-boris.brezillon@bootlin.com>
+	<dbe89241-4d05-d369-2894-fdc0b2d80b80@partner.samsung.com>
+	<20180216121619.3edad6fb@bbrezillon>
+	<4086d3a7-c79d-6906-2778-caccd647ffe6@partner.samsung.com>
+	<20180216150050.6051cc26@bbrezillon>
+	<138ed639-992d-2d87-4dd4-973323cdcad7@partner.samsung.com>
+	<20180216155455.36168609@bbrezillon>
+	<9c05d969-b488-fbc4-4143-6446d8a6d7ab@partner.samsung.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-> Subject: Re: [PATCH v3 2/4] driver: clk: imx: add new gate/gate2 wrapper
-> funtion
+On Fri, 16 Feb 2018 16:35:27 +0100
+Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+
+> On 16.02.2018 15:54, Boris Brezillon wrote:
+> > Adding back all the people that were Cc-ed on the initial email.
+> >=20
+> > On Fri, 16 Feb 2018 15:18:21 +0100
+> > Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+> >  =20
+> >> On 16.02.2018 15:00, Boris Brezillon wrote: =20
+> >>> On Fri, 16 Feb 2018 12:21:53 +0100
+> >>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+> >>>    =20
+> >>>> On 16.02.2018 12:16, Boris Brezillon wrote:   =20
+> >>>>> On Fri, 16 Feb 2018 12:07:42 +0100
+> >>>>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
+> >>>>>      =20
+> >>>>>> On 16.02.2018 11:44, Boris Brezillon wrote:     =20
+> >>>>>>> Free Electrons is now Bootlin.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> >>>>>>> ---
+> >>>>>>> Note that I'm planning to take this patch through the MTD tree.
+> >>>>>>> ---
+> >>>>>>>  .mailmap    |  7 ++++---
+> >>>>>>>  MAINTAINERS | 10 +++++-----
+> >>>>>>>  2 files changed, 9 insertions(+), 8 deletions(-)
+> >>>>>>>
+> >>>>>>> diff --git a/.mailmap b/.mailmap
+> >>>>>>> index e18cab73e209..50c1d6bf36b2 100644
+> >>>>>>> --- a/.mailmap
+> >>>>>>> +++ b/.mailmap
+> >>>>>>> @@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
+> >>>>>>>  Ben Gardner <bgardner@wabtec.com>
+> >>>>>>>  Ben M Cahill <ben.m.cahill@intel.com>
+> >>>>>>>  Bj=C3=B6rn Steinbrink <B.Steinbrink@gmx.de>
+> >>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com>
+> >>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillo=
+n.dev@gmail.com>
+> >>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillo=
+n@overkiz.com>
+> >>>>>>> +Boris Brezillon <boris.brezillon@bootlin.com>
+> >>>>>>> +Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@f=
+ree-electrons.com>       =20
+> >>>>>>
+> >>>>>> ------------------------------------------------------------------=
+ ??????????????????     =20
+> >>>>>
+> >>>>> Is there a problem with this line?
+> >>>>>      =20
+> >>>>
+> >>>> I think you want to delete all 'free-electrons', yet here you add th=
+is   =20
+> >>>
+> >>> I'm clearly not a git expert, but according to man git-shortlog [1], =
+the
+> >>> format I'm using here allows mailmap to replace the old email by the
+> >>> new one, which is exactly what I want.
+> >>>
+> >>> [1]https://git-scm.com/docs/git-shortlog
+> >>>    =20
+> >>
+> >> Ah, I see, but why do you send patch for .mailmap ?
+> >> it is your private file, not global one, I do not want mine .mailmap
+> >> to be replaced by yours :) =20
+> >=20
+> > No, it's not private, it's part of the git tree.
+> >  =20
+> >> But beside this, you can use sed script
+> >>
+> >> sed -i -e 's/free-electrons/bootlin/g' .mailmap
+> >>
+> >> Please just resend this with patch for MAINTAINER's only
+> >> =20
+> >=20
+> > .mailmap is versioned for a good reason, and I don't see why I couldn't
+> > update entries for my emails, especially since those entries already
+> > existed before this patch. =20
 >=20
-> + Lucas
->=20
-> On Wed, Feb 07, 2018 at 10:00:17AM +0800, Bai Ping wrote:
-> > Add new gate/gate2 wrapper function to register clocks with optional fl=
-ags.
-> >
-> > Signed-off-by: Bai Ping <ping.bai@nxp.com>
-> > ---
-> >  drivers/clk/imx/clk.h | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h index
-> > d69c4bb..8076ec0 100644
-> > --- a/drivers/clk/imx/clk.h
-> > +++ b/drivers/clk/imx/clk.h
-> > @@ -123,6 +123,13 @@ static inline struct clk *imx_clk_gate(const char
-> *name, const char *parent,
-> >  			shift, 0, &imx_ccm_lock);
-> >  }
-> >
-> > +static inline struct clk *imx_clk_gate_flags(const char *name, const c=
-har
-> *parent,
-> > +		void __iomem *reg, u8 shift, unsigned long flags) {
-> > +	return clk_register_gate(NULL, name, parent, flags |
-> CLK_SET_RATE_PARENT, reg,
-> > +			shift, 0, &imx_ccm_lock);
-> > +}
-> > +
-> >  static inline struct clk *imx_clk_gate_dis(const char *name, const cha=
-r
-> *parent,
-> >  		void __iomem *reg, u8 shift)
-> >  {
-> > @@ -137,6 +144,13 @@ static inline struct clk *imx_clk_gate2(const char
-> *name, const char *parent,
-> >  			shift, 0x3, 0, &imx_ccm_lock, NULL);  }
-> >
-> > +static inline struct clk *imx_clk_gate2_flags(const char *name, const =
-char
-> *parent,
-> > +		void __iomem *reg, u8 shift, unsigned long flags) {
-> > +	return clk_register_gate2(NULL, name, parent, flags |
-> CLK_SET_RATE_PARENT, reg,
-> > +			shift, 0x3, 0, &imx_ccm_lock, NULL); }
-> > +
->=20
-> Lucas' patch 'clk: imx: add clock driver for i.MX8MQ CCM' [1] adds an
-> imx_clk_gate2_flags() as well, but with different implementation.  Can yo=
-u
-> guys talk to each other to sort it out?
+> I am newbie, it looks you are right, sorry for questions.
 >=20
 
-For gate type clks, CLK_SET_RATE_PARENT flag should be a necessary flag, I =
-think it is better to add this flag by default
-for imx_clk_gate2_flags implementation. Lucas, agree?
+No problem, but when you're not sure about something you should not act
+like you know how things should be done.
 
-BR
-Jacky bai
+Regards,
 
-> Shawn
->=20
-> [1]
-> https://emea01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fpatc=
-h
-> work.kernel.org%2Fpatch%2F10195759%2F&data=3D02%7C01%7Cping.bai%40nx
-> p.com%7C95acb8b895a1428e00ab08d57b347bb7%7C686ea1d3bc2b4c6fa92cd
-> 99c5c301635%7C0%7C0%7C636550387753283006&sdata=3DoLeHGXgDfDa88UV
-> oRt4p35AaxTo8KTVjh0L32ONk1yI%3D&reserved=3D0
->=20
-> >  static inline struct clk *imx_clk_gate2_shared(const char *name,
-> >  		const char *parent, void __iomem *reg, u8 shift,
-> >  		unsigned int *share_count)
-> > --
-> > 1.9.1
-> >
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Flis=
-t
-> >
-> s.infradead.org%2Fmailman%2Flistinfo%2Flinux-arm-kernel&data=3D02%7C01%7
-> >
-> Cping.bai%40nxp.com%7C95acb8b895a1428e00ab08d57b347bb7%7C686ea1d
-> 3bc2b4
-> >
-> c6fa92cd99c5c301635%7C0%7C0%7C636550387753283006&sdata=3DJCVrNx3A
-> %2FynAF
-> > twiNCsH2sekWwgvYyKgfcZmEiXdjss%3D&reserved=3D0
+Boris
+
+--=20
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
