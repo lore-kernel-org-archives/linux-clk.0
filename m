@@ -1,45 +1,71 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>
-Subject: [PATCH 1/3] clk: exynos5433: Extend list of available AUD_PLL
- output frequencies
-Date: Mon, 05 Feb 2018 15:22:28 +0100
-Message-id: <20180205142230.9755-1-s.nawrocki@samsung.com>
-References: <CGME20180205142252epcas1p4471e32e2b513806420c64b323af2ffa6@epcas1p4.samsung.com>
+Return-Path: <a.hajda@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
+	<krzk@kernel.org>, linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG
+	SOC CLOCK DRIVERS), linux-clk@vger.kernel.org (open list:COMMON CLK
+	FRAMEWORK)
+Subject: [PATCH v2 4/7] clk: samsung: exynos5433: fix PLL rates
+Date: Fri, 16 Feb 2018 15:57:51 +0100
+Message-id: <20180216145754.14428-5-a.hajda@samsung.com>
+In-reply-to: <20180216145754.14428-1-a.hajda@samsung.com>
+References: <20180216145754.14428-1-a.hajda@samsung.com>
+	<CGME20180216145805eucas1p28452227465bf275bb00dec65ab5b3978@eucas1p2.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add more definitions to the exynos5433_aud_pll_rates table so the
-AUD_PLL can be used as a root clock source for the I2S1 and the HDMI
-interface.
+Rates declared in PLL rate tables should match exactly rates calculated
+from PLL coefficients. If that is not the case, rate of parent might be being
+set not as expected. For instance, if in the PLL rates table we have
+a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
+callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
+will return 393216003. If we now attempt to set rate of a PLL's child divider
+clock to 393216000/2 its rate will be 131072001, rather than 196608000.
+That is the divider will be set to 3 instead of 2, because 393216003/2 is
+greater than 196608000.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To fix this issue declared rates are changed to exactly match rates generated
+by a PLL, as calculated from the P, M, S, K coefficients.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/samsung/clk-exynos5433.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index db270908037a..74b70ddab4d6 100644
+index 57a41824ee2e..7985352ceb2f 100644
 --- a/drivers/clk/samsung/clk-exynos5433.c
 +++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -765,6 +765,14 @@ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initcons
- 	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
+@@ -729,7 +729,7 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
+ 	PLL_35XX_RATE(800000000U,  400, 6,  1),
+ 	PLL_35XX_RATE(733000000U,  733, 12, 1),
+ 	PLL_35XX_RATE(700000000U,  175, 3,  1),
+-	PLL_35XX_RATE(667000000U,  222, 4,  1),
++	PLL_35XX_RATE(666000000U,  222, 4,  1),
+ 	PLL_35XX_RATE(633000000U,  211, 4,  1),
+ 	PLL_35XX_RATE(600000000U,  500, 5,  2),
+ 	PLL_35XX_RATE(552000000U,  460, 5,  2),
+@@ -757,12 +757,12 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
+ /* AUD_PLL */
+ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
+ 	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
+-	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
++	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
+ 	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
+-	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
+-	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
+-	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
+-	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
++	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
++	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
++	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
++	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
-+	PLL_36XX_RATE(200000000U, 200, 3, 3,      0),
-+	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
-+	PLL_36XX_RATE(180633609U, 301, 5, 3,   3671),
-+	PLL_36XX_RATE(131072006U, 131, 3, 3,   4719),
-+	PLL_36XX_RATE(100000000U, 200, 3, 4,      0),
-+	PLL_36XX_RATE(65536003U,  131, 3, 4,   4719),
-+	PLL_36XX_RATE(49152000U,  197, 3, 5, -25690),
-+	PLL_36XX_RATE(32768001U,  131, 3, 5,   4719),
- 	{ /* sentinel */ }
- };
-
---
-2.14.2
+ 	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
+-- 
+2.16.1
