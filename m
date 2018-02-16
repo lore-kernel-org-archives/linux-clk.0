@@ -1,51 +1,105 @@
-Return-Path: <pombredanne@nexb.com>
-MIME-Version: 1.0
-In-Reply-To: <20180209070026.193879-2-yixun.lan@amlogic.com>
-References: <20180209070026.193879-1-yixun.lan@amlogic.com> <20180209070026.193879-2-yixun.lan@amlogic.com>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Fri, 9 Feb 2018 12:07:20 +0100
-Message-ID: <CAOFm3uFj-7kZNp6b3SerOzQ8Amfa5Usod+MxwvZJ1E1Z_V9VJA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh@kernel.org>, Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
-	Jian Hu <jian.hu@amlogic.com>, linux-amlogic@lists.infradead.org,
+Return-Path: <boris.brezillon@bootlin.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: linux-kernel@vger.kernel.org
+Cc: David Woodhouse <dwmw2@infradead.org>,
+	Brian Norris <computersforpeace@gmail.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Richard Weinberger <richard@nod.at>,
+	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+	linux-mtd@lists.infradead.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	linux-clk@vger.kernel.org,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+	David Airlie <airlied@linux.ie>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] Update Boris Brezillon email address
+Date: Fri, 16 Feb 2018 11:44:49 +0100
+Message-Id: <20180216104449.15546-1-boris.brezillon@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Feb 9, 2018 at 8:00 AM, Yixun Lan <yixun.lan@amlogic.com> wrote:
-> Add dt-bindings headers for the Meson-AXG's AO clock and
-> reset controller.
->
-> CC: <devicetree@vger.kernel.org>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
->  include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
->  2 files changed, 46 insertions(+)
->  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
->  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
->
-> diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
-> new file mode 100644
-> index 000000000000..78683abb4247
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/axg-aoclkc.h
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD) */
+Free Electrons is now Bootlin.
 
-nit... BSD is not a valid license id as documented in LICENSES [1] :
-please use one of these:
-BSD-2-Clause or BSD-3-Clause
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+---
+Note that I'm planning to take this patch through the MTD tree.
+---
+ .mailmap    |  7 ++++---
+ MAINTAINERS | 10 +++++-----
+ 2 files changed, 9 insertions(+), 8 deletions(-)
 
-Thank you!
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/LICENSES/preferred
+diff --git a/.mailmap b/.mailmap
+index e18cab73e209..50c1d6bf36b2 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
+ Ben Gardner <bgardner@wabtec.com>
+ Ben M Cahill <ben.m.cahill@intel.com>
+ Björn Steinbrink <B.Steinbrink@gmx.de>
+-Boris Brezillon <boris.brezillon@free-electrons.com>
+-Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon.dev@gmail.com>
+-Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon@overkiz.com>
++Boris Brezillon <boris.brezillon@bootlin.com>
++Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@free-electrons.com>
++Boris Brezillon <boris.brezillon@bootlin.com> <b.brezillon.dev@gmail.com>
++Boris Brezillon <boris.brezillon@bootlin.com> <b.brezillon@overkiz.com>
+ Brian Avery <b.avery@hp.com>
+ Brian King <brking@us.ibm.com>
+ Christoph Hellwig <hch@lst.de>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 34b2e9ed6d3d..38fcbabbc55b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1232,7 +1232,7 @@ F:	arch/arm/boot/dts/aspeed-*
+ F:	drivers/*/*aspeed*
+ 
+ ARM/ATMEL AT91 Clock Support
+-M:	Boris Brezillon <boris.brezillon@free-electrons.com>
++M:	Boris Brezillon <boris.brezillon@bootlin.com>
+ S:	Maintained
+ F:	drivers/clk/at91
+ 
+@@ -4644,7 +4644,7 @@ F:	Documentation/gpu/meson.rst
+ T:	git git://anongit.freedesktop.org/drm/drm-misc
+ 
+ DRM DRIVERS FOR ATMEL HLCDC
+-M:	Boris Brezillon <boris.brezillon@free-electrons.com>
++M:	Boris Brezillon <boris.brezillon@bootlin.com>
+ L:	dri-devel@lists.freedesktop.org
+ S:	Supported
+ F:	drivers/gpu/drm/atmel-hlcdc/
+@@ -8412,7 +8412,7 @@ F:	include/uapi/drm/armada_drm.h
+ F:	Documentation/devicetree/bindings/display/armada/
+ 
+ MARVELL CRYPTO DRIVER
+-M:	Boris Brezillon <boris.brezillon@free-electrons.com>
++M:	Boris Brezillon <boris.brezillon@bootlin.com>
+ M:	Arnaud Ebalard <arno@natisbad.org>
+ F:	drivers/crypto/marvell/
+ S:	Maintained
+@@ -9034,7 +9034,7 @@ F:	mm/
+ MEMORY TECHNOLOGY DEVICES (MTD)
+ M:	David Woodhouse <dwmw2@infradead.org>
+ M:	Brian Norris <computersforpeace@gmail.com>
+-M:	Boris Brezillon <boris.brezillon@free-electrons.com>
++M:	Boris Brezillon <boris.brezillon@bootlin.com>
+ M:	Marek Vasut <marek.vasut@gmail.com>
+ M:	Richard Weinberger <richard@nod.at>
+ M:	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+@@ -9452,7 +9452,7 @@ S:	Supported
+ F:	drivers/net/ethernet/myricom/myri10ge/
+ 
+ NAND FLASH SUBSYSTEM
+-M:	Boris Brezillon <boris.brezillon@free-electrons.com>
++M:	Boris Brezillon <boris.brezillon@bootlin.com>
+ R:	Richard Weinberger <richard@nod.at>
+ L:	linux-mtd@lists.infradead.org
+ W:	http://www.linux-mtd.infradead.org/
 -- 
-Cordially
-Philippe Ombredanne
+2.14.1
