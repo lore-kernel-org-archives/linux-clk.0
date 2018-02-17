@@ -1,51 +1,79 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v7 10/42] clk: davinci: New driver for davinci PSC clocks
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
- arm-soc <linux-arm-kernel@lists.infradead.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
- LKML <linux-kernel@vger.kernel.org>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <1519071723-31790-11-git-send-email-david@lechnology.com>
- <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <93696fc8-bb93-aa20-3506-3d7216c17cd2@lechnology.com>
-Date: Wed, 28 Feb 2018 15:40:40 -0600
-MIME-Version: 1.0
-In-Reply-To: <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Philipp Rossak <embed3d@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: sunxi-ng: a31: Fix CLK_OUT_* clock ops
+Date: Sat, 17 Feb 2018 21:05:04 +0800
+Message-Id: <20180217130504.8668-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/28/2018 06:38 AM, Bartosz Golaszewski wrote:
-> 
-> I think I found the reason for the strange crashes we were
-> experiencing (emac core->name being NULL) thanks to Sekhar who pointed
-> me in the right direction.
-> 
-> The mdio driver fails to probe with v7 due to the supplied clock rate
-> being wrong. Before failing we register the emac clock with
-> pm_clk_add_clk(). When clock_ops puts the clock, it decreases the
-> reference count of the clock, but we never actually increased it in
-> the first place in the line above. The core clock code then destroys
-> the associated clk_core structure. When the next user comes around (in
-> our case the clk debug functions) the system crashes.
-> 
-> I believe there to be two issues: one is with v7 - we need to increase
-> the clock reference count in davinci_psc_genpd_attach_dev().
-> 
-> Second is the error path in the clock framework - we should remove the
-> destroyed clk_core from the debug list, which is not being done now.
-> 
-> Why we even need to track the refcount of clk_core is a mistery for me
-> though. Stephen, Mike?
-> 
-> Best regards,
-> Bartosz Golaszewski
+When support for the A31/A31s CCU was first added, the clock ops for
+the CLK_OUT_* clocks was set to the wrong type. The clocks are MP-type,
+but the ops was set for div (M) clocks. This went unnoticed until now.
+This was because while they are different clocks, their data structures
+aligned in a way that ccu_div_ops would access the second ccu_div_internal
+and ccu_mux_internal structures, which were valid, if not incorrect.
 
-Great find. I figured it had to be something like this, but I wasn't
-able to reproduce the problem yet.
+Furthermore, the use of these CLK_OUT_* was for feeding a precise 32.768
+kHz clock signal to the WiFi chip. This was achievable by using the parent
+with the same clock rate and no divider. So the incorrect divider setting
+did not affect this usage.
 
-I suppose it is time to spin up a v8 with some fixes.
+Commit 946797aa3f08 ("clk: sunxi-ng: Support fixed post-dividers on MP
+style clocks") added a new field to the ccu_mp structure, which broke
+the aforementioned alignment. Now the system crashes as div_ops tries
+to look up a nonexistent table.
+
+Reported-by: Philipp Rossak <embed3d@gmail.com>
+Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+
+Philipp, can you give this a test and report if this fixes thing?
+I don't have any A31/A31s boards online to test this.
+
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index 72b16ed1012b..3b97f60540ad 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -762,7 +762,7 @@ static struct ccu_mp out_a_clk = {
+ 		.features	= CCU_FEATURE_FIXED_PREDIV,
+ 		.hw.init	= CLK_HW_INIT_PARENTS("out-a",
+ 						      clk_out_parents,
+-						      &ccu_div_ops,
++						      &ccu_mp_ops,
+ 						      0),
+ 	},
+ };
+@@ -783,7 +783,7 @@ static struct ccu_mp out_b_clk = {
+ 		.features	= CCU_FEATURE_FIXED_PREDIV,
+ 		.hw.init	= CLK_HW_INIT_PARENTS("out-b",
+ 						      clk_out_parents,
+-						      &ccu_div_ops,
++						      &ccu_mp_ops,
+ 						      0),
+ 	},
+ };
+@@ -804,7 +804,7 @@ static struct ccu_mp out_c_clk = {
+ 		.features	= CCU_FEATURE_FIXED_PREDIV,
+ 		.hw.init	= CLK_HW_INIT_PARENTS("out-c",
+ 						      clk_out_parents,
+-						      &ccu_div_ops,
++						      &ccu_mp_ops,
+ 						      0),
+ 	},
+ };
+-- 
+2.16.1
