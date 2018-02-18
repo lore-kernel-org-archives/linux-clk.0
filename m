@@ -1,84 +1,95 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:39235 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeBINY0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Feb 2018 08:24:26 -0500
-Subject: Re: [PATCH v2 2/5] clk: mediatek: modify MT7622 audsys to adapt MFD
- device
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
-References: <cover.1515639336.git.ryder.lee@mediatek.com>
- <d6669277f5232446b4798a6b724074b18d5c21aa.1515639336.git.ryder.lee@mediatek.com>
- <72058f8d-c83d-d0e6-dc07-83c9f5fc2710@gmail.com>
- <1517803655.1173.12.camel@mtkswgap22>
- <0e0e703c-0ac9-06ad-91c5-abdf16de1ee9@gmail.com>
- <1518069447.28878.4.camel@mtkswgap22>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <6fc674ba-a540-ef25-932d-afdc9d8e7fbe@gmail.com>
-Date: Fri, 9 Feb 2018 14:24:22 +0100
 MIME-Version: 1.0
-In-Reply-To: <1518069447.28878.4.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <11171053.oOJPuGlHoK@phil>
+References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
+	<1516375101-29836-3-git-send-email-geert+renesas@glider.be>
+	<11171053.oOJPuGlHoK@phil>
+Date: Sun, 18 Feb 2018 11:09:25 -0800
+Message-ID: <CAEG3pNCioW_FVXj3-j4KC_yO6ZYGXQB_eanHWSb9NUE9kYsWag@mail.gmail.com>
+Subject: Re: [PATCH 2/3] soc: rockchip: power-domain: Use of_clk_get_parent_count()
+ instead of open coding
+From: Michael Turquette <mturquette@baylibre.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Stephen Boyd <sboyd@codeaurora.org>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	"Stephen Boyd <sboyd@codeaurora.org>, Emilio Lopez <emilio@elopez.com.ar>, Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>, linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-tegra@vger.kernel.org,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Heiko, Geert,
 
-
-On 02/08/2018 06:57 AM, Ryder Lee wrote:
-> On Wed, 2018-02-07 at 16:18 +0100, Matthias Brugger wrote:
+On Sat, Feb 10, 2018 at 8:35 AM, Heiko Stuebner <heiko@sntech.de> wrote:
+> Hi Geert,
+>
+> Am Freitag, 19. Januar 2018, 16:18:20 CET schrieb Geert Uytterhoeven:
+>> As of_clk_get_parent_count() returns zero on failure, while
+>> of_count_phandle_with_args() might return a negative error code, this
+>> also fixes the issue of possibly using a negative number in the
+>> allocation below.
 >>
->> On 02/05/2018 05:07 AM, Ryder Lee wrote:
->>> On Sat, 2018-02-03 at 15:26 +0100, Matthias Brugger wrote:
->>>>
->>>> On 01/31/2018 08:42 AM, Ryder Lee wrote:
->>>>> As the new MFD parent is in place, switch probing method to adapt it.
->>>>>
->>>>> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
->>>>> ---
->>>>>  drivers/clk/mediatek/clk-mt7622-aud.c | 3 ++-
->>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
->>>>> index 13f752d..8c18536 100644
->>>>> --- a/drivers/clk/mediatek/clk-mt7622-aud.c
->>>>> +++ b/drivers/clk/mediatek/clk-mt7622-aud.c
->>>>> @@ -142,11 +142,12 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
->>>>>  {
->>>>>  	struct clk_onecell_data *clk_data;
->>>>>  	struct device_node *node = pdev->dev.of_node;
->>>>> +	struct device_node *pnode = pdev->dev.parent->of_node;
->>>>>  	int r;
->>>>>  
->>>>>  	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
->>>>>  
->>>>> -	mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
->>>>> +	mtk_clk_register_gates(pnode, audio_clks, ARRAY_SIZE(audio_clks),
->>>>
->>>> We will need a fallback here for older device tree bindings.
->>>>
->>>> Regards,
->>>> Matthias
->>>
->>> Up to now, I didn't see both driver and bindings are used anywhere.
->>> Should I still care about that?
->>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>>  drivers/soc/rockchip/pm_domains.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
 >>
->> Yes please, we have to ensure that newer kernel work with older bindings and
->> vice-versa.
-> 
-> OKay. An unrelated question - is it possible to change the compatible
-> string (*-audsys-clk) without breaking backward compatible?
-> 
+>> diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+>> index 5c342167b9db7a16..9936038d38771784 100644
+>> --- a/drivers/soc/rockchip/pm_domains.c
+>> +++ b/drivers/soc/rockchip/pm_domains.c
+>> @@ -16,6 +16,7 @@
+>>  #include <linux/of_address.h>
+>>  #include <linux/of_platform.h>
+>>  #include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>
+> not wanting to be to nitpicky, but clk-provider.h seems that it should be
+> used from drivers exposing clocks to the system, not from clock users.
+>
+> I just remember that in the past clk maintainers tried to keep their
+> layering intact, so I've included them for clarification.
+>
+> Mike, Stephen: the power-domain driver of Rockchip socs needs
+> to toggle all clocks of domain peripherals when turning a domain
+> on or off, so has a variable list of clocks in the clocks property in dt.
+> Hence the of_count_... call which could be replaced with
+> of_clk_get_parent_count to not open-code this.
 
-You can't change the compatible string, but you can add a new one, if the DT
-maintainer are ok with that. Beware that you won't be able to re-use the old one
-in a different driver.
+Moving of_clk_get_parent_count to clk.h seems reasonable to me. It's
+more of an of-specific helper than a provider-specific helper.
+
+Anyone up to submit a patch so that this one doesn't need to include
+clk-provider.h?
 
 Regards,
-Matthias
+Mike
+
+>
+>
+> Heiko
+>
+>>  #include <linux/regmap.h>
+>>  #include <linux/mfd/syscon.h>
+>>  #include <dt-bindings/power/rk3288-power.h>
+>> @@ -391,7 +392,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+>>               return -EINVAL;
+>>       }
+>>
+>> -     clk_cnt = of_count_phandle_with_args(node, "clocks", "#clock-cells");
+>> +     clk_cnt = of_clk_get_parent_count(node);
+>>       pd = devm_kzalloc(pmu->dev,
+>>                         sizeof(*pd) + clk_cnt * sizeof(pd->clks[0]),
+>>                         GFP_KERNEL);
+>>
+>
+>
+
+
+
+-- 
+Michael Turquette
+CEO
+BayLibre - At the Heart of Embedded Linux
+http://baylibre.com/
