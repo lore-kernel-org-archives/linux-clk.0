@@ -1,87 +1,128 @@
-Return-Path: <embed3d@gmail.com>
-Return-Path: <embed3d@gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: a31: Fix CLK_OUT_* clock ops
-To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20180217130504.8668-1-wens@csie.org>
-From: Philipp Rossak <embed3d@gmail.com>
-Message-ID: <694c5137-0020-bb62-68c7-f9729c101462@gmail.com>
-Date: Sat, 17 Feb 2018 14:54:16 +0100
-MIME-Version: 1.0
-In-Reply-To: <20180217130504.8668-1-wens@csie.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 31/42] ARM: davinci: switch to common clock framework
+Date: Mon, 19 Feb 2018 14:21:52 -0600
+Message-Id: <1519071723-31790-32-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This switches ARCH_DAVINCI to use the common clock framework. The legacy
+clock code in arch/arm/mach-davinci/ is no longer used. New drivers in
+drivers/clk/davinci/ are used instead.
+
+A few macros had to be moved to prevent compilation errors.
+
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+
+v7 changes:
+- s/compile/compilation and space instead of tab
+- add PM_GENERIC_DOMAINS dependencies
+
+v6 changes:
+- clean up indent on Common objects section
 
 
-On 17.02.2018 14:05, Chen-Yu Tsai wrote:
-> When support for the A31/A31s CCU was first added, the clock ops for
-> the CLK_OUT_* clocks was set to the wrong type. The clocks are MP-type,
-> but the ops was set for div (M) clocks. This went unnoticed until now.
-> This was because while they are different clocks, their data structures
-> aligned in a way that ccu_div_ops would access the second ccu_div_internal
-> and ccu_mux_internal structures, which were valid, if not incorrect.
-> 
-> Furthermore, the use of these CLK_OUT_* was for feeding a precise 32.768
-> kHz clock signal to the WiFi chip. This was achievable by using the parent
-> with the same clock rate and no divider. So the incorrect divider setting
-> did not affect this usage.
-> 
-> Commit 946797aa3f08 ("clk: sunxi-ng: Support fixed post-dividers on MP
-> style clocks") added a new field to the ccu_mp structure, which broke
-> the aforementioned alignment. Now the system crashes as div_ops tries
-> to look up a nonexistent table.
-> 
-> Reported-by: Philipp Rossak <embed3d@gmail.com>
-> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Tested-by: Philipp Rossak <embed3d@gmail.com>
-> ---
-> 
-> Philipp, can you give this a test and report if this fixes thing?
-> I don't have any A31/A31s boards online to test this.
-> 
-Thanks!
-That fixes that bug!
+ arch/arm/Kconfig                | 5 ++++-
+ arch/arm/mach-davinci/Makefile  | 4 ++--
+ arch/arm/mach-davinci/clock.h   | 4 ----
+ arch/arm/mach-davinci/davinci.h | 4 ++++
+ arch/arm/mach-davinci/psc.h     | 2 --
+ 5 files changed, 10 insertions(+), 9 deletions(-)
 
-Philipp
-
-> ---
->   drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-> index 72b16ed1012b..3b97f60540ad 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-> @@ -762,7 +762,7 @@ static struct ccu_mp out_a_clk = {
->   		.features	= CCU_FEATURE_FIXED_PREDIV,
->   		.hw.init	= CLK_HW_INIT_PARENTS("out-a",
->   						      clk_out_parents,
-> -						      &ccu_div_ops,
-> +						      &ccu_mp_ops,
->   						      0),
->   	},
->   };
-> @@ -783,7 +783,7 @@ static struct ccu_mp out_b_clk = {
->   		.features	= CCU_FEATURE_FIXED_PREDIV,
->   		.hw.init	= CLK_HW_INIT_PARENTS("out-b",
->   						      clk_out_parents,
-> -						      &ccu_div_ops,
-> +						      &ccu_mp_ops,
->   						      0),
->   	},
->   };
-> @@ -804,7 +804,7 @@ static struct ccu_mp out_c_clk = {
->   		.features	= CCU_FEATURE_FIXED_PREDIV,
->   		.hw.init	= CLK_HW_INIT_PARENTS("out-c",
->   						      clk_out_parents,
-> -						      &ccu_div_ops,
-> +						      &ccu_mp_ops,
->   						      0),
->   	},
->   };
-> 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 7e3d535..563fade 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -608,13 +608,16 @@ config ARCH_S3C24XX
+ config ARCH_DAVINCI
+ 	bool "TI DaVinci"
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+-	select CLKDEV_LOOKUP
++	select COMMON_CLK
+ 	select CPU_ARM926T
+ 	select GENERIC_ALLOCATOR
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_IRQ_CHIP
+ 	select GPIOLIB
+ 	select HAVE_IDE
++	select PM_GENERIC_DOMAINS if PM
++	select PM_GENERIC_DOMAINS_OF if PM && OF
++	select RESET_CONTROLLER
+ 	select USE_OF
+ 	select ZONE_DMA
+ 	help
+diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
+index 4e81780..8725d8b 100644
+--- a/arch/arm/mach-davinci/Makefile
++++ b/arch/arm/mach-davinci/Makefile
+@@ -5,8 +5,8 @@
+ #
+ 
+ # Common objects
+-obj-y 			:= time.o clock.o serial.o psc.o \
+-			   usb.o common.o sram.o aemif.o
++obj-y 					:= time.o serial.o usb.o \
++					   common.o sram.o aemif.o
+ 
+ obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
+ 
+diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
+index d7894d5..2d05856 100644
+--- a/arch/arm/mach-davinci/clock.h
++++ b/arch/arm/mach-davinci/clock.h
+@@ -12,10 +12,6 @@
+ #ifndef __ARCH_ARM_DAVINCI_CLOCK_H
+ #define __ARCH_ARM_DAVINCI_CLOCK_H
+ 
+-#define DAVINCI_PLL1_BASE 0x01c40800
+-#define DAVINCI_PLL2_BASE 0x01c40c00
+-#define MAX_PLL 2
+-
+ /* PLL/Reset register offsets */
+ #define PLLCTL          0x100
+ #define PLLCTL_PLLEN    BIT(0)
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index a200977..a227f80 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -35,6 +35,10 @@
+ #include <media/davinci/vpbe.h>
+ #include <media/davinci/vpbe_osd.h>
+ 
++#define DAVINCI_PLL1_BASE		0x01c40800
++#define DAVINCI_PLL2_BASE		0x01c40c00
++#define DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01c41000
++
+ #define DAVINCI_SYSTEM_MODULE_BASE	0x01c40000
+ #define SYSMOD_VDAC_CONFIG		0x2c
+ #define SYSMOD_VIDCLKCTL		0x38
+diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
+index 8af9f09..b58707c 100644
+--- a/arch/arm/mach-davinci/psc.h
++++ b/arch/arm/mach-davinci/psc.h
+@@ -27,8 +27,6 @@
+ #ifndef __ASM_ARCH_PSC_H
+ #define __ASM_ARCH_PSC_H
+ 
+-#define	DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01C41000
+-
+ /* Power and Sleep Controller (PSC) Domains */
+ #define DAVINCI_GPSC_ARMDOMAIN		0
+ #define DAVINCI_GPSC_DSPDOMAIN		1
+-- 
+2.7.4
