@@ -1,131 +1,147 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 01/15] clk: sunxi-ng: Add check for minimal rate to NM PLLs
-Date: Sat, 24 Feb 2018 22:45:31 +0100
-Message-Id: <20180224214545.3740-2-jernej.skrabec@siol.net>
-In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 16/42] clk: davinci: Add platform information for TI DM646x PSC
+Date: Mon, 19 Feb 2018 14:21:37 -0600
+Message-Id: <1519071723-31790-17-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some NM PLLs doesn't work well when their output clock rate is set below
-certain rate.
+This adds platform-specific declarations for the PSC clocks on TI
+DM646x based systems.
 
-Add support for that constrain.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/sunxi-ng/ccu_nm.c | 11 +++++++----
- drivers/clk/sunxi-ng/ccu_nm.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index a16de092bf94..c5ca62a9c2b9 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -20,7 +20,7 @@ struct _ccu_nm {
+v7 changes:
+- add platform_device_id table
+- don't wrap lines for readability
+- add LPSC_ALWAYS_ENABLED flag to timer0 clock
+
+v6 changes:
+- change how clkdev lookups are declared
+
+
+ drivers/clk/davinci/Makefile     |  1 +
+ drivers/clk/davinci/psc-dm646x.c | 62 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/psc.c        |  1 +
+ drivers/clk/davinci/psc.h        |  1 +
+ 4 files changed, 65 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-dm646x.c
+
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index a20e379..6c388d4 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -15,4 +15,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= psc-dm644x.o
++obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= psc-dm646x.o
+ endif
+diff --git a/drivers/clk/davinci/psc-dm646x.c b/drivers/clk/davinci/psc-dm646x.c
+new file mode 100644
+index 0000000..54d9ed9
+--- /dev/null
++++ b/drivers/clk/davinci/psc-dm646x.c
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DaVinci DM646x
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "psc.h"
++
++LPSC_CLKDEV1(ide_clkdev,	NULL,		"palm_bk3710");
++LPSC_CLKDEV2(emac_clkdev,	NULL,		"davinci_emac.1",
++				"fck",		"davinci_mdio.0");
++LPSC_CLKDEV1(aemif_clkdev,	"aemif",	NULL);
++LPSC_CLKDEV1(mcasp0_clkdev,	NULL,		"davinci-mcasp.0");
++LPSC_CLKDEV1(mcasp1_clkdev,	NULL,		"davinci-mcasp.1");
++LPSC_CLKDEV1(uart0_clkdev,	NULL,		"serial8250.0");
++LPSC_CLKDEV1(uart1_clkdev,	NULL,		"serial8250.1");
++LPSC_CLKDEV1(uart2_clkdev,	NULL,		"serial8250.2");
++LPSC_CLKDEV1(i2c_clkdev,	NULL,		"i2c_davinci.1");
++/* REVISIT: gpio-davinci.c should be modified to drop con_id */
++LPSC_CLKDEV1(gpio_clkdev,	"gpio",		NULL);
++LPSC_CLKDEV1(timer0_clkdev,	"timer0",	 NULL);
++
++static const struct davinci_lpsc_clk_info dm646x_psc_info[] __initconst = {
++	LPSC(0,  0, arm,      pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	/* REVISIT how to disable? */
++	LPSC(1,  0, dsp,      pll1_sysclk1, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(4,  0, edma_cc,  pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(5,  0, edma_tc0, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(6,  0, edma_tc1, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(7,  0, edma_tc2, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(8,  0, edma_tc3, pll1_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(10, 0, ide,      pll1_sysclk4, ide_clkdev,    0),
++	LPSC(14, 0, emac,     pll1_sysclk3, emac_clkdev,   0),
++	LPSC(16, 0, vpif0,    ref_clk,      NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(17, 0, vpif1,    ref_clk,      NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(21, 0, aemif,    pll1_sysclk3, aemif_clkdev,  LPSC_ALWAYS_ENABLED),
++	LPSC(22, 0, mcasp0,   pll1_sysclk3, mcasp0_clkdev, 0),
++	LPSC(23, 0, mcasp1,   pll1_sysclk3, mcasp1_clkdev, 0),
++	LPSC(26, 0, uart0,    aux_clkin,    uart0_clkdev,  0),
++	LPSC(27, 0, uart1,    aux_clkin,    uart1_clkdev,  0),
++	LPSC(28, 0, uart2,    aux_clkin,    uart2_clkdev,  0),
++	/* REVIST: disabling hangs system */
++	LPSC(29, 0, pwm0,     pll1_sysclk3, NULL,          LPSC_ALWAYS_ENABLED),
++	/* REVIST: disabling hangs system */
++	LPSC(30, 0, pwm1,     pll1_sysclk3, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(31, 0, i2c,      pll1_sysclk3, i2c_clkdev,    0),
++	LPSC(33, 0, gpio,     pll1_sysclk3, gpio_clkdev,   0),
++	LPSC(34, 0, timer0,   pll1_sysclk3, timer0_clkdev, LPSC_ALWAYS_ENABLED),
++	LPSC(35, 0, timer1,   pll1_sysclk3, NULL,          0),
++	{ }
++};
++
++int __init dm646x_psc_init(struct device *dev, void __iomem *base)
++{
++	return davinci_psc_register_clocks(dev, dm646x_psc_info, 46, base);
++}
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 29422d6..553804d 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -452,6 +452,7 @@ static const struct platform_device_id davinci_psc_id_table[] = {
+ 	{ .name = "dm355-psc",  .driver_data = (kernel_ulong_t)dm355_psc_init  },
+ 	{ .name = "dm365-psc",  .driver_data = (kernel_ulong_t)dm365_psc_init  },
+ 	{ .name = "dm644x-psc", .driver_data = (kernel_ulong_t)dm644x_psc_init },
++	{ .name = "dm646x-psc", .driver_data = (kernel_ulong_t)dm646x_psc_init },
+ 	{ }
  };
  
- static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
--			     struct _ccu_nm *nm)
-+			     unsigned long min_rate, struct _ccu_nm *nm)
- {
- 	unsigned long best_rate = 0;
- 	unsigned long best_n = 0, best_m = 0;
-@@ -30,7 +30,7 @@ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
- 		for (_m = nm->min_m; _m <= nm->max_m; _m++) {
- 			unsigned long tmp_rate = parent * _n  / _m;
+diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
+index 41266af5b..1c03869 100644
+--- a/drivers/clk/davinci/psc.h
++++ b/drivers/clk/davinci/psc.h
+@@ -96,5 +96,6 @@ int of_da850_psc1_init(struct device *dev, void __iomem *base);
+ int dm355_psc_init(struct device *dev, void __iomem *base);
+ int dm365_psc_init(struct device *dev, void __iomem *base);
+ int dm644x_psc_init(struct device *dev, void __iomem *base);
++int dm646x_psc_init(struct device *dev, void __iomem *base);
  
--			if (tmp_rate > rate)
-+			if (tmp_rate > rate || tmp_rate < min_rate)
- 				continue;
- 
- 			if ((rate - tmp_rate) < (rate - best_rate)) {
-@@ -134,7 +134,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 	_nm.min_m = 1;
- 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
- 
--	ccu_nm_find_best(*parent_rate, rate, &_nm);
-+	ccu_nm_find_best(*parent_rate, rate, nm->min_rate, &_nm);
- 	rate = *parent_rate * _nm.n / _nm.m;
- 
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-@@ -155,6 +155,9 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate = rate * nm->fixed_post_div;
- 
-+	if (rate < nm->min_rate)
-+		return -EINVAL;
-+
- 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
- 		spin_lock_irqsave(nm->common.lock, flags);
- 
-@@ -186,7 +189,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
- 					   &_nm.m, &_nm.n);
- 	} else {
- 		ccu_sdm_helper_disable(&nm->common, &nm->sdm);
--		ccu_nm_find_best(parent_rate, rate, &_nm);
-+		ccu_nm_find_best(parent_rate, rate, nm->min_rate, &_nm);
- 	}
- 
- 	spin_lock_irqsave(nm->common.lock, flags);
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
-index eba586b4c7d0..1d8b459c50b7 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.h
-+++ b/drivers/clk/sunxi-ng/ccu_nm.h
-@@ -37,6 +37,7 @@ struct ccu_nm {
- 	struct ccu_sdm_internal		sdm;
- 
- 	unsigned int		fixed_post_div;
-+	unsigned int		min_rate;
- 
- 	struct ccu_common	common;
- };
-@@ -88,6 +89,32 @@ struct ccu_nm {
- 		},							\
- 	}
- 
-+#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(_struct, _name, _parent,	\
-+					     _reg, _min_rate,		\
-+					     _nshift, _nwidth,		\
-+					     _mshift, _mwidth,		\
-+					     _frac_en, _frac_sel,	\
-+					     _frac_rate_0, _frac_rate_1,\
-+					     _gate, _lock, _flags)	\
-+	struct ccu_nm _struct = {					\
-+		.enable		= _gate,				\
-+		.lock		= _lock,				\
-+		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
-+		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
-+		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
-+						  _frac_rate_0,		\
-+						  _frac_rate_1),	\
-+		.min_rate	= _min_rate,				\
-+		.common		= {					\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_FRACTIONAL,	\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_nm_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
- #define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
- 				    _nshift, _nwidth,			\
- 				    _mshift, _mwidth,			\
+ #endif /* __CLK_DAVINCI_PSC_H__ */
 -- 
-2.16.2
+2.7.4
