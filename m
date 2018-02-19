@@ -1,155 +1,64 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 23 Feb 2018 16:18:21 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 2/7] pinctrl: sunxi: support pin controllers with
- holes among IRQ banks
-Message-ID: <20180223151821.gqn66roldejpowzu@flea.lan>
-References: <20180223122552.58049-1-icenowy@aosc.io>
- <20180223122552.58049-3-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hzki2yhvhouadvwv"
-In-Reply-To: <20180223122552.58049-3-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <m.purski@samsung.com>
+From: Maciej Purski <m.purski@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim
+	<jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+	Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin
+	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro
+	Carvalho Chehab <mchehab@kernel.org>, Andrzej Pietrasiewicz
+	<andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Russell King <linux@armlinux.org.uk>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier
+	<thibault.saunier@osg.samsung.com>, Javier Martinez Canillas
+	<javier@osg.samsung.com>, Hans Verkuil <hansverk@cisco.com>, Hoegeun Kwon
+	<hoegeun.kwon@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH 0/8] Use clk bulk API in exynos5433 drivers
+Date: Mon, 19 Feb 2018 16:43:58 +0100
+Message-id: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+References: <CGME20180219154456eucas1p178a82b3bb643028dc7c99ccca9c6eaca@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi all,
 
---hzki2yhvhouadvwv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+the main goal of this patchset is to simplify clk management code in
+exynos5433 drivers by using clk bulk API. In order to achieve that,
+patch #1 adds a new function to clk core, which dynamically allocates
+clk_bulk_data array and fills its id fields.
 
-On Fri, Feb 23, 2018 at 08:25:47PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
-> GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5. This
-> situation cannot be processed with the current pinctrl IRQ code, as it
-> only expects a offset to all IRQ banks.
->=20
-> Update the code to use a logical IRQ bank to hardware IRQ bank map, so
-> the new situation in H6 main pin controller can be processed. The old
-> special situation which uses a constant offset (on A33 and V3s, both
-> with a offset of 1) can be also processed with the new code.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v3:
-> - change for the refactor in the new PATCH 1.
->=20
-> No changes in v2.
->=20
->  drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c |  4 +++-
->  drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c |  4 +++-
->  drivers/pinctrl/sunxi/pinctrl-sunxi.h     | 29 +++++++++++++++++--------=
-----
->  3 files changed, 23 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c b/drivers/pinctrl/=
-sunxi/pinctrl-sun8i-a33.c
-> index da387211a75e..f043afa1aac5 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-> @@ -481,11 +481,13 @@ static const struct sunxi_desc_pin sun8i_a33_pins[]=
- =3D {
->  		  SUNXI_FUNCTION(0x3, "uart3")),	/* CTS */
->  };
-> =20
-> +static const unsigned int sun8i_a33_pinctrl_irq_bank_map[] =3D { 1, 2 };
-> +
->  static const struct sunxi_pinctrl_desc sun8i_a33_pinctrl_data =3D {
->  	.pins =3D sun8i_a33_pins,
->  	.npins =3D ARRAY_SIZE(sun8i_a33_pins),
->  	.irq_banks =3D 2,
-> -	.irq_bank_base =3D 1,
-> +	.irq_bank_map =3D sun8i_a33_pinctrl_irq_bank_map,
->  	.disable_strict_mode =3D true,
->  };
-> =20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c b/drivers/pinctrl/=
-sunxi/pinctrl-sun8i-v3s.c
-> index 496ba34e1f5f..6704ce8e5e3d 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-> @@ -293,11 +293,13 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[]=
- =3D {
->  		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 5)),	/* PG_EINT5 */
->  };
-> =20
-> +static const unsigned int sun8i_v3s_pinctrl_irq_bank_map[] =3D { 1, 2 };
-> +
->  static const struct sunxi_pinctrl_desc sun8i_v3s_pinctrl_data =3D {
->  	.pins =3D sun8i_v3s_pins,
->  	.npins =3D ARRAY_SIZE(sun8i_v3s_pins),
->  	.irq_banks =3D 2,
-> -	.irq_bank_base =3D 1,
-> +	.irq_bank_map =3D sun8i_v3s_pinctrl_irq_bank_map,
->  	.irq_read_needs_mux =3D true
->  };
-> =20
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunx=
-i/pinctrl-sunxi.h
-> index 909ca1504b61..36502cbef6c2 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-> @@ -110,7 +110,7 @@ struct sunxi_pinctrl_desc {
->  	int				npins;
->  	unsigned			pin_base;
->  	unsigned			irq_banks;
-> -	unsigned			irq_bank_base;
-> +	const unsigned int		*irq_bank_map;
->  	bool				irq_read_needs_mux;
->  	bool				disable_strict_mode;
->  };
-> @@ -263,14 +263,23 @@ static inline u32 sunxi_pull_offset(u16 pin)
->  	return pin_num * PULL_PINS_BITS;
->  }
-> =20
-> +static inline u32 sunxi_irq_hw_bank_num(u8 bank,
-> +					const struct sunxi_pinctrl_desc *desc)
-> +{
-> +	if (!desc->irq_bank_map)
-> +		return bank;
-> +	else
-> +		return desc->irq_bank_map[bank];
-> +}
-> +
+Best regards,
 
-Same remark about the order of the argument, and I would have split
-this patch in two, one to introduce the new function (but still using
-the irq_bank_base), and then a second patch to introduce the
-irq_bank_map.
+Maciej Purski
 
-Looks good otherwise, thanks!
-Maxime
+Maciej Purski (8):
+  clk: Add clk_bulk_alloc functions
+  media: s5p-jpeg: Use bulk clk API
+  drm/exynos/decon: Use clk bulk API
+  drm/exynos/dsi: Use clk bulk API
+  drm/exynos: mic: Use clk bulk API
+  drm/exynos/hdmi: Use clk bulk API
+  [media] exynos-gsc: Use clk bulk API
+  [media] s5p-mfc: Use clk bulk API
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ drivers/clk/clk-bulk.c                          | 16 +++++
+ drivers/clk/clk-devres.c                        | 37 +++++++++--
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c   | 50 +++++----------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c         | 68 +++++++++-----------
+ drivers/gpu/drm/exynos/exynos_drm_mic.c         | 44 +++++--------
+ drivers/gpu/drm/exynos/exynos_hdmi.c            | 85 ++++++++-----------------
+ drivers/media/platform/exynos-gsc/gsc-core.c    | 55 ++++++----------
+ drivers/media/platform/exynos-gsc/gsc-core.h    |  2 +-
+ drivers/media/platform/s5p-jpeg/jpeg-core.c     | 45 ++++++-------
+ drivers/media/platform/s5p-jpeg/jpeg-core.h     |  2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  6 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_pm.c     | 41 +++++-------
+ include/linux/clk.h                             | 64 +++++++++++++++++++
+ 13 files changed, 263 insertions(+), 252 deletions(-)
 
---hzki2yhvhouadvwv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqQML0ACgkQ0rTAlCFN
-r3TOoA/+IJr26dnmK1zjBiaE2I3eHpmYqrmmV7BmcTV3zEUAp0U/bCenYecTaG6C
-L6ck25pgYSYk1MJQf2JsOxK7YIUp+5dytqBmHq2JgUsgGam1OrESDMuPkJJXjiha
-I/6Fqunaa9Sa5gWjRAI426SL/9xe0gGz2Bf0d46MjycxgZlgrsxhLxDKEKASju7q
-ViGnN5uZNle6Y88+84FRIYH/wMl1CFAWjGoVQbiss1UVPQapatqBhcnxSgUIVRd2
-fbbc4As+/KgrN8CXZYY1vOmDF+PsGzDSngdZ4Sz+wKy5KMvZBTCplBCwl3+YkFJF
-9h96wlLWIbK7JnL1NxRRir+e7kWRHgEstXF4Qz5LDTwnAEkprTaFdd9nmHhJzgIf
-2Y44TpMIzhzCFA+rJG7hIJEWRCd4ZU726xLiJluqsKgTLz3S2DWFpn9ZAjVwRtXj
-kTON+NtvCiB+sdoRVeQlq2V6VExk0HJsntSo8CKlX0IynFCyDyRxZgx21zkj/bDN
-Oh5n24gGnqhZmArvCibeEKUOgzOEIkSLyrQbx28eOzgKGf28dH+xmUUpMFZqhzC8
-hkv8ylzeYayFqQWgbCnuWGuvQqLyiOEJIQu2DIBA4LUTvL0gs3mFtqaFE4IASGd8
-ZI2TMjJacm8bH0hMlzTANBDdvg67cr04wPDQYPjoiRrevTU4K58=
-=GXP9
------END PGP SIGNATURE-----
-
---hzki2yhvhouadvwv--
+-- 
+2.7.4
