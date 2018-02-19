@@ -1,150 +1,320 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 5 Feb 2018 00:09:32 -0600
-From: Rob Herring <robh@kernel.org>
-To: gabriel.fernandez@st.com
-Cc: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, gabriel.fernandez.st@gmail.com,
-	olivier.bideau@st.com
-Subject: Re: [PATCH 01/14] dt-bindings: Document STM32MP1 Reset Clock
- Controller (RCC) bindings
-Message-ID: <20180205042238.64xjrrguls2drtrg@rob-hp-laptop>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
- <1517580222-23301-2-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49620 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752245AbeBSKH1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Feb 2018 05:07:27 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180219100725euoutp020076792b0b85f7e128697570dacc8b6b~UsiSyV_8z1295612956euoutp02Z
+        for <linux-clk@vger.kernel.org>; Mon, 19 Feb 2018 10:07:25 +0000 (GMT)
+Subject: Re: [PATCH v2 7/7] clk: samsung: add compile time PLL rate
+ validators
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "moderated list:SAMSUNG SOC CLOCK DRIVERS"
+        <linux-samsung-soc@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <99c5621b-7a35-51d5-9642-0e8c599df0fa@samsung.com>
+Date: Mon, 19 Feb 2018 11:07:17 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1517580222-23301-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <5A8A9C74.6080503@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+References: <20180216145754.14428-1-a.hajda@samsung.com>
+        <CGME20180216145807eucas1p27282e8889ea210ee082a5ffa3c94a4ff@eucas1p2.samsung.com>
+        <20180216145754.14428-8-a.hajda@samsung.com> <5A8A9C74.6080503@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Feb 02, 2018 at 03:03:29PM +0100, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> The RCC block is responsible of the management of the clock and reset
-> generation for the complete circuit.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  .../devicetree/bindings/mfd/st,stm32-rcc.txt       | 85 ++++++++++++++++++++++
->  1 file changed, 85 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt b/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
-> new file mode 100644
-> index 0000000..28017a1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
-> @@ -0,0 +1,85 @@
-> +STMicroelectronics STM32 Peripheral Reset Clock Controller
-> +==========================================================
-> +
-> +The RCC IP is both a reset and a clock controller.
-> +
-> +Please also refer to reset.txt for common reset controller binding usage.
-> +
-> +Please also refer to clock-bindings.txt for common clock controller
-> +binding usage.
-> +
-> +
-> +Required properties:
-> +- compatible: "simple-mfd", "syscon"
+On 19.02.2018 10:44, Chanwoo Choi wrote:
+> Hi,
+>
+> On 2018년 02월 16일 23:57, Andrzej Hajda wrote:
+>> Rates declared in PLL rate tables should match exactly rates calculated
+>> from PLL coefficients. To avoid possible mistakes we can use compile
+>> time validation.
+>> The patch introduces such validators and expands all initializers
+>> with additional input frequency parameter, required to validate rates.
+>> Since S3C24xx PLLs requires different validators two new macros have
+>> been introduced to deal with it.
+>> As the patch adds only compile time validators it should not have impact
+>> on compiled code.
+>>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+>> ---
+>> Thanks Krzysztof for ack, I hope my changes do not invalidate it.
+>>
+>> v2:
+>> - replaced custom checker with existing BUILD_BUG_ON_ZERO,
+>> - fixed comment (by annihilation),
+>> - added Acked-By
+>> ---
+>>  drivers/clk/samsung/clk-exynos3250.c | 114 +++++++++++++++++-----------------
+>>  drivers/clk/samsung/clk-exynos4.c    | 102 +++++++++++++++---------------
+>>  drivers/clk/samsung/clk-exynos5250.c |  54 ++++++++--------
+>>  drivers/clk/samsung/clk-exynos5260.c |  90 +++++++++++++--------------
+>>  drivers/clk/samsung/clk-exynos5410.c |  20 +++---
+>>  drivers/clk/samsung/clk-exynos5420.c |  62 +++++++++----------
+>>  drivers/clk/samsung/clk-exynos5433.c | 116 +++++++++++++++++------------------
+>>  drivers/clk/samsung/clk-exynos7.c    |   2 +-
+>>  drivers/clk/samsung/clk-pll.h        |  48 ++++++++++++---
+>>  drivers/clk/samsung/clk-s3c2410.c    | 108 ++++++++++++++++----------------
+>>  10 files changed, 372 insertions(+), 344 deletions(-)
+> [snip]
+>
+>>  
+>> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+>> index 61eb8abbfd9c..1d8c0a581249 100644
+>> --- a/drivers/clk/samsung/clk-pll.h
+>> +++ b/drivers/clk/samsung/clk-pll.h
+>> @@ -41,35 +41,62 @@ enum samsung_pll_type {
+>>  	pll_1460x,
+>>  };
+>>  
+>> -#define PLL_35XX_RATE(_rate, _m, _p, _s)			\
+>> +#define PLL_RATE(_fin, _m, _p, _s, _k, _ks) \
+>> +	((u64)(_fin) * (BIT(_ks) * (_m) + (_k)) / BIT(_ks) / ((_p) << (_s)))
+>> +#define PLL_VALID_RATE(_fin, _fout, _m, _p, _s, _k, _ks) ((_fout) + \
+>> +	BUILD_BUG_ON_ZERO(PLL_RATE(_fin, _m, _p, _s, _k, _ks) != (_fout)))
+>> +
+>> +#define PLL_35XX_RATE(_fin, _rate, _m, _p, _s)			\
+>> +	{							\
+>> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+>> +				_m, _p, _s, 0, 16),		\
+>> +		.mdiv	=	(_m),				\
+>> +		.pdiv	=	(_p),				\
+>> +		.sdiv	=	(_s),				\
+>> +	}
+>> +
+>> +#define PLL_S3C2410_MPLL_RATE(_fin, _rate, _m, _p, _s)		\
+>> +	{							\
+>> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+>> +				_m + 8, _p + 2, _s, 0, 16),	\
+>> +		.mdiv	=	(_m),				\
+>> +		.pdiv	=	(_p),				\
+>> +		.sdiv	=	(_s),				\
+>> +	}
+>> +
+>> +#define PLL_S3C2440_MPLL_RATE(_fin, _rate, _m, _p, _s)		\
+>>  	{							\
+>> -		.rate	=	(_rate),				\
+>> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+>> +				_m + 8, _p + 2, _s - 1, 0, 16),	\
+>>  		.mdiv	=	(_m),				\
+>>  		.pdiv	=	(_p),				\
+>>  		.sdiv	=	(_s),				\
+> Do you use 's - 1' instead of 'multiplication 2' of numerator?
 
+Yes, it does the same thing, with assumption _s is greater than 0,
+which is true, but I can switch it to multiplication by 2 of numerator,
+to be more consistent with current code.
+>
+>>  	}
+>>  
+>> -#define PLL_36XX_RATE(_rate, _m, _p, _s, _k)			\
+>> +#define PLL_36XX_RATE(_fin, _rate, _m, _p, _s, _k)		\
+>>  	{							\
+>> -		.rate	=	(_rate),				\
+>> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+>> +				_m, _p, _s, _k, 16),		\
+>>  		.mdiv	=	(_m),				\
+>>  		.pdiv	=	(_p),				\
+>>  		.sdiv	=	(_s),				\
+>>  		.kdiv	=	(_k),				\
+>>  	}
+>>  
+>> -#define PLL_45XX_RATE(_rate, _m, _p, _s, _afc)			\
+>> +#define PLL_45XX_RATE(_fin, _rate, _m, _p, _s, _afc)		\
+>>  	{							\
+>> -		.rate	=	(_rate),			\
+>> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+>> +				_m, _p, _s - 1, 0, 16),		\
+> In clk-exynos4.c
+> PLL_45XX_RATE() is used for exynos4210_plls[apll] which is pll_4508 type.
+>
+> In clk-pll.c,
+> Both pll_4502 and pll_4508 shares the samsung_pll45xx_recalc_rate()
+> which is samsung_pll45xx_clk_ops.recalc_rate().
+>
+> The samsung_pll45xx_recalc_rate() contains the following if statement.
+> 	if (pll->type == pll_4508)
+> 		sdiv = sdiv - 1;
+>
+> It means that following 's - 1' is not valid for 'pll_4502'.
+>> +				_m, _p, _s - 1, 0, 16),		\
+> Even if there are not any use-case of PLL_45XX_RATE for pll_4502 type,
+> you need to use the correct name as following.
+> - PLL_45XX_RATE() -> PLL_4508_RATE()
 
-> +- reg: should be register base and length as documented in the datasheet
-> +
-> +- Sub-nodes:
-> +  - compatible: "st,stm32mp1-rcc-clk"
-> +	- #clock-cells: 1, device nodes should specify the clock in their
-> +	  "clocks" property, containing a phandle to the clock device node,
-> +	  an index specifying the clock to use.
-> +
-> +  - compatible: "st,stm32mp1-rcc-rst"
-> +	- #reset-cells: Shall be 1
-> +
-> +Example:
-> +	rcc: rcc@50000000 {
-> +		compatible = "syscon", "simple-mfd";
-> +		reg = <0x50000000 0x1000>;
-> +
-> +		rcc_clk: rcc-clk@50000000 {
-> +			#clock-cells = <1>;
-> +			compatible = "st,stm32mp1-rcc-clk";
-> +		};
-> +
-> +		rcc_rst: rcc-reset@50000000 {
+Yes, you are right, I will rename it.
 
-You should not have the same unit-address twice.
+Regards
+Andrzej
 
-IMO, this should just be:
+>
+>
+>>  		.mdiv	=	(_m),				\
+>>  		.pdiv	=	(_p),				\
+>>  		.sdiv	=	(_s),				\
+>>  		.afc	=	(_afc),				\
+>>  	}
+>>  
+>> -#define PLL_4600_RATE(_rate, _m, _p, _s, _k, _vsel)		\
+>> +#define PLL_4600_RATE(_fin, _rate, _m, _p, _s, _k, _vsel)	\
+>>  	{							\
+>> -		.rate	=	(_rate),			\
+>> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+>> +				_m, _p, _s, _k, 16),		\
+>>  		.mdiv	=	(_m),				\
+>>  		.pdiv	=	(_p),				\
+>>  		.sdiv	=	(_s),				\
+>> @@ -77,9 +104,10 @@ enum samsung_pll_type {
+>>  		.vsel	=	(_vsel),			\
+>>  	}
+>>  
+>> -#define PLL_4650_RATE(_rate, _m, _p, _s, _k, _mfr, _mrr, _vsel)	\
+>> +#define PLL_4650_RATE(_fin, _rate, _m, _p, _s, _k, _mfr, _mrr, _vsel) \
+>>  	{							\
+>> -		.rate	=	(_rate),			\
+>> +		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
+>> +				_m, _p, _s, _k, 10),		\
+>>  		.mdiv	=	(_m),				\
+>>  		.pdiv	=	(_p),				\
+>>  		.sdiv	=	(_s),				\
+>> diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
+>> index d8e58a659467..0c6aa3e51336 100644
+>> --- a/drivers/clk/samsung/clk-s3c2410.c
+>> +++ b/drivers/clk/samsung/clk-s3c2410.c
+>> @@ -162,34 +162,34 @@ struct samsung_clock_alias s3c2410_common_aliases[] __initdata = {
+>>  static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
+>>  	/* sorted in descending order */
+>>  	/* 2410A extras */
+>> -	PLL_35XX_RATE(270000000, 127, 1, 1),
+>> -	PLL_35XX_RATE(268000000, 126, 1, 1),
+>> -	PLL_35XX_RATE(266000000, 125, 1, 1),
+>> -	PLL_35XX_RATE(226000000, 105, 1, 1),
+>> -	PLL_35XX_RATE(210000000, 132, 2, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 270000000, 127, 1, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 268000000, 126, 1, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 266000000, 125, 1, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 226000000, 105, 1, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 210000000, 132, 2, 1),
+>>  	/* 2410 common */
+>> -	PLL_35XX_RATE(202800000, 161, 3, 1),
+>> -	PLL_35XX_RATE(192000000, 88, 1, 1),
+>> -	PLL_35XX_RATE(186000000, 85, 1, 1),
+>> -	PLL_35XX_RATE(180000000, 82, 1, 1),
+>> -	PLL_35XX_RATE(170000000, 77, 1, 1),
+>> -	PLL_35XX_RATE(158000000, 71, 1, 1),
+>> -	PLL_35XX_RATE(152000000, 68, 1, 1),
+>> -	PLL_35XX_RATE(147000000, 90, 2, 1),
+>> -	PLL_35XX_RATE(135000000, 82, 2, 1),
+>> -	PLL_35XX_RATE(124000000, 116, 1, 2),
+>> -	PLL_35XX_RATE(118500000, 150, 2, 2),
+>> -	PLL_35XX_RATE(113000000, 105, 1, 2),
+>> -	PLL_35XX_RATE(101250000, 127, 2, 2),
+>> -	PLL_35XX_RATE(90000000, 112, 2, 2),
+>> -	PLL_35XX_RATE(84750000, 105, 2, 2),
+>> -	PLL_35XX_RATE(79000000, 71, 1, 2),
+>> -	PLL_35XX_RATE(67500000, 82, 2, 2),
+>> -	PLL_35XX_RATE(56250000, 142, 2, 3),
+>> -	PLL_35XX_RATE(48000000, 120, 2, 3),
+>> -	PLL_35XX_RATE(50700000, 161, 3, 3),
+>> -	PLL_35XX_RATE(45000000, 82, 1, 3),
+>> -	PLL_35XX_RATE(33750000, 82, 2, 3),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 202800000, 161, 3, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 192000000, 88, 1, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 186000000, 85, 1, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 180000000, 82, 1, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 170000000, 77, 1, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 158000000, 71, 1, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 152000000, 68, 1, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 147000000, 90, 2, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 135000000, 82, 2, 1),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 124000000, 116, 1, 2),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 118500000, 150, 2, 2),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 113000000, 105, 1, 2),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 101250000, 127, 2, 2),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 90000000, 112, 2, 2),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 84750000, 105, 2, 2),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 79000000, 71, 1, 2),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 67500000, 82, 2, 2),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 56250000, 142, 2, 3),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 48000000, 120, 2, 3),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 50700000, 161, 3, 3),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 45000000, 82, 1, 3),
+>> +	PLL_S3C2410_MPLL_RATE(12 * MHZ, 33750000, 82, 2, 3),
+>>  	{ /* sentinel */ },
+>>  };
+>>  
+>> @@ -229,33 +229,33 @@ struct samsung_clock_alias s3c2410_aliases[] __initdata = {
+>>  
+>>  static struct samsung_pll_rate_table pll_s3c244x_12mhz_tbl[] __initdata = {
+>>  	/* sorted in descending order */
+>> -	PLL_35XX_RATE(400000000, 0x5c, 1, 1),
+>> -	PLL_35XX_RATE(390000000, 0x7a, 2, 1),
+>> -	PLL_35XX_RATE(380000000, 0x57, 1, 1),
+>> -	PLL_35XX_RATE(370000000, 0xb1, 4, 1),
+>> -	PLL_35XX_RATE(360000000, 0x70, 2, 1),
+>> -	PLL_35XX_RATE(350000000, 0xa7, 4, 1),
+>> -	PLL_35XX_RATE(340000000, 0x4d, 1, 1),
+>> -	PLL_35XX_RATE(330000000, 0x66, 2, 1),
+>> -	PLL_35XX_RATE(320000000, 0x98, 4, 1),
+>> -	PLL_35XX_RATE(310000000, 0x93, 4, 1),
+>> -	PLL_35XX_RATE(300000000, 0x75, 3, 1),
+>> -	PLL_35XX_RATE(240000000, 0x70, 1, 2),
+>> -	PLL_35XX_RATE(230000000, 0x6b, 1, 2),
+>> -	PLL_35XX_RATE(220000000, 0x66, 1, 2),
+>> -	PLL_35XX_RATE(210000000, 0x84, 2, 2),
+>> -	PLL_35XX_RATE(200000000, 0x5c, 1, 2),
+>> -	PLL_35XX_RATE(190000000, 0x57, 1, 2),
+>> -	PLL_35XX_RATE(180000000, 0x70, 2, 2),
+>> -	PLL_35XX_RATE(170000000, 0x4d, 1, 2),
+>> -	PLL_35XX_RATE(160000000, 0x98, 4, 2),
+>> -	PLL_35XX_RATE(150000000, 0x75, 3, 2),
+>> -	PLL_35XX_RATE(120000000, 0x70, 1, 3),
+>> -	PLL_35XX_RATE(110000000, 0x66, 1, 3),
+>> -	PLL_35XX_RATE(100000000, 0x5c, 1, 3),
+>> -	PLL_35XX_RATE(90000000, 0x70, 2, 3),
+>> -	PLL_35XX_RATE(80000000, 0x98, 4, 3),
+>> -	PLL_35XX_RATE(75000000, 0x75, 3, 3),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 400000000, 0x5c, 1, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 390000000, 0x7a, 2, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 380000000, 0x57, 1, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 370000000, 0xb1, 4, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 360000000, 0x70, 2, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 350000000, 0xa7, 4, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 340000000, 0x4d, 1, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 330000000, 0x66, 2, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 320000000, 0x98, 4, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 310000000, 0x93, 4, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 300000000, 0x75, 3, 1),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 240000000, 0x70, 1, 2),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 230000000, 0x6b, 1, 2),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 220000000, 0x66, 1, 2),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 210000000, 0x84, 2, 2),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 200000000, 0x5c, 1, 2),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 190000000, 0x57, 1, 2),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 180000000, 0x70, 2, 2),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 170000000, 0x4d, 1, 2),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 160000000, 0x98, 4, 2),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 150000000, 0x75, 3, 2),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 120000000, 0x70, 1, 3),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 110000000, 0x66, 1, 3),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 100000000, 0x5c, 1, 3),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 90000000, 0x70, 2, 3),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 80000000, 0x98, 4, 3),
+>> +	PLL_S3C2440_MPLL_RATE(12 * MHZ, 75000000, 0x75, 3, 3),
+>>  	{ /* sentinel */ },
+>>  };
+>>  
+>>
+>
 
-	rcc: rcc@50000000 {
-		compatible = "st-stm32mp1-rcc";
-		reg = <0x50000000 0x1000>;
-		#clock-cells = <1>;
-		#reset-cells = <1>;
-	};
-
-There's no reason a node can't provide more than 1 function.
-
-
-> +			#reset-cells = <1>;
-> +			compatible = "st,stm32mp1-rcc-rst";
-> +		};
-> +	};
-> +
-> +Specifying clocks
-> +=================
-> +
-> +All available clocks are defined as preprocessor macros in
-> +dt-bindings/clock/stm32mp1-clks.h header and can be used in device
-> +tree sources.
-> +
-> +Example:
-> +
-> +	/* Accessing DMA1 clock */
-> +	... {
-> +		clocks = <&rcc_clk DMA1>
-> +	};
-> +
-> +	/* Accessing SPI6 kernel clock */
-> +	... {
-> +		clocks = <&rcc_clk SPI6_K>
-> +	};
-
-Other than the path to header, the clock binding explains all this. No 
-need to duplicate here.
-
-> +
-> +Specifying softreset control of devices
-> +=======================================
-> +
-> +Device nodes should specify the reset channel required in their "resets"
-> +property, containing a phandle to the reset device node and an index specifying
-> +which channel to use.
-> +The index is the bit number within the RCC registers bank, starting from RCC
-> +base address.
-> +It is calculated as: index = register_offset / 4 * 32 + bit_offset.
-> +Where bit_offset is the bit offset within the register.
-> +
-> +For example on STM32MP1, for LTDC reset:
-> + ltdc = APB4_RSTSETR_offset / 4 * 32 + LTDC_bit_offset
-> +      = 0x180 / 4 * 32 + 0 = 3072
-> +
-> +The list of valid indices for STM32MP1 is available in:
-> +include/dt-bindings/reset-controller/stm32mp1-resets.h
-> +
-> +This file implements defines like:
-> +#define LTDC_R	3072
-> +
-> +example:
-> +
-> +	ltdc {
-> +		resets = <&rcc_rst LTDC_R>;
-> +	};
-> -- 
-> 1.9.1
-> 
