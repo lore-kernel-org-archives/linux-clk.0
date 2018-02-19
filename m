@@ -1,190 +1,158 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com,
-	narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v4 07/12] drm/sun4i: Add has_channel_0 TCON quirk
-Date: Wed,  7 Feb 2018 22:17:08 +0100
-Message-Id: <20180207211713.3638-8-jernej.skrabec@siol.net>
-In-Reply-To: <20180207211713.3638-1-jernej.skrabec@siol.net>
-References: <20180207211713.3638-1-jernej.skrabec@siol.net>
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 13/42] clk: davinci: Add platform information for TI DM355 PSC
+Date: Mon, 19 Feb 2018 14:21:34 -0600
+Message-Id: <1519071723-31790-14-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some TCONs on newer SoCs doesn't support channel 0, since they are meant
-to be used only with TV or HDMI encoder.
+This adds platform-specific declarations for the PSC clocks on TI
+DM355 based systems.
 
-Prepare support for them with adding has_channel_0 quirk.
-
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 41 +++++++++++++++++++++++++++-----------
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
- 2 files changed, 30 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 3c15cf24b503..32d9a5eb9e25 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -84,6 +84,7 @@ static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
- 
- 	switch (channel) {
- 	case 0:
-+		WARN_ON(!tcon->quirks->has_channel_0);
- 		regmap_update_bits(tcon->regs, SUN4I_TCON0_CTL_REG,
- 				   SUN4I_TCON0_CTL_TCON_ENABLE,
- 				   enabled ? SUN4I_TCON0_CTL_TCON_ENABLE : 0);
-@@ -276,6 +277,8 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
- 	u8 clk_delay;
- 	u32 reg, val = 0;
- 
-+	WARN_ON(!tcon->quirks->has_channel_0);
+v7 changes:
+- split registration function into two, one for each PSC
+- add platform_device_id table
+- don't wrap lines for readability
+- add LPSC_ALWAYS_ENABLED flag to timer0 clock
+
+v6 changes:
+- change how clkdev lookups are declared
+
+
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/psc-dm355.c | 72 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/psc.c       |  1 +
+ drivers/clk/davinci/psc.h       |  1 +
+ 4 files changed, 75 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-dm355.c
+
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index aef0390..e0da5c3 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -12,4 +12,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
+ obj-y += psc.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
++obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
+ endif
+diff --git a/drivers/clk/davinci/psc-dm355.c b/drivers/clk/davinci/psc-dm355.c
+new file mode 100644
+index 0000000..ade2711
+--- /dev/null
++++ b/drivers/clk/davinci/psc-dm355.c
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DaVinci DM355
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
 +
- 	tcon->dclk_min_div = 7;
- 	tcon->dclk_max_div = 7;
- 	sun4i_tcon0_mode_set_common(tcon, mode);
-@@ -344,6 +347,8 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
- 	u8 clk_delay;
- 	u32 val = 0;
- 
-+	WARN_ON(!tcon->quirks->has_channel_0);
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/types.h>
 +
- 	tcon->dclk_min_div = 6;
- 	tcon->dclk_max_div = 127;
- 	sun4i_tcon0_mode_set_common(tcon, mode);
-@@ -570,10 +575,12 @@ static int sun4i_tcon_init_clocks(struct device *dev,
- 	}
- 	clk_prepare_enable(tcon->clk);
- 
--	tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
--	if (IS_ERR(tcon->sclk0)) {
--		dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
--		return PTR_ERR(tcon->sclk0);
-+	if (tcon->quirks->has_channel_0) {
-+		tcon->sclk0 = devm_clk_get(dev, "tcon-ch0");
-+		if (IS_ERR(tcon->sclk0)) {
-+			dev_err(dev, "Couldn't get the TCON channel 0 clock\n");
-+			return PTR_ERR(tcon->sclk0);
-+		}
- 	}
- 
- 	if (tcon->quirks->has_channel_1) {
-@@ -930,10 +937,12 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		goto err_free_clocks;
- 	}
- 
--	ret = sun4i_dclk_create(dev, tcon);
--	if (ret) {
--		dev_err(dev, "Couldn't create our TCON dot clock\n");
--		goto err_free_clocks;
-+	if (tcon->quirks->has_channel_0) {
-+		ret = sun4i_dclk_create(dev, tcon);
-+		if (ret) {
-+			dev_err(dev, "Couldn't create our TCON dot clock\n");
-+			goto err_free_clocks;
-+		}
- 	}
- 
- 	ret = sun4i_tcon_init_irq(dev, tcon);
-@@ -991,7 +1000,8 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 	return 0;
- 
- err_free_dotclock:
--	sun4i_dclk_free(tcon);
-+	if (tcon->quirks->has_channel_0)
-+		sun4i_dclk_free(tcon);
- err_free_clocks:
- 	sun4i_tcon_free_clocks(tcon);
- err_assert_reset:
-@@ -1005,7 +1015,8 @@ static void sun4i_tcon_unbind(struct device *dev, struct device *master,
- 	struct sun4i_tcon *tcon = dev_get_drvdata(dev);
- 
- 	list_del(&tcon->list);
--	sun4i_dclk_free(tcon);
-+	if (tcon->quirks->has_channel_0)
-+		sun4i_dclk_free(tcon);
- 	sun4i_tcon_free_clocks(tcon);
- }
- 
-@@ -1102,16 +1113,19 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
- }
- 
- static const struct sun4i_tcon_quirks sun4i_a10_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.set_mux		= sun4i_a10_tcon_set_mux,
++#include "psc.h"
++
++LPSC_CLKDEV1(vpss_master_clkdev,	"master",	"vpss");
++LPSC_CLKDEV1(vpss_slave_clkdev,		"slave",	"vpss");
++LPSC_CLKDEV1(spi1_clkdev,		NULL,		"spi_davinci.1");
++LPSC_CLKDEV1(mmcsd1_clkdev,		NULL,		"dm6441-mmc.1");
++LPSC_CLKDEV1(mcbsp1_clkdev,		NULL,		"davinci-mcbsp.1");
++LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
++LPSC_CLKDEV1(spi2_clkdev,		NULL,		"spi_davinci.2");
++LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
++LPSC_CLKDEV1(mmcsd0_clkdev,		NULL,		"dm6441-mmc.0");
++LPSC_CLKDEV1(mcbsp0_clkdev,		NULL,		"davinci-mcbsp.0");
++LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
++LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
++LPSC_CLKDEV1(uart1_clkdev,		NULL,		"serial8250.1");
++LPSC_CLKDEV1(uart2_clkdev,		NULL,		"serial8250.2");
++LPSC_CLKDEV1(spi0_clkdev,		NULL,		"spi_davinci.0");
++/* REVISIT: gpio-davinci.c should be modified to drop con_id */
++LPSC_CLKDEV1(gpio_clkdev,		"gpio",		NULL);
++LPSC_CLKDEV1(timer0_clkdev,		"timer0",	NULL);
++LPSC_CLKDEV1(timer2_clkdev,		NULL,		"davinci-wdt");
++LPSC_CLKDEV1(vpss_dac_clkdev,		"vpss_dac",	NULL);
++
++static const struct davinci_lpsc_clk_info dm355_psc_info[] __initconst = {
++	LPSC(0,  0, vpss_master, pll1_sysclk4, vpss_master_clkdev, 0),
++	LPSC(1,  0, vpss_slave,  pll1_sysclk4, vpss_slave_clkdev,  0),
++	LPSC(5,  0, timer3,      pll1_auxclk,  NULL,               0),
++	LPSC(6,  0, spi1,        pll1_sysclk2, spi1_clkdev,        0),
++	LPSC(7,  0, mmcsd1,      pll1_sysclk2, mmcsd1_clkdev,      0),
++	LPSC(8,  0, asp1,        pll1_sysclk2, NULL,               0),
++	LPSC(9,  0, usb,         pll1_sysclk2, usb_clkdev,         0),
++	LPSC(10, 0, pwm3,        pll1_auxclk,  NULL,               0),
++	LPSC(11, 0, spi2,        pll1_sysclk2, spi2_clkdev,        0),
++	LPSC(12, 0, rto,         pll1_auxclk,  NULL,               0),
++	LPSC(14, 0, aemif,       pll1_sysclk2, aemif_clkdev,       0),
++	LPSC(15, 0, mmcsd0,      pll1_sysclk2, mmcsd0_clkdev,      0),
++	LPSC(17, 0, asp0,        pll1_sysclk2, NULL,               0),
++	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
++	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
++	LPSC(20, 0, uart1,       pll1_auxclk,  uart1_clkdev,       0),
++	LPSC(21, 0, uart2,       pll1_sysclk2, uart2_clkdev,       0),
++	LPSC(22, 0, spi0,        pll1_sysclk2, spi0_clkdev,        0),
++	LPSC(23, 0, pwm0,        pll1_auxclk,  NULL,               0),
++	LPSC(24, 0, pwm1,        pll1_auxclk,  NULL,               0),
++	LPSC(25, 0, pwm2,        pll1_auxclk,  NULL,               0),
++	LPSC(26, 0, gpio,        pll1_sysclk2, gpio_clkdev,        0),
++	LPSC(27, 0, timer0,      pll1_auxclk,  timer0_clkdev,      LPSC_ALWAYS_ENABLED),
++	LPSC(28, 0, timer1,      pll1_auxclk,  NULL,               0),
++	/* REVISIT: why can't this be disabled? */
++	LPSC(29, 0, timer2,      pll1_auxclk,  timer2_clkdev,      LPSC_ALWAYS_ENABLED),
++	LPSC(31, 0, arm,         pll1_sysclk1, NULL,               LPSC_ALWAYS_ENABLED),
++	LPSC(40, 0, mjcp,        pll1_sysclk1, NULL,               0),
++	LPSC(41, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
++	{ }
++};
++
++int __init dm355_psc_init(struct device *dev, void __iomem *base)
++{
++	return davinci_psc_register_clocks(base, dm355_psc_info, 42, base);
++}
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 0f53ec2..a2a46a2 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -449,6 +449,7 @@ static const struct platform_device_id davinci_psc_id_table[] = {
+ 	{ .name = "da830-psc1", .driver_data = (kernel_ulong_t)da830_psc1_init },
+ 	{ .name = "da850-psc0", .driver_data = (kernel_ulong_t)da850_psc0_init },
+ 	{ .name = "da850-psc1", .driver_data = (kernel_ulong_t)da850_psc1_init },
++	{ .name = "dm355-psc",  .driver_data = (kernel_ulong_t)dm355_psc_init  },
+ 	{ }
  };
  
- static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.set_mux		= sun5i_a13_tcon_set_mux,
- };
+diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
+index b50b2ea..ade6e01 100644
+--- a/drivers/clk/davinci/psc.h
++++ b/drivers/clk/davinci/psc.h
+@@ -93,5 +93,6 @@ int da850_psc0_init(struct device *dev, void __iomem *base);
+ int da850_psc1_init(struct device *dev, void __iomem *base);
+ int of_da850_psc0_init(struct device *dev, void __iomem *base);
+ int of_da850_psc1_init(struct device *dev, void __iomem *base);
++int dm355_psc_init(struct device *dev, void __iomem *base);
  
- static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.has_lvds_alt		= true,
- 	.needs_de_be_mux	= true,
-@@ -1119,26 +1133,29 @@ static const struct sun4i_tcon_quirks sun6i_a31_quirks = {
- };
- 
- static const struct sun4i_tcon_quirks sun6i_a31s_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	.needs_de_be_mux	= true,
- };
- 
- static const struct sun4i_tcon_quirks sun7i_a20_quirks = {
-+	.has_channel_0		= true,
- 	.has_channel_1		= true,
- 	/* Same display pipeline structure as A10 */
- 	.set_mux		= sun4i_a10_tcon_set_mux,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_a33_quirks = {
-+	.has_channel_0		= true,
- 	.has_lvds_alt		= true,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_a83t_lcd_quirks = {
--	/* nothing is supported */
-+	.has_channel_0		= true,
- };
- 
- static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
--	/* nothing is supported */
-+	.has_channel_0		= true,
- };
- 
- /* sun4i_drv uses this list to check if a device node is a TCON */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index b761c7b823c5..78d55e7cd2b3 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -172,6 +172,7 @@
- struct sun4i_tcon;
- 
- struct sun4i_tcon_quirks {
-+	bool	has_channel_0;	/* a83t does not have channel 0 on second TCON */
- 	bool	has_channel_1;	/* a33 does not have channel 1 */
- 	bool	has_lvds_alt;	/* Does the LVDS clock have a parent other than the TCON clock? */
- 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
+ #endif /* __CLK_DAVINCI_PSC_H__ */
 -- 
-2.16.1
+2.7.4
