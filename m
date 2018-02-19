@@ -1,52 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:39821 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752005AbeB0QFt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Feb 2018 11:05:49 -0500
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org, kernel@pengutronix.de
-Cc: fabio.estevam@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 1/2] clk: imx: imx7d: add the Keypad Port module clock
-Date: Tue, 27 Feb 2018 17:05:43 +0100
-Message-Id: <20180227160544.11446-1-stefan@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/11] clk: meson: second round of updates
+Date: Mon, 19 Feb 2018 12:21:35 +0100
+Message-Id: <20180219112146.21746-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to the i.MX7D Reference Manual, the Keypad Port module
-(KPP) requires this clock gate to be enabled.
+This changeset applies on top of the previous updates series
+available here [0].
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/clk/imx/clk-imx7d.c             | 1 +
- include/dt-bindings/clock/imx7d-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Most of the changes proposed here are related to the plls of meson
+SoCs. Details can be found in each patches but, in nutshell, there
+is :
+* a bit of clean-up,
+* improved pll capabilities using the frac parameter,
+* several clocks added to model the tree more accurately.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index f34f1ecc4690..6b6e8851eabb 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -858,6 +858,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_WDOG2_ROOT_CLK] = imx_clk_gate4("wdog2_root_clk", "wdog_post_div", base + 0x49d0, 0);
- 	clks[IMX7D_WDOG3_ROOT_CLK] = imx_clk_gate4("wdog3_root_clk", "wdog_post_div", base + 0x49e0, 0);
- 	clks[IMX7D_WDOG4_ROOT_CLK] = imx_clk_gate4("wdog4_root_clk", "wdog_post_div", base + 0x49f0, 0);
-+	clks[IMX7D_KPP_ROOT_CLK] = imx_clk_gate4("kpp_root_clk", "ipg_root_clk", base + 0x4aa0, 0);
- 	clks[IMX7D_CSI_MCLK_ROOT_CLK] = imx_clk_gate4("csi_mclk_root_clk", "csi_mclk_post_div", base + 0x4490, 0);
- 	clks[IMX7D_AUDIO_MCLK_ROOT_CLK] = imx_clk_gate4("audio_mclk_root_clk", "audio_mclk_post_div", base + 0x4790, 0);
- 	clks[IMX7D_WRCLK_ROOT_CLK] = imx_clk_gate4("wrclk_root_clk", "wrclk_post_div", base + 0x47a0, 0);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index dc51904435d8..7653c8536b64 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -453,5 +453,6 @@
- #define IMX7D_NAND_RAWNAND_CLK		440
- #define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
- #define IMX7D_SNVS_CLK			442
--#define IMX7D_CLK_END			443
-+#define IMX7D_KPP_ROOT_CLK		443
-+#define IMX7D_CLK_END			444
- #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+Beware: patch #10 depends on this core clock framework fix: [1]
+As explained in the description on the patch, if the gates are
+added w/o this fix, the system will crash when
+clk_disable_unused() is called.
+
+[0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.com
+[1]: https://lkml.kernel.org/r/20180214134340.17242-5-jbrunet@baylibre.com
+
+Jerome Brunet (11):
+  clk: meson: add fractional part of meson8b fixed_pll
+  clk: meson: poke pll CNTL last
+  clk: meson: remove special gp0 lock loop
+  clk: meson: improve pll driver results with frac
+  clk: meson: add gp0 frac parameter for axg and gxl
+  clk: meson: add ROUND_CLOSEST to the pll driver
+  clk: meson: axg: add hifi clock bindings
+  clk: meson: axg: add hifi pll clock
+  clk: meson: add mpll pre-divider
+  clk: meson: add fdiv clock gates
+  clk: meson: clean-up clk81 clocks
+
+ drivers/clk/meson/axg.c              | 184 +++++++++++++++++++++++++++++++----
+ drivers/clk/meson/axg.h              |   8 +-
+ drivers/clk/meson/clk-pll.c          | 154 ++++++++++++++++++-----------
+ drivers/clk/meson/clkc.h             |  15 +--
+ drivers/clk/meson/gxbb.c             | 141 +++++++++++++++++++++++----
+ drivers/clk/meson/gxbb.h             |  10 +-
+ drivers/clk/meson/meson8b.c          | 128 ++++++++++++++++++++----
+ drivers/clk/meson/meson8b.h          |   8 +-
+ include/dt-bindings/clock/axg-clkc.h |   1 +
+ 9 files changed, 521 insertions(+), 128 deletions(-)
+
 -- 
-2.16.2
-
+2.14.3
