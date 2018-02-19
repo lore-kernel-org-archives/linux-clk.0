@@ -1,44 +1,124 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:60496 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753272AbeBSS3q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Feb 2018 13:29:46 -0500
-MIME-Version: 1.0
-In-Reply-To: <61928ad523a7aeffb8f16d4caad56836b65ae407.1518424204.git.ryder.lee@mediatek.com>
-References: <cover.1518424204.git.ryder.lee@mediatek.com> <61928ad523a7aeffb8f16d4caad56836b65ae407.1518424204.git.ryder.lee@mediatek.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 19 Feb 2018 12:29:24 -0600
-Message-ID: <CAL_JsqJgo0pKJjrs2fdw+q=DJYwht0X5L3Bomz8gf98mEN7hkg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] dt-bindings: clock: mediatek: update audsys
- documentation to adapt MFD device
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 08/11] clk: meson: axg: add hifi pll clock
+Date: Mon, 19 Feb 2018 12:21:43 +0100
+Message-Id: <20180219112146.21746-9-jbrunet@baylibre.com>
+In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
+References: <20180219112146.21746-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 5:28 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
-> The MediaTek audio hardware block that exposes functionalities that are
-> handled by separate subsystems in the kernel.  These functions are all
-> mapped somewhere at 0x112xxxxx, and there are some control bits are mixed
-> up with other functions within the same registers.
+Add the hifi pll to the axg clock controller. This clock maybe used as an
+input of the axg audio clock controller. It uses the same settings table
+as the gp0 pll but has a frac parameter allowing more precision.
 
-I still don't think this change is necessary.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/axg.h |  2 +-
+ 2 files changed, 56 insertions(+), 1 deletion(-)
 
-Just because a hardware block in DT maps to different subsystems in a
-particular OS doesn't mean you need a DT node for each OS subsystem.
-What we have subsystems for changes over time and DT shouldn't really
-be changing based on that. And DT is not the only way to instantiate
-drivers.
-
-Rob
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 892572a2d70f..ed4a645753c4 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -245,6 +245,59 @@ static struct clk_regmap axg_gp0_pll = {
+ 	},
+ };
+ 
++const struct reg_sequence axg_hifi_init_regs[] = {
++	{ .reg = HHI_HIFI_PLL_CNTL1,	.def = 0xc084b000 },
++	{ .reg = HHI_HIFI_PLL_CNTL2,	.def = 0xb75020be },
++	{ .reg = HHI_HIFI_PLL_CNTL3,	.def = 0x0a6a3a88 },
++	{ .reg = HHI_HIFI_PLL_CNTL4,	.def = 0xc000004d },
++	{ .reg = HHI_HIFI_PLL_CNTL5,	.def = 0x00058000 },
++	{ .reg = HHI_HIFI_PLL_CNTL,	.def = 0x40010250 },
++};
++
++static struct clk_regmap axg_hifi_pll = {
++	.data = &(struct meson_clk_pll_data){
++		.m = {
++			.reg_off = HHI_HIFI_PLL_CNTL,
++			.shift   = 0,
++			.width   = 9,
++		},
++		.n = {
++			.reg_off = HHI_HIFI_PLL_CNTL,
++			.shift   = 9,
++			.width   = 5,
++		},
++		.od = {
++			.reg_off = HHI_HIFI_PLL_CNTL,
++			.shift   = 16,
++			.width   = 2,
++		},
++		.frac = {
++			.reg_off = HHI_HIFI_PLL_CNTL5,
++			.shift   = 0,
++			.width   = 13,
++		},
++		.l = {
++			.reg_off = HHI_HIFI_PLL_CNTL,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = HHI_HIFI_PLL_CNTL,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.table = axg_gp0_pll_rate_table,
++		.init_regs = axg_hifi_init_regs,
++		.init_count = ARRAY_SIZE(axg_hifi_init_regs),
++		.flags = CLK_MESON_PLL_ROUND_CLOSEST,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hifi_pll",
++		.ops = &meson_clk_pll_ops,
++		.parent_names = (const char *[]){ "xtal" },
++		.num_parents = 1,
++	},
++};
+ 
+ static struct clk_fixed_factor axg_fclk_div2 = {
+ 	.mult = 1,
+@@ -767,6 +820,7 @@ static struct clk_hw_onecell_data axg_hw_onecell_data = {
+ 		[CLKID_MPLL1_DIV]		= &axg_mpll1_div.hw,
+ 		[CLKID_MPLL2_DIV]		= &axg_mpll2_div.hw,
+ 		[CLKID_MPLL3_DIV]		= &axg_mpll3_div.hw,
++		[CLKID_HIFI_PLL]		= &axg_hifi_pll.hw,
+ 		[NR_CLKS]			= NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -838,6 +892,7 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
+ 	&axg_fixed_pll,
+ 	&axg_sys_pll,
+ 	&axg_gp0_pll,
++	&axg_hifi_pll,
+ };
+ 
+ static const struct of_device_id clkc_match_table[] = {
+diff --git a/drivers/clk/meson/axg.h b/drivers/clk/meson/axg.h
+index 4c1502a8b8c9..4916c7045c48 100644
+--- a/drivers/clk/meson/axg.h
++++ b/drivers/clk/meson/axg.h
+@@ -122,7 +122,7 @@
+ #define CLKID_MPLL2_DIV				67
+ #define CLKID_MPLL3_DIV				68
+ 
+-#define NR_CLKS					69
++#define NR_CLKS					70
+ 
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/axg-clkc.h>
+-- 
+2.14.3
