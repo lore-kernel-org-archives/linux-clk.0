@@ -1,67 +1,207 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 15/26] clk: renesas: r8a7743: Add rwdt clock
-Date: Mon, 12 Feb 2018 17:44:24 +0000
-Message-Id: <1518457475-4480-16-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 06/42] clk: davinci: Add platform information for TI DM365 PLL
+Date: Mon, 19 Feb 2018 14:21:27 -0600
+Message-Id: <1519071723-31790-7-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add "rwdt" clock to r8a7743_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
+This adds platform-specific declarations for the PLL clocks on TI
+DM365 based systems.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
-v4->v5:
-* no change
 
- drivers/clk/renesas/r8a7743-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+v7 changes:
+- split registration functions for each PLL
+- Add platform_device_id lookup
 
-diff --git a/drivers/clk/renesas/r8a7743-cpg-mssr.c b/drivers/clk/renesas/r8a7743-cpg-mssr.c
-index 6dc0b30..d3c8b1e 100644
---- a/drivers/clk/renesas/r8a7743-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7743-cpg-mssr.c
-@@ -117,6 +117,7 @@ static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7743_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7743_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7743_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7743_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7743_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7743_CLK_ZS),
- 	DEF_MOD("audio-dmac1",		 501,	R8A7743_CLK_HP),
-@@ -195,6 +196,7 @@ static const struct mssr_mod_clk r8a7743_mod_clks[] __initconst = {
+v6 changes:
+- Added dm365_pll{1,2}_info with controller-specific information
+- Changed OBSCLK data
+- Add empty lines between function calls
+
+
+ drivers/clk/davinci/Makefile    |   1 +
+ drivers/clk/davinci/pll-dm365.c | 119 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/pll.c       |   2 +
+ drivers/clk/davinci/pll.h       |   3 +
+ 4 files changed, 125 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm365.c
+
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 6720bd0..353aa02 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -5,4 +5,5 @@ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
++obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm365.c b/drivers/clk/davinci/pll-dm365.c
+new file mode 100644
+index 0000000..8654ca7
+--- /dev/null
++++ b/drivers/clk/davinci/pll-dm365.c
+@@ -0,0 +1,119 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM365
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/bitops.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++#define OCSEL_OCSRC_ENABLE	0
++
++static const struct davinci_pll_clk_info dm365_pll1_info __initconst = {
++	.name = "pll1",
++	.pllm_mask = GENMASK(9, 0),
++	.pllm_min = 1,
++	.pllm_max = 1023,
++	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV |
++		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_PLLM_2X,
++};
++
++static const struct davinci_pll_sysclk_info dm365_pll1_sysclk_info[] __initconst = {
++	SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(5, pll1_sysclk5, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(6, pll1_sysclk6, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(7, pll1_sysclk7, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(8, pll1_sysclk8, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(9, pll1_sysclk9, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	{ }
++};
++
++/*
++ * This is a bit of a hack to make OCSEL[OCSRC] on DM365 look like OCSEL[OCSRC]
++ * on DA850. On DM365, OCSEL[OCSRC] is just an enable/disable bit instead of a
++ * multiplexer. By modeling it as a single parent mux clock, the clock code will
++ * still do the right thing in this case.
++ */
++static const char * const dm365_pll_obsclk_parent_names[] __initconst = {
++	"oscin",
++};
++
++static u32 dm365_pll_obsclk_table[] = {
++	OCSEL_OCSRC_ENABLE,
++};
++
++static const struct davinci_pll_obsclk_info dm365_pll1_obsclk_info __initconst = {
++	.name = "pll1_obsclk",
++	.parent_names = dm365_pll_obsclk_parent_names,
++	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
++	.table = dm365_pll_obsclk_table,
++	.ocsrc_mask = BIT(4),
++};
++
++static const struct davinci_pll_clk_info dm365_pll2_info __initconst = {
++	.name = "pll2",
++	.pllm_mask = GENMASK(9, 0),
++	.pllm_min = 1,
++	.pllm_max = 1023,
++	.flags = PLL_HAS_PREDIV | PLL_HAS_POSTDIV | PLL_POSTDIV_ALWAYS_ENABLED |
++		 PLL_PLLM_2X,
++};
++
++static const struct davinci_pll_sysclk_info dm365_pll2_sysclk_info[] __initconst = {
++	SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(3, pll2_sysclk3, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(4, pll2_sysclk4, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(5, pll2_sysclk5, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED),
++	{ }
++};
++
++static const struct davinci_pll_obsclk_info dm365_pll2_obsclk_info __initconst = {
++	.name = "pll2_obsclk",
++	.parent_names = dm365_pll_obsclk_parent_names,
++	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
++	.table = dm365_pll_obsclk_table,
++	.ocsrc_mask = BIT(4),
++};
++
++int __init dm365_pll1_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm365_pll1_info, "ref_clk", base);
++
++	davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
++
++	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
++
++	davinci_pll_obsclk_register(dev, &dm365_pll1_obsclk_info, base);
++
++	for (info = dm365_pll1_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	return 0;
++}
++
++int __init dm365_pll2_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm365_pll2_info, "oscin", base);
++
++	davinci_pll_auxclk_register(dev, "pll2_auxclk", base);
++
++	davinci_pll_obsclk_register(dev, &dm365_pll2_obsclk_info, base);
++
++	for (info = dm365_pll2_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	return 0;
++}
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index f72ea30..c8dd3fa 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -758,6 +758,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
+ 	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
+ 	{ .name = "dm355-pll1",  .driver_data = (kernel_ulong_t)dm355_pll1_init  },
+ 	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
++	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
++	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
+ 	{ }
  };
  
- static const unsigned int r8a7743_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index 6bd73d7..b911c8a 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -129,4 +129,7 @@ int of_da850_pll1_init(struct device *dev, void __iomem *base);
+ int dm355_pll1_init(struct device *dev, void __iomem *base);
+ int dm355_pll2_init(struct device *dev, void __iomem *base);
  
++int dm365_pll1_init(struct device *dev, void __iomem *base);
++int dm365_pll2_init(struct device *dev, void __iomem *base);
++
+ #endif /* __CLK_DAVINCI_PLL_H___ */
 -- 
 2.7.4
