@@ -1,216 +1,147 @@
-MIME-Version: 1.0
-In-Reply-To: <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
-	<1515377863-20358-13-git-send-email-david@lechnology.com>
-	<CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
-Date: Fri, 9 Feb 2018 08:48:20 -0800
-Message-ID: <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-From: Michael Turquette <mturquette@baylibre.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: David Lechner <david@lechnology.com>, linux-clk <linux-clk@vger.kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <m.purski@samsung.com>
+From: Maciej Purski <m.purski@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim
+	<jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+	Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin
+	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro
+	Carvalho Chehab <mchehab@kernel.org>, Andrzej Pietrasiewicz
+	<andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Russell King <linux@armlinux.org.uk>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier
+	<thibault.saunier@osg.samsung.com>, Javier Martinez Canillas
+	<javier@osg.samsung.com>, Hans Verkuil <hansverk@cisco.com>, Hoegeun Kwon
+	<hoegeun.kwon@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH 3/8] drm/exynos/decon: Use clk bulk API
+Date: Mon, 19 Feb 2018 16:44:01 +0100
+Message-id: <1519055046-2399-4-git-send-email-m.purski@samsung.com>
+In-reply-to: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+	<CGME20180219154458eucas1p1b4e728757e78f3d5dde5c9aa565a5d20@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bartosz, all,
+Using bulk clk functions simplifies the driver's code. Use devm_clk_bulk
+functions instead of iterating over an array of clks.
 
-On Fri, Feb 9, 2018 at 8:22 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> 2018-01-08 3:17 GMT+01:00 David Lechner <david@lechnology.com>:
->> This adds platform-specific declarations for the PSC clocks on TI DA850/
->> OMAP-L138/AM18XX SoCs.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
->> ---
->>  drivers/clk/davinci/Makefile    |   1 +
->>  drivers/clk/davinci/psc-da850.c | 117 ++++++++++++++++++++++++++++++++++++++++
->>  include/linux/clk/davinci.h     |   1 +
->>  3 files changed, 119 insertions(+)
->>  create mode 100644 drivers/clk/davinci/psc-da850.c
->>
->> diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
->> index fb14c8c..aef0390 100644
->> --- a/drivers/clk/davinci/Makefile
->> +++ b/drivers/clk/davinci/Makefile
->> @@ -11,4 +11,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DM646x)     += pll-dm646x.o
->>
->>  obj-y += psc.o
->>  obj-$(CONFIG_ARCH_DAVINCI_DA830)       += psc-da830.o
->> +obj-$(CONFIG_ARCH_DAVINCI_DA850)       += psc-da850.o
->>  endif
->> diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
->> new file mode 100644
->> index 0000000..3b4583d
->> --- /dev/null
->> +++ b/drivers/clk/davinci/psc-da850.c
->> @@ -0,0 +1,117 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * PSC clock descriptions for TI DA850/OMAP-L138/AM18XX
->> + *
->> + * Copyright (C) 2017 David Lechner <david@lechnology.com>
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/clkdev.h>
->> +#include <linux/init.h>
->> +#include <linux/of.h>
->> +#include <linux/types.h>
->> +
->> +#include "psc.h"
->> +
->> +static const struct davinci_psc_clk_info da850_psc0_info[] __initconst = {
->> +       LPSC(0, 0, tpcc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +       LPSC(1, 0, tptc0, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +       LPSC(2, 0, tptc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +       LPSC(3, 0, aemif, pll0_sysclk3, 0),
->> +       LPSC(4, 0, spi0, pll0_sysclk2, 0),
->> +       LPSC(5, 0, mmcsd0, pll0_sysclk2, 0),
->> +       LPSC(6, 0, aintc, pll0_sysclk4, LPSC_ALWAYS_ENABLED),
->> +       LPSC(7, 0, arm_rom, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +       LPSC(9, 0, uart0, pll0_sysclk2, 0),
->> +       LPSC(13, 0, pruss, pll0_sysclk2, 0),
->> +       LPSC(14, 0, arm, pll0_sysclk6, LPSC_ALWAYS_ENABLED),
->> +       LPSC(15, 1, dsp, pll0_sysclk1, LPSC_FORCE | LPSC_LOCAL_RESET),
->> +       { }
->> +};
->> +
->> +static const struct davinci_psc_clk_info da850_psc1_info[] __initconst = {
->> +       LPSC(0, 0, tpcc1, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +       LPSC(1, 0, usb0, pll0_sysclk2, 0),
->> +       LPSC(2, 0, usb1, pll0_sysclk4, 0),
->> +       LPSC(3, 0, gpio, pll0_sysclk4, 0),
->> +       LPSC(5, 0, emac, pll0_sysclk4, 0),
->> +       LPSC(6, 0, emif3, pll0_sysclk5, LPSC_ALWAYS_ENABLED),
->> +       LPSC(7, 0, mcasp0, async3, 0),
->> +       LPSC(8, 0, sata, pll0_sysclk2, LPSC_FORCE),
->> +       LPSC(9, 0, vpif, pll0_sysclk2, 0),
->> +       LPSC(10, 0, spi1, async3, 0),
->> +       LPSC(11, 0, i2c1, pll0_sysclk4, 0),
->> +       LPSC(12, 0, uart1, async3, 0),
->> +       LPSC(13, 0, uart2, async3, 0),
->> +       LPSC(14, 0, mcbsp0, async3, 0),
->> +       LPSC(15, 0, mcbsp1, async3, 0),
->> +       LPSC(16, 0, lcdc, pll0_sysclk2, 0),
->> +       LPSC(17, 0, ehrpwm, async3, 0),
->> +       LPSC(18, 0, mmcsd1, pll0_sysclk2, 0),
->> +       LPSC(20, 0, ecap, async3, 0),
->> +       LPSC(21, 0, tptc2, pll0_sysclk2, LPSC_ALWAYS_ENABLED),
->> +       { }
->> +};
->> +
->> +void __init da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1)
->> +{
->> +       struct clk_onecell_data *clk_data;
->> +
->> +       clk_data = davinci_psc_register_clocks(psc0, da850_psc0_info, 16);
->> +       if (!clk_data)
->> +               return;
->> +
->> +       clk_register_clkdev(clk_data->clks[3], NULL, "ti-aemif");
->> +       clk_register_clkdev(clk_data->clks[3], "aemif", "davinci-nand.0");
->> +       clk_register_clkdev(clk_data->clks[4], NULL, "spi_davinci.0");
->> +       clk_register_clkdev(clk_data->clks[5], NULL, "da830-mmc.0");
->> +       clk_register_clkdev(clk_data->clks[9], NULL, "serial8250.0");
->> +       clk_register_clkdev(clk_data->clks[14], "arm", NULL);
->> +       clk_register_clkdev(clk_data->clks[15], NULL, "davinci-rproc.0");
->> +
->> +       clk_free_onecell_data(clk_data);
->> +
->> +       clk_data = davinci_psc_register_clocks(psc1, da850_psc1_info, 32);
->> +       if (!clk_data)
->> +               return;
->> +
->> +       clk_register_clkdev(clk_data->clks[1], "usb20_psc_clk", NULL);
->> +       clk_register_clkdev(clk_data->clks[1], NULL, "musb-da8xx");
->> +       clk_register_clkdev(clk_data->clks[1], NULL, "cppi41-dmaengine");
->> +       clk_register_clkdev(clk_data->clks[2], NULL, "ohci-da8xx");
->> +       clk_register_clkdev(clk_data->clks[3], "gpio", NULL);
->> +       clk_register_clkdev(clk_data->clks[5], NULL, "davinci_emac.1");
->> +       clk_register_clkdev(clk_data->clks[5], "fck", "davinci_mdio.0");
->> +       clk_register_clkdev(clk_data->clks[7], NULL, "davinci-mcasp.0");
->> +       clk_register_clkdev(clk_data->clks[8], "fck", "ahci_da850");
->> +       clk_register_clkdev(clk_data->clks[9], NULL, "vpif");
->> +       clk_register_clkdev(clk_data->clks[10], NULL, "spi_davinci.1");
->> +       clk_register_clkdev(clk_data->clks[11], NULL, "i2c_davinci.2");
->> +       clk_register_clkdev(clk_data->clks[12], NULL, "serial8250.1");
->> +       clk_register_clkdev(clk_data->clks[13], NULL, "serial8250.2");
->> +       clk_register_clkdev(clk_data->clks[14], NULL, "davinci-mcbsp.0");
->> +       clk_register_clkdev(clk_data->clks[15], NULL, "davinci-mcbsp.1");
->> +       clk_register_clkdev(clk_data->clks[16], "fck", "da8xx_lcdc.0");
->> +       clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.0");
->> +       clk_register_clkdev(clk_data->clks[17], "fck", "ehrpwm.1");
->> +       clk_register_clkdev(clk_data->clks[18], NULL, "da830-mmc.1");
->> +       clk_register_clkdev(clk_data->clks[20], "fck", "ecap.0");
->> +       clk_register_clkdev(clk_data->clks[20], "fck", "ecap.1");
->> +       clk_register_clkdev(clk_data->clks[20], "fck", "ecap.2");
->> +
->> +       clk_free_onecell_data(clk_data);
->> +}
->> +
->> +#ifdef CONFIG_OF
->> +static void __init of_da850_psc0_clk_init(struct device_node *node)
->> +{
->> +       of_davinci_psc_clk_init(node, da850_psc0_info, 16);
->> +}
->> +CLK_OF_DECLARE(da850_psc0_clk, "ti,da850-psc0", of_da850_psc0_clk_init);
->> +
->> +static void __init of_da850_psc1_clk_init(struct device_node *node)
->> +{
->> +       of_davinci_psc_clk_init(node, da850_psc1_info, 32);
->> +}
->> +CLK_OF_DECLARE(da850_psc1_clk, "ti,da850-psc1", of_da850_psc1_clk_init);
->> +#endif
->> diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
->> index 3ec8100..3d8bdfa 100644
->> --- a/include/linux/clk/davinci.h
->> +++ b/include/linux/clk/davinci.h
->> @@ -17,5 +17,6 @@ void dm644x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
->>  void dm646x_pll_clk_init(void __iomem *pll1, void __iomem *pll2);
->>
->>  void da830_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
->> +void da850_psc_clk_init(void __iomem *psc0, void __iomem *psc1);
->>
->>  #endif /* __LINUX_CLK_DAVINCI_H__ */
->> --
->> 2.7.4
->>
->
-> Hi David,
->
-> I've been working on moving the genpd code from its own driver to the
-> psc one. I couldn't get the system to boot though and problems
-> happened very early in the boot sequence. I struggled to figure out
-> what's happening, but eventually I noticed that psc uses
-> CLK_OF_DECLARE() to initialize clocks. The functions registered this
-> way are called very early in the boot sequence, way before
-> late_initcall() in which the genpd framework is initialized. This of
-> course makes it impossible to register genpd at the same time we
-> register PSCs.
->
-> Mike, Stephen - it would be great if you could confirm, but I believe
-> the clock framework now only accepts clock drivers which create real
-> platform drivers, in which case this series would need to be modified.
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 50 ++++++++-------------------
+ 1 file changed, 15 insertions(+), 35 deletions(-)
 
-You are correct. All new uses of CLK_OF_DECLARE are met with high
-suspicion, and all new drivers should be platform drivers.
-
-There are cases when CLK_OF_DECLARE is necessary (sometimes
-temporarily while things are reworked), but it seems this is not the
-case for this driver based on your testing of the platform driver
-approach. Please use the platform driver approach instead.
-
-Thanks,
-Mike
-
->
-> David: FYI I quickly converted the functions in psc-da850.c to actual
-> probe callbacks and it worked just fine on a da850-lcdk board.
->
-> Best regards,
-> Bartosz Golaszewski
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 1c330f2..1760fcb 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -55,7 +55,7 @@ struct decon_context {
+ 	struct exynos_drm_plane_config	configs[WINDOWS_NR];
+ 	void __iomem			*addr;
+ 	struct regmap			*sysreg;
+-	struct clk			*clks[ARRAY_SIZE(decon_clks_name)];
++	struct clk_bulk_data		*clks;
+ 	unsigned int			irq;
+ 	unsigned int			irq_vsync;
+ 	unsigned int			irq_lcd_sys;
+@@ -485,15 +485,13 @@ static irqreturn_t decon_te_irq_handler(int irq, void *dev_id)
+ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
+ {
+ 	struct decon_context *ctx = crtc->ctx;
+-	int win, i, ret;
++	int win, ret;
+ 
+ 	DRM_DEBUG_KMS("%s\n", __FILE__);
+ 
+-	for (i = 0; i < ARRAY_SIZE(decon_clks_name); i++) {
+-		ret = clk_prepare_enable(ctx->clks[i]);
+-		if (ret < 0)
+-			goto err;
+-	}
++	ret = clk_bulk_prepare_enable(ARRAY_SIZE(decon_clks_name), ctx->clks);
++	if (ret < 0)
++		return;
+ 
+ 	decon_shadow_protect(ctx, true);
+ 	for (win = 0; win < WINDOWS_NR; win++)
+@@ -504,10 +502,6 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
+ 
+ 	/* TODO: wait for possible vsync */
+ 	msleep(50);
+-
+-err:
+-	while (--i >= 0)
+-		clk_disable_unprepare(ctx->clks[i]);
+ }
+ 
+ static enum drm_mode_status decon_mode_valid(struct exynos_drm_crtc *crtc,
+@@ -638,10 +632,8 @@ static irqreturn_t decon_irq_handler(int irq, void *dev_id)
+ static int exynos5433_decon_suspend(struct device *dev)
+ {
+ 	struct decon_context *ctx = dev_get_drvdata(dev);
+-	int i = ARRAY_SIZE(decon_clks_name);
+ 
+-	while (--i >= 0)
+-		clk_disable_unprepare(ctx->clks[i]);
++	clk_bulk_disable_unprepare(ARRAY_SIZE(decon_clks_name), ctx->clks);
+ 
+ 	return 0;
+ }
+@@ -649,19 +641,9 @@ static int exynos5433_decon_suspend(struct device *dev)
+ static int exynos5433_decon_resume(struct device *dev)
+ {
+ 	struct decon_context *ctx = dev_get_drvdata(dev);
+-	int i, ret;
+-
+-	for (i = 0; i < ARRAY_SIZE(decon_clks_name); i++) {
+-		ret = clk_prepare_enable(ctx->clks[i]);
+-		if (ret < 0)
+-			goto err;
+-	}
+-
+-	return 0;
++	int ret;
+ 
+-err:
+-	while (--i >= 0)
+-		clk_disable_unprepare(ctx->clks[i]);
++	ret = clk_bulk_prepare_enable(ARRAY_SIZE(decon_clks_name), ctx->clks);
+ 
+ 	return ret;
+ }
+@@ -719,7 +701,6 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
+ 	struct decon_context *ctx;
+ 	struct resource *res;
+ 	int ret;
+-	int i;
+ 
+ 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
+@@ -732,15 +713,14 @@ static int exynos5433_decon_probe(struct platform_device *pdev)
+ 	if (ctx->out_type & IFTYPE_HDMI)
+ 		ctx->first_win = 1;
+ 
+-	for (i = 0; i < ARRAY_SIZE(decon_clks_name); i++) {
+-		struct clk *clk;
+-
+-		clk = devm_clk_get(ctx->dev, decon_clks_name[i]);
+-		if (IS_ERR(clk))
+-			return PTR_ERR(clk);
++	ctx->clks = devm_clk_bulk_alloc(dev, ARRAY_SIZE(decon_clks_name),
++					decon_clks_name);
++	if (IS_ERR(ctx->clks))
++		return PTR_ERR(ctx->clks);
+ 
+-		ctx->clks[i] = clk;
+-	}
++	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(decon_clks_name), ctx->clks);
++	if (ret < 0)
++		return ret;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	ctx->addr = devm_ioremap_resource(dev, res);
+-- 
+2.7.4
