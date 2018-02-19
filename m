@@ -1,196 +1,601 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com,
-	narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v4 11/12] ARM: dts: sun8i: a83t: Add HDMI display pipeline
-Date: Wed,  7 Feb 2018 22:17:12 +0100
-Message-Id: <20180207211713.3638-12-jernej.skrabec@siol.net>
-In-Reply-To: <20180207211713.3638-1-jernej.skrabec@siol.net>
-References: <20180207211713.3638-1-jernej.skrabec@siol.net>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 10/11] clk: meson: add fdiv clock gates
+Date: Mon, 19 Feb 2018 12:21:45 +0100
+Message-Id: <20180219112146.21746-11-jbrunet@baylibre.com>
+In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
+References: <20180219112146.21746-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds all bits necessary for HDMI on A83T - mixer1, tcon1,
-hdmi, hdmi phy and hdmi pinctrl entries.
+Fdiv fixed dividers clocks of the fixed_pll can actually gate
+independently. We never had an issue so far because these clocks
+were provided 'enabled' by the bootloader.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Add these gates to enable/disable the clocks when required.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 119 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 118 insertions(+), 1 deletion(-)
+ drivers/clk/meson/axg.c     |  95 ++++++++++++++++++++++++++++++++++++-----
+ drivers/clk/meson/axg.h     |   7 +++-
+ drivers/clk/meson/gxbb.c    | 100 +++++++++++++++++++++++++++++++++++++++-----
+ drivers/clk/meson/gxbb.h    |   7 +++-
+ drivers/clk/meson/meson8b.c |  95 ++++++++++++++++++++++++++++++++++++-----
+ drivers/clk/meson/meson8b.h |   7 +++-
+ 6 files changed, 278 insertions(+), 33 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 7f4955a5fab7..b8e629e5dbf3 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -155,7 +155,7 @@
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 2989087fb52d..99b2738c204f 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -299,61 +299,126 @@ static struct clk_regmap axg_hifi_pll = {
+ 	},
+ };
  
- 	de: display-engine {
- 		compatible = "allwinner,sun8i-a83t-display-engine";
--		allwinner,pipelines = <&mixer0>;
-+		allwinner,pipelines = <&mixer0>, <&mixer1>;
- 		status = "disabled";
- 	};
+-static struct clk_fixed_factor axg_fclk_div2 = {
++static struct clk_fixed_factor axg_fclk_div2_div = {
+ 	.mult = 1,
+ 	.div = 2,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div2",
++		.name = "fclk_div2_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
  
-@@ -208,6 +208,32 @@
- 			};
- 		};
+-static struct clk_fixed_factor axg_fclk_div3 = {
++static struct clk_regmap axg_fclk_div2 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 27,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div2",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div2_div" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_fixed_factor axg_fclk_div3_div = {
+ 	.mult = 1,
+ 	.div = 3,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div3",
++		.name = "fclk_div3_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
  
-+		mixer1: mixer@1200000 {
-+			compatible = "allwinner,sun8i-a83t-de2-mixer-1";
-+			reg = <0x01200000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER1>,
-+				 <&display_clocks CLK_MIXER1>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_WB>;
+-static struct clk_fixed_factor axg_fclk_div4 = {
++static struct clk_regmap axg_fclk_div3 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 28,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div3",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div3_div" },
++		.num_parents = 1,
++	},
++};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					mixer1_out_tcon1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon1_in_mixer1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun8i-a83t-system-controller",
- 				"syscon";
-@@ -256,6 +282,43 @@
- 			};
- 		};
++static struct clk_fixed_factor axg_fclk_div4_div = {
+ 	.mult = 1,
+ 	.div = 4,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div4",
++		.name = "fclk_div4_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
  
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun8i-a83t-tcon-tv";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
-+			clock-names = "ahb", "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
+-static struct clk_fixed_factor axg_fclk_div5 = {
++static struct clk_regmap axg_fclk_div4 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 29,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div4",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div4_div" },
++		.num_parents = 1,
++	},
++};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon1_in_mixer1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun8i-a83t-mmc",
- 				     "allwinner,sun7i-a20-mmc";
-@@ -427,6 +490,11 @@
- 				drive-strength = <40>;
- 			};
++static struct clk_fixed_factor axg_fclk_div5_div = {
+ 	.mult = 1,
+ 	.div = 5,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div5",
++		.name = "fclk_div5_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
  
-+			hdmi_pins: hdmi-pins {
-+				pins = "PH6", "PH7", "PH8";
-+				function = "hdmi";
-+			};
+-static struct clk_fixed_factor axg_fclk_div7 = {
++static struct clk_regmap axg_fclk_div5 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 30,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div5",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div5_div" },
++		.num_parents = 1,
++	},
++};
 +
- 			i2c0_pins: i2c0-pins {
- 				pins = "PH0", "PH1";
- 				function = "i2c0";
-@@ -685,6 +753,55 @@
- 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
- 		};
++static struct clk_fixed_factor axg_fclk_div7_div = {
+ 	.mult = 1,
+ 	.div = 7,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div7",
++		.name = "fclk_div7_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
  
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "iahb", "isfr", "tmds";
-+			resets = <&ccu RST_BUS_HDMI1>;
-+			reset-names = "ctrl";
-+			phys = <&hdmi_phy>;
-+			phy-names = "hdmi-phy";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hdmi_pins>;
-+			status = "disabled";
++static struct clk_regmap axg_fclk_div7 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div7",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div7_div" },
++		.num_parents = 1,
++	},
++};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
+ static struct clk_regmap axg_mpll_prediv = {
+ 	.data = &(struct clk_regmap_div_data){
+ 		.offset = HHI_MPLL_CNTL5,
+@@ -836,6 +901,11 @@ static struct clk_hw_onecell_data axg_hw_onecell_data = {
+ 		[CLKID_MPLL3_DIV]		= &axg_mpll3_div.hw,
+ 		[CLKID_HIFI_PLL]		= &axg_hifi_pll.hw,
+ 		[CLKID_MPLL_PREDIV]		= &axg_mpll_prediv.hw,
++		[CLKID_FCLK_DIV2_DIV]		= &axg_fclk_div2_div.hw,
++		[CLKID_FCLK_DIV3_DIV]		= &axg_fclk_div3_div.hw,
++		[CLKID_FCLK_DIV4_DIV]		= &axg_fclk_div4_div.hw,
++		[CLKID_FCLK_DIV5_DIV]		= &axg_fclk_div5_div.hw,
++		[CLKID_FCLK_DIV7_DIV]		= &axg_fclk_div7_div.hw,
+ 		[NR_CLKS]			= NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -909,6 +979,11 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
+ 	&axg_gp0_pll,
+ 	&axg_hifi_pll,
+ 	&axg_mpll_prediv,
++	&axg_fclk_div2,
++	&axg_fclk_div3,
++	&axg_fclk_div4,
++	&axg_fclk_div5,
++	&axg_fclk_div7,
+ };
+ 
+ static const struct of_device_id clkc_match_table[] = {
+diff --git a/drivers/clk/meson/axg.h b/drivers/clk/meson/axg.h
+index 6e5dc65041b5..b421df6a7ea0 100644
+--- a/drivers/clk/meson/axg.h
++++ b/drivers/clk/meson/axg.h
+@@ -122,8 +122,13 @@
+ #define CLKID_MPLL2_DIV				67
+ #define CLKID_MPLL3_DIV				68
+ #define CLKID_MPLL_PREDIV			70
++#define CLKID_FCLK_DIV2_DIV			71
++#define CLKID_FCLK_DIV3_DIV			72
++#define CLKID_FCLK_DIV4_DIV			73
++#define CLKID_FCLK_DIV5_DIV			74
++#define CLKID_FCLK_DIV7_DIV			75
+ 
+-#define NR_CLKS					71
++#define NR_CLKS					76
+ 
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/axg-clkc.h>
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index b62d181a6d33..70b4669cf7d6 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -490,61 +490,126 @@ static struct clk_regmap gxl_gp0_pll = {
+ 	},
+ };
+ 
+-static struct clk_fixed_factor gxbb_fclk_div2 = {
++static struct clk_fixed_factor gxbb_fclk_div2_div = {
+ 	.mult = 1,
+ 	.div = 2,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div2",
++		.name = "fclk_div2_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
+-static struct clk_fixed_factor gxbb_fclk_div3 = {
++static struct clk_regmap gxbb_fclk_div2 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 27,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div2",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div2_div" },
++		.num_parents = 1,
++	},
++};
 +
-+				hdmi_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
++static struct clk_fixed_factor gxbb_fclk_div3_div = {
+ 	.mult = 1,
+ 	.div = 3,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div3",
++		.name = "fclk_div3_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
+-static struct clk_fixed_factor gxbb_fclk_div4 = {
++static struct clk_regmap gxbb_fclk_div3 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 28,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div3",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div3_div" },
++		.num_parents = 1,
++	},
++};
 +
-+					hdmi_in_tcon1: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&tcon1_out_hdmi>;
-+					};
-+				};
++static struct clk_fixed_factor gxbb_fclk_div4_div = {
+ 	.mult = 1,
+ 	.div = 4,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div4",
++		.name = "fclk_div4_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
+-static struct clk_fixed_factor gxbb_fclk_div5 = {
++static struct clk_regmap gxbb_fclk_div4 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 29,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div4",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div4_div" },
++		.num_parents = 1,
++	},
++};
 +
-+				hdmi_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
++static struct clk_fixed_factor gxbb_fclk_div5_div = {
+ 	.mult = 1,
+ 	.div = 5,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div5",
++		.name = "fclk_div5_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
+-static struct clk_fixed_factor gxbb_fclk_div7 = {
++static struct clk_regmap gxbb_fclk_div5 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 30,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div5",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div5_div" },
++		.num_parents = 1,
++	},
++};
 +
-+		hdmi_phy: hdmi-phy@1ef0000 {
-+			compatible = "allwinner,sun8i-a83t-hdmi-phy";
-+			reg = <0x01ef0000 0x10000>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_SLOW>;
-+			clock-names = "bus", "mod";
-+			resets = <&ccu RST_BUS_HDMI0>;
-+			reset-names = "phy";
-+			#phy-cells = <0>;
-+		};
++static struct clk_fixed_factor gxbb_fclk_div7_div = {
+ 	.mult = 1,
+ 	.div = 7,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div7",
++		.name = "fclk_div7_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
++static struct clk_regmap gxbb_fclk_div7 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div7",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div7_div" },
++		.num_parents = 1,
++	},
++};
 +
- 		r_intc: interrupt-controller@1f00c00 {
- 			compatible = "allwinner,sun8i-a83t-r-intc",
- 				     "allwinner,sun6i-a31-r-intc";
+ static struct clk_regmap gxbb_mpll_prediv = {
+ 	.data = &(struct clk_regmap_div_data){
+ 		.offset = HHI_MPLL_CNTL5,
+@@ -1718,6 +1783,11 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_MPLL1_DIV]	    = &gxbb_mpll1_div.hw,
+ 		[CLKID_MPLL2_DIV]	    = &gxbb_mpll2_div.hw,
+ 		[CLKID_MPLL_PREDIV]	    = &gxbb_mpll_prediv.hw,
++		[CLKID_FCLK_DIV2_DIV]	    = &gxbb_fclk_div2_div.hw,
++		[CLKID_FCLK_DIV3_DIV]	    = &gxbb_fclk_div3_div.hw,
++		[CLKID_FCLK_DIV4_DIV]	    = &gxbb_fclk_div4_div.hw,
++		[CLKID_FCLK_DIV5_DIV]	    = &gxbb_fclk_div5_div.hw,
++		[CLKID_FCLK_DIV7_DIV]	    = &gxbb_fclk_div7_div.hw,
+ 		[NR_CLKS]		    = NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -1869,6 +1939,11 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_MPLL1_DIV]	    = &gxbb_mpll1_div.hw,
+ 		[CLKID_MPLL2_DIV]	    = &gxbb_mpll2_div.hw,
+ 		[CLKID_MPLL_PREDIV]	    = &gxbb_mpll_prediv.hw,
++		[CLKID_FCLK_DIV2_DIV]	    = &gxbb_fclk_div2_div.hw,
++		[CLKID_FCLK_DIV3_DIV]	    = &gxbb_fclk_div3_div.hw,
++		[CLKID_FCLK_DIV4_DIV]	    = &gxbb_fclk_div4_div.hw,
++		[CLKID_FCLK_DIV5_DIV]	    = &gxbb_fclk_div5_div.hw,
++		[CLKID_FCLK_DIV7_DIV]	    = &gxbb_fclk_div7_div.hw,
+ 		[NR_CLKS]		    = NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -2022,6 +2097,11 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
+ 	&gxbb_fixed_pll,
+ 	&gxbb_sys_pll,
+ 	&gxbb_mpll_prediv,
++	&gxbb_fclk_div2,
++	&gxbb_fclk_div3,
++	&gxbb_fclk_div4,
++	&gxbb_fclk_div5,
++	&gxbb_fclk_div7,
+ };
+ 
+ struct clkc_data {
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index afae007ae1ec..9febf3f03739 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -199,8 +199,13 @@
+ #define CLKID_MPLL1_DIV		  143
+ #define CLKID_MPLL2_DIV		  144
+ #define CLKID_MPLL_PREDIV	  145
++#define CLKID_FCLK_DIV2_DIV	  146
++#define CLKID_FCLK_DIV3_DIV	  147
++#define CLKID_FCLK_DIV4_DIV	  148
++#define CLKID_FCLK_DIV5_DIV	  149
++#define CLKID_FCLK_DIV7_DIV	  150
+ 
+-#define NR_CLKS			  146
++#define NR_CLKS			  151
+ 
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index f8b2f23c49de..9c9e3d180120 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -225,61 +225,126 @@ static struct clk_regmap meson8b_sys_pll = {
+ 	},
+ };
+ 
+-static struct clk_fixed_factor meson8b_fclk_div2 = {
++static struct clk_fixed_factor meson8b_fclk_div2_div = {
+ 	.mult = 1,
+ 	.div = 2,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div2",
++		.name = "fclk_div2_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
+-static struct clk_fixed_factor meson8b_fclk_div3 = {
++static struct clk_regmap meson8b_fclk_div2 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 27,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div2",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div2_div" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_fixed_factor meson8b_fclk_div3_div = {
+ 	.mult = 1,
+ 	.div = 3,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div3",
++		.name = "fclk_div_div3",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
+-static struct clk_fixed_factor meson8b_fclk_div4 = {
++static struct clk_regmap meson8b_fclk_div3 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 28,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div3",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div3_div" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_fixed_factor meson8b_fclk_div4_div = {
+ 	.mult = 1,
+ 	.div = 4,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div4",
++		.name = "fclk_div4_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
+-static struct clk_fixed_factor meson8b_fclk_div5 = {
++static struct clk_regmap meson8b_fclk_div4 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 29,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div4",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div4_div" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_fixed_factor meson8b_fclk_div5_div = {
+ 	.mult = 1,
+ 	.div = 5,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div5",
++		.name = "fclk_div5_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
+-static struct clk_fixed_factor meson8b_fclk_div7 = {
++static struct clk_regmap meson8b_fclk_div5 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 30,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div5",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div5_div" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_fixed_factor meson8b_fclk_div7_div = {
+ 	.mult = 1,
+ 	.div = 7,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div7",
++		.name = "fclk_div7_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
++static struct clk_regmap meson8b_fclk_div7 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_MPLL_CNTL6,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fclk_div7",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "fclk_div7_div" },
++		.num_parents = 1,
++	},
++};
++
+ static struct clk_regmap meson8b_mpll_prediv = {
+ 	.data = &(struct clk_regmap_div_data){
+ 		.offset = HHI_MPLL_CNTL5,
+@@ -766,6 +831,11 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+ 		[CLKID_CPU_SCALE_DIV]	    = &meson8b_cpu_scale_div.hw,
+ 		[CLKID_CPU_SCALE_OUT_SEL]   = &meson8b_cpu_scale_out_sel.hw,
+ 		[CLKID_MPLL_PREDIV]	    = &meson8b_mpll_prediv.hw,
++		[CLKID_FCLK_DIV2_DIV]	    = &meson8b_fclk_div2_div.hw,
++		[CLKID_FCLK_DIV3_DIV]	    = &meson8b_fclk_div3_div.hw,
++		[CLKID_FCLK_DIV4_DIV]	    = &meson8b_fclk_div4_div.hw,
++		[CLKID_FCLK_DIV5_DIV]	    = &meson8b_fclk_div5_div.hw,
++		[CLKID_FCLK_DIV7_DIV]	    = &meson8b_fclk_div7_div.hw,
+ 		[CLK_NR_CLKS]		    = NULL,
+ 	},
+ 	.num = CLK_NR_CLKS,
+@@ -866,6 +936,11 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
+ 	&meson8b_cpu_scale_out_sel,
+ 	&meson8b_cpu_clk,
+ 	&meson8b_mpll_prediv,
++	&meson8b_fclk_div2,
++	&meson8b_fclk_div3,
++	&meson8b_fclk_div4,
++	&meson8b_fclk_div5,
++	&meson8b_fclk_div7,
+ };
+ 
+ static const struct meson8b_clk_reset_line {
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index 839ffc9da5f7..6e414bd36981 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -78,8 +78,13 @@
+ #define CLKID_CPU_SCALE_DIV	102
+ #define CLKID_CPU_SCALE_OUT_SEL	103
+ #define CLKID_MPLL_PREDIV	104
++#define CLKID_FCLK_DIV2_DIV	105
++#define CLKID_FCLK_DIV3_DIV	106
++#define CLKID_FCLK_DIV4_DIV	107
++#define CLKID_FCLK_DIV5_DIV	108
++#define CLKID_FCLK_DIV7_DIV	109
+ 
+-#define CLK_NR_CLKS		105
++#define CLK_NR_CLKS		110
+ 
+ /*
+  * include the CLKID and RESETID that have
 -- 
-2.16.1
+2.14.3
