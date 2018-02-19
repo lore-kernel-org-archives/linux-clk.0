@@ -1,201 +1,211 @@
-Return-Path: <dinguyen@kernel.org>
-From: Dinh Nguyen <dinguyen@kernel.org>
-To: linux-clk@vger.kernel.org
-Cc: dinguyen@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Subject: [PATCHv6 2/3] arm64: dts: stratix10: use clock bindings for the Stratix10 platform
-Date: Mon, 26 Feb 2018 08:47:34 -0600
-Message-Id: <1519656455-14629-2-git-send-email-dinguyen@kernel.org>
-In-Reply-To: <1519656455-14629-1-git-send-email-dinguyen@kernel.org>
-References: <1519656455-14629-1-git-send-email-dinguyen@kernel.org>
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 27/42] ARM: davinci: da8xx: add new USB PHY clock init using common clock framework
+Date: Mon, 19 Feb 2018 14:21:48 -0600
+Message-Id: <1519071723-31790-28-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use the clock bindings for the Stratix10 SoC. This includes changing the old
-binding of "intc,clk-s10-mgr" to "intel,stratix10-clkmgr". The reason that
-this can be done is that there are currently no clock driver for Stratix10,
-thus there are no consumers of the old binding. So changing the binding will
-not break any legacy code.
+This adds the new USB PHY clock init in mach-davinci/usb-da8xx.c using
+the new common clock framework drivers.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v6:
-- no changes
-v5:
-- no changes
-v4:
-- remove '_' in name of clock nodes
-- use clock-controller in SoCDK node in dts file
-v3:
-- use the correct vendor prefix
-- explain the binding change
-v2:
-- use a single clock binding for the clock controller
----
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 50 +++++++++++++++++++++-
- .../boot/dts/altera/socfpga_stratix10_socdk.dts    | 10 +++++
- 2 files changed, 58 insertions(+), 2 deletions(-)
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index c89d0c30..5a6a699 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -17,6 +17,7 @@
- /dts-v1/;
- #include <dt-bindings/reset/altr,rst-mgr-s10.h>
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/stratix10-clock.h>
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+
+v7 changes:
+- register platform device instead of registering clocks directly
+- USB PHY clocks now treated as single device instead of registering them
+  separately
+
+v6 changes:
+- rename stuff to match changes in "clk: davinci: New driver for TI DA8XX USB
+  PHY clocks"
+- take advantage of syscon lookup changes in "mfd: syscon: Add syscon_register()
+  function"
+
+ arch/arm/mach-davinci/board-da830-evm.c     |  8 +++++++-
+ arch/arm/mach-davinci/board-omapl138-hawk.c |  9 +++++++--
+ arch/arm/mach-davinci/da8xx-dt.c            |  8 +++++++-
+ arch/arm/mach-davinci/include/mach/da8xx.h  |  1 +
+ arch/arm/mach-davinci/usb-da8xx.c           | 26 ++++++++++++++++++++++++--
+ 5 files changed, 46 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index 3973124..6e77c45 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -110,6 +110,12 @@ static __init void da830_evm_usb_init(void)
+ {
+ 	int ret;
  
- / {
- 	compatible = "altr,socfpga-stratix10";
-@@ -92,9 +93,35 @@
- 		interrupt-parent = <&intc>;
- 		ranges = <0 0 0 0xffffffff>;
++#ifdef CONFIG_COMMON_CLK
++	ret = da8xx_register_usb_phy_clocks();
++	if (ret)
++		pr_warn("%s: USB PHY CLK registration failed: %d\n",
++			__func__, ret);
++#else
+ 	/* USB_REFCLKIN is not used. */
+ 	ret = da8xx_register_usb20_phy_clk(false);
+ 	if (ret)
+@@ -120,7 +126,7 @@ static __init void da830_evm_usb_init(void)
+ 	if (ret)
+ 		pr_warn("%s: USB 1.1 PHY CLK registration failed: %d\n",
+ 			__func__, ret);
+-
++#endif
+ 	ret = da8xx_register_usb_phy();
+ 	if (ret)
+ 		pr_warn("%s: USB PHY registration failed: %d\n",
+diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+index 6a4e486..2a10cd8 100644
+--- a/arch/arm/mach-davinci/board-omapl138-hawk.c
++++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+@@ -231,7 +231,12 @@ static __init void omapl138_hawk_usb_init(void)
+ 		pr_warn("%s: USB 1.1 PinMux setup failed: %d\n", __func__, ret);
+ 		return;
+ 	}
+-
++#ifdef CONFIG_COMMON_CLK
++	ret = da8xx_register_usb_phy_clocks();
++	if (ret)
++		pr_warn("%s: USB PHY CLK registration failed: %d\n",
++			__func__, ret);
++#else
+ 	ret = da8xx_register_usb20_phy_clk(false);
+ 	if (ret)
+ 		pr_warn("%s: USB 2.0 PHY CLK registration failed: %d\n",
+@@ -241,7 +246,7 @@ static __init void omapl138_hawk_usb_init(void)
+ 	if (ret)
+ 		pr_warn("%s: USB 1.1 PHY CLK registration failed: %d\n",
+ 			__func__, ret);
+-
++#endif
+ 	ret = da8xx_register_usb_phy();
+ 	if (ret)
+ 		pr_warn("%s: USB PHY registration failed: %d\n",
+diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
+index 91dd9cb..c4edf05 100644
+--- a/arch/arm/mach-davinci/da8xx-dt.c
++++ b/arch/arm/mach-davinci/da8xx-dt.c
+@@ -69,6 +69,12 @@ static void __init da850_init_machine(void)
  
--		clkmgr@ffd1000 {
--			compatible = "altr,clk-mgr";
-+		clkmgr: clock-controller@ffd10000 {
-+			compatible = "intel,stratix10-clkmgr";
- 			reg = <0xffd10000 0x1000>;
-+			#clock-cells = <1>;
+ 	da850_register_clocks();
+ 
++#ifdef CONFIG_COMMON_CLK
++	ret = da8xx_register_usb_phy_clocks();
++	if (ret)
++		pr_warn("%s: USB PHY CLK registration failed: %d\n",
++			__func__, ret);
++#else
+ 	ret = da8xx_register_usb20_phy_clk(false);
+ 	if (ret)
+ 		pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
+@@ -77,7 +83,7 @@ static void __init da850_init_machine(void)
+ 	if (ret)
+ 		pr_warn("%s: registering USB 1.1 PHY clock failed: %d",
+ 			__func__, ret);
+-
++#endif
+ 	ret = da850_register_sata_refclk(sata_refclkpn);
+ 	if (ret)
+ 		pr_warn("%s: registering SATA REFCLK failed: %d",
+diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
+index 612e454..5d7b1de 100644
+--- a/arch/arm/mach-davinci/include/mach/da8xx.h
++++ b/arch/arm/mach-davinci/include/mach/da8xx.h
+@@ -106,6 +106,7 @@ int da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata);
+ int da8xx_register_usb_refclkin(int rate);
+ int da8xx_register_usb20_phy_clk(bool use_usb_refclkin);
+ int da8xx_register_usb11_phy_clk(bool use_usb_refclkin);
++int da8xx_register_usb_phy_clocks(void);
+ int da850_register_sata_refclk(int rate);
+ int da8xx_register_emac(void);
+ int da8xx_register_uio_pruss(void);
+diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
+index 4d89d86..d8cc63c 100644
+--- a/arch/arm/mach-davinci/usb-da8xx.c
++++ b/arch/arm/mach-davinci/usb-da8xx.c
+@@ -2,29 +2,35 @@
+ /*
+  * DA8xx USB
+  */
+-#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/init.h>
+ #include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/phy/phy.h>
++#include <linux/platform_data/clk-da8xx-cfgchip.h>
+ #include <linux/platform_data/phy-da8xx-usb.h>
+ #include <linux/platform_data/usb-davinci.h>
+ #include <linux/platform_device.h>
+ #include <linux/usb/musb.h>
+ 
+-#include <mach/clock.h>
+ #include <mach/common.h>
+ #include <mach/cputype.h>
+ #include <mach/da8xx.h>
+ #include <mach/irqs.h>
+ 
++#ifndef CONFIG_COMMON_CLK
++#include <mach/clock.h>
+ #include "clock.h"
++#endif
+ 
+ #define DA8XX_USB0_BASE		0x01e00000
+ #define DA8XX_USB1_BASE		0x01e25000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct clk *usb20_clk;
++#endif
+ 
+ static struct platform_device da8xx_usb_phy = {
+ 	.name		= "da8xx-usb-phy",
+@@ -134,6 +140,7 @@ int __init da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata)
+ 	return platform_device_register(&da8xx_usb11_device);
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct clk usb_refclkin = {
+ 	.name		= "usb_refclkin",
+ 	.set_rate	= davinci_simple_set_rate,
+@@ -360,3 +367,18 @@ int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
+ 
+ 	return ret;
+ }
++#endif
++static struct platform_device da8xx_usb_phy_clks_device = {
++	.name		= "da830-usb-phy-clks",
++	.id		= -1,
++};
 +
-+			clocks {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++int __init da8xx_register_usb_phy_clocks(void)
++{
++	struct da8xx_cfgchip_clk_platform_data pdata;
 +
-+				cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
++	pdata.cfgchip = da8xx_get_cfgchip();
++	da8xx_usb_phy_clks_device.dev.platform_data = &pdata;
 +
-+				cb_intosc_ls_clk: cb-intosc-ls-clk {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
-+
-+				f2s_free_clk: f2s-free-clk {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
-+
-+				osc1: osc1 {
-+					#clock-cells = <0>;
-+					compatible = "fixed-clock";
-+				};
-+			};
- 		};
- 
- 		gmac0: ethernet@ff800000 {
-@@ -105,6 +132,8 @@
- 			mac-address = [00 00 00 00 00 00];
- 			resets = <&rst EMAC0_RESET>;
- 			reset-names = "stmmaceth";
-+			clocks = <&clkmgr STRATIX10_EMAC0_CLK>;
-+			clock-names = "stmmaceth";
- 			status = "disabled";
- 		};
- 
-@@ -116,6 +145,8 @@
- 			mac-address = [00 00 00 00 00 00];
- 			resets = <&rst EMAC1_RESET>;
- 			reset-names = "stmmaceth";
-+			clocks = <&clkmgr STRATIX10_EMAC1_CLK>;
-+			clock-names = "stmmaceth";
- 			status = "disabled";
- 		};
- 
-@@ -127,6 +158,8 @@
- 			mac-address = [00 00 00 00 00 00];
- 			resets = <&rst EMAC2_RESET>;
- 			reset-names = "stmmaceth";
-+			clocks = <&clkmgr STRATIX10_EMAC2_CLK>;
-+			clock-names = "stmmaceth";
- 			status = "disabled";
- 		};
- 
-@@ -229,6 +262,9 @@
- 			fifo-depth = <0x400>;
- 			resets = <&rst SDMMC_RESET>;
- 			reset-names = "reset";
-+			clocks = <&clkmgr STRATIX10_L4_MP_CLK>,
-+				 <&clkmgr STRATIX10_SDMMC_CLK>;
-+			clock-names = "biu", "ciu";
- 			status = "disabled";
- 		};
- 
-@@ -288,24 +324,32 @@
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 113 4>;
- 			reg = <0xffc03000 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		timer1: timer1@ffc03100 {
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 114 4>;
- 			reg = <0xffc03100 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		timer2: timer2@ffd00000 {
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 115 4>;
- 			reg = <0xffd00000 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		timer3: timer3@ffd00100 {
- 			compatible = "snps,dw-apb-timer";
- 			interrupts = <0 116 4>;
- 			reg = <0xffd00100 0x100>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
-+			clock-names = "timer";
- 		};
- 
- 		uart0: serial0@ffc02000 {
-@@ -315,6 +359,7 @@
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			resets = <&rst UART0_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-@@ -325,6 +370,7 @@
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			resets = <&rst UART1_RESET>;
-+			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-index 0007564..b7f0b6b 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-@@ -50,6 +50,16 @@
- 		/* We expect the bootloader to fill in the reg */
- 		reg = <0 0 0 0>;
- 	};
-+
-+	soc {
-+		clock-controller@ffd10000 {
-+			clocks {
-+				osc1 {
-+					clock-frequency = <25000000>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &gpio1 {
++	return platform_device_register(&da8xx_usb_phy_clks_device);
++}
 -- 
 2.7.4
