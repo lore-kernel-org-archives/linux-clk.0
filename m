@@ -1,90 +1,152 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 02/41] clk: davinci: New driver for davinci PLL clocks
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-3-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <ff3a0549-2f76-9a8d-21bc-164649e8a6be@ti.com>
-Date: Thu, 1 Feb 2018 13:31:02 +0530
-MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-3-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 15/42] clk: davinci: Add platform information for TI DM644x PSC
+Date: Mon, 19 Feb 2018 14:21:36 -0600
+Message-Id: <1519071723-31790-16-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
-> This adds a new driver for mach-davinci PLL clocks. This is porting the
-> code from arch/arm/mach-davinci/clock.c to the common clock framework.
-> Additionally, it adds device tree support for these clocks.
-> 
-> The ifeq ($(CONFIG_COMMON_CLK), y) in the Makefile is needed to prevent
-> compile errors until the clock code in arch/arm/mach-davinci is removed.
-> 
-> Note: although there are similar clocks for TI Keystone we are not able
-> to share the code for a few reasons. The keystone clocks are device tree
-> only and use legacy one-node-per-clock bindings. Also the register
-> layouts are a bit different, which would add even more if/else mess
-> to the keystone clocks. And the keystone PLL driver doesn't support
-> setting clock rates.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+This adds platform-specific declarations for the PSC clocks on TI
+DM644x based systems.
 
-Looks nice and clean to me. There is still some feedback though.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-One thing missing is DIV4.5 clock. It will be nice to add that too,
-mostly just because it will make the binding complete.
+v7 changes:
+- add platform_device_id table
+- don't wrap lines for readability
+- add LPSC_ALWAYS_ENABLED flag to timer0 clock
 
-> +void of_davinci_pll_init(struct device_node *node,
-> +			 const struct davinci_pll_clk_info *info,
-> +			 const struct davinci_pll_obsclk_info *obsclk_info,
-> +			 const struct davinci_pll_sysclk_info *div_info,
-> +			 u8 max_sysclk_id)
-> +{
-> +	struct device_node *child;
-> +	const char *parent_name;
-> +	void __iomem *base;
-> +	struct clk *clk;
-> +
-> +	base = of_iomap(node, 0);
-> +	if (!base) {
-> +		pr_err("ioremap failed");
-> +		return;
-> +	}
-> +
-> +	if (info->flags & PLL_HAS_OSCIN)
-> +		parent_name = of_clk_get_parent_name(node, 0);
-> +	else
-> +		parent_name = OSCIN_CLK_NAME;
+v6 changes:
+- change how clkdev lookups are declared
 
-I don't think the reference clock input handling is fully correct/flexible.
 
-There are two ways to provide input clock (ref_clk) to PLL. Either use
-the internal oscillator with a crystal connected between OSCIN and
-OSCOUT (CLKMODE = 0) or a clean clock input (CLKMODE = 1) connected to
-OSCIN (OSCOUT disconnected).
+ drivers/clk/davinci/Makefile     |  1 +
+ drivers/clk/davinci/psc-dm644x.c | 67 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/psc.c        |  1 +
+ drivers/clk/davinci/psc.h        |  1 +
+ 4 files changed, 70 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-dm644x.c
 
-This is a board specific decision. On the LogicPD EVM, the former option
-is used, on the LCDK board, the later.
-
-So, I think what we need is a DT property like
-"ti,davinci-use-internal-osc" for the PLL. Boards can set or ignore it
-and you can switch CLKMODE on or off based on that.
-
-Setting CLKMODE = 1 will switch off the internal oscillator (and
-presumably save power), but it does not act as a mux. This explains why
-not worrying about setting this correctly in current mainline still works.
-
-I am also not sure if we really need PLL_HAS_OSCIN since all DaVinci
-SoCs set it anyway.
-
-Thanks,
-Sekhar
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 78dc1eb..a20e379 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -14,4 +14,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
++obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= psc-dm644x.o
+ endif
+diff --git a/drivers/clk/davinci/psc-dm644x.c b/drivers/clk/davinci/psc-dm644x.c
+new file mode 100644
+index 0000000..68bf48d
+--- /dev/null
++++ b/drivers/clk/davinci/psc-dm644x.c
+@@ -0,0 +1,67 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DaVinci DM644x
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "psc.h"
++
++LPSC_CLKDEV1(vpss_master_clkdev,	"master",	"vpss");
++LPSC_CLKDEV1(vpss_slave_clkdev,		"slave",	"vpss");
++LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
++					"fck",		"davinci_mdio.0");
++LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
++LPSC_CLKDEV1(ide_clkdev,		NULL,		"palm_bk3710");
++LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
++LPSC_CLKDEV1(mmcsd_clkdev,		NULL,		"dm6441-mmc.0");
++LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
++LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
++LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
++LPSC_CLKDEV1(uart1_clkdev,		NULL,		"serial8250.1");
++LPSC_CLKDEV1(uart2_clkdev,		NULL,		"serial8250.2");
++/* REVISIT: gpio-davinci.c should be modified to drop con_id */
++LPSC_CLKDEV1(gpio_clkdev,		"gpio",		NULL);
++LPSC_CLKDEV1(timer0_clkdev,		"timer0",	NULL);
++LPSC_CLKDEV1(timer2_clkdev,		NULL,		"davinci-wdt");
++
++static const struct davinci_lpsc_clk_info dm644x_psc_info[] __initconst = {
++	LPSC(0,  0, vpss_master, pll1_sysclk3, vpss_master_clkdev, 0),
++	LPSC(1,  0, vpss_slave,  pll1_sysclk3, vpss_slave_clkdev,  0),
++	LPSC(6,  0, emac,        pll1_sysclk5, emac_clkdev,        0),
++	LPSC(9,  0, usb,         pll1_sysclk5, usb_clkdev,         0),
++	LPSC(10, 0, ide,         pll1_sysclk5, ide_clkdev,         0),
++	LPSC(11, 0, vlynq,       pll1_sysclk5, NULL,               0),
++	LPSC(14, 0, aemif,       pll1_sysclk5, aemif_clkdev,       0),
++	LPSC(15, 0, mmcsd,       pll1_sysclk5, mmcsd_clkdev,       0),
++	LPSC(17, 0, asp0,        pll1_sysclk5, asp0_clkdev,        0),
++	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
++	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
++	LPSC(20, 0, uart1,       pll1_auxclk,  uart1_clkdev,       0),
++	LPSC(21, 0, uart2,       pll1_auxclk,  uart2_clkdev,       0),
++	LPSC(22, 0, spi,         pll1_sysclk5, NULL,               0),
++	LPSC(23, 0, pwm0,        pll1_auxclk,  NULL,               0),
++	LPSC(24, 0, pwm1,        pll1_auxclk,  NULL,               0),
++	LPSC(25, 0, pwm2,        pll1_auxclk,  NULL,               0),
++	LPSC(26, 0, gpio,        pll1_sysclk5, gpio_clkdev,        0),
++	LPSC(27, 0, timer0,      pll1_auxclk,  timer0_clkdev,      LPSC_ALWAYS_ENABLED),
++	LPSC(28, 0, timer1,      pll1_auxclk,  NULL,               0),
++	/* REVISIT: why can't this be disabled? */
++	LPSC(29, 0, timer2,      pll1_auxclk,  timer2_clkdev,      LPSC_ALWAYS_ENABLED),
++	LPSC(31, 0, arm,         pll1_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
++	/* REVISIT how to disable? */
++	LPSC(39, 1, dsp,         pll1_sysclk1, NULL,               LPSC_ALWAYS_ENABLED),
++	/* REVISIT how to disable? */
++	LPSC(40, 1, vicp,        pll1_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
++	{ }
++};
++
++int __init dm644x_psc_init(struct device *dev, void __iomem *base)
++{
++	return davinci_psc_register_clocks(dev, dm644x_psc_info, 41, base);
++}
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 5f5fc10..29422d6 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -451,6 +451,7 @@ static const struct platform_device_id davinci_psc_id_table[] = {
+ 	{ .name = "da850-psc1", .driver_data = (kernel_ulong_t)da850_psc1_init },
+ 	{ .name = "dm355-psc",  .driver_data = (kernel_ulong_t)dm355_psc_init  },
+ 	{ .name = "dm365-psc",  .driver_data = (kernel_ulong_t)dm365_psc_init  },
++	{ .name = "dm644x-psc", .driver_data = (kernel_ulong_t)dm644x_psc_init },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
+index 14caccf..41266af5b 100644
+--- a/drivers/clk/davinci/psc.h
++++ b/drivers/clk/davinci/psc.h
+@@ -95,5 +95,6 @@ int of_da850_psc0_init(struct device *dev, void __iomem *base);
+ int of_da850_psc1_init(struct device *dev, void __iomem *base);
+ int dm355_psc_init(struct device *dev, void __iomem *base);
+ int dm365_psc_init(struct device *dev, void __iomem *base);
++int dm644x_psc_init(struct device *dev, void __iomem *base);
+ 
+ #endif /* __CLK_DAVINCI_PSC_H__ */
+-- 
+2.7.4
