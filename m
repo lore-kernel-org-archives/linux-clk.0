@@ -1,75 +1,162 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 7 Feb 2018 15:01:55 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, devicetree@vger.kernel.org,
-	lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-	Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
- constraints
-Message-ID: <20180207150155.GD6003@sirena.org.uk>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
- <20180206163544.GI5681@sirena.org.uk>
- <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
- <20180207104351.GA6003@sirena.org.uk>
- <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
- <20180207141846.GC6003@sirena.org.uk>
- <20180207143213.GB5850@tbergstrom-lnx.Nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1sNVjLsmu1MXqwQ/"
-In-Reply-To: <20180207143213.GB5850@tbergstrom-lnx.Nvidia.com>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 05/42] clk: davinci: Add platform information for TI DM355 PLL
+Date: Mon, 19 Feb 2018 14:21:26 -0600
+Message-Id: <1519071723-31790-6-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds platform-specific declarations for the PLL clocks on TI
+DM355 based systems.
 
---1sNVjLsmu1MXqwQ/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-On Wed, Feb 07, 2018 at 04:32:13PM +0200, Peter De Schrijver wrote:
-> On Wed, Feb 07, 2018 at 02:18:46PM +0000, Mark Brown wrote:
+v7 changes:
+- split registration functions for each PLL
+- Add platform_device_id lookup
 
-> > You're going to have to provide a much better explanation of what this
-> > is doing - right now it seems like an abuse of constraints.  Client
-> > drivers can already determine if a particular voltage they want to set
-> > is available via regulator_list_voltage() and so on, that's what
-> > constraints are there to set.  It sounds like you're trying to use them
-> > for something else but you're really not explaining your use case
-> > clearly.
+v6 changes:
+- Added dm355_pll{1,2}_info with controller-specific information
+- Add empty lines between function calls
 
-> There is no way to query what voltage I will actually get for a given input
 
-I looked at patch 2.  It looked like an abuse of what constraints do,
-and had zero explanation of why it was doing what it was doing.  In any
-case we need the regulator code and changelog to be clear about what the
-interface is for and why it should be used, that's not happening here.
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/pll-dm355.c | 75 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/pll.c       |  2 ++
+ drivers/clk/davinci/pll.h       |  3 ++
+ 4 files changed, 81 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm355.c
 
-> voltage. If you read drivers/clk/tegra/cvb. (you did do that right?), you
-> will see that there is a minimum and maximum voltage defined by
-> charaterization which needs to be capped to the regulator generated voltages
-> for those points.
-
-I can't really tell what you're saying here.  If the driver needs to
-know if it can set the a given voltage there's already an API for doing
-that as I said.  If you're trying to convey this minimum and maximum
-voltage via the constraints that sounds like an abuse of the constraints.
-
---1sNVjLsmu1MXqwQ/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp7FOIACgkQJNaLcl1U
-h9Aspgf+MssimMSW7Qbj2UivzOJ4IsFXPul0dhXEZnBgvN+DwYbMkV8MG7g1bWdr
-M7Z0LE3RLyd/oVzJihAA99ROWs1lFlwFVzKphlqMcMHU9x2ZzYfjJwhnlwNP9AjL
-SSGfYCyaD6BqfCF8aEWmpe0XXu107XivI7BYlYU5TBjbCh8NWMBDBXZjdC68PON+
-/bKFnhujKGW6kV+fksmorZQ4u3Tz0LXFJRQc3shsU8Aw4q+Jh2kirmXYP8Iu8Cp3
-0xRE49lwrhw//uwg61C7PY9VHzns/vFwH7goskLWhGVjbmmscz1qmnz0dQ9xrIjE
-TMZiVXKZonoqEXuJfWyDlTV6fCZhHg==
-=2qiR
------END PGP SIGNATURE-----
-
---1sNVjLsmu1MXqwQ/--
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 13049d4..6720bd0 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -4,4 +4,5 @@ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
++obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+new file mode 100644
+index 0000000..88bf310
+--- /dev/null
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -0,0 +1,75 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM355
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/bitops.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++static const struct davinci_pll_clk_info dm355_pll1_info __initconst = {
++	.name = "pll1",
++	.pllm_mask = GENMASK(7, 0),
++	.pllm_min = 92,
++	.pllm_max = 184,
++	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_PREDIV_ALWAYS_ENABLED |
++		 PLL_PREDIV_FIXED8 | PLL_HAS_POSTDIV |
++		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
++};
++
++static const struct davinci_pll_sysclk_info dm355_pll1_sysclk_info[] __initconst = {
++	SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED),
++	SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED),
++	{ }
++};
++
++static const struct davinci_pll_clk_info dm355_pll2_info __initconst = {
++	.name = "pll2",
++	.pllm_mask = GENMASK(7, 0),
++	.pllm_min = 92,
++	.pllm_max = 184,
++	.flags = PLL_HAS_PREDIV | PLL_PREDIV_ALWAYS_ENABLED | PLL_HAS_POSTDIV |
++		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
++};
++
++static const struct davinci_pll_sysclk_info dm355_pll2_sysclk_info[] __initconst = {
++	SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV),
++	SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED),
++	{ }
++};
++
++int __init dm355_pll1_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm355_pll1_info, "ref_clk", base);
++
++	for (info = dm355_pll1_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
++
++	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
++
++	return 0;
++}
++
++int __init dm355_pll2_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm355_pll2_info, "oscin", base);
++
++	for (info = dm355_pll2_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	davinci_pll_sysclkbp_clk_register(dev, "pll2_sysclkbp", base);
++
++	return 0;
++}
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 7c56397..f72ea30 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -756,6 +756,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
+ 	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
+ 	{ .name = "da850-pll0",  .driver_data = (kernel_ulong_t)da850_pll0_init  },
+ 	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
++	{ .name = "dm355-pll1",  .driver_data = (kernel_ulong_t)dm355_pll1_init  },
++	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index 545a156..6bd73d7 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -126,4 +126,7 @@ int da850_pll1_init(struct device *dev, void __iomem *base);
+ int of_da850_pll0_init(struct device *dev, void __iomem *base);
+ int of_da850_pll1_init(struct device *dev, void __iomem *base);
+ 
++int dm355_pll1_init(struct device *dev, void __iomem *base);
++int dm355_pll2_init(struct device *dev, void __iomem *base);
++
+ #endif /* __CLK_DAVINCI_PLL_H___ */
+-- 
+2.7.4
