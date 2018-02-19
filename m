@@ -1,82 +1,45 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: viresh.kumar@linaro.org,  robh+dt@kernel.org,  mark.rutland@arm.com,  mturquette@baylibre.com,  sboyd@codeaurora.org,  linux@armlinux.org.uk,  andy.gross@linaro.org,  david.brown@linaro.org,  rjw@rjwysocki.net,  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-arm-msm@vger.kernel.org,  linux-soc@vger.kernel.org,  linux-pm@vger.kernel.org,  robh@kernel.org,  linux@arm.linux.org.uk
-Subject: Re: [PATCH v8 14/15] cpufreq: Add module to register cpufreq on Krait CPUs
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-	<1519740422-3835-15-git-send-email-sricharan@codeaurora.org>
-Date: Tue, 27 Feb 2018 15:58:47 +0100
-In-Reply-To: <1519740422-3835-15-git-send-email-sricharan@codeaurora.org>
-	(Sricharan R.'s message of "Tue, 27 Feb 2018 19:37:01 +0530")
-Message-ID: <87zi3ujx7c.fsf@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 01/11] clk: meson: add fractional part of meson8b fixed_pll
+Date: Mon, 19 Feb 2018 12:21:36 +0100
+Message-Id: <20180219112146.21746-2-jbrunet@baylibre.com>
+In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
+References: <20180219112146.21746-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sricharan,
-=20
- On mar., f=C3=A9vr. 27 2018, Sricharan R <sricharan@codeaurora.org> wrote:
+Add the missing frac parameter to the meson8b fixed_pll. It seems to be
+always on this platform, so the rate remains unchanged
 
-> From: Stephen Boyd <sboyd@codeaurora.org>
->
-> Register a cpufreq-generic device whenever we detect that a
-> "qcom,krait" compatible CPU is present in DT.
->
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> [Sricharan: updated to use dev_pm_opp_set_prop_name and
-> 	    nvmem apis]
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm          |  10 ++
->  drivers/cpufreq/Makefile             |   3 +
->  drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
->  drivers/cpufreq/qcom-cpufreq.c       | 183 +++++++++++++++++++++++++++++=
-++++++
->  4 files changed, 201 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq.c
->
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 3a88e33..826f9e7 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -133,6 +133,16 @@ config ARM_OMAP2PLUS_CPUFREQ
->  	depends on ARCH_OMAP2PLUS
->  	default ARCH_OMAP2PLUS
->=20=20
-> +config ARM_QCOM_CPUFREQ
-> +	bool "CPUfreq driver for the QCOM SoCs with KRAIT processors"
-> +	depends on ARCH_QCOM
-> +	select PM_OPP
-> +	help
-> +	  This enables the CPUFreq driver for Qualcomm SoCs with
-> +	  KRAIT processors.
-> +
-> +	  If in doubt, say N.
-> +
->  config ARM_S3C_CPUFREQ
->  	bool
->  	help
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index c60c1e1..21894f6 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -65,6 +65,9 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+=3D mvebu-cpufreq.o
->  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+=3D omap-cpufreq.o
->  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+=3D pxa2xx-cpufreq.o
->  obj-$(CONFIG_PXA3xx)			+=3D pxa3xx-cpufreq.o
-> +obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+=3D qcom-cpufreq.o
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/meson8b.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-These 2 following lines don't seem related to the commit log:
-> +obj-$(CONFIG_ARM_S3C24XX_CPUFREQ)	+=3D s3c24xx-cpufreq.o
-> +obj-$(CONFIG_ARM_S3C24XX_CPUFREQ_DEBUGFS) +=3D s3c24xx-cpufreq-debugfs.o
-
-Gregory
-
->  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+=3D s3c2410-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+=3D s3c2412-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+=3D s3c2416-cpufreq.o
---=20
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index ea73b5de9672..62c54a75a1d2 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -125,6 +125,11 @@ static struct clk_regmap meson8b_fixed_pll = {
+ 			.shift   = 16,
+ 			.width   = 2,
+ 		},
++		.frac = {
++			.reg_off = HHI_MPLL_CNTL2,
++			.shift   = 0,
++			.width   = 12,
++		},
+ 		.l = {
+ 			.reg_off = HHI_MPLL_CNTL,
+ 			.shift   = 31,
+-- 
+2.14.3
