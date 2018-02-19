@@ -1,233 +1,221 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39395 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752622AbeBZMyI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 07:54:08 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 5/6] soc: samsung: pm_domains: Deprecate support for
- clocks
-Date: Mon, 26 Feb 2018 13:53:54 +0100
-Message-id: <20180226125355.9052-6-m.szyprowski@samsung.com>
-In-reply-to: <20180226125355.9052-1-m.szyprowski@samsung.com>
-References: <20180226125355.9052-1-m.szyprowski@samsung.com>
-        <CGME20180226125403eucas1p27d32d02417f3cda5b809e62bf894bef8@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <m.purski@samsung.com>
+From: Maciej Purski <m.purski@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim
+	<jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+	Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin
+	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro
+	Carvalho Chehab <mchehab@kernel.org>, Andrzej Pietrasiewicz
+	<andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Russell King <linux@armlinux.org.uk>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier
+	<thibault.saunier@osg.samsung.com>, Javier Martinez Canillas
+	<javier@osg.samsung.com>, Hans Verkuil <hansverk@cisco.com>, Hoegeun Kwon
+	<hoegeun.kwon@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH 4/8] drm/exynos/dsi: Use clk bulk API
+Date: Mon, 19 Feb 2018 16:44:02 +0100
+Message-id: <1519055046-2399-5-git-send-email-m.purski@samsung.com>
+In-reply-to: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+	<CGME20180219154459eucas1p147525b88de5d34f646aa25cb8de1f1d0@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Handling of special clock operations on power domain on/off sequences has
-been moved to respective Exynos clock controller drivers, so there is no
-need to keep the duplicated (and conflicting) code in Exynos power domain
-driver. Mark clock related properties in Exynos power domain bindings as
-deprecated. This change has no inpact on backwards-compatibility, as the
-new drivers properly work with old DTBs (deprecated properties are
-ignored).
+Using bulk clk functions simplifies the driver's code. Use devm_clk_bulk
+functions instead of iterating over an array of clks.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+In order to achieve consistency with other drivers, define clock names
+in driver's variants structures.
+
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- .../devicetree/bindings/power/pd-samsung.txt       | 20 +----
- drivers/soc/samsung/pm_domains.c                   | 90 +---------------------
- 2 files changed, 5 insertions(+), 105 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 68 +++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 38 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/pd-samsung.txt b/Documentation/devicetree/bindings/power/pd-samsung.txt
-index 549f7dee9b9d..92ef355e8f64 100644
---- a/Documentation/devicetree/bindings/power/pd-samsung.txt
-+++ b/Documentation/devicetree/bindings/power/pd-samsung.txt
-@@ -15,23 +15,13 @@ Required Properties:
- Optional Properties:
- - label: Human readable string with domain name. Will be visible in userspace
- 	to let user to distinguish between multiple domains in SoC.
--- clocks: List of clock handles. The parent clocks of the input clocks to the
--	devices in this power domain are set to oscclk before power gating
--	and restored back after powering on a domain. This is required for
--	all domains which are powered on and off and not required for unused
--	domains.
--- clock-names: The following clocks can be specified:
--	- oscclk: Oscillator clock.
--	- clkN: Input clocks to the devices in this power domain. These clocks
--		will be reparented to oscclk before switching power domain off.
--		Their original parent will be brought back after turning on
--		the domain. Maximum of 4 clocks (N = 0 to 3) are supported.
--	- asbN: Clocks required by asynchronous bridges (ASB) present in
--		the power domain. These clock should be enabled during power
--		domain on/off operations.
- - power-domains: phandle pointing to the parent power domain, for more details
- 		 see Documentation/devicetree/bindings/power/power_domain.txt
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 7904ffa..46a8b5c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -209,11 +209,7 @@
+ #define DSI_XFER_TIMEOUT_MS		100
+ #define DSI_RX_FIFO_EMPTY		0x30800002
  
-+Deprecated Properties:
-+- clocks
-+- clock-names
-+
- Node of a device using power domains must have a power-domains property
- defined with a phandle to respective power domain.
- 
-@@ -47,8 +37,6 @@ Example:
- 	mfc_pd: power-domain@10044060 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044060 0x20>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
--		clock-names = "oscclk", "clk0";
- 		#power-domain-cells = <0>;
- 		label = "MFC";
- 	};
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index caf45cf7aa8e..ab8582971bfc 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -13,14 +13,11 @@
- #include <linux/err.h>
- #include <linux/slab.h>
- #include <linux/pm_domain.h>
--#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/sched.h>
- 
--#define MAX_CLK_PER_DOMAIN	4
+-#define OLD_SCLK_MIPI_CLK_NAME "pll_clk"
 -
- struct exynos_pm_domain_config {
- 	/* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
- 	u32 local_pwr_cfg;
-@@ -33,10 +30,6 @@ struct exynos_pm_domain {
- 	void __iomem *base;
- 	bool is_off;
- 	struct generic_pm_domain pd;
--	struct clk *oscclk;
--	struct clk *clk[MAX_CLK_PER_DOMAIN];
--	struct clk *pclk[MAX_CLK_PER_DOMAIN];
--	struct clk *asb_clk[MAX_CLK_PER_DOMAIN];
- 	u32 local_pwr_cfg;
- };
+-static char *clk_names[5] = { "bus_clk", "sclk_mipi",
+-	"phyclk_mipidphy0_bitclkdiv8", "phyclk_mipidphy0_rxclkesc0",
+-	"sclk_rgb_vclk_to_dsim0" };
++#define DSI_MAX_CLOCKS			5
  
-@@ -46,29 +39,10 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	void __iomem *base;
- 	u32 timeout, pwr;
- 	char *op;
--	int i;
+ enum exynos_dsi_transfer_type {
+ 	EXYNOS_DSI_TX,
+@@ -243,6 +239,7 @@ struct exynos_dsi_driver_data {
+ 	unsigned int plltmr_reg;
+ 	unsigned int has_freqband:1;
+ 	unsigned int has_clklane_stop:1;
++	const char *clock_names[DSI_MAX_CLOCKS];
+ 	unsigned int num_clks;
+ 	unsigned int max_freq;
+ 	unsigned int wait_for_reset;
+@@ -259,7 +256,7 @@ struct exynos_dsi {
  
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
- 	base = pd->base;
+ 	void __iomem *reg_base;
+ 	struct phy *phy;
+-	struct clk **clks;
++	struct clk_bulk_data *clks;
+ 	struct regulator_bulk_data supplies[2];
+ 	int irq;
+ 	int te_gpio;
+@@ -453,6 +450,7 @@ static const struct exynos_dsi_driver_data exynos3_dsi_driver_data = {
+ 	.plltmr_reg = 0x50,
+ 	.has_freqband = 1,
+ 	.has_clklane_stop = 1,
++	.clock_names = {"bus_clk", "pll_clk"},
+ 	.num_clks = 2,
+ 	.max_freq = 1000,
+ 	.wait_for_reset = 1,
+@@ -465,6 +463,7 @@ static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
+ 	.plltmr_reg = 0x50,
+ 	.has_freqband = 1,
+ 	.has_clklane_stop = 1,
++	.clock_names = {"bus_clk", "sclk_mipi"},
+ 	.num_clks = 2,
+ 	.max_freq = 1000,
+ 	.wait_for_reset = 1,
+@@ -475,6 +474,7 @@ static const struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
+ static const struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
+ 	.reg_ofs = exynos_reg_ofs,
+ 	.plltmr_reg = 0x58,
++	.clock_names = {"bus_clk", "pll_clk"},
+ 	.num_clks = 2,
+ 	.max_freq = 1000,
+ 	.wait_for_reset = 1,
+@@ -486,6 +486,10 @@ static const struct exynos_dsi_driver_data exynos5433_dsi_driver_data = {
+ 	.reg_ofs = exynos5433_reg_ofs,
+ 	.plltmr_reg = 0xa0,
+ 	.has_clklane_stop = 1,
++	.clock_names = {"bus_clk", "phyclk_mipidphy0_bitclkdiv8",
++			"phyclk_mipidphy0_rxclkesc0",
++			"sclk_rgb_vclk_to_dsim0",
++			"sclk_mipi"},
+ 	.num_clks = 5,
+ 	.max_freq = 1500,
+ 	.wait_for_reset = 0,
+@@ -497,6 +501,7 @@ static const struct exynos_dsi_driver_data exynos5422_dsi_driver_data = {
+ 	.reg_ofs = exynos5433_reg_ofs,
+ 	.plltmr_reg = 0xa0,
+ 	.has_clklane_stop = 1,
++	.clock_names = {"bus_clk", "pll_clk"},
+ 	.num_clks = 2,
+ 	.max_freq = 1500,
+ 	.wait_for_reset = 1,
+@@ -1711,7 +1716,7 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct resource *res;
+ 	struct exynos_dsi *dsi;
+-	int ret, i;
++	int ret;
  
--	for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--		if (IS_ERR(pd->asb_clk[i]))
--			break;
--		clk_prepare_enable(pd->asb_clk[i]);
--	}
--
--	/* Set oscclk before powering off a domain*/
--	if (!power_on) {
--		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--			if (IS_ERR(pd->clk[i]))
--				break;
--			pd->pclk[i] = clk_get_parent(pd->clk[i]);
--			if (clk_set_parent(pd->clk[i], pd->oscclk))
--				pr_err("%s: error setting oscclk as parent to clock %d\n",
--						domain->name, i);
--		}
--	}
--
- 	pwr = power_on ? pd->local_pwr_cfg : 0;
- 	writel_relaxed(pwr, base);
- 
-@@ -86,26 +60,6 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 		usleep_range(80, 100);
+ 	dsi = devm_kzalloc(dev, sizeof(*dsi), GFP_KERNEL);
+ 	if (!dsi)
+@@ -1743,26 +1748,15 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 		return -EPROBE_DEFER;
  	}
  
--	/* Restore clocks after powering on a domain*/
--	if (power_on) {
--		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--			if (IS_ERR(pd->clk[i]))
--				break;
+-	dsi->clks = devm_kzalloc(dev,
+-			sizeof(*dsi->clks) * dsi->driver_data->num_clks,
+-			GFP_KERNEL);
+-	if (!dsi->clks)
+-		return -ENOMEM;
++	dsi->clks = devm_clk_bulk_alloc(dev, dsi->driver_data->num_clks,
++					dsi->driver_data->clock_names);
++	if (IS_ERR(dsi->clks))
++		return PTR_ERR(dsi->clks);
+ 
+-	for (i = 0; i < dsi->driver_data->num_clks; i++) {
+-		dsi->clks[i] = devm_clk_get(dev, clk_names[i]);
+-		if (IS_ERR(dsi->clks[i])) {
+-			if (strcmp(clk_names[i], "sclk_mipi") == 0) {
+-				strcpy(clk_names[i], OLD_SCLK_MIPI_CLK_NAME);
+-				i--;
+-				continue;
+-			}
 -
--			if (IS_ERR(pd->pclk[i]))
--				continue; /* Skip on first power up */
--			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
--				pr_err("%s: error setting parent to clock%d\n",
--						domain->name, i);
+-			dev_info(dev, "failed to get the clock: %s\n",
+-					clk_names[i]);
+-			return PTR_ERR(dsi->clks[i]);
 -		}
 -	}
--
--	for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--		if (IS_ERR(pd->asb_clk[i]))
--			break;
--		clk_disable_unprepare(pd->asb_clk[i]);
++	ret = devm_clk_bulk_get(dev, dsi->driver_data->num_clks,
++				dsi->clks);
++	if (ret < 0)
++		return ret;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dsi->reg_base = devm_ioremap_resource(dev, res);
+@@ -1817,7 +1811,7 @@ static int __maybe_unused exynos_dsi_suspend(struct device *dev)
+ 	struct drm_encoder *encoder = dev_get_drvdata(dev);
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+ 	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+-	int ret, i;
++	int ret;
+ 
+ 	usleep_range(10000, 20000);
+ 
+@@ -1833,8 +1827,7 @@ static int __maybe_unused exynos_dsi_suspend(struct device *dev)
+ 
+ 	phy_power_off(dsi->phy);
+ 
+-	for (i = driver_data->num_clks - 1; i > -1; i--)
+-		clk_disable_unprepare(dsi->clks[i]);
++	clk_bulk_disable_unprepare(driver_data->num_clks, dsi->clks);
+ 
+ 	ret = regulator_bulk_disable(ARRAY_SIZE(dsi->supplies), dsi->supplies);
+ 	if (ret < 0)
+@@ -1848,7 +1841,7 @@ static int __maybe_unused exynos_dsi_resume(struct device *dev)
+ 	struct drm_encoder *encoder = dev_get_drvdata(dev);
+ 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
+ 	const struct exynos_dsi_driver_data *driver_data = dsi->driver_data;
+-	int ret, i;
++	int ret;
+ 
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(dsi->supplies), dsi->supplies);
+ 	if (ret < 0) {
+@@ -1856,23 +1849,22 @@ static int __maybe_unused exynos_dsi_resume(struct device *dev)
+ 		return ret;
+ 	}
+ 
+-	for (i = 0; i < driver_data->num_clks; i++) {
+-		ret = clk_prepare_enable(dsi->clks[i]);
+-		if (ret < 0)
+-			goto err_clk;
 -	}
--
++	ret = clk_bulk_prepare_enable(driver_data->num_clks, dsi->clks);
++	if (ret < 0)
++		goto err_clk;
+ 
+ 	ret = phy_power_on(dsi->phy);
+ 	if (ret < 0) {
+ 		dev_err(dsi->dev, "cannot enable phy %d\n", ret);
+-		goto err_clk;
++		goto err_phy;
+ 	}
+ 
  	return 0;
- }
  
-@@ -147,12 +101,6 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
- 	return kstrdup_const(name, GFP_KERNEL);
- }
++err_phy:
++	clk_bulk_disable_unprepare(driver_data->num_clks, dsi->clks);
++
+ err_clk:
+-	while (--i > -1)
+-		clk_disable_unprepare(dsi->clks[i]);
+ 	regulator_bulk_disable(ARRAY_SIZE(dsi->supplies), dsi->supplies);
  
--static const char *soc_force_no_clk[] = {
--	"samsung,exynos5250-clock",
--	"samsung,exynos5420-clock",
--	"samsung,exynos5800-clock",
--};
--
- static __init int exynos4_pm_init_power_domain(void)
- {
- 	struct device_node *np;
-@@ -161,7 +109,7 @@ static __init int exynos4_pm_init_power_domain(void)
- 	for_each_matching_node_and_match(np, exynos_pm_domain_of_match, &match) {
- 		const struct exynos_pm_domain_config *pm_domain_cfg;
- 		struct exynos_pm_domain *pd;
--		int on, i;
-+		int on;
- 
- 		pm_domain_cfg = match->data;
- 
-@@ -189,42 +137,6 @@ static __init int exynos4_pm_init_power_domain(void)
- 		pd->pd.power_on = exynos_pd_power_on;
- 		pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
- 
--		for (i = 0; i < ARRAY_SIZE(soc_force_no_clk); i++)
--			if (of_find_compatible_node(NULL, NULL,
--						    soc_force_no_clk[i]))
--				goto no_clk;
--
--		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--			char clk_name[8];
--
--			snprintf(clk_name, sizeof(clk_name), "asb%d", i);
--			pd->asb_clk[i] = of_clk_get_by_name(np, clk_name);
--			if (IS_ERR(pd->asb_clk[i]))
--				break;
--		}
--
--		pd->oscclk = of_clk_get_by_name(np, "oscclk");
--		if (IS_ERR(pd->oscclk))
--			goto no_clk;
--
--		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--			char clk_name[8];
--
--			snprintf(clk_name, sizeof(clk_name), "clk%d", i);
--			pd->clk[i] = of_clk_get_by_name(np, clk_name);
--			if (IS_ERR(pd->clk[i]))
--				break;
--			/*
--			 * Skip setting parent on first power up.
--			 * The parent at this time may not be useful at all.
--			 */
--			pd->pclk[i] = ERR_PTR(-EINVAL);
--		}
--
--		if (IS_ERR(pd->clk[0]))
--			clk_put(pd->oscclk);
--
--no_clk:
- 		on = readl_relaxed(pd->base + 0x4) & pd->local_pwr_cfg;
- 
- 		pm_genpd_init(&pd->pd, NULL, !on);
+ 	return ret;
 -- 
-2.15.0
-
+2.7.4
