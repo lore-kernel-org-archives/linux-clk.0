@@ -1,319 +1,81 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com,
-	narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	p.zabel@pengutronix.de,
-	hjc@rock-chips.com,
-	heiko@sntech.de
-Subject: [PATCH v4 05/12] drm/bridge/synopsys: dw-hdmi: don't clobber drvdata
-Date: Wed,  7 Feb 2018 22:17:06 +0100
-Message-Id: <20180207211713.3638-6-jernej.skrabec@siol.net>
-In-Reply-To: <20180207211713.3638-1-jernej.skrabec@siol.net>
-References: <20180207211713.3638-1-jernej.skrabec@siol.net>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 06/11] clk: meson: add ROUND_CLOSEST to the pll driver
+Date: Mon, 19 Feb 2018 12:21:41 +0100
+Message-Id: <20180219112146.21746-7-jbrunet@baylibre.com>
+In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
+References: <20180219112146.21746-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-dw_hdmi shouldn't set drvdata since some drivers might need to store
-it's own data there. Rework dw_hdmi in a way to return struct dw_hdmi
-instead to store it in drvdata. This way drivers are responsible to
-store and pass structure when needed.
+Provide an option for the pll driver to round to the rate closest to the
+requested rate, instead of systematically rounding down.
 
-Idea was taken from the following commit:
-8242ecbd597d ("drm/bridge/synopsys: stop clobbering drvdata")
+This may allow the provided rate to be closer to the requested rate when
+rounding up is not an issue
 
-Cc: p.zabel@pengutronix.de
-Cc: narmstrong@baylibre.com
-Cc: Laurent.pinchart@ideasonboard.com
-Cc: hjc@rock-chips.com
-Cc: heiko@sntech.de
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c   | 31 ++++++++++++-----------------
- drivers/gpu/drm/imx/dw_hdmi-imx.c           | 13 +++++++++---
- drivers/gpu/drm/meson/meson_dw_hdmi.c       | 14 +++++++++----
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c      | 12 +++++++++--
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 13 +++++++++---
- include/drm/bridge/dw_hdmi.h                | 13 ++++++------
- 6 files changed, 60 insertions(+), 36 deletions(-)
+ drivers/clk/meson/clk-pll.c | 17 +++++++++++++----
+ drivers/clk/meson/clkc.h    |  2 ++
+ 2 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 7d80f4b56683..f9802399cc0d 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2543,8 +2543,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	if (hdmi->i2c)
- 		dw_hdmi_i2c_init(hdmi);
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index d58961f35b71..65a7bd903551 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -105,7 +105,12 @@ static u16 __pll_params_with_frac(unsigned long rate,
+ 	u64 val = (u64)rate * pllt->n;
  
--	platform_set_drvdata(pdev, hdmi);
--
- 	return hdmi;
+ 	val <<= pllt->od + pllt->od2 + pllt->od3;
+-	val = div_u64(val * frac_max, parent_rate);
++
++	if (pll->flags & CLK_MESON_PLL_ROUND_CLOSEST)
++		val = DIV_ROUND_CLOSEST_ULL(val * frac_max, parent_rate);
++	else
++		val = div_u64(val * frac_max, parent_rate);
++
+ 	val -= pllt->m * frac_max;
  
- err_iahb:
-@@ -2594,25 +2592,23 @@ static void __dw_hdmi_remove(struct dw_hdmi *hdmi)
- /* -----------------------------------------------------------------------------
-  * Probe/remove API, used from platforms based on the DRM bridge API.
-  */
--int dw_hdmi_probe(struct platform_device *pdev,
--		  const struct dw_hdmi_plat_data *plat_data)
-+struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
-+			      const struct dw_hdmi_plat_data *plat_data)
- {
- 	struct dw_hdmi *hdmi;
+ 	return min((u16)val, (u16)(frac_max - 1));
+@@ -125,9 +130,13 @@ meson_clk_get_pll_settings(unsigned long rate,
+ 	while (table[i].rate && table[i].rate <= rate)
+ 		i++;
  
- 	hdmi = __dw_hdmi_probe(pdev, plat_data);
- 	if (IS_ERR(hdmi))
--		return PTR_ERR(hdmi);
-+		return hdmi;
+-	/* Select the setting of the rounded down rate */
+-	if (i != 0)
+-		i--;
++	if (i != 0) {
++		if (MESON_PARM_APPLICABLE(&pll->frac) ||
++		    !(pll->flags & CLK_MESON_PLL_ROUND_CLOSEST) ||
++		    (abs(rate - table[i - 1].rate) <
++		     abs(rate - table[i].rate)))
++			i--;
++	}
  
- 	drm_bridge_add(&hdmi->bridge);
- 
--	return 0;
-+	return hdmi;
+ 	return (struct pll_rate_table *)&table[i];
  }
- EXPORT_SYMBOL_GPL(dw_hdmi_probe);
- 
--void dw_hdmi_remove(struct platform_device *pdev)
-+void dw_hdmi_remove(struct dw_hdmi *hdmi)
- {
--	struct dw_hdmi *hdmi = platform_get_drvdata(pdev);
--
- 	drm_bridge_remove(&hdmi->bridge);
- 
- 	__dw_hdmi_remove(hdmi);
-@@ -2622,31 +2618,30 @@ EXPORT_SYMBOL_GPL(dw_hdmi_remove);
- /* -----------------------------------------------------------------------------
-  * Bind/unbind API, used from platforms based on the component framework.
-  */
--int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
--		 const struct dw_hdmi_plat_data *plat_data)
-+struct dw_hdmi *dw_hdmi_bind(struct platform_device *pdev,
-+			     struct drm_encoder *encoder,
-+			     const struct dw_hdmi_plat_data *plat_data)
- {
- 	struct dw_hdmi *hdmi;
- 	int ret;
- 
- 	hdmi = __dw_hdmi_probe(pdev, plat_data);
- 	if (IS_ERR(hdmi))
--		return PTR_ERR(hdmi);
-+		return hdmi;
- 
- 	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL);
- 	if (ret) {
--		dw_hdmi_remove(pdev);
-+		dw_hdmi_remove(hdmi);
- 		DRM_ERROR("Failed to initialize bridge with drm\n");
--		return ret;
-+		return ERR_PTR(ret);
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 9cdcd9b6c16c..8fe73c4edca8 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -71,6 +71,8 @@ struct pll_rate_table {
+ 		.od		= (_od),				\
  	}
  
--	return 0;
-+	return hdmi;
- }
- EXPORT_SYMBOL_GPL(dw_hdmi_bind);
- 
--void dw_hdmi_unbind(struct device *dev)
-+void dw_hdmi_unbind(struct dw_hdmi *hdmi)
- {
--	struct dw_hdmi *hdmi = dev_get_drvdata(dev);
--
- 	__dw_hdmi_remove(hdmi);
- }
- EXPORT_SYMBOL_GPL(dw_hdmi_unbind);
-diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
-index b62763aa8706..fe6becdcc29e 100644
---- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
-+++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
-@@ -25,6 +25,7 @@
- struct imx_hdmi {
- 	struct device *dev;
- 	struct drm_encoder encoder;
-+	struct dw_hdmi *hdmi;
- 	struct regmap *regmap;
- };
- 
-@@ -239,14 +240,18 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
- 	drm_encoder_init(drm, encoder, &dw_hdmi_imx_encoder_funcs,
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 
--	ret = dw_hdmi_bind(pdev, encoder, plat_data);
-+	platform_set_drvdata(pdev, hdmi);
++#define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
 +
-+	hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
- 
- 	/*
- 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
- 	 * which would have called the encoder cleanup.  Do it manually.
- 	 */
--	if (ret)
-+	if (IS_ERR(hdmi->hdmi)) {
-+		ret = PTR_ERR(hdmi->hdmi);
- 		drm_encoder_cleanup(encoder);
-+	}
- 
- 	return ret;
- }
-@@ -254,7 +259,9 @@ static int dw_hdmi_imx_bind(struct device *dev, struct device *master,
- static void dw_hdmi_imx_unbind(struct device *dev, struct device *master,
- 			       void *data)
- {
--	return dw_hdmi_unbind(dev);
-+	struct imx_hdmi *hdmi = dev_get_drvdata(dev);
-+
-+	dw_hdmi_unbind(hdmi->hdmi);
- }
- 
- static const struct component_ops dw_hdmi_imx_ops = {
-diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index e8c3ef8a94ce..d49af17310c9 100644
---- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-+++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-@@ -140,6 +140,7 @@ struct meson_dw_hdmi {
- 	struct clk *venci_clk;
- 	struct regulator *hdmi_supply;
- 	u32 irq_stat;
-+	struct dw_hdmi *hdmi;
- };
- #define encoder_to_meson_dw_hdmi(x) \
- 	container_of(x, struct meson_dw_hdmi, encoder)
-@@ -878,9 +879,12 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
- 	dw_plat_data->input_bus_format = MEDIA_BUS_FMT_YUV8_1X24;
- 	dw_plat_data->input_bus_encoding = V4L2_YCBCR_ENC_709;
- 
--	ret = dw_hdmi_bind(pdev, encoder, &meson_dw_hdmi->dw_plat_data);
--	if (ret)
--		return ret;
-+	platform_set_drvdata(pdev, meson_dw_hdmi);
-+
-+	meson_dw_hdmi->hdmi = dw_hdmi_bind(pdev, encoder,
-+					   &meson_dw_hdmi->dw_plat_data);
-+	if (IS_ERR(meson_dw_hdmi->hdmi))
-+		return PTR_ERR(meson_dw_hdmi->hdmi);
- 
- 	DRM_DEBUG_DRIVER("HDMI controller initialized\n");
- 
-@@ -890,7 +894,9 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
- static void meson_dw_hdmi_unbind(struct device *dev, struct device *master,
- 				   void *data)
- {
--	dw_hdmi_unbind(dev);
-+	struct meson_dw_hdmi *meson_dw_hdmi = dev_get_drvdata(dev);
-+
-+	dw_hdmi_unbind(meson_dw_hdmi->hdmi);
- }
- 
- static const struct component_ops meson_dw_hdmi_ops = {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-index dc85b53d58ef..3bebc6821e9c 100644
---- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-@@ -68,12 +68,20 @@ static const struct dw_hdmi_plat_data rcar_dw_hdmi_plat_data = {
- 
- static int rcar_dw_hdmi_probe(struct platform_device *pdev)
- {
--	return dw_hdmi_probe(pdev, &rcar_dw_hdmi_plat_data);
-+	struct dw_hdmi *hdmi;
-+
-+	hdmi = dw_hdmi_probe(pdev, &rcar_dw_hdmi_plat_data);
-+	if (IS_ERR(hdmi))
-+		return PTR_ERR(hdmi);
-+
-+	platform_set_drvdata(pdev, hdmi);
- }
- 
- static int rcar_dw_hdmi_remove(struct platform_device *pdev)
- {
--	dw_hdmi_remove(pdev);
-+	struct dw_hdmi *hdmi = platform_get_drvdata(dev);
-+
-+	dw_hdmi_remove(hdmi);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index 1eb02a82fd91..3574b0ae2ad1 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -48,6 +48,7 @@ struct rockchip_hdmi {
- 	const struct rockchip_hdmi_chip_data *chip_data;
- 	struct clk *vpll_clk;
- 	struct clk *grf_clk;
-+	struct dw_hdmi *hdmi;
- };
- 
- #define to_rockchip_hdmi(x)	container_of(x, struct rockchip_hdmi, x)
-@@ -377,14 +378,18 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
- 	drm_encoder_init(drm, encoder, &dw_hdmi_rockchip_encoder_funcs,
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 
--	ret = dw_hdmi_bind(pdev, encoder, plat_data);
-+	platform_set_drvdata(pdev, hdmi);
-+
-+	hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
- 
- 	/*
- 	 * If dw_hdmi_bind() fails we'll never call dw_hdmi_unbind(),
- 	 * which would have called the encoder cleanup.  Do it manually.
- 	 */
--	if (ret)
-+	if (IS_ERR(hdmi->hdmi)) {
-+		ret = PTR_ERR(hdmi->hdmi);
- 		drm_encoder_cleanup(encoder);
-+	}
- 
- 	return ret;
- }
-@@ -392,7 +397,9 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
- static void dw_hdmi_rockchip_unbind(struct device *dev, struct device *master,
- 				    void *data)
- {
--	return dw_hdmi_unbind(dev);
-+	struct rockchip_hdmi *hdmi = dev_get_drvdata(dev);
-+
-+	dw_hdmi_unbind(hdmi->hdmi);
- }
- 
- static const struct component_ops dw_hdmi_rockchip_ops = {
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index f3f3f0e1b2d3..dd2a8cf7d20b 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -143,12 +143,13 @@ struct dw_hdmi_plat_data {
- 			     unsigned long mpixelclock);
- };
- 
--int dw_hdmi_probe(struct platform_device *pdev,
--		  const struct dw_hdmi_plat_data *plat_data);
--void dw_hdmi_remove(struct platform_device *pdev);
--void dw_hdmi_unbind(struct device *dev);
--int dw_hdmi_bind(struct platform_device *pdev, struct drm_encoder *encoder,
--		 const struct dw_hdmi_plat_data *plat_data);
-+struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
-+			      const struct dw_hdmi_plat_data *plat_data);
-+void dw_hdmi_remove(struct dw_hdmi *hdmi);
-+void dw_hdmi_unbind(struct dw_hdmi *hdmi);
-+struct dw_hdmi *dw_hdmi_bind(struct platform_device *pdev,
-+			     struct drm_encoder *encoder,
-+			     const struct dw_hdmi_plat_data *plat_data);
- 
- void dw_hdmi_setup_rx_sense(struct device *dev, bool hpd, bool rx_sense);
- 
+ struct meson_clk_pll_data {
+ 	struct parm m;
+ 	struct parm n;
 -- 
-2.16.1
+2.14.3
