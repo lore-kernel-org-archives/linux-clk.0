@@ -1,49 +1,162 @@
-Return-Path: <eric@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-rpi-kernel@lists.infradead.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: bcm2835: Protect sections updating shared registers
-In-Reply-To: <20180208134338.24590-2-boris.brezillon@bootlin.com>
-References: <20180208134338.24590-1-boris.brezillon@bootlin.com> <20180208134338.24590-2-boris.brezillon@bootlin.com>
-Date: Thu, 08 Feb 2018 15:14:08 +0000
-Message-ID: <87shab5xa7.fsf@anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 07/42] clk: davinci: Add platform information for TI DM644x PLL
+Date: Mon, 19 Feb 2018 14:21:28 -0600
+Message-Id: <1519071723-31790-8-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
+This adds platform-specific declarations for the PLL clocks on TI
+DM644x based systems.
 
-Boris Brezillon <boris.brezillon@bootlin.com> writes:
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-> CM_PLLx and A2W_XOSC_CTRL registers are accessed by different clock
-> handlers and must be accessed with ->regs_lock held.
-> Update the sections where this protection is missing.
->
-> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+v7 changes:
+- split registration functions for each PLL
+- Add platform_device_id lookup
 
-Reviewed-by: Eric Anholt <eric@anholt.net>
+v6 changes:
+- Added dm644x_pll{1,2}_info with controller-specific information
+- Add empty lines between function calls
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/clk/davinci/Makefile     |  1 +
+ drivers/clk/davinci/pll-dm644x.c | 76 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/pll.c        |  2 ++
+ drivers/clk/davinci/pll.h        |  3 ++
+ 4 files changed, 82 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm644x.c
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlp8aUAACgkQtdYpNtH8
-nuh8cA//XtKGZJiKBHfSNoV1a827YLr1Ffush7cWpS3WsQX7hz7jLIqgSU8YF79u
-MIXJ0y3gY862J4Z+RPm9rNhBbglsBkRpRUCUejr/ZsZ0zzzwxvK59mYoICzxWs61
-ZqL2AVlg0gBlb7ygQAq84NMnWQOafo5AUR5X8Sq3Om2h3RgShJOJoRXNR+KReRn6
-Oh8TlZ0OYDJgjzFsTPRNO6QEhOGpE6z+bJUMiaTaQ+cWaFdtrKCVIryySWuGBhJ3
-p12eFVqd9gW+Iq2sA+3h8apPyeZUcvhAyLIJ08FoUROZJybyZ1Ux7zwBOMEcwHtx
-j/TxZWySaRkf3LXvvJiOK/qhisxNKOG8D+L6SCsW3q5P9cKP7AKwujO2bPocXg/A
-cvGo17/p2YJJWh8e8LSfs9y2k9SBrUiw7PlkQQjq2lf3jXYHI9aKngvB5M9kAazR
-V36+n8kzve5uEuTQVgd6fYn//v0Ehfz4E7QgZKri/HLIR3RBjfUZxhNf43TCbYTo
-b69btLXXAi2+Z5m1oyFlK5940iP4mgKsUOC9spBrEfOmpEViRK/8H60g/2xPlUWr
-TmaT+8m85kGzoztHG1gKfYDp4sdbGXWbu1Emek4ZUtheqpWsLgcXoM4DSBLWncKK
-p/UQ8UmcaqfqpVTN+50vpgOfHvrqpua2QM//thI1bMqSrZsgiXc=
-=+qqJ
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 353aa02..59d8ab6 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -6,4 +6,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
++obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= pll-dm644x.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm644x.c b/drivers/clk/davinci/pll-dm644x.c
+new file mode 100644
+index 0000000..cb31aa0
+--- /dev/null
++++ b/drivers/clk/davinci/pll-dm644x.c
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM644X
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/bitops.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++static const struct davinci_pll_clk_info dm644x_pll1_info __initconst = {
++	.name = "pll1",
++	.pllm_mask = GENMASK(4, 0),
++	.pllm_min = 1,
++	.pllm_max = 32,
++	.pllout_min_rate = 400000000,
++	.pllout_max_rate = 600000000, /* 810MHz @ 1.3V, -810 only */
++	.flags = PLL_HAS_CLKMODE | PLL_HAS_POSTDIV,
++};
++
++static const struct davinci_pll_sysclk_info dm644x_pll1_sysclk_info[] __initconst = {
++	SYSCLK(1, pll1_sysclk1, pll1_pllen, 4, SYSCLK_FIXED_DIV),
++	SYSCLK(2, pll1_sysclk2, pll1_pllen, 4, SYSCLK_FIXED_DIV),
++	SYSCLK(3, pll1_sysclk3, pll1_pllen, 4, SYSCLK_FIXED_DIV),
++	SYSCLK(5, pll1_sysclk5, pll1_pllen, 4, SYSCLK_FIXED_DIV),
++	{ }
++};
++
++static const struct davinci_pll_clk_info dm644x_pll2_info __initconst = {
++	.name = "pll2",
++	.pllm_mask = GENMASK(4, 0),
++	.pllm_min = 1,
++	.pllm_max = 32,
++	.pllout_min_rate = 400000000,
++	.pllout_max_rate = 900000000,
++	.flags = PLL_HAS_POSTDIV | PLL_POSTDIV_FIXED_DIV,
++};
++
++static const struct davinci_pll_sysclk_info dm644x_pll2_sysclk_info[] __initconst = {
++	SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0),
++	SYSCLK(2, pll2_sysclk2, pll2_pllen, 4, 0),
++	{ }
++};
++
++int __init dm644x_pll1_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm644x_pll1_info, "ref_clk", base);
++
++	for (info = dm644x_pll1_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
++
++	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
++
++	return 0;
++}
++
++int __init dm644x_pll2_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm644x_pll2_info, "oscin", base);
++
++	for (info = dm644x_pll2_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	davinci_pll_sysclkbp_clk_register(dev, "pll2_sysclkbp", base);
++
++	return 0;
++}
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index c8dd3fa..613ec24 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -760,6 +760,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
+ 	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
+ 	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
+ 	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
++	{ .name = "dm644x-pll1", .driver_data = (kernel_ulong_t)dm644x_pll1_init },
++	{ .name = "dm644x-pll2", .driver_data = (kernel_ulong_t)dm644x_pll2_init },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index b911c8a..df977a6 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -132,4 +132,7 @@ int dm355_pll2_init(struct device *dev, void __iomem *base);
+ int dm365_pll1_init(struct device *dev, void __iomem *base);
+ int dm365_pll2_init(struct device *dev, void __iomem *base);
+ 
++int dm644x_pll1_init(struct device *dev, void __iomem *base);
++int dm644x_pll2_init(struct device *dev, void __iomem *base);
++
+ #endif /* __CLK_DAVINCI_PLL_H___ */
+-- 
+2.7.4
