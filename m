@@ -1,171 +1,149 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53936 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932739AbeBUKPi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Feb 2018 05:15:38 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4/6] clk: samsung: exynos5250: Move PD-dependent clocks to
- Exynos5x sub-CMU driver
-Date: Wed, 21 Feb 2018 11:15:25 +0100
-Message-id: <20180221101527.25554-5-m.szyprowski@samsung.com>
-In-reply-to: <20180221101527.25554-1-m.szyprowski@samsung.com>
-References: <20180221101527.25554-1-m.szyprowski@samsung.com>
-        <CGME20180221101534eucas1p24db3c1d049d9ecd0de9c76a10bb58041@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 17/42] dt-bindings: clock: Add bindings for DA8XX CFGCHIP clocks
+Date: Mon, 19 Feb 2018 14:21:38 -0600
+Message-Id: <1519071723-31790-18-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clocks related to DISP1 block require special handling for power domain
-turn on/off sequences. Till now this was handled by Exynos power domain
-driver, but that approach was limited only to some special cases. This
-patch moves handling of those operations to clock controller driver.
-This gives more flexibility and allows fine tune values of some
-clock-specific registers. This patch moves handling of those mentioned
-clocks to Exynos5x sub-CMU driver instantiated from Exynos5250 driver.
+This adds a new binding for the clocks present in the CFGCHIP syscon
+registers in TI DA8XX SoCs.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/samsung/Makefile              |  1 +
- drivers/clk/samsung/clk-exynos5250.c      | 51 +++++++++++++++++++++----------
- drivers/clk/samsung/clk-exynos5x-subcmu.c |  1 +
- drivers/soc/samsung/pm_domains.c          |  1 +
- 4 files changed, 38 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index f70b3f66be89..d265f4babfb0 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_SOC_EXYNOS3250)	+= clk-exynos3250.o
- obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
- obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4412-isp.o
- obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
-+obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5x-subcmu.o
- obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
- obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 9b073c98a891..876fa4c122ca 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -18,6 +18,7 @@
- 
- #include "clk.h"
- #include "clk-cpu.h"
-+#include "clk-exynos5x-subcmu.h"
- 
- #define APLL_LOCK		0x0
- #define APLL_CON0		0x100
-@@ -571,17 +572,6 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 	GATE(CLK_SMMU_GSCL3, "smmu_gscl3", "mout_aclk266_gscl_sub",
- 			GATE_IP_GSCL, 10, 0, 0),
- 
--	GATE(CLK_FIMD1, "fimd1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 0, 0,
--		0),
--	GATE(CLK_MIE1, "mie1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 1, 0,
--		0),
--	GATE(CLK_DSIM0, "dsim0", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 3, 0,
--		0),
--	GATE(CLK_DP, "dp", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 4, 0, 0),
--	GATE(CLK_MIXER, "mixer", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 5, 0,
--		0),
--	GATE(CLK_HDMI, "hdmi", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 6, 0,
--		0),
- 
- 	GATE(CLK_MFC, "mfc", "mout_aclk333_sub", GATE_IP_MFC, 0, 0, 0),
- 	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "mout_aclk333_sub", GATE_IP_MFC, 1, 0,
-@@ -671,10 +661,6 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 	GATE(CLK_WDT, "wdt", "div_aclk66", GATE_IP_PERIS, 19, 0, 0),
- 	GATE(CLK_RTC, "rtc", "div_aclk66", GATE_IP_PERIS, 20, 0, 0),
- 	GATE(CLK_TMU, "tmu", "div_aclk66", GATE_IP_PERIS, 21, 0, 0),
--	GATE(CLK_SMMU_TV, "smmu_tv", "mout_aclk200_disp1_sub",
--			GATE_IP_DISP1, 9, 0, 0),
--	GATE(CLK_SMMU_FIMD1, "smmu_fimd1", "mout_aclk200_disp1_sub",
--			GATE_IP_DISP1, 8, 0, 0),
- 	GATE(CLK_SMMU_2D, "smmu_2d", "div_aclk200", GATE_IP_ACP, 7, 0, 0),
- 	GATE(CLK_SMMU_FIMC_ISP, "smmu_fimc_isp", "mout_aclk_266_isp_sub",
- 			GATE_IP_ISP0, 8, 0, 0),
-@@ -698,6 +684,38 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 			GATE_IP_ISP1, 7, 0, 0),
- };
- 
-+static const struct samsung_gate_clock exynos5250_disp_gate_clks[] __initconst = {
-+	GATE(CLK_FIMD1, "fimd1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 0, 0,
-+		0),
-+	GATE(CLK_MIE1, "mie1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 1, 0,
-+		0),
-+	GATE(CLK_DSIM0, "dsim0", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 3, 0,
-+		0),
-+	GATE(CLK_DP, "dp", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 4, 0, 0),
-+	GATE(CLK_MIXER, "mixer", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 5, 0,
-+		0),
-+	GATE(CLK_HDMI, "hdmi", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 6, 0,
-+		0),
-+	GATE(CLK_SMMU_TV, "smmu_tv", "mout_aclk200_disp1_sub",
-+			GATE_IP_DISP1, 9, 0, 0),
-+	GATE(CLK_SMMU_FIMD1, "smmu_fimd1", "mout_aclk200_disp1_sub",
-+			GATE_IP_DISP1, 8, 0, 0),
-+};
+v7 changes:
+- none
+
+v6 changes:
+- combine "dt-bindings: clock: Add bindings for DA8XX CFGCHIP gate clocks",
+  "dt-bindings: clock: Add binding for TI DA8XX CFGCHIP mux clocks" and
+  "dt-bindings: clock: Add bindings for TI DA8XX USB PHY clocks" into a single
+  file containing all CFGCHIP clocks bindings
+- added compatible = "ti,da830-div4p5ena"
+- added compatible = "ti,da850-async1-clksrc"
+- renamed other compatible strings
+- changed and added some clk-names strings
+- USB PHY clocks are combined into a single node with #clock-cells = <1>
+
+
+ .../bindings/clock/ti/davinci/da8xx-cfgchip.txt    | 93 ++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+new file mode 100644
+index 0000000..1e03dce
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+@@ -0,0 +1,93 @@
++Binding for TI DA8XX/OMAP-L13X/AM17XX/AM18XX CFGCHIP clocks
 +
-+static struct samsung_clk_ext_reg_dump exynos_5250_disp_suspend_regs[] = {
-+	{ GATE_IP_DISP1, 0xffffffff, 0xffffffff }, /* DISP1 gates */
-+	{ SRC_TOP3, 0, BIT(4) },	/* MUX mout_aclk200_disp1_sub */
-+	{ SRC_TOP3, 0, BIT(6) },	/* MUX mout_aclk300_disp1_sub */
-+};
++TI DA8XX/OMAP-L13X/AM17XX/AM18XX SoCs contain a general purpose set of
++registers call CFGCHIPn. Some of these registers function as clock
++gates. This document describes the bindings for those clocks.
 +
-+static const struct samsung_5x_subcmu_info exynos_5250_disp_subcmu = {
-+	.gate_clks	= exynos5250_disp_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(exynos5250_disp_gate_clks),
-+	.suspend_regs	= exynos_5250_disp_suspend_regs,
-+	.nr_suspend_regs = ARRAY_SIZE(exynos_5250_disp_suspend_regs),
-+	.pd_name	= "DISP1",
-+};
++All of the clock nodes described below must be child nodes of a CFGCHIP node
++(compatible = "ti,da830-cfgchip").
 +
- static const struct samsung_pll_rate_table vpll_24mhz_tbl[] __initconst = {
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
-@@ -859,10 +877,11 @@ static void __init exynos5250_clk_init(struct device_node *np)
- 	__raw_writel(tmp, reg_base + PWR_CTRL2);
- 
- 	exynos5250_clk_sleep_init();
-+	samsung_clk_subcmus_init(ctx, 1, &exynos_5250_disp_subcmu);
- 
- 	samsung_clk_of_add_provider(np, ctx);
- 
- 	pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
- 			_get_rate("div_arm2"));
- }
--CLK_OF_DECLARE(exynos5250_clk, "samsung,exynos5250-clock", exynos5250_clk_init);
-+CLK_OF_DECLARE_DRIVER(exynos5250_clk, "samsung,exynos5250-clock", exynos5250_clk_init);
-diff --git a/drivers/clk/samsung/clk-exynos5x-subcmu.c b/drivers/clk/samsung/clk-exynos5x-subcmu.c
-index 256473b83264..483f70c2dd40 100644
---- a/drivers/clk/samsung/clk-exynos5x-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5x-subcmu.c
-@@ -159,6 +159,7 @@ static int __init exynos5x_clk_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id exynos5x_clk_of_match[] = {
-+	{ .compatible = "samsung,exynos5250-clock", },
- 	{ .compatible = "samsung,exynos5420-clock", },
- 	{ .compatible = "samsung,exynos5800-clock", },
- 	{ },
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index f2d6d7a09c16..caf45cf7aa8e 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -148,6 +148,7 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
- }
- 
- static const char *soc_force_no_clk[] = {
-+	"samsung,exynos5250-clock",
- 	"samsung,exynos5420-clock",
- 	"samsung,exynos5800-clock",
- };
++USB PHY clocks
++--------------
++Required properties:
++- compatible: shall be "ti,da830-usb-phy-clocks".
++- #clock-cells: from common clock binding; shall be set to 1.
++- clocks: phandles to the parent clocks corresponding to clock-names
++- clock-names: shall be "fck", "usb_refclkin", "auxclk"
++
++This node provides two clocks. The clock at index 0 is the USB 2.0 PHY 48MHz
++clock and the clock at index 1 is the USB 1.1 PHY 48MHz clock.
++
++eHRPWM Time Base Clock (TBCLK)
++------------------------------
++Required properties:
++- compatible: shall be "ti,da830-tbclksync".
++- #clock-cells: from common clock binding; shall be set to 0.
++- clocks: phandle to the parent clock
++- clock-names: shall be "fck"
++
++PLL DIV4.5 divider
++------------------
++Required properties:
++- compatible: shall be "ti,da830-div4p5ena".
++- #clock-cells: from common clock binding; shall be set to 0.
++- clocks: phandle to the parent clock
++- clock-names: shall be "pll0_pllout"
++
++EMIFA clock source (ASYNC1)
++---------------------------
++Required properties:
++- compatible: shall be "ti,da850-async1-clksrc".
++- #clock-cells: from common clock binding; shall be set to 0.
++- clocks: phandles to the parent clocks corresponding to clock-names
++- clock-names: shall be "pll0_sysclk3", "div4.5"
++
++ASYNC3 clock source
++-------------------
++Required properties:
++- compatible: shall be "ti,da850-async3-clksrc".
++- #clock-cells: from common clock binding; shall be set to 0.
++- clocks: phandles to the parent clocks corresponding to clock-names
++- clock-names: shall be "pll0_sysclk2", "pll1_sysclk2"
++
++Examples:
++
++	cfgchip: syscon@1417c {
++		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
++		reg = <0x1417c 0x14>;
++
++		usb_phy_clk: usb-phy-clocks {
++			compatible = "ti,da830-usb-phy-clocks";
++			#clock-cells = <1>;
++			clocks = <&psc1 1>, <&usb_refclkin>, <&pll0_auxclk>;
++			clock-names = "fck", "usb_refclkin", "auxclk";
++		};
++		ehrpwm_tbclk: ehrpwm_tbclk {
++			compatible = "ti,da830-tbclksync";
++			#clock-cells = <0>;
++			clocks = <&psc1 17>;
++			clock-names = "fck";
++		};
++		div4p5_clk: div4.5 {
++			compatible = "ti,da830-div4p5ena";
++			#clock-cells = <0>;
++			clocks = <&pll0_pllout>;
++			clock-names = "pll0_pllout";
++		};
++		async1_clk: async1 {
++			compatible = "ti,da850-async1-clksrc";
++			#clock-cells = <0>;
++			clocks = <&pll0_sysclk 3>, <&div4p5_clk>;
++			clock-names = "pll0_sysclk3", "div4.5";
++		};
++		async3_clk: async3 {
++			compatible = "ti,da850-async3-clksrc";
++			#clock-cells = <0>;
++			clocks = <&pll0_sysclk 2>, <&pll1_sysclk 2>;
++			clock-names = "pll0_sysclk2", "pll1_sysclk2";
++		};
++	};
++
++Also see:
++- Documentation/devicetree/bindings/clock/clock-bindings.txt
++
 -- 
-2.15.0
-
+2.7.4
