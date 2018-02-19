@@ -1,181 +1,385 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org,
-	sricharan@codeaurora.org,
-	linux@arm.linux.org.uk
-Subject: [PATCH v8 13/15] clk: qcom: Add safe switch hook for krait mux clocks
-Date: Tue, 27 Feb 2018 19:37:00 +0530
-Message-Id: <1519740422-3835-14-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 36/42] ARM: davinci: dm644x: Remove legacy clock init
+Date: Mon, 19 Feb 2018 14:21:57 -0600
+Message-Id: <1519071723-31790-37-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When the Hfplls are reprogrammed during the rate change,
-the primary muxes which are sourced from the same hfpll
-for higher frequencies, needs to be switched to the 'safe
-secondary mux' as the parent for that small window. This
-is done by registering a clk notifier for the muxes and
-switching to the safe parent in the PRE_RATE_CHANGE notifier
-and back to the original parent in the POST_RATE_CHANGE notifier.
+This removes the unused legacy clock init code from
+arch/arm/mach-davinci/dm644x.c.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
- drivers/clk/qcom/clk-krait.c |  2 ++
- drivers/clk/qcom/clk-krait.h |  3 +++
- drivers/clk/qcom/krait-cc.c  | 56 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 61 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
-index 2e41767..ac2e020 100644
---- a/drivers/clk/qcom/clk-krait.c
-+++ b/drivers/clk/qcom/clk-krait.c
-@@ -50,6 +50,8 @@ static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
- 	if (__clk_is_enabled(hw->clk))
- 		__krait_mux_set_sel(mux, sel);
+v7 changes:
+- rebased
+- add davinci prefix to commit message
+
+v6 changes:
+- rebased
+
+ arch/arm/mach-davinci/dm644x.c | 300 -----------------------------------------
+ 1 file changed, 300 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 64f5193..6d3a0e8 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -29,11 +29,6 @@
+ #include "davinci.h"
+ #include "mux.h"
  
-+	mux->reparent = true;
-+
- 	return 0;
- }
+-#ifndef CONFIG_COMMON_CLK
+-#include "clock.h"
+-#include "psc.h"
+-#endif
+-
+ /*
+  * Device specific clocks
+  */
+@@ -46,292 +41,6 @@
+ #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
+ #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
  
-diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
-index 71890bc..986f356 100644
---- a/drivers/clk/qcom/clk-krait.h
-+++ b/drivers/clk/qcom/clk-krait.h
-@@ -13,6 +13,9 @@ struct krait_mux_clk {
- 	u32		shift;
- 	u32		en_mask;
- 	bool		lpl;
-+	u8		safe_sel;
-+	u8		old_index;
-+	bool		reparent;
- 
- 	struct clk_hw	hw;
- 	struct notifier_block   clk_nb;
-diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-index 7c9dfb0..4d4b657 100644
---- a/drivers/clk/qcom/krait-cc.c
-+++ b/drivers/clk/qcom/krait-cc.c
-@@ -26,6 +26,49 @@
- 	0,
+-#ifndef CONFIG_COMMON_CLK
+-static struct pll_data pll1_data = {
+-	.num       = 1,
+-	.phys_base = DAVINCI_PLL1_BASE,
+-};
+-
+-static struct pll_data pll2_data = {
+-	.num       = 2,
+-	.phys_base = DAVINCI_PLL2_BASE,
+-};
+-
+-static struct clk ref_clk = {
+-	.name = "ref_clk",
+-	.rate = DM644X_REF_FREQ,
+-};
+-
+-static struct clk pll1_clk = {
+-	.name = "pll1",
+-	.parent = &ref_clk,
+-	.pll_data = &pll1_data,
+-	.flags = CLK_PLL,
+-};
+-
+-static struct clk pll1_sysclk1 = {
+-	.name = "pll1_sysclk1",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV1,
+-};
+-
+-static struct clk pll1_sysclk2 = {
+-	.name = "pll1_sysclk2",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV2,
+-};
+-
+-static struct clk pll1_sysclk3 = {
+-	.name = "pll1_sysclk3",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV3,
+-};
+-
+-static struct clk pll1_sysclk5 = {
+-	.name = "pll1_sysclk5",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV5,
+-};
+-
+-static struct clk pll1_aux_clk = {
+-	.name = "pll1_aux_clk",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-};
+-
+-static struct clk pll1_sysclkbp = {
+-	.name = "pll1_sysclkbp",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-	.div_reg = BPDIV
+-};
+-
+-static struct clk pll2_clk = {
+-	.name = "pll2",
+-	.parent = &ref_clk,
+-	.pll_data = &pll2_data,
+-	.flags = CLK_PLL,
+-};
+-
+-static struct clk pll2_sysclk1 = {
+-	.name = "pll2_sysclk1",
+-	.parent = &pll2_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV1,
+-};
+-
+-static struct clk pll2_sysclk2 = {
+-	.name = "pll2_sysclk2",
+-	.parent = &pll2_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV2,
+-};
+-
+-static struct clk pll2_sysclkbp = {
+-	.name = "pll2_sysclkbp",
+-	.parent = &pll2_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-	.div_reg = BPDIV
+-};
+-
+-static struct clk dsp_clk = {
+-	.name = "dsp",
+-	.parent = &pll1_sysclk1,
+-	.lpsc = DAVINCI_LPSC_GEM,
+-	.domain = DAVINCI_GPSC_DSPDOMAIN,
+-	.usecount = 1,			/* REVISIT how to disable? */
+-};
+-
+-static struct clk arm_clk = {
+-	.name = "arm",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_ARM,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk vicp_clk = {
+-	.name = "vicp",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_IMCOP,
+-	.domain = DAVINCI_GPSC_DSPDOMAIN,
+-	.usecount = 1,			/* REVISIT how to disable? */
+-};
+-
+-static struct clk vpss_master_clk = {
+-	.name = "vpss_master",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DAVINCI_LPSC_VPSSMSTR,
+-	.flags = CLK_PSC,
+-};
+-
+-static struct clk vpss_slave_clk = {
+-	.name = "vpss_slave",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DAVINCI_LPSC_VPSSSLV,
+-};
+-
+-static struct clk uart0_clk = {
+-	.name = "uart0",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_UART0,
+-};
+-
+-static struct clk uart1_clk = {
+-	.name = "uart1",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_UART1,
+-};
+-
+-static struct clk uart2_clk = {
+-	.name = "uart2",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_UART2,
+-};
+-
+-static struct clk emac_clk = {
+-	.name = "emac",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_EMAC_WRAPPER,
+-};
+-
+-static struct clk i2c_clk = {
+-	.name = "i2c",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_I2C,
+-};
+-
+-static struct clk ide_clk = {
+-	.name = "ide",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_ATA,
+-};
+-
+-static struct clk asp_clk = {
+-	.name = "asp0",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_McBSP,
+-};
+-
+-static struct clk mmcsd_clk = {
+-	.name = "mmcsd",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_MMC_SD,
+-};
+-
+-static struct clk spi_clk = {
+-	.name = "spi",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_SPI,
+-};
+-
+-static struct clk gpio_clk = {
+-	.name = "gpio",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_GPIO,
+-};
+-
+-static struct clk usb_clk = {
+-	.name = "usb",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_USB,
+-};
+-
+-static struct clk vlynq_clk = {
+-	.name = "vlynq",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_VLYNQ,
+-};
+-
+-static struct clk aemif_clk = {
+-	.name = "aemif",
+-	.parent = &pll1_sysclk5,
+-	.lpsc = DAVINCI_LPSC_AEMIF,
+-};
+-
+-static struct clk pwm0_clk = {
+-	.name = "pwm0",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_PWM0,
+-};
+-
+-static struct clk pwm1_clk = {
+-	.name = "pwm1",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_PWM1,
+-};
+-
+-static struct clk pwm2_clk = {
+-	.name = "pwm2",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_PWM2,
+-};
+-
+-static struct clk timer0_clk = {
+-	.name = "timer0",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_TIMER0,
+-};
+-
+-static struct clk timer1_clk = {
+-	.name = "timer1",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_TIMER1,
+-};
+-
+-static struct clk timer2_clk = {
+-	.name = "timer2",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_TIMER2,
+-	.usecount = 1,              /* REVISIT: why can't this be disabled? */
+-};
+-
+-static struct clk_lookup dm644x_clks[] = {
+-	CLK(NULL, "ref", &ref_clk),
+-	CLK(NULL, "pll1", &pll1_clk),
+-	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
+-	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
+-	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
+-	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
+-	CLK(NULL, "pll1_aux", &pll1_aux_clk),
+-	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
+-	CLK(NULL, "pll2", &pll2_clk),
+-	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
+-	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
+-	CLK(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
+-	CLK(NULL, "dsp", &dsp_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK(NULL, "vicp", &vicp_clk),
+-	CLK("vpss", "master", &vpss_master_clk),
+-	CLK("vpss", "slave", &vpss_slave_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK("serial8250.0", NULL, &uart0_clk),
+-	CLK("serial8250.1", NULL, &uart1_clk),
+-	CLK("serial8250.2", NULL, &uart2_clk),
+-	CLK("davinci_emac.1", NULL, &emac_clk),
+-	CLK("davinci_mdio.0", "fck", &emac_clk),
+-	CLK("i2c_davinci.1", NULL, &i2c_clk),
+-	CLK("palm_bk3710", NULL, &ide_clk),
+-	CLK("davinci-mcbsp", NULL, &asp_clk),
+-	CLK("dm6441-mmc.0", NULL, &mmcsd_clk),
+-	CLK(NULL, "spi", &spi_clk),
+-	CLK(NULL, "gpio", &gpio_clk),
+-	CLK(NULL, "usb", &usb_clk),
+-	CLK(NULL, "vlynq", &vlynq_clk),
+-	CLK(NULL, "aemif", &aemif_clk),
+-	CLK(NULL, "pwm0", &pwm0_clk),
+-	CLK(NULL, "pwm1", &pwm1_clk),
+-	CLK(NULL, "pwm2", &pwm2_clk),
+-	CLK(NULL, "timer0", &timer0_clk),
+-	CLK(NULL, "timer1", &timer1_clk),
+-	CLK("davinci-wdt", NULL, &timer2_clk),
+-	CLK(NULL, NULL, NULL),
+-};
+-#endif
+-
+ static struct emac_platform_data dm644x_emac_pdata = {
+ 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
+ 	.ctrl_mod_reg_offset	= DM644X_EMAC_CNTRL_MOD_OFFSET,
+@@ -824,8 +533,6 @@ static struct davinci_id dm644x_ids[] = {
+ 	},
  };
  
-+/*
-+ * Notifier function for switching the muxes to safe parent
-+ * while the hfpll is getting reprogrammed.
-+ */
-+static int krait_notifier_cb(struct notifier_block *nb,
-+			     unsigned long event,
-+			     void *data)
-+{
-+	int ret = 0;
-+	struct krait_mux_clk *mux = container_of(nb, struct krait_mux_clk,
-+						 clk_nb);
-+	/* Switch to safe parent */
-+	if (event == PRE_RATE_CHANGE) {
-+		mux->old_index = krait_mux_clk_ops.get_parent(&mux->hw);
-+		ret = krait_mux_clk_ops.set_parent(&mux->hw, mux->safe_sel);
-+		mux->reparent = false;
-+	/*
-+	 * By the time POST_RATE_CHANGE notifier is called,
-+	 * clk framework itself would have changed the parent for the new rate.
-+	 * Only otherwise, put back to the old parent.
-+	 */
-+	} else if (event == POST_RATE_CHANGE) {
-+		if (!mux->reparent)
-+			ret = krait_mux_clk_ops.set_parent(&mux->hw,
-+							   mux->old_index);
-+	}
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+static int krait_notifier_register(struct device *dev, struct clk *clk,
-+				   struct krait_mux_clk *mux)
-+{
-+	int ret = 0;
-+
-+	mux->clk_nb.notifier_call = krait_notifier_cb;
-+	ret = clk_notifier_register(clk, &mux->clk_nb);
-+	if (ret)
-+		dev_err(dev, "failed to register clock notifier: %d\n", ret);
-+
-+	return ret;
-+}
-+
- static int
- krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
+-static u32 dm644x_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
+-
+ /*
+  * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
+  * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
+@@ -910,8 +617,6 @@ static const struct davinci_soc_info davinci_soc_info_dm644x = {
+ 	.jtag_id_reg		= 0x01c40028,
+ 	.ids			= dm644x_ids,
+ 	.ids_num		= ARRAY_SIZE(dm644x_ids),
+-	.psc_bases		= dm644x_psc_bases,
+-	.psc_bases_num		= ARRAY_SIZE(dm644x_psc_bases),
+ 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
+ 	.pinmux_pins		= dm644x_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm644x_pins),
+@@ -939,16 +644,11 @@ void __init dm644x_init(void)
+ 
+ void __init dm644x_init_time(void)
  {
-@@ -70,6 +113,7 @@
- krait_add_sec_mux(struct device *dev, int id, const char *s,
- 		  unsigned int offset, bool unique_aux)
- {
-+	int ret;
- 	struct krait_mux_clk *mux;
- 	static const char *sec_mux_list[] = {
- 		"acpu_aux",
-@@ -93,6 +137,7 @@
- 	mux->shift = 2;
- 	mux->parent_map = sec_mux_map;
- 	mux->hw.init = &init;
-+	mux->safe_sel = 0;
+-#ifdef CONFIG_COMMON_CLK
+ 	struct clk *clk;
  
- 	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
- 	if (!init.name)
-@@ -108,6 +153,11 @@
+ 	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
  
- 	clk = devm_clk_register(dev, &mux->hw);
+ 	davinci_timer_init(clk);
+-#else
+-	davinci_clk_init(dm644x_clks);
+-	davinci_timer_init(&timer0_clk);
+-#endif
+ }
  
-+	ret = krait_notifier_register(dev, clk, mux);
-+	if (ret)
-+		goto unique_aux;
-+
-+unique_aux:
- 	if (unique_aux)
- 		kfree(sec_mux_list[0]);
- err_aux:
-@@ -119,6 +169,7 @@
- krait_add_pri_mux(struct device *dev, int id, const char *s,
- 		  unsigned int offset)
- {
-+	int ret;
- 	struct krait_mux_clk *mux;
- 	const char *p_names[3];
- 	struct clk_init_data init = {
-@@ -139,6 +190,7 @@
- 	mux->lpl = id >= 0;
- 	mux->parent_map = pri_mux_map;
- 	mux->hw.init = &init;
-+	mux->safe_sel = 2;
- 
- 	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
- 	if (!init.name)
-@@ -164,6 +216,10 @@
- 
- 	clk = devm_clk_register(dev, &mux->hw);
- 
-+	ret = krait_notifier_register(dev, clk, mux);
-+	if (ret)
-+		goto err_p3;
-+err_p3:
- 	kfree(p_names[2]);
- err_p2:
- 	kfree(p_names[1]);
+ static struct resource dm644x_pll1_resources[] = {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
