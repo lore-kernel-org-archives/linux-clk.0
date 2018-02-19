@@ -1,61 +1,82 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 07/26] ARM: dts: r8a7793: Adjust SMP routine size
-Date: Mon, 12 Feb 2018 17:44:16 +0000
-Message-Id: <1518457475-4480-8-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 02/11] clk: meson: poke pll CNTL last
+Date: Mon, 19 Feb 2018 12:21:37 +0100
+Message-Id: <20180219112146.21746-3-jbrunet@baylibre.com>
+In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
+References: <20180219112146.21746-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+Poking CNTL first may take the PLL out of reset while we are still
+applying the initial settings, including the filter values
+initialization. This is the case for the axg and gxl gp0 pll.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Doing this poke last ensures the pll stays in reset while the initial
+settings are applied.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
-v4->v5:
-* no change
+ drivers/clk/meson/axg.c  | 2 +-
+ drivers/clk/meson/gxbb.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
- arch/arm/boot/dts/r8a7793.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index aa7d779..bde6969 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -392,7 +392,7 @@
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index acb63c8e0fd8..8226b82c67fd 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -193,12 +193,12 @@ static const struct pll_rate_table axg_gp0_pll_rate_table[] = {
+ };
  
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
+ const struct reg_sequence axg_gp0_init_regs[] = {
+-	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x40010250 },
+ 	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084a000 },
+ 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0xb75020be },
+ 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a59a288 },
+ 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0xc000004d },
+ 	{ .reg = HHI_GP0_PLL_CNTL5,	.def = 0x00078000 },
++	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x40010250 },
+ };
  
+ static struct clk_regmap axg_gp0_pll = {
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index bb0b0529ca81..3cd07f960489 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -390,10 +390,10 @@ static struct clk_regmap gxbb_sys_pll = {
+ };
+ 
+ const struct reg_sequence gxbb_gp0_init_regs[] = {
+-	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x6a000228 },
+ 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0x69c80000 },
+ 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a5590c4 },
+ 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0x0000500d },
++	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x4a000228 },
+ };
+ 
+ static struct clk_regmap gxbb_gp0_pll = {
+@@ -437,12 +437,12 @@ static struct clk_regmap gxbb_gp0_pll = {
+ };
+ 
+ const struct reg_sequence gxl_gp0_init_regs[] = {
+-	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x40010250 },
+ 	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084a000 },
+ 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0xb75020be },
+ 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a59a288 },
+ 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0xc000004d },
+ 	{ .reg = HHI_GP0_PLL_CNTL5,	.def = 0x00078000 },
++	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x40010250 },
+ };
+ 
+ static struct clk_regmap gxl_gp0_pll = {
 -- 
-2.7.4
+2.14.3
