@@ -1,301 +1,193 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH RESEND V3 4/9] clk: imx: add pfdv2 support
-Date: Tue, 13 Feb 2018 21:28:09 +0800
-Message-ID: <1518528494-25723-5-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
-References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <m.purski@samsung.com>
+From: Maciej Purski <m.purski@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim
+	<jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+	Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin
+	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro
+	Carvalho Chehab <mchehab@kernel.org>, Andrzej Pietrasiewicz
+	<andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Russell King <linux@armlinux.org.uk>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier
+	<thibault.saunier@osg.samsung.com>, Javier Martinez Canillas
+	<javier@osg.samsung.com>, Hans Verkuil <hansverk@cisco.com>, Hoegeun Kwon
+	<hoegeun.kwon@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH 6/8] drm/exynos/hdmi: Use clk bulk API
+Date: Mon, 19 Feb 2018 16:44:04 +0100
+Message-id: <1519055046-2399-7-git-send-email-m.purski@samsung.com>
+In-reply-to: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+	<CGME20180219154501eucas1p1e16a883d2eb0c8a99bafce5d71656066@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The pfdv2 is designed for PLL Fractional Divide (PFD) observed in System
-Clock Generation (SCG) module in IMX ULP SoC series. e.g. i.MX7ULP.
+Using bulk clk functions simplifies the driver's code. Use devm_clk_bulk
+functions instead of iterating over an array of clks.
 
-NOTE pfdv2 can only be operated when clk is gated.
-
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
-ChangeLog:
-v2->v3:
- * no changes
-v1->v2:
- * change to readl_poll_timeout
- * add pfd lock to protect share reg access between rate and enable/disable
-   operations and multiple pfd instances.
- * use clk_hw_register
----
- drivers/clk/imx/Makefile    |   3 +-
- drivers/clk/imx/clk-pfdv2.c | 207 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h       |   3 +
- 3 files changed, 212 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 97 ++++++++++--------------------------
+ 1 file changed, 27 insertions(+), 70 deletions(-)
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 2f00b03..9c04ae4 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -12,7 +12,8 @@ obj-y += \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
- 	clk-pllv4.o \
--	clk-pfd.o
-+	clk-pfd.o \
-+	clk-pfdv2.o
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index a4b75a4..6c208f7 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -136,8 +136,8 @@ struct hdmi_context {
+ 	int				irq;
+ 	struct regmap			*pmureg;
+ 	struct regmap			*sysreg;
+-	struct clk			**clk_gates;
+-	struct clk			**clk_muxes;
++	struct clk_bulk_data		*clk_gates;
++	struct clk_bulk_data		*clk_muxes;
+ 	struct regulator_bulk_data	regul_bulk[ARRAY_SIZE(supply)];
+ 	struct regulator		*reg_hdmi_en;
+ 	struct exynos_drm_clk		phy_clk;
+@@ -739,43 +739,16 @@ static int hdmiphy_reg_write_buf(struct hdmi_context *hdata,
+ 	}
+ }
  
- obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
- obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
-diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
-new file mode 100644
-index 0000000..5421bdf
---- /dev/null
-+++ b/drivers/clk/imx/clk-pfdv2.c
-@@ -0,0 +1,207 @@
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ *
-+ * Author: Dong Aisheng <aisheng.dong@nxp.com>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * as published by the Free Software Foundation; either version 2
-+ * of the License, or (at your option) any later version.
-+ *
-+ * http://www.opensource.org/licenses/gpl-license.html
-+ * http://www.gnu.org/copyleft/gpl.html
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/iopoll.h>
-+#include <linux/slab.h>
-+
-+/**
-+ * struct clk_pfdv2 - IMX PFD clock
-+ * @clk_hw:	clock source
-+ * @reg:	PFD register address
-+ * @gate_bit:	Gate bit offset
-+ * @vld_bit:	Valid bit offset
-+ * @frac_off:	PLL Fractional Divider offset
-+ */
-+
-+struct clk_pfdv2 {
-+	struct clk_hw	hw;
-+	void __iomem	*reg;
-+	u8		gate_bit;
-+	u8		vld_bit;
-+	u8		frac_off;
-+};
-+
-+#define to_clk_pfdv2(_hw) container_of(_hw, struct clk_pfdv2, hw)
-+
-+#define CLK_PFDV2_FRAC_MASK 0x3f
-+
-+#define LOCK_TIMEOUT_US		USEC_PER_MSEC
-+
-+static DEFINE_SPINLOCK(pfd_lock);
-+
-+static int clk_pfdv2_wait(struct clk_pfdv2 *pfd)
-+{
-+	u32 val;
-+
-+	return readl_poll_timeout(pfd->reg, val, val & pfd->vld_bit,
-+				  0, LOCK_TIMEOUT_US);
-+}
-+
-+static int clk_pfdv2_enable(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val &= ~pfd->gate_bit;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+
-+	return clk_pfdv2_wait(pfd);
-+}
-+
-+static void clk_pfdv2_disable(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val |= pfd->gate_bit;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+}
-+
-+static unsigned long clk_pfdv2_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	u64 tmp = parent_rate;
-+	u8 frac;
-+
-+	frac = (readl_relaxed(pfd->reg) >> pfd->frac_off)
-+		& CLK_PFDV2_FRAC_MASK;
-+
-+	if (!frac) {
-+		pr_debug("clk_pfdv2: %s invalid pfd frac value 0\n",
-+			 clk_hw_get_name(hw));
-+		return 0;
-+	}
-+
-+	tmp *= 18;
-+	do_div(tmp, frac);
-+
-+	return tmp;
-+}
-+
-+static long clk_pfdv2_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *prate)
-+{
-+	u64 tmp = *prate;
-+	u8 frac;
-+
-+	tmp = tmp * 18 + rate / 2;
-+	do_div(tmp, rate);
-+	frac = tmp;
-+
-+	if (frac < 12)
-+		frac = 12;
-+	else if (frac > 35)
-+		frac = 35;
-+
-+	tmp = *prate;
-+	tmp *= 18;
-+	do_div(tmp, frac);
-+
-+	return tmp;
-+}
-+
-+static int clk_pfdv2_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+
-+	if (readl_relaxed(pfd->reg) & pfd->gate_bit)
-+		return 0;
-+
-+	return 1;
-+}
-+
-+static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u64 tmp = parent_rate;
-+	u32 val;
-+	u8 frac;
-+
-+	tmp = tmp * 18 + rate / 2;
-+	do_div(tmp, rate);
-+	frac = tmp;
-+	if (frac < 12)
-+		frac = 12;
-+	else if (frac > 35)
-+		frac = 35;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val &= ~(CLK_PFDV2_FRAC_MASK << pfd->frac_off);
-+	val |= frac << pfd->frac_off;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_pfdv2_ops = {
-+	.enable		= clk_pfdv2_enable,
-+	.disable	= clk_pfdv2_disable,
-+	.recalc_rate	= clk_pfdv2_recalc_rate,
-+	.round_rate	= clk_pfdv2_round_rate,
-+	.set_rate	= clk_pfdv2_set_rate,
-+	.is_enabled     = clk_pfdv2_is_enabled,
-+};
-+
-+struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
-+			     void __iomem *reg, u8 idx)
-+{
-+	struct clk_init_data init;
-+	struct clk_pfdv2 *pfd;
-+	struct clk_hw *hw;
+-static int hdmi_clk_enable_gates(struct hdmi_context *hdata)
+-{
+-	int i, ret;
+-
+-	for (i = 0; i < hdata->drv_data->clk_gates.count; ++i) {
+-		ret = clk_prepare_enable(hdata->clk_gates[i]);
+-		if (!ret)
+-			continue;
+-
+-		dev_err(hdata->dev, "Cannot enable clock '%s', %d\n",
+-			hdata->drv_data->clk_gates.data[i], ret);
+-		while (i--)
+-			clk_disable_unprepare(hdata->clk_gates[i]);
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+-static void hdmi_clk_disable_gates(struct hdmi_context *hdata)
+-{
+-	int i = hdata->drv_data->clk_gates.count;
+-
+-	while (i--)
+-		clk_disable_unprepare(hdata->clk_gates[i]);
+-}
+-
+ static int hdmi_clk_set_parents(struct hdmi_context *hdata, bool to_phy)
+ {
+ 	struct device *dev = hdata->dev;
+ 	int ret = 0;
++	struct clk_bulk_data *clk_muxes = hdata->clk_muxes;
+ 	int i;
+ 
+ 	for (i = 0; i < hdata->drv_data->clk_muxes.count; i += 3) {
+-		struct clk **c = &hdata->clk_muxes[i];
+-
+-		ret = clk_set_parent(c[2], c[to_phy]);
++		ret = clk_set_parent(clk_muxes[i + 2].clk,
++				     clk_muxes[i + to_phy].clk);
+ 		if (!ret)
+ 			continue;
+ 
+@@ -1655,54 +1628,36 @@ static irqreturn_t hdmi_irq_thread(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int hdmi_clks_get(struct hdmi_context *hdata,
+-			 const struct string_array_spec *names,
+-			 struct clk **clks)
++static struct clk_bulk_data *hdmi_clks_alloc_get(struct hdmi_context *hdata,
++					const struct string_array_spec *names)
+ {
+-	struct device *dev = hdata->dev;
+-	int i;
+-
+-	for (i = 0; i < names->count; ++i) {
+-		struct clk *clk = devm_clk_get(dev, names->data[i]);
+-
+-		if (IS_ERR(clk)) {
+-			int ret = PTR_ERR(clk);
++	struct clk_bulk_data *ptr;
 +	int ret;
-+
-+	WARN_ON(idx > 3);
-+
-+	pfd = kzalloc(sizeof(*pfd), GFP_KERNEL);
-+	if (!pfd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pfd->reg = reg;
-+	pfd->gate_bit = 1 << ((idx + 1) * 8 - 1);
-+	pfd->vld_bit = pfd->gate_bit - 1;
-+	pfd->frac_off = idx * 8;
-+
-+	init.name = name;
-+	init.ops = &clk_pfdv2_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = CLK_SET_RATE_GATE;
-+
-+	pfd->hw.init = &init;
-+
-+	hw = &pfd->hw;
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(pfd);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 52f7c9d..ccd7181 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -60,6 +60,9 @@ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
- struct clk *imx_clk_pfd(const char *name, const char *parent_name,
- 		void __iomem *reg, u8 idx);
  
-+struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
-+			     void __iomem *reg, u8 idx);
-+
- struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
- 				 void __iomem *reg, u8 shift, u8 width,
- 				 void __iomem *busy_reg, u8 busy_shift);
+-			dev_err(dev, "Cannot get clock %s, %d\n",
+-				names->data[i], ret);
++	ptr = devm_clk_bulk_alloc(hdata->dev, names->count, names->data);
++	if (IS_ERR(ptr))
++		return ptr;
+ 
+-			return ret;
+-		}
+-
+-		clks[i] = clk;
+-	}
++	ret = devm_clk_bulk_get(hdata->dev, names->count, ptr);
++	if (ret < 0)
++		return ERR_PTR(ret);
+ 
+-	return 0;
++	return ptr;
+ }
+ 
+ static int hdmi_clk_init(struct hdmi_context *hdata)
+ {
+ 	const struct hdmi_driver_data *drv_data = hdata->drv_data;
+-	int count = drv_data->clk_gates.count + drv_data->clk_muxes.count;
+-	struct device *dev = hdata->dev;
+-	struct clk **clks;
+-	int ret;
+ 
+-	if (!count)
+-		return 0;
+-
+-	clks = devm_kzalloc(dev, sizeof(*clks) * count, GFP_KERNEL);
+-	if (!clks)
+-		return -ENOMEM;
++	hdata->clk_muxes = hdmi_clks_alloc_get(hdata, &drv_data->clk_muxes);
++	if (IS_ERR(hdata->clk_muxes))
++		return PTR_ERR(hdata->clk_muxes);
+ 
+-	hdata->clk_gates = clks;
+-	hdata->clk_muxes = clks + drv_data->clk_gates.count;
++	hdata->clk_gates = hdmi_clks_alloc_get(hdata, &drv_data->clk_gates);
++	if (IS_ERR(hdata->clk_gates))
++		return PTR_ERR(hdata->clk_gates);
+ 
+-	ret = hdmi_clks_get(hdata, &drv_data->clk_gates, hdata->clk_gates);
+-	if (ret)
+-		return ret;
+-
+-	return hdmi_clks_get(hdata, &drv_data->clk_muxes, hdata->clk_muxes);
++	return 0;
+ }
+ 
+ 
+@@ -2073,7 +2028,8 @@ static int __maybe_unused exynos_hdmi_suspend(struct device *dev)
+ {
+ 	struct hdmi_context *hdata = dev_get_drvdata(dev);
+ 
+-	hdmi_clk_disable_gates(hdata);
++	clk_bulk_disable_unprepare(hdata->drv_data->clk_gates.count,
++				   hdata->clk_gates);
+ 
+ 	return 0;
+ }
+@@ -2083,7 +2039,8 @@ static int __maybe_unused exynos_hdmi_resume(struct device *dev)
+ 	struct hdmi_context *hdata = dev_get_drvdata(dev);
+ 	int ret;
+ 
+-	ret = hdmi_clk_enable_gates(hdata);
++	ret = clk_bulk_prepare_enable(hdata->drv_data->clk_gates.count,
++				      hdata->clk_gates);
+ 	if (ret < 0)
+ 		return ret;
+ 
 -- 
 2.7.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
