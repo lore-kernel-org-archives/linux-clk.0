@@ -1,70 +1,144 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Lee
- Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Gabriel
- Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
-Subject: [PATCH 14/14] clk: stm32mp1: add Debug clocks
-Date: Fri, 2 Feb 2018 15:03:42 +0100
-Message-ID: <1517580222-23301-15-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <m.purski@samsung.com>
+From: Maciej Purski <m.purski@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim
+	<jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+	Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin
+	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro
+	Carvalho Chehab <mchehab@kernel.org>, Andrzej Pietrasiewicz
+	<andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Russell King <linux@armlinux.org.uk>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier
+	<thibault.saunier@osg.samsung.com>, Javier Martinez Canillas
+	<javier@osg.samsung.com>, Hans Verkuil <hansverk@cisco.com>, Hoegeun Kwon
+	<hoegeun.kwon@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH 2/8] media: s5p-jpeg: Use bulk clk API
+Date: Mon, 19 Feb 2018 16:44:00 +0100
+Message-id: <1519055046-2399-3-git-send-email-m.purski@samsung.com>
+In-reply-to: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+	<CGME20180219154457eucas1p163264992903698a8878aa5abbc8aa17b@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Using bulk clk functions simplifies the driver's code. Use devm_clk_bulk
+functions instead of iterating over an array of clks.
 
-RCC manages clock for debug and trace.
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- drivers/clk/clk-stm32mp1.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/media/platform/s5p-jpeg/jpeg-core.c | 45 ++++++++++++-----------------
+ drivers/media/platform/s5p-jpeg/jpeg-core.h |  2 +-
+ 2 files changed, 20 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 0402a0e..eafc95a 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -352,6 +352,12 @@
- 	{ 0 },
- };
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+index 79b63da..681a515 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
++++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+@@ -2903,7 +2903,7 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
+ {
+ 	struct s5p_jpeg *jpeg;
+ 	struct resource *res;
+-	int i, ret;
++	int ret;
  
-+static const struct clk_div_table ck_trace_div_table[] = {
-+	{ 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 8 },
-+	{ 4, 16 }, { 5, 16 }, { 6, 16 }, { 7, 16 },
-+	{ 0 },
-+};
-+
- struct clock_config {
- 	u32 id;
- 	const char *name;
-@@ -1566,6 +1572,17 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
- 		  _GATEMUXDIV(RCC_MCO2CFGR, 12,
- 			      RCC_MCO2CFGR, 0, 3,
- 			      RCC_MCO2CFGR, 4, 4)),
-+
-+	/* Debug clocks */
-+	FIXED_FACTOR(NO_ID, "ck_axi_div2", "ck_axi", 0, 1, 2),
-+
-+	GATE(DBG, "ck_apb_dbg", "ck_axi_div2", 0, RCC_DBGCFGR, 8, 0),
-+
-+	GATE(CK_DBG, "ck_sys_dbg", "ck_axi", 0, RCC_DBGCFGR, 8, 0),
-+
-+	COMPOSITE(CK_TRACE, "ck_trace", ck_trace_src, CLK_OPS_PARENT_ENABLE,
-+		  _GATEDIV(RCC_DBGCFGR, 9,
-+			   RCC_DBGCFGR, 0, 3, ck_trace_div_table)),
- };
+ 	/* JPEG IP abstraction struct */
+ 	jpeg = devm_kzalloc(&pdev->dev, sizeof(struct s5p_jpeg), GFP_KERNEL);
+@@ -2938,15 +2938,16 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
+ 	}
  
- struct stm32_clock_match_data {
+ 	/* clocks */
+-	for (i = 0; i < jpeg->variant->num_clocks; i++) {
+-		jpeg->clocks[i] = devm_clk_get(&pdev->dev,
+-					      jpeg->variant->clk_names[i]);
+-		if (IS_ERR(jpeg->clocks[i])) {
+-			dev_err(&pdev->dev, "failed to get clock: %s\n",
+-				jpeg->variant->clk_names[i]);
+-			return PTR_ERR(jpeg->clocks[i]);
+-		}
+-	}
++	jpeg->clocks = devm_clk_bulk_alloc(&pdev->dev,
++					   jpeg->variant->num_clocks,
++					   jpeg->variant->clk_names);
++	if (IS_ERR(jpeg->clocks))
++		return PTR_ERR(jpeg->clocks);
++
++	ret = devm_clk_bulk_get(&pdev->dev, jpeg->variant->num_clocks,
++				jpeg->clocks);
++	if (ret < 0)
++		return ret;
+ 
+ 	/* v4l2 device */
+ 	ret = v4l2_device_register(&pdev->dev, &jpeg->v4l2_dev);
+@@ -3047,7 +3048,6 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
+ static int s5p_jpeg_remove(struct platform_device *pdev)
+ {
+ 	struct s5p_jpeg *jpeg = platform_get_drvdata(pdev);
+-	int i;
+ 
+ 	pm_runtime_disable(jpeg->dev);
+ 
+@@ -3058,8 +3058,8 @@ static int s5p_jpeg_remove(struct platform_device *pdev)
+ 	v4l2_device_unregister(&jpeg->v4l2_dev);
+ 
+ 	if (!pm_runtime_status_suspended(&pdev->dev)) {
+-		for (i = jpeg->variant->num_clocks - 1; i >= 0; i--)
+-			clk_disable_unprepare(jpeg->clocks[i]);
++		clk_bulk_disable_unprepare(jpeg->variant->num_clocks,
++					   jpeg->clocks);
+ 	}
+ 
+ 	return 0;
+@@ -3069,10 +3069,8 @@ static int s5p_jpeg_remove(struct platform_device *pdev)
+ static int s5p_jpeg_runtime_suspend(struct device *dev)
+ {
+ 	struct s5p_jpeg *jpeg = dev_get_drvdata(dev);
+-	int i;
+ 
+-	for (i = jpeg->variant->num_clocks - 1; i >= 0; i--)
+-		clk_disable_unprepare(jpeg->clocks[i]);
++	clk_bulk_disable_unprepare(jpeg->variant->num_clocks, jpeg->clocks);
+ 
+ 	return 0;
+ }
+@@ -3081,16 +3079,11 @@ static int s5p_jpeg_runtime_resume(struct device *dev)
+ {
+ 	struct s5p_jpeg *jpeg = dev_get_drvdata(dev);
+ 	unsigned long flags;
+-	int i, ret;
+-
+-	for (i = 0; i < jpeg->variant->num_clocks; i++) {
+-		ret = clk_prepare_enable(jpeg->clocks[i]);
+-		if (ret) {
+-			while (--i >= 0)
+-				clk_disable_unprepare(jpeg->clocks[i]);
+-			return ret;
+-		}
+-	}
++	int ret;
++
++	ret = clk_bulk_prepare_enable(jpeg->variant->num_clocks, jpeg->clocks);
++	if (ret)
++		return ret;
+ 
+ 	spin_lock_irqsave(&jpeg->slock, flags);
+ 
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.h b/drivers/media/platform/s5p-jpeg/jpeg-core.h
+index a46465e..dc6ed98 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-core.h
++++ b/drivers/media/platform/s5p-jpeg/jpeg-core.h
+@@ -133,7 +133,7 @@ struct s5p_jpeg {
+ 	void __iomem		*regs;
+ 	unsigned int		irq;
+ 	enum exynos4_jpeg_result irq_ret;
+-	struct clk		*clocks[JPEG_MAX_CLOCKS];
++	struct clk_bulk_data	*clocks;
+ 	struct device		*dev;
+ 	struct s5p_jpeg_variant *variant;
+ 	u32			irq_status;
 -- 
-1.9.1
+2.7.4
