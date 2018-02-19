@@ -1,70 +1,144 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 8 Feb 2018 09:03:35 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
-        Jose.Abreu@synopsys.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 02/12] clk: sunxi-ng: Use u64 for calculation of nkmp
- rate
-Message-ID: <20180208080335.uduk2aa6vdkaa5n3@flea>
-References: <20180207211713.3638-1-jernej.skrabec@siol.net>
- <20180207211713.3638-3-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gmiu3sxsclb4fsnm"
-In-Reply-To: <20180207211713.3638-3-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 03/42] clk: davinci: Add platform information for TI DA830 PLL
+Date: Mon, 19 Feb 2018 14:21:24 -0600
+Message-Id: <1519071723-31790-4-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds platform-specific declarations for the PLL clocks on TI DA830/
+OMAP-L137/AM17XX SoCs.
 
---gmiu3sxsclb4fsnm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-On Wed, Feb 07, 2018 at 10:17:03PM +0100, Jernej Skrabec wrote:
-> When parent rate is 24MHz and multiplier N >=3D 180, intermediate clock
-> rate doesn't fit in 32 bit variable anymore.
->=20
-> Because of that, introduce function for calculating clock rate which
-> uses 64 bit variable for intermediate result.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+v7 changes:
+- include clkdev lookup registration here instead of in mach-davinci
+- Add platform_device_id lookup
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+v6 changes:
+- Added da830_pll_info with controller-specific information
+- Add empty lines between function calls
 
-Thanks!
-Maxime
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/pll-da830.c | 58 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/pll.c       |  1 +
+ drivers/clk/davinci/pll.h       |  4 +++
+ 4 files changed, 64 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-da830.c
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
-
---gmiu3sxsclb4fsnm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp8BFYACgkQ0rTAlCFN
-r3TClRAAg2q00R9Ae7dCh1Zyb5ztVhCT4VAqCTFiAZSlSW7NBYxrMCUBt1+JXl2H
-tlld0BOW+3nVnMnql3U6unl8/lfqTsndVczVXEW/Qz+WNBQgqaS9jGfZSdgMcrLk
-lgXd5cOvkvVBYQdFlkClQx5BbESN4l9MefFM++oVj08icksy+P5WLz39/PxZ0WG8
-/GlTMs9+vl/d0OZRRnbRnzrDm58cy2GhIcedqJMP0wlsME5jA319aea2+2jAJSAP
-Sxa3ds+oS0CifxVWqQam3uyUxuyOjPP+ZnNQNmhVBpqwYiPW2+NFGUm7AjUZ/ScP
-0bBIybY1xqu6VjIWuzgF4TPeZQ5R0E5lOyTT7BwwKhbMZsR4LBjy4jCFQPQtAeHj
-e21D/6tAZ2de3xlgIx2P7+Ij4a1Np2gI+s+2btj9pYAMEMFjojjbvG5eDepf32gq
-E8QySefQE5dF82jFiM28IhucNUfgDM1+Ya5uisBzGvvVmiiHa516ePt9YNoGZS+J
-jZ0bS6RXM0bzQXHnK8G9JhU53yZb/iDXbc3SlzFNH38vleFbOnVoHpOAW+6pQMHg
-LpfHzvGa5Sd51+0/u+bLcbvvlFRuVAhDodES+8BdGlo8BoBE60JU1BoAX8/n4RGg
-nxxQX28qhaw6Zg9wjrSlYVNmfrI5BXxF1tc9DQ+unLf8/fGeWlw=
-=05Kc
------END PGP SIGNATURE-----
-
---gmiu3sxsclb4fsnm--
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index d9673bd..9061e19 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -2,4 +2,5 @@
+ 
+ ifeq ($(CONFIG_COMMON_CLK), y)
+ obj-y += pll.o
++obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ endif
+diff --git a/drivers/clk/davinci/pll-da830.c b/drivers/clk/davinci/pll-da830.c
+new file mode 100644
+index 0000000..240b17a
+--- /dev/null
++++ b/drivers/clk/davinci/pll-da830.c
+@@ -0,0 +1,58 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DA830/OMAP-L137/AM17XX
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clkdev.h>
++#include <linux/bitops.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++static const struct davinci_pll_clk_info da830_pll_info __initconst = {
++	.name = "pll0",
++	.pllm_mask = GENMASK(4, 0),
++	.pllm_min = 4,
++	.pllm_max = 32,
++	.pllout_min_rate = 300000000,
++	.pllout_max_rate = 600000000,
++	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV,
++};
++
++/*
++ * NB: Technically, the clocks flagged as SYSCLK_FIXED_DIV are "fixed ratio",
++ * meaning that we could change the divider as long as we keep the correct
++ * ratio between all of the clocks, but we don't support that because there is
++ * currently not a need for it.
++ */
++
++static const struct davinci_pll_sysclk_info da830_pll_sysclk_info[] __initconst = {
++	SYSCLK(2, pll0_sysclk2, pll0_pllen, 5, SYSCLK_FIXED_DIV),
++	SYSCLK(3, pll0_sysclk3, pll0_pllen, 5, 0),
++	SYSCLK(4, pll0_sysclk4, pll0_pllen, 5, SYSCLK_FIXED_DIV),
++	SYSCLK(5, pll0_sysclk5, pll0_pllen, 5, 0),
++	SYSCLK(6, pll0_sysclk6, pll0_pllen, 5, SYSCLK_FIXED_DIV),
++	SYSCLK(7, pll0_sysclk7, pll0_pllen, 5, 0),
++	{ }
++};
++
++int __init da830_pll_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++	struct clk *clk;
++
++	davinci_pll_clk_register(dev, &da830_pll_info, "ref_clk", base);
++
++	clk = davinci_pll_auxclk_register(dev, "pll0_auxclk", base);
++	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
++	clk_register_clkdev(clk, "timer0", NULL);
++	clk_register_clkdev(clk, NULL, "davinci-wdt");
++
++	for (info = da830_pll_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	return 0;
++}
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index e4f3e5f..9a22511 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -751,6 +751,7 @@ static const struct of_device_id davinci_pll_of_match[] = {
+ };
+ 
+ static const struct platform_device_id davinci_pll_id_table[] = {
++	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index 50fe429..5c4c5c8 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -117,4 +117,8 @@ int of_davinci_pll_init(struct device *dev,
+ 			u8 max_sysclk_id,
+ 			void __iomem *base);
+ 
++/* Platform-specific callbacks */
++
++int da830_pll_init(struct device *dev, void __iomem *base);
++
+ #endif /* __CLK_DAVINCI_PLL_H___ */
+-- 
+2.7.4
