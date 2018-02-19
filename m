@@ -1,131 +1,168 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 01/16] clk: sunxi-ng: Add check for minimal rate to NM PLLs
-Date: Tue, 27 Feb 2018 23:26:46 +0100
-Message-Id: <20180227222701.9716-2-jernej.skrabec@siol.net>
-In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 08/42] clk: davinci: Add platform information for TI DM646x PLL
+Date: Mon, 19 Feb 2018 14:21:29 -0600
+Message-Id: <1519071723-31790-9-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some NM PLLs doesn't work well when their output clock rate is set below
-certain rate.
+This adds platform-specific declarations for the PLL clocks on TI
+DM646x based systems.
 
-Add support for that constrain.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/sunxi-ng/ccu_nm.c | 11 +++++++----
- drivers/clk/sunxi-ng/ccu_nm.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index a16de092bf94..7fc743c78c1b 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -20,7 +20,7 @@ struct _ccu_nm {
+v7 changes:
+- split registration functions for each PLL
+- Add platform_device_id lookup
+
+Note: I meant to drop the fixed factor clock for timer2 and use pll1_sysclk3
+directly in the lookup but noticed it too late. Will fix in the next rev.
+
+v6 changes:
+- Added dm646x_pll{1,2}_info with controller-specific information
+- Add empty lines between function calls
+
+
+ drivers/clk/davinci/Makefile     |  1 +
+ drivers/clk/davinci/pll-dm646x.c | 78 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/pll.c        |  2 ++
+ drivers/clk/davinci/pll.h        |  3 ++
+ 4 files changed, 84 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm646x.c
+
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 59d8ab6..d471386 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -7,4 +7,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= pll-dm644x.o
++obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
+new file mode 100644
+index 0000000..9d3e0c2
+--- /dev/null
++++ b/drivers/clk/davinci/pll-dm646x.c
+@@ -0,0 +1,78 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM646X
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/types.h>
++
++#include "pll.h"
++
++static const struct davinci_pll_clk_info dm646x_pll1_info __initconst = {
++	.name = "pll1",
++	.pllm_mask = GENMASK(4, 0),
++	.pllm_min = 14,
++	.pllm_max = 32,
++	.flags = PLL_HAS_CLKMODE,
++};
++
++static const struct davinci_pll_sysclk_info dm646x_pll1_sysclk_info[] __initconst = {
++	SYSCLK(1, pll1_sysclk1, pll1_pllen, 4, SYSCLK_FIXED_DIV),
++	SYSCLK(2, pll1_sysclk2, pll1_pllen, 4, SYSCLK_FIXED_DIV),
++	SYSCLK(3, pll1_sysclk3, pll1_pllen, 4, SYSCLK_FIXED_DIV),
++	SYSCLK(4, pll1_sysclk4, pll1_pllen, 4, 0),
++	SYSCLK(5, pll1_sysclk5, pll1_pllen, 4, 0),
++	SYSCLK(6, pll1_sysclk6, pll1_pllen, 4, 0),
++	SYSCLK(8, pll1_sysclk8, pll1_pllen, 4, 0),
++	SYSCLK(9, pll1_sysclk9, pll1_pllen, 4, 0),
++	{ }
++};
++
++static const struct davinci_pll_clk_info dm646x_pll2_info __initconst = {
++	.name = "pll2",
++	.pllm_mask = GENMASK(4, 0),
++	.pllm_min = 14,
++	.pllm_max = 32,
++	.flags = 0,
++};
++
++static const struct davinci_pll_sysclk_info dm646x_pll2_sysclk_info[] __initconst = {
++	SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0),
++	{ }
++};
++
++int __init dm646x_pll1_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++
++	davinci_pll_clk_register(dev, &dm646x_pll1_info, "ref_clk", base);
++
++	for (info = dm646x_pll1_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
++
++	davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
++
++	return 0;
++}
++
++int __init dm646x_pll2_init(struct device *dev, void __iomem *base)
++{
++	const struct davinci_pll_sysclk_info *info;
++	struct clk *clk;
++
++	davinci_pll_clk_register(dev, &dm646x_pll2_info, "oscin", base);
++
++	for (info = dm646x_pll2_sysclk_info; info->name; info++)
++		davinci_pll_sysclk_register(dev, info, base);
++
++	clk = clk_register_fixed_factor(dev, "timer2", "pll1_sysclk3", 0, 1, 1);
++	clk_register_clkdev(clk, NULL, "davinci-wdt");
++
++	return 0;
++}
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 613ec24..8fad491 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -762,6 +762,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
+ 	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
+ 	{ .name = "dm644x-pll1", .driver_data = (kernel_ulong_t)dm644x_pll1_init },
+ 	{ .name = "dm644x-pll2", .driver_data = (kernel_ulong_t)dm644x_pll2_init },
++	{ .name = "dm646x-pll1", .driver_data = (kernel_ulong_t)dm646x_pll1_init },
++	{ .name = "dm646x-pll2", .driver_data = (kernel_ulong_t)dm646x_pll2_init },
+ 	{ }
  };
  
- static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
--			     struct _ccu_nm *nm)
-+			     unsigned long min_rate, struct _ccu_nm *nm)
- {
- 	unsigned long best_rate = 0;
- 	unsigned long best_n = 0, best_m = 0;
-@@ -30,7 +30,7 @@ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
- 		for (_m = nm->min_m; _m <= nm->max_m; _m++) {
- 			unsigned long tmp_rate = parent * _n  / _m;
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index df977a6..5977be0 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -135,4 +135,7 @@ int dm365_pll2_init(struct device *dev, void __iomem *base);
+ int dm644x_pll1_init(struct device *dev, void __iomem *base);
+ int dm644x_pll2_init(struct device *dev, void __iomem *base);
  
--			if (tmp_rate > rate)
-+			if (tmp_rate > rate || tmp_rate < min_rate)
- 				continue;
- 
- 			if ((rate - tmp_rate) < (rate - best_rate)) {
-@@ -117,6 +117,9 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate *= nm->fixed_post_div;
- 
-+	if (rate < nm->min_rate)
-+		rate = nm->min_rate;
++int dm646x_pll1_init(struct device *dev, void __iomem *base);
++int dm646x_pll2_init(struct device *dev, void __iomem *base);
 +
- 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
- 		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 			rate /= nm->fixed_post_div;
-@@ -134,7 +137,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 	_nm.min_m = 1;
- 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
- 
--	ccu_nm_find_best(*parent_rate, rate, &_nm);
-+	ccu_nm_find_best(*parent_rate, rate, nm->min_rate, &_nm);
- 	rate = *parent_rate * _nm.n / _nm.m;
- 
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-@@ -186,7 +189,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
- 					   &_nm.m, &_nm.n);
- 	} else {
- 		ccu_sdm_helper_disable(&nm->common, &nm->sdm);
--		ccu_nm_find_best(parent_rate, rate, &_nm);
-+		ccu_nm_find_best(parent_rate, rate, nm->min_rate, &_nm);
- 	}
- 
- 	spin_lock_irqsave(nm->common.lock, flags);
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
-index eba586b4c7d0..1d8b459c50b7 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.h
-+++ b/drivers/clk/sunxi-ng/ccu_nm.h
-@@ -37,6 +37,7 @@ struct ccu_nm {
- 	struct ccu_sdm_internal		sdm;
- 
- 	unsigned int		fixed_post_div;
-+	unsigned int		min_rate;
- 
- 	struct ccu_common	common;
- };
-@@ -88,6 +89,32 @@ struct ccu_nm {
- 		},							\
- 	}
- 
-+#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(_struct, _name, _parent,	\
-+					     _reg, _min_rate,		\
-+					     _nshift, _nwidth,		\
-+					     _mshift, _mwidth,		\
-+					     _frac_en, _frac_sel,	\
-+					     _frac_rate_0, _frac_rate_1,\
-+					     _gate, _lock, _flags)	\
-+	struct ccu_nm _struct = {					\
-+		.enable		= _gate,				\
-+		.lock		= _lock,				\
-+		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
-+		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
-+		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
-+						  _frac_rate_0,		\
-+						  _frac_rate_1),	\
-+		.min_rate	= _min_rate,				\
-+		.common		= {					\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_FRACTIONAL,	\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_nm_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
- #define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
- 				    _nshift, _nwidth,			\
- 				    _mshift, _mwidth,			\
+ #endif /* __CLK_DAVINCI_PLL_H___ */
 -- 
-2.16.2
+2.7.4
