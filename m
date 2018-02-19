@@ -1,121 +1,145 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 00/19] clk: meson: use regmap in clock controllers
-Date: Mon, 12 Feb 2018 15:58:27 +0100
-Message-Id: <20180212145846.19380-1-jbrunet@baylibre.com>
+Return-Path: <m.purski@samsung.com>
+From: Maciej Purski <m.purski@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim
+	<jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+	Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin
+	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro
+	Carvalho Chehab <mchehab@kernel.org>, Andrzej Pietrasiewicz
+	<andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>,
+	Andrzej Hajda <a.hajda@samsung.com>, Russell King <linux@armlinux.org.uk>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier
+	<thibault.saunier@osg.samsung.com>, Javier Martinez Canillas
+	<javier@osg.samsung.com>, Hans Verkuil <hansverk@cisco.com>, Hoegeun Kwon
+	<hoegeun.kwon@samsung.com>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH 8/8] [media] s5p-mfc: Use clk bulk API
+Date: Mon, 19 Feb 2018 16:44:06 +0100
+Message-id: <1519055046-2399-9-git-send-email-m.purski@samsung.com>
+In-reply-to: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
+	<CGME20180219154503eucas1p1c8893411994bd1152d0ce5b386118416@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This changeset is a rework of meson's clock controllers to use regmap
-instead of directly using io memory. It based clk-meson next/drivers
-and depends on few core clock patches, mainly to export generic clocks
-helpers: [0],[1]. The line count is pretty high but the changes are
-actually fairly simple and repetitive.
+Using bulk clk functions simplifies the driver's code. Use devm_clk_bulk
+functions instead of iterating over an array of clks.
 
-This work has been triggered by the fact that the HHI register space on
-gxbb and axg provides more than just clocks. The display driver already
-uses a syscon for HHI on gxbb. This is why gxbb did not use
-devm_ioremap_resource() to map the registers, since it would have
-reserved the memory region, preventing another driver from re-mapping
-it. The cleaner solution is, of course, to use syscon to handle. The
-purpose of this changeset is to allow it. Even if meson8b does not need
-this ATM, there is real reason to leave it behind. It is actually easier
-to migrate it as well, so all meson clock drivers may support regmap
-only.
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h |  6 ++--
+ drivers/media/platform/s5p-mfc/s5p_mfc_pm.c     | 41 +++++++++----------------
+ 2 files changed, 18 insertions(+), 29 deletions(-)
 
-The rework starts with a few easy clean-ups. The real deal starts with
-patch 5, which adds meson's clk_regmap. This will be used as common
-structure to implement all the controller clocks. Having this replaces
-the gxbb AO controller specific regmap gate. This structure will also be
-re-used in upcoming controllers, such as the axg's AO and audio
-controllers.  Each clock type is then migrated, one at a time, to this
-new structure.
-
-While at it, the meson clock drivers have been cleaned-up a bit,
-removing the gate embedded in the mpll driver, simplifying the pll
-driver and removing the legacy cpu_clk of meson8b.
-
-The new code around the cpu clk of the meson8b is just re-implementation,
-using simple elements, of the old cpu_clk. As explained by Martin, the
-old cpu_clk would hang quite often when changing the rate of the cpu
-clock. Surprisingly, the new implementation improved the situation a bit,
-but still hangs from time to time. As this is not acceptable, the cpu
-clk subtree as been switched to a read-only mode, preventing any change
-of the cpu rate, until an acceptable solution is found.
-
-With this series applied, the clock controllers of the gxbb, gxl and axg
-SoC will try get regmap from their parent DT node. If this fails, they
-will fallback to mapping the register themselves. This fallback will be
-kept until platform DTs have changed so clock controllers is a child of
-the HHI system controller.
-
-Based on this changeset, more patches are coming. For those interested,
-the WIP is available here [2]
-
-Changes since v1 [3]:
-* Fixed a few typos in patches descriptions
-* Fixed cpu clock names on meson8b, as suggested by Martin
-* Switched cpu clock subtree to reead-only mode
-* Fix clk_regmap mux documentation, as reported by Yixun
-
-[0]: https://lkml.kernel.org/r/20180118110144.30619-1-jbrunet@baylibre.com
-[1]: https://lkml.kernel.org/r/20180122105759.12206-1-jbrunet@baylibre.com
-[2]: https://github.com/jeromebrunet/linux/tree/v4.17/meson/clk-regmap
-[1]: https://lkml.kernel.org/r/20180131180945.18025-1-jbrunet@baylibre.com
-
-Jerome Brunet (19):
-  clk: meson: use dev pointer where possible
-  clk: meson: use devm_of_clk_add_hw_provider
-  clk: meson: only one loop index is necessary in probe
-  clk: meson: remove obsolete comments
-  clk: meson: add regmap clocks
-  clk: meson: switch gxbb ao_clk to clk_regmap
-  clk: meson: remove superseded aoclk_gate_regmap
-  clk: meson: add regmap to the clock controllers
-  clk: meson: migrate gates to clk_regmap
-  clk: meson: migrate dividers to clk_regmap
-  clk: meson: migrate muxes to clk_regmap
-  clk: meson: add regmap helpers for parm
-  clk: meson: migrate mplls clocks to clk_regmap
-  clk: meson: migrate the audio divider clock to clk_regmap
-  clk: meson: migrate plls clocks to clk_regmap
-  clk: meson: split divider and gate part of mpll
-  clk: meson: rework meson8b cpu clock
-  clk: meson: remove obsolete cpu_clk
-  clk: meson: use hhi syscon if available
-
- drivers/clk/meson/Kconfig             |    9 +
- drivers/clk/meson/Makefile            |    5 +-
- drivers/clk/meson/axg.c               |  722 +++++++++--------
- drivers/clk/meson/axg.h               |    6 +-
- drivers/clk/meson/clk-audio-divider.c |   63 +-
- drivers/clk/meson/clk-cpu.c           |  178 -----
- drivers/clk/meson/clk-mpll.c          |  132 +---
- drivers/clk/meson/clk-pll.c           |  243 +++---
- drivers/clk/meson/clk-regmap.c        |  166 ++++
- drivers/clk/meson/clk-regmap.h        |  111 +++
- drivers/clk/meson/clkc.h              |   93 +--
- drivers/clk/meson/gxbb-aoclk-regmap.c |   46 --
- drivers/clk/meson/gxbb-aoclk.c        |   20 +-
- drivers/clk/meson/gxbb-aoclk.h        |   11 -
- drivers/clk/meson/gxbb.c              | 1402 ++++++++++++++++++---------------
- drivers/clk/meson/gxbb.h              |    5 +-
- drivers/clk/meson/meson8b.c           |  588 ++++++++------
- drivers/clk/meson/meson8b.h           |   11 +-
- 18 files changed, 1978 insertions(+), 1833 deletions(-)
- delete mode 100644 drivers/clk/meson/clk-cpu.c
- create mode 100644 drivers/clk/meson/clk-regmap.c
- create mode 100644 drivers/clk/meson/clk-regmap.h
- delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
-
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+index 76119a8..da3f0b3 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+@@ -192,9 +192,9 @@ struct s5p_mfc_buf {
+  * struct s5p_mfc_pm - power management data structure
+  */
+ struct s5p_mfc_pm {
+-	struct clk	*clock_gate;
+-	const char * const *clk_names;
+-	struct clk	*clocks[MFC_MAX_CLOCKS];
++	struct clk		*clock_gate;
++	const char * const	*clk_names;
++	struct clk_bulk_data	*clocks;
+ 	int		num_clocks;
+ 	bool		use_clock_gating;
+ 
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
+index eb85ced..857f6ea 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
+@@ -24,7 +24,7 @@ static atomic_t clk_ref;
+ 
+ int s5p_mfc_init_pm(struct s5p_mfc_dev *dev)
+ {
+-	int i;
++	int ret;
+ 
+ 	pm = &dev->pm;
+ 	p_dev = dev;
+@@ -35,17 +35,17 @@ int s5p_mfc_init_pm(struct s5p_mfc_dev *dev)
+ 	pm->clock_gate = NULL;
+ 
+ 	/* clock control */
+-	for (i = 0; i < pm->num_clocks; i++) {
+-		pm->clocks[i] = devm_clk_get(pm->device, pm->clk_names[i]);
+-		if (IS_ERR(pm->clocks[i])) {
+-			mfc_err("Failed to get clock: %s\n",
+-				pm->clk_names[i]);
+-			return PTR_ERR(pm->clocks[i]);
+-		}
+-	}
++	pm->clocks = devm_clk_bulk_alloc(pm->device, pm->num_clocks,
++					 pm->clk_names);
++	if (IS_ERR(pm->clocks))
++		return PTR_ERR(pm->clocks);
++
++	ret = devm_clk_bulk_get(pm->device, pm->num_clocks, pm->clocks);
++	if (ret < 0)
++		return ret;
+ 
+ 	if (dev->variant->use_clock_gating)
+-		pm->clock_gate = pm->clocks[0];
++		pm->clock_gate = pm->clocks[0].clk;
+ 
+ 	pm_runtime_enable(pm->device);
+ 	atomic_set(&clk_ref, 0);
+@@ -75,43 +75,32 @@ void s5p_mfc_clock_off(void)
+ 
+ int s5p_mfc_power_on(void)
+ {
+-	int i, ret = 0;
++	int ret = 0;
+ 
+ 	ret = pm_runtime_get_sync(pm->device);
+ 	if (ret < 0)
+ 		return ret;
+ 
+ 	/* clock control */
+-	for (i = 0; i < pm->num_clocks; i++) {
+-		ret = clk_prepare_enable(pm->clocks[i]);
+-		if (ret < 0) {
+-			mfc_err("clock prepare failed for clock: %s\n",
+-				pm->clk_names[i]);
+-			i++;
+-			goto err;
+-		}
+-	}
++	ret = clk_bulk_prepare_enable(pm->num_clocks, pm->clocks);
++	if (ret < 0)
++		goto err;
+ 
+ 	/* prepare for software clock gating */
+ 	clk_disable(pm->clock_gate);
+ 
+ 	return 0;
+ err:
+-	while (--i > 0)
+-		clk_disable_unprepare(pm->clocks[i]);
+ 	pm_runtime_put(pm->device);
+ 	return ret;
+ }
+ 
+ int s5p_mfc_power_off(void)
+ {
+-	int i;
+-
+ 	/* finish software clock gating */
+ 	clk_enable(pm->clock_gate);
+ 
+-	for (i = 0; i < pm->num_clocks; i++)
+-		clk_disable_unprepare(pm->clocks[i]);
++	clk_bulk_disable_unprepare(pm->num_clocks, pm->clocks);
+ 
+ 	return pm_runtime_put_sync(pm->device);
+ }
 -- 
-2.14.3
+2.7.4
