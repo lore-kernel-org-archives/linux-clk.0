@@ -1,156 +1,184 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51087 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750827AbeBWM13 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Feb 2018 07:27:29 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 2/7] pinctrl: sunxi: support pin controllers with holes among IRQ banks
-Date: Fri, 23 Feb 2018 20:25:47 +0800
-Message-Id: <20180223122552.58049-3-icenowy@aosc.io>
-In-Reply-To: <20180223122552.58049-1-icenowy@aosc.io>
-References: <20180223122552.58049-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 20/42] ARM: davinci: pass clock as parameter to davinci_timer_init()
+Date: Mon, 19 Feb 2018 14:21:41 -0600
+Message-Id: <1519071723-31790-21-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
-GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5. This
-situation cannot be processed with the current pinctrl IRQ code, as it
-only expects a offset to all IRQ banks.
+This changes davinci_timer_init() so that we pass the clock as a
+parameter instead of using clk_get(). This is done in preparation
+for converting to the common clock framework.
 
-Update the code to use a logical IRQ bank to hardware IRQ bank map, so
-the new situation in H6 main pin controller can be processed. The old
-special situation which uses a constant offset (on A33 and V3s, both
-with a offset of 1) can be also processed with the new code.
+It removes the requirement that we have to have a clock with con_id
+of "timer0", which will be good for DT bindings since clock-names =
+"timer0" doesn't really make sense.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Additionally, when we convert to the common clock framework, most of
+the clocks will be platform devices, which will not be available at
+this point during the boot process, so we will need to pass a clock
+that is available (i.e. ref_clk) instead of the "timer0" clock.
+
+NB: The comment added in time.c is not entirely true when this patch
+is applied, but it will be correct once the conversion to the common
+clock framework is complete in subsequent patches.
+
+Also, drop use of extern in header file since we are touching the
+definition.
+
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
-Changes in v3:
-- change for the refactor in the new PATCH 1.
 
-No changes in v2.
+v7 changes:
+- new in v7
 
- drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c |  4 +++-
- drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c |  4 +++-
- drivers/pinctrl/sunxi/pinctrl-sunxi.h     | 29 +++++++++++++++++------------
- 3 files changed, 23 insertions(+), 14 deletions(-)
+ arch/arm/mach-davinci/da830.c               |  2 +-
+ arch/arm/mach-davinci/da850.c               |  2 +-
+ arch/arm/mach-davinci/dm355.c               |  2 +-
+ arch/arm/mach-davinci/dm365.c               |  2 +-
+ arch/arm/mach-davinci/dm644x.c              |  2 +-
+ arch/arm/mach-davinci/dm646x.c              |  2 +-
+ arch/arm/mach-davinci/include/mach/common.h |  3 ++-
+ arch/arm/mach-davinci/time.c                | 13 +++++++++----
+ 8 files changed, 17 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-index da387211a75e..f043afa1aac5 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-@@ -481,11 +481,13 @@ static const struct sunxi_desc_pin sun8i_a33_pins[] = {
- 		  SUNXI_FUNCTION(0x3, "uart3")),	/* CTS */
- };
- 
-+static const unsigned int sun8i_a33_pinctrl_irq_bank_map[] = { 1, 2 };
-+
- static const struct sunxi_pinctrl_desc sun8i_a33_pinctrl_data = {
- 	.pins = sun8i_a33_pins,
- 	.npins = ARRAY_SIZE(sun8i_a33_pins),
- 	.irq_banks = 2,
--	.irq_bank_base = 1,
-+	.irq_bank_map = sun8i_a33_pinctrl_irq_bank_map,
- 	.disable_strict_mode = true,
- };
- 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-index 496ba34e1f5f..6704ce8e5e3d 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-@@ -293,11 +293,13 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
- 		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 5)),	/* PG_EINT5 */
- };
- 
-+static const unsigned int sun8i_v3s_pinctrl_irq_bank_map[] = { 1, 2 };
-+
- static const struct sunxi_pinctrl_desc sun8i_v3s_pinctrl_data = {
- 	.pins = sun8i_v3s_pins,
- 	.npins = ARRAY_SIZE(sun8i_v3s_pins),
- 	.irq_banks = 2,
--	.irq_bank_base = 1,
-+	.irq_bank_map = sun8i_v3s_pinctrl_irq_bank_map,
- 	.irq_read_needs_mux = true
- };
- 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index 909ca1504b61..36502cbef6c2 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -110,7 +110,7 @@ struct sunxi_pinctrl_desc {
- 	int				npins;
- 	unsigned			pin_base;
- 	unsigned			irq_banks;
--	unsigned			irq_bank_base;
-+	const unsigned int		*irq_bank_map;
- 	bool				irq_read_needs_mux;
- 	bool				disable_strict_mode;
- };
-@@ -263,14 +263,23 @@ static inline u32 sunxi_pull_offset(u16 pin)
- 	return pin_num * PULL_PINS_BITS;
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index 350d767..0b17e5a 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -1224,5 +1224,5 @@ void __init da830_init(void)
+ void __init da830_init_time(void)
+ {
+ 	davinci_clk_init(da830_clks);
+-	davinci_timer_init();
++	davinci_timer_init(&timerp64_0_clk);
+ }
+diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+index 34117e61..1dbf01c 100644
+--- a/arch/arm/mach-davinci/da850.c
++++ b/arch/arm/mach-davinci/da850.c
+@@ -1396,5 +1396,5 @@ void __init da850_init(void)
+ void __init da850_init_time(void)
+ {
+ 	davinci_clk_init(da850_clks);
+-	davinci_timer_init();
++	davinci_timer_init(&timerp64_0_clk);
+ }
+diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
+index f294804..0da7516 100644
+--- a/arch/arm/mach-davinci/dm355.c
++++ b/arch/arm/mach-davinci/dm355.c
+@@ -1047,7 +1047,7 @@ void __init dm355_init(void)
+ void __init dm355_init_time(void)
+ {
+ 	davinci_clk_init(dm355_clks);
+-	davinci_timer_init();
++	davinci_timer_init(&timer0_clk);
  }
  
-+static inline u32 sunxi_irq_hw_bank_num(u8 bank,
-+					const struct sunxi_pinctrl_desc *desc)
-+{
-+	if (!desc->irq_bank_map)
-+		return bank;
-+	else
-+		return desc->irq_bank_map[bank];
-+}
-+
- static inline u32 sunxi_irq_cfg_reg(u16 irq,
- 				    const struct sunxi_pinctrl_desc *desc)
+ int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 1e3df9d..871372a 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -1172,7 +1172,7 @@ void __init dm365_init(void)
+ void __init dm365_init_time(void)
  {
--	unsigned bank_base = desc->irq_bank_base;
- 	u8 bank = irq / IRQ_PER_BANK;
- 	u8 reg = (irq % IRQ_PER_BANK) / IRQ_CFG_IRQ_PER_REG * 0x04;
- 
--	return IRQ_CFG_REG + (bank_base + bank) * IRQ_MEM_SIZE + reg;
-+	return IRQ_CFG_REG +
-+	       sunxi_irq_hw_bank_num(bank, desc) * IRQ_MEM_SIZE + reg;
+ 	davinci_clk_init(dm365_clks);
+-	davinci_timer_init();
++	davinci_timer_init(&timer0_clk);
  }
  
- static inline u32 sunxi_irq_cfg_offset(u16 irq)
-@@ -282,9 +291,7 @@ static inline u32 sunxi_irq_cfg_offset(u16 irq)
- static inline u32 sunxi_irq_ctrl_reg_from_bank(u8 bank,
- 					       const struct sunxi_pinctrl_desc *desc)
+ static struct resource dm365_vpss_resources[] = {
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index b409801..71a16fc 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -935,7 +935,7 @@ void __init dm644x_init(void)
+ void __init dm644x_init_time(void)
  {
--	unsigned bank_base = desc->irq_bank_base;
+ 	davinci_clk_init(dm644x_clks);
+-	davinci_timer_init();
++	davinci_timer_init(&timer0_clk);
+ }
+ 
+ int __init dm644x_init_video(struct vpfe_config *vpfe_cfg,
+diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
+index 109ab1f..e1d6e92 100644
+--- a/arch/arm/mach-davinci/dm646x.c
++++ b/arch/arm/mach-davinci/dm646x.c
+@@ -956,7 +956,7 @@ void __init dm646x_init_time(unsigned long ref_clk_rate,
+ 	ref_clk.rate = ref_clk_rate;
+ 	aux_clkin.rate = aux_clkin_rate;
+ 	davinci_clk_init(dm646x_clks);
+-	davinci_timer_init();
++	davinci_timer_init(&timer0_clk);
+ }
+ 
+ static int __init dm646x_init_devices(void)
+diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
+index f0d5e858..5f45d0a 100644
+--- a/arch/arm/mach-davinci/include/mach/common.h
++++ b/arch/arm/mach-davinci/include/mach/common.h
+@@ -12,11 +12,12 @@
+ #ifndef __ARCH_ARM_MACH_DAVINCI_COMMON_H
+ #define __ARCH_ARM_MACH_DAVINCI_COMMON_H
+ 
++#include <linux/clk.h>
+ #include <linux/compiler.h>
+ #include <linux/types.h>
+ #include <linux/reboot.h>
+ 
+-extern void davinci_timer_init(void);
++void davinci_timer_init(struct clk *clk);
+ 
+ extern void davinci_irq_init(void);
+ extern void __iomem *davinci_intc_base;
+diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
+index 1bb991a..2521333 100644
+--- a/arch/arm/mach-davinci/time.c
++++ b/arch/arm/mach-davinci/time.c
+@@ -334,10 +334,8 @@ static struct clock_event_device clockevent_davinci = {
+ 	.set_state_oneshot	= davinci_set_oneshot,
+ };
+ 
 -
--	return IRQ_CTRL_REG + (bank_base + bank) * IRQ_MEM_SIZE;
-+	return IRQ_CTRL_REG + sunxi_irq_hw_bank_num(bank, desc) * IRQ_MEM_SIZE;
- }
- 
- static inline u32 sunxi_irq_ctrl_reg(u16 irq,
-@@ -304,17 +311,15 @@ static inline u32 sunxi_irq_ctrl_offset(u16 irq)
- static inline u32 sunxi_irq_debounce_reg_from_bank(u8 bank,
- 						   const struct sunxi_pinctrl_desc *desc)
+-void __init davinci_timer_init(void)
++void __init davinci_timer_init(struct clk *timer_clk)
  {
--	unsigned bank_base = desc->irq_bank_base;
--
--	return IRQ_DEBOUNCE_REG + (bank_base + bank) * IRQ_MEM_SIZE;
-+	return IRQ_DEBOUNCE_REG +
-+	       sunxi_irq_hw_bank_num(bank, desc) * IRQ_MEM_SIZE;
- }
+-	struct clk *timer_clk;
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 	unsigned int clockevent_id;
+ 	unsigned int clocksource_id;
+@@ -373,7 +371,14 @@ void __init davinci_timer_init(void)
+ 		}
+ 	}
  
- static inline u32 sunxi_irq_status_reg_from_bank(u8 bank,
- 						 const struct sunxi_pinctrl_desc *desc)
- {
--	unsigned bank_base = desc->irq_bank_base;
--
--	return IRQ_STATUS_REG + (bank_base + bank) * IRQ_MEM_SIZE;
-+	return IRQ_STATUS_REG +
-+	       sunxi_irq_hw_bank_num(bank, desc) * IRQ_MEM_SIZE;
- }
+-	timer_clk = clk_get(NULL, "timer0");
++	/*
++	 * REVISIT: Currently, timer_clk will be "ref_clk". However, the actual
++	 * clock for this device comes from a PLL AUXCLK or a PSC clock
++	 * (depending on the SoC). The PLL and PSC clocks are not registered
++	 * until later in boot because they are platform devices. We should try
++	 * again later to get the real clock so that the real clock is not
++	 * turned off when disabling unused clocks, which would stop the timer.
++	 */
+ 	BUG_ON(IS_ERR(timer_clk));
+ 	clk_prepare_enable(timer_clk);
  
- static inline u32 sunxi_irq_status_reg(u16 irq,
 -- 
-2.15.1
-
+2.7.4
