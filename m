@@ -1,183 +1,208 @@
-Return-Path: <Tali.Perry@nuvoton.com>
-From: Tali Perry <tali.perry1@gmail.com>
-To: brendanhiggins@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
-        raltherr@google.com, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
-Subject: [PATCH v10 2/3] NPCM750: add clock tree doc and binding
-Date: Sun, 25 Feb 2018 12:12:18 +0200
-Message-Id: <1519553539-15899-3-git-send-email-tali.perry1@gmail.com>
-In-Reply-To: <1519553539-15899-1-git-send-email-tali.perry1@gmail.com>
-References: <1519553539-15899-1-git-send-email-tali.perry1@gmail.com>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 12/42] clk: davinci: Add platform information for TI DA850 PSC
+Date: Mon, 19 Feb 2018 14:21:33 -0600
+Message-Id: <1519071723-31790-13-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds platform-specific declarations for the PSC clocks on TI DA850/
+OMAP-L138/AM18XX SoCs.
 
-Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++++++++++++++++++++
- include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 +++++++++
- 2 files changed, 144 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
- create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
 
-diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+v7 changes:
+- split registration function into two, one for each PSC
+- add platform_device_id table
+- add additional clkdev lookups for clock platform devices
+- add LPSC_SET_RATE_PARENT flag to LCDC clock
+- fix davinci_nand device name
+
+v6 changes:
+- change how clkdev lookups are declared
+
+
+ drivers/clk/davinci/Makefile    |   1 +
+ drivers/clk/davinci/psc-da850.c | 109 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/psc.c       |   4 ++
+ drivers/clk/davinci/psc.h       |   4 ++
+ 4 files changed, 118 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-da850.c
+
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index fb14c8c..aef0390 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -11,4 +11,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
+ 
+ obj-y += psc.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
++obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
+ endif
+diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
 new file mode 100644
-index 000000000000..dd17b86bd577
+index 0000000..d601a89
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
-@@ -0,0 +1,100 @@
-+* Nuvoton NPCM7XX Clock Controller
-+
-+Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
-+generates and supplies clocks to all modules within the BMC.
-+
-+External clocks:
-+
-+There are six fixed clocks that are generated outside the BMC. All clocks are of
-+a known fixed value that cannot be changed. clk_refclk, clk_mcbypck and
-+clk_sysbypck are inputs to the clock controller.
-+clk_rg1refck, clk_rg2refck and clk_xin are external clocks suppling the
-+network. They are set on the device tree, but not used by the clock module. The
-+network devices use them directly.
-+Example can be found below.
-+
-+All available clocks are defined as preprocessor macros in:
-+dt-bindings/clock/nuvoton,npcm7xx-clock.h
-+and can be reused as DT sources.
-+
-+Required Properties of clock controller:
-+
-+	- compatible: "nuvoton,npcm750-clk" : for clock controller of Nuvoton
-+		  Poleg BMC NPCM750
-+
-+	- reg: physical base address of the clock controller and length of
-+		memory mapped region.
-+
-+	- #clock-cells: should be 1.
-+
-+Example: Clock controller node:
-+
-+	clk: clock-controller@f0801000 {
-+		compatible = "nuvoton,npcm750-clk";
-+		#clock-cells = <1>;
-+		reg = <0xf0801000 0x1000>;
-+		clock-names = "refclk", "sysbypck", "mcbypck";
-+		clocks = <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
-+	};
-+
-+Example: Required external clocks for network:
-+
-+	/* external reference clock */
-+	clk_refclk: clk-refclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <25000000>;
-+		clock-output-names = "refclk";
-+	};
-+
-+	/* external reference clock for cpu. float in normal operation */
-+	clk_sysbypck: clk-sysbypck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <800000000>;
-+		clock-output-names = "sysbypck";
-+	};
-+
-+	/* external reference clock for MC. float in normal operation */
-+	clk_mcbypck: clk-mcbypck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <800000000>;
-+		clock-output-names = "mcbypck";
-+	};
-+
-+	 /* external clock signal rg1refck, supplied by the phy */
-+	clk_rg1refck: clk-rg1refck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <125000000>;
-+		clock-output-names = "clk_rg1refck";
-+	};
-+
-+	 /* external clock signal rg2refck, supplied by the phy */
-+	clk_rg2refck: clk-rg2refck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <125000000>;
-+		clock-output-names = "clk_rg2refck";
-+	};
-+
-+	clk_xin: clk-xin {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <50000000>;
-+		clock-output-names = "clk_xin";
-+	};
-+
-+
-+Example: GMAC controller node that consumes two clocks: a generated clk by the
-+clock controller and a fixed clock from DT (clk_rg1refck).
-+
-+	ethernet0: eth@f0802000 {
-+		compatible = "snps,dwmac";
-+		reg = <0xf0802000 0x2000>;
-+		interrupts = <0 14 4>;
-+		interrupt-names = "macirq";
-+		clocks	= <&clk_rg1refck>, <&clk NPCM7XX_CLK_AHB>;
-+		clock-names = "stmmaceth", "clk_gmac";
-+	};
-diff --git a/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
-new file mode 100644
-index 000000000000..f21522605b94
---- /dev/null
-+++ b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
-@@ -0,0 +1,44 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/drivers/clk/davinci/psc-da850.c
+@@ -0,0 +1,109 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Nuvoton NPCM7xx Clock Generator binding
-+ * clock binding number for all clocks supportted by nuvoton,npcm7xx-clk
++ * PSC clock descriptions for TI DA850/OMAP-L138/AM18XX
 + *
-+ * Copyright (C) 2018 Nuvoton Technologies tali.perry@nuvoton.com
-+ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
 + */
 +
-+#ifndef __DT_BINDINGS_CLOCK_NPCM7XX_H
-+#define __DT_BINDINGS_CLOCK_NPCM7XX_H
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/types.h>
 +
++#include "psc.h"
 +
-+#define NPCM7XX_CLK_CPU 0
-+#define NPCM7XX_CLK_GFX_PIXEL 1
-+#define NPCM7XX_CLK_MC 2
-+#define NPCM7XX_CLK_ADC 3
-+#define NPCM7XX_CLK_AHB 4
-+#define NPCM7XX_CLK_TIMER 5
-+#define NPCM7XX_CLK_UART 6
-+#define NPCM7XX_CLK_MMC  7
-+#define NPCM7XX_CLK_SPI3 8
-+#define NPCM7XX_CLK_PCI  9
-+#define NPCM7XX_CLK_AXI 10
-+#define NPCM7XX_CLK_APB4 11
-+#define NPCM7XX_CLK_APB3 12
-+#define NPCM7XX_CLK_APB2 13
-+#define NPCM7XX_CLK_APB1 14
-+#define NPCM7XX_CLK_APB5 15
-+#define NPCM7XX_CLK_CLKOUT 16
-+#define NPCM7XX_CLK_GFX  17
-+#define NPCM7XX_CLK_SU   18
-+#define NPCM7XX_CLK_SU48 19
-+#define NPCM7XX_CLK_SDHC 20
-+#define NPCM7XX_CLK_SPI0 21
-+#define NPCM7XX_CLK_SPIX 22
++LPSC_CLKDEV2(emifa_clkdev,	NULL,		"ti-aemif",
++				"aemif",	"davinci_nand.0");
++LPSC_CLKDEV1(spi0_clkdev,	NULL,		"spi_davinci.0");
++LPSC_CLKDEV1(mmcsd0_clkdev,	NULL,		"da830-mmc.0");
++LPSC_CLKDEV1(uart0_clkdev,	NULL,		"serial8250.0");
++/* REVISIT: used dev_id instead of con_id */
++LPSC_CLKDEV1(arm_clkdev,	"arm",		NULL);
++LPSC_CLKDEV1(dsp_clkdev,	NULL,		"davinci-rproc.0");
 +
-+#define NPCM7XX_CLK_REFCLK 23
-+#define NPCM7XX_CLK_SYSBYPCK 24
-+#define NPCM7XX_CLK_MCBYPCK 25
++static const struct davinci_lpsc_clk_info da850_psc0_info[] __initconst = {
++	LPSC(0,  0, tpcc0,   pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(1,  0, tptc0,   pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(2,  0, tptc1,   pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(3,  0, emifa,   async1,       emifa_clkdev,  0),
++	LPSC(4,  0, spi0,    pll0_sysclk2, spi0_clkdev,   0),
++	LPSC(5,  0, mmcsd0,  pll0_sysclk2, mmcsd0_clkdev, 0),
++	LPSC(6,  0, aintc,   pll0_sysclk4, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(7,  0, arm_rom, pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(9,  0, uart0,   pll0_sysclk2, uart0_clkdev,  0),
++	LPSC(13, 0, pruss,   pll0_sysclk2, NULL,          0),
++	LPSC(14, 0, arm,     pll0_sysclk6, arm_clkdev,    LPSC_ALWAYS_ENABLED | LPSC_SET_RATE_PARENT),
++	LPSC(15, 1, dsp,     pll0_sysclk1, dsp_clkdev,    LPSC_FORCE | LPSC_LOCAL_RESET),
++	{ }
++};
 +
-+#define NPCM7XX_NUM_CLOCKS	 (NPCM7XX_CLK_MCBYPCK+1)
++LPSC_CLKDEV3(usb0_clkdev,	"fck",	"da830-usb-phy-clks",
++				NULL,	"musb-da8xx",
++				NULL,	"cppi41-dmaengine");
++LPSC_CLKDEV1(usb1_clkdev,	NULL,	"ohci-da8xx");
++/* REVISIT: gpio-davinci.c should be modified to drop con_id */
++LPSC_CLKDEV1(gpio_clkdev,	"gpio",	NULL);
++LPSC_CLKDEV2(emac_clkdev,	NULL,	"davinci_emac.1",
++				"fck",	"davinci_mdio.0");
++LPSC_CLKDEV1(mcasp0_clkdev,	NULL,	"davinci-mcasp.0");
++LPSC_CLKDEV1(sata_clkdev,	"fck",	"ahci_da850");
++LPSC_CLKDEV1(vpif_clkdev,	NULL,	"vpif");
++LPSC_CLKDEV1(spi1_clkdev,	NULL,	"spi_davinci.1");
++LPSC_CLKDEV1(i2c1_clkdev,	NULL,	"i2c_davinci.2");
++LPSC_CLKDEV1(uart1_clkdev,	NULL,	"serial8250.1");
++LPSC_CLKDEV1(uart2_clkdev,	NULL,	"serial8250.2");
++LPSC_CLKDEV1(mcbsp0_clkdev,	NULL,	"davinci-mcbsp.0");
++LPSC_CLKDEV1(mcbsp1_clkdev,	NULL,	"davinci-mcbsp.1");
++LPSC_CLKDEV1(lcdc_clkdev,	"fck",	"da8xx_lcdc.0");
++LPSC_CLKDEV3(ehrpwm_clkdev,	"fck",	"ehrpwm.0",
++				"fck",	"ehrpwm.1",
++				NULL,	"da830-tbclksync");
++LPSC_CLKDEV1(mmcsd1_clkdev,	NULL,	"da830-mmc.1");
++LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
++				"fck",	"ecap.1",
++				"fck",	"ecap.2");
 +
-+#endif
++static const struct davinci_lpsc_clk_info da850_psc1_info[] __initconst = {
++	LPSC(0,  0, tpcc1,  pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(1,  0, usb0,   pll0_sysclk2, usb0_clkdev,   0),
++	LPSC(2,  0, usb1,   pll0_sysclk4, usb1_clkdev,   0),
++	LPSC(3,  0, gpio,   pll0_sysclk4, gpio_clkdev,   0),
++	LPSC(5,  0, emac,   pll0_sysclk4, emac_clkdev,   0),
++	LPSC(6,  0, ddr,    pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	LPSC(7,  0, mcasp0, async3,       mcasp0_clkdev, 0),
++	LPSC(8,  0, sata,   pll0_sysclk2, sata_clkdev,   LPSC_FORCE),
++	LPSC(9,  0, vpif,   pll0_sysclk2, vpif_clkdev,   0),
++	LPSC(10, 0, spi1,   async3,       spi1_clkdev,   0),
++	LPSC(11, 0, i2c1,   pll0_sysclk4, i2c1_clkdev,   0),
++	LPSC(12, 0, uart1,  async3,       uart1_clkdev,  0),
++	LPSC(13, 0, uart2,  async3,       uart2_clkdev,  0),
++	LPSC(14, 0, mcbsp0, async3,       mcbsp0_clkdev, 0),
++	LPSC(15, 0, mcbsp1, async3,       mcbsp1_clkdev, 0),
++	LPSC(16, 0, lcdc,   pll0_sysclk2, lcdc_clkdev,   LPSC_SET_RATE_PARENT),
++	LPSC(17, 0, ehrpwm, async3,       ehrpwm_clkdev, 0),
++	LPSC(18, 0, mmcsd1, pll0_sysclk2, mmcsd1_clkdev, 0),
++	LPSC(20, 0, ecap,   async3,       ecap_clkdev,   0),
++	LPSC(21, 0, tptc2,  pll0_sysclk2, NULL,          LPSC_ALWAYS_ENABLED),
++	{ }
++};
++
++int __init da850_psc0_init(struct device *dev, void __iomem *base)
++{
++	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
++}
++
++int __init da850_psc1_init(struct device *dev, void __iomem *base)
++{
++	return davinci_psc_register_clocks(dev, da850_psc1_info, 32, base);
++}
++
++int __init of_da850_psc0_init(struct device *dev, void __iomem *base)
++{
++	return of_davinci_psc_clk_init(dev, da850_psc0_info, 16, base);
++}
++
++int __init of_da850_psc1_init(struct device *dev, void __iomem *base)
++{
++	return of_davinci_psc_clk_init(dev, da850_psc1_info, 32, base);
++}
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index c4310af..0f53ec2 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -439,12 +439,16 @@ int of_davinci_psc_clk_init(struct device *dev,
+ }
+ 
+ static const struct of_device_id davinci_psc_of_match[] = {
++	{ .compatible = "ti,da850-psc0", .data = of_da850_psc0_init },
++	{ .compatible = "ti,da850-psc1", .data = of_da850_psc1_init },
+ 	{ }
+ };
+ 
+ static const struct platform_device_id davinci_psc_id_table[] = {
+ 	{ .name = "da830-psc0", .driver_data = (kernel_ulong_t)da830_psc0_init },
+ 	{ .name = "da830-psc1", .driver_data = (kernel_ulong_t)da830_psc1_init },
++	{ .name = "da850-psc0", .driver_data = (kernel_ulong_t)da850_psc0_init },
++	{ .name = "da850-psc1", .driver_data = (kernel_ulong_t)da850_psc1_init },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
+index c165cee..b50b2ea 100644
+--- a/drivers/clk/davinci/psc.h
++++ b/drivers/clk/davinci/psc.h
+@@ -89,5 +89,9 @@ int of_davinci_psc_clk_init(struct device *dev,
+ /* Device-specific callbacks */
+ int da830_psc0_init(struct device *dev, void __iomem *base);
+ int da830_psc1_init(struct device *dev, void __iomem *base);
++int da850_psc0_init(struct device *dev, void __iomem *base);
++int da850_psc1_init(struct device *dev, void __iomem *base);
++int of_da850_psc0_init(struct device *dev, void __iomem *base);
++int of_da850_psc1_init(struct device *dev, void __iomem *base);
+ 
+ #endif /* __CLK_DAVINCI_PSC_H__ */
 -- 
-2.14.1
+2.7.4
