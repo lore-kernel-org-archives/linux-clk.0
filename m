@@ -1,196 +1,46 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 8 Feb 2018 20:43:40 -0600
-From: Rob Herring <robh@kernel.org>
-To: Dinh Nguyen <dinguyen@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org
-Subject: Re: [PATCHv3 1/3] dt-bindings: documentation: add clock bindings
- information for Stratix10
-Message-ID: <20180209024340.f7sijb7h5egdn675@rob-hp-laptop>
-References: <1517847767-16053-1-git-send-email-dinguyen@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1517847767-16053-1-git-send-email-dinguyen@kernel.org>
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1519048168.3408.13.camel@pengutronix.de>
+Subject: Re: [PATCH v5 05/12] drm/bridge/synopsys: dw-hdmi: don't clobber
+ drvdata
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Jernej Skrabec <jernej.skrabec@siol.net>,
+	maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
+	robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@kernel.org, architt@codeaurora.org, a.hajda@samsung.com,
+	Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
+	Jose.Abreu@synopsys.com
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+ hjc@rock-chips.com,  heiko@sntech.de
+Date: Mon, 19 Feb 2018 14:49:28 +0100
+In-Reply-To: <20180214200906.31509-6-jernej.skrabec@siol.net>
+References: <20180214200906.31509-1-jernej.skrabec@siol.net>
+	 <20180214200906.31509-6-jernej.skrabec@siol.net>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 05, 2018 at 10:22:45AM -0600, Dinh Nguyen wrote:
-> Document that Stratix10 clock bindings, and add the clock header file. The
-> clock header is an enumeration of all the different clocks on the Stratix10
-> platform.
+On Wed, 2018-02-14 at 21:08 +0100, Jernej Skrabec wrote:
+> dw_hdmi shouldn't set drvdata since some drivers might need to store
+> it's own data there. Rework dw_hdmi in a way to return struct dw_hdmi
+> instead to store it in drvdata. This way drivers are responsible to
+> store and pass structure when needed.
 > 
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
-> v3:
-> - s/intc/intel for correct vendor prefix
-> - fixup node name to "intel,stratix10-clkmgr"
-> - document the required fixed-clock for oscillators
-> v2:
-> - use a single binding for the clock controller
-> ---
->  .../devicetree/bindings/clock/intc_stratix10.txt   | 47 ++++++++++++
->  include/dt-bindings/clock/stratix10-clock.h        | 85 ++++++++++++++++++++++
->  2 files changed, 132 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
->  create mode 100644 include/dt-bindings/clock/stratix10-clock.h
+> Idea was taken from the following commit:
+> 8242ecbd597d ("drm/bridge/synopsys: stop clobbering drvdata")
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/intc_stratix10.txt b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
-> new file mode 100644
-> index 0000000..8d218f4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
-> @@ -0,0 +1,47 @@
-> +Device Tree Clock bindings for Intel's SoCFPGA Stratix10 platform
-> +
-> +This binding uses the common clock binding[1].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Required properties:
-> +- compatible : shall be
-> +	"intel,stratix10-clkmgr"
-> +
-> +- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
-> +
-> +- #clock-cells : from common clock binding, shall be set to 1.
-> +
-> +- clocks : Should contain fixed-clock sources, such as oscillators.
-> +
-> +Example:
-> +	clkmgr: clock-controller@ffd10000 {
-> +		compatible = "intel,stratix10-clkmgr";
-> +		reg = <0xffd10000 0x1000>;
-> +		#clock-cells = <1>;
-> +
-> +		clocks {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			cb_intosc_hs_div2_clk: cb_intosc_hs_div2_clk {
+> Cc: p.zabel@pengutronix.de
+> Cc: narmstrong@baylibre.com
+> Cc: Laurent.pinchart@ideasonboard.com
+> Cc: hjc@rock-chips.com
+> Cc: heiko@sntech.de
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Don't use '_' in node names.
+For i.MX:
+Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-> +				#clock-cells = <0>;
-> +				compatible = "fixed-clock";
-
-fixed clock with no frequency?
-
-> +			};
-> +
-> +			cb_intosc_ls_clk: cb_intosc_ls_clk {
-> +				#clock-cells = <0>;
-> +				compatible = "fixed-clock";
-> +			};
-> +
-> +			f2s_free_clk: f2s_free_clk {
-> +				#clock-cells = <0>;
-> +				compatible = "fixed-clock";
-> +			};
-> +
-> +			osc1: osc1 {
-> +				#clock-cells = <0>;
-> +				compatible = "fixed-clock";
-> +			};
-> +		};
-> +	};
-> diff --git a/include/dt-bindings/clock/stratix10-clock.h b/include/dt-bindings/clock/stratix10-clock.h
-> new file mode 100644
-> index 0000000..bbbd9fd
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/stratix10-clock.h
-> @@ -0,0 +1,85 @@
-> +/*
-> + * SPDX-License-Identifier:	GPL-2.0
-
-This should be first line. Sorry, it's a moving target.
-
-> + *
-> + * Copyright (C) 2017, Intel Corporation
-> + */
-> +
-> +#ifndef __STRATIX10_CLOCK_H
-> +#define __STRATIX10_CLOCK_H
-> +
-> +/* fixed rate clocks */
-> +#define STRATIX10_OSC1			0
-> +#define STRATIX10_CB_INTOSC_HS_DIV2_CLK	1
-> +#define STRATIX10_CB_INTOSC_LS_CLK	2
-> +#define STRATIX10_F2S_FREE_CLK		3
-> +
-> +/* fixed factor clocks */
-> +#define STRATIX10_L4_SYS_FREE_CLK	4
-> +#define STRATIX10_MPU_PERIPH_CLK	5
-> +#define STRATIX10_MPU_L2RAM_CLK		6
-> +#define STRATIX10_SDMMC_CIU_CLK		7
-> +
-> +/* PLL clocks */
-> +#define STRATIX10_MAIN_PLL_CLK		8
-> +#define STRATIX10_PERIPH_PLL_CLK	9
-> +#define STRATIX10_BOOT_CLK		10
-> +
-> +/* Periph clocks */
-> +#define STRATIX10_MAIN_MPU_BASE_CLK	11
-> +#define STRATIX10_MAIN_NOC_BASE_CLK	12
-> +#define STRATIX10_MAIN_EMACA_CLK	13
-> +#define STRATIX10_MAIN_EMACB_CLK	14
-> +#define STRATIX10_MAIN_EMAC_PTP_CLK	15
-> +#define STRATIX10_MAIN_GPIO_DB_CLK	16
-> +#define STRATIX10_MAIN_SDMMC_CLK	17
-> +#define STRATIX10_MAIN_S2F_USR0_CLK	18
-> +#define STRATIX10_MAIN_S2F_USR1_CLK	19
-> +#define STRATIX10_MAIN_PSI_REF_CLK	20
-> +
-> +#define STRATIX10_PERI_MPU_BASE_CLK	21
-> +#define STRATIX10_PERI_NOC_BASE_CLK	22
-> +#define STRATIX10_PERI_EMACA_CLK	23
-> +#define STRATIX10_PERI_EMACB_CLK	24
-> +#define STRATIX10_PERI_EMAC_PTP_CLK	25
-> +#define STRATIX10_PERI_GPIO_DB_CLK	26
-> +#define STRATIX10_PERI_SDMMC_CLK	27
-> +#define STRATIX10_PERI_S2F_USR0_CLK	28
-> +#define STRATIX10_PERI_S2F_USR1_CLK	29
-> +#define STRATIX10_PERI_PSI_REF_CLK	30
-> +
-> +#define STRATIX10_MPU_FREE_CLK		31
-> +#define STRATIX10_NOC_FREE_CLK		32
-> +#define STRATIX10_S2F_USR0_CLK		33
-> +#define STRATIX10_NOC_CLK		34
-> +#define STRATIX10_EMAC_A_FREE_CLK	35
-> +#define STRATIX10_EMAC_B_FREE_CLK	36
-> +#define STRATIX10_EMAC_PTP_FREE_CLK	37
-> +#define STRATIX10_GPIO_DB_FREE_CLK	38
-> +#define STRATIX10_SDMMC_FREE_CLK	39
-> +#define STRATIX10_S2F_USER1_FREE_CLK	40
-> +#define STRATIX10_PSI_REF_FREE_CLK	41
-> +
-> +/* Gate clocks */
-> +#define STRATIX10_MPU_CLK		42
-> +#define STRATIX10_L4_MAIN_CLK		43
-> +#define	STRATIX10_L4_MP_CLK		44
-
-A stray tab...
-
-> +#define STRATIX10_L4_SP_CLK		45
-> +#define STRATIX10_CS_AT_CLK		46
-> +#define STRATIX10_CS_TRACE_CLK		47
-> +#define STRATIX10_CS_PDBG_CLK		48
-> +#define STRATIX10_CS_TIMER_CLK		49
-> +#define STRATIX10_S2F_USER0_CLK		50
-> +#define STRATIX10_S2F_USER1_CLK		51
-> +#define STRATIX10_EMAC0_CLK		52
-> +#define STRATIX10_EMAC1_CLK		53
-> +#define STRATIX10_EMAC2_CLK		54
-> +#define STRATIX10_EMAC_PTP_CLK		55
-> +#define STRATIX10_GPIO_DB_CLK		56
-> +#define STRATIX10_SDMMC_CLK		57
-> +#define STRATIX10_PSI_REF_CLK		58
-> +#define STRATIX10_USB_CLK		59
-> +#define STRATIX10_SPI_M_CLK		60
-> +#define STRATIX10_NAND_CLK		61
-> +#define STRATIX10_NUM_CLKS		62
-> +
-> +#endif	/* __STRATIX10_CLOCK_H */
-> -- 
-> 2.7.4
-> 
+regards
+Philipp
