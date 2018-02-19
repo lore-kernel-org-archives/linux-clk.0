@@ -1,133 +1,415 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 06/19] clk: meson: switch gxbb ao_clk to clk_regmap
-Date: Mon, 12 Feb 2018 15:58:33 +0100
-Message-Id: <20180212145846.19380-7-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 37/42] ARM: davinci: dm646x: Remove legacy clock init
+Date: Mon, 19 Feb 2018 14:21:58 -0600
+Message-Id: <1519071723-31790-38-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Drop the gxbb ao specific regmap based clock and use the
-meson clk_regmap based clock instead.
+This removes the unused legacy clock init code from
+arch/arm/mach-davinci/dm646x.c.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
- drivers/clk/meson/Kconfig      |  1 +
- drivers/clk/meson/Makefile     |  2 +-
- drivers/clk/meson/gxbb-aoclk.c | 20 ++++++++++----------
- drivers/clk/meson/gxbb-aoclk.h |  1 -
- 4 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index e97e85077da1..33d148e19066 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -20,6 +20,7 @@ config COMMON_CLK_GXBB
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
-+	select COMMON_CLK_REGMAP_MESON
- 	help
- 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
- 	  Say Y if you want peripherals and CPU frequency scaling to work.
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 11a50586666a..465086118d62 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -4,6 +4,6 @@
+v7 changes:
+- rebased
+- add davinci prefix to commit message
+
+v6 changes:
+- rebased
+
+ arch/arm/mach-davinci/dm646x.c | 329 -----------------------------------------
+ 1 file changed, 329 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
+index 22e8dda..0cf0ab9 100644
+--- a/arch/arm/mach-davinci/dm646x.c
++++ b/arch/arm/mach-davinci/dm646x.c
+@@ -30,11 +30,6 @@
+ #include "davinci.h"
+ #include "mux.h"
  
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
--obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o gxbb-aoclk-32k.o
-+obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
- obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 6c161e0a8e59..9ec23ae9a219 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -62,10 +62,9 @@
- #include <linux/delay.h>
- #include <dt-bindings/clock/gxbb-aoclkc.h>
- #include <dt-bindings/reset/gxbb-aoclkc.h>
-+#include "clk-regmap.h"
- #include "gxbb-aoclk.h"
- 
--static DEFINE_SPINLOCK(gxbb_aoclk_lock);
+-#ifndef CONFIG_COMMON_CLK
+-#include "clock.h"
+-#include "psc.h"
+-#endif
 -
- struct gxbb_aoclk_reset_controller {
- 	struct reset_controller_dev reset;
- 	unsigned int *data;
-@@ -87,12 +86,14 @@ static const struct reset_control_ops gxbb_aoclk_reset_ops = {
+ #define DAVINCI_VPIF_BASE       (0x01C12000)
+ 
+ #define VDD3P3V_VID_MASK	(BIT_MASK(3) | BIT_MASK(2) | BIT_MASK(1) |\
+@@ -49,319 +44,6 @@
+ #define DM646X_EMAC_CNTRL_RAM_OFFSET	0x2000
+ #define DM646X_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
+-#ifndef CONFIG_COMMON_CLK
+-static struct pll_data pll1_data = {
+-	.num       = 1,
+-	.phys_base = DAVINCI_PLL1_BASE,
+-};
+-
+-static struct pll_data pll2_data = {
+-	.num       = 2,
+-	.phys_base = DAVINCI_PLL2_BASE,
+-};
+-
+-static struct clk ref_clk = {
+-	.name = "ref_clk",
+-	/* rate is initialized in dm646x_init_time() */
+-};
+-
+-static struct clk aux_clkin = {
+-	.name = "aux_clkin",
+-	/* rate is initialized in dm646x_init_time() */
+-};
+-
+-static struct clk pll1_clk = {
+-	.name = "pll1",
+-	.parent = &ref_clk,
+-	.pll_data = &pll1_data,
+-	.flags = CLK_PLL,
+-};
+-
+-static struct clk pll1_sysclk1 = {
+-	.name = "pll1_sysclk1",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV1,
+-};
+-
+-static struct clk pll1_sysclk2 = {
+-	.name = "pll1_sysclk2",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV2,
+-};
+-
+-static struct clk pll1_sysclk3 = {
+-	.name = "pll1_sysclk3",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV3,
+-};
+-
+-static struct clk pll1_sysclk4 = {
+-	.name = "pll1_sysclk4",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV4,
+-};
+-
+-static struct clk pll1_sysclk5 = {
+-	.name = "pll1_sysclk5",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV5,
+-};
+-
+-static struct clk pll1_sysclk6 = {
+-	.name = "pll1_sysclk6",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV6,
+-};
+-
+-static struct clk pll1_sysclk8 = {
+-	.name = "pll1_sysclk8",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV8,
+-};
+-
+-static struct clk pll1_sysclk9 = {
+-	.name = "pll1_sysclk9",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV9,
+-};
+-
+-static struct clk pll1_sysclkbp = {
+-	.name = "pll1_sysclkbp",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-	.div_reg = BPDIV,
+-};
+-
+-static struct clk pll1_aux_clk = {
+-	.name = "pll1_aux_clk",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-};
+-
+-static struct clk pll2_clk = {
+-	.name = "pll2_clk",
+-	.parent = &ref_clk,
+-	.pll_data = &pll2_data,
+-	.flags = CLK_PLL,
+-};
+-
+-static struct clk pll2_sysclk1 = {
+-	.name = "pll2_sysclk1",
+-	.parent = &pll2_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV1,
+-};
+-
+-static struct clk dsp_clk = {
+-	.name = "dsp",
+-	.parent = &pll1_sysclk1,
+-	.lpsc = DM646X_LPSC_C64X_CPU,
+-	.usecount = 1,			/* REVISIT how to disable? */
+-};
+-
+-static struct clk arm_clk = {
+-	.name = "arm",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_ARM,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk edma_cc_clk = {
+-	.name = "edma_cc",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_TPCC,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk edma_tc0_clk = {
+-	.name = "edma_tc0",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_TPTC0,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk edma_tc1_clk = {
+-	.name = "edma_tc1",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_TPTC1,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk edma_tc2_clk = {
+-	.name = "edma_tc2",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_TPTC2,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk edma_tc3_clk = {
+-	.name = "edma_tc3",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_TPTC3,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk uart0_clk = {
+-	.name = "uart0",
+-	.parent = &aux_clkin,
+-	.lpsc = DM646X_LPSC_UART0,
+-};
+-
+-static struct clk uart1_clk = {
+-	.name = "uart1",
+-	.parent = &aux_clkin,
+-	.lpsc = DM646X_LPSC_UART1,
+-};
+-
+-static struct clk uart2_clk = {
+-	.name = "uart2",
+-	.parent = &aux_clkin,
+-	.lpsc = DM646X_LPSC_UART2,
+-};
+-
+-static struct clk i2c_clk = {
+-	.name = "I2CCLK",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_I2C,
+-};
+-
+-static struct clk gpio_clk = {
+-	.name = "gpio",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_GPIO,
+-};
+-
+-static struct clk mcasp0_clk = {
+-	.name = "mcasp0",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_McASP0,
+-};
+-
+-static struct clk mcasp1_clk = {
+-	.name = "mcasp1",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_McASP1,
+-};
+-
+-static struct clk aemif_clk = {
+-	.name = "aemif",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_AEMIF,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk emac_clk = {
+-	.name = "emac",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_EMAC,
+-};
+-
+-static struct clk pwm0_clk = {
+-	.name = "pwm0",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_PWM0,
+-	.usecount = 1,            /* REVIST: disabling hangs system */
+-};
+-
+-static struct clk pwm1_clk = {
+-	.name = "pwm1",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_PWM1,
+-	.usecount = 1,            /* REVIST: disabling hangs system */
+-};
+-
+-static struct clk timer0_clk = {
+-	.name = "timer0",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_TIMER0,
+-};
+-
+-static struct clk timer1_clk = {
+-	.name = "timer1",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_TIMER1,
+-};
+-
+-static struct clk timer2_clk = {
+-	.name = "timer2",
+-	.parent = &pll1_sysclk3,
+-	.flags = ALWAYS_ENABLED, /* no LPSC, always enabled; c.f. spruep9a */
+-};
+-
+-
+-static struct clk ide_clk = {
+-	.name = "ide",
+-	.parent = &pll1_sysclk4,
+-	.lpsc = DAVINCI_LPSC_ATA,
+-};
+-
+-static struct clk vpif0_clk = {
+-	.name = "vpif0",
+-	.parent = &ref_clk,
+-	.lpsc = DM646X_LPSC_VPSSMSTR,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk vpif1_clk = {
+-	.name = "vpif1",
+-	.parent = &ref_clk,
+-	.lpsc = DM646X_LPSC_VPSSSLV,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk_lookup dm646x_clks[] = {
+-	CLK(NULL, "ref", &ref_clk),
+-	CLK(NULL, "aux", &aux_clkin),
+-	CLK(NULL, "pll1", &pll1_clk),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk1),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk2),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk3),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk4),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk5),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk6),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk8),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk9),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclkbp),
+-	CLK(NULL, "pll1_aux", &pll1_aux_clk),
+-	CLK(NULL, "pll2", &pll2_clk),
+-	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
+-	CLK(NULL, "dsp", &dsp_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK(NULL, "edma_cc", &edma_cc_clk),
+-	CLK(NULL, "edma_tc0", &edma_tc0_clk),
+-	CLK(NULL, "edma_tc1", &edma_tc1_clk),
+-	CLK(NULL, "edma_tc2", &edma_tc2_clk),
+-	CLK(NULL, "edma_tc3", &edma_tc3_clk),
+-	CLK("serial8250.0", NULL, &uart0_clk),
+-	CLK("serial8250.1", NULL, &uart1_clk),
+-	CLK("serial8250.2", NULL, &uart2_clk),
+-	CLK("i2c_davinci.1", NULL, &i2c_clk),
+-	CLK(NULL, "gpio", &gpio_clk),
+-	CLK("davinci-mcasp.0", NULL, &mcasp0_clk),
+-	CLK("davinci-mcasp.1", NULL, &mcasp1_clk),
+-	CLK(NULL, "aemif", &aemif_clk),
+-	CLK("davinci_emac.1", NULL, &emac_clk),
+-	CLK("davinci_mdio.0", "fck", &emac_clk),
+-	CLK(NULL, "pwm0", &pwm0_clk),
+-	CLK(NULL, "pwm1", &pwm1_clk),
+-	CLK(NULL, "timer0", &timer0_clk),
+-	CLK(NULL, "timer1", &timer1_clk),
+-	CLK("davinci-wdt", NULL, &timer2_clk),
+-	CLK("palm_bk3710", NULL, &ide_clk),
+-	CLK(NULL, "vpif0", &vpif0_clk),
+-	CLK(NULL, "vpif1", &vpif1_clk),
+-	CLK(NULL, NULL, NULL),
+-};
+-#endif
+-
+ static struct emac_platform_data dm646x_emac_pdata = {
+ 	.ctrl_reg_offset	= DM646X_EMAC_CNTRL_OFFSET,
+ 	.ctrl_mod_reg_offset	= DM646X_EMAC_CNTRL_MOD_OFFSET,
+@@ -800,8 +482,6 @@ static struct davinci_id dm646x_ids[] = {
+ 	},
  };
  
- #define GXBB_AO_GATE(_name, _bit)					\
--static struct aoclk_gate_regmap _name##_ao = {				\
--	.bit_idx = (_bit),						\
--	.lock = &gxbb_aoclk_lock,					\
-+static struct clk_regmap _name##_ao = {					\
-+	.data = &(struct clk_regmap_gate_data) {			\
-+		.offset = AO_RTI_GEN_CNTL_REG0,				\
-+		.bit_idx = (_bit),					\
-+	},								\
- 	.hw.init = &(struct clk_init_data) {				\
- 		.name = #_name "_ao",					\
--		.ops = &meson_aoclk_gate_regmap_ops,			\
-+		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
- 		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-@@ -107,7 +108,6 @@ GXBB_AO_GATE(uart2, 5);
- GXBB_AO_GATE(ir_blaster, 6);
+-static u32 dm646x_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
+-
+ /*
+  * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
+  * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
+@@ -886,8 +566,6 @@ static const struct davinci_soc_info davinci_soc_info_dm646x = {
+ 	.jtag_id_reg		= 0x01c40028,
+ 	.ids			= dm646x_ids,
+ 	.ids_num		= ARRAY_SIZE(dm646x_ids),
+-	.psc_bases		= dm646x_psc_bases,
+-	.psc_bases_num		= ARRAY_SIZE(dm646x_psc_bases),
+ 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
+ 	.pinmux_pins		= dm646x_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm646x_pins),
+@@ -958,19 +636,12 @@ void __init dm646x_init(void)
+ void __init dm646x_init_time(unsigned long ref_clk_rate,
+ 			     unsigned long aux_clkin_rate)
+ {
+-#ifdef CONFIG_COMMON_CLK
+ 	struct clk *clk;
  
- static struct aoclk_cec_32k cec_32k_ao = {
--	.lock = &gxbb_aoclk_lock,
- 	.hw.init = &(struct clk_init_data) {
- 		.name = "cec_32k_ao",
- 		.ops = &meson_aoclk_cec_32k_ops,
-@@ -126,7 +126,7 @@ static unsigned int gxbb_aoclk_reset[] = {
- 	[RESET_AO_IR_BLASTER] = 23,
- };
+ 	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, ref_clk_rate);
+ 	clk_register_fixed_rate(NULL, "aux_clkin", NULL, 0, aux_clkin_rate);
  
--static struct aoclk_gate_regmap *gxbb_aoclk_gate[] = {
-+static struct clk_regmap *gxbb_aoclk_gate[] = {
- 	[CLKID_AO_REMOTE] = &remote_ao,
- 	[CLKID_AO_I2C_MASTER] = &i2c_master_ao,
- 	[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao,
-@@ -177,10 +177,10 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
- 	 * Populate regmap and register all clks
- 	 */
- 	for (clkid = 0; clkid < ARRAY_SIZE(gxbb_aoclk_gate); clkid++) {
--		gxbb_aoclk_gate[clkid]->regmap = regmap;
-+		gxbb_aoclk_gate[clkid]->map = regmap;
+ 	davinci_timer_init(clk);
+-#else
+-	ref_clk.rate = ref_clk_rate;
+-	aux_clkin.rate = aux_clkin_rate;
+-	davinci_clk_init(dm646x_clks);
+-	davinci_timer_init(&timer0_clk);
+-#endif
+ }
  
- 		ret = devm_clk_hw_register(dev,
--					gxbb_aoclk_onecell_data.hws[clkid]);
-+					   gxbb_aoclk_onecell_data.hws[clkid]);
- 		if (ret)
- 			return ret;
- 	}
-diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
-index e8604c8f7eee..127d58954cca 100644
---- a/drivers/clk/meson/gxbb-aoclk.h
-+++ b/drivers/clk/meson/gxbb-aoclk.h
-@@ -32,7 +32,6 @@ extern const struct clk_ops meson_aoclk_gate_regmap_ops;
- struct aoclk_cec_32k {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
--	spinlock_t *lock;
- };
- 
- #define to_aoclk_cec_32k(_hw) container_of(_hw, struct aoclk_cec_32k, hw)
+ static struct resource dm646x_pll1_resources[] = {
 -- 
-2.14.3
+2.7.4
