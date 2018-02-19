@@ -1,193 +1,527 @@
-Return-Path: <m.purski@samsung.com>
-From: Maciej Purski <m.purski@samsung.com>
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim
-	<jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
-	Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin
-	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro
-	Carvalho Chehab <mchehab@kernel.org>, Andrzej Pietrasiewicz
-	<andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>,
-	Andrzej Hajda <a.hajda@samsung.com>, Russell King <linux@armlinux.org.uk>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier
-	<thibault.saunier@osg.samsung.com>, Javier Martinez Canillas
-	<javier@osg.samsung.com>, Hans Verkuil <hansverk@cisco.com>, Hoegeun Kwon
-	<hoegeun.kwon@samsung.com>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 6/8] drm/exynos/hdmi: Use clk bulk API
-Date: Mon, 19 Feb 2018 16:44:04 +0100
-Message-id: <1519055046-2399-7-git-send-email-m.purski@samsung.com>
-In-reply-to: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
-References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
-	<CGME20180219154501eucas1p1e16a883d2eb0c8a99bafce5d71656066@eucas1p1.samsung.com>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v7 32/42] ARM: davinci: da830: Remove legacy clock init
+Date: Mon, 19 Feb 2018 14:21:53 -0600
+Message-Id: <1519071723-31790-33-git-send-email-david@lechnology.com>
+In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Using bulk clk functions simplifies the driver's code. Use devm_clk_bulk
-functions instead of iterating over an array of clks.
+This removes the unused legacy clock init code from
+arch/arm/mach-davinci/da830.c.
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c | 97 ++++++++++--------------------------
- 1 file changed, 27 insertions(+), 70 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index a4b75a4..6c208f7 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -136,8 +136,8 @@ struct hdmi_context {
- 	int				irq;
- 	struct regmap			*pmureg;
- 	struct regmap			*sysreg;
--	struct clk			**clk_gates;
--	struct clk			**clk_muxes;
-+	struct clk_bulk_data		*clk_gates;
-+	struct clk_bulk_data		*clk_muxes;
- 	struct regulator_bulk_data	regul_bulk[ARRAY_SIZE(supply)];
- 	struct regulator		*reg_hdmi_en;
- 	struct exynos_drm_clk		phy_clk;
-@@ -739,43 +739,16 @@ static int hdmiphy_reg_write_buf(struct hdmi_context *hdata,
- 	}
- }
- 
--static int hdmi_clk_enable_gates(struct hdmi_context *hdata)
--{
--	int i, ret;
--
--	for (i = 0; i < hdata->drv_data->clk_gates.count; ++i) {
--		ret = clk_prepare_enable(hdata->clk_gates[i]);
--		if (!ret)
--			continue;
--
--		dev_err(hdata->dev, "Cannot enable clock '%s', %d\n",
--			hdata->drv_data->clk_gates.data[i], ret);
--		while (i--)
--			clk_disable_unprepare(hdata->clk_gates[i]);
--		return ret;
--	}
--
--	return 0;
--}
--
--static void hdmi_clk_disable_gates(struct hdmi_context *hdata)
--{
--	int i = hdata->drv_data->clk_gates.count;
--
--	while (i--)
--		clk_disable_unprepare(hdata->clk_gates[i]);
--}
--
- static int hdmi_clk_set_parents(struct hdmi_context *hdata, bool to_phy)
+v7 changes:
+- rebased
+- add davinci prefix to commit message
+
+v6 changes:
+- rebased
+
+
+ arch/arm/mach-davinci/board-da830-evm.c |  12 -
+ arch/arm/mach-davinci/da830.c           | 412 --------------------------------
+ 2 files changed, 424 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index 6e77c45..d283fae 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -110,23 +110,11 @@ static __init void da830_evm_usb_init(void)
  {
- 	struct device *dev = hdata->dev;
- 	int ret = 0;
-+	struct clk_bulk_data *clk_muxes = hdata->clk_muxes;
- 	int i;
- 
- 	for (i = 0; i < hdata->drv_data->clk_muxes.count; i += 3) {
--		struct clk **c = &hdata->clk_muxes[i];
--
--		ret = clk_set_parent(c[2], c[to_phy]);
-+		ret = clk_set_parent(clk_muxes[i + 2].clk,
-+				     clk_muxes[i + to_phy].clk);
- 		if (!ret)
- 			continue;
- 
-@@ -1655,54 +1628,36 @@ static irqreturn_t hdmi_irq_thread(int irq, void *arg)
- 	return IRQ_HANDLED;
- }
- 
--static int hdmi_clks_get(struct hdmi_context *hdata,
--			 const struct string_array_spec *names,
--			 struct clk **clks)
-+static struct clk_bulk_data *hdmi_clks_alloc_get(struct hdmi_context *hdata,
-+					const struct string_array_spec *names)
- {
--	struct device *dev = hdata->dev;
--	int i;
--
--	for (i = 0; i < names->count; ++i) {
--		struct clk *clk = devm_clk_get(dev, names->data[i]);
--
--		if (IS_ERR(clk)) {
--			int ret = PTR_ERR(clk);
-+	struct clk_bulk_data *ptr;
-+	int ret;
- 
--			dev_err(dev, "Cannot get clock %s, %d\n",
--				names->data[i], ret);
-+	ptr = devm_clk_bulk_alloc(hdata->dev, names->count, names->data);
-+	if (IS_ERR(ptr))
-+		return ptr;
- 
--			return ret;
--		}
--
--		clks[i] = clk;
--	}
-+	ret = devm_clk_bulk_get(hdata->dev, names->count, ptr);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
- 
--	return 0;
-+	return ptr;
- }
- 
- static int hdmi_clk_init(struct hdmi_context *hdata)
- {
- 	const struct hdmi_driver_data *drv_data = hdata->drv_data;
--	int count = drv_data->clk_gates.count + drv_data->clk_muxes.count;
--	struct device *dev = hdata->dev;
--	struct clk **clks;
--	int ret;
- 
--	if (!count)
--		return 0;
--
--	clks = devm_kzalloc(dev, sizeof(*clks) * count, GFP_KERNEL);
--	if (!clks)
--		return -ENOMEM;
-+	hdata->clk_muxes = hdmi_clks_alloc_get(hdata, &drv_data->clk_muxes);
-+	if (IS_ERR(hdata->clk_muxes))
-+		return PTR_ERR(hdata->clk_muxes);
- 
--	hdata->clk_gates = clks;
--	hdata->clk_muxes = clks + drv_data->clk_gates.count;
-+	hdata->clk_gates = hdmi_clks_alloc_get(hdata, &drv_data->clk_gates);
-+	if (IS_ERR(hdata->clk_gates))
-+		return PTR_ERR(hdata->clk_gates);
- 
--	ret = hdmi_clks_get(hdata, &drv_data->clk_gates, hdata->clk_gates);
--	if (ret)
--		return ret;
--
--	return hdmi_clks_get(hdata, &drv_data->clk_muxes, hdata->clk_muxes);
-+	return 0;
- }
- 
- 
-@@ -2073,7 +2028,8 @@ static int __maybe_unused exynos_hdmi_suspend(struct device *dev)
- {
- 	struct hdmi_context *hdata = dev_get_drvdata(dev);
- 
--	hdmi_clk_disable_gates(hdata);
-+	clk_bulk_disable_unprepare(hdata->drv_data->clk_gates.count,
-+				   hdata->clk_gates);
- 
- 	return 0;
- }
-@@ -2083,7 +2039,8 @@ static int __maybe_unused exynos_hdmi_resume(struct device *dev)
- 	struct hdmi_context *hdata = dev_get_drvdata(dev);
  	int ret;
  
--	ret = hdmi_clk_enable_gates(hdata);
-+	ret = clk_bulk_prepare_enable(hdata->drv_data->clk_gates.count,
-+				      hdata->clk_gates);
- 	if (ret < 0)
- 		return ret;
+-#ifdef CONFIG_COMMON_CLK
+ 	ret = da8xx_register_usb_phy_clocks();
+ 	if (ret)
+ 		pr_warn("%s: USB PHY CLK registration failed: %d\n",
+ 			__func__, ret);
+-#else
+-	/* USB_REFCLKIN is not used. */
+-	ret = da8xx_register_usb20_phy_clk(false);
+-	if (ret)
+-		pr_warn("%s: USB 2.0 PHY CLK registration failed: %d\n",
+-			__func__, ret);
  
+-	ret = da8xx_register_usb11_phy_clk(false);
+-	if (ret)
+-		pr_warn("%s: USB 1.1 PHY CLK registration failed: %d\n",
+-			__func__, ret);
+-#endif
+ 	ret = da8xx_register_usb_phy();
+ 	if (ret)
+ 		pr_warn("%s: USB PHY registration failed: %d\n",
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index c1c2604..470ae48 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -23,11 +23,6 @@
+ 
+ #include "mux.h"
+ 
+-#ifndef CONFIG_COMMON_CLK
+-#include "clock.h"
+-#include "psc.h"
+-#endif
+-
+ /* Offsets of the 8 compare registers on the da830 */
+ #define DA830_CMP12_0		0x60
+ #define DA830_CMP12_1		0x64
+@@ -40,404 +35,6 @@
+ 
+ #define DA830_REF_FREQ		24000000
+ 
+-#ifndef CONFIG_COMMON_CLK
+-static struct pll_data pll0_data = {
+-	.num		= 1,
+-	.phys_base	= DA8XX_PLL0_BASE,
+-	.flags		= PLL_HAS_PREDIV | PLL_HAS_POSTDIV,
+-};
+-
+-static struct clk ref_clk = {
+-	.name		= "ref_clk",
+-	.rate		= DA830_REF_FREQ,
+-};
+-
+-static struct clk pll0_clk = {
+-	.name		= "pll0",
+-	.parent		= &ref_clk,
+-	.pll_data	= &pll0_data,
+-	.flags		= CLK_PLL,
+-};
+-
+-static struct clk pll0_aux_clk = {
+-	.name		= "pll0_aux_clk",
+-	.parent		= &pll0_clk,
+-	.flags		= CLK_PLL | PRE_PLL,
+-};
+-
+-static struct clk pll0_sysclk2 = {
+-	.name		= "pll0_sysclk2",
+-	.parent		= &pll0_clk,
+-	.flags		= CLK_PLL,
+-	.div_reg	= PLLDIV2,
+-};
+-
+-static struct clk pll0_sysclk3 = {
+-	.name		= "pll0_sysclk3",
+-	.parent		= &pll0_clk,
+-	.flags		= CLK_PLL,
+-	.div_reg	= PLLDIV3,
+-};
+-
+-static struct clk pll0_sysclk4 = {
+-	.name		= "pll0_sysclk4",
+-	.parent		= &pll0_clk,
+-	.flags		= CLK_PLL,
+-	.div_reg	= PLLDIV4,
+-};
+-
+-static struct clk pll0_sysclk5 = {
+-	.name		= "pll0_sysclk5",
+-	.parent		= &pll0_clk,
+-	.flags		= CLK_PLL,
+-	.div_reg	= PLLDIV5,
+-};
+-
+-static struct clk pll0_sysclk6 = {
+-	.name		= "pll0_sysclk6",
+-	.parent		= &pll0_clk,
+-	.flags		= CLK_PLL,
+-	.div_reg	= PLLDIV6,
+-};
+-
+-static struct clk pll0_sysclk7 = {
+-	.name		= "pll0_sysclk7",
+-	.parent		= &pll0_clk,
+-	.flags		= CLK_PLL,
+-	.div_reg	= PLLDIV7,
+-};
+-
+-static struct clk i2c0_clk = {
+-	.name		= "i2c0",
+-	.parent		= &pll0_aux_clk,
+-};
+-
+-static struct clk timerp64_0_clk = {
+-	.name		= "timer0",
+-	.parent		= &pll0_aux_clk,
+-};
+-
+-static struct clk timerp64_1_clk = {
+-	.name		= "timer1",
+-	.parent		= &pll0_aux_clk,
+-};
+-
+-static struct clk arm_rom_clk = {
+-	.name		= "arm_rom",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_ARM_RAM_ROM,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk scr0_ss_clk = {
+-	.name		= "scr0_ss",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_SCR0_SS,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk scr1_ss_clk = {
+-	.name		= "scr1_ss",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_SCR1_SS,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk scr2_ss_clk = {
+-	.name		= "scr2_ss",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_SCR2_SS,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk dmax_clk = {
+-	.name		= "dmax",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_PRUSS,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk tpcc_clk = {
+-	.name		= "tpcc",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_TPCC,
+-	.flags		= ALWAYS_ENABLED | CLK_PSC,
+-};
+-
+-static struct clk tptc0_clk = {
+-	.name		= "tptc0",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_TPTC0,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk tptc1_clk = {
+-	.name		= "tptc1",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_TPTC1,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk mmcsd_clk = {
+-	.name		= "mmcsd",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_MMC_SD,
+-};
+-
+-static struct clk uart0_clk = {
+-	.name		= "uart0",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_UART0,
+-};
+-
+-static struct clk uart1_clk = {
+-	.name		= "uart1",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_UART1,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk uart2_clk = {
+-	.name		= "uart2",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_UART2,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk spi0_clk = {
+-	.name		= "spi0",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC0_SPI0,
+-};
+-
+-static struct clk spi1_clk = {
+-	.name		= "spi1",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_SPI1,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk ecap0_clk = {
+-	.name		= "ecap0",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_ECAP,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk ecap1_clk = {
+-	.name		= "ecap1",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_ECAP,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk ecap2_clk = {
+-	.name		= "ecap2",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_ECAP,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk pwm0_clk = {
+-	.name		= "pwm0",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_PWM,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk pwm1_clk = {
+-	.name		= "pwm1",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_PWM,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk pwm2_clk = {
+-	.name		= "pwm2",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_PWM,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk eqep0_clk = {
+-	.name		= "eqep0",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA830_LPSC1_EQEP,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk eqep1_clk = {
+-	.name		= "eqep1",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA830_LPSC1_EQEP,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk lcdc_clk = {
+-	.name		= "lcdc",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_LCDC,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk mcasp0_clk = {
+-	.name		= "mcasp0",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_McASP0,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk mcasp1_clk = {
+-	.name		= "mcasp1",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA830_LPSC1_McASP1,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk mcasp2_clk = {
+-	.name		= "mcasp2",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA830_LPSC1_McASP2,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk usb20_clk = {
+-	.name		= "usb20",
+-	.parent		= &pll0_sysclk2,
+-	.lpsc		= DA8XX_LPSC1_USB20,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk cppi41_clk = {
+-	.name		= "cppi41",
+-	.parent		= &usb20_clk,
+-};
+-
+-static struct clk aemif_clk = {
+-	.name		= "aemif",
+-	.parent		= &pll0_sysclk3,
+-	.lpsc		= DA8XX_LPSC0_EMIF25,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk aintc_clk = {
+-	.name		= "aintc",
+-	.parent		= &pll0_sysclk4,
+-	.lpsc		= DA8XX_LPSC0_AINTC,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk secu_mgr_clk = {
+-	.name		= "secu_mgr",
+-	.parent		= &pll0_sysclk4,
+-	.lpsc		= DA8XX_LPSC0_SECU_MGR,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk emac_clk = {
+-	.name		= "emac",
+-	.parent		= &pll0_sysclk4,
+-	.lpsc		= DA8XX_LPSC1_CPGMAC,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk gpio_clk = {
+-	.name		= "gpio",
+-	.parent		= &pll0_sysclk4,
+-	.lpsc		= DA8XX_LPSC1_GPIO,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk i2c1_clk = {
+-	.name		= "i2c1",
+-	.parent		= &pll0_sysclk4,
+-	.lpsc		= DA8XX_LPSC1_I2C,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk usb11_clk = {
+-	.name		= "usb11",
+-	.parent		= &pll0_sysclk4,
+-	.lpsc		= DA8XX_LPSC1_USB11,
+-	.gpsc		= 1,
+-};
+-
+-static struct clk emif3_clk = {
+-	.name		= "emif3",
+-	.parent		= &pll0_sysclk5,
+-	.lpsc		= DA8XX_LPSC1_EMIF3C,
+-	.gpsc		= 1,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk arm_clk = {
+-	.name		= "arm",
+-	.parent		= &pll0_sysclk6,
+-	.lpsc		= DA8XX_LPSC0_ARM,
+-	.flags		= ALWAYS_ENABLED,
+-};
+-
+-static struct clk rmii_clk = {
+-	.name		= "rmii",
+-	.parent		= &pll0_sysclk7,
+-};
+-
+-static struct clk_lookup da830_clks[] = {
+-	CLK(NULL,		"ref",		&ref_clk),
+-	CLK(NULL,		"pll0",		&pll0_clk),
+-	CLK(NULL,		"pll0_aux",	&pll0_aux_clk),
+-	CLK(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
+-	CLK(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
+-	CLK(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
+-	CLK(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
+-	CLK(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
+-	CLK(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
+-	CLK("i2c_davinci.1",	NULL,		&i2c0_clk),
+-	CLK(NULL,		"timer0",	&timerp64_0_clk),
+-	CLK("davinci-wdt",	NULL,		&timerp64_1_clk),
+-	CLK(NULL,		"arm_rom",	&arm_rom_clk),
+-	CLK(NULL,		"scr0_ss",	&scr0_ss_clk),
+-	CLK(NULL,		"scr1_ss",	&scr1_ss_clk),
+-	CLK(NULL,		"scr2_ss",	&scr2_ss_clk),
+-	CLK(NULL,		"dmax",		&dmax_clk),
+-	CLK(NULL,		"tpcc",		&tpcc_clk),
+-	CLK(NULL,		"tptc0",	&tptc0_clk),
+-	CLK(NULL,		"tptc1",	&tptc1_clk),
+-	CLK("da830-mmc.0",	NULL,		&mmcsd_clk),
+-	CLK("serial8250.0",	NULL,		&uart0_clk),
+-	CLK("serial8250.1",	NULL,		&uart1_clk),
+-	CLK("serial8250.2",	NULL,		&uart2_clk),
+-	CLK("spi_davinci.0",	NULL,		&spi0_clk),
+-	CLK("spi_davinci.1",	NULL,		&spi1_clk),
+-	CLK(NULL,		"ecap0",	&ecap0_clk),
+-	CLK(NULL,		"ecap1",	&ecap1_clk),
+-	CLK(NULL,		"ecap2",	&ecap2_clk),
+-	CLK(NULL,		"pwm0",		&pwm0_clk),
+-	CLK(NULL,		"pwm1",		&pwm1_clk),
+-	CLK(NULL,		"pwm2",		&pwm2_clk),
+-	CLK("eqep.0",		NULL,		&eqep0_clk),
+-	CLK("eqep.1",		NULL,		&eqep1_clk),
+-	CLK("da8xx_lcdc.0",	"fck",		&lcdc_clk),
+-	CLK("davinci-mcasp.0",	NULL,		&mcasp0_clk),
+-	CLK("davinci-mcasp.1",	NULL,		&mcasp1_clk),
+-	CLK("davinci-mcasp.2",	NULL,		&mcasp2_clk),
+-	CLK("musb-da8xx",	NULL,		&usb20_clk),
+-	CLK("cppi41-dmaengine",	NULL,		&cppi41_clk),
+-	CLK(NULL,		"aemif",	&aemif_clk),
+-	CLK(NULL,		"aintc",	&aintc_clk),
+-	CLK(NULL,		"secu_mgr",	&secu_mgr_clk),
+-	CLK("davinci_emac.1",	NULL,		&emac_clk),
+-	CLK("davinci_mdio.0",   "fck",          &emac_clk),
+-	CLK(NULL,		"gpio",		&gpio_clk),
+-	CLK("i2c_davinci.2",	NULL,		&i2c1_clk),
+-	CLK("ohci-da8xx",	NULL,	&usb11_clk),
+-	CLK(NULL,		"emif3",	&emif3_clk),
+-	CLK(NULL,		"arm",		&arm_clk),
+-	CLK(NULL,		"rmii",		&rmii_clk),
+-	CLK(NULL,		NULL,		NULL),
+-};
+-#endif
+-
+ /*
+  * Device specific mux setup
+  *
+@@ -1135,8 +732,6 @@ static struct map_desc da830_io_desc[] = {
+ 	},
+ };
+ 
+-static u32 da830_psc_bases[] = { DA8XX_PSC0_BASE, DA8XX_PSC1_BASE };
+-
+ /* Contents of JTAG ID register used to identify exact cpu type */
+ static struct davinci_id da830_ids[] = {
+ 	{
+@@ -1205,8 +800,6 @@ static const struct davinci_soc_info davinci_soc_info_da830 = {
+ 	.jtag_id_reg		= DA8XX_SYSCFG0_BASE + DA8XX_JTAG_ID_REG,
+ 	.ids			= da830_ids,
+ 	.ids_num		= ARRAY_SIZE(da830_ids),
+-	.psc_bases		= da830_psc_bases,
+-	.psc_bases_num		= ARRAY_SIZE(da830_psc_bases),
+ 	.pinmux_base		= DA8XX_SYSCFG0_BASE + 0x120,
+ 	.pinmux_pins		= da830_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(da830_pins),
+@@ -1228,16 +821,11 @@ void __init da830_init(void)
+ 
+ void __init da830_init_time(void)
+ {
+-#ifdef CONFIG_COMMON_CLK
+ 	struct clk *clk;
+ 
+ 	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
+ 
+ 	davinci_timer_init(clk);
+-#else
+-	davinci_clk_init(da830_clks);
+-	davinci_timer_init(&timerp64_0_clk);
+-#endif
+ }
+ 
+ static struct resource da830_pll_resources[] = {
 -- 
 2.7.4
