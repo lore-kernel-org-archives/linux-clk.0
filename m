@@ -1,101 +1,81 @@
-Return-Path: <sricharan@codeaurora.org>
-Subject: Re: [PATCH v6 14/15] cpufreq: Add module to register cpufreq on Krait
- CPUs
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
- david.brown@linaro.org, rjw@rjwysocki.net,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, robh@kernel.org
-References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
- <1517890108-8140-15-git-send-email-sricharan@codeaurora.org>
- <20180206042642.GG28462@vireshk-i7>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <993dcf5e-a9b4-9434-08cf-7d385589800b@codeaurora.org>
-Date: Tue, 6 Feb 2018 10:13:59 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180206042642.GG28462@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 05/11] clk: meson: add gp0 frac parameter for axg and gxl
+Date: Mon, 19 Feb 2018 12:21:40 +0100
+Message-Id: <20180219112146.21746-6-jbrunet@baylibre.com>
+In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
+References: <20180219112146.21746-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Viresh,
+Add the frac parameter for the gp0 pll of the axg and gxl.
+This allows to achieve rates between the fixed settings provided
+by the table.
 
-On 2/6/2018 9:56 AM, Viresh Kumar wrote:
-> On 06-02-18, 09:38, Sricharan R wrote:
->> diff --git a/drivers/cpufreq/qcom-cpufreq.c b/drivers/cpufreq/qcom-cpufreq.c
->> new file mode 100644
->> index 0000000..5b988d4
->> --- /dev/null
->> +++ b/drivers/cpufreq/qcom-cpufreq.c
->> @@ -0,0 +1,161 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> +
->> +#include <linux/cpu.h>
->> +#include <linux/err.h>
->> +#include <linux/init.h>
->> +#include <linux/io.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_opp.h>
->> +#include <linux/slab.h>
->> +#include "cpufreq-dt.h"
->> +#include <linux/nvmem-consumer.h>
-> 
-> I don't think you need all of these anymore, isn't it ? Can you cross check
-> which ones are really required? For example, cpufreq-dt.h isn't required for
-> sure.
-> 
- oops. Had this in mind to fix the headers. But missed it. Sorry,
- will fix and repost.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg.c  | 7 ++++++-
+ drivers/clk/meson/gxbb.c | 7 ++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
->> +static int __init qcom_cpufreq_driver_init(void)
->> +{
->> +	struct device *cpu_dev;
->> +	struct device_node *np;
->> +	struct nvmem_cell *pvs_nvmem;
->> +	int ret;
->> +
->> +	cpu_dev = get_cpu_device(0);
->> +	if (!cpu_dev)
->> +		return -ENODEV;
->> +
->> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
->> +	if (!np)
->> +		return -ENOENT;
->> +
->> +	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
->> +		of_node_put(np);
->> +		return -ENODEV;
->> +	}
->> +
->> +	pvs_nvmem = of_nvmem_cell_get(np, NULL);
->> +	if (IS_ERR(pvs_nvmem)) {
->> +		dev_err(cpu_dev, "Could not get nvmem cell\n");
->> +		return PTR_ERR(pvs_nvmem);
->> +	}
->> +
->> +	of_node_put(np);
->> +
->> +	ret = qcom_cpufreq_populate_opps(pvs_nvmem);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return PTR_ERR(platform_device_register_simple("cpufreq-dt",
->> +						       -1, NULL, 0));
-> 
-> Wanna do proper error handling here? For example, unset OPP name on failure here
-> so that resources get freed ?
-> 
-
- ok, will fix things here.
-
-Regards,
-  Sricharan
-
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 4f13929cd594..892572a2d70f 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -193,7 +193,7 @@ static const struct pll_rate_table axg_gp0_pll_rate_table[] = {
+ };
+ 
+ const struct reg_sequence axg_gp0_init_regs[] = {
+-	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084a000 },
++	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084b000 },
+ 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0xb75020be },
+ 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a59a288 },
+ 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0xc000004d },
+@@ -218,6 +218,11 @@ static struct clk_regmap axg_gp0_pll = {
+ 			.shift   = 16,
+ 			.width   = 2,
+ 		},
++		.frac = {
++			.reg_off = HHI_GP0_PLL_CNTL1,
++			.shift   = 0,
++			.width   = 10,
++		},
+ 		.l = {
+ 			.reg_off = HHI_GP0_PLL_CNTL,
+ 			.shift   = 31,
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index ac48eef0f490..fdeb372863de 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -437,7 +437,7 @@ static struct clk_regmap gxbb_gp0_pll = {
+ };
+ 
+ const struct reg_sequence gxl_gp0_init_regs[] = {
+-	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084a000 },
++	{ .reg = HHI_GP0_PLL_CNTL1,	.def = 0xc084b000 },
+ 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0xb75020be },
+ 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a59a288 },
+ 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0xc000004d },
+@@ -462,6 +462,11 @@ static struct clk_regmap gxl_gp0_pll = {
+ 			.shift   = 16,
+ 			.width   = 2,
+ 		},
++		.frac = {
++			.reg_off = HHI_GP0_PLL_CNTL1,
++			.shift   = 0,
++			.width   = 10,
++		},
+ 		.l = {
+ 			.reg_off = HHI_GP0_PLL_CNTL,
+ 			.shift   = 31,
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.14.3
