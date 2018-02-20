@@ -1,131 +1,90 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <b421fae7-b807-5ed8-669d-6ba773ac3eca@gmail.com>
-References: <e155f7fc-9c22-d8ac-d142-805812aa9988@gmail.com> <b421fae7-b807-5ed8-669d-6ba773ac3eca@gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 13 Feb 2018 10:59:51 +0800
-Message-ID: <CAGb2v65qNOLRfQXMOoYzH1y-t+YDDhK_wAe1QUKs74Pzu8D84A@mail.gmail.com>
-Subject: Re: BUG: A31s Not booting anymore
-To: Philipp Rossak <embed3d@gmail.com>
-Cc: linux-sunxi <linux-sunxi@googlegroups.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5A8BC9ED.7010303@samsung.com>
+Date: Tue, 20 Feb 2018 16:10:37 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin
+	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated
+ list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open
+ list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 6/7] clk: samsung: s3c2410: fix PLL rates
+In-reply-to: <20180216145754.14428-7-a.hajda@samsung.com>
+References: <20180216145754.14428-1-a.hajda@samsung.com>
+	<CGME20180216145807eucas1p2260082a8178bc746dc8110982f2b0c2b@eucas1p2.samsung.com>
+	<20180216145754.14428-7-a.hajda@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 13, 2018 at 9:25 AM, Philipp Rossak <embed3d@gmail.com> wrote:
->
->
-> On 12.02.2018 19:21, Philipp Rossak wrote:
->>
->> Hey,
->>
->> When I try to boot my A31s (Bananapi M2) u-boot is showing only Starting
->> kernel ... . After enabling the earlyprintk I could capture this log: [1].
->>
->> After reverting those 5 commits from Chen-Yu I was able to boot again:
->>
->>
->> clk: sunxi-ng: Support fixed post-dividers on NM style clocks
->> 7d333ef1cc1b8c8951f3a2c41f6406e2295d8be9
->>
->> clk: sunxi-ng: sun8i: a83t: Add /2 fixed post divider to audio PLL
->> 10e6eb4f2c5b35ae71c9bc0db83d74238719b453
->>
->> clk: sunxi-ng: sun8i: a83t: Use sigma-delta modulation for audio PLL
->> e952ca3c6b2ffdfbf9618e4bd3e9aad1ff3f5eb4
->>
->> clk: sunxi-ng: Support fixed post-dividers on MP style clocks
->> 946797aa3f08e2f6f5992f3ec2be44791e9b9260
->>
->> clk: sunxi-ng: sun50i: a64: Add 2x fixed post-divider to MMC module clocks
->> 83fe3be4d1974f5f50c5e2039a1609f4960e8579
->>
->>
->> I allready tried to fix it with making them save against zero:
->>
->> if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV && \
->>          cmp->fixed_post_div with)
->>                 rate *= cmp->fixed_post_div;
->>
->> But that didn't help.
->>
->> Any ideas?
->>
->> Regards,
->> Philipp
->>
->> [1]: https://pastebin.com/64Fzzqvg
->
->
-> It took me some time, but I have now a few more infos:
->
-> Right now the code breaks at this point here [1], with this clock [2].
-> If we have a look now at the clock config [3], we see here a table which is
-> an u8 array and also a fixed_predivs struct.
+On 2018년 02월 16일 23:57, Andrzej Hajda wrote:
+> Rates declared in PLL rate tables should match exactly rates calculated
+> from PLL coefficients. If that is not the case, rate of parent might be being
+> set not as expected. For instance, if in the PLL rates table we have
+> a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
+> callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
+> will return 393216003. If we now attempt to set rate of a PLL's child divider
+> clock to 393216000/2 its rate will be 131072001, rather than 196608000.
+> That is the divider will be set to 3 instead of 2, because 393216003/2 is
+> greater than 196608000.
+> 
+> To fix this issue declared rates are changed to exactly match rates generated
+> by a PLL, as calculated from the P, M, S, K coefficients.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  drivers/clk/samsung/clk-s3c2410.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
+> index e0650c33863b..d8e58a659467 100644
+> --- a/drivers/clk/samsung/clk-s3c2410.c
+> +++ b/drivers/clk/samsung/clk-s3c2410.c
+> @@ -168,7 +168,7 @@ static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
+>  	PLL_35XX_RATE(226000000, 105, 1, 1),
+>  	PLL_35XX_RATE(210000000, 132, 2, 1),
+>  	/* 2410 common */
+> -	PLL_35XX_RATE(203000000, 161, 3, 1),
+> +	PLL_35XX_RATE(202800000, 161, 3, 1),
+>  	PLL_35XX_RATE(192000000, 88, 1, 1),
+>  	PLL_35XX_RATE(186000000, 85, 1, 1),
+>  	PLL_35XX_RATE(180000000, 82, 1, 1),
+> @@ -178,18 +178,18 @@ static struct samsung_pll_rate_table pll_s3c2410_12mhz_tbl[] __initdata = {
+>  	PLL_35XX_RATE(147000000, 90, 2, 1),
+>  	PLL_35XX_RATE(135000000, 82, 2, 1),
+>  	PLL_35XX_RATE(124000000, 116, 1, 2),
+> -	PLL_35XX_RATE(118000000, 150, 2, 2),
+> +	PLL_35XX_RATE(118500000, 150, 2, 2),
+>  	PLL_35XX_RATE(113000000, 105, 1, 2),
+> -	PLL_35XX_RATE(101000000, 127, 2, 2),
+> +	PLL_35XX_RATE(101250000, 127, 2, 2),
+>  	PLL_35XX_RATE(90000000, 112, 2, 2),
+> -	PLL_35XX_RATE(85000000, 105, 2, 2),
+> +	PLL_35XX_RATE(84750000, 105, 2, 2),
+>  	PLL_35XX_RATE(79000000, 71, 1, 2),
+> -	PLL_35XX_RATE(68000000, 82, 2, 2),
+> -	PLL_35XX_RATE(56000000, 142, 2, 3),
+> +	PLL_35XX_RATE(67500000, 82, 2, 2),
+> +	PLL_35XX_RATE(56250000, 142, 2, 3),
+>  	PLL_35XX_RATE(48000000, 120, 2, 3),
+> -	PLL_35XX_RATE(51000000, 161, 3, 3),
+> +	PLL_35XX_RATE(50700000, 161, 3, 3),
+>  	PLL_35XX_RATE(45000000, 82, 1, 3),
+> -	PLL_35XX_RATE(34000000, 82, 2, 3),
+> +	PLL_35XX_RATE(33750000, 82, 2, 3),
+>  	{ /* sentinel */ },
+>  };
+>  
+> 
 
-The u8 array is for mapping the parents from the index in the parents
-array to the actual register value you listed below.
-
-How are you figuring out which clock is triggering this? Because that
-is not even the right type of clock. The backtrace you posted shows
-the error occurring in a DIV or M type clock, not the MP type you
-are pointing to.
-
-Could you add some noisy printk calls to the sunxi_ccu_probe()
-function in drivers/clk/sunxi-ng/ccu_common.c so it's much clearer
-which clock is failing?
+Looks good to me.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 
->
-> If we have a look at the function call where it breaks [4], shouldn't the
-> table be a clk_div_table struct instead of an u8?
-
-The table argument is an option. Did you go through how the sunxi-ng driver
-calls this function? As mentioned above, you are looking at the wrong thing.
-
-Thanks
-ChenYu
-
->
-> The a31s is the only board where we have this combination of a fixed_predivs
-> and a table.
->
-> Philipp
->
->
-> Related Clock source register A31s:
->
-> 0000: OSC24MHz/750=32KHz
-> 0001: LOSC
-> 0010: OSC24MHz
-> 0011: /
-> 0100: /
-> 0101: /
-> 0110: /
-> 0111: /
-> 1000: /
-> 1001: /
-> 1010: /
-> 1011: AXICLK/4
-> 1100: /
-> 1101: AHB1CLK/4
-> 1110: /
-> 1111: /
->
->
-> [1]:
-> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L89
->
-> [2]:
-> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L1137
->
-> [3]:
-> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/sunxi-ng/ccu-sun6i-a31.c#L749
->
-> [4]:
-> http://lxr.bootlin.com/linux/v4.16-rc1/source/drivers/clk/clk-divider.c#L93
->
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
