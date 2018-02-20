@@ -1,87 +1,39 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Thu, 1 Feb 2018 13:02:19 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2 2/6] clk: tegra: DT align parameter for CVB calculation
-Message-ID: <20180201110219.GC7031@tbergstrom-lnx.Nvidia.com>
-References: <1516797938-32044-1-git-send-email-pdeschrijver@nvidia.com>
- <1516797938-32044-4-git-send-email-pdeschrijver@nvidia.com>
- <7066d1ff-6da4-203d-57ea-cf179fea17be@nvidia.com>
- <20180201103002.GY7031@tbergstrom-lnx.Nvidia.com>
- <98da869b-e3b5-d703-c2bd-c34a081dfbc8@nvidia.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <98da869b-e3b5-d703-c2bd-c34a081dfbc8@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <644095ad-42c5-a4fc-728a-76377938d2f1@cogentembedded.com>
+References: <644095ad-42c5-a4fc-728a-76377938d2f1@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Feb 2018 13:47:51 +0100
+Message-ID: <CAMuHMdXR5vrB-qR6uX3KZgKxJyCdUzQ_y_4rDR9n_5pgKZ_PYQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Renesas R8A77980 CPG/MSSR clock support
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 10:54:15AM +0000, Jon Hunter wrote:
-> 
-> On 01/02/18 10:30, Peter De Schrijver wrote:
-> > On Wed, Jan 31, 2018 at 10:43:04AM +0000, Jon Hunter wrote:
-> >>
-> >> On 24/01/18 12:45, Peter De Schrijver wrote:
-> >>> When using a PWM controlled regulator, the voltage step and offset are
-> >>> determined by the regulator IC in use. This is specified in DT rather
-> >>> than fixed in the CVB table. Hence pass this information to the CVB table
-> >>> calculation function. For backwards compatibility the table values are used
-> >>> if the corresponding parameter is 0.
-> >>>
-> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >>> ---
-> >>>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 23 +++++++++++++++++++++--
-> >>>  drivers/clk/tegra/cvb.c                    | 18 ++++++++++++++----
-> >>>  drivers/clk/tegra/cvb.h                    |  5 +++--
-> >>>  3 files changed, 38 insertions(+), 8 deletions(-)
-> >>>
-> >>> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> >>> index 440eb8d..6205ce1 100644
-> >>> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> >>> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> >>> @@ -111,6 +111,7 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
-> >>>  	struct tegra_dfll_soc_data *soc;
-> >>>  	const struct of_device_id *of_id;
-> >>>  	const struct dfll_fcpu_data *fcpu_data;
-> >>> +	struct rail_alignment align;
-> >>>  
-> >>>  	of_id = of_match_device(tegra124_dfll_fcpu_of_match, &pdev->dev);
-> >>>  	fcpu_data = of_id->data;
-> >>> @@ -135,12 +136,30 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
-> >>>  		return -ENODEV;
-> >>>  	}
-> >>>  
-> >>> +	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-offset-uv",
-> >>> +					&align.offset_uv);
-> >>> +	if (err < 0) {
-> >>> +		dev_err(&pdev->dev,
-> >>> +			"offset uv not found, default to table value\n");
-> >>> +		align.offset_uv = 0;
-> >>> +	}
-> >>> +
-> >>> +	err = of_property_read_u32(pdev->dev.of_node, "nvidia,align-step-uv",
-> >>> +					&align.step_uv);
-> >>> +	if (err < 0) {
-> >>> +		dev_err(&pdev->dev,
-> >>> +			"step uv not found, default to table value\n");
-> >>> +		align.step_uv = 0;
-> >>> +	}
-> >>> +
-> >>
-> >> I am a bit confused by this ...
-> >>
-> >> 1. Isn't this going to break Tegra124 DFLL support?
-> > 
-> > We fall back to the original behaviour in case the properties are missing, so
-> > it should work.
-> 
-> Ah yes. However, on Tegra124 now I see all this prints. Can't we only
-> read these properties if using PWM?
-> 
+On Thu, Feb 15, 2018 at 12:54 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Here's the set of 2 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
+> 'renesas-drivers.git' repo. We're adding the CPG/MSSR driver support for R8A77980...
+>
+> [1/2] dt-bindings: clock: add R8A77980 CPG core clock definitions
+> [2/2] clk: renesas: cpg-mssr: add R8A77980 support
 
-I think it would make more sense then to get these parameters from the
-regulator object in case of i2c. If that works on Tegra124, we can eliminate
-using the CVB table align values entirely.
+Thanks, queued in clk-renesas-for-v4.17.
 
-Peter.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
