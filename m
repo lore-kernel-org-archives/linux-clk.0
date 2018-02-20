@@ -1,39 +1,57 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 27/41] ARM: da8xx: add new sata_refclk init using
- common clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-28-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <8bb4fff4-df9b-f940-0dbe-888942f55abf@ti.com>
-Date: Fri, 2 Feb 2018 20:29:24 +0530
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-28-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <694c5137-0020-bb62-68c7-f9729c101462@gmail.com>
+References: <20180217130504.8668-1-wens@csie.org> <694c5137-0020-bb62-68c7-f9729c101462@gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 20 Feb 2018 11:17:06 +0800
+Message-ID: <CAGb2v64F9oHCv=uOGmeLc4_Qnz4BZO29ct8mCbJsRgdTJMDk3w@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: a31: Fix CLK_OUT_* clock ops
+To: Philipp Rossak <embed3d@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
-> This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
-> using the new common clock framework drivers.
-> 
-> The #ifdefs are needed to prevent compile errors until the entire
-> ARCH_DAVINCI is converted.
-> 
-> Also, the #includes are sorted since we are adding some here.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+On Sat, Feb 17, 2018 at 9:54 PM, Philipp Rossak <embed3d@gmail.com> wrote:
+>
+>
+> On 17.02.2018 14:05, Chen-Yu Tsai wrote:
+>>
+>> When support for the A31/A31s CCU was first added, the clock ops for
+>> the CLK_OUT_* clocks was set to the wrong type. The clocks are MP-type,
+>> but the ops was set for div (M) clocks. This went unnoticed until now.
+>> This was because while they are different clocks, their data structures
+>> aligned in a way that ccu_div_ops would access the second ccu_div_internal
+>> and ccu_mux_internal structures, which were valid, if not incorrect.
+>>
+>> Furthermore, the use of these CLK_OUT_* was for feeding a precise 32.768
+>> kHz clock signal to the WiFi chip. This was achievable by using the parent
+>> with the same clock rate and no divider. So the incorrect divider setting
+>> did not affect this usage.
+>>
+>> Commit 946797aa3f08 ("clk: sunxi-ng: Support fixed post-dividers on MP
+>> style clocks") added a new field to the ccu_mp structure, which broke
+>> the aforementioned alignment. Now the system crashes as div_ops tries
+>> to look up a nonexistent table.
+>>
+>> Reported-by: Philipp Rossak <embed3d@gmail.com>
+>> Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>
+> Tested-by: Philipp Rossak <embed3d@gmail.com>
+>>
+>> ---
+>>
+>> Philipp, can you give this a test and report if this fixes thing?
+>> I don't have any A31/A31s boards online to test this.
+>>
+> Thanks!
+> That fixes that bug!
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Thanks.
 
-Thanks,
-Sekhar
+It looks like this has been applied by Maxime.
