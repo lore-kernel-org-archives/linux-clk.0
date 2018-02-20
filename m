@@ -1,53 +1,116 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5A792A2B.60603@samsung.com>
-Date: Tue, 06 Feb 2018 13:08:11 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-	m.szyprowski@samsung.com
-Subject: Re: [PATCH 3/3] clk: exynos5433: Add CLK_IGNORE_UNUSED flag to
- sclk_ioclk_i2s1_bclk
-In-reply-to: <20180205142230.9755-3-s.nawrocki@samsung.com>
-References: <20180205142230.9755-1-s.nawrocki@samsung.com>
-	<CGME20180205142314epcas1p2c9b9bdcba33290a9528a1b24fbc849eb@epcas1p2.samsung.com>
-	<20180205142230.9755-3-s.nawrocki@samsung.com>
+Return-Path: <david@lechnology.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v7_00/42]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+ <CAMRc=MdT5Vd68eoWfJGv=5_uzD0L5m3Y+wi6r7N6O8y6HZrQSg@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <6142ab0d-85b1-84da-3a35-bdd8733bebd9@lechnology.com>
+Date: Tue, 20 Feb 2018 12:39:59 -0600
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=MdT5Vd68eoWfJGv=5_uzD0L5m3Y+wi6r7N6O8y6HZrQSg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018년 02월 05일 23:22, Sylwester Nawrocki wrote:
-> The sclk_ioclk_i2s1_bclk clock is not currently handled by any driver
-> and disabling this clock by the clk core prevents proper operation
-> of the I2S1 block. CLK_IGNORE_UNUSED flag is added as a temporary fix.
+On 02/20/2018 07:33 AM, Bartosz Golaszewski wrote:
+> 2018-02-19 21:21 GMT+01:00 David Lechner <david@lechnology.com>:
+>> This series converts mach-davinci to use the common clock framework.
+>>
+>>
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi David,
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index d74361736e64..15177f74e125 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -1680,7 +1680,7 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
->  			ENABLE_SCLK_PERIC, 11, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_IOCLK_I2S1_BCLK, "sclk_ioclk_i2s1_bclk",
->  			"ioclk_i2s1_bclk_in", ENABLE_SCLK_PERIC, 10,
-> -			CLK_SET_RATE_PARENT, 0),
-> +			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
->  	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "sclk_spdif_peric",
->  			ENABLE_SCLK_PERIC, 8, CLK_SET_RATE_PARENT, 0),
->  	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
+> just some quick results from today's playing with v7.
 > 
+> I started out with da850-lcdk with my standard rootfs over NFS. I was
+> not able to boot to console so far. The first problem is that mdio
+> fails to probe:
+> 
+> libphy: Fixed MDIO Bus: probed
+> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
+> davinci_mdio 1e24000.mdio: no live phy, scanning all
+> davinci_mdio: probe of 1e24000.mdio failed with error -5> 
+> After some digging I noticed that the supplied clock rate differs
+> between mainline (114000000Hz) vs common-clock-v7 (18000000). Since
+> we're not setting the rate in mdio, using LPSC_SET_RATE_PARENT would
+> not help like with lcdc.
 
-If any device driver handles the sclk_ioclk_i2s1_bclk on later,
-CLK_IGNORE_UNUSED will be ignored. Looks good to me.
+Can you post the output of this command so that I can see how your
+clocks are setup:
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+cat /sys/kernel/debug/clk/clk_summary
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+
+> 
+> After that, the boot just hangs without ever getting to emac's probe.
+
+Using your workaround, can you run:
+
+cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+
+If you see:
+   
+1e27000.clock-controller: emac  off-0
+
+then genpd is not working like it is supposed to. You should see something
+like this for device that are working:
+           
+1e27000.clock-controller: uart2  on
+     /devices/platform/soc@1c00000/1d0d000.serial        active
+
+
+> 
+> Once I set the emac clock to always enabled (a workaround that was
+> necessary with v6, but could be dropped with my first
+> genpd-in-a-separate-driver attempt), I'm getting a rather strange NULL
+> pointer dereference:
+
+I noticed this too when adding the power-domains property to some device
+tree nodes. This is part of the reason why I didn't add it everywhere.
+I wasn't able to figure out the cause of this yet. As a work around
+though, please try removing the power-domains property from the emac
+and mdio nodes and use your previous workaround of having an always
+enabled clock.
+
+> 
+> Backtrace:
+> [<c049d464>] (strlen) from [<c01f32a8>] (start_creating+0x58/0xc0)
+> [<c01f3250>] (start_creating) from [<c01f34c8>] (debugfs_create_dir+0x14/0xd8)
+>   r7:c04dadbc r6:c0567480 r5:c0656274 r4:c68a9300
+> [<c01f34b4>] (debugfs_create_dir) from [<c0296838>]
+> (clk_debug_create_one+0x28/0x1d0)
+>   r5:c0656274 r4:c68a9300
+> [<c0296810>] (clk_debug_create_one) from [<c05cdf84>]
+> (clk_debug_init+0x100/0x15c)
+>   r5:c0656274 r4:c68a9300
+> [<c05cde84>] (clk_debug_init) from [<c000a54c>] (do_one_initcall+0x50/0x19c)
+>   r7:c05e3834 r6:ffffe000 r5:c05f7008 r4:c05cde84
+> [<c000a4fc>] (do_one_initcall) from [<c05b6eb4>]
+> (kernel_init_freeable+0x110/0x1cc)
+>   r9:c05b4584 r8:c05b6614 r7:c05e3834 r6:c063cc80 r5:00000073 r4:c05f2354
+> [<c05b6da4>] (kernel_init_freeable) from [<c04a2ce4>] (kernel_init+0x10/0xfc)
+>   r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c04a2cd4
+>   r4:00000000
+> [<c04a2cd4>] (kernel_init) from [<c00090e0>] (ret_from_fork+0x14/0x34)
+> 
+> It turns out that the emac clock is correctly registered in
+> __davinci_psc_register_clocks() and a corresponding clk_core structure
+> is added to the list and core->name is correctly assigned, but then
+> later when clk_debug_init() is called, the name in emac clk_core is
+> NULL. This is the direct reason for the panic. Interestingly other
+> members of clk_core seem to be fine.
+> 
+> I'll continue on debugging it. Let me know if you have any ideas.
+> 
+> Best regards,
+> Bartosz Golaszewski
+> 
