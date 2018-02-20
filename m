@@ -1,61 +1,191 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <dinguyen@kernel.org>
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: dinguyen@kernel.org,
 	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 04/26] ARM: dts: r8a7790: Adjust SMP routine size
-Date: Mon, 12 Feb 2018 17:44:13 +0000
-Message-Id: <1518457475-4480-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org
+Subject: [PATCHv5 1/3] dt-bindings: documentation: add clock bindings information for Stratix10
+Date: Tue, 20 Feb 2018 09:44:31 -0600
+Message-Id: <1519141473-1253-1-git-send-email-dinguyen@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+Document that Stratix10 clock bindings, and add the clock header file. The
+clock header is an enumeration of all the different clocks on the Stratix10
+platform.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-v4->v5:
-* no change
+v5:
+- moved SPDX license header to single line comment
+v4:
+- remove '_' in node names
+- remove stray tab
+- add clock-frequency property for fixed-clocks
+- put SPDX license as the very top line
+v3:
+- s/intc/intel for correct vendor prefix
+- fixup node name to "intel,stratix10-clkmgr"
+- document the required fixed-clock for oscillators
+v2:
+- use a single binding for the clock controller
+---
+ .../devicetree/bindings/clock/intc_stratix10.txt   | 51 +++++++++++++
+ include/dt-bindings/clock/stratix10-clock.h        | 84 ++++++++++++++++++++++
+ 2 files changed, 135 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
+ create mode 100644 include/dt-bindings/clock/stratix10-clock.h
 
- arch/arm/boot/dts/r8a7790.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index 3bbcc0b..a84bf35 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -443,7 +443,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
+diff --git a/Documentation/devicetree/bindings/clock/intc_stratix10.txt b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
+new file mode 100644
+index 0000000..0652ff1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
+@@ -0,0 +1,51 @@
++Device Tree Clock bindings for Intel's SoCFPGA Stratix10 platform
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible : shall be
++	"intel,stratix10-clkmgr"
++
++- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
++
++- #clock-cells : from common clock binding, shall be set to 1.
++
++- clocks : Should contain fixed-clock sources, such as oscillators.
++
++Example:
++	clkmgr: clock-controller@ffd10000 {
++		compatible = "intel,stratix10-clkmgr";
++		reg = <0xffd10000 0x1000>;
++		#clock-cells = <1>;
++
++		clocks {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++
++			cb_intosc_ls_clk: cb-intosc-ls-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++
++			f2s_free_clk: f2s-free-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++
++			osc1: osc1 {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++		};
++	};
+diff --git a/include/dt-bindings/clock/stratix10-clock.h b/include/dt-bindings/clock/stratix10-clock.h
+new file mode 100644
+index 0000000..0ac1c90
+--- /dev/null
++++ b/include/dt-bindings/clock/stratix10-clock.h
+@@ -0,0 +1,84 @@
++/* SPDX-License-Identifier:	GPL-2.0 */
++/*
++ * Copyright (C) 2017, Intel Corporation
++ */
++
++#ifndef __STRATIX10_CLOCK_H
++#define __STRATIX10_CLOCK_H
++
++/* fixed rate clocks */
++#define STRATIX10_OSC1			0
++#define STRATIX10_CB_INTOSC_HS_DIV2_CLK	1
++#define STRATIX10_CB_INTOSC_LS_CLK	2
++#define STRATIX10_F2S_FREE_CLK		3
++
++/* fixed factor clocks */
++#define STRATIX10_L4_SYS_FREE_CLK	4
++#define STRATIX10_MPU_PERIPH_CLK	5
++#define STRATIX10_MPU_L2RAM_CLK		6
++#define STRATIX10_SDMMC_CIU_CLK		7
++
++/* PLL clocks */
++#define STRATIX10_MAIN_PLL_CLK		8
++#define STRATIX10_PERIPH_PLL_CLK	9
++#define STRATIX10_BOOT_CLK		10
++
++/* Periph clocks */
++#define STRATIX10_MAIN_MPU_BASE_CLK	11
++#define STRATIX10_MAIN_NOC_BASE_CLK	12
++#define STRATIX10_MAIN_EMACA_CLK	13
++#define STRATIX10_MAIN_EMACB_CLK	14
++#define STRATIX10_MAIN_EMAC_PTP_CLK	15
++#define STRATIX10_MAIN_GPIO_DB_CLK	16
++#define STRATIX10_MAIN_SDMMC_CLK	17
++#define STRATIX10_MAIN_S2F_USR0_CLK	18
++#define STRATIX10_MAIN_S2F_USR1_CLK	19
++#define STRATIX10_MAIN_PSI_REF_CLK	20
++
++#define STRATIX10_PERI_MPU_BASE_CLK	21
++#define STRATIX10_PERI_NOC_BASE_CLK	22
++#define STRATIX10_PERI_EMACA_CLK	23
++#define STRATIX10_PERI_EMACB_CLK	24
++#define STRATIX10_PERI_EMAC_PTP_CLK	25
++#define STRATIX10_PERI_GPIO_DB_CLK	26
++#define STRATIX10_PERI_SDMMC_CLK	27
++#define STRATIX10_PERI_S2F_USR0_CLK	28
++#define STRATIX10_PERI_S2F_USR1_CLK	29
++#define STRATIX10_PERI_PSI_REF_CLK	30
++
++#define STRATIX10_MPU_FREE_CLK		31
++#define STRATIX10_NOC_FREE_CLK		32
++#define STRATIX10_S2F_USR0_CLK		33
++#define STRATIX10_NOC_CLK		34
++#define STRATIX10_EMAC_A_FREE_CLK	35
++#define STRATIX10_EMAC_B_FREE_CLK	36
++#define STRATIX10_EMAC_PTP_FREE_CLK	37
++#define STRATIX10_GPIO_DB_FREE_CLK	38
++#define STRATIX10_SDMMC_FREE_CLK	39
++#define STRATIX10_S2F_USER1_FREE_CLK	40
++#define STRATIX10_PSI_REF_FREE_CLK	41
++
++/* Gate clocks */
++#define STRATIX10_MPU_CLK		42
++#define STRATIX10_L4_MAIN_CLK		43
++#define STRATIX10_L4_MP_CLK		44
++#define STRATIX10_L4_SP_CLK		45
++#define STRATIX10_CS_AT_CLK		46
++#define STRATIX10_CS_TRACE_CLK		47
++#define STRATIX10_CS_PDBG_CLK		48
++#define STRATIX10_CS_TIMER_CLK		49
++#define STRATIX10_S2F_USER0_CLK		50
++#define STRATIX10_S2F_USER1_CLK		51
++#define STRATIX10_EMAC0_CLK		52
++#define STRATIX10_EMAC1_CLK		53
++#define STRATIX10_EMAC2_CLK		54
++#define STRATIX10_EMAC_PTP_CLK		55
++#define STRATIX10_GPIO_DB_CLK		56
++#define STRATIX10_SDMMC_CLK		57
++#define STRATIX10_PSI_REF_CLK		58
++#define STRATIX10_USB_CLK		59
++#define STRATIX10_SPI_M_CLK		60
++#define STRATIX10_NAND_CLK		61
++#define STRATIX10_NUM_CLKS		62
++
++#endif	/* __STRATIX10_CLOCK_H */
 -- 
 2.7.4
