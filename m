@@ -1,118 +1,63 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v7 28/42] ARM: davinci: da8xx: add new sata_refclk init using common clock framework
-Date: Mon, 19 Feb 2018 14:21:49 -0600
-Message-Id: <1519071723-31790-29-git-send-email-david@lechnology.com>
-In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51316 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932719AbeBUKPh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Feb 2018 05:15:37 -0500
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 1/6] soc: samsung: pm_domains: Add blacklisting clock
+ handling
+Date: Wed, 21 Feb 2018 11:15:22 +0100
+Message-id: <20180221101527.25554-2-m.szyprowski@samsung.com>
+In-reply-to: <20180221101527.25554-1-m.szyprowski@samsung.com>
+References: <20180221101527.25554-1-m.szyprowski@samsung.com>
+        <CGME20180221101533eucas1p234b1801844ce8fac633377d129323422@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
-using the new common clock framework drivers.
+Handling of clock reparenting will be move to clock controller driver, so
+add possibility to blacklist clock handling on systems, where the clock
+controller already does all needed operations. This is needed to avoid
+potential deadlock on clock reparenting during power domain on/off
+procedure.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
-
-Also, the #includes are sorted since we are adding some here.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
+ drivers/soc/samsung/pm_domains.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-v7 changes:
-- sorting of include files seems to have been messed up by rebasing - will fix
-  in later revision
-
-v6 changes:
-- none
-
-
- arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 24422ba..c7ec60b 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -10,25 +10,30 @@
-  * the Free Software Foundation; either version 2 of the License, or
-  * (at your option) any later version.
-  */
--#include <linux/init.h>
--#include <linux/platform_device.h>
--#include <linux/dma-contiguous.h>
--#include <linux/serial_8250.h>
- #include <linux/ahci_platform.h>
-+#include <linux/clk-provider.h>
- #include <linux/clk.h>
--#include <linux/reboot.h>
-+#include <linux/clkdev.h>
-+#include <linux/dma-contiguous.h>
- #include <linux/dmaengine.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+#include <linux/serial_8250.h>
- 
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
--#include <mach/clock.h>
-+#include <mach/time.h>
-+
-+#include "asp.h"
- #include "cpuidle.h"
- #include "sram.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include <mach/clock.h>
- #include "clock.h"
--#include "asp.h"
-+#endif
- 
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
-@@ -1040,6 +1045,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
+diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
+index b6a436594a19..cef30bdf19b1 100644
+--- a/drivers/soc/samsung/pm_domains.c
++++ b/drivers/soc/samsung/pm_domains.c
+@@ -147,6 +147,9 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
+ 	return kstrdup_const(name, GFP_KERNEL);
  }
  
- #ifdef CONFIG_ARCH_DAVINCI_DA850
-+#ifndef CONFIG_COMMON_CLK
- static struct clk sata_refclk = {
- 	.name		= "sata_refclk",
- 	.set_rate	= davinci_simple_set_rate,
-@@ -1061,6 +1067,18 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return 0;
- }
-+#else
-+int __init da850_register_sata_refclk(int rate)
-+{
-+	struct clk *clk;
++static const char *soc_force_no_clk[] = {
++};
 +
-+	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	return clk_register_clkdev(clk, "refclk", "ahci_da850");
-+}
-+#endif
+ static __init int exynos4_pm_init_power_domain(void)
+ {
+ 	struct device_node *np;
+@@ -183,6 +186,11 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		pd->pd.power_on = exynos_pd_power_on;
+ 		pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
  
- static struct resource da850_sata_resources[] = {
- 	{
++		for (i = 0; i < ARRAY_SIZE(soc_force_no_clk); i++)
++			if (of_find_compatible_node(NULL, NULL,
++						    soc_force_no_clk[i]))
++				goto no_clk;
++
+ 		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+ 			char clk_name[8];
+ 
 -- 
-2.7.4
+2.15.0
+
