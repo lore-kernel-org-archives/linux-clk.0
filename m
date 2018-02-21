@@ -1,94 +1,232 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Tue, 27 Feb 2018 10:09:13 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Philipp Rossak <embed3d@gmail.com>
-Cc: wens@csie.org, a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4] rtc: ac100: Fix ac100 determine rate bug
-Message-ID: <20180227090913.3vb6yudd4nh2wlyh@flea>
-References: <20180226211901.9805-1-embed3d@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="f3wecsvhqugikgzn"
-In-Reply-To: <20180226211901.9805-1-embed3d@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:53946 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932740AbeBUKPi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Feb 2018 05:15:38 -0500
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 5/6] soc: samsung: pm_domains: Deprecate support for clocks
+Date: Wed, 21 Feb 2018 11:15:26 +0100
+Message-id: <20180221101527.25554-6-m.szyprowski@samsung.com>
+In-reply-to: <20180221101527.25554-1-m.szyprowski@samsung.com>
+References: <20180221101527.25554-1-m.szyprowski@samsung.com>
+        <CGME20180221101534eucas1p29d832ffe11055241a39d79a8863845ad@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Handling of special clock operations on power domain on/off sequences has
+been moved to respective Exynos clock controller drivers, so there is no
+need to keep the duplicated (and conflicting) code in Exynos power domain
+driver. Mark clock related properties in Exynos power domain bindings as
+deprecated. This change has no inpact on backwards-compatibility, as the
+new drivers properly work with old DTBs (deprecated properties are
+ignored).
 
---f3wecsvhqugikgzn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ .../devicetree/bindings/power/pd-samsung.txt       | 20 +----
+ drivers/soc/samsung/pm_domains.c                   | 90 +---------------------
+ 2 files changed, 5 insertions(+), 105 deletions(-)
 
-On Mon, Feb 26, 2018 at 10:19:01PM +0100, Philipp Rossak wrote:
-> This patch fixes a bug, that prevents the Allwinner A83T and the A80
-> from a successful boot.
->=20
-> The bug is there since v4.16-rc1 and appeared after the clk branch was
-> merged.
->=20
-> You can find the shortend trace below:
->=20
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 00000000
-> pgd =3D (ptrval)
-> [00000000] *pgd=3D00000000
-> Internal error: Oops: 5 [#1] SMP ARM
-> Modules linked in:
-> CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
-> Hardware name: Allwinner sun8i Family
-> Workqueue: events deferred_probe_work_func
-> PC is at clk_hw_get_rate+0x0/0x34
-> LR is at ac100_clkout_determine_rate+0x48/0x19c
->=20
-> [ ... ]
->=20
-> (clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
-> (ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
-> (clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
-> (clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
-> (of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
->=20
-> To fix that bug, we first check if the return of the
-> clk_hw_get_parent_by_index is non zero. If it is zero we skip that
-> clock parent.
->=20
-> The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
->=20
-> Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
->=20
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+diff --git a/Documentation/devicetree/bindings/power/pd-samsung.txt b/Documentation/devicetree/bindings/power/pd-samsung.txt
+index 549f7dee9b9d..92ef355e8f64 100644
+--- a/Documentation/devicetree/bindings/power/pd-samsung.txt
++++ b/Documentation/devicetree/bindings/power/pd-samsung.txt
+@@ -15,23 +15,13 @@ Required Properties:
+ Optional Properties:
+ - label: Human readable string with domain name. Will be visible in userspace
+ 	to let user to distinguish between multiple domains in SoC.
+-- clocks: List of clock handles. The parent clocks of the input clocks to the
+-	devices in this power domain are set to oscclk before power gating
+-	and restored back after powering on a domain. This is required for
+-	all domains which are powered on and off and not required for unused
+-	domains.
+-- clock-names: The following clocks can be specified:
+-	- oscclk: Oscillator clock.
+-	- clkN: Input clocks to the devices in this power domain. These clocks
+-		will be reparented to oscclk before switching power domain off.
+-		Their original parent will be brought back after turning on
+-		the domain. Maximum of 4 clocks (N = 0 to 3) are supported.
+-	- asbN: Clocks required by asynchronous bridges (ASB) present in
+-		the power domain. These clock should be enabled during power
+-		domain on/off operations.
+ - power-domains: phandle pointing to the parent power domain, for more details
+ 		 see Documentation/devicetree/bindings/power/power_domain.txt
+ 
++Deprecated Properties:
++- clocks
++- clock-names
++
+ Node of a device using power domains must have a power-domains property
+ defined with a phandle to respective power domain.
+ 
+@@ -47,8 +37,6 @@ Example:
+ 	mfc_pd: power-domain@10044060 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044060 0x20>;
+-		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
+-		clock-names = "oscclk", "clk0";
+ 		#power-domain-cells = <0>;
+ 		label = "MFC";
+ 	};
+diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
+index caf45cf7aa8e..ab8582971bfc 100644
+--- a/drivers/soc/samsung/pm_domains.c
++++ b/drivers/soc/samsung/pm_domains.c
+@@ -13,14 +13,11 @@
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/pm_domain.h>
+-#include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/sched.h>
+ 
+-#define MAX_CLK_PER_DOMAIN	4
+-
+ struct exynos_pm_domain_config {
+ 	/* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
+ 	u32 local_pwr_cfg;
+@@ -33,10 +30,6 @@ struct exynos_pm_domain {
+ 	void __iomem *base;
+ 	bool is_off;
+ 	struct generic_pm_domain pd;
+-	struct clk *oscclk;
+-	struct clk *clk[MAX_CLK_PER_DOMAIN];
+-	struct clk *pclk[MAX_CLK_PER_DOMAIN];
+-	struct clk *asb_clk[MAX_CLK_PER_DOMAIN];
+ 	u32 local_pwr_cfg;
+ };
+ 
+@@ -46,29 +39,10 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+ 	void __iomem *base;
+ 	u32 timeout, pwr;
+ 	char *op;
+-	int i;
+ 
+ 	pd = container_of(domain, struct exynos_pm_domain, pd);
+ 	base = pd->base;
+ 
+-	for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-		if (IS_ERR(pd->asb_clk[i]))
+-			break;
+-		clk_prepare_enable(pd->asb_clk[i]);
+-	}
+-
+-	/* Set oscclk before powering off a domain*/
+-	if (!power_on) {
+-		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-			if (IS_ERR(pd->clk[i]))
+-				break;
+-			pd->pclk[i] = clk_get_parent(pd->clk[i]);
+-			if (clk_set_parent(pd->clk[i], pd->oscclk))
+-				pr_err("%s: error setting oscclk as parent to clock %d\n",
+-						domain->name, i);
+-		}
+-	}
+-
+ 	pwr = power_on ? pd->local_pwr_cfg : 0;
+ 	writel_relaxed(pwr, base);
+ 
+@@ -86,26 +60,6 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+ 		usleep_range(80, 100);
+ 	}
+ 
+-	/* Restore clocks after powering on a domain*/
+-	if (power_on) {
+-		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-			if (IS_ERR(pd->clk[i]))
+-				break;
+-
+-			if (IS_ERR(pd->pclk[i]))
+-				continue; /* Skip on first power up */
+-			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
+-				pr_err("%s: error setting parent to clock%d\n",
+-						domain->name, i);
+-		}
+-	}
+-
+-	for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-		if (IS_ERR(pd->asb_clk[i]))
+-			break;
+-		clk_disable_unprepare(pd->asb_clk[i]);
+-	}
+-
+ 	return 0;
+ }
+ 
+@@ -147,12 +101,6 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
+ 	return kstrdup_const(name, GFP_KERNEL);
+ }
+ 
+-static const char *soc_force_no_clk[] = {
+-	"samsung,exynos5250-clock",
+-	"samsung,exynos5420-clock",
+-	"samsung,exynos5800-clock",
+-};
+-
+ static __init int exynos4_pm_init_power_domain(void)
+ {
+ 	struct device_node *np;
+@@ -161,7 +109,7 @@ static __init int exynos4_pm_init_power_domain(void)
+ 	for_each_matching_node_and_match(np, exynos_pm_domain_of_match, &match) {
+ 		const struct exynos_pm_domain_config *pm_domain_cfg;
+ 		struct exynos_pm_domain *pd;
+-		int on, i;
++		int on;
+ 
+ 		pm_domain_cfg = match->data;
+ 
+@@ -189,42 +137,6 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		pd->pd.power_on = exynos_pd_power_on;
+ 		pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
+ 
+-		for (i = 0; i < ARRAY_SIZE(soc_force_no_clk); i++)
+-			if (of_find_compatible_node(NULL, NULL,
+-						    soc_force_no_clk[i]))
+-				goto no_clk;
+-
+-		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-			char clk_name[8];
+-
+-			snprintf(clk_name, sizeof(clk_name), "asb%d", i);
+-			pd->asb_clk[i] = of_clk_get_by_name(np, clk_name);
+-			if (IS_ERR(pd->asb_clk[i]))
+-				break;
+-		}
+-
+-		pd->oscclk = of_clk_get_by_name(np, "oscclk");
+-		if (IS_ERR(pd->oscclk))
+-			goto no_clk;
+-
+-		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-			char clk_name[8];
+-
+-			snprintf(clk_name, sizeof(clk_name), "clk%d", i);
+-			pd->clk[i] = of_clk_get_by_name(np, clk_name);
+-			if (IS_ERR(pd->clk[i]))
+-				break;
+-			/*
+-			 * Skip setting parent on first power up.
+-			 * The parent at this time may not be useful at all.
+-			 */
+-			pd->pclk[i] = ERR_PTR(-EINVAL);
+-		}
+-
+-		if (IS_ERR(pd->clk[0]))
+-			clk_put(pd->oscclk);
+-
+-no_clk:
+ 		on = readl_relaxed(pd->base + 0x4) & pd->local_pwr_cfg;
+ 
+ 		pm_genpd_init(&pd->pd, NULL, !on);
+-- 
+2.15.0
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---f3wecsvhqugikgzn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqVIDgACgkQ0rTAlCFN
-r3SKUBAAmcXMlygQJbkcmBF6rYnTivNolCp0SWBSagp/4wBeR4LMQZr51PVntfS8
-NoUaJgQGBXV3Wt1wwO18KSzeK8QzA/ngbBl+W+uPERXij5VxR+huYYALvj82aK+X
-i/se2qemdHkbpPOxtAgglYHv2WjBk2y+cCTLOrzRMaeyUldUfSbPl/ddMiC8e19e
-LrM326W4/F+tva8DE8dGy6ojyg023b6NfM/VKQGGGA9iVOJUIkNV67rTKs5npiK8
-teSqME/NdORF43ZAzF0qkGZqvBLAOGZXCFRpRb7QDnTO6NpyfCiOHIj4rkb9XlpX
-OI4DkqfsMeve6pyYYperLoVA3bhIj8T3qzjVXgRdVKjG+Cz4afwQ9gsP5WIKr9wT
-VlzhTSdBx9c64ZuG+6bphH2cVUVUdtWTJVSd+jx1nGJeaOiP+1Pv/nB8A/wMnM0+
-oucA+oxQhWPVnIczlWyZ0Scs7HmaR9r0ZkWROSX+WtlQn5N1gU0fpFsnyfiFh47o
-XF2sCDbAXtC8KckNI39vUM5uYTsZlrhgA+g5uzYRrlFBJnvV6Ds/nHuDu1ZNc6nK
-9Le7Y0TkceLZNfmGZX0v19clFt1d73c8cnbHwTVB0kz/hmffKEzoX8A7IJOjWv5w
-bCRiIZL9eODMX2oaBby0dvEgn/5eUgm+zZHfBgrxgl2n2+BuIUQ=
-=4Khs
------END PGP SIGNATURE-----
-
---f3wecsvhqugikgzn--
