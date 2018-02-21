@@ -1,45 +1,93 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 07/16] drm/sun4i: Add support for H3 display engine
-Date: Tue, 27 Feb 2018 23:26:52 +0100
-Message-Id: <20180227222701.9716-8-jernej.skrabec@siol.net>
-In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <1519193048.18794.42.camel@mtkswgap22>
+References: <cover.1518424204.git.ryder.lee@mediatek.com>
+ <61928ad523a7aeffb8f16d4caad56836b65ae407.1518424204.git.ryder.lee@mediatek.com>
+ <CAL_JsqJgo0pKJjrs2fdw+q=DJYwht0X5L3Bomz8gf98mEN7hkg@mail.gmail.com>
+ <1519193048.18794.42.camel@mtkswgap22>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Wed, 21 Feb 2018 08:10:37 -0600
+Message-ID: <CAL_JsqLjcMpS=bLzAV0arLJY143O1XefjSR0djM73E8uC4oJHg@mail.gmail.com>
+Subject: Re: [SPAM]Re: [PATCH v3 4/5] dt-bindings: clock: mediatek: update
+ audsys documentation to adapt MFD device
+To: Ryder Lee <ryder.lee@mediatek.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org,
+ Matthias Brugger <matthias.bgg@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-H3 display engine has two mixers which are connected to HDMI and TV
-output.
+On Wed, Feb 21, 2018 at 12:04 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+> On Mon, 2018-02-19 at 12:29 -0600, Rob Herring wrote:
+>> On Mon, Feb 12, 2018 at 5:28 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+>> > The MediaTek audio hardware block that exposes functionalities that are
+>> > handled by separate subsystems in the kernel.  These functions are all
+>> > mapped somewhere at 0x112xxxxx, and there are some control bits are mixed
+>> > up with other functions within the same registers.
+>>
+>> I still don't think this change is necessary.
+>>
+>> Just because a hardware block in DT maps to different subsystems in a
+>> particular OS doesn't mean you need a DT node for each OS subsystem.
+>> What we have subsystems for changes over time and DT shouldn't really
+>> be changing based on that. And DT is not the only way to instantiate
+>> drivers.
+>>
+>
+> Apart right now we have the definition of both functions. The other
+> location is here:../sonud/mt2701-afe-pcm.txt. The ways I could come up
+> with are:
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+There are several problems you need to fix. First,
+"mediatek,mt2701-audsys" is not documented. It is only used in the
+example. Second, bindings/arm/mediatek/mediatek,audsys.txt should move
+to bindings/sound/ if it is only audio related functions. Or perhaps
+just combine the 2 documents because it is all inconsistent currently.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 3957c2ff6870..a0f43b81c64c 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -359,6 +359,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun7i-a20-display-engine" },
- 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
- 	{ .compatible = "allwinner,sun8i-a83t-display-engine" },
-+	{ .compatible = "allwinner,sun8i-h3-display-engine" },
- 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
- 	{ }
- };
--- 
-2.16.2
+The 2 documents are inconsistent as to what is the relationship of
+-audsys and -audio (afe) nodes. mt2701-afe-pcm.txt shows that the AFE
+is already a child of -audsys. The -audsys node should have
+#clock-cells. It should also not be a simple-mfd (another
+inconsistency in the binding) because it needs to probe first to
+provide clocks to child nodes, and then trigger probing the child
+nodes.
+
+Rob
+
+>
+> 1. Add a dummy MFD driver (need to think a new compatible or just use
+> '*-audsys' which has already been picked by clock driver) to instantiate
+> two sub-devices through id_table and mfd_cell.
+>
+> 2. For the sake of simplification - add a new compatible "simple-mfd".
+>
+> 3. The last thing - keep two nodes separated/independent. (x)
+>
+> I'm not sure which one is better.
+>
+>
+>
+> @Lee @Matthias: What do you suggest?
+>
+> Ryder.
+>
+>
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
