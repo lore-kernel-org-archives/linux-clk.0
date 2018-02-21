@@ -1,146 +1,50 @@
-Return-Path: <robin.murphy@arm.com>
-Subject: Re: [PATCH 1/8] clk: Add clk_bulk_alloc functions
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- Maciej Purski <m.purski@samsung.com>, linux-media@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Cc: David Airlie <airlied@linux.ie>,
- Michael Turquette <mturquette@baylibre.com>, Kamil Debski <kamil@wypas.org>,
- Andrzej Hajda <a.hajda@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Thibault Saunier <thibault.saunier@osg.samsung.com>,
- Joonyoung Shim <jy0922.shim@samsung.com>,
- Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Inki Dae <inki.dae@samsung.com>, Jeongtae Park <jtp.park@samsung.com>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Seung-Woo Kim <sw0312.kim@samsung.com>, Hans Verkuil <hansverk@cisco.com>,
- Kyungmin Park <kyungmin.park@samsung.com>
-References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
- <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
- <1519055046-2399-2-git-send-email-m.purski@samsung.com>
- <b67b5043-f5e5-826a-f0b8-f7cf722c61e6@arm.com>
- <f13fb12b-54e6-104b-4ec0-192d1bb72cc8@samsung.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <a8bb8965-12af-c3e8-3d67-6af37059b33e@arm.com>
-Date: Tue, 20 Feb 2018 14:19:32 +0000
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:58030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932767AbeBUQVM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 21 Feb 2018 11:21:12 -0500
 MIME-Version: 1.0
-In-Reply-To: <f13fb12b-54e6-104b-4ec0-192d1bb72cc8@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180221101527.25554-4-m.szyprowski@samsung.com>
+References: <CGME20180221101533eucas1p2c0fdc0b744b1e026906bd047507f5701@eucas1p2.samsung.com>
+ <20180221101527.25554-1-m.szyprowski@samsung.com> <20180221101527.25554-4-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 21 Feb 2018 17:21:09 +0100
+Message-ID: <CAJKOXPdHT6M15Kw43ve61DcprT_4-669Ucd9t2icUdOQHuYZdw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] clk: samsung: exynos542x: Move PD-dependent clocks to
+ Exynos5x sub-CMU driver
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
+Minor nit - the driver you are touching is "clk-exynos5420" so let's
+use the same prefix for commit subject (instead of 542x).
 
-On 20/02/18 09:36, Marek Szyprowski wrote:
-> Hi Robin,
-> 
-> On 2018-02-19 17:29, Robin Murphy wrote:
->> Hi Maciej,
->>
->> On 19/02/18 15:43, Maciej Purski wrote:
->>> When a driver is going to use clk_bulk_get() function, it has to
->>> initialize an array of clk_bulk_data, by filling its id fields.
->>>
->>> Add a new function to the core, which dynamically allocates
->>> clk_bulk_data array and fills its id fields. Add clk_bulk_free()
->>> function, which frees the array allocated by clk_bulk_alloc() function.
->>> Add a managed version of clk_bulk_alloc().
->>
->> Seeing how every subsequent patch ends up with the roughly this same 
->> stanza:
->>
->>     x = devm_clk_bulk_alloc(dev, num, names);
->>     if (IS_ERR(x)
->>         return PTR_ERR(x);
->>     ret = devm_clk_bulk_get(dev, x, num);
->>
->> I wonder if it might be better to simply implement:
->>
->>     int devm_clk_bulk_alloc_get(dev, &x, num, names)
->>
->> that does the whole lot in one go, and let drivers that want to do 
->> more fiddly things continue to open-code the allocation.
->>
->> But perhaps that's an abstraction too far... I'm not all that familiar 
->> with the lie of the land here.
-> 
-> Hmmm. This patchset clearly shows, that it would be much simpler if we
-> get rid of clk_bulk_data structure at all and let clk_bulk_* functions
-> to operate on struct clk *array[]. Typically the list of clock names
-> is already in some kind of array (taken from driver data or statically
-> embedded into driver), so there is little benefit from duplicating it
-> in clk_bulk_data. Sadly, I missed clk_bulk_* api discussion and maybe
-> there are other benefits from this approach.
-> 
-> If not, I suggest simplifying clk_bulk_* api by dropping clk_bulk_data
-> structure and switching to clock ptr array:
-> 
-> int clk_bulk_get(struct device *dev, int num_clock, struct clk *clocks[],
->                   const char *clk_names[]);
-> int clk_bulk_prepare(int num_clks, struct clk *clks[]);
-> int clk_bulk_enable(int num_clks, struct clk *clks[]);
-> ...
+With the patch itself I am okay:
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Yes, that's certainly a possibility; if on the other hand there are 
-desirable reasons for the encapsulation (personally, I do think it's 
-quite neat), then maybe num_clocks should get pushed down into 
-clk_bulk_data as well - then with dedicated alloc/free functions as 
-proposed here it could become a simple opaque cookie as far as callers 
-are concerned.
+Best regards,
+Krzysztof
 
-I also haven't looked into the origins of the bulk API design, though; 
-I've just been familiarising myself from the perspective of reviewing 
-general clk API usage in drivers.
-
-Robin.
-
->>> Signed-off-by: Maciej Purski <m.purski@samsung.com>
->>> ---
->>>   drivers/clk/clk-bulk.c   | 16 ++++++++++++
->>>   drivers/clk/clk-devres.c | 37 +++++++++++++++++++++++++---
->>>   include/linux/clk.h      | 64 
->>> ++++++++++++++++++++++++++++++++++++++++++++++++
->>>   3 files changed, 113 insertions(+), 4 deletions(-)
->>>
->>
->> [...]
->>> @@ -598,6 +645,23 @@ struct clk *clk_get_sys(const char *dev_id, 
->>> const char *con_id);
->>>     #else /* !CONFIG_HAVE_CLK */
->>>   +static inline struct clk_bulk_data *clk_bulk_alloc(int num_clks,
->>> +                           const char **clk_ids)
->>> +{
->>> +    return NULL;
->>
->> Either way, is it intentional not returning an ERR_PTR() value in this 
->> case? Since NULL will pass an IS_ERR() check, it seems a bit fragile 
->> for an allocation call to apparently succeed when the whole API is 
->> configured out (and I believe introducing new uses of IS_ERR_OR_NULL() 
->> is in general strongly discouraged.)
->>
->> Robin.
->>
->>> +}
->>> +
->>> +static inline struct clk_bulk_data *devm_clk_bulk_alloc(struct 
->>> device *dev,
->>> +                            int num_clks,
->>> +                            const char **clk_ids)
->>> +{
->>> +    return NULL;
->>> +}
->>> +
->>> +static inline void clk_bulk_free(struct clk_bulk_data *clks)
->>> +{
->>> +}
->>> +
->>>   static inline struct clk *clk_get(struct device *dev, const char *id)
->>>   {
->>>       return NULL;
->>
-> Best regards
+On Wed, Feb 21, 2018 at 11:15 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Clocks related to DISP, GSC and MFC blocks require special handling for
+> power domain turn on/off sequences. Till now this was handled by Exynos
+> power domain driver, but that approach was limited only to some special
+> cases. This patch moves handling of those operations to clock controller
+> driver. This gives more flexibility and allows fine tune values of some
+> clock-specific registers. This patch moves handling of those mentioned
+> clocks to Exynos5x sub-CMU driver instantiated from Exynos5420 driver.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/Makefile              |   1 +
+>  drivers/clk/samsung/clk-exynos5420.c      | 121 +++++++++++++++++++++++-------
+>  drivers/clk/samsung/clk-exynos5x-subcmu.c |   2 +
+>  drivers/soc/samsung/pm_domains.c          |   2 +
+>  4 files changed, 100 insertions(+), 26 deletions(-)
