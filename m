@@ -1,100 +1,91 @@
-Return-Path: <Claudiu.Beznea@microchip.com>
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-To: Sean Young <sean@mess.org>
-CC: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
-	<krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
-	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
-	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
-	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
-	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-	<mchehab@kernel.org>, <lee.jones@linaro.org>, <daniel.thompson@linaro.org>,
-	<jingoohan1@gmail.com>, <milo.kim@ti.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@free-electrons.com>, <linux-pwm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
-	<linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
- <20180222130131.46fcuurp4h6dc7wb@gofer.mess.org>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <8d0f25e6-3bbf-cbbc-7eef-abde0127f2bc@microchip.com>
-Date: Thu, 22 Feb 2018 15:23:40 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180222130131.46fcuurp4h6dc7wb@gofer.mess.org>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: Claudiu.Beznea@microchip.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51328 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932742AbeBUKPj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Feb 2018 05:15:39 -0500
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 6/6] ARM: dts: exynos: Remove obsolete clock properties from
+ power domains
+Date: Wed, 21 Feb 2018 11:15:27 +0100
+Message-id: <20180221101527.25554-7-m.szyprowski@samsung.com>
+In-reply-to: <20180221101527.25554-1-m.szyprowski@samsung.com>
+References: <20180221101527.25554-1-m.szyprowski@samsung.com>
+        <CGME20180221101535eucas1p2e99fbf00fd97bb935b02d12e7c225da0@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Handling of special clock operations on power domain on/off sequences has
+been moved to respective Exynos clock controller drivers and clock properties
+have been marked as deprecated. Remove all clock properties from existing
+Exynos power domain nodes, as they are no longer used.
 
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos5250.dtsi |  4 ----
+ arch/arm/boot/dts/exynos5420.dtsi | 14 --------------
+ 2 files changed, 18 deletions(-)
 
-On 22.02.2018 15:01, Sean Young wrote:
-> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
->> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
->> were adapted to this change.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
->> ---
-> 
-> -snip-
-> 
->> diff --git a/drivers/media/rc/ir-rx51.c b/drivers/media/rc/ir-rx51.c
->> index 49265f02e772..a971b02ea021 100644
->> --- a/drivers/media/rc/ir-rx51.c
->> +++ b/drivers/media/rc/ir-rx51.c
->> @@ -55,10 +55,13 @@ static int init_timing_params(struct ir_rx51 *ir_rx51)
->>  {
->>  	struct pwm_device *pwm = ir_rx51->pwm;
->>  	int duty, period = DIV_ROUND_CLOSEST(NSEC_PER_SEC, ir_rx51->freq);
->> +	struct pwm_caps caps = { };
->>  
->>  	duty = DIV_ROUND_CLOSEST(ir_rx51->duty_cycle * period, 100);
->>  
->> -	pwm_config(pwm, duty, period);
->> +	pwm_get_caps(pwm->chip, pwm, &caps);
->> +
->> +	pwm_config(pwm, duty, period, BIT(ffs(caps.modes) - 1));
->>  
->>  	return 0;
->>  }
->> diff --git a/drivers/media/rc/pwm-ir-tx.c b/drivers/media/rc/pwm-ir-tx.c
->> index 27d0f5837a76..c630e1b450a3 100644
->> --- a/drivers/media/rc/pwm-ir-tx.c
->> +++ b/drivers/media/rc/pwm-ir-tx.c
->> @@ -61,6 +61,7 @@ static int pwm_ir_tx(struct rc_dev *dev, unsigned int *txbuf,
->>  {
->>  	struct pwm_ir *pwm_ir = dev->priv;
->>  	struct pwm_device *pwm = pwm_ir->pwm;
->> +	struct pwm_caps caps = { };
->>  	int i, duty, period;
->>  	ktime_t edge;
->>  	long delta;
->> @@ -68,7 +69,9 @@ static int pwm_ir_tx(struct rc_dev *dev, unsigned int *txbuf,
->>  	period = DIV_ROUND_CLOSEST(NSEC_PER_SEC, pwm_ir->carrier);
->>  	duty = DIV_ROUND_CLOSEST(pwm_ir->duty_cycle * period, 100);
->>  
->> -	pwm_config(pwm, duty, period);
->> +	pwm_get_caps(pwm->chip, pwm, &caps);
->> +
->> +	pwm_config(pwm, duty, period, BIT(ffs(caps.modes) - 1));
->>  
->>  	edge = ktime_get();
->>  
-> 
-> The two PWM rc-core drivers need PWM_MODE(NORMAL), not the first available
-> mode that the device supports. If mode normal is not supported, then probe
-> should fail.
-OK, thank you for your inputs. I will address this in next version.
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index bb4180ef7885..54b0ecd2c4fd 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -132,10 +132,6 @@
+ 			reg = <0x100440A0 0x20>;
+ 			#power-domain-cells = <0>;
+ 			label = "DISP1";
+-			clocks = <&clock CLK_FIN_PLL>,
+-				 <&clock CLK_MOUT_ACLK200_DISP1_SUB>,
+-				 <&clock CLK_MOUT_ACLK300_DISP1_SUB>;
+-			clock-names = "oscclk", "clk0", "clk1";
+ 		};
+ 
+ 		pd_mau: power-domain@100440c0 {
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 2f3cb2a97f71..9672d0e51f69 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -276,10 +276,6 @@
+ 			reg = <0x10044000 0x20>;
+ 			#power-domain-cells = <0>;
+ 			label = "GSC";
+-			clocks = <&clock CLK_FIN_PLL>,
+-				 <&clock CLK_MOUT_USER_ACLK300_GSCL>,
+-				 <&clock CLK_GSCL0>, <&clock CLK_GSCL1>;
+-			clock-names = "oscclk", "clk0", "asb0", "asb1";
+ 		};
+ 
+ 		isp_pd: power-domain@10044020 {
+@@ -292,10 +288,6 @@
+ 		mfc_pd: power-domain@10044060 {
+ 			compatible = "samsung,exynos4210-pd";
+ 			reg = <0x10044060 0x20>;
+-			clocks = <&clock CLK_FIN_PLL>,
+-				 <&clock CLK_MOUT_USER_ACLK333>,
+-				 <&clock CLK_ACLK333>;
+-			clock-names = "oscclk", "clk0","asb0";
+ 			#power-domain-cells = <0>;
+ 			label = "MFC";
+ 		};
+@@ -312,12 +304,6 @@
+ 			reg = <0x100440C0 0x20>;
+ 			#power-domain-cells = <0>;
+ 			label = "DISP";
+-			clocks = <&clock CLK_FIN_PLL>,
+-				 <&clock CLK_MOUT_USER_ACLK200_DISP1>,
+-				 <&clock CLK_MOUT_USER_ACLK300_DISP1>,
+-				 <&clock CLK_MOUT_USER_ACLK400_DISP1>,
+-				 <&clock CLK_FIMD1>, <&clock CLK_MIXER>;
+-			clock-names = "oscclk", "clk0", "clk1", "clk2", "asb0", "asb1";
+ 		};
+ 
+ 		mau_pd: power-domain@100440e0 {
+-- 
+2.15.0
 
-
-Thank you,
-Claudiu Beznea
-> 
-> 
-> Sean
-> 
