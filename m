@@ -1,70 +1,64 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org,
-	sricharan@codeaurora.org,
-	linux@arm.linux.org.uk
-Subject: [PATCH v8 12/15] dt-bindings: clock: Document qcom,krait-cc
-Date: Tue, 27 Feb 2018 19:36:59 +0530
-Message-Id: <1519740422-3835-13-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <Claudiu.Beznea@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
+	<krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
+	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
+	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
+	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+	<mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
+	<daniel.thompson@linaro.org>, <jingoohan1@gmail.com>, <milo.kim@ti.com>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>,
+	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>, Claudiu Beznea
+	<claudiu.beznea@microchip.com>
+Subject: [PATCH v3 03/10] pwm: cros-ec: populate PWM mode in of_xlate function
+Date: Thu, 22 Feb 2018 14:01:14 +0200
+Message-ID: <1519300881-8136-4-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: claudiu.beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Populate PWM mode in of_xlate function to avoid pwm_apply_state() failure.
 
-The Krait clock controller controls the krait CPU and the L2 clocks
-consisting a primary mux and secondary mux. Add document for that.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- .../devicetree/bindings/clock/qcom,krait-cc.txt    | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+ drivers/pwm/pwm-cros-ec.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-new file mode 100644
-index 0000000..874138f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-@@ -0,0 +1,22 @@
-+Krait Clock Controller
+diff --git a/drivers/pwm/pwm-cros-ec.c b/drivers/pwm/pwm-cros-ec.c
+index 9c13694eaa24..e54954c13323 100644
+--- a/drivers/pwm/pwm-cros-ec.c
++++ b/drivers/pwm/pwm-cros-ec.c
+@@ -137,6 +137,7 @@ static struct pwm_device *
+ cros_ec_pwm_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
+ {
+ 	struct pwm_device *pwm;
++	struct pwm_caps caps;
+ 
+ 	if (args->args[0] >= pc->npwm)
+ 		return ERR_PTR(-EINVAL);
+@@ -145,8 +146,11 @@ cros_ec_pwm_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
+ 	if (IS_ERR(pwm))
+ 		return pwm;
+ 
++	pwm_get_caps(pc, pwm, &caps);
 +
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+			"qcom,krait-cc-v1"
-+			"qcom,krait-cc-v2"
-+
-+- #clock-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: must be 1
-+
-+Example:
-+
-+	kraitcc: clock-controller {
-+		compatible = "qcom,krait-cc-v1";
-+		#clock-cells = <1>;
-+	};
+ 	/* The EC won't let us change the period */
+ 	pwm->args.period = EC_PWM_MAX_DUTY;
++	pwm->args.mode = BIT(ffs(caps.modes) - 1);
+ 
+ 	return pwm;
+ }
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
