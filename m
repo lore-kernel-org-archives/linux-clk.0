@@ -1,65 +1,66 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 03/15] clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
-Date: Sat, 24 Feb 2018 22:45:33 +0100
-Message-Id: <20180224214545.3740-4-jernej.skrabec@siol.net>
-In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+Return-Path: <Claudiu.Beznea@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
+	<krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
+	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
+	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
+	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+	<mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
+	<daniel.thompson@linaro.org>, <jingoohan1@gmail.com>, <milo.kim@ti.com>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>,
+	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>, Claudiu Beznea
+	<claudiu.beznea@microchip.com>
+Subject: [PATCH v3 02/10] pwm: clps711x: populate PWM mode in of_xlate function
+Date: Thu, 22 Feb 2018 14:01:13 +0200
+Message-ID: <1519300881-8136-3-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: claudiu.beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Some units have to be able to set it's own clock precisely to work
-correctly. Allow them to do so by adding CLK_SET_RATE_PARENT flag.
+Populate PWM mode in of_xlate function to avoid pwm_apply_state() failure.
 
-Add this flag to DE, TCON and HDMI clocks.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/pwm/pwm-clps711x.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index b9f39078c0b2..77ed0b0ba681 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -452,11 +452,13 @@ static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
+diff --git a/drivers/pwm/pwm-clps711x.c b/drivers/pwm/pwm-clps711x.c
+index 26ec24e457b1..2a4d31ab3af0 100644
+--- a/drivers/pwm/pwm-clps711x.c
++++ b/drivers/pwm/pwm-clps711x.c
+@@ -109,10 +109,20 @@ static const struct pwm_ops clps711x_pwm_ops = {
+ static struct pwm_device *clps711x_pwm_xlate(struct pwm_chip *chip,
+ 					     const struct of_phandle_args *args)
+ {
++	struct pwm_device *pwm;
++	struct pwm_caps caps;
++
+ 	if (args->args[0] >= chip->npwm)
+ 		return ERR_PTR(-EINVAL);
  
- static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
- static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
--				 0x104, 0, 4, 24, 3, BIT(31), 0);
-+				 0x104, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
+-	return pwm_request_from_chip(chip, args->args[0], NULL);
++	pwm = pwm_request_from_chip(chip, args->args[0], NULL);
++	if (IS_ERR(pwm))
++		return pwm;
++
++	pwm_get_caps(chip, pwm, &caps);
++	pwm->args.mode = BIT(ffs(caps.modes) - 1);
++
++	return pwm;
+ }
  
- static const char * const tcon_parents[] = { "pll-video" };
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_clk, "tcon", tcon_parents,
--				 0x118, 0, 4, 24, 3, BIT(31), 0);
-+				 0x118, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static const char * const tve_parents[] = { "pll-de", "pll-periph1" };
- static SUNXI_CCU_M_WITH_MUX_GATE(tve_clk, "tve", tve_parents,
-@@ -487,7 +489,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 
- static const char * const hdmi_parents[] = { "pll-video" };
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
--				 0x150, 0, 4, 24, 2, BIT(31), 0);
-+				 0x150, 0, 4, 24, 2, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
- 		      0x154, BIT(31), 0);
+ static int clps711x_pwm_probe(struct platform_device *pdev)
 -- 
-2.16.2
+2.7.4
