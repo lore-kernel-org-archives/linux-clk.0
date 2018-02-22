@@ -1,206 +1,70 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58518 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030245AbeBOM4Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Feb 2018 07:56:16 -0500
-Subject: Re: [PATCH v2] clk: Properly update prepare/enable count on orphan
- clock reparent
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <7e2e6f06-6af3-5592-d44d-438496e2aa52@samsung.com>
-Date: Thu, 15 Feb 2018 13:56:09 +0100
-MIME-version: 1.0
-In-reply-to: <1518695051.2883.77.camel@baylibre.com>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-References: <CGME20180126091902eucas1p2b3ad9978e3ab09bd7a2bd9123c9eecaa@eucas1p2.samsung.com>
-        <20180126091845.11902-1-m.szyprowski@samsung.com>
-        <20180127004917.GI28313@codeaurora.org>
-        <7c7810e0-efcb-c837-1b18-328e59c3b2df@samsung.com>
-        <747280a0-77ec-4407-9545-134019b24609@samsung.com>
-        <1518695051.2883.77.camel@baylibre.com>
+Received: from mail.kernel.org ([198.145.29.99]:41802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753054AbeBVJmi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Feb 2018 04:42:38 -0500
+Date: Thu, 22 Feb 2018 17:42:29 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Bai Ping <ping.bai@nxp.com>
+Cc: sboyd@kernel.org, robh+dt@kernel.org, kernel@pengutronix.de,
+        aisheng.dong@nxp.com, linux-imx@nxp.com, jacky.baip@gmail.com,
+        fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] driver: clk: imx: Add CLK_IS_CRITICAL flag for
+ busy diviver and busy mux
+Message-ID: <20180222094228.GK3217@dragon>
+References: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome,
+On Wed, Feb 07, 2018 at 10:00:16AM +0800, Bai Ping wrote:
+> The busy divider and busy mux is actually used by the system critical clocks,
+> so add 'CLK_IS_CRITICAL' to clocks registered with these two type.
 
-On 2018-02-15 12:44, Jerome Brunet wrote:
-> On Wed, 2018-02-14 at 14:37 +0100, Marek Szyprowski wrote:
->> On 2018-01-30 10:01, Marek Szyprowski wrote:
->>> On 2018-01-27 01:49, Stephen Boyd wrote:
->>>> On 01/26, Marek Szyprowski wrote:
->>>>> If orphaned clock has been already prepared/enabled (for example if
->>>>> it or
->>>>> one of its children has CLK_IS_CRITICAL flag), then the prepare/enable
->>>>> counters of the newly assigned parent are not updated correctly. This
->>>>> might later cause warnings during changing clock parents.
->>>> This doesn't feel right. Perhaps we should delay enabling a clk
->>>> if it's CRITICAL until we adopt an orphaned clk. Good news is we
->>>> have orphan status tracking now so this should be pretty simple.
->>> Not really. It won't be so simple, because we would need to track the
->>> status of the whole clock sub-tree for enabling critical clocks. Even
->>> then we would need to delay enabling them until the real top clock is
->>> registered.
->>>
->>>> Otherwise migrating the count up is complicated and requires us
->>>> to call the prepare/enable ops on a critical clk and then keep
->>>> doing that each time it gets re-parented. Do you have this case,
->>>> where some clk is marked as CRITICAL, and then we need to migrate
->>>> that enable/prepare count to the parent?
->>> Yes, this is the case of Exynos5422-based boards, where we have a
->>> bunch of critical clocks, which are reparented from internal PLL to
->>> external oscillator when respective power domain is suspended.
->>>
->>> It took me a while to gather all the needed information from the
->>> debug logs. Here is one example of such clock tree:
->>>
->>> fin_pll (clk1, top clock, external pll)
->>>      fout_dpll (clk2)
->>>          mout_sclk_dpll (clk3)
->>>              mout_aclk300_disp1 (clk4)
->>>                  dout_aclk300_disp1 (clk5)
->>>                      mout_sw_aclk300_disp1 (clk6)
->>>                          mout_user_aclk300_disp1 (clk7)
->>>                              aclk300_disp1 (clk8, critical)
->>>
->>> Before turning off power domains, aclk300_disp1 is reparented
->>> directly to fin_pll (this is a hardware requirement). When power
->>> domain is turned on again, aclk300_disp1 is reparented back to
->>> mout_user_aclk300_disp1.
->>>
->>> Clocks are registered in the following order:
->>> 1, 2, 7, 3, 6, 5, 8, 4.
->>>
->>> In this case when critical clock is registered, clk4 is not yet
->>> available, so clocks 1-3 won't get proper prepare/enable count.
->>> Then this causes a warning during reparenting clk8 to clk1:
->>>
->>>   ------------[ cut here ]------------
->>>   WARNING: CPU: 0 PID: 59 at drivers/clk/clk.c:811
->>> clk_core_disable_lock+0x18/0x24
->>>   Modules linked in:
->>>   CPU: 0 PID: 59 Comm: kworker/0:1 Not tainted
->>> 4.15.0-next-20180130-dirty #131
->>>   Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->>>   Workqueue: pm genpd_power_off_work_fn
->>>   [<c01114e4>] (unwind_backtrace) from [<c010dbc0>] (show_stack+0x10/0x14)
->>>   [<c010dbc0>] (show_stack) from [<c09b7b94>] (dump_stack+0x90/0xc8)
->>>   [<c09b7b94>] (dump_stack) from [<c0124ff8>] (__warn+0xe4/0x110)
->>>   [<c0124ff8>] (__warn) from [<c0125064>] (warn_slowpath_null+0x40/0x48)
->>>   [<c0125064>] (warn_slowpath_null) from [<c048e650>]
->>> (clk_core_disable_lock+0x18/0x24)
->>>   [<c048e650>] (clk_core_disable_lock) from [<c048f51c>]
->>> (clk_core_disable_unprepare+0xc/0x20)
->>>   [<c048f51c>] (clk_core_disable_unprepare) from [<c048faec>]
->>> (__clk_set_parent_after+0x48/0x4c)
->>>   [<c048faec>] (__clk_set_parent_after) from [<c048fd28>]
->>> (clk_core_set_parent_nolock+0x238/0x5d0)
->>>   [<c048fd28>] (clk_core_set_parent_nolock) from [<c04902e4>]
->>> (clk_set_parent+0x38/0x6c)
->>>   [<c04902e4>] (clk_set_parent) from [<c049d760>]
->>> (exynos_pd_power+0x74/0x1cc)
->>>   [<c049d760>] (exynos_pd_power) from [<c0552064>]
->>> (genpd_power_off+0x164/0x264)
->>>   [<c0552064>] (genpd_power_off) from [<c0552430>]
->>> (genpd_power_off_work_fn+0x2c/0x40)
->>>   [<c0552430>] (genpd_power_off_work_fn) from [<c014355c>]
->>> (process_one_work+0x1d0/0x7bc)
->>>   [<c014355c>] (process_one_work) from [<c0143bb4>]
->>> (worker_thread+0x34/0x4dc)
->>>   [<c0143bb4>] (worker_thread) from [<c014a348>] (kthread+0x128/0x164)
->>>   [<c014a348>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
->>>   Exception stack(0xeeb01fb0 to 0xeeb01ff8)
->>>   1fa0:                                     00000000 00000000 00000000
->>> 00000000
->>>   1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->>> 00000000
->>>   1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
->>>   ---[ end trace 48eea511a44c78ef ]---
->>>   ------------[ cut here ]------------
->>>   WARNING: CPU: 0 PID: 59 at drivers/clk/clk.c:684
->>> clk_core_disable_unprepare+0x18/0x20
->>>   Modules linked in:
->>>   CPU: 0 PID: 59 Comm: kworker/0:1 Tainted: G        W
->>> 4.15.0-next-20180130-dirty #131
->>>   Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->>>   Workqueue: pm genpd_power_off_work_fn
->>>   [<c01114e4>] (unwind_backtrace) from [<c010dbc0>] (show_stack+0x10/0x14)
->>>   [<c010dbc0>] (show_stack) from [<c09b7b94>] (dump_stack+0x90/0xc8)
->>>   [<c09b7b94>] (dump_stack) from [<c0124ff8>] (__warn+0xe4/0x110)
->>>   [<c0124ff8>] (__warn) from [<c0125064>] (warn_slowpath_null+0x40/0x48)
->>>   [<c0125064>] (warn_slowpath_null) from [<c048f528>]
->>> (clk_core_disable_unprepare+0x18/0x20)
->>>   [<c048f528>] (clk_core_disable_unprepare) from [<c048faec>]
->>> (__clk_set_parent_after+0x48/0x4c)
->>>   [<c048faec>] (__clk_set_parent_after) from [<c048fd28>]
->>> (clk_core_set_parent_nolock+0x238/0x5d0)
->>>   [<c048fd28>] (clk_core_set_parent_nolock) from [<c04902e4>]
->>> (clk_set_parent+0x38/0x6c)
->>>   [<c04902e4>] (clk_set_parent) from [<c049d760>]
->>> (exynos_pd_power+0x74/0x1cc)
->>>   [<c049d760>] (exynos_pd_power) from [<c0552064>]
->>> (genpd_power_off+0x164/0x264)
->>>   [<c0552064>] (genpd_power_off) from [<c0552430>]
->>> (genpd_power_off_work_fn+0x2c/0x40)
->>>   [<c0552430>] (genpd_power_off_work_fn) from [<c014355c>]
->>> (process_one_work+0x1d0/0x7bc)
->>>   [<c014355c>] (process_one_work) from [<c0143bb4>]
->>> (worker_thread+0x34/0x4dc)
->>>   [<c0143bb4>] (worker_thread) from [<c014a348>] (kthread+0x128/0x164)
->>>   [<c014a348>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
->>>   Exception stack(0xeeb01fb0 to 0xeeb01ff8)
->>>   1fa0:                                     00000000 00000000 00000000
->>> 00000000
->>>   1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->>> 00000000
->>>   1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
->>>   ---[ end trace 48eea511a44c78f0 ]---
->>>
->>> Please note that this pattern happens for other critical clocks too.
->>>
->>>> Hopefully it isn't the worser case, where the clk is handed out
->>>> to some consumer but it's still orphaned at that point, and then
->>>> we have little control over the migration of state to the parent.
->>> Well, in my opinion my patch is simplest fix for the regression
->>> introduced by commit f8f8f1d04494 ("clk: Don't touch hardware when
->>> reparenting during registration"). It also doesn't have any side-effects
->>> as it affects only the situation when orphaned clock has been already
->>> prepared/enabled, what in practice means it or one of its children has
->>> critical flag. Reworking critical clock handling will be much more
->>> complicated.
->> Stephen, do you have any comments?
->>
->> The issue is there for almost 2 months... v4.16-rc1 is out and its
->> a good time to get a fix in (this or any other if you propose such).
->>
->> Best regards
-> Hi Marek,
->
-> I've sent another patch addressing the same issue (sorry, I did not see your
-> thread earlier)
->
-> While I agree parent adopting orphan need to take care of any existing count,
-> your solution could be missing a few things, like dealing with
-> CLK_OPS_PARENT_ENABLE clock types
->
-> Fortunately, __clk_set_parent_before() and __clk_set_parent_after() already deal
-> with those annoying stuff and does count migration well.
->
-> Would you mind trying this change [0] and let me know if works for you as well ?
->
-> [0] : https://lkml.kernel.org/r/20180214134340.17242-5-jbrunet@baylibre.com
+Are there any real world issues you have seen with this CLK_IS_CRITICAL
+missing from these busy clocks?
 
-I'm fine with your approach. It fixes the issue observed on 
-Exynos5422-based boards.
+> 
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+s/diviver/divider in the patch subject.
 
+Shawn
+
+> ---
+>  drivers/clk/imx/clk-busy.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+> index 6df3389..9903652 100644
+> --- a/drivers/clk/imx/clk-busy.c
+> +++ b/drivers/clk/imx/clk-busy.c
+> @@ -101,7 +101,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+>  
+>  	init.name = name;
+>  	init.ops = &clk_busy_divider_ops;
+> -	init.flags = CLK_SET_RATE_PARENT;
+> +	init.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL;
+>  	init.parent_names = &parent_name;
+>  	init.num_parents = 1;
+>  
+> @@ -175,7 +175,7 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+>  
+>  	init.name = name;
+>  	init.ops = &clk_busy_mux_ops;
+> -	init.flags = 0;
+> +	init.flags = CLK_IS_CRITICAL;
+>  	init.parent_names = parent_names;
+>  	init.num_parents = num_parents;
+>  
+> -- 
+> 1.9.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
