@@ -1,74 +1,90 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1517575828.3153.23.camel@baylibre.com>
-Subject: Re: [PATCH v5 00/10] clk: implement clock rate protection mechanism
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, Linus
- Walleij <linus.walleij@linaro.org>, Quentin Schulz
- <quentin.schulz@free-electrons.com>, Kevin Hilman <khilman@baylibre.com>,
- Maxime Ripard <maxime.ripard@free-electrons.com>
-Date: Fri, 02 Feb 2018 13:50:28 +0100
-In-Reply-To: <20180201174307.GC23162@codeaurora.org>
-References: <20171201215200.23523-1-jbrunet@baylibre.com>
-	 <151373031022.33554.13905466641279532222@resonance>
-	 <20171222021520.GO7997@codeaurora.org>
-	 <1517217778.3153.1.camel@baylibre.com>
-	 <20180201174307.GC23162@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sean@mess.org>
+Date: Thu, 22 Feb 2018 13:01:31 +0000
+From: Sean Young <sean@mess.org>
+To: Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: thierry.reding@gmail.com, shc_work@mail.ru, kgene@kernel.org,
+	krzk@kernel.org, linux@armlinux.org.uk, mturquette@baylibre.com,
+	sboyd@codeaurora.org, jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+	airlied@linux.ie, kamil@wypas.org, b.zolnierkie@samsung.com,
+	jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
+	rpurdie@rpsys.net, jacek.anaszewski@gmail.com, pavel@ucw.cz,
+	mchehab@kernel.org, lee.jones@linaro.org,
+	daniel.thompson@linaro.org, jingoohan1@gmail.com, milo.kim@ti.com,
+	robh+dt@kernel.org, mark.rutland@arm.com, corbet@lwn.net,
+	nicolas.ferre@microchip.com, alexandre.belloni@free-electrons.com,
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+Message-ID: <20180222130131.46fcuurp4h6dc7wb@gofer.mess.org>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-02-01 at 09:43 -0800, Stephen Boyd wrote:
-> > > > Applied to clk-protect-rate, with the exception that I did not apply
-> > > > "clk: fix CLK_SET_RATE_GATE with clock rate protection" as it breaks
-> > > > qcom clk code.
-> > > > 
-> > > > Stephen, do you plan to fix up the qcom clock code so that the
-> > > > SET_RATE_GATE improvement can go in?
-> > > > 
-> > > 
-> > > I started working on it a while back. Let's see if I can finish
-> > > it off this weekend.
-> > > 
-> > 
-> > Hi Stephen,
-> > 
-> > Have you been able find something to fix the qcom code regarding this issue ?
-> > 
+On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+> were adapted to this change.
 > 
-> This is what I have. I'm unhappy with a few things. First, I made
-> a spinlock for each clk, which is overkill. Most likely, just a
-> single spinlock is needed per clk-controller device. Second, I
-> haven't finished off the branch/gate part, so gating/ungating of
-> branches needs to be locked as well to prevent branches from
-> turning on while rates change. And finally, the 'branches' list is
-> duplicating a bunch of information about the child clks of an
-> RCG, so it feels like we need a core framework API to enable and
-> disable clks forcibly while remembering what is enabled/disabled
-> or at least to walk the clk tree and call some function.
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
 
-Looks similar to Mike's CCR idea ;)
+-snip-
 
-> 
-> The spinlock per clk-controller is duplicating the regmap lock we
-> already have, so we may want a regmap API to grab the lock, and
-> then another regmap API to do reads/writes without grabbing the
-> lock, and then finally release the lock with a regmap unlock API.
+> diff --git a/drivers/media/rc/ir-rx51.c b/drivers/media/rc/ir-rx51.c
+> index 49265f02e772..a971b02ea021 100644
+> --- a/drivers/media/rc/ir-rx51.c
+> +++ b/drivers/media/rc/ir-rx51.c
+> @@ -55,10 +55,13 @@ static int init_timing_params(struct ir_rx51 *ir_rx51)
+>  {
+>  	struct pwm_device *pwm = ir_rx51->pwm;
+>  	int duty, period = DIV_ROUND_CLOSEST(NSEC_PER_SEC, ir_rx51->freq);
+> +	struct pwm_caps caps = { };
+>  
+>  	duty = DIV_ROUND_CLOSEST(ir_rx51->duty_cycle * period, 100);
+>  
+> -	pwm_config(pwm, duty, period);
+> +	pwm_get_caps(pwm->chip, pwm, &caps);
+> +
+> +	pwm_config(pwm, duty, period, BIT(ffs(caps.modes) - 1));
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/media/rc/pwm-ir-tx.c b/drivers/media/rc/pwm-ir-tx.c
+> index 27d0f5837a76..c630e1b450a3 100644
+> --- a/drivers/media/rc/pwm-ir-tx.c
+> +++ b/drivers/media/rc/pwm-ir-tx.c
+> @@ -61,6 +61,7 @@ static int pwm_ir_tx(struct rc_dev *dev, unsigned int *txbuf,
+>  {
+>  	struct pwm_ir *pwm_ir = dev->priv;
+>  	struct pwm_device *pwm = pwm_ir->pwm;
+> +	struct pwm_caps caps = { };
+>  	int i, duty, period;
+>  	ktime_t edge;
+>  	long delta;
+> @@ -68,7 +69,9 @@ static int pwm_ir_tx(struct rc_dev *dev, unsigned int *txbuf,
+>  	period = DIV_ROUND_CLOSEST(NSEC_PER_SEC, pwm_ir->carrier);
+>  	duty = DIV_ROUND_CLOSEST(pwm_ir->duty_cycle * period, 100);
+>  
+> -	pwm_config(pwm, duty, period);
+> +	pwm_get_caps(pwm->chip, pwm, &caps);
+> +
+> +	pwm_config(pwm, duty, period, BIT(ffs(caps.modes) - 1));
+>  
+>  	edge = ktime_get();
+>  
 
-There is 'regsequence' for multiple write in a burst, but that's only if you do
-write only ... I suppose you are more in read/update/writeback mode, so it
-probably does not help much.
+The two PWM rc-core drivers need PWM_MODE(NORMAL), not the first available
+mode that the device supports. If mode normal is not supported, then probe
+should fail.
 
-Maybe we could extend regmap's regsequence, to do a sequence of
-regmap_update_bits() ?
 
-Another possibility could be to provide your own lock/unlock ops when
-registering the regmap. With this, you might be able to supply your own spinlock
-to regmap. This is already supported by regmap, would it help ?
-
-> This part is mostly an optimization, but it would be nice to have
-> so that multiple writes could be done in sequence. This way, the
-> RCG code could do the special locking sequence and the branch
-> code could do the fire and forget single bit update.
+Sean
