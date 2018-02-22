@@ -1,116 +1,95 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Lee
- Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Gabriel
- Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
-Subject: [PATCH 05/14] clk: stm32mp1: add Source Clocks for PLLs
-Date: Fri, 2 Feb 2018 15:03:33 +0100
-Message-ID: <1517580222-23301-6-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <weiyi.lu@mediatek.com>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
+	<weiyi.lu@mediatek.com>
+Subject: [PATCH v1 2/5] soc: mediatek: update power domain data of MT2712
+Date: Thu, 22 Feb 2018 13:48:48 +0800
+Message-ID: <20180222054851.26096-4-weiyi.lu@mediatek.com>
+In-Reply-To: <20180222054851.26096-1-weiyi.lu@mediatek.com>
+References: <20180222054851.26096-1-weiyi.lu@mediatek.com>
+Return-Path: weiyi.lu@mediatek.com
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+1. split MFG power domain into MFG/MFG_SC1/MFG_SC2/MFG_SC3
+according to MT2712 ECO design change
+2. add subdomain support for MT2712
 
-This patch adds source clocks for PLLs
-This patch also introduces MUX clock API.
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/clk/clk-stm32mp1.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ drivers/soc/mediatek/mtk-scpsys.c | 42 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 40 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index be5a4e5..1c9a84a 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -368,6 +368,14 @@ struct div_cfg {
- 	const struct clk_div_table *table;
- };
- 
-+struct mux_cfg {
-+	u32 reg_off;
-+	u8 shift;
-+	u8 width;
-+	u8 mux_flags;
-+	u32 *table;
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 59bd749c2f25..edf8fd6c2c85 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -664,12 +664,48 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+ 		.name = "mfg",
+ 		.sta_mask = PWR_STATUS_MFG,
+ 		.ctl_offs = SPM_MFG_PWR_CON,
+-		.sram_pdn_bits = GENMASK(11, 8),
+-		.sram_pdn_ack_bits = GENMASK(19, 16),
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
+ 		.clk_id = {CLK_MFG},
+ 		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
+ 		.active_wakeup = true,
+ 	},
++	[MT2712_POWER_DOMAIN_MFG_SC1] = {
++		.name = "mfg_sc1",
++		.sta_mask = BIT(22),
++		.ctl_offs = 0x02c0,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_MFG_SC2] = {
++		.name = "mfg_sc2",
++		.sta_mask = BIT(23),
++		.ctl_offs = 0x02c4,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
++	[MT2712_POWER_DOMAIN_MFG_SC3] = {
++		.name = "mfg_sc3",
++		.sta_mask = BIT(30),
++		.ctl_offs = 0x01f8,
++		.sram_pdn_bits = GENMASK(8, 8),
++		.sram_pdn_ack_bits = GENMASK(16, 16),
++		.clk_id = {CLK_NONE},
++		.active_wakeup = true,
++	},
 +};
 +
- static struct clk_hw *
- _clk_hw_register_gate(struct device *dev,
- 		      struct clk_hw_onecell_data *clk_data,
-@@ -419,6 +427,20 @@ struct div_cfg {
- 					     lock);
- }
- 
-+static struct clk_hw *
-+_clk_hw_register_mux(struct device *dev,
-+		     struct clk_hw_onecell_data *clk_data,
-+		     void __iomem *base, spinlock_t *lock,
-+		     const struct clock_config *cfg)
-+{
-+	struct mux_cfg *mux_cfg = cfg->cfg;
-+
-+	return clk_hw_register_mux(dev, cfg->name, cfg->parent_names,
-+				   cfg->num_parents, cfg->flags,
-+				   mux_cfg->reg_off + base, mux_cfg->shift,
-+				   mux_cfg->width, mux_cfg->mux_flags, lock);
-+}
-+
- /* MP1 Gate clock with set & clear registers */
- 
- static int mp1_gate_clk_enable(struct clk_hw *hw)
-@@ -550,6 +572,22 @@ static struct clk_hw *clk_register_mp1_gate(struct device *dev,
- 	DIV_TABLE(_id, _name, _parent, _flags, _offset, _shift, _width,\
- 		  _div_flags, NULL)
- 
-+#define MUX(_id, _name, _parents, _flags, _offset, _shift, _width, _mux_flags)\
-+{\
-+	.id		= _id,\
-+	.name		= _name,\
-+	.parent_names	= _parents,\
-+	.num_parents	= ARRAY_SIZE(_parents),\
-+	.flags		= _flags,\
-+	.cfg		=  &(struct mux_cfg) {\
-+		.reg_off	= _offset,\
-+		.shift		= _shift,\
-+		.width		= _width,\
-+		.mux_flags	= _mux_flags,\
-+	},\
-+	.func		= _clk_hw_register_mux,\
-+}
-+
- #define MP1_GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags)\
- {\
- 	.id		= _id,\
-@@ -577,6 +615,16 @@ static struct clk_hw *clk_register_mp1_gate(struct device *dev,
- 	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
- 
- 	FIXED_FACTOR(CK_HSE_DIV2, "clk-hse-div2", "ck_hse", 0, 1, 2),
-+
-+	/* ref clock pll */
-+	MUX(NO_ID, "ref1", ref12_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK12SELR,
-+	    0, 2, CLK_MUX_READ_ONLY),
-+
-+	MUX(NO_ID, "ref3", ref3_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK3SELR,
-+	    0, 2, CLK_MUX_READ_ONLY),
-+
-+	MUX(NO_ID, "ref4", ref4_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK4SELR,
-+	    0, 2, CLK_MUX_READ_ONLY),
++static const struct scp_subdomain scp_subdomain_mt2712[] = {
++	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VDEC},
++	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VENC},
++	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_ISP},
++	{MT2712_POWER_DOMAIN_MFG, MT2712_POWER_DOMAIN_MFG_SC1},
++	{MT2712_POWER_DOMAIN_MFG_SC1, MT2712_POWER_DOMAIN_MFG_SC2},
++	{MT2712_POWER_DOMAIN_MFG_SC2, MT2712_POWER_DOMAIN_MFG_SC3},
  };
  
- struct stm32_clock_match_data {
+ /*
+@@ -905,6 +941,8 @@ static const struct scp_soc_data mt2701_data = {
+ static const struct scp_soc_data mt2712_data = {
+ 	.domains = scp_domain_data_mt2712,
+ 	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
++	.subdomains = scp_subdomain_mt2712,
++	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt2712),
+ 	.regs = {
+ 		.pwr_sta_offs = SPM_PWR_STATUS,
+ 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
 -- 
-1.9.1
+2.12.5
