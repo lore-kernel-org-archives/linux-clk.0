@@ -1,70 +1,44 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Lee
- Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Gabriel
- Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
-Subject: [PATCH 12/14] clk: stm32mp1: add RTC clock
-Date: Fri, 2 Feb 2018 15:03:40 +0100
-Message-ID: <1517580222-23301-13-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:54168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753346AbeBVKyb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Feb 2018 05:54:31 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180221101527.25554-2-m.szyprowski@samsung.com>
+References: <CGME20180221101533eucas1p234b1801844ce8fac633377d129323422@eucas1p2.samsung.com>
+ <20180221101527.25554-1-m.szyprowski@samsung.com> <20180221101527.25554-2-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 22 Feb 2018 11:54:28 +0100
+Message-ID: <CAJKOXPftSvug8J_zMO0mmGWpFLHgpb4no4q2t=tW6Qva0fd0qg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] soc: samsung: pm_domains: Add blacklisting clock handling
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On Wed, Feb 21, 2018 at 11:15 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Handling of clock reparenting will be move to clock controller driver, so
+> add possibility to blacklist clock handling on systems, where the clock
+> controller already does all needed operations. This is needed to avoid
+> potential deadlock on clock reparenting during power domain on/off
+> procedure.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/soc/samsung/pm_domains.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
 
-This patch adds the RTC clock.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32mp1.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Feel free to take it through samsung-clk tree. Just in case of
+possible conflicts - could you put it on separate branch please?
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 5a1142c..1cb06b0 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -1179,6 +1179,15 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
- 	_MUX(_mux_offset, _mux_bit, _mux_width, 0),\
- }
- 
-+#define _GATEMUX(_gate_offset,\
-+		 _bit_idx,\
-+		 _mux_offset, _mux_bit, _mux_width)\
-+{\
-+	_NO_DIV,\
-+	_GATE(_gate_offset, _bit_idx, 0),\
-+	_MUX(_mux_offset, _mux_bit, _mux_width, 0),\
-+}
-+
- #define _MP1_GATE(_gate_offset, _bit_idx, _flags)\
- 		  _GATE_OPS(_gate_offset, _bit_idx, _flags, &mp1_gate_clk_ops)
- 
-@@ -1526,6 +1535,14 @@ static struct clk_hw *_clk_register_cktim(struct device *dev,
- 		 RCC_APB4ENSETR, 0, 0),
- 
- 	MP1_GATE(GPU_K, "gpu_k", "pll2_q", 0, RCC_AHB6ENSETR, 5, 0),
-+
-+	/* RTC clock */
-+	DIV(NO_ID, "ck_hse_rtc", "ck_hse", 0, RCC_RTCDIVR, 0, 7,
-+	    CLK_DIVIDER_ALLOW_ZERO),
-+
-+	COMPOSITE(RTC, "ck_rtc", rtc_src, CLK_OPS_PARENT_ENABLE |
-+		  CLK_SET_RATE_PARENT,
-+		  _GATEMUX(RCC_BDCR, 20, RCC_BDCR, 16, 2)),
- };
- 
- struct stm32_clock_match_data {
--- 
-1.9.1
+Best regards,
+Krzysztof
