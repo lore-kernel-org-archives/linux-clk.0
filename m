@@ -1,99 +1,172 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-db5eur01on0057.outbound.protection.outlook.com ([104.47.2.57]:43154
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750751AbeBXGUE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 24 Feb 2018 01:20:04 -0500
-From: Jacky Bai <ping.bai@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "jacky.baip@gmail.com" <jacky.baip@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3 4/4] driver: clk: imx: add clock driver for imx6sll
-Date: Sat, 24 Feb 2018 06:19:59 +0000
-Message-ID: <HE1PR04MB311302D386C13F246A820BE187C30@HE1PR04MB3113.eurprd04.prod.outlook.com>
-References: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
- <1517968819-12869-4-git-send-email-ping.bai@nxp.com>
- <20180224034552.GY3217@dragon>
-In-Reply-To: <20180224034552.GY3217@dragon>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <weiyi.lu@mediatek.com>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
+	<weiyi.lu@mediatek.com>
+Subject: [PATCH v1 5/5] clk: mediatek: update clock driver of MT2712
+Date: Thu, 22 Feb 2018 13:48:51 +0800
+Message-ID: <20180222054851.26096-7-weiyi.lu@mediatek.com>
+In-Reply-To: <20180222054851.26096-1-weiyi.lu@mediatek.com>
+References: <20180222054851.26096-1-weiyi.lu@mediatek.com>
+Return-Path: weiyi.lu@mediatek.com
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-> > a/drivers/clk/imx/clk-imx6sll.c b/drivers/clk/imx/clk-imx6sll.c new
-> > file mode 100644 index 0000000..e902b27
-> > --- /dev/null
-> > +++ b/drivers/clk/imx/clk-imx6sll.c
-> > @@ -0,0 +1,351 @@
-> > +/*
-> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> > + * Copyright 2017-2018 NXP.
-> > + *
-> > + * The code contained herein is licensed under the GNU General Public
-> > + * License. You may obtain a copy of the GNU General Public License
-> > + * Version 2 or later at the following locations:
->=20
-> SPDX tag instead?
+According to ECO design change,
+1. add new clock mux data and change some
+2. add new clock gate data and clock factor data
+3. change status register offset of infra subsystem
 
-Thanks, will fix it.
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt2712.c | 69 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 55 insertions(+), 14 deletions(-)
 
->=20
-> > + */
-> > +
-> > +#include <dt-bindings/clock/imx6sll-clock.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/clkdev.h>
-> > +#include <linux/err.h>
-> > +#include <linux/init.h>
-> > +#include <linux/io.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/of_irq.h>
-> > +#include <linux/types.h>
-> > +
-> > +#include "clk.h"
-> > +
-> > +#define CCM_ANALOG_PLL_BYPASS		(0x1 << 16)
-> > +#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
-> > +#define CCDR	0x4
->=20
-> There is no much point to use define for this particular offset.  Or if y=
-ou think
-> it's really useful, please make the indent unified with other defines.
->=20
-
-OK, will remove the define in V4.
-
-
-> > +	clks[IMX6SLL_CLK_PLL2_PFD0] =3D imx_clk_pfd("pll2_pfd0_352m",
-> "pll2_bus",	   base + 0x100, 0);
-> > +	clks[IMX6SLL_CLK_PLL2_PFD1] =3D imx_clk_pfd("pll2_pfd1_594m",
-> "pll2_bus",	   base + 0x100, 1);
-> > +	clks[IMX6SLL_CLK_PLL2_PFD2] =3D imx_clk_pfd("pll2_pfd2_396m",
-> "pll2_bus",	   base + 0x100, 2);
-> > +	clks[IMX6SLL_CLK_PLL2_PFD3] =3D imx_clk_pfd("pll2_pfd3_594m",
-> "pll2_bus",	   base + 0x100, 3);
-> > +	clks[IMX6SLL_CLK_PLL3_PFD0] =3D imx_clk_pfd("pll3_pfd0_720m",
-> "pll3_usb_otg", base + 0xf0,  0);
-> > +	clks[IMX6SLL_CLK_PLL3_PFD1] =3D imx_clk_pfd("pll3_pfd1_540m",
-> "pll3_usb_otg", base + 0xf0,  1);
-> > +	clks[IMX6SLL_CLK_PLL3_PFD2] =3D imx_clk_pfd("pll3_pfd2_508m",
-> "pll3_usb_otg", base + 0xf0,	 2);
-> > +	clks[IMX6SLL_CLK_PLL3_PFD3] =3D imx_clk_pfd("pll3_pfd3_454m",
-> "pll3_usb_otg", base + 0xf0,	 3);
->=20
-> The indent of the last number of last two line are unnecessarily broken.
->=20
-
-Thanks, I will go through this file to make the indent better.
-
-BR
-Jacky Bai
+diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
+index 498d13799388..d4a7497a2417 100644
+--- a/drivers/clk/mediatek/clk-mt2712.c
++++ b/drivers/clk/mediatek/clk-mt2712.c
+@@ -141,6 +141,8 @@ static const struct mtk_fixed_factor top_divs[] = {
+ 		1),
+ 	FACTOR(CLK_TOP_APLL1_D2, "apll1_d2", "apll1_ck", 1,
+ 		2),
++	FACTOR(CLK_TOP_APLL1_D3, "apll1_d3", "apll1_ck", 1,
++		3),
+ 	FACTOR(CLK_TOP_APLL1_D4, "apll1_d4", "apll1_ck", 1,
+ 		4),
+ 	FACTOR(CLK_TOP_APLL1_D8, "apll1_d8", "apll1_ck", 1,
+@@ -625,7 +627,7 @@ static const char * const ether_125m_parents[] = {
+ static const char * const ether_50m_parents[] = {
+ 	"clk26m",
+ 	"etherpll_50m",
+-	"univpll_d26",
++	"apll1_d3",
+ 	"univpll3_d4"
+ };
+ 
+@@ -686,7 +688,7 @@ static const char * const i2c_parents[] = {
+ 
+ static const char * const msdc0p_aes_parents[] = {
+ 	"clk26m",
+-	"msdcpll_ck",
++	"syspll_d2",
+ 	"univpll_d3",
+ 	"vcodecpll_ck"
+ };
+@@ -719,6 +721,17 @@ static const char * const aud_apll2_parents[] = {
+ 	"clkaud_ext_i_2"
+ };
+ 
++static const char * const apll1_ref_parents[] = {
++	"clkaud_ext_i_2",
++	"clkaud_ext_i_1",
++	"clki2si0_mck_i",
++	"clki2si1_mck_i",
++	"clki2si2_mck_i",
++	"clktdmin_mclk_i",
++	"clki2si2_mck_i",
++	"clktdmin_mclk_i"
++};
++
+ static const char * const audull_vtx_parents[] = {
+ 	"d2a_ulclk_6p5m",
+ 	"clkaud_ext_i_0"
+@@ -884,6 +897,10 @@ static struct mtk_composite top_muxes[] = {
+ 		aud_apll1_parents, 0x134, 0, 1),
+ 	MUX(CLK_TOP_AUD_APLL2_SEL, "aud_apll2_sel",
+ 		aud_apll2_parents, 0x134, 1, 1),
++	MUX(CLK_TOP_APLL1_REF_SEL, "apll1_ref_sel",
++		apll1_ref_parents, 0x134, 4, 3),
++	MUX(CLK_TOP_APLL2_REF_SEL, "apll2_ref_sel",
++		apll1_ref_parents, 0x134, 7, 3),
+ 	MUX(CLK_TOP_DA_AUDULL_VTX_6P5M_SEL, "audull_vtx_sel",
+ 		audull_vtx_parents, 0x134, 31, 1),
+ };
+@@ -932,36 +949,56 @@ static const struct mtk_clk_divider top_adj_divs[] = {
+ 	DIV_ADJ(CLK_TOP_APLL_DIV7, "apll_div7", "i2si3_sel", 0x128, 24, 8),
+ };
+ 
+-static const struct mtk_gate_regs top_cg_regs = {
++static const struct mtk_gate_regs top0_cg_regs = {
+ 	.set_ofs = 0x120,
+ 	.clr_ofs = 0x120,
+ 	.sta_ofs = 0x120,
+ };
+ 
+-#define GATE_TOP(_id, _name, _parent, _shift) {	\
++static const struct mtk_gate_regs top1_cg_regs = {
++	.set_ofs = 0x424,
++	.clr_ofs = 0x424,
++	.sta_ofs = 0x424,
++};
++
++#define GATE_TOP0(_id, _name, _parent, _shift) {	\
+ 		.id = _id,				\
+ 		.name = _name,				\
+ 		.parent_name = _parent,			\
+-		.regs = &top_cg_regs,			\
++		.regs = &top0_cg_regs,			\
+ 		.shift = _shift,			\
+ 		.ops = &mtk_clk_gate_ops_no_setclr,	\
+ 	}
+ 
++#define GATE_TOP1(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &top1_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr_inv,	\
++	}
++
+ static const struct mtk_gate top_clks[] = {
+-	GATE_TOP(CLK_TOP_APLL_DIV_PDN0, "apll_div_pdn0", "i2so1_sel", 0),
+-	GATE_TOP(CLK_TOP_APLL_DIV_PDN1, "apll_div_pdn1", "i2so2_sel", 1),
+-	GATE_TOP(CLK_TOP_APLL_DIV_PDN2, "apll_div_pdn2", "i2so3_sel", 2),
+-	GATE_TOP(CLK_TOP_APLL_DIV_PDN3, "apll_div_pdn3", "tdmo0_sel", 3),
+-	GATE_TOP(CLK_TOP_APLL_DIV_PDN4, "apll_div_pdn4", "tdmo1_sel", 4),
+-	GATE_TOP(CLK_TOP_APLL_DIV_PDN5, "apll_div_pdn5", "i2si1_sel", 5),
+-	GATE_TOP(CLK_TOP_APLL_DIV_PDN6, "apll_div_pdn6", "i2si2_sel", 6),
+-	GATE_TOP(CLK_TOP_APLL_DIV_PDN7, "apll_div_pdn7", "i2si3_sel", 7),
++	/* TOP0 */
++	GATE_TOP0(CLK_TOP_APLL_DIV_PDN0, "apll_div_pdn0", "i2so1_sel", 0),
++	GATE_TOP0(CLK_TOP_APLL_DIV_PDN1, "apll_div_pdn1", "i2so2_sel", 1),
++	GATE_TOP0(CLK_TOP_APLL_DIV_PDN2, "apll_div_pdn2", "i2so3_sel", 2),
++	GATE_TOP0(CLK_TOP_APLL_DIV_PDN3, "apll_div_pdn3", "tdmo0_sel", 3),
++	GATE_TOP0(CLK_TOP_APLL_DIV_PDN4, "apll_div_pdn4", "tdmo1_sel", 4),
++	GATE_TOP0(CLK_TOP_APLL_DIV_PDN5, "apll_div_pdn5", "i2si1_sel", 5),
++	GATE_TOP0(CLK_TOP_APLL_DIV_PDN6, "apll_div_pdn6", "i2si2_sel", 6),
++	GATE_TOP0(CLK_TOP_APLL_DIV_PDN7, "apll_div_pdn7", "i2si3_sel", 7),
++	/* TOP1 */
++	GATE_TOP1(CLK_TOP_NFI2X_EN, "nfi2x_en", "nfi2x_sel", 0),
++	GATE_TOP1(CLK_TOP_NFIECC_EN, "nfiecc_en", "nfiecc_sel", 1),
++	GATE_TOP1(CLK_TOP_NFI1X_CK_EN, "nfi1x_ck_en", "nfi2x_sel", 2),
+ };
+ 
+ static const struct mtk_gate_regs infra_cg_regs = {
+ 	.set_ofs = 0x40,
+ 	.clr_ofs = 0x44,
+-	.sta_ofs = 0x40,
++	.sta_ofs = 0x48,
+ };
+ 
+ #define GATE_INFRA(_id, _name, _parent, _shift) {	\
+@@ -1120,6 +1157,10 @@ static const struct mtk_gate peri_clks[] = {
+ 		"msdc50_0_h_sel", 4),
+ 	GATE_PERI2(CLK_PERI_MSDC50_3_HCLK_EN, "per_msdc50_3_h",
+ 		"msdc50_3_h_sel", 5),
++	GATE_PERI2(CLK_PERI_MSDC30_0_QTR_EN, "per_msdc30_0_q",
++		"axi_sel", 6),
++	GATE_PERI2(CLK_PERI_MSDC30_3_QTR_EN, "per_msdc30_3_q",
++		"mem_sel", 7),
+ };
+ 
+ #define MT2712_PLL_FMAX		(3000UL * MHZ)
+-- 
+2.12.5
