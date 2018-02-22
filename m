@@ -1,123 +1,114 @@
-Return-Path: <Claudiu.Beznea@microchip.com>
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-To: Daniel Thompson <daniel.thompson@linaro.org>
-CC: Jani Nikula <jani.nikula@linux.intel.com>, <thierry.reding@gmail.com>,
-	<shc_work@mail.ru>, <kgene@kernel.org>, <krzk@kernel.org>,
-	<linux@armlinux.org.uk>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
-	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
-	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
-	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-	<mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
-	<jingoohan1@gmail.com>, <milo.kim@ti.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@free-electrons.com>, <linux-pwm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
-	<linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
- <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
- <20180222123308.mypx2r7n6o63mj5z@oak.lan> <87po4s2hve.fsf@intel.com>
- <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
- <20180227105444.lo4pee7vh4we3foq@oak.lan>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <8e1d3b30-3543-56fd-7be6-7fe6edcb40d9@microchip.com>
-Date: Tue, 27 Feb 2018 13:40:58 +0200
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Thu, 22 Feb 2018 13:38:24 +0100
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: linux-kernel@vger.kernel.org
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Marek Vasut
+ <marek.vasut@gmail.com>, David Airlie <airlied@linux.ie>, Richard
+ Weinberger <richard@nod.at>, Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, dri-devel@lists.freedesktop.org,
+ linux-clk@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-crypto@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, Cyrille
+ Pitchen <cyrille.pitchen@wedev4u.fr>, Brian Norris
+ <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>,
+ "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH] Update Boris Brezillon email address
+Message-ID: <20180222133824.6494645f@bbrezillon>
+In-Reply-To: <20180216104449.15546-1-boris.brezillon@bootlin.com>
+References: <20180216104449.15546-1-boris.brezillon@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20180227105444.lo4pee7vh4we3foq@oak.lan>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: Claudiu.Beznea@microchip.com
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+On Fri, 16 Feb 2018 11:44:49 +0100
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+
+> Free Electrons is now Bootlin.
+>=20
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> ---
+> Note that I'm planning to take this patch through the MTD tree.
+
+Applied to the nand/next branch of the MTD tree.
+
+> ---
+>  .mailmap    |  7 ++++---
+>  MAINTAINERS | 10 +++++-----
+>  2 files changed, 9 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/.mailmap b/.mailmap
+> index e18cab73e209..50c1d6bf36b2 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
+>  Ben Gardner <bgardner@wabtec.com>
+>  Ben M Cahill <ben.m.cahill@intel.com>
+>  Bj=C3=B6rn Steinbrink <B.Steinbrink@gmx.de>
+> -Boris Brezillon <boris.brezillon@free-electrons.com>
+> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon.dev@gm=
+ail.com>
+> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon@overki=
+z.com>
+> +Boris Brezillon <boris.brezillon@bootlin.com>
+> +Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@free-elec=
+trons.com>
+> +Boris Brezillon <boris.brezillon@bootlin.com> <b.brezillon.dev@gmail.com>
+> +Boris Brezillon <boris.brezillon@bootlin.com> <b.brezillon@overkiz.com>
+>  Brian Avery <b.avery@hp.com>
+>  Brian King <brking@us.ibm.com>
+>  Christoph Hellwig <hch@lst.de>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 34b2e9ed6d3d..38fcbabbc55b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1232,7 +1232,7 @@ F:	arch/arm/boot/dts/aspeed-*
+>  F:	drivers/*/*aspeed*
+> =20
+>  ARM/ATMEL AT91 Clock Support
+> -M:	Boris Brezillon <boris.brezillon@free-electrons.com>
+> +M:	Boris Brezillon <boris.brezillon@bootlin.com>
+>  S:	Maintained
+>  F:	drivers/clk/at91
+> =20
+> @@ -4644,7 +4644,7 @@ F:	Documentation/gpu/meson.rst
+>  T:	git git://anongit.freedesktop.org/drm/drm-misc
+> =20
+>  DRM DRIVERS FOR ATMEL HLCDC
+> -M:	Boris Brezillon <boris.brezillon@free-electrons.com>
+> +M:	Boris Brezillon <boris.brezillon@bootlin.com>
+>  L:	dri-devel@lists.freedesktop.org
+>  S:	Supported
+>  F:	drivers/gpu/drm/atmel-hlcdc/
+> @@ -8412,7 +8412,7 @@ F:	include/uapi/drm/armada_drm.h
+>  F:	Documentation/devicetree/bindings/display/armada/
+> =20
+>  MARVELL CRYPTO DRIVER
+> -M:	Boris Brezillon <boris.brezillon@free-electrons.com>
+> +M:	Boris Brezillon <boris.brezillon@bootlin.com>
+>  M:	Arnaud Ebalard <arno@natisbad.org>
+>  F:	drivers/crypto/marvell/
+>  S:	Maintained
+> @@ -9034,7 +9034,7 @@ F:	mm/
+>  MEMORY TECHNOLOGY DEVICES (MTD)
+>  M:	David Woodhouse <dwmw2@infradead.org>
+>  M:	Brian Norris <computersforpeace@gmail.com>
+> -M:	Boris Brezillon <boris.brezillon@free-electrons.com>
+> +M:	Boris Brezillon <boris.brezillon@bootlin.com>
+>  M:	Marek Vasut <marek.vasut@gmail.com>
+>  M:	Richard Weinberger <richard@nod.at>
+>  M:	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+> @@ -9452,7 +9452,7 @@ S:	Supported
+>  F:	drivers/net/ethernet/myricom/myri10ge/
+> =20
+>  NAND FLASH SUBSYSTEM
+> -M:	Boris Brezillon <boris.brezillon@free-electrons.com>
+> +M:	Boris Brezillon <boris.brezillon@bootlin.com>
+>  R:	Richard Weinberger <richard@nod.at>
+>  L:	linux-mtd@lists.infradead.org
+>  W:	http://www.linux-mtd.infradead.org/
 
 
-On 27.02.2018 12:54, Daniel Thompson wrote:
-> On Mon, Feb 26, 2018 at 04:24:15PM +0200, Claudiu Beznea wrote:
->> On 26.02.2018 11:57, Jani Nikula wrote:
->>> On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
->>>> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
->>>>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
->>>>> were adapted to this change.
->>>>>
->>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
->>>>> ---
->>>>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
->>>>>  drivers/bus/ts-nbus.c                |  2 +-
->>>>>  drivers/clk/clk-pwm.c                |  3 ++-
->>>>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
->>>>>  drivers/hwmon/pwm-fan.c              |  2 +-
->>>>>  drivers/input/misc/max77693-haptic.c |  2 +-
->>>>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
->>>>>  drivers/leds/leds-pwm.c              |  5 ++++-
->>>>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
->>>>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
->>>>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
->>>>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
->>>>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
->>>>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
->>>>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
->>>>>  include/linux/pwm.h                  |  6 ++++--
->>>>>  16 files changed, 70 insertions(+), 21 deletions(-)
->>>>>
->>>>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
->>>>> index 2030a6b77a09..696fa25dafd2 100644
->>>>> --- a/drivers/video/backlight/lm3630a_bl.c
->>>>> +++ b/drivers/video/backlight/lm3630a_bl.c
->>>>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
->>>>>  {
->>>>>  	unsigned int period = pchip->pdata->pwm_period;
->>>>>  	unsigned int duty = br * period / br_max;
->>>>> +	struct pwm_caps caps = { };
->>>>>  
->>>>> -	pwm_config(pchip->pwmd, duty, period);
->>>>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
->>>>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
->>>>
->>>> Well... I admit I've only really looked at the patches that impact 
->>>> backlight but dispersing this really odd looking bit twiddling 
->>>> throughout the kernel doesn't strike me a great API design.
->>>>
->>>> IMHO callers should not be required to find the first set bit in
->>>> some specially crafted set of capability bits simply to get sane 
->>>> default behaviour.
->>>
->>> Agreed. IMHO the regular use case becomes rather tedious, ugly, and
->>> error prone.
->>
->> Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
->> from your side?
->>
->> Or, what about using a function like pwm_mode_first() to get the first supported
->> mode by PWM channel?
->>
->> Or, would you prefer to solve this inside pwm_config() function, let's say, in
->> case an invalid mode is passed as argument, to let pwm_config() to choose the
->> first available PWM mode for PWM channel passed as argument?
-> 
-> What is it that actually needs solving?
-> 
-> If a driver requests normal mode and the PWM driver cannot support it
-> why not just return an error an move on.
-Because, simply, I wasn't aware of what these PWM client drivers needs for.
 
-> 
-> Put another way, what is the use case for secretly adopting a mode the
-> caller didn't want? Under what circumstances is this a good thing?
-No one... But I wasn't aware of what the PWM clients needs for from their PWM
-controllers. At this moment having BIT(ffs(caps.modes)) instead of
-PWM_MODE(NORMAL) is mostly the same since all the driver that has not explicitly
-registered PWM caps will use PWM normal mode.
-
-I will use PWM_MODE(NORMAL) instead of this in all the cases if this is OK from
-your side.
-
-Thank you,
-Claudiu Beznea
-> 
-> 
-> Daniel.
-> 
+--=20
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
