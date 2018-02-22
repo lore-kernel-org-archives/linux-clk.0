@@ -1,34 +1,87 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 16/41] clk: davinci: Add platform information for TI
- DM646x PSC
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-17-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <f382c0fa-5a5f-c5bb-1f37-6d356e427dc1@ti.com>
-Date: Thu, 1 Feb 2018 17:47:09 +0530
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:55714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751810AbeBVD1L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 21 Feb 2018 22:27:11 -0500
+Date: Thu, 22 Feb 2018 11:27:04 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v2] clk: imx51-imx53: Fix UART4/5 registration on i.MX50
+ and i.MX53
+Message-ID: <20180222032703.GD3217@dragon>
+References: <1516029708-17204-1-git-send-email-festevam@gmail.com>
+ <1516097462.9022.7.camel@pengutronix.de>
+ <CAOMZO5A3wD+uxbgCmKU0jQGzi_r7g-Qitv5Mz=WmQZA7ndn0tw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-17-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOMZO5A3wD+uxbgCmKU0jQGzi_r7g-Qitv5Mz=WmQZA7ndn0tw@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
-> This adds platform-specific declarations for the PSC clocks on TI
-> DM646x based systems.
+On Tue, Feb 13, 2018 at 11:42:55PM -0200, Fabio Estevam wrote:
+> Hi Stephen,
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
+> On Tue, Jan 16, 2018 at 8:11 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> > On Mon, 2018-01-15 at 13:21 -0200, Fabio Estevam wrote:
+> >> From: Fabio Estevam <fabio.estevam@nxp.com>
+> >>
+> >> Since commit 59dc3d8c8673 ("clk: imx51: uart4, uart5 gates only exist on
+> >> imx50, imx53") the following warnings are seen on i.MX53:
+> >>
+> >> [    2.776190] ------------[ cut here ]------------
+> >> [    2.780948] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:811 clk_core_disable+0xc4/0xe0
+> >> [    2.789145] Modules linked in:
+> >> [    2.792236] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc7-next-20180115 #1
+> >> [    2.799735] Hardware name: Freescale i.MX53 (Device Tree Support)
+> >> [    2.805845] Backtrace:
+> >> [    2.808329] [<c010d1a0>] (dump_backtrace) from [<c010d460>] (show_stack+0x18/0x1c)
+> >> [    2.815919]  r7:00000000 r6:60000093 r5:00000000 r4:c10798d4
+> >> [    2.821607] [<c010d448>] (show_stack) from [<c0a353ec>] (dump_stack+0xb4/0xe8)
+> >> [    2.828854] [<c0a35338>] (dump_stack) from [<c0126144>] (__warn+0xf0/0x11c)
+> >> [    2.835837]  r9:00000000 r8:0000032b r7:00000009 r6:c0d429f8 r5:00000000 r4:00000000
+> >> [    2.843601] [<c0126054>] (__warn) from [<c0126288>] (warn_slowpath_null+0x44/0x50)
+> >> [    2.851191]  r8:c1008908 r7:c0e08874 r6:c04bfac8 r5:0000032b r4:c0d429f8
+> >> [    2.857913] [<c0126244>] (warn_slowpath_null) from [<c04bfac8>] (clk_core_disable+0xc4/0xe0)
+> >> [    2.866369]  r6:dc02bb00 r5:dc02a980 r4:dc02a980
+> >> [    2.871011] [<c04bfa04>] (clk_core_disable) from [<c04c0e54>] (clk_core_disable_lock+0x20/0x2c)
+> >> [    2.879726]  r5:dc02a980 r4:80000013
+> >> [    2.883323] [<c04c0e34>] (clk_core_disable_lock) from [<c04c0e84>] (clk_disable+0x24/0x28)
+> >> [    2.891604]  r5:c0f6b3e4 r4:0000001c
+> >> [    2.895209] [<c04c0e60>] (clk_disable) from [<c0f2340c>] (imx_clk_disable_uart+0x50/0x68)
+> >> [    2.903412] [<c0f233bc>] (imx_clk_disable_uart) from [<c010277c>] (do_one_initcall+0x50/0x19c)
+> >> [    2.912043]  r7:c0e08874 r6:c0f63854 r5:c0f233bc r4:ffffe000
+> >> [    2.917726] [<c010272c>] (do_one_initcall) from [<c0f00f00>] (kernel_init_freeable+0x118/0x1d0)
+> >> [    2.926447]  r9:c0f63858 r8:000000f0 r7:c0e08874 r6:c0f63854 r5:c107b500 r4:c0f75260
+> >> [    2.934220] [<c0f00de8>] (kernel_init_freeable) from [<c0a4a5f0>] (kernel_init+0x10/0x118)
+> >> [    2.942506]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0a4a5e0
+> >> [    2.950351]  r4:00000000
+> >> [    2.952908] [<c0a4a5e0>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+> >> [    2.960496] Exception stack(0xdc05dfb0 to 0xdc05dff8)
+> >> [    2.965569] dfa0:                                     00000000 00000000 00000000 00000000
+> >> [    2.973768] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> >> [    2.981965] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> >> [    2.988596]  r5:c0a4a5e0 r4:00000000
+> >> [    2.992188] ---[ end trace 346e26f708876edd ]---
+> >> [    2.997420] ------------[ cut here ]------------
+> >>
+> >> In order to fix the problem UART4/5 registration needs to happen only on
+> >> i.MX50 and i.MX53.
+> >>
+> >> So let mx51_clocks_init() register only UART1-3 and
+> >> mx50_clocks_init()/mx53_clocks_init register all the UART1-5 ports.
+> >>
+> >> Fixes: 59dc3d8c8673 ("clk: imx51: uart4, uart5 gates only exist on imx50, imx53")
+> >> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> >
+> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> 
+> Do you plan to apply this one directly or should Shawn collect it?
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+I queued it up and will send a pull request to Stephen later.
 
-Thanks,
-Sekhar
+Shawn
