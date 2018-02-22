@@ -1,64 +1,69 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 04/15] clk: sunxi-ng: h3: h5: export CLK_PLL_VIDEO
-Date: Sat, 24 Feb 2018 22:45:34 +0100
-Message-Id: <20180224214545.3740-5-jernej.skrabec@siol.net>
-In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+Return-Path: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH v3 06/10] pwm: add PWM modes
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Thierry Reding <thierry.reding@gmail.com>, Alexander Shiyan
+	<shc_work@mail.ru>, <kgene@kernel.org>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Russell King - ARM Linux <linux@armlinux.org.uk>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@linux.ie>, <kamil@wypas.org>, Bartlomiej Zolnierkiewicz
+	<b.zolnierkie@samsung.com>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck
+	<linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard
+ Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sean
+ Young <sean@mess.org>, Lee Jones <lee.jones@linaro.org>, Daniel Thompson
+	<daniel.thompson@linaro.org>, Jingoo Han <jingoohan1@gmail.com>,
+	<milo.kim@ti.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@free-electrons.com>, <linux-pwm@vger.kernel.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm Mailing List
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>, linux-input
+	<linux-input@vger.kernel.org>, Linux LED Subsystem
+	<linux-leds@vger.kernel.org>, Linux Media Mailing List
+	<linux-media@vger.kernel.org>, <linux-fbdev@vger.kernel.org>, devicetree
+	<devicetree@vger.kernel.org>, Linux Documentation List
+	<linux-doc@vger.kernel.org>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-7-git-send-email-claudiu.beznea@microchip.com>
+ <CAHp75Ver6GuKSDooAr2DW+eqt=B3p8O+X6+rOSWNgfhHxgVqNQ@mail.gmail.com>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <e5090740-520a-34c0-6b52-09cc8ada11b1@microchip.com>
+Date: Thu, 22 Feb 2018 19:42:29 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAHp75Ver6GuKSDooAr2DW+eqt=B3p8O+X6+rOSWNgfhHxgVqNQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: Claudiu.Beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-CLK_PLL_VIDEO needs to be referenced in HDMI DT entry as a possible
-PHY clock parent.
 
-Export it so it can be used later in DT.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.h      | 4 +++-
- include/dt-bindings/clock/sun8i-h3-ccu.h | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+On 22.02.2018 19:28, Andy Shevchenko wrote:
+> On Thu, Feb 22, 2018 at 2:01 PM, Claudiu Beznea
+> <claudiu.beznea@microchip.com> wrote:
+>> Add PWM normal and complementary modes.
+> 
+>> +- PWM_DTMODE_COMPLEMENTARY: PWM complementary working mode (for PWM
+>> +channels two outputs); if not specified, the default for PWM channel will
+>> +be used
+> 
+> What DT stands for?
+It stands for Device Tree. It remained this way from the previous version. In
+the previous version I had modes described in an enum, to be used by PWM core,
+as follows:
+enum pwm_mode {
+	PWM_MODE_NORMAL,
+	PWM_MODE_COMPLEMENTARY,
+};
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
-index 1b4baea37d81..73d7392c968c 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
-@@ -26,7 +26,9 @@
- #define CLK_PLL_AUDIO_2X	3
- #define CLK_PLL_AUDIO_4X	4
- #define CLK_PLL_AUDIO_8X	5
--#define CLK_PLL_VIDEO		6
-+
-+/* PLL_VIDEO is exported */
-+
- #define CLK_PLL_VE		7
- #define CLK_PLL_DDR		8
- 
-diff --git a/include/dt-bindings/clock/sun8i-h3-ccu.h b/include/dt-bindings/clock/sun8i-h3-ccu.h
-index e139fe5c62ec..c5f7e9a70968 100644
---- a/include/dt-bindings/clock/sun8i-h3-ccu.h
-+++ b/include/dt-bindings/clock/sun8i-h3-ccu.h
-@@ -43,6 +43,8 @@
- #ifndef _DT_BINDINGS_CLK_SUN8I_H3_H_
- #define _DT_BINDINGS_CLK_SUN8I_H3_H_
- 
-+#define CLK_PLL_VIDEO		6
-+
- #define CLK_PLL_PERIPH0		9
- 
- #define CLK_CPUX		14
--- 
-2.16.2
+and, to avoid conflict b/w these defines and the one from
+include/dt-bindings/pwm/pwm.h I introduced this DT in the define names from
+dt-bindings. But now the DT might be removed since I've changed the way the PWM
+mode is identified in PWM core. I will remove the DT in the next version, if not
+requested otherwise.
+
+Thank you,
+Claudiu Benea
