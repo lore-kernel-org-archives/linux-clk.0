@@ -1,113 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51144 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751089AbeBWM2Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Feb 2018 07:28:24 -0500
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 4/7] clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
-Date: Fri, 23 Feb 2018 20:25:49 +0800
-Message-Id: <20180223122552.58049-5-icenowy@aosc.io>
-In-Reply-To: <20180223122552.58049-1-icenowy@aosc.io>
-References: <20180223122552.58049-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rui.silva@linaro.org>
+Return-Path: <rui.silva@linaro.org>
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: horia.geanta@nxp.com,
+	aymen.sghaier@nxp.com,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ryan Harkin <ryan.harkin@linaro.org>,
+	Bryan O'Donoghue <pure.logic@nexus-software.ie>,
+	Rui Miguel Silva <rui.silva@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Lukas Auer <lukas.auer@aisec.fraunhofer.de>
+Subject: [PATCH v4 3/4] clk: imx7d: add CAAM clock
+Date: Thu, 22 Feb 2018 14:22:49 +0000
+Message-Id: <20180222142250.31348-4-rui.silva@linaro.org>
+In-Reply-To: <20180222142250.31348-1-rui.silva@linaro.org>
+References: <20180222142250.31348-1-rui.silva@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On the new Allwinner H6 SoC, multiple PLL's are NMP style clocks
-(modelled as NKMP with no K) and have fixed post-dividers.
+Add CAAM clock so that we could use the Cryptographic Acceleration and
+Assurance Module (CAAM) hardware block.
 
-Add fixed post divider support to the NKMP style clocks.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org
+Cc: "Horia Geantă" <horia.geanta@nxp.com>
+Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Lukas Auer <lukas.auer@aisec.fraunhofer.de>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
 ---
-Changes in v3:
-- Rebased on newest linux-next/master.
+ drivers/clk/imx/clk-imx7d.c             | 1 +
+ include/dt-bindings/clock/imx7d-clock.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-No changes in v2.
-
- drivers/clk/sunxi-ng/ccu_nkmp.c | 20 +++++++++++++++++---
- drivers/clk/sunxi-ng/ccu_nkmp.h |  2 ++
- 2 files changed, 19 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index c3f6fe7be565..ebd9436d2c7c 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -95,7 +95,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
- 					unsigned long parent_rate)
- {
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
--	unsigned long n, m, k, p;
-+	unsigned long n, m, k, p, rate;
- 	u32 reg;
- 
- 	reg = readl(nkmp->common.base + nkmp->common.reg);
-@@ -121,7 +121,11 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
- 	p = reg >> nkmp->p.shift;
- 	p &= (1 << nkmp->p.width) - 1;
- 
--	return ccu_nkmp_calc_rate(parent_rate, n, k, m, 1 << p);
-+	rate = ccu_nkmp_calc_rate(parent_rate, n, k, m, 1 << p);
-+	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate /= nkmp->fixed_post_div;
-+
-+	return rate;
- }
- 
- static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -130,6 +134,9 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct ccu_nkmp *nkmp = hw_to_ccu_nkmp(hw);
- 	struct _ccu_nkmp _nkmp;
- 
-+	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate *= nkmp->fixed_post_div;
-+
- 	_nkmp.min_n = nkmp->n.min ?: 1;
- 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
- 	_nkmp.min_k = nkmp->k.min ?: 1;
-@@ -141,8 +148,12 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
- 
--	return ccu_nkmp_calc_rate(*parent_rate, _nkmp.n, _nkmp.k,
-+	rate = ccu_nkmp_calc_rate(*parent_rate, _nkmp.n, _nkmp.k,
- 				  _nkmp.m, _nkmp.p);
-+	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate / nkmp->fixed_post_div;
-+
-+	return rate;
- }
- 
- static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -154,6 +165,9 @@ static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long flags;
- 	u32 reg;
- 
-+	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+		rate = rate * nkmp->fixed_post_div;
-+
- 	_nkmp.min_n = nkmp->n.min ?: 1;
- 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
- 	_nkmp.min_k = nkmp->k.min ?: 1;
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.h b/drivers/clk/sunxi-ng/ccu_nkmp.h
-index a82facbc6144..6940503e7fc4 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.h
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.h
-@@ -34,6 +34,8 @@ struct ccu_nkmp {
- 	struct ccu_div_internal		m;
- 	struct ccu_div_internal		p;
- 
-+	unsigned int		fixed_post_div;
-+
- 	struct ccu_common	common;
- };
- 
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 80dc211eb74b..52ab096fb39c 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -795,6 +795,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
+ 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
++	clks[IMX7D_CAAM_CLK] = imx_clk_gate4("caam_clk", "ipg_root_clk", base + 0x4240, 0);
+ 	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
+ 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
+ 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
+diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+index e2f99ae72d5c..2bc5618feaeb 100644
+--- a/include/dt-bindings/clock/imx7d-clock.h
++++ b/include/dt-bindings/clock/imx7d-clock.h
+@@ -452,5 +452,6 @@
+ #define IMX7D_OCOTP_CLK			439
+ #define IMX7D_NAND_RAWNAND_CLK		440
+ #define IMX7D_NAND_USDHC_BUS_RAWNAND_CLK 441
+-#define IMX7D_CLK_END			442
++#define IMX7D_CAAM_CLK			442
++#define IMX7D_CLK_END			443
+ #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
 -- 
-2.15.1
-
+2.16.2
