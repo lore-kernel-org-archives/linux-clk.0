@@ -1,82 +1,128 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/19] clk: meson: use devm_of_clk_add_hw_provider
-Date: Mon, 12 Feb 2018 15:58:29 +0100
-Message-Id: <20180212145846.19380-3-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+Return-Path: <Claudiu.Beznea@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
+	<krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
+	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
+	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
+	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+	<mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
+	<daniel.thompson@linaro.org>, <jingoohan1@gmail.com>, <milo.kim@ti.com>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>,
+	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>, Claudiu Beznea
+	<claudiu.beznea@microchip.com>
+Subject: [PATCH v3 10/10] pwm: atmel: add push-pull mode support
+Date: Thu, 22 Feb 2018 14:01:21 +0200
+Message-ID: <1519300881-8136-11-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: claudiu.beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-There is no remove callbacks in meson's clock controllers and
-of_clk_del_provider is never called if of_clk_add_hw_provider has been
-executed, introducing a potential memory leak.
-Fixing this by the using the devm variant.
+Add support for PWM push-pull mode. This is only supported by SAMA5D2 SoCs.
 
-In reality, the leak would never happen since these controllers are
-never unloaded once in use ... still, this is worth cleaning.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/clk/meson/axg.c     | 4 ++--
- drivers/clk/meson/gxbb.c    | 5 +++--
- drivers/clk/meson/meson8b.c | 4 ++--
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/pwm/pwm-atmel.c | 40 ++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 36 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 1f48649a7d2a..e16d53b6be30 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -854,8 +854,8 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 		}
- 	}
+diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
+index d2482fe28cfa..da4b58c1ecf2 100644
+--- a/drivers/pwm/pwm-atmel.c
++++ b/drivers/pwm/pwm-atmel.c
+@@ -33,8 +33,11 @@
  
--	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
--			clkc_data->hw_onecell_data);
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   clkc_data->hw_onecell_data);
- }
+ #define PWM_CMR			0x0
+ /* Bit field in CMR */
+-#define PWM_CMR_CPOL		(1 << 9)
+-#define PWM_CMR_UPD_CDTY	(1 << 10)
++#define PWM_CMR_CPOL		BIT(9)
++#define PWM_CMR_UPD_CDTY	BIT(10)
++#define PWM_CMR_DTHI		BIT(17)
++#define PWM_CMR_DTLI		BIT(18)
++#define PWM_CMR_PPM		BIT(19)
+ #define PWM_CMR_CPRE_MSK	0xF
  
- static struct platform_driver axg_driver = {
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 423abcb8ef88..17f44ac751b3 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -2002,8 +2002,9 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 			goto iounmap;
- 	}
+ /* The following registers for PWM v1 */
+@@ -219,16 +222,19 @@ static int atmel_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ {
+ 	struct atmel_pwm_chip *atmel_pwm = to_atmel_pwm_chip(chip);
+ 	struct pwm_state cstate;
++	struct pwm_caps caps;
+ 	unsigned long cprd, cdty;
+ 	u32 pres, val;
+ 	int ret;
  
--	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
--			clkc_data->hw_onecell_data);
+ 	pwm_get_state(pwm, &cstate);
++	pwm_get_caps(chip, pwm, &caps);
+ 
+ 	if (state->enabled) {
+ 		if (cstate.enabled &&
+ 		    cstate.polarity == state->polarity &&
+-		    cstate.period == state->period) {
++		    cstate.period == state->period &&
++		    cstate.mode == state->mode) {
+ 			cprd = atmel_pwm_ch_readl(atmel_pwm, pwm->hwpwm,
+ 						  atmel_pwm->data->regs.period);
+ 			atmel_pwm_calculate_cdty(state, cprd, &cdty);
+@@ -263,6 +269,18 @@ static int atmel_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			val &= ~PWM_CMR_CPOL;
+ 		else
+ 			val |= PWM_CMR_CPOL;
 +
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   clkc_data->hw_onecell_data);
++		/* PWM mode. */
++		if (caps.modes & PWM_MODE(PUSH_PULL)) {
++			if (state->mode == PWM_MODE(PUSH_PULL)) {
++				val |= PWM_CMR_PPM | PWM_CMR_DTLI;
++				val &= ~PWM_CMR_DTHI;
++			} else {
++				val &= ~(PWM_CMR_PPM | PWM_CMR_DTLI |
++					 PWM_CMR_DTHI);
++			}
++		}
++
+ 		atmel_pwm_ch_writel(atmel_pwm, pwm->hwpwm, PWM_CMR, val);
+ 		atmel_pwm_set_cprd_cdty(chip, pwm, cprd, cdty);
+ 		mutex_lock(&atmel_pwm->isr_lock);
+@@ -315,6 +333,20 @@ static const struct atmel_pwm_data atmel_pwm_data_v2 = {
+ 	},
+ };
  
- iounmap:
- 	iounmap(clk_base);
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 3ffea80c1308..abac079ff77f 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -878,8 +878,8 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
--			&meson8b_hw_onecell_data);
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   &meson8b_hw_onecell_data);
- }
- 
- static const struct of_device_id meson8b_clkc_match_table[] = {
++static const struct atmel_pwm_data atmel_pwm_data_v3 = {
++	.regs = {
++		.period		= PWMV2_CPRD,
++		.period_upd	= PWMV2_CPRDUPD,
++		.duty		= PWMV2_CDTY,
++		.duty_upd	= PWMV2_CDTYUPD,
++	},
++	.caps = {
++		.modes = PWM_MODE(NORMAL) |
++			 PWM_MODE(COMPLEMENTARY) |
++			 PWM_MODE(PUSH_PULL),
++	},
++};
++
+ static const struct platform_device_id atmel_pwm_devtypes[] = {
+ 	{
+ 		.name = "at91sam9rl-pwm",
+@@ -337,7 +369,7 @@ static const struct of_device_id atmel_pwm_dt_ids[] = {
+ 		.data = &atmel_pwm_data_v2,
+ 	}, {
+ 		.compatible = "atmel,sama5d2-pwm",
+-		.data = &atmel_pwm_data_v2,
++		.data = &atmel_pwm_data_v3,
+ 	}, {
+ 		/* sentinel */
+ 	},
 -- 
-2.14.3
+2.7.4
