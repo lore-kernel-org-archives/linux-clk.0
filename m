@@ -1,95 +1,69 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <9b8ae02b-67d5-8d0a-2e35-cab85f89470d@kernel.org>
-References: <1517847767-16053-1-git-send-email-dinguyen@kernel.org>
- <20180209024340.f7sijb7h5egdn675@rob-hp-laptop> <9b8ae02b-67d5-8d0a-2e35-cab85f89470d@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 12 Feb 2018 10:41:22 -0600
-Message-ID: <CAL_JsqJhYvB7haMpx7gBxpmS7ZVStvEwe5VDsrcN+z+0UxHASw@mail.gmail.com>
-Subject: Re: [PATCHv3 1/3] dt-bindings: documentation: add clock bindings
- information for Stratix10
-To: Dinh Nguyen <dinguyen@kernel.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <marcel@ziswiler.com>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+To: linux-tegra@vger.kernel.org
+Cc: Dmitry Osipenko <digetx@gmail.com>,
+	Marcel Ziswiler <marcel@ziswiler.com>,
+	Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: tegra: fix pllu rate configuration
+Date: Fri, 23 Feb 2018 00:04:51 +0100
+Message-Id: <20180222230451.15515-1-marcel@ziswiler.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Feb 9, 2018 at 12:19 PM, Dinh Nguyen <dinguyen@kernel.org> wrote:
-> Hi Rob,
->
->
-> On 02/08/2018 08:43 PM, Rob Herring wrote:
->> On Mon, Feb 05, 2018 at 10:22:45AM -0600, Dinh Nguyen wrote:
->>> Document that Stratix10 clock bindings, and add the clock header file. The
->>> clock header is an enumeration of all the different clocks on the Stratix10
->>> platform.
->>>
->>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->>> ---
->>> v3:
->>> - s/intc/intel for correct vendor prefix
->>> - fixup node name to "intel,stratix10-clkmgr"
->>> - document the required fixed-clock for oscillators
->>> v2:
->>> - use a single binding for the clock controller
->>> ---
->>>  .../devicetree/bindings/clock/intc_stratix10.txt   | 47 ++++++++++++
->>>  include/dt-bindings/clock/stratix10-clock.h        | 85 ++++++++++++++++++++++
->>>  2 files changed, 132 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
->>>  create mode 100644 include/dt-bindings/clock/stratix10-clock.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/intc_stratix10.txt b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
->>> new file mode 100644
->>> index 0000000..8d218f4
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
->>> @@ -0,0 +1,47 @@
->>> +Device Tree Clock bindings for Intel's SoCFPGA Stratix10 platform
->>> +
->>> +This binding uses the common clock binding[1].
->>> +
->>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->>> +
->>> +Required properties:
->>> +- compatible : shall be
->>> +    "intel,stratix10-clkmgr"
->>> +
->>> +- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
->>> +
->>> +- #clock-cells : from common clock binding, shall be set to 1.
->>> +
->>> +- clocks : Should contain fixed-clock sources, such as oscillators.
->>> +
->>> +Example:
->>> +    clkmgr: clock-controller@ffd10000 {
->>> +            compatible = "intel,stratix10-clkmgr";
->>> +            reg = <0xffd10000 0x1000>;
->>> +            #clock-cells = <1>;
->>> +
->>> +            clocks {
->>> +                    #address-cells = <1>;
->>> +                    #size-cells = <0>;
->>> +
->>> +                    cb_intosc_hs_div2_clk: cb_intosc_hs_div2_clk {
->>
->> Don't use '_' in node names.
->>
->
-> Ok..
->
->>> +                            #clock-cells = <0>;
->>> +                            compatible = "fixed-clock";
->>
->> fixed clock with no frequency?
->
-> The frequency gets populated in the board's dts file. This provides for
-> the scenario where different boards might use different oscillator
-> frequencies.
+Turns out latest upstream U-Boot does not configure/enable pllu which
+leaves it at some default rate of 500 kHz:
 
-That is irrelevant for examples. The SoC vs. board file split is
-outside the scope of the binding (i.e. not part of the ABI). Well, at
-least until it is done with overlays.
+root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
+       pll_u                  3        3        0      500000          0
 
-Rob
+Of course this won't quite work leading to the following messages:
+
+[    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
+ehci
+[   11.759173] usb 2-1: device descriptor read/64, error -110
+[   27.119453] usb 2-1: device descriptor read/64, error -110
+[   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
+ehci
+[   32.559454] usb 2-1: device descriptor read/64, error -110
+[   47.929777] usb 2-1: device descriptor read/64, error -110
+[   48.049658] usb usb2-port1: attempt power cycle
+[   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
+ehci
+[   59.349457] usb 2-1: device not accepting address 4, error -110
+[   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
+ehci
+[   70.069457] usb 2-1: device not accepting address 5, error -110
+[   70.079721] usb usb2-port1: unable to enumerate USB device
+
+Fix this by actually allowing the rate also being set from within
+the Linux kernel.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+ drivers/clk/tegra/clk-pll.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 7c369e21c91c..830d1c87fa7c 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1151,6 +1151,8 @@ static const struct clk_ops tegra_clk_pllu_ops = {
+ 	.enable = clk_pllu_enable,
+ 	.disable = clk_pll_disable,
+ 	.recalc_rate = clk_pll_recalc_rate,
++	.round_rate = clk_pll_round_rate,
++	.set_rate = clk_pll_set_rate,
+ };
+ 
+ static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
+-- 
+2.14.3
