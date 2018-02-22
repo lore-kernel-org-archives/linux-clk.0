@@ -1,234 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43686 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030635AbeBNOAe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Feb 2018 09:00:34 -0500
-From: Ilia Lin <ilialin@codeaurora.org>
-To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v3 10/10] DT: QCOM: Add thermal mitigation to msm8996
-Date: Wed, 14 Feb 2018 15:59:52 +0200
-Message-Id: <1518616792-29028-11-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Claudiu.Beznea@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
+	<krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <jani.nikula@linux.intel.com>,
+	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
+	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
+	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+	<mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
+	<daniel.thompson@linaro.org>, <jingoohan1@gmail.com>, <milo.kim@ti.com>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>,
+	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>, Claudiu Beznea
+	<claudiu.beznea@microchip.com>
+Subject: [PATCH v3 09/10] pwm: add documentation for pwm push-pull mode
+Date: Thu, 22 Feb 2018 14:01:20 +0200
+Message-ID: <1519300881-8136-10-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: claudiu.beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add thermal mitigation configuration to msm8996.
-With the cpufreq-dt OPP table the CPU frequency may be
-scaled and therefore throttled by the thermal config.
+Add documentation for PWM push-pull mode.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 98 +++++++++++++++++++++++++++++++----
- 1 file changed, 87 insertions(+), 11 deletions(-)
+ Documentation/devicetree/bindings/pwm/pwm.txt |  2 ++
+ Documentation/pwm.txt                         | 16 ++++++++++++++++
+ include/dt-bindings/pwm/pwm.h                 |  1 +
+ 3 files changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 0359197..1df5b6f 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -14,6 +14,7 @@
- #include <dt-bindings/clock/qcom,gcc-msm8996.h>
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
-+#include <dt-bindings/thermal/thermal.h>
+diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentation/devicetree/bindings/pwm/pwm.txt
+index c2b4b9ba0e3f..968dd786ad7c 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm.txt
+@@ -49,6 +49,8 @@ Optionally, the pwm-specifier can encode a number of flags (defined in
+ - PWM_DTMODE_COMPLEMENTARY: PWM complementary working mode (for PWM
+ channels two outputs); if not specified, the default for PWM channel will
+ be used
++- PWM_DTMODE_PUSH_PULL: PWM push-pull working modes (for PWM channels with
++two outputs); if not specified the default for PWM channel will be used
  
- / {
- 	model = "Qualcomm Technologies, Inc. MSM8996";
-@@ -88,6 +89,10 @@
- 			enable-method = "psci";
- 			clocks = <&kryocc 0>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 			      compatible = "cache";
-@@ -102,6 +107,10 @@
- 			enable-method = "psci";
- 			clocks = <&kryocc 0>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 		};
+ Example with optional PWM specifier for inverse polarity and complementary
+ mode:
+diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
+index 59592f8cc381..174c371583b6 100644
+--- a/Documentation/pwm.txt
++++ b/Documentation/pwm.txt
+@@ -128,6 +128,22 @@ channel that was exported. The following properties will then be available:
+     PWML1   |__|  |__|  |__|  |__|
+             <--T-->
  
-@@ -112,6 +121,10 @@
- 			enable-method = "psci";
- 			clocks = <&kryocc 1>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 			L2_1: l2-cache {
- 			      compatible = "cache";
-@@ -126,6 +139,10 @@
- 			enable-method = "psci";
- 			clocks = <&kryocc 1>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 		};
- 
-@@ -336,18 +353,33 @@
- 			thermal-sensors = <&tsens0 3>;
- 
- 			trips {
--				cpu_alert0: trip0 {
-+				cpu_alert0: cpu_alert0 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn0: cpu_warn0 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu_crit0: trip1 {
-+				cpu_crit0: cpu_crit0 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
++    Push-pull mode - for PWM channels with two outputs; output waveforms
++        for a PWM channel with 2 outputs, in push-pull mode, with normal
++        polarity looks like this:
++            __          __
++    PWMH __|  |________|  |________
++                  __          __
++    PWML ________|  |________|  |__
++           <--T-->
 +
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn0>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal1 {
-@@ -357,18 +389,33 @@
- 			thermal-sensors = <&tsens0 5>;
- 
- 			trips {
--				cpu_alert1: trip0 {
-+				cpu_alert1: cpu_alert1 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn1: cpu_warn1 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu_crit1: trip1 {
-+				cpu_crit1: cpu_crit1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
++    If polarity is inversed:
++         __    ________    ________
++    PWMH   |__|        |__|
++         ________    ________    __
++    PWML         |__|        |__|
++           <--T-->
 +
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert1>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn1>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
+     Where T is the signal period.
  
- 		cpu-thermal2 {
-@@ -378,18 +425,32 @@
- 			thermal-sensors = <&tsens0 8>;
+ Implementing a PWM driver
+diff --git a/include/dt-bindings/pwm/pwm.h b/include/dt-bindings/pwm/pwm.h
+index b4d61269aced..674dfdd59595 100644
+--- a/include/dt-bindings/pwm/pwm.h
++++ b/include/dt-bindings/pwm/pwm.h
+@@ -12,5 +12,6 @@
  
- 			trips {
--				cpu_alert2: trip0 {
-+				cpu_alert2: cpu_alert2 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn2: cpu_warn2 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu_crit2: trip1 {
-+				cpu_crit2: cpu_crit2 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert2>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn2>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
+ #define PWM_POLARITY_INVERTED			(1 << 0)
+ #define PWM_DTMODE_COMPLEMENTARY		(1 << 1)
++#define PWM_DTMODE_PUSH_PULL			(1 << 2)
  
- 		cpu-thermal3 {
-@@ -399,18 +460,33 @@
- 			thermal-sensors = <&tsens0 10>;
- 
- 			trips {
--				cpu_alert3: trip0 {
-+				cpu_alert3: cpu_alert3 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn3: cpu_warn3 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
- 				cpu_crit3: trip1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert3>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn3>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 	};
- 
+ #endif
 -- 
-1.9.1
-
+2.7.4
