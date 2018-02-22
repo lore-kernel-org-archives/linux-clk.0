@@ -1,97 +1,95 @@
-Return-Path: <groeck7@gmail.com>
-Return-Path: <groeck7@gmail.com>
-Sender: Guenter Roeck <groeck7@gmail.com>
-Subject: Re: [RFC v4 12/26] watchdog: renesas_wdt: Add R-Car Gen2 support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
- Magnus Damm <magnus.damm@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Chris Paterson <Chris.Paterson2@renesas.com>,
- Biju Das <biju.das@bp.renesas.com>,
- Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-13-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <2dd9f76d-b3e9-31f2-11eb-272d327f3b01@roeck-us.net>
-Date: Thu, 1 Feb 2018 18:56:16 -0800
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, linux-rpi-kernel@lists.infradead.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: bcm2835: De-assert/assert PLL reset signal when appropriate
+In-Reply-To: <20180214113722.6b9f578c@bbrezillon>
+References: <20180208134338.24590-1-boris.brezillon@bootlin.com> <20180208134338.24590-3-boris.brezillon@bootlin.com> <87po5f5x7l.fsf@anholt.net> <20180214113722.6b9f578c@bbrezillon>
+Date: Thu, 22 Feb 2018 12:18:07 -0800
+Message-ID: <87sh9ssrr4.fsf@anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <1517423070-24236-13-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01/31/2018 10:24 AM, Fabrizio Castro wrote:
-> Due to commits:
-> * "ARM: shmobile: Add watchdog support",
-> * "ARM: shmobile: rcar-gen2: Add watchdog support", and
-> * "soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2",
-> we now have everything we needed for the watchdog to work on Gen2 and
-> RZ/G1.
-> 
-> This commit adds "renesas,rcar-gen2-wdt" as compatible string for R-Car
-> Gen2 and RZ/G1, and since on those platforms the rwdt clock needs to be
-> always ON, when suspending to RAM we need to explicitly disable the
-> counting by clearing TME from RWTCSRA.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> ---
-> v3->4:
-> * in this new version the changes to the driver have been splitted into
->    two commits, this patch takes care of the basic Gen2 support, patch 13/26
->    takes care of the restart handler.
-> 
->   drivers/watchdog/renesas_wdt.c | 42 +++++++++++++++++++++++++++++++++++++-----
->   1 file changed, 37 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-> index 831ef83..0a1a402 100644
-> --- a/drivers/watchdog/renesas_wdt.c
-> +++ b/drivers/watchdog/renesas_wdt.c
-> @@ -203,13 +203,42 @@ static int rwdt_remove(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> -/*
-> - * This driver does also fit for R-Car Gen2 (r8a779[0-4]) WDT. However, for SMP
-> - * to work there, one also needs a RESET (RST) driver which does not exist yet
-> - * due to HW issues. This needs to be solved before adding compatibles here.
-> - */
-> +#ifdef CONFIG_PM
-> +static int rwdt_suspend(struct device *dev)
-> +{
-> +	struct platform_device *pdev;
-> +	struct rwdt_priv *priv;
-> +
-> +	pdev = to_platform_device(dev);
-> +	priv = platform_get_drvdata(pdev);
-> +	if (watchdog_active(&priv->wdev)) {
-> +		rwdt_write(priv, priv->cks, RWTCSRA);
-> +	}
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Unnecessary { }
+Boris Brezillon <boris.brezillon@bootlin.com> writes:
 
-> +	return 0;
-> +}
-> +
-> +static int rwdt_resume(struct device *dev)
-> +{
-> +	struct platform_device *pdev;
-> +	struct rwdt_priv *priv;
-> +
-> +	pdev = to_platform_device(dev);
-> +	priv = platform_get_drvdata(pdev);
-> +	if (watchdog_active(&priv->wdev)) {
-> +		rwdt_write(priv, priv->cks | RWTCSRA_TME, RWTCSRA);
-> +	}
+> On Thu, 08 Feb 2018 15:15:42 +0000
+> Eric Anholt <eric@anholt.net> wrote:
+>
+>> Boris Brezillon <boris.brezillon@bootlin.com> writes:
+>>=20
+>> > In order to enable a PLL, not only the PLL has to be powered up and
+>> > locked, but you also have to de-assert the reset signal. The last part
+>> > was missing. Add it so PLLs that were not enabled by the FW/bootloader
+>> > can be enabled from Linux.
+>> >
+>> > Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the au=
+dio domain clocks")
+>> > Cc: <stable@vger.kernel.org>
+>> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+>> > ---
+>> >  drivers/clk/bcm/clk-bcm2835.c | 7 +++++++
+>> >  1 file changed, 7 insertions(+)
+>> >
+>> > diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm28=
+35.c
+>> > index a07f6451694a..6c5d4a8e426c 100644
+>> > --- a/drivers/clk/bcm/clk-bcm2835.c
+>> > +++ b/drivers/clk/bcm/clk-bcm2835.c
+>> > @@ -602,6 +602,9 @@ static void bcm2835_pll_off(struct clk_hw *hw)
+>> >  	const struct bcm2835_pll_data *data =3D pll->data;
+>> >=20=20
+>> >  	spin_lock(&cprman->regs_lock);
+>> > +	cprman_write(cprman, data->a2w_ctrl_reg,
+>> > +		     cprman_read(cprman, data->a2w_ctrl_reg) &
+>> > +		     ~A2W_PLL_CTRL_PRST_DISABLE);
+>> >  	cprman_write(cprman, data->cm_ctrl_reg,
+>> >  		     cprman_read(cprman, data->cm_ctrl_reg) |
+>> >  		     CM_PLL_ANARST);=20=20
+>>=20
+>> For turning off, the FW just does the equivalent of:
+>>=20
+>> 	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
+>> 	cprman_write(cprman, data->a2w_ctrl_reg, A2W_PLL_CTRL_PWRDN);
+>
+> Hm, the write to ->a2w_ctrl_reg overwrites the=20
+> NDIV/PDIV values done in bcm2835_pll_set_rate(). So, either we do:
+>
+> 	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
+> 	cprman_write(cprman, data->a2w_ctrl_reg,
+> 		     cprman_read(cprman, data->a2w_ctrl_reg) |
+> 		     A2W_PLL_CTRL_PWRDN);
+>
+> or we cache the pdiv/ndiv values in struct bcm2835_pll and only apply
+> them in bcm2835_pll_on().
+>
+> I'd recommend going for the former to keep the changes easily
+> backportable to older kernels.
 
-Same here. FWIW, checkpatch does complain about that.
+Oh, right.  I like your cprman_write() solution above.
 
-Guenter
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlqPJX8ACgkQtdYpNtH8
+nuiN2w/8D6Tdik7p5RiE0SguTzoogDplLJSe6O/Ha1+2gIwDEx5Pg69tJ9vPNNVb
+bcytI583fjDTYtWj0rAxfCDZkYhPlrbdFuFL1QgjvXPOrdE7r2h12+JxPB4SxdPq
+qLa16yQslaSdLQmkzZmsRqzfkkDIxAEmFwo+fp31GqKtZkAJj+OnKNHD+hRWOxHw
+30LUFOerGlz5b/lH34TRigRDauzHj7s/BYs+7/sW8eEhZlRzrf41+bFAL+G0FU3t
+9r+VSn6izJ6SwyFpWFl1+9n63WWpdmTNz7Zsv8o/n5aNRW0xPQbsmVEdEmeA9b/R
+8Avl1nXC36BqDFIfdyVUsRcGBY4RXBvYwF7JiRQo7CRwuIb8gX2uoAzzI2xXSIN0
+djT7Ene5Uws3j4c3vxmQg9hKBW2B7pDIA8/VvVtbK/H8r84Mkb83a01rgguHgEPP
+jh+AYvg+ulJjijjCdffJ7Jl1ZudyZboH1XL/V3/SZ9zTTFRHR9OokntxQ5unqBkb
+Xyh58ycrvbMjlfonQm1WBshbxnbV0CFmqgISBBeSB+x0bcvMPjqr5VAPG+uV0BBR
+gYSnyn34fDezaGn6kpM2BXqQhum9gyYNMtS6j0n3H0k2IezKYbcAYWJogEe4lQQc
+cFwq+A9TlZiENhOFOYcw1lhT4HJhGTzj/tENo9tO93HdNtBzKiM=
+=xkF5
+-----END PGP SIGNATURE-----
+--=-=-=--
