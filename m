@@ -1,84 +1,176 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<michal.simek@xilinx.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-	<linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Jolly
- Shah <jolly.shah@xilinx.com>, Jolly Shah <jollys@xilinx.com>, Tejas Patel
-	<tejasp@xilinx.com>, Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH 1/3] drivers: clk: Add clk_get_children support
-Date: Wed, 28 Feb 2018 14:27:39 -0800
-Message-ID: <1519856861-31384-2-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
-References: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 1/7] pinctrl: sunxi: refactor irq related register function to have desc
+Date: Fri, 23 Feb 2018 20:25:46 +0800
+Message-Id: <20180223122552.58049-2-icenowy@aosc.io>
+In-Reply-To: <20180223122552.58049-1-icenowy@aosc.io>
+References: <20180223122552.58049-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jolly Shah <jolly.shah@xilinx.com>
+As the new H6 SoC has holes in the IRQ registers, refactor the IRQ
+related register function for getting the full pinctrl desc structure.
 
-This API helps to determine the users for any clock.
-
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
-Signed-off-by: Tejas Patel <tejasp@xilinx.com>
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/clk.c            | 28 ++++++++++++++++++++++++++++
- include/linux/clk-provider.h |  1 +
- 2 files changed, 29 insertions(+)
+New patch in v3.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0f686a9..947a18b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -274,6 +274,34 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_parent);
- 
-+static unsigned int sibling;
-+
-+static void clk_show_subtree(struct clk_core *c,
-+			     int level)
-+{
-+	struct clk_core *child;
-+
-+	if (!c)
-+		return;
-+
-+	if (level == 1)
-+		sibling++;
-+
-+	hlist_for_each_entry(child, &c->children, child_node)
-+		clk_show_subtree(child, level + 1);
-+}
-+
-+unsigned int clk_get_children(char *name)
-+{
-+	struct clk_core *core;
-+	struct clk *pclk = __clk_lookup(name);
-+
-+	sibling = 0;
-+	core = pclk->core;
-+	clk_show_subtree(core, 0);
-+	return sibling;
-+}
-+
- static struct clk_core *__clk_lookup_subtree(const char *name,
- 					     struct clk_core *core)
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 18 ++++++++----------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h | 29 +++++++++++++++++++++--------
+ 2 files changed, 29 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 341312d66512..31bd99f7df50 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -835,7 +835,7 @@ static void sunxi_pinctrl_irq_release_resources(struct irq_data *d)
+ static int sunxi_pinctrl_irq_set_type(struct irq_data *d, unsigned int type)
  {
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index f711be6..e94dfb2 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -745,6 +745,7 @@ unsigned int __clk_get_enable_count(struct clk *clk);
- unsigned long clk_hw_get_rate(const struct clk_hw *hw);
- unsigned long __clk_get_flags(struct clk *clk);
- unsigned long clk_hw_get_flags(const struct clk_hw *hw);
-+unsigned int clk_get_children(char *name);
- bool clk_hw_is_prepared(const struct clk_hw *hw);
- bool clk_hw_rate_is_protected(const struct clk_hw *hw);
- bool clk_hw_is_enabled(const struct clk_hw *hw);
+ 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+-	u32 reg = sunxi_irq_cfg_reg(d->hwirq, pctl->desc->irq_bank_base);
++	u32 reg = sunxi_irq_cfg_reg(d->hwirq, pctl->desc);
+ 	u8 index = sunxi_irq_cfg_offset(d->hwirq);
+ 	unsigned long flags;
+ 	u32 regval;
+@@ -882,8 +882,7 @@ static int sunxi_pinctrl_irq_set_type(struct irq_data *d, unsigned int type)
+ static void sunxi_pinctrl_irq_ack(struct irq_data *d)
+ {
+ 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+-	u32 status_reg = sunxi_irq_status_reg(d->hwirq,
+-					      pctl->desc->irq_bank_base);
++	u32 status_reg = sunxi_irq_status_reg(d->hwirq, pctl->desc);
+ 	u8 status_idx = sunxi_irq_status_offset(d->hwirq);
+ 
+ 	/* Clear the IRQ */
+@@ -893,7 +892,7 @@ static void sunxi_pinctrl_irq_ack(struct irq_data *d)
+ static void sunxi_pinctrl_irq_mask(struct irq_data *d)
+ {
+ 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+-	u32 reg = sunxi_irq_ctrl_reg(d->hwirq, pctl->desc->irq_bank_base);
++	u32 reg = sunxi_irq_ctrl_reg(d->hwirq, pctl->desc);
+ 	u8 idx = sunxi_irq_ctrl_offset(d->hwirq);
+ 	unsigned long flags;
+ 	u32 val;
+@@ -910,7 +909,7 @@ static void sunxi_pinctrl_irq_mask(struct irq_data *d)
+ static void sunxi_pinctrl_irq_unmask(struct irq_data *d)
+ {
+ 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+-	u32 reg = sunxi_irq_ctrl_reg(d->hwirq, pctl->desc->irq_bank_base);
++	u32 reg = sunxi_irq_ctrl_reg(d->hwirq, pctl->desc);
+ 	u8 idx = sunxi_irq_ctrl_offset(d->hwirq);
+ 	unsigned long flags;
+ 	u32 val;
+@@ -1002,7 +1001,7 @@ static void sunxi_pinctrl_irq_handler(struct irq_desc *desc)
+ 	if (bank == pctl->desc->irq_banks)
+ 		return;
+ 
+-	reg = sunxi_irq_status_reg_from_bank(bank, pctl->desc->irq_bank_base);
++	reg = sunxi_irq_status_reg_from_bank(bank, pctl->desc);
+ 	val = readl(pctl->membase + reg);
+ 
+ 	if (val) {
+@@ -1234,8 +1233,7 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
+ 
+ 		writel(src | div << 4,
+ 		       pctl->membase +
+-		       sunxi_irq_debounce_reg_from_bank(i,
+-							pctl->desc->irq_bank_base));
++		       sunxi_irq_debounce_reg_from_bank(i, pctl->desc));
+ 	}
+ 
+ 	return 0;
+@@ -1411,10 +1409,10 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+ 	for (i = 0; i < pctl->desc->irq_banks; i++) {
+ 		/* Mask and clear all IRQs before registering a handler */
+ 		writel(0, pctl->membase + sunxi_irq_ctrl_reg_from_bank(i,
+-						pctl->desc->irq_bank_base));
++						pctl->desc));
+ 		writel(0xffffffff,
+ 		       pctl->membase + sunxi_irq_status_reg_from_bank(i,
+-						pctl->desc->irq_bank_base));
++						pctl->desc));
+ 
+ 		irq_set_chained_handler_and_data(pctl->irq[i],
+ 						 sunxi_pinctrl_irq_handler,
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index 11b128f54ed2..909ca1504b61 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -263,8 +263,10 @@ static inline u32 sunxi_pull_offset(u16 pin)
+ 	return pin_num * PULL_PINS_BITS;
+ }
+ 
+-static inline u32 sunxi_irq_cfg_reg(u16 irq, unsigned bank_base)
++static inline u32 sunxi_irq_cfg_reg(u16 irq,
++				    const struct sunxi_pinctrl_desc *desc)
+ {
++	unsigned bank_base = desc->irq_bank_base;
+ 	u8 bank = irq / IRQ_PER_BANK;
+ 	u8 reg = (irq % IRQ_PER_BANK) / IRQ_CFG_IRQ_PER_REG * 0x04;
+ 
+@@ -277,16 +279,20 @@ static inline u32 sunxi_irq_cfg_offset(u16 irq)
+ 	return irq_num * IRQ_CFG_IRQ_BITS;
+ }
+ 
+-static inline u32 sunxi_irq_ctrl_reg_from_bank(u8 bank, unsigned bank_base)
++static inline u32 sunxi_irq_ctrl_reg_from_bank(u8 bank,
++					       const struct sunxi_pinctrl_desc *desc)
+ {
++	unsigned bank_base = desc->irq_bank_base;
++
+ 	return IRQ_CTRL_REG + (bank_base + bank) * IRQ_MEM_SIZE;
+ }
+ 
+-static inline u32 sunxi_irq_ctrl_reg(u16 irq, unsigned bank_base)
++static inline u32 sunxi_irq_ctrl_reg(u16 irq,
++				     const struct sunxi_pinctrl_desc *desc)
+ {
+ 	u8 bank = irq / IRQ_PER_BANK;
+ 
+-	return sunxi_irq_ctrl_reg_from_bank(bank, bank_base);
++	return sunxi_irq_ctrl_reg_from_bank(bank, desc);
+ }
+ 
+ static inline u32 sunxi_irq_ctrl_offset(u16 irq)
+@@ -295,21 +301,28 @@ static inline u32 sunxi_irq_ctrl_offset(u16 irq)
+ 	return irq_num * IRQ_CTRL_IRQ_BITS;
+ }
+ 
+-static inline u32 sunxi_irq_debounce_reg_from_bank(u8 bank, unsigned bank_base)
++static inline u32 sunxi_irq_debounce_reg_from_bank(u8 bank,
++						   const struct sunxi_pinctrl_desc *desc)
+ {
++	unsigned bank_base = desc->irq_bank_base;
++
+ 	return IRQ_DEBOUNCE_REG + (bank_base + bank) * IRQ_MEM_SIZE;
+ }
+ 
+-static inline u32 sunxi_irq_status_reg_from_bank(u8 bank, unsigned bank_base)
++static inline u32 sunxi_irq_status_reg_from_bank(u8 bank,
++						 const struct sunxi_pinctrl_desc *desc)
+ {
++	unsigned bank_base = desc->irq_bank_base;
++
+ 	return IRQ_STATUS_REG + (bank_base + bank) * IRQ_MEM_SIZE;
+ }
+ 
+-static inline u32 sunxi_irq_status_reg(u16 irq, unsigned bank_base)
++static inline u32 sunxi_irq_status_reg(u16 irq,
++				       const struct sunxi_pinctrl_desc *desc)
+ {
+ 	u8 bank = irq / IRQ_PER_BANK;
+ 
+-	return sunxi_irq_status_reg_from_bank(bank, bank_base);
++	return sunxi_irq_status_reg_from_bank(bank, desc);
+ }
+ 
+ static inline u32 sunxi_irq_status_offset(u16 irq)
 -- 
-2.7.4
+2.15.1
