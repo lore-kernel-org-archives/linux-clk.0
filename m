@@ -1,42 +1,39 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Rob Herring <robh@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE
-	<alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        "gabriel.fernandez.st@gmail.com"
-	<gabriel.fernandez.st@gmail.com>,
-        Olivier BIDEAU <olivier.bideau@st.com>
-Subject: Re: [PATCH 02/14] dt-bindings: clock: add STM32MP1 clocks
-Date: Mon, 5 Feb 2018 07:02:24 +0000
-Message-ID: <ec89b70e-1500-df15-639c-59165fb2014b@st.com>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
- <1517580222-23301-3-git-send-email-gabriel.fernandez@st.com>
- <20180205042348.2f7ssmzkajeky5l7@rob-hp-laptop>
-In-Reply-To: <20180205042348.2f7ssmzkajeky5l7@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <marcel@ziswiler.com>
+Date: Fri, 23 Feb 2018 07:28:33 +0100
+In-Reply-To: <98bfea14-de25-e764-94b4-2f0dd687149a@wwwdotorg.org>
+References: <20180222230451.15515-1-marcel@ziswiler.com> <98bfea14-de25-e764-94b4-2f0dd687149a@wwwdotorg.org>
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+To: Stephen Warren <swarren@wwwdotorg.org>
+CC: linux-tegra@vger.kernel.org,Dmitry Osipenko <digetx@gmail.com>,Marcel Ziswiler <marcel.ziswiler@toradex.com>,Thierry Reding <thierry.reding@gmail.com>,Stephen Boyd <sboyd@kernel.org>,linux-kernel@vger.kernel.org,Prashant Gaikwad <pgaikwad@nvidia.com>,Peter De Schrijver <pdeschrijver@nvidia.com>,Jonathan Hunter <jonathanh@nvidia.com>,Michael Turquette <mturquette@baylibre.com>,linux-clk@vger.kernel.org
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Message-ID: <5E71CC53-1C99-45FD-9615-D95C88DC085B@ziswiler.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCk9uIDAyLzA1LzIwMTggMDc6MDkgQU0sIFJvYiBIZXJyaW5nIHdyb3RlOg0KPiBPbiBGcmks
-IEZlYiAwMiwgMjAxOCBhdCAwMzowMzozMFBNICswMTAwLCBnYWJyaWVsLmZlcm5hbmRlekBzdC5j
-b20gd3JvdGU6DQo+PiBGcm9tOiBHYWJyaWVsIEZlcm5hbmRleiA8Z2FicmllbC5mZXJuYW5kZXpA
-c3QuY29tPg0KPj4NCj4+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgY2xvY2sgYmluZGluZyBlbnRyeSBm
-b3IgU1RNMzJNUDENCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBHYWJyaWVsIEZlcm5hbmRleiA8Z2Fi
-cmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4gLS0tDQo+PiAgIGluY2x1ZGUvZHQtYmluZGluZ3Mv
-Y2xvY2svc3RtMzJtcDEtY2xrcy5oIHwgMjQ4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-Kw0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMjQ4IGluc2VydGlvbnMoKykNCj4+ICAgY3JlYXRlIG1v
-ZGUgMTAwNjQ0IGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svc3RtMzJtcDEtY2xrcy5oDQo+IFlv
-dSBjYW4gc3F1YXNoIHRoaXMgaW50byB0aGUgcHJldmlvdXMgcGF0Y2guDQpPayBUaGFua3MhDQoN
-CkJSDQpHYWJyaWVsDQo=
+
+
+On February 23, 2018 12:47:56 AM GMT+01:00, Stephen Warren <swarren@wwwdot=
+org=2Eorg> wrote:
+>On 02/22/2018 04:04 PM, Marcel Ziswiler wrote:
+>> Turns out latest upstream U-Boot does not configure/enable pllu which
+>> leaves it at some default rate of 500 kHz:
+>
+>I assume this is only because U-Boot just happened not to access any
+>USB=20
+>devices=2E In other words, if you break into the U-Boot boot flow and=20
+>explicitly initialize/access USB, then USB works both in U-Boot and in=20
+>the kernel even without this patch?
+
+Exactly=2E
+
+> If that's not the case, it seems=20
+>there's a bug in U-Boot=2E
+>
+>Either way, I have no issue with this patch=2E I just want to make sure=
+=20
+>there weren't other bugs in U-Boot that needed fixing=2E
+
+No, rest assured U-Boot is working just fine on the legacy Tegras=2E The o=
+nly thing in need of fixing lately was NAND on Colibri T20 and Harmony=2E
