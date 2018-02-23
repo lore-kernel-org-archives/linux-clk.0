@@ -1,116 +1,169 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com,
-	narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v5 00/12] drm/sun4i: Add A83T HDMI support
-Date: Wed, 14 Feb 2018 21:08:54 +0100
-Message-Id: <20180214200906.31509-1-jernej.skrabec@siol.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:53925 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751765AbeBWPUl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Feb 2018 10:20:41 -0500
+Date: Fri, 23 Feb 2018 16:20:38 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 6/7] arm64: allwinner: h6: add the basical Allwinner
+ H6 DTSI file
+Message-ID: <20180223152038.2bflylwa6vj4gzfj@flea.lan>
+References: <20180223123555.64009-6-icenowy@aosc.io>
+ <20180223123555.64009-7-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="l2fdrnpsmitlpdua"
+In-Reply-To: <20180223123555.64009-7-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series implements support for A83T DW HDMI and PHY. Contrary to
-v1 series, this one is based on latest linux-next, since all needed patches
-were merged.
 
-While exactly this combination of HDMI controller and PHY is not common in
-Allwinner SoCs, this patch series nevertheless makes groundwork for other
-SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H5.
+--l2fdrnpsmitlpdua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please take a look.
+On Fri, Feb 23, 2018 at 08:35:54PM +0800, Icenowy Zheng wrote:
+> Allwinner H6 is a new SoC with Cortex-A53 cores from Allwinner, with its
+> memory map fully reworked and some high-speed peripherals (PCIe, USB
+> 3.0) introduced.
+>=20
+> This commit adds the basical DTSI file of it, including the clock
+> support and UART support.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+> Changes in v3:
+> - SPDX license identifier fix.
+>=20
+> Changes in v2:
+> - Add APB1 clock as PIO's APB clock.
+> - Switched to SPDX license identifier.
+>=20
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 177 +++++++++++++++++++++=
+++++++
+>  1 file changed, 177 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/bo=
+ot/dts/allwinner/sun50i-h6.dtsi
+> new file mode 100644
+> index 000000000000..4a6236bd9778
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> @@ -0,0 +1,177 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> +/*
+> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/sun50i-h6-ccu.h>
+> +#include <dt-bindings/reset/sun50i-h6-ccu.h>
+> +
+> +/ {
+> +	interrupt-parent =3D <&gic>;
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <1>;
+> +
+> +	cpus {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		cpu0: cpu@0 {
+> +			compatible =3D "arm,cortex-a53", "arm,armv8";
+> +			device_type =3D "cpu";
+> +			reg =3D <0>;
+> +			enable-method =3D "psci";
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			compatible =3D "arm,cortex-a53", "arm,armv8";
+> +			device_type =3D "cpu";
+> +			reg =3D <1>;
+> +			enable-method =3D "psci";
+> +		};
+> +
+> +		cpu2: cpu@2 {
+> +			compatible =3D "arm,cortex-a53", "arm,armv8";
+> +			device_type =3D "cpu";
+> +			reg =3D <2>;
+> +			enable-method =3D "psci";
+> +		};
+> +
+> +		cpu3: cpu@3 {
+> +			compatible =3D "arm,cortex-a53", "arm,armv8";
+> +			device_type =3D "cpu";
+> +			reg =3D <3>;
+> +			enable-method =3D "psci";
+> +		};
+> +	};
+> +
+> +	iosc: internal-osc-clk {
+> +		#clock-cells =3D <0>;
+> +		compatible =3D "fixed-clock";
+> +		clock-frequency =3D <16000000>;
+> +		clock-accuracy =3D <300000000>;
+> +		clock-output-names =3D "iosc";
+> +	};
 
-Best regards,
-Jernej
+You're not using it anywhere
 
-Changes from v4:
-- Added Acked-by tag
-- DT patch doesn't add second example anymore
-- Removed unneeded properties from dtsi
+> +	osc24M: osc24M_clk {
+> +		#clock-cells =3D <0>;
+> +		compatible =3D "fixed-clock";
+> +		clock-frequency =3D <24000000>;
+> +		clock-output-names =3D "osc24M";
+> +	};
+> +
+> +	osc32k: osc32k_clk {
+> +		#clock-cells =3D <0>;
+> +		compatible =3D "fixed-clock";
+> +		clock-frequency =3D <32768>;
+> +		clock-output-names =3D "osc32k";
+> +	};
+> +
+> +	psci {
+> +		compatible =3D "arm,psci-0.2";
+> +		method =3D "smc";
+> +	};
 
-Changes from v3:
-- Collected tags
-- drop patch for changing NKMP formula
-- add patch to use 64 bit intermediate variable for calculating NKMP
-  clock rate and thus preventing overflow in some cases
-- rework DT bindings patch according Rob's suggestions
-- move TMDS clock from PHY to controller driver, since documentation
-  suggest such relationship
+Is it needed? The bootloader should fill it with whatever version it
+has, shouldn't it?
 
-Changes from v2:
-- Collected ACKs and Review-by tags
-- patch for deinit callback was replaced with the one which gives control
-  of drvdata to driver
-- fixed meson driver (renamed reset function)
-- prototypes for newly exported functions in dw_hdmi.h were reordered
+Thanks!
+Maxime
 
-Changes from v1:
-- Collected ACKs
-- Separated bindings for controller and PHY
-- Split driver into two parts - controller and PHY
-- HDMI PHY driver now uses regmap for writes
-- added defines for PHY registers and bits
-- updated DT entries to accommodate new bindings
-- removed already merged clock patch
-- reworked first clock patch according to comments
-- added new clock patch which changes NKMP formula
-- split TCON patch in two, one for quirk and one for new compatible
-- reworked patch which exports DW HDMI PHY functions:
-  - remove "gen2" from some function names
-  - removed parameter from dw_hdmi_phy_reset()
-  - added address parameter to dw_hdmi_phy_i2c_set_addr()
-- updated most of commit messages
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Jernej Skrabec (12):
-  clk: sunxi-ng: Mask nkmp factors when setting register
-  clk: sunxi-ng: Use u64 for calculation of nkmp rate
-  drm/bridge/synopsys: dw-hdmi: Enable workaround for v1.32a
-  drm/bridge/synopsys: dw-hdmi: Export some PHY related functions
-  drm/bridge/synopsys: dw-hdmi: don't clobber drvdata
-  dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
-  drm/sun4i: Add has_channel_0 TCON quirk
-  drm/sun4i: Add support for A83T second TCON
-  drm/sun4i: Add support for A83T second DE2 mixer
-  drm/sun4i: Implement A83T HDMI driver
-  ARM: dts: sun8i: a83t: Add HDMI display pipeline
-  ARM: dts: sun8i: a83t: Enable HDMI on BananaPi M3
+--l2fdrnpsmitlpdua
+Content-Type: application/pgp-signature; name="signature.asc"
 
- .../bindings/display/sunxi/sun4i-drm.txt           |  61 ++++-
- arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts       |  25 ++
- arch/arm/boot/dts/sun8i-a83t.dtsi                  | 108 ++++++++-
- drivers/clk/sunxi-ng/ccu_nkmp.c                    |  42 +++-
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |  83 ++++---
- drivers/gpu/drm/imx/dw_hdmi-imx.c                  |  13 +-
- drivers/gpu/drm/meson/meson_dw_hdmi.c              |  22 +-
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c             |  12 +-
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |  13 +-
- drivers/gpu/drm/sun4i/Kconfig                      |   9 +
- drivers/gpu/drm/sun4i/Makefile                     |   4 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |  46 +++-
- drivers/gpu/drm/sun4i/sun4i_tcon.h                 |   1 +
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              | 196 +++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              |  44 ++++
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             | 270 +++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.c                |  11 +
- include/drm/bridge/dw_hdmi.h                       |  24 +-
- 18 files changed, 896 insertions(+), 88 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.16.1
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqQMUUACgkQ0rTAlCFN
+r3TVHRAAk/zurzZNX92aYYFuKKrNaIZVtlQ3TjMUrhpHWREtUKOY6Eqww5ymSq/A
+lMJMDtBPP4cUMWqGfhJsOevAqzfpEVzta4QoIhUo44TclVAOVegBbDwEFemWsfg7
+S1RzpeAXmW2rNvbHdqp519L97tHZQTxZ1aPsyGDGcnMDOyej6moAPjj+im5istOW
++rPlNSqd6Wa5/ZUoEJUJn/5U6R8sKvZNPgxdl3YlXWHlNNkzkJ36KaEu6vykwhV6
+6GgHdoVuTcWU/XtnNjIsC3j5GfQxOvGXBtvhKcnZowo1Vxt+p2Gb3bDkHtqjbLUy
+tNrFFxUTKZK0F06Ct/+cgm6N6SkFsu8WHlp7Ak4zP6uUvMHS+5FlycRCI49gmp05
+HkXbHndRnRJvSc+MKj6qjBhpceFzBtbViD2iUL3SEsQi1j+v75t6mZiHo7nFVbT6
+oPLAF/89ZFjO6XyfmMIEc0nVRr1UvEXo6XuOlByvXv2/ttcZQlHK62ruqjuiK1dE
+4bHknI2POiMi8/3AJkUwhS+g8h6KGhmTUyUR1cy99CSagRsnbe4Wd/YOsFFDeSAp
+LT5mvFcWSPUIrlYSfmxa98NFXi6DH7PL/+5m7IVjUzz1IfXBTR+rZ6zGoR1yko3o
+gn2hMHXn/YRQaewgp6zhorbffutDGzM+Wb+nYwMWCmQVe3YC7Og=
+=xle5
+-----END PGP SIGNATURE-----
+
+--l2fdrnpsmitlpdua--
