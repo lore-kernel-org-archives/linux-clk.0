@@ -1,159 +1,306 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com,
-	narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <sudeep.holla@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: ALKML <linux-arm-kernel@lists.infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	DTML <devicetree@vger.kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Alexey Klimov <klimov.linux@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v5 06/12] dt-bindings: display: sun4i-drm: Add A83T HDMI pipeline
-Date: Wed, 14 Feb 2018 21:09:00 +0100
-Message-Id: <20180214200906.31509-7-jernej.skrabec@siol.net>
-In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
-References: <20180214200906.31509-1-jernej.skrabec@siol.net>
+	Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH v6 16/20] clk: add support for clocks provided by SCMI
+Date: Fri, 23 Feb 2018 16:23:46 +0000
+Message-Id: <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
+References: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds all necessary compatibles and descriptions needed to
-implement A83T HDMI pipeline.
+On some ARM based systems, a separate Cortex-M based System Control
+Processor(SCP) provides the overall power, clock, reset and system
+control. System Control and Management Interface(SCMI) Message Protocol
+is defined for the communication between the Application Cores(AP)
+and the SCP.
 
-Mixer is already properly described, so only compatible is added.
+This patch adds support for the clocks provided by SCP using SCMI
+protocol.
 
-However, A83T TV TCON, which is connected to HDMI, doesn't have channel 0,
-contrary to all TCONs currently described. Because of that, TCON
-documentation is extended.
-
-A83T features Synopsys DW HDMI controller with a custom PHY which looks
-like Synopsys Gen2 PHY with few additions. Since there is no
-documentation, needed properties were found out through experimentation
-and reading BSP code.
-
-At the end, example is added for newer SoCs, which feature DE2 and DW
-HDMI.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- .../bindings/display/sunxi/sun4i-drm.txt           | 61 +++++++++++++++++++---
- 1 file changed, 55 insertions(+), 6 deletions(-)
+ MAINTAINERS            |   2 +-
+ drivers/clk/Kconfig    |  10 +++
+ drivers/clk/Makefile   |   1 +
+ drivers/clk/clk-scmi.c | 213 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 225 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/clk-scmi.c
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index cd626ee1147a..b995bfee734a 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -64,6 +64,52 @@ Required properties:
-     first port should be the input endpoint. The second should be the
-     output, usually to an HDMI connector.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 432594d2bc4d..fbd719cd0d54 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13386,7 +13386,7 @@ M:	Sudeep Holla <sudeep.holla@arm.com>
+ L:	linux-arm-kernel@lists.infradead.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/arm/arm,sc[mp]i.txt
+-F:	drivers/clk/clk-scpi.c
++F:	drivers/clk/clk-sc[mp]i.c
+ F:	drivers/cpufreq/scpi-cpufreq.c
+ F:	drivers/firmware/arm_scpi.c
+ F:	drivers/firmware/arm_scmi/
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 98ce9fc6e6c0..7ae23b25b406 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -62,6 +62,16 @@ config COMMON_CLK_HI655X
+ 	  multi-function device has one fixed-rate oscillator, clocked
+ 	  at 32KHz.
  
-+DWC HDMI TX Encoder
-+-------------------
++config COMMON_CLK_SCMI
++	tristate "Clock driver controlled via SCMI interface"
++	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
++	  ---help---
++	  This driver provides support for clocks that are controlled
++	  by firmware that implements the SCMI interface.
 +
-+The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
-+with Allwinner's own PHY IP. It supports audio and video outputs and CEC.
++	  This driver uses SCMI Message Protocol to interact with the
++	  firmware providing all the clock controls.
 +
-+These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
-+Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
-+following device-specific properties.
+ config COMMON_CLK_SCPI
+ 	tristate "Clock driver controlled via SCPI interface"
+ 	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 71ec41e6364f..6605513eaa94 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -41,6 +41,7 @@ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
+ obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
+ obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
+ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
++obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
+ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
+ obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+new file mode 100644
+index 000000000000..1e4d7a57779b
+--- /dev/null
++++ b/drivers/clk/clk-scmi.c
+@@ -0,0 +1,213 @@
++/*
++ * System Control and Power Interface (SCMI) Protocol based clock driver
++ *
++ * Copyright (C) 2017 ARM Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program. If not, see <http://www.gnu.org/licenses/>.
++ */
 +
-+Required properties:
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/of.h>
++#include <linux/module.h>
++#include <linux/scmi_protocol.h>
++#include <asm/div64.h>
 +
-+  - compatible: value must be one of:
-+    * "allwinner,sun8i-a83t-dw-hdmi"
-+  - reg: base address and size of memory-mapped region
-+  - reg-io-width: See dw_hdmi.txt. Shall be 1.
-+  - interrupts: HDMI interrupt number
-+  - clocks: phandles to the clocks feeding the HDMI encoder
-+    * iahb: the HDMI bus clock
-+    * isfr: the HDMI register clock
-+    * tmds: TMDS clock
-+  - clock-names: the clock names mentioned above
-+  - resets: phandle to the reset controller
-+  - reset-names: must be "ctrl"
-+  - phys: phandle to the DWC HDMI PHY
-+  - phy-names: must be "phy"
++struct scmi_clk {
++	u32 id;
++	struct clk_hw hw;
++	const struct scmi_clock_info *info;
++	const struct scmi_handle *handle;
++};
 +
-+  - ports: A ports node with endpoint definitions as defined in
-+    Documentation/devicetree/bindings/media/video-interfaces.txt. The
-+    first port should be the input endpoint. The second should be the
-+    output, usually to an HDMI connector.
++#define to_scmi_clk(clk) container_of(clk, struct scmi_clk, hw)
 +
-+DWC HDMI PHY
-+------------
++static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	int ret;
++	u64 rate;
++	struct scmi_clk *clk = to_scmi_clk(hw);
 +
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun8i-a83t-hdmi-phy
-+  - reg: base address and size of memory-mapped region
-+  - clocks: phandles to the clocks feeding the HDMI PHY
-+    * bus: the HDMI PHY interface clock
-+    * mod: the HDMI PHY module clock
-+  - clock-names: the clock names mentioned above
-+  - resets: phandle to the reset controller driving the PHY
-+  - reset-names: must be "phy"
++	ret = clk->handle->clk_ops->rate_get(clk->handle, clk->id, &rate);
++	if (ret)
++		return 0;
++	return rate;
++}
 +
- TV Encoder
- ----------
- 
-@@ -94,24 +140,26 @@ Required properties:
-    * allwinner,sun7i-a20-tcon
-    * allwinner,sun8i-a33-tcon
-    * allwinner,sun8i-a83t-tcon-lcd
-+   * allwinner,sun8i-a83t-tcon-tv
-    * allwinner,sun8i-v3s-tcon
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-- - clocks: phandles to the clocks feeding the TCON. Three are needed:
-+ - clocks: phandles to the clocks feeding the TCON.
-    - 'ahb': the interface clocks
--   - 'tcon-ch0': The clock driving the TCON channel 0
-+   - 'tcon-ch0': The clock driving the TCON channel 0, except for A83T TV TCON
-  - resets: phandles to the reset controllers driving the encoder
-    - "lcd": the reset line for the TCON channel 0
- 
-  - clock-names: the clock names mentioned above
-  - reset-names: the reset names mentioned above
-- - clock-output-names: Name of the pixel clock created
-+ - clock-output-names: Name of the pixel clock created, if TCON supports
-+   channel 0.
- 
- - ports: A ports node with endpoint definitions as defined in
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoint, the second one the output
- 
--  The output may have multiple endpoints. The TCON has two channels,
-+  The output may have multiple endpoints. TCON can have 1 or 2 channels,
-   usually with the first channel being used for the panels interfaces
-   (RGB, LVDS, etc.), and the second being used for the outputs that
-   require another controller (TV Encoder, HDMI, etc.). The endpoints
-@@ -122,8 +170,8 @@ Required properties:
- On SoCs other than the A33 and V3s, there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
- 
--On SoCs that support LVDS (all SoCs but the A13, H3, H5 and V3s), you
--need one more reset line:
-+When TCON support LVDS (all TCONs except TV TCON on A83T and those found
-+in A13, H3, H5 and V3s SoCs), you need one more reset line:
-    - 'lvds': The reset line driving the LVDS logic
- 
- And on the A23, A31, A31s and A33, you need one more clock line:
-@@ -226,6 +274,7 @@ supported.
- Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-a83t-de2-mixer-0
-+    * allwinner,sun8i-a83t-de2-mixer-1
-     * allwinner,sun8i-v3s-de2-mixer
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
++static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	int step;
++	u64 fmin, fmax, ftmp;
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	/*
++	 * We can't figure out what rate it will be, so just return the
++	 * rate back to the caller. scmi_clk_recalc_rate() will be called
++	 * after the rate is set and we'll know what rate the clock is
++	 * running at then.
++	 */
++	if (clk->info->rate_discrete)
++		return rate;
++
++	fmin = clk->info->range.min_rate;
++	fmax = clk->info->range.max_rate;
++	if (rate <= fmin)
++		return fmin;
++	else if (rate >= fmax)
++		return fmax;
++
++	ftmp = rate - fmin;
++	ftmp += clk->info->range.step_size - 1; /* to round up */
++	step = do_div(ftmp, clk->info->range.step_size);
++
++	return step * clk->info->range.step_size + fmin;
++}
++
++static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++			     unsigned long parent_rate)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	return clk->handle->clk_ops->rate_set(clk->handle, clk->id, 0, rate);
++}
++
++static int scmi_clk_enable(struct clk_hw *hw)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	return clk->handle->clk_ops->enable(clk->handle, clk->id);
++}
++
++static void scmi_clk_disable(struct clk_hw *hw)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	clk->handle->clk_ops->disable(clk->handle, clk->id);
++}
++
++static const struct clk_ops scmi_clk_ops = {
++	.recalc_rate = scmi_clk_recalc_rate,
++	.round_rate = scmi_clk_round_rate,
++	.set_rate = scmi_clk_set_rate,
++	/*
++	 * We can't provide enable/disable callback as we can't perform the same
++	 * in atomic context. Since the clock framework provides standard API
++	 * clk_prepare_enable that helps cases using clk_enable in non-atomic
++	 * context, it should be fine providing prepare/unprepare.
++	 */
++	.prepare = scmi_clk_enable,
++	.unprepare = scmi_clk_disable,
++};
++
++static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
++{
++	int ret;
++	struct clk_init_data init = {
++		.flags = CLK_GET_RATE_NOCACHE,
++		.num_parents = 0,
++		.ops = &scmi_clk_ops,
++		.name = sclk->info->name,
++	};
++
++	sclk->hw.init = &init;
++	ret = devm_clk_hw_register(dev, &sclk->hw);
++	if (!ret)
++		clk_hw_set_rate_range(&sclk->hw, sclk->info->range.min_rate,
++				      sclk->info->range.max_rate);
++	return ret;
++}
++
++static int scmi_clocks_probe(struct scmi_device *sdev)
++{
++	int idx, count, err;
++	struct clk_hw **hws;
++	struct clk_hw_onecell_data *clk_data;
++	struct device *dev = &sdev->dev;
++	struct device_node *np = dev->of_node;
++	const struct scmi_handle *handle = sdev->handle;
++
++	if (!handle || !handle->clk_ops)
++		return -ENODEV;
++
++	count = handle->clk_ops->count_get(handle);
++	if (count < 0) {
++		dev_err(dev, "%s: invalid clock output count\n", np->name);
++		return -EINVAL;
++	}
++
++	clk_data = devm_kzalloc(dev, sizeof(*clk_data) +
++				sizeof(*clk_data->hws) * count, GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	clk_data->num = count;
++	hws = clk_data->hws;
++
++	for (idx = 0; idx < count; idx++) {
++		struct scmi_clk *sclk;
++
++		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
++		if (!sclk)
++			return -ENOMEM;
++
++		sclk->info = handle->clk_ops->info_get(handle, idx);
++		if (!sclk->info) {
++			dev_dbg(dev, "invalid clock info for idx %d\n", idx);
++			continue;
++		}
++
++		sclk->id = idx;
++		sclk->handle = handle;
++
++		err = scmi_clk_ops_init(dev, sclk);
++		if (err) {
++			dev_err(dev, "failed to register clock %d\n", idx);
++			devm_kfree(dev, sclk);
++			hws[idx] = NULL;
++		} else {
++			dev_dbg(dev, "Registered clock:%s\n", sclk->info->name);
++			hws[idx] = &sclk->hw;
++		}
++	}
++
++	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++}
++
++static void scmi_clocks_remove(struct scmi_device *sdev)
++{
++	struct device *dev = &sdev->dev;
++	struct device_node *np = dev->of_node;
++
++	of_clk_del_provider(np);
++}
++
++static const struct scmi_device_id scmi_id_table[] = {
++	{ SCMI_PROTOCOL_CLOCK },
++	{ },
++};
++MODULE_DEVICE_TABLE(scmi, scmi_id_table);
++
++static struct scmi_driver scmi_clocks_driver = {
++	.name = "scmi-clocks",
++	.probe = scmi_clocks_probe,
++	.remove = scmi_clocks_remove,
++	.id_table = scmi_id_table,
++};
++module_scmi_driver(scmi_clocks_driver);
++
++MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
++MODULE_DESCRIPTION("ARM SCMI clock driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.16.1
+2.7.4
