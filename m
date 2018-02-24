@@ -1,50 +1,71 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 17/41] dt-bindings: clock: Add bindings for DA8XX
- CFGCHIP clocks
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-18-git-send-email-david@lechnology.com>
- <572e31a2-ac18-512b-03bb-82fffcf4d228@ti.com>
- <26fd0f01-ed14-6544-7443-e88c69ca9acb@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <f57cae4e-560a-0ea4-16dd-bdf8696d4f7b@ti.com>
-Date: Mon, 5 Feb 2018 15:12:35 +0530
-MIME-Version: 1.0
-In-Reply-To: <26fd0f01-ed14-6544-7443-e88c69ca9acb@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 05/15] dt-bindings: display: sun4i-drm: Add compatibles for H3 HDMI pipeline
+Date: Sat, 24 Feb 2018 22:45:35 +0100
+Message-Id: <20180224214545.3740-6-jernej.skrabec@siol.net>
+In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 02 February 2018 11:20 PM, David Lechner wrote:
-> On 02/02/2018 12:20 AM, Sekhar Nori wrote:
->> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
->>> +EMIFA clock source (ASYNC1)
->>> +---------------------------
->>> +Required properties:
->>> +- compatible: shall be "ti,da850-async1-clksrc".
->>> +- #clock-cells: from common clock binding; shall be set to 0.
->>> +- clocks: phandles to the parent clocks corresponding to clock-names
->>> +- clock-names: shall be "pll0_sysclk3", "div4.5"
->>
->> Is this clock really referred to as aysnc1 in documentation? I don't get
->> hits for async1 in OMAP-L138 TRM.
->>
-> 
-> It looks like it is only called ASYNC1 in the datasheet, not the TRM.
-> 
-> Table 6-5. Maximum Internal Clock Frequencies at Each Voltage Operating
-> Point
+Add missing compatibles for H3 HDMI pipeline. These compatibles can also
+be used with H5 SoC.
 
-I see it now. Its fine to use async1 then.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Thanks,
-Sekhar
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index b995bfee734a..8bdef4920edc 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -102,6 +102,7 @@ DWC HDMI PHY
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-a83t-hdmi-phy
++    * allwinner,sun8i-h3-hdmi-phy
+   - reg: base address and size of memory-mapped region
+   - clocks: phandles to the clocks feeding the HDMI PHY
+     * bus: the HDMI PHY interface clock
+@@ -110,6 +111,9 @@ Required properties:
+   - resets: phandle to the reset controller driving the PHY
+   - reset-names: must be "phy"
+ 
++H3 HDMI PHY requires additional clock:
++  - pll-0: parent of phy clock
++
+ TV Encoder
+ ----------
+ 
+@@ -275,6 +279,7 @@ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-a83t-de2-mixer-0
+     * allwinner,sun8i-a83t-de2-mixer-1
++    * allwinner,sun8i-h3-de2-mixer-0
+     * allwinner,sun8i-v3s-de2-mixer
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+@@ -305,6 +310,7 @@ Required properties:
+     * allwinner,sun7i-a20-display-engine
+     * allwinner,sun8i-a33-display-engine
+     * allwinner,sun8i-a83t-display-engine
++    * allwinner,sun8i-h3-display-engine
+     * allwinner,sun8i-v3s-display-engine
+ 
+   - allwinner,pipelines: list of phandle to the display engine
+-- 
+2.16.2
