@@ -1,60 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58111 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964778AbeBMNlB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Feb 2018 08:41:01 -0500
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG SOC CLOCK
-        DRIVERS),
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH 0/7] clk: samsung: fix PLL rates
-Date: Tue, 13 Feb 2018 14:40:25 +0100
-Message-id: <20180213134032.30235-1-a.hajda@samsung.com>
-References: <CGME20180213134056eucas1p270dae5e31eeb96f5c317fe512d761ddd@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 08/15] drm/sun4i: Fix polarity configuration for DW HDMI PHY
+Date: Sat, 24 Feb 2018 22:45:38 +0100
+Message-Id: <20180224214545.3740-9-jernej.skrabec@siol.net>
+In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Current polarity configuration code is cleary wrong since it compares
+same flag two times. However, even if flag name is fixed, it won't work
+well for resolutions which have one polarity positive and another
+negative.
 
-This patchset fixes PLL clock rates in all Samsung PLLs, moreover it adds
-compile time validators to avoid such mistakes in the future.
-The patchset has been compile tested for all variants, and runtime tested on
-TM2 and Odroid XU3.
+Fix that by properly set each bit according to each polarity. Since
+those two bits are not described in any documentation, relationships
+were obtained by experimentation.
 
-Regards
-Andrzej
+Fixes: b7c7436a5ff0 ("drm/sun4i: Implement A83T HDMI driver")
 
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Andrzej Hajda (7):
-  clk: samsung: exynos3250: fix PLL rates
-  clk: samsung: exynos5250: fix PLL rates
-  clk: samsung: exynos5260: fix PLL rates
-  clk: samsung: exynos5433: fix PLL rates
-  clk: samsung: exynos7: fix PLL rates
-  clk: samsung: s3c2410: fix PLL rates
-  clk: samsung: add compile time PLL rate validators
-
- drivers/clk/samsung/clk-exynos3250.c | 114 +++++++++++++++++------------------
- drivers/clk/samsung/clk-exynos4.c    | 102 +++++++++++++++----------------
- drivers/clk/samsung/clk-exynos5250.c |  54 ++++++++---------
- drivers/clk/samsung/clk-exynos5260.c |  90 +++++++++++++--------------
- drivers/clk/samsung/clk-exynos5410.c |  20 +++---
- drivers/clk/samsung/clk-exynos5420.c |  62 +++++++++----------
- drivers/clk/samsung/clk-exynos5433.c | 114 +++++++++++++++++------------------
- drivers/clk/samsung/clk-exynos7.c    |   2 +-
- drivers/clk/samsung/clk-pll.h        |  55 ++++++++++++++---
- drivers/clk/samsung/clk-s3c2410.c    | 108 ++++++++++++++++-----------------
- 10 files changed, 378 insertions(+), 343 deletions(-)
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index e5bfcdd43ec9..f48e8b70fabe 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -35,10 +35,11 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
+ 	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
+ 	u32 val = 0;
+ 
+-	if ((mode->flags & DRM_MODE_FLAG_NHSYNC) &&
+-	    (mode->flags & DRM_MODE_FLAG_NHSYNC)) {
+-		val = 0x03;
+-	}
++	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
++		val |= 0x01;
++
++	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
++		val |= 0x02;
+ 
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
+ 			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK,
 -- 
-2.16.1
-
+2.16.2
