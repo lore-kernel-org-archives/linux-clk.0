@@ -1,59 +1,65 @@
-Return-Path: <patrice.chotard@st.com>
-From: Patrice CHOTARD <patrice.chotard@st.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on
- stm32F769
-Date: Mon, 26 Feb 2018 08:41:13 +0000
-Message-ID: <fb3b26e8-0102-122b-1386-68a661139706@st.com>
-References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
- <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
-In-Reply-To: <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 03/15] clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
+Date: Sat, 24 Feb 2018 22:45:33 +0100
+Message-Id: <20180224214545.3740-4-jernej.skrabec@siol.net>
+In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwgTWljaGFlbA0KDQpJdCdzIGEgZ2VudGxlIHJlbWluZGVyIGFzIHRoaXMgcGF0
-Y2ggaXMgcHJlc2VudCBvbiBtYWlsaW5nIGxpc3QgYW5kIA0KYWNrZWQtYnkgc2luY2UgMDEvMTIv
-MjAxOA0KDQpUaGFua3MNCg0KUGF0cmljZQ0KDQpPbiAwMS8xNi8yMDE4IDAxOjMwIFBNLCBwYXRy
-aWNlLmNob3RhcmRAc3QuY29tIHdyb3RlOg0KPiBGcm9tOiBQYXRyaWNlIENob3RhcmQgPHBhdHJp
-Y2UuY2hvdGFyZEBzdC5jb20+DQo+IA0KPiBTVE0zMkY3NjkgaGFzIDIgU0RNTUMgcG9ydCwgYWRk
-IGNsb2NrIGVudHJ5IGZvciB0aGUgc2Vjb25kIG9uZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFs
-ZXhhbmRyZSBUT1JHVUUgPGFsZXhhbmRyZS50b3JndWVAc3QuY29tPg0KPiBTaWduZWQtb2ZmLWJ5
-OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+IEFja2VkLWJ5OiBT
-dGVwaGVuIEJveWQgPHNib3lkQGNvZGVhdXJvcmEub3JnPg0KPiAtLS0NCj4gDQo+IHYyIF8gQWRk
-IEFja2VkLWJ5DQo+IA0KPiAgIGRyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMgfCAzICsrLQ0KPiAg
-IDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstc3RtMzJmNC5jIGIvZHJpdmVycy9jbGsvY2xrLXN0
-bTMyZjQuYw0KPiBpbmRleCA5NmM2YjZiLi44ZjhhMTc4IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
-L2Nsay9jbGstc3RtMzJmNC5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMNCj4g
-QEAgLTI4Miw2ICsyODIsNyBAQCBzdHJ1Y3Qgc3RtMzJmNF9nYXRlX2RhdGEgew0KPiAgIA0KPiAg
-IAl7IFNUTTMyRjRfUkNDX0FQQjJFTlIsICAwLAkidGltMSIsCQkiYXBiMl9tdWwiIH0sDQo+ICAg
-CXsgU1RNMzJGNF9SQ0NfQVBCMkVOUiwgIDEsCSJ0aW04IiwJCSJhcGIyX211bCIgfSwNCj4gKwl7
-IFNUTTMyRjRfUkNDX0FQQjJFTlIsICA3LAkic2RtbWMyIiwJInNkbXV4IiAgICB9LA0KPiAgIAl7
-IFNUTTMyRjRfUkNDX0FQQjJFTlIsICA4LAkiYWRjMSIsCQkiYXBiMl9kaXYiIH0sDQo+ICAgCXsg
-U1RNMzJGNF9SQ0NfQVBCMkVOUiwgIDksCSJhZGMyIiwJCSJhcGIyX2RpdiIgfSwNCj4gICAJeyBT
-VE0zMkY0X1JDQ19BUEIyRU5SLCAxMCwJImFkYzMiLAkJImFwYjJfZGl2IiB9LA0KPiBAQCAtMzE1
-LDcgKzMxNiw3IEBAIHN0cnVjdCBzdG0zMmY0X2dhdGVfZGF0YSB7DQo+ICAgDQo+ICAgc3RhdGlj
-IGNvbnN0IHU2NCBzdG0zMmY3NDZfZ2F0ZV9tYXBbTUFYX0dBVEVfTUFQXSA9IHsgMHgwMDAwMDBm
-MTdlZjQxN2ZmdWxsLA0KPiAgIAkJCQkJCSAgICAgIDB4MDAwMDAwMDAwMDAwMDAwM3VsbCwNCj4g
-LQkJCQkJCSAgICAgIDB4MDRmNzdmMDMzZTAxYzlmZnVsbCB9Ow0KPiArCQkJCQkJICAgICAgMHgw
-NGY3N2Y4MzNlMDFjOWZmdWxsIH07DQo+ICAgDQo+ICAgc3RhdGljIGNvbnN0IHU2NCAqc3RtMzJm
-NF9nYXRlX21hcDsNCj4gICANCj4g
+Some units have to be able to set it's own clock precisely to work
+correctly. Allow them to do so by adding CLK_SET_RATE_PARENT flag.
+
+Add this flag to DE, TCON and HDMI clocks.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index b9f39078c0b2..77ed0b0ba681 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -452,11 +452,13 @@ static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
+ 
+ static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
+-				 0x104, 0, 4, 24, 3, BIT(31), 0);
++				 0x104, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static const char * const tcon_parents[] = { "pll-video" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(tcon_clk, "tcon", tcon_parents,
+-				 0x118, 0, 4, 24, 3, BIT(31), 0);
++				 0x118, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static const char * const tve_parents[] = { "pll-de", "pll-periph1" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(tve_clk, "tve", tve_parents,
+@@ -487,7 +489,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+ 
+ static const char * const hdmi_parents[] = { "pll-video" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+-				 0x150, 0, 4, 24, 2, BIT(31), 0);
++				 0x150, 0, 4, 24, 2, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
+ 		      0x154, BIT(31), 0);
+-- 
+2.16.2
