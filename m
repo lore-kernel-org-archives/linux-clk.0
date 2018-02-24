@@ -1,72 +1,131 @@
-Return-Path: <wsa-dev@sang-engineering.com>
-Date: Thu, 8 Feb 2018 00:20:41 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [RFC v4 23/26] ARM: dts: r8a7791: Add watchdog support to SoC
- dtsi
-Message-ID: <20180207232041.vgo2i7cmkljwvluy@katana>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1517423070-24236-24-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5lywdttzvhqp5tef"
-In-Reply-To: <1517423070-24236-24-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 01/15] clk: sunxi-ng: Add check for minimal rate to NM PLLs
+Date: Sat, 24 Feb 2018 22:45:31 +0100
+Message-Id: <20180224214545.3740-2-jernej.skrabec@siol.net>
+In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
+Some NM PLLs doesn't work well when their output clock rate is set below
+certain rate.
 
---5lywdttzvhqp5tef
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add support for that constrain.
 
-On Wed, Jan 31, 2018 at 06:24:27PM +0000, Fabrizio Castro wrote:
-> This commit adds watchdog support to the r8a7791 dtsi.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesa=
-s.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_nm.c | 11 +++++++----
+ drivers/clk/sunxi-ng/ccu_nm.h | 27 +++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+), 4 deletions(-)
 
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---5lywdttzvhqp5tef
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlp7ickACgkQFA3kzBSg
-KbbmUA/9GVhdEFtaR7aTq7KbbW4Vcee6HlK7E9Bnhcxwqvc9pXckaReLWp+NcsBo
-O4KMkEfPFuylGXnAGTADDBgZnb0+mgQw03NsBN6Gclo/E3O0QwLv9DVCBimjjPs5
-ePQw2FDC1hXxrr6hE5BZ4RNycamyEj5l5N++KtmPc/IXgiuRX0iOphAUrEpCO0gD
-CKCom0bM0Uh3J3kS3CreGu0xH1JIdF80DzTqH4JJ+R1WzOM+th/TKN1aJh4ClOx1
-V74+rTG6dc1JNIhgNUiDwgMe75TzMoD+K/gYDdYNHPdBZGo67vzM5ers+EwEy3Li
-PldfJIcK8dmF/y8aj3/hEXKxghg+qEBWhlhRubk3PcXgqAmtwm30YdjYBpI07Zpf
-oruYV5nE5zlaY/SI4OzPENIyT1A4LCz93qSxFCdYzFmV1y5ESsgJIv2M14ZOb7cK
-0ZdvJvbfwsuiDPoWjNiX37KVl+2aA7AhyZLbI04SuHdqUplHLomqekeSgA8nTXwN
-oiD1fw91jmxClBKlc94lhAYJgMg7mJadqaSmy7Ee20O92nVjVy9t1UT4Ljm8C9kz
-jz1t+lDRm4SBvXWDn0TMbFpAdrnnNJsZvfckM+FiQUtvsd01vs8buv7c/3ZBl81t
-YdSfuUyA/MKPXtgk0bpDJTBQGfzcZo1cMCSczyOnGWFF3X3I0Yo=
-=OeS1
------END PGP SIGNATURE-----
-
---5lywdttzvhqp5tef--
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index a16de092bf94..c5ca62a9c2b9 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -20,7 +20,7 @@ struct _ccu_nm {
+ };
+ 
+ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
+-			     struct _ccu_nm *nm)
++			     unsigned long min_rate, struct _ccu_nm *nm)
+ {
+ 	unsigned long best_rate = 0;
+ 	unsigned long best_n = 0, best_m = 0;
+@@ -30,7 +30,7 @@ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
+ 		for (_m = nm->min_m; _m <= nm->max_m; _m++) {
+ 			unsigned long tmp_rate = parent * _n  / _m;
+ 
+-			if (tmp_rate > rate)
++			if (tmp_rate > rate || tmp_rate < min_rate)
+ 				continue;
+ 
+ 			if ((rate - tmp_rate) < (rate - best_rate)) {
+@@ -134,7 +134,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
+-	ccu_nm_find_best(*parent_rate, rate, &_nm);
++	ccu_nm_find_best(*parent_rate, rate, nm->min_rate, &_nm);
+ 	rate = *parent_rate * _nm.n / _nm.m;
+ 
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+@@ -155,6 +155,9 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate = rate * nm->fixed_post_div;
+ 
++	if (rate < nm->min_rate)
++		return -EINVAL;
++
+ 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
+ 		spin_lock_irqsave(nm->common.lock, flags);
+ 
+@@ -186,7 +189,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 					   &_nm.m, &_nm.n);
+ 	} else {
+ 		ccu_sdm_helper_disable(&nm->common, &nm->sdm);
+-		ccu_nm_find_best(parent_rate, rate, &_nm);
++		ccu_nm_find_best(parent_rate, rate, nm->min_rate, &_nm);
+ 	}
+ 
+ 	spin_lock_irqsave(nm->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
+index eba586b4c7d0..1d8b459c50b7 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.h
++++ b/drivers/clk/sunxi-ng/ccu_nm.h
+@@ -37,6 +37,7 @@ struct ccu_nm {
+ 	struct ccu_sdm_internal		sdm;
+ 
+ 	unsigned int		fixed_post_div;
++	unsigned int		min_rate;
+ 
+ 	struct ccu_common	common;
+ };
+@@ -88,6 +89,32 @@ struct ccu_nm {
+ 		},							\
+ 	}
+ 
++#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(_struct, _name, _parent,	\
++					     _reg, _min_rate,		\
++					     _nshift, _nwidth,		\
++					     _mshift, _mwidth,		\
++					     _frac_en, _frac_sel,	\
++					     _frac_rate_0, _frac_rate_1,\
++					     _gate, _lock, _flags)	\
++	struct ccu_nm _struct = {					\
++		.enable		= _gate,				\
++		.lock		= _lock,				\
++		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
++		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
++		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
++						  _frac_rate_0,		\
++						  _frac_rate_1),	\
++		.min_rate	= _min_rate,				\
++		.common		= {					\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_FRACTIONAL,	\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_nm_ops,	\
++						      _flags),		\
++		},							\
++	}
++
+ #define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
+ 				    _nshift, _nwidth,			\
+ 				    _mshift, _mwidth,			\
+-- 
+2.16.2
