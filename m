@@ -1,264 +1,250 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39384 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752451AbeBZMyH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 07:54:07 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 2/6] clk: samsung: Add Exynos5 sub-CMU clock driver
-Date: Mon, 26 Feb 2018 13:53:51 +0100
-Message-id: <20180226125355.9052-3-m.szyprowski@samsung.com>
-In-reply-to: <20180226125355.9052-1-m.szyprowski@samsung.com>
-References: <20180226125355.9052-1-m.szyprowski@samsung.com>
-        <CGME20180226125402eucas1p1ac3e0a5853218cd77f469864f70ae89d@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 09/15] drm/sun4i: Add support for variants to DW HDMI PHY
+Date: Sat, 24 Feb 2018 22:45:39 +0100
+Message-Id: <20180224214545.3740-10-jernej.skrabec@siol.net>
+In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Exynos5250/5420/5800 have only one clock constroller, but some of their
-clock depends on respective power domains. Handling integration of clock
-controller and power domain can be done using runtime PM feature of CCF
-framework. This however needs a separate struct device for each power
-domain. This patch adds such separate driver for a group of such clocks,
-which can be instantiated more than once, each time for a different
-power domain.
+There are multiple variants of DW HDMI PHYs in Allwinner SoCs. While
+some things like clock and reset setup are the same, PHY configuration
+differs a lot.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Split out code which is PHY specific to separate functions and create
+a structure which holds pointers to those functions.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/samsung/clk-exynos5-subcmu.c | 185 +++++++++++++++++++++++++++++++
- drivers/clk/samsung/clk-exynos5-subcmu.h |  26 +++++
- 2 files changed, 211 insertions(+)
- create mode 100644 drivers/clk/samsung/clk-exynos5-subcmu.c
- create mode 100644 drivers/clk/samsung/clk-exynos5-subcmu.h
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  | 20 ++++++--
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 91 +++++++++++++++++++++++-----------
+ 2 files changed, 77 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-new file mode 100644
-index 000000000000..41bf5c3cf178
---- /dev/null
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -0,0 +1,185 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2018 Samsung Electronics Co., Ltd.
-+// Author: Marek Szyprowski <m.szyprowski@samsung.com>
-+// Common Clock Framework support for Exynos5 power-domain dependent clocks
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index d8d0684fc8aa..1e9eb6072615 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -12,11 +12,23 @@
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
+ 
++struct sun8i_hdmi_phy;
 +
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
-+
-+#include "clk.h"
-+#include "clk-exynos5-subcmu.h"
-+
-+static struct samsung_clk_provider *ctx;
-+static const struct exynos5_subcmu_info *cmu;
-+static int nr_cmus;
-+
-+static void samsung_ext_clk_save(void __iomem *base,
-+				 struct samsung_clk_ext_reg_dump *rd,
-+				 unsigned int num_regs)
-+{
-+	for (; num_regs > 0; --num_regs, ++rd) {
-+		rd->save = readl(base + rd->offset);
-+		writel((rd->save & ~rd->mask) | rd->value, base + rd->offset);
-+		rd->save &= rd->mask;
-+	}
++struct sun8i_hdmi_phy_variant {
++	void (*phy_init)(struct sun8i_hdmi_phy *phy);
++	void (*phy_disable)(struct dw_hdmi *hdmi,
++			    struct sun8i_hdmi_phy *phy);
++	int  (*phy_config)(struct dw_hdmi *hdmi,
++			   struct sun8i_hdmi_phy *phy,
++			   unsigned int clk_rate);
 +};
 +
-+static void samsung_ext_clk_restore(void __iomem *base,
-+				    struct samsung_clk_ext_reg_dump *rd,
-+				    unsigned int num_regs)
+ struct sun8i_hdmi_phy {
+-	struct clk		*clk_bus;
+-	struct clk		*clk_mod;
+-	struct regmap		*regs;
+-	struct reset_control	*rst_phy;
++	struct clk			*clk_bus;
++	struct clk			*clk_mod;
++	struct regmap			*regs;
++	struct reset_control		*rst_phy;
++	struct sun8i_hdmi_phy_variant	*variant;
+ };
+ 
+ struct sun8i_dw_hdmi {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index f48e8b70fabe..ab758f040acd 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -29,22 +29,10 @@
+  */
+ #define I2C_ADDR	0x69
+ 
+-static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
+-				 struct drm_display_mode *mode)
++static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
++				      struct sun8i_hdmi_phy *phy,
++				      unsigned int clk_rate)
+ {
+-	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
+-	u32 val = 0;
+-
+-	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+-		val |= 0x01;
+-
+-	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
+-		val |= 0x02;
+-
+-	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
+-			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK,
+-			   SUN8I_HDMI_PHY_DBG_CTRL_POL(val));
+-
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
+ 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
+ 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
+@@ -64,21 +52,21 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
+ 	 * release any documentation, explanation of this values can
+ 	 * be found in i.MX 6Dual/6Quad Reference Manual.
+ 	 */
+-	if (mode->crtc_clock <= 27000) {
++	if (clk_rate <= 27000000) {
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x01e0, 0x06);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x15);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x08da, 0x10);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0007, 0x19);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0318, 0x0e);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x8009, 0x09);
+-	} else if (mode->crtc_clock <= 74250) {
++	} else if (clk_rate <= 74250000) {
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0540, 0x06);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0005, 0x15);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x10);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0007, 0x19);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x02b5, 0x0e);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x8009, 0x09);
+-	} else if (mode->crtc_clock <= 148500) {
++	} else if (clk_rate <= 148500000) {
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x04a0, 0x06);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x000a, 0x15);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x10);
+@@ -103,10 +91,28 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
+ 	return 0;
+ };
+ 
+-static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
++static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
++				 struct drm_display_mode *mode)
+ {
+ 	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
++	u32 val = 0;
++
++	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
++		val |= 0x01;
++
++	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
++		val |= 0x02;
++
++	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
++			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK,
++			   SUN8I_HDMI_PHY_DBG_CTRL_POL(val));
++
++	return phy->variant->phy_config(hdmi, phy, mode->crtc_clock * 1000);
++};
+ 
++static void sun8i_hdmi_phy_disable_a83t(struct dw_hdmi *hdmi,
++					struct sun8i_hdmi_phy *phy)
 +{
-+	for (; num_regs > 0; --num_regs, ++rd)
-+		writel((readl(base + rd->offset) & ~rd->mask) | rd->save,
-+		       base + rd->offset);
+ 	dw_hdmi_phy_gen2_txpwron(hdmi, 0);
+ 	dw_hdmi_phy_gen2_pddq(hdmi, 1);
+ 
+@@ -114,6 +120,13 @@ static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
+ 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN, 0);
+ }
+ 
++static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
++{
++	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
++
++	phy->variant->phy_disable(hdmi, phy);
 +}
 +
-+static void samsung_clk_defer_gate(struct samsung_clk_provider *ctx,
-+			      const struct samsung_gate_clock *list, int nr_clk)
+ static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_ops = {
+ 	.init = &sun8i_hdmi_phy_config,
+ 	.disable = &sun8i_hdmi_phy_disable,
+@@ -122,16 +135,8 @@ static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_ops = {
+ 	.setup_hpd = &dw_hdmi_phy_setup_hpd,
+ };
+ 
+-void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
++static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
+ {
+-	/* enable read access to HDMI controller */
+-	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
+-		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
+-
+-	/* unscramble register offsets */
+-	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
+-		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
+-
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
+ 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK,
+ 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK);
+@@ -145,6 +150,19 @@ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
+ 			   SUN8I_HDMI_PHY_DBG_CTRL_ADDR(I2C_ADDR));
+ }
+ 
++void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
 +{
-+	while (nr_clk--)
-+		samsung_clk_add_lookup(ctx, ERR_PTR(-EPROBE_DEFER), list++->id);
++	/* enable read access to HDMI controller */
++	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
++		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
++
++	/* unscramble register offsets */
++	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
++		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
++
++	phy->variant->phy_init(phy);
 +}
 +
-+/*
-+ * Pass the needed clock provider context and register sub-CMU clocks
-+ *
-+ * NOTE: This function has to be called from the main, OF_CLK_DECLARE-
-+ * initialized clock provider driver. This happens very early during boot
-+ * process. Then this driver, during core_initcall registers two platform
-+ * drivers: one which binds to the same device-tree node as OF_CLK_DECLARE
-+ * driver and second, for handling its per-domain child-devices. Those
-+ * platform drivers are bound to their devices a bit later in arch_initcall,
-+ * when OF-core populates all device-tree nodes.
-+ */
-+void exynos5_subcmus_init(struct samsung_clk_provider *_ctx, int _nr_cmus,
-+			  const struct exynos5_subcmu_info *_cmu)
-+{
-+	ctx = _ctx;
-+	cmu = _cmu;
-+	nr_cmus = _nr_cmus;
-+
-+	for (; _nr_cmus--; _cmu++) {
-+		samsung_clk_defer_gate(ctx, _cmu->gate_clks, _cmu->nr_gate_clks);
-+		samsung_ext_clk_save(ctx->reg_base, _cmu->suspend_regs,
-+				     _cmu->nr_suspend_regs);
-+	}
-+}
-+
-+static int __maybe_unused exynos5_clk_subcmu_suspend(struct device *dev)
-+{
-+	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ctx->lock, flags);
-+	samsung_ext_clk_save(ctx->reg_base, info->suspend_regs,
-+			     info->nr_suspend_regs);
-+	spin_unlock_irqrestore(&ctx->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused exynos5_clk_subcmu_resume(struct device *dev)
-+{
-+	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ctx->lock, flags);
-+	samsung_ext_clk_restore(ctx->reg_base, info->suspend_regs,
-+				info->nr_suspend_regs);
-+	spin_unlock_irqrestore(&ctx->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int __init exynos5_clk_subcmu_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
-+
-+	pm_runtime_set_suspended(dev);
-+	pm_runtime_enable(dev);
-+	pm_runtime_get(dev);
-+
-+	ctx->dev = dev;
-+	samsung_clk_register_div(ctx, info->div_clks, info->nr_div_clks);
-+	samsung_clk_register_gate(ctx, info->gate_clks, info->nr_gate_clks);
-+	ctx->dev = NULL;
-+
-+	pm_runtime_put_sync(dev);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops exynos5_clk_subcmu_pm_ops = {
-+	SET_RUNTIME_PM_OPS(exynos5_clk_subcmu_suspend,
-+			   exynos5_clk_subcmu_resume, NULL)
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				     pm_runtime_force_resume)
+ const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void)
+ {
+ 	return &sun8i_hdmi_phy_ops;
+@@ -158,20 +176,31 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
+ 	.name		= "phy"
+ };
+ 
++static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
++	.phy_init = &sun8i_hdmi_phy_init_a83t,
++	.phy_disable = &sun8i_hdmi_phy_disable_a83t,
++	.phy_config = &sun8i_hdmi_phy_config_a83t,
 +};
 +
-+static struct platform_driver exynos5_clk_subcmu_driver __refdata = {
-+	.driver	= {
-+		.name = "exynos5-clock-subcmu",
-+		.suppress_bind_attrs = true,
-+		.pm = &exynos5_clk_subcmu_pm_ops,
+ static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
+-	{ .compatible = "allwinner,sun8i-a83t-hdmi-phy" },
++	{
++		.compatible = "allwinner,sun8i-a83t-hdmi-phy",
++		.data = &sun8i_a83t_hdmi_phy,
 +	},
-+	.probe = exynos5_clk_subcmu_probe,
-+};
+ 	{ /* sentinel */ }
+ };
+ 
+ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ {
++	const struct of_device_id *match;
+ 	struct device *dev = hdmi->dev;
+ 	struct sun8i_hdmi_phy *phy;
+ 	struct resource res;
+ 	void __iomem *regs;
+ 	int ret;
+ 
+-	if (!of_match_node(sun8i_hdmi_phy_of_table, node)) {
++	match = of_match_node(sun8i_hdmi_phy_of_table, node);
++	if (!match) {
+ 		dev_err(dev, "Incompatible HDMI PHY\n");
+ 		return -EINVAL;
+ 	}
+@@ -180,6 +209,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 	if (!phy)
+ 		return -ENOMEM;
+ 
++	phy->variant = (struct sun8i_hdmi_phy_variant *)match->data;
 +
-+static int __init exynos5_clk_register_subcmu_drv(struct device *parent,
-+					 const struct exynos5_subcmu_info *info,
-+						  struct device_node *pd_node)
-+{
-+	struct of_phandle_args genpdspec = { .np = pd_node };
-+	struct platform_device *pdev;
-+
-+	pdev = platform_device_alloc(info->pd_name, -1);
-+	pdev->dev.parent = parent;
-+	pdev->driver_override = "exynos5-clock-subcmu";
-+	platform_set_drvdata(pdev, (void *)info);
-+	of_genpd_add_device(&genpdspec, &pdev->dev);
-+	platform_device_add(pdev);
-+
-+	return 0;
-+}
-+
-+static int __init exynos5_clk_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np;
-+	const char *name;
-+	int i;
-+
-+	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
-+		if (of_property_read_string(np, "label", &name) < 0)
-+			continue;
-+		for (i = 0; i < nr_cmus; i++)
-+			if (strcmp(cmu[i].pd_name, name) == 0)
-+				exynos5_clk_register_subcmu_drv(&pdev->dev,
-+								&cmu[i], np);
-+	}
-+	return 0;
-+}
-+
-+static const struct of_device_id exynos5_clk_of_match[] = {
-+	{ },
-+};
-+
-+static struct platform_driver exynos5_clk_driver __refdata = {
-+	.driver	= {
-+		.name = "exynos5-clock",
-+		.of_match_table = exynos5_clk_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = exynos5_clk_probe,
-+};
-+
-+static int __init exynos5_clk_drv_init(void)
-+{
-+	platform_driver_register(&exynos5_clk_driver);
-+	platform_driver_register(&exynos5_clk_subcmu_driver);
-+	return 0;
-+}
-+core_initcall(exynos5_clk_drv_init);
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.h b/drivers/clk/samsung/clk-exynos5-subcmu.h
-new file mode 100644
-index 000000000000..364ca4051d9e
---- /dev/null
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __CLK_EXYNOS5_SUBCMU_H
-+#define __CLK_EXYNOS5_SUBCMU_H
-+
-+struct samsung_clk_ext_reg_dump {
-+	u32 offset;
-+	u32 value;
-+	u32 mask;
-+	u32 save;
-+};
-+
-+struct exynos5_subcmu_info {
-+	const struct samsung_div_clock *div_clks;
-+	unsigned int nr_div_clks;
-+	const struct samsung_gate_clock *gate_clks;
-+	unsigned int nr_gate_clks;
-+	struct samsung_clk_ext_reg_dump *suspend_regs;
-+	unsigned int nr_suspend_regs;
-+	const char *pd_name;
-+};
-+
-+void exynos5_subcmus_init(struct samsung_clk_provider *ctx, int nr_cmus,
-+			  const struct exynos5_subcmu_info *cmu);
-+
-+#endif
+ 	ret = of_address_to_resource(node, 0, &res);
+ 	if (ret) {
+ 		dev_err(dev, "phy: Couldn't get our resources\n");
 -- 
-2.15.0
-
+2.16.2
