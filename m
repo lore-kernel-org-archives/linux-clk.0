@@ -14,65 +14,32 @@ Cc: jernej.skrabec@siol.net,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-sunxi@googlegroups.com
-Subject: [PATCH 02/15] clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
-Date: Sat, 24 Feb 2018 22:45:32 +0100
-Message-Id: <20180224214545.3740-3-jernej.skrabec@siol.net>
+Subject: [PATCH 06/15] drm/sun4i: Add support for H3 display engine
+Date: Sat, 24 Feb 2018 22:45:36 +0100
+Message-Id: <20180224214545.3740-7-jernej.skrabec@siol.net>
 In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
 References: <20180224214545.3740-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Although user manuals for H3 and H5 SoCs state that minimal rate
-supported by video PLL is around 30 MHz, it seems that in reality
-minimal rate is around 192 MHz.
-
-Experiments showed that any rate below 96 MHz doesn't produce any video
-output at all. Even at this frequency, stable output depends on right
-factors. For example, when N = 4 and M = 1, output is stable and when N
-= 8 and M = 2, it's not.
-
-BSP clock driver suggest that minimum stable frequency is 192 MHz. That
-would also be in line with A64 SoC, which has similar periphery.
-
-Set minimal video PLL rate for H3/H5 to 192 MHz.
+H3 display engine has two mixers which are connected to HDMI and TV
+output.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 29bc0566b776..b9f39078c0b2 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -69,17 +69,18 @@ static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				       BIT(28),	/* lock */
- 				       CLK_SET_RATE_UNGATE);
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
--					"osc24M", 0x0010,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video_clk, "pll-video",
-+					    "osc24M", 0x0010,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,	/* N */
-+					    0, 4,	/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					"osc24M", 0x0018,
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 3957c2ff6870..a0f43b81c64c 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -359,6 +359,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
+ 	{ .compatible = "allwinner,sun7i-a20-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-a83t-display-engine" },
++	{ .compatible = "allwinner,sun8i-h3-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
+ 	{ }
+ };
 -- 
 2.16.2
