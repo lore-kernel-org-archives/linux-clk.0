@@ -1,215 +1,353 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45695 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752547AbeBZNJz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 08:09:55 -0500
-Subject: Re: [PATCH 0/6] Exynos5: cleanup clocks handling in power domains
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-id: <c1d83b91-675a-5fb7-e28d-434a01a2eb54@samsung.com>
-Date: Mon, 26 Feb 2018 14:09:50 +0100
-MIME-version: 1.0
-In-reply-to: <CANAwSgQirTqLMCCUWZNUKn3jVTCssjkD=H9Oe2R729K81xm2pg@mail.gmail.com>
-Content-type: text/plain; charset="utf-8"; format="flowed"
-References: <CGME20180221101532eucas1p24200cb65dba8209cd99dba5427c9a28d@eucas1p2.samsung.com>
-        <20180221101527.25554-1-m.szyprowski@samsung.com>
-        <CANAwSgQirTqLMCCUWZNUKn3jVTCssjkD=H9Oe2R729K81xm2pg@mail.gmail.com>
+Received: from mail-he1eur01on0067.outbound.protection.outlook.com ([104.47.0.67]:44192
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750751AbeBXGH4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 24 Feb 2018 01:07:56 -0500
+From: Jacky Bai <ping.bai@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>
+CC: "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "jacky.baip@gmail.com" <jacky.baip@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v3 3/4] Document: dt: binding: imx: update clock doc for
+ imx6sll
+Date: Sat, 24 Feb 2018 06:07:52 +0000
+Message-ID: <HE1PR04MB3113ABD88EDACA6F5E56587E87C30@HE1PR04MB3113.eurprd04.prod.outlook.com>
+References: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
+ <1517968819-12869-3-git-send-email-ping.bai@nxp.com>
+ <20180224032041.GX3217@dragon>
+In-Reply-To: <20180224032041.GX3217@dragon>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Anand,
+> Subject: Re: [PATCH v3 3/4] Document: dt: binding: imx: update clock doc =
+for
+> imx6sll
+>=20
+> On Wed, Feb 07, 2018 at 10:00:18AM +0800, Bai Ping wrote:
+> > Add clock binding doc update for imx6sll.
+> >
+> > Signed-off-by: Bai Ping <ping.bai@nxp.com>
+> > ---
+> > change from v2->v3:
+> >  - remove the leading 0s
+> >  - move the  imx6sll-clock.h to this patch.
+> > ---
+> >  .../devicetree/bindings/clock/imx6sll-clock.txt    |  37 ++++
+> >  include/dt-bindings/clock/imx6sll-clock.h          | 204
+> +++++++++++++++++++++
+> >  2 files changed, 241 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> >  create mode 100644 include/dt-bindings/clock/imx6sll-clock.h
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> > b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> > new file mode 100644
+> > index 0000000..b5d272f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+> > @@ -0,0 +1,37 @@
+> > +* Clock bindings for Freescale i.MX6 SLL
+> > +
+> > +Required properties:
+> > +- compatible: Should be "fsl,imx6sll-ccm"
+> > +- reg: Address and length of the register set
+> > +- #clock-cells: Should be <1>
+> > +- clocks: list of clock specifiers, must contain an entry for each
+> > +required
+> > +  entry in clock-names
+> > +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ip=
+p_di1"
+> > +
+> > +The clock consumer should specify the desired clock by having the
+> > +clock ID in its "clocks" phandle cell.  See
+> > +include/dt-bindings/clock/imx6sll-clock.h
+> > +for the full list of i.MX6 SLL clock IDs.
+> > +
+> > +Examples:
+> > +
+> > +#include <dt-bindings/clock/imx6sll-clock.h>
+> > +
+> > +clks: ccm@20c4000 {
+>=20
+> s/ccm/clock-controller
 
-On 2018-02-22 06:42, Anand Moon wrote:
-> On 21 February 2018 at 15:45, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> This patchset performs cleanup of the clock handling during Exynos power
->> domain power on/off sequences. This has been achieved by moving all clock
->> related operations from Exynos power domain driver to respective Exynos
->> clock controller drivers. Such change is possible after introducinng
->> runtime power-management in common clock framework.
->>
->> Another nice result of this cleanup is removal of deplock warning reported
->> in the following thread (the 'second issue'):
->> https://www.spinics.net/lists/linux-samsung-soc/msg61766.html
->>
->> [    5.932966] ======================================================
->> [    5.937199] usb 5-1: new high-speed USB device number 2 using xhci-hcd
->> [    5.939073] WARNING: possible circular locking dependency detected
->> [    5.939110] 4.15.0-rc8-next-20180116 #1121 Tainted: G        W
->> [    5.958143] ------------------------------------------------------
->> [    5.964299] kworker/0:1/59 is trying to acquire lock:
->> [    5.969304]  (&genpd->mlock){+.+.}, at: [<6abc3872>] genpd_runtime_resume+0x104/0x260
->> [    5.977155]
->> [    5.977155] but task is already holding lock:
->> [    5.982926]  (prepare_lock){+.+.}, at: [<74cef905>] clk_prepare_lock+0x10/0xf8
->> [    5.990143]
->> [    5.990143] which lock already depends on the new lock.
->> [    5.990143]
->> [    5.998309]
->> [    5.998309] the existing dependency chain (in reverse order) is:
->> [    6.005739]
->> [    6.005739] -> #1 (prepare_lock){+.+.}:
->> [    6.011042]        mutex_lock_nested+0x1c/0x24
->> [    6.015419]        clk_prepare_lock+0x50/0xf8
->> [    6.019755]        clk_unprepare+0x1c/0x2c
->> [    6.023841]        exynos_pd_power+0x1a8/0x1e4
->> [    6.028246]        genpd_power_off+0x160/0x274
->> [    6.032664]        genpd_power_off_work_fn+0x2c/0x40
->> [    6.037630]        process_one_work+0x2d4/0x8f0
->> [    6.042104]        worker_thread+0x38/0x584
->> [    6.046268]        kthread+0x138/0x168
->> [    6.049981]        ret_from_fork+0x14/0x20
->> [    6.054044]          (null)
->> [    6.056794]
->> [    6.056794] -> #0 (&genpd->mlock){+.+.}:
->> [    6.062238]        __mutex_lock+0x7c/0xa68
->> [    6.066278]        mutex_lock_nested+0x1c/0x24
->> [    6.070703]        genpd_runtime_resume+0x104/0x260
->> [    6.075557]        __rpm_callback+0xc0/0x21c
->> [    6.079792]        rpm_callback+0x20/0x80
->> [    6.083774]        rpm_resume+0x558/0x7dc
->> [    6.087762]        __pm_runtime_resume+0x60/0x98
->> [    6.092367]        clk_core_prepare+0x44/0x490
->> [    6.096783]        clk_prepare+0x20/0x30
->> [    6.100674]        amba_get_enable_pclk+0x2c/0x60
->> [    6.105363]        amba_device_try_add+0x8c/0x20c
->> [    6.110041]        amba_deferred_retry_func+0x40/0xbc
->> [    6.115080]        process_one_work+0x2d4/0x8f0
->> [    6.119569]        worker_thread+0x38/0x584
->> [    6.123727]        kthread+0x138/0x168
->> [    6.127444]        ret_from_fork+0x14/0x20
->> [    6.131510]          (null)
->> [    6.134263]
->> [    6.134263] other info that might help us debug this:
->> [    6.134263]
->> [    6.142328]  Possible unsafe locking scenario:
->> [    6.142328]
->> [    6.148178]        CPU0                    CPU1
->> [    6.152656]        ----                    ----
->> [    6.157160]   lock(prepare_lock);
->> [    6.160439]                                lock(&genpd->mlock);
->> [    6.166365]                                lock(prepare_lock);
->> [    6.172168]   lock(&genpd->mlock);
->> [    6.175517]
->> [    6.175517]  *** DEADLOCK ***
->> [    6.175517]
->> [    6.181475] 4 locks held by kworker/0:1/59:
->> [    6.185580]  #0:  ((wq_completion)"events"){+.+.}, at: [<f71c19aa>] process_one_work+0x210/0x8f0
->> [    6.194407]  #1:  ((deferred_retry_work).work){+.+.}, at: [<f71c19aa>] process_one_work+0x210/0x8f0
->> [    6.203422]  #2:  (deferred_devices_lock){+.+.}, at: [<3e940c1f>] amba_deferred_retry_func+0x1c/0xbc
->> [    6.212522]  #3:  (prepare_lock){+.+.}, at: [<74cef905>] clk_prepare_lock+0x10/0xf8
->> [    6.220128]
->> [    6.220128] stack backtrace:
->> [    6.224438] CPU: 0 PID: 59 Comm: kworker/0:1 Tainted: G        W        4.15.0-rc8-next-20180116 #1121
->> [    6.233757] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
->> [    6.239791] Workqueue: events amba_deferred_retry_func
->> [    6.244929] [<c0111f90>] (unwind_backtrace) from [<c010e360>] (show_stack+0x10/0x14)
->> [    6.252670] [<c010e360>] (show_stack) from [<c0a19860>] (dump_stack+0x98/0xc4)
->> [    6.259877] [<c0a19860>] (dump_stack) from [<c0181478>] (print_circular_bug.constprop.17+0x210/0x32c)
->> [    6.269077] [<c0181478>] (print_circular_bug.constprop.17) from [<c01848f8>] (__lock_acquire+0x155c/0x1ac8)
->> [    6.278786] [<c01848f8>] (__lock_acquire) from [<c0185884>] (lock_acquire+0xe0/0x2bc)
->> [    6.286558] [<c0185884>] (lock_acquire) from [<c0a31788>] (__mutex_lock+0x7c/0xa68)
->> [    6.294181] [<c0a31788>] (__mutex_lock) from [<c0a32190>] (mutex_lock_nested+0x1c/0x24)
->> [    6.302161] [<c0a32190>] (mutex_lock_nested) from [<c05885dc>] (genpd_runtime_resume+0x104/0x260)
->> [    6.311008] [<c05885dc>] (genpd_runtime_resume) from [<c057c6c4>] (__rpm_callback+0xc0/0x21c)
->> [    6.319484] [<c057c6c4>] (__rpm_callback) from [<c057c840>] (rpm_callback+0x20/0x80)
->> [    6.327185] [<c057c840>] (rpm_callback) from [<c057c2a8>] (rpm_resume+0x558/0x7dc)
->> [    6.334721] [<c057c2a8>] (rpm_resume) from [<c057c58c>] (__pm_runtime_resume+0x60/0x98)
->> [    6.342706] [<c057c58c>] (__pm_runtime_resume) from [<c04b7f6c>] (clk_core_prepare+0x44/0x490)
->> [    6.351297] [<c04b7f6c>] (clk_core_prepare) from [<c04ba304>] (clk_prepare+0x20/0x30)
->> [    6.359081] [<c04ba304>] (clk_prepare) from [<c04b52f4>] (amba_get_enable_pclk+0x2c/0x60)
->> [    6.367229] [<c04b52f4>] (amba_get_enable_pclk) from [<c04b5510>] (amba_device_try_add+0x8c/0x20c)
->> [    6.376164] [<c04b5510>] (amba_device_try_add) from [<c04b56f8>] (amba_deferred_retry_func+0x40/0xbc)
->> [    6.385361] [<c04b56f8>] (amba_deferred_retry_func) from [<c01465b4>] (process_one_work+0x2d4/0x8f0)
->> [    6.394457] [<c01465b4>] (process_one_work) from [<c0147860>] (worker_thread+0x38/0x584)
->> [    6.402497] [<c0147860>] (worker_thread) from [<c014d794>] (kthread+0x138/0x168)
->> [    6.409852] [<c014d794>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
->>
->> This patchset affects Exynos5250 and Exynos5420/5422/5800 SoCs.
->>
->> Changes has been tested on Snow Chromebook (Exynos5250), Peach-Pit
->> Chromebook2 (Exynos5420) and Odroid XU3/XU4 (Exynos5422) boards with
->> latest linux-next kernel.
-> I feel their is different CMU to support clk framework on Exynos platform.
-> below are the some of the address of the CMU from the respective user manual.
->
-> Exynos 4412:
-> The address map of Exynos 4412 clock controller consists of six CMUs.
-> They are, CMU_LEFTBUS, CMU_RIGHTBUS, CMU_TOP, CMU_DMC, CMU_CPU, and
-> CMU_ISP. Each CMU uses an address space of 16 KB for SFRs.
-> The internal structure of address space for each CMU is similar for all CMUs.
->
-> 0x1003_4000         CMU_LEFTBUS
-> 0x1003_8000         CMU_RIGHTBUS
-> 0x1003_C000         CMU_TOP
-> 0x1004_0000         CMU_DMC
-> 0x1004_4000         CMU_CPU
->
-> Exynos 5250:
-> The address map of Exynos 5250 clock controller. There are nine CMUs
-> in Exynos 5250 and
-> each CMU uses 16 KB address space for SFRs. The nine CMUs are CMU_CPU,
-> CMU_CORE, CMU_ACP,
-> CMU_ISP, CMU_TOP, CMU_LEX, CMU_R0X, CMU_R1X, and CMU_CDREX. The
-> internal structure of the
-> address space for each CMU is similar to all CMUs.
->
-> 0x1001_0000       CMU_CPU
-> 0x1001_4000       CMU_CORE
-> 0x1001_8000       CMU_ACP
-> 0x1001_C000       CMU_ISP
-> 0x1002_0000       CMU_TOP
-> 0x1002_4000       CMU_LEX
-> 0x1002_8000       CMU_R0X
-> 0x1002_C000       CMU_R1X
-> 0x1003_4000       CMU_CDREX
->
-> Exynos5422:
-> The address map of Exynos 5422 Clock Controller. Exynos 5422 provides
-> for seven CMUs:
-> CMU_CPU, CMU_KFC, CMU_CDREX, CMU_CPERI, CMU_G2D, CMU_ISP,  CMU_TOP
-> Each CMU uses 16 KB address space for SFRs. The internal structure of
-> the address space
-> for each CMU is similar for all CMUs.
->
-> 0x1001_0000         CMU_CPU
-> 0x1001_4000         CMU_CPERI
-> 0x1001_8000         CMU_G2D
-> 0x1001_C000        CMU_ISP
-> 0x1002_4000         CMU_TOP
-> 0x1003_0000         CMU_CDREX
-> 0x1003_4000         CMU_KFC
->
-> I feel currently we have only one parent CMU for all the clock
-> so is it possible to restructure the clk to support these CMU
-> and also look into respective power-domain.
->
-> I have read few parts of the documentation but dont have in-dept
-> knowledge into this.
-> Please correct me if my understating is wrong. I have limited
-> knowledge on clk frame work.
+OK, will fix it.=20
 
-Well, the main problem with 4412 and 5420/5422 is the fact that there is
-no direct relation between each CMU and respective power domains.
+>=20
+> > +		compatible =3D "fsl,imx6sll-ccm";
+> > +		reg =3D <0x020c4000 0x4000>;
+> > +		interrupts =3D <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
+> > +			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
+> > +		#clock-cells =3D <1>;
+> > +		clocks =3D <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
+> > +		clock-names =3D "ckil", "osc", "ipp_di0", "ipp_di1"; };
+> > +
+> > +uart1: serial@2020000 {
+> > +		compatible =3D "fsl,imx6sl-uart", "fsl,imx6q-uart", "fsl,imx21-uart"=
+;
+> > +		reg =3D <0x02020000 0x4000>;
+> > +		interrupts =3D <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
+> > +		clocks =3D <&clks IMX6SLL_CLK_UART1_IPG>,
+> > +			 <&clks IMX6SLL_CLK_UART1_SERIAL>;
+> > +		clock-names =3D "ipg", "per";
+> > +		status =3D "disabled";
+>=20
+> The status line can be dropped in example.
+>=20
 
-For example display related clocks, which correspond to DISP power domain
-are all mixed in CMU_TOP together with other non-display clocks. Same for
-MFC, GSC, MSC and some ISP blocks. PERI, G2D, CPU and KFC all belong to
-always-on power domains, so it is easier to have them handled together.
+OK, will fix it.
 
-In short: there is no point in splitting clocks controller driver based on
-the base address, as it simply gives no advantage at all.
+> > +};
+> > diff --git a/include/dt-bindings/clock/imx6sll-clock.h
+> > b/include/dt-bindings/clock/imx6sll-clock.h
+> > new file mode 100644
+> > index 0000000..39c2567
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/imx6sll-clock.h
+> > @@ -0,0 +1,204 @@
+> > +/*
+> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > +modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+>=20
+> Can we use SPDX tag instead?  You can look at Lucas' i.MX8MQ clock patch =
+for
+> example, or document Documentation/process/license-rules.rst for details.
+>=20
 
- > ...
+Ok, will fix in next version.=20
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+BR
+Jacky Bai
+> Shawn
+>=20
+> > + *
+> > + */
+> > +
+> > +#ifndef __DT_BINDINGS_CLOCK_IMX6SLL_H #define
+> > +__DT_BINDINGS_CLOCK_IMX6SLL_H
+> > +
+> > +#define IMX6SLL_CLK_DUMMY		0
+> > +#define IMX6SLL_CLK_CKIL		1
+> > +#define IMX6SLL_CLK_OSC			2
+> > +#define IMX6SLL_PLL1_BYPASS_SRC		3
+> > +#define IMX6SLL_PLL2_BYPASS_SRC		4
+> > +#define IMX6SLL_PLL3_BYPASS_SRC		5
+> > +#define IMX6SLL_PLL4_BYPASS_SRC		6
+> > +#define IMX6SLL_PLL5_BYPASS_SRC		7
+> > +#define IMX6SLL_PLL6_BYPASS_SRC		8
+> > +#define IMX6SLL_PLL7_BYPASS_SRC		9
+> > +#define IMX6SLL_CLK_PLL1		10
+> > +#define IMX6SLL_CLK_PLL2		11
+> > +#define IMX6SLL_CLK_PLL3		12
+> > +#define IMX6SLL_CLK_PLL4		13
+> > +#define IMX6SLL_CLK_PLL5		14
+> > +#define IMX6SLL_CLK_PLL6		15
+> > +#define IMX6SLL_CLK_PLL7		16
+> > +#define IMX6SLL_PLL1_BYPASS		17
+> > +#define IMX6SLL_PLL2_BYPASS		18
+> > +#define IMX6SLL_PLL3_BYPASS		19
+> > +#define IMX6SLL_PLL4_BYPASS		20
+> > +#define IMX6SLL_PLL5_BYPASS		21
+> > +#define IMX6SLL_PLL6_BYPASS		22
+> > +#define IMX6SLL_PLL7_BYPASS		23
+> > +#define IMX6SLL_CLK_PLL1_SYS		24
+> > +#define IMX6SLL_CLK_PLL2_BUS		25
+> > +#define IMX6SLL_CLK_PLL3_USB_OTG	26
+> > +#define IMX6SLL_CLK_PLL4_AUDIO		27
+> > +#define IMX6SLL_CLK_PLL5_VIDEO		28
+> > +#define IMX6SLL_CLK_PLL6_ENET		29
+> > +#define IMX6SLL_CLK_PLL7_USB_HOST	30
+> > +#define IMX6SLL_CLK_USBPHY1		31
+> > +#define IMX6SLL_CLK_USBPHY2		32
+> > +#define IMX6SLL_CLK_USBPHY1_GATE	33
+> > +#define IMX6SLL_CLK_USBPHY2_GATE	34
+> > +#define IMX6SLL_CLK_PLL2_PFD0		35
+> > +#define IMX6SLL_CLK_PLL2_PFD1		36
+> > +#define IMX6SLL_CLK_PLL2_PFD2		37
+> > +#define IMX6SLL_CLK_PLL2_PFD3		38
+> > +#define IMX6SLL_CLK_PLL3_PFD0		39
+> > +#define IMX6SLL_CLK_PLL3_PFD1		40
+> > +#define IMX6SLL_CLK_PLL3_PFD2		41
+> > +#define IMX6SLL_CLK_PLL3_PFD3		42
+> > +#define IMX6SLL_CLK_PLL4_POST_DIV	43
+> > +#define IMX6SLL_CLK_PLL4_AUDIO_DIV	44
+> > +#define IMX6SLL_CLK_PLL5_POST_DIV	45
+> > +#define IMX6SLL_CLK_PLL5_VIDEO_DIV	46
+> > +#define IMX6SLL_CLK_PLL2_198M		47
+> > +#define IMX6SLL_CLK_PLL3_120M		48
+> > +#define IMX6SLL_CLK_PLL3_80M		49
+> > +#define IMX6SLL_CLK_PLL3_60M		50
+> > +#define IMX6SLL_CLK_STEP		51
+> > +#define IMX6SLL_CLK_PLL1_SW		52
+> > +#define IMX6SLL_CLK_AXI_ALT_SEL		53
+> > +#define IMX6SLL_CLK_AXI_SEL		54
+> > +#define IMX6SLL_CLK_PERIPH_PRE		55
+> > +#define IMX6SLL_CLK_PERIPH2_PRE		56
+> > +#define IMX6SLL_CLK_PERIPH_CLK2_SEL	57
+> > +#define IMX6SLL_CLK_PERIPH2_CLK2_SEL	58
+> > +#define IMX6SLL_CLK_PERCLK_SEL		59
+> > +#define IMX6SLL_CLK_USDHC1_SEL		60
+> > +#define IMX6SLL_CLK_USDHC2_SEL		61
+> > +#define IMX6SLL_CLK_USDHC3_SEL		62
+> > +#define IMX6SLL_CLK_SSI1_SEL		63
+> > +#define IMX6SLL_CLK_SSI2_SEL		64
+> > +#define IMX6SLL_CLK_SSI3_SEL		65
+> > +#define IMX6SLL_CLK_PXP_SEL		66
+> > +#define IMX6SLL_CLK_LCDIF_PRE_SEL	67
+> > +#define IMX6SLL_CLK_LCDIF_SEL		68
+> > +#define IMX6SLL_CLK_EPDC_PRE_SEL	69
+> > +#define IMX6SLL_CLK_SPDIF_SEL		70
+> > +#define IMX6SLL_CLK_ECSPI_SEL		71
+> > +#define IMX6SLL_CLK_UART_SEL		72
+> > +#define IMX6SLL_CLK_ARM			73
+> > +#define IMX6SLL_CLK_PERIPH		74
+> > +#define IMX6SLL_CLK_PERIPH2		75
+> > +#define IMX6SLL_CLK_PERIPH2_CLK2	76
+> > +#define IMX6SLL_CLK_PERIPH_CLK2		77
+> > +#define IMX6SLL_CLK_MMDC_PODF		78
+> > +#define IMX6SLL_CLK_AXI_PODF		79
+> > +#define IMX6SLL_CLK_AHB			80
+> > +#define IMX6SLL_CLK_IPG			81
+> > +#define IMX6SLL_CLK_PERCLK		82
+> > +#define IMX6SLL_CLK_USDHC1_PODF		83
+> > +#define IMX6SLL_CLK_USDHC2_PODF		84
+> > +#define IMX6SLL_CLK_USDHC3_PODF		85
+> > +#define IMX6SLL_CLK_SSI1_PRED		86
+> > +#define IMX6SLL_CLK_SSI2_PRED		87
+> > +#define IMX6SLL_CLK_SSI3_PRED		88
+> > +#define IMX6SLL_CLK_SSI1_PODF		89
+> > +#define IMX6SLL_CLK_SSI2_PODF		90
+> > +#define IMX6SLL_CLK_SSI3_PODF		91
+> > +#define IMX6SLL_CLK_PXP_PODF		92
+> > +#define IMX6SLL_CLK_LCDIF_PRED		93
+> > +#define IMX6SLL_CLK_LCDIF_PODF		94
+> > +#define IMX6SLL_CLK_EPDC_SEL		95
+> > +#define IMX6SLL_CLK_EPDC_PODF		96
+> > +#define IMX6SLL_CLK_SPDIF_PRED		97
+> > +#define IMX6SLL_CLK_SPDIF_PODF		98
+> > +#define IMX6SLL_CLK_ECSPI_PODF		99
+> > +#define IMX6SLL_CLK_UART_PODF		100
+> > +
+> > +/* CCGR 0 */
+> > +#define IMX6SLL_CLK_AIPSTZ1		101
+> > +#define IMX6SLL_CLK_AIPSTZ2		102
+> > +#define IMX6SLL_CLK_DCP			103
+> > +#define IMX6SLL_CLK_UART2_IPG		104
+> > +#define IMX6SLL_CLK_UART2_SERIAL	105
+> > +
+> > +/* CCGR 1 */
+> > +#define IMX6SLL_CLK_ECSPI1		106
+> > +#define IMX6SLL_CLK_ECSPI2		107
+> > +#define IMX6SLL_CLK_ECSPI3		108
+> > +#define IMX6SLL_CLK_ECSPI4		109
+> > +#define IMX6SLL_CLK_UART3_IPG		110
+> > +#define IMX6SLL_CLK_UART3_SERIAL	111
+> > +#define IMX6SLL_CLK_UART4_IPG		112
+> > +#define IMX6SLL_CLK_UART4_SERIAL	113
+> > +#define IMX6SLL_CLK_EPIT1		114
+> > +#define IMX6SLL_CLK_EPIT2		115
+> > +#define IMX6SLL_CLK_GPT_BUS		116
+> > +#define IMX6SLL_CLK_GPT_SERIAL		117
+> > +
+> > +/* CCGR2 */
+> > +#define IMX6SLL_CLK_CSI			118
+> > +#define IMX6SLL_CLK_I2C1		119
+> > +#define IMX6SLL_CLK_I2C2		120
+> > +#define IMX6SLL_CLK_I2C3		121
+> > +#define IMX6SLL_CLK_OCOTP		122
+> > +#define IMX6SLL_CLK_LCDIF_APB		123
+> > +#define IMX6SLL_CLK_PXP			124
+> > +
+> > +/* CCGR3 */
+> > +#define IMX6SLL_CLK_UART5_IPG		125
+> > +#define IMX6SLL_CLK_UART5_SERIAL	126
+> > +#define IMX6SLL_CLK_EPDC_AXI		127
+> > +#define IMX6SLL_CLK_EPDC_PIX		128
+> > +#define IMX6SLL_CLK_LCDIF_PIX		129
+> > +#define IMX6SLL_CLK_WDOG1		130
+> > +#define IMX6SLL_CLK_MMDC_P0_FAST	131
+> > +#define IMX6SLL_CLK_MMDC_P0_IPG		132
+> > +#define IMX6SLL_CLK_OCRAM		133
+> > +
+> > +/* CCGR4 */
+> > +#define IMX6SLL_CLK_PWM1		134
+> > +#define IMX6SLL_CLK_PWM2		135
+> > +#define IMX6SLL_CLK_PWM3		136
+> > +#define IMX6SLL_CLK_PWM4		137
+> > +
+> > +/* CCGR 5 */
+> > +#define IMX6SLL_CLK_ROM			138
+> > +#define IMX6SLL_CLK_SDMA		139
+> > +#define IMX6SLL_CLK_KPP			140
+> > +#define IMX6SLL_CLK_WDOG2		141
+> > +#define IMX6SLL_CLK_SPBA		142
+> > +#define IMX6SLL_CLK_SPDIF		143
+> > +#define IMX6SLL_CLK_SPDIF_GCLK		144
+> > +#define IMX6SLL_CLK_SSI1		145
+> > +#define IMX6SLL_CLK_SSI1_IPG		146
+> > +#define IMX6SLL_CLK_SSI2		147
+> > +#define IMX6SLL_CLK_SSI2_IPG		148
+> > +#define IMX6SLL_CLK_SSI3		149
+> > +#define IMX6SLL_CLK_SSI3_IPG		150
+> > +#define IMX6SLL_CLK_UART1_IPG		151
+> > +#define IMX6SLL_CLK_UART1_SERIAL	152
+> > +
+> > +/* CCGR 6 */
+> > +#define IMX6SLL_CLK_USBOH3		153
+> > +#define IMX6SLL_CLK_USDHC1		154
+> > +#define IMX6SLL_CLK_USDHC2		155
+> > +#define IMX6SLL_CLK_USDHC3		156
+> > +
+> > +#define IMX6SLL_CLK_IPP_DI0		157
+> > +#define IMX6SLL_CLK_IPP_DI1		158
+> > +#define IMX6SLL_CLK_LDB_DI0_SEL		159
+> > +#define IMX6SLL_CLK_LDB_DI0_DIV_3_5	160
+> > +#define IMX6SLL_CLK_LDB_DI0_DIV_7	161
+> > +#define IMX6SLL_CLK_LDB_DI0_DIV_SEL	162
+> > +#define IMX6SLL_CLK_LDB_DI0		163
+> > +#define IMX6SLL_CLK_LDB_DI1_SEL		164
+> > +#define IMX6SLL_CLK_LDB_DI1_DIV_3_5	165
+> > +#define IMX6SLL_CLK_LDB_DI1_DIV_7	166
+> > +#define IMX6SLL_CLK_LDB_DI1_DIV_SEL	167
+> > +#define IMX6SLL_CLK_LDB_DI1		168
+> > +#define IMX6SLL_CLK_EXTERN_AUDIO_SEL    169
+> > +#define IMX6SLL_CLK_EXTERN_AUDIO_PRED   170
+> > +#define IMX6SLL_CLK_EXTERN_AUDIO_PODF   171
+> > +#define IMX6SLL_CLK_EXTERN_AUDIO        172
+> > +
+> > +#define IMX6SLL_CLK_END			173
+> > +
+> > +#endif /* __DT_BINDINGS_CLOCK_IMX6SLL_H */
+> > --
+> > 1.9.1
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Flis=
+t
+> >
+> s.infradead.org%2Fmailman%2Flistinfo%2Flinux-arm-kernel&data=3D02%7C01%7
+> >
+> Cping.bai%40nxp.com%7Ccc849c553d0440b4ec8e08d57b359fdb%7C686ea1d3
+> bc2b4
+> >
+> c6fa92cd99c5c301635%7C0%7C0%7C636550392672754015&sdata=3DeUk%2BM
+> NWxWfiBQ
+> > AI1AZ7IxwqRrJxsFmOdJAJJBCtlxM8%3D&reserved=3D0
