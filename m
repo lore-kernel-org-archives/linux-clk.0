@@ -1,84 +1,202 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH 0/3] clk: ti: add CLK_SET_RATE_PARENT support for clkctrl
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-omap@vger.kernel.org>, <jsarha@ti.com>
-References: <1519657812-15605-1-git-send-email-t-kristo@ti.com>
- <20180226220520.GI16043@atomide.com>
- <e036e793-37f5-a6ee-4347-72d27579e278@ti.com>
- <20180227164142.GA5448@atomide.com> <20180227164813.GB5448@atomide.com>
- <98bf01ee-f6e0-67e4-f8cc-cec4e5d37f31@ti.com>
- <20180228215850.GH5448@atomide.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <7df04a6b-9ddd-7061-9a29-8620da4f61c2@ti.com>
-Date: Thu, 1 Mar 2018 09:04:25 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180228215850.GH5448@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 10/15] drm/sun4i: Move and expand DW HDMI PHY register macros
+Date: Sat, 24 Feb 2018 22:45:40 +0100
+Message-Id: <20180224214545.3740-11-jernej.skrabec@siol.net>
+In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28/02/18 23:58, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [180228 05:38]:
->> On 27/02/18 18:48, Tony Lindgren wrote:
->>> * Tony Lindgren <tony@atomide.com> [180227 16:43]:
->>>> * Tero Kristo <t-kristo@ti.com> [180227 06:35]:
->>>>> On 27/02/18 00:05, Tony Lindgren wrote:
->>>>>> Hmm so should we have all the timers use bit 0 in the dtsi?
->>>>>> Or default to bit 24 for all of them?
->>>>>
->>>>> Who is going to control the clkctrl clock for the timers if you just control
->>>>> the opt clock? Also, ain't the bit 24 the clksel mux setting? Tweaking that
->>>>> would seem wrong...
->>>>
->>>> Yeah OK.
->>>
->>> $ git grep TIMER arch/arm/boot/dts/* | grep CLKCTRL
->>>
->>> And that shows timer1 using bit 24 for omap4, omap5 and dra7
->>> dtsi files.
->>>
->>> So shouldn't that then be just bit 0 instead of bit 24 for
->>> those? And then we let omap_dm_timer_init_one() reparent it?
->>
->> Actually, that fck setting is because of this patch:
->>
->> 138f7ca78f5a0677f591fdf23d0309c2f4774bf7
->> ARM: OMAP2+: timer: add support for fetching fck handle from DT
->>
->> So, you need to provide the clock handle at bit offset 24.
->>
->> The main clkctrl clock is still handled via hwmod core, or via the
->> interconnect driver.
-> 
-> Yeah but in timer.c we just need to enable the module and it's
-> clock and reparent if needed. There's nothing else to manage
-> there, omap_dm_timer_init_one() just queries the rate.
-> 
-> So I now think something is is wrong. For the interconnect target
-> module we need to provide the module clock (bit 0) in the dts,
-> not the source mux clock (bit 24).
-> 
-> Then omap_dm_timer_init_one() can configure the source clock
-> which is bit 24. My guess is that 138f7ca78f is really a
-> workaround for set_parent() not working properly for clkctrl
-> clock :)
+DW HDMI PHY macros are moved to header file and expanded with the
+registers present on newer SoCs like H3 and H5.
 
-set_parent() can't work for clkctrl clock, as it only has one parent. 
-The mux is a separate component, so you need to fetch the parent of the 
-clkctrl part and set the parent for that one; unless we want to 
-implement some sort of composite clock support for it.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  | 130 +++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c |  16 ----
+ 2 files changed, 130 insertions(+), 16 deletions(-)
 
-I'd say it is more like a transitional patch to support both legacy and 
-clkctrl way of handling clocks. The patch can most likely be dropped 
-once the transition is done, but this was the only way I could see how 
-to get it fixed in short term.
-
-> Then a board can specify it's desired source clock for system
-> timer(s) by configure "assigned-lcok-parents" and set it to
-> 32KiHz clock or SYS_CLK.
-
-Yeah, that will definitely work.
-
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 1e9eb6072615..4d625adf4b65 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -12,6 +12,136 @@
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
+ 
++#define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
++#define SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK		BIT(0)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK	GENMASK(15, 8)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL(val)	(val << 8)
++#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR_MASK	GENMASK(23, 16)
++#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR(addr)	(addr << 16)
++
++#define SUN8I_HDMI_PHY_REXT_CTRL_REG	0x0004
++#define SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN	BIT(31)
++
++#define SUN8I_HDMI_PHY_READ_EN_REG	0x0010
++#define SUN8I_HDMI_PHY_READ_EN_MAGIC		0x54524545
++
++#define SUN8I_HDMI_PHY_UNSCRAMBLE_REG	0x0014
++#define SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC		0x42494E47
++
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG	0x0020
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SWI		BIT(31)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_PWEND	BIT(30)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_PWENC	BIT(29)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_CALSW	BIT(28)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SVRCAL(x)	((x) << 26)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SVBH(x)	((x) << 24)
++#define SUN8I_HDMI_PHY_ANA_CFG1_AMP_OPT		BIT(23)
++#define SUN8I_HDMI_PHY_ANA_CFG1_EMP_OPT		BIT(22)
++#define SUN8I_HDMI_PHY_ANA_CFG1_AMPCK_OPT	BIT(21)
++#define SUN8I_HDMI_PHY_ANA_CFG1_EMPCK_OPT	BIT(20)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENRCAL		BIT(19)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENCALOG		BIT(18)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SCKTMDS	BIT(17)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TMDSCLK_EN	BIT(16)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK	GENMASK(15, 12)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TXEN_ALL	(0xf << 12)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDSCLK	BIT(11)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS2	BIT(10)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS1	BIT(9)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS0	BIT(8)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDSCLK	BIT(7)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS2	BIT(6)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS1	BIT(5)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS0	BIT(4)
++#define SUN8I_HDMI_PHY_ANA_CFG1_CKEN		BIT(3)
++#define SUN8I_HDMI_PHY_ANA_CFG1_LDOEN		BIT(2)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENVBS		BIT(1)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENBI		BIT(0)
++
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG	0x0024
++#define SUN8I_HDMI_PHY_ANA_CFG2_M_EN		BIT(31)
++#define SUN8I_HDMI_PHY_ANA_CFG2_PLLDBEN		BIT(30)
++#define SUN8I_HDMI_PHY_ANA_CFG2_SEN		BIT(29)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_HPDPD	BIT(28)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_HPDEN	BIT(27)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_PLRCK	BIT(26)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_PLR(x)	((x) << 23)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_DENCK	BIT(22)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_DEN		BIT(21)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CD(x)	((x) << 19)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CKSS(x)	((x) << 17)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BIGSWCK	BIT(16)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BIGSW	BIT(15)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CSMPS(x)	((x) << 13)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_SLV(x)	((x) << 10)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BOOSTCK(x)	((x) << 8)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BOOST(x)	((x) << 6)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_RESDI(x)	((x) << 0)
++
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG	0x0028
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_SLOWCK(x)	((x) << 30)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_SLOW(x)	((x) << 28)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_WIRE(x)	((x) << 18)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_AMPCK(x)	((x) << 14)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_EMPCK(x)	((x) << 11)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_AMP(x)	((x) << 7)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_EMP(x)	((x) << 4)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SDAPD		BIT(3)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SDAEN		BIT(2)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SCLPD		BIT(1)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SCLEN		BIT(0)
++
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG	0x002c
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG_OD1		BIT(31)
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG_OD		BIT(30)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
++#define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
++#define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
++#define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
++#define SUN8I_HDMI_PHY_PLL_CFG1_PLLDBEN		BIT(19)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CS		BIT(18)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CP_S(x)		((x) << 13)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CNT_INT(x)	((x) << 7)
++#define SUN8I_HDMI_PHY_PLL_CFG1_BWS		BIT(6)
++#define SUN8I_HDMI_PHY_PLL_CFG1_B_IN_MSK	GENMASK(5, 0)
++#define SUN8I_HDMI_PHY_PLL_CFG1_B_IN_SHIFT	0
++
++#define SUN8I_HDMI_PHY_PLL_CFG2_REG	0x0030
++#define SUN8I_HDMI_PHY_PLL_CFG2_SV_H		BIT(31)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PDCLKSEL(x)	((x) << 29)
++#define SUN8I_HDMI_PHY_PLL_CFG2_CLKSTEP(x)	((x) << 27)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PSET(x)		((x) << 24)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PCLK_SEL	BIT(23)
++#define SUN8I_HDMI_PHY_PLL_CFG2_AUTOSYNC_DIS	BIT(22)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VREG2_OUT_EN	BIT(21)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VREG1_OUT_EN	BIT(20)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCOGAIN_EN	BIT(19)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCOGAIN(x)	((x) << 16)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCO_S(x)	((x) << 12)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCO_RST_IN	BIT(11)
++#define SUN8I_HDMI_PHY_PLL_CFG2_SINT_FRAC	BIT(10)
++#define SUN8I_HDMI_PHY_PLL_CFG2_SDIV2		BIT(9)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S(x)		((x) << 6)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S6P25_7P5	BIT(5)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S5_7		BIT(4)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK	GENMASK(3, 0)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_SHIFT	0
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV(x)	(((x) - 1) << 0)
++
++#define SUN8I_HDMI_PHY_PLL_CFG3_REG	0x0034
++#define SUN8I_HDMI_PHY_PLL_CFG3_SOUT_DIV2	BIT(0)
++
++#define SUN8I_HDMI_PHY_ANA_STS_REG	0x0038
++#define SUN8I_HDMI_PHY_ANA_STS_B_OUT_SHIFT	11
++#define SUN8I_HDMI_PHY_ANA_STS_B_OUT_MSK	GENMASK(16, 11)
++#define SUN8I_HDMI_PHY_ANA_STS_RCALEND2D	BIT(7)
++#define SUN8I_HDMI_PHY_ANA_STS_RCAL_MASK	GENMASK(5, 0)
++
++#define SUN8I_HDMI_PHY_CEC_REG		0x003c
++
+ struct sun8i_hdmi_phy;
+ 
+ struct sun8i_hdmi_phy_variant {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index ab758f040acd..1bf96b04545b 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -7,22 +7,6 @@
+ 
+ #include "sun8i_dw_hdmi.h"
+ 
+-#define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
+-#define SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK		BIT(0)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK	GENMASK(15, 8)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL(val)	(val << 8)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR_MASK	GENMASK(23, 16)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR(addr)	(addr << 16)
+-
+-#define SUN8I_HDMI_PHY_REXT_CTRL_REG	0x0004
+-#define SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN	BIT(31)
+-
+-#define SUN8I_HDMI_PHY_READ_EN_REG	0x0010
+-#define SUN8I_HDMI_PHY_READ_EN_MAGIC		0x54524545
+-
+-#define SUN8I_HDMI_PHY_UNSCRAMBLE_REG	0x0014
+-#define SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC		0x42494E47
+-
+ /*
+  * Address can be actually any value. Here is set to same value as
+  * it is set in BSP driver.
+-- 
+2.16.2
