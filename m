@@ -1,51 +1,54 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<michal.simek@xilinx.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-	<linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Jolly
- Shah <jollys@xilinx.com>
-Subject: [PATCH 0/3] drivers: clk: Add ZynqMp clock driver support
-Date: Wed, 28 Feb 2018 14:27:38 -0800
-Message-ID: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
+Return-Path: <icenowy@aosc.io>
+Date: Sun, 25 Feb 2018 16:43:52 +0800
+In-Reply-To: <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-15-jernej.skrabec@siol.net> <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
+To: linux-arm-kernel@lists.infradead.org,Julian Calaby <julian.calaby@gmail.com>,jernej.skrabec@siol.net
+CC: Mark Rutland <mark.rutland@arm.com>,devicetree <devicetree@vger.kernel.org>,David Airlie <airlied@linux.ie>,Michael Turquette <mturquette@baylibre.com>,linux-sunxi <linux-sunxi@googlegroups.com>,"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,dri-devel <dri-devel@lists.freedesktop.org>,sboyd@kernel.org,Chen-Yu Tsai <wens@csie.org>,Rob Herring <robh+dt@kernel.org>,Maxime Ripard <maxime.ripard@free-electrons.com>,"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <E26547A5-F219-4310-B0E6-49AC3A700566@aosc.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock driver for ZynqMp. 
-This patchset has dependency on below drivers:
-Firmware Driver:     https://patchwork.kernel.org/patch/10230773/
 
-Jolly Shah (3):
-  drivers: clk: Add clk_get_children support
-  dt-bindings: clock: Add bindings for ZynqMP clock driver
-  drivers: clk: Add ZynqMP clock driver
 
- .../devicetree/bindings/clock/xlnx,zynqmp-clk.txt  | 163 +++++
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk.c                                  |  28 +
- drivers/clk/zynqmp/Kconfig                         |  10 +
- drivers/clk/zynqmp/Makefile                        |   4 +
- drivers/clk/zynqmp/clk-gate-zynqmp.c               | 156 +++++
- drivers/clk/zynqmp/clk-mux-zynqmp.c                | 189 ++++++
- drivers/clk/zynqmp/clkc.c                          | 712 +++++++++++++++++++++
- drivers/clk/zynqmp/divider.c                       | 245 +++++++
- drivers/clk/zynqmp/pll.c                           | 382 +++++++++++
- include/linux/clk-provider.h                       |   1 +
- include/linux/clk/zynqmp.h                         |  45 ++
- 13 files changed, 1937 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
- create mode 100644 drivers/clk/zynqmp/Kconfig
- create mode 100644 drivers/clk/zynqmp/Makefile
- create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
- create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
- create mode 100644 drivers/clk/zynqmp/clkc.c
- create mode 100644 drivers/clk/zynqmp/divider.c
- create mode 100644 drivers/clk/zynqmp/pll.c
- create mode 100644 include/linux/clk/zynqmp.h
+=E4=BA=8E 2018=E5=B9=B42=E6=9C=8825=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=884=
+:11:34, Julian Calaby <julian=2Ecalaby@gmail=2Ecom> =E5=86=99=E5=88=B0:
+>Hi Jernej,
+>
+>On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec
+><jernej=2Eskrabec@siol=2Enet> wrote:
+>> Enable HDMI output on all boards which have HDMI connector=2E
+>>
+>> Signed-off-by: Jernej Skrabec <jernej=2Eskrabec@siol=2Enet>
+>> ---
+>>  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus=2Edts    | 25
+>++++++++++++++++++++++
+>>  arch/arm/boot/dts/sun8i-h3-beelink-x2=2Edts          | 25
+>++++++++++++++++++++++
+>>  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc=2Edts | 25
+>++++++++++++++++++++++
+>>  arch/arm/boot/dts/sun8i-h3-nanopi-m1=2Edts           | 25
+>++++++++++++++++++++++
+>>  arch/arm/boot/dts/sun8i-h3-orangepi-2=2Edts          | 25
+>++++++++++++++++++++++
+>>  arch/arm/boot/dts/sun8i-h3-orangepi-lite=2Edts       | 25
+>++++++++++++++++++++++
+>>  arch/arm/boot/dts/sun8i-h3-orangepi-one=2Edts        | 24
+>+++++++++++++++++++++
+>>  arch/arm/boot/dts/sun8i-h3-orangepi-pc=2Edts         | 25
+>++++++++++++++++++++++
+>>  8 files changed, 199 insertions(+)
+>
+>As I understand it, the H2+ is just a slightly trimmed down H3=2E In
+>terms of HDMI support, the difference is that the H2+ can't output 4k=2E
 
--- 
-2.7.4
+H2+ can OUTPUT 4K=2E The BSP restricts it to DECODE 4K=2E (And mainline wo=
+n't have such restriction)
+
+>If this code is compatible with the H2+, could you please add the
+>necessary bits and pieces to the h2-plus DTSs too?
+>
+>Thanks,
