@@ -1,79 +1,38 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Rossak <embed3d@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: a31: Fix CLK_OUT_* clock ops
-Date: Sat, 17 Feb 2018 21:05:04 +0800
-Message-Id: <20180217130504.8668-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f175.google.com ([209.85.220.175]:36470 "EHLO
+        mail-qk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751542AbeBYMNW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Feb 2018 07:13:22 -0500
+MIME-Version: 1.0
+In-Reply-To: <1519483851-31135-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1519483851-31135-1-git-send-email-yamada.masahiro@socionext.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 25 Feb 2018 14:13:20 +0200
+Message-ID: <CAHp75VdKDFnrk6i9vBZL2YnqeUH3AaxdZJ_f6ZNOUtnq1pjM3Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] drivers: use 'depends on MFD_SYSCON' instead of
+ 'select MFD_SYSCON'
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        USB <linux-usb@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When support for the A31/A31s CCU was first added, the clock ops for
-the CLK_OUT_* clocks was set to the wrong type. The clocks are MP-type,
-but the ops was set for div (M) clocks. This went unnoticed until now.
-This was because while they are different clocks, their data structures
-aligned in a way that ccu_div_ops would access the second ccu_div_internal
-and ccu_mux_internal structures, which were valid, if not incorrect.
+On Sat, Feb 24, 2018 at 4:50 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 
-Furthermore, the use of these CLK_OUT_* was for feeding a precise 32.768
-kHz clock signal to the WiFi chip. This was achievable by using the parent
-with the same clock rate and no divider. So the incorrect divider setting
-did not affect this usage.
+> Also, make MFD_SYSCON 'default y' because some defconfig files may
+> rely on someone select's MFD_SYSCON.
 
-Commit 946797aa3f08 ("clk: sunxi-ng: Support fixed post-dividers on MP
-style clocks") added a new field to the ccu_mp structure, which broke
-the aforementioned alignment. Now the system crashes as div_ops tries
-to look up a nonexistent table.
+I'm not sure this is right thing to do. You basically imply that there
+always a user of it.
 
-Reported-by: Philipp Rossak <embed3d@gmail.com>
-Fixes: c6e6c96d8fa6 ("clk: sunxi-ng: Add A31/A31s clocks")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
 
-Philipp, can you give this a test and report if this fixes thing?
-I don't have any A31/A31s boards online to test this.
-
----
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index 72b16ed1012b..3b97f60540ad 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -762,7 +762,7 @@ static struct ccu_mp out_a_clk = {
- 		.features	= CCU_FEATURE_FIXED_PREDIV,
- 		.hw.init	= CLK_HW_INIT_PARENTS("out-a",
- 						      clk_out_parents,
--						      &ccu_div_ops,
-+						      &ccu_mp_ops,
- 						      0),
- 	},
- };
-@@ -783,7 +783,7 @@ static struct ccu_mp out_b_clk = {
- 		.features	= CCU_FEATURE_FIXED_PREDIV,
- 		.hw.init	= CLK_HW_INIT_PARENTS("out-b",
- 						      clk_out_parents,
--						      &ccu_div_ops,
-+						      &ccu_mp_ops,
- 						      0),
- 	},
- };
-@@ -804,7 +804,7 @@ static struct ccu_mp out_c_clk = {
- 		.features	= CCU_FEATURE_FIXED_PREDIV,
- 		.hw.init	= CLK_HW_INIT_PARENTS("out-c",
- 						      clk_out_parents,
--						      &ccu_div_ops,
-+						      &ccu_mp_ops,
- 						      0),
- 	},
- };
 -- 
-2.16.1
+With Best Regards,
+Andy Shevchenko
