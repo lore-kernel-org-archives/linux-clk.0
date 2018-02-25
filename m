@@ -1,109 +1,183 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-db5eur01on0050.outbound.protection.outlook.com ([104.47.2.50]:9131
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753190AbeBVJwO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Feb 2018 04:52:14 -0500
-From: Jacky Bai <ping.bai@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "jacky.baip@gmail.com" <jacky.baip@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3 1/4] driver: clk: imx: Add CLK_IS_CRITICAL flag for
- busy diviver and busy mux
-Date: Thu, 22 Feb 2018 09:52:06 +0000
-Message-ID: <HE1PR04MB31137D8726109678F9B98A9F87CD0@HE1PR04MB3113.eurprd04.prod.outlook.com>
-References: <1517968819-12869-1-git-send-email-ping.bai@nxp.com>
- <20180222094228.GK3217@dragon>
-In-Reply-To: <20180222094228.GK3217@dragon>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Tali.Perry@nuvoton.com>
+From: Tali Perry <tali.perry1@gmail.com>
+To: brendanhiggins@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
+        raltherr@google.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
+Subject: [PATCH v10 2/3] NPCM750: add clock tree doc and binding
+Date: Sun, 25 Feb 2018 12:12:18 +0200
+Message-Id: <1519553539-15899-3-git-send-email-tali.perry1@gmail.com>
+In-Reply-To: <1519553539-15899-1-git-send-email-tali.perry1@gmail.com>
+References: <1519553539-15899-1-git-send-email-tali.perry1@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
-> Subject: Re: [PATCH v3 1/4] driver: clk: imx: Add CLK_IS_CRITICAL flag fo=
-r busy
-> diviver and busy mux
->=20
-> On Wed, Feb 07, 2018 at 10:00:16AM +0800, Bai Ping wrote:
-> > The busy divider and busy mux is actually used by the system critical
-> > clocks, so add 'CLK_IS_CRITICAL' to clocks registered with these two ty=
-pe.
->=20
-> Are there any real world issues you have seen with this CLK_IS_CRITICAL m=
-issing
-> from these busy clocks?
->=20
+Signed-off-by: Tali Perry <tali.perry1@gmail.com>
 
-Previously in our clk driver, the always clocks is enabled by put them in c=
-lk_init_on array. So community suggest me to
-Add 'CLK_IS_CRITICAL' flags to these clocks and remove the clk_init_on arra=
-y. As the busy clock don't have CLK_IS_CRITICAL flag and
-It seems all the busy clock are system critical, need to be enabled always,=
- so we need to add this flag to the bus clocks if the clk_init_on array is
-removed, otherwise, the bus clock will be disable in 'disable unused clk' s=
-tage if we don't enable it explicitly.
+---
+ .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++++++++++++++++++++
+ include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 +++++++++
+ 2 files changed, 144 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+ create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
 
-BR
-Jacky Bai
-> >
-> > Signed-off-by: Bai Ping <ping.bai@nxp.com>
->=20
-> s/diviver/divider in the patch subject.
->=20
-> Shawn
->=20
-> > ---
-> >  drivers/clk/imx/clk-busy.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-> > index 6df3389..9903652 100644
-> > --- a/drivers/clk/imx/clk-busy.c
-> > +++ b/drivers/clk/imx/clk-busy.c
-> > @@ -101,7 +101,7 @@ struct clk *imx_clk_busy_divider(const char *name,
-> > const char *parent_name,
-> >
-> >  	init.name =3D name;
-> >  	init.ops =3D &clk_busy_divider_ops;
-> > -	init.flags =3D CLK_SET_RATE_PARENT;
-> > +	init.flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL;
-> >  	init.parent_names =3D &parent_name;
-> >  	init.num_parents =3D 1;
-> >
-> > @@ -175,7 +175,7 @@ struct clk *imx_clk_busy_mux(const char *name,
-> > void __iomem *reg, u8 shift,
-> >
-> >  	init.name =3D name;
-> >  	init.ops =3D &clk_busy_mux_ops;
-> > -	init.flags =3D 0;
-> > +	init.flags =3D CLK_IS_CRITICAL;
-> >  	init.parent_names =3D parent_names;
-> >  	init.num_parents =3D num_parents;
-> >
-> > --
-> > 1.9.1
-> >
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Flis=
-t
-> >
-> s.infradead.org%2Fmailman%2Flistinfo%2Flinux-arm-kernel&data=3D02%7C01%7
-> >
-> Cping.bai%40nxp.com%7C6183140614624dfd492f08d579d89d58%7C686ea1d3
-> bc2b4
-> >
-> c6fa92cd99c5c301635%7C0%7C0%7C636548893622897723&sdata=3DamVo6uZ6
-> ra1o9XA
-> > xHSRi9cOd%2BuRUV%2BIkrXSbBncE0lA%3D&reserved=3D0
+diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+new file mode 100644
+index 000000000000..dd17b86bd577
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+@@ -0,0 +1,100 @@
++* Nuvoton NPCM7XX Clock Controller
++
++Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
++generates and supplies clocks to all modules within the BMC.
++
++External clocks:
++
++There are six fixed clocks that are generated outside the BMC. All clocks are of
++a known fixed value that cannot be changed. clk_refclk, clk_mcbypck and
++clk_sysbypck are inputs to the clock controller.
++clk_rg1refck, clk_rg2refck and clk_xin are external clocks suppling the
++network. They are set on the device tree, but not used by the clock module. The
++network devices use them directly.
++Example can be found below.
++
++All available clocks are defined as preprocessor macros in:
++dt-bindings/clock/nuvoton,npcm7xx-clock.h
++and can be reused as DT sources.
++
++Required Properties of clock controller:
++
++	- compatible: "nuvoton,npcm750-clk" : for clock controller of Nuvoton
++		  Poleg BMC NPCM750
++
++	- reg: physical base address of the clock controller and length of
++		memory mapped region.
++
++	- #clock-cells: should be 1.
++
++Example: Clock controller node:
++
++	clk: clock-controller@f0801000 {
++		compatible = "nuvoton,npcm750-clk";
++		#clock-cells = <1>;
++		reg = <0xf0801000 0x1000>;
++		clock-names = "refclk", "sysbypck", "mcbypck";
++		clocks = <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
++	};
++
++Example: Required external clocks for network:
++
++	/* external reference clock */
++	clk_refclk: clk-refclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++		clock-output-names = "refclk";
++	};
++
++	/* external reference clock for cpu. float in normal operation */
++	clk_sysbypck: clk-sysbypck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <800000000>;
++		clock-output-names = "sysbypck";
++	};
++
++	/* external reference clock for MC. float in normal operation */
++	clk_mcbypck: clk-mcbypck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <800000000>;
++		clock-output-names = "mcbypck";
++	};
++
++	 /* external clock signal rg1refck, supplied by the phy */
++	clk_rg1refck: clk-rg1refck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++		clock-output-names = "clk_rg1refck";
++	};
++
++	 /* external clock signal rg2refck, supplied by the phy */
++	clk_rg2refck: clk-rg2refck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++		clock-output-names = "clk_rg2refck";
++	};
++
++	clk_xin: clk-xin {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <50000000>;
++		clock-output-names = "clk_xin";
++	};
++
++
++Example: GMAC controller node that consumes two clocks: a generated clk by the
++clock controller and a fixed clock from DT (clk_rg1refck).
++
++	ethernet0: eth@f0802000 {
++		compatible = "snps,dwmac";
++		reg = <0xf0802000 0x2000>;
++		interrupts = <0 14 4>;
++		interrupt-names = "macirq";
++		clocks	= <&clk_rg1refck>, <&clk NPCM7XX_CLK_AHB>;
++		clock-names = "stmmaceth", "clk_gmac";
++	};
+diff --git a/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+new file mode 100644
+index 000000000000..f21522605b94
+--- /dev/null
++++ b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Nuvoton NPCM7xx Clock Generator binding
++ * clock binding number for all clocks supportted by nuvoton,npcm7xx-clk
++ *
++ * Copyright (C) 2018 Nuvoton Technologies tali.perry@nuvoton.com
++ *
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_NPCM7XX_H
++#define __DT_BINDINGS_CLOCK_NPCM7XX_H
++
++
++#define NPCM7XX_CLK_CPU 0
++#define NPCM7XX_CLK_GFX_PIXEL 1
++#define NPCM7XX_CLK_MC 2
++#define NPCM7XX_CLK_ADC 3
++#define NPCM7XX_CLK_AHB 4
++#define NPCM7XX_CLK_TIMER 5
++#define NPCM7XX_CLK_UART 6
++#define NPCM7XX_CLK_MMC  7
++#define NPCM7XX_CLK_SPI3 8
++#define NPCM7XX_CLK_PCI  9
++#define NPCM7XX_CLK_AXI 10
++#define NPCM7XX_CLK_APB4 11
++#define NPCM7XX_CLK_APB3 12
++#define NPCM7XX_CLK_APB2 13
++#define NPCM7XX_CLK_APB1 14
++#define NPCM7XX_CLK_APB5 15
++#define NPCM7XX_CLK_CLKOUT 16
++#define NPCM7XX_CLK_GFX  17
++#define NPCM7XX_CLK_SU   18
++#define NPCM7XX_CLK_SU48 19
++#define NPCM7XX_CLK_SDHC 20
++#define NPCM7XX_CLK_SPI0 21
++#define NPCM7XX_CLK_SPIX 22
++
++#define NPCM7XX_CLK_REFCLK 23
++#define NPCM7XX_CLK_SYSBYPCK 24
++#define NPCM7XX_CLK_MCBYPCK 25
++
++#define NPCM7XX_NUM_CLOCKS	 (NPCM7XX_CLK_MCBYPCK+1)
++
++#endif
+-- 
+2.14.1
