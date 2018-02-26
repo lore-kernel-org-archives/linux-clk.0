@@ -1,66 +1,91 @@
-Return-Path: <a.hajda@samsung.com>
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski
-	<krzk@kernel.org>, linux-samsung-soc@vger.kernel.org (moderated list:SAMSUNG
-	SOC CLOCK DRIVERS), linux-clk@vger.kernel.org (open list:COMMON CLK
-	FRAMEWORK)
-Subject: [PATCH v2 1/7] clk: samsung: exynos3250: fix PLL rates
-Date: Fri, 16 Feb 2018 15:57:48 +0100
-Message-id: <20180216145754.14428-2-a.hajda@samsung.com>
-In-reply-to: <20180216145754.14428-1-a.hajda@samsung.com>
-References: <20180216145754.14428-1-a.hajda@samsung.com>
-	<CGME20180216145804eucas1p2cbe4de00131e6b7bbd946d349dfc2b2d@eucas1p2.samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:34138 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752640AbeBZMnQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 07:43:16 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAK7LNAT8sRDNZKbcpXY+e98O+sJHw9vUM9bKvdmVZNuEEQoMdA@mail.gmail.com>
+References: <1519483851-31135-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAK8P3a26kkcmzT450326=xHXjynG=uNYi2w07w6T+T01zQOQag@mail.gmail.com> <CAK7LNAT8sRDNZKbcpXY+e98O+sJHw9vUM9bKvdmVZNuEEQoMdA@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 26 Feb 2018 13:43:14 +0100
+Message-ID: <CAK8P3a3zMG4wV9SWg78NGmk=BU9yq5paxZvJ=coHCWxVgNhO2w@mail.gmail.com>
+Subject: Re: [RFC PATCH] drivers: use 'depends on MFD_SYSCON' instead of
+ 'select MFD_SYSCON'
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Rates declared in PLL rate tables should match exactly rates calculated
-from PLL coefficients. If that is not the case, rate of parent might be being
-set not as expected. For instance, if in the PLL rates table we have
-a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-will return 393216003. If we now attempt to set rate of a PLL's child divider
-clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-That is the divider will be set to 3 instead of 2, because 393216003/2 is
-greater than 196608000.
+On Mon, Feb 26, 2018 at 12:53 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-02-26 17:43 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+>> On Sat, Feb 24, 2018 at 3:50 PM, Masahiro Yamada
+>> <yamada.masahiro@socionext.com> wrote:
+>>> As Documentation/kbuild/kconfig-language.txt notes, 'select' should be
+>>> used with care - it forces a lower limit of another symbol, ignoring
+>>> the dependency.
+>>>
+>>> MFD_SYSCON depends on HAS_IOMEM, but several drivers with COMPILE_TEST
+>>> select it.
+>>>
+>>> This causes unmet dependencies for architecture without HAS_IOMEM.
+>>>
+>>>   $ make ARCH=score randconfig
+>>>   scripts/kconfig/conf  --randconfig Kconfig
+>>>   KCONFIG_SEED=0x27C47F43
+>>>   warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && ...)
+>>>   selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
+>>>
+>>> Use 'depends on' to observe the dependency.
+>>>
+>>> This commit was created by the following command:
+>>>
+>>>   $ find drivers -name 'Kconfig*' | xargs sed -i -e \
+>>>     's/select MFD_SYSCON$/depends on MFD_SYSCON/'
+>>>
+>>> Then, COMMON_CLK_NXP and S3C2410_WATCHDOG were fixed up manually.
+>>>
+>>> Also, make MFD_SYSCON 'default y' because some defconfig files may
+>>> rely on someone select's MFD_SYSCON.
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>> ---
+>>>
+>>> If you have a better idea to fix 'unmet dependencies',
+>>> please suggest.
+>>
+>> Changing 'select MFD_SYSCON' to 'depends on' will definitely break lots
+>> of defconfig configurations, I'd rather not do that.
+>
+>
+> Could you explain why?
+>
+> I set 'default y' for MFD_SYSCON.
+>
+> Would it still break defconfig configurations?
 
-To fix this issue declared rates are changed to exactly match rates generated
-by a PLL, as calculated from the P, M, S, K coefficients.
+No, you are right, that would not break defconfigs, it would just mean one
+useless driver being enabled for many configurations that don't need it.
 
-In this patch an erroneous P value for 74176002 output frequency is also
-corrected.
+>> Only score, tile and um have some configurations that select 'NO_IOMEM'.
+>> Score is getting removed now, tile might get removed later (we could make
+>> PCI mandatory in the meantime to avoid that configuration), and I think for
+>> um, we already have a workaround for the NO_IOMEM dependencies
+>> (I forget the details).
+>
+> I do not think this is a stable solution.
+>
+> Or, do you mean to remove NO_IOMEM and HAS_IOMEM completely?
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/clk/samsung/clk-exynos3250.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+We could either leave it for arch/um only and have that deal with the
+issues (which I think we already have), or we could remove the options
+entirely.
 
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index 1b81e283f605..ed36728424a2 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -698,7 +698,7 @@ static const struct samsung_pll_rate_table exynos3250_epll_rates[] __initconst =
- 	PLL_36XX_RATE(144000000,  96, 2, 3,     0),
- 	PLL_36XX_RATE( 96000000, 128, 2, 4,     0),
- 	PLL_36XX_RATE( 84000000, 112, 2, 4,     0),
--	PLL_36XX_RATE( 80000004, 106, 2, 4, 43691),
-+	PLL_36XX_RATE( 80000003, 106, 2, 4, 43691),
- 	PLL_36XX_RATE( 73728000,  98, 2, 4, 19923),
- 	PLL_36XX_RATE( 67737598, 270, 3, 5, 62285),
- 	PLL_36XX_RATE( 65535999, 174, 2, 5, 49982),
-@@ -734,7 +734,7 @@ static const struct samsung_pll_rate_table exynos3250_vpll_rates[] __initconst =
- 	PLL_36XX_RATE(148352005,  98, 2, 3, 59070),
- 	PLL_36XX_RATE(108000000, 144, 2, 4,     0),
- 	PLL_36XX_RATE( 74250000,  99, 2, 4,     0),
--	PLL_36XX_RATE( 74176002,  98, 3, 4, 59070),
-+	PLL_36XX_RATE( 74176002,  98, 2, 4, 59070),
- 	PLL_36XX_RATE( 54054000, 216, 3, 5, 14156),
- 	PLL_36XX_RATE( 54000000, 144, 2, 5,     0),
- 	{ /* sentinel */ }
--- 
-2.16.1
+      Arnd
