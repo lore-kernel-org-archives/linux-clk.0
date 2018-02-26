@@ -1,42 +1,50 @@
-Return-Path: <jani.nikula@intel.com>
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thierry Reding <thierry.reding@gmail.com>, Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org,
- linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org,
- joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, airlied@linux.ie,
- kamil@wypas.org, b.zolnierkie@samsung.com, jdelvare@suse.com,
- linux@roeck-us.net, dmitry.torokhov@gmail.com, rpurdie@rpsys.net,
- jacek.anaszewski@gmail.com, pavel@ucw.cz, mchehab@kernel.org,
- sean@mess.org, lee.jones@linaro.org, daniel.thompson@linaro.org,
- jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org,
- mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com,
- alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
- linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
-In-Reply-To: <20180228194429.GD22932@mithrandir>
-References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com> <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com> <20180228194429.GD22932@mithrandir>
-Date: Wed, 28 Feb 2018 22:04:52 +0200
-Message-ID: <87r2p4hod7.fsf@intel.com>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180226102557.7bgjs3txp7cbridn@flea.lan>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+ <20180224214545.3740-2-jernej.skrabec@siol.net> <20180226093800.uwbo54wrdcwmsyzh@flea.lan>
+ <CAGb2v64fxs5Ne5=orQxNcg70Z_N0NJyyC7MPuNH6pxcqrsUq4g@mail.gmail.com> <20180226102557.7bgjs3txp7cbridn@flea.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 26 Feb 2018 18:28:43 +0800
+Message-ID: <CAGb2v67X8BpvSbxj4So0fdPnY5c6yEKza6b=KZWf7qxMaOUXWg@mail.gmail.com>
+Subject: Re: [PATCH 01/15] clk: sunxi-ng: Add check for minimal rate to NM PLLs
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>, David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 28 Feb 2018, Thierry Reding <thierry.reding@gmail.com> wrote:
-> Anyone that needs something other than normal mode should use the new
-> atomic PWM API.
+On Mon, Feb 26, 2018 at 6:25 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Mon, Feb 26, 2018 at 05:43:01PM +0800, Chen-Yu Tsai wrote:
+>> On Mon, Feb 26, 2018 at 5:38 PM, Maxime Ripard
+>> <maxime.ripard@bootlin.com> wrote:
+>> > Hi,
+>> >
+>> > On Sat, Feb 24, 2018 at 10:45:31PM +0100, Jernej Skrabec wrote:
+>> >> Some NM PLLs doesn't work well when their output clock rate is set below
+>> >> certain rate.
+>> >>
+>> >> Add support for that constrain.
+>> >
+>> > In such a case, you should round the rate to the minimum the clock can
+>> > operate at, and not return an error.
+>>
+>> That's true for round_rate. But what's the expected behavior of set_rate?
+>> AFAIK we presume all users call round_rate before set_rate, but that doesn't
+>> seem to be true all the time.
+>
+> One of the first things that happens during a set_rate is a round_rate:
+> https://elixir.bootlin.com/linux/v4.16-rc3/source/drivers/clk/clk.c#L1873
 
-At the risk of revealing my true ignorance, what is the new atomic PWM
-API? Where? Examples of how one would convert old code over to the new
-API?
+Ah! This was added recently in commit ca5e089a32c5 ("clk: use round rate
+to bail out early in set_rate").
 
-BR,
-Jani.
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+Thanks for the tip!
+ChenYu
