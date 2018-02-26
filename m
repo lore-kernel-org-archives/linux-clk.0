@@ -1,94 +1,62 @@
 Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com,
-	narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v4 02/12] clk: sunxi-ng: Use u64 for calculation of nkmp rate
-Date: Wed,  7 Feb 2018 22:17:03 +0100
-Message-Id: <20180207211713.3638-3-jernej.skrabec@siol.net>
-In-Reply-To: <20180207211713.3638-1-jernej.skrabec@siol.net>
-References: <20180207211713.3638-1-jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 08/15] drm/sun4i: Fix polarity configuration for DW HDMI PHY
+Date: Mon, 26 Feb 2018 17:19:58 +0100
+Message-ID: <2043407.cqGGRsJjYq@jernej-laptop>
+In-Reply-To: <20180226093930.mipjyr6sr35ldkw6@flea.lan>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-9-jernej.skrabec@siol.net> <20180226093930.mipjyr6sr35ldkw6@flea.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-When parent rate is 24MHz and multiplier N >= 180, intermediate clock
-rate doesn't fit in 32 bit variable anymore.
+Hi,
 
-Because of that, introduce function for calculating clock rate which
-uses 64 bit variable for intermediate result.
+Dne ponedeljek, 26. februar 2018 ob 10:39:30 CET je Maxime Ripard napisal(a):
+> Hi,
+> 
+> On Sat, Feb 24, 2018 at 10:45:38PM +0100, Jernej Skrabec wrote:
+> > Current polarity configuration code is cleary wrong since it compares
+> > same flag two times. However, even if flag name is fixed, it won't work
+> > well for resolutions which have one polarity positive and another
+> > negative.
+> > 
+> > Fix that by properly set each bit according to each polarity. Since
+> > those two bits are not described in any documentation, relationships
+> > were obtained by experimentation.
+> > 
+> > Fixes: b7c7436a5ff0 ("drm/sun4i: Implement A83T HDMI driver")
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> > b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c index e5bfcdd43ec9..f48e8b70fabe
+> > 100644
+> > --- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> > +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> > @@ -35,10 +35,11 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi,
+> > void *data,> 
+> >  	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
+> >  	u32 val = 0;
+> > 
+> > -	if ((mode->flags & DRM_MODE_FLAG_NHSYNC) &&
+> > -	    (mode->flags & DRM_MODE_FLAG_NHSYNC)) {
+> > -		val = 0x03;
+> > -	}
+> > +	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+> > +		val |= 0x01;
+> > +
+> > +	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
+> > +		val |= 0x02;
+> 
+> Can you introduce defines for those?
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu_nkmp.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+Of course.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index a99068a08315..c3f6fe7be565 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -20,6 +20,18 @@ struct _ccu_nkmp {
- 	unsigned long	p, min_p, max_p;
- };
- 
-+static unsigned long ccu_nkmp_calc_rate(unsigned long parent,
-+					unsigned long n, unsigned long k,
-+					unsigned long m, unsigned long p)
-+{
-+	u64 rate = parent;
-+
-+	rate *= n * k;
-+	do_div(rate, m * p);
-+
-+	return rate;
-+}
-+
- static void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
- 			       struct _ccu_nkmp *nkmp)
- {
-@@ -33,7 +45,9 @@ static void ccu_nkmp_find_best(unsigned long parent, unsigned long rate,
- 				for (_p = nkmp->min_p; _p <= nkmp->max_p; _p <<= 1) {
- 					unsigned long tmp_rate;
- 
--					tmp_rate = parent * _n * _k / (_m * _p);
-+					tmp_rate = ccu_nkmp_calc_rate(parent,
-+								      _n, _k,
-+								      _m, _p);
- 
- 					if (tmp_rate > rate)
- 						continue;
-@@ -107,7 +121,7 @@ static unsigned long ccu_nkmp_recalc_rate(struct clk_hw *hw,
- 	p = reg >> nkmp->p.shift;
- 	p &= (1 << nkmp->p.width) - 1;
- 
--	return (parent_rate * n * k >> p) / m;
-+	return ccu_nkmp_calc_rate(parent_rate, n, k, m, 1 << p);
- }
- 
- static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -127,7 +141,8 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	ccu_nkmp_find_best(*parent_rate, rate, &_nkmp);
- 
--	return *parent_rate * _nkmp.n * _nkmp.k / (_nkmp.m * _nkmp.p);
-+	return ccu_nkmp_calc_rate(*parent_rate, _nkmp.n, _nkmp.k,
-+				  _nkmp.m, _nkmp.p);
- }
- 
- static int ccu_nkmp_set_rate(struct clk_hw *hw, unsigned long rate,
--- 
-2.16.1
+Best regards,
+Jernej
