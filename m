@@ -1,128 +1,103 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Lee
- Jones <lee.jones@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Gabriel
- Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>
-Subject: [PATCH 01/14] dt-bindings: Document STM32MP1 Reset Clock Controller (RCC) bindings
-Date: Fri, 2 Feb 2018 15:03:29 +0100
-Message-ID: <1517580222-23301-2-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
-References: <1517580222-23301-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v7 10/15] dt-bindings: arm: Document qcom,kpss-gcc
+Date: Mon, 26 Feb 2018 15:23:26 +0530
+Message-Id: <1519638811-17269-11-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-The RCC block is responsible of the management of the clock and reset
-generation for the complete circuit.
+The ACC and GCC regions present in KPSSv1 contain registers to
+control clocks and power to each Krait CPU and L2. Documenting
+the bindings here.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- .../devicetree/bindings/mfd/st,stm32-rcc.txt       | 85 ++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
+ .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  |  7 +++++
+ .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 32 ++++++++++++++++++++++
+ 2 files changed, 39 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
 
-diff --git a/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt b/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+index 1333db9..382a574 100644
+--- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+@@ -21,10 +21,17 @@ PROPERTIES
+ 		    the register region. An optional second element specifies
+ 		    the base address and size of the alias register region.
+ 
++- clock-output-names:
++	Usage: optional
++	Value type: <string>
++	Definition: Name of the output clock. Typically acpuX_aux where X is a
++		    CPU number starting at 0.
++
+ Example:
+ 
+ 	clock-controller@2088000 {
+ 		compatible = "qcom,kpss-acc-v2";
+ 		reg = <0x02088000 0x1000>,
+ 		      <0x02008000 0x1000>;
++		clock-output-names = "acpu0_aux";
+ 	};
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
 new file mode 100644
-index 0000000..28017a1
+index 0000000..37fc0a4
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/st,stm32-rcc.txt
-@@ -0,0 +1,85 @@
-+STMicroelectronics STM32 Peripheral Reset Clock Controller
-+==========================================================
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+@@ -0,0 +1,32 @@
++Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
 +
-+The RCC IP is both a reset and a clock controller.
++PROPERTIES
 +
-+Please also refer to reset.txt for common reset controller binding usage.
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: should be one of the following. The generic compatible
++			"qcom,kpss-gcc" should also be included.
++			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
 +
-+Please also refer to clock-bindings.txt for common clock controller
-+binding usage.
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: base address and size of the register region
 +
-+
-+Required properties:
-+- compatible: "simple-mfd", "syscon"
-+- reg: should be register base and length as documented in the datasheet
-+
-+- Sub-nodes:
-+  - compatible: "st,stm32mp1-rcc-clk"
-+	- #clock-cells: 1, device nodes should specify the clock in their
-+	  "clocks" property, containing a phandle to the clock device node,
-+	  an index specifying the clock to use.
-+
-+  - compatible: "st,stm32mp1-rcc-rst"
-+	- #reset-cells: Shall be 1
-+
-+Example:
-+	rcc: rcc@50000000 {
-+		compatible = "syscon", "simple-mfd";
-+		reg = <0x50000000 0x1000>;
-+
-+		rcc_clk: rcc-clk@50000000 {
-+			#clock-cells = <1>;
-+			compatible = "st,stm32mp1-rcc-clk";
-+		};
-+
-+		rcc_rst: rcc-reset@50000000 {
-+			#reset-cells = <1>;
-+			compatible = "st,stm32mp1-rcc-rst";
-+		};
-+	};
-+
-+Specifying clocks
-+=================
-+
-+All available clocks are defined as preprocessor macros in
-+dt-bindings/clock/stm32mp1-clks.h header and can be used in device
-+tree sources.
++- clock-output-names:
++	Usage: required
++	Value type: <string>
++	Definition: Name of the output clock. Typically acpu_l2_aux indicating
++		    an L2 cache auxiliary clock.
 +
 +Example:
 +
-+	/* Accessing DMA1 clock */
-+	... {
-+		clocks = <&rcc_clk DMA1>
-+	};
-+
-+	/* Accessing SPI6 kernel clock */
-+	... {
-+		clocks = <&rcc_clk SPI6_K>
-+	};
-+
-+Specifying softreset control of devices
-+=======================================
-+
-+Device nodes should specify the reset channel required in their "resets"
-+property, containing a phandle to the reset device node and an index specifying
-+which channel to use.
-+The index is the bit number within the RCC registers bank, starting from RCC
-+base address.
-+It is calculated as: index = register_offset / 4 * 32 + bit_offset.
-+Where bit_offset is the bit offset within the register.
-+
-+For example on STM32MP1, for LTDC reset:
-+ ltdc = APB4_RSTSETR_offset / 4 * 32 + LTDC_bit_offset
-+      = 0x180 / 4 * 32 + 0 = 3072
-+
-+The list of valid indices for STM32MP1 is available in:
-+include/dt-bindings/reset-controller/stm32mp1-resets.h
-+
-+This file implements defines like:
-+#define LTDC_R	3072
-+
-+example:
-+
-+	ltdc {
-+		resets = <&rcc_rst LTDC_R>;
++	l2cc: clock-controller@2011000 {
++		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
++		reg = <0x2011000 0x1000>;
++		clock-output-names = "acpu_l2_aux";
 +	};
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
