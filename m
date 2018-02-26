@@ -1,76 +1,85 @@
-Return-Path: <benjamin.gaignard@linaro.org>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Mon, 26 Feb 2018 11:25:57 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>,
+	David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 01/15] clk: sunxi-ng: Add check for minimal rate to NM
+ PLLs
+Message-ID: <20180226102557.7bgjs3txp7cbridn@flea.lan>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+ <20180224214545.3740-2-jernej.skrabec@siol.net>
+ <20180226093800.uwbo54wrdcwmsyzh@flea.lan>
+ <CAGb2v64fxs5Ne5=orQxNcg70Z_N0NJyyC7MPuNH6pxcqrsUq4g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180117093813.20227-1-benjamin.gaignard@st.com>
-References: <20180117093813.20227-1-benjamin.gaignard@st.com>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date: Wed, 14 Feb 2018 15:58:13 +0100
-Message-ID: <CA+M3ks75nSfy_+fZgbb=r9rps8aLNdzPKFc8uuqUJrvW7dCoEQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: stm32: add configuration flags for each of the
- stm32 drivers
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-Cc: linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Benjamin Gaignard <benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dxrtdxft72nv6clt"
+In-Reply-To: <CAGb2v64fxs5Ne5=orQxNcg70Z_N0NJyyC7MPuNH6pxcqrsUq4g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-01-17 10:38 GMT+01:00 Benjamin Gaignard <benjamin.gaignard@linaro.org>:
-> Add two configuration flags to be able to not compile all the time
-> stm32f and stm32h7 drivers when ARCH_STM32 is set.
-> That help to save some space on those small platforms.
->
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> Acked-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Gentle ping on this patch, thanks
+--dxrtdxft72nv6clt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Benjamin
+On Mon, Feb 26, 2018 at 05:43:01PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Feb 26, 2018 at 5:38 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > Hi,
+> >
+> > On Sat, Feb 24, 2018 at 10:45:31PM +0100, Jernej Skrabec wrote:
+> >> Some NM PLLs doesn't work well when their output clock rate is set bel=
+ow
+> >> certain rate.
+> >>
+> >> Add support for that constrain.
+> >
+> > In such a case, you should round the rate to the minimum the clock can
+> > operate at, and not return an error.
+>=20
+> That's true for round_rate. But what's the expected behavior of set_rate?
+> AFAIK we presume all users call round_rate before set_rate, but that does=
+n't
+> seem to be true all the time.
 
-> ---
->  drivers/clk/Kconfig  | 14 ++++++++++++++
->  drivers/clk/Makefile |  4 ++--
->  2 files changed, 16 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 1c4e1aa6767e..47243e8675c1 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -226,6 +226,20 @@ config COMMON_CLK_VC5
->           This driver supports the IDT VersaClock 5 and VersaClock 6
->           programmable clock generators.
->
-> +config COMMON_CLK_STM32F
-> +       bool "Clock driver for stm32f4 and stm32f7 SoC families"
-> +       depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-> +       help
-> +       ---help---
-> +         Support for stm32f4 and stm32f7 SoC families clocks
-> +
-> +config COMMON_CLK_STM32H7
-> +       bool "Clock driver for stm32h7 SoC family"
-> +       depends on MACH_STM32H743
-> +       help
-> +       ---help---
-> +         Support for stm32h7 SoC family clocks
-> +
->  source "drivers/clk/bcm/Kconfig"
->  source "drivers/clk/hisilicon/Kconfig"
->  source "drivers/clk/imgtec/Kconfig"
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index f7f761b02bed..956dce66587b 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -44,8 +44,8 @@ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
->  obj-$(CONFIG_COMMON_CLK_SI5351)                += clk-si5351.o
->  obj-$(CONFIG_COMMON_CLK_SI514)         += clk-si514.o
->  obj-$(CONFIG_COMMON_CLK_SI570)         += clk-si570.o
-> -obj-$(CONFIG_ARCH_STM32)               += clk-stm32f4.o
-> -obj-$(CONFIG_ARCH_STM32)               += clk-stm32h7.o
-> +obj-$(CONFIG_COMMON_CLK_STM32F)        += clk-stm32f4.o
-> +obj-$(CONFIG_COMMON_CLK_STM32H7)       += clk-stm32h7.o
->  obj-$(CONFIG_ARCH_TANGO)               += clk-tango4.o
->  obj-$(CONFIG_CLK_TWL6040)              += clk-twl6040.o
->  obj-$(CONFIG_ARCH_U300)                        += clk-u300.o
-> --
-> 2.15.0
->
+One of the first things that happens during a set_rate is a round_rate:
+https://elixir.bootlin.com/linux/v4.16-rc3/source/drivers/clk/clk.c#L1873
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--dxrtdxft72nv6clt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqT4LQACgkQ0rTAlCFN
+r3T82Q//XfVSf/LYhtSjfNluMQUsBGgfDZcrFQEQfFSe5p1v72zjU292NQonhjQa
+EPas8HKpm1lpKz8b1cEzT8VSdi4/JgkES4FXDfdGfzkZFKgU/EQUljAgMyrVmgpJ
+2kKgKtOVg3PO0VlzFXcTBcqPn/5TVDnPNG7w6BjmLMhpkhSKiZ9XqxGdZNMBEfcW
+ck+Nhg6wd/vTbBxRyWmuZIh+Dp2Wk2upzejNG/vm7OS7z0AMW85FoA6LrtbEnkD9
+v9lcEdJhDmAEy9lhl8vZ2qdjNbbqtIN4UXd4p3nUVyyOiEULFdN7OBRNSZYnOFrI
+9Ac1X8LSfK1/1N6kHdoinIgEv/ZMT7vHXk6WG8x80YS8mAv/nh4HRfTdTNnWP9mg
+JeUYl9KNQ0cUJsTxPGTOfyduv6mAgQRgwYrHJgVF5WI7ovrU+MX7hJAKp/YlXbhn
+mHugHcCTJh4OO/sLhq/f8zH+ZX+HxuEOreReRl0scWbnFLV1Okck7DU1aNT77LK1
+B5Qj0mnerD1bqBZtxxAuj+v/wA1CE+W+iMwi7O+YBawuyDu4naO9WTlpZsfkNS9H
+8ZAFzYZbcebdO3JO6+To9tq2KdGYijYz5OpCnhMJsvZb/z9AgeBaOHNuJnWgIkBt
+r9m734o5BlBk172h2J44SxN6HoZ3Q540EuS2T6xJJV2Hr9cyySE=
+=7CGv
+-----END PGP SIGNATURE-----
+
+--dxrtdxft72nv6clt--
