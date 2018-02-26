@@ -1,529 +1,180 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v7 18/42] clk: davinci: New driver for TI DA8XX CFGCHIP clocks
-Date: Mon, 19 Feb 2018 14:21:39 -0600
-Message-Id: <1519071723-31790-19-git-send-email-david@lechnology.com>
-In-Reply-To: <1519071723-31790-1-git-send-email-david@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v7 13/15] clk: qcom: Add safe switch hook for krait mux clocks
+Date: Mon, 26 Feb 2018 15:23:29 +0530
+Message-Id: <1519638811-17269-14-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds a new driver for the gate and multiplexer clocks in the
-CFGCHIPn syscon registers on TI DA8XX-type SoCs.
+When the Hfplls are reprogrammed during the rate change,
+the primary muxes which are sourced from the same hfpll
+for higher frequencies, needs to be switched to the 'safe
+secondary mux' as the parent for that small window. This
+is done by registering a clk notifier for the muxes and
+switching to the safe parent in the PRE_RATE_CHANGE notifier
+and back to the original parent in the POST_RATE_CHANGE notifier.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
+ drivers/clk/qcom/clk-krait.c |  2 ++
+ drivers/clk/qcom/clk-krait.h |  3 +++
+ drivers/clk/qcom/krait-cc.c  | 56 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 61 insertions(+)
 
-v7 changes:
-- convert to platform device
-
-v6 changes:
-- added DIV4.5 and ASYNC1 clocks
-- refactored code to be more generic
-- added functions for registering clocks from board files (no longer device
-  tree only)
-- use pr_fmt macro
-
-
- drivers/clk/davinci/Makefile                    |   2 +
- drivers/clk/davinci/da8xx-cfgchip.c             | 435 ++++++++++++++++++++++++
- include/linux/platform_data/clk-da8xx-cfgchip.h |  21 ++
- 3 files changed, 458 insertions(+)
- create mode 100644 drivers/clk/davinci/da8xx-cfgchip.c
- create mode 100644 include/linux/platform_data/clk-da8xx-cfgchip.h
-
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 6c388d4..11178b7 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+index 2e41767..ac2e020 100644
+--- a/drivers/clk/qcom/clk-krait.c
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -50,6 +50,8 @@ static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	if (__clk_is_enabled(hw->clk))
+ 		__krait_mux_set_sel(mux, sel);
  
- ifeq ($(CONFIG_COMMON_CLK), y)
-+obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
++	mux->reparent = true;
 +
- obj-y += pll.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
-diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-new file mode 100644
-index 0000000..386da99
---- /dev/null
-+++ b/drivers/clk/davinci/da8xx-cfgchip.c
-@@ -0,0 +1,435 @@
-+// SPDX-License-Identifier: GPL-2.0
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
+index 71890bc..986f356 100644
+--- a/drivers/clk/qcom/clk-krait.h
++++ b/drivers/clk/qcom/clk-krait.h
+@@ -13,6 +13,9 @@ struct krait_mux_clk {
+ 	u32		shift;
+ 	u32		en_mask;
+ 	bool		lpl;
++	u8		safe_sel;
++	u8		old_index;
++	bool		reparent;
+ 
+ 	struct clk_hw	hw;
+ 	struct notifier_block   clk_nb;
+diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
+index 7c9dfb0..4d4b657 100644
+--- a/drivers/clk/qcom/krait-cc.c
++++ b/drivers/clk/qcom/krait-cc.c
+@@ -26,6 +26,49 @@
+ 	0,
+ };
+ 
 +/*
-+ * Clock driver for DA8xx/AM17xx/AM18xx/OMAP-L13x CFGCHIP
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ * Notifier function for switching the muxes to safe parent
++ * while the hfpll is getting reprogrammed.
 + */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/init.h>
-+#include <linux/mfd/da8xx-cfgchip.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of_device.h>
-+#include <linux/of.h>
-+#include <linux/platform_data/clk-da8xx-cfgchip.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+/* --- Gate clocks --- */
-+
-+#define DA8XX_GATE_CLOCK_IS_DIV4P5	BIT(1)
-+
-+struct da8xx_cfgchip_gate_clk_info {
-+	const char *name;
-+	u32 cfgchip;
-+	u32 bit;
-+	u32 flags;
-+};
-+
-+struct da8xx_cfgchip_gate_clk {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u32 reg;
-+	u32 mask;
-+};
-+
-+#define to_da8xx_cfgchip_gate_clk(_hw) \
-+	container_of((_hw), struct da8xx_cfgchip_gate_clk, hw)
-+
-+static int da8xx_cfgchip_gate_clk_enable(struct clk_hw *hw)
++static int krait_notifier_cb(struct notifier_block *nb,
++			     unsigned long event,
++			     void *data)
 +{
-+	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++	int ret = 0;
++	struct krait_mux_clk *mux = container_of(nb, struct krait_mux_clk,
++						 clk_nb);
++	/* Switch to safe parent */
++	if (event == PRE_RATE_CHANGE) {
++		mux->old_index = krait_mux_clk_ops.get_parent(&mux->hw);
++		ret = krait_mux_clk_ops.set_parent(&mux->hw, mux->safe_sel);
++		mux->reparent = false;
++	/*
++	 * By the time POST_RATE_CHANGE notifier is called,
++	 * clk framework itself would have changed the parent for the new rate.
++	 * Only otherwise, put back to the old parent.
++	 */
++	} else if (event == POST_RATE_CHANGE) {
++		if (!mux->reparent)
++			ret = krait_mux_clk_ops.set_parent(&mux->hw,
++							   mux->old_index);
++	}
 +
-+	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, clk->mask);
++	return notifier_from_errno(ret);
 +}
 +
-+static void da8xx_cfgchip_gate_clk_disable(struct clk_hw *hw)
++static int krait_notifier_register(struct device *dev, struct clk *clk,
++				   struct krait_mux_clk *mux)
 +{
-+	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
++	int ret = 0;
 +
-+	regmap_write_bits(clk->regmap, clk->reg, clk->mask, 0);
++	mux->clk_nb.notifier_call = krait_notifier_cb;
++	ret = clk_notifier_register(clk, &mux->clk_nb);
++	if (ret)
++		dev_err(dev, "failed to register clock notifier: %d\n", ret);
++
++	return ret;
 +}
 +
-+static int da8xx_cfgchip_gate_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
-+	unsigned int val;
-+
-+	regmap_read(clk->regmap, clk->reg, &val);
-+
-+	return !!(val & clk->mask);
-+}
-+
-+static unsigned long da8xx_cfgchip_div4p5_recalc_rate(struct clk_hw *hw,
-+						      unsigned long parent_rate)
-+{
-+	/* this clock divides by 4.5 */
-+	return parent_rate * 2 / 9;
-+}
-+
-+static const struct clk_ops da8xx_cfgchip_gate_clk_ops = {
-+	.enable		= da8xx_cfgchip_gate_clk_enable,
-+	.disable	= da8xx_cfgchip_gate_clk_disable,
-+	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
-+};
-+
-+static const struct clk_ops da8xx_cfgchip_div4p5_clk_ops = {
-+	.enable		= da8xx_cfgchip_gate_clk_enable,
-+	.disable	= da8xx_cfgchip_gate_clk_disable,
-+	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
-+	.recalc_rate	= da8xx_cfgchip_div4p5_recalc_rate,
-+};
-+
-+static struct da8xx_cfgchip_gate_clk * __init
-+da8xx_cfgchip_gate_clk_register(struct device *dev,
-+				const struct da8xx_cfgchip_gate_clk_info *info,
-+				struct regmap *regmap)
-+{
-+	struct clk *parent;
-+	const char *parent_name;
-+	struct da8xx_cfgchip_gate_clk *gate;
-+	struct clk_init_data init;
+ static int
+ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
+ {
+@@ -70,6 +113,7 @@
+ krait_add_sec_mux(struct device *dev, int id, const char *s,
+ 		  unsigned int offset, bool unique_aux)
+ {
 +	int ret;
+ 	struct krait_mux_clk *mux;
+ 	static const char *sec_mux_list[] = {
+ 		"acpu_aux",
+@@ -93,6 +137,7 @@
+ 	mux->shift = 2;
+ 	mux->parent_map = sec_mux_map;
+ 	mux->hw.init = &init;
++	mux->safe_sel = 0;
+ 
+ 	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
+ 	if (!init.name)
+@@ -108,6 +153,11 @@
+ 
+ 	clk = devm_clk_register(dev, &mux->hw);
+ 
++	ret = krait_notifier_register(dev, clk, mux);
++	if (ret)
++		goto unique_aux;
 +
-+	parent = devm_clk_get(dev, NULL);
-+	if (IS_ERR(parent))
-+		return ERR_CAST(parent);
-+
-+	parent_name = __clk_get_name(parent);
-+
-+	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = info->name;
-+	if (info->flags & DA8XX_GATE_CLOCK_IS_DIV4P5)
-+		init.ops = &da8xx_cfgchip_div4p5_clk_ops;
-+	else
-+		init.ops = &da8xx_cfgchip_gate_clk_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = 0;
-+
-+	gate->hw.init = &init;
-+	gate->regmap = regmap;
-+	gate->reg = info->cfgchip;
-+	gate->mask = info->bit;
-+
-+	ret = devm_clk_hw_register(dev, &gate->hw);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
-+	return gate;
-+}
-+
-+static const struct da8xx_cfgchip_gate_clk_info da8xx_tbclksync_info __initconst = {
-+	.name = "ehrpwm_tbclk",
-+	.cfgchip = CFGCHIP(1),
-+	.bit = CFGCHIP1_TBCLKSYNC,
-+};
-+
-+static int __init da8xx_cfgchip_register_tbclk(struct device *dev,
-+					       struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_gate_clk *gate;
-+
-+	gate = da8xx_cfgchip_gate_clk_register(dev, &da8xx_tbclksync_info,
-+					       regmap);
-+	if (IS_ERR(gate))
-+		return PTR_ERR(gate);
-+
-+	clk_hw_register_clkdev(&gate->hw, "tbclk", "ehrpwm.0");
-+	clk_hw_register_clkdev(&gate->hw, "tbclk", "ehrpwm.1");
-+
-+	return 0;
-+}
-+
-+static const struct da8xx_cfgchip_gate_clk_info da8xx_div4p5ena_info __initconst = {
-+	.name = "div4.5",
-+	.cfgchip = CFGCHIP(3),
-+	.bit = CFGCHIP3_DIV45PENA,
-+	.flags = DA8XX_GATE_CLOCK_IS_DIV4P5,
-+};
-+
-+static int __init da8xx_cfgchip_register_div4p5(struct device *dev,
-+						struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_gate_clk *gate;
-+
-+	gate = da8xx_cfgchip_gate_clk_register(dev, &da8xx_div4p5ena_info, regmap);
-+	if (IS_ERR(gate))
-+		return PTR_ERR(gate);
-+
-+	return 0;
-+}
-+
-+static int __init
-+of_da8xx_cfgchip_gate_clk_init(struct device *dev,
-+			       const struct da8xx_cfgchip_gate_clk_info *info,
-+			       struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_gate_clk *gate;
-+
-+	gate = da8xx_cfgchip_gate_clk_register(dev, info, regmap);
-+	if (IS_ERR(gate))
-+		return PTR_ERR(gate);
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, gate);
-+}
-+
-+static int __init of_da8xx_tbclksync_init(struct device *dev,
-+					  struct regmap *regmap)
-+{
-+	return of_da8xx_cfgchip_gate_clk_init(dev, &da8xx_tbclksync_info, regmap);
-+}
-+
-+static int __init of_da8xx_div4p5ena_init(struct device *dev,
-+					  struct regmap *regmap)
-+{
-+	return of_da8xx_cfgchip_gate_clk_init(dev, &da8xx_div4p5ena_info, regmap);
-+}
-+
-+/* --- MUX clocks --- */
-+
-+struct da8xx_cfgchip_mux_clk_info {
-+	const char *name;
-+	const char *parent0;
-+	const char *parent1;
-+	u32 cfgchip;
-+	u32 bit;
-+};
-+
-+struct da8xx_cfgchip_mux_clk {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u32 reg;
-+	u32 mask;
-+};
-+
-+#define to_da8xx_cfgchip_mux_clk(_hw) \
-+	container_of((_hw), struct da8xx_cfgchip_mux_clk, hw)
-+
-+static int da8xx_cfgchip_mux_clk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
-+	unsigned int val = index ? clk->mask : 0;
-+
-+	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, val);
-+}
-+
-+static u8 da8xx_cfgchip_mux_clk_get_parent(struct clk_hw *hw)
-+{
-+	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
-+	unsigned int val;
-+
-+	regmap_read(clk->regmap, clk->reg, &val);
-+
-+	return (val & clk->mask) ? 1 : 0;
-+}
-+
-+static const struct clk_ops da8xx_cfgchip_mux_clk_ops = {
-+	.set_parent	= da8xx_cfgchip_mux_clk_set_parent,
-+	.get_parent	= da8xx_cfgchip_mux_clk_get_parent,
-+};
-+
-+static struct da8xx_cfgchip_mux_clk * __init
-+da8xx_cfgchip_mux_clk_register(struct device *dev,
-+			       const struct da8xx_cfgchip_mux_clk_info *info,
-+			       struct regmap *regmap)
-+{
-+	const char * const parent_names[] = { info->parent0, info->parent1 };
-+	struct da8xx_cfgchip_mux_clk *mux;
-+	struct clk_init_data init;
++unique_aux:
+ 	if (unique_aux)
+ 		kfree(sec_mux_list[0]);
+ err_aux:
+@@ -119,6 +169,7 @@
+ krait_add_pri_mux(struct device *dev, int id, const char *s,
+ 		  unsigned int offset)
+ {
 +	int ret;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = info->name;
-+	init.ops = &da8xx_cfgchip_mux_clk_ops;
-+	init.parent_names = parent_names;
-+	init.num_parents = 2;
-+	init.flags = 0;
-+
-+	mux->hw.init = &init;
-+	mux->regmap = regmap;
-+	mux->reg = info->cfgchip;
-+	mux->mask = info->bit;
-+
-+	ret = devm_clk_hw_register(dev, &mux->hw);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
-+	return mux;
-+}
-+
-+static const struct da8xx_cfgchip_mux_clk_info da850_async1_info __initconst = {
-+	.name = "async1",
-+	.parent0 = "pll0_sysclk3",
-+	.parent1 = "div4.5",
-+	.cfgchip = CFGCHIP(3),
-+	.bit = CFGCHIP3_EMA_CLKSRC,
-+};
-+
-+static int __init da8xx_cfgchip_register_async1(struct device *dev,
-+						struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_mux_clk *mux;
-+
-+	mux = da8xx_cfgchip_mux_clk_register(dev, &da850_async1_info, regmap);
-+	if (IS_ERR(mux))
-+		return PTR_ERR(mux);
-+
-+	return 0;
-+}
-+
-+static const struct da8xx_cfgchip_mux_clk_info da850_async3_info __initconst = {
-+	.name = "async3",
-+	.parent0 = "pll0_sysclk2",
-+	.parent1 = "pll1_sysclk2",
-+	.cfgchip = CFGCHIP(3),
-+	.bit = CFGCHIP3_ASYNC3_CLKSRC,
-+};
-+
-+static int __init da850_cfgchip_register_async3(struct device *dev,
-+						struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_mux_clk *mux;
-+	struct clk_hw *parent;
-+
-+	mux = da8xx_cfgchip_mux_clk_register(dev, &da850_async3_info, regmap);
-+	if (IS_ERR(mux))
-+		return PTR_ERR(mux);
-+
-+	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
-+	parent = clk_hw_get_parent_by_index(&mux->hw, 1);
-+	if (parent)
-+		clk_set_parent(mux->hw.clk, parent->clk);
-+	else
-+		dev_warn(dev, "Failed to find async3 parent clock\n");
-+
-+	return 0;
-+}
-+
-+static int __init
-+of_da8xx_cfgchip_init_mux_clock(struct device *dev,
-+				const struct da8xx_cfgchip_mux_clk_info *info,
-+				struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_mux_clk *mux;
-+
-+	mux = da8xx_cfgchip_mux_clk_register(dev, info, regmap);
-+	if (IS_ERR(mux))
-+		return PTR_ERR(mux);
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &mux->hw);
-+}
-+
-+static int __init of_da850_async1_init(struct device *dev, struct regmap *regmap)
-+{
-+	return of_da8xx_cfgchip_init_mux_clock(dev, &da850_async1_info, regmap);
-+}
-+
-+static int __init of_da850_async3_init(struct device *dev, struct regmap *regmap)
-+{
-+	return of_da8xx_cfgchip_init_mux_clock(dev, &da850_async3_info, regmap);
-+}
-+
-+/* --- platform device --- */
-+
-+static const struct of_device_id da8xx_cfgchip_of_match[] = {
-+	{
-+		.compatible = "ti,da830-tbclksync",
-+		.data = of_da8xx_tbclksync_init,
-+	},
-+	{
-+		.compatible = "ti,da830-div4p5ena",
-+		.data = of_da8xx_div4p5ena_init,
-+	},
-+	{
-+		.compatible = "ti,da850-async1-clksrc",
-+		.data = of_da850_async1_init,
-+	},
-+	{
-+		.compatible = "ti,da850-async3-clksrc",
-+		.data = of_da850_async3_init,
-+	},
-+	{ }
-+};
-+
-+static const struct platform_device_id da8xx_cfgchip_id_table[] = {
-+	{
-+		.name = "da830-tbclksync",
-+		.driver_data = (kernel_ulong_t)da8xx_cfgchip_register_tbclk,
-+	},
-+	{
-+		.name = "da830-div4p5ena",
-+		.driver_data = (kernel_ulong_t)da8xx_cfgchip_register_div4p5,
-+	},
-+	{
-+		.name = "da850-async1-clksrc",
-+		.driver_data = (kernel_ulong_t)da8xx_cfgchip_register_async1,
-+	},
-+	{
-+		.name = "da850-async3-clksrc",
-+		.driver_data = (kernel_ulong_t)da850_cfgchip_register_async3,
-+	},
-+	{ }
-+};
-+
-+typedef int (*da8xx_cfgchip_init)(struct device *dev, void __iomem *base);
-+
-+static int da8xx_cfgchip_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct da8xx_cfgchip_clk_platform_data *pdata = dev->platform_data;
-+	const struct of_device_id *of_id;
-+	da8xx_cfgchip_init clk_init = NULL;
-+	struct regmap *regmap = NULL;
-+
-+	of_id = of_match_device(da8xx_cfgchip_of_match, dev);
-+	if (of_id) {
-+		struct device_node *parent;
-+
-+		clk_init = of_id->data;
-+		parent = of_get_parent(dev->of_node);
-+		regmap = syscon_node_to_regmap(parent);
-+		of_node_put(parent);
-+	} else if (pdev->id_entry && pdata) {
-+		clk_init = (void *)pdev->id_entry->driver_data;
-+		regmap = pdata->cfgchip;
-+	}
-+
-+	if (!clk_init) {
-+		dev_err(dev, "unable to find driver data\n");
-+		return -EINVAL;
-+	}
-+
-+	if (IS_ERR_OR_NULL(regmap)) {
-+		dev_err(dev, "no regmap for CFGCHIP syscon\n");
-+		return regmap ? PTR_ERR(regmap) : -ENOENT;
-+	}
-+
-+	return clk_init(dev, regmap);
-+}
-+
-+static struct platform_driver da8xx_cfgchip_driver = {
-+	.probe		= da8xx_cfgchip_probe,
-+	.driver		= {
-+		.name		= "da8xx-cfgchip-clk",
-+		.of_match_table	= da8xx_cfgchip_of_match,
-+	},
-+	.id_table	= da8xx_cfgchip_id_table,
-+};
-+
-+static int __init da8xx_cfgchip_driver_init(void)
-+{
-+	return platform_driver_register(&da8xx_cfgchip_driver);
-+}
-+
-+/* has to be postcore_initcall because PSC devices depend on the async3 clock */
-+postcore_initcall(da8xx_cfgchip_driver_init);
-diff --git a/include/linux/platform_data/clk-da8xx-cfgchip.h b/include/linux/platform_data/clk-da8xx-cfgchip.h
-new file mode 100644
-index 0000000..de0f77d
---- /dev/null
-+++ b/include/linux/platform_data/clk-da8xx-cfgchip.h
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * clk-da8xx-cfgchip - TI DaVinci DA8xx CFGCHIP clock driver
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#ifndef __LINUX_PLATFORM_DATA_CLK_DA8XX_CFGCHIP_H__
-+#define __LINUX_PLATFORM_DATA_CLK_DA8XX_CFGCHIP_H__
-+
-+#include <linux/regmap.h>
-+
-+/**
-+ * da8xx_cfgchip_clk_platform_data
-+ * @cfgchip: CFGCHIP syscon regmap
-+ */
-+struct da8xx_cfgchip_clk_platform_data {
-+	struct regmap *cfgchip;
-+};
-+
-+#endif /* __LINUX_PLATFORM_DATA_CLK_DA8XX_CFGCHIP_H__ */
+ 	struct krait_mux_clk *mux;
+ 	const char *p_names[3];
+ 	struct clk_init_data init = {
+@@ -139,6 +190,7 @@
+ 	mux->lpl = id >= 0;
+ 	mux->parent_map = pri_mux_map;
+ 	mux->hw.init = &init;
++	mux->safe_sel = 2;
+ 
+ 	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
+ 	if (!init.name)
+@@ -164,6 +216,10 @@
+ 
+ 	clk = devm_clk_register(dev, &mux->hw);
+ 
++	ret = krait_notifier_register(dev, clk, mux);
++	if (ret)
++		goto err_p3;
++err_p3:
+ 	kfree(p_names[2]);
+ err_p2:
+ 	kfree(p_names[1]);
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
