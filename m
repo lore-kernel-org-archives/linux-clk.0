@@ -1,85 +1,31 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: use get_phase() if available
-Date: Thu, 15 Feb 2018 11:28:22 +0100
-Message-Id: <20180215102822.7721-1-jbrunet@baylibre.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 01/15] clk: sunxi-ng: Add check for minimal rate to NM PLLs
+Date: Mon, 26 Feb 2018 17:17:41 +0100
+Message-ID: <2662255.10CUWtpM2s@jernej-laptop>
+In-Reply-To: <20180226093800.uwbo54wrdcwmsyzh@flea.lan>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-2-jernej.skrabec@siol.net> <20180226093800.uwbo54wrdcwmsyzh@flea.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-When the get_phase() callback is available, we should use it
-instead of just relying the values cached, and assumed un-rounded,
-by the framework
+Hi,
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
+Dne ponedeljek, 26. februar 2018 ob 10:38:00 CET je Maxime Ripard napisal(a):
+> Hi,
+> 
+> On Sat, Feb 24, 2018 at 10:45:31PM +0100, Jernej Skrabec wrote:
+> > Some NM PLLs doesn't work well when their output clock rate is set below
+> > certain rate.
+> > 
+> > Add support for that constrain.
+> 
+> In such a case, you should round the rate to the minimum the clock can
+> operate at, and not return an error.
 
-Hi Mike, Stephen,
+OK.
 
-This changes applies on top of the phase fix I've sent [0]
-
-[0]: https://lkml.kernel.org/r/20180215101958.22676-1-jbrunet@baylibre.com
-
- drivers/clk/clk.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b33d362239e7..bcd6ec980903 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2297,6 +2297,21 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
- }
- EXPORT_SYMBOL_GPL(clk_set_parent);
- 
-+static int clk_core_get_phase_nolock(struct clk_core *core)
-+{
-+	int ret;
-+
-+	if (!core->ops->get_phase)
-+		return core->phase;
-+
-+	/* Update the phase if the callback is available */
-+	ret = core->ops->get_phase(core->hw);
-+	if (ret >= 0)
-+		core->phase = ret;
-+
-+	return ret;
-+}
-+
- static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
- {
- 	int ret = -EINVAL;
-@@ -2314,12 +2329,16 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
- 	if (core->ops->set_phase)
- 		ret = core->ops->set_phase(core->hw, degrees);
- 
--	if (!ret)
-+	if (!ret) {
- 		core->phase = degrees;
- 
-+		/* Read back the phase in case it got rounded */
-+		ret = clk_core_get_phase_nolock(core);
-+	}
-+
- 	trace_clk_set_phase_complete(core, degrees);
- 
--	return ret;
-+	return ret > 0 ? 0 : ret;
- }
- 
- /**
-@@ -2375,7 +2394,7 @@ static int clk_core_get_phase(struct clk_core *core)
- 	int ret;
- 
- 	clk_prepare_lock();
--	ret = core->phase;
-+	ret = clk_core_get_phase_nolock(core);
- 	clk_prepare_unlock();
- 
- 	return ret;
--- 
-2.14.3
+Best regards,
+Jernej
