@@ -1,46 +1,241 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
 	robh+dt@kernel.org,
 	mark.rutland@arm.com,
 	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
 	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 12/15] drm/sun4i: Allow building on arm64
-Date: Sat, 24 Feb 2018 22:45:42 +0100
-Message-Id: <20180224214545.3740-13-jernej.skrabec@siol.net>
-In-Reply-To: <20180224214545.3740-1-jernej.skrabec@siol.net>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v7 02/15] clk: mux: Split out register accessors for reuse
+Date: Mon, 26 Feb 2018 15:23:18 +0530
+Message-Id: <1519638811-17269-3-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-64-bit ARM SoCs from Allwinner have DE2/TCON/HDMI periphery which
-is compatible to 32-bit SoCs, so allow building DRM driver for
-arm64 architecture.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+We want to reuse the logic in clk-mux.c for other clock drivers
+that don't use readl as register accessors. Fortunately, there
+really isn't much to the mux code besides the table indirection
+and quirk flags if you assume any bit shifting and masking has
+been done already. Pull that logic out into reusable functions
+that operate on an optional table and some flags so that other
+drivers can use the same logic.
+
+[Sricharan: Rebased for mainline]
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/gpu/drm/sun4i/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-mux.c         | 74 +++++++++++++++++++++++++++----------------
+ drivers/clk/nxp/clk-lpc32xx.c | 21 +++---------
+ include/linux/clk-provider.h  |  6 ++++
+ 3 files changed, 57 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index 7327da3bc94f..eee6bc0eaf97 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -1,6 +1,6 @@
- config DRM_SUN4I
- 	tristate "DRM Support for Allwinner A10 Display Engine"
--	depends on DRM && ARM && COMMON_CLK
-+	depends on DRM && (ARM || ARM64) && COMMON_CLK
- 	depends on ARCH_SUNXI || COMPILE_TEST
- 	select DRM_GEM_CMA_HELPER
- 	select DRM_KMS_HELPER
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 39cabe1..28223fa 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -26,35 +26,25 @@
+  * parent - parent is adjustable through clk_set_parent
+  */
+ 
+-static u8 clk_mux_get_parent(struct clk_hw *hw)
++unsigned int clk_mux_get_parent(struct clk_hw *hw, unsigned int val,
++				unsigned int *table,
++				unsigned long flags)
+ {
+-	struct clk_mux *mux = to_clk_mux(hw);
+ 	int num_parents = clk_hw_get_num_parents(hw);
+-	u32 val;
+-
+-	/*
+-	 * FIXME need a mux-specific flag to determine if val is bitwise or numeric
+-	 * e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges from 0x1
+-	 * to 0x7 (index starts at one)
+-	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
+-	 * val = 0x4 really means "bit 2, index starts at bit 0"
+-	 */
+-	val = clk_readl(mux->reg) >> mux->shift;
+-	val &= mux->mask;
+ 
+-	if (mux->table) {
++	if (table) {
+ 		int i;
+ 
+ 		for (i = 0; i < num_parents; i++)
+-			if (mux->table[i] == val)
++			if (table[i] == val)
+ 				return i;
+ 		return -EINVAL;
+ 	}
+ 
+-	if (val && (mux->flags & CLK_MUX_INDEX_BIT))
++	if (val && (flags & CLK_MUX_INDEX_BIT))
+ 		val = ffs(val) - 1;
+ 
+-	if (val && (mux->flags & CLK_MUX_INDEX_ONE))
++	if (val && (flags & CLK_MUX_INDEX_ONE))
+ 		val--;
+ 
+ 	if (val >= num_parents)
+@@ -62,23 +52,53 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+ 
+ 	return val;
+ }
++EXPORT_SYMBOL_GPL(clk_mux_get_parent);
+ 
+-static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
++static u8 _clk_mux_get_parent(struct clk_hw *hw)
+ {
+ 	struct clk_mux *mux = to_clk_mux(hw);
+ 	u32 val;
+-	unsigned long flags = 0;
+ 
+-	if (mux->table) {
+-		index = mux->table[index];
++	/*
++	 * FIXME need a mux-specific flag to determine if val is bitwise or
++	 * numeric e.g. sys_clkin_ck's clksel field is 3 bits wide,
++	 * but ranges from 0x1 to 0x7 (index starts at one)
++	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
++	 * val = 0x4 really means "bit 2, index starts at bit 0"
++	 */
++	val = clk_readl(mux->reg) >> mux->shift;
++	val &= mux->mask;
++
++	return clk_mux_get_parent(hw, val, mux->table, mux->flags);
++}
++
++unsigned int clk_mux_reindex(u8 index, unsigned int *table,
++			     unsigned long flags)
++{
++	unsigned int val = index;
++
++	if (table) {
++		val = table[val];
+ 	} else {
+-		if (mux->flags & CLK_MUX_INDEX_BIT)
+-			index = 1 << index;
++		if (flags & CLK_MUX_INDEX_BIT)
++			val = 1 << index;
+ 
+-		if (mux->flags & CLK_MUX_INDEX_ONE)
+-			index++;
++		if (flags & CLK_MUX_INDEX_ONE)
++			val++;
+ 	}
+ 
++	return val;
++}
++EXPORT_SYMBOL_GPL(clk_mux_reindex);
++
++static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_mux *mux = to_clk_mux(hw);
++	u32 val;
++	unsigned long flags = 0;
++
++	index = clk_mux_reindex(index, mux->table, mux->flags);
++
+ 	if (mux->lock)
+ 		spin_lock_irqsave(mux->lock, flags);
+ 	else
+@@ -102,14 +122,14 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ }
+ 
+ const struct clk_ops clk_mux_ops = {
+-	.get_parent = clk_mux_get_parent,
++	.get_parent = _clk_mux_get_parent,
+ 	.set_parent = clk_mux_set_parent,
+ 	.determine_rate = __clk_mux_determine_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_mux_ops);
+ 
+ const struct clk_ops clk_mux_ro_ops = {
+-	.get_parent = clk_mux_get_parent,
++	.get_parent = _clk_mux_get_parent,
+ };
+ EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
+ 
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index f5d815f..9b34150 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -999,29 +999,16 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	.set_rate = clk_divider_set_rate,
+ };
+ 
+-static u8 clk_mux_get_parent(struct clk_hw *hw)
++static u8 _clk_mux_get_parent(struct clk_hw *hw)
+ {
+ 	struct lpc32xx_clk_mux *mux = to_lpc32xx_mux(hw);
+-	u32 num_parents = clk_hw_get_num_parents(hw);
+ 	u32 val;
+ 
+ 	regmap_read(clk_regmap, mux->reg, &val);
+ 	val >>= mux->shift;
+ 	val &= mux->mask;
+ 
+-	if (mux->table) {
+-		u32 i;
+-
+-		for (i = 0; i < num_parents; i++)
+-			if (mux->table[i] == val)
+-				return i;
+-		return -EINVAL;
+-	}
+-
+-	if (val >= num_parents)
+-		return -EINVAL;
+-
+-	return val;
++	return clk_mux_get_parent(hw, val, mux->table, 0);
+ }
+ 
+ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+@@ -1036,11 +1023,11 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ }
+ 
+ static const struct clk_ops lpc32xx_clk_mux_ro_ops = {
+-	.get_parent = clk_mux_get_parent,
++	.get_parent = _clk_mux_get_parent,
+ };
+ 
+ static const struct clk_ops lpc32xx_clk_mux_ops = {
+-	.get_parent = clk_mux_get_parent,
++	.get_parent = _clk_mux_get_parent,
+ 	.set_parent = clk_mux_set_parent,
+ 	.determine_rate = __clk_mux_determine_rate,
+ };
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index f711be6..344ad92 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -488,6 +488,12 @@ struct clk_mux {
+ extern const struct clk_ops clk_mux_ops;
+ extern const struct clk_ops clk_mux_ro_ops;
+ 
++unsigned int clk_mux_get_parent(struct clk_hw *hw, unsigned int val,
++				unsigned int *table,
++				unsigned long flags);
++unsigned int clk_mux_reindex(u8 index, unsigned int *table,
++			     unsigned long flags);
++
+ struct clk *clk_register_mux(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags,
 -- 
-2.16.2
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
