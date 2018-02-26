@@ -1,111 +1,233 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <CAOFm3uFU9KPZqvRucm8U0ruy6ZZ6AoN55ELCdzp6+sqA6i_SaQ@mail.gmail.com>
-References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
- <20180210024120.27503-2-manivannan.sadhasivam@linaro.org> <CAOFm3uFU9KPZqvRucm8U0ruy6ZZ6AoN55ELCdzp6+sqA6i_SaQ@mail.gmail.com>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Sat, 10 Feb 2018 13:32:54 +0530
-Message-ID: <CAOZjjhk5LZ+OT4=tyfDTCGNe8gjXfoPc3z=S1d9bB+rqSBk1qA@mail.gmail.com>
-Subject: Re: [PATCH v3 01/11] dt-bindings: clock: Add Actions S900 clock bindings
-To: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, liuwei@actions-semi.com,
-	mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Daniel Thompson <daniel.thompson@linaro.org>,
-	Amit Kucheria <amit.kucheria@linaro.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39395 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752622AbeBZMyI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 07:54:08 -0500
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 5/6] soc: samsung: pm_domains: Deprecate support for
+ clocks
+Date: Mon, 26 Feb 2018 13:53:54 +0100
+Message-id: <20180226125355.9052-6-m.szyprowski@samsung.com>
+In-reply-to: <20180226125355.9052-1-m.szyprowski@samsung.com>
+References: <20180226125355.9052-1-m.szyprowski@samsung.com>
+        <CGME20180226125403eucas1p27d32d02417f3cda5b809e62bf894bef8@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Philippe,
+Handling of special clock operations on power domain on/off sequences has
+been moved to respective Exynos clock controller drivers, so there is no
+need to keep the duplicated (and conflicting) code in Exynos power domain
+driver. Mark clock related properties in Exynos power domain bindings as
+deprecated. This change has no inpact on backwards-compatibility, as the
+new drivers properly work with old DTBs (deprecated properties are
+ignored).
 
-On 10 February 2018 at 13:06, Philippe Ombredanne <pombredanne@nexb.com> wrote:
-> Dear Manivannan,
->
-> On Sat, Feb 10, 2018 at 3:41 AM, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
->> Add Actions Semi S900 clock bindings.
->>
->> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->> Acked-by: Rob Herring <robh@kernel.org>
->
-> <snip>
->
->> diff --git a/include/dt-bindings/clock/actions,s900-cmu.h b/include/dt-bindings/clock/actions,s900-cmu.h
->> new file mode 100644
->> index 000000000000..2fa94e19922b
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/actions,s900-cmu.h
->> @@ -0,0 +1,139 @@
->> +/*
->> + * Device Tree binding constants for Actions S900 Clock Management Unit
->> + *
->> + * Copyright (c) 2014 Actions Semi Inc.
->> + * Copyright (c) 2017 Linaro Ltd.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
->> + * GNU General Public License for more details.
->> + */
->
-> Would you consider using the new SPDX license ids rather that this
-> time-tested but rather boring legalese?
->
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ .../devicetree/bindings/power/pd-samsung.txt       | 20 +----
+ drivers/soc/samsung/pm_domains.c                   | 90 +---------------------
+ 2 files changed, 5 insertions(+), 105 deletions(-)
 
-Very sorry! I converted all the driver code to SPDX license tag but since
-this file was already Acked, I forgot to do so.
+diff --git a/Documentation/devicetree/bindings/power/pd-samsung.txt b/Documentation/devicetree/bindings/power/pd-samsung.txt
+index 549f7dee9b9d..92ef355e8f64 100644
+--- a/Documentation/devicetree/bindings/power/pd-samsung.txt
++++ b/Documentation/devicetree/bindings/power/pd-samsung.txt
+@@ -15,23 +15,13 @@ Required Properties:
+ Optional Properties:
+ - label: Human readable string with domain name. Will be visible in userspace
+ 	to let user to distinguish between multiple domains in SoC.
+-- clocks: List of clock handles. The parent clocks of the input clocks to the
+-	devices in this power domain are set to oscclk before power gating
+-	and restored back after powering on a domain. This is required for
+-	all domains which are powered on and off and not required for unused
+-	domains.
+-- clock-names: The following clocks can be specified:
+-	- oscclk: Oscillator clock.
+-	- clkN: Input clocks to the devices in this power domain. These clocks
+-		will be reparented to oscclk before switching power domain off.
+-		Their original parent will be brought back after turning on
+-		the domain. Maximum of 4 clocks (N = 0 to 3) are supported.
+-	- asbN: Clocks required by asynchronous bridges (ASB) present in
+-		the power domain. These clock should be enabled during power
+-		domain on/off operations.
+ - power-domains: phandle pointing to the parent power domain, for more details
+ 		 see Documentation/devicetree/bindings/power/power_domain.txt
+ 
++Deprecated Properties:
++- clocks
++- clock-names
++
+ Node of a device using power domains must have a power-domains property
+ defined with a phandle to respective power domain.
+ 
+@@ -47,8 +37,6 @@ Example:
+ 	mfc_pd: power-domain@10044060 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044060 0x20>;
+-		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
+-		clock-names = "oscclk", "clk0";
+ 		#power-domain-cells = <0>;
+ 		label = "MFC";
+ 	};
+diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
+index caf45cf7aa8e..ab8582971bfc 100644
+--- a/drivers/soc/samsung/pm_domains.c
++++ b/drivers/soc/samsung/pm_domains.c
+@@ -13,14 +13,11 @@
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/pm_domain.h>
+-#include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/sched.h>
+ 
+-#define MAX_CLK_PER_DOMAIN	4
+-
+ struct exynos_pm_domain_config {
+ 	/* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
+ 	u32 local_pwr_cfg;
+@@ -33,10 +30,6 @@ struct exynos_pm_domain {
+ 	void __iomem *base;
+ 	bool is_off;
+ 	struct generic_pm_domain pd;
+-	struct clk *oscclk;
+-	struct clk *clk[MAX_CLK_PER_DOMAIN];
+-	struct clk *pclk[MAX_CLK_PER_DOMAIN];
+-	struct clk *asb_clk[MAX_CLK_PER_DOMAIN];
+ 	u32 local_pwr_cfg;
+ };
+ 
+@@ -46,29 +39,10 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+ 	void __iomem *base;
+ 	u32 timeout, pwr;
+ 	char *op;
+-	int i;
+ 
+ 	pd = container_of(domain, struct exynos_pm_domain, pd);
+ 	base = pd->base;
+ 
+-	for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-		if (IS_ERR(pd->asb_clk[i]))
+-			break;
+-		clk_prepare_enable(pd->asb_clk[i]);
+-	}
+-
+-	/* Set oscclk before powering off a domain*/
+-	if (!power_on) {
+-		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-			if (IS_ERR(pd->clk[i]))
+-				break;
+-			pd->pclk[i] = clk_get_parent(pd->clk[i]);
+-			if (clk_set_parent(pd->clk[i], pd->oscclk))
+-				pr_err("%s: error setting oscclk as parent to clock %d\n",
+-						domain->name, i);
+-		}
+-	}
+-
+ 	pwr = power_on ? pd->local_pwr_cfg : 0;
+ 	writel_relaxed(pwr, base);
+ 
+@@ -86,26 +60,6 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+ 		usleep_range(80, 100);
+ 	}
+ 
+-	/* Restore clocks after powering on a domain*/
+-	if (power_on) {
+-		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-			if (IS_ERR(pd->clk[i]))
+-				break;
+-
+-			if (IS_ERR(pd->pclk[i]))
+-				continue; /* Skip on first power up */
+-			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
+-				pr_err("%s: error setting parent to clock%d\n",
+-						domain->name, i);
+-		}
+-	}
+-
+-	for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-		if (IS_ERR(pd->asb_clk[i]))
+-			break;
+-		clk_disable_unprepare(pd->asb_clk[i]);
+-	}
+-
+ 	return 0;
+ }
+ 
+@@ -147,12 +101,6 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
+ 	return kstrdup_const(name, GFP_KERNEL);
+ }
+ 
+-static const char *soc_force_no_clk[] = {
+-	"samsung,exynos5250-clock",
+-	"samsung,exynos5420-clock",
+-	"samsung,exynos5800-clock",
+-};
+-
+ static __init int exynos4_pm_init_power_domain(void)
+ {
+ 	struct device_node *np;
+@@ -161,7 +109,7 @@ static __init int exynos4_pm_init_power_domain(void)
+ 	for_each_matching_node_and_match(np, exynos_pm_domain_of_match, &match) {
+ 		const struct exynos_pm_domain_config *pm_domain_cfg;
+ 		struct exynos_pm_domain *pd;
+-		int on, i;
++		int on;
+ 
+ 		pm_domain_cfg = match->data;
+ 
+@@ -189,42 +137,6 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		pd->pd.power_on = exynos_pd_power_on;
+ 		pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
+ 
+-		for (i = 0; i < ARRAY_SIZE(soc_force_no_clk); i++)
+-			if (of_find_compatible_node(NULL, NULL,
+-						    soc_force_no_clk[i]))
+-				goto no_clk;
+-
+-		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-			char clk_name[8];
+-
+-			snprintf(clk_name, sizeof(clk_name), "asb%d", i);
+-			pd->asb_clk[i] = of_clk_get_by_name(np, clk_name);
+-			if (IS_ERR(pd->asb_clk[i]))
+-				break;
+-		}
+-
+-		pd->oscclk = of_clk_get_by_name(np, "oscclk");
+-		if (IS_ERR(pd->oscclk))
+-			goto no_clk;
+-
+-		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+-			char clk_name[8];
+-
+-			snprintf(clk_name, sizeof(clk_name), "clk%d", i);
+-			pd->clk[i] = of_clk_get_by_name(np, clk_name);
+-			if (IS_ERR(pd->clk[i]))
+-				break;
+-			/*
+-			 * Skip setting parent on first power up.
+-			 * The parent at this time may not be useful at all.
+-			 */
+-			pd->pclk[i] = ERR_PTR(-EINVAL);
+-		}
+-
+-		if (IS_ERR(pd->clk[0]))
+-			clk_put(pd->oscclk);
+-
+-no_clk:
+ 		on = readl_relaxed(pd->base + 0x4) & pd->local_pwr_cfg;
+ 
+ 		pm_genpd_init(&pd->pd, NULL, !on);
+-- 
+2.15.0
 
-Will clean it up.
-
-> The (still new and fresh) license documentation contributed by tglx
-> --the only maintainer that I know that understands both the innards of
-> Spectre and Meltdown and the beauty of reStructuredText -- is in:
-> Documentation/process/license-rules.rst
->
-> Practically this means replacing the above by a simple single line and
-> getting rid of a whopping 8 comment lines!
->
-> SPDX-License-Identifier: GPL-2.0+
->
-> You get to save a few tree as a bonus if you also do the same for all
-> Linaro-copyrighted files. Yes this is saving trees because I will use
-> less paper each time I print a listing of the kernel source code.
-> Which is something that I rarely if ever do: but somebody must do it
-> somewhere for sure.
->
-
-This is something I will consider doing it in a separate patchset.
-
-> If I do the math: we have ~60K files in the kernel, and say we can
-> remove roughly 5 lines of legalese per file on average. Each printed
-> source code page is roughly 60 lines : this will mean a saving of
-> about 6000 paper sheets saved on each printout! A letter-size paper
-> ream is 500 pages, about 2.5 Kg and costs about ~$8.  You can extract
-> about 10K to 20k sheets of paper per tree [1].
-> Therefore my Fermi estimate is that using shorter legalese in the
-> kernel will eventually save roughly ONE FULL smaller tree (6K pages)
-> each time someone prints the kernel code: incredible, right?
->
-> Thank  you for helping make the kernel a mostly legalese-free codebase
-> and saving trees at the same time!
->
-
-Thanks for the finding!
-
-Regards,
-Mani
-
-> [1] https://www.sierraclub.org/sierra/2014-4-july-august/green-life/how-much-paper-does-one-tree-produce
-> --
-> Cordially
-> Philippe Ombredanne
