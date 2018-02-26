@@ -1,232 +1,70 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	viresh.kumar@linaro.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 07/11] clk: actions: Add divider clock support
-Date: Sat, 10 Feb 2018 08:11:16 +0530
-Message-Id: <20180210024120.27503-8-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
-References: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <icenowy@aosc.io>
+Date: Tue, 27 Feb 2018 00:21:05 +0800
+In-Reply-To: <2676311.2IEVhXnSIE@jernej-laptop>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-15-jernej.skrabec@siol.net> <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com> <2676311.2IEVhXnSIE@jernej-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
+To: jernej.skrabec@siol.net,=?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,Julian Calaby <julian.calaby@gmail.com>
+CC: Maxime Ripard <maxime.ripard@free-electrons.com>,Chen-Yu Tsai <wens@csie.org>,David Airlie <airlied@linux.ie>,Rob Herring <robh+dt@kernel.org>,Mark Rutland <mark.rutland@arm.com>,Michael Turquette <mturquette@baylibre.com>,sboyd@kernel.org,dri-devel <dri-devel@lists.freedesktop.org>,devicetree <devicetree@vger.kernel.org>,"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,linux-sunxi <linux-sunxi@googlegroups.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <4AA78C45-E139-417E-BE89-FE0BFBC409B0@aosc.io>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi divider clock together with
-helper functions to be used in composite clock.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/Makefile      |  1 +
- drivers/clk/actions/owl-divider.c | 94 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-divider.h | 75 +++++++++++++++++++++++++++++++
- 3 files changed, 170 insertions(+)
- create mode 100644 drivers/clk/actions/owl-divider.c
- create mode 100644 drivers/clk/actions/owl-divider.h
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 2d4aa8f35d90..5ce75df57e1a 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -3,3 +3,4 @@ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
- clk-owl-y			+= owl-common.o
- clk-owl-y			+= owl-gate.o
- clk-owl-y			+= owl-mux.o
-+clk-owl-y			+= owl-divider.o
-diff --git a/drivers/clk/actions/owl-divider.c b/drivers/clk/actions/owl-divider.c
-new file mode 100644
-index 000000000000..cddac00fe324
---- /dev/null
-+++ b/drivers/clk/actions/owl-divider.c
-@@ -0,0 +1,94 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL divider clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "owl-divider.h"
-+
-+long owl_divider_helper_round_rate(struct owl_clk_common *common,
-+				const struct owl_divider_hw *div_hw,
-+				unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	return divider_round_rate(&common->hw, rate, parent_rate,
-+				  div_hw->table, div_hw->width,
-+				  div_hw->div_flags);
-+}
-+
-+static long owl_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct owl_divider *div = hw_to_owl_divider(hw);
-+
-+	return owl_divider_helper_round_rate(&div->common, &div->div_hw,
-+					     rate, parent_rate);
-+}
-+
-+unsigned long owl_divider_helper_recalc_rate(struct owl_clk_common *common,
-+					 const struct owl_divider_hw *div_hw,
-+					 unsigned long parent_rate)
-+{
-+	unsigned long val;
-+	unsigned int reg;
-+
-+	regmap_read(common->regmap, div_hw->reg, &reg);
-+	val = reg >> div_hw->shift;
-+	val &= (1 << div_hw->width) - 1;
-+
-+	return divider_recalc_rate(&common->hw, parent_rate,
-+				   val, div_hw->table,
-+				   div_hw->div_flags,
-+				   div_hw->width);
-+}
-+
-+static unsigned long owl_divider_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct owl_divider *div = hw_to_owl_divider(hw);
-+
-+	return owl_divider_helper_recalc_rate(&div->common,
-+					      &div->div_hw, parent_rate);
-+}
-+
-+int owl_divider_helper_set_rate(const struct owl_clk_common *common,
-+				const struct owl_divider_hw *div_hw,
-+				unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	unsigned long val;
-+	unsigned int reg;
-+
-+	val = divider_get_val(rate, parent_rate, div_hw->table,
-+			      div_hw->width, 0);
-+
-+	regmap_read(common->regmap, div_hw->reg, &reg);
-+	reg &= ~GENMASK(div_hw->width + div_hw->shift - 1, div_hw->shift);
-+
-+	regmap_write(common->regmap, div_hw->reg,
-+			  reg | (val << div_hw->shift));
-+
-+	return 0;
-+}
-+
-+static int owl_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct owl_divider *div = hw_to_owl_divider(hw);
-+
-+	return owl_divider_helper_set_rate(&div->common, &div->div_hw,
-+					rate, parent_rate);
-+}
-+
-+const struct clk_ops owl_divider_ops = {
-+	.recalc_rate = owl_divider_recalc_rate,
-+	.round_rate = owl_divider_round_rate,
-+	.set_rate = owl_divider_set_rate,
-+};
-diff --git a/drivers/clk/actions/owl-divider.h b/drivers/clk/actions/owl-divider.h
-new file mode 100644
-index 000000000000..92d3e3d23967
---- /dev/null
-+++ b/drivers/clk/actions/owl-divider.h
-@@ -0,0 +1,75 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL divider clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_DIVIDER_H_
-+#define _OWL_DIVIDER_H_
-+
-+#include "owl-common.h"
-+
-+struct owl_divider_hw {
-+	u32			reg;
-+	u8			shift;
-+	u8			width;
-+	u8			div_flags;
-+	struct clk_div_table	*table;
-+};
-+
-+struct owl_divider {
-+	struct owl_divider_hw	div_hw;
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_DIVIDER_HW(_reg, _shift, _width, _div_flags, _table)	\
-+	{								\
-+		.reg		= _reg,					\
-+		.shift		= _shift,				\
-+		.width		= _width,				\
-+		.div_flags	= _div_flags,				\
-+		.table		= _table,				\
-+	}
-+
-+#define OWL_DIVIDER(_struct, _name, _parent, _reg,			\
-+		    _shift, _width, _table, _div_flags, _flags)		\
-+	struct owl_divider _struct = {					\
-+		.div_hw	= OWL_DIVIDER_HW(_reg, _shift, _width,		\
-+					 _div_flags, _table),		\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &owl_divider_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
-+static inline struct owl_divider *hw_to_owl_divider(const struct clk_hw *hw)
-+{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_divider, common);
-+}
-+
-+long owl_divider_helper_round_rate(struct owl_clk_common *common,
-+				const struct owl_divider_hw *div_hw,
-+				unsigned long rate,
-+				unsigned long *parent_rate);
-+
-+unsigned long owl_divider_helper_recalc_rate(struct owl_clk_common *common,
-+					 const struct owl_divider_hw *div_hw,
-+					 unsigned long parent_rate);
-+
-+int owl_divider_helper_set_rate(const struct owl_clk_common *common,
-+				const struct owl_divider_hw *div_hw,
-+				unsigned long rate,
-+				unsigned long parent_rate);
-+
-+extern const struct clk_ops owl_divider_ops;
-+
-+#endif /* _OWL_DIVIDER_H_ */
--- 
-2.14.1
+=E4=BA=8E 2018=E5=B9=B42=E6=9C=8827=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=881=
+2:16:44, "Jernej =C5=A0krabec" <jernej=2Eskrabec@siol=2Enet> =E5=86=99=E5=
+=88=B0:
+>Hi Julian,
+>
+>Dne nedelja, 25=2E februar 2018 ob 09:11:34 CET je Julian Calaby
+>napisal(a):
+>> Hi Jernej,
+>>=20
+>> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec
+><jernej=2Eskrabec@siol=2Enet>=20
+>wrote:
+>> > Enable HDMI output on all boards which have HDMI connector=2E
+>> >=20
+>> > Signed-off-by: Jernej Skrabec <jernej=2Eskrabec@siol=2Enet>
+>> > ---
+>> >=20
+>> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus=2Edts    | 25
+>> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2=2Edts =
+=20
+>    =20
+>> >   | 25 ++++++++++++++++++++++
+>> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc=2Edts | 25
+>> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1=2Edts  =
+=20
+>    =20
+>> >   | 25 ++++++++++++++++++++++
+>arch/arm/boot/dts/sun8i-h3-orangepi-2=2Edts =20
+>> >         | 25 ++++++++++++++++++++++
+>> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite=2Edts       | 25
+>> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one=2Edts
+>    =20
+>> >   | 24 +++++++++++++++++++++
+>arch/arm/boot/dts/sun8i-h3-orangepi-pc=2Edts =20
+>> >        | 25 ++++++++++++++++++++++ 8 files changed, 199
+>insertions(+)
+>>=20
+>> As I understand it, the H2+ is just a slightly trimmed down H3=2E In
+>> terms of HDMI support, the difference is that the H2+ can't output
+>4k=2E
+>> If this code is compatible with the H2+, could you please add the
+>> necessary bits and pieces to the h2-plus DTSs too?
+>
+>There are only 3 H2+ boards in kernel and none of them has HDMI
+>connector, so=20
+
+BPi M2 Zero has miniHDMI connector=2E
+
+>there's nothing to do actually=2E But if such board is added to kernel,
+>it would=20
+>be trivially add proper nodes, since all H2+ boards include H3 DTSI=2E
+>
+>Best regards,
+>Jernej
