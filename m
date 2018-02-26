@@ -1,45 +1,44 @@
-Return-Path: <s.nawrocki@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Subject: Re: [PATCH v2] clk: exynos5433: Extend list of available AUD_PLL
- output frequencies
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, krzk@kernel.org, b.zolnierkie@samsung.com,
-	m.szyprowski@samsung.com
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <7fa753f3-dcea-2fec-de44-f7404851c7eb@samsung.com>
-Date: Wed, 14 Feb 2018 15:58:50 +0100
-In-reply-to: <5A820B19.8080902@samsung.com>
-References: <CGME20180212155239epcas2p34dad3d106036f65e5ee566a593a983e3@epcas2p3.samsung.com>
-	<20180212155227.20605-1-s.nawrocki@samsung.com>
-	<5A820B19.8080902@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:59404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751094AbeBZPaF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Feb 2018 10:30:05 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180226125355.9052-6-m.szyprowski@samsung.com>
+References: <CGME20180226125403eucas1p27d32d02417f3cda5b809e62bf894bef8@eucas1p2.samsung.com>
+ <20180226125355.9052-1-m.szyprowski@samsung.com> <20180226125355.9052-6-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 26 Feb 2018 16:15:29 +0100
+Message-ID: <CAJKOXPcMndkWP4ZGp95pEibEcm8vZDZkai9Xjrhb+VT=AtuLmQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] soc: samsung: pm_domains: Deprecate support for clocks
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 02/12/2018 10:46 PM, Chanwoo Choi wrote:
-> On 2018년 02월 13일 00:52, Sylwester Nawrocki wrote:
->> Add one more entry to the exynos5433_aud_pll_rates table, this allows
->> to support audio sample rates: 48000, 96000, 192000 Hz with minimum
->> error. The M, P, S, K values re confirmed by the HW team.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos5433.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->> index ebd18586e325..b08a9028653f 100644
->> --- a/drivers/clk/samsung/clk-exynos5433.c
->> +++ b/drivers/clk/samsung/clk-exynos5433.c
->> @@ -765,6 +765,7 @@ static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initcons
->>  	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
->>  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
->>  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
->> +	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
->>  	{ /* sentinel */ }
->>  };
-> Looks good to me.
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+On Mon, Feb 26, 2018 at 1:53 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Handling of special clock operations on power domain on/off sequences has
+> been moved to respective Exynos clock controller drivers, so there is no
+> need to keep the duplicated (and conflicting) code in Exynos power domain
+> driver. Mark clock related properties in Exynos power domain bindings as
+> deprecated. This change has no inpact on backwards-compatibility, as the
+> new drivers properly work with old DTBs (deprecated properties are
+> ignored).
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../devicetree/bindings/power/pd-samsung.txt       | 20 +----
+>  drivers/soc/samsung/pm_domains.c                   | 90 +---------------------
+>  2 files changed, 5 insertions(+), 105 deletions(-)
 
-Thanks, patch applied to clk/samsung tree.
+Looks okay, as you mentioned in cover letter, I'll take this and 6/6
+for the release coming after successful merge of 1-4.
+
+Best regards,
+Krzysztof
