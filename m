@@ -1,33 +1,39 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 36/41] ARM: dm646x: Remove legacy clock init
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-37-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <86622680-2a83-0e4a-0114-61d7542a28e2@ti.com>
-Date: Wed, 7 Feb 2018 20:36:54 +0530
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-37-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180226093800.uwbo54wrdcwmsyzh@flea.lan>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+ <20180224214545.3740-2-jernej.skrabec@siol.net> <20180226093800.uwbo54wrdcwmsyzh@flea.lan>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 26 Feb 2018 17:43:01 +0800
+Message-ID: <CAGb2v64fxs5Ne5=orQxNcg70Z_N0NJyyC7MPuNH6pxcqrsUq4g@mail.gmail.com>
+Subject: Re: [PATCH 01/15] clk: sunxi-ng: Add check for minimal rate to NM PLLs
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>, David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
-> This removes the unused legacy clock init code from
-> arch/arm/mach-davinci/dm646x.c.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+On Mon, Feb 26, 2018 at 5:38 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> Hi,
+>
+> On Sat, Feb 24, 2018 at 10:45:31PM +0100, Jernej Skrabec wrote:
+>> Some NM PLLs doesn't work well when their output clock rate is set below
+>> certain rate.
+>>
+>> Add support for that constrain.
+>
+> In such a case, you should round the rate to the minimum the clock can
+> operate at, and not return an error.
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+That's true for round_rate. But what's the expected behavior of set_rate?
+AFAIK we presume all users call round_rate before set_rate, but that doesn't
+seem to be true all the time.
 
-Thanks,
-Sekhar
+ChenYu
