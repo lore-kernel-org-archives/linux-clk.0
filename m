@@ -1,91 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41081 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752538AbeBZMyI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 07:54:08 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 6/6] ARM: dts: exynos: Remove obsolete clock properties
- from power domains
-Date: Mon, 26 Feb 2018 13:53:55 +0100
-Message-id: <20180226125355.9052-7-m.szyprowski@samsung.com>
-In-reply-to: <20180226125355.9052-1-m.szyprowski@samsung.com>
-References: <20180226125355.9052-1-m.szyprowski@samsung.com>
-        <CGME20180226125404eucas1p235469ad425d99e51cfa4163124f66b26@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <patrice.chotard@st.com>
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+CC: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on
+ stm32F769
+Date: Mon, 26 Feb 2018 08:41:13 +0000
+Message-ID: <fb3b26e8-0102-122b-1386-68a661139706@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+ <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
+In-Reply-To: <1516105859-3525-15-git-send-email-patrice.chotard@st.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Handling of special clock operations on power domain on/off sequences has
-been moved to respective Exynos clock controller drivers and clock properties
-have been marked as deprecated. Remove all clock properties from existing
-Exynos power domain nodes, as they are no longer used.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi |  4 ----
- arch/arm/boot/dts/exynos5420.dtsi | 14 --------------
- 2 files changed, 18 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 56626d1a4235..38f216f9f5ad 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -134,10 +134,6 @@
- 			reg = <0x100440A0 0x20>;
- 			#power-domain-cells = <0>;
- 			label = "DISP1";
--			clocks = <&clock CLK_FIN_PLL>,
--				 <&clock CLK_MOUT_ACLK200_DISP1_SUB>,
--				 <&clock CLK_MOUT_ACLK300_DISP1_SUB>;
--			clock-names = "oscclk", "clk0", "clk1";
- 		};
- 
- 		pd_mau: power-domain@100440c0 {
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 2f3cb2a97f71..9672d0e51f69 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -276,10 +276,6 @@
- 			reg = <0x10044000 0x20>;
- 			#power-domain-cells = <0>;
- 			label = "GSC";
--			clocks = <&clock CLK_FIN_PLL>,
--				 <&clock CLK_MOUT_USER_ACLK300_GSCL>,
--				 <&clock CLK_GSCL0>, <&clock CLK_GSCL1>;
--			clock-names = "oscclk", "clk0", "asb0", "asb1";
- 		};
- 
- 		isp_pd: power-domain@10044020 {
-@@ -292,10 +288,6 @@
- 		mfc_pd: power-domain@10044060 {
- 			compatible = "samsung,exynos4210-pd";
- 			reg = <0x10044060 0x20>;
--			clocks = <&clock CLK_FIN_PLL>,
--				 <&clock CLK_MOUT_USER_ACLK333>,
--				 <&clock CLK_ACLK333>;
--			clock-names = "oscclk", "clk0","asb0";
- 			#power-domain-cells = <0>;
- 			label = "MFC";
- 		};
-@@ -312,12 +304,6 @@
- 			reg = <0x100440C0 0x20>;
- 			#power-domain-cells = <0>;
- 			label = "DISP";
--			clocks = <&clock CLK_FIN_PLL>,
--				 <&clock CLK_MOUT_USER_ACLK200_DISP1>,
--				 <&clock CLK_MOUT_USER_ACLK300_DISP1>,
--				 <&clock CLK_MOUT_USER_ACLK400_DISP1>,
--				 <&clock CLK_FIMD1>, <&clock CLK_MIXER>;
--			clock-names = "oscclk", "clk0", "clk1", "clk2", "asb0", "asb1";
- 		};
- 
- 		mau_pd: power-domain@100440e0 {
--- 
-2.15.0
-
+SGkgU3RlcGhlbiwgTWljaGFlbA0KDQpJdCdzIGEgZ2VudGxlIHJlbWluZGVyIGFzIHRoaXMgcGF0
+Y2ggaXMgcHJlc2VudCBvbiBtYWlsaW5nIGxpc3QgYW5kIA0KYWNrZWQtYnkgc2luY2UgMDEvMTIv
+MjAxOA0KDQpUaGFua3MNCg0KUGF0cmljZQ0KDQpPbiAwMS8xNi8yMDE4IDAxOjMwIFBNLCBwYXRy
+aWNlLmNob3RhcmRAc3QuY29tIHdyb3RlOg0KPiBGcm9tOiBQYXRyaWNlIENob3RhcmQgPHBhdHJp
+Y2UuY2hvdGFyZEBzdC5jb20+DQo+IA0KPiBTVE0zMkY3NjkgaGFzIDIgU0RNTUMgcG9ydCwgYWRk
+IGNsb2NrIGVudHJ5IGZvciB0aGUgc2Vjb25kIG9uZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFs
+ZXhhbmRyZSBUT1JHVUUgPGFsZXhhbmRyZS50b3JndWVAc3QuY29tPg0KPiBTaWduZWQtb2ZmLWJ5
+OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+IEFja2VkLWJ5OiBT
+dGVwaGVuIEJveWQgPHNib3lkQGNvZGVhdXJvcmEub3JnPg0KPiAtLS0NCj4gDQo+IHYyIF8gQWRk
+IEFja2VkLWJ5DQo+IA0KPiAgIGRyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMgfCAzICsrLQ0KPiAg
+IDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstc3RtMzJmNC5jIGIvZHJpdmVycy9jbGsvY2xrLXN0
+bTMyZjQuYw0KPiBpbmRleCA5NmM2YjZiLi44ZjhhMTc4IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJz
+L2Nsay9jbGstc3RtMzJmNC5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1zdG0zMmY0LmMNCj4g
+QEAgLTI4Miw2ICsyODIsNyBAQCBzdHJ1Y3Qgc3RtMzJmNF9nYXRlX2RhdGEgew0KPiAgIA0KPiAg
+IAl7IFNUTTMyRjRfUkNDX0FQQjJFTlIsICAwLAkidGltMSIsCQkiYXBiMl9tdWwiIH0sDQo+ICAg
+CXsgU1RNMzJGNF9SQ0NfQVBCMkVOUiwgIDEsCSJ0aW04IiwJCSJhcGIyX211bCIgfSwNCj4gKwl7
+IFNUTTMyRjRfUkNDX0FQQjJFTlIsICA3LAkic2RtbWMyIiwJInNkbXV4IiAgICB9LA0KPiAgIAl7
+IFNUTTMyRjRfUkNDX0FQQjJFTlIsICA4LAkiYWRjMSIsCQkiYXBiMl9kaXYiIH0sDQo+ICAgCXsg
+U1RNMzJGNF9SQ0NfQVBCMkVOUiwgIDksCSJhZGMyIiwJCSJhcGIyX2RpdiIgfSwNCj4gICAJeyBT
+VE0zMkY0X1JDQ19BUEIyRU5SLCAxMCwJImFkYzMiLAkJImFwYjJfZGl2IiB9LA0KPiBAQCAtMzE1
+LDcgKzMxNiw3IEBAIHN0cnVjdCBzdG0zMmY0X2dhdGVfZGF0YSB7DQo+ICAgDQo+ICAgc3RhdGlj
+IGNvbnN0IHU2NCBzdG0zMmY3NDZfZ2F0ZV9tYXBbTUFYX0dBVEVfTUFQXSA9IHsgMHgwMDAwMDBm
+MTdlZjQxN2ZmdWxsLA0KPiAgIAkJCQkJCSAgICAgIDB4MDAwMDAwMDAwMDAwMDAwM3VsbCwNCj4g
+LQkJCQkJCSAgICAgIDB4MDRmNzdmMDMzZTAxYzlmZnVsbCB9Ow0KPiArCQkJCQkJICAgICAgMHgw
+NGY3N2Y4MzNlMDFjOWZmdWxsIH07DQo+ICAgDQo+ICAgc3RhdGljIGNvbnN0IHU2NCAqc3RtMzJm
+NF9nYXRlX21hcDsNCj4gICANCj4g
