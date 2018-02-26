@@ -1,82 +1,184 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5A8A6E52.9020602@samsung.com>
-Date: Mon, 19 Feb 2018 15:27:30 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin
-	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated
- list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open
- list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 4/7] clk: samsung: exynos5433: fix PLL rates
-In-reply-to: <20180216145754.14428-5-a.hajda@samsung.com>
-References: <20180216145754.14428-1-a.hajda@samsung.com>
-	<CGME20180216145805eucas1p28452227465bf275bb00dec65ab5b3978@eucas1p2.samsung.com>
-	<20180216145754.14428-5-a.hajda@samsung.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v7 00/15] Krait clocks + Krait CPUfreq
+Date: Mon, 26 Feb 2018 15:23:16 +0530
+Message-Id: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018년 02월 16일 23:57, Andrzej Hajda wrote:
-> Rates declared in PLL rate tables should match exactly rates calculated
-> from PLL coefficients. If that is not the case, rate of parent might be being
-> set not as expected. For instance, if in the PLL rates table we have
-> a 393216000 Hz entry and the real value as returned by the PLL's recalc_rate
-> callback is 393216003, after setting PLL's clk rate to 393216000 clk_get_rate
-> will return 393216003. If we now attempt to set rate of a PLL's child divider
-> clock to 393216000/2 its rate will be 131072001, rather than 196608000.
-> That is the divider will be set to 3 instead of 2, because 393216003/2 is
-> greater than 196608000.
-> 
-> To fix this issue declared rates are changed to exactly match rates generated
-> by a PLL, as calculated from the P, M, S, K coefficients.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 57a41824ee2e..7985352ceb2f 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -729,7 +729,7 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
->  	PLL_35XX_RATE(800000000U,  400, 6,  1),
->  	PLL_35XX_RATE(733000000U,  733, 12, 1),
->  	PLL_35XX_RATE(700000000U,  175, 3,  1),
-> -	PLL_35XX_RATE(667000000U,  222, 4,  1),
-> +	PLL_35XX_RATE(666000000U,  222, 4,  1),
->  	PLL_35XX_RATE(633000000U,  211, 4,  1),
->  	PLL_35XX_RATE(600000000U,  500, 5,  2),
->  	PLL_35XX_RATE(552000000U,  460, 5,  2),
-> @@ -757,12 +757,12 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
->  /* AUD_PLL */
->  static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
->  	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
-> -	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
-> +	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
->  	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
-> -	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
-> -	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
-> -	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
-> -	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
-> +	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
-> +	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
-> +	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
-> +	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
->  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
->  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
->  	PLL_36XX_RATE(196608001U, 197, 3, 3, -25690),
-> 
+[v7]
+  * Fixed comments from Viresh for cleaning up the error handling
+    in qcom-cpufreq.c. Also changed the init function to lateinit
+    call. This is required because nvmem which gets initialised with
+    module_init needs to go first.
+  * Fixed Rob's comments for bindings documentation
+  * Fixed kbuild build issue in clk-lpc32xx.c
+  * Rebased on top of clk-next
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+[v6]
+  * Adrressed comments from Viresh for patch #14 in v5 [5]
+  * Introduced a new binding operating-points-v2-krait-cpu
+    as per discussion with Rob
+  * Added Review tags
 
+[v5]
+  * Addressed comments from Rob for bindings
+  * Addressed comments from Viresh to use dev_pm_opp_set_prop_name, accordingly
+    dropped patch #12 and corrected patch #11 from previous patch set in [4]
+  * Converted to use #spdx tags for newly introduced files
+
+Mostly a resend of the v3 posted by Stephen quite some time back [1]
+except for few changes.
+  Based on reading some feedback from list,
+  * Dropped the patch "clk: Add safe switch hook" from v3 [2].
+    Now this is taken care by patch#10 in this series only for Krait.
+  * Dropped the path "clk: Avoid sending high rates to downstream
+		      clocks during set_rate" from v3 [3].
+  * Rebased on top of clk-next.
+  * Dropped the DT update from the series. Will send separately
+  * Now with cpufreq-dt+opp supporting voltage scaling, registering the
+    krait cpu supplies in DT should be sufficient. But one issue is,
+    the qcom-cpufreq drivers reads the efuse and based on that registers
+    the opp data and then registers the cpufreq-dt device. So when
+    cpufreq-dt driver probes and registers the regulator to the OPP framework,
+    it expects that the opp data for the device should not be registered before
+    the regulator. Will send a RFC patch removing that check, to find out the
+    right way of doing it.
+
+These patches provide cpufreq scaling on devices with Krait CPUs.
+In Krait CPU designs there's one PLL and two muxes per CPU, allowing
+us to switch CPU frequencies independently.
+
+				 secondary
+	 +-----+                    +
+	 | QSB |-------+------------|\
+	 +-----+       |            | |-+
+		       |    +-------|/  |
+		       |    |       +   |
+	 +-----+       |    |           |
+	 | PLL |----+-------+           |   primary
+	 +-----+    |  |                |     +
+		    |  |                +-----|\       +------+
+	 +-------+  |  |                      | \      |      |
+	 | HFPLL |----------+-----------------|  |-----| CPU0 |
+	 +-------+  |  |    |                 |  |     |      |
+		    |  |    | +-----+         | /      +------+
+		    |  |    +-| / 2 |---------|/
+		    |  |      +-----+         +
+		    |  |         secondary
+		    |  |            +
+		    |  +------------|\
+		    |               | |-+
+		    +---------------|/  |   primary
+				    +   |     +
+					+-----|\       +------+
+	 +-------+                            | \      |      |
+	 | HFPLL |----------------------------|  |-----| CPU1 |
+	 +-------+          |                 |  |     |      |
+			    | +-----+         | /      +------+
+			    +-| / 2 |---------|/
+			      +-----+         +
+
+To support this in the common clock framework we model the muxes,
+dividers, and PLLs as different clocks. CPUfreq only interacts
+with the primary mux (farthest right in the diagram). When CPUfreq
+sets a rate, the mux code finds the best parent that can provide the rate.
+Due to the design, QSB and the top PLL are always a fixed rate and thus
+only support one frequency each. These sources provide the lowest
+frequencies for the CPUs. The HFPLLs are where we can make the CPU go
+faster (GHz range). Sometimes we need to run the HFPLL twice as
+fast and divide it by two to get a particular frequency.
+
+When switching rates we can't leave the CPU clocked by the HFPLL because
+we need to turn off the output of the PLL when changing its frequency.
+This means we have to switch over to the secondary mux and use one of the
+fixed sources. This is why we need something like the safe parent patch.
+
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/332607.html
+[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/332615.html
+[3] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/332608.html
+[4] https://lwn.net/Articles/740994/ 
+[5] https://lkml.org/lkml/2017/12/19/537
+
+Sricharan R (2):
+  clk: qcom: Add safe switch hook for krait mux clocks
+  dt-bindings: cpufreq: Document operating-points-v2-krait-cpu
+
+Stephen Boyd (13):
+  ARM: Add Krait L2 register accessor functions
+  clk: mux: Split out register accessors for reuse
+  clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
+  clk: qcom: Add HFPLL driver
+  dt-bindings: clock: Document qcom,hfpll
+  clk: qcom: Add MSM8960/APQ8064's HFPLLs
+  clk: qcom: Add IPQ806X's HFPLLs
+  clk: qcom: Add support for Krait clocks
+  clk: qcom: Add KPSS ACC/GCC driver
+  dt-bindings: arm: Document qcom,kpss-gcc
+  clk: qcom: Add Krait clock controller driver
+  dt-bindings: clock: Document qcom,krait-cc
+  cpufreq: Add module to register cpufreq on Krait CPUs
+
+ .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  |   7 +
+ .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  |  32 ++
+ .../devicetree/bindings/clock/qcom,hfpll.txt       |  46 +++
+ .../devicetree/bindings/clock/qcom,krait-cc.txt    |  22 ++
+ .../devicetree/bindings/cpufreq/krait-cpufreq.txt  | 363 +++++++++++++++++++
+ arch/arm/common/Kconfig                            |   3 +
+ arch/arm/common/Makefile                           |   1 +
+ arch/arm/common/krait-l2-accessors.c               |  48 +++
+ arch/arm/include/asm/krait-l2-accessors.h          |  10 +
+ drivers/clk/clk-mux.c                              |  74 ++--
+ drivers/clk/nxp/clk-lpc32xx.c                      |  21 +-
+ drivers/clk/qcom/Kconfig                           |  28 ++
+ drivers/clk/qcom/Makefile                          |   5 +
+ drivers/clk/qcom/clk-hfpll.c                       | 244 +++++++++++++
+ drivers/clk/qcom/clk-hfpll.h                       |  45 +++
+ drivers/clk/qcom/clk-krait.c                       | 126 +++++++
+ drivers/clk/qcom/clk-krait.h                       |  41 +++
+ drivers/clk/qcom/gcc-ipq806x.c                     |  82 +++++
+ drivers/clk/qcom/gcc-msm8960.c                     | 172 +++++++++
+ drivers/clk/qcom/hfpll.c                           |  96 +++++
+ drivers/clk/qcom/kpss-xcc.c                        |  87 +++++
+ drivers/clk/qcom/krait-cc.c                        | 397 +++++++++++++++++++++
+ drivers/cpufreq/Kconfig.arm                        |  10 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   5 +
+ drivers/cpufreq/qcom-cpufreq.c                     | 181 ++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8960.h       |   2 +
+ include/linux/clk-provider.h                       |   6 +
+ 28 files changed, 2111 insertions(+), 44 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
+ create mode 100644 arch/arm/common/krait-l2-accessors.c
+ create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
+ create mode 100644 drivers/clk/qcom/clk-hfpll.c
+ create mode 100644 drivers/clk/qcom/clk-hfpll.h
+ create mode 100644 drivers/clk/qcom/clk-krait.c
+ create mode 100644 drivers/clk/qcom/clk-krait.h
+ create mode 100644 drivers/clk/qcom/hfpll.c
+ create mode 100644 drivers/clk/qcom/kpss-xcc.c
+ create mode 100644 drivers/clk/qcom/krait-cc.c
+ create mode 100644 drivers/cpufreq/qcom-cpufreq.c
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
