@@ -1,118 +1,105 @@
-Return-Path: <julian.calaby@gmail.com>
+Return-Path: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+To: Jani Nikula <jani.nikula@linux.intel.com>, Daniel Thompson
+	<daniel.thompson@linaro.org>
+CC: <thierry.reding@gmail.com>, <shc_work@mail.ru>, <kgene@kernel.org>,
+	<krzk@kernel.org>, <linux@armlinux.org.uk>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <joonas.lahtinen@linux.intel.com>,
+	<rodrigo.vivi@intel.com>, <airlied@linux.ie>, <kamil@wypas.org>,
+	<b.zolnierkie@samsung.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
+	<dmitry.torokhov@gmail.com>, <rpurdie@rpsys.net>,
+	<jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <mchehab@kernel.org>,
+	<sean@mess.org>, <lee.jones@linaro.org>, <jingoohan1@gmail.com>,
+	<milo.kim@ti.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+	<corbet@lwn.net>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@free-electrons.com>, <linux-pwm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
+	<linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
+	<linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180222123308.mypx2r7n6o63mj5z@oak.lan> <87po4s2hve.fsf@intel.com>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
+Date: Mon, 26 Feb 2018 16:24:15 +0200
 MIME-Version: 1.0
-In-Reply-To: <20180227070735.ml3mc4nr4vpge57u@flea>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net>
- <2676311.2IEVhXnSIE@jernej-laptop> <4AA78C45-E139-417E-BE89-FE0BFBC409B0@aosc.io>
- <2342395.9m6rrqTry7@jernej-laptop> <CAGRGNgU8-uJuns7mAzS-gc81qvVAkS9JS2Tm13p2Qp7dMDCNkg@mail.gmail.com>
- <20180227070735.ml3mc4nr4vpge57u@flea>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Tue, 27 Feb 2018 21:35:09 +1100
-Message-ID: <CAGRGNgU0_zxejYfTzk5qeNhp5saCtTLy4Ra+oG97anhJwL+qOA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI
- output on H3 boards
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: jernej.skrabec@siol.net, linux-sunxi <linux-sunxi@googlegroups.com>,
-	Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	dri-devel <dri-devel@lists.freedesktop.org>, devicetree <devicetree@vger.kernel.org>,
-	"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87po4s2hve.fsf@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: Claudiu.Beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
 
-On Tue, Feb 27, 2018 at 6:07 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Tue, Feb 27, 2018 at 01:29:27PM +1100, Julian Calaby wrote:
->> Hi Jernej,
+
+On 26.02.2018 11:57, Jani Nikula wrote:
+> On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+>> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+>>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+>>> were adapted to this change.
+>>>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>>> ---
+>>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+>>>  drivers/bus/ts-nbus.c                |  2 +-
+>>>  drivers/clk/clk-pwm.c                |  3 ++-
+>>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+>>>  drivers/hwmon/pwm-fan.c              |  2 +-
+>>>  drivers/input/misc/max77693-haptic.c |  2 +-
+>>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+>>>  drivers/leds/leds-pwm.c              |  5 ++++-
+>>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+>>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+>>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+>>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+>>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+>>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+>>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+>>>  include/linux/pwm.h                  |  6 ++++--
+>>>  16 files changed, 70 insertions(+), 21 deletions(-)
+>>>
+>>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+>>> index 2030a6b77a09..696fa25dafd2 100644
+>>> --- a/drivers/video/backlight/lm3630a_bl.c
+>>> +++ b/drivers/video/backlight/lm3630a_bl.c
+>>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
+>>>  {
+>>>  	unsigned int period = pchip->pdata->pwm_period;
+>>>  	unsigned int duty = br * period / br_max;
+>>> +	struct pwm_caps caps = { };
+>>>  
+>>> -	pwm_config(pchip->pwmd, duty, period);
+>>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
+>>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
 >>
->> On Tue, Feb 27, 2018 at 3:27 AM, Jernej =C5=A0krabec <jernej.skrabec@sio=
-l.net> wrote:
->> > Hi,
->> >
->> > Dne ponedeljek, 26. februar 2018 ob 17:21:05 CET je Icenowy Zheng napi=
-sal(a):
->> >> =E4=BA=8E 2018=E5=B9=B42=E6=9C=8827=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=
-=8D=8812:16:44, "Jernej =C5=A0krabec"
->> > <jernej.skrabec@siol.net> =E5=86=99=E5=88=B0:
->> >> >Hi Julian,
->> >> >
->> >> >Dne nedelja, 25. februar 2018 ob 09:11:34 CET je Julian Calaby
->> >> >
->> >> >napisal(a):
->> >> >> Hi Jernej,
->> >> >>
->> >> >> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec
->> >> >
->> >> ><jernej.skrabec@siol.net>
->> >> >
->> >> >wrote:
->> >> >> > Enable HDMI output on all boards which have HDMI connector.
->> >> >> >
->> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> >> >> > ---
->> >> >> >
->> >> >> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25
->> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2.dt=
-s
->> >> >> >
->> >> >> >   | 25 ++++++++++++++++++++++
->> >> >> >
->> >> >> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25
->> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
->> >> >> >
->> >> >> >   | 25 ++++++++++++++++++++++
->> >> >
->> >> >arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
->> >> >
->> >> >> >         | 25 ++++++++++++++++++++++
->> >> >> >
->> >> >> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25
->> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one.=
-dts
->> >> >> >
->> >> >> >   | 24 +++++++++++++++++++++
->> >> >
->> >> >arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
->> >> >
->> >> >> >        | 25 ++++++++++++++++++++++ 8 files changed, 199
->> >> >
->> >> >insertions(+)
->> >> >
->> >> >> As I understand it, the H2+ is just a slightly trimmed down H3. In
->> >> >> terms of HDMI support, the difference is that the H2+ can't output
->> >> >
->> >> >4k.
->> >> >
->> >> >> If this code is compatible with the H2+, could you please add the
->> >> >> necessary bits and pieces to the h2-plus DTSs too?
->> >> >
->> >> >There are only 3 H2+ boards in kernel and none of them has HDMI
->> >> >connector, so
->> >>
->> >> BPi M2 Zero has miniHDMI connector.
->> >
->> > Ah, sorry, I missed that one. Since I don't have it (or any other boar=
-d with
->> > H2+) I'm not really comfortable including such patch. If anyone will t=
-est it,
->> > I can include it in next revision.
+>> Well... I admit I've only really looked at the patches that impact 
+>> backlight but dispersing this really odd looking bit twiddling 
+>> throughout the kernel doesn't strike me a great API design.
 >>
->> I have one of those (this is why I'm interested in this patchset) so
->> I'm willing to test, however I can't guarantee I'll get to it quickly.
->
-> Then I guess the best way forward will be to keep the current patch as
-> is, and you'll send a patch whenever you have the time to test it.
+>> IMHO callers should not be required to find the first set bit in
+>> some specially crafted set of capability bits simply to get sane 
+>> default behaviour.
+> 
+> Agreed. IMHO the regular use case becomes rather tedious, ugly, and
+> error prone.
 
-Fair enough, I'll do that then. =3D)
+Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
+from your side?
 
-Thanks,
+Or, what about using a function like pwm_mode_first() to get the first supported
+mode by PWM channel?
 
---=20
-Julian Calaby
+Or, would you prefer to solve this inside pwm_config() function, let's say, in
+case an invalid mode is passed as argument, to let pwm_config() to choose the
+first available PWM mode for PWM channel passed as argument?
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+Thank you,
+Claudiu Beznea
+
+> 
+> BR,
+> Jani.
+> 
+> 
