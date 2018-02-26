@@ -1,93 +1,148 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v7 14/15] cpufreq: Add module to register cpufreq on Krait
+ CPUs
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
+ david.brown@linaro.org, rjw@rjwysocki.net,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org, robh@kernel.org
+References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+ <1519638811-17269-15-git-send-email-sricharan@codeaurora.org>
+ <20180226100425.GO26947@vireshk-i7>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <ab5ad9c2-2016-47ca-b748-833ff6e75f70@codeaurora.org>
+Date: Mon, 26 Feb 2018 15:45:59 +0530
 MIME-Version: 1.0
-In-Reply-To: <1519193048.18794.42.camel@mtkswgap22>
-References: <cover.1518424204.git.ryder.lee@mediatek.com>
- <61928ad523a7aeffb8f16d4caad56836b65ae407.1518424204.git.ryder.lee@mediatek.com>
- <CAL_JsqJgo0pKJjrs2fdw+q=DJYwht0X5L3Bomz8gf98mEN7hkg@mail.gmail.com>
- <1519193048.18794.42.camel@mtkswgap22>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 21 Feb 2018 08:10:37 -0600
-Message-ID: <CAL_JsqLjcMpS=bLzAV0arLJY143O1XefjSR0djM73E8uC4oJHg@mail.gmail.com>
-Subject: Re: [SPAM]Re: [PATCH v3 4/5] dt-bindings: clock: mediatek: update
- audsys documentation to adapt MFD device
-To: Ryder Lee <ryder.lee@mediatek.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org,
- Matthias Brugger <matthias.bgg@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20180226100425.GO26947@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Feb 21, 2018 at 12:04 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
-> On Mon, 2018-02-19 at 12:29 -0600, Rob Herring wrote:
->> On Mon, Feb 12, 2018 at 5:28 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
->> > The MediaTek audio hardware block that exposes functionalities that are
->> > handled by separate subsystems in the kernel.  These functions are all
->> > mapped somewhere at 0x112xxxxx, and there are some control bits are mixed
->> > up with other functions within the same registers.
->>
->> I still don't think this change is necessary.
->>
->> Just because a hardware block in DT maps to different subsystems in a
->> particular OS doesn't mean you need a DT node for each OS subsystem.
->> What we have subsystems for changes over time and DT shouldn't really
->> be changing based on that. And DT is not the only way to instantiate
->> drivers.
->>
->
-> Apart right now we have the definition of both functions. The other
-> location is here:../sonud/mt2701-afe-pcm.txt. The ways I could come up
-> with are:
+Hi Viresh,
 
-There are several problems you need to fix. First,
-"mediatek,mt2701-audsys" is not documented. It is only used in the
-example. Second, bindings/arm/mediatek/mediatek,audsys.txt should move
-to bindings/sound/ if it is only audio related functions. Or perhaps
-just combine the 2 documents because it is all inconsistent currently.
+On 2/26/2018 3:34 PM, Viresh Kumar wrote:
+> On 26-02-18, 15:23, Sricharan R wrote:
+>> From: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Is this email id still valid ?
+> 
 
-The 2 documents are inconsistent as to what is the relationship of
--audsys and -audio (afe) nodes. mt2701-afe-pcm.txt shows that the AFE
-is already a child of -audsys. The -audsys node should have
-#clock-cells. It should also not be a simple-mfd (another
-inconsistency in the binding) because it needs to probe first to
-provide clocks to child nodes, and then trigger probing the child
-nodes.
+ Yes. codeaurora id should exist.
 
-Rob
+>> +static int __init qcom_cpufreq_populate_opps(struct nvmem_cell *pvs_nvmem,
+>> +					     struct opp_table **tbl)
+>> +{
+>> +	int speed = 0, pvs = 0, pvs_ver = 0, cpu;
+>> +	struct device *cpu_dev;
+>> +	u8 *buf;
+>> +	size_t len;
+>> +	char pvs_name[] = "speedXX-pvsXX-vXX";
+>> +
+>> +	buf = nvmem_cell_read(pvs_nvmem, &len);
+>> +	if (len == 4)
+>> +		get_krait_bin_format_a(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
+>> +	else if (len == 8)
+>> +		get_krait_bin_format_b(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
+>> +	else
+>> +		pr_warn("Unable to read nvmem data. Defaulting to 0!\n");
+>> +
+>> +	snprintf(pvs_name, sizeof(pvs_name), "speed%d-pvs%d-v%d",
+>> +		 speed, pvs, pvs_ver);
+>> +
+>> +	for (cpu = 0; cpu < num_possible_cpus(); cpu++) {
+>> +		cpu_dev = get_cpu_device(cpu);
+>> +		if (!cpu_dev)
+>> +			return -ENODEV;
+>> +
+>> +		tbl[cpu] = dev_pm_opp_set_prop_name(cpu_dev, pvs_name);
+>> +
+>> +		if (IS_ERR(tbl[cpu])) {
+>> +			tbl[cpu] = 0;
+>> +			pr_warn("failed to add OPP name %s\n", pvs_name);
+>> +			return PTR_ERR(tbl[cpu]);
+> 
+> You just set tbl[cpu] to 0 :)
+> 
 
->
-> 1. Add a dummy MFD driver (need to think a new compatible or just use
-> '*-audsys' which has already been picked by clock driver) to instantiate
-> two sub-devices through id_table and mfd_cell.
->
-> 2. For the sake of simplification - add a new compatible "simple-mfd".
->
-> 3. The last thing - keep two nodes separated/independent. (x)
->
-> I'm not sure which one is better.
->
->
->
-> @Lee @Matthias: What do you suggest?
->
-> Ryder.
->
->
+ my bad. will fix it.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init qcom_cpufreq_driver_init(void)
+>> +{
+>> +	struct platform_device *pdev;
+>> +	struct device *cpu_dev;
+>> +	struct device_node *np;
+>> +	struct nvmem_cell *pvs_nvmem;
+>> +	struct opp_table *tbl[NR_CPUS] = { NULL };
+>> +	int ret, cpu = 0;
+>> +
+>> +	cpu_dev = get_cpu_device(0);
+>> +	if (!cpu_dev)
+>> +		return -ENODEV;
+>> +
+>> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+>> +	if (!np)
+>> +		return -ENOENT;
+>> +
+>> +	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
+>> +		ret = -ENOENT;
+>> +		goto free_np;
+>> +	}
+>> +
+>> +	pvs_nvmem = of_nvmem_cell_get(np, NULL);
+>> +	if (IS_ERR(pvs_nvmem)) {
+>> +		dev_err(cpu_dev, "Could not get nvmem cell\n");
+>> +		ret = PTR_ERR(pvs_nvmem);
+>> +		goto free_np;
+>> +	}
+>> +
+>> +	ret = qcom_cpufreq_populate_opps(pvs_nvmem, tbl);
+>> +	if (ret)
+>> +		goto free_opp_name;
+>> +
+>> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+>> +	if (IS_ERR(pdev)) {
+>> +		ret = PTR_ERR(pdev);
+>> +		goto free_opp_name;
+>> +	}
+>> +
+>> +	of_node_put(np);
+>> +
+>> +	return 0;
+>> +
+>> +free_opp_name:
+>> +	while (tbl[cpu]) {
+>> +		dev_pm_opp_put_prop_name(tbl[cpu]);
+>> +		cpu++;
+>> +	}
+>> +
+>> +free_np:
+>> +	of_node_put(np);
+>> +
+>> +	return ret;
+>> +}
+>> +late_initcall(qcom_cpufreq_driver_init);
+>> +
+>> +MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
+>> +MODULE_AUTHOR("Stephen Boyd <sboyd@codeaurora.org>");
+>> +MODULE_LICENSE("GPL v2");
+> 
+> Everything else is fine. Fix above issue and you can add
+> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+
+ Thanks. Will fix and repost.
+
+Regards,
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
