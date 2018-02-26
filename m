@@ -1,87 +1,264 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:55714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751810AbeBVD1L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 21 Feb 2018 22:27:11 -0500
-Date: Thu, 22 Feb 2018 11:27:04 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v2] clk: imx51-imx53: Fix UART4/5 registration on i.MX50
- and i.MX53
-Message-ID: <20180222032703.GD3217@dragon>
-References: <1516029708-17204-1-git-send-email-festevam@gmail.com>
- <1516097462.9022.7.camel@pengutronix.de>
- <CAOMZO5A3wD+uxbgCmKU0jQGzi_r7g-Qitv5Mz=WmQZA7ndn0tw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAOMZO5A3wD+uxbgCmKU0jQGzi_r7g-Qitv5Mz=WmQZA7ndn0tw@mail.gmail.com>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39384 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752451AbeBZMyH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 07:54:07 -0500
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 2/6] clk: samsung: Add Exynos5 sub-CMU clock driver
+Date: Mon, 26 Feb 2018 13:53:51 +0100
+Message-id: <20180226125355.9052-3-m.szyprowski@samsung.com>
+In-reply-to: <20180226125355.9052-1-m.szyprowski@samsung.com>
+References: <20180226125355.9052-1-m.szyprowski@samsung.com>
+        <CGME20180226125402eucas1p1ac3e0a5853218cd77f469864f70ae89d@eucas1p1.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 13, 2018 at 11:42:55PM -0200, Fabio Estevam wrote:
-> Hi Stephen,
-> 
-> On Tue, Jan 16, 2018 at 8:11 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> > On Mon, 2018-01-15 at 13:21 -0200, Fabio Estevam wrote:
-> >> From: Fabio Estevam <fabio.estevam@nxp.com>
-> >>
-> >> Since commit 59dc3d8c8673 ("clk: imx51: uart4, uart5 gates only exist on
-> >> imx50, imx53") the following warnings are seen on i.MX53:
-> >>
-> >> [    2.776190] ------------[ cut here ]------------
-> >> [    2.780948] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:811 clk_core_disable+0xc4/0xe0
-> >> [    2.789145] Modules linked in:
-> >> [    2.792236] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc7-next-20180115 #1
-> >> [    2.799735] Hardware name: Freescale i.MX53 (Device Tree Support)
-> >> [    2.805845] Backtrace:
-> >> [    2.808329] [<c010d1a0>] (dump_backtrace) from [<c010d460>] (show_stack+0x18/0x1c)
-> >> [    2.815919]  r7:00000000 r6:60000093 r5:00000000 r4:c10798d4
-> >> [    2.821607] [<c010d448>] (show_stack) from [<c0a353ec>] (dump_stack+0xb4/0xe8)
-> >> [    2.828854] [<c0a35338>] (dump_stack) from [<c0126144>] (__warn+0xf0/0x11c)
-> >> [    2.835837]  r9:00000000 r8:0000032b r7:00000009 r6:c0d429f8 r5:00000000 r4:00000000
-> >> [    2.843601] [<c0126054>] (__warn) from [<c0126288>] (warn_slowpath_null+0x44/0x50)
-> >> [    2.851191]  r8:c1008908 r7:c0e08874 r6:c04bfac8 r5:0000032b r4:c0d429f8
-> >> [    2.857913] [<c0126244>] (warn_slowpath_null) from [<c04bfac8>] (clk_core_disable+0xc4/0xe0)
-> >> [    2.866369]  r6:dc02bb00 r5:dc02a980 r4:dc02a980
-> >> [    2.871011] [<c04bfa04>] (clk_core_disable) from [<c04c0e54>] (clk_core_disable_lock+0x20/0x2c)
-> >> [    2.879726]  r5:dc02a980 r4:80000013
-> >> [    2.883323] [<c04c0e34>] (clk_core_disable_lock) from [<c04c0e84>] (clk_disable+0x24/0x28)
-> >> [    2.891604]  r5:c0f6b3e4 r4:0000001c
-> >> [    2.895209] [<c04c0e60>] (clk_disable) from [<c0f2340c>] (imx_clk_disable_uart+0x50/0x68)
-> >> [    2.903412] [<c0f233bc>] (imx_clk_disable_uart) from [<c010277c>] (do_one_initcall+0x50/0x19c)
-> >> [    2.912043]  r7:c0e08874 r6:c0f63854 r5:c0f233bc r4:ffffe000
-> >> [    2.917726] [<c010272c>] (do_one_initcall) from [<c0f00f00>] (kernel_init_freeable+0x118/0x1d0)
-> >> [    2.926447]  r9:c0f63858 r8:000000f0 r7:c0e08874 r6:c0f63854 r5:c107b500 r4:c0f75260
-> >> [    2.934220] [<c0f00de8>] (kernel_init_freeable) from [<c0a4a5f0>] (kernel_init+0x10/0x118)
-> >> [    2.942506]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0a4a5e0
-> >> [    2.950351]  r4:00000000
-> >> [    2.952908] [<c0a4a5e0>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-> >> [    2.960496] Exception stack(0xdc05dfb0 to 0xdc05dff8)
-> >> [    2.965569] dfa0:                                     00000000 00000000 00000000 00000000
-> >> [    2.973768] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> >> [    2.981965] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> >> [    2.988596]  r5:c0a4a5e0 r4:00000000
-> >> [    2.992188] ---[ end trace 346e26f708876edd ]---
-> >> [    2.997420] ------------[ cut here ]------------
-> >>
-> >> In order to fix the problem UART4/5 registration needs to happen only on
-> >> i.MX50 and i.MX53.
-> >>
-> >> So let mx51_clocks_init() register only UART1-3 and
-> >> mx50_clocks_init()/mx53_clocks_init register all the UART1-5 ports.
-> >>
-> >> Fixes: 59dc3d8c8673 ("clk: imx51: uart4, uart5 gates only exist on imx50, imx53")
-> >> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-> >
-> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> 
-> Do you plan to apply this one directly or should Shawn collect it?
+Exynos5250/5420/5800 have only one clock constroller, but some of their
+clock depends on respective power domains. Handling integration of clock
+controller and power domain can be done using runtime PM feature of CCF
+framework. This however needs a separate struct device for each power
+domain. This patch adds such separate driver for a group of such clocks,
+which can be instantiated more than once, each time for a different
+power domain.
 
-I queued it up and will send a pull request to Stephen later.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 185 +++++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5-subcmu.h |  26 +++++
+ 2 files changed, 211 insertions(+)
+ create mode 100644 drivers/clk/samsung/clk-exynos5-subcmu.c
+ create mode 100644 drivers/clk/samsung/clk-exynos5-subcmu.h
 
-Shawn
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
+new file mode 100644
+index 000000000000..41bf5c3cf178
+--- /dev/null
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+@@ -0,0 +1,185 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2018 Samsung Electronics Co., Ltd.
++// Author: Marek Szyprowski <m.szyprowski@samsung.com>
++// Common Clock Framework support for Exynos5 power-domain dependent clocks
++
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_runtime.h>
++
++#include "clk.h"
++#include "clk-exynos5-subcmu.h"
++
++static struct samsung_clk_provider *ctx;
++static const struct exynos5_subcmu_info *cmu;
++static int nr_cmus;
++
++static void samsung_ext_clk_save(void __iomem *base,
++				 struct samsung_clk_ext_reg_dump *rd,
++				 unsigned int num_regs)
++{
++	for (; num_regs > 0; --num_regs, ++rd) {
++		rd->save = readl(base + rd->offset);
++		writel((rd->save & ~rd->mask) | rd->value, base + rd->offset);
++		rd->save &= rd->mask;
++	}
++};
++
++static void samsung_ext_clk_restore(void __iomem *base,
++				    struct samsung_clk_ext_reg_dump *rd,
++				    unsigned int num_regs)
++{
++	for (; num_regs > 0; --num_regs, ++rd)
++		writel((readl(base + rd->offset) & ~rd->mask) | rd->save,
++		       base + rd->offset);
++}
++
++static void samsung_clk_defer_gate(struct samsung_clk_provider *ctx,
++			      const struct samsung_gate_clock *list, int nr_clk)
++{
++	while (nr_clk--)
++		samsung_clk_add_lookup(ctx, ERR_PTR(-EPROBE_DEFER), list++->id);
++}
++
++/*
++ * Pass the needed clock provider context and register sub-CMU clocks
++ *
++ * NOTE: This function has to be called from the main, OF_CLK_DECLARE-
++ * initialized clock provider driver. This happens very early during boot
++ * process. Then this driver, during core_initcall registers two platform
++ * drivers: one which binds to the same device-tree node as OF_CLK_DECLARE
++ * driver and second, for handling its per-domain child-devices. Those
++ * platform drivers are bound to their devices a bit later in arch_initcall,
++ * when OF-core populates all device-tree nodes.
++ */
++void exynos5_subcmus_init(struct samsung_clk_provider *_ctx, int _nr_cmus,
++			  const struct exynos5_subcmu_info *_cmu)
++{
++	ctx = _ctx;
++	cmu = _cmu;
++	nr_cmus = _nr_cmus;
++
++	for (; _nr_cmus--; _cmu++) {
++		samsung_clk_defer_gate(ctx, _cmu->gate_clks, _cmu->nr_gate_clks);
++		samsung_ext_clk_save(ctx->reg_base, _cmu->suspend_regs,
++				     _cmu->nr_suspend_regs);
++	}
++}
++
++static int __maybe_unused exynos5_clk_subcmu_suspend(struct device *dev)
++{
++	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ctx->lock, flags);
++	samsung_ext_clk_save(ctx->reg_base, info->suspend_regs,
++			     info->nr_suspend_regs);
++	spin_unlock_irqrestore(&ctx->lock, flags);
++
++	return 0;
++}
++
++static int __maybe_unused exynos5_clk_subcmu_resume(struct device *dev)
++{
++	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ctx->lock, flags);
++	samsung_ext_clk_restore(ctx->reg_base, info->suspend_regs,
++				info->nr_suspend_regs);
++	spin_unlock_irqrestore(&ctx->lock, flags);
++
++	return 0;
++}
++
++static int __init exynos5_clk_subcmu_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
++
++	pm_runtime_set_suspended(dev);
++	pm_runtime_enable(dev);
++	pm_runtime_get(dev);
++
++	ctx->dev = dev;
++	samsung_clk_register_div(ctx, info->div_clks, info->nr_div_clks);
++	samsung_clk_register_gate(ctx, info->gate_clks, info->nr_gate_clks);
++	ctx->dev = NULL;
++
++	pm_runtime_put_sync(dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops exynos5_clk_subcmu_pm_ops = {
++	SET_RUNTIME_PM_OPS(exynos5_clk_subcmu_suspend,
++			   exynos5_clk_subcmu_resume, NULL)
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				     pm_runtime_force_resume)
++};
++
++static struct platform_driver exynos5_clk_subcmu_driver __refdata = {
++	.driver	= {
++		.name = "exynos5-clock-subcmu",
++		.suppress_bind_attrs = true,
++		.pm = &exynos5_clk_subcmu_pm_ops,
++	},
++	.probe = exynos5_clk_subcmu_probe,
++};
++
++static int __init exynos5_clk_register_subcmu_drv(struct device *parent,
++					 const struct exynos5_subcmu_info *info,
++						  struct device_node *pd_node)
++{
++	struct of_phandle_args genpdspec = { .np = pd_node };
++	struct platform_device *pdev;
++
++	pdev = platform_device_alloc(info->pd_name, -1);
++	pdev->dev.parent = parent;
++	pdev->driver_override = "exynos5-clock-subcmu";
++	platform_set_drvdata(pdev, (void *)info);
++	of_genpd_add_device(&genpdspec, &pdev->dev);
++	platform_device_add(pdev);
++
++	return 0;
++}
++
++static int __init exynos5_clk_probe(struct platform_device *pdev)
++{
++	struct device_node *np;
++	const char *name;
++	int i;
++
++	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
++		if (of_property_read_string(np, "label", &name) < 0)
++			continue;
++		for (i = 0; i < nr_cmus; i++)
++			if (strcmp(cmu[i].pd_name, name) == 0)
++				exynos5_clk_register_subcmu_drv(&pdev->dev,
++								&cmu[i], np);
++	}
++	return 0;
++}
++
++static const struct of_device_id exynos5_clk_of_match[] = {
++	{ },
++};
++
++static struct platform_driver exynos5_clk_driver __refdata = {
++	.driver	= {
++		.name = "exynos5-clock",
++		.of_match_table = exynos5_clk_of_match,
++		.suppress_bind_attrs = true,
++	},
++	.probe = exynos5_clk_probe,
++};
++
++static int __init exynos5_clk_drv_init(void)
++{
++	platform_driver_register(&exynos5_clk_driver);
++	platform_driver_register(&exynos5_clk_subcmu_driver);
++	return 0;
++}
++core_initcall(exynos5_clk_drv_init);
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.h b/drivers/clk/samsung/clk-exynos5-subcmu.h
+new file mode 100644
+index 000000000000..364ca4051d9e
+--- /dev/null
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __CLK_EXYNOS5_SUBCMU_H
++#define __CLK_EXYNOS5_SUBCMU_H
++
++struct samsung_clk_ext_reg_dump {
++	u32 offset;
++	u32 value;
++	u32 mask;
++	u32 save;
++};
++
++struct exynos5_subcmu_info {
++	const struct samsung_div_clock *div_clks;
++	unsigned int nr_div_clks;
++	const struct samsung_gate_clock *gate_clks;
++	unsigned int nr_gate_clks;
++	struct samsung_clk_ext_reg_dump *suspend_regs;
++	unsigned int nr_suspend_regs;
++	const char *pd_name;
++};
++
++void exynos5_subcmus_init(struct samsung_clk_provider *ctx, int nr_cmus,
++			  const struct exynos5_subcmu_info *cmu);
++
++#endif
+-- 
+2.15.0
+
