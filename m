@@ -1,101 +1,172 @@
-Return-Path: <a.hajda@samsung.com>
-Subject: Re: [PATCH 4/7] clk: samsung: exynos5433: fix PLL rates
-To: Chanwoo Choi <cw00.choi@samsung.com>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Kukjin
-	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "moderated
- list:SAMSUNG SOC CLOCK DRIVERS" <linux-samsung-soc@vger.kernel.org>, "open
- list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, "Chanwoo Choi
- (gmail)" <cwchoi00@gmail.com>, =?UTF-8?B?7LWc7LCs7JqwIChzYW1zdW5nLmNvbSk=?=
-	<chanwoo@kernel.org>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <38a7fbdf-86c6-5447-697e-f3cc3f2103f1@samsung.com>
-Date: Wed, 14 Feb 2018 09:36:53 +0100
-MIME-Version: 1.0
-In-Reply-To: <5A83CD07.3060008@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-References: <20180213134032.30235-1-a.hajda@samsung.com>
-	<CGME20180213134101eucas1p1f9348abc0344594476bc8618c1006e31@eucas1p1.samsung.com>
-	<20180213134032.30235-5-a.hajda@samsung.com> <5A83CD07.3060008@samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39392 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752547AbeBZMyI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 07:54:08 -0500
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 4/6] clk: samsung: exynos5250: Move PD-dependent clocks
+ to Exynos5 sub-CMU driver
+Date: Mon, 26 Feb 2018 13:53:53 +0100
+Message-id: <20180226125355.9052-5-m.szyprowski@samsung.com>
+In-reply-to: <20180226125355.9052-1-m.szyprowski@samsung.com>
+References: <20180226125355.9052-1-m.szyprowski@samsung.com>
+        <CGME20180226125403eucas1p29b1850f658e17912be0b1fa6ed3a8a83@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14.02.2018 06:45, Chanwoo Choi wrote:
-> Hi Sylwester and Andrzej,
->
-> Exynos5433 TRM shows different PLL frequency from the calculated value. Actually, I'm not sure which value is the correct value between TRM's value and real calculated value.
->
-> If we only consider the equation, I agree that we have to replace them with real calculated value with equation. But, TRM shows the diagram of clock domain which contains the multiple IPs. And each diagram specifies the required source clock rate of each child IP. Maybe, this source clock rate might be calculated from the PLL rate provided by TRM. (even if it's different from real calculated value).
->
-> Although the real rate is a little bit incorrect, we might better to keep PLL rate provided by TRM in order to get the required source clock of child IPs as the TRM. If we modify the PLL rate provided by TRM, the source clock rate of child IP might be different from TRM.
->
-> Basically, I have no objection of this patch. Just I think that need to check it.
+Clocks related to DISP1 block require special handling for power domain
+turn on/off sequences. Till now this was handled by Exynos power domain
+driver, but that approach was limited only to some special cases. This
+patch moves handling of those operations to clock controller driver.
+This gives more flexibility and allows fine tune values of some
+clock-specific registers. This patch moves handling of those mentioned
+clocks to Exynos5 sub-CMU driver instantiated from Exynos5250 driver.
 
-After verifying documentation it seems that in case of fractional PLLs
-TRM shows rates with lower precision, so I wouldn't say in such case it
-is different.
-Only 667MHz frequency looks odd, but it seems to be a bug in TRM, I
-guess copy/paste bug from Exyons5430, where 667MHz rate was generated
-from different PMS coefficients.
-Android code has also tables proving it should be 666MHz [1].
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/Makefile             |  1 +
+ drivers/clk/samsung/clk-exynos5-subcmu.c |  1 +
+ drivers/clk/samsung/clk-exynos5250.c     | 51 ++++++++++++++++++++++----------
+ drivers/soc/samsung/pm_domains.c         |  1 +
+ 4 files changed, 38 insertions(+), 16 deletions(-)
 
+diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+index b23d6cfac723..513826393158 100644
+--- a/drivers/clk/samsung/Makefile
++++ b/drivers/clk/samsung/Makefile
+@@ -8,6 +8,7 @@ obj-$(CONFIG_SOC_EXYNOS3250)	+= clk-exynos3250.o
+ obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
+ obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4412-isp.o
+ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
++obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5-subcmu.o
+ obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
+ obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
+ obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
+index dd278e33688b..b0bd9eb67b83 100644
+--- a/drivers/clk/samsung/clk-exynos5-subcmu.c
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+@@ -164,6 +164,7 @@ static int __init exynos5_clk_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id exynos5_clk_of_match[] = {
++	{ .compatible = "samsung,exynos5250-clock", },
+ 	{ .compatible = "samsung,exynos5420-clock", },
+ 	{ .compatible = "samsung,exynos5800-clock", },
+ 	{ },
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 9b073c98a891..44da35d939be 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -18,6 +18,7 @@
+ 
+ #include "clk.h"
+ #include "clk-cpu.h"
++#include "clk-exynos5-subcmu.h"
+ 
+ #define APLL_LOCK		0x0
+ #define APLL_CON0		0x100
+@@ -571,17 +572,6 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
+ 	GATE(CLK_SMMU_GSCL3, "smmu_gscl3", "mout_aclk266_gscl_sub",
+ 			GATE_IP_GSCL, 10, 0, 0),
+ 
+-	GATE(CLK_FIMD1, "fimd1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 0, 0,
+-		0),
+-	GATE(CLK_MIE1, "mie1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 1, 0,
+-		0),
+-	GATE(CLK_DSIM0, "dsim0", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 3, 0,
+-		0),
+-	GATE(CLK_DP, "dp", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 4, 0, 0),
+-	GATE(CLK_MIXER, "mixer", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 5, 0,
+-		0),
+-	GATE(CLK_HDMI, "hdmi", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 6, 0,
+-		0),
+ 
+ 	GATE(CLK_MFC, "mfc", "mout_aclk333_sub", GATE_IP_MFC, 0, 0, 0),
+ 	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "mout_aclk333_sub", GATE_IP_MFC, 1, 0,
+@@ -671,10 +661,6 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
+ 	GATE(CLK_WDT, "wdt", "div_aclk66", GATE_IP_PERIS, 19, 0, 0),
+ 	GATE(CLK_RTC, "rtc", "div_aclk66", GATE_IP_PERIS, 20, 0, 0),
+ 	GATE(CLK_TMU, "tmu", "div_aclk66", GATE_IP_PERIS, 21, 0, 0),
+-	GATE(CLK_SMMU_TV, "smmu_tv", "mout_aclk200_disp1_sub",
+-			GATE_IP_DISP1, 9, 0, 0),
+-	GATE(CLK_SMMU_FIMD1, "smmu_fimd1", "mout_aclk200_disp1_sub",
+-			GATE_IP_DISP1, 8, 0, 0),
+ 	GATE(CLK_SMMU_2D, "smmu_2d", "div_aclk200", GATE_IP_ACP, 7, 0, 0),
+ 	GATE(CLK_SMMU_FIMC_ISP, "smmu_fimc_isp", "mout_aclk_266_isp_sub",
+ 			GATE_IP_ISP0, 8, 0, 0),
+@@ -698,6 +684,38 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
+ 			GATE_IP_ISP1, 7, 0, 0),
+ };
+ 
++static const struct samsung_gate_clock exynos5250_disp_gate_clks[] __initconst = {
++	GATE(CLK_FIMD1, "fimd1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 0, 0,
++		0),
++	GATE(CLK_MIE1, "mie1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 1, 0,
++		0),
++	GATE(CLK_DSIM0, "dsim0", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 3, 0,
++		0),
++	GATE(CLK_DP, "dp", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 4, 0, 0),
++	GATE(CLK_MIXER, "mixer", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 5, 0,
++		0),
++	GATE(CLK_HDMI, "hdmi", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 6, 0,
++		0),
++	GATE(CLK_SMMU_TV, "smmu_tv", "mout_aclk200_disp1_sub",
++			GATE_IP_DISP1, 9, 0, 0),
++	GATE(CLK_SMMU_FIMD1, "smmu_fimd1", "mout_aclk200_disp1_sub",
++			GATE_IP_DISP1, 8, 0, 0),
++};
++
++static struct samsung_clk_ext_reg_dump exynos5250_disp_suspend_regs[] = {
++	{ GATE_IP_DISP1, 0xffffffff, 0xffffffff }, /* DISP1 gates */
++	{ SRC_TOP3, 0, BIT(4) },	/* MUX mout_aclk200_disp1_sub */
++	{ SRC_TOP3, 0, BIT(6) },	/* MUX mout_aclk300_disp1_sub */
++};
++
++static const struct exynos5_subcmu_info exynos5250_disp_subcmu = {
++	.gate_clks	= exynos5250_disp_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5250_disp_gate_clks),
++	.suspend_regs	= exynos5250_disp_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5250_disp_suspend_regs),
++	.pd_name	= "DISP1",
++};
++
+ static const struct samsung_pll_rate_table vpll_24mhz_tbl[] __initconst = {
+ 	/* sorted in descending order */
+ 	/* PLL_36XX_RATE(rate, m, p, s, k) */
+@@ -859,10 +877,11 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 	__raw_writel(tmp, reg_base + PWR_CTRL2);
+ 
+ 	exynos5250_clk_sleep_init();
++	exynos5_subcmus_init(ctx, 1, &exynos5250_disp_subcmu);
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
+ 	pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
+ 			_get_rate("div_arm2"));
+ }
+-CLK_OF_DECLARE(exynos5250_clk, "samsung,exynos5250-clock", exynos5250_clk_init);
++CLK_OF_DECLARE_DRIVER(exynos5250_clk, "samsung,exynos5250-clock", exynos5250_clk_init);
+diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
+index f2d6d7a09c16..caf45cf7aa8e 100644
+--- a/drivers/soc/samsung/pm_domains.c
++++ b/drivers/soc/samsung/pm_domains.c
+@@ -148,6 +148,7 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
+ }
+ 
+ static const char *soc_force_no_clk[] = {
++	"samsung,exynos5250-clock",
+ 	"samsung,exynos5420-clock",
+ 	"samsung,exynos5800-clock",
+ };
+-- 
+2.15.0
 
-[1]:
-https://github.com/googyanas/Googy-Max-N4-Kernel/blob/master/drivers/clk/samsung/clk-exynos5433.c#L3260
-
-Regards
-Andrzej
-
->
-> Regards,
-> Chanwoo Choi
->
-> On 2018년 02월 13일 22:40, Andrzej Hajda wrote:
->> Declared rates did not match rates generated by PLL.
->> As a result driver behaved inconsitently.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos5433.c | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
->> index db270908037a..335bebfa21c0 100644
->> --- a/drivers/clk/samsung/clk-exynos5433.c
->> +++ b/drivers/clk/samsung/clk-exynos5433.c
->> @@ -729,7 +729,7 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
->>  	PLL_35XX_RATE(800000000U,  400, 6,  1),
->>  	PLL_35XX_RATE(733000000U,  733, 12, 1),
->>  	PLL_35XX_RATE(700000000U,  175, 3,  1),
->> -	PLL_35XX_RATE(667000000U,  222, 4,  1),
->> +	PLL_35XX_RATE(666000000U,  222, 4,  1),
->>  	PLL_35XX_RATE(633000000U,  211, 4,  1),
->>  	PLL_35XX_RATE(600000000U,  500, 5,  2),
->>  	PLL_35XX_RATE(552000000U,  460, 5,  2),
->> @@ -757,12 +757,12 @@ static const struct samsung_pll_rate_table exynos5433_pll_rates[] __initconst =
->>  /* AUD_PLL */
->>  static const struct samsung_pll_rate_table exynos5433_aud_pll_rates[] __initconst = {
->>  	PLL_36XX_RATE(400000000U, 200, 3, 2,      0),
->> -	PLL_36XX_RATE(393216000U, 197, 3, 2, -25690),
->> +	PLL_36XX_RATE(393216003U, 197, 3, 2, -25690),
->>  	PLL_36XX_RATE(384000000U, 128, 2, 2,      0),
->> -	PLL_36XX_RATE(368640000U, 246, 4, 2, -15729),
->> -	PLL_36XX_RATE(361507200U, 181, 3, 2, -16148),
->> -	PLL_36XX_RATE(338688000U, 113, 2, 2,  -6816),
->> -	PLL_36XX_RATE(294912000U,  98, 1, 3,  19923),
->> +	PLL_36XX_RATE(368639991U, 246, 4, 2, -15729),
->> +	PLL_36XX_RATE(361507202U, 181, 3, 2, -16148),
->> +	PLL_36XX_RATE(338687988U, 113, 2, 2,  -6816),
->> +	PLL_36XX_RATE(294912002U,  98, 1, 3,  19923),
->>  	PLL_36XX_RATE(288000000U,  96, 1, 3,      0),
->>  	PLL_36XX_RATE(252000000U,  84, 1, 3,      0),
->>  	{ /* sentinel */ }
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
