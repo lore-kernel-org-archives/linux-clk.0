@@ -1,61 +1,193 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <sboyd@kernel.org>, <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 1/5] dt-bindings: clock: ti: add latching support to mux and divider clocks
-Date: Thu, 15 Feb 2018 14:49:47 +0200
-Message-ID: <1518698991-10099-2-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
-References: <1518698991-10099-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <dinguyen@kernel.org>
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: linux-clk@vger.kernel.org
+Cc: dinguyen@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Subject: [PATCHv6 1/3] dt-bindings: documentation: add clock bindings information for Stratix10
+Date: Mon, 26 Feb 2018 08:47:33 -0600
+Message-Id: <1519656455-14629-1-git-send-email-dinguyen@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Certain hardware configurations, like dra76x, have some of the clock
-registers partitioned in a funky manner that requires the clock
-control setup to be latched for PRCM to be notified of the change. This
-is accomplished with a separate control bit under the register. Add
-support for this clock latching support to divider and mux clocks.
+Document that Stratix10 clock bindings, and add the clock header file. The
+clock header is an enumeration of all the different clocks on the Stratix10
+platform.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/clock/ti/divider.txt | 3 +++
- Documentation/devicetree/bindings/clock/ti/mux.txt     | 3 +++
- 2 files changed, 6 insertions(+)
+v6:
+- no changes
+v5:
+- moved SPDX license header to single line comment
+v4:
+- remove '_' in node names
+- remove stray tab
+- add clock-frequency property for fixed-clocks
+- put SPDX license as the very top line
+v3:
+- s/intc/intel for correct vendor prefix
+- fixup node name to "intel,stratix10-clkmgr"
+- document the required fixed-clock for oscillators
+v2:
+- use a single binding for the clock controller
+---
+ .../devicetree/bindings/clock/intc_stratix10.txt   | 51 +++++++++++++
+ include/dt-bindings/clock/stratix10-clock.h        | 84 ++++++++++++++++++++++
+ 2 files changed, 135 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
+ create mode 100644 include/dt-bindings/clock/stratix10-clock.h
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/divider.txt b/Documentation/devicetree/bindings/clock/ti/divider.txt
-index 35a6f5c..9b13b32 100644
---- a/Documentation/devicetree/bindings/clock/ti/divider.txt
-+++ b/Documentation/devicetree/bindings/clock/ti/divider.txt
-@@ -75,6 +75,9 @@ Optional properties:
- - ti,invert-autoidle-bit : autoidle is enabled by setting the bit to 0,
-   see [2]
- - ti,set-rate-parent : clk_set_rate is propagated to parent
-+- ti,latch-bit : latch the divider value to HW, only needed if the register
-+  access requires this. As an example dra76x DPLL_GMAC H14 divider implements
-+  such behavior.
- 
- Examples:
- dpll_usb_m2_ck: dpll_usb_m2_ck@4a008190 {
-diff --git a/Documentation/devicetree/bindings/clock/ti/mux.txt b/Documentation/devicetree/bindings/clock/ti/mux.txt
-index 2d0d170..eec8994 100644
---- a/Documentation/devicetree/bindings/clock/ti/mux.txt
-+++ b/Documentation/devicetree/bindings/clock/ti/mux.txt
-@@ -48,6 +48,9 @@ Optional properties:
-   zero
- - ti,set-rate-parent : clk_set_rate is propagated to parent clock,
-   not supported by the composite-mux-clock subtype
-+- ti,latch-bit : latch the mux value to HW, only needed if the register
-+  access requires this. As an example, dra7x DPLL_GMAC H14 muxing
-+  implements such behavior.
- 
- Examples:
- 
+diff --git a/Documentation/devicetree/bindings/clock/intc_stratix10.txt b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
+new file mode 100644
+index 0000000..0652ff1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
+@@ -0,0 +1,51 @@
++Device Tree Clock bindings for Intel's SoCFPGA Stratix10 platform
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible : shall be
++	"intel,stratix10-clkmgr"
++
++- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
++
++- #clock-cells : from common clock binding, shall be set to 1.
++
++- clocks : Should contain fixed-clock sources, such as oscillators.
++
++Example:
++	clkmgr: clock-controller@ffd10000 {
++		compatible = "intel,stratix10-clkmgr";
++		reg = <0xffd10000 0x1000>;
++		#clock-cells = <1>;
++
++		clocks {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++
++			cb_intosc_ls_clk: cb-intosc-ls-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++
++			f2s_free_clk: f2s-free-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++
++			osc1: osc1 {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <25000000>;
++			};
++		};
++	};
+diff --git a/include/dt-bindings/clock/stratix10-clock.h b/include/dt-bindings/clock/stratix10-clock.h
+new file mode 100644
+index 0000000..0ac1c90
+--- /dev/null
++++ b/include/dt-bindings/clock/stratix10-clock.h
+@@ -0,0 +1,84 @@
++/* SPDX-License-Identifier:	GPL-2.0 */
++/*
++ * Copyright (C) 2017, Intel Corporation
++ */
++
++#ifndef __STRATIX10_CLOCK_H
++#define __STRATIX10_CLOCK_H
++
++/* fixed rate clocks */
++#define STRATIX10_OSC1			0
++#define STRATIX10_CB_INTOSC_HS_DIV2_CLK	1
++#define STRATIX10_CB_INTOSC_LS_CLK	2
++#define STRATIX10_F2S_FREE_CLK		3
++
++/* fixed factor clocks */
++#define STRATIX10_L4_SYS_FREE_CLK	4
++#define STRATIX10_MPU_PERIPH_CLK	5
++#define STRATIX10_MPU_L2RAM_CLK		6
++#define STRATIX10_SDMMC_CIU_CLK		7
++
++/* PLL clocks */
++#define STRATIX10_MAIN_PLL_CLK		8
++#define STRATIX10_PERIPH_PLL_CLK	9
++#define STRATIX10_BOOT_CLK		10
++
++/* Periph clocks */
++#define STRATIX10_MAIN_MPU_BASE_CLK	11
++#define STRATIX10_MAIN_NOC_BASE_CLK	12
++#define STRATIX10_MAIN_EMACA_CLK	13
++#define STRATIX10_MAIN_EMACB_CLK	14
++#define STRATIX10_MAIN_EMAC_PTP_CLK	15
++#define STRATIX10_MAIN_GPIO_DB_CLK	16
++#define STRATIX10_MAIN_SDMMC_CLK	17
++#define STRATIX10_MAIN_S2F_USR0_CLK	18
++#define STRATIX10_MAIN_S2F_USR1_CLK	19
++#define STRATIX10_MAIN_PSI_REF_CLK	20
++
++#define STRATIX10_PERI_MPU_BASE_CLK	21
++#define STRATIX10_PERI_NOC_BASE_CLK	22
++#define STRATIX10_PERI_EMACA_CLK	23
++#define STRATIX10_PERI_EMACB_CLK	24
++#define STRATIX10_PERI_EMAC_PTP_CLK	25
++#define STRATIX10_PERI_GPIO_DB_CLK	26
++#define STRATIX10_PERI_SDMMC_CLK	27
++#define STRATIX10_PERI_S2F_USR0_CLK	28
++#define STRATIX10_PERI_S2F_USR1_CLK	29
++#define STRATIX10_PERI_PSI_REF_CLK	30
++
++#define STRATIX10_MPU_FREE_CLK		31
++#define STRATIX10_NOC_FREE_CLK		32
++#define STRATIX10_S2F_USR0_CLK		33
++#define STRATIX10_NOC_CLK		34
++#define STRATIX10_EMAC_A_FREE_CLK	35
++#define STRATIX10_EMAC_B_FREE_CLK	36
++#define STRATIX10_EMAC_PTP_FREE_CLK	37
++#define STRATIX10_GPIO_DB_FREE_CLK	38
++#define STRATIX10_SDMMC_FREE_CLK	39
++#define STRATIX10_S2F_USER1_FREE_CLK	40
++#define STRATIX10_PSI_REF_FREE_CLK	41
++
++/* Gate clocks */
++#define STRATIX10_MPU_CLK		42
++#define STRATIX10_L4_MAIN_CLK		43
++#define STRATIX10_L4_MP_CLK		44
++#define STRATIX10_L4_SP_CLK		45
++#define STRATIX10_CS_AT_CLK		46
++#define STRATIX10_CS_TRACE_CLK		47
++#define STRATIX10_CS_PDBG_CLK		48
++#define STRATIX10_CS_TIMER_CLK		49
++#define STRATIX10_S2F_USER0_CLK		50
++#define STRATIX10_S2F_USER1_CLK		51
++#define STRATIX10_EMAC0_CLK		52
++#define STRATIX10_EMAC1_CLK		53
++#define STRATIX10_EMAC2_CLK		54
++#define STRATIX10_EMAC_PTP_CLK		55
++#define STRATIX10_GPIO_DB_CLK		56
++#define STRATIX10_SDMMC_CLK		57
++#define STRATIX10_PSI_REF_CLK		58
++#define STRATIX10_USB_CLK		59
++#define STRATIX10_SPI_M_CLK		60
++#define STRATIX10_NAND_CLK		61
++#define STRATIX10_NUM_CLKS		62
++
++#endif	/* __STRATIX10_CLOCK_H */
 -- 
-1.9.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.4
