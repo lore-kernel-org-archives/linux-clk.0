@@ -1,60 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kapsi.fi ([91.232.154.25]:48557 "EHLO mail.kapsi.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753971AbeBLMFj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 12 Feb 2018 07:05:39 -0500
-Subject: Re: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <a40f0593-24d8-a91e-9f8c-f7eafc379591@kapsi.fi>
-Date: Mon, 12 Feb 2018 14:05:36 +0200
+Return-Path: <marcel.ziswiler@toradex.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To: "digetx@gmail.com" <digetx@gmail.com>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, "thierry.reding@gmail.com"
+	<thierry.reding@gmail.com>, "pdeschrijver@nvidia.com"
+	<pdeschrijver@nvidia.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+Date: Mon, 26 Feb 2018 23:04:24 +0000
+Message-ID: <1519686262.6374.3.camel@toradex.com>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+	 <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+In-Reply-To: <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This seems to cause a system hang with an HDMI monitor attached - likely 
-in unpowergate as if I disable powergating the hang doesn't happen.
-
-Have you tested with a display attached?
-
-Mikko
-
-On 01/25/2018 04:00 PM, Peter De Schrijver wrote:
-> This patch series introduces the Memory Built-In Self Test (MBIST)
-> work around (WAR) needed when power ungating certain domains. More
-> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
-> implement the WAR in the Tegra210 clock driver, because most accesses are
-> to CAR registers and for the VENC domain, we need to make sure the CSI
-> clock source is not changed during the WAR execution.
-> 
-> Changes in v4:
-> * moved locking and clock control to tegra210_clk_handle_mbist_war()
-> * propagate errors during WAR execution to user
-> * rework error handling tegra210_mbist_clk_init() slightly
-> 
-> Changes in v3:
-> * fix compile problem on non-Tegra210 platforms
-> * fix clock handling bug in tegra210_generic_mbist_war()
-> * addressed minor comments
-> 
-> Changes in v2:
-> * Use readl for fence_delay() rather than readl_relaxed
-> * clarify MBIST and WAR acronyms
-> 
-> Peter De Schrijver (4):
->    clk: tegra: Add la clock for Tegra210
->    clk: tegra: add fence_delay for clock registers
->    clk: tegra: MBIST work around for Tegra210
->    soc/tegra: pmc: MBIST work around for Tegra210
-> 
->   drivers/clk/tegra/clk-tegra210.c         | 357 ++++++++++++++++++++++++++++++-
->   drivers/clk/tegra/clk.h                  |   7 +
->   drivers/soc/tegra/pmc.c                  |   7 +
->   include/dt-bindings/clock/tegra210-car.h |   2 +-
->   include/linux/clk/tegra.h                |   6 +
->   5 files changed, 376 insertions(+), 3 deletions(-)
-> 
+T24gTW9uLCAyMDE4LTAyLTI2IGF0IDE1OjQyICswMzAwLCBEbWl0cnkgT3NpcGVua28gd3JvdGU6
+DQo+IE9uIDIzLjAyLjIwMTggMDI6MDQsIE1hcmNlbCBaaXN3aWxlciB3cm90ZToNCj4gPiBUdXJu
+cyBvdXQgbGF0ZXN0IHVwc3RyZWFtIFUtQm9vdCBkb2VzIG5vdCBjb25maWd1cmUvZW5hYmxlIHBs
+bHUNCj4gPiB3aGljaA0KPiA+IGxlYXZlcyBpdCBhdCBzb21lIGRlZmF1bHQgcmF0ZSBvZiA1MDAg
+a0h6Og0KPiA+IA0KPiA+IHJvb3RAYXBhbGlzLXQzMDp+IyBjYXQgL3N5cy9rZXJuZWwvZGVidWcv
+Y2xrL2Nsa19zdW1tYXJ5IHwgZ3JlcA0KPiA+IHBsbF91DQo+ID4gICAgICAgIHBsbF91ICAgICAg
+ICAgICAgICAgICAgMyAgICAgICAgMyAgICAgICAgMCAgICAgIDUwMDAwMCAgICAgIA0KPiA+ICAg
+ICAwDQo+ID4gDQo+ID4gT2YgY291cnNlIHRoaXMgd29uJ3QgcXVpdGUgd29yayBsZWFkaW5nIHRv
+IHRoZSBmb2xsb3dpbmcgbWVzc2FnZXM6DQo+ID4gDQo+ID4gWyAgICA2LjU1OTU5M10gdXNiIDIt
+MTogbmV3IGZ1bGwtc3BlZWQgVVNCIGRldmljZSBudW1iZXIgMiB1c2luZw0KPiA+IHRlZ3JhLQ0K
+PiA+IGVoY2kNCj4gPiBbICAgMTEuNzU5MTczXSB1c2IgMi0xOiBkZXZpY2UgZGVzY3JpcHRvciBy
+ZWFkLzY0LCBlcnJvciAtMTEwDQo+ID4gWyAgIDI3LjExOTQ1M10gdXNiIDItMTogZGV2aWNlIGRl
+c2NyaXB0b3IgcmVhZC82NCwgZXJyb3IgLTExMA0KPiA+IFsgICAyNy4zODkyMTddIHVzYiAyLTE6
+IG5ldyBmdWxsLXNwZWVkIFVTQiBkZXZpY2UgbnVtYmVyIDMgdXNpbmcNCj4gPiB0ZWdyYS0NCj4g
+PiBlaGNpDQo+ID4gWyAgIDMyLjU1OTQ1NF0gdXNiIDItMTogZGV2aWNlIGRlc2NyaXB0b3IgcmVh
+ZC82NCwgZXJyb3IgLTExMA0KPiA+IFsgICA0Ny45Mjk3NzddIHVzYiAyLTE6IGRldmljZSBkZXNj
+cmlwdG9yIHJlYWQvNjQsIGVycm9yIC0xMTANCj4gPiBbICAgNDguMDQ5NjU4XSB1c2IgdXNiMi1w
+b3J0MTogYXR0ZW1wdCBwb3dlciBjeWNsZQ0KPiA+IFsgICA0OC43NTk0NzVdIHVzYiAyLTE6IG5l
+dyBmdWxsLXNwZWVkIFVTQiBkZXZpY2UgbnVtYmVyIDQgdXNpbmcNCj4gPiB0ZWdyYS0NCj4gPiBl
+aGNpDQo+ID4gWyAgIDU5LjM0OTQ1N10gdXNiIDItMTogZGV2aWNlIG5vdCBhY2NlcHRpbmcgYWRk
+cmVzcyA0LCBlcnJvciAtMTEwDQo+ID4gWyAgIDU5LjUwOTQ0OV0gdXNiIDItMTogbmV3IGZ1bGwt
+c3BlZWQgVVNCIGRldmljZSBudW1iZXIgNSB1c2luZw0KPiA+IHRlZ3JhLQ0KPiA+IGVoY2kNCj4g
+PiBbICAgNzAuMDY5NDU3XSB1c2IgMi0xOiBkZXZpY2Ugbm90IGFjY2VwdGluZyBhZGRyZXNzIDUs
+IGVycm9yIC0xMTANCj4gPiBbICAgNzAuMDc5NzIxXSB1c2IgdXNiMi1wb3J0MTogdW5hYmxlIHRv
+IGVudW1lcmF0ZSBVU0IgZGV2aWNlDQo+ID4gDQo+ID4gRml4IHRoaXMgYnkgYWN0dWFsbHkgYWxs
+b3dpbmcgdGhlIHJhdGUgYWxzbyBiZWluZyBzZXQgZnJvbSB3aXRoaW4NCj4gPiB0aGUgTGludXgg
+a2VybmVsLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2Vs
+Lnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+IA0KPiA+IC0tLQ0KPiA+IA0KPiA+ICBkcml2ZXJz
+L2Nsay90ZWdyYS9jbGstcGxsLmMgfCAyICsrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2Vy
+dGlvbnMoKykNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvdGVncmEvY2xrLXBs
+bC5jIGIvZHJpdmVycy9jbGsvdGVncmEvY2xrLQ0KPiA+IHBsbC5jDQo+ID4gaW5kZXggN2MzNjll
+MjFjOTFjLi44MzBkMWM4N2ZhN2MgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvdGVncmEv
+Y2xrLXBsbC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvdGVncmEvY2xrLXBsbC5jDQo+ID4gQEAg
+LTExNTEsNiArMTE1MSw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgY2xrX29wcw0KPiA+IHRlZ3Jh
+X2Nsa19wbGx1X29wcyA9IHsNCj4gPiAgCS5lbmFibGUgPSBjbGtfcGxsdV9lbmFibGUsDQo+ID4g
+IAkuZGlzYWJsZSA9IGNsa19wbGxfZGlzYWJsZSwNCj4gPiAgCS5yZWNhbGNfcmF0ZSA9IGNsa19w
+bGxfcmVjYWxjX3JhdGUsDQo+ID4gKwkucm91bmRfcmF0ZSA9IGNsa19wbGxfcm91bmRfcmF0ZSwN
+Cj4gPiArCS5zZXRfcmF0ZSA9IGNsa19wbGxfc2V0X3JhdGUsDQo+ID4gIH07DQo+ID4gIA0KPiA+
+ICBzdGF0aWMgaW50IF9wbGxfZml4ZWRfbWRpdihzdHJ1Y3QgdGVncmFfY2xrX3BsbF9wYXJhbXMN
+Cj4gPiAqcGxsX3BhcmFtcywNCj4gPiANCj4gDQo+IFRlZ3JhJ3MgVVNCIFBIWSBkcml2ZXIgb25s
+eSBlbmFibGVzIGNsb2NrIGFuZCBjbGsgZHJpdmVyIGRvZXNuJ3QNCj4gc3BlY2lmeSB0aGUNCj4g
+Y2xvY2sgcmF0ZSBpbiB0aGUgaW5pdCB0YWJsZS4gQ291bGQgeW91IHBsZWFzZSBjbGFyaWZ5IHdo
+ZXJlIGluIHRoZQ0KPiBrZXJuZWxzIGNvZGUNCj4gUExMX1UgcmF0ZSBpcyBnZXR0aW5nIHNldD8N
+Cg0KSSBndWVzcyB0aGF0IHdvdWxkIGJlIGFjY29yZGluZyB0byB0aGUgZm9sbG93aW5nIHRhYmxl
+IGlzbid0IGl0Og0KDQpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVs
+L2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZQ0KL2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdy
+YTMwLmM/aD12NC4xNi1yYzMjbjI4Nw==
