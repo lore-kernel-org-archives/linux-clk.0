@@ -1,61 +1,45 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 06/26] ARM: dts: r8a7792: Adjust SMP routine size
-Date: Mon, 12 Feb 2018 17:44:15 +0000
-Message-Id: <1518457475-4480-7-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:57262 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754000AbeBZPJk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Feb 2018 10:09:40 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180226125355.9052-3-m.szyprowski@samsung.com>
+References: <CGME20180226125402eucas1p1ac3e0a5853218cd77f469864f70ae89d@eucas1p1.samsung.com>
+ <20180226125355.9052-1-m.szyprowski@samsung.com> <20180226125355.9052-3-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 26 Feb 2018 16:09:37 +0100
+Message-ID: <CAJKOXPc6UY5B+7H64cb7Qn+c8sK_22v_a3oMCXhQOyVoXhhk4A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] clk: samsung: Add Exynos5 sub-CMU clock driver
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+On Mon, Feb 26, 2018 at 1:53 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Exynos5250/5420/5800 have only one clock constroller, but some of their
+> clock depends on respective power domains. Handling integration of clock
+> controller and power domain can be done using runtime PM feature of CCF
+> framework. This however needs a separate struct device for each power
+> domain. This patch adds such separate driver for a group of such clocks,
+> which can be instantiated more than once, each time for a different
+> power domain.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5-subcmu.c | 185 +++++++++++++++++++++++++++++++
+>  drivers/clk/samsung/clk-exynos5-subcmu.h |  26 +++++
+>  2 files changed, 211 insertions(+)
+>  create mode 100644 drivers/clk/samsung/clk-exynos5-subcmu.c
+>  create mode 100644 drivers/clk/samsung/clk-exynos5-subcmu.h
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4->v5:
-* no change
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
- arch/arm/boot/dts/r8a7792.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index 268987f..bea0f12 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -341,7 +341,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
--- 
-2.7.4
+Best regards,
+Krzysztof
