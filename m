@@ -1,67 +1,89 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 16/26] clk: renesas: r8a7745: Add rwdt clock
-Date: Mon, 12 Feb 2018 17:44:25 +0000
-Message-Id: <1518457475-4480-17-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:41548 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752218AbeBZLyU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 06:54:20 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a26kkcmzT450326=xHXjynG=uNYi2w07w6T+T01zQOQag@mail.gmail.com>
+References: <1519483851-31135-1-git-send-email-yamada.masahiro@socionext.com> <CAK8P3a26kkcmzT450326=xHXjynG=uNYi2w07w6T+T01zQOQag@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 26 Feb 2018 20:53:29 +0900
+Message-ID: <CAK7LNAT8sRDNZKbcpXY+e98O+sJHw9vUM9bKvdmVZNuEEQoMdA@mail.gmail.com>
+Subject: Re: [RFC PATCH] drivers: use 'depends on MFD_SYSCON' instead of
+ 'select MFD_SYSCON'
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add "rwdt" clock to r8a7745_mod_clks. Also, since we may need to access
-the watchdog registers at any time, declare the clock as critical.
+2018-02-26 17:43 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+> On Sat, Feb 24, 2018 at 3:50 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> As Documentation/kbuild/kconfig-language.txt notes, 'select' should be
+>> used with care - it forces a lower limit of another symbol, ignoring
+>> the dependency.
+>>
+>> MFD_SYSCON depends on HAS_IOMEM, but several drivers with COMPILE_TEST
+>> select it.
+>>
+>> This causes unmet dependencies for architecture without HAS_IOMEM.
+>>
+>>   $ make ARCH=score randconfig
+>>   scripts/kconfig/conf  --randconfig Kconfig
+>>   KCONFIG_SEED=0x27C47F43
+>>   warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && ...)
+>>   selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
+>>
+>> Use 'depends on' to observe the dependency.
+>>
+>> This commit was created by the following command:
+>>
+>>   $ find drivers -name 'Kconfig*' | xargs sed -i -e \
+>>     's/select MFD_SYSCON$/depends on MFD_SYSCON/'
+>>
+>> Then, COMMON_CLK_NXP and S3C2410_WATCHDOG were fixed up manually.
+>>
+>> Also, make MFD_SYSCON 'default y' because some defconfig files may
+>> rely on someone select's MFD_SYSCON.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>>
+>> If you have a better idea to fix 'unmet dependencies',
+>> please suggest.
+>
+> Changing 'select MFD_SYSCON' to 'depends on' will definitely break lots
+> of defconfig configurations, I'd rather not do that.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v4->v5:
-* no change
 
- drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+Could you explain why?
 
-diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-index 2859504..87f5a36 100644
---- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-@@ -114,6 +114,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
- 	DEF_MOD("cmt1",			 329,	R8A7745_CLK_R),
- 	DEF_MOD("usbhs-dmac0",		 330,	R8A7745_CLK_HP),
- 	DEF_MOD("usbhs-dmac1",		 331,	R8A7745_CLK_HP),
-+	DEF_MOD("rwdt",			 402,	R8A7745_CLK_R),
- 	DEF_MOD("irqc",			 407,	R8A7745_CLK_CP),
- 	DEF_MOD("intc-sys",		 408,	R8A7745_CLK_ZS),
- 	DEF_MOD("audio-dmac0",		 502,	R8A7745_CLK_HP),
-@@ -180,6 +181,7 @@ static const struct mssr_mod_clk r8a7745_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a7745_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-SYS (GIC) */
- };
- 
+I set 'default y' for MFD_SYSCON.
+
+Would it still break defconfig configurations?
+
+
+
+
+> Only score, tile and um have some configurations that select 'NO_IOMEM'.
+> Score is getting removed now, tile might get removed later (we could make
+> PCI mandatory in the meantime to avoid that configuration), and I think for
+> um, we already have a workaround for the NO_IOMEM dependencies
+> (I forget the details).
+
+I do not think this is a stable solution.
+
+Or, do you mean to remove NO_IOMEM and HAS_IOMEM completely?
+
+
+
+
 -- 
-2.7.4
+Best Regards
+Masahiro Yamada
