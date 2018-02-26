@@ -1,127 +1,167 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	afaerber@suse.de,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
 	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	viresh.kumar@linaro.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 00/11] Add clock driver for Actions S900 SoC
-Date: Sat, 10 Feb 2018 08:11:09 +0530
-Message-Id: <20180210024120.27503-1-manivannan.sadhasivam@linaro.org>
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v7 09/15] clk: qcom: Add KPSS ACC/GCC driver
+Date: Mon, 26 Feb 2018 15:23:25 +0530
+Message-Id: <1519638811-17269-10-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds clock support for Actions Semi OWL series
-S900 SoC with relevant clock bindings and device tree data.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Driver has been validated on Bubblegum-96 board.
+The ACC and GCC regions present in KPSSv1 contain registers to
+control clocks and power to each Krait CPU and L2. For CPUfreq
+purposes probe these devices and expose a mux clock that chooses
+between PXO and PLL8.
 
-Thanks,
-Mani
+Cc: <devicetree@vger.kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/qcom/Kconfig    |  8 +++++
+ drivers/clk/qcom/Makefile   |  1 +
+ drivers/clk/qcom/kpss-xcc.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 96 insertions(+)
+ create mode 100644 drivers/clk/qcom/kpss-xcc.c
 
-Changes in V3:
-
-* Completely refactored the clock driver based on sunxi-ng
-  clock structure
-* Removed all owl_ prefixed functions for registering the
-  clock driver and used the registration functions directly
-* Moved to SPDX based license tag
-* Removed module dependencies from the driver
-* Made I2C clocks as simple gate clocks due to the lack of
-  information about factor rates
-* Added Ack from Rob for DT bindings
-* Sourced CMU clock for UART5
-
-Changes in V2: (https://lkml.org/lkml/2017/11/6/840)
-
-* Changed the directory structure to actions/ and used owl- prefix
-  for sources.
-* Fixed MAINTAINERS and added Andreas as Designated Reviewer (R:).
-* Introduced new Kconfig for S900 code part (CONFIG_CLK_OWL_S900).
-* Changed the license from GPLv2 to GPLv2+.
-* Moved fixed clock sources to DT
-* Changed clock-controller node name to cmu in DT
-* Added clocks property to cmu node in DT
-* Changed compatible property value to "actions,s900-cmu"
-* Fixed example UART controller node in documentation
-* Fixed tab vs space issue
-
-Changes in V1: (https://lkml.org/lkml/2017/10/31/808)
-
-* Addressed last year's review comments from Stephen
-- https://patchwork.kernel.org/patch/9254471/
-
-Manivannan Sadhasivam (11):
-  dt-bindings: clock: Add Actions S900 clock bindings
-  arm64: dts: actions: Add S900 clock management unit nodes
-  arm64: dts: actions: Source CMU clock for UART5
-  clk: actions: Add common clock driver support
-  clk: actions: Add gate clock support
-  clk: actions: Add mux clock support
-  clk: actions: Add divider clock support
-  clk: actions: Add factor clock support
-  clk: actions: Add composite clock support
-  clk: actions: Add pll clock support
-  clk: actions: Add S900 SoC clock support
-
- .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 ++
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |   8 +-
- arch/arm64/boot/dts/actions/s900.dtsi              |  20 +
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/actions/Kconfig                        |  14 +
- drivers/clk/actions/Makefile                       |  12 +
- drivers/clk/actions/owl-common.c                   |  84 +++
- drivers/clk/actions/owl-common.h                   |  40 ++
- drivers/clk/actions/owl-composite.c                | 155 +++++
- drivers/clk/actions/owl-composite.h                | 101 ++++
- drivers/clk/actions/owl-divider.c                  |  94 +++
- drivers/clk/actions/owl-divider.h                  |  75 +++
- drivers/clk/actions/owl-factor.c                   | 222 +++++++
- drivers/clk/actions/owl-factor.h                   |  83 +++
- drivers/clk/actions/owl-gate.c                     |  77 +++
- drivers/clk/actions/owl-gate.h                     |  73 +++
- drivers/clk/actions/owl-mux.c                      |  60 ++
- drivers/clk/actions/owl-mux.h                      |  61 ++
- drivers/clk/actions/owl-pll.c                      | 194 ++++++
- drivers/clk/actions/owl-pll.h                      |  92 +++
- drivers/clk/actions/owl-s900.c                     | 666 +++++++++++++++++++++
- drivers/clk/actions/owl-s900.h                     |  61 ++
- include/dt-bindings/clock/actions,s900-cmu.h       | 139 +++++
- 24 files changed, 2373 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
- create mode 100644 drivers/clk/actions/Kconfig
- create mode 100644 drivers/clk/actions/Makefile
- create mode 100644 drivers/clk/actions/owl-common.c
- create mode 100644 drivers/clk/actions/owl-common.h
- create mode 100644 drivers/clk/actions/owl-composite.c
- create mode 100644 drivers/clk/actions/owl-composite.h
- create mode 100644 drivers/clk/actions/owl-divider.c
- create mode 100644 drivers/clk/actions/owl-divider.h
- create mode 100644 drivers/clk/actions/owl-factor.c
- create mode 100644 drivers/clk/actions/owl-factor.h
- create mode 100644 drivers/clk/actions/owl-gate.c
- create mode 100644 drivers/clk/actions/owl-gate.h
- create mode 100644 drivers/clk/actions/owl-mux.c
- create mode 100644 drivers/clk/actions/owl-mux.h
- create mode 100644 drivers/clk/actions/owl-pll.c
- create mode 100644 drivers/clk/actions/owl-pll.h
- create mode 100644 drivers/clk/actions/owl-s900.c
- create mode 100644 drivers/clk/actions/owl-s900.h
- create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
-
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index bf14f56..8fca65d 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -235,6 +235,14 @@ config QCOM_HFPLL
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as MSM8974, APQ8084, etc.
+ 
++config KPSS_XCC
++	tristate "KPSS Clock Controller"
++	depends on COMMON_CLK_QCOM
++	help
++	  Support for the Krait ACC and GCC clock controllers. Say Y
++	  if you want to support CPU frequency scaling on devices such
++	  as MSM8960, APQ8064, etc.
++
+ config KRAIT_CLOCKS
+ 	bool
+ 	select KRAIT_L2_ACCESSORS
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index e1e96f6..24e598a 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -40,4 +40,5 @@ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
++obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
+ obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
+diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
+new file mode 100644
+index 0000000..8590b5e
+--- /dev/null
++++ b/drivers/clk/qcom/kpss-xcc.c
+@@ -0,0 +1,87 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++
++static const char *aux_parents[] = {
++	"pll8_vote",
++	"pxo",
++};
++
++static unsigned int aux_parent_map[] = {
++	3,
++	0,
++};
++
++static const struct of_device_id kpss_xcc_match_table[] = {
++	{ .compatible = "qcom,kpss-acc-v1", .data = (void *)1UL },
++	{ .compatible = "qcom,kpss-gcc" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, kpss_xcc_match_table);
++
++static int kpss_xcc_driver_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *id;
++	struct clk *clk;
++	struct resource *res;
++	void __iomem *base;
++	const char *name;
++
++	id = of_match_device(kpss_xcc_match_table, &pdev->dev);
++	if (!id)
++		return -ENODEV;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	if (id->data) {
++		if (of_property_read_string_index(pdev->dev.of_node,
++						  "clock-output-names",
++						  0, &name))
++			return -ENODEV;
++		base += 0x14;
++	} else {
++		name = "acpu_l2_aux";
++		base += 0x28;
++	}
++
++	clk = clk_register_mux_table(&pdev->dev, name, aux_parents,
++				     ARRAY_SIZE(aux_parents), 0, base, 0, 0x3,
++				     0, aux_parent_map, NULL);
++
++	platform_set_drvdata(pdev, clk);
++
++	return PTR_ERR_OR_ZERO(clk);
++}
++
++static int kpss_xcc_driver_remove(struct platform_device *pdev)
++{
++	clk_unregister_mux(platform_get_drvdata(pdev));
++	return 0;
++}
++
++static struct platform_driver kpss_xcc_driver = {
++	.probe = kpss_xcc_driver_probe,
++	.remove = kpss_xcc_driver_remove,
++	.driver = {
++		.name = "kpss-xcc",
++		.of_match_table = kpss_xcc_match_table,
++	},
++};
++module_platform_driver(kpss_xcc_driver);
++
++MODULE_DESCRIPTION("Krait Processor Sub System (KPSS) Clock Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:kpss-xcc");
 -- 
-2.14.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
