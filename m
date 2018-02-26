@@ -1,64 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:60420 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934007AbeBLL3l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Feb 2018 06:29:41 -0500
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v3 1/5] clk: mediatek: update missing clock data for MT7622 audsys
-Date: Mon, 12 Feb 2018 19:28:47 +0800
-Message-ID: <ee93f496edb238935940233d88f5548940b53b6a.1518424204.git.ryder.lee@mediatek.com>
-In-Reply-To: <cover.1518424204.git.ryder.lee@mediatek.com>
-References: <cover.1518424204.git.ryder.lee@mediatek.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, devicetree <devicetree@vger.kernel.org>, "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
+Date: Mon, 26 Feb 2018 17:16:44 +0100
+Message-ID: <2676311.2IEVhXnSIE@jernej-laptop>
+In-Reply-To: <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-15-jernej.skrabec@siol.net> <CAGRGNgWgkfax2TUSjK4397i678gXTTLh80r2HWwTB6u0GM0Cuw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add missing clock data 'CLK_AUDIO_AFE_CONN' for MT7622 audsys.
+Hi Julian,
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- drivers/clk/mediatek/clk-mt7622-aud.c  | 1 +
- include/dt-bindings/clock/mt7622-clk.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Dne nedelja, 25. februar 2018 ob 09:11:34 CET je Julian Calaby napisal(a):
+> Hi Jernej,
+> 
+> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Enable HDMI output on all boards which have HDMI connector.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25
+> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts        
+> >   | 25 ++++++++++++++++++++++
+> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25
+> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts         
+> >   | 25 ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-2.dts  
+> >         | 25 ++++++++++++++++++++++
+> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25
+> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts      
+> >   | 24 +++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts  
+> >        | 25 ++++++++++++++++++++++ 8 files changed, 199 insertions(+)
+> 
+> As I understand it, the H2+ is just a slightly trimmed down H3. In
+> terms of HDMI support, the difference is that the H2+ can't output 4k.
+> If this code is compatible with the H2+, could you please add the
+> necessary bits and pieces to the h2-plus DTSs too?
 
-diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
-index fad7d9f..13f752d 100644
---- a/drivers/clk/mediatek/clk-mt7622-aud.c
-+++ b/drivers/clk/mediatek/clk-mt7622-aud.c
-@@ -106,6 +106,7 @@
- 	GATE_AUDIO1(CLK_AUDIO_INTDIR, "audio_intdir", "intdir_sel", 20),
- 	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
- 	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
-+	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
- 	/* AUDIO2 */
- 	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
- 	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
-diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
-index 3e514ed..e9d77f0 100644
---- a/include/dt-bindings/clock/mt7622-clk.h
-+++ b/include/dt-bindings/clock/mt7622-clk.h
-@@ -235,7 +235,8 @@
- #define CLK_AUDIO_MEM_ASRC3		43
- #define CLK_AUDIO_MEM_ASRC4		44
- #define CLK_AUDIO_MEM_ASRC5		45
--#define CLK_AUDIO_NR_CLK		46
-+#define CLK_AUDIO_AFE_CONN		46
-+#define CLK_AUDIO_NR_CLK		47
- 
- /* SSUSBSYS */
- 
--- 
-1.9.1
+There are only 3 H2+ boards in kernel and none of them has HDMI connector, so 
+there's nothing to do actually. But if such board is added to kernel, it would 
+be trivially add proper nodes, since all H2+ boards include H3 DTSI.
 
+Best regards,
+Jernej
