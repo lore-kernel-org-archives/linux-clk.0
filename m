@@ -1,240 +1,143 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 08/19] clk: meson: add regmap to the clock controllers
-Date: Mon, 12 Feb 2018 15:58:35 +0100
-Message-Id: <20180212145846.19380-9-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Tue, 27 Feb 2018 08:07:35 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: jernej.skrabec@siol.net, linux-sunxi <linux-sunxi@googlegroups.com>,
+	Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
+	David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI
+ output on H3 boards
+Message-ID: <20180227070735.ml3mc4nr4vpge57u@flea>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+ <2676311.2IEVhXnSIE@jernej-laptop>
+ <4AA78C45-E139-417E-BE89-FE0BFBC409B0@aosc.io>
+ <2342395.9m6rrqTry7@jernej-laptop>
+ <CAGRGNgU8-uJuns7mAzS-gc81qvVAkS9JS2Tm13p2Qp7dMDCNkg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hvvzilz5wqazdv4s"
+In-Reply-To: <CAGRGNgU8-uJuns7mAzS-gc81qvVAkS9JS2Tm13p2Qp7dMDCNkg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This change registers a regmap in meson8b, gxbb and axg controllers.
-The clock are still accessing their registers directly through iomem.
-Once all clocks handled by these controllers have been move to regmap,
-the regmap register will be removed and replaced with a syscon request.
 
-This is needed because other drivers, such as the HDMI driver, need to
-access the HHI register region
+--hvvzilz5wqazdv4s
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/Kconfig   |  2 ++
- drivers/clk/meson/axg.c     | 15 ++++++++++++++-
- drivers/clk/meson/gxbb.c    | 33 +++++++++++++++++++++++----------
- drivers/clk/meson/meson8b.c | 14 +++++++++++++-
- 4 files changed, 52 insertions(+), 12 deletions(-)
+On Tue, Feb 27, 2018 at 01:29:27PM +1100, Julian Calaby wrote:
+> Hi Jernej,
+>=20
+> On Tue, Feb 27, 2018 at 3:27 AM, Jernej =C5=A0krabec <jernej.skrabec@siol=
+=2Enet> wrote:
+> > Hi,
+> >
+> > Dne ponedeljek, 26. februar 2018 ob 17:21:05 CET je Icenowy Zheng napis=
+al(a):
+> >> =E4=BA=8E 2018=E5=B9=B42=E6=9C=8827=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=
+=8812:16:44, "Jernej =C5=A0krabec"
+> > <jernej.skrabec@siol.net> =E5=86=99=E5=88=B0:
+> >> >Hi Julian,
+> >> >
+> >> >Dne nedelja, 25. februar 2018 ob 09:11:34 CET je Julian Calaby
+> >> >
+> >> >napisal(a):
+> >> >> Hi Jernej,
+> >> >>
+> >> >> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec
+> >> >
+> >> ><jernej.skrabec@siol.net>
+> >> >
+> >> >wrote:
+> >> >> > Enable HDMI output on all boards which have HDMI connector.
+> >> >> >
+> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >> >> > ---
+> >> >> >
+> >> >> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25
+> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
+> >> >> >
+> >> >> >   | 25 ++++++++++++++++++++++
+> >> >> >
+> >> >> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25
+> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
+> >> >> >
+> >> >> >   | 25 ++++++++++++++++++++++
+> >> >
+> >> >arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
+> >> >
+> >> >> >         | 25 ++++++++++++++++++++++
+> >> >> >
+> >> >> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25
+> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one.d=
+ts
+> >> >> >
+> >> >> >   | 24 +++++++++++++++++++++
+> >> >
+> >> >arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+> >> >
+> >> >> >        | 25 ++++++++++++++++++++++ 8 files changed, 199
+> >> >
+> >> >insertions(+)
+> >> >
+> >> >> As I understand it, the H2+ is just a slightly trimmed down H3. In
+> >> >> terms of HDMI support, the difference is that the H2+ can't output
+> >> >
+> >> >4k.
+> >> >
+> >> >> If this code is compatible with the H2+, could you please add the
+> >> >> necessary bits and pieces to the h2-plus DTSs too?
+> >> >
+> >> >There are only 3 H2+ boards in kernel and none of them has HDMI
+> >> >connector, so
+> >>
+> >> BPi M2 Zero has miniHDMI connector.
+> >
+> > Ah, sorry, I missed that one. Since I don't have it (or any other board=
+ with
+> > H2+) I'm not really comfortable including such patch. If anyone will te=
+st it,
+> > I can include it in next revision.
+>=20
+> I have one of those (this is why I'm interested in this patchset) so
+> I'm willing to test, however I can't guarantee I'll get to it quickly.
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 33d148e19066..9735335b17a9 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -11,6 +11,7 @@ config COMMON_CLK_MESON8B
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
-+	select REGMAP
- 	help
- 	  Support for the clock controller on AmLogic S802 (Meson8),
- 	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
-@@ -29,6 +30,7 @@ config COMMON_CLK_AXG
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
-+	select REGMAP
- 	help
- 	  Support for the clock controller on AmLogic A113D devices, aka axg.
- 	  Say Y if you want peripherals and CPU frequency scaling to work.
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index bc5c29f13282..aed0f9e64f71 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -11,10 +11,11 @@
- 
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/init.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
--#include <linux/init.h>
-+#include <linux/regmap.h>
- 
- #include "clkc.h"
- #include "axg.h"
-@@ -791,12 +792,19 @@ static const struct of_device_id clkc_match_table[] = {
- 	{}
- };
- 
-+static const struct regmap_config clkc_regmap_config = {
-+	.reg_bits       = 32,
-+	.val_bits       = 32,
-+	.reg_stride     = 4,
-+};
-+
- static int axg_clkc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	const struct clkc_data *clkc_data;
- 	struct resource *res;
- 	void __iomem *clk_base;
-+	struct regmap *map;
- 	int ret, i;
- 
- 	clkc_data = of_device_get_match_data(dev);
-@@ -807,12 +815,17 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
- 		return -EINVAL;
-+
- 	clk_base = devm_ioremap(dev, res->start, resource_size(res));
- 	if (!clk_base) {
- 		dev_err(dev, "Unable to map clk base\n");
- 		return -ENXIO;
- 	}
- 
-+	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
-+	if (IS_ERR(map))
-+		return PTR_ERR(map);
-+
- 	/* Populate base address for PLLs */
- 	for (i = 0; i < clkc_data->clk_plls_count; i++)
- 		clkc_data->clk_plls[i]->base = clk_base;
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 6609024eee00..e3faf0a0fdb7 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -19,10 +19,11 @@
- 
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/init.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
--#include <linux/init.h>
-+#include <linux/regmap.h>
- 
- #include "clkc.h"
- #include "gxbb.h"
-@@ -1937,10 +1938,18 @@ static const struct of_device_id clkc_match_table[] = {
- 	{},
- };
- 
-+static const struct regmap_config clkc_regmap_config = {
-+	.reg_bits       = 32,
-+	.val_bits       = 32,
-+	.reg_stride     = 4,
-+};
-+
- static int gxbb_clkc_probe(struct platform_device *pdev)
- {
- 	const struct clkc_data *clkc_data;
-+	struct resource *res;
- 	void __iomem *clk_base;
-+	struct regmap *map;
- 	int ret, i;
- 	struct device *dev = &pdev->dev;
- 
-@@ -1948,13 +1957,20 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	if (!clkc_data)
- 		return -EINVAL;
- 
--	/*  Generic clocks and PLLs */
--	clk_base = of_iomap(dev->of_node, 0);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -EINVAL;
-+
-+	clk_base = devm_ioremap(dev, res->start, resource_size(res));
- 	if (!clk_base) {
- 		pr_err("%s: Unable to map clk base\n", __func__);
- 		return -ENXIO;
- 	}
- 
-+	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
-+	if (IS_ERR(map))
-+		return PTR_ERR(map);
-+
- 	/* Populate base address for PLLs */
- 	for (i = 0; i < clkc_data->clk_plls_count; i++)
- 		clkc_data->clk_plls[i]->base = clk_base;
-@@ -1991,17 +2007,14 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 
- 		ret = devm_clk_hw_register(dev,
- 					   clkc_data->hw_onecell_data->hws[i]);
--		if (ret)
--			goto iounmap;
-+		if (ret) {
-+			dev_err(dev, "Clock registration failed\n");
-+			return ret;
-+		}
- 	}
- 
--
- 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
- 					   clkc_data->hw_onecell_data);
--
--iounmap:
--	iounmap(clk_base);
--	return ret;
- }
- 
- static struct platform_driver gxbb_driver = {
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index db017c29a84c..0981e970de3d 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -23,11 +23,12 @@
- 
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/init.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/reset-controller.h>
- #include <linux/slab.h>
--#include <linux/init.h>
-+#include <linux/regmap.h>
- 
- #include "clkc.h"
- #include "meson8b.h"
-@@ -804,16 +805,27 @@ static const struct reset_control_ops meson8b_clk_reset_ops = {
- 	.deassert = meson8b_clk_reset_deassert,
- };
- 
-+static const struct regmap_config clkc_regmap_config = {
-+	.reg_bits       = 32,
-+	.val_bits       = 32,
-+	.reg_stride     = 4,
-+};
-+
- static int meson8b_clkc_probe(struct platform_device *pdev)
- {
- 	int ret, i;
- 	struct clk_hw *parent_hw;
- 	struct clk *parent_clk;
- 	struct device *dev = &pdev->dev;
-+	struct regmap *map;
- 
- 	if (!clk_base)
- 		return -ENXIO;
- 
-+	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
-+	if (IS_ERR(map))
-+		return PTR_ERR(map);
-+
- 	/* Populate base address for PLLs */
- 	for (i = 0; i < ARRAY_SIZE(meson8b_clk_plls); i++)
- 		meson8b_clk_plls[i]->base = clk_base;
--- 
-2.14.3
+Then I guess the best way forward will be to keep the current patch as
+is, and you'll send a patch whenever you have the time to test it.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--hvvzilz5wqazdv4s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqVA6gACgkQ0rTAlCFN
+r3Q6vg/9Fm4ScE+f0ZUY+8HUDprDlD6ldpEISEpdTAjAJWM79FS1uGjliUeykw3r
++W2ILskyTqcyI4vWoV7IfGfdj5AdHYgu4Kl11jgk692Xsli8Tcmj1j1HSeFVGShq
+Zi5uRUDRbWegypGTCqFKp7xpZaMpv+9h3cQ02hdqOzxieu/On9hWWK+2siI7L9Uo
+Og0DPCvyNTnEMFvi+7UHHlKSHVmIrNdx5D8Ey2rk8hC2Y4R4cA4FPFRzGp4sYzor
+GEtKGM/cbB1xFgtCNaUjs4I+pEi8ZGowc7UZ0mVdKHsH7IhkEj1kC+LJRP2r5mMf
+nfLESFP/0ovvg6wTPrwZkLWGnYoEEIH1YgodzwO//2IOZHxrFh+ZL1bGrfQg9mUV
+tqiOP5aRaWCMYZy9NN5MQZ8jajPmQrxBsrrEoB8/B5DDaWRb7vnbNjqhNUVgmTh6
+2C/pHxFZbgMLSXR1Hkj0Ph50AZaQeqO381JsrI6SM5xXnGUrg4K4C7i/xtxyhdWU
+XZXw/rm4kLSCbBHQvNicrILn0PZh0fAKvsmClmFmxv6bMeXPAlRimM+uQjzaR7o/
+vCq253+Ne61sOPSRjgyJl2tqjEof2CIUTYwS8+U+57DYcgg678e2Qv8Br2cdYENX
+kJVUbQ8vbEYm4VMGApRBsWAsakQwgnK0QVuCJ53nhNp4Nu5c5wM=
+=8IBn
+-----END PGP SIGNATURE-----
+
+--hvvzilz5wqazdv4s--
