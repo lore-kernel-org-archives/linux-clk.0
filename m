@@ -1,356 +1,248 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 05/19] clk: meson: add regmap clocks
-Date: Mon, 12 Feb 2018 15:58:32 +0100
-Message-Id: <20180212145846.19380-6-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 10/16] drm/sun4i: Add support for variants to DW HDMI PHY
+Date: Tue, 27 Feb 2018 23:26:55 +0100
+Message-Id: <20180227222701.9716-11-jernej.skrabec@siol.net>
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Meson clock controllers need to move the classical iomem registers to
-regmap. This is triggered because the HHI controllers found on the GXBB
-and GXL host more than just clocks. To properly handle this, we would
-like to migrate HHI to syscon. Also GXBB AO clock controller already use
-regmap, AXG AO and Audio clock controllers will as well.
+There are multiple variants of DW HDMI PHYs in Allwinner SoCs. While
+some things like clock and reset setup are the same, PHY configuration
+differs a lot.
 
-The purpose of this change is to provide a common structure to these
-meson controllers (and possibly others) for regmap based clocks.
+Split out code which is PHY specific to separate functions and create
+a structure which holds pointers to those functions.
 
-This change provides the basic gate, mux and divider, based on the
-helpers provided by the related generic clocks
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/meson/Kconfig      |   4 +
- drivers/clk/meson/Makefile     |   1 +
- drivers/clk/meson/clk-regmap.c | 166 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/clk-regmap.h | 111 +++++++++++++++++++++++++++
- 4 files changed, 282 insertions(+)
- create mode 100644 drivers/clk/meson/clk-regmap.c
- create mode 100644 drivers/clk/meson/clk-regmap.h
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  | 20 ++++++--
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 89 +++++++++++++++++++++++-----------
+ 2 files changed, 76 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 7694302c70a4..e97e85077da1 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -3,6 +3,10 @@ config COMMON_CLK_AMLOGIC
- 	depends on OF
- 	depends on ARCH_MESON || COMPILE_TEST
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index d8d0684fc8aa..1e9eb6072615 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -12,11 +12,23 @@
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
  
-+config COMMON_CLK_REGMAP_MESON
-+	bool
-+	select REGMAP
++struct sun8i_hdmi_phy;
 +
- config COMMON_CLK_MESON8B
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 3c03ce583798..11a50586666a 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -6,3 +6,4 @@ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-cpu.o clk-mpll.o clk-audio-div
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-regmap.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-+obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-new file mode 100644
-index 000000000000..3645fdb62343
---- /dev/null
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -0,0 +1,166 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 BayLibre, SAS.
-+// Author: Jerome Brunet <jbrunet@baylibre.com>
-+
-+#include "clk-regmap.h"
-+
-+static int clk_regmap_gate_endisable(struct clk_hw *hw, int enable)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_gate_data *gate = clk_get_regmap_gate_data(clk);
-+	int set = gate->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+
-+	set ^= enable;
-+
-+	return regmap_update_bits(clk->map, gate->offset, BIT(gate->bit_idx),
-+				  set ? BIT(gate->bit_idx) : 0);
-+}
-+
-+static int clk_regmap_gate_enable(struct clk_hw *hw)
-+{
-+	return clk_regmap_gate_endisable(hw, 1);
-+}
-+
-+static void clk_regmap_gate_disable(struct clk_hw *hw)
-+{
-+	clk_regmap_gate_endisable(hw, 0);
-+}
-+
-+static int clk_regmap_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_gate_data *gate = clk_get_regmap_gate_data(clk);
-+	unsigned int val;
-+
-+	regmap_read(clk->map, gate->offset, &val);
-+	if (gate->flags & CLK_GATE_SET_TO_DISABLE)
-+		val ^= BIT(gate->bit_idx);
-+
-+	val &= BIT(gate->bit_idx);
-+
-+	return val ? 1 : 0;
-+}
-+
-+const struct clk_ops clk_regmap_gate_ops = {
-+	.enable = clk_regmap_gate_enable,
-+	.disable = clk_regmap_gate_disable,
-+	.is_enabled = clk_regmap_gate_is_enabled,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_gate_ops);
-+
-+static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
-+						unsigned long prate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(clk->map, div->offset, &val);
-+	if (ret)
-+		/* Gives a hint that something is wrong */
-+		return 0;
-+
-+	val >>= div->shift;
-+	val &= clk_div_mask(div->width);
-+	return divider_recalc_rate(hw, prate, val, div->table, div->flags,
-+				   div->width);
-+}
-+
-+static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long *prate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	/* if read only, just return current value */
-+	if (div->flags & CLK_DIVIDER_READ_ONLY) {
-+		ret = regmap_read(clk->map, div->offset, &val);
-+		if (ret)
-+			/* Gives a hint that something is wrong */
-+			return 0;
-+
-+		val >>= div->shift;
-+		val &= clk_div_mask(div->width);
-+
-+		return divider_ro_round_rate(hw, rate, prate, div->table,
-+					     div->width, div->flags, val);
-+	}
-+
-+	return divider_round_rate(hw, rate, prate, div->table, div->width,
-+				  div->flags);
-+}
-+
-+static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long parent_rate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = divider_get_val(rate, parent_rate, div->table, div->width,
-+			      div->flags);
-+	if (ret < 0)
-+		return ret;
-+
-+	val = (unsigned int)ret << div->shift;
-+	return regmap_update_bits(clk->map, div->offset,
-+				  clk_div_mask(div->width) << div->shift, val);
++struct sun8i_hdmi_phy_variant {
++	void (*phy_init)(struct sun8i_hdmi_phy *phy);
++	void (*phy_disable)(struct dw_hdmi *hdmi,
++			    struct sun8i_hdmi_phy *phy);
++	int  (*phy_config)(struct dw_hdmi *hdmi,
++			   struct sun8i_hdmi_phy *phy,
++			   unsigned int clk_rate);
 +};
 +
-+/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+ struct sun8i_hdmi_phy {
+-	struct clk		*clk_bus;
+-	struct clk		*clk_mod;
+-	struct regmap		*regs;
+-	struct reset_control	*rst_phy;
++	struct clk			*clk_bus;
++	struct clk			*clk_mod;
++	struct regmap			*regs;
++	struct reset_control		*rst_phy;
++	struct sun8i_hdmi_phy_variant	*variant;
+ };
+ 
+ struct sun8i_dw_hdmi {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 9d2f11ca3538..17aada64bafd 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -30,21 +30,10 @@
+  */
+ #define I2C_ADDR	0x69
+ 
+-static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
+-				 struct drm_display_mode *mode)
++static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
++				      struct sun8i_hdmi_phy *phy,
++				      unsigned int clk_rate)
+ {
+-	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
+-	u32 val = 0;
+-
+-	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+-		val |= SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC;
+-
+-	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
+-		val |= SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC;
+-
+-	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
+-			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK, val);
+-
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
+ 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
+ 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
+@@ -64,21 +53,21 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
+ 	 * release any documentation, explanation of this values can
+ 	 * be found in i.MX 6Dual/6Quad Reference Manual.
+ 	 */
+-	if (mode->crtc_clock <= 27000) {
++	if (clk_rate <= 27000000) {
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x01e0, 0x06);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x15);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x08da, 0x10);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0007, 0x19);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0318, 0x0e);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x8009, 0x09);
+-	} else if (mode->crtc_clock <= 74250) {
++	} else if (clk_rate <= 74250000) {
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0540, 0x06);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0005, 0x15);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x10);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0007, 0x19);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x02b5, 0x0e);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x8009, 0x09);
+-	} else if (mode->crtc_clock <= 148500) {
++	} else if (clk_rate <= 148500000) {
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x04a0, 0x06);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x000a, 0x15);
+ 		dw_hdmi_phy_i2c_write(hdmi, 0x0000, 0x10);
+@@ -103,10 +92,27 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
+ 	return 0;
+ };
+ 
+-static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
++static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
++				 struct drm_display_mode *mode)
+ {
+ 	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
++	u32 val = 0;
 +
-+const struct clk_ops clk_regmap_divider_ops = {
-+	.recalc_rate = clk_regmap_div_recalc_rate,
-+	.round_rate = clk_regmap_div_round_rate,
-+	.set_rate = clk_regmap_div_set_rate,
++	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
++		val |= SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC;
+ 
++	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
++		val |= SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC;
++
++	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
++			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK, val);
++
++	return phy->variant->phy_config(hdmi, phy, mode->crtc_clock * 1000);
 +};
-+EXPORT_SYMBOL_GPL(clk_regmap_divider_ops);
 +
-+const struct clk_ops clk_regmap_divider_ro_ops = {
-+	.recalc_rate = clk_regmap_div_recalc_rate,
-+	.round_rate = clk_regmap_div_round_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_divider_ro_ops);
-+
-+static u8 clk_regmap_mux_get_parent(struct clk_hw *hw)
++static void sun8i_hdmi_phy_disable_a83t(struct dw_hdmi *hdmi,
++					struct sun8i_hdmi_phy *phy)
 +{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_mux_data *mux = clk_get_regmap_mux_data(clk);
-+	unsigned int val;
-+	int ret;
+ 	dw_hdmi_phy_gen2_txpwron(hdmi, 0);
+ 	dw_hdmi_phy_gen2_pddq(hdmi, 1);
+ 
+@@ -114,6 +120,13 @@ static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
+ 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN, 0);
+ }
+ 
++static void sun8i_hdmi_phy_disable(struct dw_hdmi *hdmi, void *data)
++{
++	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
 +
-+	ret = regmap_read(clk->map, mux->offset, &val);
-+	if (ret)
-+		return ret;
-+
-+	val >>= mux->shift;
-+	val &= mux->mask;
-+	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
++	phy->variant->phy_disable(hdmi, phy);
 +}
 +
-+static int clk_regmap_mux_set_parent(struct clk_hw *hw, u8 index)
+ static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_ops = {
+ 	.init = &sun8i_hdmi_phy_config,
+ 	.disable = &sun8i_hdmi_phy_disable,
+@@ -122,16 +135,8 @@ static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_ops = {
+ 	.setup_hpd = &dw_hdmi_phy_setup_hpd,
+ };
+ 
+-void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
++static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
+ {
+-	/* enable read access to HDMI controller */
+-	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
+-		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
+-
+-	/* unscramble register offsets */
+-	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
+-		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
+-
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
+ 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK,
+ 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK);
+@@ -145,6 +150,19 @@ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
+ 			   SUN8I_HDMI_PHY_DBG_CTRL_ADDR(I2C_ADDR));
+ }
+ 
++void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
 +{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_mux_data *mux = clk_get_regmap_mux_data(clk);
-+	unsigned int val = clk_mux_index_to_val(mux->table, mux->flags, index);
++	/* enable read access to HDMI controller */
++	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
++		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
 +
-+	return regmap_update_bits(clk->map, mux->offset,
-+				  mux->mask << mux->shift,
-+				  val << mux->shift);
++	/* unscramble register offsets */
++	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
++		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
++
++	phy->variant->phy_init(phy);
 +}
 +
-+const struct clk_ops clk_regmap_mux_ops = {
-+	.get_parent = clk_regmap_mux_get_parent,
-+	.set_parent = clk_regmap_mux_set_parent,
-+	.determine_rate = __clk_mux_determine_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_mux_ops);
-+
-+const struct clk_ops clk_regmap_mux_ro_ops = {
-+	.get_parent = clk_regmap_mux_get_parent,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_mux_ro_ops);
-diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
-new file mode 100644
-index 000000000000..627c888026d7
---- /dev/null
-+++ b/drivers/clk/meson/clk-regmap.h
-@@ -0,0 +1,111 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 BayLibre, SAS.
-+// Author: Jerome Brunet <jbrunet@baylibre.com>
-+
-+#ifndef __CLK_REGMAP_H
-+#define __CLK_REGMAP_H
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+/**
-+ * struct clk_regmap - regmap backed clock
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @map:	pointer to the regmap structure controlling the clock
-+ * @data:	data specific to the clock type
-+ *
-+ * Clock which is controlled by regmap backed registers. The actual type of
-+ * of the clock is controlled by the clock_ops and data.
-+ */
-+struct clk_regmap {
-+	struct clk_hw	hw;
-+	struct regmap	*map;
-+	void		*data;
+ const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void)
+ {
+ 	return &sun8i_hdmi_phy_ops;
+@@ -158,20 +176,31 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
+ 	.name		= "phy"
+ };
+ 
++static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
++	.phy_init = &sun8i_hdmi_phy_init_a83t,
++	.phy_disable = &sun8i_hdmi_phy_disable_a83t,
++	.phy_config = &sun8i_hdmi_phy_config_a83t,
 +};
 +
-+#define to_clk_regmap(_hw) container_of(_hw, struct clk_regmap, hw)
+ static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
+-	{ .compatible = "allwinner,sun8i-a83t-hdmi-phy" },
++	{
++		.compatible = "allwinner,sun8i-a83t-hdmi-phy",
++		.data = &sun8i_a83t_hdmi_phy,
++	},
+ 	{ /* sentinel */ }
+ };
+ 
+ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ {
++	const struct of_device_id *match;
+ 	struct device *dev = hdmi->dev;
+ 	struct sun8i_hdmi_phy *phy;
+ 	struct resource res;
+ 	void __iomem *regs;
+ 	int ret;
+ 
+-	if (!of_match_node(sun8i_hdmi_phy_of_table, node)) {
++	match = of_match_node(sun8i_hdmi_phy_of_table, node);
++	if (!match) {
+ 		dev_err(dev, "Incompatible HDMI PHY\n");
+ 		return -EINVAL;
+ 	}
+@@ -180,6 +209,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 	if (!phy)
+ 		return -ENOMEM;
+ 
++	phy->variant = (struct sun8i_hdmi_phy_variant *)match->data;
 +
-+/**
-+ * struct clk_regmap_gate_data - regmap backed gate specific data
-+ *
-+ * @offset:	offset of the register controlling gate
-+ * @bit_idx:	single bit controlling gate
-+ * @flags:	hardware-specific flags
-+ *
-+ * Flags:
-+ * Same as clk_gate except CLK_GATE_HIWORD_MASK which is ignored
-+ */
-+struct clk_regmap_gate_data {
-+	unsigned int	offset;
-+	u8		bit_idx;
-+	u8		flags;
-+};
-+
-+static inline struct clk_regmap_gate_data *
-+clk_get_regmap_gate_data(struct clk_regmap *clk)
-+{
-+	return (struct clk_regmap_gate_data *)clk->data;
-+}
-+
-+extern const struct clk_ops clk_regmap_gate_ops;
-+
-+/**
-+ * struct clk_regmap_div_data - regmap backed adjustable divider specific data
-+ *
-+ * @offset:	offset of the register controlling the divider
-+ * @shift:	shift to the divider bit field
-+ * @width:	width of the divider bit field
-+ * @table:	array of value/divider pairs, last entry should have div = 0
-+ *
-+ * Flags:
-+ * Same as clk_divider except CLK_DIVIDER_HIWORD_MASK which is ignored
-+ */
-+struct clk_regmap_div_data {
-+	unsigned int	offset;
-+	u8		shift;
-+	u8		width;
-+	u8		flags;
-+	const struct clk_div_table	*table;
-+};
-+
-+static inline struct clk_regmap_div_data *
-+clk_get_regmap_div_data(struct clk_regmap *clk)
-+{
-+	return (struct clk_regmap_div_data *)clk->data;
-+}
-+
-+extern const struct clk_ops clk_regmap_divider_ops;
-+extern const struct clk_ops clk_regmap_divider_ro_ops;
-+
-+/**
-+ * struct clk_regmap_mux_data - regmap backed multiplexer clock specific data
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @offset:	offset of theregister controlling multiplexer
-+ * @table:	array of parent indexed register values
-+ * @shift:	shift to multiplexer bit field
-+ * @mask:	mask of mutliplexer bit field
-+ * @flags:	hardware-specific flags
-+ *
-+ * Flags:
-+ * Same as clk_divider except CLK_MUX_HIWORD_MASK which is ignored
-+ */
-+struct clk_regmap_mux_data {
-+	unsigned int	offset;
-+	u32		*table;
-+	u32		mask;
-+	u8		shift;
-+	u8		flags;
-+};
-+
-+static inline struct clk_regmap_mux_data *
-+clk_get_regmap_mux_data(struct clk_regmap *clk)
-+{
-+	return (struct clk_regmap_mux_data *)clk->data;
-+}
-+
-+extern const struct clk_ops clk_regmap_mux_ops;
-+extern const struct clk_ops clk_regmap_mux_ro_ops;
-+
-+#endif /* __CLK_REGMAP_H */
+ 	ret = of_address_to_resource(node, 0, &res);
+ 	if (ret) {
+ 		dev_err(dev, "phy: Couldn't get our resources\n");
 -- 
-2.14.3
+2.16.2
