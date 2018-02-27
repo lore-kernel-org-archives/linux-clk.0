@@ -1,70 +1,105 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 7 Feb 2018 14:18:46 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-	mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, devicetree@vger.kernel.org,
-	lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-	Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH v3 01/11] regulator: core: add API to get voltage
- constraints
-Message-ID: <20180207141846.GC6003@sirena.org.uk>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-2-git-send-email-pdeschrijver@nvidia.com>
- <20180206163544.GI5681@sirena.org.uk>
- <20180207084744.GG7031@tbergstrom-lnx.Nvidia.com>
- <20180207104351.GA6003@sirena.org.uk>
- <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
+Return-Path: <julian.calaby@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2JFBq9zoW8cOFH7v"
-In-Reply-To: <20180207123750.GA5850@tbergstrom-lnx.Nvidia.com>
+In-Reply-To: <2342395.9m6rrqTry7@jernej-laptop>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+ <2676311.2IEVhXnSIE@jernej-laptop> <4AA78C45-E139-417E-BE89-FE0BFBC409B0@aosc.io>
+ <2342395.9m6rrqTry7@jernej-laptop>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Tue, 27 Feb 2018 13:29:27 +1100
+Message-ID: <CAGRGNgU8-uJuns7mAzS-gc81qvVAkS9JS2Tm13p2Qp7dMDCNkg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI
+ output on H3 boards
+To: jernej.skrabec@siol.net
+Cc: linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>, devicetree <devicetree@vger.kernel.org>,
+	"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Jernej,
 
---2JFBq9zoW8cOFH7v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, Feb 27, 2018 at 3:27 AM, Jernej =C5=A0krabec <jernej.skrabec@siol.n=
+et> wrote:
+> Hi,
+>
+> Dne ponedeljek, 26. februar 2018 ob 17:21:05 CET je Icenowy Zheng napisal=
+(a):
+>> =E4=BA=8E 2018=E5=B9=B42=E6=9C=8827=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=
+=8812:16:44, "Jernej =C5=A0krabec"
+> <jernej.skrabec@siol.net> =E5=86=99=E5=88=B0:
+>> >Hi Julian,
+>> >
+>> >Dne nedelja, 25. februar 2018 ob 09:11:34 CET je Julian Calaby
+>> >
+>> >napisal(a):
+>> >> Hi Jernej,
+>> >>
+>> >> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec
+>> >
+>> ><jernej.skrabec@siol.net>
+>> >
+>> >wrote:
+>> >> > Enable HDMI output on all boards which have HDMI connector.
+>> >> >
+>> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> >> > ---
+>> >> >
+>> >> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25
+>> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
+>> >> >
+>> >> >   | 25 ++++++++++++++++++++++
+>> >> >
+>> >> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25
+>> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
+>> >> >
+>> >> >   | 25 ++++++++++++++++++++++
+>> >
+>> >arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
+>> >
+>> >> >         | 25 ++++++++++++++++++++++
+>> >> >
+>> >> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25
+>> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
+>> >> >
+>> >> >   | 24 +++++++++++++++++++++
+>> >
+>> >arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>> >
+>> >> >        | 25 ++++++++++++++++++++++ 8 files changed, 199
+>> >
+>> >insertions(+)
+>> >
+>> >> As I understand it, the H2+ is just a slightly trimmed down H3. In
+>> >> terms of HDMI support, the difference is that the H2+ can't output
+>> >
+>> >4k.
+>> >
+>> >> If this code is compatible with the H2+, could you please add the
+>> >> necessary bits and pieces to the h2-plus DTSs too?
+>> >
+>> >There are only 3 H2+ boards in kernel and none of them has HDMI
+>> >connector, so
+>>
+>> BPi M2 Zero has miniHDMI connector.
+>
+> Ah, sorry, I missed that one. Since I don't have it (or any other board w=
+ith
+> H2+) I'm not really comfortable including such patch. If anyone will test=
+ it,
+> I can include it in next revision.
 
-On Wed, Feb 07, 2018 at 02:37:51PM +0200, Peter De Schrijver wrote:
-> On Wed, Feb 07, 2018 at 10:43:51AM +0000, Mark Brown wrote:
-> > On Wed, Feb 07, 2018 at 10:47:44AM +0200, Peter De Schrijver wrote:
-> > > On Tue, Feb 06, 2018 at 04:35:44PM +0000, Mark Brown wrote:
-> > > > On Tue, Feb 06, 2018 at 06:34:02PM +0200, Peter De Schrijver wrote:
+I have one of those (this is why I'm interested in this patchset) so
+I'm willing to test, however I can't guarantee I'll get to it quickly.
 
-> > > > > Add API to get min/max rail voltage configured from platform for
-> > > > > given rails.
+Thanks,
 
-> > > > because...
+--=20
+Julian Calaby
 
-> > > of the next patch where this is used to retrieve the minimum rail voltage.
-
-> > And that in turn is needed for...?
-
-> To calculate the required voltage for each frequency.
-
-You're going to have to provide a much better explanation of what this
-is doing - right now it seems like an abuse of constraints.  Client
-drivers can already determine if a particular voltage they want to set
-is available via regulator_list_voltage() and so on, that's what
-constraints are there to set.  It sounds like you're trying to use them
-for something else but you're really not explaining your use case
-clearly.
-
---2JFBq9zoW8cOFH7v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlp7CsUACgkQJNaLcl1U
-h9D8NQf9HArPCGOGdxVM2WXctuVLm1L69UeQZ4U5agoguZ9RA64DKMLKWWMWP9sm
-XmnSvULmxvpwoRJG0lhRGlQKnd9PpsBiKCIcIixPgWRqdjEdfV8eFd1rKlpqUgss
-ahAPnok+UzhsRJTXum2ibaZOyiQb6MDwyxvXvAXJrZ3fKQ68WpxMIvNLgTdx9YK0
-/oEEbp4T/jSTLLm1Cf7+1OYJ64muqNh25QcxJR1S9UnlNw5qdEjUXaoQvL9XXxro
-Su1vPDfnb0E+W0DEIBW8wWyJLGU8nmAOFX+mbPSukmq+VwQjBMzp66khYbpgGjVQ
-p/CdoTHiJ+CI0E3ymlqYhkE6pkcXnQ==
-=IooP
------END PGP SIGNATURE-----
-
---2JFBq9zoW8cOFH7v--
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
