@@ -1,168 +1,131 @@
-Return-Path: <m.purski@samsung.com>
-From: Maciej Purski <m.purski@samsung.com>
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim
-	<jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
-	Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin
-	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro
-	Carvalho Chehab <mchehab@kernel.org>, Andrzej Pietrasiewicz
-	<andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>,
-	Andrzej Hajda <a.hajda@samsung.com>, Russell King <linux@armlinux.org.uk>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier
-	<thibault.saunier@osg.samsung.com>, Javier Martinez Canillas
-	<javier@osg.samsung.com>, Hans Verkuil <hansverk@cisco.com>, Hoegeun Kwon
-	<hoegeun.kwon@samsung.com>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 7/8] [media] exynos-gsc: Use clk bulk API
-Date: Mon, 19 Feb 2018 16:44:05 +0100
-Message-id: <1519055046-2399-8-git-send-email-m.purski@samsung.com>
-In-reply-to: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
-References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
-	<CGME20180219154502eucas1p20e8daf3edc6737817f8d62db5a2099f2@eucas1p2.samsung.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 01/16] clk: sunxi-ng: Add check for minimal rate to NM PLLs
+Date: Tue, 27 Feb 2018 23:26:46 +0100
+Message-Id: <20180227222701.9716-2-jernej.skrabec@siol.net>
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Using bulk clk functions simplifies the driver's code. Use devm_clk_bulk
-functions instead of iterating over an array of clks.
+Some NM PLLs doesn't work well when their output clock rate is set below
+certain rate.
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
+Add support for that constrain.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/media/platform/exynos-gsc/gsc-core.c | 55 ++++++++++------------------
- drivers/media/platform/exynos-gsc/gsc-core.h |  2 +-
- 2 files changed, 20 insertions(+), 37 deletions(-)
+ drivers/clk/sunxi-ng/ccu_nm.c | 11 +++++++----
+ drivers/clk/sunxi-ng/ccu_nm.h | 27 +++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index 17854a3..fa7e993 100644
---- a/drivers/media/platform/exynos-gsc/gsc-core.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -1149,7 +1149,6 @@ static int gsc_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	const struct gsc_driverdata *drv_data = of_device_get_match_data(dev);
- 	int ret;
--	int i;
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index a16de092bf94..7fc743c78c1b 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -20,7 +20,7 @@ struct _ccu_nm {
+ };
  
- 	gsc = devm_kzalloc(dev, sizeof(struct gsc_dev), GFP_KERNEL);
- 	if (!gsc)
-@@ -1187,25 +1186,19 @@ static int gsc_probe(struct platform_device *pdev)
- 		return -ENXIO;
+ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
+-			     struct _ccu_nm *nm)
++			     unsigned long min_rate, struct _ccu_nm *nm)
+ {
+ 	unsigned long best_rate = 0;
+ 	unsigned long best_n = 0, best_m = 0;
+@@ -30,7 +30,7 @@ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
+ 		for (_m = nm->min_m; _m <= nm->max_m; _m++) {
+ 			unsigned long tmp_rate = parent * _n  / _m;
+ 
+-			if (tmp_rate > rate)
++			if (tmp_rate > rate || tmp_rate < min_rate)
+ 				continue;
+ 
+ 			if ((rate - tmp_rate) < (rate - best_rate)) {
+@@ -117,6 +117,9 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nm->fixed_post_div;
+ 
++	if (rate < nm->min_rate)
++		rate = nm->min_rate;
++
+ 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
+ 		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 			rate /= nm->fixed_post_div;
+@@ -134,7 +137,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	_nm.min_m = 1;
+ 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+ 
+-	ccu_nm_find_best(*parent_rate, rate, &_nm);
++	ccu_nm_find_best(*parent_rate, rate, nm->min_rate, &_nm);
+ 	rate = *parent_rate * _nm.n / _nm.m;
+ 
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+@@ -186,7 +189,7 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 					   &_nm.m, &_nm.n);
+ 	} else {
+ 		ccu_sdm_helper_disable(&nm->common, &nm->sdm);
+-		ccu_nm_find_best(parent_rate, rate, &_nm);
++		ccu_nm_find_best(parent_rate, rate, nm->min_rate, &_nm);
  	}
  
--	for (i = 0; i < gsc->num_clocks; i++) {
--		gsc->clock[i] = devm_clk_get(dev, drv_data->clk_names[i]);
--		if (IS_ERR(gsc->clock[i])) {
--			dev_err(dev, "failed to get clock: %s\n",
--				drv_data->clk_names[i]);
--			return PTR_ERR(gsc->clock[i]);
--		}
--	}
-+	gsc->clocks = devm_clk_bulk_alloc(dev, gsc->num_clocks,
-+					  drv_data->clk_names);
-+	if (IS_ERR(gsc->clocks))
-+		return PTR_ERR(gsc->clocks);
+ 	spin_lock_irqsave(nm->common.lock, flags);
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
+index eba586b4c7d0..1d8b459c50b7 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.h
++++ b/drivers/clk/sunxi-ng/ccu_nm.h
+@@ -37,6 +37,7 @@ struct ccu_nm {
+ 	struct ccu_sdm_internal		sdm;
  
--	for (i = 0; i < gsc->num_clocks; i++) {
--		ret = clk_prepare_enable(gsc->clock[i]);
--		if (ret) {
--			dev_err(dev, "clock prepare failed for clock: %s\n",
--				drv_data->clk_names[i]);
--			while (--i >= 0)
--				clk_disable_unprepare(gsc->clock[i]);
--			return ret;
--		}
--	}
-+	ret = devm_clk_bulk_get(dev, gsc->num_clocks,
-+				gsc->clocks);
-+	if (ret)
-+		return ret;
+ 	unsigned int		fixed_post_div;
++	unsigned int		min_rate;
+ 
+ 	struct ccu_common	common;
+ };
+@@ -88,6 +89,32 @@ struct ccu_nm {
+ 		},							\
+ 	}
+ 
++#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(_struct, _name, _parent,	\
++					     _reg, _min_rate,		\
++					     _nshift, _nwidth,		\
++					     _mshift, _mwidth,		\
++					     _frac_en, _frac_sel,	\
++					     _frac_rate_0, _frac_rate_1,\
++					     _gate, _lock, _flags)	\
++	struct ccu_nm _struct = {					\
++		.enable		= _gate,				\
++		.lock		= _lock,				\
++		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
++		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
++		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
++						  _frac_rate_0,		\
++						  _frac_rate_1),	\
++		.min_rate	= _min_rate,				\
++		.common		= {					\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_FRACTIONAL,	\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_nm_ops,	\
++						      _flags),		\
++		},							\
++	}
 +
-+	ret = clk_bulk_prepare_enable(gsc->num_clocks, gsc->clocks);
-+	if (ret)
-+		return ret;
- 
- 	ret = devm_request_irq(dev, res->start, gsc_irq_handler,
- 				0, pdev->name, gsc);
-@@ -1239,15 +1232,14 @@ static int gsc_probe(struct platform_device *pdev)
- err_v4l2:
- 	v4l2_device_unregister(&gsc->v4l2_dev);
- err_clk:
--	for (i = gsc->num_clocks - 1; i >= 0; i--)
--		clk_disable_unprepare(gsc->clock[i]);
-+	clk_bulk_disable_unprepare(gsc->num_clocks, gsc->clocks);
-+
- 	return ret;
- }
- 
- static int gsc_remove(struct platform_device *pdev)
- {
- 	struct gsc_dev *gsc = platform_get_drvdata(pdev);
--	int i;
- 
- 	pm_runtime_get_sync(&pdev->dev);
- 
-@@ -1255,8 +1247,7 @@ static int gsc_remove(struct platform_device *pdev)
- 	v4l2_device_unregister(&gsc->v4l2_dev);
- 
- 	vb2_dma_contig_clear_max_seg_size(&pdev->dev);
--	for (i = 0; i < gsc->num_clocks; i++)
--		clk_disable_unprepare(gsc->clock[i]);
-+	clk_bulk_disable_unprepare(gsc->num_clocks, gsc->clocks);
- 
- 	pm_runtime_put_noidle(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
-@@ -1307,18 +1298,12 @@ static int gsc_runtime_resume(struct device *dev)
- {
- 	struct gsc_dev *gsc = dev_get_drvdata(dev);
- 	int ret = 0;
--	int i;
- 
- 	pr_debug("gsc%d: state: 0x%lx\n", gsc->id, gsc->state);
- 
--	for (i = 0; i < gsc->num_clocks; i++) {
--		ret = clk_prepare_enable(gsc->clock[i]);
--		if (ret) {
--			while (--i >= 0)
--				clk_disable_unprepare(gsc->clock[i]);
--			return ret;
--		}
--	}
-+	ret = clk_bulk_prepare_enable(gsc->num_clocks, gsc->clocks);
-+	if (ret)
-+		return ret;
- 
- 	gsc_hw_set_sw_reset(gsc);
- 	gsc_wait_reset(gsc);
-@@ -1331,14 +1316,12 @@ static int gsc_runtime_suspend(struct device *dev)
- {
- 	struct gsc_dev *gsc = dev_get_drvdata(dev);
- 	int ret = 0;
--	int i;
- 
- 	ret = gsc_m2m_suspend(gsc);
- 	if (ret)
- 		return ret;
- 
--	for (i = gsc->num_clocks - 1; i >= 0; i--)
--		clk_disable_unprepare(gsc->clock[i]);
-+	clk_bulk_disable_unprepare(gsc->num_clocks, gsc->clocks);
- 
- 	pr_debug("gsc%d: state: 0x%lx\n", gsc->id, gsc->state);
- 	return ret;
-diff --git a/drivers/media/platform/exynos-gsc/gsc-core.h b/drivers/media/platform/exynos-gsc/gsc-core.h
-index 715d9c9d..08ff7b9 100644
---- a/drivers/media/platform/exynos-gsc/gsc-core.h
-+++ b/drivers/media/platform/exynos-gsc/gsc-core.h
-@@ -334,7 +334,7 @@ struct gsc_dev {
- 	struct gsc_variant		*variant;
- 	u16				id;
- 	int				num_clocks;
--	struct clk			*clock[GSC_MAX_CLOCKS];
-+	struct clk_bulk_data		*clocks;
- 	void __iomem			*regs;
- 	wait_queue_head_t		irq_queue;
- 	struct gsc_m2m_device		m2m;
+ #define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
+ 				    _nshift, _nwidth,			\
+ 				    _mshift, _mwidth,			\
 -- 
-2.7.4
+2.16.2
