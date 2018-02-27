@@ -1,422 +1,131 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 8 Feb 2018 20:54:49 -0600
-From: Rob Herring <robh@kernel.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: viresh.kumar@linaro.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
-	david.brown@linaro.org, rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v6 15/15] dt-bindings: cpufreq: Document
- operating-points-v2-krait-cpu
-Message-ID: <20180209025449.qvbirdvflijxo62j@rob-hp-laptop>
-References: <1517890108-8140-1-git-send-email-sricharan@codeaurora.org>
- <1517890108-8140-16-git-send-email-sricharan@codeaurora.org>
+Return-Path: <daniel.thompson@linaro.org>
+Return-Path: <daniel.thompson@linaro.org>
+Date: Tue, 27 Feb 2018 15:38:12 +0000
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, thierry.reding@gmail.com,
+	shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org,
+	linux@armlinux.org.uk, mturquette@baylibre.com,
+	sboyd@codeaurora.org, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, airlied@linux.ie, kamil@wypas.org,
+	b.zolnierkie@samsung.com, jdelvare@suse.com, linux@roeck-us.net,
+	dmitry.torokhov@gmail.com, rpurdie@rpsys.net,
+	jacek.anaszewski@gmail.com, pavel@ucw.cz, mchehab@kernel.org,
+	sean@mess.org, lee.jones@linaro.org, jingoohan1@gmail.com,
+	milo.kim@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	corbet@lwn.net, nicolas.ferre@microchip.com,
+	alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+Message-ID: <20180227153812.txt2vsdygfnobo33@oak.lan>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180222123308.mypx2r7n6o63mj5z@oak.lan>
+ <87po4s2hve.fsf@intel.com>
+ <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
+ <20180227105444.lo4pee7vh4we3foq@oak.lan>
+ <8e1d3b30-3543-56fd-7be6-7fe6edcb40d9@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1517890108-8140-16-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <8e1d3b30-3543-56fd-7be6-7fe6edcb40d9@microchip.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 06, 2018 at 09:38:28AM +0530, Sricharan R wrote:
-> In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
-> that has KRAIT processors the voltage/current value of each OPP
-> varies based on the silicon variant in use.
-> operating-points-v2-krait-cpu specifies the phandle to nvmem efuse cells
-> and the operating-points-v2 table for each opp. The qcom-cpufreq driver
-> reads the efuse value from the SoC to provide the required information
-> that is used to determine the voltage and current value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
+On Tue, Feb 27, 2018 at 01:40:58PM +0200, Claudiu Beznea wrote:
+> On 27.02.2018 12:54, Daniel Thompson wrote:
+> > On Mon, Feb 26, 2018 at 04:24:15PM +0200, Claudiu Beznea wrote:
+> >> On 26.02.2018 11:57, Jani Nikula wrote:
+> >>> On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+> >>>> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+> >>>>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+> >>>>> were adapted to this change.
+> >>>>>
+> >>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> >>>>> ---
+> >>>>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+> >>>>>  drivers/bus/ts-nbus.c                |  2 +-
+> >>>>>  drivers/clk/clk-pwm.c                |  3 ++-
+> >>>>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+> >>>>>  drivers/hwmon/pwm-fan.c              |  2 +-
+> >>>>>  drivers/input/misc/max77693-haptic.c |  2 +-
+> >>>>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+> >>>>>  drivers/leds/leds-pwm.c              |  5 ++++-
+> >>>>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+> >>>>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+> >>>>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+> >>>>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+> >>>>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+> >>>>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+> >>>>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+> >>>>>  include/linux/pwm.h                  |  6 ++++--
+> >>>>>  16 files changed, 70 insertions(+), 21 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+> >>>>> index 2030a6b77a09..696fa25dafd2 100644
+> >>>>> --- a/drivers/video/backlight/lm3630a_bl.c
+> >>>>> +++ b/drivers/video/backlight/lm3630a_bl.c
+> >>>>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
+> >>>>>  {
+> >>>>>  	unsigned int period = pchip->pdata->pwm_period;
+> >>>>>  	unsigned int duty = br * period / br_max;
+> >>>>> +	struct pwm_caps caps = { };
+> >>>>>  
+> >>>>> -	pwm_config(pchip->pwmd, duty, period);
+> >>>>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
+> >>>>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
+> >>>>
+> >>>> Well... I admit I've only really looked at the patches that impact 
+> >>>> backlight but dispersing this really odd looking bit twiddling 
+> >>>> throughout the kernel doesn't strike me a great API design.
+> >>>>
+> >>>> IMHO callers should not be required to find the first set bit in
+> >>>> some specially crafted set of capability bits simply to get sane 
+> >>>> default behaviour.
+> >>>
+> >>> Agreed. IMHO the regular use case becomes rather tedious, ugly, and
+> >>> error prone.
+> >>
+> >> Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
+> >> from your side?
+> >>
+> >> Or, what about using a function like pwm_mode_first() to get the first supported
+> >> mode by PWM channel?
+> >>
+> >> Or, would you prefer to solve this inside pwm_config() function, let's say, in
+> >> case an invalid mode is passed as argument, to let pwm_config() to choose the
+> >> first available PWM mode for PWM channel passed as argument?
+> > 
+> > What is it that actually needs solving?
+> > 
+> > If a driver requests normal mode and the PWM driver cannot support it
+> > why not just return an error an move on.
+> Because, simply, I wasn't aware of what these PWM client drivers needs for.
+
+I'm afraid you have confused me here.
+
+Didn't you just *add* the whole concept of PWM caps with your patches?
+How could any existing call site expect anything except normal mode.
+Until now there has been no possiblity to request anything else.
+
+
+> > Put another way, what is the use case for secretly adopting a mode the
+> > caller didn't want? Under what circumstances is this a good thing?
+> No one... But I wasn't aware of what the PWM clients needs for from their PWM
+> controllers. At this moment having BIT(ffs(caps.modes)) instead of
+> PWM_MODE(NORMAL) is mostly the same since all the driver that has not explicitly
+> registered PWM caps will use PWM normal mode.
 > 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> ---
->  .../devicetree/bindings/cpufreq/krait-cpufreq.txt  | 363 +++++++++++++++++++++
->  1 file changed, 363 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
+> I will use PWM_MODE(NORMAL) instead of this in all the cases if this is OK from
+> your side.
 > 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
-> new file mode 100644
-> index 0000000..e7351f7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
-> @@ -0,0 +1,363 @@
-> +QCOM KRAIT CPUFreq and OPP bindings
-> +===================================
-> +
-> +In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
-> +that has KRAIT processors the voltage value of each OPP varies
-> +based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-> +defines the voltage and current value based on the speed/pvs/version
-> +combination blown in the efuse. The qcom-cpufreq driver reads the efuse
-> +value from the SoC to provide the OPP framework with required information.
-> +This is used to determine the voltage and current value for each OPP of
-> +operating-points-v2 table when it is parsed by the OPP framework.
-> +
-> +Required properties:
-> +--------------------
-> +In 'cpus' nodes:
-> +- operating-points-v2: Phandle to the operating-points-v2 table to use.
-> +
-> +In 'operating-points-v2' table:
-> +- compatible: Should be
-> +	- 'operating-points-v2-krait-cpu' for ipq8064, apq8064, msm8960,
-> +					      msm8974.
-> +- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
-> +		efuse registers that has information about the
-> +		speedbin/pvs/version that is used to select the right
-> +		voltage/current value pair. Note that the length field of the
-> +		nvmem-cell is used to differentiate between format 'A' or 'B'
-> +		efuse settings. len of '4' bytes is for format 'A' and '8'
-> +		bytes for format 'B'. Please refer the for nvmem-cells
-> +		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
-> +		and also examples below for both the cases.
-> +Example 1:
-> +---------
-> +
-> +/* For arch/arm/boot/dts/apq8064.dtsi --> format 'A' */
-> +cpus {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	CPU0: cpu@0 {
-> +		compatible = "qcom,krait";
-> +		enable-method = "qcom,kpss-acc-v1";
-> +		device_type = "cpu";
-> +		reg = <0>;
-> +		next-level-cache = <&L2>;
-> +		qcom,acc = <&acc0>;
-> +		qcom,saw = <&saw0>;
-> +		cpu-idle-states = <&CPU_SPC>;
-> +		operating-points-v2 = <&cpu_opp_table>;
-> +	};
-> +};
-> +
-> +qfprom: qfprom@700000 {
-> +	  compatible      = "qcom,qfprom";
-> +	  reg	      = <0x00700000 0x1000>;
-> +	  #address-cells  = <1>;
-> +	  #size-cells     = <1>;
-> +	  ranges;
-> +	  pvs_efuse: pvs {
-> +		reg = <0xc0 0x4>;
-> +	};
-> +};
-> +
-> +cpu_opp_table: opp-table {
-> +	compatible = "operating-points-v2-krait-cpu";
-> +	nvmem-cells = <&pvs_efuse>;
-> +
-> +		/*
-> +		 * Missing opp-shared property means CPUs switch DVFS states
-> +		 * independently.
-> +		 */
-> +
-> +	       opp-918000000 {
-> +			opp-hz = /bits/ 64 <918000000>;
-> +			opp-microvolt-speed0-pvs0-v0 = <1100000>;
-
-Where is this property defined? I'm not that happy with it, but don't 
-have a better suggestion. Maybe make pvsN be an array of values with 0 
-for any skipped indexes? The '-v0' seems pointless. 
-
-> +			opp-microvolt-speed0-pvs1-v0 = <1050000>;
-> +			opp-microvolt-speed0-pvs3-v0 = <1000000>;
-> +			opp-microvolt-speed0-pvs4-v0 = <975000>;
-> +			opp-microvolt-speed1-pvs0-v0 = <1025000>;
-> +			opp-microvolt-speed1-pvs1-v0 = <1000000>;
-> +			opp-microvolt-speed1-pvs2-v0 = <950000>;
-> +			opp-microvolt-speed1-pvs3-v0 = <925000>;
-> +			opp-microvolt-speed1-pvs4-v0 = <900000>;
-> +			opp-microvolt-speed1-pvs5-v0 = <900000>;
-> +			opp-microvolt-speed1-pvs6-v0 = <900000>;
-> +			opp-microvolt-speed2-pvs0-v0 = <975000>;
-> +			opp-microvolt-speed2-pvs1-v0 = <950000>;
-> +			opp-microvolt-speed2-pvs2-v0 = <925000>;
-> +			opp-microvolt-speed2-pvs3-v0 = <912500>;
-> +			opp-microvolt-speed2-pvs4-v0 = <900000>;
-> +			opp-microvolt-speed2-pvs5-v0 = <900000>;
-> +			opp-microvolt-speed2-pvs6-v0 = <900000>;
-> +			opp-microvolt-speed14-pvs0-v0 = <1025000>;
-> +			opp-microvolt-speed14-pvs1-v0 = <1000000>;
-> +			opp-microvolt-speed14-pvs2-v0 = <950000>;
-> +			opp-microvolt-speed14-pvs3-v0 = <925000>;
-> +			opp-microvolt-speed14-pvs4-v0 = <900000>;
-> +			opp-microvolt-speed14-pvs5-v0 = <900000>;
-> +			opp-microvolt-speed14-pvs6-v0 = <900000>;
-> +		};
-> +
-> +		opp-810000000 {
-> +			opp-hz = /bits/ 64 <810000000>;
-> +			opp-microvolt-speed0-pvs0-v0 =  < 1075000>;
-> +			opp-microvolt-speed0-pvs1-v0 = 	< 1025000>;
-> +			opp-microvolt-speed0-pvs3-v0 = 	< 975000>;
-> +			opp-microvolt-speed0-pvs3-v0 = 	< 962500>;
-> +			opp-microvolt-speed1-pvs0-v0 = 	< 1000000>;
-> +			opp-microvolt-speed1-pvs1-v0 = 	< 975000>;
-> +			opp-microvolt-speed1-pvs2-v0 = 	< 937500>;
-> +			opp-microvolt-speed1-pvs3-v0 = 	< 900000>;
-> +			opp-microvolt-speed1-pvs4-v0 = 	< 887500>;
-> +			opp-microvolt-speed1-pvs5-v0 = 	< 887500>;
-> +			opp-microvolt-speed1-pvs6-v0 = 	< 887500>;
-> +			opp-microvolt-speed2-pvs0-v0 = 	< 962500>;
-> +			opp-microvolt-speed2-pvs1-v0 = 	< 937500>;
-> +			opp-microvolt-speed2-pvs2-v0 = 	< 912500>;
-> +			opp-microvolt-speed2-pvs3-v0 = 	< 900000>;
-> +			opp-microvolt-speed2-pvs4-v0 = 	< 887500>;
-> +			opp-microvolt-speed2-pvs5-v0 = 	< 887500>;
-> +			opp-microvolt-speed2-pvs6-v0 = 	< 887500>;
-
-Some space then tab issues on the above. Also, drop the space after the 
-'<'.
-
-> +			opp-microvolt-speed14-pvs0-v0 =	< 1000000>;
-> +			opp-microvolt-speed14-pvs1-v0 =	< 975000>;
-> +			opp-microvolt-speed14-pvs2-v0 =	< 937500>;
-> +			opp-microvolt-speed14-pvs3-v0 =	< 900000>;
-> +			opp-microvolt-speed14-pvs4-v0 =	< 887500>;
-> +			opp-microvolt-speed14-pvs5-v0 =	< 887500>;
-> +			opp-microvolt-speed14-pvs6-v0 =	< 887500>;
-> +		};
-> +
-> +		opp-702000000 {
-> +			 opp-hz = /bits/ 64 <702000000>;
-> +			 opp-microvolt-speed0-pvs0-v0 =  <1025000>;
-> +			 opp-microvolt-speed0-pvs1-v0 =  <975000>;
-> +			 opp-microvolt-speed0-pvs3-v0 =  <925000>;
-> +			 opp-microvolt-speed0-pvs3-v0 =  <925000>;
-> +			 opp-microvolt-speed1-pvs0-v0 =  <962500>;
-> +			 opp-microvolt-speed1-pvs1-v0 =  <962500>;
-> +			 opp-microvolt-speed1-pvs2-v0 =  <925000>;
-> +			 opp-microvolt-speed1-pvs3-v0 =  <900000>;
-> +			 opp-microvolt-speed1-pvs4-v0 =  <875000>;
-> +			 opp-microvolt-speed1-pvs5-v0 =  <875000>;
-> +			 opp-microvolt-speed1-pvs6-v0 =  <875000>;
-> +			 opp-microvolt-speed2-pvs0-v0 =  <950000>;
-> +			 opp-microvolt-speed2-pvs1-v0 =  <925000>;
-> +			 opp-microvolt-speed2-pvs2-v0 =  <900000>;
-> +			 opp-microvolt-speed2-pvs3-v0 =  <900000>;
-> +			 opp-microvolt-speed2-pvs4-v0 =  <875000>;
-> +			 opp-microvolt-speed2-pvs5-v0 =  <875000>;
-> +			 opp-microvolt-speed2-pvs6-v0 =  <875000>;
-> +			 opp-microvolt-speed14-pvs0-v0 = <962500>;
-> +			 opp-microvolt-speed14-pvs1-v0 = <962500>;
-> +			 opp-microvolt-speed14-pvs2-v0 = <925000>;
-> +			 opp-microvolt-speed14-pvs3-v0 = <900000>;
-> +			 opp-microvolt-speed14-pvs4-v0 = <875000>;
-> +			 opp-microvolt-speed14-pvs5-v0 = <875000>;
-> +			 opp-microvolt-speed14-pvs6-v0 = <875000>;
-> +		};
-> +
-> +		opp-594000000 {
-> +			opp-hz = /bits/ 64 <594000000>;
-> +			opp-microvolt-speed0-pvs0-v0 =  <1000000>;
-> +			opp-microvolt-speed0-pvs1-v0 = 	<950000>;
-> +			opp-microvolt-speed0-pvs3-v0 = 	<900000>;
-> +			opp-microvolt-speed0-pvs3-v0 = 	<900000>;
-> +			opp-microvolt-speed1-pvs0-v0 = 	<950000>;
-> +			opp-microvolt-speed1-pvs1-v0 = 	<950000>;
-> +			opp-microvolt-speed1-pvs2-v0 = 	<925000>;
-> +			opp-microvolt-speed1-pvs3-v0 = 	<900000>;
-> +			opp-microvolt-speed1-pvs4-v0 = 	<875000>;
-> +			opp-microvolt-speed1-pvs5-v0 = 	<875000>;
-> +			opp-microvolt-speed1-pvs6-v0 = 	<875000>;
-> +			opp-microvolt-speed2-pvs0-v0 = 	<950000>;
-> +			opp-microvolt-speed2-pvs1-v0 = 	<925000>;
-> +			opp-microvolt-speed2-pvs2-v0 = 	<900000>;
-> +			opp-microvolt-speed2-pvs3-v0 = 	<900000>;
-> +			opp-microvolt-speed2-pvs4-v0 = 	<875000>;
-> +			opp-microvolt-speed2-pvs5-v0 = 	<875000>;
-> +			opp-microvolt-speed2-pvs6-v0 = 	<875000>;
-
-More space then tab issues after the '='.
-
-> +			opp-microvolt-speed14-pvs0-v0 =	<950000>;
-> +			opp-microvolt-speed14-pvs1-v0 =	<950000>;
-> +			opp-microvolt-speed14-pvs2-v0 =	<925000>;
-> +			opp-microvolt-speed14-pvs3-v0 =	<900000>;
-> +			opp-microvolt-speed14-pvs4-v0 =	<875000>;
-> +			opp-microvolt-speed14-pvs5-v0 =	<875000>;
-> +			opp-microvolt-speed14-pvs6-v0 =	<875000>;
-> +		};
-> +
-> +		opp-486000000 {
-> +			 opp-hz = /bits/ 64 <486000000>;
-> +			 opp-microvolt-speed0-pvs0-v0 = <975000>;
-> +			 opp-microvolt-speed0-pvs1-v0 = <925000>;
-> +			 opp-microvolt-speed0-pvs3-v0 = <875000>;
-> +			 opp-microvolt-speed0-pvs3-v0 = <875000>;
-> +			 opp-microvolt-speed1-pvs0-v0 = <950000>;
-> +			 opp-microvolt-speed1-pvs1-v0 = <950000>;
-> +			 opp-microvolt-speed1-pvs2-v0 = <925000>;
-> +			 opp-microvolt-speed1-pvs3-v0 = <900000>;
-> +			 opp-microvolt-speed1-pvs4-v0 = <875000>;
-> +			 opp-microvolt-speed1-pvs5-v0 = <875000>;
-> +			 opp-microvolt-speed1-pvs6-v0 = <875000>;
-> +			 opp-microvolt-speed2-pvs0-v0 = <950000>;
-> +			 opp-microvolt-speed2-pvs1-v0 = <925000>;
-> +			 opp-microvolt-speed2-pvs2-v0 = <900000>;
-> +			 opp-microvolt-speed2-pvs3-v0 = <900000>;
-> +			 opp-microvolt-speed2-pvs4-v0 = <875000>;
-> +			 opp-microvolt-speed2-pvs5-v0 = <875000>;
-> +			 opp-microvolt-speed2-pvs6-v0 = <875000>;
-> +			 opp-microvolt-speed14-pvs0-v0 = <950000>;
-> +			 opp-microvolt-speed14-pvs1-v0 = <950000>;
-> +			 opp-microvolt-speed14-pvs2-v0 = <925000>;
-> +			 opp-microvolt-speed14-pvs3-v0 = <900000>;
-> +			 opp-microvolt-speed14-pvs4-v0 = <875000>;
-> +			 opp-microvolt-speed14-pvs5-v0 = <875000>;
-> +			 opp-microvolt-speed14-pvs6-v0 = <875000>;
-> +		};
-> +
-> +		opp-384000000 {
-> +			opp-hz = /bits/ 64 <384000000>;
-> +			opp-microvolt-speed0-pvs0-v0 = <950000>;
-> +			opp-microvolt-speed0-pvs1-v0 = <900000>;
-> +			opp-microvolt-speed0-pvs3-v0 = <850000>;
-> +			opp-microvolt-speed0-pvs3-v0 = <850000>;
-> +			opp-microvolt-speed1-pvs0-v0 = <950000>;
-> +			opp-microvolt-speed1-pvs1-v0 = <950000>;
-> +			opp-microvolt-speed1-pvs2-v0 = <925000>;
-> +			opp-microvolt-speed1-pvs3-v0 = <900000>;
-> +			opp-microvolt-speed1-pvs4-v0 = <875000>;
-> +			opp-microvolt-speed1-pvs5-v0 = <875000>;
-> +			opp-microvolt-speed1-pvs6-v0 = <875000>;
-> +			opp-microvolt-speed2-pvs0-v0 = <950000>;
-> +			opp-microvolt-speed2-pvs1-v0 = <925000>;
-> +			opp-microvolt-speed2-pvs2-v0 = <900000>;
-> +			opp-microvolt-speed2-pvs3-v0 = <900000>;
-> +			opp-microvolt-speed2-pvs4-v0 = <875000>;
-> +			opp-microvolt-speed2-pvs5-v0 = <875000>;
-> +			opp-microvolt-speed2-pvs6-v0 = <875000>;
-> +			opp-microvolt-speed14-pvs0-v0 = <950000>;
-> +			opp-microvolt-speed14-pvs1-v0 = <950000>;
-> +			opp-microvolt-speed14-pvs2-v0 = <925000>;
-> +			opp-microvolt-speed14-pvs3-v0 = <900000>;
-> +			opp-microvolt-speed14-pvs4-v0 = <875000>;
-> +			opp-microvolt-speed14-pvs5-v0 = <875000>;
-> +			opp-microvolt-speed14-pvs6-v0 = <875000>;
-> +		};
-> +};
-> +
-> +EXAMPLE 2:
-> +---------
-> +/* For arch/arm/boot/dts/qcom-msm8974.dtsi--> format 'B' */
-> +
-> +qfprom: qfprom@700000 {
-> +	  compatible      = "qcom,qfprom";
-> +	  reg	      = <0x00700000 0x1000>;
-> +	  #address-cells  = <1>;
-> +	  #size-cells     = <1>;
-> +	  ranges;
-> +	  pvs_efuse: pvs {
-> +		reg = <0xc0 0x8>;
-> +	};
-> +};
-> +
-> +cpu_opp_table: opp-table {
-> +	compatible = "operating-points-v2-krait-cpu";
-> +	nvmem-cells = <&pvs_efuse>;
-> +
-> +		/*
-> +		 * Missing opp-shared property means CPUs switch DVFS states
-> +		 * independently.
-> +		 */
-> +	opp-960000000 {
-> +		opp-hz = /bits/ 64 <960000000>;
-> +		opp-microvolt-speed0-pvs0-v0 = <915000>;
-> +		opp-microvolt-speed0-pvs1-v0 = <895000>;
-> +		opp-microvolt-speed0-pvs2-v0 = <875000>;
-> +		opp-microvolt-speed0-pvs3-v0 = <860000>;
-> +		opp-microvolt-speed0-pvs4-v0 = <850000>;
-> +		opp-microvolt-speed0-pvs5-v0 = <840000>;
-> +		opp-microvolt-speed0-pvs6-v0 = <830000>;
-> +		opp-microvolt-speed2-pvs0-v0 = <875000>;
-> +		opp-microvolt-speed2-pvs1-v0 = <860000>;
-> +		opp-microvolt-speed2-pvs2-v0 = <845000>;
-> +		opp-microvolt-speed2-pvs3-v0 = <830000>;
-> +		opp-microvolt-speed2-pvs4-v0 = <820000>;
-> +		opp-microvolt-speed2-pvs5-v0 = <810000>;
-> +		opp-microvolt-speed2-pvs6-v0 = <800000>;
-> +		opp-microvolt-speed1-pvs0-v0 = <840000>;
-> +		opp-microvolt-speed1-pvs1-v0 = <825000>;
-> +		opp-microvolt-speed1-pvs2-v0 = <810000>;
-> +		opp-microvolt-speed1-pvs3-v0 = <795000>;
-> +		opp-microvolt-speed1-pvs4-v0 = <785000>;
-> +		opp-microvolt-speed1-pvs5-v0 = <775000>;
-> +		opp-microvolt-speed1-pvs6-v0 = <765000>;
-> +
-> +		opp-microamp-speed0-pvs0-v0 = <252>;
-> +		opp-microamp-speed0-pvs1-v0 = <252>;
-> +		opp-microamp-speed0-pvs2-v0 = <252>;
-> +		opp-microamp-speed0-pvs3-v0 = <252>;
-> +		opp-microamp-speed0-pvs4-v0 = <252>;
-> +		opp-microamp-speed0-pvs5-v0 = <252>;
-> +		opp-microamp-speed0-pvs6-v0 = <252>;
-> +		opp-microamp-speed2-pvs0-v0 = <245>;
-> +		opp-microamp-speed2-pvs1-v0 = <245>;
-> +		opp-microamp-speed2-pvs2-v0 = <245>;
-> +		opp-microamp-speed2-pvs3-v0 = <245>;
-> +		opp-microamp-speed2-pvs4-v0 = <245>;
-> +		opp-microamp-speed2-pvs5-v0 = <245>;
-> +		opp-microamp-speed2-pvs6-v0 = <245>;
-> +		opp-microamp-speed1-pvs0-v0 = <242>;
-> +		opp-microamp-speed1-pvs1-v0 = <242>;
-> +		opp-microamp-speed1-pvs2-v0 = <242>;
-> +		opp-microamp-speed1-pvs3-v0 = <242>;
-> +		opp-microamp-speed1-pvs4-v0 = <242>;
-> +		opp-microamp-speed1-pvs5-v0 = <242>;
-> +		opp-microamp-speed1-pvs6-v0 = <242>;
-> +	};
-> +
-> +	opp-883200000 {
-> +		opp-hz = /bits/ 64 <883200000>;
-> +		opp-microvolt-speed0-pvs0-v0 = <900000>;
-> +		opp-microvolt-speed0-pvs1-v0 = <885000>;
-> +		opp-microvolt-speed0-pvs2-v0 = <865000>;
-> +		opp-microvolt-speed0-pvs3-v0 = <850000>;
-> +		opp-microvolt-speed0-pvs4-v0 = <840000>;
-> +		opp-microvolt-speed0-pvs5-v0 = <830000>;
-> +		opp-microvolt-speed0-pvs6-v0 = <820000>;
-> +		opp-microvolt-speed2-pvs0-v0 = <865000>;
-> +		opp-microvolt-speed2-pvs1-v0 = <850000>;
-> +		opp-microvolt-speed2-pvs2-v0 = <835000>;
-> +		opp-microvolt-speed2-pvs3-v0 = <820000>;
-> +		opp-microvolt-speed2-pvs4-v0 = <810000>;
-> +		opp-microvolt-speed2-pvs5-v0 = <800000>;
-> +		opp-microvolt-speed2-pvs6-v0 = <790000>;
-> +		opp-microvolt-speed1-pvs0-v0 = <830000>;
-> +		opp-microvolt-speed1-pvs1-v0 = <815000>;
-> +		opp-microvolt-speed1-pvs2-v0 = <800000>;
-> +		opp-microvolt-speed1-pvs3-v0 = <785000>;
-> +		opp-microvolt-speed1-pvs4-v0 = <775000>;
-> +		opp-microvolt-speed1-pvs5-v0 = <765000>;
-> +		opp-microvolt-speed1-pvs6-v0 = <755000>;
-> +
-> +		opp-microamp-speed0-pvs0-v0 = <229>;
-> +		opp-microamp-speed0-pvs1-v0 = <229>;
-> +		opp-microamp-speed0-pvs2-v0 = <229>;
-> +		opp-microamp-speed0-pvs3-v0 = <229>;
-> +		opp-microamp-speed0-pvs4-v0 = <229>;
-> +		opp-microamp-speed0-pvs5-v0 = <229>;
-> +		opp-microamp-speed0-pvs6-v0 = <229>;
-> +		opp-microamp-speed2-pvs0-v0 = <223>;
-> +		opp-microamp-speed2-pvs1-v0 = <223>;
-> +		opp-microamp-speed2-pvs2-v0 = <223>;
-> +		opp-microamp-speed2-pvs3-v0 = <223>;
-> +		opp-microamp-speed2-pvs4-v0 = <223>;
-> +		opp-microamp-speed2-pvs5-v0 = <223>;
-> +		opp-microamp-speed2-pvs6-v0 = <223>;
-> +		opp-microamp-speed1-pvs0-v0 = <221>;
-> +		opp-microamp-speed1-pvs1-v0 = <221>;
-> +		opp-microamp-speed1-pvs2-v0 = <221>;
-> +		opp-microamp-speed1-pvs3-v0 = <221>;
-> +		opp-microamp-speed1-pvs4-v0 = <221>;
-> +		opp-microamp-speed1-pvs5-v0 = <221>;
-> +		opp-microamp-speed1-pvs6-v0 = <221>;
-> +	};
-> +};
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-> 
+> Thank you,
+> Claudiu Beznea
+> > 
+> > 
+> > Daniel.
+> > 
