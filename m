@@ -1,67 +1,264 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
 	robh+dt@kernel.org,
 	mark.rutland@arm.com,
 	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com,
-	narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
 	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v5 09/12] drm/sun4i: Add support for A83T second DE2 mixer
-Date: Wed, 14 Feb 2018 21:09:03 +0100
-Message-Id: <20180214200906.31509-10-jernej.skrabec@siol.net>
-In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
-References: <20180214200906.31509-1-jernej.skrabec@siol.net>
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org,
+	sricharan@codeaurora.org,
+	linux@arm.linux.org.uk
+Subject: [PATCH v8 06/15] clk: qcom: Add MSM8960/APQ8064's HFPLLs
+Date: Tue, 27 Feb 2018 19:36:53 +0530
+Message-Id: <1519740422-3835-7-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-It supports 1 VI and 1 UI plane and HW scaling on both planes.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Describe the HFPLLs present on MSM8960 and APQ8064 devices.
+
+Acked-by: Rob Herring <robh@kernel.org> (bindings)
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/qcom/gcc-msm8960.c               | 172 +++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8960.h |   2 +
+ 2 files changed, 174 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 2cbb2de6d39c..9b0256d31a61 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -485,6 +485,13 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
- 	.vi_num		= 1,
+diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm8960.c
+index eb551c7..809f16a 100644
+--- a/drivers/clk/qcom/gcc-msm8960.c
++++ b/drivers/clk/qcom/gcc-msm8960.c
+@@ -30,6 +30,7 @@
+ #include "clk-pll.h"
+ #include "clk-rcg.h"
+ #include "clk-branch.h"
++#include "clk-hfpll.h"
+ #include "reset.h"
+ 
+ static struct clk_pll pll3 = {
+@@ -86,6 +87,164 @@
+ 	},
  };
  
-+static const struct sun8i_mixer_cfg sun8i_a83t_mixer1_cfg = {
-+	.ccsc		= 1,
-+	.scaler_mask	= 0x3,
-+	.ui_num		= 1,
-+	.vi_num		= 1,
++static struct hfpll_data hfpll0_data = {
++	.mode_reg = 0x3200,
++	.l_reg = 0x3208,
++	.m_reg = 0x320c,
++	.n_reg = 0x3210,
++	.config_reg = 0x3204,
++	.status_reg = 0x321c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3214,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
 +};
 +
- static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.vi_num = 2,
- 	.ui_num = 1,
-@@ -498,6 +505,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
- 		.data = &sun8i_a83t_mixer0_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun8i-a83t-de2-mixer-1",
-+		.data = &sun8i_a83t_mixer1_cfg,
++static struct clk_hfpll hfpll0 = {
++	.d = &hfpll0_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll0",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
 +	},
- 	{
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
++};
++
++static struct hfpll_data hfpll1_8064_data = {
++	.mode_reg = 0x3240,
++	.l_reg = 0x3248,
++	.m_reg = 0x324c,
++	.n_reg = 0x3250,
++	.config_reg = 0x3244,
++	.status_reg = 0x325c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3254,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct hfpll_data hfpll1_data = {
++	.mode_reg = 0x3300,
++	.l_reg = 0x3308,
++	.m_reg = 0x330c,
++	.n_reg = 0x3310,
++	.config_reg = 0x3304,
++	.status_reg = 0x331c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll1 = {
++	.d = &hfpll1_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll1",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
++};
++
++static struct hfpll_data hfpll2_data = {
++	.mode_reg = 0x3280,
++	.l_reg = 0x3288,
++	.m_reg = 0x328c,
++	.n_reg = 0x3290,
++	.config_reg = 0x3284,
++	.status_reg = 0x329c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3294,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll2 = {
++	.d = &hfpll2_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll2",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll2.lock),
++};
++
++static struct hfpll_data hfpll3_data = {
++	.mode_reg = 0x32c0,
++	.l_reg = 0x32c8,
++	.m_reg = 0x32cc,
++	.n_reg = 0x32d0,
++	.config_reg = 0x32c4,
++	.status_reg = 0x32dc,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x32d4,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll3 = {
++	.d = &hfpll3_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll3",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll3.lock),
++};
++
++static struct hfpll_data hfpll_l2_8064_data = {
++	.mode_reg = 0x3300,
++	.l_reg = 0x3308,
++	.m_reg = 0x330c,
++	.n_reg = 0x3310,
++	.config_reg = 0x3304,
++	.status_reg = 0x331c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct hfpll_data hfpll_l2_data = {
++	.mode_reg = 0x3400,
++	.l_reg = 0x3408,
++	.m_reg = 0x340c,
++	.n_reg = 0x3410,
++	.config_reg = 0x3404,
++	.status_reg = 0x341c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3414,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll_l2 = {
++	.d = &hfpll_l2_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll_l2",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
++};
++
+ static struct clk_pll pll14 = {
+ 	.l_reg = 0x31c4,
+ 	.m_reg = 0x31c8,
+@@ -3112,6 +3271,9 @@ enum {
+ 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
+ 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
+ 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
++	[PLL9] = &hfpll0.clkr,
++	[PLL10] = &hfpll1.clkr,
++	[PLL12] = &hfpll_l2.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_msm8960_resets[] = {
+@@ -3323,6 +3485,11 @@ enum {
+ 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
+ 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
+ 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
++	[PLL9] = &hfpll0.clkr,
++	[PLL10] = &hfpll1.clkr,
++	[PLL12] = &hfpll_l2.clkr,
++	[PLL16] = &hfpll2.clkr,
++	[PLL17] = &hfpll3.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_apq8064_resets[] = {
+@@ -3482,6 +3649,11 @@ static int gcc_msm8960_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (match->data == &gcc_apq8064_desc) {
++		hfpll1.d = &hfpll1_8064_data;
++		hfpll_l2.d = &hfpll_l2_8064_data;
++	}
++
+ 	tsens = platform_device_register_data(&pdev->dev, "qcom-tsens", -1,
+ 					      NULL, 0);
+ 	if (IS_ERR(tsens))
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8960.h b/include/dt-bindings/clock/qcom,gcc-msm8960.h
+index 7d20eed..e02742f 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8960.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8960.h
+@@ -319,5 +319,7 @@
+ #define CE3_SRC					303
+ #define CE3_CORE_CLK				304
+ #define CE3_H_CLK				305
++#define PLL16					306
++#define PLL17					307
+ 
+ #endif
 -- 
-2.16.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
