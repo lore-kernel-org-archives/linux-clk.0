@@ -1,62 +1,94 @@
-Return-Path: <boris.brezillon@bootlin.com>
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Stephen Warren <swarren@wwwdotorg.org>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-rpi-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/4] clk: bcm2835: Protect sections updating shared registers
-Date: Thu,  8 Feb 2018 14:43:36 +0100
-Message-Id: <20180208134338.24590-2-boris.brezillon@bootlin.com>
-In-Reply-To: <20180208134338.24590-1-boris.brezillon@bootlin.com>
-References: <20180208134338.24590-1-boris.brezillon@bootlin.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org,
+	sricharan@codeaurora.org,
+	linux@arm.linux.org.uk
+Subject: [PATCH v8 05/15] dt-bindings: clock: Document qcom,hfpll
+Date: Tue, 27 Feb 2018 19:36:52 +0530
+Message-Id: <1519740422-3835-6-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-CM_PLLx and A2W_XOSC_CTRL registers are accessed by different clock
-handlers and must be accessed with ->regs_lock held.
-Update the sections where this protection is missing.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Adds bindings document for qcom,hfpll instantiated within
+the Krait processor subsystem as separate register region.
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/clock/qcom,hfpll.txt       | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 2108a274185a..a07f6451694a 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -623,8 +623,10 @@ static int bcm2835_pll_on(struct clk_hw *hw)
- 		     ~A2W_PLL_CTRL_PWRDN);
- 
- 	/* Take the PLL out of reset. */
-+	spin_lock(&cprman->regs_lock);
- 	cprman_write(cprman, data->cm_ctrl_reg,
- 		     cprman_read(cprman, data->cm_ctrl_reg) & ~CM_PLL_ANARST);
-+	spin_unlock(&cprman->regs_lock);
- 
- 	/* Wait for the PLL to lock. */
- 	timeout = ktime_add_ns(ktime_get(), LOCK_TIMEOUT_NS);
-@@ -701,9 +703,11 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
- 	}
- 
- 	/* Unmask the reference clock from the oscillator. */
-+	spin_lock(&cprman->regs_lock);
- 	cprman_write(cprman, A2W_XOSC_CTRL,
- 		     cprman_read(cprman, A2W_XOSC_CTRL) |
- 		     data->reference_enable_mask);
-+	spin_unlock(&cprman->regs_lock);
- 
- 	if (do_ana_setup_first)
- 		bcm2835_pll_write_ana(cprman, data->ana_reg_base, ana);
+diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+new file mode 100644
+index 0000000..771cb0a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+@@ -0,0 +1,46 @@
++High-Frequency PLL (HFPLL)
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>:
++		shall contain only one of the following. The generic
++		compatible "qcom,hfpll" should be also included.
++
++                        "qcom,hfpll-ipq8064", "qcom,hfpll"
++                        "qcom,hfpll-apq8064", "qcom,hfpll"
++                        "qcom,hfpll-msm8974", "qcom,hfpll"
++                        "qcom,hfpll-msm8960", "qcom,hfpll"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: address and size of HPLL registers. An optional second
++		    element specifies the address and size of the alias
++		    register region.
++
++- clock-output-names:
++	Usage: required
++	Value type: <string>
++	Definition: Name of the PLL. Typically hfpllX where X is a CPU number
++		    starting at 0. Otherwise hfpll_Y where Y is more specific
++		    such as "l2".
++
++Example:
++
++1) An HFPLL for the L2 cache.
++
++	clock-controller@f9016000 {
++		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
++		reg = <0xf9016000 0x30>;
++		clock-output-names = "hfpll_l2";
++	};
++
++2) An HFPLL for CPU0. This HFPLL has the alias register region.
++
++	clock-controller@f908a000 {
++		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
++		reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
++		clock-output-names = "hfpll0";
++	};
 -- 
-2.14.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
