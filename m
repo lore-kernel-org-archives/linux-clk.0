@@ -1,36 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42289 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752562AbeBEGId (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Feb 2018 01:08:33 -0500
-Date: Mon, 5 Feb 2018 00:08:31 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>
-Subject: Re: [PATCH v2 1/5] clk: mediatek: update missing clock data for
- MT7622 audsys
-Message-ID: <20180205024914.os5dq5wip344hefe@rob-hp-laptop>
-References: <cover.1515639336.git.ryder.lee@mediatek.com>
- <ec2dfe750291a996c54cc8aaeafafa333b992c4f.1515639336.git.ryder.lee@mediatek.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 0/3] clk: ti: add CLK_SET_RATE_PARENT support for clkctrl
+To: Tony Lindgren <tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <linux-omap@vger.kernel.org>, <jsarha@ti.com>
+References: <1519657812-15605-1-git-send-email-t-kristo@ti.com>
+ <20180226220520.GI16043@atomide.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <e036e793-37f5-a6ee-4347-72d27579e278@ti.com>
+Date: Tue, 27 Feb 2018 08:34:37 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <ec2dfe750291a996c54cc8aaeafafa333b992c4f.1515639336.git.ryder.lee@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180226220520.GI16043@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jan 31, 2018 at 03:42:41PM +0800, Ryder Lee wrote:
-> Add missing clock data 'CLK_AUDIO_AFE_CONN' for MT7622 audsys.
+On 27/02/18 00:05, Tony Lindgren wrote:
+> Hi,
 > 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-mt7622-aud.c  | 1 +
->  include/dt-bindings/clock/mt7622-clk.h | 3 ++-
->  2 files changed, 3 insertions(+), 1 deletion(-)
+> * Tero Kristo <t-kristo@ti.com> [180226 15:11]:
+>> This patch adds clock rate propagation support for clkctrl clocks. This
+>> is needed on am33xx beaglebone black device at least, otherwise the
+>> display does not work. Similar problem appears to be present on am43xx
+>> but haven't heard of any reports of such so far, maybe Jyri can confirm
+>> this?
+> 
+> I think I was also hitting this with the system timers with ti-sysc
+> where set_parent() would fail unless the dts has the following for
+> timers:
+> 
+> clocks = <&l4_wkup_clkctrl OMAP4_TIMER1_CLKCTRL 24>;
+> 
+> So bit 24 instead of 0.
+> 
+> Hmm so should we have all the timers use bit 0 in the dtsi?
+> Or default to bit 24 for all of them?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Who is going to control the clkctrl clock for the timers if you just 
+control the opt clock? Also, ain't the bit 24 the clksel mux setting? 
+Tweaking that would seem wrong...
+
+If you were facing problems with setting the clock source, we could 
+maybe just apply the CLK_SET_RATE_PARENT globally to all clkctrl clocks 
+(modify the patch #1 in this series to always set the flag, instead of 
+clecking against the CLKF_xyz flag.) Any thoughts?
+
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
