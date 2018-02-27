@@ -1,77 +1,58 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 20/41] ARM: da830: add new clock init using common
- clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-21-git-send-email-david@lechnology.com>
- <4b2f45f5-7f0d-f0e6-6854-9992e19f45f2@ti.com>
- <e5eb68e8-eb53-331d-5941-95df7d295074@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <4fc7b926-a21f-d49a-005e-44ad7f06e2e7@ti.com>
-Date: Mon, 5 Feb 2018 16:36:58 +0530
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [PATCH v3 00/14] Add MMCI support for STM32F SoCs family
+To: <patrice.chotard@st.com>, Russell King <linux@armlinux.org.uk>,
+        Ulf
+ Hansson <ulf.hansson@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <c4f78733-2544-6cef-97e5-fedcc23de404@st.com>
+Date: Tue, 27 Feb 2018 14:25:34 +0100
 MIME-Version: 1.0
-In-Reply-To: <e5eb68e8-eb53-331d-5941-95df7d295074@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1516286070-24927-1-git-send-email-patrice.chotard@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 02 February 2018 11:33 PM, David Lechner wrote:
-> On 02/02/2018 08:12 AM, Sekhar Nori wrote:
->> On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
->>>   void __init da830_init_time(void)
->>>   {
->>> +#ifdef CONFIG_COMMON_CLK
->>> +    void __iomem *pll0, *psc0, *psc1;
->>> +    struct clk *clk;
->>> +
->>> +    pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
->>> +    psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
->>> +    psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
->>> +
->>> +    da8xx_register_cfgchip();
->>> +
->>> +    clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
->>> +
->>> +    da830_pll_clk_init(pll0);
->>> +
->>> +    da830_psc_clk_init(psc0, psc1);
->>> +
->>
->>> +    clk = clk_register_fixed_factor(NULL, "i2c0", "pll0_aux_clk", 0,
->>> 1, 1);
->>> +    clk_register_clkdev(clk, NULL, "i2c_davinci.1");
->>> +
->>> +    clk = clk_register_fixed_factor(NULL, "timer0", "pll0_aux_clk",
->>> 0, 1, 1);
->>> +    clk_register_clkdev(clk, "timer0", NULL);
->>> +
->>> +    clk = clk_register_fixed_factor(NULL, "timer1", "pll0_aux_clk",
->>> 0, 1, 1);
->>> +    clk_register_clkdev(clk, NULL, "davinci-wdt");
->>
->> Isn't this better done in da830_pll_clk_init() ? I think we can get rid
->> of the dummy fixed factor clock too and directly use the pll0_auxclk.
+Hi Patrice,
+
+On 01/18/2018 03:34 PM, patrice.chotard@st.com wrote:
+> From: Patrice Chotard <patrice.chotard@st.com>
 > 
+> This series reworks patches submitted one year ago by Andrea Merello [1]
+> but without succeed to merged it.
 > 
-> I considered it, but I kind of like keeping the fixed factor clocks for
-> debugging purposes. If you just have "pll0_auxclk" the enable count is
-> not helpful because you don't know which driver did the enabling.
+> STM32F4 and STM32F7 SoCs families embeds a variant of the ARM PrimeCell
+> PL18x SD host controller, for which the mmci driver exists.
+> This series adds support for these SoCs to the mmci driver.
+> 
+> As other variants, this one need some specific quirks, that this
+> series address.
+> 
+> This series has been tested on following boards :
+> 	_ stm32f429-eval
+> 	_ stm32f469-disco
+> 	_ stm32f746-eval
+> 	_ stm32f769-disco
+> 
+> DT update for stm32f7 pinctrl, stm32f746-eval and stm32f769-disco boards
+> will be sent later to avoid conflict with pending stm32f7 series [1] which
+> is not yet merged on kernel mainline.
+> 
+> [1] https://www.spinics.net/lists/linux-mmc/msg41616.html
+> [2] https://patchwork.kernel.org/patch/10104447/
+>
+...
 
-I think it is better to more or less reflect the hardware here. We would
-not be doing this in the DT case, for example.
+Patches 6 to 13 (DT/SoC/configs) applied on stm32-next.
 
-I see your point on debugging. Such code can perhaps be temporarily
-introduced if really debugging such an issue. This will be the case with
-any shared clock.
-
-Thanks,
-Sekhar
+Thanks
+Alex
