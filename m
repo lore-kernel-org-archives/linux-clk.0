@@ -1,105 +1,110 @@
-Return-Path: <robin.murphy@arm.com>
-Subject: Re: [PATCH 1/8] clk: Add clk_bulk_alloc functions
-To: Maciej Purski <m.purski@samsung.com>, linux-media@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Cc: David Airlie <airlied@linux.ie>,
- Michael Turquette <mturquette@baylibre.com>, Kamil Debski <kamil@wypas.org>,
- Andrzej Hajda <a.hajda@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Thibault Saunier <thibault.saunier@osg.samsung.com>,
- Joonyoung Shim <jy0922.shim@samsung.com>,
- Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Inki Dae <inki.dae@samsung.com>, Jeongtae Park <jtp.park@samsung.com>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Seung-Woo Kim <sw0312.kim@samsung.com>, Hans Verkuil <hansverk@cisco.com>,
- Kyungmin Park <kyungmin.park@samsung.com>
-References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
- <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
- <1519055046-2399-2-git-send-email-m.purski@samsung.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <b67b5043-f5e5-826a-f0b8-f7cf722c61e6@arm.com>
-Date: Mon, 19 Feb 2018 16:29:12 +0000
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:61396 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751515AbeB0Arn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 19:47:43 -0500
 MIME-Version: 1.0
-In-Reply-To: <1519055046-2399-2-git-send-email-m.purski@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAK8P3a3zMG4wV9SWg78NGmk=BU9yq5paxZvJ=coHCWxVgNhO2w@mail.gmail.com>
+References: <1519483851-31135-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAK8P3a26kkcmzT450326=xHXjynG=uNYi2w07w6T+T01zQOQag@mail.gmail.com>
+ <CAK7LNAT8sRDNZKbcpXY+e98O+sJHw9vUM9bKvdmVZNuEEQoMdA@mail.gmail.com> <CAK8P3a3zMG4wV9SWg78NGmk=BU9yq5paxZvJ=coHCWxVgNhO2w@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 27 Feb 2018 09:46:53 +0900
+Message-ID: <CAK7LNAQBLTk7rduT2eQQKRhRiGTw-8MRhpz2ZJdEwKTx=-zY-Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] drivers: use 'depends on MFD_SYSCON' instead of
+ 'select MFD_SYSCON'
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maciej,
+2018-02-26 21:43 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+> On Mon, Feb 26, 2018 at 12:53 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> 2018-02-26 17:43 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+>>> On Sat, Feb 24, 2018 at 3:50 PM, Masahiro Yamada
+>>> <yamada.masahiro@socionext.com> wrote:
+>>>> As Documentation/kbuild/kconfig-language.txt notes, 'select' should be
+>>>> used with care - it forces a lower limit of another symbol, ignoring
+>>>> the dependency.
+>>>>
+>>>> MFD_SYSCON depends on HAS_IOMEM, but several drivers with COMPILE_TEST
+>>>> select it.
+>>>>
+>>>> This causes unmet dependencies for architecture without HAS_IOMEM.
+>>>>
+>>>>   $ make ARCH=score randconfig
+>>>>   scripts/kconfig/conf  --randconfig Kconfig
+>>>>   KCONFIG_SEED=0x27C47F43
+>>>>   warning: (HWSPINLOCK_QCOM && AHCI_MTK && STMMAC_PLATFORM && ...)
+>>>>   selects MFD_SYSCON which has unmet direct dependencies (HAS_IOMEM)
+>>>>
+>>>> Use 'depends on' to observe the dependency.
+>>>>
+>>>> This commit was created by the following command:
+>>>>
+>>>>   $ find drivers -name 'Kconfig*' | xargs sed -i -e \
+>>>>     's/select MFD_SYSCON$/depends on MFD_SYSCON/'
+>>>>
+>>>> Then, COMMON_CLK_NXP and S3C2410_WATCHDOG were fixed up manually.
+>>>>
+>>>> Also, make MFD_SYSCON 'default y' because some defconfig files may
+>>>> rely on someone select's MFD_SYSCON.
+>>>>
+>>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>> ---
+>>>>
+>>>> If you have a better idea to fix 'unmet dependencies',
+>>>> please suggest.
+>>>
+>>> Changing 'select MFD_SYSCON' to 'depends on' will definitely break lots
+>>> of defconfig configurations, I'd rather not do that.
+>>
+>>
+>> Could you explain why?
+>>
+>> I set 'default y' for MFD_SYSCON.
+>>
+>> Would it still break defconfig configurations?
+>
+> No, you are right, that would not break defconfigs, it would just mean one
+> useless driver being enabled for many configurations that don't need it.
 
-On 19/02/18 15:43, Maciej Purski wrote:
-> When a driver is going to use clk_bulk_get() function, it has to
-> initialize an array of clk_bulk_data, by filling its id fields.
-> 
-> Add a new function to the core, which dynamically allocates
-> clk_bulk_data array and fills its id fields. Add clk_bulk_free()
-> function, which frees the array allocated by clk_bulk_alloc() function.
-> Add a managed version of clk_bulk_alloc().
+If we are unhappy about this,
+we can send per-arch patches
+to add CONFIG_MTD_SYSCON=y to defconfigs that need it.
 
-Seeing how every subsequent patch ends up with the roughly this same stanza:
+But, we need to decide what the right solution is.
 
-	x = devm_clk_bulk_alloc(dev, num, names);
-	if (IS_ERR(x)
-		return PTR_ERR(x);
-	ret = devm_clk_bulk_get(dev, x, num);
 
-I wonder if it might be better to simply implement:
+>>> Only score, tile and um have some configurations that select 'NO_IOMEM'.
+>>> Score is getting removed now, tile might get removed later (we could make
+>>> PCI mandatory in the meantime to avoid that configuration), and I think for
+>>> um, we already have a workaround for the NO_IOMEM dependencies
+>>> (I forget the details).
+>>
+>> I do not think this is a stable solution.
+>>
+>> Or, do you mean to remove NO_IOMEM and HAS_IOMEM completely?
+>
+> We could either leave it for arch/um only and have that deal with the
+> issues (which I think we already have), or we could remove the options
+> entirely.
+>
+>       Arnd
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-	int devm_clk_bulk_alloc_get(dev, &x, num, names)
 
-that does the whole lot in one go, and let drivers that want to do more 
-fiddly things continue to open-code the allocation.
 
-But perhaps that's an abstraction too far... I'm not all that familiar 
-with the lie of the land here.
-
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> ---
->   drivers/clk/clk-bulk.c   | 16 ++++++++++++
->   drivers/clk/clk-devres.c | 37 +++++++++++++++++++++++++---
->   include/linux/clk.h      | 64 ++++++++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 113 insertions(+), 4 deletions(-)
-> 
-
-[...]
-> @@ -598,6 +645,23 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id);
->   
->   #else /* !CONFIG_HAVE_CLK */
->   
-> +static inline struct clk_bulk_data *clk_bulk_alloc(int num_clks,
-> +						   const char **clk_ids)
-> +{
-> +	return NULL;
-
-Either way, is it intentional not returning an ERR_PTR() value in this 
-case? Since NULL will pass an IS_ERR() check, it seems a bit fragile for 
-an allocation call to apparently succeed when the whole API is 
-configured out (and I believe introducing new uses of IS_ERR_OR_NULL() 
-is in general strongly discouraged.)
-
-Robin.
-
-> +}
-> +
-> +static inline struct clk_bulk_data *devm_clk_bulk_alloc(struct device *dev,
-> +							int num_clks,
-> +							const char **clk_ids)
-> +{
-> +	return NULL;
-> +}
-> +
-> +static inline void clk_bulk_free(struct clk_bulk_data *clks)
-> +{
-> +}
-> +
->   static inline struct clk *clk_get(struct device *dev, const char *id)
->   {
->   	return NULL;
-> 
+-- 
+Best Regards
+Masahiro Yamada
