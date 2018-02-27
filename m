@@ -1,967 +1,204 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/19] clk: meson: migrate mplls clocks to clk_regmap
-Date: Mon, 12 Feb 2018 15:58:40 +0100
-Message-Id: <20180212145846.19380-14-jbrunet@baylibre.com>
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 11/16] drm/sun4i: Move and expand DW HDMI PHY register macros
+Date: Tue, 27 Feb 2018 23:26:56 +0100
+Message-Id: <20180227222701.9716-12-jernej.skrabec@siol.net>
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Rework meson mpll driver to use clk_regmap and move meson8b, gxbb
-and axg clocks using meson_clk_mpll to clk_regmap
+DW HDMI PHY macros are moved to header file and expanded with the
+registers present on newer SoCs like H3 and H5.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/meson/axg.c      | 245 +++++++++++++++++++++----------------------
- drivers/clk/meson/clk-mpll.c | 102 +++++++-----------
- drivers/clk/meson/clkc.h     |   4 +-
- drivers/clk/meson/gxbb.c     | 161 ++++++++++++++--------------
- drivers/clk/meson/meson8b.c  | 155 ++++++++++++++-------------
- 5 files changed, 313 insertions(+), 354 deletions(-)
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  | 131 +++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c |  17 -----
+ 2 files changed, 131 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 9f0c36e12cb8..85f9466ce006 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -267,38 +267,40 @@ static struct clk_fixed_factor axg_fclk_div7 = {
- 	},
- };
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 1e9eb6072615..49161326ea5a 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -12,6 +12,137 @@
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
  
--static struct meson_clk_mpll axg_mpll0 = {
--	.sdm = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 0,
--		.width   = 14,
--	},
--	.sdm_en = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 15,
--		.width	 = 1,
--	},
--	.n2 = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 16,
--		.width   = 9,
--	},
--	.en = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 14,
--		.width	 = 1,
-+static struct clk_regmap axg_mpll0 = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 15,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 16,
-+			.width   = 9,
-+		},
-+		.en = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 14,
-+			.width	 = 1,
-+		},
-+		.ssen = {
-+			.reg_off = HHI_MPLL_CNTL,
-+			.shift   = 25,
-+			.width	 = 1,
-+		},
-+		.misc = {
-+			.reg_off = HHI_PLL_TOP_MISC,
-+			.shift   = 0,
-+			.width	 = 1,
-+		},
-+		.lock = &meson_clk_lock,
- 	},
--	.ssen = {
--		.reg_off = HHI_MPLL_CNTL,
--		.shift   = 25,
--		.width	 = 1,
--	},
--	.misc = {
--		.reg_off = HHI_PLL_TOP_MISC,
--		.shift   = 0,
--		.width	 = 1,
--	},
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll0",
- 		.ops = &meson_clk_mpll_ops,
-@@ -307,33 +309,35 @@ static struct meson_clk_mpll axg_mpll0 = {
- 	},
- };
- 
--static struct meson_clk_mpll axg_mpll1 = {
--	.sdm = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 0,
--		.width   = 14,
-+static struct clk_regmap axg_mpll1 = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 15,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 16,
-+			.width   = 9,
-+		},
-+		.en = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 14,
-+			.width	 = 1,
-+		},
-+		.misc = {
-+			.reg_off = HHI_PLL_TOP_MISC,
-+			.shift   = 1,
-+			.width	 = 1,
-+		},
-+		.lock = &meson_clk_lock,
- 	},
--	.sdm_en = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 15,
--		.width	 = 1,
--	},
--	.n2 = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 16,
--		.width   = 9,
--	},
--	.en = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 14,
--		.width	 = 1,
--	},
--	.misc = {
--		.reg_off = HHI_PLL_TOP_MISC,
--		.shift   = 1,
--		.width	 = 1,
--	},
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll1",
- 		.ops = &meson_clk_mpll_ops,
-@@ -342,33 +346,35 @@ static struct meson_clk_mpll axg_mpll1 = {
- 	},
- };
- 
--static struct meson_clk_mpll axg_mpll2 = {
--	.sdm = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 0,
--		.width   = 14,
--	},
--	.sdm_en = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 15,
--		.width	 = 1,
-+static struct clk_regmap axg_mpll2 = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 15,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 16,
-+			.width   = 9,
-+		},
-+		.en = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 14,
-+			.width	 = 1,
-+		},
-+		.misc = {
-+			.reg_off = HHI_PLL_TOP_MISC,
-+			.shift   = 2,
-+			.width	 = 1,
-+		},
-+		.lock = &meson_clk_lock,
- 	},
--	.n2 = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 16,
--		.width   = 9,
--	},
--	.en = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 14,
--		.width	 = 1,
--	},
--	.misc = {
--		.reg_off = HHI_PLL_TOP_MISC,
--		.shift   = 2,
--		.width	 = 1,
--	},
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll2",
- 		.ops = &meson_clk_mpll_ops,
-@@ -377,33 +383,35 @@ static struct meson_clk_mpll axg_mpll2 = {
- 	},
- };
- 
--static struct meson_clk_mpll axg_mpll3 = {
--	.sdm = {
--		.reg_off = HHI_MPLL3_CNTL0,
--		.shift   = 12,
--		.width   = 14,
--	},
--	.sdm_en = {
--		.reg_off = HHI_MPLL3_CNTL0,
--		.shift   = 11,
--		.width	 = 1,
-+static struct clk_regmap axg_mpll3 = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = HHI_MPLL3_CNTL0,
-+			.shift   = 12,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = HHI_MPLL3_CNTL0,
-+			.shift   = 11,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = HHI_MPLL3_CNTL0,
-+			.shift   = 2,
-+			.width   = 9,
-+		},
-+		.en = {
-+			.reg_off = HHI_MPLL3_CNTL0,
-+			.shift   = 0,
-+			.width	 = 1,
-+		},
-+		.misc = {
-+			.reg_off = HHI_PLL_TOP_MISC,
-+			.shift   = 3,
-+			.width	 = 1,
-+		},
-+		.lock = &meson_clk_lock,
- 	},
--	.n2 = {
--		.reg_off = HHI_MPLL3_CNTL0,
--		.shift   = 2,
--		.width   = 9,
--	},
--	.en = {
--		.reg_off = HHI_MPLL3_CNTL0,
--		.shift   = 0,
--		.width	 = 1,
--	},
--	.misc = {
--		.reg_off = HHI_PLL_TOP_MISC,
--		.shift   = 3,
--		.width	 = 1,
--	},
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll3",
- 		.ops = &meson_clk_mpll_ops,
-@@ -698,13 +706,6 @@ static struct meson_clk_pll *const axg_clk_plls[] = {
- 	&axg_gp0_pll,
- };
- 
--static struct meson_clk_mpll *const axg_clk_mplls[] = {
--	&axg_mpll0,
--	&axg_mpll1,
--	&axg_mpll2,
--	&axg_mpll3,
--};
--
- static struct clk_regmap *const axg_clk_regmaps[] = {
- 	&axg_clk81,
- 	&axg_ddr,
-@@ -759,19 +760,19 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
- 	&axg_mpeg_clk_sel,
- 	&axg_sd_emmc_b_clk0_sel,
- 	&axg_sd_emmc_c_clk0_sel,
-+	&axg_mpll0,
-+	&axg_mpll1,
-+	&axg_mpll2,
-+	&axg_mpll3,
- };
- 
- struct clkc_data {
--	struct meson_clk_mpll *const *clk_mplls;
--	unsigned int clk_mplls_count;
- 	struct meson_clk_pll *const *clk_plls;
- 	unsigned int clk_plls_count;
- 	struct clk_hw_onecell_data *hw_onecell_data;
- };
- 
- static const struct clkc_data axg_clkc_data = {
--	.clk_mplls = axg_clk_mplls,
--	.clk_mplls_count = ARRAY_SIZE(axg_clk_mplls),
- 	.clk_plls = axg_clk_plls,
- 	.clk_plls_count = ARRAY_SIZE(axg_clk_plls),
- 	.hw_onecell_data = &axg_hw_onecell_data,
-@@ -820,10 +821,6 @@ static int axg_clkc_probe(struct platform_device *pdev)
- 	for (i = 0; i < clkc_data->clk_plls_count; i++)
- 		clkc_data->clk_plls[i]->base = clk_base;
- 
--	/* Populate base address for MPLLs */
--	for (i = 0; i < clkc_data->clk_mplls_count; i++)
--		clkc_data->clk_mplls[i]->base = clk_base;
--
- 	/* Populate regmap for the regmap backed clocks */
- 	for (i = 0; i < ARRAY_SIZE(axg_clk_regmaps); i++)
- 		axg_clk_regmaps[i]->map = map;
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index 6d79d6daadc4..66998ff47635 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -68,11 +68,15 @@
- #define N2_MIN	4
- #define N2_MAX	511
- 
--#define to_meson_clk_mpll(_hw) container_of(_hw, struct meson_clk_mpll, hw)
-+static inline struct meson_clk_mpll_data *
-+meson_clk_mpll_data(struct clk_regmap *clk)
-+{
-+	return (struct meson_clk_mpll_data *)clk->data;
-+}
- 
- static long rate_from_params(unsigned long parent_rate,
--				      unsigned long sdm,
--				      unsigned long n2)
-+			     unsigned int sdm,
-+			     unsigned int n2)
- {
- 	unsigned long divisor = (SDM_DEN * n2) + sdm;
- 
-@@ -84,8 +88,8 @@ static long rate_from_params(unsigned long parent_rate,
- 
- static void params_from_rate(unsigned long requested_rate,
- 			     unsigned long parent_rate,
--			     unsigned long *sdm,
--			     unsigned long *n2)
-+			     unsigned int *sdm,
-+			     unsigned int *n2)
- {
- 	uint64_t div = parent_rate;
- 	unsigned long rem = do_div(div, requested_rate);
-@@ -105,31 +109,23 @@ static void params_from_rate(unsigned long requested_rate,
- static unsigned long mpll_recalc_rate(struct clk_hw *hw,
- 		unsigned long parent_rate)
- {
--	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
--	struct parm *p;
--	unsigned long reg, sdm, n2;
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
-+	unsigned int sdm, n2;
- 	long rate;
- 
--	p = &mpll->sdm;
--	reg = readl(mpll->base + p->reg_off);
--	sdm = PARM_GET(p->width, p->shift, reg);
--
--	p = &mpll->n2;
--	reg = readl(mpll->base + p->reg_off);
--	n2 = PARM_GET(p->width, p->shift, reg);
-+	sdm = meson_parm_read(clk->map, &mpll->sdm);
-+	n2 = meson_parm_read(clk->map, &mpll->n2);
- 
- 	rate = rate_from_params(parent_rate, sdm, n2);
--	if (rate < 0)
--		return 0;
--
--	return rate;
-+	return rate < 0 ? 0 : rate;
- }
- 
- static long mpll_round_rate(struct clk_hw *hw,
- 			    unsigned long rate,
- 			    unsigned long *parent_rate)
- {
--	unsigned long sdm, n2;
-+	unsigned int sdm, n2;
- 
- 	params_from_rate(rate, *parent_rate, &sdm, &n2);
- 	return rate_from_params(*parent_rate, sdm, n2);
-@@ -139,9 +135,9 @@ static int mpll_set_rate(struct clk_hw *hw,
- 			 unsigned long rate,
- 			 unsigned long parent_rate)
- {
--	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
--	struct parm *p;
--	unsigned long reg, sdm, n2;
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
-+	unsigned int sdm, n2;
- 	unsigned long flags = 0;
- 
- 	params_from_rate(rate, parent_rate, &sdm, &n2);
-@@ -151,34 +147,20 @@ static int mpll_set_rate(struct clk_hw *hw,
- 	else
- 		__acquire(mpll->lock);
- 
--	p = &mpll->sdm;
--	reg = readl(mpll->base + p->reg_off);
--	reg = PARM_SET(p->width, p->shift, reg, sdm);
--	writel(reg, mpll->base + p->reg_off);
--
--	p = &mpll->sdm_en;
--	reg = readl(mpll->base + p->reg_off);
--	reg = PARM_SET(p->width, p->shift, reg, 1);
--	writel(reg, mpll->base + p->reg_off);
--
--	p = &mpll->ssen;
--	if (p->width != 0) {
--		reg = readl(mpll->base + p->reg_off);
--		reg = PARM_SET(p->width, p->shift, reg, 1);
--		writel(reg, mpll->base + p->reg_off);
--	}
-+	/* Enable and set the fractional part */
-+	meson_parm_write(clk->map, &mpll->sdm, sdm);
-+	meson_parm_write(clk->map, &mpll->sdm_en, 1);
- 
--	p = &mpll->n2;
--	reg = readl(mpll->base + p->reg_off);
--	reg = PARM_SET(p->width, p->shift, reg, n2);
--	writel(reg, mpll->base + p->reg_off);
-+	/* Set additional fractional part enable if required */
-+	if (MESON_PARM_APPLICABLE(&mpll->ssen))
-+		meson_parm_write(clk->map, &mpll->ssen, 1);
- 
--	p = &mpll->misc;
--	if (p->width != 0) {
--		reg = readl(mpll->base + p->reg_off);
--		reg = PARM_SET(p->width, p->shift, reg, 1);
--		writel(reg, mpll->base + p->reg_off);
--	}
-+	/* Set the integer divider part */
-+	meson_parm_write(clk->map, &mpll->n2, n2);
++#define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
++#define SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK		BIT(0)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK	GENMASK(15, 8)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC	BIT(8)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC	BIT(9)
++#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR_MASK	GENMASK(23, 16)
++#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR(addr)	(addr << 16)
 +
-+	/* Set the magic misc bit if required */
-+	if (MESON_PARM_APPLICABLE(&mpll->misc))
-+		meson_parm_write(clk->map, &mpll->misc, 1);
++#define SUN8I_HDMI_PHY_REXT_CTRL_REG	0x0004
++#define SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN	BIT(31)
++
++#define SUN8I_HDMI_PHY_READ_EN_REG	0x0010
++#define SUN8I_HDMI_PHY_READ_EN_MAGIC		0x54524545
++
++#define SUN8I_HDMI_PHY_UNSCRAMBLE_REG	0x0014
++#define SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC		0x42494E47
++
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG	0x0020
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SWI		BIT(31)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_PWEND	BIT(30)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_PWENC	BIT(29)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_CALSW	BIT(28)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SVRCAL(x)	((x) << 26)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SVBH(x)	((x) << 24)
++#define SUN8I_HDMI_PHY_ANA_CFG1_AMP_OPT		BIT(23)
++#define SUN8I_HDMI_PHY_ANA_CFG1_EMP_OPT		BIT(22)
++#define SUN8I_HDMI_PHY_ANA_CFG1_AMPCK_OPT	BIT(21)
++#define SUN8I_HDMI_PHY_ANA_CFG1_EMPCK_OPT	BIT(20)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENRCAL		BIT(19)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENCALOG		BIT(18)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SCKTMDS	BIT(17)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TMDSCLK_EN	BIT(16)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK	GENMASK(15, 12)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TXEN_ALL	(0xf << 12)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDSCLK	BIT(11)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS2	BIT(10)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS1	BIT(9)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS0	BIT(8)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDSCLK	BIT(7)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS2	BIT(6)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS1	BIT(5)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS0	BIT(4)
++#define SUN8I_HDMI_PHY_ANA_CFG1_CKEN		BIT(3)
++#define SUN8I_HDMI_PHY_ANA_CFG1_LDOEN		BIT(2)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENVBS		BIT(1)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENBI		BIT(0)
++
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG	0x0024
++#define SUN8I_HDMI_PHY_ANA_CFG2_M_EN		BIT(31)
++#define SUN8I_HDMI_PHY_ANA_CFG2_PLLDBEN		BIT(30)
++#define SUN8I_HDMI_PHY_ANA_CFG2_SEN		BIT(29)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_HPDPD	BIT(28)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_HPDEN	BIT(27)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_PLRCK	BIT(26)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_PLR(x)	((x) << 23)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_DENCK	BIT(22)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_DEN		BIT(21)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CD(x)	((x) << 19)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CKSS(x)	((x) << 17)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BIGSWCK	BIT(16)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BIGSW	BIT(15)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CSMPS(x)	((x) << 13)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_SLV(x)	((x) << 10)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BOOSTCK(x)	((x) << 8)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BOOST(x)	((x) << 6)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_RESDI(x)	((x) << 0)
++
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG	0x0028
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_SLOWCK(x)	((x) << 30)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_SLOW(x)	((x) << 28)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_WIRE(x)	((x) << 18)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_AMPCK(x)	((x) << 14)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_EMPCK(x)	((x) << 11)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_AMP(x)	((x) << 7)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_EMP(x)	((x) << 4)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SDAPD		BIT(3)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SDAEN		BIT(2)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SCLPD		BIT(1)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SCLEN		BIT(0)
++
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG	0x002c
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG_OD1		BIT(31)
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG_OD		BIT(30)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
++#define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
++#define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
++#define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
++#define SUN8I_HDMI_PHY_PLL_CFG1_PLLDBEN		BIT(19)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CS		BIT(18)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CP_S(x)		((x) << 13)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CNT_INT(x)	((x) << 7)
++#define SUN8I_HDMI_PHY_PLL_CFG1_BWS		BIT(6)
++#define SUN8I_HDMI_PHY_PLL_CFG1_B_IN_MSK	GENMASK(5, 0)
++#define SUN8I_HDMI_PHY_PLL_CFG1_B_IN_SHIFT	0
++
++#define SUN8I_HDMI_PHY_PLL_CFG2_REG	0x0030
++#define SUN8I_HDMI_PHY_PLL_CFG2_SV_H		BIT(31)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PDCLKSEL(x)	((x) << 29)
++#define SUN8I_HDMI_PHY_PLL_CFG2_CLKSTEP(x)	((x) << 27)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PSET(x)		((x) << 24)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PCLK_SEL	BIT(23)
++#define SUN8I_HDMI_PHY_PLL_CFG2_AUTOSYNC_DIS	BIT(22)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VREG2_OUT_EN	BIT(21)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VREG1_OUT_EN	BIT(20)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCOGAIN_EN	BIT(19)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCOGAIN(x)	((x) << 16)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCO_S(x)	((x) << 12)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCO_RST_IN	BIT(11)
++#define SUN8I_HDMI_PHY_PLL_CFG2_SINT_FRAC	BIT(10)
++#define SUN8I_HDMI_PHY_PLL_CFG2_SDIV2		BIT(9)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S(x)		((x) << 6)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S6P25_7P5	BIT(5)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S5_7		BIT(4)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK	GENMASK(3, 0)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_SHIFT	0
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV(x)	(((x) - 1) << 0)
++
++#define SUN8I_HDMI_PHY_PLL_CFG3_REG	0x0034
++#define SUN8I_HDMI_PHY_PLL_CFG3_SOUT_DIV2	BIT(0)
++
++#define SUN8I_HDMI_PHY_ANA_STS_REG	0x0038
++#define SUN8I_HDMI_PHY_ANA_STS_B_OUT_SHIFT	11
++#define SUN8I_HDMI_PHY_ANA_STS_B_OUT_MSK	GENMASK(16, 11)
++#define SUN8I_HDMI_PHY_ANA_STS_RCALEND2D	BIT(7)
++#define SUN8I_HDMI_PHY_ANA_STS_RCAL_MASK	GENMASK(5, 0)
++
++#define SUN8I_HDMI_PHY_CEC_REG		0x003c
++
+ struct sun8i_hdmi_phy;
  
- 	if (mpll->lock)
- 		spin_unlock_irqrestore(mpll->lock, flags);
-@@ -190,9 +172,8 @@ static int mpll_set_rate(struct clk_hw *hw,
+ struct sun8i_hdmi_phy_variant {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 17aada64bafd..16889bc0c62d 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -7,23 +7,6 @@
  
- static void mpll_enable_core(struct clk_hw *hw, int enable)
- {
--	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
--	struct parm *p;
--	unsigned long reg;
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
- 	unsigned long flags = 0;
+ #include "sun8i_dw_hdmi.h"
  
- 	if (mpll->lock)
-@@ -200,10 +181,7 @@ static void mpll_enable_core(struct clk_hw *hw, int enable)
- 	else
- 		__acquire(mpll->lock);
- 
--	p = &mpll->en;
--	reg = readl(mpll->base + p->reg_off);
--	reg = PARM_SET(p->width, p->shift, reg, enable ? 1 : 0);
--	writel(reg, mpll->base + p->reg_off);
-+	meson_parm_write(clk->map, &mpll->en, enable ? 1 : 0);
- 
- 	if (mpll->lock)
- 		spin_unlock_irqrestore(mpll->lock, flags);
-@@ -226,16 +204,10 @@ static void mpll_disable(struct clk_hw *hw)
- 
- static int mpll_is_enabled(struct clk_hw *hw)
- {
--	struct meson_clk_mpll *mpll = to_meson_clk_mpll(hw);
--	struct parm *p;
--	unsigned long reg;
--	int en;
+-#define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
+-#define SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK		BIT(0)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK	GENMASK(15, 8)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC	BIT(8)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC	BIT(9)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR_MASK	GENMASK(23, 16)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR(addr)	(addr << 16)
 -
--	p = &mpll->en;
--	reg = readl(mpll->base + p->reg_off);
--	en = PARM_GET(p->width, p->shift, reg);
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
- 
--	return en;
-+	return meson_parm_read(clk->map, &mpll->en);
- }
- 
- const struct clk_ops meson_clk_mpll_ro_ops = {
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 8edc25297422..08a1ebfc65dc 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -132,9 +132,7 @@ struct meson_clk_cpu {
- int meson_clk_cpu_notifier_cb(struct notifier_block *nb, unsigned long event,
- 		void *data);
- 
--struct meson_clk_mpll {
--	struct clk_hw hw;
--	void __iomem *base;
-+struct meson_clk_mpll_data {
- 	struct parm sdm;
- 	struct parm sdm_en;
- 	struct parm n2;
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index d9f426265774..d2724a7ce9e7 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -482,33 +482,35 @@ static struct clk_fixed_factor gxbb_fclk_div7 = {
- 	},
- };
- 
--static struct meson_clk_mpll gxbb_mpll0 = {
--	.sdm = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 0,
--		.width   = 14,
--	},
--	.sdm_en = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 15,
--		.width	 = 1,
--	},
--	.n2 = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 16,
--		.width   = 9,
--	},
--	.en = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 14,
--		.width	 = 1,
--	},
--	.ssen = {
--		.reg_off = HHI_MPLL_CNTL,
--		.shift   = 25,
--		.width	 = 1,
-+static struct clk_regmap gxbb_mpll0 = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 15,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 16,
-+			.width   = 9,
-+		},
-+		.en = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 14,
-+			.width	 = 1,
-+		},
-+		.ssen = {
-+			.reg_off = HHI_MPLL_CNTL,
-+			.shift   = 25,
-+			.width	 = 1,
-+		},
-+		.lock = &meson_clk_lock,
- 	},
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll0",
- 		.ops = &meson_clk_mpll_ops,
-@@ -517,28 +519,30 @@ static struct meson_clk_mpll gxbb_mpll0 = {
- 	},
- };
- 
--static struct meson_clk_mpll gxbb_mpll1 = {
--	.sdm = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 0,
--		.width   = 14,
--	},
--	.sdm_en = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 15,
--		.width	 = 1,
--	},
--	.n2 = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 16,
--		.width   = 9,
--	},
--	.en = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 14,
--		.width	 = 1,
-+static struct clk_regmap gxbb_mpll1 = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 15,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 16,
-+			.width   = 9,
-+		},
-+		.en = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 14,
-+			.width	 = 1,
-+		},
-+		.lock = &meson_clk_lock,
- 	},
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll1",
- 		.ops = &meson_clk_mpll_ops,
-@@ -547,28 +551,30 @@ static struct meson_clk_mpll gxbb_mpll1 = {
- 	},
- };
- 
--static struct meson_clk_mpll gxbb_mpll2 = {
--	.sdm = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 0,
--		.width   = 14,
--	},
--	.sdm_en = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 15,
--		.width	 = 1,
--	},
--	.n2 = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 16,
--		.width   = 9,
--	},
--	.en = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 14,
--		.width	 = 1,
-+static struct clk_regmap gxbb_mpll2 = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 15,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 16,
-+			.width   = 9,
-+		},
-+		.en = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 14,
-+			.width	 = 1,
-+		},
-+		.lock = &meson_clk_lock,
- 	},
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll2",
- 		.ops = &meson_clk_mpll_ops,
-@@ -1771,12 +1777,6 @@ static struct meson_clk_pll *const gxl_clk_plls[] = {
- 	&gxl_gp0_pll,
- };
- 
--static struct meson_clk_mpll *const gxbb_clk_mplls[] = {
--	&gxbb_mpll0,
--	&gxbb_mpll1,
--	&gxbb_mpll2,
--};
+-#define SUN8I_HDMI_PHY_REXT_CTRL_REG	0x0004
+-#define SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN	BIT(31)
 -
- static struct meson_clk_audio_divider *const gxbb_audio_dividers[] = {
- 	&gxbb_cts_amclk_div,
- };
-@@ -1909,11 +1909,12 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
- 	&gxbb_vapb_0_sel,
- 	&gxbb_vapb_1_sel,
- 	&gxbb_vapb_sel,
-+	&gxbb_mpll0,
-+	&gxbb_mpll1,
-+	&gxbb_mpll2,
- };
- 
- struct clkc_data {
--	struct meson_clk_mpll *const *clk_mplls;
--	unsigned int clk_mplls_count;
- 	struct meson_clk_pll *const *clk_plls;
- 	unsigned int clk_plls_count;
- 	struct meson_clk_audio_divider *const *clk_audio_dividers;
-@@ -1922,8 +1923,6 @@ struct clkc_data {
- };
- 
- static const struct clkc_data gxbb_clkc_data = {
--	.clk_mplls = gxbb_clk_mplls,
--	.clk_mplls_count = ARRAY_SIZE(gxbb_clk_mplls),
- 	.clk_plls = gxbb_clk_plls,
- 	.clk_plls_count = ARRAY_SIZE(gxbb_clk_plls),
- 	.clk_audio_dividers = gxbb_audio_dividers,
-@@ -1932,8 +1931,6 @@ static const struct clkc_data gxbb_clkc_data = {
- };
- 
- static const struct clkc_data gxl_clkc_data = {
--	.clk_mplls = gxbb_clk_mplls,
--	.clk_mplls_count = ARRAY_SIZE(gxbb_clk_mplls),
- 	.clk_plls = gxl_clk_plls,
- 	.clk_plls_count = ARRAY_SIZE(gxl_clk_plls),
- 	.clk_audio_dividers = gxbb_audio_dividers,
-@@ -1984,10 +1981,6 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	for (i = 0; i < clkc_data->clk_plls_count; i++)
- 		clkc_data->clk_plls[i]->base = clk_base;
- 
--	/* Populate base address for MPLLs */
--	for (i = 0; i < clkc_data->clk_mplls_count; i++)
--		clkc_data->clk_mplls[i]->base = clk_base;
+-#define SUN8I_HDMI_PHY_READ_EN_REG	0x0010
+-#define SUN8I_HDMI_PHY_READ_EN_MAGIC		0x54524545
 -
- 	/* Populate base address for the audio dividers */
- 	for (i = 0; i < clkc_data->clk_audio_dividers_count; i++)
- 		clkc_data->clk_audio_dividers[i]->base = clk_base;
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index e643f7556f5e..4bb51c8f3102 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -257,33 +257,35 @@ static struct clk_fixed_factor meson8b_fclk_div7 = {
- 	},
- };
- 
--static struct meson_clk_mpll meson8b_mpll0 = {
--	.sdm = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 0,
--		.width   = 14,
--	},
--	.sdm_en = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 15,
--		.width   = 1,
--	},
--	.n2 = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 16,
--		.width   = 9,
--	},
--	.en = {
--		.reg_off = HHI_MPLL_CNTL7,
--		.shift   = 14,
--		.width   = 1,
--	},
--	.ssen = {
--		.reg_off = HHI_MPLL_CNTL,
--		.shift   = 25,
--		.width   = 1,
-+static struct clk_regmap meson8b_mpll0 = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 15,
-+			.width   = 1,
-+		},
-+		.n2 = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 16,
-+			.width   = 9,
-+		},
-+		.en = {
-+			.reg_off = HHI_MPLL_CNTL7,
-+			.shift   = 14,
-+			.width   = 1,
-+		},
-+		.ssen = {
-+			.reg_off = HHI_MPLL_CNTL,
-+			.shift   = 25,
-+			.width   = 1,
-+		},
-+		.lock = &meson_clk_lock,
- 	},
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll0",
- 		.ops = &meson_clk_mpll_ops,
-@@ -292,28 +294,30 @@ static struct meson_clk_mpll meson8b_mpll0 = {
- 	},
- };
- 
--static struct meson_clk_mpll meson8b_mpll1 = {
--	.sdm = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 0,
--		.width   = 14,
--	},
--	.sdm_en = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 15,
--		.width   = 1,
--	},
--	.n2 = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 16,
--		.width   = 9,
-+static struct clk_regmap meson8b_mpll1 = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 15,
-+			.width   = 1,
-+		},
-+		.n2 = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 16,
-+			.width   = 9,
-+		},
-+		.en = {
-+			.reg_off = HHI_MPLL_CNTL8,
-+			.shift   = 14,
-+			.width   = 1,
-+		},
-+		.lock = &meson_clk_lock,
- 	},
--	.en = {
--		.reg_off = HHI_MPLL_CNTL8,
--		.shift   = 14,
--		.width   = 1,
--	},
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll1",
- 		.ops = &meson_clk_mpll_ops,
-@@ -322,28 +326,30 @@ static struct meson_clk_mpll meson8b_mpll1 = {
- 	},
- };
- 
--static struct meson_clk_mpll meson8b_mpll2 = {
--	.sdm = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 0,
--		.width   = 14,
--	},
--	.sdm_en = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 15,
--		.width   = 1,
--	},
--	.n2 = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 16,
--		.width   = 9,
--	},
--	.en = {
--		.reg_off = HHI_MPLL_CNTL9,
--		.shift   = 14,
--		.width   = 1,
-+static struct clk_regmap meson8b_mpll2 = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 15,
-+			.width   = 1,
-+		},
-+		.n2 = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 16,
-+			.width   = 9,
-+		},
-+		.en = {
-+			.reg_off = HHI_MPLL_CNTL9,
-+			.shift   = 14,
-+			.width   = 1,
-+		},
-+		.lock = &meson_clk_lock,
- 	},
--	.lock = &meson_clk_lock,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll2",
- 		.ops = &meson_clk_mpll_ops,
-@@ -613,12 +619,6 @@ static struct meson_clk_pll *const meson8b_clk_plls[] = {
- 	&meson8b_sys_pll,
- };
- 
--static struct meson_clk_mpll *const meson8b_clk_mplls[] = {
--	&meson8b_mpll0,
--	&meson8b_mpll1,
--	&meson8b_mpll2,
--};
+-#define SUN8I_HDMI_PHY_UNSCRAMBLE_REG	0x0014
+-#define SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC		0x42494E47
 -
- static struct clk_regmap *const meson8b_clk_regmaps[] = {
- 	&meson8b_clk81,
- 	&meson8b_ddr,
-@@ -700,6 +700,9 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
- 	&meson8b_ao_iface,
- 	&meson8b_mpeg_clk_div,
- 	&meson8b_mpeg_clk_sel,
-+	&meson8b_mpll0,
-+	&meson8b_mpll1,
-+	&meson8b_mpll2,
- };
- 
- static const struct meson8b_clk_reset_line {
-@@ -826,10 +829,6 @@ static int meson8b_clkc_probe(struct platform_device *pdev)
- 	for (i = 0; i < ARRAY_SIZE(meson8b_clk_plls); i++)
- 		meson8b_clk_plls[i]->base = clk_base;
- 
--	/* Populate base address for MPLLs */
--	for (i = 0; i < ARRAY_SIZE(meson8b_clk_mplls); i++)
--		meson8b_clk_mplls[i]->base = clk_base;
--
- 	/* Populate the base address for CPU clk */
- 	meson8b_cpu_clk.base = clk_base;
- 
+ /*
+  * Address can be actually any value. Here is set to same value as
+  * it is set in BSP driver.
 -- 
-2.14.3
+2.16.2
