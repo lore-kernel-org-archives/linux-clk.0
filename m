@@ -1,55 +1,64 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1518077220.15707.3.camel@baylibre.com>
-Subject: Re: [PATCH 05/19] clk: meson: add regmap clocks
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Carlo Caione
-	 <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Date: Thu, 08 Feb 2018 09:07:00 +0100
-In-Reply-To: <0bd2c95c-dab3-9796-1267-472e6a00a403@amlogic.com>
-References: <20180131180945.18025-1-jbrunet@baylibre.com>
-	 <20180131180945.18025-6-jbrunet@baylibre.com>
-	 <0bd2c95c-dab3-9796-1267-472e6a00a403@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:58482 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751093AbeB0Qmz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Feb 2018 11:42:55 -0500
+Date: Tue, 27 Feb 2018 08:42:48 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-omap@vger.kernel.org, jsarha@ti.com
+Subject: Re: [PATCH 0/3] clk: ti: add CLK_SET_RATE_PARENT support for clkctrl
+Message-ID: <20180227164142.GA5448@atomide.com>
+References: <1519657812-15605-1-git-send-email-t-kristo@ti.com>
+ <20180226220520.GI16043@atomide.com>
+ <e036e793-37f5-a6ee-4347-72d27579e278@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <e036e793-37f5-a6ee-4347-72d27579e278@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-02-08 at 15:33 +0800, Yixun Lan wrote:
-> > +/**
-> > + * struct clk_regmap_mux_data - regmap backed multiplexer clock specific data
-> > + *
-> > + * @hw:              handle between common and hardware-specific interfaces
-> > + * @offset:  offset of theregister controlling multiplexer
-> > + * @table:   array of parent indexed register values
-> > + * @shift:   shift to multiplexer bit field
-> > + * @width:   width of mutliplexer bit field
+* Tero Kristo <t-kristo@ti.com> [180227 06:35]:
+> On 27/02/18 00:05, Tony Lindgren wrote:
+> > Hi,
+> > 
+> > * Tero Kristo <t-kristo@ti.com> [180226 15:11]:
+> > > This patch adds clock rate propagation support for clkctrl clocks. This
+> > > is needed on am33xx beaglebone black device at least, otherwise the
+> > > display does not work. Similar problem appears to be present on am43xx
+> > > but haven't heard of any reports of such so far, maybe Jyri can confirm
+> > > this?
+> > 
+> > I think I was also hitting this with the system timers with ti-sysc
+> > where set_parent() would fail unless the dts has the following for
+> > timers:
+> > 
+> > clocks = <&l4_wkup_clkctrl OMAP4_TIMER1_CLKCTRL 24>;
+> > 
+> > So bit 24 instead of 0.
+> > 
+> > Hmm so should we have all the timers use bit 0 in the dtsi?
+> > Or default to bit 24 for all of them?
 > 
->       ~~~~~~ this is wrong, please update to keep it sync with the
-> struct definition
+> Who is going to control the clkctrl clock for the timers if you just control
+> the opt clock? Also, ain't the bit 24 the clksel mux setting? Tweaking that
+> would seem wrong...
 
-Indeed, it is.
-This is just a copy/paste of the mux documentation provided in
-include/linux/clk-provider.h ... which is also inaccurate.
+Yeah OK.
 
-Thanks for pointing it out
+> If you were facing problems with setting the clock source, we could maybe
+> just apply the CLK_SET_RATE_PARENT globally to all clkctrl clocks (modify
+> the patch #1 in this series to always set the flag, instead of clecking
+> against the CLKF_xyz flag.) Any thoughts?
 
-> 
-> > + * @flags:   hardware-specific flags
-> > + *
-> > + * Flags:
-> > + * Same as clk_divider except CLK_MUX_HIWORD_MASK which is ignored
-> > + */
-> > +struct clk_regmap_mux_data {
-> > +     unsigned int    offset;
-> > +     u32             *table;
-> > +     u32             mask;
-> 
->                         ~~~~~ here
-> > +     u8              shift;
-> > +     u8              flags;
-> > +};
-> > +
+Sounds good to me if that keeps omap_dm_timer_init_one() working
+for clk_set_parent() for configuring timer via dts :)
+
+I think there's a reserved range for the parent clocks that is
+different from the opt clocks in the clkctrl registers so it
+can be maybe checked that way?
+
+Regards,
+
+Tony
