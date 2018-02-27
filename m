@@ -1,45 +1,123 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:45748 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933346AbeBVRRU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Feb 2018 12:17:20 -0500
-Received: by mail-qk0-f194.google.com with SMTP id g2so7348749qkd.12
-        for <linux-clk@vger.kernel.org>; Thu, 22 Feb 2018 09:17:19 -0800 (PST)
-From: Fabio Estevam <festevam@gmail.com>
-To: shawnguo@kernel.org
-Cc: sboyd@kernel.org, linux-clk@vger.kernel.org,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH] clk: imx6sl: Include "common.h" header file
-Date: Thu, 22 Feb 2018 14:17:25 -0300
-Message-Id: <1519319846-18246-1-git-send-email-festevam@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+To: Daniel Thompson <daniel.thompson@linaro.org>
+CC: Jani Nikula <jani.nikula@linux.intel.com>, <thierry.reding@gmail.com>,
+	<shc_work@mail.ru>, <kgene@kernel.org>, <krzk@kernel.org>,
+	<linux@armlinux.org.uk>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
+	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
+	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+	<mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
+	<jingoohan1@gmail.com>, <milo.kim@ti.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <corbet@lwn.net>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@free-electrons.com>, <linux-pwm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-hwmon@vger.kernel.org>, <linux-input@vger.kernel.org>,
+	<linux-leds@vger.kernel.org>, <linux-media@vger.kernel.org>,
+	<linux-fbdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180222123308.mypx2r7n6o63mj5z@oak.lan> <87po4s2hve.fsf@intel.com>
+ <3a70b89c-b470-3723-760c-5294d0a75230@microchip.com>
+ <20180227105444.lo4pee7vh4we3foq@oak.lan>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <8e1d3b30-3543-56fd-7be6-7fe6edcb40d9@microchip.com>
+Date: Tue, 27 Feb 2018 13:40:58 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180227105444.lo4pee7vh4we3foq@oak.lan>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: Claudiu.Beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
 
-The prototype for the imx6sl_set_wait_clk() function is provided
-by the "common.h" header file, so include it to avoid the following
-sparse warning:
 
-drivers/clk/imx/clk-imx6sl.c:163:6: warning: symbol 'imx6sl_set_wait_clk' was not declared. Should it be static?
+On 27.02.2018 12:54, Daniel Thompson wrote:
+> On Mon, Feb 26, 2018 at 04:24:15PM +0200, Claudiu Beznea wrote:
+>> On 26.02.2018 11:57, Jani Nikula wrote:
+>>> On Thu, 22 Feb 2018, Daniel Thompson <daniel.thompson@linaro.org> wrote:
+>>>> On Thu, Feb 22, 2018 at 02:01:16PM +0200, Claudiu Beznea wrote:
+>>>>> Add PWM mode to pwm_config() function. The drivers which uses pwm_config()
+>>>>> were adapted to this change.
+>>>>>
+>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>>>>> ---
+>>>>>  arch/arm/mach-s3c24xx/mach-rx1950.c  | 11 +++++++++--
+>>>>>  drivers/bus/ts-nbus.c                |  2 +-
+>>>>>  drivers/clk/clk-pwm.c                |  3 ++-
+>>>>>  drivers/gpu/drm/i915/intel_panel.c   | 17 ++++++++++++++---
+>>>>>  drivers/hwmon/pwm-fan.c              |  2 +-
+>>>>>  drivers/input/misc/max77693-haptic.c |  2 +-
+>>>>>  drivers/input/misc/max8997_haptic.c  |  6 +++++-
+>>>>>  drivers/leds/leds-pwm.c              |  5 ++++-
+>>>>>  drivers/media/rc/ir-rx51.c           |  5 ++++-
+>>>>>  drivers/media/rc/pwm-ir-tx.c         |  5 ++++-
+>>>>>  drivers/video/backlight/lm3630a_bl.c |  4 +++-
+>>>>>  drivers/video/backlight/lp855x_bl.c  |  4 +++-
+>>>>>  drivers/video/backlight/lp8788_bl.c  |  5 ++++-
+>>>>>  drivers/video/backlight/pwm_bl.c     | 11 +++++++++--
+>>>>>  drivers/video/fbdev/ssd1307fb.c      |  3 ++-
+>>>>>  include/linux/pwm.h                  |  6 ++++--
+>>>>>  16 files changed, 70 insertions(+), 21 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/video/backlight/lm3630a_bl.c b/drivers/video/backlight/lm3630a_bl.c
+>>>>> index 2030a6b77a09..696fa25dafd2 100644
+>>>>> --- a/drivers/video/backlight/lm3630a_bl.c
+>>>>> +++ b/drivers/video/backlight/lm3630a_bl.c
+>>>>> @@ -165,8 +165,10 @@ static void lm3630a_pwm_ctrl(struct lm3630a_chip *pchip, int br, int br_max)
+>>>>>  {
+>>>>>  	unsigned int period = pchip->pdata->pwm_period;
+>>>>>  	unsigned int duty = br * period / br_max;
+>>>>> +	struct pwm_caps caps = { };
+>>>>>  
+>>>>> -	pwm_config(pchip->pwmd, duty, period);
+>>>>> +	pwm_get_caps(pchip->pwmd->chip, pchip->pwmd, &caps);
+>>>>> +	pwm_config(pchip->pwmd, duty, period, BIT(ffs(caps.modes) - 1));
+>>>>
+>>>> Well... I admit I've only really looked at the patches that impact 
+>>>> backlight but dispersing this really odd looking bit twiddling 
+>>>> throughout the kernel doesn't strike me a great API design.
+>>>>
+>>>> IMHO callers should not be required to find the first set bit in
+>>>> some specially crafted set of capability bits simply to get sane 
+>>>> default behaviour.
+>>>
+>>> Agreed. IMHO the regular use case becomes rather tedious, ugly, and
+>>> error prone.
+>>
+>> Using simply PWM_MODE(NORMAL) instead of BIT(ffs(caps.modes) - 1) would be OK
+>> from your side?
+>>
+>> Or, what about using a function like pwm_mode_first() to get the first supported
+>> mode by PWM channel?
+>>
+>> Or, would you prefer to solve this inside pwm_config() function, let's say, in
+>> case an invalid mode is passed as argument, to let pwm_config() to choose the
+>> first available PWM mode for PWM channel passed as argument?
+> 
+> What is it that actually needs solving?
+> 
+> If a driver requests normal mode and the PWM driver cannot support it
+> why not just return an error an move on.
+Because, simply, I wasn't aware of what these PWM client drivers needs for.
 
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
----
- drivers/clk/imx/clk-imx6sl.c | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> Put another way, what is the use case for secretly adopting a mode the
+> caller didn't want? Under what circumstances is this a good thing?
+No one... But I wasn't aware of what the PWM clients needs for from their PWM
+controllers. At this moment having BIT(ffs(caps.modes)) instead of
+PWM_MODE(NORMAL) is mostly the same since all the driver that has not explicitly
+registered PWM caps will use PWM normal mode.
 
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index 9642cdf..bdda77b 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -16,6 +16,7 @@
- #include <dt-bindings/clock/imx6sl-clock.h>
- 
- #include "clk.h"
-+#include "common.h"
- 
- #define CCSR			0xc
- #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
--- 
-2.7.4
+I will use PWM_MODE(NORMAL) instead of this in all the cases if this is OK from
+your side.
 
+Thank you,
+Claudiu Beznea
+> 
+> 
+> Daniel.
+> 
