@@ -1,172 +1,115 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39392 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752547AbeBZMyI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Feb 2018 07:54:08 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 4/6] clk: samsung: exynos5250: Move PD-dependent clocks
- to Exynos5 sub-CMU driver
-Date: Mon, 26 Feb 2018 13:53:53 +0100
-Message-id: <20180226125355.9052-5-m.szyprowski@samsung.com>
-In-reply-to: <20180226125355.9052-1-m.szyprowski@samsung.com>
-References: <20180226125355.9052-1-m.szyprowski@samsung.com>
-        <CGME20180226125403eucas1p29b1850f658e17912be0b1fa6ed3a8a83@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
+Date: Tue, 27 Feb 2018 14:59:11 +0300
+MIME-Version: 1.0
+In-Reply-To: <1519686262.6374.3.camel@toradex.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Clocks related to DISP1 block require special handling for power domain
-turn on/off sequences. Till now this was handled by Exynos power domain
-driver, but that approach was limited only to some special cases. This
-patch moves handling of those operations to clock controller driver.
-This gives more flexibility and allows fine tune values of some
-clock-specific registers. This patch moves handling of those mentioned
-clocks to Exynos5 sub-CMU driver instantiated from Exynos5250 driver.
+On 27.02.2018 02:04, Marcel Ziswiler wrote:
+> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+>>> Turns out latest upstream U-Boot does not configure/enable pllu
+>>> which
+>>> leaves it at some default rate of 500 kHz:
+>>>
+>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+>>> pll_u
+>>>        pll_u                  3        3        0      500000      
+>>>     0
+>>>
+>>> Of course this won't quite work leading to the following messages:
+>>>
+>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+>>> tegra-
+>>> ehci
+>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+>>> tegra-
+>>> ehci
+>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+>>> [   48.049658] usb usb2-port1: attempt power cycle
+>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+>>> tegra-
+>>> ehci
+>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+>>> tegra-
+>>> ehci
+>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+>>>
+>>> Fix this by actually allowing the rate also being set from within
+>>> the Linux kernel.
+>>>
+>>> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>>>
+>>> ---
+>>>
+>>>  drivers/clk/tegra/clk-pll.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-
+>>> pll.c
+>>> index 7c369e21c91c..830d1c87fa7c 100644
+>>> --- a/drivers/clk/tegra/clk-pll.c
+>>> +++ b/drivers/clk/tegra/clk-pll.c
+>>> @@ -1151,6 +1151,8 @@ static const struct clk_ops
+>>> tegra_clk_pllu_ops = {
+>>>  	.enable = clk_pllu_enable,
+>>>  	.disable = clk_pll_disable,
+>>>  	.recalc_rate = clk_pll_recalc_rate,
+>>> +	.round_rate = clk_pll_round_rate,
+>>> +	.set_rate = clk_pll_set_rate,
+>>>  };
+>>>  
+>>>  static int _pll_fixed_mdiv(struct tegra_clk_pll_params
+>>> *pll_params,
+>>>
+>>
+>> Tegra's USB PHY driver only enables clock and clk driver doesn't
+>> specify the
+>> clock rate in the init table. Could you please clarify where in the
+>> kernels code
+>> PLL_U rate is getting set?
+> 
+> I guess that would be according to the following table isn't it:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree
+> /drivers/clk/tegra/clk-tegra30.c?h=v4.16-rc3#n287
+> 
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/Makefile             |  1 +
- drivers/clk/samsung/clk-exynos5-subcmu.c |  1 +
- drivers/clk/samsung/clk-exynos5250.c     | 51 ++++++++++++++++++++++----------
- drivers/soc/samsung/pm_domains.c         |  1 +
- 4 files changed, 38 insertions(+), 16 deletions(-)
+I see now that T30 has PLL_U in the init table [0], but T20 doesn't.
 
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index b23d6cfac723..513826393158 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_SOC_EXYNOS3250)	+= clk-exynos3250.o
- obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
- obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4412-isp.o
- obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
-+obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5-subcmu.o
- obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
- obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index dd278e33688b..b0bd9eb67b83 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -164,6 +164,7 @@ static int __init exynos5_clk_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id exynos5_clk_of_match[] = {
-+	{ .compatible = "samsung,exynos5250-clock", },
- 	{ .compatible = "samsung,exynos5420-clock", },
- 	{ .compatible = "samsung,exynos5800-clock", },
- 	{ },
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 9b073c98a891..44da35d939be 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -18,6 +18,7 @@
- 
- #include "clk.h"
- #include "clk-cpu.h"
-+#include "clk-exynos5-subcmu.h"
- 
- #define APLL_LOCK		0x0
- #define APLL_CON0		0x100
-@@ -571,17 +572,6 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 	GATE(CLK_SMMU_GSCL3, "smmu_gscl3", "mout_aclk266_gscl_sub",
- 			GATE_IP_GSCL, 10, 0, 0),
- 
--	GATE(CLK_FIMD1, "fimd1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 0, 0,
--		0),
--	GATE(CLK_MIE1, "mie1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 1, 0,
--		0),
--	GATE(CLK_DSIM0, "dsim0", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 3, 0,
--		0),
--	GATE(CLK_DP, "dp", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 4, 0, 0),
--	GATE(CLK_MIXER, "mixer", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 5, 0,
--		0),
--	GATE(CLK_HDMI, "hdmi", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 6, 0,
--		0),
- 
- 	GATE(CLK_MFC, "mfc", "mout_aclk333_sub", GATE_IP_MFC, 0, 0, 0),
- 	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "mout_aclk333_sub", GATE_IP_MFC, 1, 0,
-@@ -671,10 +661,6 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 	GATE(CLK_WDT, "wdt", "div_aclk66", GATE_IP_PERIS, 19, 0, 0),
- 	GATE(CLK_RTC, "rtc", "div_aclk66", GATE_IP_PERIS, 20, 0, 0),
- 	GATE(CLK_TMU, "tmu", "div_aclk66", GATE_IP_PERIS, 21, 0, 0),
--	GATE(CLK_SMMU_TV, "smmu_tv", "mout_aclk200_disp1_sub",
--			GATE_IP_DISP1, 9, 0, 0),
--	GATE(CLK_SMMU_FIMD1, "smmu_fimd1", "mout_aclk200_disp1_sub",
--			GATE_IP_DISP1, 8, 0, 0),
- 	GATE(CLK_SMMU_2D, "smmu_2d", "div_aclk200", GATE_IP_ACP, 7, 0, 0),
- 	GATE(CLK_SMMU_FIMC_ISP, "smmu_fimc_isp", "mout_aclk_266_isp_sub",
- 			GATE_IP_ISP0, 8, 0, 0),
-@@ -698,6 +684,38 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 			GATE_IP_ISP1, 7, 0, 0),
- };
- 
-+static const struct samsung_gate_clock exynos5250_disp_gate_clks[] __initconst = {
-+	GATE(CLK_FIMD1, "fimd1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 0, 0,
-+		0),
-+	GATE(CLK_MIE1, "mie1", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 1, 0,
-+		0),
-+	GATE(CLK_DSIM0, "dsim0", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 3, 0,
-+		0),
-+	GATE(CLK_DP, "dp", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 4, 0, 0),
-+	GATE(CLK_MIXER, "mixer", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 5, 0,
-+		0),
-+	GATE(CLK_HDMI, "hdmi", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 6, 0,
-+		0),
-+	GATE(CLK_SMMU_TV, "smmu_tv", "mout_aclk200_disp1_sub",
-+			GATE_IP_DISP1, 9, 0, 0),
-+	GATE(CLK_SMMU_FIMD1, "smmu_fimd1", "mout_aclk200_disp1_sub",
-+			GATE_IP_DISP1, 8, 0, 0),
-+};
-+
-+static struct samsung_clk_ext_reg_dump exynos5250_disp_suspend_regs[] = {
-+	{ GATE_IP_DISP1, 0xffffffff, 0xffffffff }, /* DISP1 gates */
-+	{ SRC_TOP3, 0, BIT(4) },	/* MUX mout_aclk200_disp1_sub */
-+	{ SRC_TOP3, 0, BIT(6) },	/* MUX mout_aclk300_disp1_sub */
-+};
-+
-+static const struct exynos5_subcmu_info exynos5250_disp_subcmu = {
-+	.gate_clks	= exynos5250_disp_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(exynos5250_disp_gate_clks),
-+	.suspend_regs	= exynos5250_disp_suspend_regs,
-+	.nr_suspend_regs = ARRAY_SIZE(exynos5250_disp_suspend_regs),
-+	.pd_name	= "DISP1",
-+};
-+
- static const struct samsung_pll_rate_table vpll_24mhz_tbl[] __initconst = {
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
-@@ -859,10 +877,11 @@ static void __init exynos5250_clk_init(struct device_node *np)
- 	__raw_writel(tmp, reg_base + PWR_CTRL2);
- 
- 	exynos5250_clk_sleep_init();
-+	exynos5_subcmus_init(ctx, 1, &exynos5250_disp_subcmu);
- 
- 	samsung_clk_of_add_provider(np, ctx);
- 
- 	pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
- 			_get_rate("div_arm2"));
- }
--CLK_OF_DECLARE(exynos5250_clk, "samsung,exynos5250-clock", exynos5250_clk_init);
-+CLK_OF_DECLARE_DRIVER(exynos5250_clk, "samsung,exynos5250-clock", exynos5250_clk_init);
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index f2d6d7a09c16..caf45cf7aa8e 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -148,6 +148,7 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
- }
- 
- static const char *soc_force_no_clk[] = {
-+	"samsung,exynos5250-clock",
- 	"samsung,exynos5420-clock",
- 	"samsung,exynos5800-clock",
- };
--- 
-2.15.0
+There is only one 480MHz rate defined in PLL_U lookup table. PLL_U also provides
+12MHz and 60MHz outputs using fixed dividers and hence PLL_U shouldn't need
+set/round_rate(), we can't change PLL_U rate at all and only enable / disable it.
 
+Looks like for some reason PLL_U enabling fails without set/round_rate, but then
+PHY driver should fail to probe [1]. Is it the case? Do you know why PLL_U isn't
+actually getting enabled in HW? It is quite fishy, seems like clk driver /
+framework bug or I'm missing something.
+
+[0]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/tegra/clk-tegra30.c?h=v4.16-rc3#n1274
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/phy/phy-tegra-usb.c?h=v4.16-rc3#n777
