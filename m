@@ -1,77 +1,65 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 21/41] ARM: da850: add new clock init using common
- clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-22-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <73d2c30d-ee86-1269-dd4b-1ebfe88a3149@ti.com>
-Date: Fri, 2 Feb 2018 19:50:39 +0530
-MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-22-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 03/16] clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
+Date: Tue, 27 Feb 2018 23:26:48 +0100
+Message-Id: <20180227222701.9716-4-jernej.skrabec@siol.net>
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
->  void __init da850_init_time(void)
->  {
-> +#ifdef CONFIG_COMMON_CLK
-> +	void __iomem *pll0, *pll1, *psc0, *psc1;
-> +	struct regmap *cfgchip;
-> +	struct clk *clk;
-> +	struct clk_hw *parent;
-> +
-> +	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
-> +	pll1 = ioremap(DA850_PLL1_BASE, SZ_4K);
-> +	psc0 = ioremap(DA8XX_PSC0_BASE, SZ_4K);
-> +	psc1 = ioremap(DA8XX_PSC1_BASE, SZ_4K);
-> +
-> +	cfgchip = da8xx_register_cfgchip();
-> +	if (WARN(IS_ERR(cfgchip), "failed to register CFGCHIP syscon"))
-> +		return;
-> +
-> +	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
-> +
-> +	da850_pll_clk_init(pll0, pll1);
-> +
-> +	da8xx_cfgchip_register_div4p5(cfgchip);
-> +
-> +	da8xx_cfgchip_register_async1(cfgchip);
-> +
-> +	clk = clk_register_fixed_factor(NULL, "async2", "pll0_auxclk", 0, 1, 1);
-> +	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-> +	clk_register_clkdev(clk, "timer0", NULL);
-> +	clk_register_clkdev(clk, NULL, "davinci-wdt");
+Some units have to be able to set it's own clock precisely to work
+correctly. Allow them to do so by adding CLK_SET_RATE_PARENT flag.
 
-I think its better to get these clkdevs registered in
-da850_pll_clk_init() itself.
+Add this flag to DE, TCON and HDMI clocks.
 
-> +
-> +	clk = da8xx_cfgchip_register_async3(cfgchip);
-> +
-> +	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
-> +	parent = clk_hw_get_parent_by_index(__clk_get_hw(clk), 1);
-> +	if (parent)
-> +		clk_set_parent(clk, parent->clk);
-> +	else
-> +		pr_warn("%s: Failed to find async3 parent clock\n", __func__);
-> +
-> +	da850_psc_clk_init(psc0, psc1);
-> +
-> +	clk = clk_register_fixed_factor(NULL, "rmii", "pll0_sysclk7", 0, 1, 1);
-> +	clk_register_clkdev(clk, "rmii", NULL);
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Like in da830, can drop this rmii clock, I think.
-
-Thanks,
-Sekhar
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index b9f39078c0b2..77ed0b0ba681 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -452,11 +452,13 @@ static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
+ 
+ static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
+-				 0x104, 0, 4, 24, 3, BIT(31), 0);
++				 0x104, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static const char * const tcon_parents[] = { "pll-video" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(tcon_clk, "tcon", tcon_parents,
+-				 0x118, 0, 4, 24, 3, BIT(31), 0);
++				 0x118, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static const char * const tve_parents[] = { "pll-de", "pll-periph1" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(tve_clk, "tve", tve_parents,
+@@ -487,7 +489,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+ 
+ static const char * const hdmi_parents[] = { "pll-video" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+-				 0x150, 0, 4, 24, 2, BIT(31), 0);
++				 0x150, 0, 4, 24, 2, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
+ 		      0x154, BIT(31), 0);
+-- 
+2.16.2
