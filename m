@@ -1,63 +1,82 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1518697199.2883.91.camel@baylibre.com>
-Subject: Re: [PATCH v2] clk: Properly update prepare/enable count on orphan
- clock reparent
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@codeaurora.org>, Marek Szyprowski
-	 <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Michael
- Turquette <mturquette@baylibre.com>, Shawn Guo <shawnguo@kernel.org>, Dong
- Aisheng <aisheng.dong@nxp.com>, Bartlomiej Zolnierkiewicz
- <b.zolnierkie@samsung.com>,  Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 15 Feb 2018 13:19:59 +0100
-In-Reply-To: <20180127004917.GI28313@codeaurora.org>
-References: 
-	<CGME20180126091902eucas1p2b3ad9978e3ab09bd7a2bd9123c9eecaa@eucas1p2.samsung.com>
-	 <20180126091845.11902-1-m.szyprowski@samsung.com>
-	 <20180127004917.GI28313@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: viresh.kumar@linaro.org,  robh+dt@kernel.org,  mark.rutland@arm.com,  mturquette@baylibre.com,  sboyd@codeaurora.org,  linux@armlinux.org.uk,  andy.gross@linaro.org,  david.brown@linaro.org,  rjw@rjwysocki.net,  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org,  linux-arm-msm@vger.kernel.org,  linux-soc@vger.kernel.org,  linux-pm@vger.kernel.org,  robh@kernel.org,  linux@arm.linux.org.uk
+Subject: Re: [PATCH v8 14/15] cpufreq: Add module to register cpufreq on Krait CPUs
+References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+	<1519740422-3835-15-git-send-email-sricharan@codeaurora.org>
+Date: Tue, 27 Feb 2018 15:58:47 +0100
+In-Reply-To: <1519740422-3835-15-git-send-email-sricharan@codeaurora.org>
+	(Sricharan R.'s message of "Tue, 27 Feb 2018 19:37:01 +0530")
+Message-ID: <87zi3ujx7c.fsf@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-01-26 at 16:49 -0800, Stephen Boyd wrote:
-> On 01/26, Marek Szyprowski wrote:
-> > If orphaned clock has been already prepared/enabled (for example if it or
-> > one of its children has CLK_IS_CRITICAL flag), then the prepare/enable
-> > counters of the newly assigned parent are not updated correctly. This
-> > might later cause warnings during changing clock parents.
-> 
-> This doesn't feel right. Perhaps we should delay enabling a clk
-> if it's CRITICAL until we adopt an orphaned clk.
+Hi Sricharan,
+=20
+ On mar., f=C3=A9vr. 27 2018, Sricharan R <sricharan@codeaurora.org> wrote:
 
-It does not sounds right. A critical clock should be enabled as soon as
-possible, regardless of current knowledge of the clock tree.
+> From: Stephen Boyd <sboyd@codeaurora.org>
+>
+> Register a cpufreq-generic device whenever we detect that a
+> "qcom,krait" compatible CPU is present in DT.
+>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> [Sricharan: updated to use dev_pm_opp_set_prop_name and
+> 	    nvmem apis]
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |  10 ++
+>  drivers/cpufreq/Makefile             |   3 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
+>  drivers/cpufreq/qcom-cpufreq.c       | 183 +++++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 201 insertions(+)
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq.c
+>
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 3a88e33..826f9e7 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -133,6 +133,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+>  	depends on ARCH_OMAP2PLUS
+>  	default ARCH_OMAP2PLUS
+>=20=20
+> +config ARM_QCOM_CPUFREQ
+> +	bool "CPUfreq driver for the QCOM SoCs with KRAIT processors"
+> +	depends on ARCH_QCOM
+> +	select PM_OPP
+> +	help
+> +	  This enables the CPUFreq driver for Qualcomm SoCs with
+> +	  KRAIT processors.
+> +
+> +	  If in doubt, say N.
+> +
+>  config ARM_S3C_CPUFREQ
+>  	bool
+>  	help
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index c60c1e1..21894f6 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -65,6 +65,9 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+=3D mvebu-cpufreq.o
+>  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+=3D omap-cpufreq.o
+>  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+=3D pxa2xx-cpufreq.o
+>  obj-$(CONFIG_PXA3xx)			+=3D pxa3xx-cpufreq.o
+> +obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+=3D qcom-cpufreq.o
 
-How would you decide when is right time anyway ?
-The orphaned critical clock could be reparented to clock that is orphan itself,
-you would get into the same count issue again.
+These 2 following lines don't seem related to the commit log:
+> +obj-$(CONFIG_ARM_S3C24XX_CPUFREQ)	+=3D s3c24xx-cpufreq.o
+> +obj-$(CONFIG_ARM_S3C24XX_CPUFREQ_DEBUGFS) +=3D s3c24xx-cpufreq-debugfs.o
 
-> Good news is we
-> have orphan status tracking now so this should be pretty simple.
-> Otherwise migrating the count up is complicated and requires us
-> to call the prepare/enable ops on a critical clk and then keep
-> doing that each time it gets re-parented.
+Gregory
 
-What is the problem with this ? We are going to have call those enable ops
-anyway. Whether it is done one at a time or all at once, does it really matter ?
-
-> Do you have this case,
-> where some clk is marked as CRITICAL, and then we need to migrate
-> that enable/prepare count to the parent?
-
-yes.
-
-> 
-> Hopefully it isn't the worser case, where the clk is handed out
-> to some consumer but it's still orphaned at that point, and then
-> we have little control over the migration of state to the parent.
-> 
-
-This should not be a problem if the clock reparenting  and count migration is
-done properly. To do  this, the __clk_set_parent_before() and
-__clk_set_parent_after() function look good to me,  have I missed anything ? 
+>  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+=3D s3c2410-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+=3D s3c2412-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+=3D s3c2416-cpufreq.o
+--=20
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
