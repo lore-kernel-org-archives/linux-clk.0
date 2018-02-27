@@ -1,104 +1,45 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: viresh.kumar@linaro.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
 	robh+dt@kernel.org,
 	mark.rutland@arm.com,
 	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	robh@kernel.org,
-	sricharan@codeaurora.org,
-	linux@arm.linux.org.uk
-Subject: [PATCH v8 10/15] dt-bindings: arm: Document qcom,kpss-gcc
-Date: Tue, 27 Feb 2018 19:36:57 +0530
-Message-Id: <1519740422-3835-11-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 07/16] drm/sun4i: Add support for H3 display engine
+Date: Tue, 27 Feb 2018 23:26:52 +0100
+Message-Id: <20180227222701.9716-8-jernej.skrabec@siol.net>
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+H3 display engine has two mixers which are connected to HDMI and TV
+output.
 
-The ACC and GCC regions present in KPSSv1 contain registers to
-control clocks and power to each Krait CPU and L2. Documenting
-the bindings here.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  |  7 +++++
- .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 32 ++++++++++++++++++++++
- 2 files changed, 39 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-index 1333db9..382a574 100644
---- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-@@ -21,10 +21,17 @@ PROPERTIES
- 		    the register region. An optional second element specifies
- 		    the base address and size of the alias register region.
- 
-+- clock-output-names:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: Name of the output clock. Typically acpuX_aux where X is a
-+		    CPU number starting at 0.
-+
- Example:
- 
- 	clock-controller@2088000 {
- 		compatible = "qcom,kpss-acc-v2";
- 		reg = <0x02088000 0x1000>,
- 		      <0x02008000 0x1000>;
-+		clock-output-names = "acpu0_aux";
- 	};
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-new file mode 100644
-index 0000000..37fc0a4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-@@ -0,0 +1,32 @@
-+Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: should be one of the following. The generic compatible
-+			"qcom,kpss-gcc" should also be included.
-+			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: base address and size of the register region
-+
-+- clock-output-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Name of the output clock. Typically acpu_l2_aux indicating
-+		    an L2 cache auxiliary clock.
-+
-+Example:
-+
-+	l2cc: clock-controller@2011000 {
-+		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
-+		reg = <0x2011000 0x1000>;
-+		clock-output-names = "acpu_l2_aux";
-+	};
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 3957c2ff6870..a0f43b81c64c 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -359,6 +359,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
+ 	{ .compatible = "allwinner,sun7i-a20-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-a83t-display-engine" },
++	{ .compatible = "allwinner,sun8i-h3-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
+ 	{ }
+ };
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.16.2
