@@ -1,321 +1,434 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Fri, 23 Feb 2018 14:55:44 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@pengutronix.de, patchwork-lst@pengutronix.de,
-	"A . s . Dong" <aisheng.dong@nxp.com>, linux-imx@nxp.com
-Subject: Re: [PATCH v2 2/4] clk: imx: add fractional PLL output clock
-Message-ID: <20180223065540.GO3217@dragon>
-References: <20180201175412.9480-1-l.stach@pengutronix.de>
- <20180201175412.9480-2-l.stach@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180201175412.9480-2-l.stach@pengutronix.de>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 15/16] ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
+Date: Tue, 27 Feb 2018 23:27:00 +0100
+Message-Id: <20180227222701.9716-16-jernej.skrabec@siol.net>
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 01, 2018 at 06:54:10PM +0100, Lucas Stach wrote:
-> This is a new clock type introduced on i.MX8.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  drivers/clk/imx/Makefile       |   1 +
->  drivers/clk/imx/clk-frac-pll.c | 229 +++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk.h          |   3 +
->  3 files changed, 233 insertions(+)
->  create mode 100644 drivers/clk/imx/clk-frac-pll.c
-> 
-> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-> index f91f2b2e11cd..9892ae63539c 100644
-> --- a/drivers/clk/imx/Makefile
-> +++ b/drivers/clk/imx/Makefile
-> @@ -6,6 +6,7 @@ obj-y += \
->  	clk-cpu.o \
->  	clk-fixup-div.o \
->  	clk-fixup-mux.o \
-> +	clk-frac-pll.o \
->  	clk-gate-exclusive.o \
->  	clk-gate2.o \
->  	clk-pllv1.o \
-> diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
-> new file mode 100644
-> index 000000000000..30736d53dfbe
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-frac-pll.c
-> @@ -0,0 +1,229 @@
-> +/*
-> + * Copyright 2017 NXP.
-> + *
-> + * The code contained herein is licensed under the GNU General Public
-> + * License. You may obtain a copy of the GNU General Public License
-> + * Version 2 or later at the following locations:
-> + *
-> + * http://www.opensource.org/licenses/gpl-license.html
-> + * http://www.gnu.org/copyleft/gpl.html
+Enable HDMI output on all boards which have HDMI connector.
 
-The SPDX tag is being used for include/dt-bindings/clock/imx8mq-clock.h.
-It may be good for all clock driver new files as well?
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25 ++++++++++++++++++++++
+ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts          | 25 ++++++++++++++++++++++
+ arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25 ++++++++++++++++++++++
+ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts           | 25 ++++++++++++++++++++++
+ arch/arm/boot/dts/sun8i-h3-orangepi-2.dts          | 25 ++++++++++++++++++++++
+ arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25 ++++++++++++++++++++++
+ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts        | 24 +++++++++++++++++++++
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         | 25 ++++++++++++++++++++++
+ 8 files changed, 199 insertions(+)
 
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/slab.h>
-> +#include <linux/jiffies.h>
-
-Sort them alphabetically?
-
-> +
-> +#include "clk.h"
-> +
-> +#define PLL_CFG0 	0x0
-> +#define PLL_CFG1	0x4
-> +
-> +#define PLL_LOCK_STATUS	(0x1 << 31)
-> +#define PLL_CLKE	21
-
-Unused define?
-
-> +#define PLL_PD		19
-> +#define PLL_BYPASS	14
-> +#define PLL_NEWDIV_VAL		(1 << 12)
-> +#define PLL_NEWDIV_ACK		(1 << 11)
-
-0x1 in PLL_LOCK_STATUS and 1 here lack consistency.  Maybe BIT() even
-better?
-
-> +#define PLL_FRAC_DIV_MASK	0xffffff
-> +#define PLL_INT_DIV_MASK	0x7f
-> +#define PLL_FRAC_DENOM		0x1000000
-
-Can we make the indentation of all these defines consistent?
-
-> +
-> +struct clk_frac_pll {
-> +	struct clk_hw	hw;
-> +	void __iomem	*base;
-> +};
-> +
-> +#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
-> +
-> +static int clk_wait_lock(struct clk_frac_pll *pll)
-> +{
-> +	unsigned long timeout = jiffies + msecs_to_jiffies(10);
-> +
-> +	/* Wait for PLL to lock */
-> +	do {
-> +		if (readl_relaxed(pll->base) & PLL_LOCK_STATUS)
-> +			break;
-> +		if (time_after(jiffies, timeout))
-> +			break;
-> +	} while (1);
-> +
-> +	return readl_relaxed(pll->base) & PLL_LOCK_STATUS ? 0 : -ETIMEDOUT;
-> +}
-> +
-> +static int clk_wait_ack(struct clk_frac_pll *pll)
-> +{
-> +	unsigned long timeout = jiffies + msecs_to_jiffies(50);
-> +
-> +	/* return directly if the pll is in powerdown or in bypass */
-> +	if (readl_relaxed(pll->base) & ((1 << PLL_PD) | (1 << PLL_BYPASS)))
-
-Instead of bit shift, it seems that defining PLL_PD and PLL_BYPASS as
-bit mask will make the code a bit simpler.
-
-> +		return 0;
-> +
-> +	/* Wait for the pll's divfi and divff to be reloaded */
-> +	do {
-> +		if (readl_relaxed(pll->base) & PLL_NEWDIV_ACK)
-> +			break;
-> +		if (time_after(jiffies, timeout))
-> +			break;
-> +	} while (1);
-> +
-> +	return readl_relaxed(pll->base) & PLL_NEWDIV_ACK ? 0 : ETIMEDOUT;
-> +}
-> +
-> +static int clk_pll_prepare(struct clk_hw *hw)
-> +{
-> +	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-> +	u32 val;
-> +
-> +	val = readl_relaxed(pll->base + PLL_CFG0);
-> +	val &= ~(1 << PLL_PD);
-> +	writel_relaxed(val, pll->base + PLL_CFG0);
-> +
-> +	return clk_wait_lock(pll);
-> +}
-> +
-> +static void clk_pll_unprepare(struct clk_hw *hw)
-> +{
-> +	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-> +	u32 val;
-> +
-> +	val = readl_relaxed(pll->base + PLL_CFG0);
-> +	val |= (1 << PLL_PD);
-> +	writel_relaxed(val, pll->base + PLL_CFG0);
-> +}
-> +
-> +static int clk_pll_is_prepared(struct clk_hw *hw)
-> +{
-> +	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-> +	u32 val;
-> +
-> +	val = readl_relaxed(pll->base + PLL_CFG0);
-> +	return (val & (1 << PLL_PD)) ? 0 : 1;
-> +}
-> +
-> +static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-> +					 unsigned long parent_rate)
-> +{
-> +	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-> +	u32 val, divff, divfi, divq;
-> +	u64 temp64;
-> +
-> +	val = readl_relaxed(pll->base + PLL_CFG0);
-> +	divq = ((val & 0x1f) + 1) * 2;
-> +	val = readl_relaxed(pll->base + PLL_CFG1);
-> +	divff = (val >> 7) & PLL_FRAC_DIV_MASK;
-> +	divfi = (val & PLL_INT_DIV_MASK);
-> +
-> +	temp64 = (u64)parent_rate * 8;
-> +	temp64 *= divff;
-> +	do_div(temp64, PLL_FRAC_DENOM);
-> +	temp64 /= divq;
-> +
-> +	return parent_rate * 8 * (divfi + 1) / divq + (unsigned long)temp64;
-> +}
-> +
-> +static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> +			       unsigned long *prate)
-> +{
-> +	u32 divff, divfi;
-> +	u64 temp64;
-> +	unsigned long parent_rate = *prate;
-> +
-> +	parent_rate *= 8;
-> +	rate *= 2;
-> +	divfi = rate / parent_rate;
-> +	temp64 = (u64)(rate - divfi * parent_rate);
-> +	temp64 *= PLL_FRAC_DENOM;
-> +	do_div(temp64, parent_rate);
-> +	divff = temp64;
-> +
-> +	temp64 = (u64)parent_rate;
-> +	temp64 *= divff;
-> +	do_div(temp64, PLL_FRAC_DENOM);
-> +
-> +	return (parent_rate * divfi + (unsigned long)temp64) / 2;
-> +}
-> +
-> +/*
-> + * To simplify the clock calculation, we can keep the 'PLL_OUTPUT_VAL' at zero
-> + * (means the PLL output will be divided by 2). So the PLL output can use
-> + * the below formula:
-> + * pllout = parent_rate * 8 / 2 * DIVF_VAL;
-> + * where DIVF_VAL = 1 + DIVFI + DIVFF / 2^24.
-> + */
-> +static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			    unsigned long parent_rate)
-> +{
-> +	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-> +	u32 val, divfi, divff;
-> +	u64 temp64;
-> +	int ret;
-> +
-> +	parent_rate *= 8;
-> +	rate *= 2;
-> +	divfi = rate / parent_rate;
-> +	temp64 = (u64) (rate - divfi * parent_rate);
-> +	temp64 *= PLL_FRAC_DENOM;
-> +	do_div(temp64, parent_rate);
-> +	divff = temp64;
-> +
-> +	val = readl_relaxed(pll->base + PLL_CFG1);
-> +	val &= ~((PLL_FRAC_DIV_MASK << 7) | (PLL_INT_DIV_MASK));
-> +	val |= ((divff << 7) | (divfi - 1));
-
-	val |= (divff << 7) | (divfi - 1);
-
-Shawn
-
-> +	writel_relaxed(val, pll->base + PLL_CFG1);
-> +
-> +	val = readl_relaxed(pll->base + PLL_CFG0);
-> +	val &= ~0x1f;
-> +	writel_relaxed(val, pll->base + PLL_CFG0);
-> +
-> +	/* Set the NEV_DIV_VAL to reload the DIVFI and DIVFF */
-> +	val = readl_relaxed(pll->base + PLL_CFG0);
-> +	val |= PLL_NEWDIV_VAL;
-> +	writel_relaxed(val, pll->base + PLL_CFG0);
-> +
-> +	ret = clk_wait_ack(pll);
-> +
-> +	/* clear the NEV_DIV_VAL */
-> +	val = readl_relaxed(pll->base + PLL_CFG0);
-> +	val &= ~PLL_NEWDIV_VAL;
-> +	writel_relaxed(val, pll->base + PLL_CFG0);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct clk_ops clk_frac_pll_ops = {
-> +	.prepare	= clk_pll_prepare,
-> +	.unprepare	= clk_pll_unprepare,
-> +	.is_prepared	= clk_pll_is_prepared,
-> +	.recalc_rate	= clk_pll_recalc_rate,
-> +	.round_rate	= clk_pll_round_rate,
-> +	.set_rate	= clk_pll_set_rate,
-> +};
-> +
-> +struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-> +			     void __iomem *base)
-> +{
-> +	struct clk_frac_pll *pll;
-> +	struct clk *clk;
-> +	struct clk_init_data init;
-> +
-> +	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-> +	if (!pll)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	pll->base = base;
-> +	init.name = name;
-> +	init.ops = &clk_frac_pll_ops;
-> +	init.flags = 0;
-> +	init.parent_names = &parent_name;
-> +	init.num_parents = 1;
-> +
-> +	pll->hw.init = &init;
-> +
-> +	clk = clk_register(NULL, &pll->hw);
-> +	if (IS_ERR(clk))
-> +		kfree(pll);
-> +
-> +	return clk;
-> +}
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index d69c4bbf3597..287610902ea8 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -27,6 +27,9 @@ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
->  struct clk *imx_clk_pllv2(const char *name, const char *parent,
->  		void __iomem *base);
->  
-> +struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-> +			     void __iomem *base);
-> +
->  enum imx_pllv3_type {
->  	IMX_PLLV3_GENERIC,
->  	IMX_PLLV3_SYS,
-> -- 
-> 2.15.1
-> 
+diff --git a/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts b/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts
+index 9c1bc472fb1c..30540dc8e0c5 100644
+--- a/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts
++++ b/arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts
+@@ -61,6 +61,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -100,6 +111,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -129,6 +144,16 @@
+ 	};
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
+diff --git a/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts b/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
+index 870aabcbb2d8..cf1f970b0c6f 100644
+--- a/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
++++ b/arch/arm/boot/dts/sun8i-h3-beelink-x2.dts
+@@ -61,6 +61,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -100,6 +111,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -108,6 +123,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
+diff --git a/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts b/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
+index d0d41eb86cb4..b20a710da7bc 100644
+--- a/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
++++ b/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
+@@ -23,6 +23,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -120,6 +131,10 @@
+ 	status = "okay";
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -143,6 +158,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
+diff --git a/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts b/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
+index c77fbca4f227..9412668bb888 100644
+--- a/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
++++ b/arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
+@@ -49,6 +49,21 @@
+ 	aliases {
+ 		ethernet0 = &emac;
+ 	};
++
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++};
++
++&de {
++	status = "okay";
+ };
+ 
+ &ehci1 {
+@@ -66,6 +81,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
+diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
+index 7569bd05e249..f1fc6bdca8be 100644
+--- a/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
++++ b/arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
+@@ -62,6 +62,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -114,6 +125,10 @@
+ 	status = "okay";
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci1 {
+ 	status = "okay";
+ };
+@@ -125,6 +140,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
+diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts
+index 2e59fd296717..476ae8e387ca 100644
+--- a/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts
++++ b/arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts
+@@ -61,6 +61,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -91,6 +102,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci1 {
+ 	status = "okay";
+ };
+@@ -99,6 +114,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
+diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
+index c1a8cd93c463..3328fe583c9b 100644
+--- a/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
++++ b/arch/arm/boot/dts/sun8i-h3-orangepi-one.dts
+@@ -60,6 +60,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -90,6 +101,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -102,9 +117,18 @@
+ 	phy-handle = <&int_mii_phy>;
+ 	phy-mode = "mii";
+ 	allwinner,leds-active-low;
++};
++
++&hdmi {
+ 	status = "okay";
+ };
+ 
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &mmc0 {
+ 	vmmc-supply = <&reg_vcc3v3>;
+ 	bus-width = <4>;
+diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+index 537227b85935..cea4d647ecbf 100644
+--- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
++++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+@@ -60,6 +60,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -98,6 +109,10 @@
+ 	status = "okay";
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -121,6 +136,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &ir {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ir_pins_a>;
+-- 
+2.16.2
