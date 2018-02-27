@@ -1,153 +1,172 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v6 01/26] ARM: shmobile: Add watchdog support
-Date: Wed, 28 Feb 2018 17:40:22 +0000
-Message-Id: <1519839622-6109-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
-References: <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v2 14/16] ARM: dts: sunxi: h3/h5: Add HDMI pipeline
+Date: Tue, 27 Feb 2018 23:26:59 +0100
+Message-Id: <20180227222701.9716-15-jernej.skrabec@siol.net>
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
-boot CPUs run a routine designed to bring up SMP and deal with hot plug.
-The value contained in the SBAR registers is not initialized by a WDT
-triggered reset, which means that after a WDT triggered reset we jump
-to the SMP bring up routine, preventing the system from executing the
-bootrom code.
+This commit adds all entries needed for HDMI to function properly.
 
-The purpose of this patch is to jump to the bootrom code in case of a
-WDT triggered reset, and keep the SMP functionality untouched.
-In order to tell if the code had been called due to the WDT overflowing
-we are testing WOVF from register RWTCSRA.
-
-The new function shmobile_boot_vector_gen2 isn't replacing
-shmobile_boot_vector for backward compatibility reasons. The kernel
-will install the best option (either shmobile_boot_vector or
-shmobile_boot_vector_gen2) to ICRAM1 after parsing the device tree,
-according to the amount of memory available.
-
-Since shmobile_boot_vector has become bigger, "reg" property of nodes
-compatible with "renesas,smp-sram" now need to be set to a value
-greater or equal to "<0 0x60>".
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
-v5->v6:
-* taken ifdefs out as per Geert's suggestion.
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 108 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
 
- arch/arm/mach-shmobile/common.h  |  4 +++
- arch/arm/mach-shmobile/headsmp.S | 53 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
-
-diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
-index a8fa4f7..43c1ac69 100644
---- a/arch/arm/mach-shmobile/common.h
-+++ b/arch/arm/mach-shmobile/common.h
-@@ -7,6 +7,10 @@ extern void shmobile_init_delay(void);
- extern void shmobile_boot_vector(void);
- extern unsigned long shmobile_boot_fn;
- extern unsigned long shmobile_boot_size;
-+extern void shmobile_boot_vector_gen2(void);
-+extern unsigned long shmobile_boot_fn_gen2;
-+extern unsigned long shmobile_boot_cpu_gen2;
-+extern unsigned long shmobile_boot_size_gen2;
- extern void shmobile_smp_boot(void);
- extern void shmobile_smp_sleep(void);
- extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
-diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
-index 32e0bf6..2ece67c 100644
---- a/arch/arm/mach-shmobile/headsmp.S
-+++ b/arch/arm/mach-shmobile/headsmp.S
-@@ -16,6 +16,11 @@
- #include <asm/assembler.h>
- #include <asm/memory.h>
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index 7741166d34d8..1be1a02d6df2 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -105,6 +105,12 @@
+ 		};
+ 	};
  
-+#define SCTLR_MMU	0x01
-+#define BOOTROM_ADDRESS	0xE6340000
-+#define RWTCSRA_ADDRESS 0xE6020004
-+#define RWTCSRA_WOVF	0x10
++	de: display-engine {
++		compatible = "allwinner,sun8i-h3-display-engine";
++		allwinner,pipelines = <&mixer0>;
++		status = "disabled";
++	};
 +
- /*
-  * Reset vector for secondary CPUs.
-  * This will be mapped at address 0 by SBAR register.
-@@ -38,6 +43,54 @@ shmobile_boot_size:
- 	.long	. - shmobile_boot_vector
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -123,6 +129,29 @@
+ 			#reset-cells = <1>;
+ 		};
  
- /*
-+ * Reset vector for R-Car Gen2 and RZ/G1 secondary CPUs.
-+ * This will be mapped at address 0 by SBAR register.
-+ */
-+ENTRY(shmobile_boot_vector_gen2)
-+	mrc	p15, 0, r0, c0, c0, 5		@ r0 = MPIDR
-+	ldr	r1, shmobile_boot_cpu_gen2
-+	cmp	r0, r1
-+	bne	shmobile_smp_continue_gen2
++		mixer0: mixer@1100000 {
++			compatible = "allwinner,sun8i-h3-de2-mixer-0";
++			reg = <0x01100000 0x100000>;
++			clocks = <&display_clocks CLK_BUS_MIXER0>,
++				 <&display_clocks CLK_MIXER0>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&display_clocks RST_MIXER0>;
 +
-+	mrc	p15, 0, r1, c1, c0, 0		@ r1 = SCTLR
-+	and	r0, r1, #SCTLR_MMU
-+	cmp	r0, #SCTLR_MMU
-+	beq	shmobile_smp_continue_gen2
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+	ldr	r0, rwtcsra
-+	mov	r1, #0
-+	ldrb	r1, [r0]
-+	and	r0, r1, #RWTCSRA_WOVF
-+	cmp	r0, #RWTCSRA_WOVF
-+	bne	shmobile_smp_continue_gen2
++				mixer0_out: port@1 {
++					reg = <1>;
 +
-+	ldr	r0, bootrom
-+	bx	r0
++					mixer0_out_tcon0: endpoint {
++						remote-endpoint = <&tcon0_in_mixer0>;
++					};
++				};
++			};
++		};
 +
-+shmobile_smp_continue_gen2:
-+	ldr     r1, shmobile_boot_fn_gen2
-+	bx	r1
-+
-+ENDPROC(shmobile_boot_vector_gen2)
-+
-+	.align	4
-+rwtcsra:
-+	.word	RWTCSRA_ADDRESS
-+bootrom:
-+	.word	BOOTROM_ADDRESS
-+	.globl	shmobile_boot_cpu_gen2
-+shmobile_boot_cpu_gen2:
-+	.word	0x00000000
-+
-+	.align	2
-+	.globl	shmobile_boot_fn_gen2
-+shmobile_boot_fn_gen2:
-+	.space	4
-+	.globl	shmobile_boot_size_gen2
-+shmobile_boot_size_gen2:
-+	.long	. - shmobile_boot_vector_gen2
-+
-+/*
-  * Per-CPU SMP boot function/argument selection code based on MPIDR
-  */
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-h3-system-controller",
+ 				"syscon";
+@@ -138,6 +167,41 @@
+ 			#dma-cells = <1>;
+ 		};
  
++		tcon0: lcd-controller@1c0c000 {
++			compatible = "allwinner,sun8i-h3-tcon-tv",
++				     "allwinner,sun8i-a83t-tcon-tv";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON0>, <&ccu CLK_TCON0>;
++			clock-names = "ahb", "tcon-ch1";
++			resets = <&ccu RST_BUS_TCON0>;
++			reset-names = "lcd";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon0_in: port@0 {
++					reg = <0>;
++
++					tcon0_in_mixer0: endpoint {
++						remote-endpoint = <&mixer0_out_tcon0>;
++					};
++				};
++
++				tcon0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					tcon0_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon0>;
++					};
++				};
++			};
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			/* compatible and clocks are in per SoC .dtsi file */
+ 			reg = <0x01c0f000 0x1000>;
+@@ -682,6 +746,50 @@
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
++		hdmi: hdmi@1ee0000 {
++			compatible = "allwinner,sun8i-h3-dw-hdmi",
++				     "allwinner,sun8i-a83t-dw-hdmi";
++			reg = <0x01ee0000 0x10000>;
++			reg-io-width = <1>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
++				 <&ccu CLK_HDMI>;
++			clock-names = "iahb", "isfr", "tmds";
++			resets = <&ccu RST_BUS_HDMI1>;
++			reset-names = "ctrl";
++			phys = <&hdmi_phy>;
++			phy-names = "hdmi-phy";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					reg = <0>;
++
++					hdmi_in_tcon0: endpoint {
++						remote-endpoint = <&tcon0_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					reg = <1>;
++				};
++			};
++		};
++
++		hdmi_phy: hdmi-phy@1ef0000 {
++			compatible = "allwinner,sun8i-h3-hdmi-phy";
++			reg = <0x01ef0000 0x10000>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
++				 <&ccu 6>;
++			clock-names = "bus", "mod", "pll-0";
++			resets = <&ccu RST_BUS_HDMI0>;
++			reset-names = "phy";
++			#phy-cells = <0>;
++		};
++
+ 		rtc: rtc@1f00000 {
+ 			compatible = "allwinner,sun6i-a31-rtc";
+ 			reg = <0x01f00000 0x54>;
 -- 
-2.7.4
+2.16.2
