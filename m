@@ -1,84 +1,149 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
- <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
- <1519686262.6374.3.camel@toradex.com>
- <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
- <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
-Date: Wed, 28 Feb 2018 15:00:23 +0300
-MIME-Version: 1.0
-In-Reply-To: <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org,
+	sricharan@codeaurora.org,
+	linux@arm.linux.org.uk
+Subject: [PATCH v8 01/15] ARM: Add Krait L2 register accessor functions
+Date: Tue, 27 Feb 2018 19:36:48 +0530
+Message-Id: <1519740422-3835-2-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28.02.2018 12:36, Peter De Schrijver wrote:
-> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
->> On 27.02.2018 02:04, Marcel Ziswiler wrote:
->>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
->>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
->>>>> Turns out latest upstream U-Boot does not configure/enable pllu
->>>>> which
->>>>> leaves it at some default rate of 500 kHz:
->>>>>
->>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
->>>>> pll_u
->>>>>        pll_u                  3        3        0      500000      
->>>>>     0
->>>>>
->>>>> Of course this won't quite work leading to the following messages:
->>>>>
->>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
->>>>> tegra-
->>>>> ehci
->>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
->>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
->>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
->>>>> tegra-
->>>>> ehci
->>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
->>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
->>>>> [   48.049658] usb usb2-port1: attempt power cycle
->>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
->>>>> tegra-
->>>>> ehci
->>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
->>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
->>>>> tegra-
->>>>> ehci
->>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
->>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
->>>>>
->>>>> Fix this by actually allowing the rate also being set from within
->>>>> the Linux kernel.
-> 
-> I think the best solution to this problem would be to make pll_u a fixed
-> clock and enable it and program the rate if it's not enabled at boot.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
-yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
-correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
-there.
+Krait CPUs have a handful of L2 cache controller registers that
+live behind a cp15 based indirection register. First you program
+the indirection register (l2cpselr) to point the L2 'window'
+register (l2cpdr) at what you want to read/write.  Then you
+read/write the 'window' register to do what you want. The
+l2cpselr register is not banked per-cpu so we must lock around
+accesses to it to prevent other CPUs from re-pointing l2cpdr
+underneath us.
 
-> This is how it's done for Tegra210. The reason is that the USB IP blocks
-> can control the pll_u state in hw. This means that if sw would disable
-> and then re-enable the pll_u clock, but there is no USB activity, pll_u
-> will still be disable and therefor not lock, causing an error. Today
-> this is worked around by not polling the lock bit for pll_u, but a better
-> solution would be to just remove all sw controls for pll_u.
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ arch/arm/common/Kconfig                   |  3 ++
+ arch/arm/common/Makefile                  |  1 +
+ arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
+ arch/arm/include/asm/krait-l2-accessors.h | 10 +++++++
+ 4 files changed, 62 insertions(+)
+ create mode 100644 arch/arm/common/krait-l2-accessors.c
+ create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
 
-SW controls could be removed, but I don't think it is really necessary as in our
-case SW is the PHY driver and we know what it does. Alternatively we can enable
-PLL_U in the init table to keep it "always" enabled.
+diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
+index e5ad070..c8e1986 100644
+--- a/arch/arm/common/Kconfig
++++ b/arch/arm/common/Kconfig
+@@ -7,6 +7,9 @@ config DMABOUNCE
+ 	bool
+ 	select ZONE_DMA
+ 
++config KRAIT_L2_ACCESSORS
++	bool
++
+ config SHARP_LOCOMO
+ 	bool
+ 
+diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+index 70b4a14..eec6cd1 100644
+--- a/arch/arm/common/Makefile
++++ b/arch/arm/common/Makefile
+@@ -7,6 +7,7 @@ obj-y				+= firmware.o
+ 
+ obj-$(CONFIG_SA1111)		+= sa1111.o
+ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
++obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
+ obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
+ obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
+ obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
+diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
+new file mode 100644
+index 0000000..9a97dda
+--- /dev/null
++++ b/arch/arm/common/krait-l2-accessors.c
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/spinlock.h>
++#include <linux/export.h>
++
++#include <asm/barrier.h>
++#include <asm/krait-l2-accessors.h>
++
++static DEFINE_RAW_SPINLOCK(krait_l2_lock);
++
++void krait_set_l2_indirect_reg(u32 addr, u32 val)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&krait_l2_lock, flags);
++	/*
++	 * Select the L2 window by poking l2cpselr, then write to the window
++	 * via l2cpdr.
++	 */
++	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
++	isb();
++	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
++	isb();
++
++	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++}
++EXPORT_SYMBOL(krait_set_l2_indirect_reg);
++
++u32 krait_get_l2_indirect_reg(u32 addr)
++{
++	u32 val;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&krait_l2_lock, flags);
++	/*
++	 * Select the L2 window by poking l2cpselr, then read from the window
++	 * via l2cpdr.
++	 */
++	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
++	isb();
++	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
++
++	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++
++	return val;
++}
++EXPORT_SYMBOL(krait_get_l2_indirect_reg);
+diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
+new file mode 100644
+index 0000000..dd7c474
+--- /dev/null
++++ b/arch/arm/include/asm/krait-l2-accessors.h
+@@ -0,0 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
++#define __ASMARM_KRAIT_L2_ACCESSORS_H
++
++extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
++extern u32 krait_get_l2_indirect_reg(u32 addr);
++
++#endif
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
