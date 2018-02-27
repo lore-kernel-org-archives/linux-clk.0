@@ -1,71 +1,118 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Thu, 15 Feb 2018 14:52:22 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	architt@codeaurora.org, a.hajda@samsung.com,
-	Laurent.pinchart@ideasonboard.com, narmstrong@baylibre.com,
-	Jose.Abreu@synopsys.com, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v5 00/12] drm/sun4i: Add A83T HDMI support
-Message-ID: <20180215135222.7ta2r22je3dun3lm@flea.lan>
-References: <20180214200906.31509-1-jernej.skrabec@siol.net>
+Return-Path: <julian.calaby@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hmkaczg3omrq4h5g"
-In-Reply-To: <20180214200906.31509-1-jernej.skrabec@siol.net>
+In-Reply-To: <20180227070735.ml3mc4nr4vpge57u@flea>
+References: <20180224214545.3740-1-jernej.skrabec@siol.net>
+ <2676311.2IEVhXnSIE@jernej-laptop> <4AA78C45-E139-417E-BE89-FE0BFBC409B0@aosc.io>
+ <2342395.9m6rrqTry7@jernej-laptop> <CAGRGNgU8-uJuns7mAzS-gc81qvVAkS9JS2Tm13p2Qp7dMDCNkg@mail.gmail.com>
+ <20180227070735.ml3mc4nr4vpge57u@flea>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Tue, 27 Feb 2018 21:35:09 +1100
+Message-ID: <CAGRGNgU0_zxejYfTzk5qeNhp5saCtTLy4Ra+oG97anhJwL+qOA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 14/15] ARM: dts: sun8i: h3: Enable HDMI
+ output on H3 boards
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: jernej.skrabec@siol.net, linux-sunxi <linux-sunxi@googlegroups.com>,
+	Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	dri-devel <dri-devel@lists.freedesktop.org>, devicetree <devicetree@vger.kernel.org>,
+	"Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Maxime,
 
---hmkaczg3omrq4h5g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Feb 27, 2018 at 6:07 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Tue, Feb 27, 2018 at 01:29:27PM +1100, Julian Calaby wrote:
+>> Hi Jernej,
+>>
+>> On Tue, Feb 27, 2018 at 3:27 AM, Jernej =C5=A0krabec <jernej.skrabec@sio=
+l.net> wrote:
+>> > Hi,
+>> >
+>> > Dne ponedeljek, 26. februar 2018 ob 17:21:05 CET je Icenowy Zheng napi=
+sal(a):
+>> >> =E4=BA=8E 2018=E5=B9=B42=E6=9C=8827=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=
+=8D=8812:16:44, "Jernej =C5=A0krabec"
+>> > <jernej.skrabec@siol.net> =E5=86=99=E5=88=B0:
+>> >> >Hi Julian,
+>> >> >
+>> >> >Dne nedelja, 25. februar 2018 ob 09:11:34 CET je Julian Calaby
+>> >> >
+>> >> >napisal(a):
+>> >> >> Hi Jernej,
+>> >> >>
+>> >> >> On Sun, Feb 25, 2018 at 8:45 AM, Jernej Skrabec
+>> >> >
+>> >> ><jernej.skrabec@siol.net>
+>> >> >
+>> >> >wrote:
+>> >> >> > Enable HDMI output on all boards which have HDMI connector.
+>> >> >> >
+>> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> >> >> > ---
+>> >> >> >
+>> >> >> >  arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    | 25
+>> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-beelink-x2.dt=
+s
+>> >> >> >
+>> >> >> >   | 25 ++++++++++++++++++++++
+>> >> >> >
+>> >> >> >  arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts | 25
+>> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts
+>> >> >> >
+>> >> >> >   | 25 ++++++++++++++++++++++
+>> >> >
+>> >> >arch/arm/boot/dts/sun8i-h3-orangepi-2.dts
+>> >> >
+>> >> >> >         | 25 ++++++++++++++++++++++
+>> >> >> >
+>> >> >> >  arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       | 25
+>> >> >> >  ++++++++++++++++++++++ arch/arm/boot/dts/sun8i-h3-orangepi-one.=
+dts
+>> >> >> >
+>> >> >> >   | 24 +++++++++++++++++++++
+>> >> >
+>> >> >arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+>> >> >
+>> >> >> >        | 25 ++++++++++++++++++++++ 8 files changed, 199
+>> >> >
+>> >> >insertions(+)
+>> >> >
+>> >> >> As I understand it, the H2+ is just a slightly trimmed down H3. In
+>> >> >> terms of HDMI support, the difference is that the H2+ can't output
+>> >> >
+>> >> >4k.
+>> >> >
+>> >> >> If this code is compatible with the H2+, could you please add the
+>> >> >> necessary bits and pieces to the h2-plus DTSs too?
+>> >> >
+>> >> >There are only 3 H2+ boards in kernel and none of them has HDMI
+>> >> >connector, so
+>> >>
+>> >> BPi M2 Zero has miniHDMI connector.
+>> >
+>> > Ah, sorry, I missed that one. Since I don't have it (or any other boar=
+d with
+>> > H2+) I'm not really comfortable including such patch. If anyone will t=
+est it,
+>> > I can include it in next revision.
+>>
+>> I have one of those (this is why I'm interested in this patchset) so
+>> I'm willing to test, however I can't guarantee I'll get to it quickly.
+>
+> Then I guess the best way forward will be to keep the current patch as
+> is, and you'll send a patch whenever you have the time to test it.
 
-On Wed, Feb 14, 2018 at 09:08:54PM +0100, Jernej Skrabec wrote:
-> This patch series implements support for A83T DW HDMI and PHY. Contrary to
-> v1 series, this one is based on latest linux-next, since all needed patch=
-es
-> were merged.
->=20
-> While exactly this combination of HDMI controller and PHY is not common in
-> Allwinner SoCs, this patch series nevertheless makes groundwork for other
-> SoCs, which have same DW HDMI IP block, but different PHYs, like H3 and H=
-5.
->=20
-> Please take a look.
+Fair enough, I'll do that then. =3D)
 
-I've applied the two clk patches. I'm waiting for some review from
-Archit on the synopsys bridge before merging anything else.
-
-Maxime
+Thanks,
 
 --=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Julian Calaby
 
---hmkaczg3omrq4h5g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqFkJUACgkQ0rTAlCFN
-r3Ttxw/+LBVtH/qfKjzG6L16Jur2rgZk5GZtfhatjnRwsCpSAjYmNEaG2kbhfSwI
-rlY4sY+kE7MY26PKnSNx4hlQ1EB4yAa2I4nkE34a9tDRcdWcl88vz4hrM84yLB7d
-BuIB/qcgkAVxVP8IcRM5bFfWZx1JkBm3JUF1Md8ZITdY/aGyc1hdga+aQjbOwEiO
-AdROg0k79xnkacbEwxv6DGvFU+NquEObvQ29hNGQqXutbzKr/N1OYjc5hw+uFbmz
-HaXtoZXRnywJGeIEakufxHqgvnMxUEQd3J0jOOK4b3ZPMIqA6in0qKEzfWAhivpn
-JxXO7nMeDh/t9OAf3eKheFc/m46vp6/G0TB6HMif/ZYeLOB+bcGQThfDH3C/inWR
-Qhs/ivYEVOCVo/Gdv8Y5lkMXQt5RUW1JJnC8x9phQAD3rBfCLkHX5LkDdPtffYtv
-XLAFwUet1Q2ixENP3nEBsBne013nDZbYG7jyIVHrTGcWECqxa+hIbf1JwNaH3AUd
-3QS3dLMV9rs9twqdUcnKITNRZIDr9k5rSRknAZTyCKl04z+8KP6QSwH8bV83Ak4v
-7V7rRdkm4McJwjWSRIQSWHRjswT83AaalFy47AiMq5cMaco0uNiN/HJVPIyO4ku9
-eBzpg1FQfq/LNEfG0o/bDjXBVe2Pa4tuGHmDfEgjklKRDTCG/gI=
-=aMPH
------END PGP SIGNATURE-----
-
---hmkaczg3omrq4h5g--
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
