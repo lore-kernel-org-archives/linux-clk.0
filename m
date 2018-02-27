@@ -1,115 +1,181 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:45982 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752865AbeBPPfd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Feb 2018 10:35:33 -0500
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Subject: Re: [PATCH] Update Boris Brezillon email address
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-From: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Message-id: <9c05d969-b488-fbc4-4143-6446d8a6d7ab@partner.samsung.com>
-Date: Fri, 16 Feb 2018 16:35:27 +0100
-In-reply-to: <20180216155455.36168609@bbrezillon>
-References: <CGME20180216104523epcas3p1c45769e365a181963f8328237d270854@epcas3p1.samsung.com>
-        <20180216104449.15546-1-boris.brezillon@bootlin.com>
-        <dbe89241-4d05-d369-2894-fdc0b2d80b80@partner.samsung.com>
-        <20180216121619.3edad6fb@bbrezillon>
-        <4086d3a7-c79d-6906-2778-caccd647ffe6@partner.samsung.com>
-        <20180216150050.6051cc26@bbrezillon>
-        <138ed639-992d-2d87-4dd4-973323cdcad7@partner.samsung.com>
-        <20180216155455.36168609@bbrezillon>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: viresh.kumar@linaro.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	robh@kernel.org,
+	sricharan@codeaurora.org,
+	linux@arm.linux.org.uk
+Subject: [PATCH v8 13/15] clk: qcom: Add safe switch hook for krait mux clocks
+Date: Tue, 27 Feb 2018 19:37:00 +0530
+Message-Id: <1519740422-3835-14-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 16.02.2018 15:54, Boris Brezillon wrote:
-> Adding back all the people that were Cc-ed on the initial email.
-> 
-> On Fri, 16 Feb 2018 15:18:21 +0100
-> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
-> 
->> On 16.02.2018 15:00, Boris Brezillon wrote:
->>> On Fri, 16 Feb 2018 12:21:53 +0100
->>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
->>>   
->>>> On 16.02.2018 12:16, Boris Brezillon wrote:  
->>>>> On Fri, 16 Feb 2018 12:07:42 +0100
->>>>> Kamil Konieczny <k.konieczny@partner.samsung.com> wrote:
->>>>>     
->>>>>> On 16.02.2018 11:44, Boris Brezillon wrote:    
->>>>>>> Free Electrons is now Bootlin.
->>>>>>>
->>>>>>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
->>>>>>> ---
->>>>>>> Note that I'm planning to take this patch through the MTD tree.
->>>>>>> ---
->>>>>>>  .mailmap    |  7 ++++---
->>>>>>>  MAINTAINERS | 10 +++++-----
->>>>>>>  2 files changed, 9 insertions(+), 8 deletions(-)
->>>>>>>
->>>>>>> diff --git a/.mailmap b/.mailmap
->>>>>>> index e18cab73e209..50c1d6bf36b2 100644
->>>>>>> --- a/.mailmap
->>>>>>> +++ b/.mailmap
->>>>>>> @@ -33,9 +33,10 @@ Axel Lin <axel.lin@gmail.com>
->>>>>>>  Ben Gardner <bgardner@wabtec.com>
->>>>>>>  Ben M Cahill <ben.m.cahill@intel.com>
->>>>>>>  Björn Steinbrink <B.Steinbrink@gmx.de>
->>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com>
->>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon.dev@gmail.com>
->>>>>>> -Boris Brezillon <boris.brezillon@free-electrons.com> <b.brezillon@overkiz.com>
->>>>>>> +Boris Brezillon <boris.brezillon@bootlin.com>
->>>>>>> +Boris Brezillon <boris.brezillon@bootlin.com> <boris.brezillon@free-electrons.com>      
->>>>>>
->>>>>> ------------------------------------------------------------------ ??????????????????    
->>>>>
->>>>> Is there a problem with this line?
->>>>>     
->>>>
->>>> I think you want to delete all 'free-electrons', yet here you add this  
->>>
->>> I'm clearly not a git expert, but according to man git-shortlog [1], the
->>> format I'm using here allows mailmap to replace the old email by the
->>> new one, which is exactly what I want.
->>>
->>> [1]https://git-scm.com/docs/git-shortlog
->>>   
->>
->> Ah, I see, but why do you send patch for .mailmap ?
->> it is your private file, not global one, I do not want mine .mailmap
->> to be replaced by yours :)
-> 
-> No, it's not private, it's part of the git tree.
-> 
->> But beside this, you can use sed script
->>
->> sed -i -e 's/free-electrons/bootlin/g' .mailmap
->>
->> Please just resend this with patch for MAINTAINER's only
->>
-> 
-> .mailmap is versioned for a good reason, and I don't see why I couldn't
-> update entries for my emails, especially since those entries already
-> existed before this patch.
+When the Hfplls are reprogrammed during the rate change,
+the primary muxes which are sourced from the same hfpll
+for higher frequencies, needs to be switched to the 'safe
+secondary mux' as the parent for that small window. This
+is done by registering a clk notifier for the muxes and
+switching to the safe parent in the PRE_RATE_CHANGE notifier
+and back to the original parent in the POST_RATE_CHANGE notifier.
 
-I am newbie, it looks you are right, sorry for questions.
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ drivers/clk/qcom/clk-krait.c |  2 ++
+ drivers/clk/qcom/clk-krait.h |  3 +++
+ drivers/clk/qcom/krait-cc.c  | 56 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 61 insertions(+)
 
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+index 2e41767..ac2e020 100644
+--- a/drivers/clk/qcom/clk-krait.c
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -50,6 +50,8 @@ static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	if (__clk_is_enabled(hw->clk))
+ 		__krait_mux_set_sel(mux, sel);
+ 
++	mux->reparent = true;
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
+index 71890bc..986f356 100644
+--- a/drivers/clk/qcom/clk-krait.h
++++ b/drivers/clk/qcom/clk-krait.h
+@@ -13,6 +13,9 @@ struct krait_mux_clk {
+ 	u32		shift;
+ 	u32		en_mask;
+ 	bool		lpl;
++	u8		safe_sel;
++	u8		old_index;
++	bool		reparent;
+ 
+ 	struct clk_hw	hw;
+ 	struct notifier_block   clk_nb;
+diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
+index 7c9dfb0..4d4b657 100644
+--- a/drivers/clk/qcom/krait-cc.c
++++ b/drivers/clk/qcom/krait-cc.c
+@@ -26,6 +26,49 @@
+ 	0,
+ };
+ 
++/*
++ * Notifier function for switching the muxes to safe parent
++ * while the hfpll is getting reprogrammed.
++ */
++static int krait_notifier_cb(struct notifier_block *nb,
++			     unsigned long event,
++			     void *data)
++{
++	int ret = 0;
++	struct krait_mux_clk *mux = container_of(nb, struct krait_mux_clk,
++						 clk_nb);
++	/* Switch to safe parent */
++	if (event == PRE_RATE_CHANGE) {
++		mux->old_index = krait_mux_clk_ops.get_parent(&mux->hw);
++		ret = krait_mux_clk_ops.set_parent(&mux->hw, mux->safe_sel);
++		mux->reparent = false;
++	/*
++	 * By the time POST_RATE_CHANGE notifier is called,
++	 * clk framework itself would have changed the parent for the new rate.
++	 * Only otherwise, put back to the old parent.
++	 */
++	} else if (event == POST_RATE_CHANGE) {
++		if (!mux->reparent)
++			ret = krait_mux_clk_ops.set_parent(&mux->hw,
++							   mux->old_index);
++	}
++
++	return notifier_from_errno(ret);
++}
++
++static int krait_notifier_register(struct device *dev, struct clk *clk,
++				   struct krait_mux_clk *mux)
++{
++	int ret = 0;
++
++	mux->clk_nb.notifier_call = krait_notifier_cb;
++	ret = clk_notifier_register(clk, &mux->clk_nb);
++	if (ret)
++		dev_err(dev, "failed to register clock notifier: %d\n", ret);
++
++	return ret;
++}
++
+ static int
+ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
+ {
+@@ -70,6 +113,7 @@
+ krait_add_sec_mux(struct device *dev, int id, const char *s,
+ 		  unsigned int offset, bool unique_aux)
+ {
++	int ret;
+ 	struct krait_mux_clk *mux;
+ 	static const char *sec_mux_list[] = {
+ 		"acpu_aux",
+@@ -93,6 +137,7 @@
+ 	mux->shift = 2;
+ 	mux->parent_map = sec_mux_map;
+ 	mux->hw.init = &init;
++	mux->safe_sel = 0;
+ 
+ 	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
+ 	if (!init.name)
+@@ -108,6 +153,11 @@
+ 
+ 	clk = devm_clk_register(dev, &mux->hw);
+ 
++	ret = krait_notifier_register(dev, clk, mux);
++	if (ret)
++		goto unique_aux;
++
++unique_aux:
+ 	if (unique_aux)
+ 		kfree(sec_mux_list[0]);
+ err_aux:
+@@ -119,6 +169,7 @@
+ krait_add_pri_mux(struct device *dev, int id, const char *s,
+ 		  unsigned int offset)
+ {
++	int ret;
+ 	struct krait_mux_clk *mux;
+ 	const char *p_names[3];
+ 	struct clk_init_data init = {
+@@ -139,6 +190,7 @@
+ 	mux->lpl = id >= 0;
+ 	mux->parent_map = pri_mux_map;
+ 	mux->hw.init = &init;
++	mux->safe_sel = 2;
+ 
+ 	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
+ 	if (!init.name)
+@@ -164,6 +216,10 @@
+ 
+ 	clk = devm_clk_register(dev, &mux->hw);
+ 
++	ret = krait_notifier_register(dev, clk, mux);
++	if (ret)
++		goto err_p3;
++err_p3:
+ 	kfree(p_names[2]);
+ err_p2:
+ 	kfree(p_names[1]);
 -- 
-Best regards,
-Kamil Konieczny
-Samsung R&D Institute Poland
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
