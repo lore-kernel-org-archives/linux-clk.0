@@ -1,262 +1,149 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 7 Feb 2018 19:49:59 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 4/6] clk: sunxi-ng: add support for the Allwinner H6
- CCU
-Message-ID: <20180207184959.5h233agyhva352s4@flea>
-References: <20180203154942.63566-1-icenowy@aosc.io>
- <20180203154942.63566-5-icenowy@aosc.io>
- <20180207090210.jlxleeh32tojvzp5@flea>
- <3AB5A169-5EA5-4A45-95AF-4CA56F13A1CA@aosc.io>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Message-ID: <1519840692.8089.87.camel@mtkswgap22>
+Subject: Re: [SPAM]Re: [PATCH v3 4/5] dt-bindings: clock: mediatek: update
+ audsys documentation to adapt MFD device
+From: Sean Wang <sean.wang@mediatek.com>
+To: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 1 Mar 2018 01:58:12 +0800
+In-Reply-To: <CAL_Jsq+NK-sUY-qOZ2Xv1ZfWVm-vG0tyAgN_auKeaQxMq58vkw@mail.gmail.com>
+References: <cover.1518424204.git.ryder.lee@mediatek.com>
+ <61928ad523a7aeffb8f16d4caad56836b65ae407.1518424204.git.ryder.lee@mediatek.com>
+ <CAL_JsqJgo0pKJjrs2fdw+q=DJYwht0X5L3Bomz8gf98mEN7hkg@mail.gmail.com>
+ <1519193048.18794.42.camel@mtkswgap22>
+ <CAL_JsqLjcMpS=bLzAV0arLJY143O1XefjSR0djM73E8uC4oJHg@mail.gmail.com>
+ <1519272878.1907.87.camel@mtkswgap22>
+ <CAL_Jsq+NK-sUY-qOZ2Xv1ZfWVm-vG0tyAgN_auKeaQxMq58vkw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ezess36y6rgitwq2"
-In-Reply-To: <3AB5A169-5EA5-4A45-95AF-4CA56F13A1CA@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Ryder Lee <ryder.lee@mediatek.com>, Garlic
+ Tseng <garlic.tseng@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org,
+ Matthias Brugger <matthias.bgg@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM
+ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
---ezess36y6rgitwq2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Feb 07, 2018 at 05:11:11PM +0800, Icenowy Zheng wrote:
->=20
->=20
-> =E4=BA=8E 2018=E5=B9=B42=E6=9C=887=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=885=
-:02:10, Maxime Ripard <maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
-> >Hi,
+On Wed, 2018-02-28 at 09:13 -0600, Rob Herring wrote:
+> On Wed, Feb 21, 2018 at 10:14 PM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+> > On Wed, 2018-02-21 at 08:10 -0600, Rob Herring wrote:
+> >> On Wed, Feb 21, 2018 at 12:04 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+> >> > On Mon, 2018-02-19 at 12:29 -0600, Rob Herring wrote:
+> >> >> On Mon, Feb 12, 2018 at 5:28 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+> >> >> > The MediaTek audio hardware block that exposes functionalities that are
+> >> >> > handled by separate subsystems in the kernel.  These functions are all
+> >> >> > mapped somewhere at 0x112xxxxx, and there are some control bits are mixed
+> >> >> > up with other functions within the same registers.
+> >> >>
+> >> >> I still don't think this change is necessary.
+> >> >>
+> >> >> Just because a hardware block in DT maps to different subsystems in a
+> >> >> particular OS doesn't mean you need a DT node for each OS subsystem.
+> >> >> What we have subsystems for changes over time and DT shouldn't really
+> >> >> be changing based on that. And DT is not the only way to instantiate
+> >> >> drivers.
+> >> >>
+> >> >
+> >> > Apart right now we have the definition of both functions. The other
+> >> > location is here:../sonud/mt2701-afe-pcm.txt. The ways I could come up
+> >> > with are:
+> >>
+> >> There are several problems you need to fix. First,
+> >> "mediatek,mt2701-audsys" is not documented. It is only used in the
+> >> example. Second, bindings/arm/mediatek/mediatek,audsys.txt should move
+> >> to bindings/sound/ if it is only audio related functions. Or perhaps
+> >> just combine the 2 documents because it is all inconsistent currently.
 > >
-> >On Sat, Feb 03, 2018 at 11:49:40PM +0800, Icenowy Zheng wrote:
-> >> +	/* Force the output divider of video PLLs to 0 */
-> >> +	for (i =3D 0; i < ARRAY_SIZE(pll_video_regs); i++) {
-> >> +		val =3D readl(reg + pll_video_regs[i]);
-> >> +		val &=3D ~BIT(0);
-> >> +		writel(val, reg + pll_video_regs[i]);
-> >> +	}
+> > Because the series crossed subsystems but didn't apply at the same time.
 > >
-> >Why?
->=20
-> According to the manual the output divider here is
-> test only, and for daily use it should be 0.
->=20
+> >> The 2 documents are inconsistent as to what is the relationship of
+> >> -audsys and -audio (afe) nodes. mt2701-afe-pcm.txt shows that the AFE
+> >> is already a child of -audsys. The -audsys node should have
+> >> #clock-cells. It should also not be a simple-mfd (another
+> >> inconsistency in the binding) because it needs to probe first to
+> >> provide clocks to child nodes, and then trigger probing the child
+> >> nodes.
 > >
-> >> +	/* Force OHCI 12M clock sources to 00 (12MHz divided from 48MHz) */
-> >> +	for (i =3D 0; i < ARRAY_SIZE(usb2_clk_regs); i++) {
-> >> +		val =3D readl(reg + usb2_clk_regs[i]);
-> >> +		val &=3D ~GENMASK(25, 24);
-> >> +		writel (val, reg + usb2_clk_regs[i]);
-> >> +	}
+> > This is the 1st version I sent before, and the clock parts still under
+> > review :( .  But yes, the 2 inconsistent documents should be fixed -
+> > this may depend on what we end up doing with the DT appearance.
 > >
-> >Why?
->=20
-> Just make them have a sure working parent. Why this
-> muxs exist is still mysterious.
->=20
+> > IMHO, apart from overlapping regions with other functions I didn't see
+> > any difference between audsys and other clock drivers (providers).
 > >
-> >> +	/*
-> >> +	 * Force the post-divider of pll-video to 8 and the output divider
->=20
-> oh here's a typo -- it's audio, not video.
->=20
-> >> +	 * of it to 1.
-> >> +	 */
-> >> +	val =3D readl(reg + SUN50I_H6_PLL_AUDIO_REG);
-> >> +	val &=3D ~(GENMASK(21, 16) | BIT(0));
-> >> +	writel(val | (7 << 16), reg + SUN50I_H6_PLL_AUDIO_REG);
-> >
-> >Why?
->=20
-> See the comments about pll-audio in the former sources :-)
+> > For the sake of uniformity, I make the 2 sub-devices parallel and move
+> > "simple-mfd" to the top, and the sequences should actually be handled
+> > through "probe deferral mechanism" - that would make this kind of
+> > situations much easier to manage.
+> 
+> If a child node has a dependency on the parent, probe deferral is not
+> the correct solution. The parent should probe first and control
+> probing of the chlidren. "simple-mfd" is intended for cases where
+> there is no dependency on the parent node.
+> 
 
-You should have a comments for all those :)
+I think the device hierarchy for AUDSYS has to be depicted more
+appropriately at first before we keep going to discuss the topic.
 
->=20
-> >> diff --git a/include/dt-bindings/clock/sun50i-h6-ccu.h
-> >b/include/dt-bindings/clock/sun50i-h6-ccu.h
-> >> new file mode 100644
-> >> index 000000000000..f7ddb241012c
-> >> --- /dev/null
-> >> +++ b/include/dt-bindings/clock/sun50i-h6-ccu.h
-> >> @@ -0,0 +1,125 @@
-> >> +/*
-> >> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-> >> + *
-> >> + * SPDX-License-Identifier: (GPL-2.0+ or MIT)
-> >> + */
-> >> +
-> >> +#ifndef _DT_BINDINGS_CLK_SUN50I_H6_H_
-> >> +#define _DT_BINDINGS_CLK_SUN50I_H6_H_
-> >> +
-> >> +#define CLK_PLL_PERIPH0		3
-> >
-> >Why is that needed?
->=20
-> Parent of AR100 clock in PRCM.
 
-ACK.
+          ------- clock-controller
+	  -
+AUDSYS ---------- audio-controller 
+	  -
+	  ------- other controllers not being modeled yet
 
-> >
-> >> +
-> >> +#define CLK_CPUX		21
-> >> +
-> >> +#define CLK_APB1		26
-> >
-> >Same thing here
->=20
-> As discussed in v1, the APB bus clock is used for PIO.
+Currently, AUDSYS just works as a container containing all the devices 
+present within the range reserved for audio relevant function and even
+partial registers and bits for these devices are mixing within some of
+the range. And for clock controller, they're just all being used to
+provide to the audio-controller or other functional devices under AUDSYS
+internally.
 
-ACK
+Thus, deferral actually happens between siblings, rather than between
+parent and child. For example, the probe deferral Ryder said is pointing
+to that audio-controller needs to wait until all resources like clock
+resources all in ready state.
 
-> >
-> >> +
-> >> +#define CLK_DE			29
-> >> +#define CLK_BUS_DE		30
-> >> +#define CLK_DEINTERLACE		31
-> >> +#define CLK_BUS_DEINTERLACE	32
-> >> +#define CLK_GPU			33
-> >> +#define CLK_BUS_GPU		34
-> >> +#define CLK_CE			35
-> >> +#define CLK_BUS_CE		36
-> >> +#define CLK_VE			37
-> >> +#define CLK_BUS_VE		38
-> >> +#define CLK_EMCE		39
-> >> +#define CLK_BUS_EMCE		40
-> >> +#define CLK_VP9			41
-> >> +#define CLK_BUS_VP9		42
-> >> +#define CLK_BUS_DMA		43
-> >> +#define CLK_BUS_MSGBOX		44
-> >> +#define CLK_BUS_SPINLOCK	45
-> >> +#define CLK_BUS_HSTIMER		46
-> >> +#define CLK_AVS			47
-> >> +#define CLK_BUS_DBG		48
-> >> +#define CLK_BUS_PSI		49
-> >> +#define CLK_BUS_PWM		50
-> >> +#define CLK_BUS_IOMMU		51
-> >> +
-> >> +#define CLK_MBUS_DMA		53
-> >> +#define CLK_MBUS_VE		54
-> >> +#define CLK_MBUS_CE		55
-> >> +#define CLK_MBUS_TS		56
-> >> +#define CLK_MBUS_NAND		57
-> >> +#define CLK_MBUS_CSI		58
-> >> +#define CLK_MBUS_DEINTERLACE	59
-> >> +
-> >> +#define CLK_NAND0		61
-> >> +#define CLK_NAND1		62
-> >> +#define CLK_BUS_NAND		63
-> >> +#define CLK_MMC0		64
-> >> +#define CLK_MMC1		65
-> >> +#define CLK_MMC2		66
-> >> +#define CLK_BUS_MMC0		67
-> >> +#define CLK_BUS_MMC1		68
-> >> +#define CLK_BUS_MMC2		69
-> >> +#define CLK_BUS_UART0		70
-> >> +#define CLK_BUS_UART1		71
-> >> +#define CLK_BUS_UART2		72
-> >> +#define CLK_BUS_UART3		73
-> >> +#define CLK_BUS_I2C0		74
-> >> +#define CLK_BUS_I2C1		75
-> >> +#define CLK_BUS_I2C2		76
-> >> +#define CLK_BUS_I2C3		77
-> >> +#define CLK_BUS_SCR0		78
-> >> +#define CLK_BUS_SCR1		79
-> >> +#define CLK_SPI0		80
-> >> +#define CLK_SPI1		81
-> >> +#define CLK_BUS_SPI0		82
-> >> +#define CLK_BUS_SPI1		83
-> >> +#define CLK_BUS_EMAC		84
-> >> +#define CLK_TS			85
-> >> +#define CLK_BUS_TS		86
-> >> +#define CLK_IR_TX		87
-> >> +#define CLK_BUS_IR_TX		88
-> >> +#define CLK_BUS_THS		89
-> >> +#define CLK_I2S3		90
-> >> +#define CLK_I2S0		91
-> >> +#define CLK_I2S1		92
-> >> +#define CLK_I2S2		93
-> >> +#define CLK_BUS_I2S0		94
-> >> +#define CLK_BUS_I2S1		95
-> >> +#define CLK_BUS_I2S2		96
-> >> +#define CLK_BUS_I2S3		97
-> >> +#define CLK_SPDIF		98
-> >> +#define CLK_BUS_SPDIF		99
-> >> +#define CLK_DMIC		100
-> >> +#define CLK_BUS_DMIC		101
-> >> +#define CLK_AUDIO_HUB		102
-> >> +#define CLK_BUS_AUDIO_HUB	103
-> >> +#define CLK_USB_OHCI0		104
-> >> +#define CLK_USB_PHY0		105
-> >> +#define CLK_USB_PHY1		106
-> >> +#define CLK_USB_OHCI3		107
-> >> +#define CLK_USB_PHY3		108
-> >> +#define CLK_USB_HSIC_12M	109
-> >> +#define CLK_USB_HSIC		110
-> >> +#define CLK_BUS_OHCI0		111
-> >> +#define CLK_BUS_OHCI3		112
-> >> +#define CLK_BUS_EHCI0		113
-> >> +#define CLK_BUS_XHCI		114
-> >> +#define CLK_BUS_EHCI3		115
-> >> +#define CLK_BUS_OTG		116
-> >> +#define CLK_PCIE_REF_100M	117
-> >> +#define CLK_PCIE_REF		118
-> >> +#define CLK_PCIE_REF_OUT	119
-> >> +#define CLK_PCIE_MAXI		120
-> >> +#define CLK_PCIE_AUX		121
-> >
-> >Dito.
->=20
-> I think AUX clock is used in PCIe code.
->=20
-> BTW the REF_100M clock is intermediate, and
-> does't need to be exported. Will fix it in the next version.
->=20
-> >
-> >> +#define CLK_BUS_PCIE		122
-> >> +#define CLK_HDMI		123
-> >> +#define CLK_HDMI_CEC		124
-> >> +#define CLK_BUS_HDMI		125
-> >> +#define CLK_BUS_TCON_TOP	126
-> >
-> >Ditto.
->=20
-> TCON_TOP is not a clock parent -- it's a dedicated hw
-> part which controlls the connection between
-> DE2/3 mixers and TCONs.
+I'm not fully sure MFD can be used properly to describe such kind of
+device hierarchy, but it's really worth having a good way to describe
+the composition of hardware blocks precisely in device tree and to ease
+extension device support under AUDSYS for future.
 
-Ok, great, thanks!
-Maxime
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+There is also the same thing happened in MMSYS as [1] stated.
 
---ezess36y6rgitwq2
-Content-Type: application/pgp-signature; name="signature.asc"
+[1] https://lkml.org/lkml/2017/11/14/669
 
------BEGIN PGP SIGNATURE-----
+> > BTW, I could make the AFE driver be instantiated/probed from the clock
+> > driver but this seems superfluous to me.  Just make sure is this what
+> > you want?
+> 
+> I would think it would be the other way around. The AFE driver creates
+> some clocks. Whether that's a separate driver or a single driver is a
+> kernel issue that has nothing to do with the binding. IIRC, there's
+> several examples in display controllers and camera interfaces where
+> those drivers are also clock providers.
+> 
+> Rob
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlp7SlYACgkQ0rTAlCFN
-r3TrMg//QcmsHRC1PFMt3DUBC3NPwNUuBDBP741PNoVCDWXCyOU6NbgkWUoaqOFZ
-cslmtPLAFzmqAwtsvcAAu9/pdUKDc8F1Y6510+JvRuvj+6ulnNmRodsVpRPcgsfV
-9ycdrEzgPRX3tcaRzuh0ByYDnRuRtBwY7aTMZTjY2/HORSHwIrfLVDe7k0ytllIZ
-3QABWdFNe1XNM1UoAOSypFbwnDsnpz+g8Yod14SiuGgVoEZQ4OUOT1kfJL8SUJFf
-VgNzg7VCYjQmpOcvgeiuI767ZnnRjCZEyJBhTC5zap09yyzmAVP/9Qiu6jXt1Zd9
-vCPfXy/6AOqgFbiluy3iGWitGcV9ykfZorFyBbDLL4Ub8+WRdQVg1rh6nWl0ozf0
-tDRLs9cjnEmm+odO/wHN8rFF0FXWLZAgwvLBnmOp7RkLxVmBjxhqMW4TmgK+CYxS
-tN76Harvdod7AZFGNGnsOyTP0KL4CA2z527yLg+Dr20NV4IecgPRSyAVBWmPLZPp
-QiFpnfQ6B3tcC6qCi77kUkeNZjRyFZ2KenUGKnmZaM7oLFwmp6wpEwtXMH0SjmtB
-K4Ik3feqfBWWgja3GQz0fUeM7UkcD8MdLZdmolfEL6BDm2Y0g9VRTCp/u4dAjtUk
-HifqpnHMhxElgfSD0MP4ZN7OQcGEDC3aGaHx3SRy/tf3PWdferk=
-=oJSi
------END PGP SIGNATURE-----
 
---ezess36y6rgitwq2--
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
