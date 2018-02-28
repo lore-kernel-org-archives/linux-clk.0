@@ -1,95 +1,153 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Message-ID: <1519272878.1907.87.camel@mtkswgap22>
-Subject: Re: [SPAM]Re: [PATCH v3 4/5] dt-bindings: clock: mediatek: update
- audsys documentation to adapt MFD device
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Rob Herring <robh+dt@kernel.org>
-Date: Thu, 22 Feb 2018 12:14:38 +0800
-In-Reply-To: <CAL_JsqLjcMpS=bLzAV0arLJY143O1XefjSR0djM73E8uC4oJHg@mail.gmail.com>
-References: <cover.1518424204.git.ryder.lee@mediatek.com>
- <61928ad523a7aeffb8f16d4caad56836b65ae407.1518424204.git.ryder.lee@mediatek.com>
- <CAL_JsqJgo0pKJjrs2fdw+q=DJYwht0X5L3Bomz8gf98mEN7hkg@mail.gmail.com>
- <1519193048.18794.42.camel@mtkswgap22>
- <CAL_JsqLjcMpS=bLzAV0arLJY143O1XefjSR0djM73E8uC4oJHg@mail.gmail.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org,
- Matthias Brugger <matthias.bgg@gmail.com>, Lee Jones <lee.jones@linaro.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM
- ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Simon Horman <horms@verge.net.au>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: [PATCH v6 01/26] ARM: shmobile: Add watchdog support
+Date: Wed, 28 Feb 2018 17:40:22 +0000
+Message-Id: <1519839622-6109-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
+References: <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-02-21 at 08:10 -0600, Rob Herring wrote:
-> On Wed, Feb 21, 2018 at 12:04 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
-> > On Mon, 2018-02-19 at 12:29 -0600, Rob Herring wrote:
-> >> On Mon, Feb 12, 2018 at 5:28 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
-> >> > The MediaTek audio hardware block that exposes functionalities that are
-> >> > handled by separate subsystems in the kernel.  These functions are all
-> >> > mapped somewhere at 0x112xxxxx, and there are some control bits are mixed
-> >> > up with other functions within the same registers.
-> >>
-> >> I still don't think this change is necessary.
-> >>
-> >> Just because a hardware block in DT maps to different subsystems in a
-> >> particular OS doesn't mean you need a DT node for each OS subsystem.
-> >> What we have subsystems for changes over time and DT shouldn't really
-> >> be changing based on that. And DT is not the only way to instantiate
-> >> drivers.
-> >>
-> >
-> > Apart right now we have the definition of both functions. The other
-> > location is here:../sonud/mt2701-afe-pcm.txt. The ways I could come up
-> > with are:
-> 
-> There are several problems you need to fix. First,
-> "mediatek,mt2701-audsys" is not documented. It is only used in the
-> example. Second, bindings/arm/mediatek/mediatek,audsys.txt should move
-> to bindings/sound/ if it is only audio related functions. Or perhaps
-> just combine the 2 documents because it is all inconsistent currently.
+On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
+boot CPUs run a routine designed to bring up SMP and deal with hot plug.
+The value contained in the SBAR registers is not initialized by a WDT
+triggered reset, which means that after a WDT triggered reset we jump
+to the SMP bring up routine, preventing the system from executing the
+bootrom code.
 
-Because the series crossed subsystems but didn't apply at the same time.
+The purpose of this patch is to jump to the bootrom code in case of a
+WDT triggered reset, and keep the SMP functionality untouched.
+In order to tell if the code had been called due to the WDT overflowing
+we are testing WOVF from register RWTCSRA.
 
-> The 2 documents are inconsistent as to what is the relationship of
-> -audsys and -audio (afe) nodes. mt2701-afe-pcm.txt shows that the AFE
-> is already a child of -audsys. The -audsys node should have
-> #clock-cells. It should also not be a simple-mfd (another
-> inconsistency in the binding) because it needs to probe first to
-> provide clocks to child nodes, and then trigger probing the child
-> nodes.
+The new function shmobile_boot_vector_gen2 isn't replacing
+shmobile_boot_vector for backward compatibility reasons. The kernel
+will install the best option (either shmobile_boot_vector or
+shmobile_boot_vector_gen2) to ICRAM1 after parsing the device tree,
+according to the amount of memory available.
 
-This is the 1st version I sent before, and the clock parts still under
-review :( .  But yes, the 2 inconsistent documents should be fixed -
-this may depend on what we end up doing with the DT appearance.
+Since shmobile_boot_vector has become bigger, "reg" property of nodes
+compatible with "renesas,smp-sram" now need to be set to a value
+greater or equal to "<0 0x60>".
 
-IMHO, apart from overlapping regions with other functions I didn't see
-any difference between audsys and other clock drivers (providers).
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v5->v6:
+* taken ifdefs out as per Geert's suggestion.
 
-For the sake of uniformity, I make the 2 sub-devices parallel and move
-"simple-mfd" to the top, and the sequences should actually be handled
-through "probe deferral mechanism" - that would make this kind of
-situations much easier to manage.
+ arch/arm/mach-shmobile/common.h  |  4 +++
+ arch/arm/mach-shmobile/headsmp.S | 53 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
-BTW, I could make the AFE driver be instantiated/probed from the clock
-driver but this seems superfluous to me.  Just make sure is this what
-you want?
-
-Ryder
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/mach-shmobile/common.h b/arch/arm/mach-shmobile/common.h
+index a8fa4f7..43c1ac69 100644
+--- a/arch/arm/mach-shmobile/common.h
++++ b/arch/arm/mach-shmobile/common.h
+@@ -7,6 +7,10 @@ extern void shmobile_init_delay(void);
+ extern void shmobile_boot_vector(void);
+ extern unsigned long shmobile_boot_fn;
+ extern unsigned long shmobile_boot_size;
++extern void shmobile_boot_vector_gen2(void);
++extern unsigned long shmobile_boot_fn_gen2;
++extern unsigned long shmobile_boot_cpu_gen2;
++extern unsigned long shmobile_boot_size_gen2;
+ extern void shmobile_smp_boot(void);
+ extern void shmobile_smp_sleep(void);
+ extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
+diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
+index 32e0bf6..2ece67c 100644
+--- a/arch/arm/mach-shmobile/headsmp.S
++++ b/arch/arm/mach-shmobile/headsmp.S
+@@ -16,6 +16,11 @@
+ #include <asm/assembler.h>
+ #include <asm/memory.h>
+ 
++#define SCTLR_MMU	0x01
++#define BOOTROM_ADDRESS	0xE6340000
++#define RWTCSRA_ADDRESS 0xE6020004
++#define RWTCSRA_WOVF	0x10
++
+ /*
+  * Reset vector for secondary CPUs.
+  * This will be mapped at address 0 by SBAR register.
+@@ -38,6 +43,54 @@ shmobile_boot_size:
+ 	.long	. - shmobile_boot_vector
+ 
+ /*
++ * Reset vector for R-Car Gen2 and RZ/G1 secondary CPUs.
++ * This will be mapped at address 0 by SBAR register.
++ */
++ENTRY(shmobile_boot_vector_gen2)
++	mrc	p15, 0, r0, c0, c0, 5		@ r0 = MPIDR
++	ldr	r1, shmobile_boot_cpu_gen2
++	cmp	r0, r1
++	bne	shmobile_smp_continue_gen2
++
++	mrc	p15, 0, r1, c1, c0, 0		@ r1 = SCTLR
++	and	r0, r1, #SCTLR_MMU
++	cmp	r0, #SCTLR_MMU
++	beq	shmobile_smp_continue_gen2
++
++	ldr	r0, rwtcsra
++	mov	r1, #0
++	ldrb	r1, [r0]
++	and	r0, r1, #RWTCSRA_WOVF
++	cmp	r0, #RWTCSRA_WOVF
++	bne	shmobile_smp_continue_gen2
++
++	ldr	r0, bootrom
++	bx	r0
++
++shmobile_smp_continue_gen2:
++	ldr     r1, shmobile_boot_fn_gen2
++	bx	r1
++
++ENDPROC(shmobile_boot_vector_gen2)
++
++	.align	4
++rwtcsra:
++	.word	RWTCSRA_ADDRESS
++bootrom:
++	.word	BOOTROM_ADDRESS
++	.globl	shmobile_boot_cpu_gen2
++shmobile_boot_cpu_gen2:
++	.word	0x00000000
++
++	.align	2
++	.globl	shmobile_boot_fn_gen2
++shmobile_boot_fn_gen2:
++	.space	4
++	.globl	shmobile_boot_size_gen2
++shmobile_boot_size_gen2:
++	.long	. - shmobile_boot_vector_gen2
++
++/*
+  * Per-CPU SMP boot function/argument selection code based on MPIDR
+  */
+ 
+-- 
+2.7.4
