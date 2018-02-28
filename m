@@ -1,188 +1,117 @@
-Return-Path: <dinguyen@kernel.org>
-From: Dinh Nguyen <dinguyen@kernel.org>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: dinguyen@kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org
-Subject: [PATCHv4 1/3] dt-bindings: documentation: add clock bindings information for Stratix10
-Date: Tue, 13 Feb 2018 04:04:44 -0600
-Message-Id: <1518516286-14428-1-git-send-email-dinguyen@kernel.org>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Wed, 28 Feb 2018 08:34:40 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
+	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 01/16] clk: sunxi-ng: Add check for minimal rate to NM
+ PLLs
+Message-ID: <20180228073440.6ejo3wjdqag6h4nl@flea>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+ <20180227222701.9716-2-jernej.skrabec@siol.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jbftow7kteudva7c"
+In-Reply-To: <20180227222701.9716-2-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document that Stratix10 clock bindings, and add the clock header file. The
-clock header is an enumeration of all the different clocks on the Stratix10
-platform.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v4:
-- remove '_' in node names
-- remove stray tab
-- add clock-frequency property for fixed-clocks
-- put SPDX license as the very top line
-v3:
-- s/intc/intel for correct vendor prefix
-- fixup node name to "intel,stratix10-clkmgr"
-- document the required fixed-clock for oscillators
-v2:
-- use a single binding for the clock controller
----
- .../devicetree/bindings/clock/intc_stratix10.txt   | 51 +++++++++++++
- include/dt-bindings/clock/stratix10-clock.h        | 84 ++++++++++++++++++++++
- 2 files changed, 135 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
- create mode 100644 include/dt-bindings/clock/stratix10-clock.h
+--jbftow7kteudva7c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/clock/intc_stratix10.txt b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
-new file mode 100644
-index 0000000..0652ff1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/intc_stratix10.txt
-@@ -0,0 +1,51 @@
-+Device Tree Clock bindings for Intel's SoCFPGA Stratix10 platform
-+
-+This binding uses the common clock binding[1].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+Required properties:
-+- compatible : shall be
-+	"intel,stratix10-clkmgr"
-+
-+- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
-+
-+- #clock-cells : from common clock binding, shall be set to 1.
-+
-+- clocks : Should contain fixed-clock sources, such as oscillators.
-+
-+Example:
-+	clkmgr: clock-controller@ffd10000 {
-+		compatible = "intel,stratix10-clkmgr";
-+		reg = <0xffd10000 0x1000>;
-+		#clock-cells = <1>;
-+
-+		clocks {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
-+				#clock-cells = <0>;
-+				compatible = "fixed-clock";
-+				clock-frequency = <25000000>;
-+			};
-+
-+			cb_intosc_ls_clk: cb-intosc-ls-clk {
-+				#clock-cells = <0>;
-+				compatible = "fixed-clock";
-+				clock-frequency = <25000000>;
-+			};
-+
-+			f2s_free_clk: f2s-free-clk {
-+				#clock-cells = <0>;
-+				compatible = "fixed-clock";
-+				clock-frequency = <25000000>;
-+			};
-+
-+			osc1: osc1 {
-+				#clock-cells = <0>;
-+				compatible = "fixed-clock";
-+				clock-frequency = <25000000>;
-+			};
-+		};
-+	};
-diff --git a/include/dt-bindings/clock/stratix10-clock.h b/include/dt-bindings/clock/stratix10-clock.h
-new file mode 100644
-index 0000000..5be885d
---- /dev/null
-+++ b/include/dt-bindings/clock/stratix10-clock.h
-@@ -0,0 +1,84 @@
-+/* SPDX-License-Identifier:	GPL-2.0
-+ *
-+ * Copyright (C) 2017, Intel Corporation
-+ */
-+
-+#ifndef __STRATIX10_CLOCK_H
-+#define __STRATIX10_CLOCK_H
-+
-+/* fixed rate clocks */
-+#define STRATIX10_OSC1			0
-+#define STRATIX10_CB_INTOSC_HS_DIV2_CLK	1
-+#define STRATIX10_CB_INTOSC_LS_CLK	2
-+#define STRATIX10_F2S_FREE_CLK		3
-+
-+/* fixed factor clocks */
-+#define STRATIX10_L4_SYS_FREE_CLK	4
-+#define STRATIX10_MPU_PERIPH_CLK	5
-+#define STRATIX10_MPU_L2RAM_CLK		6
-+#define STRATIX10_SDMMC_CIU_CLK		7
-+
-+/* PLL clocks */
-+#define STRATIX10_MAIN_PLL_CLK		8
-+#define STRATIX10_PERIPH_PLL_CLK	9
-+#define STRATIX10_BOOT_CLK		10
-+
-+/* Periph clocks */
-+#define STRATIX10_MAIN_MPU_BASE_CLK	11
-+#define STRATIX10_MAIN_NOC_BASE_CLK	12
-+#define STRATIX10_MAIN_EMACA_CLK	13
-+#define STRATIX10_MAIN_EMACB_CLK	14
-+#define STRATIX10_MAIN_EMAC_PTP_CLK	15
-+#define STRATIX10_MAIN_GPIO_DB_CLK	16
-+#define STRATIX10_MAIN_SDMMC_CLK	17
-+#define STRATIX10_MAIN_S2F_USR0_CLK	18
-+#define STRATIX10_MAIN_S2F_USR1_CLK	19
-+#define STRATIX10_MAIN_PSI_REF_CLK	20
-+
-+#define STRATIX10_PERI_MPU_BASE_CLK	21
-+#define STRATIX10_PERI_NOC_BASE_CLK	22
-+#define STRATIX10_PERI_EMACA_CLK	23
-+#define STRATIX10_PERI_EMACB_CLK	24
-+#define STRATIX10_PERI_EMAC_PTP_CLK	25
-+#define STRATIX10_PERI_GPIO_DB_CLK	26
-+#define STRATIX10_PERI_SDMMC_CLK	27
-+#define STRATIX10_PERI_S2F_USR0_CLK	28
-+#define STRATIX10_PERI_S2F_USR1_CLK	29
-+#define STRATIX10_PERI_PSI_REF_CLK	30
-+
-+#define STRATIX10_MPU_FREE_CLK		31
-+#define STRATIX10_NOC_FREE_CLK		32
-+#define STRATIX10_S2F_USR0_CLK		33
-+#define STRATIX10_NOC_CLK		34
-+#define STRATIX10_EMAC_A_FREE_CLK	35
-+#define STRATIX10_EMAC_B_FREE_CLK	36
-+#define STRATIX10_EMAC_PTP_FREE_CLK	37
-+#define STRATIX10_GPIO_DB_FREE_CLK	38
-+#define STRATIX10_SDMMC_FREE_CLK	39
-+#define STRATIX10_S2F_USER1_FREE_CLK	40
-+#define STRATIX10_PSI_REF_FREE_CLK	41
-+
-+/* Gate clocks */
-+#define STRATIX10_MPU_CLK		42
-+#define STRATIX10_L4_MAIN_CLK		43
-+#define STRATIX10_L4_MP_CLK		44
-+#define STRATIX10_L4_SP_CLK		45
-+#define STRATIX10_CS_AT_CLK		46
-+#define STRATIX10_CS_TRACE_CLK		47
-+#define STRATIX10_CS_PDBG_CLK		48
-+#define STRATIX10_CS_TIMER_CLK		49
-+#define STRATIX10_S2F_USER0_CLK		50
-+#define STRATIX10_S2F_USER1_CLK		51
-+#define STRATIX10_EMAC0_CLK		52
-+#define STRATIX10_EMAC1_CLK		53
-+#define STRATIX10_EMAC2_CLK		54
-+#define STRATIX10_EMAC_PTP_CLK		55
-+#define STRATIX10_GPIO_DB_CLK		56
-+#define STRATIX10_SDMMC_CLK		57
-+#define STRATIX10_PSI_REF_CLK		58
-+#define STRATIX10_USB_CLK		59
-+#define STRATIX10_SPI_M_CLK		60
-+#define STRATIX10_NAND_CLK		61
-+#define STRATIX10_NUM_CLKS		62
-+
-+#endif	/* __STRATIX10_CLOCK_H */
--- 
-2.7.4
+Hi,
+
+On Tue, Feb 27, 2018 at 11:26:46PM +0100, Jernej Skrabec wrote:
+> Some NM PLLs doesn't work well when their output clock rate is set below
+> certain rate.
+>=20
+> Add support for that constrain.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/clk/sunxi-ng/ccu_nm.c | 11 +++++++----
+>  drivers/clk/sunxi-ng/ccu_nm.h | 27 +++++++++++++++++++++++++++
+>  2 files changed, 34 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+> index a16de092bf94..7fc743c78c1b 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nm.c
+> @@ -20,7 +20,7 @@ struct _ccu_nm {
+>  };
+> =20
+>  static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
+> -			     struct _ccu_nm *nm)
+> +			     unsigned long min_rate, struct _ccu_nm *nm)
+>  {
+>  	unsigned long best_rate =3D 0;
+>  	unsigned long best_n =3D 0, best_m =3D 0;
+> @@ -30,7 +30,7 @@ static void ccu_nm_find_best(unsigned long parent, unsi=
+gned long rate,
+>  		for (_m =3D nm->min_m; _m <=3D nm->max_m; _m++) {
+>  			unsigned long tmp_rate =3D parent * _n  / _m;
+> =20
+> -			if (tmp_rate > rate)
+> +			if (tmp_rate > rate || tmp_rate < min_rate)
+>  				continue;
+> =20
+>  			if ((rate - tmp_rate) < (rate - best_rate)) {
+> @@ -117,6 +117,9 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsi=
+gned long rate,
+>  	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>  		rate *=3D nm->fixed_post_div;
+> =20
+> +	if (rate < nm->min_rate)
+> +		rate =3D nm->min_rate;
+> +
+
+I guess you can just return there. There's no point in trying to find
+the factors at this point, since the minimum should be a value that
+can be reached.
+
+>  	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
+>  		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>  			rate /=3D nm->fixed_post_div;
+> @@ -134,7 +137,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsi=
+gned long rate,
+>  	_nm.min_m =3D 1;
+>  	_nm.max_m =3D nm->m.max ?: 1 << nm->m.width;
+> =20
+> -	ccu_nm_find_best(*parent_rate, rate, &_nm);
+> +	ccu_nm_find_best(*parent_rate, rate, nm->min_rate, &_nm);
+
+Therefore, you don't need to change the prototype there either.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--jbftow7kteudva7c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqWW4wACgkQ0rTAlCFN
+r3TU/BAAmxBKw7Wvwd44uNICrnv1n/tKtG72EEdkJvG4B8OqXY69KckH7941DM9h
+YfujkHMsFqghmXCdMzxunXNHegSy6lM3aNMHQBXfOOj4drBW37WQMyZCc9jBUoAI
+DlmEraJZJDoA1sSSL/BIHSDxlM2EGzmhtB3RZrlcOdNGSPldAqgnEC28NwYbuZxP
+RMAsvwnyL39RVLZy3kSrJ6SNMdcFVvNNbueQhUrFrJAd/bpGbfBNJzj2uUPVODVV
+cwVGbqOe5z0Zno6O7Tp3Zd0+wKC1YwqQ6+K/MYzbXn5p5LIZLu+CcJvk9C2LEj3y
+/tY/XKU++1PSbHdbYIN7ZgNLVrTf9/3lyazgJcm/Wt9D5IplHKyDGZDwTFpW36fX
+R41WQS6YW1i3LJMd4qUBVlZuLtlVLceX6XDl9wxkQAwkSG3dyKPMBzEjVj2w+XUc
+OvNwIxwqmCdAcn12ZpRc3EAisKFzfcDJlMuXCIhKNwvddtGLsbLzXxvLTZUuJtmo
+nsBefriY+5d28sPucEVHtaYlz3276yF3dCi+j4JHrujdROhhuXud/WDPlBT2BecL
+btXOaCKZlbxrXAj2/ZXPz0iKTR2bx9CSGqfBIkkVZ+wfume+72fKpK3cXe3hekPM
+2s8bQ75DlSaEbcTQXNhgzJ8at+fFm9LDQi6MsW57x6hQBnbbzoI=
+=WPSn
+-----END PGP SIGNATURE-----
+
+--jbftow7kteudva7c--
