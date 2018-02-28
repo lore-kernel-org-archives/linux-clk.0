@@ -1,109 +1,71 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 11/11] clk: meson: clean-up clk81 clocks
-Date: Mon, 19 Feb 2018 12:21:46 +0100
-Message-Id: <20180219112146.21746-12-jbrunet@baylibre.com>
-In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
-References: <20180219112146.21746-1-jbrunet@baylibre.com>
+Return-Path: <tony@atomide.com>
+Date: Wed, 28 Feb 2018 13:58:50 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+	linux-omap@vger.kernel.org, jsarha@ti.com
+Subject: Re: [PATCH 0/3] clk: ti: add CLK_SET_RATE_PARENT support for clkctrl
+Message-ID: <20180228215850.GH5448@atomide.com>
+References: <1519657812-15605-1-git-send-email-t-kristo@ti.com>
+ <20180226220520.GI16043@atomide.com>
+ <e036e793-37f5-a6ee-4347-72d27579e278@ti.com>
+ <20180227164142.GA5448@atomide.com>
+ <20180227164813.GB5448@atomide.com>
+ <98bf01ee-f6e0-67e4-f8cc-cec4e5d37f31@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <98bf01ee-f6e0-67e4-f8cc-cec4e5d37f31@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-clk81 is a composite clock which parents all the peripheral clocks of the
-platform. It is a critical clock which is used as provided by the
-bootloader. We don't want to change its rate or reparent it, ever.
+* Tero Kristo <t-kristo@ti.com> [180228 05:38]:
+> On 27/02/18 18:48, Tony Lindgren wrote:
+> > * Tony Lindgren <tony@atomide.com> [180227 16:43]:
+> > > * Tero Kristo <t-kristo@ti.com> [180227 06:35]:
+> > > > On 27/02/18 00:05, Tony Lindgren wrote:
+> > > > > Hmm so should we have all the timers use bit 0 in the dtsi?
+> > > > > Or default to bit 24 for all of them?
+> > > > 
+> > > > Who is going to control the clkctrl clock for the timers if you just control
+> > > > the opt clock? Also, ain't the bit 24 the clksel mux setting? Tweaking that
+> > > > would seem wrong...
+> > > 
+> > > Yeah OK.
+> > 
+> > $ git grep TIMER arch/arm/boot/dts/* | grep CLKCTRL
+> > 
+> > And that shows timer1 using bit 24 for omap4, omap5 and dra7
+> > dtsi files.
+> > 
+> > So shouldn't that then be just bit 0 instead of bit 24 for
+> > those? And then we let omap_dm_timer_init_one() reparent it?
+> 
+> Actually, that fck setting is because of this patch:
+> 
+> 138f7ca78f5a0677f591fdf23d0309c2f4774bf7
+> ARM: OMAP2+: timer: add support for fetching fck handle from DT
+> 
+> So, you need to provide the clock handle at bit offset 24.
+> 
+> The main clkctrl clock is still handled via hwmod core, or via the
+> interconnect driver.
 
-Remove the CLK_IGNORE_UNUSED on the mux and divider. These clock can't
-gate so the flag is useless, and the gate is already critical, so the
-clock won't ever be unused.
+Yeah but in timer.c we just need to enable the module and it's
+clock and reparent if needed. There's nothing else to manage
+there, omap_dm_timer_init_one() just queries the rate.
 
-Remove CLK_SET_RATE_NO_REPARENT from mux, it is useless since the mux is
-read-only.
+So I now think something is is wrong. For the interconnect target
+module we need to provide the module clock (bit 0) in the dts,
+not the source mux clock (bit 24).
 
-Remove CLK_SET_RATE_PARENT from the gate and divider and use ro_ops for
-the divider. A peripheral clock should not try to change the rate of
-clk81. Stopping the rate propagation is good way to make sure such request
-would be ignored.
+Then omap_dm_timer_init_one() can configure the source clock
+which is bit 24. My guess is that 138f7ca78f is really a
+workaround for set_parent() not working properly for clkctrl
+clock :)
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/gxbb.c    | 6 ++----
- drivers/clk/meson/meson8b.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+Then a board can specify it's desired source clock for system
+timer(s) by configure "assigned-lcok-parents" and set it to
+32KiHz clock or SYS_CLK.
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 70b4669cf7d6..db5e0dcbb5aa 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -775,7 +775,6 @@ static struct clk_regmap gxbb_mpeg_clk_sel = {
- 		 */
- 		.parent_names = clk81_parent_names,
- 		.num_parents = ARRAY_SIZE(clk81_parent_names),
--		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
- 	},
- };
- 
-@@ -787,10 +786,9 @@ static struct clk_regmap gxbb_mpeg_clk_div = {
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_div",
--		.ops = &clk_regmap_divider_ops,
-+		.ops = &clk_regmap_divider_ro_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_sel" },
- 		.num_parents = 1,
--		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
- 	},
- };
- 
-@@ -805,7 +803,7 @@ static struct clk_regmap gxbb_clk81 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_div" },
- 		.num_parents = 1,
--		.flags = (CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
- 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 9c9e3d180120..b324c44d36eb 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -506,7 +506,6 @@ static struct clk_regmap meson8b_mpeg_clk_sel = {
- 		.parent_names = (const char *[]){ "fclk_div3", "fclk_div4",
- 			"fclk_div5" },
- 		.num_parents = 3,
--		.flags = (CLK_SET_RATE_NO_REPARENT | CLK_IGNORE_UNUSED),
- 	},
- };
- 
-@@ -518,10 +517,9 @@ struct clk_regmap meson8b_mpeg_clk_div = {
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_div",
--		.ops = &clk_regmap_divider_ops,
-+		.ops = &clk_regmap_divider_ro_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_sel" },
- 		.num_parents = 1,
--		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),
- 	},
- };
- 
-@@ -535,7 +533,7 @@ struct clk_regmap meson8b_clk81 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "mpeg_clk_div" },
- 		.num_parents = 1,
--		.flags = (CLK_SET_RATE_PARENT | CLK_IS_CRITICAL),
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
- 
--- 
-2.14.3
+Regards,
+
+Tony
