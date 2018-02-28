@@ -1,216 +1,374 @@
-Return-Path: <m.purski@samsung.com>
-From: Maciej Purski <m.purski@samsung.com>
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim
-	<jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
-	Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin
-	Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Mauro
-	Carvalho Chehab <mchehab@kernel.org>, Andrzej Pietrasiewicz
-	<andrzej.p@samsung.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Kamil Debski <kamil@wypas.org>, Jeongtae Park <jtp.park@samsung.com>,
-	Andrzej Hajda <a.hajda@samsung.com>, Russell King <linux@armlinux.org.uk>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Thibault Saunier
-	<thibault.saunier@osg.samsung.com>, Javier Martinez Canillas
-	<javier@osg.samsung.com>, Hans Verkuil <hansverk@cisco.com>, Hoegeun Kwon
-	<hoegeun.kwon@samsung.com>, Bartlomiej Zolnierkiewicz
-	<b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 1/8] clk: Add clk_bulk_alloc functions
-Date: Mon, 19 Feb 2018 16:43:59 +0100
-Message-id: <1519055046-2399-2-git-send-email-m.purski@samsung.com>
-In-reply-to: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
-References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
-	<CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
+Return-Path: <dongas86@gmail.com>
+Return-Path: <dongas86@gmail.com>
+Date: Wed, 28 Feb 2018 20:03:29 +0800
+From: Dong Aisheng <dongas86@gmail.com>
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@pengutronix.de, patchwork-lst@pengutronix.de,
+	"A . s . Dong" <aisheng.dong@nxp.com>, linux-imx@nxp.com
+Subject: Re: [PATCH v2 3/4] clk: imx: add SCCG PLL type
+Message-ID: <20180228120329.GB17222@b29396-OptiPlex-7040>
+References: <20180201175412.9480-1-l.stach@pengutronix.de>
+ <20180201175412.9480-3-l.stach@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180201175412.9480-3-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-When a driver is going to use clk_bulk_get() function, it has to
-initialize an array of clk_bulk_data, by filling its id fields.
+On Thu, Feb 01, 2018 at 06:54:11PM +0100, Lucas Stach wrote:
+> The SCCG is a new PLL type introduced on i.MX8. Add support for this.
+> The driver currently misses the PLL lock check, as the preliminary
+> documentation mentions lock configurations, but is quiet about where
+> to find the actual lock status signal.
+> 
 
-Add a new function to the core, which dynamically allocates
-clk_bulk_data array and fills its id fields. Add clk_bulk_free()
-function, which frees the array allocated by clk_bulk_alloc() function.
-Add a managed version of clk_bulk_alloc().
+Why? Can't use PLL_LOCK bit?
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
----
- drivers/clk/clk-bulk.c   | 16 ++++++++++++
- drivers/clk/clk-devres.c | 37 +++++++++++++++++++++++++---
- include/linux/clk.h      | 64 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 113 insertions(+), 4 deletions(-)
+BTW, i think the comments should mention that it breaks down
+the SSCG PLL into two PLLS part with a few extra dividers.
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 4c10456..2f16941 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -19,6 +19,22 @@
- #include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/export.h>
-+#include <linux/slab.h>
-+
-+struct clk_bulk_data *clk_bulk_alloc(int num_clocks, const char *const *clk_ids)
-+{
-+	struct clk_bulk_data *ptr;
-+	int i;
-+
-+	ptr = kcalloc(num_clocks, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	for (i = 0; i < num_clocks; i++)
-+		ptr[i].id = clk_ids[i];
-+
-+	return ptr;
-+}
- 
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
- {
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index d854e26..2115b97 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -9,6 +9,39 @@
- #include <linux/export.h>
- #include <linux/gfp.h>
- 
-+struct clk_bulk_devres {
-+	struct clk_bulk_data *clks;
-+	int num_clks;
-+};
-+
-+static void devm_clk_alloc_release(struct device *dev, void *res)
-+{
-+	struct clk_bulk_devres *devres = res;
-+
-+	clk_bulk_free(devres->clks);
-+}
-+
-+struct clk_bulk_data *devm_clk_bulk_alloc(struct device *dev, int num_clks,
-+					  const char *const *clk_ids)
-+{
-+	struct clk_bulk_data **ptr, *clk_bulk;
-+
-+	ptr = devres_alloc(devm_clk_alloc_release,
-+			   num_clks * sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk_bulk = clk_bulk_alloc(num_clks, clk_ids);
-+	if (clk_bulk) {
-+		*ptr = clk_bulk;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
-+	}
-+
-+	return clk_bulk;
-+}
-+
- static void devm_clk_release(struct device *dev, void *res)
- {
- 	clk_put(*(struct clk **)res);
-@@ -34,10 +67,6 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- }
- EXPORT_SYMBOL(devm_clk_get);
- 
--struct clk_bulk_devres {
--	struct clk_bulk_data *clks;
--	int num_clks;
--};
- 
- static void devm_clk_bulk_release(struct device *dev, void *res)
- {
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 4c4ef9f..7d66f41 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -15,6 +15,7 @@
- #include <linux/err.h>
- #include <linux/kernel.h>
- #include <linux/notifier.h>
-+#include <linux/slab.h>
- 
- struct device;
- struct clk;
-@@ -240,6 +241,52 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
- #endif
- 
- #ifdef CONFIG_HAVE_CLK
-+
-+/**
-+ * clk_bulk_alloc - allocates an array of clk_bulk_data and fills their
-+ *		    id field
-+ * @num_clks: number of clk_bulk_data
-+ * @clk_ids: array of clock consumer ID's
-+ *
-+ * This function allows drivers to dynamically create an array of clk_bulk_data
-+ * and fill their id field in one operation. If successful, it allows calling
-+ * clk_bulk_get on the pointer returned by this function.
-+ *
-+ * Returns a pointer to a clk_bulk_data array, or valid IS_ERR() condition
-+ * containing errno.
-+ */
-+struct clk_bulk_data *clk_bulk_alloc(int num_clks, const char *const *clk_ids);
-+
-+/**
-+ * devm_clk_bulk_alloc - allocates an array of clk_bulk_data and fills their
-+ *			 id field
-+ * @dev: device for clock "consumer"
-+ * @num_clks: number of clk_bulk_data
-+ * @clk_ids: array of clock consumer ID's
-+ *
-+ * This function allows drivers to dynamically create an array of clk_bulk_data
-+ * and fill their id field in one operation with management, the array will
-+ * automatically be freed when the device is unbound. If successful, it allows
-+ * calling clk_bulk_get on the pointer returned by this function.
-+ *
-+ * Returns a pointer to a clk_bulk_data array, or valid IS_ERR() condition
-+ * containing errno.
-+ */
-+struct clk_bulk_data *devm_clk_bulk_alloc(struct device *dev, int num_clks,
-+					  const char * const *clk_ids);
-+
-+/**
-+ * clk_bulk_free - frees the array of clk_bulk_data
-+ * @clks: pointer to clk_bulk_data array
-+ *
-+ * This function frees the array allocated by clk_bulk_data. It must be called
-+ * when all clks are freed.
-+ */
-+static inline void clk_bulk_free(struct clk_bulk_data *clks)
-+{
-+	kfree(clks);
-+}
-+
- /**
-  * clk_get - lookup and obtain a reference to a clock producer.
-  * @dev: device for clock "consumer"
-@@ -598,6 +645,23 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id);
- 
- #else /* !CONFIG_HAVE_CLK */
- 
-+static inline struct clk_bulk_data *clk_bulk_alloc(int num_clks,
-+						   const char **clk_ids)
-+{
-+	return NULL;
-+}
-+
-+static inline struct clk_bulk_data *devm_clk_bulk_alloc(struct device *dev,
-+							int num_clks,
-+							const char **clk_ids)
-+{
-+	return NULL;
-+}
-+
-+static inline void clk_bulk_free(struct clk_bulk_data *clks)
-+{
-+}
-+
- static inline struct clk *clk_get(struct device *dev, const char *id)
- {
- 	return NULL;
--- 
-2.7.4
+The easiest way for user may compose them into one. But as this PLL indeed
+is much complicated, i'm ok to divide them tempoparily at this stage.
+
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
+>  drivers/clk/imx/Makefile       |   3 +-
+>  drivers/clk/imx/clk-sccg-pll.c | 235 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h          |   9 ++
+>  3 files changed, 246 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/imx/clk-sccg-pll.c
+> 
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index 9892ae63539c..bfcbd5272d12 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -12,7 +12,8 @@ obj-y += \
+>  	clk-pllv1.o \
+>  	clk-pllv2.o \
+>  	clk-pllv3.o \
+> -	clk-pfd.o
+> +	clk-pfd.o \
+> +	clk-sccg-pll.o
+>  
+>  obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+>  obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+> diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
+> new file mode 100644
+> index 000000000000..3a79f952564b
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-sccg-pll.c
+> @@ -0,0 +1,235 @@
+> +/*
+> + * Copyright 2017 NXP.
+> + *
+> + * The code contained herein is licensed under the GNU General Public
+> + * License. You may obtain a copy of the GNU General Public License
+> + * Version 2 or later at the following locations:
+> + *
+> + * http://www.opensource.org/licenses/gpl-license.html
+> + * http://www.gnu.org/copyleft/gpl.html
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk.h"
+> +
+> +/* PLL CFGs */
+> +#define PLL_CFG0	0x0
+> +#define PLL_CFG1	0x4
+> +#define PLL_CFG2	0x8
+> +
+> +#define PLL_DIVF1_SHIFT	13
+> +#define PLL_DIVF2_SHIFT	7
+> +#define PLL_DIVF_MASK	0x3f
+> +
+> +#define PLL_DIVR1_SHIFT	25
+> +#define PLL_DIVR2_SHIFT	19
+> +#define PLL_DIVR1_MASK	0x3
+> +#define PLL_DIVR2_MASK	0x3f
+> +#define PLL_REF_SHIFT	0
+> +#define PLL_REF_MASK	0x3
+> +
+> +#define PLL_LOCK	31
+> +#define PLL_PD		7
+> +
+> +#define OSC_25M		25000000
+> +#define OSC_27M		27000000
+> +
+> +struct clk_sccg_pll {
+> +	struct clk_hw	hw;
+> +	void __iomem	*base;
+> +};
+> +
+> +#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
+> +
+> +static int clk_pll1_is_prepared(struct clk_hw *hw)
+> +{
+> +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> +	u32 val;
+> +
+> +	val = readl_relaxed(pll->base + PLL_CFG0);
+> +	return (val & (1 << PLL_PD)) ? 0 : 1;
+
+BM_PLL_PD	BIT(7)
+
+> +}
+> +
+> +static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
+> +					 unsigned long parent_rate)
+> +{
+> +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> +	u32 val, divf;
+> +
+> +	val = readl_relaxed(pll->base + PLL_CFG2);
+> +	divf = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
+> +
+> +	return parent_rate * 2 * (divf + 1);
+> +}
+> +
+> +static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
+> +			       unsigned long *prate)
+> +{
+> +	unsigned long parent_rate = *prate;
+> +	u32 div;
+> +
+> +	div = rate / (parent_rate * 2);
+> +
+> +	return parent_rate * div * 2;
+> +}
+> +
+> +static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			    unsigned long parent_rate)
+> +{
+> +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> +	u32 val;
+> +	u32 divf;
+> +
+> +	divf = rate / (parent_rate * 2);
+> +
+> +	val = readl_relaxed(pll->base + PLL_CFG2);
+> +	val &= ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
+> +	val |= (divf - 1) << PLL_DIVF1_SHIFT;
+> +	writel_relaxed(val, pll->base + PLL_CFG2);
+> +
+> +	/* FIXME: PLL lock check */
+> +
+> +	return 0;
+> +}
+> +
+> +static int clk_pll1_prepare(struct clk_hw *hw)
+> +{
+> +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> +	u32 val;
+> +
+> +	val = readl_relaxed(pll->base);
+> +	val &= ~(1 << PLL_PD);
+> +	writel_relaxed(val, pll->base);
+> +
+> +	/* FIXME: PLL lock check */
+> +
+> +	return 0;
+> +}
+> +
+> +static void clk_pll1_unprepare(struct clk_hw *hw)
+> +{
+> +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> +	u32 val;
+> +
+> +	val = readl_relaxed(pll->base);
+> +	val |= (1 << PLL_PD);
+> +	writel_relaxed(val, pll->base);
+> +}
+> +
+> +static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
+> +					 unsigned long parent_rate)
+> +{
+> +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> +	u32 val, ref, divr1, divf1, divr2, divf2;
+> +	u64 temp64;
+> +
+> +	val = readl_relaxed(pll->base + PLL_CFG0);
+> +	switch ((val >> PLL_REF_SHIFT) & PLL_REF_MASK) {
+> +	case 0:
+> +		ref = OSC_25M;
+> +		break;
+> +	case 1:
+> +		ref = OSC_27M;
+> +		break;
+> +	default:
+> +		ref = OSC_25M;
+> +		break;
+> +	}
+> +
+> +	val = readl_relaxed(pll->base + PLL_CFG2);
+> +	divr1 = (val >> PLL_DIVR1_SHIFT) & PLL_DIVR1_MASK;
+> +	divr2 = (val >> PLL_DIVR2_SHIFT) & PLL_DIVR2_MASK;
+> +	divf1 = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
+> +	divf2 = (val >> PLL_DIVF2_SHIFT) & PLL_DIVF_MASK;
+> +
+> +	temp64 = ref * 2;
+> +	temp64 *= (divf1 + 1) * (divf2 + 1);
+> +
+> +	do_div(temp64, (divr1 + 1) * (divr2 + 1));
+> +
+
+Here it looks strange to me.
+
+We break down the SSCG PLL into two parts. But here we manually
+calculate the PLL rate from HW register value instead of referring to
+the parent_rate. Seems like a layer violation.
+
+Any strong reason to do this?
+
+> +	return (unsigned long)temp64;
+> +}
+> +
+> +static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
+> +			       unsigned long *prate)
+> +{
+> +	u32 div;
+> +	unsigned long parent_rate = *prate;
+> +
+> +	div = rate / (parent_rate);
+> +
+> +	return parent_rate * div;
+> +}
+> +
+> +static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
+> +			    unsigned long parent_rate)
+> +{
+> +	u32 val;
+> +	u32 divf;
+> +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> +
+> +	divf = rate / (parent_rate);
+> +
+> +	val = readl_relaxed(pll->base + PLL_CFG2);
+> +	val &= ~(PLL_DIVF_MASK << PLL_DIVF2_SHIFT);
+> +	val |= (divf - 1) << PLL_DIVF2_SHIFT;
+> +	writel_relaxed(val, pll->base + PLL_CFG2);
+
+I wonder pretending the PLL2 as a simple divider (only mult divf2)
+may break the fractional divider capability.
+Probably we shouldn't create another divider behind pll2.
+e.g. sys1_pll2_div
+
+> +
+> +	/* FIXME: PLL lock check */
+> +
+
+check PLL_LOCK here
+
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops clk_sccg_pll1_ops = {
+> +	.is_prepared	= clk_pll1_is_prepared,
+
+Should this belong to pll2?
+
+> +	.recalc_rate	= clk_pll1_recalc_rate,
+> +	.round_rate	= clk_pll1_round_rate,
+> +	.set_rate	= clk_pll1_set_rate,
+> +};
+> +
+> +static const struct clk_ops clk_sccg_pll2_ops = {
+> +	.prepare	= clk_pll1_prepare,
+> +	.unprepare	= clk_pll1_unprepare,
+> +	.recalc_rate	= clk_pll2_recalc_rate,
+> +	.round_rate	= clk_pll2_round_rate,
+> +	.set_rate	= clk_pll2_set_rate,
+> +};
+> +
+> +struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
+> +			     void __iomem *base, enum imx_sccg_pll_type pll_type)
+> +{
+> +	struct clk_sccg_pll *pll;
+> +	struct clk *clk;
+> +	struct clk_init_data init;
+> +
+> +	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+> +	if (!pll)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	pll->base = base;
+> +	init.name = name;
+> +	switch (pll_type) {
+> +	case SCCG_PLL1:
+> +		init.ops = &clk_sccg_pll1_ops;
+> +		break;
+> +	case SCCG_PLL2:
+> +		init.ops = &clk_sccg_pll2_ops;
+> +		break;
+
+No default?
+
+> +	}
+> +
+> +	init.flags = 0;
+
+Should't assign CLK_SET_RATE_PARENT?
+
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = 1;
+> +
+> +	pll->hw.init = &init;
+> +
+> +	clk = clk_register(NULL, &pll->hw);
+> +	if (IS_ERR(clk))
+> +		kfree(pll);
+> +
+> +	return clk;
+> +}
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 287610902ea8..809509758e24 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -21,6 +21,11 @@ enum imx_pllv1_type {
+>  	IMX_PLLV1_IMX35,
+>  };
+>  
+> +enum imx_sccg_pll_type {
+> +	SCCG_PLL1,
+> +	SCCG_PLL2,
+> +};
+> +
+>  struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
+>  		const char *parent, void __iomem *base);
+>  
+> @@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *parent,
+>  struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
+>  			     void __iomem *base);
+>  
+> +struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
+> +			     void __iomem *base,
+> +			     enum imx_sccg_pll_type pll_type);
+> +
+>  enum imx_pllv3_type {
+>  	IMX_PLLV3_GENERIC,
+>  	IMX_PLLV3_SYS,
+
+Last, overally, i did not see the configuration of SSE bit
+as it changes the formula.
+SSE=0: PLLOUT = REF/DIVR1 * 2 * DIVF1/DIVR2 * DIVF2/DIVQ
+SSE=1: PLLOUT = REF/DIVR1 * 8 * DIVF1/DIVR2 * DIVF2/DIVQ
+
+Are we replying on the default register value?
+
+Regards
+Dong Aisheng
+
+> -- 
+> 2.15.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
