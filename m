@@ -1,71 +1,42 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v2 05/16] dt-bindings: display: sun4i-drm: Add compatibles for H3 HDMI pipeline
-Date: Tue, 27 Feb 2018 23:26:50 +0100
-Message-Id: <20180227222701.9716-6-jernej.skrabec@siol.net>
-In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+Return-Path: <jani.nikula@intel.com>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc: shc_work@mail.ru, kgene@kernel.org, krzk@kernel.org,
+ linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@codeaurora.org,
+ joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, airlied@linux.ie,
+ kamil@wypas.org, b.zolnierkie@samsung.com, jdelvare@suse.com,
+ linux@roeck-us.net, dmitry.torokhov@gmail.com, rpurdie@rpsys.net,
+ jacek.anaszewski@gmail.com, pavel@ucw.cz, mchehab@kernel.org,
+ sean@mess.org, lee.jones@linaro.org, daniel.thompson@linaro.org,
+ jingoohan1@gmail.com, milo.kim@ti.com, robh+dt@kernel.org,
+ mark.rutland@arm.com, corbet@lwn.net, nicolas.ferre@microchip.com,
+ alexandre.belloni@free-electrons.com, linux-pwm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+In-Reply-To: <20180228194429.GD22932@mithrandir>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com> <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com> <20180228194429.GD22932@mithrandir>
+Date: Wed, 28 Feb 2018 22:04:52 +0200
+Message-ID: <87r2p4hod7.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add missing compatibles for H3 HDMI pipeline. These compatibles can also
-be used with H5 SoC.
+On Wed, 28 Feb 2018, Thierry Reding <thierry.reding@gmail.com> wrote:
+> Anyone that needs something other than normal mode should use the new
+> atomic PWM API.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+At the risk of revealing my true ignorance, what is the new atomic PWM
+API? Where? Examples of how one would convert old code over to the new
+API?
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index b995bfee734a..8bdef4920edc 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -102,6 +102,7 @@ DWC HDMI PHY
- Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-a83t-hdmi-phy
-+    * allwinner,sun8i-h3-hdmi-phy
-   - reg: base address and size of memory-mapped region
-   - clocks: phandles to the clocks feeding the HDMI PHY
-     * bus: the HDMI PHY interface clock
-@@ -110,6 +111,9 @@ Required properties:
-   - resets: phandle to the reset controller driving the PHY
-   - reset-names: must be "phy"
- 
-+H3 HDMI PHY requires additional clock:
-+  - pll-0: parent of phy clock
-+
- TV Encoder
- ----------
- 
-@@ -275,6 +279,7 @@ Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-a83t-de2-mixer-0
-     * allwinner,sun8i-a83t-de2-mixer-1
-+    * allwinner,sun8i-h3-de2-mixer-0
-     * allwinner,sun8i-v3s-de2-mixer
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
-@@ -305,6 +310,7 @@ Required properties:
-     * allwinner,sun7i-a20-display-engine
-     * allwinner,sun8i-a33-display-engine
-     * allwinner,sun8i-a83t-display-engine
-+    * allwinner,sun8i-h3-display-engine
-     * allwinner,sun8i-v3s-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
+BR,
+Jani.
+
 -- 
-2.16.2
+Jani Nikula, Intel Open Source Technology Center
