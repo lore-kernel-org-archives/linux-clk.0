@@ -1,61 +1,73 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: [PATCH v5 02/26] ARM: dts: r8a7743: Adjust SMP routine size
-Date: Mon, 12 Feb 2018 17:44:11 +0000
-Message-Id: <1518457475-4480-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Dong Aisheng <dongas86@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH] clk: imx: imx7d: correct video pll clock tree
+Date: Wed, 28 Feb 2018 11:32:37 +0000
+Message-ID: <VI1PR04MB132809996C5C2BFCF0B482B8F5C70@VI1PR04MB1328.eurprd04.prod.outlook.com>
+References: <1514999361-2723-1-git-send-email-Anson.Huang@nxp.com>
+ <20180108104111.GE32635@b29396-OptiPlex-7040>
+In-Reply-To: <20180108104111.GE32635@b29396-OptiPlex-7040>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adjusts the definition of the SMP routine size according
-to the latest changes made by commit:
-"ARM: shmobile: Add watchdog support"
+Ping...
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4->v5:
-* no change
+Looks like this patch is missed on latest tree, so ping it.
 
- arch/arm/boot/dts/r8a7743.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Anson Huang
+Best Regards!
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 47b62f6..c2943d7 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -973,7 +973,7 @@
- 
- 			smp-sram@0 {
- 				compatible = "renesas,smp-sram";
--				reg = <0 0x10>;
-+				reg = <0 0x100>;
- 			};
- 		};
- 
--- 
-2.7.4
+
+> -----Original Message-----
+> From: Dong Aisheng [mailto:dongas86@gmail.com]
+> Sent: Monday, January 8, 2018 6:41 PM
+> To: Anson Huang <anson.huang@nxp.com>
+> Cc: linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; sboyd@codeaurora.org;
+> mturquette@baylibre.com; Fabio Estevam <fabio.estevam@nxp.com>;
+> kernel@pengutronix.de; shawnguo@kernel.org; dl-linux-imx
+> <linux-imx@nxp.com>
+> Subject: Re: [PATCH] clk: imx: imx7d: correct video pll clock tree
+>=20
+> On Thu, Jan 04, 2018 at 01:09:21AM +0800, Anson Huang wrote:
+> > There is a test divider and post divider in video PLL, test divider is
+> > placed before post divider, all clocks that can select parent from
+> > video PLL should be from post divider, NOT from pll_video_main, below
+> > are clock tree dump before and after this patch:
+> >
+> > Before:
+> > pll_video_main
+> >    pll_video_main_bypass
+> >       pll_video_main_clk
+> >          lcdif_pixel_src
+> >             lcdif_pixel_cg
+> >                lcdif_pixel_pre_div
+> >                   lcdif_pixel_post_div
+> >                      lcdif_pixel_root_clk
+> > After:
+> > pll_video_main
+> >    pll_video_main_bypass
+> >       pll_video_main_clk
+> >          pll_video_test_div
+> >             pll_video_post_div
+> >                lcdif_pixel_src
+> >                   lcdif_pixel_cg
+> >                      lcdif_pixel_pre_div
+> >                         lcdif_pixel_post_div
+> >                            lcdif_pixel_root_clk
+> >
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>=20
+> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+>=20
+> Regards
+> Dong Aisheng
