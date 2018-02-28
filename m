@@ -1,95 +1,89 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v8 14/15] cpufreq: Add module to register cpufreq on Krait
+ CPUs
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: viresh.kumar@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+ andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org, robh@kernel.org, linux@arm.linux.org.uk
+References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+ <1519740422-3835-15-git-send-email-sricharan@codeaurora.org>
+ <87zi3ujx7c.fsf@bootlin.com>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <95e134a6-7992-e16f-dc55-df7af96b31b9@codeaurora.org>
+Date: Wed, 28 Feb 2018 11:04:26 +0530
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1517423070-24236-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 6 Feb 2018 16:44:28 +0100
-Message-ID: <CAMuHMdX0EBhc20G1eaN-LXyMpamyjW1otja3YV10kR1PNEprXg@mail.gmail.com>
-Subject: Re: [RFC v4 00/26] Fix watchdog on Renesas R-Car Gen2 and RZ/G1
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87zi3ujx7c.fsf@bootlin.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabrizio,
+Hi Gregory,
 
-On Wed, Jan 31, 2018 at 7:24 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> the forth version of this series aims at consolidating the watchdog fix.
-> There is a discussion still in progress about the changes to the
-> watchdog driver, please see the following for more information:
-> https://patchwork.kernel.org/patch/10192435/
->
-> It doesn't look like leaving the restart handler in for Gen3 is going
-> to do any harm (but it may be unwelcome), perhaps esplicitly setting
-> its priority to a medium level (128) will help its adoption on Gen3
-> as well? This is what this particular version is proposing.
->
-> Also, although the latest implmentation of the reset vector hasn't
-> raised any problem so far, it hasn't received any feedback either.
-> Please do look into it to espose problems and weaknesses (if any).
->
-> Finally, it would be great if someone could test this patch set on his
-> Gen2/Gen3/RZ/G1 board, and it would be awesome if that board was a
-> Lager with all of the cores enabled and working at the same time ;-)
+On 2/27/2018 8:28 PM, Gregory CLEMENT wrote:
+> Hi Sricharan,
+>  
+>  On mar., févr. 27 2018, Sricharan R <sricharan@codeaurora.org> wrote:
+> 
+>> From: Stephen Boyd <sboyd@codeaurora.org>
+>>
+>> Register a cpufreq-generic device whenever we detect that a
+>> "qcom,krait" compatible CPU is present in DT.
+>>
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> [Sricharan: updated to use dev_pm_opp_set_prop_name and
+>> 	    nvmem apis]
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>> ---
+>>  drivers/cpufreq/Kconfig.arm          |  10 ++
+>>  drivers/cpufreq/Makefile             |   3 +
+>>  drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
+>>  drivers/cpufreq/qcom-cpufreq.c       | 183 +++++++++++++++++++++++++++++++++++
+>>  4 files changed, 201 insertions(+)
+>>  create mode 100644 drivers/cpufreq/qcom-cpufreq.c
+>>
+>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+>> index 3a88e33..826f9e7 100644
+>> --- a/drivers/cpufreq/Kconfig.arm
+>> +++ b/drivers/cpufreq/Kconfig.arm
+>> @@ -133,6 +133,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+>>  	depends on ARCH_OMAP2PLUS
+>>  	default ARCH_OMAP2PLUS
+>>  
+>> +config ARM_QCOM_CPUFREQ
+>> +	bool "CPUfreq driver for the QCOM SoCs with KRAIT processors"
+>> +	depends on ARCH_QCOM
+>> +	select PM_OPP
+>> +	help
+>> +	  This enables the CPUFreq driver for Qualcomm SoCs with
+>> +	  KRAIT processors.
+>> +
+>> +	  If in doubt, say N.
+>> +
+>>  config ARM_S3C_CPUFREQ
+>>  	bool
+>>  	help
+>> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+>> index c60c1e1..21894f6 100644
+>> --- a/drivers/cpufreq/Makefile
+>> +++ b/drivers/cpufreq/Makefile
+>> @@ -65,6 +65,9 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+>>  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+>>  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+>>  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
+>> +obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
+> 
+> These 2 following lines don't seem related to the commit log:
+>> +obj-$(CONFIG_ARM_S3C24XX_CPUFREQ)	+= s3c24xx-cpufreq.o
+>> +obj-$(CONFIG_ARM_S3C24XX_CPUFREQ_DEBUGFS) += s3c24xx-cpufreq-debugfs.o
+> 
 
-I applied your series, made the following change:
+ oops. Will remove. Rebase mistake. Thanks.
 
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -499,6 +499,11 @@
-        status = "okay";
- };
+Regards,
+ Sricharan-- 
 
-+&rwdt {
-+       timeout-sec = <5>;
-+       status = "okay";
-+};
-+
- &sata0 {
-        status = "okay";
- };
-
-and tried it on koelsch. Unfortunately it hangs:
-
-    # cat > /dev/watchdog
-    [wait 5s]
-    [hang]
-
-However, it does work when booted with maxcpus=1, or when built with
-CONFIG_SMP=n.
-
-It also works when offlining CPU1 first:
-
-    # echo 0 > /sys/devices/system/cpu/cpu1/online
-    #cat > /dev/watchdog
-    [wait 5s]
-    [reboot]
-
-It does not work when offlining CPU0 first.
-
-This is on r8a7791 ES1.0.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
