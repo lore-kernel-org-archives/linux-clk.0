@@ -1,210 +1,84 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH RESEND V3 8/9] clk: imx: implement new clk_hw based APIs
-Date: Tue, 13 Feb 2018 21:28:13 +0800
-Message-ID: <1518528494-25723-9-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
-References: <1518528494-25723-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	"Geert Uytterhoeven" <geert+renesas@glider.be>, Wolfram Sang
+	<wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>, "open
+ list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+	<devicetree@vger.kernel.org>, Linux Watchdog Mailing List
+	<linux-watchdog@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Linux ARM
+	<linux-arm-kernel@lists.infradead.org>, linux-clk
+	<linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>, Ramesh Shanmugasundaram
+	<ramesh.shanmugasundaram@bp.renesas.com>
+Subject: RE: [PATCH v5 01/26] ARM: shmobile: Add watchdog support
+Date: Wed, 28 Feb 2018 17:37:39 +0000
+Message-ID: <TY1PR06MB089598E10BB2D1719BD05C7AC0C70@TY1PR06MB0895.apcprd06.prod.outlook.com>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1518457475-4480-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com, Anson.Huang@nxp.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
- shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock providers are recommended to use the new struct clk_hw based API,
-so implement IMX clk_hw based provider helpers functions to the new
-approach.
-
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
----
-ChangeLog:
-v2->v3:
- * no changes
-v1->v2:  new patches
----
- drivers/clk/imx/clk.c | 22 ++++++++++++++++++
- drivers/clk/imx/clk.h | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 84 insertions(+)
-
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index 9074e69..1efed86 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -18,6 +18,16 @@ void __init imx_check_clocks(struct clk *clks[], unsigned int count)
- 			       i, PTR_ERR(clks[i]));
- }
- 
-+void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++)
-+		if (IS_ERR(clks[i]))
-+			pr_err("i.MX clk %u: register failed with %ld\n",
-+			       i, PTR_ERR(clks[i]));
-+}
-+
- static struct clk * __init imx_obtain_fixed_clock_from_dt(const char *name)
- {
- 	struct of_phandle_args phandle;
-@@ -49,6 +59,18 @@ struct clk * __init imx_obtain_fixed_clock(
- 	return clk;
- }
- 
-+struct clk_hw * __init imx_obtain_fixed_clk_hw(struct device_node *np,
-+					       const char *name)
-+{
-+	struct clk *clk;
-+
-+	clk = of_clk_get_by_name(np, name);
-+	if (IS_ERR(clk))
-+		return ERR_PTR(-ENOENT);
-+
-+	return __clk_get_hw(clk);
-+}
-+
- /*
-  * This fixups the register CCM_CSCMR1 write value.
-  * The write/read/divider values of the aclk_podf field
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 956155c..3d58420 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -8,6 +8,7 @@
- extern spinlock_t imx_ccm_lock;
- 
- void imx_check_clocks(struct clk *clks[], unsigned int count);
-+void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
- void imx_register_uart_clocks(struct clk ** const clks[]);
- 
- extern void imx_cscmr1_fixup(u32 *val);
-@@ -54,6 +55,9 @@ struct clk *clk_register_gate2(struct device *dev, const char *name,
- struct clk * imx_obtain_fixed_clock(
- 			const char *name, unsigned long rate);
- 
-+struct clk_hw *imx_obtain_fixed_clk_hw(struct device_node *np,
-+				       const char *name);
-+
- struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
- 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
- 
-@@ -90,6 +94,16 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rate)
-+{
-+	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
-+}
-+
-+static inline struct clk_hw *imx_get_clk_hw_fixed(const char *name, int rate)
-+{
-+	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
-+}
-+
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
- 			u8 shift, u8 width, const char * const *parents,
- 			int num_parents)
-@@ -113,6 +127,15 @@ static inline struct clk *imx_clk_divider(const char *name, const char *parent,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_divider(const char *name,
-+						const char *parent,
-+						void __iomem *reg, u8 shift,
-+						u8 width)
-+{
-+	return clk_hw_register_divider(NULL, name, parent, CLK_SET_RATE_PARENT,
-+				       reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_divider_flags(const char *name,
- 		const char *parent, void __iomem *reg, u8 shift, u8 width,
- 		unsigned long flags)
-@@ -121,6 +144,15 @@ static inline struct clk *imx_clk_divider_flags(const char *name,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_divider_flags(const char *name,
-+						   const char *parent,
-+						   void __iomem *reg, u8 shift,
-+						   u8 width, unsigned long flags)
-+{
-+	return clk_hw_register_divider(NULL, name, parent, flags,
-+				       reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_divider2(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift, u8 width)
- {
-@@ -136,6 +168,13 @@ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
- 			shift, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_gate(const char *name, const char *parent,
-+					     void __iomem *reg, u8 shift)
-+{
-+	return clk_hw_register_gate(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
-+				    shift, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift)
- {
-@@ -208,6 +247,17 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_mux2(const char *name, void __iomem *reg,
-+					     u8 shift, u8 width,
-+					     const char * const *parents,
-+					     int num_parents)
-+{
-+	return clk_hw_register_mux(NULL, name, parents, num_parents,
-+				   CLK_SET_RATE_NO_REPARENT |
-+				   CLK_OPS_PARENT_ENABLE,
-+				   reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_mux_flags(const char *name,
- 			void __iomem *reg, u8 shift, u8 width,
- 			const char * const *parents, int num_parents,
-@@ -218,6 +268,18 @@ static inline struct clk *imx_clk_mux_flags(const char *name,
- 			&imx_ccm_lock);
- }
- 
-+static inline struct clk_hw *imx_clk_hw_mux_flags(const char *name,
-+						  void __iomem *reg, u8 shift,
-+						  u8 width,
-+						  const char * const *parents,
-+						  int num_parents,
-+						  unsigned long flags)
-+{
-+	return clk_hw_register_mux(NULL, name, parents, num_parents,
-+				   flags | CLK_SET_RATE_NO_REPARENT,
-+				   reg, shift, width, 0, &imx_ccm_lock);
-+}
-+
- struct clk *imx_clk_cpu(const char *name, const char *parent_name,
- 		struct clk *div, struct clk *mux, struct clk *pll,
- 		struct clk *step);
--- 
-2.7.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+SGkgR2VlcnQsDQoNCnRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0KPiBTdWJqZWN0OiBS
+ZTogW1BBVENIIHY1IDAxLzI2XSBBUk06IHNobW9iaWxlOiBBZGQgd2F0Y2hkb2cgc3VwcG9ydA0K
+Pg0KPiBIaSBGYWJyaXppbywNCj4NCj4gT24gTW9uLCBGZWIgMTIsIDIwMTggYXQgNjo0NCBQTSwg
+RmFicml6aW8gQ2FzdHJvDQo+IDxmYWJyaXppby5jYXN0cm9AYnAucmVuZXNhcy5jb20+IHdyb3Rl
+Og0KPiA+IE9uIFItQ2FyIEdlbjIgYW5kIFJaL0cxIHBsYXRmb3Jtcywgd2UgdXNlIHRoZSBTQkFS
+IHJlZ2lzdGVycyB0byBtYWtlIG5vbg0KPiA+IGJvb3QgQ1BVcyBydW4gYSByb3V0aW5lIGRlc2ln
+bmVkIHRvIGJyaW5nIHVwIFNNUCBhbmQgZGVhbCB3aXRoIGhvdCBwbHVnLg0KPiA+IFRoZSB2YWx1
+ZSBjb250YWluZWQgaW4gdGhlIFNCQVIgcmVnaXN0ZXJzIGlzIG5vdCBpbml0aWFsaXplZCBieSBh
+IFdEVA0KPiA+IHRyaWdnZXJlZCByZXNldCwgd2hpY2ggbWVhbnMgdGhhdCBhZnRlciBhIFdEVCB0
+cmlnZ2VyZWQgcmVzZXQgd2UganVtcA0KPiA+IHRvIHRoZSBTTVAgYnJpbmcgdXAgcm91dGluZSwg
+cHJldmVudGluZyB0aGUgc3lzdGVtIGZyb20gZXhlY3V0aW5nIHRoZQ0KPiA+IGJvb3Ryb20gY29k
+ZS4NCj4gPg0KPiA+IFRoZSBwdXJwb3NlIG9mIHRoaXMgcGF0Y2ggaXMgdG8ganVtcCB0byB0aGUg
+Ym9vdHJvbSBjb2RlIGluIGNhc2Ugb2YgYQ0KPiA+IFdEVCB0cmlnZ2VyZWQgcmVzZXQsIGFuZCBr
+ZWVwIHRoZSBTTVAgZnVuY3Rpb25hbGl0eSB1bnRvdWNoZWQuDQo+ID4gSW4gb3JkZXIgdG8gdGVs
+bCBpZiB0aGUgY29kZSBoYWQgYmVlbiBjYWxsZWQgZHVlIHRvIHRoZSBXRFQgb3ZlcmZsb3dpbmcN
+Cj4gPiB3ZSBhcmUgdGVzdGluZyBXT1ZGIGZyb20gcmVnaXN0ZXIgUldUQ1NSQS4NCj4gPg0KPiA+
+IFRoZSBuZXcgZnVuY3Rpb24gc2htb2JpbGVfYm9vdF92ZWN0b3JfZ2VuMiBpc24ndCByZXBsYWNp
+bmcNCj4gPiBzaG1vYmlsZV9ib290X3ZlY3RvciBmb3IgYmFja3dhcmQgY29tcGF0aWJpbGl0eSBy
+ZWFzb25zLiBUaGUga2VybmVsDQo+ID4gd2lsbCBpbnN0YWxsIHRoZSBiZXN0IG9wdGlvbiAoZWl0
+aGVyIHNobW9iaWxlX2Jvb3RfdmVjdG9yIG9yDQo+ID4gc2htb2JpbGVfYm9vdF92ZWN0b3JfZ2Vu
+MikgdG8gSUNSQU0xIGFmdGVyIHBhcnNpbmcgdGhlIGRldmljZSB0cmVlLA0KPiA+IGFjY29yZGlu
+ZyB0byB0aGUgYW1vdW50IG9mIG1lbW9yeSBhdmFpbGFibGUuDQo+ID4NCj4gPiBTaW5jZSBzaG1v
+YmlsZV9ib290X3ZlY3RvciBoYXMgYmVjb21lIGJpZ2dlciwgInJlZyIgcHJvcGVydHkgb2Ygbm9k
+ZXMNCj4gPiBjb21wYXRpYmxlIHdpdGggInJlbmVzYXMsc21wLXNyYW0iIG5vdyBuZWVkIHRvIGJl
+IHNldCB0byBhIHZhbHVlDQo+ID4gZ3JlYXRlciBvciBlcXVhbCB0byAiPDAgMHg2MD4iLg0KPiA+
+DQo+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5jYXN0cm9AYnAu
+cmVuZXNhcy5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0g
+PHJhbWVzaC5zaGFubXVnYXN1bmRhcmFtQGJwLnJlbmVzYXMuY29tPg0KPg0KPiA+IC0tLSBhL2Fy
+Y2gvYXJtL21hY2gtc2htb2JpbGUvY29tbW9uLmgNCj4gPiArKysgYi9hcmNoL2FybS9tYWNoLXNo
+bW9iaWxlL2NvbW1vbi5oDQo+ID4gQEAgLTcsNiArNywxMiBAQCBleHRlcm4gdm9pZCBzaG1vYmls
+ZV9pbml0X2RlbGF5KHZvaWQpOw0KPiA+ICBleHRlcm4gdm9pZCBzaG1vYmlsZV9ib290X3ZlY3Rv
+cih2b2lkKTsNCj4gPiAgZXh0ZXJuIHVuc2lnbmVkIGxvbmcgc2htb2JpbGVfYm9vdF9mbjsNCj4g
+PiAgZXh0ZXJuIHVuc2lnbmVkIGxvbmcgc2htb2JpbGVfYm9vdF9zaXplOw0KPiA+ICsjaWZkZWYg
+Q09ORklHX0FSQ0hfUkNBUl9HRU4yDQo+DQo+IEkgdGhpbmsgdGhpcyAjaWZkZWYgY2FuIGJlIHJl
+bW92ZWQuDQoNCkknbGwgc2VuZCBhIG5ldyB2ZXJzaW9uIG9mIHRoaXMgcGF0Y2ggd2l0aG91dCBp
+ZmRlZnMuDQoNClRoYW5rcywNCkZhYg0KDQo+DQo+ID4gK2V4dGVybiB2b2lkIHNobW9iaWxlX2Jv
+b3RfdmVjdG9yX2dlbjIodm9pZCk7DQo+ID4gK2V4dGVybiB1bnNpZ25lZCBsb25nIHNobW9iaWxl
+X2Jvb3RfZm5fZ2VuMjsNCj4gPiArZXh0ZXJuIHVuc2lnbmVkIGxvbmcgc2htb2JpbGVfYm9vdF9j
+cHVfZ2VuMjsNCj4gPiArZXh0ZXJuIHVuc2lnbmVkIGxvbmcgc2htb2JpbGVfYm9vdF9zaXplX2dl
+bjI7DQo+ID4gKyNlbmRpZiAvKiBDT05GSUdfQVJDSF9SQ0FSX0dFTjIgKi8NCj4gPiAgZXh0ZXJu
+IHZvaWQgc2htb2JpbGVfc21wX2Jvb3Qodm9pZCk7DQo+ID4gIGV4dGVybiB2b2lkIHNobW9iaWxl
+X3NtcF9zbGVlcCh2b2lkKTsNCj4gPiAgZXh0ZXJuIHZvaWQgc2htb2JpbGVfc21wX2hvb2sodW5z
+aWduZWQgaW50IGNwdSwgdW5zaWduZWQgbG9uZyBmbiwNCj4NCj4gQXBhcnQgZnJvbSB0aGF0Og0K
+PiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5i
+ZT4NCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAgICAgICAgICAgICAg
+IEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2Yg
+TGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtbTY4ay5vcmcNCj4NCj4gSW4gcGVyc29u
+YWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBo
+YWNrZXIuIEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkg
+InByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25p
+Y3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwg
+QnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2Fs
+ZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
