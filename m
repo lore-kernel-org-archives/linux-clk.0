@@ -1,38 +1,94 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 37/41] ARM: da8xx: Remove legacy clock init
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-38-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <310debb9-9cd6-35d6-fd4d-664d13a79533@ti.com>
-Date: Wed, 7 Feb 2018 20:46:57 +0530
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
+ <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
+ <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
+ <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
+ <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
+Date: Wed, 28 Feb 2018 20:20:47 +0300
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-38-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:44 PM, David Lechner wrote:
-> This removes the unused legacy clock init code from
-> arch/arm/mach-davinci/{devices,usb}-da8xx}.c.
+On 28.02.2018 17:14, Peter De Schrijver wrote:
+> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
+>> On 28.02.2018 12:36, Peter De Schrijver wrote:
+>>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
+>>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
+>>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+>>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+>>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
+>>>>>>> which
+>>>>>>> leaves it at some default rate of 500 kHz:
+>>>>>>>
+>>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+>>>>>>> pll_u
+>>>>>>>        pll_u                  3        3        0      500000      
+>>>>>>>     0
+>>>>>>>
+>>>>>>> Of course this won't quite work leading to the following messages:
+>>>>>>>
+>>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+>>>>>>> tegra-
+>>>>>>> ehci
+>>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+>>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+>>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+>>>>>>> tegra-
+>>>>>>> ehci
+>>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+>>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+>>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
+>>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+>>>>>>> tegra-
+>>>>>>> ehci
+>>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+>>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+>>>>>>> tegra-
+>>>>>>> ehci
+>>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+>>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+>>>>>>>
+>>>>>>> Fix this by actually allowing the rate also being set from within
+>>>>>>> the Linux kernel.
+>>>
+>>> I think the best solution to this problem would be to make pll_u a fixed
+>>> clock and enable it and program the rate if it's not enabled at boot.
+>>
+>> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
+>> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
+>> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
+>> there.
+>>
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
+> AFAIK we only use one rate ever?
 
-Can you please mention SATA and USB in subject line and in patch
-description?
+IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
+setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
 
-Apart from that:
-
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
-Sekhar
+>>> This is how it's done for Tegra210. The reason is that the USB IP blocks
+>>> can control the pll_u state in hw. This means that if sw would disable
+>>> and then re-enable the pll_u clock, but there is no USB activity, pll_u
+>>> will still be disable and therefor not lock, causing an error. Today
+>>> this is worked around by not polling the lock bit for pll_u, but a better
+>>> solution would be to just remove all sw controls for pll_u.
+>>
+>> SW controls could be removed, but I don't think it is really necessary as in our
+>> case SW is the PHY driver and we know what it does. Alternatively we can enable
+>> PLL_U in the init table to keep it "always" enabled.
