@@ -1,88 +1,40 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com
+Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 00/16] Implement H3/H5 HDMI driver
+Date: Wed, 28 Feb 2018 22:23:35 +0100
+Message-ID: <2235934.0TF68fluGz@jernej-laptop>
+In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1518457475-4480-2-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com> <1518457475-4480-2-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 28 Feb 2018 13:57:21 +0100
-Message-ID: <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
-Subject: Re: [PATCH v5 01/26] ARM: shmobile: Add watchdog support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabrizio,
+Hi Maxime,
 
-On Mon, Feb 12, 2018 at 6:44 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
-> boot CPUs run a routine designed to bring up SMP and deal with hot plug.
-> The value contained in the SBAR registers is not initialized by a WDT
-> triggered reset, which means that after a WDT triggered reset we jump
-> to the SMP bring up routine, preventing the system from executing the
-> bootrom code.
->
-> The purpose of this patch is to jump to the bootrom code in case of a
-> WDT triggered reset, and keep the SMP functionality untouched.
-> In order to tell if the code had been called due to the WDT overflowing
-> we are testing WOVF from register RWTCSRA.
->
-> The new function shmobile_boot_vector_gen2 isn't replacing
-> shmobile_boot_vector for backward compatibility reasons. The kernel
-> will install the best option (either shmobile_boot_vector or
-> shmobile_boot_vector_gen2) to ICRAM1 after parsing the device tree,
-> according to the amount of memory available.
->
-> Since shmobile_boot_vector has become bigger, "reg" property of nodes
-> compatible with "renesas,smp-sram" now need to be set to a value
-> greater or equal to "<0 0x60>".
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Dne torek, 27. februar 2018 ob 23:26:45 CET je Jernej Skrabec napisal(a):
+> This series implements H3/H5 HDMI driver. It was tested on OrangePi 2 (H3),
+> OrangePi Plus2e (H3) and OrangePi PC2 (H5) with many resolutions and it
+> works well. Bug, which prevented correct operation for some resolutions,
+> is also fixed.
+> 
+> Code is based on linux-next, next-20180226 tag.
 
-> --- a/arch/arm/mach-shmobile/common.h
-> +++ b/arch/arm/mach-shmobile/common.h
-> @@ -7,6 +7,12 @@ extern void shmobile_init_delay(void);
->  extern void shmobile_boot_vector(void);
->  extern unsigned long shmobile_boot_fn;
->  extern unsigned long shmobile_boot_size;
-> +#ifdef CONFIG_ARCH_RCAR_GEN2
+Today I tried on this series on  next-20180228, but resolution switching 
+doesn't really work. The reason for this is use of clk_set_rate_exclusive() in 
+sun4i_tcon1_mode_set(). If I revert it to ordinary clk_set_rate() it works ok. 
+I investigated a bit and it seems that clocks stays at first set even if tcon 
+(the owner of exclusive lock) request the new one. Example:
 
-I think this #ifdef can be removed.
+[   69.325732] TCON clk wanted: 148500000
+[   69.325740] TCON real clk: 69272728
+[   69.325770] HDMI clk wanted: 148500000
+[   69.325773] HDMI real clk: 138545455
+[   69.325815] HDMI PHY clk wanted: 148500000
+[   69.325819] HDMI PHY real clk: 138545454
 
-> +extern void shmobile_boot_vector_gen2(void);
-> +extern unsigned long shmobile_boot_fn_gen2;
-> +extern unsigned long shmobile_boot_cpu_gen2;
-> +extern unsigned long shmobile_boot_size_gen2;
-> +#endif /* CONFIG_ARCH_RCAR_GEN2 */
->  extern void shmobile_smp_boot(void);
->  extern void shmobile_smp_sleep(void);
->  extern void shmobile_smp_hook(unsigned int cpu, unsigned long fn,
+Is there anything I can do to help debug this?
 
-Apart from that:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Jernej
