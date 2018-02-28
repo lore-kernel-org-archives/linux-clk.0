@@ -1,40 +1,73 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 00/16] Implement H3/H5 HDMI driver
-Date: Wed, 28 Feb 2018 22:23:35 +0100
-Message-ID: <2235934.0TF68fluGz@jernej-laptop>
-In-Reply-To: <20180227222701.9716-1-jernej.skrabec@siol.net>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Wed, 28 Feb 2018 11:36:20 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, "thierry.reding@gmail.com"
+	<thierry.reding@gmail.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+Message-ID: <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
+ <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
+> On 27.02.2018 02:04, Marcel Ziswiler wrote:
+> > On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+> >> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+> >>> Turns out latest upstream U-Boot does not configure/enable pllu
+> >>> which
+> >>> leaves it at some default rate of 500 kHz:
+> >>>
+> >>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+> >>> pll_u
+> >>>        pll_u                  3        3        0      500000      
+> >>>     0
+> >>>
+> >>> Of course this won't quite work leading to the following messages:
+> >>>
+> >>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+> >>> tegra-
+> >>> ehci
+> >>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+> >>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+> >>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+> >>> tegra-
+> >>> ehci
+> >>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+> >>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+> >>> [   48.049658] usb usb2-port1: attempt power cycle
+> >>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+> >>> tegra-
+> >>> ehci
+> >>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+> >>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+> >>> tegra-
+> >>> ehci
+> >>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+> >>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+> >>>
+> >>> Fix this by actually allowing the rate also being set from within
+> >>> the Linux kernel.
 
-Dne torek, 27. februar 2018 ob 23:26:45 CET je Jernej Skrabec napisal(a):
-> This series implements H3/H5 HDMI driver. It was tested on OrangePi 2 (H3),
-> OrangePi Plus2e (H3) and OrangePi PC2 (H5) with many resolutions and it
-> works well. Bug, which prevented correct operation for some resolutions,
-> is also fixed.
-> 
-> Code is based on linux-next, next-20180226 tag.
+I think the best solution to this problem would be to make pll_u a fixed
+clock and enable it and program the rate if it's not enabled at boot.
+This is how it's done for Tegra210. The reason is that the USB IP blocks
+can control the pll_u state in hw. This means that if sw would disable
+and then re-enable the pll_u clock, but there is no USB activity, pll_u
+will still be disable and therefor not lock, causing an error. Today
+this is worked around by not polling the lock bit for pll_u, but a better
+solution would be to just remove all sw controls for pll_u.
 
-Today I tried on this series on  next-20180228, but resolution switching 
-doesn't really work. The reason for this is use of clk_set_rate_exclusive() in 
-sun4i_tcon1_mode_set(). If I revert it to ordinary clk_set_rate() it works ok. 
-I investigated a bit and it seems that clocks stays at first set even if tcon 
-(the owner of exclusive lock) request the new one. Example:
-
-[   69.325732] TCON clk wanted: 148500000
-[   69.325740] TCON real clk: 69272728
-[   69.325770] HDMI clk wanted: 148500000
-[   69.325773] HDMI real clk: 138545455
-[   69.325815] HDMI PHY clk wanted: 148500000
-[   69.325819] HDMI PHY real clk: 138545454
-
-Is there anything I can do to help debug this?
-
-Best regards,
-Jernej
+Peter.
