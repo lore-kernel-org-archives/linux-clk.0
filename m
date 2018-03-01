@@ -1,106 +1,204 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
-        Loic PALLARDY
-	<loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: [PATCH v2 01/12] dt-bindings: Document STM32MP1 Reset Clock Controller (RCC) bindings
-Date: Thu, 8 Mar 2018 17:53:54 +0100
-Message-ID: <1520528045-18330-2-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
-References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 11/16] drm/sun4i: Move and expand DW HDMI PHY register macros
+Date: Thu,  1 Mar 2018 22:34:37 +0100
+Message-Id: <20180301213442.16677-12-jernej.skrabec@siol.net>
+In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
+References: <20180301213442.16677-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+DW HDMI PHY macros are moved to header file and expanded with the
+registers present on newer SoCs like H3 and H5.
 
-The RCC block is responsible of the management of the clock and reset
-generation for the complete circuit.
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- .../devicetree/bindings/clock/st,stm32mp1-rcc.txt  | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  | 131 +++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c |  17 -----
+ 2 files changed, 131 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt b/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
-new file mode 100644
-index 0000000..fb9495e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
-@@ -0,0 +1,60 @@
-+STMicroelectronics STM32 Peripheral Reset Clock Controller
-+==========================================================
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 1e9eb6072615..49161326ea5a 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -12,6 +12,137 @@
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
+ 
++#define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
++#define SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK		BIT(0)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK	GENMASK(15, 8)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC	BIT(8)
++#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC	BIT(9)
++#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR_MASK	GENMASK(23, 16)
++#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR(addr)	(addr << 16)
 +
-+The RCC IP is both a reset and a clock controller.
++#define SUN8I_HDMI_PHY_REXT_CTRL_REG	0x0004
++#define SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN	BIT(31)
 +
-+RCC makes also power management (resume/supend and wakeup interrupt).
++#define SUN8I_HDMI_PHY_READ_EN_REG	0x0010
++#define SUN8I_HDMI_PHY_READ_EN_MAGIC		0x54524545
 +
-+Please also refer to reset.txt for common reset controller binding usage.
++#define SUN8I_HDMI_PHY_UNSCRAMBLE_REG	0x0014
++#define SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC		0x42494E47
 +
-+Please also refer to clock-bindings.txt for common clock controller
-+binding usage.
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG	0x0020
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SWI		BIT(31)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_PWEND	BIT(30)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_PWENC	BIT(29)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_CALSW	BIT(28)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SVRCAL(x)	((x) << 26)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SVBH(x)	((x) << 24)
++#define SUN8I_HDMI_PHY_ANA_CFG1_AMP_OPT		BIT(23)
++#define SUN8I_HDMI_PHY_ANA_CFG1_EMP_OPT		BIT(22)
++#define SUN8I_HDMI_PHY_ANA_CFG1_AMPCK_OPT	BIT(21)
++#define SUN8I_HDMI_PHY_ANA_CFG1_EMPCK_OPT	BIT(20)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENRCAL		BIT(19)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENCALOG		BIT(18)
++#define SUN8I_HDMI_PHY_ANA_CFG1_REG_SCKTMDS	BIT(17)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TMDSCLK_EN	BIT(16)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK	GENMASK(15, 12)
++#define SUN8I_HDMI_PHY_ANA_CFG1_TXEN_ALL	(0xf << 12)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDSCLK	BIT(11)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS2	BIT(10)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS1	BIT(9)
++#define SUN8I_HDMI_PHY_ANA_CFG1_BIASEN_TMDS0	BIT(8)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDSCLK	BIT(7)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS2	BIT(6)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS1	BIT(5)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENP2S_TMDS0	BIT(4)
++#define SUN8I_HDMI_PHY_ANA_CFG1_CKEN		BIT(3)
++#define SUN8I_HDMI_PHY_ANA_CFG1_LDOEN		BIT(2)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENVBS		BIT(1)
++#define SUN8I_HDMI_PHY_ANA_CFG1_ENBI		BIT(0)
 +
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG	0x0024
++#define SUN8I_HDMI_PHY_ANA_CFG2_M_EN		BIT(31)
++#define SUN8I_HDMI_PHY_ANA_CFG2_PLLDBEN		BIT(30)
++#define SUN8I_HDMI_PHY_ANA_CFG2_SEN		BIT(29)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_HPDPD	BIT(28)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_HPDEN	BIT(27)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_PLRCK	BIT(26)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_PLR(x)	((x) << 23)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_DENCK	BIT(22)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_DEN		BIT(21)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CD(x)	((x) << 19)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CKSS(x)	((x) << 17)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BIGSWCK	BIT(16)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BIGSW	BIT(15)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_CSMPS(x)	((x) << 13)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_SLV(x)	((x) << 10)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BOOSTCK(x)	((x) << 8)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_BOOST(x)	((x) << 6)
++#define SUN8I_HDMI_PHY_ANA_CFG2_REG_RESDI(x)	((x) << 0)
 +
-+Required properties:
-+- compatible: "st,stm32mp1-rcc", "syscon"
-+- reg: should be register base and length as documented in the datasheet
-+- #clock-cells: 1, device nodes should specify the clock in their
-+  "clocks" property, containing a phandle to the clock device node,
-+  an index specifying the clock to use.
-+- #reset-cells: Shall be 1
-+- interrupts: Should contain a general interrupt line and a interrupt line
-+  to the wake-up of processor (CSTOP).
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG	0x0028
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_SLOWCK(x)	((x) << 30)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_SLOW(x)	((x) << 28)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_WIRE(x)	((x) << 18)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_AMPCK(x)	((x) << 14)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_EMPCK(x)	((x) << 11)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_AMP(x)	((x) << 7)
++#define SUN8I_HDMI_PHY_ANA_CFG3_REG_EMP(x)	((x) << 4)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SDAPD		BIT(3)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SDAEN		BIT(2)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SCLPD		BIT(1)
++#define SUN8I_HDMI_PHY_ANA_CFG3_SCLEN		BIT(0)
 +
-+Example:
-+	rcc: rcc@50000000 {
-+		compatible = "st,stm32mp1-rcc", "syscon";
-+		reg = <0x50000000 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+		interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>,
-+			     <GIC_SPI 145 IRQ_TYPE_NONE>;
-+	};
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG	0x002c
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG_OD1		BIT(31)
++#define SUN8I_HDMI_PHY_PLL_CFG1_REG_OD		BIT(30)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
++#define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
++#define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
++#define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
++#define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
++#define SUN8I_HDMI_PHY_PLL_CFG1_PLLDBEN		BIT(19)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CS		BIT(18)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CP_S(x)		((x) << 13)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CNT_INT(x)	((x) << 7)
++#define SUN8I_HDMI_PHY_PLL_CFG1_BWS		BIT(6)
++#define SUN8I_HDMI_PHY_PLL_CFG1_B_IN_MSK	GENMASK(5, 0)
++#define SUN8I_HDMI_PHY_PLL_CFG1_B_IN_SHIFT	0
 +
-+Specifying clocks
-+=================
++#define SUN8I_HDMI_PHY_PLL_CFG2_REG	0x0030
++#define SUN8I_HDMI_PHY_PLL_CFG2_SV_H		BIT(31)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PDCLKSEL(x)	((x) << 29)
++#define SUN8I_HDMI_PHY_PLL_CFG2_CLKSTEP(x)	((x) << 27)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PSET(x)		((x) << 24)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PCLK_SEL	BIT(23)
++#define SUN8I_HDMI_PHY_PLL_CFG2_AUTOSYNC_DIS	BIT(22)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VREG2_OUT_EN	BIT(21)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VREG1_OUT_EN	BIT(20)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCOGAIN_EN	BIT(19)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCOGAIN(x)	((x) << 16)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCO_S(x)	((x) << 12)
++#define SUN8I_HDMI_PHY_PLL_CFG2_VCO_RST_IN	BIT(11)
++#define SUN8I_HDMI_PHY_PLL_CFG2_SINT_FRAC	BIT(10)
++#define SUN8I_HDMI_PHY_PLL_CFG2_SDIV2		BIT(9)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S(x)		((x) << 6)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S6P25_7P5	BIT(5)
++#define SUN8I_HDMI_PHY_PLL_CFG2_S5_7		BIT(4)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK	GENMASK(3, 0)
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_SHIFT	0
++#define SUN8I_HDMI_PHY_PLL_CFG2_PREDIV(x)	(((x) - 1) << 0)
 +
-+All available clocks are defined as preprocessor macros in
-+dt-bindings/clock/stm32mp1-clks.h header and can be used in device
-+tree sources.
++#define SUN8I_HDMI_PHY_PLL_CFG3_REG	0x0034
++#define SUN8I_HDMI_PHY_PLL_CFG3_SOUT_DIV2	BIT(0)
 +
-+Specifying softreset control of devices
-+=======================================
++#define SUN8I_HDMI_PHY_ANA_STS_REG	0x0038
++#define SUN8I_HDMI_PHY_ANA_STS_B_OUT_SHIFT	11
++#define SUN8I_HDMI_PHY_ANA_STS_B_OUT_MSK	GENMASK(16, 11)
++#define SUN8I_HDMI_PHY_ANA_STS_RCALEND2D	BIT(7)
++#define SUN8I_HDMI_PHY_ANA_STS_RCAL_MASK	GENMASK(5, 0)
 +
-+Device nodes should specify the reset channel required in their "resets"
-+property, containing a phandle to the reset device node and an index specifying
-+which channel to use.
-+The index is the bit number within the RCC registers bank, starting from RCC
-+base address.
-+It is calculated as: index = register_offset / 4 * 32 + bit_offset.
-+Where bit_offset is the bit offset within the register.
++#define SUN8I_HDMI_PHY_CEC_REG		0x003c
 +
-+For example on STM32MP1, for LTDC reset:
-+ ltdc = APB4_RSTSETR_offset / 4 * 32 + LTDC_bit_offset
-+      = 0x180 / 4 * 32 + 0 = 3072
-+
-+The list of valid indices for STM32MP1 is available in:
-+include/dt-bindings/reset-controller/stm32mp1-resets.h
-+
-+This file implements defines like:
-+#define LTDC_R	3072
+ struct sun8i_hdmi_phy;
+ 
+ struct sun8i_hdmi_phy_variant {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 17aada64bafd..16889bc0c62d 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -7,23 +7,6 @@
+ 
+ #include "sun8i_dw_hdmi.h"
+ 
+-#define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
+-#define SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK		BIT(0)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK	GENMASK(15, 8)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC	BIT(8)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC	BIT(9)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR_MASK	GENMASK(23, 16)
+-#define SUN8I_HDMI_PHY_DBG_CTRL_ADDR(addr)	(addr << 16)
+-
+-#define SUN8I_HDMI_PHY_REXT_CTRL_REG	0x0004
+-#define SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN	BIT(31)
+-
+-#define SUN8I_HDMI_PHY_READ_EN_REG	0x0010
+-#define SUN8I_HDMI_PHY_READ_EN_MAGIC		0x54524545
+-
+-#define SUN8I_HDMI_PHY_UNSCRAMBLE_REG	0x0014
+-#define SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC		0x42494E47
+-
+ /*
+  * Address can be actually any value. Here is set to same value as
+  * it is set in BSP driver.
 -- 
-1.9.1
+2.16.2
