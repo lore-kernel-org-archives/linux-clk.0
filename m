@@ -1,120 +1,69 @@
-Return-Path: <shawn.lin@rock-chips.com>
-Cc: shawn.lin@rock-chips.com, Heiko Stuebner <heiko@sntech.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
- <CAMuHMdWVxtP4T8jVYLmmhNvQQqCUkHSF2vuoEX847pnE+Yyz_Q@mail.gmail.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <4d6a543d-aebd-acef-c061-073fe0c31cfe@rock-chips.com>
-Date: Thu, 8 Mar 2018 19:15:12 +0800
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:34765 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966781AbeCAJ3q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 1 Mar 2018 04:29:46 -0500
+Date: Thu, 1 Mar 2018 10:29:33 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 5/7] clk: sunxi-ng: add support for the Allwinner H6
+ CCU
+Message-ID: <20180301092933.eqibjnepoj3ecvo6@flea>
+References: <20180223123555.64009-6-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWVxtP4T8jVYLmmhNvQQqCUkHSF2vuoEX847pnE+Yyz_Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s63sgyrl3h62372d"
+In-Reply-To: <20180223123555.64009-6-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
 
-On 2018/3/8 17:40, Geert Uytterhoeven wrote:
-> On Thu, Mar 8, 2018 at 8:54 AM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->> It's found that the clock phase output from clk_summary is
->> wrong compared to the actual phase reading from the register.
->>
->> cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
->> sdio_sample     0        1        0 50000000          0 -22
->>
->> It expose an issue that clk core, clk_core_get_phase, always
-> 
-> exposes
-> 
->> return the cached core->phase which should be either updated
->> by calling clk_set_phase or directly from the first place the
->> clk was registered. When registering the clk, the core->phase
->> geting from ->get_phase() may return negative value indicating
->> error. This is quite common since the clk's phase may be highly
->> related to its praent chain, but it was temporary orphan when
-> 
-> parent
-> 
->> registered, since its parent chain hadn't be ready at that time,
->> so the clk drivers decide to return error in this case. However,
->> if no clk_set_phase is called, core->phase would never be updated.
->> This is wrong, and we should try to update it when all its parent
->> chain is settled down, like the way of updating clock rate for that.
-> 
-> chains are settled
-> 
->> It's not derserved to complicate the code but just update it if
-> 
-> deserved
-> 
->> seeing it's a nagative number when calling clk_core_get_phase, which
-> 
-> negative
-> 
->> would be much simple and enough.
->>
->> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->> ---
->>
->>   drivers/clk/clk.c | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 0f686a9..b49e4c8 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -2370,6 +2370,15 @@ static int clk_core_get_phase(struct clk_core *core)
->>          int ret;
->>
->>          clk_prepare_lock();
->> +       /*
->> +        * clk_set_phase always set the phase in [0, 360],
->> +        * so the only reason for core->phase to be nagative
-> 
-> a negative
-> 
->> +        * number is it's a error number propagated back from
-> 
-> an error
-> 
->> +        * the clk drivers. So we should try to update it if
->> +        * possible.
->> +        */
->> +       if (core->phase < 0 && core->ops->get_phase)
->> +               core->phase = core->ops->get_phase(core->hw);
-> 
-> Can this happen if core->ops->get_phase does not exist?
+--s63sgyrl3h62372d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ahh, nope.
+On Fri, Feb 23, 2018 at 08:35:53PM +0800, Icenowy Zheng wrote:
+> The Allwinner H6 SoC has a CCU which has been largely rearranged.
+>=20
+> Add support for it in the sunxi-ng CCU framework.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-> If yes, we're stuck with a negative number forever?
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-If core->ops->get_phase doesn't exist, it should be zero after
-calling clk_register, and only got updated by ->set_phase().
-So if 'core->phase < 0' happens, it implies core->ops->get_phase
-must exists. But Jerome has a good point, let's move there to see
-what is needed here.
+Thanks!
+Maxime
 
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-> 
->>          ret = core->phase;
->>          clk_prepare_unlock();
->>
->> --
->> 1.9.1
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                  -- Linus Torvalds
-> 
-> 
-> 
+--s63sgyrl3h62372d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqXx/wACgkQ0rTAlCFN
+r3QliQ//fe49xJfjzFjOrXyAoTIVrDoHzFPPRbLwC1kMiDypGE/WGyU/ofTX8u3o
+1EjXj2TQorYDHwl/+8QGHOnfnDWg5gUmJOeVCvdS8fhcjReTC8Ofrwnti3SHERjK
+K5YjBYIxByAvZOfAc6ohAKVP2RxuOR1owAEYRIi0/7SvRwH+4LRmCTB9PGiJsqSn
+lenCiR6ZYcP1Ny08VVi620EiLV9aNY8pQBRh1oL/EFudT4Gg3it3L7DIWgYs2on7
+Dpt+UdPxH+ZCpqnlYUGzL/Thw/Kd9F32ZpqWDywzu88g/HPcAXwoTYtYWpOpE3Cu
+mUyf7aSxJ+wkZRcmTlJtbMp94fSDS2ZtZQqF7E1i2YqGtmxrS7pdSQDEcKE6YqKz
+ITZSveu9SmIFkd1NEfpRDDw/ouuzS+IjcR0Unn6TQ9o7knLTMK8nJDDk7dsLpb95
+oRgLBBMwYsalT0XC0m0PtKvqaALRGWEaV6ncOilNKZvgZLb2Wd5o8yQnqLXw7LpP
+BEaI017FQa96DDCXooLP4l1FKsD/s38PvqFQrUGD/OynBvcnehV2tLMHJ0ABvXVT
++aO0poJG6+H4xk4J/m427F9OVTIUcqQJAU8NqPQ/YVp1j0UiLC+aycWXrS1ztBVS
+1nrR3rqp1un4XBs0cbUQBPAuTHSQf7Xr4HVexA47zklbEGwGrss=
+=t6pH
+-----END PGP SIGNATURE-----
+
+--s63sgyrl3h62372d--
