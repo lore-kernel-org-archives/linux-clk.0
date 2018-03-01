@@ -1,31 +1,55 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 1 Mar 2018 15:19:50 -0600
+From: Rob Herring <robh@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 3/7] pinctrl: sunxi: add support for the Allwinner H6
+ main pin controller
+Message-ID: <20180301211950.ust7g4jnlncrvwxp@rob-hp-laptop>
+References: <20180223122552.58049-1-icenowy@aosc.io>
+ <20180223122552.58049-4-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <3BB206AB2B1BD448954845CE6FF69A8E01F81FD1B9@nt-mail04>
-References: <3BB206AB2B1BD448954845CE6FF69A8E01F81FD1B9@nt-mail04>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 15 Mar 2018 09:51:44 -0300
-Message-ID: <CAOMZO5BxpRX9g=BktT15tCiSFt4CofkRKDHsutVT-8poZ5bHmA@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx51: uart4, uart5 gates only exist on imx50, imx53
-To: =?UTF-8?Q?Patrick_Br=C3=BCnn?= <P.Bruenn@beckhoff.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kernel-dev <linux-kernel-dev@beckhoff.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180223122552.58049-4-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Patrick,
+On Fri, Feb 23, 2018 at 08:25:48PM +0800, Icenowy Zheng wrote:
+> The Allwinner H6 SoC has two pin controllers, one main controller
+> (called CPUX-PORT in user manual) and one controller in CPUs power
+> domain (called CPUS-PORT in user manual).
+> 
+> This commit introduces support for the main pin controller on H6.
+> 
+> The pin bank A and B are not wired out and hidden from the SoC's
+> documents, however it's shown that the "ATE" (an AC200 chip
+> co-packaged with the H6 die) is connected to the main SoC die via these
+> pin banks. The information about these banks is just copied from the BSP
+> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
+> format. The GPIO functions are dropped, as they're impossible to use --
+> except a GPIO&IRQ only pin (PB20) which might be the IRQ of ATE.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v3:
+> - SPDX license identifier fix.
+> - Dropped most GPIO functionality at PA/PB.
+> 
+> Changes in v2:
+> - Dropped without_bus_gate description.
+> - Switched to SPDX license identifier.
+> 
+>  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
 
-On Thu, Mar 15, 2018 at 9:43 AM, Patrick Br=C3=BCnn <P.Bruenn@beckhoff.com>=
- wrote:
-> Hi list,
->
-> since v4.16-rc1 my board imx53-cx9020 shows multiple WARNINGs like this:
+Please add acks when posting new versions.
 
-I fixed this problem with this commit:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/=
-drivers/clk/imx/clk-imx51-imx53.c?h=3Dnext-20180315&id=3Da275b315334dea3c21=
-51094765387ede421aac92
+>  drivers/pinctrl/sunxi/Kconfig                      |   4 +
+>  drivers/pinctrl/sunxi/Makefile                     |   1 +
+>  drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c          | 614 +++++++++++++++++++++
+>  4 files changed, 620 insertions(+)
+>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
