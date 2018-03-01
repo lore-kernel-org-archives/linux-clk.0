@@ -1,51 +1,99 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 2/8] ARM: davinci: dts: make psc0 a reset provider
-Date: Fri, 23 Mar 2018 10:36:03 +0100
-Message-Id: <20180323093609.24576-3-brgl@bgdev.pl>
-In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
-References: <20180323093609.24576-1-brgl@bgdev.pl>
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 01/16] clk: sunxi-ng: Add check for minimal rate to NM PLLs
+Date: Thu,  1 Mar 2018 22:34:27 +0100
+Message-Id: <20180301213442.16677-2-jernej.skrabec@siol.net>
+In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
+References: <20180301213442.16677-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Some NM PLLs doesn't work well when their output clock rate is set below
+certain rate.
 
-The psc driver registers with the reset framework as a provider. Add
-the #reset-cells property to the psc0 node.
+Add support for that constrain.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm/boot/dts/da850.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/sunxi-ng/ccu_nm.c |  7 +++++++
+ drivers/clk/sunxi-ng/ccu_nm.h | 27 +++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index a3b9a99b43ca..dad64dbf1f23 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -123,6 +123,7 @@
- 			compatible = "ti,da850-psc0";
- 			reg = <0x10000 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
- 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
- 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index a16de092bf94..4e2073307f34 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -117,6 +117,13 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nm->fixed_post_div;
+ 
++	if (rate < nm->min_rate) {
++		rate = nm->min_rate;
++		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
++			rate /= nm->fixed_post_div;
++		return rate;
++	}
++
+ 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
+ 		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 			rate /= nm->fixed_post_div;
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
+index eba586b4c7d0..1d8b459c50b7 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.h
++++ b/drivers/clk/sunxi-ng/ccu_nm.h
+@@ -37,6 +37,7 @@ struct ccu_nm {
+ 	struct ccu_sdm_internal		sdm;
+ 
+ 	unsigned int		fixed_post_div;
++	unsigned int		min_rate;
+ 
+ 	struct ccu_common	common;
+ };
+@@ -88,6 +89,32 @@ struct ccu_nm {
+ 		},							\
+ 	}
+ 
++#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(_struct, _name, _parent,	\
++					     _reg, _min_rate,		\
++					     _nshift, _nwidth,		\
++					     _mshift, _mwidth,		\
++					     _frac_en, _frac_sel,	\
++					     _frac_rate_0, _frac_rate_1,\
++					     _gate, _lock, _flags)	\
++	struct ccu_nm _struct = {					\
++		.enable		= _gate,				\
++		.lock		= _lock,				\
++		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
++		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
++		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
++						  _frac_rate_0,		\
++						  _frac_rate_1),	\
++		.min_rate	= _min_rate,				\
++		.common		= {					\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_FRACTIONAL,	\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_nm_ops,	\
++						      _flags),		\
++		},							\
++	}
++
+ #define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
+ 				    _nshift, _nwidth,			\
+ 				    _mshift, _mwidth,			\
 -- 
-2.16.1
+2.16.2
