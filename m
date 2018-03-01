@@ -1,89 +1,47 @@
-Return-Path: <prasannatsmkumar@gmail.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+Message-ID: <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com>
+Date: Thu, 1 Mar 2018 16:33:29 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180306000832.GL4197@saruman>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date: Wed, 7 Mar 2018 19:14:49 +0530
-Message-ID: <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-To: James Hogan <jhogan@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>,
-	linux-clk@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>, Mathieu Malaterre <malat@debian.org>,
-	Dominik Peklo <dom.peklo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi James,
-
-Thanks for reviewing this.
-
-On 6 March 2018 at 05:38, James Hogan <jhogan@kernel.org> wrote:
-> On Wed, Sep 27, 2017 at 08:45:26PM +0530, PrasannaKumar Muralidharan wrote:
->> Add initial Ingenic X1000 SoC support. Provide minimum necessary
->> information to boot kernel to an initramfs userspace.
+On 15.01.2018 13:56, Dmitry Osipenko wrote:
+> On 10.01.2018 16:59, Dmitry Osipenko wrote:
+>> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
+>> as critical.
 >>
->> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 >> ---
->>  arch/mips/boot/dts/ingenic/x1000.dtsi | 93 +++++++++++++++++++++++++++++++++++
->>  arch/mips/jz4740/Kconfig              |  6 +++
->>  arch/mips/jz4740/time.c               |  2 +-
->>  3 files changed, 100 insertions(+), 1 deletion(-)
->>  create mode 100644 arch/mips/boot/dts/ingenic/x1000.dtsi
->
-> arch/mips/jz4780/setup.c, specifically get_board_mach_type() and
-> get_system_type() will need updating too.
+>>
+>> Change log:
+>> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
+>>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
+>>         and Tegra30.
+>>
+>> v3:     Dropped marking PLL_P outputs as critical, because seems they are
+>>         not so critical. Although, I still haven't got a definitive answer
+>>         about what exact HW functions are affected by the fixed-clocks.
+>>         Anyway it should be cleaner to correct the actual drivers.
+> 
+> Stephen / Michael, would it be possible to schedule these patches for 4.16? My
+> T20 and T30 devices aren't working without the 'critical clocks' patch. Things
+> happen to work with the opensource u-boot, but not with the proprietary
+> bootloader. It's probably not a big deal that out-of-tree devices are broken,
+> although would be nice to have one problem less.
 
-Missed it. Will make necessary changes.
-
-> Does X1000 use a different PRID, or is it basically just a JZ4780 core
-> with different SoC peripherals?
-
-Yes X1000 does have a different PRID (PRID = 0x2ed1024f). X1000 has
-single CPU core so it is definitely not JZ4780.
-
->> diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/ingenic/x1000.dtsi
->> new file mode 100644
->> index 0000000..abbb9ec
->> --- /dev/null
->> +++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
->> @@ -0,0 +1,93 @@
->> +/*
->> + * Copyright (C) 2016 PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
->> + *
->> + * This file is licensed under the terms of the GNU General Public
->> + * License version 2. This program is licensed "as is" without any
->> + * warranty of any kind, whether express or implied.
->
-> (these will need updating to use SPDX identifiers if you respin)
-
-Sure. Will take care while submitting next version.
-
->> +     cgu: jz4780-cgu@10000000 {
->
-> not sure jz4780 is appropriate here.
-
-No, it is not. Copy pasted from jz4780.dtsi but missed updating this.
-
->> +             compatible = "ingenic,x1000-cgu";
->> +             reg = <0x10000000 0x100>;
->> +
->> +             clocks = <&ext>, <&rtc>;
->> +             clock-names = "ext", "rtc";
->> +
->> +             #clock-cells = <1>;
->> +     };
->
-> Cheers
-> James
-
-I used to get my code tested from Domink but I could not reach him for
-quite some time. Before buying the development board myself I would
-like to see if anyone can help me in testing. Do you have any contact
-with Ingenic who can help in testing this?
-
-Thanks,
-PrasannaKumar
+Guys, is there anything I could do to get these patches in linux-next?
