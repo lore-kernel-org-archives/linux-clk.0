@@ -1,51 +1,59 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Fabio Estevam <festevam@gmail.com>
-CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Peter Chen
-	<peter.chen@freescale.com>, Irina Tirdea <irina.tirdea@nxp.com>, Anson Huang
-	<anson.huang@nxp.com>, linux-kernel <linux-kernel@vger.kernel.org>, Ranjani
- Vaidyanathan <ranjani.vaidyanathan@nxp.com>, dl-linux-imx
-	<linux-imx@nxp.com>, "b29396@freescale.com" <b29396@freescale.com>, linux-clk
-	<linux-clk@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM
- ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: imx7d: Move clks_init_on before any clock operations
-Date: Wed, 28 Mar 2018 06:32:18 +0000
-Message-ID: <20180328063217.nztxaphgo3uojop5@fsr-ub1664-175>
-References: <1522160607-7104-1-git-send-email-abel.vesa@nxp.com>
- <CAOMZO5C23Va4Frrpqgw8LxEJbfj+cE6xeS3362QzyRn=_wi7JQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5C23Va4Frrpqgw8LxEJbfj+cE6xeS3362QzyRn=_wi7JQ@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <horms@verge.net.au>
+Date: Thu, 1 Mar 2018 10:44:34 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [PATCH v6 01/26] ARM: shmobile: Add watchdog support
+Message-ID: <20180301094434.tnk5uxlbkhv6pcb7@verge.net.au>
+References: <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
+ <1519839622-6109-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1519839622-6109-1-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabio,
+On Wed, Feb 28, 2018 at 05:40:22PM +0000, Fabrizio Castro wrote:
+> On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
+> boot CPUs run a routine designed to bring up SMP and deal with hot plug.
+> The value contained in the SBAR registers is not initialized by a WDT
+> triggered reset, which means that after a WDT triggered reset we jump
+> to the SMP bring up routine, preventing the system from executing the
+> bootrom code.
+> 
+> The purpose of this patch is to jump to the bootrom code in case of a
+> WDT triggered reset, and keep the SMP functionality untouched.
+> In order to tell if the code had been called due to the WDT overflowing
+> we are testing WOVF from register RWTCSRA.
+> 
+> The new function shmobile_boot_vector_gen2 isn't replacing
+> shmobile_boot_vector for backward compatibility reasons. The kernel
+> will install the best option (either shmobile_boot_vector or
+> shmobile_boot_vector_gen2) to ICRAM1 after parsing the device tree,
+> according to the amount of memory available.
+> 
+> Since shmobile_boot_vector has become bigger, "reg" property of nodes
+> compatible with "renesas,smp-sram" now need to be set to a value
+> greater or equal to "<0 0x60>".
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
 
-On Tue, Mar 27, 2018 at 12:08:39PM -0300, Fabio Estevam wrote:
-> Hi Abel,
->=20
-> On Tue, Mar 27, 2018 at 11:23 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
-> > From: Dong Aisheng <b29396@freescale.com>
-> >
-> > For init on clocks we should move it at the first place in imx7d_clocks=
-_init()
-> > before any clock operations, else the clock operation may fail in case =
-the clock
-> > is still not on.
-> >
-> > Acked-by: Ranjani Vaidyanathan <Ranjani.Vaidyanathan@freescale.com>
-> > Signed-off-by: Dong Aisheng <b29396@freescale.com>
-> > Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
-> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
->=20
-> Thanks for your patches.
->=20
-> You sent 4 patches today touching the same file.
->=20
-> Please annotate the sequence of the patches (1/4, 2/4, etc) so that
-> the maintainer can clearly know the order the patches should be
-> applied.
-
-Yep, my bad. I'll resend as a patchset now.
--- =
+Thanks, I have marked this as deferred as I would like dependencies to
+be merged first.
