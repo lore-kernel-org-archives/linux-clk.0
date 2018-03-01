@@ -1,40 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:13031 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750782AbeCFQwa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 11:52:30 -0500
-Subject: Re: [PATCH v3 0/6] Exynos5: cleanup clocks handling in power
- domains
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <bd9fb3a8-0bb4-f408-6f76-567e401217a6@samsung.com>
-Date: Tue, 06 Mar 2018 17:52:23 +0100
-MIME-version: 1.0
-In-reply-to: <20180306143312.21035-1-m.szyprowski@samsung.com>
-Content-type: text/plain; charset="utf-8"
-References: <CGME20180306143322eucas1p258b0dfce5af79f19dd36fbb9b4013d5a@eucas1p2.samsung.com>
-        <20180306143312.21035-1-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tony@atomide.com>
+Date: Thu, 1 Mar 2018 07:26:00 -0800
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+	linux-omap@vger.kernel.org, jsarha@ti.com
+Subject: Re: [PATCH 0/3] clk: ti: add CLK_SET_RATE_PARENT support for clkctrl
+Message-ID: <20180301152600.GF62820@atomide.com>
+References: <1519657812-15605-1-git-send-email-t-kristo@ti.com>
+ <20180226220520.GI16043@atomide.com>
+ <e036e793-37f5-a6ee-4347-72d27579e278@ti.com>
+ <20180227164142.GA5448@atomide.com>
+ <20180227164813.GB5448@atomide.com>
+ <98bf01ee-f6e0-67e4-f8cc-cec4e5d37f31@ti.com>
+ <20180228215850.GH5448@atomide.com>
+ <7df04a6b-9ddd-7061-9a29-8620da4f61c2@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <7df04a6b-9ddd-7061-9a29-8620da4f61c2@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/06/2018 03:33 PM, Marek Szyprowski wrote:
-> Marek Szyprowski (6):
->   soc: samsung: pm_domains: Add blacklisting clock handling
->   clk: samsung: Add Exynos5 sub-CMU clock driver
->   clk: samsung: exynos5420: Move PD-dependent clocks to Exynos5 sub-CMU
->     driver
->   clk: samsung: exynos5250: Move PD-dependent clocks to Exynos5 sub-CMU
->     driver
->   soc: samsung: pm_domains: Deprecate support for clocks
->   ARM: dts: exynos: Remove obsolete clock properties from power domains
+* Tero Kristo <t-kristo@ti.com> [180301 07:05]:
+> On 28/02/18 23:58, Tony Lindgren wrote:
+> > Then omap_dm_timer_init_one() can configure the source clock
+> > which is bit 24. My guess is that 138f7ca78f is really a
+> > workaround for set_parent() not working properly for clkctrl
+> > clock :)
+> 
+> set_parent() can't work for clkctrl clock, as it only has one parent. The
+> mux is a separate component, so you need to fetch the parent of the clkctrl
+> part and set the parent for that one; unless we want to implement some sort
+> of composite clock support for it.
 
-I have applied first four patches to samsung/clk tree, thanks.
+Hmm OK probably good idea to avoid any composite clocks here :)
 
--- 
-Regards,
-Sylwester
+I guess in timer1 example, clkctrl bit 0 is gate for both GPT1_FCLK
+and WKUP_L4_ICLK2? And then bit 24 sets the parent of WKUP_L4_ICLK2.
+Or am I still confused?
+
+So what should we call clkctrl bit 24 then? It seems we can have
+up to 8 opt clocks and also "parent" clocks for the fck.
+
+> I'd say it is more like a transitional patch to support both legacy and
+> clkctrl way of handling clocks. The patch can most likely be dropped once
+> the transition is done, but this was the only way I could see how to get it
+> fixed in short term.
+
+OK
+
+> > Then a board can specify it's desired source clock for system
+> > timer(s) by configure "assigned-lcok-parents" and set it to
+> > 32KiHz clock or SYS_CLK.
+> 
+> Yeah, that will definitely work.
+
+We can have those aliases for the timer driver, I guess we just
+need a suitable name for the clkctrl parent bit(s).
+
+Anyways, no objections to this series of fixes, just wondering:
+
+Acked-by: Tony Lindgren <tony@atomide.com>
