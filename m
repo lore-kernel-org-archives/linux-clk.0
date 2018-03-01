@@ -1,44 +1,46 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1522265176-33226-5-git-send-email-biju.das@bp.renesas.com>
-References: <1522265176-33226-1-git-send-email-biju.das@bp.renesas.com> <1522265176-33226-5-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Mar 2018 11:11:55 +0200
-Message-ID: <CAMuHMdU6Mv2AL5qRJ4RrkEWGrVpU-c5J7-uNAeLviDo0g+m8Xw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] clk: renesas: cpg-mssr: Add r8a77470 support
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 13/16] drm/sun4i: Allow building on arm64
+Date: Thu,  1 Mar 2018 22:34:39 +0100
+Message-Id: <20180301213442.16677-14-jernej.skrabec@siol.net>
+In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
+References: <20180301213442.16677-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Biju,
+64-bit ARM SoCs from Allwinner have DE2/TCON/HDMI periphery which
+is compatible to 32-bit SoCs, so allow building DRM driver for
+arm64 architecture.
 
-On Wed, Mar 28, 2018 at 9:26 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Add RZ/G1C (R8A77470) Clock Pulse Generator / Module Standby and Software
-> Reset support.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
-> V1->V2:
-> * incorporated geert's review comment
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for the update, will queue in clk-renesas-for v4.18.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+index 7327da3bc94f..eee6bc0eaf97 100644
+--- a/drivers/gpu/drm/sun4i/Kconfig
++++ b/drivers/gpu/drm/sun4i/Kconfig
+@@ -1,6 +1,6 @@
+ config DRM_SUN4I
+ 	tristate "DRM Support for Allwinner A10 Display Engine"
+-	depends on DRM && ARM && COMMON_CLK
++	depends on DRM && (ARM || ARM64) && COMMON_CLK
+ 	depends on ARCH_SUNXI || COMPILE_TEST
+ 	select DRM_GEM_CMA_HELPER
+ 	select DRM_KMS_HELPER
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.16.2
