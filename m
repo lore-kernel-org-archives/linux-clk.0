@@ -1,86 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:51214 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751269AbeCTUDb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Mar 2018 16:03:31 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: ilialin@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <013c01d3c052$ca49ecd0$5eddc670$@codeaurora.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
-        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
-        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
-        nicolas.dechesne@linaro.org, celster@codeaurora.org
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
- <1518616792-29028-8-git-send-email-ilialin@codeaurora.org>
- <152147821849.242365.7709382599118820578@swboyd.mtv.corp.google.com>
- <013c01d3c052$ca49ecd0$5eddc670$@codeaurora.org>
-Message-ID: <152157621010.125118.6503833008829122560@swboyd.mtv.corp.google.com>
-Subject: RE: [PATCH v3 07/10] clk: qcom: clk-cpu-8996: Prepare PLLs on probe
-Date: Tue, 20 Mar 2018 13:03:30 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 05/16] dt-bindings: display: sun4i-drm: Add compatibles for H3 HDMI pipeline
+Date: Thu,  1 Mar 2018 22:34:31 +0100
+Message-Id: <20180301213442.16677-6-jernej.skrabec@siol.net>
+In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
+References: <20180301213442.16677-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting ilialin@codeaurora.org (2018-03-20 06:53:08)
-> 
-> 
-> > -----Original Message-----
-> > From: Stephen Boyd <sboyd@kernel.org>
-> > Sent: Monday, March 19, 2018 18:50
-> > To: Ilia Lin <ilialin@codeaurora.org>; linux-arm-kernel@lists.infradead.org;
-> > linux-arm-msm@vger.kernel.org; linux-clk@vger.kernel.org;
-> > sboyd@codeaurora.org
-> > Cc: mark.rutland@arm.com; devicetree@vger.kernel.org;
-> > rnayak@codeaurora.org; robh@kernel.org; will.deacon@arm.com;
-> > amit.kucheria@linaro.org; tfinkel@codeaurora.org; ilialin@codeaurora.org;
-> > nicolas.dechesne@linaro.org; celster@codeaurora.org
-> > Subject: Re: [PATCH v3 07/10] clk: qcom: clk-cpu-8996: Prepare PLLs on probe
-> > 
-> > Quoting Ilia Lin (2018-02-14 05:59:49)
-> > > The PLLs must be prepared enabled during the probe to be accessible by
-> > > the OPPs. Otherwise an OPP may switch to non-enabled clock.
-> > 
-> > Sounds like an OPP problem.
-> 
-> And again, it could be solved by a platform specific cpufreq driver. Worth it?
-> 
-> > 
-> > >  #include "clk-alpha-pll.h"
-> > >
-> > >  #define VCO(a, b, c) { \
-> > > @@ -376,6 +376,18 @@ struct clk_hw_clks {
-> > >         clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
-> > >         clk_alpha_pll_configure(&pwrcl_alt_pll, regmap,
-> > > &altpll_config);
-> > >
-> > > +       /* Enable all PLLs and alt PLLs */
-> > > +       clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
-> > > +       clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
-> > > +       clk_prepare_enable(pwrcl_pll.clkr.hw.clk);
-> > > +       clk_prepare_enable(perfcl_pll.clkr.hw.clk);
-> > 
-> > And this can't be done by the cpufreq-dt driver?
-> 
-> Are you suggesting changing the cpufreq-dt as well?
+Add missing compatibles for H3 HDMI pipeline. These compatibles can also
+be used with H5 SoC.
 
-Yes?
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> 
-> > 
-> > > +
-> > > +       /* Set initial boot frequencies for power/perf PLLs */
-> > > +       clk_set_rate(pwrcl_alt_pll.clkr.hw.clk, 652800000);
-> > > +       clk_set_rate(perfcl_alt_pll.clkr.hw.clk, 652800000);
-> > > +       clk_set_rate(pwrcl_pll.clkr.hw.clk, 652800000);
-> > > +       clk_set_rate(perfcl_pll.clkr.hw.clk, 652800000);
-> > 
-> > We have assigned rates in DT for this.
-> 
-> I assumed that the clock driver can live without the OPP table and any cpufreq driver. Or do you mean adding this as parameters for the kryocc DT node?
-> 
-
-Yes I mean adding assigned rates to the kroycc DT node to setup PLLs to
-rates you want.
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index b995bfee734a..8bdef4920edc 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -102,6 +102,7 @@ DWC HDMI PHY
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-a83t-hdmi-phy
++    * allwinner,sun8i-h3-hdmi-phy
+   - reg: base address and size of memory-mapped region
+   - clocks: phandles to the clocks feeding the HDMI PHY
+     * bus: the HDMI PHY interface clock
+@@ -110,6 +111,9 @@ Required properties:
+   - resets: phandle to the reset controller driving the PHY
+   - reset-names: must be "phy"
+ 
++H3 HDMI PHY requires additional clock:
++  - pll-0: parent of phy clock
++
+ TV Encoder
+ ----------
+ 
+@@ -275,6 +279,7 @@ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-a83t-de2-mixer-0
+     * allwinner,sun8i-a83t-de2-mixer-1
++    * allwinner,sun8i-h3-de2-mixer-0
+     * allwinner,sun8i-v3s-de2-mixer
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+@@ -305,6 +310,7 @@ Required properties:
+     * allwinner,sun7i-a20-display-engine
+     * allwinner,sun8i-a33-display-engine
+     * allwinner,sun8i-a83t-display-engine
++    * allwinner,sun8i-h3-display-engine
+     * allwinner,sun8i-v3s-display-engine
+ 
+   - allwinner,pipelines: list of phandle to the display engine
+-- 
+2.16.2
