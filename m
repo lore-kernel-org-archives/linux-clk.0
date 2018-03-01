@@ -1,85 +1,78 @@
-Return-Path: <eajames@linux.vnet.ibm.com>
-From: Eddie James <eajames@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org, joel@jms.id.au, mturquette@baylibre.com,
-        sboyd@kernel.org, eajames@linux.vnet.ibm.com, mine260309@gmail.com,
-        ryan_chen@aspeedtech.com
-Subject: [PATCH v2 2/2] clk: aspeed: Prevent reset if clock is enabled
-Date: Thu,  8 Mar 2018 14:57:20 -0600
-In-Reply-To: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com>
-Message-Id: <1520542640-9185-3-git-send-email-eajames@linux.vnet.ibm.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 02/16] clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
+Date: Thu,  1 Mar 2018 22:34:28 +0100
+Message-Id: <20180301213442.16677-3-jernej.skrabec@siol.net>
+In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
+References: <20180301213442.16677-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to the Aspeed specification, the reset and enable sequence
-should be done when the clock is stopped. The specification doesn't
-define behavior if the reset is done while the clock is enabled.
+Although user manuals for H3 and H5 SoCs state that minimal rate
+supported by video PLL is around 30 MHz, it seems that in reality
+minimal rate is around 192 MHz.
 
->From testing on the AST2500, the LPC Controller has problems if the
-clock is reset while enabled.
+Experiments showed that any rate below 96 MHz doesn't produce any video
+output at all. Even at this frequency, stable output depends on right
+factors. For example, when N = 4 and M = 1, output is stable and when N
+= 8 and M = 2, it's not.
 
-Therefore, check whether the clock is enabled or not before performing
-the reset and enable sequence in the Aspeed clock driver.
+BSP clock driver suggest that minimum stable frequency is 192 MHz. That
+would also be in line with A64 SoC, which has similar periphery.
 
-Root-caused-by: Lei Yu <mine260309@gmail.com>
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+Set minimal video PLL rate for H3/H5 to 192 MHz.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/clk-aspeed.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 1687771..5eb50c3 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -205,6 +205,18 @@ struct aspeed_clk_soc_data {
- 	.calc_pll = aspeed_ast2400_calc_pll,
- };
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 29bc0566b776..b9f39078c0b2 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -69,17 +69,18 @@ static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+ 				       BIT(28),	/* lock */
+ 				       CLK_SET_RATE_UNGATE);
  
-+static int aspeed_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-+	u32 clk = BIT(gate->clock_idx);
-+	u32 enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
-+	u32 reg;
-+
-+	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
-+
-+	return ((reg & clk) == enval) ? 1 : 0;
-+}
-+
- static int aspeed_clk_enable(struct clk_hw *hw)
- {
- 	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
-@@ -215,6 +227,11 @@ static int aspeed_clk_enable(struct clk_hw *hw)
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
+-					"osc24M", 0x0010,
+-					8, 7,		/* N */
+-					0, 4,		/* M */
+-					BIT(24),	/* frac enable */
+-					BIT(25),	/* frac select */
+-					270000000,	/* frac rate 0 */
+-					297000000,	/* frac rate 1 */
+-					BIT(31),	/* gate */
+-					BIT(28),	/* lock */
+-					CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video_clk, "pll-video",
++					    "osc24M", 0x0010,
++					    192000000,	/* Minimum rate */
++					    8, 7,	/* N */
++					    0, 4,	/* M */
++					    BIT(24),	/* frac enable */
++					    BIT(25),	/* frac select */
++					    270000000,	/* frac rate 0 */
++					    297000000,	/* frac rate 1 */
++					    BIT(31),	/* gate */
++					    BIT(28),	/* lock */
++					    CLK_SET_RATE_UNGATE);
  
- 	spin_lock_irqsave(gate->lock, flags);
- 
-+	if (aspeed_clk_is_enabled(hw)) {
-+		spin_unlock_irqrestore(gate->lock, flags);
-+		return 0;
-+	}
-+
- 	if (gate->reset_idx >= 0) {
- 		/* Put IP in reset */
- 		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
-@@ -255,18 +272,6 @@ static void aspeed_clk_disable(struct clk_hw *hw)
- 	spin_unlock_irqrestore(gate->lock, flags);
- }
- 
--static int aspeed_clk_is_enabled(struct clk_hw *hw)
--{
--	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
--	u32 clk = BIT(gate->clock_idx);
--	u32 enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
--	u32 reg;
--
--	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
--
--	return ((reg & clk) == enval) ? 1 : 0;
--}
--
- static const struct clk_ops aspeed_clk_gate_ops = {
- 	.enable = aspeed_clk_enable,
- 	.disable = aspeed_clk_disable,
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+ 					"osc24M", 0x0018,
 -- 
-1.8.3.1
+2.16.2
