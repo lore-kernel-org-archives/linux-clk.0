@@ -1,188 +1,91 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 11/15] drm/sun4i: Add support for H3 HDMI PHY variant
-Date: Mon, 26 Feb 2018 17:24:13 +0100
-Message-ID: <5983773.Yp6r9qpA8a@jernej-laptop>
-In-Reply-To: <20180224214545.3740-12-jernej.skrabec@siol.net>
-References: <20180224214545.3740-1-jernej.skrabec@siol.net> <20180224214545.3740-12-jernej.skrabec@siol.net>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Thu, 1 Mar 2018 09:41:29 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, "thierry.reding@gmail.com"
+	<thierry.reding@gmail.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+Message-ID: <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
+ <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
+ <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
+ <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
+ <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
+ <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi all,
-
-Dne sobota, 24. februar 2018 ob 22:45:41 CET je Jernej Skrabec napisal(a):
-> While A83T HDMI PHY seems to be just customized Synopsys HDMI PHY, H3
-> HDMI PHY is completely custom PHY.
+On Wed, Feb 28, 2018 at 08:20:47PM +0300, Dmitry Osipenko wrote:
+> On 28.02.2018 17:14, Peter De Schrijver wrote:
+> > On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
+> >> On 28.02.2018 12:36, Peter De Schrijver wrote:
+> >>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
+> >>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
+> >>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+> >>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+> >>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
+> >>>>>>> which
+> >>>>>>> leaves it at some default rate of 500 kHz:
+> >>>>>>>
+> >>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+> >>>>>>> pll_u
+> >>>>>>>        pll_u                  3        3        0      500000      
+> >>>>>>>     0
+> >>>>>>>
+> >>>>>>> Of course this won't quite work leading to the following messages:
+> >>>>>>>
+> >>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+> >>>>>>> tegra-
+> >>>>>>> ehci
+> >>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+> >>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+> >>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+> >>>>>>> tegra-
+> >>>>>>> ehci
+> >>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+> >>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+> >>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
+> >>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+> >>>>>>> tegra-
+> >>>>>>> ehci
+> >>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+> >>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+> >>>>>>> tegra-
+> >>>>>>> ehci
+> >>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+> >>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+> >>>>>>>
+> >>>>>>> Fix this by actually allowing the rate also being set from within
+> >>>>>>> the Linux kernel.
+> >>>
+> >>> I think the best solution to this problem would be to make pll_u a fixed
+> >>> clock and enable it and program the rate if it's not enabled at boot.
+> >>
+> >> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
+> >> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
+> >> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
+> >> there.
+> >>
+> > 
+> > AFAIK we only use one rate ever?
 > 
-> However, they still have many things in common like clock and reset
-> setup, setting sync polarity and more.
+> IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
+> setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
 > 
-> Add support for H3 HDMI PHY variant.
-> 
-> While documentation exists for this PHY variant, it doesn't go in great
-> details. Because of that, almost all settings are copied from BSP linux
-> 4.4. Interestingly, those settings are slightly different to those found
-> in a older BSP with Linux 3.4. For now, no user visible difference was
-> found between them.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/sun4i/Makefile             |   1 +
->  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h      |   6 +
->  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c     | 263
-> ++++++++++++++++++++++++++++- drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c |
-> 130 ++++++++++++++
->  4 files changed, 397 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-> 
-[...]
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-> b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c new file mode 100644
-> index 000000000000..3c34ec5ff4af
-> --- /dev/null
-> +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-> @@ -0,0 +1,130 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (C) 2018 Jernej Skrabec <jernej.skrabec@siol.net>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +#include "sun8i_dw_hdmi.h"
-> +
-> +struct sun8i_phy_clk {
-> +	struct clk_hw		hw;
-> +	struct sun8i_hdmi_phy	*phy;
-> +};
-> +
-> +static inline struct sun8i_phy_clk *hw_to_phy_clk(struct clk_hw *hw)
-> +{
-> +	return container_of(hw, struct sun8i_phy_clk, hw);
-> +}
-> +
-> +static int sun8i_phy_clk_determine_rate(struct clk_hw *hw,
-> +					struct clk_rate_request *req)
-> +{
-> +	unsigned long rate = req->rate;
-> +	unsigned long best_rate = 0;
-> +	struct clk_hw *parent;
-> +	int best_div = 1;
-> +	int i;
-> +
-> +	parent = clk_hw_get_parent(hw);
-> +
-> +	for (i = 1; i <= 16; i++) {
-> +		unsigned long ideal = rate * i;
-> +		unsigned long rounded;
-> +
-> +		rounded = clk_hw_round_rate(parent, ideal);
-> +
-> +		if (rounded == ideal) {
-> +			best_rate = rounded;
-> +			best_div = i;
-> +			break;
-> +		}
-> +
-> +		if (abs(rate - rounded) < abs(rate - best_rate / best_div)) {
 
-Here is a bug. Above line should be:
-if (abs(rate - rounded / i) < abs(rate - best_rate / best_div)) {
+Indeed. And given that it's hw controlled anyway, I don't see why we can't make
+it a fixed clock and handle the init at kernel boot depending on what the
+bootloader has done.
 
-I guess this could solve the issue described in cover letter.
-
-Best regards,
-Jernej
-
-> +			best_rate = rounded;
-> +			best_div = i;
-> +		}
-> +	}
-> +
-> +	req->rate = best_rate / best_div;
-> +	req->best_parent_rate = best_rate;
-> +	req->best_parent_hw = parent;
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned long sun8i_phy_clk_recalc_rate(struct clk_hw *hw,
-> +					       unsigned long parent_rate)
-> +{
-> +	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
-> +	u32 reg;
-> +
-> +	regmap_read(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG, &reg);
-> +	reg = ((reg >> SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_SHIFT) &
-> +		SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK) + 1;
-> +
-> +	return parent_rate / reg;
-> +}
-> +
-> +static int sun8i_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				  unsigned long parent_rate)
-> +{
-> +	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
-> +	unsigned long best_rate = 0;
-> +	u8 best_m = 0, m;
-> +
-> +	for (m = 1; m <= 16; m++) {
-> +		unsigned long tmp_rate = parent_rate / m;
-> +
-> +		if (tmp_rate > rate)
-> +			continue;
-> +
-> +		if (!best_rate ||
-> +		    (rate - tmp_rate) < (rate - best_rate)) {
-> +			best_rate = tmp_rate;
-> +			best_m = m;
-> +		}
-> +	}
-> +
-> +	regmap_update_bits(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG,
-> +			   SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK,
-> +			   SUN8I_HDMI_PHY_PLL_CFG2_PREDIV(best_m));
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops sun8i_phy_clk_ops = {
-> +	.determine_rate	= sun8i_phy_clk_determine_rate,
-> +	.recalc_rate	= sun8i_phy_clk_recalc_rate,
-> +	.set_rate	= sun8i_phy_clk_set_rate,
-> +};
-> +
-> +int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev)
-> +{
-> +	struct clk_init_data init;
-> +	struct sun8i_phy_clk *priv;
-> +	const char *parents[1];
-> +
-> +	parents[0] = __clk_get_name(phy->clk_pll0);
-> +	if (!parents[0])
-> +		return -ENODEV;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	init.name = "hdmi-phy-clk";
-> +	init.ops = &sun8i_phy_clk_ops;
-> +	init.parent_names = parents;
-> +	init.num_parents = 1;
-> +	init.flags = CLK_SET_RATE_PARENT;
-> +
-> +	priv->phy = phy;
-> +	priv->hw.init = &init;
-> +
-> +	phy->clk_phy = devm_clk_register(dev, &priv->hw);
-> +	if (IS_ERR(phy->clk_phy))
-> +		return PTR_ERR(phy->clk_phy);
-> +
-> +	return 0;
-> +}
-> --
-> 2.16.2
+Peter.
