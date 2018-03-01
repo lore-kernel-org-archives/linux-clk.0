@@ -1,70 +1,98 @@
-Return-Path: <joel.stan@gmail.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20180222230451.15515-1-marcel@ziswiler.com>
+ <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
+ <1519686262.6374.3.camel@toradex.com>
+ <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
+ <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
+ <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
+ <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
+ <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
+ <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
+ <028b0ba5-33b9-d12e-77ba-aebbfa91a5fb@gmail.com>
+Message-ID: <0aa21b3e-0ace-33d5-31ec-ecd7bb36b1d0@gmail.com>
+Date: Thu, 1 Mar 2018 16:44:35 +0300
 MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <1520440570-25280-1-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1520440570-25280-1-git-send-email-eajames@linux.vnet.ibm.com>
-From: Joel Stanley <joel@jms.id.au>
-Date: Thu, 8 Mar 2018 14:12:48 +1030
-Message-ID: <CACPK8Xe5rVtB6hUo4xW9qSz-T+kehvXSRv5g1_6KOO=BYr8Qwg@mail.gmail.com>
-Subject: Re: [PATCH] clk: aspeed: Prevent reset if clock is enabled
-To: Eddie James <eajames@linux.vnet.ibm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org, Lei YU <mine260309@gmail.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <028b0ba5-33b9-d12e-77ba-aebbfa91a5fb@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Eddie,
-
-On Thu, Mar 8, 2018 at 3:06 AM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
-> According to the Aspeed specification, the reset and enable sequence
-> should be done when the clock is stopped. The specification doesn't
-> define behavior if the reset is done while the clock is enabled.
->
-> From testing on the AST2500, the LPC Controller has problems if the
-> clock is reset while enabled.
->
-> Therefore, check whether the clock is enabled or not before performing
-> the reset and enable sequence in the Aspeed clock driver.
->
-> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
-> ---
->  drivers/clk/clk-aspeed.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index 9f7f931..a13054d 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -212,6 +212,12 @@ static int aspeed_clk_enable(struct clk_hw *hw)
->         u32 clk = BIT(gate->clock_idx);
->         u32 rst = BIT(gate->reset_idx);
->         u32 enval;
-> +       u32 reg;
-> +
-> +       /* Only reset/enable/unreset if clock is stopped */
-> +       regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
-> +       if (!(reg & clk))
-> +               return 0;
-
-This doesn't generalise to all of the clocks, as some clocks use set
-to disable. Perhaps we could do something like this:
-
-       /* Only reset/enable/unreset if clock is stopped. The LPC clock
-on ast2500 has issues otherwise */
-       enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
-       regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
-       if ((reg & clk) == enval) {
-               spin_unlock_irqrestore(gate->lock, flags);
-               return 0;
-       }
-
-I think we should also do this operation under the lock.
-
-Please cc Ryan Chen <ryan_chen@aspeedtech.com> so he can confirm that
-this workaround is valid, and credit Lei who spent a lot of time
-investigating this issue. Perhaps "Root-caused-by".
-
-Cheers,
-
-Joel
+On 01.03.2018 16:19, Dmitry Osipenko wrote:
+> On 01.03.2018 10:41, Peter De Schrijver wrote:
+>> On Wed, Feb 28, 2018 at 08:20:47PM +0300, Dmitry Osipenko wrote:
+>>> On 28.02.2018 17:14, Peter De Schrijver wrote:
+>>>> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
+>>>>> On 28.02.2018 12:36, Peter De Schrijver wrote:
+>>>>>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
+>>>>>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
+>>>>>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
+>>>>>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
+>>>>>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
+>>>>>>>>>> which
+>>>>>>>>>> leaves it at some default rate of 500 kHz:
+>>>>>>>>>>
+>>>>>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
+>>>>>>>>>> pll_u
+>>>>>>>>>>        pll_u                  3        3        0      500000      
+>>>>>>>>>>     0
+>>>>>>>>>>
+>>>>>>>>>> Of course this won't quite work leading to the following messages:
+>>>>>>>>>>
+>>>>>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
+>>>>>>>>>> tegra-
+>>>>>>>>>> ehci
+>>>>>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
+>>>>>>>>>> tegra-
+>>>>>>>>>> ehci
+>>>>>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
+>>>>>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
+>>>>>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
+>>>>>>>>>> tegra-
+>>>>>>>>>> ehci
+>>>>>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
+>>>>>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
+>>>>>>>>>> tegra-
+>>>>>>>>>> ehci
+>>>>>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
+>>>>>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
+>>>>>>>>>>
+>>>>>>>>>> Fix this by actually allowing the rate also being set from within
+>>>>>>>>>> the Linux kernel.
+>>>>>>
+>>>>>> I think the best solution to this problem would be to make pll_u a fixed
+>>>>>> clock and enable it and program the rate if it's not enabled at boot.
+>>>>>
+>>>>> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
+>>>>> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
+>>>>> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
+>>>>> there.
+>>>>>
+>>>>
+>>>> AFAIK we only use one rate ever?
+>>>
+>>> IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
+>>> setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
+>>>
+>>
+>> Indeed. And given that it's hw controlled anyway, I don't see why we can't make
+>> it a fixed clock and handle the init at kernel boot depending on what the
+>> bootloader has done.
+> 
+> We can, I just don't think you can demand from Mark to do it. This patch is fine
+> on its own, everything else could be done later.
+I meant Marcel.
