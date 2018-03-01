@@ -1,47 +1,65 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	alexandre.belloni@bootlin.com
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-clk@vger.kernel.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH v6] clk: lpc32xx: Set name of regmap_config
-Date: Mon, 19 Mar 2018 11:58:54 +0800
-Message-Id: <20180319035854.3265-1-jeffy.chen@rock-chips.com>
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 03/16] clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
+Date: Thu,  1 Mar 2018 22:34:29 +0100
+Message-Id: <20180301213442.16677-4-jernej.skrabec@siol.net>
+In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
+References: <20180301213442.16677-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-We are now allowing to register debugfs without a valid device, and not
-having a valid name will end up using "dummy*" to create debugfs dir.
+Some units have to be able to set it's own clock precisely to work
+correctly. Allow them to do so by adding CLK_SET_RATE_PARENT flag.
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+Add this flag to DE, TCON and HDMI clocks.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Changes in v6:
-Modify name as Vladimir suggested.
-
- drivers/clk/nxp/clk-lpc32xx.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index f5d815f577e0..5eeecee17b69 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -67,6 +67,7 @@
- #define LPC32XX_USB_CLK_STS		0xF8
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index b9f39078c0b2..77ed0b0ba681 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -452,11 +452,13 @@ static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
  
- static struct regmap_config lpc32xx_scb_regmap_config = {
-+	.name = "scb",
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
+ static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
+-				 0x104, 0, 4, 24, 3, BIT(31), 0);
++				 0x104, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static const char * const tcon_parents[] = { "pll-video" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(tcon_clk, "tcon", tcon_parents,
+-				 0x118, 0, 4, 24, 3, BIT(31), 0);
++				 0x118, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static const char * const tve_parents[] = { "pll-de", "pll-periph1" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(tve_clk, "tve", tve_parents,
+@@ -487,7 +489,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+ 
+ static const char * const hdmi_parents[] = { "pll-video" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+-				 0x150, 0, 4, 24, 2, BIT(31), 0);
++				 0x150, 0, 4, 24, 2, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
+ 		      0x154, BIT(31), 0);
 -- 
-2.11.0
+2.16.2
