@@ -1,63 +1,34 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Bjorn Andersson <bjorn.andersson@linaro.org>,
- David Lechner <david@lechnology.com>, Kevin Hilman <khilman@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Ohad Ben-Cohen <ohad@wizery.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Sekhar Nori <nsekhar@ti.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
-Cc: devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20180323130455.11470-1-brgl@bgdev.pl>
-Message-ID: <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the reset
- framework
-Date: Fri, 23 Mar 2018 09:49:47 -0700
+In-Reply-To: <fb3b26e8-0102-122b-1386-68a661139706@st.com>
+References: <1516105859-3525-1-git-send-email-patrice.chotard@st.com>
+ <1516105859-3525-15-git-send-email-patrice.chotard@st.com> <fb3b26e8-0102-122b-1386-68a661139706@st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 1 Mar 2018 10:12:30 +0100
+Message-ID: <CACRpkdbd-Zz-JRC-_OfKtx28OvDcf0af93pqraP=XPpAN-geVg@mail.gmail.com>
+Subject: Re: [PATCH v2 14/15] clk: stm32: Add clk entry for SDMMC2 on stm32F769
+To: Patrice CHOTARD <patrice.chotard@st.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Alexandre TORGUE <alexandre.torgue@st.com>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> =
+On Mon, Feb 26, 2018 at 9:41 AM, Patrice CHOTARD <patrice.chotard@st.com> wrote:
 
-> This series converts the only user of the handcoded, mach-specific reset
-> routines in the davinci platform to using the reset framework.
-> =
+> Hi Stephen, Michael
+>
+> It's a gentle reminder as this patch is present on mailing list and
+> acked-by since 01/12/2018
 
-> Patch 1 modifies the way lookup entries are registered with the reset
-> framework.
-> =
+You need Stephen's new kernel.org mail address to reach him.
+(Added on TO:)
 
-> Patches 2-4 add necessary lookups/DT-properties.
-> =
-
-> Patches 5-7 convert the davinci-rproc driver to the reset framework.
-> =
-
-> Patch 8 removes now dead code.
-> =
-
-> Philipp: it turned out that it's indeed better to use the reset
-> controller's device name for the entry lookup.
-> =
-
-> Tested both in DT and legacy modes by booting the examples from
-> ti-ipc-rtos recipe in meta-ti.
-> =
-
-> This series applies on top of David Lechner's common-clk-v9 branch[1]
-> with Philipp Zabel's reset/next branch[2] pulled in.
-> =
-
-> It can be found in my github tree as well[3].
-> =
-
-
-What's the merge strategy for the rest of the patches? I should apply
-the clk ones after the next -rc1?
+Yours,
+Linus Walleij
