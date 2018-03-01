@@ -1,99 +1,87 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sun, 18 Mar 2018 07:47:53 -0500
-From: Rob Herring <robh@kernel.org>
-To: gabriel.fernandez@st.com
-Cc: sboyd@kernel.org, Mark Rutland <mark.rutland@arm.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Thu, 1 Mar 2018 09:23:47 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
+	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, gabriel.fernandez.st@gmail.com,
-	olivier.bideau@st.com, Loic PALLARDY <loic.pallardy@st.com>,
-	benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: Re: [PATCH RESEND 2/2] clk: stm32: Add DSI clock for STM32F469 Board
-Message-ID: <20180318124753.nbjbs5deslihl7ir@rob-hp-laptop>
-References: <1520578651-28849-1-git-send-email-gabriel.fernandez@st.com>
- <1520578651-28849-3-git-send-email-gabriel.fernandez@st.com>
+	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 00/16] Implement H3/H5 HDMI driver
+Message-ID: <20180301082347.go4l7332kjoq5dmm@flea>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+ <2235934.0TF68fluGz@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1520578651-28849-3-git-send-email-gabriel.fernandez@st.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bms6j7mrz2uzijua"
+In-Reply-To: <2235934.0TF68fluGz@jernej-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 09, 2018 at 07:57:31AM +0100, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch adds DSI clock for STM32F469 board
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  drivers/clk/clk-stm32f4.c                 | 11 ++++++++++-
->  include/dt-bindings/clock/stm32fx-clock.h |  3 ++-
->  2 files changed, 12 insertions(+), 2 deletions(-)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--bms6j7mrz2uzijua
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> index 96c6b6b..d15bae6 100644
-> --- a/drivers/clk/clk-stm32f4.c
-> +++ b/drivers/clk/clk-stm32f4.c
-> @@ -521,7 +521,7 @@ struct stm32f4_pll_data {
->  };
->  
->  static const struct stm32f4_pll_data stm32f469_pll[MAX_PLL_DIV] = {
-> -	{ PLL,	   50, { "pll",	     "pll-q",    NULL	    } },
-> +	{ PLL,	   50, { "pll",	     "pll-q",    "pll-r"    } },
->  	{ PLL_I2S, 50, { "plli2s-p", "plli2s-q", "plli2s-r" } },
->  	{ PLL_SAI, 50, { "pllsai-p", "pllsai-q", "pllsai-r" } },
->  };
-> @@ -1047,6 +1047,8 @@ static struct clk_hw *stm32_register_cclk(struct device *dev, const char *name,
->  	"no-clock", "lse", "lsi", "hse-rtc"
->  };
->  
-> +static const char *dsi_parent[2] = { NULL, "pll-r" };
-> +
->  static const char *lcd_parent[1] = { "pllsai-r-div" };
->  
->  static const char *i2s_parents[2] = { "plli2s-r", NULL };
-> @@ -1156,6 +1158,12 @@ struct stm32f4_clk_data {
->  		NO_GATE, 0,
->  		0
->  	},
-> +	{
-> +		CLK_F469_DSI, "dsi", dsi_parent, ARRAY_SIZE(dsi_parent),
-> +		STM32F4_RCC_DCKCFGR, 29, 1,
-> +		STM32F4_RCC_APB2ENR, 27,
-> +		CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT
-> +	},
->  };
->  
->  static const struct stm32_aux_clk stm32f746_aux_clk[] = {
-> @@ -1450,6 +1458,7 @@ static void __init stm32f4_rcc_init(struct device_node *np)
->  	stm32f4_gate_map = data->gates_map;
->  
->  	hse_clk = of_clk_get_parent_name(np, 0);
-> +	dsi_parent[0] = hse_clk;
->  
->  	i2s_in_clk = of_clk_get_parent_name(np, 1);
->  
-> diff --git a/include/dt-bindings/clock/stm32fx-clock.h b/include/dt-bindings/clock/stm32fx-clock.h
-> index 4d523b0..58d8b51 100644
-> --- a/include/dt-bindings/clock/stm32fx-clock.h
-> +++ b/include/dt-bindings/clock/stm32fx-clock.h
-> @@ -35,8 +35,9 @@
->  #define CLK_SAIQ_PDIV		13
->  #define CLK_HSI			14
->  #define CLK_SYSCLK		15
-> +#define CLK_F469_DSI		16
->  
-> -#define END_PRIMARY_CLK		16
-> +#define END_PRIMARY_CLK		17
->  
->  #define CLK_HDMI_CEC		16
->  #define CLK_SPDIF		17
-> -- 
-> 1.9.1
-> 
+Hi,
+
+On Wed, Feb 28, 2018 at 10:23:35PM +0100, Jernej =C5=A0krabec wrote:
+> Dne torek, 27. februar 2018 ob 23:26:45 CET je Jernej Skrabec napisal(a):
+> > This series implements H3/H5 HDMI driver. It was tested on OrangePi 2 (=
+H3),
+> > OrangePi Plus2e (H3) and OrangePi PC2 (H5) with many resolutions and it
+> > works well. Bug, which prevented correct operation for some resolutions,
+> > is also fixed.
+> >=20
+> > Code is based on linux-next, next-20180226 tag.
+>=20
+> Today I tried on this series on  next-20180228, but resolution switching=
+=20
+> doesn't really work. The reason for this is use of clk_set_rate_exclusive=
+() in=20
+> sun4i_tcon1_mode_set(). If I revert it to ordinary clk_set_rate() it work=
+s ok.=20
+> I investigated a bit and it seems that clocks stays at first set even if =
+tcon=20
+> (the owner of exclusive lock) request the new one. Example:
+>=20
+> [   69.325732] TCON clk wanted: 148500000
+> [   69.325740] TCON real clk: 69272728
+> [   69.325770] HDMI clk wanted: 148500000
+> [   69.325773] HDMI real clk: 138545455
+> [   69.325815] HDMI PHY clk wanted: 148500000
+> [   69.325819] HDMI PHY real clk: 138545454
+>=20
+> Is there anything I can do to help debug this?
+
+I don't recall if disable hook is called during a mode set, but if it
+is, you can add a call to clk_rate_exclusive_put.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--bms6j7mrz2uzijua
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqXuJIACgkQ0rTAlCFN
+r3RkBRAAmbT74UhBx1jf6GnGS1Bu4/2UWpgjR2yq49jHCAeIOvqS53Y9H5NwiJcX
+gxpNhfatCOVOohJudP0tVu0onlGJySfz3LkexmruDgu8dL/2bTPgerBPDLybg03f
+jWpJSSmnwUFPPQb8uhEMExiE71O/PL4bYlaxjc/aXK/mq3YhD2txTah8qM0mPLZq
+CWICp0mfjVyKAwFhNgdGLaXNeCPeAE+r5FRKCRAwX7fHw6G2iyzbQi3ZqQO5poOl
+0DZCcsf6IQZC/Ym7lZ0CLwv2xDWEUhXtvora/mRMo42iYzS3a0ldUZg2/xbHy0gv
+6q/GHx2sthrcxTyjdsGarIS/oi0fgOZN6D5dl/JOJUrNn8ZYVIBY/B0cOAESZisf
+IeP2SXa0nWlQzTGX+gNrdeudcdhJz1wUzv1qmUuhAirpNxbxrAk+U7pECU8nLRNZ
+Qo9GeruHmOIGIc16XHbWz6rdhm1Yu4Y8YR3jweMJlo2wvW71B4gStKXU32OSW6Av
+L/6kBCawsOdctuBG6hmf/Rfod9D7iE2F/9BBdPeFUSsMsinub1cUxsEDaobP2VXX
+VgK8tHoaq4vfx5l6NbUj7f99j2z8s37hjFH3yhkLvBRnF9VSSZPzXuC6pSTO+WDn
+c0WFYqoUKSHrkblavABDSGTVntUquc2yuKKGXLW985owcTDq5u4=
+=4IPA
+-----END PGP SIGNATURE-----
+
+--bms6j7mrz2uzijua--
