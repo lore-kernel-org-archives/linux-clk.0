@@ -1,47 +1,59 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <bgolaszewski@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <1521781901-20466-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1521781901-20466-1-git-send-email-hayashi.kunihiko@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 23 Mar 2018 19:16:46 +0900
-Message-ID: <CAK7LNARPD5_9xWLkWZyFQHN2WwtyBtQsnZYggbvyWEg+qtXCWg@mail.gmail.com>
-Subject: Re: [PATCH] clk: uniphier: add ethernet clock control support for PXs3
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <93696fc8-bb93-aa20-3506-3d7216c17cd2@lechnology.com>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+ <1519071723-31790-11-git-send-email-david@lechnology.com> <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
+ <93696fc8-bb93-aa20-3506-3d7216c17cd2@lechnology.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Thu, 1 Mar 2018 09:36:14 +0100
+Message-ID: <CAMpxmJVpMgikNfB4HgNCs+ep+EOHqH5bthiW82LsnDqzLfE5mg@mail.gmail.com>
+Subject: Re: [PATCH v7 10/42] clk: davinci: New driver for davinci PSC clocks
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
+	arm-soc <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-23 14:11 GMT+09:00 Kunihiko Hayashi <hayashi.kunihiko@socionext.com>:
-> Add clock control for ethernet controller on PXs3 SoC.
+2018-02-28 22:40 GMT+01:00 David Lechner <david@lechnology.com>:
+> On 02/28/2018 06:38 AM, Bartosz Golaszewski wrote:
+>>
+>>
+>> I think I found the reason for the strange crashes we were
+>> experiencing (emac core->name being NULL) thanks to Sekhar who pointed
+>> me in the right direction.
+>>
+>> The mdio driver fails to probe with v7 due to the supplied clock rate
+>> being wrong. Before failing we register the emac clock with
+>> pm_clk_add_clk(). When clock_ops puts the clock, it decreases the
+>> reference count of the clock, but we never actually increased it in
+>> the first place in the line above. The core clock code then destroys
+>> the associated clk_core structure. When the next user comes around (in
+>> our case the clk debug functions) the system crashes.
+>>
+>> I believe there to be two issues: one is with v7 - we need to increase
+>> the clock reference count in davinci_psc_genpd_attach_dev().
+>>
+>> Second is the error path in the clock framework - we should remove the
+>> destroyed clk_core from the debug list, which is not being done now.
+>>
+>> Why we even need to track the refcount of clk_core is a mistery for me
+>> though. Stephen, Mike?
+>>
+>> Best regards,
+>> Bartosz Golaszewski
 >
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
->  drivers/clk/uniphier/clk-uniphier-sys.c | 2 ++
->  1 file changed, 2 insertions(+)
 >
-> diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-> index d244e72..faadd9b 100644
-> --- a/drivers/clk/uniphier/clk-uniphier-sys.c
-> +++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-> @@ -233,6 +233,8 @@ const struct uniphier_clk_data uniphier_pxs3_sys_clk_data[] = {
->         UNIPHIER_LD20_SYS_CLK_SD,
->         UNIPHIER_LD11_SYS_CLK_NAND(2),
->         UNIPHIER_LD11_SYS_CLK_EMMC(4),
-> +       UNIPHIER_CLK_GATE("ether0", 6, NULL, 0x210c, 9),
-> +       UNIPHIER_CLK_GATE("ether1", 7, NULL, 0x210c, 10),
->         UNIPHIER_CLK_GATE("usb30", 12, NULL, 0x210c, 4),        /* =GIO0 */
->         UNIPHIER_CLK_GATE("usb31-0", 13, NULL, 0x210c, 5),      /* =GIO1 */
->         UNIPHIER_CLK_GATE("usb31-1", 14, NULL, 0x210c, 6),      /* =GIO1-1 */
-> --
+> Great find. I figured it had to be something like this, but I wasn't
+> able to reproduce the problem yet.
+>
+> I suppose it is time to spin up a v8 with some fixes.
 
+I still don't know why the mdio clock rate is much lower than in
+mainline though. Any ideas?
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks,
+Bart
