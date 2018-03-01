@@ -1,98 +1,75 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <alexandre.belloni@bootlin.com>
+Date: Thu, 1 Mar 2018 10:59:44 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Philipp Rossak <embed3d@gmail.com>
+Cc: wens@csie.org, a.zummo@towertech.it, maxime.ripard@bootlin.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+	linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4] rtc: ac100: Fix ac100 determine rate bug
+Message-ID: <20180301095944.GT1479@piout.net>
+References: <20180226211901.9805-1-embed3d@gmail.com>
 MIME-Version: 1.0
-To: Maciej Purski <m.purski@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <f13fb12b-54e6-104b-4ec0-192d1bb72cc8@samsung.com>
-Cc: David Airlie <airlied@linux.ie>, Michael Turquette <mturquette@baylibre.com>,
- Kamil Debski <kamil@wypas.org>, Andrzej Hajda <a.hajda@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Thibault Saunier <thibault.saunier@osg.samsung.com>,
- Joonyoung Shim <jy0922.shim@samsung.com>,
- Russell King <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk@kernel.org>,
- Javier Martinez Canillas <javier@osg.samsung.com>,
- Kukjin Kim <kgene@kernel.org>, Hoegeun Kwon <hoegeun.kwon@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Inki Dae <inki.dae@samsung.com>, Jeongtae Park <jtp.park@samsung.com>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Seung-Woo Kim <sw0312.kim@samsung.com>, Hans Verkuil <hansverk@cisco.com>,
- Kyungmin Park <kyungmin.park@samsung.com>
-References: <1519055046-2399-1-git-send-email-m.purski@samsung.com>
- <CGME20180219154456eucas1p15f4073beaf61312238f142f217a8bb3c@eucas1p1.samsung.com>
- <1519055046-2399-2-git-send-email-m.purski@samsung.com>
- <b67b5043-f5e5-826a-f0b8-f7cf722c61e6@arm.com>
- <f13fb12b-54e6-104b-4ec0-192d1bb72cc8@samsung.com>
-Message-ID: <152115450981.111154.2342657732967302796@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/8] clk: Add clk_bulk_alloc functions
-Date: Thu, 15 Mar 2018 15:55:09 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180226211901.9805-1-embed3d@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Marek Szyprowski (2018-02-20 01:36:03)
-> Hi Robin,
-> =
+On 26/02/2018 at 22:19:01 +0100, Philipp Rossak wrote:
+> This patch fixes a bug, that prevents the Allwinner A83T and the A80
+> from a successful boot.
+> 
+> The bug is there since v4.16-rc1 and appeared after the clk branch was
+> merged.
+> 
+> You can find the shortend trace below:
+> 
+> Unable to handle kernel NULL pointer dereference at virtual address
+> 00000000
+> pgd = (ptrval)
+> [00000000] *pgd=00000000
+> Internal error: Oops: 5 [#1] SMP ARM
+> Modules linked in:
+> CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
+> Hardware name: Allwinner sun8i Family
+> Workqueue: events deferred_probe_work_func
+> PC is at clk_hw_get_rate+0x0/0x34
+> LR is at ac100_clkout_determine_rate+0x48/0x19c
+> 
+> [ ... ]
+> 
+> (clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
+> (ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
+> (clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
+> (clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
+> (of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
+> 
+> To fix that bug, we first check if the return of the
+> clk_hw_get_parent_by_index is non zero. If it is zero we skip that
+> clock parent.
+> 
+> The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
+> 
+> Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
+> 
+> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+> ---
+> 
+> Changes in v4:
+> 	* add more information to the comment
+> Changes in v3:
+> 	* add information when the bug appeared 
+> 	* make the comment more clear
+> Changes in v2:
+> 	* add tag Fixes: ... to commit message
+> 	* add comment to if statement why we are doing this check
+> 
+>  drivers/rtc/rtc-ac100.c | 24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
+> 
+Applied, thanks.
 
-> On 2018-02-19 17:29, Robin Murphy wrote:
-> >
-> > Seeing how every subsequent patch ends up with the roughly this same =
-
-> > stanza:
-> >
-> > =C2=A0=C2=A0=C2=A0=C2=A0x =3D devm_clk_bulk_alloc(dev, num, names);
-> > =C2=A0=C2=A0=C2=A0=C2=A0if (IS_ERR(x)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return PTR_ERR(x);
-> > =C2=A0=C2=A0=C2=A0=C2=A0ret =3D devm_clk_bulk_get(dev, x, num);
-> >
-> > I wonder if it might be better to simply implement:
-> >
-> > =C2=A0=C2=A0=C2=A0=C2=A0int devm_clk_bulk_alloc_get(dev, &x, num, names)
-> >
-> > that does the whole lot in one go, and let drivers that want to do =
-
-> > more fiddly things continue to open-code the allocation.
-> >
-> > But perhaps that's an abstraction too far... I'm not all that familiar =
-
-> > with the lie of the land here.
-> =
-
-> Hmmm. This patchset clearly shows, that it would be much simpler if we
-> get rid of clk_bulk_data structure at all and let clk_bulk_* functions
-> to operate on struct clk *array[]. Typically the list of clock names
-> is already in some kind of array (taken from driver data or statically
-> embedded into driver), so there is little benefit from duplicating it
-> in clk_bulk_data. Sadly, I missed clk_bulk_* api discussion and maybe
-> there are other benefits from this approach.
-> =
-
-> If not, I suggest simplifying clk_bulk_* api by dropping clk_bulk_data
-> structure and switching to clock ptr array:
-> =
-
-> int clk_bulk_get(struct device *dev, int num_clock, struct clk *clocks[],
->  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=
-=A0=C2=A0 const char *clk_names[]);
-> int clk_bulk_prepare(int num_clks, struct clk *clks[]);
-> int clk_bulk_enable(int num_clks, struct clk *clks[]);
-> ...
-> =
-
-
-If you have an array of pointers to names of clks then we can put the
-struct clk pointers adjacent to them at the same time. I suppose the
-problem there is that some drivers want to mark that array of pointers
-to names as const. And then we can't update the clk pointers next to
-them.
-
-This is the same design that regulators has done so that's why it's
-written like this for clks. Honestly, we're talking about a handful of
-pointers here so I'm not sure it really matters much. Just duplicate the
-pointer and be done if you want to mark the array of names as const or
-have your const 'setup' structure point to the bulk_data array that you
-define statically non-const somewhere globally.
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
