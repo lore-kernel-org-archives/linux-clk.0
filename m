@@ -1,133 +1,95 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@free-electrons.com,
+	wens@csie.org,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
 	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	linux-clk@vger.kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: jernej.skrabec@siol.net,
+	dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v4 05/14] clk: qcom: cpu-8996: Add support to switch to alternate PLL
-Date: Fri, 30 Mar 2018 00:26:38 +0300
-Message-Id: <1522358807-10413-6-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+	linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH v3 00/16] Implement H3/H5 HDMI driver
+Date: Thu,  1 Mar 2018 22:34:26 +0100
+Message-Id: <20180301213442.16677-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+This series implements H3/H5 HDMI driver. It was tested on OrangePi 2 (H3),
+OrangePi Plus2e (H3) and OrangePi PC2 (H5) with many resolutions and it
+works well.
 
-Each of the CPU clusters on msm8996 are powered via a primary
-PLL and a secondary PLL. The primary PLL is what drives the
-CPU clk, except for times when we are reprogramming the PLL
-itself, when we temporarily switch to an alternate PLL.
-Use clock rate change notifiers to support this.
+Code is based on linux-next, next-20180228 tag.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/qcom/clk-cpu-8996.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Best regards,
+Jernej
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index f096410..12585b1 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -62,6 +62,7 @@
-  * detect voltage droops. We do not add support for ACD as yet.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -188,10 +189,14 @@ struct clk_cpu_8996_mux {
- 	u32	reg;
- 	u8	shift;
- 	u8	width;
-+	struct notifier_block nb;
- 	struct clk_hw	*pll;
- 	struct clk_regmap clkr;
- };
- 
-+#define to_clk_cpu_8996_mux_nb(_nb) \
-+	container_of(_nb, struct clk_cpu_8996_mux, nb)
-+
- static inline
- struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
- {
-@@ -237,6 +242,26 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return 0;
- }
- 
-+int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			void *data)
-+{
-+	int ret;
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+
-+	switch (event) {
-+	case PRE_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
-+		break;
-+	case POST_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		break;
-+	default:
-+		ret = 0;
-+		break;
-+	}
-+
-+	return notifier_from_errno(ret);
-+};
- const struct clk_ops clk_cpu_8996_mux_ops = {
- 	.set_parent = clk_cpu_8996_mux_set_parent,
- 	.get_parent = clk_cpu_8996_mux_get_parent,
-@@ -280,6 +305,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
- 		.parent_names = (const char *[]){
-@@ -299,6 +325,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
- 		.parent_names = (const char *[]){
-@@ -357,6 +384,12 @@ struct clk_regmap *clks[] = {
- 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
- 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
- 
-+	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
-+
- 	return ret;
- }
- 
+Changes in v3:
+- Removed TCON patch to skip LVDS procesing
+- Added TCON patch to release exclusive clock lock
+- Minimal clock rate is now returned immediately in round_rate for NM PLLs
+
+Changes in v2:
+- Fixed build warning on arm64
+- Fixed condition in determine_rate function in HDMI PHY clock driver
+- Added defines for polarity settings in HDMI PHY
+- Added patch to skip LVDS code path altogether if TCON doesn't support it.
+- round_rate for NM PLLs now rounds to minimal rate if requested rate is
+  lower.
+- set_rate for NM PLLs doesn't fail if requested rate is lower than minimal
+  (round_rate is called before which already guarantees that rate is not
+   lower than minimal).
+
+Jernej Skrabec (16):
+  clk: sunxi-ng: Add check for minimal rate to NM PLLs
+  clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
+  clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
+  clk: sunxi-ng: h3: h5: export CLK_PLL_VIDEO
+  dt-bindings: display: sun4i-drm: Add compatibles for H3 HDMI pipeline
+  drm/sun4i: Release exclusive clock lock when disabling TCON
+  drm/sun4i: Add support for H3 display engine
+  drm/sun4i: Add support for H3 mixer 0
+  drm/sun4i: Fix polarity configuration for DW HDMI PHY
+  drm/sun4i: Add support for variants to DW HDMI PHY
+  drm/sun4i: Move and expand DW HDMI PHY register macros
+  drm/sun4i: Add support for H3 HDMI PHY variant
+  drm/sun4i: Allow building on arm64
+  ARM: dts: sunxi: h3/h5: Add HDMI pipeline
+  ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
+  ARM64: dts: sun50i: h5: Enable HDMI output on H5 boards
+
+ .../bindings/display/sunxi/sun4i-drm.txt           |   6 +
+ arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    |  25 ++
+ arch/arm/boot/dts/sun8i-h3-beelink-x2.dts          |  25 ++
+ arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts |  25 ++
+ arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts           |  25 ++
+ arch/arm/boot/dts/sun8i-h3-orangepi-2.dts          |  25 ++
+ arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       |  25 ++
+ arch/arm/boot/dts/sun8i-h3-orangepi-one.dts        |  24 ++
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  25 ++
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 108 ++++++
+ .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  |  25 ++
+ .../dts/allwinner/sun50i-h5-orangepi-prime.dts     |  25 ++
+ .../allwinner/sun50i-h5-orangepi-zero-plus2.dts    |  25 ++
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |  32 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |   4 +-
+ drivers/clk/sunxi-ng/ccu_nm.c                      |   7 +
+ drivers/clk/sunxi-ng/ccu_nm.h                      |  27 ++
+ drivers/gpu/drm/sun4i/Kconfig                      |   2 +-
+ drivers/gpu/drm/sun4i/Makefile                     |   1 +
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |   1 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   6 +-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              | 157 ++++++++-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             | 369 ++++++++++++++++++---
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c         | 132 ++++++++
+ drivers/gpu/drm/sun4i/sun8i_mixer.c                |  12 +
+ include/dt-bindings/clock/sun8i-h3-ccu.h           |   2 +
+ 26 files changed, 1070 insertions(+), 70 deletions(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+
 -- 
-1.9.1
+2.16.2
