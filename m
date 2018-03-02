@@ -1,204 +1,89 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	hdegoede@redhat.com,
-	b.zolnierkie@samsung.com,
-	linux@armlinux.org.uk,
-	linux-fbdev@vger.kernel.org,
-	linux-imx@nxp.com,
-	sboyd@kernel.org,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH V2 2/4] clk: add new APIs to operate on all available clocks
-Date: Wed, 21 Mar 2018 11:19:49 +0800
-Message-Id: <1521602391-30356-3-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
-References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Fri, 2 Mar 2018 09:12:36 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
+	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 06/16] drm/sun4i: Don't process LVDS if TCON doesn't
+ support it
+Message-ID: <20180302081236.zlt52z6jjsglzk3i@flea.lan>
+References: <20180227222701.9716-1-jernej.skrabec@siol.net>
+ <20180227222701.9716-7-jernej.skrabec@siol.net>
+ <20180228073608.r2zd3qkiudm2uarm@flea>
+ <5333678.QYsGi30oEL@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uk6tcwyktkcpl2dk"
+In-Reply-To: <5333678.QYsGi30oEL@jernej-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch introduces of_clk_bulk_get_all and clk_bulk_x_all APIs
-to users who just want to handle all available clocks from device tree
-without need to know the detailed clock information likes clock numbers
-and names. This is useful in writing some generic drivers to handle clock
-part.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-v1->v2:
- * make of_clk_bulk_get_all private
- * add clk_bulk_get/put_all
----
- drivers/clk/clk-bulk.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h    | 42 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 98 insertions(+), 1 deletion(-)
+--uk6tcwyktkcpl2dk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 4b357b2..3293c6b 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -17,9 +17,11 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/export.h>
- #include <linux/of.h>
-+#include <linux/slab.h>
- 
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
- static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-@@ -50,6 +52,38 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
- 	return ret;
- }
- EXPORT_SYMBOL(of_clk_bulk_get);
-+
-+static int __must_check of_clk_bulk_get_all(struct device_node *np,
-+					    struct clk_bulk_data **clks)
-+{
-+	struct clk_bulk_data *clk_bulk;
-+	int num_clks;
-+	int ret;
-+
-+	num_clks = of_clk_get_parent_count(np);
-+	if (!num_clks)
-+		return 0;
-+
-+	clk_bulk = kcalloc(num_clks, sizeof(*clk_bulk), GFP_KERNEL);
-+	if (!clk_bulk)
-+		return -ENOMEM;
-+
-+	ret = of_clk_bulk_get(np, num_clks, clk_bulk);
-+	if (ret) {
-+		kfree(clk_bulk);
-+		return ret;
-+	}
-+
-+	*clks = clk_bulk;
-+
-+	return num_clks;
-+}
-+#else
-+static int __must_check of_clk_bulk_get_all(struct device_node *np,
-+					    struct clk_bulk_data **clks)
-+{
-+	return -ENOENT;
-+}
- #endif
- 
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
-@@ -90,6 +124,29 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
- }
- EXPORT_SYMBOL(clk_bulk_get);
- 
-+void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks)
-+{
-+	if (IS_ERR_OR_NULL(clks))
-+		return;
-+
-+	clk_bulk_put(num_clks, clks);
-+
-+	kfree(clks);
-+}
-+EXPORT_SYMBOL(clk_bulk_put_all);
-+
-+int __must_check clk_bulk_get_all(struct device *dev,
-+				  struct clk_bulk_data **clks)
-+{
-+	struct device_node *np = dev_of_node(dev);
-+
-+	if (!np)
-+		return 0;
-+
-+	return of_clk_bulk_get_all(np, clks);
-+}
-+EXPORT_SYMBOL(clk_bulk_get_all);
-+
- #ifdef CONFIG_HAVE_CLK_PREPARE
- 
- /**
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 0dbd088..a76fdff 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -279,7 +279,26 @@ struct clk *clk_get(struct device *dev, const char *id);
-  */
- int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 			      struct clk_bulk_data *clks);
--
-+/**
-+ * clk_bulk_get_all - lookup and obtain all available references to clock
-+ *		      producer.
-+ * @dev: device for clock "consumer"
-+ * @clks: pointer to the clk_bulk_data table of consumer
-+ *
-+ * This helper function allows drivers to get all clk consumers in one
-+ * operation. If any of the clk cannot be acquired then any clks
-+ * that were obtained will be freed before returning to the caller.
-+ *
-+ * Returns a positive value for the number of clocks obtained while the
-+ * clock references are stored in the clk_bulk_data table in @clks field.
-+ * Returns 0 if there're none and a negative value if something failed.
-+ *
-+ * Drivers must assume that the clock source is not enabled.
-+ *
-+ * clk_bulk_get should not be called from within interrupt context.
-+ */
-+int __must_check clk_bulk_get_all(struct device *dev,
-+				  struct clk_bulk_data **clks);
- /**
-  * devm_clk_bulk_get - managed get multiple clk consumers
-  * @dev: device for clock "consumer"
-@@ -455,6 +474,19 @@ void clk_put(struct clk *clk);
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks);
- 
- /**
-+ * clk_bulk_put_all - "free" all the clock source
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table of consumer
-+ *
-+ * Note: drivers must ensure that all clk_bulk_enable calls made on this
-+ * clock source are balanced by clk_bulk_disable calls prior to calling
-+ * this function.
-+ *
-+ * clk_bulk_put_all should not be called from within interrupt context.
-+ */
-+void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks);
-+
-+/**
-  * devm_clk_put	- "free" a managed clock source
-  * @dev: device used to acquire the clock
-  * @clk: clock source acquired with devm_clk_get()
-@@ -609,6 +641,12 @@ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 	return 0;
- }
- 
-+static inline int __must_check clk_bulk_get_all(struct device *dev,
-+					 struct clk_bulk_data **clks)
-+{
-+	return 0;
-+}
-+
- static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- {
- 	return NULL;
-@@ -630,6 +668,8 @@ static inline void clk_put(struct clk *clk) {}
- 
- static inline void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) {}
- 
-+static inline void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks) {}
-+
- static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
- 
- 
--- 
-2.7.4
+Hi,
+
+On Wed, Feb 28, 2018 at 10:43:30PM +0100, Jernej =C5=A0krabec wrote:
+> Dne sreda, 28. februar 2018 ob 08:36:08 CET je Maxime Ripard napisal(a):
+> > On Tue, Feb 27, 2018 at 11:26:51PM +0100, Jernej Skrabec wrote:
+> > > TCON checks for LVDS properties even if it doesn't support it. Add a
+> > > check to skip that part of the code if TCON doesn't support channel 0.
+> > >=20
+> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >=20
+> > I have already sent a similar patch here:
+> > https://lists.freedesktop.org/archives/dri-devel/2018-February/166665.h=
+tml
+>=20
+> Right. However, check last chunk in my patch. There is no need to call=20
+> sun4i_rgb_init() if TCON doesn't support channel 0. It doesn't do anythin=
+g,=20
+> except producing warning. Will you add that this change to your patch and=
+ then=20
+> I can remove this patch from next revision?
+
+They are orthogonal to me though. Mine fixes the spurious LVDS error
+messages that you were mentionning in your commit log. Your point here
+is that we shouldn't need to even register the LVDS and RGB output
+when there's no channel 0. This is obviously true, but it should be in
+a separate patch.
+
+> BTW, your patch won't apply cleanly, since you didn't base it on latest c=
+ode=20
+> (every TCON variant has at least one entry now).
+
+I'll fix it when applying.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--uk6tcwyktkcpl2dk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIyBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqZB3MACgkQ0rTAlCFN
+r3SFIw/4kQEthkhFdmX9akYCDc7An/Zq+S8g+aYhZIsoYtWscv08rurozqbjA3MI
+5oSNf+mJTnpLTZX2U9BdqfVITwUqYFjNTryGvO2Tk1774Zh29dzYk4iYd4rF+ZSp
+5r+ZOwE4dnbJpIwCEdc+Ni1eSssv132Rhj1O5MD8Cn+/O2xuuCAjc6Pqhrw8ww0f
+SpWeCOEde/o+ZyZraUz435m2w39hXEEbDlS/tBk5K8w6fzlqaF8aBdtFYH4ADMTm
+on1Vstmrn70h4gIHlW3k+GlS9NZJVBIkmB8S9JN8GdNarRWR2M8jIm0RgQuY8zbI
+jiKmLcohP1gysLYwuhAP7PgEpSIOYBviRw9tcy2J6uGaoxfzZBR+kzf7Cd1o8bmb
+PSNtSUHS0ZssyEzZjNVDTIcqvSxsvmVEKbDU4OsWRlcI4fVAx6/J3jFnidKrfy7H
+hUGQrxc5Fh6nnTjKrRltzjaGIZnlJXbzqig+KX8i/bfFPcAXYOWNpRQF2YADomDO
+UwtPPRIodzqrlAwe2gLya9XHb/FVAbG+vQTA0XBmYq6Om7aaBAi7fsjpITQeTyIT
+Wr03i87WTuqC2R8SAg3JMXTDeyLakM5rKnhfrArHII3BACrzjrbUsyENabEqlb6e
+wpteJQMxBJKupkVp12mNSw4KLjynS9K8z7CbASKv/603p9bDuA==
+=YUqa
+-----END PGP SIGNATURE-----
+
+--uk6tcwyktkcpl2dk--
