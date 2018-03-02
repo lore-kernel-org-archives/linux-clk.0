@@ -1,83 +1,72 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-Subject: Re: [RFC PATCH] clk: qcom: rpmcc: Add support to XO buffered clocks
-To: Stephen Boyd <sboyd@kernel.org>, andy.gross@linaro.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: david.brown@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org,
- linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, georgi.djakov@linaro.org
-References: <20180315143724.13859-1-srinivas.kandagatla@linaro.org>
- <152113633637.107923.1559162375425599621@swboyd.mtv.corp.google.com>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <256371b1-82aa-4fe4-b767-4025395082fd@linaro.org>
-Date: Thu, 15 Mar 2018 18:04:42 +0000
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v8 00/15] Krait clocks + Krait CPUfreq
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "Rafael J. Wysocki"
+ <rjw@rjwysocki.net>, Rob Herring <robh@kernel.org>,
+ Russell King - ARM Linux <linux@arm.linux.org.uk>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, viresh kumar <viresh.kumar@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org,
+ Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@armlinux.org.uk>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+ "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+ <CACRpkdbu9Kxvuwr-nLHxyEYiTeGK38o7MKCFf-MMjYxwgcJPPA@mail.gmail.com>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <e133630b-36b2-ed0e-3052-3e2e1c958405@codeaurora.org>
+Date: Fri, 2 Mar 2018 19:42:41 +0530
 MIME-Version: 1.0
-In-Reply-To: <152113633637.107923.1559162375425599621@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CACRpkdbu9Kxvuwr-nLHxyEYiTeGK38o7MKCFf-MMjYxwgcJPPA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Thanks for the review comments,
+Hi Linus,
 
-On 15/03/18 17:52, Stephen Boyd wrote:
-> Quoting srinivas.kandagatla@linaro.org (2018-03-15 07:37:24)
->> diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
->> index c60f61b10c7f..261f5505e714 100644
->> --- a/drivers/clk/qcom/clk-rpm.c
->> +++ b/drivers/clk/qcom/clk-rpm.c
->> @@ -56,6 +57,19 @@
->>                  },                                                            \
->>          }
->>   
->> +#define DEFINE_CLK_RPM_XO_BUFFER(_platform, _name, _active, offset)          \
->> +       static struct clk_rpm _platform##_##_name = {                         \
->> +               .rpm_clk_id = QCOM_RPM_CXO_BUFFERS,                           \
->> +               .xo_offset = (offset),                                        \
->> +               .rate = 19200000,                                             \
+On 3/1/2018 6:58 PM, Linus Walleij wrote:
+> Hi Sricharan,
 > 
-> Shouldn't these rates also come from parent, i.e. pxo_board? So drop
-> this line?
-Yep, will remove this.
+> thanks for picking up Stephen's patch set and working on this
+> clocking business!
 > 
->> +               .hw.init = &(struct clk_init_data){                           \
->> +                       .ops = &clk_rpm_fixed_ops,                            \
->> +                       .name = #_name,                                       \
->> +                       .parent_names = (const char *[]){ "pxo_board" },      \
->> +                       .num_parents = 1,                                     \
->> +               },                                                            \
->> +       }
->> +
->>   #define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)             \
->>          static struct clk_rpm _platform##_##_name = {                         \
->>                  .rpm_clk_id = (r_id),                                         \
->> @@ -128,6 +142,8 @@
->>   
->>   struct clk_rpm {
->>          const int rpm_clk_id;
->> +       const int xo_offset;
->> +       u32 xo_buffer_value;
->>          const bool active_only;
->>          unsigned long rate;
->>          bool enabled;
->> @@ -308,6 +330,11 @@ static void clk_rpm_fixed_unprepare(struct clk_hw *hw)
->>          u32 value = 0;
->>          int ret;
->>   
->> +       if (r->rpm_clk_id == QCOM_RPM_CXO_BUFFERS) {
->> +               r->xo_buffer_value &= ~(QCOM_RPM_XO_MODE_ON << r->xo_offset);
->> +               value = r->xo_buffer_value;
->> +       }
->> +
+> Would you happen to know if the MSM8660/APQ8060 that
+> I'm using a bit has the same Krait clocking so I need to augment
+> that SoC to use this too (on top of this, naturally, this is a good first
+> step)?
 > 
-> I seem to recall that the xo buffers are within the same "word" or
-> something like that for each of the buffers. So we would need to make
-> sure we don't overwrite the bits in there between clks that are
-Code as it is will not work.
-> enabling/disabling stuff. Maybe make some sort of shared variable they
-> all point to and then put a mutex around it? May also be worth making
-> more clk_ops at that point to not conflate with the simpler on/off code.
-Yep, I will give something like that a try in next version.
 
+After digging a bit for data, looks like the clock controller in msm8660
+is called the acpuclk/scplls [1] . So the support for these clocks have
+to be added. rpm_pm8901_regulators is in place.
 
--srini
+Looks like it is using the same PVS cpufreq table as in Krait. so once
+the support for clks is added, the krait cpufreq bindings can be used.
+ 
+[1] https://bitbucket.org/carvsdriver/android_kernel_samsung_msm8660-common/src/0a8b2f30db72e00d6e0b9ad1b9630fe33099ccd0/arch/arm/mach-msm/acpuclock-8x60.c?at=moretz&fileviewer=file-view-default 
 
+> On Tue, Feb 27, 2018 at 3:06 PM, Sricharan R <sricharan@codeaurora.org> wrote:
 > 
+>>   * Dropped the DT update from the series. Will send separatelyssbi
+> 
+> Are these available somewhere so I can test the sum total on
+> the Nexus 7 and see if I get some graphics? I've been sticking a
+> patch from Stephen's series in for some time and it makes the
+> MDP graphics works on the 2013 Nexus 7.
+> 
+
+ok, Nexus 7 -> apq8064 right ?
+
+Just pushed the data for apq8064 as per latest bindings for reference [1].
+Don't have an board to test that data. Also have not added the cpu-supply
+as well.
+
+[1] https://github.com/sricharanaz/kernel/commit/464aa4fd5fc642a6b296d5ad438211042496dabb
+
+Regards,
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
