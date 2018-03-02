@@ -1,83 +1,53 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 02/11] arm64: dts: actions: Add S900 clock management unit nodes
-Date: Fri,  2 Mar 2018 11:18:51 +0530
-Message-Id: <20180302054900.11275-3-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
-References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+MIME-Version: 1.0
+In-Reply-To: <20180223122552.58049-1-icenowy@aosc.io>
+References: <20180223122552.58049-1-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 2 Mar 2018 09:51:56 +0100
+Message-ID: <CACRpkdYtTLV1R+LpPp8J8uGX9f7sFXOkPuH8du0zz_v=FZHMBw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] Initial Allwinner H6 support
+To: Icenowy Zheng <icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
+ linux-sunxi <linux-sunxi@googlegroups.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk <linux-clk@vger.kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Actions Semi S900 Clock Management Unit (CMU) nodes
+On Fri, Feb 23, 2018 at 1:25 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/actions/s900.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+> This patchset adds initial support for the Allwinner H6 SoC.
+>
+> It's quite different from earlier Allwinner SoCs. For example, the
+> memory map is refactored, and the CCU is rearranged. It's also the first
+> Allwinner SoC with PCI Express interface, and the second one with USB
+> 3.0 (the first one is A80).
+>
+> This patchset adds the most basical support for it, including the main pin
+> controller, the main CCU and the basical device tree.
 
-diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-index 11406f6d3a6d..fee0c9557656 100644
---- a/arch/arm64/boot/dts/actions/s900.dtsi
-+++ b/arch/arm64/boot/dts/actions/s900.dtsi
-@@ -4,6 +4,7 @@
-  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-  */
- 
-+#include <dt-bindings/clock/actions,s900-cmu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
- / {
-@@ -88,6 +89,18 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	losc: losc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		#clock-cells = <0>;
-+	};
-+
-+	diff24M: diff24M {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		#clock-cells = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
-@@ -154,6 +167,13 @@
- 			status = "disabled";
- 		};
- 
-+		cmu: clock-controller@e0160000 {
-+			compatible = "actions,s900-cmu";
-+			reg = <0x0 0xe0160000 0x0 0x1000>;
-+			clocks = <&hosc>, <&losc>;
-+			#clock-cells = <1>;
-+		};
-+
- 		timer: timer@e0228000 {
- 			compatible = "actions,s900-timer";
- 			reg = <0x0 0xe0228000 0x0 0x8000>;
--- 
-2.14.1
+It seems the pin control part is more or less finished, I will
+apply it after v4 if Maxime provides ACKs for it.
+
+Is it fine to merge the pinctrl drivers/* portions in isolation from the
+rest?
+
+Yours,
+Linus Walleij
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
