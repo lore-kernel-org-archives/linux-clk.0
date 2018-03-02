@@ -1,69 +1,83 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1521385797.6569.90.camel@baylibre.com>
-References: <20180315115545.1884-1-jbrunet@baylibre.com> <20180315115545.1884-2-jbrunet@baylibre.com>
- <20180318125222.kqtybu4hiwvsx3om@rob-hp-laptop> <1521385797.6569.90.camel@baylibre.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 22 Mar 2018 22:04:13 -0500
-Message-ID: <CAL_JsqKPFbA4duG8tUKwdJTtxXOG+3kMTwu2qAVxb9zgPckL3g@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: meson: update documentation with
- hhi syscon
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 02/11] arm64: dts: actions: Add S900 clock management unit nodes
+Date: Fri,  2 Mar 2018 11:18:51 +0530
+Message-Id: <20180302054900.11275-3-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Mar 18, 2018 at 10:09 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> On Sun, 2018-03-18 at 07:52 -0500, Rob Herring wrote:
->> On Thu, Mar 15, 2018 at 12:55:42PM +0100, Jerome Brunet wrote:
->> > The HHI register region hosts more than just clocks and needs to
->> > accessed drivers other than the clock controller, such as the display
->> > driver.
->> >
->> > This register region should be managed by syscon. It is already the case
->> > on gxbb/gxl and it soon will be on axg. The clock controllers must use
->> > this system controller instead of directly mapping the registers.
->>
->> Sounds like a kernel problem, not a DT one.
->
-> It's a platform problem, so it has much a kernel problem (solution already
-> merged) as a DT problem
->
-> DT wise, we've got two devices mapping the same region
->
-> in arch/arm64/boot/dts/amlogic/meson-gx.dtsi:
->> system-controller@0
->
-> which is used by the display device.
->
-> and in arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi (same for gxl)
->> clock-controller@0
->
-> It has worked so far because the clock controller claims the region w/o
-> reserving it but it remains unsafe since both device may access the same region.
-> The fix is to have the clock controller go through the existing syscon.
+Add Actions Semi S900 Clock Management Unit (CMU) nodes
 
-We certainly want to avoid multiple nodes using the same mmio region.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/actions/s900.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-
->> With a single child, there is really no point to this change. A single
->> node can provide multiple functions. Look at nodes that are both reset
->> and clock providers.
->
-> There is more than a single user, as explained above and in the cover letter of
-> this series.
-
-Right, but a single node can support more than a single user (or
-provider). You don't have to have multiple nodes to have multiple
-users/providers.
-
-Rob
+diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+index 11406f6d3a6d..fee0c9557656 100644
+--- a/arch/arm64/boot/dts/actions/s900.dtsi
++++ b/arch/arm64/boot/dts/actions/s900.dtsi
+@@ -4,6 +4,7 @@
+  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+  */
+ 
++#include <dt-bindings/clock/actions,s900-cmu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+ / {
+@@ -88,6 +89,18 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	losc: losc {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		#clock-cells = <0>;
++	};
++
++	diff24M: diff24M {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		#clock-cells = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+@@ -154,6 +167,13 @@
+ 			status = "disabled";
+ 		};
+ 
++		cmu: clock-controller@e0160000 {
++			compatible = "actions,s900-cmu";
++			reg = <0x0 0xe0160000 0x0 0x1000>;
++			clocks = <&hosc>, <&losc>;
++			#clock-cells = <1>;
++		};
++
+ 		timer: timer@e0228000 {
+ 			compatible = "actions,s900-timer";
+ 			reg = <0x0 0xe0228000 0x0 0x8000>;
+-- 
+2.14.1
