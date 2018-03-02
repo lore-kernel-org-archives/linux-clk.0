@@ -1,87 +1,233 @@
-Return-Path: <dan.carpenter@oracle.com>
-Date: Thu, 15 Mar 2018 13:35:18 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: kbuild@01.org, Mike Looijmans <mike.looijmans@topic.nl>
-Cc: kbuild-all@01.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: Re: [PATCH] clk: Add driver for the si544 clock generator chip
-Message-ID: <20180315103517.qkdqagrasoogp3yj@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1520930639-11642-1-git-send-email-mike.looijmans@topic.nl>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 07/11] clk: actions: Add divider clock support
+Date: Fri,  2 Mar 2018 11:18:56 +0530
+Message-Id: <20180302054900.11275-8-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
+Add support for Actions Semi divider clock together with
+helper functions to be used in composite clock.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on v4.16-rc4]
-[also build test WARNING on next-20180314]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Mike-Looijmans/clk-Add-driver-for-the-si544-clock-generator-chip/20180314-122736
-
-smatch warnings:
-drivers/clk/clk-si544.c:188 si544_calc_muldiv() warn: impossible condition '((frequency * tmp) >= 10800000000) => (0-u32max >= 10800000000)'
-
-# https://github.com/0day-ci/linux/commit/aba3d3de8751c1457bcf0b75bcc901f289a18426
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout aba3d3de8751c1457bcf0b75bcc901f289a18426
-vim +188 drivers/clk/clk-si544.c
-
-aba3d3de Mike Looijmans 2018-03-13  168  
-aba3d3de Mike Looijmans 2018-03-13  169  /* Calculate divider settings for a given frequency */
-aba3d3de Mike Looijmans 2018-03-13  170  static int si544_calc_muldiv(struct clk_si544_muldiv *settings,
-aba3d3de Mike Looijmans 2018-03-13  171  	unsigned long frequency)
-aba3d3de Mike Looijmans 2018-03-13  172  {
-aba3d3de Mike Looijmans 2018-03-13  173  	u64 vco;
-aba3d3de Mike Looijmans 2018-03-13  174  	u32 ls_freq;
-aba3d3de Mike Looijmans 2018-03-13  175  	u32 tmp;
-aba3d3de Mike Looijmans 2018-03-13  176  	u8 res;
-aba3d3de Mike Looijmans 2018-03-13  177  
-aba3d3de Mike Looijmans 2018-03-13  178  	/* Determine the minimum value of LS_DIV and resulting target freq. */
-aba3d3de Mike Looijmans 2018-03-13  179  	ls_freq = frequency;
-aba3d3de Mike Looijmans 2018-03-13  180  	settings->ls_div_bits = 0;
-aba3d3de Mike Looijmans 2018-03-13  181  
-aba3d3de Mike Looijmans 2018-03-13  182  	if (frequency >= (FVCO_MIN / HS_DIV_MAX))
-aba3d3de Mike Looijmans 2018-03-13  183  		settings->ls_div_bits = 0;
-aba3d3de Mike Looijmans 2018-03-13  184  	else {
-aba3d3de Mike Looijmans 2018-03-13  185  		res = 1;
-aba3d3de Mike Looijmans 2018-03-13  186  		tmp = 2 * HS_DIV_MAX;
-aba3d3de Mike Looijmans 2018-03-13  187  		while (tmp <= (HS_DIV_MAX * 32)) {
-aba3d3de Mike Looijmans 2018-03-13 @188  			if ((frequency * tmp) >= FVCO_MIN)
-aba3d3de Mike Looijmans 2018-03-13  189  				break;
-aba3d3de Mike Looijmans 2018-03-13  190  			++res;
-aba3d3de Mike Looijmans 2018-03-13  191  			tmp <<= 1;
-aba3d3de Mike Looijmans 2018-03-13  192  		}
-aba3d3de Mike Looijmans 2018-03-13  193  		settings->ls_div_bits = res;
-aba3d3de Mike Looijmans 2018-03-13  194  		ls_freq = frequency << res;
-aba3d3de Mike Looijmans 2018-03-13  195  	}
-aba3d3de Mike Looijmans 2018-03-13  196  
-aba3d3de Mike Looijmans 2018-03-13  197  	/* Determine minimum HS_DIV by rounding up */
-aba3d3de Mike Looijmans 2018-03-13  198  	vco = FVCO_MIN + ls_freq - 1;
-aba3d3de Mike Looijmans 2018-03-13  199  	do_div(vco, ls_freq);
-aba3d3de Mike Looijmans 2018-03-13  200  	settings->hs_div = vco;
-aba3d3de Mike Looijmans 2018-03-13  201  	/* round up to even number if needed */
-aba3d3de Mike Looijmans 2018-03-13  202  	if ((settings->hs_div > HS_DIV_MAX_ODD) && (settings->hs_div & 1))
-aba3d3de Mike Looijmans 2018-03-13  203  		++settings->hs_div;
-aba3d3de Mike Looijmans 2018-03-13  204  	/* Calculate VCO frequency (in 10..12GHz range) */
-aba3d3de Mike Looijmans 2018-03-13  205  	vco = (u64)ls_freq * settings->hs_div;
-aba3d3de Mike Looijmans 2018-03-13  206  	/* Calculate the integer part of the feedback divider */
-aba3d3de Mike Looijmans 2018-03-13  207  	tmp = do_div(vco, FXO);
-aba3d3de Mike Looijmans 2018-03-13  208  	settings->fb_div_int = vco;
-aba3d3de Mike Looijmans 2018-03-13  209  	/* And the fractional bits using the remainder */
-aba3d3de Mike Looijmans 2018-03-13  210  	vco = (u64)tmp << 32;
-aba3d3de Mike Looijmans 2018-03-13  211  	do_div(vco, FXO);
-aba3d3de Mike Looijmans 2018-03-13  212  	settings->fb_div_frac = vco;
-aba3d3de Mike Looijmans 2018-03-13  213  
-aba3d3de Mike Looijmans 2018-03-13  214  	return 0;
-aba3d3de Mike Looijmans 2018-03-13  215  }
-aba3d3de Mike Looijmans 2018-03-13  216  
-
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/clk/actions/Makefile      |  1 +
+ drivers/clk/actions/owl-divider.c | 94 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-divider.h | 75 +++++++++++++++++++++++++++++++
+ 3 files changed, 170 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-divider.c
+ create mode 100644 drivers/clk/actions/owl-divider.h
+
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 2d4aa8f35d90..5ce75df57e1a 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -3,3 +3,4 @@ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+ clk-owl-y			+= owl-common.o
+ clk-owl-y			+= owl-gate.o
+ clk-owl-y			+= owl-mux.o
++clk-owl-y			+= owl-divider.o
+diff --git a/drivers/clk/actions/owl-divider.c b/drivers/clk/actions/owl-divider.c
+new file mode 100644
+index 000000000000..cddac00fe324
+--- /dev/null
++++ b/drivers/clk/actions/owl-divider.c
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL divider clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include "owl-divider.h"
++
++long owl_divider_helper_round_rate(struct owl_clk_common *common,
++				const struct owl_divider_hw *div_hw,
++				unsigned long rate,
++				unsigned long *parent_rate)
++{
++	return divider_round_rate(&common->hw, rate, parent_rate,
++				  div_hw->table, div_hw->width,
++				  div_hw->div_flags);
++}
++
++static long owl_divider_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct owl_divider *div = hw_to_owl_divider(hw);
++
++	return owl_divider_helper_round_rate(&div->common, &div->div_hw,
++					     rate, parent_rate);
++}
++
++unsigned long owl_divider_helper_recalc_rate(struct owl_clk_common *common,
++					 const struct owl_divider_hw *div_hw,
++					 unsigned long parent_rate)
++{
++	unsigned long val;
++	unsigned int reg;
++
++	regmap_read(common->regmap, div_hw->reg, &reg);
++	val = reg >> div_hw->shift;
++	val &= (1 << div_hw->width) - 1;
++
++	return divider_recalc_rate(&common->hw, parent_rate,
++				   val, div_hw->table,
++				   div_hw->div_flags,
++				   div_hw->width);
++}
++
++static unsigned long owl_divider_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct owl_divider *div = hw_to_owl_divider(hw);
++
++	return owl_divider_helper_recalc_rate(&div->common,
++					      &div->div_hw, parent_rate);
++}
++
++int owl_divider_helper_set_rate(const struct owl_clk_common *common,
++				const struct owl_divider_hw *div_hw,
++				unsigned long rate,
++				unsigned long parent_rate)
++{
++	unsigned long val;
++	unsigned int reg;
++
++	val = divider_get_val(rate, parent_rate, div_hw->table,
++			      div_hw->width, 0);
++
++	regmap_read(common->regmap, div_hw->reg, &reg);
++	reg &= ~GENMASK(div_hw->width + div_hw->shift - 1, div_hw->shift);
++
++	regmap_write(common->regmap, div_hw->reg,
++			  reg | (val << div_hw->shift));
++
++	return 0;
++}
++
++static int owl_divider_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct owl_divider *div = hw_to_owl_divider(hw);
++
++	return owl_divider_helper_set_rate(&div->common, &div->div_hw,
++					rate, parent_rate);
++}
++
++const struct clk_ops owl_divider_ops = {
++	.recalc_rate = owl_divider_recalc_rate,
++	.round_rate = owl_divider_round_rate,
++	.set_rate = owl_divider_set_rate,
++};
+diff --git a/drivers/clk/actions/owl-divider.h b/drivers/clk/actions/owl-divider.h
+new file mode 100644
+index 000000000000..92d3e3d23967
+--- /dev/null
++++ b/drivers/clk/actions/owl-divider.h
+@@ -0,0 +1,75 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL divider clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_DIVIDER_H_
++#define _OWL_DIVIDER_H_
++
++#include "owl-common.h"
++
++struct owl_divider_hw {
++	u32			reg;
++	u8			shift;
++	u8			width;
++	u8			div_flags;
++	struct clk_div_table	*table;
++};
++
++struct owl_divider {
++	struct owl_divider_hw	div_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_DIVIDER_HW(_reg, _shift, _width, _div_flags, _table)	\
++	{								\
++		.reg		= _reg,					\
++		.shift		= _shift,				\
++		.width		= _width,				\
++		.div_flags	= _div_flags,				\
++		.table		= _table,				\
++	}
++
++#define OWL_DIVIDER(_struct, _name, _parent, _reg,			\
++		    _shift, _width, _table, _div_flags, _flags)		\
++	struct owl_divider _struct = {					\
++		.div_hw	= OWL_DIVIDER_HW(_reg, _shift, _width,		\
++					 _div_flags, _table),		\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &owl_divider_ops,	\
++						      _flags),		\
++		},							\
++	}
++
++static inline struct owl_divider *hw_to_owl_divider(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_divider, common);
++}
++
++long owl_divider_helper_round_rate(struct owl_clk_common *common,
++				const struct owl_divider_hw *div_hw,
++				unsigned long rate,
++				unsigned long *parent_rate);
++
++unsigned long owl_divider_helper_recalc_rate(struct owl_clk_common *common,
++					 const struct owl_divider_hw *div_hw,
++					 unsigned long parent_rate);
++
++int owl_divider_helper_set_rate(const struct owl_clk_common *common,
++				const struct owl_divider_hw *div_hw,
++				unsigned long rate,
++				unsigned long parent_rate);
++
++extern const struct clk_ops owl_divider_ops;
++
++#endif /* _OWL_DIVIDER_H_ */
+-- 
+2.14.1
