@@ -1,192 +1,185 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
 	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 1/8] reset: modify the way reset lookup works for board files
-Date: Fri, 23 Mar 2018 14:04:48 +0100
-Message-Id: <20180323130455.11470-2-brgl@bgdev.pl>
-In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 06/11] clk: actions: Add mux clock support
+Date: Fri,  2 Mar 2018 11:18:55 +0530
+Message-Id: <20180302054900.11275-7-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Add support for Actions Semi mux clock together with helper
+functions to be used in composite clock.
 
-Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
-introduced reset control lookup mechanism for boards that still use
-board files.
-
-The routine used to register lookup entries takes the corresponding
-reset_controlled_dev structure as argument.
-
-It's been determined however that for the first user of this new
-interface - davinci psc driver - it will be easier to register the
-lookup entries using the reset controller device name.
-
-This patch changes the way lookup entries are added.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/reset/core.c             | 38 +++++++++++++++++++++++++++++++-------
- include/linux/reset-controller.h | 14 ++++++++------
- 2 files changed, 39 insertions(+), 13 deletions(-)
+ drivers/clk/actions/Makefile  |  1 +
+ drivers/clk/actions/owl-mux.c | 60 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-mux.h | 61 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 06fa4907afc4..f4a29c046995 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -153,12 +153,10 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 1f0917872c9d..2d4aa8f35d90 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -2,3 +2,4 @@ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
  
- /**
-  * reset_controller_add_lookup - register a set of lookup entries
-- * @rcdev: initialized reset controller device owning the reset line
-  * @lookup: array of reset lookup entries
-  * @num_entries: number of entries in the lookup array
-  */
--void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
--				 struct reset_control_lookup *lookup,
-+void reset_controller_add_lookup(struct reset_control_lookup *lookup,
- 				 unsigned int num_entries)
- {
- 	struct reset_control_lookup *entry;
-@@ -168,13 +166,12 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
- 	for (i = 0; i < num_entries; i++) {
- 		entry = &lookup[i];
- 
--		if (!entry->dev_id) {
--			pr_warn("%s(): reset lookup entry has no dev_id, skipping\n",
-+		if (!entry->dev_id || !entry->provider) {
-+			pr_warn("%s(): reset lookup entry badly specified, skipping\n",
- 				__func__);
- 			continue;
- 		}
- 
--		entry->rcdev = rcdev;
- 		list_add_tail(&entry->list, &reset_lookup_list);
- 	}
- 	mutex_unlock(&reset_lookup_mutex);
-@@ -526,11 +523,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
- }
- EXPORT_SYMBOL_GPL(__of_reset_control_get);
- 
-+static struct reset_controller_dev *
-+__reset_controller_by_name(const char *name)
+ clk-owl-y			+= owl-common.o
+ clk-owl-y			+= owl-gate.o
++clk-owl-y			+= owl-mux.o
+diff --git a/drivers/clk/actions/owl-mux.c b/drivers/clk/actions/owl-mux.c
+new file mode 100644
+index 000000000000..f9c6cf2540e4
+--- /dev/null
++++ b/drivers/clk/actions/owl-mux.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL mux clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include "owl-mux.h"
++
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw)
 +{
-+	struct reset_controller_dev *rcdev;
++	u32 reg;
++	u8 parent;
 +
-+	lockdep_assert_held(&reset_list_mutex);
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	parent = reg >> mux_hw->shift;
++	parent &= BIT(mux_hw->width) - 1;
 +
-+	list_for_each_entry(rcdev, &reset_controller_list, list) {
-+		if (!rcdev->dev)
-+			continue;
-+
-+		if (!strcmp(name, dev_name(rcdev->dev)))
-+			return rcdev;
-+	}
-+
-+	return NULL;
++	return parent;
 +}
 +
- static struct reset_control *
- __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 				bool shared, bool optional)
- {
- 	const struct reset_control_lookup *lookup;
-+	struct reset_controller_dev *rcdev;
- 	const char *dev_id = dev_name(dev);
- 	struct reset_control *rstc = NULL;
- 
-@@ -547,7 +563,15 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 		    ((con_id && lookup->con_id) &&
- 		     !strcmp(con_id, lookup->con_id))) {
- 			mutex_lock(&reset_list_mutex);
--			rstc = __reset_control_get_internal(lookup->rcdev,
-+			rcdev = __reset_controller_by_name(lookup->provider);
-+			if (!rcdev) {
-+				mutex_unlock(&reset_list_mutex);
-+				mutex_unlock(&reset_lookup_mutex);
-+				/* Reset provider may not be ready yet. */
-+				return -EPROBE_DEFER;
-+			}
++static u8 owl_mux_get_parent(struct clk_hw *hw)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
 +
-+			rstc = __reset_control_get_internal(rcdev,
- 							    lookup->index,
- 							    shared);
- 			mutex_unlock(&reset_list_mutex);
-diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
-index 25698f6c1fae..9326d671b6e6 100644
---- a/include/linux/reset-controller.h
-+++ b/include/linux/reset-controller.h
-@@ -30,24 +30,25 @@ struct of_phandle_args;
-  * struct reset_control_lookup - represents a single lookup entry
-  *
-  * @list: internal list of all reset lookup entries
-- * @rcdev: reset controller device controlling this reset line
-+ * @provider: name of the reset controller device controlling this reset line
-  * @index: ID of the reset controller in the reset controller device
-  * @dev_id: name of the device associated with this reset line
-  * @con_id name of the reset line (can be NULL)
-  */
- struct reset_control_lookup {
- 	struct list_head list;
--	struct reset_controller_dev *rcdev;
-+	const char *provider;
- 	unsigned int index;
- 	const char *dev_id;
- 	const char *con_id;
- };
- 
--#define RESET_LOOKUP(_dev_id, _con_id, _index)				\
-+#define RESET_LOOKUP(_provider, _index, _dev_id, _con_id)		\
- 	{								\
-+		.provider = _provider,					\
-+		.index = _index,					\
- 		.dev_id = _dev_id,					\
- 		.con_id = _con_id,					\
--		.index = _index,					\
- 	}
- 
- /**
-@@ -57,6 +58,7 @@ struct reset_control_lookup {
-  * @owner: kernel module of the reset controller driver
-  * @list: internal list of reset controller devices
-  * @reset_control_head: head of internal list of requested reset controls
-+ * @dev: corresponding driver model device struct
-  * @of_node: corresponding device tree node as phandle target
-  * @of_reset_n_cells: number of cells in reset line specifiers
-  * @of_xlate: translation function to translate from specifier as found in the
-@@ -68,6 +70,7 @@ struct reset_controller_dev {
- 	struct module *owner;
- 	struct list_head list;
- 	struct list_head reset_control_head;
-+	struct device *dev;
- 	struct device_node *of_node;
- 	int of_reset_n_cells;
- 	int (*of_xlate)(struct reset_controller_dev *rcdev,
-@@ -82,8 +85,7 @@ struct device;
- int devm_reset_controller_register(struct device *dev,
- 				   struct reset_controller_dev *rcdev);
- 
--void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
--				 struct reset_control_lookup *lookup,
-+void reset_controller_add_lookup(struct reset_control_lookup *lookup,
- 				 unsigned int num_entries);
- 
- #endif
++	return owl_mux_helper_get_parent(&mux->common, &mux->mux_hw);
++}
++
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index)
++{
++	u32 reg;
++
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	reg &= ~GENMASK(mux_hw->width + mux_hw->shift - 1, mux_hw->shift);
++	regmap_write(common->regmap, mux_hw->reg,
++			reg | (index << mux_hw->shift));
++
++	return 0;
++}
++
++static int owl_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
++
++	return owl_mux_helper_set_parent(&mux->common, &mux->mux_hw, index);
++}
++
++const struct clk_ops owl_mux_ops = {
++	.get_parent = owl_mux_get_parent,
++	.set_parent = owl_mux_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
+diff --git a/drivers/clk/actions/owl-mux.h b/drivers/clk/actions/owl-mux.h
+new file mode 100644
+index 000000000000..834284c8c3ae
+--- /dev/null
++++ b/drivers/clk/actions/owl-mux.h
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL mux clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_MUX_H_
++#define _OWL_MUX_H_
++
++#include "owl-common.h"
++
++struct owl_mux_hw {
++	u32			reg;
++	u8			shift;
++	u8			width;
++};
++
++struct owl_mux {
++	struct owl_mux_hw	mux_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_MUX_HW(_reg, _shift, _width)		\
++	{						\
++		.reg	= _reg,				\
++		.shift	= _shift,			\
++		.width	= _width,			\
++	}
++
++#define OWL_MUX(_struct, _name, _parents, _reg,				\
++		_shift, _width, _flags)					\
++	struct owl_mux _struct = {					\
++		.mux_hw	= OWL_MUX_HW(_reg, _shift, _width),		\
++		.common = {						\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
++						       _parents,	\
++						       &owl_mux_ops,	\
++						       _flags),		\
++		},							\
++	}
++
++static inline struct owl_mux *hw_to_owl_mux(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_mux, common);
++}
++
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw);
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index);
++
++extern const struct clk_ops owl_mux_ops;
++
++#endif /* _OWL_MUX_H_ */
 -- 
-2.16.1
+2.14.1
