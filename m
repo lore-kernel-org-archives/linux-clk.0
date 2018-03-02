@@ -1,52 +1,63 @@
-Return-Path: <s.nawrocki@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Subject: Re: [PATCH] clk: samsung: exynos5420: Add CLK_SET_RATE_PARENT flag
- to mout_mau_epll_clk
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	b.zolnierkie@samsung.com, m.szyprowski@samsung.com
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <6c79e24e-4127-4702-1dee-80fa0c409966@samsung.com>
-Date: Mon, 12 Mar 2018 11:29:47 +0100
-In-reply-to: <5AA09F22.2070903@samsung.com>
-References: <CGME20180307164708epcas1p27e6599e85617f559c5c4c8eb92a70a47@epcas1p2.samsung.com>
-	<20180307164656.12194-1-s.nawrocki@samsung.com>
-	<5AA09F22.2070903@samsung.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 03/11] arm64: dts: actions: Source CMU clock for UART5
+Date: Fri,  2 Mar 2018 11:18:52 +0530
+Message-Id: <20180302054900.11275-4-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/08/2018 03:25 AM, Chanwoo Choi wrote:
-> On 2018년 03월 08일 01:46, Sylwester Nawrocki wrote:
->> This allows changing the EPLL output frequency through the audio subsystem
->> clock tree leaf clocks. This change is needed to support audio on the HDMI
->> interface on Peach-Pi(t) Chromebook.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos5420.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
->> index 8c050ff63536..1f204ba37f0f 100644
->> --- a/drivers/clk/samsung/clk-exynos5420.c
->> +++ b/drivers/clk/samsung/clk-exynos5420.c
->> @@ -621,7 +621,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
->>  
->>  	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
->>  			mout_group5_5800_p, SRC_TOP7, 16, 2),
->> -	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2),
->> +	MUX_F(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2,
->> +	      CLK_SET_RATE_PARENT, 0),
->>  
->>  	MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
->>  };
->>
-> Looks good to me.
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Remove fixed clock and source CMU (Clock Management Unit) clock for
+UART5 driver in Actions Semi S900 SoC.
 
-Thanks for your review, patch applied to the clk/samsung tree.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
+index 21ca80f9941c..ff043c961d75 100644
+--- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
++++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
+@@ -24,12 +24,6 @@
+ 		device_type = "memory";
+ 		reg = <0x0 0x0 0x0 0x80000000>;
+ 	};
+-
+-	uart5_clk: uart5-clk {
+-		compatible = "fixed-clock";
+-		clock-frequency = <921600>;
+-		#clock-cells = <0>;
+-	};
+ };
+ 
+ &timer {
+@@ -38,5 +32,5 @@
+ 
+ &uart5 {
+ 	status = "okay";
+-	clocks = <&uart5_clk>;
++	clocks = <&cmu CLK_UART5>;
+ };
 -- 
-Regards,
-Sylwester
+2.14.1
