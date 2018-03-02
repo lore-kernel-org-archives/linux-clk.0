@@ -1,316 +1,230 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Wed, 28 Mar 2018 17:09:30 +0200
-From: Paul Cercueil <paul@crapouillou.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-doc@vger.kernel.org
-Subject: 
-In-Reply-To: <b853fabf-4812-cefc-dd8b-f9ab596e1a36@arm.com>
-References: <20180110224838.16711-2-paul@crapouillou.net>
- <20180317232901.14129-1-paul@crapouillou.net>
- <20180317232901.14129-5-paul@crapouillou.net>
- <b853fabf-4812-cefc-dd8b-f9ab596e1a36@arm.com>
-Message-ID: <7475d34b1083ed052dec2b53b505ad6b@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 01/11] dt-bindings: clock: Add Actions S900 clock bindings
+Date: Fri,  2 Mar 2018 11:18:50 +0530
+Message-Id: <20180302054900.11275-2-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Le 2018-03-20 09:52, Marc Zyngier a écrit :
-> On 17/03/18 23:28, Paul Cercueil wrote:
->> Add documentation about how to properly use the Ingenic TCU
->> (Timer/Counter Unit) drivers from devicetree.
->> 
->> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->> ---
->>  .../bindings/clock/ingenic,tcu-clocks.txt          | 42 
->> ++++++++++++++++
->>  .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 
->> +++++++++++++++
->>  .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56 
->> ++++++++++++++++++++++
->>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 
->> ++++++++++++++++
->>  4 files changed, 178 insertions(+)
->>  create mode 100644 
->> Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
->>  create mode 100644 
->> Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
->>  create mode 100644 
->> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
->>  create mode 100644 
->> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->> 
->>  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
->>  added content.
->> 
->> diff --git 
->> a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt 
->> b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
->> new file mode 100644
->> index 000000000000..471d27078599
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
->> @@ -0,0 +1,42 @@
->> +Ingenic SoC TCU binding
->> +
->> +The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It 
->> features 8
->> +channels, each one having its own clock, that can be started and 
->> stopped,
->> +reparented, and reclocked.
->> +
->> +Required properties:
->> +- compatible : One of:
->> +  * ingenic,jz4740-tcu-clocks,
->> +  * ingenic,jz4770-tcu-clocks,
->> +  * ingenic,jz4780-tcu-clocks.
->> +- clocks : List of phandle & clock specifiers for clocks external to 
->> the TCU.
->> +  The "pclk", "rtc" and "ext" clocks should be provided.
->> +- clock-names : List of name strings for the external clocks.
->> +- #clock-cells: Should be 1.
->> +  Clock consumers specify this argument to identify a clock. The 
->> valid values
->> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
->> +
->> +Example:
->> +
->> +/ {
->> +	tcu: mfd@10002000 {
->> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
->> +		reg = <0x10002000 0x1000>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0x0 0x10002000 0x1000>;
->> +
->> +		tcu_clk: clocks@10 {
->> +			compatible = "ingenic,jz4740-tcu-clocks";
->> +			reg = <0x10 0xff0>;
->> +
->> +			clocks = <&ext>, <&rtc>, <&pclk>;
->> +			clock-names = "ext", "rtc", "pclk";
->> +
->> +			#clock-cells = <1>;
->> +		};
->> +	};
->> +};
->> +
->> +For information about the top-level "ingenic,tcu" compatible node and 
->> other
->> +children nodes, see 
->> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
->> diff --git 
->> a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt 
->> b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
->> new file mode 100644
->> index 000000000000..7f3af2da77cd
->> --- /dev/null
->> +++ 
->> b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
->> @@ -0,0 +1,39 @@
->> +Ingenic SoCs Timer/Counter Unit Interrupt Controller
->> +
->> +Required properties:
->> +
->> +- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings 
->> are:
->> +  * ingenic,jz4740-tcu-intc
->> +  * ingenic,jz4770-tcu-intc
->> +  * ingenic,jz4780-tcu-intc
->> +- interrupt-controller : Identifies the node as an interrupt 
->> controller
->> +- #interrupt-cells : Specifies the number of cells needed to encode 
->> an
->> +  interrupt source. The value shall be 1.
->> +- interrupt-parent : phandle of the interrupt controller.
->> +- interrupts : Specifies the interrupt the controller is connected 
->> to.
->> +
->> +Example:
->> +
->> +/ {
->> +	tcu: mfd@10002000 {
->> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
->> +		reg = <0x10002000 0x1000>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0x0 0x10002000 0x1000>;
->> +
->> +		tcu_irq: interrupt-controller@20 {
->> +			compatible = "ingenic,jz4740-tcu-intc";
->> +			reg = <0x20 0x20>;
->> +
->> +			interrupt-controller;
->> +			#interrupt-cells = <1>;
->> +
->> +			interrupt-parent = <&intc>;
->> +			interrupts = <15>;
->> +		};
->> +	};
->> +};
->> +
->> +For information about the top-level "ingenic,tcu" compatible node and 
->> other
->> +children nodes, see 
->> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
->> diff --git a/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt 
->> b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
->> new file mode 100644
->> index 000000000000..5742c3f21550
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
->> @@ -0,0 +1,56 @@
->> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
->> +----------------------------------------------------------
->> +
->> +For a description of the TCU hardware and drivers, have a look at
->> +Documentation/mips/ingenic-tcu.txt.
->> +
->> +The TCU is implemented as a parent node, whose role is to create the
->> +regmap, and child nodes for the various drivers listed in the 
->> aforementioned
->> +document.
-> 
-> You're describing the Linux driver here. Please stick to a description
-> of the HW.
+Add Actions Semi S900 clock bindings.
 
-There's already a whole file that describes the hardware. I just wanted 
-to mention
-that there should be child nodes, but I can rephrase that.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 ++++++++
+ include/dt-bindings/clock/actions,s900-cmu.h       | 129 +++++++++++++++++++++
+ 2 files changed, 176 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+ create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
 
->> +
->> +Required properties:
->> +
->> +- compatible: must be "ingenic,tcu", "simple-mfd", "syscon";
-> 
-> Without any provision for an SoC version? Seems bold...
-
-Well, we don't use the "ingenic,tcu" compatible string, the parent node 
-is just
-here to create the regmap (in this version of the patchset, it will 
-probably change
-later).
-
->> +- reg: Should be the offset/length value corresponding to the TCU 
->> registers
->> +- #address-cells: Should be <1>;
->> +- #size-cells: Should be <1>;
->> +- ranges: Should be one range for the full TCU registers area
->> +
->> +Accepted children nodes:
->> +- 
->> Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
->> +- Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
->> +- Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> 
-> It is slightly confusing that you have 3 files named ingenic,tcu.txt.
-> How about ingenic,tcu-intc.txt and ingenic,tcu-timer.txt (amending the
-> binding for the timer)?
-
-Right. I'll change that.
-
->> +
->> +
->> +Example:
->> +
->> +/ {
->> +	tcu: mfd@10002000 {
->> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
->> +		reg = <0x10002000 0x1000>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0x0 0x10002000 0x1000>;
->> +
->> +		tcu_irq: interrupt-controller@20 {
->> +			compatible = "ingenic,jz4740-tcu-intc";
->> +			reg = <0x20 0x20>;
->> +			...
->> +		};
->> +
->> +		tcu_clk: clocks@10 {
->> +			compatible = "ingenic,jz4740-tcu-clocks";
->> +			reg = <0x10 0xff0>;
->> +			...
->> +		};
->> +
->> +		tcu_timer: timer@10 {
->> +			compatible = "ingenic,jz4740-tcu";
->> +			reg = <0x10 0xff0>;
->> +			...
->> +		};
->> +	};
->> +};
->> +
->> +For more information about the children node, refer to the documents 
->> listed
->> +above in the "Accepted children nodes" section.
->> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt 
->> b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->> new file mode 100644
->> index 000000000000..f910b7e96783
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->> @@ -0,0 +1,41 @@
->> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
->> +---------------------------------------------
->> +
->> +Required properties:
->> +
->> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
->> +  * ingenic,jz4740-tcu
->> +  * ingenic,jz4770-tcu
->> +  * ingenic,jz4780-tcu
->> +- interrupt-parent : phandle of the TCU interrupt controller.
->> +- interrupts : Specifies the interrupts the controller is connected 
->> to.
->> +- clocks : List of phandle & clock specifiers for the TCU clocks.
->> +- clock-names : List of name strings for the TCU clocks.
->> +
->> +Example:
->> +
->> +/ {
->> +	tcu: mfd@10002000 {
->> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
->> +		reg = <0x10002000 0x1000>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0x0 0x10002000 0x1000>;
->> +
->> +		tcu_timer: timer@10 {
->> +			compatible = "ingenic,jz4740-tcu";
->> +			reg = <0x10 0xff0>;
->> +
->> +			clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk 2>, <&tcu_clk 3>,
->> +					 <&tcu_clk 4>, <&tcu_clk 5>, <&tcu_clk 6>, <&tcu_clk 7>;
->> +			clock-names = "timer0", "timer1", "timer2", "timer3",
->> +						  "timer4", "timer5", "timer6", "timer7";
->> +
->> +			interrupt-parent = <&tcu_irq>;
->> +			interrupts = <0 1 2 3 4 5 6 7>;
->> +		};
->> +	};
->> +};
->> +
->> +For information about the top-level "ingenic,tcu" compatible node and 
->> other
->> +children nodes, see 
->> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
->> 
-> 
-> Thanks,
-> 
-> 	M.
+diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+new file mode 100644
+index 000000000000..93e4fb827cd6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+@@ -0,0 +1,47 @@
++* Actions S900 Clock Management Unit (CMU)
++
++The Actions S900 clock management unit generates and supplies clock to various
++controllers within the SoC. The clock binding described here is applicable to
++S900 SoC.
++
++Required Properties:
++
++- compatible: should be "actions,s900-cmu"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- clocks: Reference to the parent clocks ("hosc", "losc")
++- #clock-cells: should be 1.
++
++Each clock is assigned an identifier, and client nodes can use this identifier
++to specify the clock which they consume.
++
++All available clocks are defined as preprocessor macros in
++dt-bindings/clock/actions,s900-cmu.h header and can be used in device
++tree sources.
++
++External clocks:
++
++The hosc clock used as input for the plls is generated outside the SoC. It is
++expected that it is defined using standard clock bindings as "hosc".
++
++Actions S900 CMU also requires one more clock:
++ - "losc" - internal low frequency oscillator
++
++Example: Clock Management Unit node:
++
++        cmu: clock-controller@e0160000 {
++                compatible = "actions,s900-cmu";
++                reg = <0x0 0xe0160000 0x0 0x1000>;
++                clocks = <&hosc>, <&losc>;
++                #clock-cells = <1>;
++        };
++
++Example: UART controller node that consumes clock generated by the clock
++management unit:
++
++        uart: serial@e012a000 {
++                compatible = "actions,s900-uart", "actions,owl-uart";
++                reg = <0x0 0xe012a000 0x0 0x2000>;
++                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&cmu CLK_UART5>;
++        };
+diff --git a/include/dt-bindings/clock/actions,s900-cmu.h b/include/dt-bindings/clock/actions,s900-cmu.h
+new file mode 100644
+index 000000000000..7c1251565f43
+--- /dev/null
++++ b/include/dt-bindings/clock/actions,s900-cmu.h
+@@ -0,0 +1,129 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Device Tree binding constants for Actions Semi S900 Clock Management Unit
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Copyright (c) 2018 Linaro Ltd.
++
++#ifndef __DT_BINDINGS_CLOCK_S900_CMU_H
++#define __DT_BINDINGS_CLOCK_S900_CMU_H
++
++#define CLK_NONE			0
++
++/* fixed rate clocks */
++#define CLK_LOSC			1
++#define CLK_HOSC			2
++
++/* pll clocks */
++#define CLK_CORE_PLL			3
++#define CLK_DEV_PLL			4
++#define CLK_DDR_PLL			5
++#define CLK_NAND_PLL			6
++#define CLK_DISPLAY_PLL			7
++#define CLK_DSI_PLL			8
++#define CLK_ASSIST_PLL			9
++#define CLK_AUDIO_PLL			10
++
++/* system clock */
++#define CLK_CPU				15
++#define CLK_DEV				16
++#define CLK_NOC				17
++#define CLK_NOC_MUX			18
++#define CLK_NOC_DIV			19
++#define CLK_AHB				20
++#define CLK_APB				21
++#define CLK_DMAC			22
++
++/* peripheral device clock */
++#define CLK_GPIO			23
++
++#define CLK_BISP			24
++#define CLK_CSI0			25
++#define CLK_CSI1			26
++
++#define CLK_DE0				27
++#define CLK_DE1				28
++#define CLK_DE2				29
++#define CLK_DE3				30
++#define CLK_DSI				32
++
++#define CLK_GPU				33
++#define CLK_GPU_CORE			34
++#define CLK_GPU_MEM			35
++#define CLK_GPU_SYS			36
++
++#define CLK_HDE				37
++#define CLK_I2C0			38
++#define CLK_I2C1			39
++#define CLK_I2C2			40
++#define CLK_I2C3			41
++#define CLK_I2C4			42
++#define CLK_I2C5			43
++#define CLK_I2SRX			44
++#define CLK_I2STX			45
++#define CLK_IMX				46
++#define CLK_LCD				47
++#define CLK_NAND0			48
++#define CLK_NAND1			49
++#define CLK_PWM0			50
++#define CLK_PWM1			51
++#define CLK_PWM2			52
++#define CLK_PWM3			53
++#define CLK_PWM4			54
++#define CLK_PWM5			55
++#define CLK_SD0				56
++#define CLK_SD1				57
++#define CLK_SD2				58
++#define CLK_SD3				59
++#define CLK_SENSOR			60
++#define CLK_SPEED_SENSOR		61
++#define CLK_SPI0			62
++#define CLK_SPI1			63
++#define CLK_SPI2			64
++#define CLK_SPI3			65
++#define CLK_THERMAL_SENSOR		66
++#define CLK_UART0			67
++#define CLK_UART1			68
++#define CLK_UART2			69
++#define CLK_UART3			70
++#define CLK_UART4			71
++#define CLK_UART5			72
++#define CLK_UART6			73
++#define CLK_VCE				74
++#define CLK_VDE				75
++
++#define CLK_USB3_480MPLL0		76
++#define CLK_USB3_480MPHY0		77
++#define CLK_USB3_5GPHY			78
++#define CLK_USB3_CCE			79
++#define CLK_USB3_MAC			80
++
++#define CLK_TIMER			83
++
++#define CLK_HDMI_AUDIO			84
++
++#define CLK_24M				85
++
++#define CLK_EDP				86
++
++#define CLK_24M_EDP			87
++#define CLK_EDP_PLL			88
++#define CLK_EDP_LINK			89
++
++#define CLK_USB2H0_PLLEN		90
++#define CLK_USB2H0_PHY			91
++#define CLK_USB2H0_CCE			92
++#define CLK_USB2H1_PLLEN		93
++#define CLK_USB2H1_PHY			94
++#define CLK_USB2H1_CCE			95
++
++#define CLK_DDR0			96
++#define CLK_DDR1			97
++#define CLK_DMM				98
++
++#define CLK_ETH_MAC			99
++#define CLK_RMII_REF			100
++
++#define CLK_NR_CLKS			(CLK_RMII_REF + 1)
++
++#endif /* __DT_BINDINGS_CLOCK_S900_CMU_H */
+-- 
+2.14.1
