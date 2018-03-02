@@ -1,99 +1,134 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Richard Genoud <richard.genoud@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Gregory CLEMENT <gregory.clement@free-electrons.com>,  Ralph Sennhauser <ralph.sennhauser@gmail.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: mvebu: armada-38x: add support for missing clocks
-References: <20180308090300.23544-1-richard.genoud@gmail.com>
-Date: Thu, 08 Mar 2018 14:22:01 +0100
-In-Reply-To: <20180308090300.23544-1-richard.genoud@gmail.com> (Richard
-	Genoud's message of "Thu, 8 Mar 2018 10:03:00 +0100")
-Message-ID: <87h8pq4s92.fsf@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 00/11] Add clock driver for Actions S900 SoC
+Date: Fri,  2 Mar 2018 11:18:49 +0530
+Message-Id: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Richard,
- 
- On jeu., mars 08 2018, Richard Genoud <richard.genoud@gmail.com> wrote:
+This patchset adds clock support for Actions Semi OWL series
+S900 SoC with relevant clock bindings and device tree info.
 
-> Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
-> or 1333MHz (industrial).
->
-> They have also some dip-switches to select a different clock (666, 800,
-> 1066, 1200).
-
-The patch looks goo and it will also be usefull for any other board
-using these frequencies, thanks for this. I have only one small comment,
-see below.
-
-
->
-> The funny thing is that the recovery button is on the MPP34 fq selector.
-> So, when booting an industrial board with this button down, the frequency
-> 666MHz is selected (and the kernel didn't boot).
->
-> This patch add all the missing clocks.
->
-> The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
->
-> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
-> ---
->  drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
-> index 394aa6f03f01..9ff4ea63932d 100644
-> --- a/drivers/clk/mvebu/armada-38x.c
-> +++ b/drivers/clk/mvebu/armada-38x.c
-> @@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
->  }
->  
->  static const u32 armada_38x_cpu_frequencies[] __initconst = {
-> -	0, 0, 0, 0,
-> -	1066 * 1000 * 1000, 0, 0, 0,
-> +	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
-> +	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
->  	1332 * 1000 * 1000, 0, 0, 0,
->  	1600 * 1000 * 1000, 0, 0, 0,
-> -	1866 * 1000 * 1000,
-> +	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
-
-Maybe you could add a comment here to say that the 2GHz mode didn't have
-been tested.
+Driver has been validated on Bubblegum-96 board.
 
 Thanks,
-Gregory
+Mani
 
+Changes in V4:
 
->  };
->  
->  static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
-> @@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
->  };
->  
->  static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
-> -	{0, 1}, {0, 1}, {0, 1}, {0, 1},
-> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
-> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
->  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-> +	{1, 2}, {0, 1}, {0, 1}, {1, 2},
->  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
-> @@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
->  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-> +	{1, 2}, {0, 1}, {0, 1}, {7, 15},
->  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+* Moved to SPDX license tag for dt-bindings
+* Fixed a warning in owl-common.h
+* Rebased on top of 4.16-rc3
+
+Changes in V3:
+
+* Completely refactored the clock driver based on sunxi-ng
+  clock structure
+* Removed all owl_ prefixed functions for registering the
+  clock driver and used the registration functions directly
+* Moved to SPDX based license tag
+* Removed module dependencies from the driver
+* Made I2C clocks as simple gate clocks due to the lack of
+  information about factor rates
+* Added Ack from Rob for DT bindings
+* Sourced CMU clock for UART5
+
+Changes in V2: (https://lkml.org/lkml/2017/11/6/840)
+
+* Changed the directory structure to actions/ and used owl- prefix
+  for sources.
+* Fixed MAINTAINERS and added Andreas as Designated Reviewer (R:).
+* Introduced new Kconfig for S900 code part (CONFIG_CLK_OWL_S900).
+* Changed the license from GPLv2 to GPLv2+.
+* Moved fixed clock sources to DT
+* Changed clock-controller node name to cmu in DT
+* Added clocks property to cmu node in DT
+* Changed compatible property value to "actions,s900-cmu"
+* Fixed example UART controller node in documentation
+* Fixed tab vs space issue
+
+Changes in V1: (https://lkml.org/lkml/2017/10/31/808)
+
+* Addressed last year's review comments from Stephen
+- https://patchwork.kernel.org/patch/9254471/
+
+Manivannan Sadhasivam (11):
+  dt-bindings: clock: Add Actions S900 clock bindings
+  arm64: dts: actions: Add S900 clock management unit nodes
+  arm64: dts: actions: Source CMU clock for UART5
+  clk: actions: Add common clock driver support
+  clk: actions: Add gate clock support
+  clk: actions: Add mux clock support
+  clk: actions: Add divider clock support
+  clk: actions: Add factor clock support
+  clk: actions: Add composite clock support
+  clk: actions: Add pll clock support
+  clk: actions: Add S900 SoC clock support
+
+ .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 ++
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |   8 +-
+ arch/arm64/boot/dts/actions/s900.dtsi              |  20 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/actions/Kconfig                        |  14 +
+ drivers/clk/actions/Makefile                       |  12 +
+ drivers/clk/actions/owl-common.c                   |  84 +++
+ drivers/clk/actions/owl-common.h                   |  41 ++
+ drivers/clk/actions/owl-composite.c                | 155 +++++
+ drivers/clk/actions/owl-composite.h                | 101 ++++
+ drivers/clk/actions/owl-divider.c                  |  94 +++
+ drivers/clk/actions/owl-divider.h                  |  75 +++
+ drivers/clk/actions/owl-factor.c                   | 222 +++++++
+ drivers/clk/actions/owl-factor.h                   |  83 +++
+ drivers/clk/actions/owl-gate.c                     |  77 +++
+ drivers/clk/actions/owl-gate.h                     |  73 +++
+ drivers/clk/actions/owl-mux.c                      |  60 ++
+ drivers/clk/actions/owl-mux.h                      |  61 ++
+ drivers/clk/actions/owl-pll.c                      | 194 ++++++
+ drivers/clk/actions/owl-pll.h                      |  92 +++
+ drivers/clk/actions/owl-s900.c                     | 666 +++++++++++++++++++++
+ drivers/clk/actions/owl-s900.h                     |  61 ++
+ include/dt-bindings/clock/actions,s900-cmu.h       | 129 ++++
+ 24 files changed, 2364 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+ create mode 100644 drivers/clk/actions/Kconfig
+ create mode 100644 drivers/clk/actions/Makefile
+ create mode 100644 drivers/clk/actions/owl-common.c
+ create mode 100644 drivers/clk/actions/owl-common.h
+ create mode 100644 drivers/clk/actions/owl-composite.c
+ create mode 100644 drivers/clk/actions/owl-composite.h
+ create mode 100644 drivers/clk/actions/owl-divider.c
+ create mode 100644 drivers/clk/actions/owl-divider.h
+ create mode 100644 drivers/clk/actions/owl-factor.c
+ create mode 100644 drivers/clk/actions/owl-factor.h
+ create mode 100644 drivers/clk/actions/owl-gate.c
+ create mode 100644 drivers/clk/actions/owl-gate.h
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
+ create mode 100644 drivers/clk/actions/owl-pll.c
+ create mode 100644 drivers/clk/actions/owl-pll.h
+ create mode 100644 drivers/clk/actions/owl-s900.c
+ create mode 100644 drivers/clk/actions/owl-s900.h
+ create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
 
 -- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.14.1
