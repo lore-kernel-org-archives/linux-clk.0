@@ -1,58 +1,123 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>, Sascha Hauer
-	<s.hauer@pengutronix.de>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "patchwork-lst@pengutronix.de"
-	<patchwork-lst@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo
-	<shawnguo@kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v2 4/4] clk: imx: add clock driver for i.MX8MQ CCM
-Date: Fri, 16 Mar 2018 10:29:29 +0000
-Message-ID: <AM3PR04MB3060D75EF763926D9732BB780D70@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <20180201175412.9480-1-l.stach@pengutronix.de>
-	 <20180201175412.9480-4-l.stach@pengutronix.de>
-	 <20180315213304.ejvgpkhxtblr6xb3@pengutronix.de>
- <1521195019.3492.7.camel@pengutronix.de>
-In-Reply-To: <1521195019.3492.7.camel@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH v3 05/10] pwm: add PWM mode to pwm_config()
+To: Jani Nikula <jani.nikula@linux.intel.com>, Thierry Reding
+	<thierry.reding@gmail.com>
+CC: <shc_work@mail.ru>, <kgene@kernel.org>, <krzk@kernel.org>,
+	<linux@armlinux.org.uk>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<airlied@linux.ie>, <kamil@wypas.org>, <b.zolnierkie@samsung.com>,
+	<jdelvare@suse.com>, <linux@roeck-us.net>, <dmitry.torokhov@gmail.com>,
+	<rpurdie@rpsys.net>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+	<mchehab@kernel.org>, <sean@mess.org>, <lee.jones@linaro.org>,
+	<daniel.thompson@linaro.org>, <jingoohan1@gmail.com>, <milo.kim@ti.com>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@free-electrons.com>,
+	<linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>,
+	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>
+References: <1519300881-8136-1-git-send-email-claudiu.beznea@microchip.com>
+ <1519300881-8136-6-git-send-email-claudiu.beznea@microchip.com>
+ <20180228194429.GD22932@mithrandir> <87r2p4hod7.fsf@intel.com>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <585cc4ae-3674-c119-295b-e59f4242e619@microchip.com>
+Date: Fri, 2 Mar 2018 11:28:09 +0200
 MIME-Version: 1.0
+In-Reply-To: <87r2p4hod7.fsf@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: Claudiu.Beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMdWNhcyBTdGFjaCBbbWFpbHRv
-Omwuc3RhY2hAcGVuZ3V0cm9uaXguZGVdDQo+IFNlbnQ6IEZyaWRheSwgTWFyY2ggMTYsIDIwMTgg
-NjoxMCBQTQ0KPiBUbzogU2FzY2hhIEhhdWVyIDxzLmhhdWVyQHBlbmd1dHJvbml4LmRlPg0KPiBD
-YzogTWljaGFlbCBUdXJxdWV0dGUgPG10dXJxdWV0dGVAYmF5bGlicmUuY29tPjsgU3RlcGhlbiBC
-b3lkDQo+IDxzYm95ZEBjb2RlYXVyb3JhLm9yZz47IEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54
-cC5jb20+Ow0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgcGF0Y2h3b3JrLWxzdEBwZW5n
-dXRyb25peC5kZTsgUm9iIEhlcnJpbmcNCj4gPHJvYmgrZHRAa2VybmVsLm9yZz47IGRsLWxpbnV4
-LWlteCA8bGludXgtaW14QG54cC5jb20+Ow0KPiBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7IEZhYmlv
-IEVzdGV2YW0gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IFNoYXduDQo+IEd1byA8c2hhd25ndW9A
-a2VybmVsLm9yZz47IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS0NCj4ga2Vy
-bmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiA0LzRdIGNs
-azogaW14OiBhZGQgY2xvY2sgZHJpdmVyIGZvciBpLk1YOE1RIENDTQ0KPiANCj4gQW0gRG9ubmVy
-c3RhZywgZGVuIDE1LjAzLjIwMTgsIDIyOjMzICswMTAwIHNjaHJpZWIgU2FzY2hhIEhhdWVyOg0K
-PiA+IE9uIFRodSwgRmViIDAxLCAyMDE4IGF0IDA2OjU0OjEyUE0gKzAxMDAsIEx1Y2FzIFN0YWNo
-IHdyb3RlOg0KPiA+ID4gQWRkIGRyaXZlciBmb3IgdGhlIENsb2NrIENvbnRyb2wgTW9kdWxlIGZv
-dW5kIG9uIGkuTVg4TVEuDQo+ID4gPg0KPiA+ID4gVGhpcyBpcyBsYXJnZWx5IGJhc2VkIG9uIHRo
-ZSBkb3duc3RyZWFtIGRyaXZlciBmcm9tIEFuc29uIEh1YW5nIGFuZA0KPiA+ID4gQmFpIFBpbmcg
-YXQgTlhQLCB3aXRoIG9ubHkgc29tZSBzbWFsbCBhZGFwdGlvbnMgdG8gbWFpbmxpbmUgZnJvbSBt
-ZS4NCj4gPiA+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBMdWNhcyBTdGFjaCA8bC5zdGFjaEBwZW5n
-dXRyb25peC5kZT4NCj4gPg0KPiA+IEEgZ2VuZXJhbCB0aG91Z2h0OiBUaGUgaS5NWDhNIGZpbmFs
-bHkgaGFzIGEgY29uc2lzdGVudCBjbG9jayB0cmVlLiBXZQ0KPiA+IGhhdmUgZm9yIGV4YW1wbGUg
-NzAgUGVyaXBoZXJhbCBjbG9jayBzbGljZXMgY29uc2lzdGluZyBvZiBhIG11eCwgYQ0KPiA+IGdh
-dGUgYW5kIHR3byBkaXZpZGVycywgYWxsIDcwIGxvb2tpbmcgdGhlIHNhbWUuDQo+ID4gRm9yIHRo
-ZXNlIGl0IG1pZ2h0IG1ha2Ugc2Vuc2UgdG8gY3JlYXRlIGEgbW9yZSBjb21wbGV4IGNsb2NrIHR5
-cGUNCj4gPiBwcm92aWRpbmcgbXV4LCBnYXRlIGFuZCBzZXQgcmF0ZSBmdW5jdGlvbmFsaXR5IGlu
-IG9uZSBjbG9jay4gVGhpcw0KPiA+IHdvdWxkIGRyYXN0aWNhbGx5IHJlZHVjZSB0aGUgbnVtYmVy
-IG9mIGNsb2NrcyB3ZSBoYXZlIHRvIGhhbmRsZS4NCj4gDQo+IEkgYWdyZWUuIEl0IHNlZW1zIHdl
-IGFyZSBtaXNzaW5nIHRoZSA0LjE3IG1lcmdlIHdpbmRvdyB3aXRoIHRoaXMgYW55d2F5cywNCj4g
-ZHVlIHRvIHRoZSBsYXJnZSBudW1iZXIgb2YgY2hhbmdlcyBzdGlsbCByZXF1aXJlZCBhbmQgdGlt
-ZSBjb25zdHJhaW50cyBvbiBteQ0KPiBzaWRlLCBzbyBhIGxhcmdlciByZXdvcmsgb2YgdGhlIGRy
-aXZlciBtaWdodCBiZSBwb3NzaWJsZSBpZiB3ZSB0YXJnZXQgNC4xOC4NCj4gDQoNClllcywgdGhh
-dCB3b3VsZCBiZSB3b3J0aCBhIHRyeS4NCg0KVGhhbmtzIGZvciBkb2luZyBpdC4NCg0KUmVnYXJk
-cw0KRG9uZyBBaXNoZW5nDQoNCj4gUmVnYXJkcywNCj4gTHVjYXMNCg==
+
+
+On 28.02.2018 22:04, Jani Nikula wrote:
+> On Wed, 28 Feb 2018, Thierry Reding <thierry.reding@gmail.com> wrote:
+>> Anyone that needs something other than normal mode should use the new
+>> atomic PWM API.
+> 
+> At the risk of revealing my true ignorance, what is the new atomic PWM
+> API? Where? Examples of how one would convert old code over to the new
+> API?
+As far as I know, the old PWM core code uses config(), set_polarity(),
+enable(), disable() methods of driver, registered as pwm_ops:
+struct pwm_ops {
+
+        int (*request)(struct pwm_chip *chip, struct pwm_device *pwm);
+
+        void (*free)(struct pwm_chip *chip, struct pwm_device *pwm);
+
+        int (*config)(struct pwm_chip *chip, struct pwm_device *pwm,
+
+                      int duty_ns, int period_ns);
+
+        int (*set_polarity)(struct pwm_chip *chip, struct pwm_device *pwm,
+
+                            enum pwm_polarity polarity);
+
+        int (*capture)(struct pwm_chip *chip, struct pwm_device *pwm,
+
+                       struct pwm_capture *result, unsigned long timeout);
+
+        int (*enable)(struct pwm_chip *chip, struct pwm_device *pwm);
+
+        void (*disable)(struct pwm_chip *chip, struct pwm_device *pwm);
+
+        int (*apply)(struct pwm_chip *chip, struct pwm_device *pwm,
+
+                     struct pwm_state *state);
+
+        void (*get_state)(struct pwm_chip *chip, struct pwm_device *pwm,
+
+                          struct pwm_state *state);
+
+#ifdef CONFIG_DEBUG_FS
+
+        void (*dbg_show)(struct pwm_chip *chip, struct seq_file *s);
+
+#endif
+
+        struct module *owner;
+
+};
+
+
+to do settings on hardware. In order to so settings on a PWM the users
+should have been follow the below steps:
+->config()
+->set_polarity()
+->enable()
+Moreover, if the PWM was previously enabled it should have been first
+disable and then to follow the above steps in order to apply a new settings
+on hardware.
+The driver should have been provide, at probe, all the above function:
+->config(), ->set_polarity(), ->disable(), ->enable(), function that were
+used by PWM core.
+
+Now, having atomic PWM, the driver should provide one function to PWM core,
+which is ->apply() function. Every PWM has a state associated, which keeps
+the period, duty cycle, polarity and enable/disable status. The driver's
+->apply() function takes as argument the state that should be applied and
+it takes care of applying this new state directly without asking user to
+call ->disable(), then ->config()/->set_polarity(), then ->enable() to
+apply new hardware settings.
+
+The PWM consumer could set a new state for PWM it uses, using
+pwm_apply_state(pwm, new_state);
+
+Regarding the models to switch on atomic PWM, on the controller side you
+can check for drivers that registers apply function at probe time.
+Regarding the PWM users, you can look for pwm_apply_state()
+(drivers/hwmon/pwm-fan.c or drivers/input/misc/pwm-beeper.c are some examples).
+
+Thierry, please correct me if I'm wrong.
+
+Thank you,
+Claudiu Beznea
+
+> 
+> BR,
+> Jani.
+> 
