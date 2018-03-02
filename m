@@ -1,255 +1,369 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Qiufang Dai <qiufang.dai@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>,
-	Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 4/6] clk: meson-axg: Add AO Clock and Reset controller driver
-Date: Wed, 28 Mar 2018 10:50:48 +0800
-Message-ID: <20180328025050.221585-5-yixun.lan@amlogic.com>
-In-Reply-To: <20180328025050.221585-1-yixun.lan@amlogic.com>
-References: <20180328025050.221585-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 08/11] clk: actions: Add factor clock support
+Date: Fri,  2 Mar 2018 11:18:57 +0530
+Message-Id: <20180302054900.11275-9-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Qiufang Dai <qiufang.dai@amlogic.com>
+Add support for Actions Semi factor clock together with
+helper functions to be used in composite clock.
 
-Adds a Clock and Reset controller driver for the Always-On part
-of the Amlogic Meson-AXG SoC.
-
-Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/clk/meson/Makefile    |   2 +-
- drivers/clk/meson/axg-aoclk.c | 164 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/axg-aoclk.h |  31 ++++++++
- 3 files changed, 196 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/axg-aoclk.c
- create mode 100644 drivers/clk/meson/axg-aoclk.h
+ drivers/clk/actions/Makefile     |   1 +
+ drivers/clk/actions/owl-factor.c | 222 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-factor.h |  83 +++++++++++++++
+ 3 files changed, 306 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-factor.c
+ create mode 100644 drivers/clk/actions/owl-factor.h
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 555ab9c6ab64..fa6d1e36cef6 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -5,5 +5,5 @@
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o meson-aoclk.o gxbb-aoclk.o gxbb-aoclk-32k.o
--obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-+obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o meson-aoclk.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 5ce75df57e1a..994357fa560b 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -4,3 +4,4 @@ clk-owl-y			+= owl-common.o
+ clk-owl-y			+= owl-gate.o
+ clk-owl-y			+= owl-mux.o
+ clk-owl-y			+= owl-divider.o
++clk-owl-y			+= owl-factor.o
+diff --git a/drivers/clk/actions/owl-factor.c b/drivers/clk/actions/owl-factor.c
 new file mode 100644
-index 000000000000..b11cc4450570
+index 000000000000..c48a2c8b479e
 --- /dev/null
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -0,0 +1,164 @@
++++ b/drivers/clk/actions/owl-factor.c
+@@ -0,0 +1,222 @@
 +// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Amlogic Meson-AXG Clock Controller Driver
-+ *
-+ * Copyright (c) 2016 Baylibre SAS.
-+ * Author: Michael Turquette <mturquette@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/init.h>
-+#include "clkc.h"
-+#include "axg-aoclk.h"
++//
++// OWL factor clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
-+#define AXG_AO_GATE(_name, _bit)					\
-+static struct clk_regmap _name##_ao = {					\
-+	.data = &(struct clk_regmap_gate_data) {			\
-+		.offset = (AO_RTI_GEN_CNTL_REG0),			\
-+		.bit_idx = (_bit),					\
-+	},								\
-+	.hw.init = &(struct clk_init_data) {				\
-+		.name = #_name "_ao",					\
-+		.ops = &clk_regmap_gate_ops,				\
-+		.parent_names = (const char *[]){ "clk81" },		\
-+		.num_parents = 1,					\
-+		.flags = CLK_IGNORE_UNUSED,				\
-+	},								\
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++#include "owl-factor.h"
++
++static unsigned int _get_table_maxval(const struct clk_factor_table *table)
++{
++	unsigned int maxval = 0;
++	const struct clk_factor_table *clkt;
++
++	for (clkt = table; clkt->div; clkt++)
++		if (clkt->val > maxval)
++			maxval = clkt->val;
++	return maxval;
 +}
 +
-+AXG_AO_GATE(remote, 0);
-+AXG_AO_GATE(i2c_master, 1);
-+AXG_AO_GATE(i2c_slave, 2);
-+AXG_AO_GATE(uart1, 3);
-+AXG_AO_GATE(uart2, 5);
-+AXG_AO_GATE(ir_blaster, 6);
-+AXG_AO_GATE(saradc, 7);
++static int _get_table_div_mul(const struct clk_factor_table *table,
++			unsigned int val, unsigned int *mul, unsigned int *div)
++{
++	const struct clk_factor_table *clkt;
 +
-+static struct clk_regmap ao_clk81 = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_RTI_PWR_CNTL_REG0,
-+		.mask = 0x1,
-+		.shift = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_clk81",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ "clk81", "ao_alt_xtal"},
-+		.num_parents = 2,
-+	},
++	for (clkt = table; clkt->div; clkt++) {
++		if (clkt->val == val) {
++			*mul = clkt->mul;
++			*div = clkt->div;
++			return 1;
++		}
++	}
++
++	return 0;
++}
++
++static unsigned int _get_table_val(const struct clk_factor_table *table,
++			unsigned long rate, unsigned long parent_rate)
++{
++	const struct clk_factor_table *clkt;
++	int val = -1;
++	u64 calc_rate;
++
++	for (clkt = table; clkt->div; clkt++) {
++		calc_rate = parent_rate * clkt->mul;
++		do_div(calc_rate, clkt->div);
++
++		if ((unsigned long)calc_rate <= rate) {
++			val = clkt->val;
++			break;
++		}
++	}
++
++	if (val == -1)
++		val = _get_table_maxval(table);
++
++	return val;
++}
++
++static int clk_val_best(struct clk_hw *hw, unsigned long rate,
++			unsigned long *best_parent_rate)
++{
++	struct owl_factor *factor = hw_to_owl_factor(hw);
++	struct owl_factor_hw *factor_hw = &factor->factor_hw;
++	const struct clk_factor_table *clkt = factor_hw->table;
++	unsigned long parent_rate, try_parent_rate, best = 0, cur_rate;
++	unsigned long parent_rate_saved = *best_parent_rate;
++	int bestval = 0;
++
++	if (!rate)
++		rate = 1;
++
++	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
++		parent_rate = *best_parent_rate;
++		bestval = _get_table_val(clkt, rate, parent_rate);
++		return bestval;
++	}
++
++	for (clkt = factor_hw->table; clkt->div; clkt++) {
++		try_parent_rate = rate * clkt->div / clkt->mul;
++
++		if (try_parent_rate == parent_rate_saved) {
++			pr_debug("%s: [%d %d %d] found try_parent_rate %ld\n",
++				__func__, clkt->val, clkt->mul, clkt->div,
++				try_parent_rate);
++			/*
++			 * It's the most ideal case if the requested rate can be
++			 * divided from parent clock without any need to change
++			 * parent rate, so return the divider immediately.
++			 */
++			*best_parent_rate = parent_rate_saved;
++			return clkt->val;
++		}
++
++		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
++				try_parent_rate);
++		cur_rate = DIV_ROUND_UP(parent_rate, clkt->div) * clkt->mul;
++		if (cur_rate <= rate && cur_rate > best) {
++			bestval = clkt->val;
++			best = cur_rate;
++			*best_parent_rate = parent_rate;
++		}
++	}
++
++	if (!bestval) {
++		bestval = _get_table_maxval(clkt);
++		*best_parent_rate = clk_hw_round_rate(
++				clk_hw_get_parent(hw), 1);
++	}
++
++	return bestval;
++}
++
++long owl_factor_helper_round_rate(struct owl_clk_common *common,
++				const struct owl_factor_hw *factor_hw,
++				unsigned long rate,
++				unsigned long *parent_rate)
++{
++	const struct clk_factor_table *clkt = factor_hw->table;
++	unsigned int val, mul = 0, div = 1;
++
++	val = clk_val_best(&common->hw, rate, parent_rate);
++	_get_table_div_mul(clkt, val, &mul, &div);
++
++	return *parent_rate * mul / div;
++}
++
++static long owl_factor_round_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long *parent_rate)
++{
++	struct owl_factor *factor = hw_to_owl_factor(hw);
++	struct owl_factor_hw *factor_hw = &factor->factor_hw;
++
++	return owl_factor_helper_round_rate(&factor->common, factor_hw,
++					rate, parent_rate);
++}
++
++unsigned long owl_factor_helper_recalc_rate(struct owl_clk_common *common,
++					 const struct owl_factor_hw *factor_hw,
++					 unsigned long parent_rate)
++{
++	const struct clk_factor_table *clkt = factor_hw->table;
++	unsigned long rate;
++	u32 reg, val, mul, div;
++
++	div = 0;
++	mul = 0;
++
++	regmap_read(common->regmap, factor_hw->reg, &reg);
++
++	val = reg >> factor_hw->shift;
++	val &= div_mask(factor_hw);
++
++	_get_table_div_mul(clkt, val, &mul, &div);
++	if (!div) {
++		WARN(!(factor_hw->fct_flags & CLK_DIVIDER_ALLOW_ZERO),
++			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
++			__clk_get_name(common->hw.clk));
++		return parent_rate;
++	}
++
++	rate = parent_rate * mul;
++	do_div(rate, div);
++
++	return rate;
++}
++
++static unsigned long owl_factor_recalc_rate(struct clk_hw *hw,
++			unsigned long parent_rate)
++{
++	struct owl_factor *factor = hw_to_owl_factor(hw);
++	struct owl_factor_hw *factor_hw = &factor->factor_hw;
++	struct owl_clk_common *common = &factor->common;
++
++	return owl_factor_helper_recalc_rate(common, factor_hw, parent_rate);
++}
++
++int owl_factor_helper_set_rate(const struct owl_clk_common *common,
++				const struct owl_factor_hw *factor_hw,
++				unsigned long rate,
++				unsigned long parent_rate)
++{
++	u32 val, reg;
++
++	val = _get_table_val(factor_hw->table, rate, parent_rate);
++
++	if (val > div_mask(factor_hw))
++		val = div_mask(factor_hw);
++
++	regmap_read(common->regmap, factor_hw->reg, &reg);
++
++	reg &= ~(div_mask(factor_hw) << factor_hw->shift);
++	reg |= val << factor_hw->shift;
++
++	regmap_write(common->regmap, factor_hw->reg, reg);
++
++	return 0;
++}
++
++static int owl_factor_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct owl_factor *factor = hw_to_owl_factor(hw);
++	struct owl_factor_hw *factor_hw = &factor->factor_hw;
++	struct owl_clk_common *common = &factor->common;
++
++	return owl_factor_helper_set_rate(common, factor_hw,
++					rate, parent_rate);
++}
++
++const struct clk_ops owl_factor_ops = {
++	.round_rate	= owl_factor_round_rate,
++	.recalc_rate	= owl_factor_recalc_rate,
++	.set_rate	= owl_factor_set_rate,
 +};
-+
-+static struct clk_regmap axg_saradc_mux = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_SAR_CLK,
-+		.mask = 0x3,
-+		.shift = 9,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_mux",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_names = (const char *[]){ "xtal", "ao_clk81" },
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = AO_SAR_CLK,
-+		.shift = 0,
-+		.width = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "axg_saradc_mux" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_gate = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = AO_SAR_CLK,
-+		.bit_idx = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_gate",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_names = (const char *[]){ "axg_saradc_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static unsigned int axg_aoclk_reset[] = {
-+	[RESET_AO_REMOTE] = 16,
-+	[RESET_AO_I2C_MASTER] = 18,
-+	[RESET_AO_I2C_SLAVE] = 19,
-+	[RESET_AO_UART1] = 17,
-+	[RESET_AO_UART2] = 22,
-+	[RESET_AO_IR_BLASTER] = 23,
-+};
-+
-+static struct clk_regmap *axg_aoclk_regmap[] = {
-+	[CLKID_AO_REMOTE]	= &remote_ao,
-+	[CLKID_AO_I2C_MASTER]	= &i2c_master_ao,
-+	[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao,
-+	[CLKID_AO_UART1]	= &uart1_ao,
-+	[CLKID_AO_UART2]	= &uart2_ao,
-+	[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao,
-+	[CLKID_AO_SAR_ADC]	= &saradc_ao,
-+	[CLKID_AO_CLK81]	= &ao_clk81,
-+	[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux,
-+	[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div,
-+	[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate,
-+};
-+
-+static struct clk_hw_onecell_data axg_aoclk_onecell_data = {
-+	.hws = {
-+		[CLKID_AO_REMOTE]	= &remote_ao.hw,
-+		[CLKID_AO_I2C_MASTER]	= &i2c_master_ao.hw,
-+		[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao.hw,
-+		[CLKID_AO_UART1]	= &uart1_ao.hw,
-+		[CLKID_AO_UART2]	= &uart2_ao.hw,
-+		[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao.hw,
-+		[CLKID_AO_SAR_ADC]	= &saradc_ao.hw,
-+		[CLKID_AO_CLK81]	= &ao_clk81.hw,
-+		[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux.hw,
-+		[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div.hw,
-+		[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate.hw,
-+	},
-+	.num = NR_CLKS,
-+};
-+
-+static struct meson_aoclk_data axg_aoclkc_data = {
-+	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
-+	.num_reset	= ARRAY_SIZE(axg_aoclk_reset),
-+	.reset		= axg_aoclk_reset,
-+	.num_clks	= ARRAY_SIZE(axg_aoclk_regmap),
-+	.clks		= axg_aoclk_regmap,
-+	.hw_data	= &axg_aoclk_onecell_data,
-+};
-+
-+static const struct of_device_id axg_aoclkc_match_table[] = {
-+	{
-+		.compatible	= "amlogic,meson-axg-aoclkc",
-+		.data		= &axg_aoclkc_data,
-+	},
-+	{ }
-+};
-+
-+static struct platform_driver axg_aoclkc_driver = {
-+	.probe		= meson_aoclkc_probe,
-+	.driver		= {
-+		.name	= "axg-aoclkc",
-+		.of_match_table = axg_aoclkc_match_table,
-+	},
-+};
-+
-+builtin_platform_driver(axg_aoclkc_driver);
-diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
+diff --git a/drivers/clk/actions/owl-factor.h b/drivers/clk/actions/owl-factor.h
 new file mode 100644
-index 000000000000..396cd3023064
+index 000000000000..f1a7ffe896e1
 --- /dev/null
-+++ b/drivers/clk/meson/axg-aoclk.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2017 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
++++ b/drivers/clk/actions/owl-factor.h
+@@ -0,0 +1,83 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL factor clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
-+#ifndef __AXG_AOCLKC_H
-+#define __AXG_AOCLKC_H
++#ifndef _OWL_FACTOR_H_
++#define _OWL_FACTOR_H_
 +
-+#include "meson-aoclk.h"
++#include "owl-common.h"
 +
-+#define NR_CLKS	11
-+/* AO Configuration Clock registers offsets
-+ * Register offsets from the data sheet must be multiplied by 4.
-+ */
-+#define AO_RTI_PWR_CNTL_REG1	0x0C
-+#define AO_RTI_PWR_CNTL_REG0	0x10
-+#define AO_RTI_GEN_CNTL_REG0	0x40
-+#define AO_OSCIN_CNTL		0x58
-+#define AO_CRT_CLK_CNTL1	0x68
-+#define AO_SAR_CLK		0x90
-+#define AO_RTC_ALT_CLK_CNTL0	0x94
-+#define AO_RTC_ALT_CLK_CNTL1	0x98
++struct clk_factor_table {
++	unsigned int		val;
++	unsigned int		mul;
++	unsigned int		div;
++};
 +
-+#include <dt-bindings/clock/axg-aoclkc.h>
-+#include <dt-bindings/reset/axg-aoclkc.h>
++struct owl_factor_hw {
++	u32			reg;
++	u8			shift;
++	u8			width;
++	u8			fct_flags;
++	struct clk_factor_table	*table;
++};
 +
-+#endif /* __AXG_AOCLKC_H */
++struct owl_factor {
++	struct owl_factor_hw	factor_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_FACTOR_HW(_reg, _shift, _width, _fct_flags, _table)		\
++	{								\
++		.reg		= _reg,					\
++		.shift		= _shift,				\
++		.width		= _width,				\
++		.fct_flags	= _fct_flags,				\
++		.table		= _table,				\
++	}
++
++#define OWL_FACTOR(_struct, _name, _parent, _reg,			\
++		   _shift, _width, _table, _fct_flags, _flags)		\
++	struct owl_factor _struct = {					\
++		.factor_hw = OWL_FACTOR_HW(_reg, _shift,		\
++					   _width, _fct_flags, _table),	\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &owl_factor_ops,	\
++						      _flags),		\
++		},							\
++	}
++
++#define div_mask(d) ((1 << ((d)->width)) - 1)
++
++static inline struct owl_factor *hw_to_owl_factor(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_factor, common);
++}
++
++long owl_factor_helper_round_rate(struct owl_clk_common *common,
++				const struct owl_factor_hw *factor_hw,
++				unsigned long rate,
++				unsigned long *parent_rate);
++
++unsigned long owl_factor_helper_recalc_rate(struct owl_clk_common *common,
++					 const struct owl_factor_hw *factor_hw,
++					 unsigned long parent_rate);
++
++int owl_factor_helper_set_rate(const struct owl_clk_common *common,
++				const struct owl_factor_hw *factor_hw,
++				unsigned long rate,
++				unsigned long parent_rate);
++
++extern const struct clk_ops owl_factor_ops;
++
++#endif /* _OWL_FACTOR_H_ */
 -- 
-2.15.1
+2.14.1
