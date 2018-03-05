@@ -1,48 +1,54 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [linux-sunxi] [PATCH v4 4/9] pinctrl: sunxi: add support for the
- Allwinner H6 main pin controller
-To: icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-References: <20180316140215.28663-1-icenowy@aosc.io>
- <20180316140215.28663-5-icenowy@aosc.io>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <a74d898f-7047-eebf-027e-106c40be2b9d@arm.com>
-Date: Fri, 16 Mar 2018 17:07:28 +0000
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, kbuild-all@01.org,
+ mturquette@baylibre.com, sboyd@codeaurora.org, michal.simek@xilinx.com,
+ robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org,
+ rajanv@xilinx.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Jolly Shah <jollys@xilinx.com>, Tejas Patel <tejasp@xilinx.com>,
+ Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: Re: [PATCH 3/3] drivers: clk: Add ZynqMP clock driver
+To: Jolly Shah <jolly.shah@xilinx.com>
+References: <1519856861-31384-4-git-send-email-jollys@xilinx.com>
+ <201803031109.JhmyjZJJ%fengguang.wu@intel.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <eddd8944-77c4-1813-4bd0-b7aa1cb70574@arm.com>
+Date: Mon, 5 Mar 2018 10:37:28 +0000
 MIME-Version: 1.0
-In-Reply-To: <20180316140215.28663-5-icenowy@aosc.io>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <201803031109.JhmyjZJJ%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-On 16/03/18 14:02, Icenowy Zheng wrote:
-> The Allwinner H6 SoC has two pin controllers, one main controller
-> (called CPUX-PORT in user manual) and one controller in CPUs power
-> domain (called CPUS-PORT in user manual).
+
+On 03/03/18 03:32, kbuild test robot wrote:
+> Hi Jolly,
 > 
-> This commit introduces support for the main pin controller on H6.
+> Thank you for the patch! Yet something to improve:
 > 
-> The pin bank A and B are not wired out and hidden from the SoC's
-> documents, however it's shown that the "ATE" (an AC200 chip
-> co-packaged with the H6 die) is connected to the main SoC die via these
-> pin banks. The information about these banks is just copied from the BSP
-> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
-> format. The GPIO functions are dropped, as they're impossible to use --
-> except a GPIO&IRQ only pin (PB20) which might be the IRQ of ATE.
+> [auto build test ERROR on clk/clk-next]
+> [also build test ERROR on v4.16-rc3 next-20180302]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 > 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Acked-by: Rob Herring <robh@kernel.org>
+> url:    https://github.com/0day-ci/linux/commits/Jolly-Shah/drivers-clk-Add-ZynqMp-clock-driver-support/20180303-063643
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> config: arm64-allmodconfig (attached as .config)
+> compiler: aarch64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=arm64 
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from drivers/clk/zynqmp/pll.c:9:0:
+>>> include/linux/clk/zynqmp.h:10:10: fatal error: linux/firmware/xilinx/zynqmp/firmware.h: No such file or directory
+>     #include <linux/firmware/xilinx/zynqmp/firmware.h>
+>              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As mentioned before, I checked every single pin against the manual and
-this looks correct to me.
+Another reason to have the complete series together, for better review
+and better build coverage.
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-Thanks!
-Andre.
+-- 
+Regards,
+Sudeep
