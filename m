@@ -1,48 +1,49 @@
-Return-Path: <brgl@bgdev.pl>
-MIME-Version: 1.0
-In-Reply-To: <6166e140-b417-dd22-10cf-843db3958226@lechnology.com>
-References: <20180327092031.11251-1-brgl@bgdev.pl> <6166e140-b417-dd22-10cf-843db3958226@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 30 Mar 2018 13:07:14 +0200
-Message-ID: <CAMRc=Me-+oDi7R-=sSbKU45EFDv04X2rswksLD2N1rnbYrZo2A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-To: David Lechner <david@lechnology.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+Date: Mon,  5 Mar 2018 11:25:20 +0100
+Message-Id: <20180305102524.5905-4-o.rempel@pengutronix.de>
+In-Reply-To: <20180305102524.5905-1-o.rempel@pengutronix.de>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-27 18:48 GMT+02:00 David Lechner <david@lechnology.com>:
-> Wasn't there a v4 already? Is this really v5 instead of v3?
->
+Export pm_power_off_prepare. It is needed to implement power off on
+Freescale/NXP iMX6 based boards with external power management
+integrated circuit (PMIC).
 
-Yes there was and Philipp applied the v4 alright.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ kernel/reboot.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
->>
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> This series converts the only user of the handcoded, mach-specific reset
->> routines in the davinci platform to using the reset framework.
->>
->> Patches 1-3 add necessary lookups/DT-properties.
->
->
-> Should I just squash the DT changes into my common-clock-v9 branch
-> since those patches haven't been picked up yet anyway? That will be
-> 2 fewer patches to keep track of.
-
-I would personally prefer to keep the changesets thematically
-separate. The clock series is big anyway already.
-
-Thanks,
-Bartosz
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index e4ced883d8de..350be6baa60d 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -49,6 +49,7 @@ int reboot_force;
+  */
+ 
+ void (*pm_power_off_prepare)(void);
++EXPORT_SYMBOL(pm_power_off_prepare);
+ 
+ /**
+  *	emergency_restart - reboot the system
+-- 
+2.16.1
