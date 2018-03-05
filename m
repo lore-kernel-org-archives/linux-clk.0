@@ -1,68 +1,46 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sun, 18 Mar 2018 21:15:03 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 2/9] pinctrl: sunxi: introduce IRQ bank conversion
- function
-Message-ID: <20180318201503.g3ksrwcxzjurll3m@flea>
-References: <20180316140215.28663-1-icenowy@aosc.io>
- <20180316140215.28663-3-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pcmdpne3ti4c4xtj"
-In-Reply-To: <20180316140215.28663-3-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <shawn.guo@linaro.org>
+Return-Path: <shawn.guo@linaro.org>
+From: Shawn Guo <shawn.guo@linaro.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Jiancheng Xue <xuejiancheng@hisilicon.com>,
+	Jianguo Sun <sunjianguo1@huawei.com>,
+	linux-clk@vger.kernel.org,
+	Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH v2 0/2] Add eMMC phase clock support for Hi3798CV200
+Date: Mon,  5 Mar 2018 15:01:30 +0800
+Message-Id: <1520233292-14704-1-git-send-email-shawn.guo@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Stephen,
 
---pcmdpne3ti4c4xtj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The series adds a phase clock type for eMMC support on Hi3798CV200 SoC.
+It has a few updates on the first version posted by Jiancheng [1] as
+below.
 
-On Fri, Mar 16, 2018 at 10:02:08PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
-> GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5. Some
-> refactors in the sunxi pinctrl framework are needed.
->=20
-> This commit introduces a IRQ bank conversion function, which replaces
-> the "(bank_base + bank)" code in IRQ register access.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Changes for v2:
+ - Rebase to v4.16-rc.
+ - Use SPDX-License-Identifier.
+ - Coding-style fixes and indentation improvements.
+ - Make hisi_phase_clock resource managed, so that unregister function
+   calls for this clock can be completely saved.
+ - Name phase clock fields degrees vs. regvals to make them more
+   explicit.
+ - Add .get_phase function support.
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+[1] https://lkml.org/lkml/2017/10/17/1207
 
-Thanks!
-Maxime
+tianshuliang (2):
+  clk: hisilicon: add hisi phase clock support
+  clk: hi3798cv200: add emmc sample and drive clock
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ drivers/clk/hisilicon/Makefile          |   2 +-
+ drivers/clk/hisilicon/clk-hisi-phase.c  | 121 ++++++++++++++++++++++++++++++++
+ drivers/clk/hisilicon/clk.c             |  24 +++++++
+ drivers/clk/hisilicon/clk.h             |  19 +++++
+ drivers/clk/hisilicon/crg-hi3798cv200.c |  20 ++++++
+ 5 files changed, 185 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/hisilicon/clk-hisi-phase.c
 
---pcmdpne3ti4c4xtj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlquyMYACgkQ0rTAlCFN
-r3TSDw//VmvyAb+NmW2CFFLCwcnIfzjIthgNXsT9LVtnDQQiWBXyZ/LblXOCS8AM
-5x/O2KCVP+mkjjAhYPaCmaCLW30MMEBEE+vyeVX0FFpUgIghPbiC0WD1K5RSTrX8
-Qqwv63v/I+8KdssjVLn56nGxC6JBBEeY9nqwt5yfCheun1yp1J1viKr+9Oxik6cG
-G7BQXaMVG9Ytw9zMQNZgP+qNZK1OoZaDuZlAnUasJX0YfWwPpeomFg3w9ab4i89Y
-sidN/6ErwUI8zFuztC13RxIbMhqWRWibyqCXumDp/jZ/fs+s2q3hqCXWhmjC1wrZ
-hbj20BGkg7gx9CHTRGSHP1D7hCOExCWCPc8ciDZHQsyXGhkJXm/oOdIrtaLO1J2w
-jxIJ/iUlZqGTS7AO+jGpMalhvK2x9fcVhUQEqy+NNoaN+3jcjc68AbeIVSEGVR1P
-At34knsS0y8vThWJlsZrvX480wKg5qPm3EnP28MjdLKw20xse/+4Y+L2h+yUKV4w
-5lM1yeDQUXojCS4NanDvYxZJmS3ureEEkWjE0BuwzY6bLqg5/bELsumAEsbbS8DX
-FehZNEh9WiBYtMVmZY08SD9zuDnCQrhbsudxhpcOkMkNRHMoroF7uzH9wR0Wj+1n
-Pe1KM1W64ohr0tAHQUhMrpZdYk24upgT9hTW6tWKPT7CA2HUOq8=
-=NJrC
------END PGP SIGNATURE-----
-
---pcmdpne3ti4c4xtj--
+-- 
+1.9.1
