@@ -1,40 +1,74 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: mark.rutland@arm.com, matthias.bgg@gmail.com, mturquette@baylibre.com,
- p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@codeaurora.org,
- sean.wang@mediatek.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <b6eafb38f8d697bd8d00c8d86a0b22be809f8062.1519874655.git.sean.wang@mediatek.com>
-Cc: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
- stable@vger.kernel.org
-References: <cd26a3bdc9f29e237089395fbba93e28549ddf25.1519874655.git.sean.wang@mediatek.com>
- <b6eafb38f8d697bd8d00c8d86a0b22be809f8062.1519874655.git.sean.wang@mediatek.com>
-Message-ID: <152149113900.242365.801086554904089563@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/2] clk: mediatek: fix PWM clock source by adding a fixed-factor
- clock
-Date: Mon, 19 Mar 2018 13:25:39 -0700
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [RESEND PATCH] clk: rockchip: Prevent calculating mmc phase if clock rate is zero
+Date: Mon,  5 Mar 2018 11:25:58 +0800
+Message-Id: <1520220358-181119-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting sean.wang@mediatek.com (2018-02-28 19:27:51)
-> From: Sean Wang <sean.wang@mediatek.com>
-> =
+The MMC sample and drv clock for rockchip platforms are derived from
+the bus clock output to the MMC/SDIO card. So it should never happens
+that the clk rate is zero given it should inherits the clock rate from
+its parent. If something goes wrong and makes the clock rate to be zero,
+the calculation would be wrong but may still make the mmc tuning process
+work luckily. However it makes people harder to debug when the following
+data transfer is unstable.
 
-> The clock for which all PWM devices on MT7623 or MT2701 actually depending
-> on has to be divided by four from its parent clock axi_sel in the clock
-> path prior to PWM devices.
-> =
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
+Resend this since the former log output missed '\n'
 
-> Consequently, adding a fixed-factor clock axisel_d4 as one-fourth of
-> clock axi_sel allows that PWM devices can have the correct resolution
-> calculation.
-> =
 
-> Cc: stable@vger.kernel.org
-> Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
+ drivers/clk/rockchip/clk-mmc-phase.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Applied to clk-next
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index 077fcdc..c0c14e4 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -58,6 +58,12 @@ static int rockchip_mmc_get_phase(struct clk_hw *hw)
+ 	u16 degrees;
+ 	u32 delay_num = 0;
+ 
++	/* See the comment for rockchip_mmc_set_phase below */
++	if (!rate) {
++		pr_err("%s: invalid clk rate\n", __func__);
++		return -EINVAL;
++	}
++
+ 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
+ 
+ 	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
+@@ -84,6 +90,25 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int degrees)
+ 	u32 raw_value;
+ 	u32 delay;
+ 
++	/*
++	 * The below calculation is based on the output clock from
++	 * MMC host to the card, which expects the phase clock inherits
++	 * the clock rate from its parent, namely the output clock
++	 * provider of MMC host. However, things may go wrong if
++	 * (1) It is orphan.
++	 * (2) It is assigned to the wrong parent.
++	 *
++	 * This check help debug the case (1), which seems to be the
++	 * most likely problem we often made and explicitly makes people
++	 * harder to debug the unstable mmc tuning stuff. So hope people
++	 * to have a close look at this comment to help check out what was
++	 * happening.
++	 */
++	if (!rate) {
++		pr_err("%s: invalid clk rate\n", __func__);
++		return -EINVAL;
++	}
++
+ 	nineties = degrees / 90;
+ 	remainder = (degrees % 90);
+ 
+-- 
+1.9.1
