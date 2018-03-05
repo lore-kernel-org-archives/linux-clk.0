@@ -1,66 +1,127 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v7 10/42] clk: davinci: New driver for davinci PSC clocks
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
+ arm-soc <linux-arm-kernel@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+ <1519071723-31790-11-git-send-email-david@lechnology.com>
+ <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
+ <93696fc8-bb93-aa20-3506-3d7216c17cd2@lechnology.com>
+ <CAMpxmJVpMgikNfB4HgNCs+ep+EOHqH5bthiW82LsnDqzLfE5mg@mail.gmail.com>
+ <6bbe9bf3-24c1-acd9-200d-513520d34558@lechnology.com>
+ <CAMRc=Mdhi=byn4gPY6tVxgGjn9cgvc3smUkjV=Ku9i3euaZZtQ@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <d1b91c10-fe11-452e-2c68-86e95fb58266@lechnology.com>
+Date: Mon, 5 Mar 2018 10:23:55 -0600
 MIME-Version: 1.0
-To: Rajan Vaja <RAJANV@xilinx.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Jolly Shah <JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>
-References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
- <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
- <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
-Message-ID: <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
-Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro CLK_OF_DECLARE_DRIVER
-Date: Thu, 15 Mar 2018 11:47:12 -0700
+In-Reply-To: <CAMRc=Mdhi=byn4gPY6tVxgGjn9cgvc3smUkjV=Ku9i3euaZZtQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rajan Vaja (2018-03-09 11:27:40)
-> > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> > =
+On 03/05/2018 07:02 AM, Bartosz Golaszewski wrote:
+> 2018-03-01 17:44 GMT+01:00 David Lechner <david@lechnology.com>:
+>> On 03/01/2018 02:36 AM, Bartosz Golaszewski wrote:
+>>>
+>>> 2018-02-28 22:40 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>>
+>>>> On 02/28/2018 06:38 AM, Bartosz Golaszewski wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> I think I found the reason for the strange crashes we were
+>>>>> experiencing (emac core->name being NULL) thanks to Sekhar who pointed
+>>>>> me in the right direction.
+>>>>>
+>>>>> The mdio driver fails to probe with v7 due to the supplied clock rate
+>>>>> being wrong. Before failing we register the emac clock with
+>>>>> pm_clk_add_clk(). When clock_ops puts the clock, it decreases the
+>>>>> reference count of the clock, but we never actually increased it in
+>>>>> the first place in the line above. The core clock code then destroys
+>>>>> the associated clk_core structure. When the next user comes around (in
+>>>>> our case the clk debug functions) the system crashes.
+>>>>>
+>>>>> I believe there to be two issues: one is with v7 - we need to increase
+>>>>> the clock reference count in davinci_psc_genpd_attach_dev().
+>>>>>
+>>>>> Second is the error path in the clock framework - we should remove the
+>>>>> destroyed clk_core from the debug list, which is not being done now.
+>>>>>
+>>>>> Why we even need to track the refcount of clk_core is a mistery for me
+>>>>> though. Stephen, Mike?
+>>>>>
+>>>>> Best regards,
+>>>>> Bartosz Golaszewski
+>>>>
+>>>>
+>>>>
+>>>> Great find. I figured it had to be something like this, but I wasn't
+>>>> able to reproduce the problem yet.
+>>>>
+>>>> I suppose it is time to spin up a v8 with some fixes.
+>>>
+>>>
+>>> I still don't know why the mdio clock rate is much lower than in
+>>> mainline though. Any ideas?
+>>>
+>>> Thanks,
+>>> Bart
+>>>
+>>
+>> Now that you have fixed the crash, can you answer the questions I have
+>> asked earlier?
+>>
+>>> Can you post the output of this command so that I can see how your
+>>
+>> clocks are setup:
+>>
+>> cat /sys/kernel/debug/clk/clk_summary
+>>
+>>> Using your workaround, can you run:
+>>
+>>
+>> cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+>>
+>> If you see:
+>>    1e27000.clock-controller: emac  off-0
+>>
+>> then genpd is not working like it is supposed to. You should see something
+>> like this for device that are working:
+>>            1e27000.clock-controller: uart2  on
+>>      /devices/platform/soc@1c00000/1d0d000.serial        active
+> 
+> Hi David, Sekhar,
+> 
+> I tried booting the board today over tftp but didn't succeed. I then
+> switched to a normal boot from SD card and the boot process froze at
+> the same moment (right after the DHCP config, or after rtc config if I
+> disabled DHCP in bootargs). I then realized that the emac clock can't
+> be the culprit. After some digging I found out that the late_initcall
+> to clk_disable_unused() disables sysclk6 - the parent of the arm
+> clock, which of course freezes the device.
+> 
+> If I remove the call to clk_disable_unused(), I can boot just fine.
+> 
+> The following other clocks are disabled before pll0_sysclk6:
+> pll1_sysclk3
+> pll0_obsclk
+> pll0_sysclk7
+> 
+> davinci_lpsc_clk_enable() is never called for these clocks - in fact
+> it's not called for any parent that's not explicitly defined in
+> psc-da850.c - I believe this may be one of the reasons. I will get
+> back to debugging it tomorrow.
+> 
+> Best regards,
+> Bartosz Golaszewski
+> 
 
-> > Is the intent to register the clk twice? I believe things are working as
-> > intended without this patch, so maybe you can explain a little more what
-> > you're trying to fix.
-> [Rajan] Yes. During of_clk_init() if some DT fixed factor clock has
-> parent which is neither mentioned in output-clock-names of clock
-> controller nor registered as clock provider, of_clk_init() will try to
-> forcefully register in second loop. =
-
-> =
-
->                         if (force || parent_ready(clk_provider->np)) {
-> =
-
->                                 /* Don't populate platform devices */
->                                 of_node_set_flag(clk_provider->np,
->                                                  OF_POPULATED);
-> =
-
-> So registration of this DT fixed-factor clock would fail as parent
-> would be NULL as below (called from _of_fixed_factor_clk_setup()):
-> parent_name =3D of_clk_get_parent_name(node, 0);
-> =
-
-> On the other hand, even if registration failed, that node will be
-> marked as OF_POPULATED, so probe of clk-fixed-factor.c will also not
-> be called and that DT fixed-factor clock would never be registered. =
-
-> =
-
-> Same thing is discussed at  https://lkml.org/lkml/2017/6/5/681 .
-
-Ok. I believe the answer is to fix the DT to describe the parent chain
-properly with clock-output-names. Otherwise, we have no good way of
-figuring out what the name should be.
-
-The alternative is to start working on a solution for having the clk
-framework stop using strings to describe clk topology. My plan there is
-to allow clk registration to indicate that another parent names array
-should be used with clk_get() of the device or node pointer that's
-associated with the clk during registration to find the parent . If we
-had that, then we could hook up clks into the tree by calling clk_get()
-in the framework and map through the clock-names property. This also
-gets us to a point where clk names don't have to be globally unique,
-which would be nice.
+Thanks for continuing to dig into this. I think I know what needs to
+be done now. I think I don't have the dependencies quite right where
+the PSC clocks are being registered before the PLL clocks, in which
+case they aren't getting the correct parent clock.
