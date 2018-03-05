@@ -1,37 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:57084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751475AbeCPWht (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Mar 2018 18:37:49 -0400
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 5 Mar 2018 16:19:36 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: viresh.kumar@linaro.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
+	david.brown@linaro.org, rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+Subject: Re: [PATCH v8 15/15] dt-bindings: cpufreq: Document
+ operating-points-v2-krait-cpu
+Message-ID: <20180305221936.yu2mlcjodlcumedx@rob-hp-laptop>
+References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
+ <1519740422-3835-16-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
-To: linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-        srinivas.kandagatla@linaro.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20171207105922.31986-1-srinivas.kandagatla@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-References: <20171207105922.31986-1-srinivas.kandagatla@linaro.org>
-Message-ID: <152123986829.242365.11910441932575486140@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: qcom: gcc-msm8996: Mark aggre0 noc clks as critical
-Date: Fri, 16 Mar 2018 15:37:48 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1519740422-3835-16-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting srinivas.kandagatla@linaro.org (2017-12-07 02:59:22)
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Tue, Feb 27, 2018 at 07:37:02PM +0530, Sricharan R wrote:
+> In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
+> that has KRAIT processors the voltage/current value of each OPP
+> varies based on the silicon variant in use.
+> operating-points-v2-krait-cpu specifies the phandle to nvmem efuse cells
+> and the operating-points-v2 table for each opp. The qcom-cpufreq driver
+> reads the efuse value from the SoC to provide the required information
+> that is used to determine the voltage and current value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
 > 
-> aggre0 bus clks are not associated with any of the drivers, so its
-> important that these clks are always on to get peripherals on this
-> bus working. So mark them as critical.
-> 
-> Eventually when we have a proper bus driver these clks can be marked
-> appropriately.
-> 
-> Without this patch pcie on db820c is not functional.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 > ---
+>  .../devicetree/bindings/cpufreq/krait-cpufreq.txt  | 363 +++++++++++++++++++++
+>  1 file changed, 363 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
 
-Applied to clk-next
-
+Reviewed-by: Rob Herring <robh@kernel.org>
