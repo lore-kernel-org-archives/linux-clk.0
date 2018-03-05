@@ -1,58 +1,65 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sun, 18 Mar 2018 07:52:25 -0500
-From: Rob Herring <robh@kernel.org>
-To: Tali Perry <tali.perry1@gmail.com>
-Cc: brendanhiggins@google.com, mark.rutland@arm.com, linux@armlinux.org.uk,
-	avifishman70@gmail.com, tmaimon77@gmail.com, raltherr@google.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v11 1/2] clk: npcm750: Add binding for Nuvoton NPCM7XX
- clock\n
-Message-ID: <20180318125225.sp7ppfumxhcbzbfm@rob-hp-laptop>
-References: <1521121518-32217-1-git-send-email-tali.perry1@gmail.com>
- <1521121518-32217-2-git-send-email-tali.perry1@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1521121518-32217-2-git-send-email-tali.perry1@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:38629 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933544AbeCEKZc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Mar 2018 05:25:32 -0500
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v6 6/6] ARM: dts: imx6: RIoTboard provide standby on power off option
+Date: Mon,  5 Mar 2018 11:25:23 +0100
+Message-Id: <20180305102524.5905-7-o.rempel@pengutronix.de>
+In-Reply-To: <20180305102524.5905-1-o.rempel@pengutronix.de>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 03:45:17PM +0200, Tali Perry wrote:
-> * Nuvoton NPCM7XX Clock Controller
+This board, as well as some other boards with i.MX6 and a PMIC, uses a
+"PMIC_STBY_REQ" line to notify the PMIC about a state change.
+The PMIC is programmed for a specific state change before triggering the
+line.
+In this case, PMIC_STBY_REQ can be used for stand by, sleep
+and power off modes.
 
-Trailing '\n' on the subject.
-> 
-> Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
-> generates and supplies clocks to all modules within the BMC.
-> 
-> 10 ==> 11
-> update documentation. "eth" replaced with "ethernet" in use case eaxample.
-> 
-> 2 ==> 10
-> update documentation. add external clocks as inputs to clk driver.
-> fix SPDX comment.
-> 
-> 1 ==> 2
-> This patch includes fix request described here:
-> https://patchwork.kernel.org/patch/10200033/
-> (move fixed clocks to DT)
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ arch/arm/boot/dts/imx6dl-riotboard.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Changelog goes after the '---' so it doesn't end up in the git commit.
+diff --git a/arch/arm/boot/dts/imx6dl-riotboard.dts b/arch/arm/boot/dts/imx6dl-riotboard.dts
+index 23e108204e1e..c507532baed3 100644
+--- a/arch/arm/boot/dts/imx6dl-riotboard.dts
++++ b/arch/arm/boot/dts/imx6dl-riotboard.dts
+@@ -90,6 +90,10 @@
+ 	status = "okay";
+ };
+ 
++&clks {
++	fsl,pmic-stby-poweroff;
++};
++
+ &fec {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_enet>;
+@@ -170,6 +174,7 @@
+ 		reg = <0x08>;
+ 		interrupt-parent = <&gpio5>;
+ 		interrupts = <16 8>;
++		fsl,pmic-stby-poweroff;
+ 
+ 		regulators {
+ 			reg_vddcore: sw1ab {				/* VDDARM_IN */
+-- 
+2.16.1
 
-> 
-> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-> 
-> ---
-> 
-> 
->  .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++++++++++++++++++++
->  include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 +++++++++
->  2 files changed, 144 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
->  create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
-
-With those fixed,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
