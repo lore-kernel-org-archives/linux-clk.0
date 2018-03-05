@@ -1,38 +1,157 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 5/8] remoteproc/davinci: prepare and unprepare the
- clock where needed
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
- Bjorn Andersson <bjorn.andersson@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-remoteproc@vger.kernel.org,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180330152856.12297-1-brgl@bgdev.pl>
- <20180330152856.12297-6-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <4122b904-ee40-db8b-ecd5-813d75b3cba2@lechnology.com>
-Date: Fri, 30 Mar 2018 12:14:03 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180330152856.12297-6-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <m.szyprowski@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"; format="flowed"
+Subject: Re: [PATCH v2 4/8] clk: migrate the count of orphaned clocks at
+ init
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd
+	<sboyd@codeaurora.org>, Shawn Guo <shawnguo@kernel.org>, Dong Aisheng
+	<aisheng.dong@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Message-id: <40e6c987-633c-b806-02e8-5299187bbcf0@samsung.com>
+Date: Mon, 05 Mar 2018 10:06:45 +0100
+In-reply-to: <7c9b0ac1-582c-9b25-4d62-844667e80507@samsung.com>
+References: <20180214134340.17242-1-jbrunet@baylibre.com>
+	<20180214134340.17242-5-jbrunet@baylibre.com>
+	<7c9b0ac1-582c-9b25-4d62-844667e80507@samsung.com>
+	<CGME20180305090647eucas1p14c01d34dd2eef3eaab8752bf90591c4c@eucas1p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi All,
 
+On 2018-02-15 13:55, Marek Szyprowski wrote:
+> Hi Jerome,
+>
+> On 2018-02-14 14:43, Jerome Brunet wrote:
+>> The orphan clocks reparents should migrate any existing count from the
+>> orphan clock to its new acestor clocks, otherwise we may have
+>> inconsistent counts in the tree and end-up with gated critical clocks
+>>
+>> Assuming we have two clocks, A and B.
+>> * Clock A has CLK_IS_CRITICAL flag set.
+>> * Clock B is an ancestor of A which can gate. Clock B gate is left
+>>    enabled by the bootloader.
+>>
+>> Step 1: Clock A is registered. Since it is a critical clock, it is
+>> enabled. The clock being still an orphan, no parent are enabled.
+>>
+>> Step 2: Clock B is registered and reparented to clock A (potentially
+>> through several other clocks). We are now in situation where the enable
+>> count of clock A is 1 while the enable count of its ancestors is 0, 
+>> which
+>> is not good.
+>>
+>> Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
+>> clock B being 0, clock B is gated and and critical clock A actually gets
+>> disabled.
+>>
+>> This situation was found while adding fdiv_clk gates to the meson8b
+>> platform.  These clocks parent clk81 critical clock, which is the mother
+>> of all peripheral clocks in this system. Because of the issue described
+>> here, the system is crashing when clk_disable_unused() is called.
+>>
+>> The situation is solved by reverting
+>> commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting 
+>> during registration").
+>> To avoid breaking again the situation described in this commit
+>> description, enabling critical clock should be done before walking the
+>> orphan list. This way, a parent critical clock may not be accidentally
+>> disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
+>>
+>> Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting 
+>> during registration")
+>> Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> Cc: Shawn Guo <shawnguo@kernel.org>
+>> Cc: Dong Aisheng <aisheng.dong@nxp.com>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>
+> This patch fixes kernel oops on Exynos5422-based boards (Odroid XU3/XU4)
+> mentioned in the following threads:
+> https://patchwork.kernel.org/patch/10185357/
+> https://www.spinics.net/lists/linux-samsung-soc/msg61766.html
 
-On 3/30/18 10:28 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> We're currently switching the platform to using the common clock
-> framework. We need to explicitly prepare and unprepare the rproc
-> clock.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Acked-by: Suman Anna <s-anna@ti.com>
-> ---
+Stephen, Michael: v4.16-rc4 is out today and this regression (which got 
+merged
+on 22 Dec 2017) is still not fixed yet...
 
-Reviewed-by: David Lechner <david@lechnology.com>
+Is there a chance to get it into final v4.16 release?
+
+>> ---
+>>   drivers/clk/clk.c | 37 +++++++++++++++++++++----------------
+>>   1 file changed, 21 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index a4b4e4d6df5e..cca05ea2c058 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -2969,23 +2969,38 @@ static int __clk_core_init(struct clk_core 
+>> *core)
+>>           rate = 0;
+>>       core->rate = core->req_rate = rate;
+>>   +    /*
+>> +     * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
+>> +     * don't get accidentally disabled when walking the orphan tree and
+>> +     * reparenting clocks
+>> +     */
+>> +    if (core->flags & CLK_IS_CRITICAL) {
+>> +        unsigned long flags;
+>> +
+>> +        clk_core_prepare(core);
+>> +
+>> +        flags = clk_enable_lock();
+>> +        clk_core_enable(core);
+>> +        clk_enable_unlock(flags);
+>> +    }
+>> +
+>>       /*
+>>        * walk the list of orphan clocks and reparent any that newly 
+>> finds a
+>>        * parent.
+>>        */
+>>       hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, 
+>> child_node) {
+>>           struct clk_core *parent = __clk_init_parent(orphan);
+>> -        unsigned long flags;
+>>             /*
+>> -         * we could call __clk_set_parent, but that would result in a
+>> -         * redundant call to the .set_rate op, if it exists
+>> +         * We need to use __clk_set_parent_before() and _after() to
+>> +         * to properly migrate any prepare/enable count of the orphan
+>> +         * clock. This is important for CLK_IS_CRITICAL clocks, which
+>> +         * are enabled during init but might not have a parent yet.
+>>            */
+>>           if (parent) {
+>>               /* update the clk tree topology */
+>> -            flags = clk_enable_lock();
+>> -            clk_reparent(orphan, parent);
+>> -            clk_enable_unlock(flags);
+>> +            __clk_set_parent_before(orphan, parent);
+>> +            __clk_set_parent_after(orphan, parent, NULL);
+>>               __clk_recalc_accuracies(orphan);
+>>               __clk_recalc_rates(orphan, 0);
+>>           }
+>> @@ -3002,16 +3017,6 @@ static int __clk_core_init(struct clk_core *core)
+>>       if (core->ops->init)
+>>           core->ops->init(core->hw);
+>>   -    if (core->flags & CLK_IS_CRITICAL) {
+>> -        unsigned long flags;
+>> -
+>> -        clk_core_prepare(core);
+>> -
+>> -        flags = clk_enable_lock();
+>> -        clk_core_enable(core);
+>> -        clk_enable_unlock(flags);
+>> -    }
+>> -
+>>       kref_init(&core->ref);
+>>   out:
+>>       clk_pm_runtime_put(core);
+>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
