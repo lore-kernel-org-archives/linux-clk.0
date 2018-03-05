@@ -1,79 +1,98 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 4/8] clk: davinci: add a reset lookup table for psc0
-Date: Fri, 23 Mar 2018 12:47:05 +0100
-Message-Id: <20180323114709.20330-5-brgl@bgdev.pl>
-In-Reply-To: <20180323114709.20330-1-brgl@bgdev.pl>
-References: <20180323114709.20330-1-brgl@bgdev.pl>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Message-ID: <1520241825.2798.36.camel@mtkswgap22>
+Subject: Re: [SPAM]Re: [PATCH v3 4/5] dt-bindings: clock: mediatek: update
+ audsys documentation to adapt MFD device
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 5 Mar 2018 17:23:45 +0800
+In-Reply-To: <CAL_Jsq+NK-sUY-qOZ2Xv1ZfWVm-vG0tyAgN_auKeaQxMq58vkw@mail.gmail.com>
+References: <cover.1518424204.git.ryder.lee@mediatek.com>
+ <61928ad523a7aeffb8f16d4caad56836b65ae407.1518424204.git.ryder.lee@mediatek.com>
+ <CAL_JsqJgo0pKJjrs2fdw+q=DJYwht0X5L3Bomz8gf98mEN7hkg@mail.gmail.com>
+ <1519193048.18794.42.camel@mtkswgap22>
+ <CAL_JsqLjcMpS=bLzAV0arLJY143O1XefjSR0djM73E8uC4oJHg@mail.gmail.com>
+ <1519272878.1907.87.camel@mtkswgap22>
+ <CAL_Jsq+NK-sUY-qOZ2Xv1ZfWVm-vG0tyAgN_auKeaQxMq58vkw@mail.gmail.com>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Garlic Tseng <garlic.tseng@mediatek.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org,
+ Matthias Brugger <matthias.bgg@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM
+ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, 2018-02-28 at 09:13 -0600, Rob Herring wrote:
+> >> There are several problems you need to fix. First,
+> >> "mediatek,mt2701-audsys" is not documented. It is only used in the
+> >> example. Second, bindings/arm/mediatek/mediatek,audsys.txt should move
+> >> to bindings/sound/ if it is only audio related functions. Or perhaps
+> >> just combine the 2 documents because it is all inconsistent currently.
+> >
+> > Because the series crossed subsystems but didn't apply at the same time.
+> >
+> >> The 2 documents are inconsistent as to what is the relationship of
+> >> -audsys and -audio (afe) nodes. mt2701-afe-pcm.txt shows that the AFE
+> >> is already a child of -audsys. The -audsys node should have
+> >> #clock-cells. It should also not be a simple-mfd (another
+> >> inconsistency in the binding) because it needs to probe first to
+> >> provide clocks to child nodes, and then trigger probing the child
+> >> nodes.
+> >
+> > This is the 1st version I sent before, and the clock parts still under
+> > review :( .  But yes, the 2 inconsistent documents should be fixed -
+> > this may depend on what we end up doing with the DT appearance.
+> >
+> > IMHO, apart from overlapping regions with other functions I didn't see
+> > any difference between audsys and other clock drivers (providers).
+> >
+> > For the sake of uniformity, I make the 2 sub-devices parallel and move
+> > "simple-mfd" to the top, and the sequences should actually be handled
+> > through "probe deferral mechanism" - that would make this kind of
+> > situations much easier to manage.
+> 
+> If a child node has a dependency on the parent, probe deferral is not
+> the correct solution. The parent should probe first and control
+> probing of the chlidren. "simple-mfd" is intended for cases where
+> there is no dependency on the parent node.
 
-In order to be able to use the reset framework in legacy boot mode as
-well, add the reset lookup table to the psc driver for da850 variant.
+In my opinion, they are just the provider-consumer relationship not the
+parent-child relationship, and we leverage this mechanism for most CCF
+users.  Please correct me if I'm wrong.  
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/clk/davinci/psc-da850.c | 7 +++++++
- drivers/clk/davinci/psc.c       | 1 +
- 2 files changed, 8 insertions(+)
+That's why I sent the a new one to separate them (but I forgot to modify
+mt2701-afe-pcm.txt).
 
-diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
-index ccc7eb17bf3a..50cc0d17df40 100644
---- a/drivers/clk/davinci/psc-da850.c
-+++ b/drivers/clk/davinci/psc-da850.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/reset-controller.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/init.h>
-@@ -66,8 +67,14 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
- 				"fck",	"ecap.1",
- 				"fck",	"ecap.2");
- 
-+static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
-+	RESET_LOOKUP("da850-psc0", "davinci-rproc.0", NULL, 15),
-+};
-+
- static int da850_psc0_init(struct device *dev, void __iomem *base)
- {
-+	reset_controller_add_lookup(da850_psc0_reset_lookup_table,
-+				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
- 	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
- }
- 
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 3b0e59dfbdd7..063df62381ea 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
- 
- 	psc->rcdev.ops = &davinci_psc_reset_ops;
- 	psc->rcdev.owner = THIS_MODULE;
-+	psc->rcdev.dev = dev;
- 	psc->rcdev.of_node = dev->of_node;
- 	psc->rcdev.of_reset_n_cells = 1;
- 	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
--- 
-2.16.1
+> > BTW, I could make the AFE driver be instantiated/probed from the clock
+> > driver but this seems superfluous to me.  Just make sure is this what
+> > you want?
+> 
+> I would think it would be the other way around. The AFE driver creates
+> some clocks. Whether that's a separate driver or a single driver is a
+> kernel issue that has nothing to do with the binding. IIRC, there's
+> several examples in display controllers and camera interfaces where
+> those drivers are also clock providers.
+
+I've look at some display drivers, but couldn't find a good case. The
+different is, that the driver I saw provides clocks to other submodules,
+while the AFE is just a user. So it's odd if we register AFE itself as a
+clock provider (and use the clocks it generates).
+
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
