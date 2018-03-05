@@ -1,43 +1,72 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5420: Add more entries to EPLL rate
- table
-Date: Wed, 07 Mar 2018 17:46:56 +0100
-Message-id: <20180307164656.12194-2-s.nawrocki@samsung.com>
-In-reply-to: <20180307164656.12194-1-s.nawrocki@samsung.com>
-References: <20180307164656.12194-1-s.nawrocki@samsung.com>
-	<CGME20180307164733epcas1p3695c022315be8d2839ac9e88016e3a76@epcas1p3.samsung.com>
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH] clk: rockchip: Prevent calculating mmc phase if clock rate is zero
+Date: Mon,  5 Mar 2018 11:21:49 +0800
+Message-Id: <1520220109-177862-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Adding these EPLL output frequency entries allows to support all required
-audio sample rates on the CODEC and the HDMI interface on Peach-Pit
-Chromebook.
+The MMC sample and drv clock for rockchip platforms are derived from
+the bus clock output to the MMC/SDIO card. So it should never happens
+that the clk rate is zero given it should inherits the clock rate from
+its parent. If something goes wrong and makes the clock rate to be zero,
+the calculation would be wrong but may still make the mmc tuning process
+work luckily. However it makes people harder to debug when the following
+data transfer is unstable.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 1f204ba37f0f..f2607cb97a97 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1360,8 +1360,11 @@ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
- 	PLL_36XX_RATE(180633609U, 301, 5, 3, 3671),
- 	PLL_36XX_RATE(131072006U, 131, 3, 3, 4719),
- 	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
-+	PLL_36XX_RATE( 73728000U, 98, 2, 4, 19923),
-+	PLL_36XX_RATE( 67737602U, 90, 2, 4, 20762),
- 	PLL_36XX_RATE( 65536003U, 131, 3, 4, 4719),
- 	PLL_36XX_RATE( 49152000U, 197, 3, 5, -25690),
-+	PLL_36XX_RATE( 45158401U, 90, 3, 4, 20762),
- 	PLL_36XX_RATE( 32768001U, 131, 3, 5, 4719),
- };
+ drivers/clk/rockchip/clk-mmc-phase.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index 077fcdc..c0c14e4 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -58,6 +58,12 @@ static int rockchip_mmc_get_phase(struct clk_hw *hw)
+ 	u16 degrees;
+ 	u32 delay_num = 0;
+ 
++	/* See the comment for rockchip_mmc_set_phase below */
++	if (!rate) {
++		pr_err("%s: invalid clk rate", __func__);
++		return -EINVAL;
++	}
++
+ 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
+ 
+ 	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
+@@ -84,6 +90,25 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int degrees)
+ 	u32 raw_value;
+ 	u32 delay;
+ 
++	/*
++	 * The below calculation is based on the output clock from
++	 * MMC host to the card, which expects the phase clock inherits
++	 * the clock rate from its parent, namely the output clock
++	 * provider of MMC host. However, things may go wrong if
++	 * (1) It is orphan.
++	 * (2) It is assigned to the wrong parent.
++	 *
++	 * This check help debug the case (1), which seems to be the
++	 * most likely problem we often made and explicitly makes people
++	 * harder to debug the unstable mmc tuning stuff. So hope people
++	 * to have a close look at this comment to help check out what was
++	 * happening.
++	 */
++	if (!rate) {
++		pr_err("%s: invalid clk rate", __func__);
++		return -EINVAL;
++	}
++
+ 	nineties = degrees / 90;
+ 	remainder = (degrees % 90);
  
 -- 
-2.14.2
+1.9.1
