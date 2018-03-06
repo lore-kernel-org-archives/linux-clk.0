@@ -1,42 +1,356 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521168778-27236-2-git-send-email-david@lechnology.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
- David Lechner <david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-2-git-send-email-david@lechnology.com>
-Message-ID: <152156541358.183971.6354552764403526569@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v8 01/42] dt-bindings: clock: Add new bindings for TI Davinci PLL
- clocks
-Date: Tue, 20 Mar 2018 10:03:33 -0700
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v9 03/15] clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
+Date: Tue,  6 Mar 2018 20:08:56 +0530
+Message-Id: <1520347148-27852-4-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting David Lechner (2018-03-15 19:52:17)
-> This adds a new binding for the PLL IP blocks in the mach-davinci
-> family of processors. Currently, only da850 has device tree support
-> but these bindings can also work for other SoCs in this family just
-> by adding new compatible strings.
-> =
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-> Note: Although these PLL controllers are very similar to the TI Keystone
-> SoCs, we are not re-using those bindings. The Keystone bindings use a
-> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
-> have a slightly different PLL register layout and a number of quirks
-> that can't be handled by the existing bindings, so the keystone bindings
-> could not be used as-is anyway.
-> =
+HFPLLs are the main frequency source for Krait CPU clocks. Add
+support for changing the rate of these PLLs.
 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/qcom/Makefile    |   1 +
+ drivers/clk/qcom/clk-hfpll.c | 244 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-hfpll.h |  45 ++++++++
+ 3 files changed, 290 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-hfpll.c
+ create mode 100644 drivers/clk/qcom/clk-hfpll.h
 
-Applied to clk-next
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 230332c..a2b7888 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+ clk-qcom-y += clk-regmap-divider.o
+ clk-qcom-y += clk-regmap-mux.o
+ clk-qcom-y += clk-regmap-mux-div.o
++clk-qcom-y += clk-hfpll.o
+ clk-qcom-y += reset.o
+ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+ 
+diff --git a/drivers/clk/qcom/clk-hfpll.c b/drivers/clk/qcom/clk-hfpll.c
+new file mode 100644
+index 0000000..3c04805
+--- /dev/null
++++ b/drivers/clk/qcom/clk-hfpll.c
+@@ -0,0 +1,244 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/kernel.h>
++#include <linux/export.h>
++#include <linux/regmap.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/spinlock.h>
++
++#include "clk-regmap.h"
++#include "clk-hfpll.h"
++
++#define PLL_OUTCTRL	BIT(0)
++#define PLL_BYPASSNL	BIT(1)
++#define PLL_RESET_N	BIT(2)
++
++/* Initialize a HFPLL at a given rate and enable it. */
++static void __clk_hfpll_init_once(struct clk_hw *hw)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++
++	if (likely(h->init_done))
++		return;
++
++	/* Configure PLL parameters for integer mode. */
++	if (hd->config_val)
++		regmap_write(regmap, hd->config_reg, hd->config_val);
++	regmap_write(regmap, hd->m_reg, 0);
++	regmap_write(regmap, hd->n_reg, 1);
++
++	if (hd->user_reg) {
++		u32 regval = hd->user_val;
++		unsigned long rate;
++
++		rate = clk_hw_get_rate(hw);
++
++		/* Pick the right VCO. */
++		if (hd->user_vco_mask && rate > hd->low_vco_max_rate)
++			regval |= hd->user_vco_mask;
++		regmap_write(regmap, hd->user_reg, regval);
++	}
++
++	if (hd->droop_reg)
++		regmap_write(regmap, hd->droop_reg, hd->droop_val);
++
++	h->init_done = true;
++}
++
++static void __clk_hfpll_enable(struct clk_hw *hw)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	u32 val;
++
++	__clk_hfpll_init_once(hw);
++
++	/* Disable PLL bypass mode. */
++	regmap_update_bits(regmap, hd->mode_reg, PLL_BYPASSNL, PLL_BYPASSNL);
++
++	/*
++	 * H/W requires a 5us delay between disabling the bypass and
++	 * de-asserting the reset. Delay 10us just to be safe.
++	 */
++	udelay(10);
++
++	/* De-assert active-low PLL reset. */
++	regmap_update_bits(regmap, hd->mode_reg, PLL_RESET_N, PLL_RESET_N);
++
++	/* Wait for PLL to lock. */
++	if (hd->status_reg) {
++		do {
++			regmap_read(regmap, hd->status_reg, &val);
++		} while (!(val & BIT(hd->lock_bit)));
++	} else {
++		udelay(60);
++	}
++
++	/* Enable PLL output. */
++	regmap_update_bits(regmap, hd->mode_reg, PLL_OUTCTRL, PLL_OUTCTRL);
++}
++
++/* Enable an already-configured HFPLL. */
++static int clk_hfpll_enable(struct clk_hw *hw)
++{
++	unsigned long flags;
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	u32 mode;
++
++	spin_lock_irqsave(&h->lock, flags);
++	regmap_read(regmap, hd->mode_reg, &mode);
++	if (!(mode & (PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL)))
++		__clk_hfpll_enable(hw);
++	spin_unlock_irqrestore(&h->lock, flags);
++
++	return 0;
++}
++
++static void __clk_hfpll_disable(struct clk_hfpll *h)
++{
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++
++	/*
++	 * Disable the PLL output, disable test mode, enable the bypass mode,
++	 * and assert the reset.
++	 */
++	regmap_update_bits(regmap, hd->mode_reg,
++			   PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL, 0);
++}
++
++static void clk_hfpll_disable(struct clk_hw *hw)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	unsigned long flags;
++
++	spin_lock_irqsave(&h->lock, flags);
++	__clk_hfpll_disable(h);
++	spin_unlock_irqrestore(&h->lock, flags);
++}
++
++static long clk_hfpll_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *parent_rate)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	unsigned long rrate;
++
++	rate = clamp(rate, hd->min_rate, hd->max_rate);
++
++	rrate = DIV_ROUND_UP(rate, *parent_rate) * *parent_rate;
++	if (rrate > hd->max_rate)
++		rrate -= *parent_rate;
++
++	return rrate;
++}
++
++/*
++ * For optimization reasons, assumes no downstream clocks are actively using
++ * it.
++ */
++static int clk_hfpll_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	unsigned long flags;
++	u32 l_val, val;
++	bool enabled;
++
++	l_val = rate / parent_rate;
++
++	spin_lock_irqsave(&h->lock, flags);
++
++	enabled = __clk_is_enabled(hw->clk);
++	if (enabled)
++		__clk_hfpll_disable(h);
++
++	/* Pick the right VCO. */
++	if (hd->user_reg && hd->user_vco_mask) {
++		regmap_read(regmap, hd->user_reg, &val);
++		if (rate <= hd->low_vco_max_rate)
++			val &= ~hd->user_vco_mask;
++		else
++			val |= hd->user_vco_mask;
++		regmap_write(regmap, hd->user_reg, val);
++	}
++
++	regmap_write(regmap, hd->l_reg, l_val);
++
++	if (enabled)
++		__clk_hfpll_enable(hw);
++
++	spin_unlock_irqrestore(&h->lock, flags);
++
++	return 0;
++}
++
++static unsigned long clk_hfpll_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	u32 l_val;
++
++	regmap_read(regmap, hd->l_reg, &l_val);
++
++	return l_val * parent_rate;
++}
++
++static void clk_hfpll_init(struct clk_hw *hw)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	u32 mode, status;
++
++	regmap_read(regmap, hd->mode_reg, &mode);
++	if (mode != (PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL)) {
++		__clk_hfpll_init_once(hw);
++		return;
++	}
++
++	if (hd->status_reg) {
++		regmap_read(regmap, hd->status_reg, &status);
++		if (!(status & BIT(hd->lock_bit))) {
++			WARN(1, "HFPLL %s is ON, but not locked!\n",
++			     __clk_get_name(hw->clk));
++			clk_hfpll_disable(hw);
++			__clk_hfpll_init_once(hw);
++		}
++	}
++}
++
++static int hfpll_is_enabled(struct clk_hw *hw)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	u32 mode;
++
++	regmap_read(regmap, hd->mode_reg, &mode);
++	mode &= 0x7;
++	return mode == (PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL);
++}
++
++const struct clk_ops clk_ops_hfpll = {
++	.enable = clk_hfpll_enable,
++	.disable = clk_hfpll_disable,
++	.is_enabled = hfpll_is_enabled,
++	.round_rate = clk_hfpll_round_rate,
++	.set_rate = clk_hfpll_set_rate,
++	.recalc_rate = clk_hfpll_recalc_rate,
++	.init = clk_hfpll_init,
++};
++EXPORT_SYMBOL_GPL(clk_ops_hfpll);
+diff --git a/drivers/clk/qcom/clk-hfpll.h b/drivers/clk/qcom/clk-hfpll.h
+new file mode 100644
+index 0000000..c380cdf
+--- /dev/null
++++ b/drivers/clk/qcom/clk-hfpll.h
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#ifndef __QCOM_CLK_HFPLL_H__
++#define __QCOM_CLK_HFPLL_H__
++
++#include <linux/clk-provider.h>
++#include <linux/spinlock.h>
++#include "clk-regmap.h"
++
++struct hfpll_data {
++	u32 mode_reg;
++	u32 l_reg;
++	u32 m_reg;
++	u32 n_reg;
++	u32 user_reg;
++	u32 droop_reg;
++	u32 config_reg;
++	u32 status_reg;
++	u8  lock_bit;
++
++	u32 droop_val;
++	u32 config_val;
++	u32 user_val;
++	u32 user_vco_mask;
++	unsigned long low_vco_max_rate;
++
++	unsigned long min_rate;
++	unsigned long max_rate;
++};
++
++struct clk_hfpll {
++	struct hfpll_data const *d;
++	int init_done;
++
++	struct clk_regmap clkr;
++	spinlock_t lock;
++};
++
++#define to_clk_hfpll(_hw) \
++	container_of(to_clk_regmap(_hw), struct clk_hfpll, clkr)
++
++extern const struct clk_ops clk_ops_hfpll;
++
++#endif
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
