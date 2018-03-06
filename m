@@ -1,152 +1,290 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 41/42] ARM: davinci: da8xx-dt: switch to device tree clocks
-Date: Thu, 15 Mar 2018 21:52:57 -0500
-Message-Id: <1521168778-27236-42-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37137 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753500AbeCFNjF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 08:39:05 -0500
+Subject: Re: [PATCH v2 2/6] clk: samsung: Add Exynos5 sub-CMU clock driver
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <bd1675ce-864f-ea58-299e-c79a79724dd1@samsung.com>
+Date: Tue, 06 Mar 2018 14:38:59 +0100
+MIME-version: 1.0
+In-reply-to: <acdefd0b-8b6e-d783-e0dc-fe5eabee6dc2@samsung.com>
+Content-type: text/plain; charset="utf-8"; format="flowed"
+References: <20180226125355.9052-1-m.szyprowski@samsung.com>
+        <CGME20180226125402eucas1p1ac3e0a5853218cd77f469864f70ae89d@eucas1p1.samsung.com>
+        <20180226125355.9052-3-m.szyprowski@samsung.com>
+        <acdefd0b-8b6e-d783-e0dc-fe5eabee6dc2@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes all of the clock init code from da8xx-dt.c. This includes
-all of the OF_DEV_AUXDATA that was just used for looking up clocks.
+Hi Sylwester,
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+On 2018-03-06 14:31, Sylwester Nawrocki wrote:
+> On 02/26/2018 01:53 PM, Marek Szyprowski wrote:
+>> Exynos5250/5420/5800 have only one clock constroller, but some of their
+>> clock depends on respective power domains. Handling integration of clock
+>> controller and power domain can be done using runtime PM feature of CCF
+>> framework. This however needs a separate struct device for each power
+>> domain. This patch adds such separate driver for a group of such clocks,
+>> which can be instantiated more than once, each time for a different
+>> power domain.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk-exynos5-subcmu.c | 185 +++++++++++++++++++++++++++++++
+>>   drivers/clk/samsung/clk-exynos5-subcmu.h |  26 +++++
+>>   2 files changed, 211 insertions(+)
+>>   create mode 100644 drivers/clk/samsung/clk-exynos5-subcmu.c
+>>   create mode 100644 drivers/clk/samsung/clk-exynos5-subcmu.h
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
+>> new file mode 100644
+>> index 000000000000..41bf5c3cf178
+>> --- /dev/null
+>> +++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+>> @@ -0,0 +1,185 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +//
+>> +// Copyright (c) 2018 Samsung Electronics Co., Ltd.
+>> +// Author: Marek Szyprowski <m.szyprowski@samsung.com>
+>> +// Common Clock Framework support for Exynos5 power-domain dependent clocks
+>> +
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_domain.h>
+>> +#include <linux/pm_runtime.h>
+>> +
+>> +#include "clk.h"
+>> +#include "clk-exynos5-subcmu.h"
+>> +
+>> +static struct samsung_clk_provider *ctx;
+>> +static const struct exynos5_subcmu_info *cmu;
+>> +static int nr_cmus;
+>> +
+>> +static void samsung_ext_clk_save(void __iomem *base,
+> static void exynos5_subcmu_clk_save(... ? If something is generic, then I would
+> expect it to be found in drivers/clk/samsung/clk.c.
+>
+>> +				 struct samsung_clk_ext_reg_dump *rd,
+>> +				 unsigned int num_regs)
+>> +{
+>> +	for (; num_regs > 0; --num_regs, ++rd) {
+>> +		rd->save = readl(base + rd->offset);
+>> +		writel((rd->save & ~rd->mask) | rd->value, base + rd->offset);
+>> +		rd->save &= rd->mask;
+>> +	}
+>> +};
+>> +
+>> +static void samsung_ext_clk_restore(void __iomem *base,
+> And similarly static void exynos5_subcmu_clk_restore(... ?
+>
+>> +				    struct samsung_clk_ext_reg_dump *rd,
+>> +				    unsigned int num_regs)
+>> +{
+>> +	for (; num_regs > 0; --num_regs, ++rd)
+>> +		writel((readl(base + rd->offset) & ~rd->mask) | rd->save,
+>> +		       base + rd->offset);
+>> +}
+>> +
+>> +static void samsung_clk_defer_gate(struct samsung_clk_provider *ctx,
+>> +			      const struct samsung_gate_clock *list, int nr_clk)
+>> +{
+>> +	while (nr_clk--)
+>> +		samsung_clk_add_lookup(ctx, ERR_PTR(-EPROBE_DEFER), list++->id);
+>> +}
+>> +
+>> +/*
+>> + * Pass the needed clock provider context and register sub-CMU clocks
+>> + *
+>> + * NOTE: This function has to be called from the main, OF_CLK_DECLARE-
+>> + * initialized clock provider driver. This happens very early during boot
+>> + * process. Then this driver, during core_initcall registers two platform
+>> + * drivers: one which binds to the same device-tree node as OF_CLK_DECLARE
+>> + * driver and second, for handling its per-domain child-devices. Those
+>> + * platform drivers are bound to their devices a bit later in arch_initcall,
+>> + * when OF-core populates all device-tree nodes.
+>> + */
+>> +void exynos5_subcmus_init(struct samsung_clk_provider *_ctx, int _nr_cmus,
+>> +			  const struct exynos5_subcmu_info *_cmu)
+>> +{
+>> +	ctx = _ctx;
+>> +	cmu = _cmu;
+>> +	nr_cmus = _nr_cmus;
+>> +
+>> +	for (; _nr_cmus--; _cmu++) {
+>> +		samsung_clk_defer_gate(ctx, _cmu->gate_clks, _cmu->nr_gate_clks);
+> Why this is needed only for gate clocks and not for all clocks handled
+> by the subcmu?
 
-v8 changes:
-- none
+Because only gate clocks are exported for DT lookup and only those can 
+be requested
+by clk_get().
 
-v7 changes:
-- rebased
-- drop of_platform_default_populate(NULL, NULL, NULL)
-- add change in pm_domain.c
+>> +		samsung_ext_clk_save(ctx->reg_base, _cmu->suspend_regs,
+>> +				     _cmu->nr_suspend_regs);
+>> +	}
+>> +}
+>> +
+>> +static int __maybe_unused exynos5_clk_subcmu_suspend(struct device *dev)
+> exynos5_subcmu_suspend ?
+>
+>> +{
+>> +	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&ctx->lock, flags);
+>> +	samsung_ext_clk_save(ctx->reg_base, info->suspend_regs,
+>> +			     info->nr_suspend_regs);
+>> +	spin_unlock_irqrestore(&ctx->lock, flags);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __maybe_unused exynos5_clk_subcmu_resume(struct device *dev)
+> exynos5_subcmu_resume ?
+>
+>> +{
+>> +	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&ctx->lock, flags);
+>> +	samsung_ext_clk_restore(ctx->reg_base, info->suspend_regs,
+>> +				info->nr_suspend_regs);
+>> +	spin_unlock_irqrestore(&ctx->lock, flags);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init exynos5_clk_subcmu_probe(struct platform_device *pdev)
+> exynos5_subcmu_probe() ?
+>
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
+>> +
+>> +	pm_runtime_set_suspended(dev);
+>> +	pm_runtime_enable(dev);
+>> +	pm_runtime_get(dev);
+>> +
+>> +	ctx->dev = dev;
+>> +	samsung_clk_register_div(ctx, info->div_clks, info->nr_div_clks);
+>> +	samsung_clk_register_gate(ctx, info->gate_clks, info->nr_gate_clks);
+>> +	ctx->dev = NULL;
+>> +
+>> +	pm_runtime_put_sync(dev);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct dev_pm_ops exynos5_clk_subcmu_pm_ops = {
+> exynos5_subcmu_pm_ops ?
+>
+>> +	SET_RUNTIME_PM_OPS(exynos5_clk_subcmu_suspend,
+>> +			   exynos5_clk_subcmu_resume, NULL)
+>> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+>> +				     pm_runtime_force_resume)
+>> +};
+>> +
+>> +static struct platform_driver exynos5_clk_subcmu_driver __refdata = {
+> exynos5_subcmu_driver ?
+>
+>> +	.driver	= {
+>> +		.name = "exynos5-clock-subcmu",
+> "exynos5-subcmu" ?
+>
+>> +		.suppress_bind_attrs = true,
+>> +		.pm = &exynos5_clk_subcmu_pm_ops,
+>> +	},
+>> +	.probe = exynos5_clk_subcmu_probe,
+>> +};
+>> +
+>> +static int __init exynos5_clk_register_subcmu_drv(struct device *parent,
+> This function registers device, not a driver so perhaps rename it to
+> exynos5_clk_register_subcmu() or exynos5_clk_register_subcmu_dev()?
+>
+>> +					 const struct exynos5_subcmu_info *info,
+>> +						  struct device_node *pd_node)
+>> +{
+>> +	struct of_phandle_args genpdspec = { .np = pd_node };
+>> +	struct platform_device *pdev;
+>> +
+>> +	pdev = platform_device_alloc(info->pd_name, -1);
+>> +	pdev->dev.parent = parent;
+>> +	pdev->driver_override = "exynos5-clock-subcmu";
+>> +	platform_set_drvdata(pdev, (void *)info);
+>> +	of_genpd_add_device(&genpdspec, &pdev->dev);
+>> +	platform_device_add(pdev);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init exynos5_clk_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device_node *np;
+>> +	const char *name;
+>> +	int i;
+>> +
+>> +	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+>> +		if (of_property_read_string(np, "label", &name) < 0)
+>> +			continue;
+>> +		for (i = 0; i < nr_cmus; i++)
+>> +			if (strcmp(cmu[i].pd_name, name) == 0)
+>> +				exynos5_clk_register_subcmu_drv(&pdev->dev,
+>> +								&cmu[i], np);
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct of_device_id exynos5_clk_of_match[] = {
+>> +	{ },
+>> +};
+>> +
+>> +static struct platform_driver exynos5_clk_driver __refdata = {
+>> +	.driver	= {
+>> +		.name = "exynos5-clock",
+>> +		.of_match_table = exynos5_clk_of_match,
+>> +		.suppress_bind_attrs = true,
+>> +	},
+>> +	.probe = exynos5_clk_probe,
+>> +};
+>> +
+>> +static int __init exynos5_clk_drv_init(void)
+>> +{
+>> +	platform_driver_register(&exynos5_clk_driver);
+>> +	platform_driver_register(&exynos5_clk_subcmu_driver);
+>> +	return 0;
+>> +}
+>> +core_initcall(exynos5_clk_drv_init);
+>> diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.h b/drivers/clk/samsung/clk-exynos5-subcmu.h
+>> new file mode 100644
+>> index 000000000000..364ca4051d9e
+>> --- /dev/null
+>> +++ b/drivers/clk/samsung/clk-exynos5-subcmu.h
+>> @@ -0,0 +1,26 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +
+>> +#ifndef __CLK_EXYNOS5_SUBCMU_H
+>> +#define __CLK_EXYNOS5_SUBCMU_H
+>> +
+>> +struct samsung_clk_ext_reg_dump {
+>   struct	exynos5_subcmu_reg_dump ?
+>
+>> +	u32 offset;
+>> +	u32 value;
+>> +	u32 mask;
+>> +	u32 save;
+>> +};
 
-Note: I didn't see this until it was too late, but Bartosz has an interesting
-alternative for the legacy PM domain stuff at
-https://github.com/brgl/linux/commit/0197b11512e44206708f4bd320c369a2a163e82d
+I will send v3 with the simplified function/structure names then.
 
-v6 changes:
-- removed misleading statement from commit message
-
- arch/arm/mach-davinci/da8xx-dt.c  | 58 ---------------------------------------
- arch/arm/mach-davinci/pm_domain.c |  5 ++++
- 2 files changed, 5 insertions(+), 58 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
-index 088bc5c..23ac410 100644
---- a/arch/arm/mach-davinci/da8xx-dt.c
-+++ b/arch/arm/mach-davinci/da8xx-dt.c
-@@ -19,67 +19,10 @@
- #include "cp_intc.h"
- #include <mach/da8xx.h>
- 
--static struct of_dev_auxdata da850_aemif_auxdata_lookup[] = {
--	OF_DEV_AUXDATA("ti,davinci-nand", 0x62000000, "davinci-nand.0", NULL),
--	{}
--};
--
--static struct aemif_platform_data aemif_data = {
--	.dev_lookup = da850_aemif_auxdata_lookup,
--};
--
--static struct of_dev_auxdata da850_auxdata_lookup[] __initdata = {
--	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01c22000, "i2c_davinci.1", NULL),
--	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01e28000, "i2c_davinci.2", NULL),
--	OF_DEV_AUXDATA("ti,davinci-wdt", 0x01c21000, "davinci-wdt", NULL),
--	OF_DEV_AUXDATA("ti,da830-mmc", 0x01c40000, "da830-mmc.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f00000, "ehrpwm.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f02000, "ehrpwm.1", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f06000, "ecap.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f07000, "ecap.1", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f08000, "ecap.2", NULL),
--	OF_DEV_AUXDATA("ti,da830-spi", 0x01c41000, "spi_davinci.0", NULL),
--	OF_DEV_AUXDATA("ti,da830-spi", 0x01f0e000, "spi_davinci.1", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01c42000, "serial8250.0", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01d0c000, "serial8250.1", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01d0d000, "serial8250.2", NULL),
--	OF_DEV_AUXDATA("ti,davinci_mdio", 0x01e24000, "davinci_mdio.0", NULL),
--	OF_DEV_AUXDATA("ti,davinci-dm6467-emac", 0x01e20000, "davinci_emac.1",
--		       NULL),
--	OF_DEV_AUXDATA("ti,da830-mcasp-audio", 0x01d00000, "davinci-mcasp.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-aemif", 0x68000000, "ti-aemif", &aemif_data),
--	OF_DEV_AUXDATA("ti,da850-tilcdc", 0x01e13000, "da8xx_lcdc.0", NULL),
--	OF_DEV_AUXDATA("ti,da830-ohci", 0x01e25000, "ohci-da8xx", NULL),
--	OF_DEV_AUXDATA("ti,da830-musb", 0x01e00000, "musb-da8xx", NULL),
--	OF_DEV_AUXDATA("ti,da830-usb-phy", 0x01c1417c, "da8xx-usb-phy", NULL),
--	OF_DEV_AUXDATA("ti,da850-ahci", 0x01e18000, "ahci_da850", NULL),
--	OF_DEV_AUXDATA("ti,da850-vpif", 0x01e17000, "vpif", NULL),
--	OF_DEV_AUXDATA("ti,da850-dsp", 0x11800000, "davinci-rproc.0", NULL),
--	{}
--};
--
- #ifdef CONFIG_ARCH_DAVINCI_DA850
- 
- static void __init da850_init_machine(void)
- {
--	/* All existing boards use 100MHz SATA refclkpn */
--	static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
--
--	int ret;
--
--	da850_register_clocks();
--
--	ret = da8xx_register_usb_phy_clocks();
--	if (ret)
--		pr_warn("%s: USB PHY CLK registration failed: %d\n",
--			__func__, ret);
--
--	ret = da850_register_sata_refclk(sata_refclkpn);
--	if (ret)
--		pr_warn("%s: registering SATA REFCLK failed: %d",
--			__func__, ret);
--
--	of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
- 	davinci_pm_init();
- 	pdata_quirks_init();
- }
-@@ -94,7 +37,6 @@ static const char *const da850_boards_compat[] __initconst = {
- 
- DT_MACHINE_START(DA850_DT, "Generic DA850/OMAP-L138/AM18x")
- 	.map_io		= da850_init,
--	.init_time	= da850_init_time,
- 	.init_machine	= da850_init_machine,
- 	.dt_compat	= da850_boards_compat,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/pm_domain.c b/arch/arm/mach-davinci/pm_domain.c
-index 78eac2c..e251fd5 100644
---- a/arch/arm/mach-davinci/pm_domain.c
-+++ b/arch/arm/mach-davinci/pm_domain.c
-@@ -13,6 +13,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/pm_clock.h>
- #include <linux/platform_device.h>
-+#include <linux/of.h>
- 
- static struct dev_pm_domain davinci_pm_domain = {
- 	.ops = {
-@@ -28,6 +29,10 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
- 
- static int __init davinci_pm_runtime_init(void)
- {
-+	if (of_have_populated_dt())
-+		return 0;
-+
-+	/* Use pm_clk as fallback if we're not using genpd. */
- 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
- 
- 	return 0;
+Best regards
 -- 
-2.7.4
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
