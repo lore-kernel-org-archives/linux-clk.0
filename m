@@ -1,114 +1,266 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Thu, 22 Mar 2018 17:04:02 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [GIT PULL] Allwinner clock changes for 4.17
-Message-ID: <20180322160402.o2lon3bbncgss4sv@flea>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ltwm67ir4qod67ul"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46323 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753715AbeCFOd1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 09:33:27 -0500
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v3 2/6] clk: samsung: Add Exynos5 sub-CMU clock driver
+Date: Tue, 06 Mar 2018 15:33:08 +0100
+Message-id: <20180306143312.21035-3-m.szyprowski@samsung.com>
+In-reply-to: <20180306143312.21035-1-m.szyprowski@samsung.com>
+References: <20180306143312.21035-1-m.szyprowski@samsung.com>
+        <CGME20180306143323eucas1p1398ec0ae5a45235ddadb9398437c5250@eucas1p1.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Exynos5250/5420/5800 have only one clock constroller, but some of their
+clock depends on respective power domains. Handling integration of clock
+controller and power domain can be done using runtime PM feature of CCF
+framework. This however needs a separate struct device for each power
+domain. This patch adds such separate driver for a group of such clocks,
+which can be instantiated more than once, each time for a different
+power domain.
 
---ltwm67ir4qod67ul
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 186 +++++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5-subcmu.h |  26 +++++
+ 2 files changed, 212 insertions(+)
+ create mode 100644 drivers/clk/samsung/clk-exynos5-subcmu.c
+ create mode 100644 drivers/clk/samsung/clk-exynos5-subcmu.h
 
-Hi Mike, Stephen,
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
+new file mode 100644
+index 000000000000..ac3983c8adf2
+--- /dev/null
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+@@ -0,0 +1,186 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2018 Samsung Electronics Co., Ltd.
++// Author: Marek Szyprowski <m.szyprowski@samsung.com>
++// Common Clock Framework support for Exynos5 power-domain dependent clocks
++
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_runtime.h>
++
++#include "clk.h"
++#include "clk-exynos5-subcmu.h"
++
++static struct samsung_clk_provider *ctx;
++static const struct exynos5_subcmu_info *cmu;
++static int nr_cmus;
++
++static void exynos5_subcmu_clk_save(void __iomem *base,
++				    struct exynos5_subcmu_reg_dump *rd,
++				    unsigned int num_regs)
++{
++	for (; num_regs > 0; --num_regs, ++rd) {
++		rd->save = readl(base + rd->offset);
++		writel((rd->save & ~rd->mask) | rd->value, base + rd->offset);
++		rd->save &= rd->mask;
++	}
++};
++
++static void exynos5_subcmu_clk_restore(void __iomem *base,
++				       struct exynos5_subcmu_reg_dump *rd,
++				       unsigned int num_regs)
++{
++	for (; num_regs > 0; --num_regs, ++rd)
++		writel((readl(base + rd->offset) & ~rd->mask) | rd->save,
++		       base + rd->offset);
++}
++
++static void exynos5_subcmu_defer_gate(struct samsung_clk_provider *ctx,
++			      const struct samsung_gate_clock *list, int nr_clk)
++{
++	while (nr_clk--)
++		samsung_clk_add_lookup(ctx, ERR_PTR(-EPROBE_DEFER), list++->id);
++}
++
++/*
++ * Pass the needed clock provider context and register sub-CMU clocks
++ *
++ * NOTE: This function has to be called from the main, OF_CLK_DECLARE-
++ * initialized clock provider driver. This happens very early during boot
++ * process. Then this driver, during core_initcall registers two platform
++ * drivers: one which binds to the same device-tree node as OF_CLK_DECLARE
++ * driver and second, for handling its per-domain child-devices. Those
++ * platform drivers are bound to their devices a bit later in arch_initcall,
++ * when OF-core populates all device-tree nodes.
++ */
++void exynos5_subcmus_init(struct samsung_clk_provider *_ctx, int _nr_cmus,
++			  const struct exynos5_subcmu_info *_cmu)
++{
++	ctx = _ctx;
++	cmu = _cmu;
++	nr_cmus = _nr_cmus;
++
++	for (; _nr_cmus--; _cmu++) {
++		exynos5_subcmu_defer_gate(ctx, _cmu->gate_clks,
++					  _cmu->nr_gate_clks);
++		exynos5_subcmu_clk_save(ctx->reg_base, _cmu->suspend_regs,
++					_cmu->nr_suspend_regs);
++	}
++}
++
++static int __maybe_unused exynos5_subcmu_suspend(struct device *dev)
++{
++	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ctx->lock, flags);
++	exynos5_subcmu_clk_save(ctx->reg_base, info->suspend_regs,
++				info->nr_suspend_regs);
++	spin_unlock_irqrestore(&ctx->lock, flags);
++
++	return 0;
++}
++
++static int __maybe_unused exynos5_subcmu_resume(struct device *dev)
++{
++	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ctx->lock, flags);
++	exynos5_subcmu_clk_restore(ctx->reg_base, info->suspend_regs,
++				   info->nr_suspend_regs);
++	spin_unlock_irqrestore(&ctx->lock, flags);
++
++	return 0;
++}
++
++static int __init exynos5_subcmu_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct exynos5_subcmu_info *info = dev_get_drvdata(dev);
++
++	pm_runtime_set_suspended(dev);
++	pm_runtime_enable(dev);
++	pm_runtime_get(dev);
++
++	ctx->dev = dev;
++	samsung_clk_register_div(ctx, info->div_clks, info->nr_div_clks);
++	samsung_clk_register_gate(ctx, info->gate_clks, info->nr_gate_clks);
++	ctx->dev = NULL;
++
++	pm_runtime_put_sync(dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops exynos5_subcmu_pm_ops = {
++	SET_RUNTIME_PM_OPS(exynos5_subcmu_suspend,
++			   exynos5_subcmu_resume, NULL)
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				     pm_runtime_force_resume)
++};
++
++static struct platform_driver exynos5_subcmu_driver __refdata = {
++	.driver	= {
++		.name = "exynos5-subcmu",
++		.suppress_bind_attrs = true,
++		.pm = &exynos5_subcmu_pm_ops,
++	},
++	.probe = exynos5_subcmu_probe,
++};
++
++static int __init exynos5_clk_register_subcmu(struct device *parent,
++					 const struct exynos5_subcmu_info *info,
++					      struct device_node *pd_node)
++{
++	struct of_phandle_args genpdspec = { .np = pd_node };
++	struct platform_device *pdev;
++
++	pdev = platform_device_alloc(info->pd_name, -1);
++	pdev->dev.parent = parent;
++	pdev->driver_override = "exynos5-subcmu";
++	platform_set_drvdata(pdev, (void *)info);
++	of_genpd_add_device(&genpdspec, &pdev->dev);
++	platform_device_add(pdev);
++
++	return 0;
++}
++
++static int __init exynos5_clk_probe(struct platform_device *pdev)
++{
++	struct device_node *np;
++	const char *name;
++	int i;
++
++	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
++		if (of_property_read_string(np, "label", &name) < 0)
++			continue;
++		for (i = 0; i < nr_cmus; i++)
++			if (strcmp(cmu[i].pd_name, name) == 0)
++				exynos5_clk_register_subcmu(&pdev->dev,
++							    &cmu[i], np);
++	}
++	return 0;
++}
++
++static const struct of_device_id exynos5_clk_of_match[] = {
++	{ },
++};
++
++static struct platform_driver exynos5_clk_driver __refdata = {
++	.driver	= {
++		.name = "exynos5-clock",
++		.of_match_table = exynos5_clk_of_match,
++		.suppress_bind_attrs = true,
++	},
++	.probe = exynos5_clk_probe,
++};
++
++static int __init exynos5_clk_drv_init(void)
++{
++	platform_driver_register(&exynos5_clk_driver);
++	platform_driver_register(&exynos5_subcmu_driver);
++	return 0;
++}
++core_initcall(exynos5_clk_drv_init);
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.h b/drivers/clk/samsung/clk-exynos5-subcmu.h
+new file mode 100644
+index 000000000000..755ee8aaa3de
+--- /dev/null
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __CLK_EXYNOS5_SUBCMU_H
++#define __CLK_EXYNOS5_SUBCMU_H
++
++struct exynos5_subcmu_reg_dump {
++	u32 offset;
++	u32 value;
++	u32 mask;
++	u32 save;
++};
++
++struct exynos5_subcmu_info {
++	const struct samsung_div_clock *div_clks;
++	unsigned int nr_div_clks;
++	const struct samsung_gate_clock *gate_clks;
++	unsigned int nr_gate_clks;
++	struct exynos5_subcmu_reg_dump *suspend_regs;
++	unsigned int nr_suspend_regs;
++	const char *pd_name;
++};
++
++void exynos5_subcmus_init(struct samsung_clk_provider *ctx, int nr_cmus,
++			  const struct exynos5_subcmu_info *cmu);
++
++#endif
+-- 
+2.15.0
 
-Here is our usual pull request for the next merge window.
-
-Thanks!
-Maxime
-
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
-i-clk-for-4.17
-
-for you to fetch changes up to f422fa558aada511406432bc5974d3a5bf728227:
-
-  clk: sunxi-ng: add missing hdmi-slow clock for H6 CCU (2018-03-21 12:27:1=
-3 +0100)
-
-----------------------------------------------------------------
-Allwinner clock changes for 4.17
-
-Our usual bunch of changes for the next merge window. The most significant
-addition is the support of the H6 clock unit. Other than that, there's a
-bunch of fixes for the video clocks on the H3 and H5, and some Kconfig
-cleanup.
-
-----------------------------------------------------------------
-Corentin Labbe (1):
-      clk: sunxi-ng: remove select on obsolete SUNXI_CCU_X kconfig name
-
-Icenowy Zheng (4):
-      clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
-      dt-bindings: add device tree binding for Allwinner H6 main CCU
-      clk: sunxi-ng: add support for the Allwinner H6 CCU
-      clk: sunxi-ng: add missing hdmi-slow clock for H6 CCU
-
-Jernej Skrabec (6):
-      clk: sunxi-ng: Mask nkmp factors when setting register
-      clk: sunxi-ng: Use u64 for calculation of nkmp rate
-      clk: sunxi-ng: Add check for minimal rate to NM PLLs
-      clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
-      clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
-      clk: sunxi-ng: h3: h5: export CLK_PLL_VIDEO
-
- .../devicetree/bindings/clock/sunxi-ccu.txt        |    4 +
- drivers/clk/sunxi-ng/Kconfig                       |   12 +-
- drivers/clk/sunxi-ng/Makefile                      |    1 +
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c               | 1211 ++++++++++++++++=
-++++
- drivers/clk/sunxi-ng/ccu-sun50i-h6.h               |   56 +
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |   32 +-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |    4 +-
- drivers/clk/sunxi-ng/ccu_nkmp.c                    |   56 +-
- drivers/clk/sunxi-ng/ccu_nkmp.h                    |    2 +
- drivers/clk/sunxi-ng/ccu_nm.c                      |    7 +
- drivers/clk/sunxi-ng/ccu_nm.h                      |   27 +
- include/dt-bindings/clock/sun50i-h6-ccu.h          |  125 ++
- include/dt-bindings/clock/sun8i-h3-ccu.h           |    2 +
- include/dt-bindings/reset/sun50i-h6-ccu.h          |   73 ++
- 14 files changed, 1578 insertions(+), 34 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.h
- create mode 100644 include/dt-bindings/clock/sun50i-h6-ccu.h
- create mode 100644 include/dt-bindings/reset/sun50i-h6-ccu.h
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ltwm67ir4qod67ul
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqz0/EACgkQ0rTAlCFN
-r3ReKA//cSShFeUNkQonWsuvVyi+uM1VyhhLWDr12+p2CuASGUlbCF+/cWBjoFkE
-29WaCdvtmLYHuDYo5Q4+X6S9oeeHNH55Ar0cNWYSljGP8maSqxdxXnuJou07Ho8A
-tS912t3SnQ5zmqjs+c1DdFLNTgEK6Ujr4morirW8DkLWSmhe4fihtptxVek8lbaC
-94bQhtb1Wj+YuaGl4qdypj1aek/GK1bwjyt5Bx9PISupUEK7U3tY3NJLwk4kdgKk
-qrqWqpkhoaj4xo09zFAHhGhUUczbIKquwxFKL43CATY9OY6YVC9GtWgOE4NkqUBI
-Hc9zJEw4b9GkD+H4gBSUGfCOWi60i514wOqoOoxYMMeGmWq/qt7V8hUzx9HswYcE
-KY3vswSO477+HCfMm40WBRKN15GBJ6iWJnjnWhJUTUDoH9cl8bge8/h11Nni77Tm
-Jzv2rV9/jd1GsVwwKuUUda6tYsX+73spVFMeHCqUzsKENZXuIW5WMOxavOSlP4sw
-MsOcZBE7hid5tKjALf4U16muUYefbaNjSXZA01bteeQQnk8aL5XQ/jiv8QyoIwcE
-JrZAaNihpU8e2xOINpIuAOPifWwtAKrgLadt8Yr6OaFM38zA+bHN3CE8jvTelmZ1
-dGQFuWemR6mW6mG3cvSxPqZLvvOCfQZ6C02Wdx/aAfh5C6F/WEw=
-=Rb17
------END PGP SIGNATURE-----
-
---ltwm67ir4qod67ul--
