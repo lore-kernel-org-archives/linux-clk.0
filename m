@@ -1,235 +1,245 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
 	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 03/11] clk: actions: Add common clock driver support
-Date: Sat, 24 Mar 2018 19:01:51 +0530
-Message-Id: <20180324133159.4824-4-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
-References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v9 08/15] clk: qcom: Add support for Krait clocks
+Date: Tue,  6 Mar 2018 20:09:01 +0530
+Message-Id: <1520347148-27852-9-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi common clock driver with generic structures
-and interface functions.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+The Krait clocks are made up of a series of muxes and a divider
+that choose between a fixed rate clock and dedicated HFPLLs for
+each CPU. Instead of using mmio accesses to remux parents, the
+Krait implementation exposes the remux control via cp15
+registers. Support these clocks.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/Kconfig              |  1 +
- drivers/clk/Makefile             |  1 +
- drivers/clk/actions/Kconfig      |  4 ++
- drivers/clk/actions/Makefile     |  3 ++
- drivers/clk/actions/owl-common.c | 89 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-common.h | 41 ++++++++++++++++++
- 6 files changed, 139 insertions(+)
- create mode 100644 drivers/clk/actions/Kconfig
- create mode 100644 drivers/clk/actions/Makefile
- create mode 100644 drivers/clk/actions/owl-common.c
- create mode 100644 drivers/clk/actions/owl-common.h
+ drivers/clk/qcom/Kconfig     |   4 ++
+ drivers/clk/qcom/Makefile    |   1 +
+ drivers/clk/qcom/clk-krait.c | 124 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-krait.h |  38 +++++++++++++
+ 4 files changed, 167 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-krait.c
+ create mode 100644 drivers/clk/qcom/clk-krait.h
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 98ce9fc6e6c0..6313a4f4327a 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -238,6 +238,7 @@ config COMMON_CLK_VC5
- 	  This driver supports the IDT VersaClock 5 and VersaClock 6
- 	  programmable clock generators.
- 
-+source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 71ec41e6364f..b7909df532ed 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -56,6 +56,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
- obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
- 
- # please keep this section sorted lexicographically by directory path name
-+obj-y					+= actions/
- obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
- obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
- obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
-diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index d9ae51e..bf14f56 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -234,3 +234,7 @@ config QCOM_HFPLL
+ 	  Support for the high-frequency PLLs present on Qualcomm devices.
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as MSM8974, APQ8084, etc.
++
++config KRAIT_CLOCKS
++	bool
++	select KRAIT_L2_ACCESSORS
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index c57b808..e1e96f6 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+ clk-qcom-y += clk-regmap-divider.o
+ clk-qcom-y += clk-regmap-mux.o
+ clk-qcom-y += clk-regmap-mux-div.o
++clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
+ clk-qcom-y += clk-hfpll.o
+ clk-qcom-y += reset.o
+ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
 new file mode 100644
-index 000000000000..13a3e5083d43
+index 0000000..2e41767
 --- /dev/null
-+++ b/drivers/clk/actions/Kconfig
-@@ -0,0 +1,4 @@
-+config CLK_ACTIONS
-+	bool "Clock driver for Actions Semi SoCs"
-+	depends on ARCH_ACTIONS || COMPILE_TEST
-+	default ARCH_ACTIONS
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-new file mode 100644
-index 000000000000..64a50fc2d335
---- /dev/null
-+++ b/drivers/clk/actions/Makefile
-@@ -0,0 +1,3 @@
-+obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -0,0 +1,124 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
 +
-+clk-owl-y			+= owl-common.o
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-new file mode 100644
-index 000000000000..61c1071b5180
---- /dev/null
-+++ b/drivers/clk/actions/owl-common.c
-@@ -0,0 +1,89 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL common clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/spinlock.h>
 +
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++#include <asm/krait-l2-accessors.h>
 +
-+#include "owl-common.h"
++#include "clk-krait.h"
 +
-+static const struct regmap_config owl_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x00cc,
-+	.fast_io	= true,
-+};
++/* Secondary and primary muxes share the same cp15 register */
++static DEFINE_SPINLOCK(krait_clock_reg_lock);
 +
-+static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
-+			 struct regmap *regmap)
++#define LPL_SHIFT	8
++static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
 +{
-+	int i;
-+	struct owl_clk_common *clks;
++	unsigned long flags;
++	u32 regval;
 +
-+	for (i = 0; i < desc->num_clks; i++) {
-+		clks = desc->clks[i];
-+		if (!clks)
-+			continue;
-+
-+		clks->regmap = regmap;
++	spin_lock_irqsave(&krait_clock_reg_lock, flags);
++	regval = krait_get_l2_indirect_reg(mux->offset);
++	regval &= ~(mux->mask << mux->shift);
++	regval |= (sel & mux->mask) << mux->shift;
++	if (mux->lpl) {
++		regval &= ~(mux->mask << (mux->shift + LPL_SHIFT));
++		regval |= (sel & mux->mask) << (mux->shift + LPL_SHIFT);
 +	}
++	krait_set_l2_indirect_reg(mux->offset, regval);
++	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
++
++	/* Wait for switch to complete. */
++	mb();
++	udelay(1);
 +}
 +
-+int owl_clk_regmap_init(struct platform_device *pdev,
-+			 const struct owl_clk_desc *desc)
++static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
 +{
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct resource *res;
++	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
++	u32 sel;
 +
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &owl_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		pr_err("failed to init regmap\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	owl_clk_set_regmap(desc, regmap);
++	sel = clk_mux_reindex(index, mux->parent_map, 0);
++	mux->en_mask = sel;
++	/* Don't touch mux if CPU is off as it won't work */
++	if (__clk_is_enabled(hw->clk))
++		__krait_mux_set_sel(mux, sel);
 +
 +	return 0;
 +}
 +
-+int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
++static u8 krait_mux_get_parent(struct clk_hw *hw)
 +{
-+	int i, ret;
-+	struct clk_hw *hw;
++	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
++	u32 sel;
 +
-+	for (i = 0; i < hw_clks->num; i++) {
++	sel = krait_get_l2_indirect_reg(mux->offset);
++	sel >>= mux->shift;
++	sel &= mux->mask;
++	mux->en_mask = sel;
 +
-+		hw = hw_clks->hws[i];
-+
-+		if (IS_ERR_OR_NULL(hw))
-+			continue;
-+
-+		ret = devm_clk_hw_register(dev, hw);
-+		if (ret) {
-+			dev_err(dev, "Couldn't register clock %d - %s\n",
-+				i, hw->init->name);
-+			return ret;
-+		}
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_clks);
-+	if (ret)
-+		dev_err(dev, "Failed to add clock provider\n");
-+
-+	return ret;
++	return clk_mux_get_parent(hw, sel, mux->parent_map, 0);
 +}
-diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
-new file mode 100644
-index 000000000000..4fd726ec54a6
---- /dev/null
-+++ b/drivers/clk/actions/owl-common.h
-@@ -0,0 +1,41 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL common clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
-+#ifndef _OWL_COMMON_H_
-+#define _OWL_COMMON_H_
++const struct clk_ops krait_mux_clk_ops = {
++	.set_parent = krait_mux_set_parent,
++	.get_parent = krait_mux_get_parent,
++	.determine_rate = __clk_mux_determine_rate_closest,
++};
++EXPORT_SYMBOL_GPL(krait_mux_clk_ops);
++
++/* The divider can divide by 2, 4, 6 and 8. But we only really need div-2. */
++static long krait_div2_round_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long *parent_rate)
++{
++	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), rate * 2);
++	return DIV_ROUND_UP(*parent_rate, 2);
++}
++
++static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct krait_div2_clk *d = to_krait_div2_clk(hw);
++	unsigned long flags;
++	u32 val;
++	u32 mask = BIT(d->width) - 1;
++
++	if (d->lpl)
++		mask = mask << (d->shift + LPL_SHIFT) | mask << d->shift;
++
++	spin_lock_irqsave(&krait_clock_reg_lock, flags);
++	val = krait_get_l2_indirect_reg(d->offset);
++	val &= ~mask;
++	krait_set_l2_indirect_reg(d->offset, val);
++	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
++
++	return 0;
++}
++
++static unsigned long
++krait_div2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	struct krait_div2_clk *d = to_krait_div2_clk(hw);
++	u32 mask = BIT(d->width) - 1;
++	u32 div;
++
++	div = krait_get_l2_indirect_reg(d->offset);
++	div >>= d->shift;
++	div &= mask;
++	div = (div + 1) * 2;
++
++	return DIV_ROUND_UP(parent_rate, div);
++}
++
++const struct clk_ops krait_div2_clk_ops = {
++	.round_rate = krait_div2_round_rate,
++	.set_rate = krait_div2_set_rate,
++	.recalc_rate = krait_div2_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(krait_div2_clk_ops);
+diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
+new file mode 100644
+index 0000000..71890bc
+--- /dev/null
++++ b/drivers/clk/qcom/clk-krait.h
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#ifndef __QCOM_CLK_KRAIT_H
++#define __QCOM_CLK_KRAIT_H
 +
 +#include <linux/clk-provider.h>
-+#include <linux/of_platform.h>
-+#include <linux/regmap.h>
 +
-+struct device_node;
++struct krait_mux_clk {
++	unsigned int	*parent_map;
++	u32		offset;
++	u32		mask;
++	u32		shift;
++	u32		en_mask;
++	bool		lpl;
 +
-+struct owl_clk_common {
-+	struct regmap			*regmap;
-+	struct clk_hw			hw;
++	struct clk_hw	hw;
++	struct notifier_block   clk_nb;
 +};
 +
-+struct owl_clk_desc {
-+	struct owl_clk_common		**clks;
-+	unsigned long			num_clks;
-+	struct clk_hw_onecell_data	*hw_clks;
++#define to_krait_mux_clk(_hw) container_of(_hw, struct krait_mux_clk, hw)
++
++extern const struct clk_ops krait_mux_clk_ops;
++
++struct krait_div2_clk {
++	u32		offset;
++	u8		width;
++	u32		shift;
++	bool		lpl;
++
++	struct clk_hw	hw;
 +};
 +
-+static inline struct owl_clk_common *
-+	hw_to_owl_clk_common(const struct clk_hw *hw)
-+{
-+	return container_of(hw, struct owl_clk_common, hw);
-+}
++#define to_krait_div2_clk(_hw) container_of(_hw, struct krait_div2_clk, hw)
 +
-+int owl_clk_regmap_init(struct platform_device *pdev,
-+			 const struct owl_clk_desc *desc);
-+int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks);
++extern const struct clk_ops krait_div2_clk_ops;
 +
-+#endif /* _OWL_COMMON_H_ */
++#endif
 -- 
-2.14.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
