@@ -1,75 +1,67 @@
-Return-Path: <alexandre.belloni@bootlin.com>
-Date: Thu, 1 Mar 2018 10:59:44 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Philipp Rossak <embed3d@gmail.com>
-Cc: wens@csie.org, a.zummo@towertech.it, maxime.ripard@bootlin.com,
-	mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-	linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4] rtc: ac100: Fix ac100 determine rate bug
-Message-ID: <20180301095944.GT1479@piout.net>
-References: <20180226211901.9805-1-embed3d@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:21185 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753237AbeCFJKB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 04:10:01 -0500
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v4 2/6] clk: mediatek: add devm_of_platform_populate() for MT7622 audsys
+Date: Tue, 6 Mar 2018 17:09:27 +0800
+Message-ID: <3a3c198707a69297abc05d2a7fef97857e7fab5a.1520327262.git.ryder.lee@mediatek.com>
+In-Reply-To: <cover.1520327262.git.ryder.lee@mediatek.com>
+References: <cover.1520327262.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180226211901.9805-1-embed3d@gmail.com>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26/02/2018 at 22:19:01 +0100, Philipp Rossak wrote:
-> This patch fixes a bug, that prevents the Allwinner A83T and the A80
-> from a successful boot.
-> 
-> The bug is there since v4.16-rc1 and appeared after the clk branch was
-> merged.
-> 
-> You can find the shortend trace below:
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address
-> 00000000
-> pgd = (ptrval)
-> [00000000] *pgd=00000000
-> Internal error: Oops: 5 [#1] SMP ARM
-> Modules linked in:
-> CPU: 0 PID: 49 Comm: kworker/0:1 Not tainted 4.15.0-10190-gb89e32ccd1be #2
-> Hardware name: Allwinner sun8i Family
-> Workqueue: events deferred_probe_work_func
-> PC is at clk_hw_get_rate+0x0/0x34
-> LR is at ac100_clkout_determine_rate+0x48/0x19c
-> 
-> [ ... ]
-> 
-> (clk_hw_get_rate) from (ac100_clkout_determine_rate+0x48/0x19c)
-> (ac100_clkout_determine_rate) from  (clk_core_set_rate_nolock+0x3c/0x1a0)
-> (clk_core_set_rate_nolock) from (clk_set_rate+0x30/0x88)
-> (clk_set_rate) from (of_clk_set_defaults+0x200/0x364)
-> (of_clk_set_defaults) from (platform_drv_probe+0x18/0xb0)
-> 
-> To fix that bug, we first check if the return of the
-> clk_hw_get_parent_by_index is non zero. If it is zero we skip that
-> clock parent.
-> 
-> The BUG report could be found here: https://lkml.org/lkml/2018/2/10/198
-> 
-> Fixes: 04940631b8d2 ("rtc: ac100: Add clk output support")
-> 
-> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
-> ---
-> 
-> Changes in v4:
-> 	* add more information to the comment
-> Changes in v3:
-> 	* add information when the bug appeared 
-> 	* make the comment more clear
-> Changes in v2:
-> 	* add tag Fixes: ... to commit message
-> 	* add comment to if statement why we are doing this check
-> 
->  drivers/rtc/rtc-ac100.c | 24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
-> 
-Applied, thanks.
+Add devm_of_platform_populate() to populate devices which are children
+of the root node.
 
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt7622-aud.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+index 13f752d..0a1109f 100644
+--- a/drivers/clk/mediatek/clk-mt7622-aud.c
++++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+@@ -142,6 +142,7 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	struct device_node *node = pdev->dev.of_node;
++
+ 	int r;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
+@@ -150,12 +151,15 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
+ 			       clk_data);
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+-	if (r)
++	if (r) {
+ 		dev_err(&pdev->dev,
+ 			"could not register clock provider: %s: %d\n",
+ 			pdev->name, r);
+ 
+-	return r;
++		return r;
++	}
++
++	return devm_of_platform_populate(&pdev->dev);
+ }
+ 
+ static const struct of_device_id of_match_clk_mt7622_aud[] = {
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+1.9.1
+
