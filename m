@@ -1,73 +1,65 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-clk@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH v2] clk: Don't show the incorrect clock phase
-Date: Fri,  9 Mar 2018 08:56:39 +0800
-Message-Id: <1520556999-74737-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v4 4/6] dt-bindings: clock: mediatek: update audsys documentation to adapt MFD device
+Date: Tue, 6 Mar 2018 17:09:29 +0800
+Message-ID: <ad47a5c633fea2f75720dcd4b24fa6c41592d38b.1520327262.git.ryder.lee@mediatek.com>
+In-Reply-To: <cover.1520327262.git.ryder.lee@mediatek.com>
+References: <cover.1520327262.git.ryder.lee@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-It's found that the clock phase output from clk_summary is
-wrong compared to the actual phase reading from the register.
+The MediaTek audio hardware block that exposes functionalities that are
+handled by separate subsystems in the kernel.  These functions are all
+mapped somewhere at 0x112xxxxx, and there are some control bits are mixed
+up with other functions within the same registers.
 
-cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
-sdio_sample     0        1        0 50000000          0 -22
+This patch modifies example to illustrate child nodes.
 
-It exposes an issue that clk core, clk_core_get_phase, always
-returns the cached core->phase which should be either updated
-by calling clk_set_phase or directly from the first place the
-clk was registered.
-
-When registering the clk, the core->phase geting from ->get_phase()
-may return negative value indicating error. This is quite common
-since the clk's phase may be highly related to its parent chain,
-but it was temporarily orphan when registered, since its parent
-chains hadn't be ready at that time, so the clk drivers decide to
-return error in this case. However, if no clk_set_phase is called or
-maybe the ->set_phase() isn't even implemented, the core->phase would
-never be updated. This is wrong, and we should try to update it when
-all its parent chains are settled down, like the way of updating clock
-rate for that. But it's not deserved to complicate the code now and
-just update it anyway when calling clk_core_get_phase, which would be
-much simple and enough.
-
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
+ .../bindings/arm/mediatek/mediatek,audsys.txt         | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-Changes in v2:
-- fix the typos suggested by Geert
-- update cached phase anyway suggested by Jerome
-
- drivers/clk/clk.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0f686a9..4070664 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2370,6 +2370,17 @@ static int clk_core_get_phase(struct clk_core *core)
- 	int ret;
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+index 9b8f578..97b304e 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+@@ -13,10 +13,19 @@ The AUDSYS controller uses the common clk binding from
+ Documentation/devicetree/bindings/clock/clock-bindings.txt
+ The available clocks are defined in dt-bindings/clock/mt*-clk.h.
  
- 	clk_prepare_lock();
-+	/*
-+	 * Always try to update cached phase if possible since
-+	 * (1) It may be invalid at the first place when registering
-+	 * the hw clock but never got updated if no ->set_phase() be
-+	 * implemented or called.
-+	 * (2) It may be stale along with the other factors, for instance,
-+	 * the hw clock's rate is changed but current framework doesn't
-+	 * notify the change of phase concurrent with that of rate.
-+	 */
-+	if (core->ops->get_phase)
-+		core->phase = core->ops->get_phase(core->hw);
- 	ret = core->phase;
- 	clk_prepare_unlock();
++Required sub-nodes:
++-------
++For common binding part and usage, refer to
++../sonud/mt2701-afe-pcm.txt.
++
+ Example:
  
+-audsys: audsys@11220000 {
+-	compatible = "mediatek,mt7622-audsys", "syscon";
+-	reg = <0 0x11220000 0 0x1000>;
+-	#clock-cells = <1>;
+-};
++	audsys: clock-controller@11220000 {
++		compatible = "mediatek,mt7622-audsys", "syscon";
++		reg = <0 0x11220000 0 0x2000>;
++		#clock-cells = <1>;
++
++		afe: audio-controller {
++			...
++		};
++	};
 -- 
 1.9.1
