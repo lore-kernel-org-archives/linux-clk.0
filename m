@@ -1,63 +1,99 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Qiufang Dai <qiufang.dai@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>,
-	Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [PATCH v2 6/7] arm64: dts: meson-axg: add AO clock driver DT info
-Date: Fri, 23 Mar 2018 22:38:15 +0800
-Message-ID: <20180323143816.200573-7-yixun.lan@amlogic.com>
-In-Reply-To: <20180323143816.200573-1-yixun.lan@amlogic.com>
-References: <20180323143816.200573-1-yixun.lan@amlogic.com>
+Return-Path: <jhogan@kernel.org>
+Date: Tue, 6 Mar 2018 00:08:32 +0000
+From: James Hogan <jhogan@kernel.org>
+To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, ralf@linux-mips.org,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	devicetree@vger.kernel.org, linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paul@crapouillou.net, malat@debian.org, dom.peklo@gmail.com
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+Message-ID: <20180306000832.GL4197@saruman>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+ <20170927151527.25570-4-prasannatsmkumar@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nrXiCraHbXeog9mY"
+In-Reply-To: <20170927151527.25570-4-prasannatsmkumar@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Qiufang Dai <qiufang.dai@amlogic.com>
 
-This add the AO (Always-On part) clock DT info for Meson-AXG SoC
+--nrXiCraHbXeog9mY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Wed, Sep 27, 2017 at 08:45:26PM +0530, PrasannaKumar Muralidharan wrote:
+> Add initial Ingenic X1000 SoC support. Provide minimum necessary
+> information to boot kernel to an initramfs userspace.
+>=20
+> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+> ---
+>  arch/mips/boot/dts/ingenic/x1000.dtsi | 93 +++++++++++++++++++++++++++++=
+++++++
+>  arch/mips/jz4740/Kconfig              |  6 +++
+>  arch/mips/jz4740/time.c               |  2 +-
+>  3 files changed, 100 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/mips/boot/dts/ingenic/x1000.dtsi
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index a80632641b39..b3d394f5d95a 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/axg-clkc.h>
-+#include <dt-bindings/clock/axg-aoclkc.h>
- 
- / {
- 	compatible = "amlogic,meson-axg";
-@@ -472,6 +473,17 @@
- 			#size-cells = <2>;
- 			ranges = <0x0 0x0 0x0 0xff800000 0x0 0x100000>;
- 
-+			sysctrl_AO: sys-ctrl@0 {
-+				compatible = "amlogic,meson-axg-ao-sysctrl", "syscon", "simple-mfd";
-+				reg =  <0x0 0x0 0x0 0x100>;
-+
-+				clkc_AO: clock-controller {
-+					compatible = "amlogic,meson-axg-aoclkc";
-+					#clock-cells = <1>;
-+					#reset-cells = <1>;
-+				};
-+			};
-+
- 			pinctrl_aobus: pinctrl@14 {
- 				compatible = "amlogic,meson-axg-aobus-pinctrl";
- 				#address-cells = <2>;
--- 
-2.15.1
+arch/mips/jz4780/setup.c, specifically get_board_mach_type() and
+get_system_type() will need updating too.
+
+Does X1000 use a different PRID, or is it basically just a JZ4780 core
+with different SoC peripherals?
+
+> diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/i=
+ngenic/x1000.dtsi
+> new file mode 100644
+> index 0000000..abbb9ec
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
+> @@ -0,0 +1,93 @@
+> +/*
+> + * Copyright (C) 2016 PrasannaKumar Muralidharan <prasannatsmkumar@gmail=
+=2Ecom>
+> + *
+> + * This file is licensed under the terms of the GNU General Public
+> + * License version 2. This program is licensed "as is" without any
+> + * warranty of any kind, whether express or implied.
+
+(these will need updating to use SPDX identifiers if you respin)
+
+> +	cgu: jz4780-cgu@10000000 {
+
+not sure jz4780 is appropriate here.
+
+> +		compatible =3D "ingenic,x1000-cgu";
+> +		reg =3D <0x10000000 0x100>;
+> +
+> +		clocks =3D <&ext>, <&rtc>;
+> +		clock-names =3D "ext", "rtc";
+> +
+> +		#clock-cells =3D <1>;
+> +	};
+
+Cheers
+James
+
+--nrXiCraHbXeog9mY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqd2/8ACgkQbAtpk944
+dnpAlw/+MjVXePpEgRTo/x44QOaJLfHn945fI+988C3mMlcVg2kUqCRp0b0U+7ZD
+ozPBJYreFQvJXWJM0dAyf34A/9PxdZGDHtcv7bn/BG+EY05F7XWqyQwfAO4zmBhG
+IMmhra1XLX4b0XwnFMUXz2OBndGJPJkOQ/iJY5viIdVZR+98dQMZP3a6q21H/Nhs
+mZkrjVJ0Eq8CuYCuDxxeX1d8nkuutFgq77MvbEXHkTB2OI1eRQ8IkuwOIUJ9+7g3
+uqi3LhzWR+DtpPHTDqY+AwBM+wrRx9YcDj3XPg03waefBm8c7wRKdmZb20zDLLxV
+G14KvwVaiMIcEKDhyYi4Z21X6gZwEUPJUJJ5qmSN/DGj3a0EzFpZrYRnuGEjRUUU
+u/R0o9c3mg8MeYzmPrz+ckVMe2z4IgezOd3QrYzPvDa8HUrrKfK++/Wvr6TN3Gu3
+sy9zp0hyg9+zArF90hYznChoam9ePPoUZjM7Ao3eXLLggohMWeEvRiFOPkyICQt9
+flD7d/Tom/i00YO3LTMpicIfNnWCGGaBcXuDZzwMXIwXBiHpEjPZ7CKSzbHTlzjx
+/vsnemhVAHxvKRayAzdUm6gML/jvpYi/EpJzDW7zeWI+18oDXvdN80tsVYSNGtbK
+V6PGb7j4MWsBNNquEbU8H0DM96OkqhNFFBtMf3tniVxRv2iAz/k=
+=eDtH
+-----END PGP SIGNATURE-----
+
+--nrXiCraHbXeog9mY--
