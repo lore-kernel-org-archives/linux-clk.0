@@ -1,61 +1,51 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.140]:47944 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751723AbeCIBwM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Mar 2018 20:52:12 -0500
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org, broonie@kernel.org,
-        alexandre.belloni@bootlin.com
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-rtc@vger.kernel.org,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
-        Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 0/4] Set name of regmap_config
-Date: Fri,  9 Mar 2018 09:51:42 +0800
-Message-Id: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
+Received: from mailout2.samsung.com ([203.254.224.25]:61902 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753792AbeCFQFq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 11:05:46 -0500
+Subject: Re: [PATCH 1/6] soc: samsung: pm_domains: Add blacklisting clock
+ handling
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <ff4b8d50-8a08-442c-b289-9c22f01892ff@samsung.com>
+Date: Tue, 06 Mar 2018 17:05:38 +0100
+MIME-version: 1.0
+In-reply-to: <CAJKOXPftSvug8J_zMO0mmGWpFLHgpb4no4q2t=tW6Qva0fd0qg@mail.gmail.com>
+Content-type: text/plain; charset="utf-8"
+References: <CGME20180221101533eucas1p234b1801844ce8fac633377d129323422@eucas1p2.samsung.com>
+        <20180221101527.25554-1-m.szyprowski@samsung.com>
+        <20180221101527.25554-2-m.szyprowski@samsung.com>
+        <CAJKOXPftSvug8J_zMO0mmGWpFLHgpb4no4q2t=tW6Qva0fd0qg@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 02/22/2018 11:54 AM, Krzysztof Kozlowski wrote:
+> On Wed, Feb 21, 2018 at 11:15 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> Handling of clock reparenting will be move to clock controller driver, so
+>> add possibility to blacklist clock handling on systems, where the clock
+>> controller already does all needed operations. This is needed to avoid
+>> potential deadlock on clock reparenting during power domain on/off
+>> procedure.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  drivers/soc/samsung/pm_domains.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> Feel free to take it through samsung-clk tree. Just in case of
+> possible conflicts - could you put it on separate branch please?
 
-After 9b947a13e7f6 ("regmap: use debugfs even when no device"), we are
-allowing regmap to create debugfs without a valid device. Some of them
-would end up using "dummy*" as debugfs name.
-
-This series try to set names in some regmap_config to avoid that.
-
-
-Changes in v4:
-Not to use rtc dev to init regmap, the gpbr is not directly related to
-the rtc.
-
-Changes in v3:
-Modify commit message.
-
-Jeffy Chen (4):
-  mfd: syscon: Set name of regmap_config
-  rtc: at91sam9: Set name of regmap_config
-  clk: lpc32xx: Set name of regmap_config
-  ARM: rockchip: Set name of regmap_config
-
- arch/arm/mach-rockchip/platsmp.c | 1 +
- drivers/clk/nxp/clk-lpc32xx.c    | 1 +
- drivers/mfd/syscon.c             | 1 +
- drivers/rtc/rtc-at91sam9.c       | 1 +
- 4 files changed, 4 insertions(+)
+OK, it's applied on a separate branch now, please let me know when
+you need a signed tag.
 
 -- 
-2.11.0
-
-
+Thanks,
+Sylwester
