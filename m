@@ -1,47 +1,65 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] clk: renesas: r8a7792: Fix LB clock divider
-Date: Thu, 29 Mar 2018 19:33:09 +0200
-Message-Id: <1522344790-20061-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:16569 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750817AbeCFJJg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 04:09:36 -0500
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v4 1/6] clk: mediatek: update missing clock data for MT7622 audsys
+Date: Tue, 6 Mar 2018 17:09:26 +0800
+Message-ID: <d768a69e47bef843ae324801dca22a66289c959f.1520327262.git.ryder.lee@mediatek.com>
+In-Reply-To: <cover.1520327262.git.ryder.lee@mediatek.com>
+References: <cover.1520327262.git.ryder.lee@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-the LB clock divider depends on the value of the MD18 pin.
+Add missing clock data 'CLK_AUDIO_AFE_CONN' for MT7622 audsys.
 
-On R-Car V2H, the LB clock divider is fixed to 24.  Hence model the
-clock as a fixed factor clock instead.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 ---
- drivers/clk/renesas/r8a7792-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-mt7622-aud.c  | 1 +
+ include/dt-bindings/clock/mt7622-clk.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r8a7792-cpg-mssr.c b/drivers/clk/renesas/r8a7792-cpg-mssr.c
-index 609a540804965c40..8b66e6f4b4584de1 100644
---- a/drivers/clk/renesas/r8a7792-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7792-cpg-mssr.c
-@@ -53,7 +53,6 @@ static const struct cpg_core_clk r8a7792_core_clks[] __initconst = {
- 	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
+diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+index fad7d9f..13f752d 100644
+--- a/drivers/clk/mediatek/clk-mt7622-aud.c
++++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+@@ -106,6 +106,7 @@
+ 	GATE_AUDIO1(CLK_AUDIO_INTDIR, "audio_intdir", "intdir_sel", 20),
+ 	GATE_AUDIO1(CLK_AUDIO_A1SYS, "audio_a1sys", "a1sys_hp_sel", 21),
+ 	GATE_AUDIO1(CLK_AUDIO_A2SYS, "audio_a2sys", "a2sys_hp_sel", 22),
++	GATE_AUDIO1(CLK_AUDIO_AFE_CONN, "audio_afe_conn", "a1sys_hp_sel", 23),
+ 	/* AUDIO2 */
+ 	GATE_AUDIO2(CLK_AUDIO_UL1, "audio_ul1", "a1sys_hp_sel", 0),
+ 	GATE_AUDIO2(CLK_AUDIO_UL2, "audio_ul2", "a1sys_hp_sel", 1),
+diff --git a/include/dt-bindings/clock/mt7622-clk.h b/include/dt-bindings/clock/mt7622-clk.h
+index 3e514ed..e9d77f0 100644
+--- a/include/dt-bindings/clock/mt7622-clk.h
++++ b/include/dt-bindings/clock/mt7622-clk.h
+@@ -235,7 +235,8 @@
+ #define CLK_AUDIO_MEM_ASRC3		43
+ #define CLK_AUDIO_MEM_ASRC4		44
+ #define CLK_AUDIO_MEM_ASRC5		45
+-#define CLK_AUDIO_NR_CLK		46
++#define CLK_AUDIO_AFE_CONN		46
++#define CLK_AUDIO_NR_CLK		47
  
- 	/* Core Clock Outputs */
--	DEF_BASE("lb",   R8A7792_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
- 	DEF_BASE("qspi", R8A7792_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
+ /* SSUSBSYS */
  
- 	DEF_FIXED("z",      R8A7792_CLK_Z,     CLK_PLL0,          1, 1),
-@@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7792_core_clks[] __initconst = {
- 	DEF_FIXED("hp",     R8A7792_CLK_HP,    CLK_PLL1,         12, 1),
- 	DEF_FIXED("i",      R8A7792_CLK_I,     CLK_PLL1,          3, 1),
- 	DEF_FIXED("b",      R8A7792_CLK_B,     CLK_PLL1,         12, 1),
-+	DEF_FIXED("lb",     R8A7792_CLK_B,     CLK_PLL1,         24, 1),
- 	DEF_FIXED("p",      R8A7792_CLK_P,     CLK_PLL1,         24, 1),
- 	DEF_FIXED("cl",     R8A7792_CLK_CL,    CLK_PLL1,         48, 1),
- 	DEF_FIXED("m2",     R8A7792_CLK_M2,    CLK_PLL1,          8, 1),
 -- 
-2.7.4
+1.9.1
+
