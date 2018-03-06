@@ -1,75 +1,69 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sun, 18 Mar 2018 21:16:18 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 4/9] pinctrl: sunxi: add support for the Allwinner H6
- main pin controller
-Message-ID: <20180318201618.wk6ypgjljhkwpei7@flea>
-References: <20180316140215.28663-1-icenowy@aosc.io>
- <20180316140215.28663-5-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="czeyzjeg3gm3fdy3"
-In-Reply-To: <20180316140215.28663-5-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v9 12/15] dt-bindings: clock: Document qcom,krait-cc
+Date: Tue,  6 Mar 2018 20:09:05 +0530
+Message-Id: <1520347148-27852-13-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Stephen Boyd <sboyd@codeaurora.org>
 
---czeyzjeg3gm3fdy3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The Krait clock controller controls the krait CPU and the L2 clocks
+consisting a primary mux and secondary mux. Add document for that.
 
-On Fri, Mar 16, 2018 at 10:02:10PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC has two pin controllers, one main controller
-> (called CPUX-PORT in user manual) and one controller in CPUs power
-> domain (called CPUS-PORT in user manual).
->=20
-> This commit introduces support for the main pin controller on H6.
->=20
-> The pin bank A and B are not wired out and hidden from the SoC's
-> documents, however it's shown that the "ATE" (an AC200 chip
-> co-packaged with the H6 die) is connected to the main SoC die via these
-> pin banks. The information about these banks is just copied from the BSP
-> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
-> format. The GPIO functions are dropped, as they're impossible to use --
-> except a GPIO&IRQ only pin (PB20) which might be the IRQ of ATE.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,krait-cc.txt    | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---czeyzjeg3gm3fdy3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlquyREACgkQ0rTAlCFN
-r3Rq4A/8DcJWJHup9/bUO/SRXYyqPzJ/20bsVUg534Ev/PfoDpq15j4ygd32o5Bk
-LZ0SPBKeKnS27DIeHwBuJTx+RCewBzdfSQC6gMH1q+7/0D9dlGHz+9XdpSpSeXpg
-azpPLDC0fE7TMNIqQW3EtFDm2j1hxNwQJshcnQ1A+58t/CksdSZB+JNNKyZaeuqe
-04NS6KnbUDTj0Kk1F6CidQvXDhwWMM6jLTiAKH4y13nG263eMxXMMkt88sqKXGrY
-yY5AUQMA+TpAvEX5EDOz07DdWTcHgp8cddV9JBNH87B8+4fAAp3Vb3tis0lY/Whx
-OhFtFvlsC/SV/mor9l+xlDfjnDWjwIwvcETCkgZppP9XRZ3e6BNbKWElnEhvWpgN
-j1eD1jQ9L0PY7VdxwsHZVO7CRvSZ/QbedaU+oYMSd8NIKKE3/SnjpnPRIlAm+v69
-2LllOHUOXVzilIf6fK06w5KjAwCrwn7KoHnBAE7O67Uqv5ivHKSsHHTBd19OC1kM
-Fy2n9PHMaFFgmrzhomcN0FHefZdKc4PKKB+V88KSqrpQPJ2kVh9ovYcBexpxugff
-uRSQQnupy5TaFf9MC4CGnWJjo6YfHq2y2ocAu8Se/xvAI1E9UAIq4p6vr4wf3CPl
-ZrKmlT4LM+1MahpjttsWsyQCTDvvlOWF+PoQKMC5cFeb0qNJu4I=
-=LKmd
------END PGP SIGNATURE-----
-
---czeyzjeg3gm3fdy3--
+diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+new file mode 100644
+index 0000000..874138f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+@@ -0,0 +1,22 @@
++Krait Clock Controller
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: must be one of:
++			"qcom,krait-cc-v1"
++			"qcom,krait-cc-v2"
++
++- #clock-cells:
++	Usage: required
++	Value type: <u32>
++	Definition: must be 1
++
++Example:
++
++	kraitcc: clock-controller {
++		compatible = "qcom,krait-cc-v1";
++		#clock-cells = <1>;
++	};
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
