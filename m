@@ -1,81 +1,103 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:49677 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751088AbeC1CvP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Mar 2018 22:51:15 -0400
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 0/6] clk: meson-axg: Add AO Cloclk and Reset driver
-Date: Wed, 28 Mar 2018 10:50:44 +0800
-Message-ID: <20180328025050.221585-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v9 10/15] dt-bindings: arm: Document qcom,kpss-gcc
+Date: Tue,  6 Mar 2018 20:09:03 +0530
+Message-Id: <1520347148-27852-11-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-  This patch try to add AO clock and Reset driver for Amlogic's
-Meson-AXG SoC.
-  Please note that patch 6 need to wait for the DTS changes[3] merged
-into mainline first, otherwise it will break the serial console.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
- patch 1: factor the common code into a dedicated file
- patch 2-4: add the aoclk driver for AXG SoC
- patch 5-6: drop unnecessary clock flags
+The ACC and GCC regions present in KPSSv1 contain registers to
+control clocks and power to each Krait CPU and L2. Documenting
+the bindings here.
 
-changes since v2 at [2]: 
- - rework meson_aoclkc_probe() which leverage the of_match_data
- - merge patch 5-6 into this series
- - seperate DTS patch, will send to Kevin Hilman independently
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  |  7 +++++
+ .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 32 ++++++++++++++++++++++
+ 2 files changed, 39 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+index 1333db9..382a574 100644
+--- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+@@ -21,10 +21,17 @@ PROPERTIES
+ 		    the register region. An optional second element specifies
+ 		    the base address and size of the alias register region.
  
-changes since v1 at [0]: 
- - rebase to clk-meson's branch 'next/drivers' [1]
- - fix license, update to BSD-3-Clause
- - drop un-used include header file
-
-[0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
-[1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
-[2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
-[3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
-
-Qiufang Dai (1):
-  clk: meson-axg: Add AO Clock and Reset controller driver
-
-Yixun Lan (5):
-  clk: meson: aoclk: refactor common code into dedicated file
-  dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
-  dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-  clk: meson: drop CLK_SET_RATE_PARENT flag
-  clk: meson: drop CLK_IGNORE_UNUSED flag
-
- .../bindings/clock/amlogic,gxbb-aoclkc.txt         |   1 +
- drivers/clk/meson/Makefile                         |   4 +-
- drivers/clk/meson/axg-aoclk.c                      | 163 +++++++++++++++++++++
- drivers/clk/meson/axg-aoclk.h                      |  31 ++++
- drivers/clk/meson/gxbb-aoclk.c                     |  88 ++++-------
- drivers/clk/meson/gxbb-aoclk.h                     |   7 +
- drivers/clk/meson/meson-aoclk.c                    |  79 ++++++++++
- drivers/clk/meson/meson-aoclk.h                    |  35 +++++
- include/dt-bindings/clock/axg-aoclkc.h             |  26 ++++
- include/dt-bindings/reset/axg-aoclkc.h             |  20 +++
- 10 files changed, 393 insertions(+), 61 deletions(-)
- create mode 100644 drivers/clk/meson/axg-aoclk.c
- create mode 100644 drivers/clk/meson/axg-aoclk.h
- create mode 100644 drivers/clk/meson/meson-aoclk.c
- create mode 100644 drivers/clk/meson/meson-aoclk.h
- create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
- create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
-
++- clock-output-names:
++	Usage: optional
++	Value type: <string>
++	Definition: Name of the output clock. Typically acpuX_aux where X is a
++		    CPU number starting at 0.
++
+ Example:
+ 
+ 	clock-controller@2088000 {
+ 		compatible = "qcom,kpss-acc-v2";
+ 		reg = <0x02088000 0x1000>,
+ 		      <0x02008000 0x1000>;
++		clock-output-names = "acpu0_aux";
+ 	};
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+new file mode 100644
+index 0000000..37fc0a4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+@@ -0,0 +1,32 @@
++Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: should be one of the following. The generic compatible
++			"qcom,kpss-gcc" should also be included.
++			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: base address and size of the register region
++
++- clock-output-names:
++	Usage: required
++	Value type: <string>
++	Definition: Name of the output clock. Typically acpu_l2_aux indicating
++		    an L2 cache auxiliary clock.
++
++Example:
++
++	l2cc: clock-controller@2011000 {
++		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
++		reg = <0x2011000 0x1000>;
++		clock-output-names = "acpu_l2_aux";
++	};
 -- 
-2.15.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
