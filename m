@@ -1,68 +1,74 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.135]:52576 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932899AbeCSJVd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Mar 2018 05:21:33 -0400
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH] clk: rockchip: Don't restore invalid cached phase
-Date: Mon, 19 Mar 2018 17:15:02 +0800
-Message-Id: <1521450902-32142-1-git-send-email-shawn.lin@rock-chips.com>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:30789 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750801AbeCFJHF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 04:07:05 -0500
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v4 0/6] Fix the overlapping registers issue for the MediTek audio system
+Date: Tue, 6 Mar 2018 17:06:34 +0800
+Message-ID: <cover.1520326090.git.ryder.lee@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We inevitably cache the invalid phase when the clock provider
-be reparented from orphan to its real parent in the first place,
-thus we may mess up the initialization of MMC cards since we
-only set the default sample phase and drive phase later on.
-So we should skip to restore the invalid phase. And this patch
-also corrects the error path to return invalid pointer to clk if
-clk_notifier_register failed introduced by the same offending
-commit.
+Hi,
 
-Fixes: 60cf09e45fbc ("clk: rockchip: Restore the clock phase after the rate was changed")
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
+This is the new round of the audsys. I add devm_of_platform_populate() in the clock driver
+to populate the child devices (AFE) so that we can handle the dependency for all functions. 
 
- drivers/clk/rockchip/clk-mmc-phase.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+changes since v4:
+ - remove "simple-mfd" from mediatek,audsys.txt.
+ - switch to use devm_of_platform_populate() to populate the child devices.
+ 
+changes since v3:
+ - Rebase to v4.16.
+ - Modify clock driver for the sake of the backward compatibility.
+ - Rewrite commit message of patch 4/5 to make it more specific.
 
-diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-index dc4c227..c8c6119 100644
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -181,7 +181,8 @@ static int rockchip_mmc_clk_rate_notify(struct notifier_block *nb,
- 	if (event == PRE_RATE_CHANGE)
- 		mmc_clock->cached_phase =
- 			rockchip_mmc_get_phase(&mmc_clock->hw);
--	else if (event == POST_RATE_CHANGE)
-+	else if (mmc_clock->cached_phase != -EINVAL &&
-+		 event == POST_RATE_CHANGE)
- 		rockchip_mmc_set_phase(&mmc_clock->hw, mmc_clock->cached_phase);
- 
- 	return NOTIFY_DONE;
-@@ -211,8 +212,10 @@ struct clk *rockchip_clk_register_mmc(const char *name,
- 	mmc_clock->shift = shift;
- 
- 	clk = clk_register(NULL, &mmc_clock->hw);
--	if (IS_ERR(clk))
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
- 		goto err_register;
-+	}
- 
- 	mmc_clock->clk_rate_change_nb.notifier_call =
- 				&rockchip_mmc_clk_rate_notify;
-@@ -225,5 +228,5 @@ struct clk *rockchip_clk_register_mmc(const char *name,
- 	clk_unregister(clk);
- err_register:
- 	kfree(mmc_clock);
--	return clk;
-+	return ERR_PTR(ret);
- }
+changes since v2:
+ - Drop useless changes in clk-mt7622-aud.c.
+ - Revise binding text: 
+        - Add more information about audio subsystem.
+        - Separate clock node and AFE node.
+ - Update license header.
+
+changes since v1:
+ - To avoid writing an MFD driver, we add "simple-mfd" in the audsys binding.
+ - Move three top clocks to audio driver [1] as we remove mfd/mtk-audsys.c in 
+v1.
+
+Ryder Lee (6):
+  clk: mediatek: update missing clock data for MT7622 audsys
+  clk: mediatek: add devm_of_platform_populate() for MT7622 audsys
+  clk: mediatek: add audsys support for MT2701
+  dt-bindings: clock: mediatek: update audsys documentation to adapt MFD
+    device
+  dt-bindings: clock: mediatek: add audsys support for MT2701
+  arm: dts: mediatek: modify audio related nodes for both MT2701 and
+    MT7623
+
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |  20 ++-
+ arch/arm/boot/dts/mt2701.dtsi                      | 188 ++++++++++----------
+ arch/arm/boot/dts/mt7623.dtsi                      | 190 ++++++++++-----------
+ drivers/clk/mediatek/Kconfig                       |   6 +
+ drivers/clk/mediatek/Makefile                      |   1 +
+ drivers/clk/mediatek/clk-mt2701-aud.c              | 177 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt7622-aud.c              |   9 +-
+ include/dt-bindings/clock/mt7622-clk.h             |   3 +-
+ 8 files changed, 390 insertions(+), 204 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-aud.c
+
 -- 
 1.9.1
-
 
