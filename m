@@ -1,166 +1,145 @@
-Return-Path: <brgl@bgdev.pl>
-MIME-Version: 1.0
-In-Reply-To: <51e33d41-37b1-9e88-4a13-503bb39e2e40@ti.com>
-References: <20180327092031.11251-1-brgl@bgdev.pl> <20180327092031.11251-8-brgl@bgdev.pl>
- <51e33d41-37b1-9e88-4a13-503bb39e2e40@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 29 Mar 2018 09:16:33 +0200
-Message-ID: <CAMRc=Me6giXHneuuRTPSwfw8HxwbDVCTgReZ_6HBv90ushf+-Q@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] remoteproc/davinci: use the reset framework
-To: Suman Anna <s-anna@ti.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v9 07/15] clk: qcom: Add IPQ806X's HFPLLs
+Date: Tue,  6 Mar 2018 20:09:00 +0530
+Message-Id: <1520347148-27852-8-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-29 0:30 GMT+02:00 Suman Anna <s-anna@ti.com>:
-> Hi Bart,
->
-> On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> Switch to using the reset framework instead of handcoded reset routines
->> we used so far.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->>  drivers/remoteproc/da8xx_remoteproc.c | 33 ++++++++++++++++++++++++++++-----
->>  1 file changed, 28 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
->> index b668e32996e2..788f59809c02 100644
->> --- a/drivers/remoteproc/da8xx_remoteproc.c
->> +++ b/drivers/remoteproc/da8xx_remoteproc.c
->> @@ -10,6 +10,7 @@
->>
->>  #include <linux/bitops.h>
->>  #include <linux/clk.h>
->> +#include <linux/reset.h>
->>  #include <linux/err.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/io.h>
->> @@ -20,8 +21,6 @@
->>  #include <linux/platform_device.h>
->>  #include <linux/remoteproc.h>
->>
->> -#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
->> -
->>  #include "remoteproc_internal.h"
->>
->>  static char *da8xx_fw_name;
->> @@ -72,6 +71,7 @@ struct da8xx_rproc {
->>       struct da8xx_rproc_mem *mem;
->>       int num_mems;
->>       struct clk *dsp_clk;
->> +     struct reset_control *dsp_reset;
->>       void (*ack_fxn)(struct irq_data *data);
->>       struct irq_data *irq_data;
->>       void __iomem *chipsig;
->> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
->>       struct device *dev = rproc->dev.parent;
->>       struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
->>       struct clk *dsp_clk = drproc->dsp_clk;
->> +     struct reset_control *dsp_reset = drproc->dsp_reset;
->>       int ret;
->>
->>       /* hw requires the start (boot) address be on 1KB boundary */
->> @@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
->>               return ret;
->>       }
->>
->> -     davinci_clk_reset_deassert(dsp_clk);
->> +     ret = reset_control_deassert(dsp_reset);
->> +     if (ret) {
->> +             dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
->> +             clk_disable_unprepare(dsp_clk);
->> +             return ret;
->> +     }
->>
->>       return 0;
->>  }
->> @@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
->>  static int da8xx_rproc_stop(struct rproc *rproc)
->>  {
->>       struct da8xx_rproc *drproc = rproc->priv;
->> +     struct device *dev = rproc->dev.parent;
->> +     int ret;
->> +
->> +     ret = reset_control_assert(drproc->dsp_reset);
->> +     if (ret) {
->> +             dev_err(dev, "reset_control_assert() failed: %d\n", ret);
->> +             return ret;
->> +     }
->>
->> -     davinci_clk_reset_assert(drproc->dsp_clk);
->>       clk_disable_unprepare(drproc->dsp_clk);
->>
->>       return 0;
->> @@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->>       struct resource *bootreg_res;
->>       struct resource *chipsig_res;
->>       struct clk *dsp_clk;
->> +     struct reset_control *dsp_reset;
->>       void __iomem *chipsig;
->>       void __iomem *bootreg;
->>       int irq;
->> @@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->>               return PTR_ERR(dsp_clk);
->>       }
->>
->> +     dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
->> +     if (IS_ERR(dsp_reset)) {
->> +             if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
->> +                     dev_err(dev, "unable to get reset control: %ld\n",
->> +                             PTR_ERR(dsp_reset));
->> +
->> +             return PTR_ERR(dsp_reset);
->> +     }
->> +
->>       if (dev->of_node) {
->>               ret = of_reserved_mem_device_init(dev);
->>               if (ret) {
->> @@ -309,7 +332,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->>        * *not* in reset, but da8xx_rproc_start() needs the DSP to be
->>        * held in reset at the time it is called.
->>        */
->> -     ret = davinci_clk_reset_assert(drproc->dsp_clk);
->> +     ret = reset_control_assert(dsp_reset);
->>       if (ret)
->>               goto free_rproc;
->>
->
-> Tested your previous branch, need one more change in this patch to have
-> the remoteproc boot be actually executing some code. The acquired
-> dsp_reset is not stored in the drproc, so the start and stop were not
-> effective. The issue was masked because reset_control_assert() and
-> deassert() return 0 when a NULL pointer is passed in.
->
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -311,6 +311,7 @@ static int da8xx_rproc_probe(struct platform_device
-> *pdev)
->         drproc = rproc->priv;
->         drproc->rproc = rproc;
->         drproc->dsp_clk = dsp_clk;
-> +       drproc->dsp_reset = dsp_reset;
->         rproc->has_iommu = false;
->
-> regards
-> Suman
->
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Oh snap, thanks for spotting it.
+Describe the HFPLLs present on IPQ806X devices.
 
-I'll just resend last two patches, since the previous six will be
-picked up at different places.
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq806x.c | 82 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-Thanks,
-Bartosz
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index 28eb200..d571cf8 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -30,6 +30,7 @@
+ #include "clk-pll.h"
+ #include "clk-rcg.h"
+ #include "clk-branch.h"
++#include "clk-hfpll.h"
+ #include "reset.h"
+ 
+ static struct clk_pll pll0 = {
+@@ -113,6 +114,84 @@
+ 	},
+ };
+ 
++static struct hfpll_data hfpll0_data = {
++	.mode_reg = 0x3200,
++	.l_reg = 0x3208,
++	.m_reg = 0x320c,
++	.n_reg = 0x3210,
++	.config_reg = 0x3204,
++	.status_reg = 0x321c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3214,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll0 = {
++	.d = &hfpll0_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll0",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
++};
++
++static struct hfpll_data hfpll1_data = {
++	.mode_reg = 0x3240,
++	.l_reg = 0x3248,
++	.m_reg = 0x324c,
++	.n_reg = 0x3250,
++	.config_reg = 0x3244,
++	.status_reg = 0x325c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll1 = {
++	.d = &hfpll1_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll1",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
++};
++
++static struct hfpll_data hfpll_l2_data = {
++	.mode_reg = 0x3300,
++	.l_reg = 0x3308,
++	.m_reg = 0x330c,
++	.n_reg = 0x3310,
++	.config_reg = 0x3304,
++	.status_reg = 0x331c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll_l2 = {
++	.d = &hfpll_l2_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll_l2",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
++};
++
+ static struct clk_pll pll14 = {
+ 	.l_reg = 0x31c4,
+ 	.m_reg = 0x31c8,
+@@ -2800,6 +2879,9 @@ enum {
+ 	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
+ 	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
+ 	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
++	[PLL9] = &hfpll0.clkr,
++	[PLL10] = &hfpll1.clkr,
++	[PLL12] = &hfpll_l2.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq806x_resets[] = {
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
