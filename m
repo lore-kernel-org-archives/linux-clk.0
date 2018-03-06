@@ -1,61 +1,52 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180318213129.ucwslzvwq6khxrcd@flea>
-References: <20180317092857.4396-1-wens@csie.org> <20180317092857.4396-3-wens@csie.org>
- <20180318213129.ucwslzvwq6khxrcd@flea>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 20 Mar 2018 15:15:02 +0800
-Message-ID: <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com>
-Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to
- access the GMAC register
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
-	Icenowy Zheng <icenowy@aosc.io>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	netdev <netdev@vger.kernel.org>, Corentin Labbe <clabbe.montjoie@gmail.com>
+In-Reply-To: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
+References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 6 Mar 2018 19:23:11 -0300
+Message-ID: <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
+To: Martin Kaiser <martin@kaiser.cx>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
->> From: Icenowy Zheng <icenowy@aosc.io>
->>
->> There's a GMAC configuration register, which exists on A64/A83T/H3/H5 in
->> the syscon part, in the CCU of R40 SoC.
->>
->> Export a regmap of the CCU.
->>
->> Read access is not restricted to all registers, but only the GMAC
->> register is allowed to be written.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Hi Martin,
+
+On Tue, Mar 6, 2018 at 7:02 PM, Martin Kaiser <martin@kaiser.cx> wrote:
+> The ssi1_ipg clock depends on ssi1_ipg_per. Set ssi1_ipg_per as parent
+> clock of ssi1_ipg. Without this link, the fsl_ssi driver does not
+> activate the ssi1_ipg clock correctly and ssi1 is unable to transfer
+> audio data.
 >
-> Gah, this is crazy. I'm really starting to regret letting that syscon
-> in in the first place...
+> Fix the parent clock of ssi2 as well, it shows the same behaviour.
+>
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> ---
+> Dear all,
+>
+> could you have a look at this patch? This makes SSI1 and 2 work for me.
 
-IMHO syscon is really a better fit. It's part of the glue layer and
-most other dwmac user platforms treat it as such and use a syscon.
-Plus the controls encompass delays (phase), inverters (polarity),
-and even signal routing. It's not really just a group of clock controls,
-like what we poorly modeled for A20/A31. I think that was really a
-mistake.
+I get audio working from SSI1, but I guess this is due to the fact
+that the bootloader enables the SSI clock:
 
-As I mentioned in the cover letter, a slightly saner approach would
-be to let drivers add custom syscon entries, which would then require
-less custom plumbing.
+I have the following in U-Boot:
 
-> And I'm not really looking forward the time where SCPI et al. will be
-> mature and we'll have the clock controller completely outside of our
-> control.
+/* Enable the clocks */
+DATA 4 0x53f8000c 0x1fffffff
+DATA 4 0x53f80010 0xffffffff
+DATA 4 0x53f80014 0xfdfff
 
-I don't think it's going to happen for any of the older SoCs. The R40
-only stands out because the GMAC controls are in the clock controller
-address space, presumably to be like the A20.
+I will try tomorrow to disable the SSI1 clock from U-Boot and apply your patch.
 
+Will let you know how my testing goes.
 
-ChenYu
+> With the default "ipg" parent clocks, I get no ipg clocks on the SSIs.
+> However, I was wondering why we don't need anything similar e.g. for the
+> UARTs...
+
+Maybe your bootloader is already turning on the UART clocks?
