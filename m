@@ -1,65 +1,60 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from botnar.kaiser.cx ([176.28.20.183]:40896 "EHLO botnar.kaiser.cx"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753805AbeCFWCz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Mar 2018 17:02:55 -0500
+From: Martin Kaiser <martin@kaiser.cx>
 To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Peter Chen <peter.chen@freescale.com>,
-	Irina Tirdea <irina.tirdea@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com,
-	Anson Huang <anson.huang@nxp.com>,
-	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
-	Abel Vesa <abelvesa@linux.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Anson Huang <b20788@freescale.com>,
-	Abel Vesa <abel.vesa@nxp.com>
-Subject: [RESEND 2/4] clk: imx7d: Correct dram pll type
-Date: Wed, 28 Mar 2018 09:46:37 +0300
-Message-Id: <1522219599-10831-4-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
-References: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
+Date: Tue,  6 Mar 2018 23:02:15 +0100
+Message-Id: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Anson Huang <b20788@freescale.com>
+The ssi1_ipg clock depends on ssi1_ipg_per. Set ssi1_ipg_per as parent
+clock of ssi1_ipg. Without this link, the fsl_ssi driver does not
+activate the ssi1_ipg clock correctly and ssi1 is unable to transfer
+audio data.
 
-DRAM PLL is a audio/video type PLL, need to correct
-it to get correct ops of PLL.
+Fix the parent clock of ssi2 as well, it shows the same behaviour.
 
-There is a test_div placed before DRAM PLL's gate, so
-add this test div clk.
-
-Signed-off-by: Anson Huang <b20788@freescale.com>
-Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 ---
- drivers/clk/imx/clk-imx7d.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Dear all,
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 39d110b..1cc485f 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -441,11 +441,13 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
- 
- 	clks[IMX7D_PLL_ARM_MAIN_CLK] = imx_clk_gate("pll_arm_main_clk", "pll_arm_main_bypass", base + 0x60, 13);
--	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_main_bypass", base + 0x70, 13);
-+	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_test_div", base + 0x70, 13);
- 	clks[IMX7D_PLL_SYS_MAIN_CLK] = imx_clk_gate("pll_sys_main_clk", "pll_sys_main_bypass", base + 0xb0, 13);
- 	clks[IMX7D_PLL_AUDIO_MAIN_CLK] = imx_clk_gate("pll_audio_main_clk", "pll_audio_main_bypass", base + 0xf0, 13);
- 	clks[IMX7D_PLL_VIDEO_MAIN_CLK] = imx_clk_gate("pll_video_main_clk", "pll_video_main_bypass", base + 0x130, 13);
- 
-+	clks[IMX7D_PLL_DRAM_TEST_DIV]  = clk_register_divider_table(NULL, "pll_dram_test_div", "pll_dram_main_bypass",
-+				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x70, 21, 2, 0, test_div_table, &imx_ccm_lock);
- 	clks[IMX7D_PLL_AUDIO_TEST_DIV]  = clk_register_divider_table(NULL, "pll_audio_test_div", "pll_audio_main_clk",
- 				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 19, 2, 0, test_div_table, &imx_ccm_lock);
- 	clks[IMX7D_PLL_AUDIO_POST_DIV] = clk_register_divider_table(NULL, "pll_audio_post_div", "pll_audio_test_div",
+could you have a look at this patch? This makes SSI1 and 2 work for me.
+With the default "ipg" parent clocks, I get no ipg clocks on the SSIs.
+However, I was wondering why we don't need anything similar e.g. for the
+UARTs...
+
+Best regards,
+Martin
+
+ drivers/clk/imx/clk-imx25.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
+index 23686f7..ee2852f 100644
+--- a/drivers/clk/imx/clk-imx25.c
++++ b/drivers/clk/imx/clk-imx25.c
+@@ -217,8 +217,8 @@ static int __init __mx25_clocks_init(void __iomem *ccm_base)
+ 	clk[sim2_ipg] = imx_clk_gate("sim2_ipg", "ipg", ccm(CCM_CGCR2),  8);
+ 	clk[slcdc_ipg] = imx_clk_gate("slcdc_ipg", "ipg", ccm(CCM_CGCR2),  9);
+ 	clk[spba_ipg] = imx_clk_gate("spba_ipg", "ipg", ccm(CCM_CGCR2),  10);
+-	clk[ssi1_ipg] = imx_clk_gate("ssi1_ipg", "ipg", ccm(CCM_CGCR2), 11);
+-	clk[ssi2_ipg] = imx_clk_gate("ssi2_ipg", "ipg", ccm(CCM_CGCR2), 12);
++	clk[ssi1_ipg] = imx_clk_gate("ssi1_ipg", "ssi1_ipg_per", ccm(CCM_CGCR2), 11);
++	clk[ssi2_ipg] = imx_clk_gate("ssi2_ipg", "ssi2_ipg_per", ccm(CCM_CGCR2), 12);
+ 	clk[tsc_ipg] = imx_clk_gate("tsc_ipg", "ipg", ccm(CCM_CGCR2), 13);
+ 	clk[uart1_ipg] = imx_clk_gate("uart1_ipg", "ipg", ccm(CCM_CGCR2), 14);
+ 	clk[uart2_ipg] = imx_clk_gate("uart2_ipg", "ipg", ccm(CCM_CGCR2), 15);
 -- 
-2.7.4
+2.1.4
+
