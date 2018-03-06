@@ -1,78 +1,148 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	alexandre.belloni@bootlin.com
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Joseph Lo <josephl@nvidia.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	lee.jones@linaro.org,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Brian Norris <briannorris@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	linux-rockchip@lists.infradead.org,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-input@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	devicetree@vger.kernel.org,
-	stephen lu <lumotuwe@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
 	linux-arm-kernel@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-rtc@vger.kernel.org,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH v5 0/4] Set name of regmap_config
-Date: Mon, 12 Mar 2018 17:51:38 +0800
-Message-Id: <20180312095142.30854-1-jeffy.chen@rock-chips.com>
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v9 01/15] ARM: Add Krait L2 register accessor functions
+Date: Tue,  6 Mar 2018 20:08:54 +0530
+Message-Id: <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-After 9b947a13e7f6 ("regmap: use debugfs even when no device"), we are
-allowing regmap to create debugfs without a valid device. Some of them
-would end up using "dummy*" as debugfs name.
+Krait CPUs have a handful of L2 cache controller registers that
+live behind a cp15 based indirection register. First you program
+the indirection register (l2cpselr) to point the L2 'window'
+register (l2cpdr) at what you want to read/write.  Then you
+read/write the 'window' register to do what you want. The
+l2cpselr register is not banked per-cpu so we must lock around
+accesses to it to prevent other CPUs from re-pointing l2cpdr
+underneath us.
 
-This series try to set names in some regmap_config to avoid that.
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ arch/arm/common/Kconfig                   |  3 ++
+ arch/arm/common/Makefile                  |  1 +
+ arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
+ arch/arm/include/asm/krait-l2-accessors.h | 10 +++++++
+ 4 files changed, 62 insertions(+)
+ create mode 100644 arch/arm/common/krait-l2-accessors.c
+ create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
 
-
-Changes in v5:
-CC lee.jones@linaro.org
-
-Changes in v4:
-Not to use rtc dev to init regmap, the gpbr is not directly related to
-the rtc.
-
-Changes in v3:
-Modify commit message.
-
-Jeffy Chen (4):
-  mfd: syscon: Set name of regmap_config
-  rtc: at91sam9: Set name of regmap_config
-  clk: lpc32xx: Set name of regmap_config
-  ARM: rockchip: Set name of regmap_config
-
- arch/arm/mach-rockchip/platsmp.c | 1 +
- drivers/clk/nxp/clk-lpc32xx.c    | 1 +
- drivers/mfd/syscon.c             | 1 +
- drivers/rtc/rtc-at91sam9.c       | 1 +
- 4 files changed, 4 insertions(+)
-
+diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
+index e5ad070..c8e1986 100644
+--- a/arch/arm/common/Kconfig
++++ b/arch/arm/common/Kconfig
+@@ -7,6 +7,9 @@ config DMABOUNCE
+ 	bool
+ 	select ZONE_DMA
+ 
++config KRAIT_L2_ACCESSORS
++	bool
++
+ config SHARP_LOCOMO
+ 	bool
+ 
+diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+index 70b4a14..eec6cd1 100644
+--- a/arch/arm/common/Makefile
++++ b/arch/arm/common/Makefile
+@@ -7,6 +7,7 @@ obj-y				+= firmware.o
+ 
+ obj-$(CONFIG_SA1111)		+= sa1111.o
+ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
++obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
+ obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
+ obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
+ obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
+diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
+new file mode 100644
+index 0000000..9a97dda
+--- /dev/null
++++ b/arch/arm/common/krait-l2-accessors.c
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/spinlock.h>
++#include <linux/export.h>
++
++#include <asm/barrier.h>
++#include <asm/krait-l2-accessors.h>
++
++static DEFINE_RAW_SPINLOCK(krait_l2_lock);
++
++void krait_set_l2_indirect_reg(u32 addr, u32 val)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&krait_l2_lock, flags);
++	/*
++	 * Select the L2 window by poking l2cpselr, then write to the window
++	 * via l2cpdr.
++	 */
++	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
++	isb();
++	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
++	isb();
++
++	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++}
++EXPORT_SYMBOL(krait_set_l2_indirect_reg);
++
++u32 krait_get_l2_indirect_reg(u32 addr)
++{
++	u32 val;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&krait_l2_lock, flags);
++	/*
++	 * Select the L2 window by poking l2cpselr, then read from the window
++	 * via l2cpdr.
++	 */
++	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
++	isb();
++	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
++
++	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++
++	return val;
++}
++EXPORT_SYMBOL(krait_get_l2_indirect_reg);
+diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
+new file mode 100644
+index 0000000..dd7c474
+--- /dev/null
++++ b/arch/arm/include/asm/krait-l2-accessors.h
+@@ -0,0 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
++#define __ASMARM_KRAIT_L2_ACCESSORS_H
++
++extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
++extern u32 krait_get_l2_indirect_reg(u32 addr);
++
++#endif
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
