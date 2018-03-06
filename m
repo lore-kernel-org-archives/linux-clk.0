@@ -1,94 +1,220 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 8 Mar 2018 15:44:37 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
-Message-ID: <20180308144437.GJ3529@ulmo>
-References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
- <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
- <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 5 Mar 2018 19:45:49 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jolly Shah <jolly.shah@xilinx.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, michal.simek@xilinx.com,
+	mark.rutland@arm.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+	linux-kernel@vger.kernel.org, Jolly Shah <jollys@xilinx.com>,
+	rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
+ driver
+Message-ID: <20180306014549.6t3ae5adzc3cpi5v@rob-hp-laptop>
+References: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
+ <1519856861-31384-3-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="J2uG6jHjFLimDtBY"
-In-Reply-To: <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1519856861-31384-3-git-send-email-jollys@xilinx.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Feb 28, 2018 at 02:27:40PM -0800, Jolly Shah wrote:
+> Add documentation to describe Xilinx ZynqMP clock driver
+> bindings.
+> 
+> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> ---
+>  .../devicetree/bindings/clock/xlnx,zynqmp-clk.txt  | 163 +++++++++++++++++++++
+>  1 file changed, 163 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+> new file mode 100644
+> index 0000000..d590330
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+> @@ -0,0 +1,163 @@
+> +Device Tree Clock bindings for the Zynq Ultrascale+ MPSoC
+> +
+> +The Zynq Ultrascale+ MPSoC has several different clk providers,
+> +each with there own bindings.
+> +The purpose of this document is to document their usage.
+> +
+> +See clock_bindings.txt for more information on the generic clock bindings.
+> +
+> +== Clock Controller ==
+> +The clock controller is a logical abstraction of Zynq Ultrascale+ MPSoC clock
+> +tree. It reads required input clock frequencies from the devicetree and acts
+> +as clock provider for all clock consumers of PS clocks.
 
---J2uG6jHjFLimDtBY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Umm, the clock controller should correspond to a h/w block, not a 
+"logical abstraction of the clock tree".
 
-On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
-> On 15.01.2018 13:56, Dmitry Osipenko wrote:
-> > On 10.01.2018 16:59, Dmitry Osipenko wrote:
-> >> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
-> >> as critical.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >> ---
-> >>
-> >> Change log:
-> >> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 a=
-nd
-> >>         Tegra124. Switched to a use of common EMC gate definition on T=
-egra20
-> >>         and Tegra30.
-> >>
-> >> v3:     Dropped marking PLL_P outputs as critical, because seems they =
-are
-> >>         not so critical. Although, I still haven't got a definitive an=
-swer
-> >>         about what exact HW functions are affected by the fixed-clocks.
-> >>         Anyway it should be cleaner to correct the actual drivers.
-> >=20
-> > Stephen / Michael, would it be possible to schedule these patches for 4=
-=2E16? My
-> > T20 and T30 devices aren't working without the 'critical clocks' patch.=
- Things
-> > happen to work with the opensource u-boot, but not with the proprietary
-> > bootloader. It's probably not a big deal that out-of-tree devices are b=
-roken,
-> > although would be nice to have one problem less.
->=20
-> Guys, is there anything I could do to get these patches in linux-next?
+> +
+> +Required properties:
+> + - #clock-cells : Must be 1
+> + - compatible : "xlnx,zynqmp-clk"
+> + - clocks : list of clock specifiers which are external input clocks to the
+> +	    given clock controller. Please refer the next section to find
+> +	    the input clocks for a given controller.
+> + - clock-names : list of names of clocks which are exteral input clocks to the
+> +		 given clock controller. Please refer to the clock bindings
+> +		 for more details
+> +
+> +Input clocks for zynqmp Ultrascale+ clock controller:
+> +The Zynq UltraScale+ MPSoC has one primary and four alternative reference clock
+> +inputs.
+> +These required clock inputs are the
+> + - pss_ref_clk (PS reference clock)
+> + - video_clk (reference clock for video system )
+> + - pss_alt_ref_clk (alternative PS reference clock)
+> + - aux_ref_clk
+> + - gt_crx_ref_clk (transceiver reference clock)
+> +
+> +The following strings are optional parameters to the 'clock-names' property in
+> +order to provide an optional (E)MIO clock source.
+> + - swdt0_ext_clk
+> + - swdt1_ext_clk
+> + - gem0_emio_clk
+> + - gem1_emio_clk
+> + - gem2_emio_clk
+> + - gem3_emio_clk
+> + - mio_clk_XX		# with XX = 00..77
+> + - mio_clk_50_or_51	#for the mux clock to gem tsu from 50 or 51
+> +
+> +
+> +Output clocks for zynqmp Ultrascale+ clock controller:
+> +Output clocks are registered based on clock information received from firmware.
+> +Output clock indexes are mentioned below:
+> +
+> +Clock ID:	Output clock name:
+> +-------------------------------------
 
-I've picked these up into the for-4.17/clk branch in the Tegra tree. I
-already have that branch for the MBIST patches which are a dependency
-for the for-4.17/soc branch.
+These go in header definition, not here.
 
-Stephen, Mike, let me know if you have any objections to carrying these
-in the Tegra tree.
+> +0		iopll
+> +1		rpll
+> +2		apll
+> +3		dpll
+> +4		vpll
+> +5		iopll_to_fpd
+> +6		rpll_to_fpd
+> +7		apll_to_lpd
+> +8		dpll_to_lpd
+> +9		vpll_to_lpd
+> +10		acpu
+> +11		acpu_half
+> +12		dbf_fpd
+> +13		dbf_lpd
+> +14		dbg_trace
+> +15		dbg_tstmp
+> +16		dp_video_ref
+> +17		dp_audio_ref
+> +18		dp_stc_ref
+> +19		gdma_ref
+> +20		dpdma_ref
+> +21		ddr_ref
+> +22		sata_ref
+> +23		pcie_ref
+> +24		gpu_ref
+> +25		gpu_pp0_ref
+> +26		gpu_pp1_ref
+> +27		topsw_main
+> +28		topsw_lsbus
+> +29		gtgref0_ref
+> +30		lpd_switch
+> +31		lpd_lsbus
+> +32		usb0_bus_ref
+> +33		usb1_bus_ref
+> +34		usb3_dual_ref
+> +35		usb0
+> +36		usb1
+> +37		cpu_r5
+> +38		cpu_r5_core
+> +39		csu_spb
+> +40		csu_pll
+> +41		pcap
+> +42		iou_switch
+> +43		gem_tsu_ref
+> +44		gem_tsu
+> +45		gem0_ref
+> +46		gem1_ref
+> +47		gem2_ref
+> +48		gem3_ref
+> +49		gem0_tx
+> +50		gem1_tx
+> +51		gem2_tx
+> +52		gem3_tx
+> +53		qspi_ref
+> +54		sdio0_ref
+> +55		sdio1_ref
+> +56		uart0_ref
+> +57		uart1_ref
+> +58		spi0_ref
+> +59		spi1_ref
+> +60		nand_ref
+> +61		i2c0_ref
+> +62		i2c1_ref
+> +63		can0_ref
+> +64		can1_ref
+> +65		can0
+> +66		can1
+> +67		dll_ref
+> +68		adma_ref
+> +69		timestamp_ref
+> +70		ams_ref
+> +71		pl0_ref
+> +72		pl1_ref
+> +73		pl2_ref
+> +74		pl3_ref
+> +75		wdt
+> +76		iopll_int
+> +77		iopll_pre_src
+> +78		iopll_half
+> +79		iopll_int_mux
+> +80		iopll_post_src
+> +81		rpll_int
+> +82		rpll_pre_src
+> +83		rpll_half
+> +84		rpll_int_mux
+> +85		rpll_post_src
+> +86		apll_int
+> +87		apll_pre_src
+> +88		apll_half
+> +89		apll_int_mux
+> +90		apll_post_src
+> +91		dpll_int
+> +92		dpll_pre_src
+> +93		dpll_half
+> +94		dpll_int_mux
+> +95		dpll_post_src
+> +96		vpll_int
+> +97		vpll_pre_src
+> +98		vpll_half
+> +99		vpll_int_mux
+> +100		vpll_post_src
+> +101		can0_mio
+> +102		can1_mio
+> +
+> +Example:
+> +
+> +clk: clk {
+> +	#clock-cells = <1>;
+> +	compatible = "xlnx,zynqmp-clk";
 
-Thanks,
-Thierry
+How do you control the clocks?
 
---J2uG6jHjFLimDtBY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhTFUACgkQ3SOs138+
-s6HkiQ/+O0EfjH6ZS4NOtc7o8vllzUKFMVlWp/b/GfzgQYT9Pab3GAgJhR0HxFN9
-zmKxaO5MxiWZnD4PNR5J9ZpApe5oDMt7lmOHoa7VeuXQCqVvC3Ykf4NbR8YAZ9Cd
-O4i8dsSqeU7QRpplvCkYiRauWRfl09NZiPtn60xHXQyFwE5r/k2ZXcmYrP2mkKjU
-fgbIYJBNixxCtCsa/hjAVegi2woWy+3YdygIdo/buDtNUAQsLEX4QmFnbFmie0Lt
-+O9nDeTCfRh05Bq3MrC55lC6UrKyNy012Sdf//fgTlyF0eDVlkqWiN+4yHhvpSMO
-PpS3aiAekYod0RfxVmfRseNO26e7Mu+9QlyxY9EEgDs+RY6Nv5pTny3b606K5b6w
-dtTnJmzX3jVYEiRGl1I5efCKwf1VuinyF9e/uEArI+BzK6yefIqsMzsZo76LZWSs
-y2db0ra4E9astiyShVjEy5F14yq9R59XGZ8wemYNLyjkJwqM15bnBDFtxKDY7+O1
-UcvczgBwRzjaYZOj3OHHeQnk68IBwgieHDHhr9srloox00usLqkgqlz/JdZ6Q1IM
-pq7Bys6L3MZv9X0H1Se6ie8kuJMLKOea5r8VnHZDiZSDF6glm1Bk8RF9eGukcPnn
-xkrQKwbqVK+jBPa5fGWSR4fdM9Cm+WMDj4PQ+6yZrZprVBSpf6A=
-=rzzQ
------END PGP SIGNATURE-----
-
---J2uG6jHjFLimDtBY--
+> +	clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
+> +	clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk"
+> +};
+> -- 
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
