@@ -1,89 +1,64 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH net-next 11/12] ARM: dts: sun8i: r40: Add device node and RGMII pinmux node for GMAC
-Date: Sat, 17 Mar 2018 17:28:56 +0800
-Message-Id: <20180317092857.4396-12-wens@csie.org>
-In-Reply-To: <20180317092857.4396-1-wens@csie.org>
-References: <20180317092857.4396-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46319 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753696AbeCFOd0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 09:33:26 -0500
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v3 1/6] soc: samsung: pm_domains: Add blacklisting clock
+ handling
+Date: Tue, 06 Mar 2018 15:33:07 +0100
+Message-id: <20180306143312.21035-2-m.szyprowski@samsung.com>
+In-reply-to: <20180306143312.21035-1-m.szyprowski@samsung.com>
+References: <20180306143312.21035-1-m.szyprowski@samsung.com>
+        <CGME20180306143323eucas1p1d420abb34b827a3128503859e0c21727@eucas1p1.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The R40 SoC has a GMAC (gigabit capable Ethernet controller). Add a
-device node for it. The only publicly available board for this SoC
-uses an RGMII PHY. Add a pinmux node for it as well.
+Handling of clock reparenting will be move to clock controller driver, so
+add possibility to blacklist clock handling on systems, where the clock
+controller already does all needed operations. This is needed to avoid
+potential deadlock on clock reparenting during power domain on/off
+procedure.
 
-Since this SoC also has an old 10/100 Mbps EMAC, which also has an
-MDIO bus controller, the MDIO bus for the GMAC is labeled "gmac_mdio".
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/sun8i-r40.dtsi | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/soc/samsung/pm_domains.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
-index 173dcc1652d2..bd97ca3dc2fa 100644
---- a/arch/arm/boot/dts/sun8i-r40.dtsi
-+++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-@@ -265,6 +265,19 @@
- 			#interrupt-cells = <3>;
- 			#gpio-cells = <3>;
+diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
+index b6a436594a19..cef30bdf19b1 100644
+--- a/drivers/soc/samsung/pm_domains.c
++++ b/drivers/soc/samsung/pm_domains.c
+@@ -147,6 +147,9 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
+ 	return kstrdup_const(name, GFP_KERNEL);
+ }
  
-+			gmac_rgmii_pins: gmac-rgmii-pins {
-+				pins = "PA0", "PA1", "PA2", "PA3",
-+				       "PA4", "PA5", "PA6", "PA7",
-+				       "PA8", "PA10", "PA11", "PA12",
-+				       "PA13", "PA15", "PA16";
-+				function = "gmac";
-+				/*
-+				 * data lines in RGMII mode use DDR mode
-+				 * and need a higher signal drive strength
-+				 */
-+				drive-strength = <40>;
-+			};
++static const char *soc_force_no_clk[] = {
++};
 +
- 			i2c0_pins: i2c0-pins {
- 				pins = "PB0", "PB1";
- 				function = "i2c0";
-@@ -451,6 +464,27 @@
- 			#size-cells = <0>;
- 		};
+ static __init int exynos4_pm_init_power_domain(void)
+ {
+ 	struct device_node *np;
+@@ -183,6 +186,11 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		pd->pd.power_on = exynos_pd_power_on;
+ 		pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
  
-+		gmac: ethernet@1c50000 {
-+			compatible = "allwinner,sun8i-r40-gmac";
-+			syscon = <&ccu>;
-+			reg = <0x01c50000 0x10000>;
-+			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq";
-+			resets = <&ccu RST_BUS_GMAC>;
-+			reset-names = "stmmaceth";
-+			clocks = <&ccu CLK_BUS_GMAC>;
-+			clock-names = "stmmaceth";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
++		for (i = 0; i < ARRAY_SIZE(soc_force_no_clk); i++)
++			if (of_find_compatible_node(NULL, NULL,
++						    soc_force_no_clk[i]))
++				goto no_clk;
 +
-+			gmac_mdio: mdio {
-+				compatible = "snps,dwmac-mdio";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+		};
-+
- 		gic: interrupt-controller@1c81000 {
- 			compatible = "arm,gic-400";
- 			reg = <0x01c81000 0x1000>,
+ 		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+ 			char clk_name[8];
+ 
 -- 
-2.16.2
+2.15.0
+
