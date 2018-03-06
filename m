@@ -1,126 +1,93 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH v2 00/19] clk: meson: use regmap in clock controllers
-To: Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>, Carlo Caione
- <carlo@caione.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180212145846.19380-1-jbrunet@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <fc016802-4126-eaad-fcb1-a93e349409f3@baylibre.com>
-Date: Mon, 12 Mar 2018 11:22:42 +0100
-MIME-Version: 1.0
-In-Reply-To: <20180212145846.19380-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v9 05/15] dt-bindings: clock: Document qcom,hfpll
+Date: Tue,  6 Mar 2018 20:08:58 +0530
+Message-Id: <1520347148-27852-6-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12/02/2018 15:58, Jerome Brunet wrote:
-> This changeset is a rework of meson's clock controllers to use regmap
-> instead of directly using io memory. It based clk-meson next/drivers
-> and depends on few core clock patches, mainly to export generic clocks
-> helpers: [0],[1]. The line count is pretty high but the changes are
-> actually fairly simple and repetitive.
-> 
-> This work has been triggered by the fact that the HHI register space on
-> gxbb and axg provides more than just clocks. The display driver already
-> uses a syscon for HHI on gxbb. This is why gxbb did not use
-> devm_ioremap_resource() to map the registers, since it would have
-> reserved the memory region, preventing another driver from re-mapping
-> it. The cleaner solution is, of course, to use syscon to handle. The
-> purpose of this changeset is to allow it. Even if meson8b does not need
-> this ATM, there is real reason to leave it behind. It is actually easier
-> to migrate it as well, so all meson clock drivers may support regmap
-> only.
-> 
-> The rework starts with a few easy clean-ups. The real deal starts with
-> patch 5, which adds meson's clk_regmap. This will be used as common
-> structure to implement all the controller clocks. Having this replaces
-> the gxbb AO controller specific regmap gate. This structure will also be
-> re-used in upcoming controllers, such as the axg's AO and audio
-> controllers.  Each clock type is then migrated, one at a time, to this
-> new structure.
-> 
-> While at it, the meson clock drivers have been cleaned-up a bit,
-> removing the gate embedded in the mpll driver, simplifying the pll
-> driver and removing the legacy cpu_clk of meson8b.
-> 
-> The new code around the cpu clk of the meson8b is just re-implementation,
-> using simple elements, of the old cpu_clk. As explained by Martin, the
-> old cpu_clk would hang quite often when changing the rate of the cpu
-> clock. Surprisingly, the new implementation improved the situation a bit,
-> but still hangs from time to time. As this is not acceptable, the cpu
-> clk subtree as been switched to a read-only mode, preventing any change
-> of the cpu rate, until an acceptable solution is found.
-> 
-> With this series applied, the clock controllers of the gxbb, gxl and axg
-> SoC will try get regmap from their parent DT node. If this fails, they
-> will fallback to mapping the register themselves. This fallback will be
-> kept until platform DTs have changed so clock controllers is a child of
-> the HHI system controller.
-> 
-> Based on this changeset, more patches are coming. For those interested,
-> the WIP is available here [2]
-> 
-> Changes since v1 [3]:
-> * Fixed a few typos in patches descriptions
-> * Fixed cpu clock names on meson8b, as suggested by Martin
-> * Switched cpu clock subtree to reead-only mode
-> * Fix clk_regmap mux documentation, as reported by Yixun
-> 
-> [0]: https://lkml.kernel.org/r/20180118110144.30619-1-jbrunet@baylibre.com
-> [1]: https://lkml.kernel.org/r/20180122105759.12206-1-jbrunet@baylibre.com
-> [2]: https://github.com/jeromebrunet/linux/tree/v4.17/meson/clk-regmap
-> [1]: https://lkml.kernel.org/r/20180131180945.18025-1-jbrunet@baylibre.com
-> 
-> Jerome Brunet (19):
->   clk: meson: use dev pointer where possible
->   clk: meson: use devm_of_clk_add_hw_provider
->   clk: meson: only one loop index is necessary in probe
->   clk: meson: remove obsolete comments
->   clk: meson: add regmap clocks
->   clk: meson: switch gxbb ao_clk to clk_regmap
->   clk: meson: remove superseded aoclk_gate_regmap
->   clk: meson: add regmap to the clock controllers
->   clk: meson: migrate gates to clk_regmap
->   clk: meson: migrate dividers to clk_regmap
->   clk: meson: migrate muxes to clk_regmap
->   clk: meson: add regmap helpers for parm
->   clk: meson: migrate mplls clocks to clk_regmap
->   clk: meson: migrate the audio divider clock to clk_regmap
->   clk: meson: migrate plls clocks to clk_regmap
->   clk: meson: split divider and gate part of mpll
->   clk: meson: rework meson8b cpu clock
->   clk: meson: remove obsolete cpu_clk
->   clk: meson: use hhi syscon if available
-> 
->  drivers/clk/meson/Kconfig             |    9 +
->  drivers/clk/meson/Makefile            |    5 +-
->  drivers/clk/meson/axg.c               |  722 +++++++++--------
->  drivers/clk/meson/axg.h               |    6 +-
->  drivers/clk/meson/clk-audio-divider.c |   63 +-
->  drivers/clk/meson/clk-cpu.c           |  178 -----
->  drivers/clk/meson/clk-mpll.c          |  132 +---
->  drivers/clk/meson/clk-pll.c           |  243 +++---
->  drivers/clk/meson/clk-regmap.c        |  166 ++++
->  drivers/clk/meson/clk-regmap.h        |  111 +++
->  drivers/clk/meson/clkc.h              |   93 +--
->  drivers/clk/meson/gxbb-aoclk-regmap.c |   46 --
->  drivers/clk/meson/gxbb-aoclk.c        |   20 +-
->  drivers/clk/meson/gxbb-aoclk.h        |   11 -
->  drivers/clk/meson/gxbb.c              | 1402 ++++++++++++++++++---------------
->  drivers/clk/meson/gxbb.h              |    5 +-
->  drivers/clk/meson/meson8b.c           |  588 ++++++++------
->  drivers/clk/meson/meson8b.h           |   11 +-
->  18 files changed, 1978 insertions(+), 1833 deletions(-)
->  delete mode 100644 drivers/clk/meson/clk-cpu.c
->  create mode 100644 drivers/clk/meson/clk-regmap.c
->  create mode 100644 drivers/clk/meson/clk-regmap.h
->  delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
-> 
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Tested on Odroid-C2 & LibreTech-CC,
+Adds bindings document for qcom,hfpll instantiated within
+the Krait processor subsystem as separate register region.
 
-Applied to meson's next/drivers tree after merge of clk-next to satisfy the dependencies.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,hfpll.txt       | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
 
-Neil
+diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+new file mode 100644
+index 0000000..771cb0a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+@@ -0,0 +1,46 @@
++High-Frequency PLL (HFPLL)
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>:
++		shall contain only one of the following. The generic
++		compatible "qcom,hfpll" should be also included.
++
++                        "qcom,hfpll-ipq8064", "qcom,hfpll"
++                        "qcom,hfpll-apq8064", "qcom,hfpll"
++                        "qcom,hfpll-msm8974", "qcom,hfpll"
++                        "qcom,hfpll-msm8960", "qcom,hfpll"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: address and size of HPLL registers. An optional second
++		    element specifies the address and size of the alias
++		    register region.
++
++- clock-output-names:
++	Usage: required
++	Value type: <string>
++	Definition: Name of the PLL. Typically hfpllX where X is a CPU number
++		    starting at 0. Otherwise hfpll_Y where Y is more specific
++		    such as "l2".
++
++Example:
++
++1) An HFPLL for the L2 cache.
++
++	clock-controller@f9016000 {
++		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
++		reg = <0xf9016000 0x30>;
++		clock-output-names = "hfpll_l2";
++	};
++
++2) An HFPLL for CPU0. This HFPLL has the alias register region.
++
++	clock-controller@f908a000 {
++		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
++		reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
++		clock-output-names = "hfpll0";
++	};
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
