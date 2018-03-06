@@ -1,95 +1,433 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Thu, 8 Mar 2018 15:57:43 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-	Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-Message-ID: <20180308145743.GK3529@ulmo>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v4 6/6] arm: dts: mediatek: modify audio related nodes for both MT2701 and MT7623
+Date: Tue, 6 Mar 2018 17:09:31 +0800
+Message-ID: <a431bb8f9c203227b14845058a27d690691d0c20.1520327262.git.ryder.lee@mediatek.com>
+In-Reply-To: <cover.1520327262.git.ryder.lee@mediatek.com>
+References: <cover.1520327262.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="YQEH9CATo+4lan7A"
-In-Reply-To: <20180222230451.15515-1-marcel@ziswiler.com>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Modify audio related nodes to reflect the actual usage in binding documents.
 
---YQEH9CATo+4lan7A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ arch/arm/boot/dts/mt2701.dtsi | 188 ++++++++++++++++++++---------------------
+ arch/arm/boot/dts/mt7623.dtsi | 190 ++++++++++++++++++++----------------------
+ 2 files changed, 182 insertions(+), 196 deletions(-)
 
-On Fri, Feb 23, 2018 at 12:04:51AM +0100, Marcel Ziswiler wrote:
-> Turns out latest upstream U-Boot does not configure/enable pllu which
-> leaves it at some default rate of 500 kHz:
->=20
-> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
->        pll_u                  3        3        0      500000          0
->=20
-> Of course this won't quite work leading to the following messages:
->=20
-> [    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
-> ehci
-> [   11.759173] usb 2-1: device descriptor read/64, error -110
-> [   27.119453] usb 2-1: device descriptor read/64, error -110
-> [   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
-> ehci
-> [   32.559454] usb 2-1: device descriptor read/64, error -110
-> [   47.929777] usb 2-1: device descriptor read/64, error -110
-> [   48.049658] usb usb2-port1: attempt power cycle
-> [   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
-> ehci
-> [   59.349457] usb 2-1: device not accepting address 4, error -110
-> [   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
-> ehci
-> [   70.069457] usb 2-1: device not accepting address 5, error -110
-> [   70.079721] usb usb2-port1: unable to enumerate USB device
->=20
-> Fix this by actually allowing the rate also being set from within
-> the Linux kernel.
->=20
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->=20
-> ---
->=20
->  drivers/clk/tegra/clk-pll.c | 2 ++
->  1 file changed, 2 insertions(+)
-
-I'm aware of the discussion about how best to implement this, but this
-seems like a reasonable fix until we have something better.
-
-Peter, Jon: if you want to fix this more properly, please take point on
-this.
-
-Applied this to for-4.17/clk, thanks.
-
-Thierry
-
---YQEH9CATo+4lan7A
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhT2QACgkQ3SOs138+
-s6HfIg//QKMJaDaJsNPOL3kC7s3piPoVc3qyNEdrNAafHWTrnt25IU22tV/X2RV2
-uAAGQVTk5MOunhgKNbBhz/i1I6FIyTqyQWx+QyB8NFjZQ8HXNfc+O2cl/IQGLq+k
-BESU2HOISJ7THKGteMsMw3wJLKRFjBMHllLYxd9DEdvA+04SaIf318eBeHMeQyIQ
-Dh+QMtq7FyAmrEDQLFTJhEkB627kty2bD/3BXhLZpHjG0Qb8MpXp4/BBPcqWubju
-HsVeEJjcpfshp7k9uIAACnnh0TqtfliFdmksuis5NIpzIO9jzLkXbIc6Zyy+sDTk
-2UyrJj7FGVG7fHGkLzLbI2wFpTq8sYu1om7Qp9vWk6GVTm+uBdWjQeym1ocKw6SM
-R5voboBXMtDuTuBQ9FRzj2gf9AckOCgipOQsWK3dbp4u6H4aaRdaIJ6wwYz5DRMZ
-8P/OMON/BJCuIF+sM4b5ddrLmhkiE0Pz4MCt5/LnRe7p+9pEHG5mFBV7bTwsJZsr
-Dd+zgI4L8ReBStB7UAhD2fZFH+kz03BSQbwVn2UbaWt2Z3mF29KDMHkhHT8jwHH+
-MEGStWJuCCenVgwP69IowpKkJlqusgJh9WmUXDBMqkgwc0WYo7hGKf8JCmfT10Xr
-GCMzihI1h8TQb01sjJX5Yp9lkxy40Qd27jLPiMy0Zpi8RR4hk8E=
-=9v9j
------END PGP SIGNATURE-----
-
---YQEH9CATo+4lan7A--
+diff --git a/arch/arm/boot/dts/mt2701.dtsi b/arch/arm/boot/dts/mt2701.dtsi
+index 05557fc..05cf65c 100644
+--- a/arch/arm/boot/dts/mt2701.dtsi
++++ b/arch/arm/boot/dts/mt2701.dtsi
+@@ -426,104 +426,96 @@
+ 		status = "disabled";
+ 	};
+ 
+-	afe: audio-controller@11220000 {
+-		compatible = "mediatek,mt2701-audio";
+-		reg = <0 0x11220000 0 0x2000>,
+-		      <0 0x112a0000 0 0x20000>;
+-		interrupts =  <GIC_SPI 104 IRQ_TYPE_LEVEL_LOW>,
+-			      <GIC_SPI 132 IRQ_TYPE_LEVEL_LOW>;
+-		interrupt-names	= "afe", "asys";
+-		power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
+-
+-		clocks = <&infracfg CLK_INFRA_AUDIO>,
+-			 <&topckgen CLK_TOP_AUD_MUX1_SEL>,
+-			 <&topckgen CLK_TOP_AUD_MUX2_SEL>,
+-			 <&topckgen CLK_TOP_AUD_MUX1_DIV>,
+-			 <&topckgen CLK_TOP_AUD_MUX2_DIV>,
+-			 <&topckgen CLK_TOP_AUD_48K_TIMING>,
+-			 <&topckgen CLK_TOP_AUD_44K_TIMING>,
+-			 <&topckgen CLK_TOP_AUDPLL_MUX_SEL>,
+-			 <&topckgen CLK_TOP_APLL_SEL>,
+-			 <&topckgen CLK_TOP_AUD1PLL_98M>,
+-			 <&topckgen CLK_TOP_AUD2PLL_90M>,
+-			 <&topckgen CLK_TOP_HADDS2PLL_98M>,
+-			 <&topckgen CLK_TOP_HADDS2PLL_294M>,
+-			 <&topckgen CLK_TOP_AUDPLL>,
+-			 <&topckgen CLK_TOP_AUDPLL_D4>,
+-			 <&topckgen CLK_TOP_AUDPLL_D8>,
+-			 <&topckgen CLK_TOP_AUDPLL_D16>,
+-			 <&topckgen CLK_TOP_AUDPLL_D24>,
+-			 <&topckgen CLK_TOP_AUDINTBUS_SEL>,
+-			 <&clk26m>,
+-			 <&topckgen CLK_TOP_SYSPLL1_D4>,
+-			 <&topckgen CLK_TOP_AUD_K1_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K2_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K3_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K4_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K5_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K6_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K1_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K2_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K3_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K4_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K5_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K6_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_I2S1_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S2_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S3_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S4_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S5_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S6_MCLK>,
+-			 <&topckgen CLK_TOP_ASM_M_SEL>,
+-			 <&topckgen CLK_TOP_ASM_H_SEL>,
+-			 <&topckgen CLK_TOP_UNIVPLL2_D4>,
+-			 <&topckgen CLK_TOP_UNIVPLL2_D2>,
+-			 <&topckgen CLK_TOP_SYSPLL_D5>;
+-
+-		clock-names = "infra_sys_audio_clk",
+-			 "top_audio_mux1_sel",
+-			 "top_audio_mux2_sel",
+-			 "top_audio_mux1_div",
+-			 "top_audio_mux2_div",
+-			 "top_audio_48k_timing",
+-			 "top_audio_44k_timing",
+-			 "top_audpll_mux_sel",
+-			 "top_apll_sel",
+-			 "top_aud1_pll_98M",
+-			 "top_aud2_pll_90M",
+-			 "top_hadds2_pll_98M",
+-			 "top_hadds2_pll_294M",
+-			 "top_audpll",
+-			 "top_audpll_d4",
+-			 "top_audpll_d8",
+-			 "top_audpll_d16",
+-			 "top_audpll_d24",
+-			 "top_audintbus_sel",
+-			 "clk_26m",
+-			 "top_syspll1_d4",
+-			 "top_aud_k1_src_sel",
+-			 "top_aud_k2_src_sel",
+-			 "top_aud_k3_src_sel",
+-			 "top_aud_k4_src_sel",
+-			 "top_aud_k5_src_sel",
+-			 "top_aud_k6_src_sel",
+-			 "top_aud_k1_src_div",
+-			 "top_aud_k2_src_div",
+-			 "top_aud_k3_src_div",
+-			 "top_aud_k4_src_div",
+-			 "top_aud_k5_src_div",
+-			 "top_aud_k6_src_div",
+-			 "top_aud_i2s1_mclk",
+-			 "top_aud_i2s2_mclk",
+-			 "top_aud_i2s3_mclk",
+-			 "top_aud_i2s4_mclk",
+-			 "top_aud_i2s5_mclk",
+-			 "top_aud_i2s6_mclk",
+-			 "top_asm_m_sel",
+-			 "top_asm_h_sel",
+-			 "top_univpll2_d4",
+-			 "top_univpll2_d2",
+-			 "top_syspll_d5";
++	audsys: clock-controller@11220000 {
++		compatible = "mediatek,mt2701-audsys", "syscon";
++		reg = <0 0x11220000 0 0x2000>;
++		#clock-cells = <1>;
++
++		afe: audio-controller {
++			compatible = "mediatek,mt2701-audio";
++			interrupts =  <GIC_SPI 104 IRQ_TYPE_LEVEL_LOW>,
++				      <GIC_SPI 132 IRQ_TYPE_LEVEL_LOW>;
++			interrupt-names	= "afe", "asys";
++			power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
++
++			clocks = <&infracfg CLK_INFRA_AUDIO>,
++				 <&topckgen CLK_TOP_AUD_MUX1_SEL>,
++				 <&topckgen CLK_TOP_AUD_MUX2_SEL>,
++				 <&topckgen CLK_TOP_AUD_48K_TIMING>,
++				 <&topckgen CLK_TOP_AUD_44K_TIMING>,
++				 <&topckgen CLK_TOP_AUD_K1_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K2_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K3_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K4_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K1_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K2_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K3_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K4_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_I2S1_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S2_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S3_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S4_MCLK>,
++				 <&audsys CLK_AUD_I2SO1>,
++				 <&audsys CLK_AUD_I2SO2>,
++				 <&audsys CLK_AUD_I2SO3>,
++				 <&audsys CLK_AUD_I2SO4>,
++				 <&audsys CLK_AUD_I2SIN1>,
++				 <&audsys CLK_AUD_I2SIN2>,
++				 <&audsys CLK_AUD_I2SIN3>,
++				 <&audsys CLK_AUD_I2SIN4>,
++				 <&audsys CLK_AUD_ASRCO1>,
++				 <&audsys CLK_AUD_ASRCO2>,
++				 <&audsys CLK_AUD_ASRCO3>,
++				 <&audsys CLK_AUD_ASRCO4>,
++				 <&audsys CLK_AUD_AFE>,
++				 <&audsys CLK_AUD_AFE_CONN>,
++				 <&audsys CLK_AUD_A1SYS>,
++				 <&audsys CLK_AUD_A2SYS>,
++				 <&audsys CLK_AUD_AFE_MRGIF>;
++
++			clock-names = "infra_sys_audio_clk",
++				      "top_audio_mux1_sel",
++				      "top_audio_mux2_sel",
++				      "top_audio_a1sys_hp",
++				      "top_audio_a2sys_hp",
++				      "i2s0_src_sel",
++				      "i2s1_src_sel",
++				      "i2s2_src_sel",
++				      "i2s3_src_sel",
++				      "i2s0_src_div",
++				      "i2s1_src_div",
++				      "i2s2_src_div",
++				      "i2s3_src_div",
++				      "i2s0_mclk_en",
++				      "i2s1_mclk_en",
++				      "i2s2_mclk_en",
++				      "i2s3_mclk_en",
++				      "i2so0_hop_ck",
++				      "i2so1_hop_ck",
++				      "i2so2_hop_ck",
++				      "i2so3_hop_ck",
++				      "i2si0_hop_ck",
++				      "i2si1_hop_ck",
++				      "i2si2_hop_ck",
++				      "i2si3_hop_ck",
++				      "asrc0_out_ck",
++				      "asrc1_out_ck",
++				      "asrc2_out_ck",
++				      "asrc3_out_ck",
++				      "audio_afe_pd",
++				      "audio_afe_conn_pd",
++				      "audio_a1sys_pd",
++				      "audio_a2sys_pd",
++				      "audio_mrgif_pd";
++
++			assigned-clocks = <&topckgen CLK_TOP_AUD_MUX1_SEL>,
++					  <&topckgen CLK_TOP_AUD_MUX2_SEL>,
++					  <&topckgen CLK_TOP_AUD_MUX1_DIV>,
++					  <&topckgen CLK_TOP_AUD_MUX2_DIV>;
++			assigned-clock-parents = <&topckgen CLK_TOP_AUD1PLL_98M>,
++						 <&topckgen CLK_TOP_AUD2PLL_90M>;
++			assigned-clock-rates = <0>, <0>, <49152000>, <45158400>;
++		};
+ 	};
+ 
+ 	mmsys: syscon@14000000 {
+diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+index b750da5..e4dd31d 100644
+--- a/arch/arm/boot/dts/mt7623.dtsi
++++ b/arch/arm/boot/dts/mt7623.dtsi
+@@ -538,105 +538,99 @@
+ 		status = "disabled";
+ 	};
+ 
+-	afe: audio-controller@11220000 {
+-		compatible = "mediatek,mt7623-audio",
+-			     "mediatek,mt2701-audio";
+-		reg = <0 0x11220000 0 0x2000>,
+-		      <0 0x112a0000 0 0x20000>;
+-		interrupts =  <GIC_SPI 104 IRQ_TYPE_LEVEL_LOW>,
+-			      <GIC_SPI 132 IRQ_TYPE_LEVEL_LOW>;
+-		interrupt-names	= "afe", "asys";
+-		power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
++	audsys: clock-controller@11220000 {
++		compatible = "mediatek,mt7623-audsys",
++			     "mediatek,mt2701-audsys",
++			     "syscon";
++		reg = <0 0x11220000 0 0x2000>;
++		#clock-cells = <1>;
+ 
+-		clocks = <&infracfg CLK_INFRA_AUDIO>,
+-			 <&topckgen CLK_TOP_AUD_MUX1_SEL>,
+-			 <&topckgen CLK_TOP_AUD_MUX2_SEL>,
+-			 <&topckgen CLK_TOP_AUD_MUX1_DIV>,
+-			 <&topckgen CLK_TOP_AUD_MUX2_DIV>,
+-			 <&topckgen CLK_TOP_AUD_48K_TIMING>,
+-			 <&topckgen CLK_TOP_AUD_44K_TIMING>,
+-			 <&topckgen CLK_TOP_AUDPLL_MUX_SEL>,
+-			 <&topckgen CLK_TOP_APLL_SEL>,
+-			 <&topckgen CLK_TOP_AUD1PLL_98M>,
+-			 <&topckgen CLK_TOP_AUD2PLL_90M>,
+-			 <&topckgen CLK_TOP_HADDS2PLL_98M>,
+-			 <&topckgen CLK_TOP_HADDS2PLL_294M>,
+-			 <&topckgen CLK_TOP_AUDPLL>,
+-			 <&topckgen CLK_TOP_AUDPLL_D4>,
+-			 <&topckgen CLK_TOP_AUDPLL_D8>,
+-			 <&topckgen CLK_TOP_AUDPLL_D16>,
+-			 <&topckgen CLK_TOP_AUDPLL_D24>,
+-			 <&topckgen CLK_TOP_AUDINTBUS_SEL>,
+-			 <&clk26m>,
+-			 <&topckgen CLK_TOP_SYSPLL1_D4>,
+-			 <&topckgen CLK_TOP_AUD_K1_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K2_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K3_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K4_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K5_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K6_SRC_SEL>,
+-			 <&topckgen CLK_TOP_AUD_K1_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K2_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K3_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K4_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K5_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_K6_SRC_DIV>,
+-			 <&topckgen CLK_TOP_AUD_I2S1_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S2_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S3_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S4_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S5_MCLK>,
+-			 <&topckgen CLK_TOP_AUD_I2S6_MCLK>,
+-			 <&topckgen CLK_TOP_ASM_M_SEL>,
+-			 <&topckgen CLK_TOP_ASM_H_SEL>,
+-			 <&topckgen CLK_TOP_UNIVPLL2_D4>,
+-			 <&topckgen CLK_TOP_UNIVPLL2_D2>,
+-			 <&topckgen CLK_TOP_SYSPLL_D5>;
+-
+-		clock-names = "infra_sys_audio_clk",
+-			 "top_audio_mux1_sel",
+-			 "top_audio_mux2_sel",
+-			 "top_audio_mux1_div",
+-			 "top_audio_mux2_div",
+-			 "top_audio_48k_timing",
+-			 "top_audio_44k_timing",
+-			 "top_audpll_mux_sel",
+-			 "top_apll_sel",
+-			 "top_aud1_pll_98M",
+-			 "top_aud2_pll_90M",
+-			 "top_hadds2_pll_98M",
+-			 "top_hadds2_pll_294M",
+-			 "top_audpll",
+-			 "top_audpll_d4",
+-			 "top_audpll_d8",
+-			 "top_audpll_d16",
+-			 "top_audpll_d24",
+-			 "top_audintbus_sel",
+-			 "clk_26m",
+-			 "top_syspll1_d4",
+-			 "top_aud_k1_src_sel",
+-			 "top_aud_k2_src_sel",
+-			 "top_aud_k3_src_sel",
+-			 "top_aud_k4_src_sel",
+-			 "top_aud_k5_src_sel",
+-			 "top_aud_k6_src_sel",
+-			 "top_aud_k1_src_div",
+-			 "top_aud_k2_src_div",
+-			 "top_aud_k3_src_div",
+-			 "top_aud_k4_src_div",
+-			 "top_aud_k5_src_div",
+-			 "top_aud_k6_src_div",
+-			 "top_aud_i2s1_mclk",
+-			 "top_aud_i2s2_mclk",
+-			 "top_aud_i2s3_mclk",
+-			 "top_aud_i2s4_mclk",
+-			 "top_aud_i2s5_mclk",
+-			 "top_aud_i2s6_mclk",
+-			 "top_asm_m_sel",
+-			 "top_asm_h_sel",
+-			 "top_univpll2_d4",
+-			 "top_univpll2_d2",
+-			 "top_syspll_d5";
++		afe: audio-controller {
++			compatible = "mediatek,mt7623-audio",
++				     "mediatek,mt2701-audio";
++			interrupts =  <GIC_SPI 104 IRQ_TYPE_LEVEL_LOW>,
++				      <GIC_SPI 132 IRQ_TYPE_LEVEL_LOW>;
++			interrupt-names	= "afe", "asys";
++			power-domains = <&scpsys MT2701_POWER_DOMAIN_IFR_MSC>;
++
++			clocks = <&infracfg CLK_INFRA_AUDIO>,
++				 <&topckgen CLK_TOP_AUD_MUX1_SEL>,
++				 <&topckgen CLK_TOP_AUD_MUX2_SEL>,
++				 <&topckgen CLK_TOP_AUD_48K_TIMING>,
++				 <&topckgen CLK_TOP_AUD_44K_TIMING>,
++				 <&topckgen CLK_TOP_AUD_K1_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K2_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K3_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K4_SRC_SEL>,
++				 <&topckgen CLK_TOP_AUD_K1_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K2_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K3_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_K4_SRC_DIV>,
++				 <&topckgen CLK_TOP_AUD_I2S1_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S2_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S3_MCLK>,
++				 <&topckgen CLK_TOP_AUD_I2S4_MCLK>,
++				 <&audsys CLK_AUD_I2SO1>,
++				 <&audsys CLK_AUD_I2SO2>,
++				 <&audsys CLK_AUD_I2SO3>,
++				 <&audsys CLK_AUD_I2SO4>,
++				 <&audsys CLK_AUD_I2SIN1>,
++				 <&audsys CLK_AUD_I2SIN2>,
++				 <&audsys CLK_AUD_I2SIN3>,
++				 <&audsys CLK_AUD_I2SIN4>,
++				 <&audsys CLK_AUD_ASRCO1>,
++				 <&audsys CLK_AUD_ASRCO2>,
++				 <&audsys CLK_AUD_ASRCO3>,
++				 <&audsys CLK_AUD_ASRCO4>,
++				 <&audsys CLK_AUD_AFE>,
++				 <&audsys CLK_AUD_AFE_CONN>,
++				 <&audsys CLK_AUD_A1SYS>,
++				 <&audsys CLK_AUD_A2SYS>,
++				 <&audsys CLK_AUD_AFE_MRGIF>;
++
++			clock-names = "infra_sys_audio_clk",
++				      "top_audio_mux1_sel",
++				      "top_audio_mux2_sel",
++				      "top_audio_a1sys_hp",
++				      "top_audio_a2sys_hp",
++				      "i2s0_src_sel",
++				      "i2s1_src_sel",
++				      "i2s2_src_sel",
++				      "i2s3_src_sel",
++				      "i2s0_src_div",
++				      "i2s1_src_div",
++				      "i2s2_src_div",
++				      "i2s3_src_div",
++				      "i2s0_mclk_en",
++				      "i2s1_mclk_en",
++				      "i2s2_mclk_en",
++				      "i2s3_mclk_en",
++				      "i2so0_hop_ck",
++				      "i2so1_hop_ck",
++				      "i2so2_hop_ck",
++				      "i2so3_hop_ck",
++				      "i2si0_hop_ck",
++				      "i2si1_hop_ck",
++				      "i2si2_hop_ck",
++				      "i2si3_hop_ck",
++				      "asrc0_out_ck",
++				      "asrc1_out_ck",
++				      "asrc2_out_ck",
++				      "asrc3_out_ck",
++				      "audio_afe_pd",
++				      "audio_afe_conn_pd",
++				      "audio_a1sys_pd",
++				      "audio_a2sys_pd",
++				      "audio_mrgif_pd";
++
++			assigned-clocks = <&topckgen CLK_TOP_AUD_MUX1_SEL>,
++					  <&topckgen CLK_TOP_AUD_MUX2_SEL>,
++					  <&topckgen CLK_TOP_AUD_MUX1_DIV>,
++					  <&topckgen CLK_TOP_AUD_MUX2_DIV>;
++			assigned-clock-parents = <&topckgen CLK_TOP_AUD1PLL_98M>,
++						 <&topckgen CLK_TOP_AUD2PLL_90M>;
++			assigned-clock-rates = <0>, <0>, <49152000>, <45158400>;
++		};
+ 	};
+ 
+ 	mmc0: mmc@11230000 {
+-- 
+1.9.1
