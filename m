@@ -1,40 +1,50 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 1/7] dt-bindings: add compatible string for the A64 DE2 CCU
-Date: Sat, 17 Mar 2018 01:53:48 +0800
-Message-Id: <20180316175354.21437-2-icenowy@aosc.io>
-In-Reply-To: <20180316175354.21437-1-icenowy@aosc.io>
-References: <20180316175354.21437-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <prasannatsmkumar@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1520432391.3731.8.camel@flygoat.com>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+ <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
+ <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com> <1520432391.3731.8.camel@flygoat.com>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Wed, 7 Mar 2018 20:51:04 +0530
+Message-ID: <CANc+2y5t9PLHJTF0RvoVOTy0DpWtb++ARFT=5KuJOd-1Da+ASQ@mail.gmail.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: James Hogan <jhogan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>,
+	linux-clk@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>, Mathieu Malaterre <malat@debian.org>,
+	Dominik Peklo <dom.peklo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner A64 SoC has a DE2 CCU like the one in the DE2 of Allwinner
-H5 SoC.
+Hi Jiaxun,
 
-Add a compatible string for it.
+On 7 March 2018 at 19:49, Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+> =E5=9C=A8 2018-03-07=E4=B8=89=E7=9A=84 19:14 +0530=EF=BC=8CPrasannaKumar =
+Muralidharan=E5=86=99=E9=81=93=EF=BC=9A
+>>
+>> I used to get my code tested from Domink but I could not reach him
+>> for
+>> quite some time. Before buying the development board myself I would
+>> like to see if anyone can help me in testing. Do you have any contact
+>> with Ingenic who can help in testing this?
+>>
+>
+> Hi PrasannaKumar
+>
+> I'm resently working on Ingenic chips too. Ingentic guys have sent me a
+> X1000 development broad and it will arrive in about two weeks. I have a
+> ejtag debugger also (but not very suit with X1000 because X1000 have
+> different ejtag interface with standard MIPS cores, maybe we need some
+> modification on openocd). So maybe I can help in testing this after I
+> get my broad. Just ask if you need any help.
+> Thanks
+> --
+> Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- Documentation/devicetree/bindings/clock/sun8i-de2.txt | 1 +
- 1 file changed, 1 insertion(+)
+Really nice to hear. I will ask for help once I make changes.
 
-diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-index f2fa87c4765c..e94582e8b8a9 100644
---- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-+++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-@@ -6,6 +6,7 @@ Required properties :
- 		- "allwinner,sun8i-a83t-de2-clk"
- 		- "allwinner,sun8i-h3-de2-clk"
- 		- "allwinner,sun8i-v3s-de2-clk"
-+		- "allwinner,sun50i-a64-de2-clk"
- 		- "allwinner,sun50i-h5-de2-clk"
- 
- - reg: Must contain the registers base address and length
--- 
-2.15.1
+Thanks,
+PrasannaKumar
