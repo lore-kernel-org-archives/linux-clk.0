@@ -1,214 +1,59 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 05/11] clk: actions: Add gate clock support
-Date: Fri,  2 Mar 2018 11:18:54 +0530
-Message-Id: <20180302054900.11275-6-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
-References: <20180302054900.11275-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <prasannatsmkumar@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20180307151025.GP4197@saruman>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+ <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
+ <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+ <20180307143541.GN4197@saruman> <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
+ <20180307151025.GP4197@saruman>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Wed, 7 Mar 2018 20:52:27 +0530
+Message-ID: <CANc+2y6yNkgrJnM64D-JyL3jyWwk_Tes4MZfMw0NRmsf5v7=4w@mail.gmail.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+To: James Hogan <jhogan@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>,
+	linux-clk@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>, Mathieu Malaterre <malat@debian.org>,
+	Dominik Peklo <dom.peklo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi gate clock together with helper
-functions to be used in composite clock.
+On 7 March 2018 at 20:40, James Hogan <jhogan@kernel.org> wrote:
+> On Wed, Mar 07, 2018 at 08:35:00PM +0530, PrasannaKumar Muralidharan wrote:
+>> On 7 March 2018 at 20:05, James Hogan <jhogan@kernel.org> wrote:
+>> > On Wed, Mar 07, 2018 at 07:14:49PM +0530, PrasannaKumar Muralidharan wrote:
+>> >> > Does X1000 use a different PRID, or is it basically just a JZ4780 core
+>> >> > with different SoC peripherals?
+>> >>
+>> >> Yes X1000 does have a different PRID (PRID = 0x2ed1024f). X1000 has
+>> >
+>> > Right, so thats 0x2e000000 | PRID_COMP_INGENIC_D1 | PRID_IMP_JZRISC |
+>> > 0x4f, which cpu-probe.c already handles (apparently the D1 company code
+>> > is used for JZ4770 & JZ4775 too).
+>>
+>> Okay. Does this mean I need not modify get_board_mach_type() and
+>> get_system_type()?
+>
+> You still need to modify them, otherwise it won't understand
+> "ingenic,x1000" compatible string, and will call it a JZ4740 in
+> /proc/cpuinfo.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/Makefile   |  1 +
- drivers/clk/actions/owl-gate.c | 77 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-gate.h | 73 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 151 insertions(+)
- create mode 100644 drivers/clk/actions/owl-gate.c
- create mode 100644 drivers/clk/actions/owl-gate.h
+Oh okay. Will make the changes.
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 64a50fc2d335..1f0917872c9d 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
- 
- clk-owl-y			+= owl-common.o
-+clk-owl-y			+= owl-gate.o
-diff --git a/drivers/clk/actions/owl-gate.c b/drivers/clk/actions/owl-gate.c
-new file mode 100644
-index 000000000000..25dd94ac0f35
---- /dev/null
-+++ b/drivers/clk/actions/owl-gate.c
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL gate clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "owl-gate.h"
-+
-+void clk_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable)
-+{
-+	int set = gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+	u32 reg;
-+
-+	set ^= enable;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (set)
-+		reg |= BIT(gate_hw->bit_idx);
-+	else
-+		reg &= ~BIT(gate_hw->bit_idx);
-+
-+	regmap_write(common->regmap, gate_hw->reg, reg);
-+}
-+
-+static void owl_gate_disable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	clk_gate_set(common, &gate->gate_hw, false);
-+}
-+
-+static int owl_gate_enable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	clk_gate_set(common, &gate->gate_hw, true);
-+
-+	return 0;
-+}
-+
-+int clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw)
-+{
-+	u32 reg;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE)
-+		reg ^= BIT(gate_hw->bit_idx);
-+
-+	return !!(reg & BIT(gate_hw->bit_idx));
-+}
-+
-+static int owl_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	return clk_is_enabled(common, &gate->gate_hw);
-+}
-+
-+const struct clk_ops owl_gate_ops = {
-+	.disable	= owl_gate_disable,
-+	.enable		= owl_gate_enable,
-+	.is_enabled	= owl_gate_is_enabled,
-+};
-diff --git a/drivers/clk/actions/owl-gate.h b/drivers/clk/actions/owl-gate.h
-new file mode 100644
-index 000000000000..4fc609647ae4
---- /dev/null
-+++ b/drivers/clk/actions/owl-gate.h
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL gate clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_GATE_H_
-+#define _OWL_GATE_H_
-+
-+#include "owl-common.h"
-+
-+struct owl_gate_hw {
-+	u32			reg;
-+	u8			bit_idx;
-+	u8			gate_flags;
-+};
-+
-+struct owl_gate {
-+	struct owl_gate_hw	gate_hw;
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_GATE_HW(_reg, _bit_idx, _gate_flags)	\
-+	{						\
-+		.reg		= _reg,			\
-+		.bit_idx	= _bit_idx,		\
-+		.gate_flags	= _gate_flags,		\
-+	}
-+
-+#define OWL_GATE(_struct, _name, _parent, _reg,				\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		}							\
-+	}								\
-+
-+#define OWL_GATE_NO_PARENT(_struct, _name, _reg,			\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_NO_PARENT(_name,	\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		},							\
-+	}								\
-+
-+static inline struct owl_gate *hw_to_owl_gate(const struct clk_hw *hw)
-+{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_gate, common);
-+}
-+
-+void clk_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable);
-+int clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw);
-+
-+extern const struct clk_ops owl_gate_ops;
-+
-+#endif /* _OWL_GATE_H_ */
--- 
-2.14.1
+>> >> I used to get my code tested from Domink but I could not reach him for
+>> >> quite some time. Before buying the development board myself I would
+>> >> like to see if anyone can help me in testing. Do you have any contact
+>> >> with Ingenic who can help in testing this?
+>> >
+>> > Not personally, but I'll ask around. Of course if nobody much cares
+>> > about it in practice and nobody has the hardware, there may be little
+>> > value in supporting it upstream.
+>>
+>> Seems Jiaxun is interested in the board and is willing to help.
+>
+> Okay, cool.
+>
+> Cheers
+> James
