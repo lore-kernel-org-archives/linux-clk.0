@@ -1,58 +1,43 @@
-Return-Path: <riku.voipio@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <152113644553.107923.8652081506535849458@swboyd.mtv.corp.google.com>
-References: <20180312104945.3001-1-riku.voipio@linaro.org> <152113644553.107923.8652081506535849458@swboyd.mtv.corp.google.com>
-From: Riku Voipio <riku.voipio@linaro.org>
-Date: Fri, 16 Mar 2018 11:42:44 +0200
-Message-ID: <CAAqcGHkAKVShOL2atHwcdQMHt5wGpx+zmHQbzJPs1wc1VvLyrg@mail.gmail.com>
-Subject: Re: [RESEND PATCH] clk: enable hi655x common clk automatically
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org, Arnd Bergmann <arnd@linaro.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, John Stultz <john.stultz@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Wei Xu <xuwei5@hisilicon.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
+Return-Path: <jiaxun.yang@flygoat.com>
+Message-ID: <1520432391.3731.8.camel@flygoat.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, James Hogan
+	 <jhogan@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Ralf Baechle <ralf@linux-mips.org>, Michael Turquette
+ <mturquette@baylibre.com>, sboyd@codeaurora.org,  "open list:OPEN FIRMWARE
+ AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+ Linux-MIPS <linux-mips@linux-mips.org>,  linux-clk@vger.kernel.org, open
+ list <linux-kernel@vger.kernel.org>, Paul Cercueil <paul@crapouillou.net>,
+ Mathieu Malaterre <malat@debian.org>, Dominik Peklo <dom.peklo@gmail.com>
+Date: Wed, 07 Mar 2018 22:19:51 +0800
+In-Reply-To: <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+	 <20170927151527.25570-4-prasannatsmkumar@gmail.com>
+	 <20180306000832.GL4197@saruman>
+	 <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15 March 2018 at 19:54, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting riku.voipio@linaro.org (2018-03-12 03:49:45)
->> From: Riku Voipio <riku.voipio@linaro.org>
->>
->> Without COMMON_CLK_HI655X Wifi and bluetooth are non-functional on Hikey.
->> As suggested by Arnd, enable the driver automatically when the parent
->> driver is selected. With sensible defaults in place, we can leave other
->> choices for EXPERT.
->>
->> Cc: John Stultz <john.stultz@linaro.org>
->> Cc: Ulf Hansson <ulf.hansson@linaro.org>
->> Cc: Wei Xu <xuwei5@hisilicon.com>
->> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Suggested-by: Arnd Bergmann <arnd@linaro.org>
->> Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
->> ---
->> Previous discussion at https://patchwork.kernel.org/patch/9767143/
->> ---
->>  drivers/clk/Kconfig | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index 98ce9fc6e6c0..448ce83b334d 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -55,8 +55,10 @@ config COMMON_CLK_RK808
->>           by control register.
->>
->>  config COMMON_CLK_HI655X
->> -       tristate "Clock driver for Hi655x"
->> -       depends on MFD_HI655X_PMIC || COMPILE_TEST
->> +       tristate "Clock driver for Hi655x" if EXPERT
->
-> Hmm. This would be the first EXPERT usage in the clk code. I guess
-> that's ok.
+在 2018-03-07三的 19:14 +0530，PrasannaKumar Muralidharan写道：
+> 
+> I used to get my code tested from Domink but I could not reach him
+> for
+> quite some time. Before buying the development board myself I would
+> like to see if anyone can help me in testing. Do you have any contact
+> with Ingenic who can help in testing this?
+> 
 
-Put it this way - would you comfortable letting a non-expert fiddle this option?
+Hi PrasannaKumar
 
->> +       depends on (MFD_HI655X_PMIC || COMPILE_TEST)
->> +       depends on REGMAP
->> +       default MFD_HI655X_PMIC
+I'm resently working on Ingenic chips too. Ingentic guys have sent me a
+X1000 development broad and it will arrive in about two weeks. I have a
+ejtag debugger also (but not very suit with X1000 because X1000 have
+different ejtag interface with standard MIPS cores, maybe we need some
+modification on openocd). So maybe I can help in testing this after I
+get my broad. Just ask if you need any help.
+Thanks
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
