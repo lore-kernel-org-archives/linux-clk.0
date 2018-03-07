@@ -1,66 +1,43 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
-Date: Thu, 8 Mar 2018 23:25:04 +0000
-MIME-Version: 1.0
-In-Reply-To: <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>
+Subject: [PATCH] clk: samsung: exynos5420: Add more entries to EPLL rate
+ table
+Date: Wed, 07 Mar 2018 17:46:56 +0100
+Message-id: <20180307164656.12194-2-s.nawrocki@samsung.com>
+In-reply-to: <20180307164656.12194-1-s.nawrocki@samsung.com>
+References: <20180307164656.12194-1-s.nawrocki@samsung.com>
+	<CGME20180307164733epcas1p3695c022315be8d2839ac9e88016e3a76@epcas1p3.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Adding these EPLL output frequency entries allows to support all required
+audio sample rates on the CODEC and the HDMI interface on Peach-Pit
+Chromebook.
 
-On 06/02/18 16:34, Peter De Schrijver wrote:
-> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-> support in this driver. Also allow for the case where the CPU voltage is
-> controlled directly by the DFLL rather than by a separate regulator object.
-> 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> index 4353025..f8e01a8 100644
-> --- a/drivers/cpufreq/tegra124-cpufreq.c
-> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
->  {
->  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
->  	clk_disable_unprepare(priv->dfll_clk);
-> -	regulator_sync_voltage(priv->vdd_cpu_reg);
-> +	if (priv->vdd_cpu_reg)
-> +		regulator_sync_voltage(priv->vdd_cpu_reg);
->  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
->  }
->  
-> @@ -89,10 +90,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  
->  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
-> -	if (IS_ERR(priv->vdd_cpu_reg)) {
-> -		ret = PTR_ERR(priv->vdd_cpu_reg);
-> -		goto out_put_np;
-> -	}
-> +	if (IS_ERR(priv->vdd_cpu_reg) != -EPROBE_DEFER)
-> +		priv->vdd_cpu_reg = NULL;
-> +	else
-> +		return -EPROBE_DEFER;
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I am still not sure that we should rely on the fact that the regulator
-is not present in DT to imply that we do not need it. I think that we
-should be checking if we are using I2C mode here.
-
-Cheers
-Jon
-
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 1f204ba37f0f..f2607cb97a97 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1360,8 +1360,11 @@ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+ 	PLL_36XX_RATE(180633609U, 301, 5, 3, 3671),
+ 	PLL_36XX_RATE(131072006U, 131, 3, 3, 4719),
+ 	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
++	PLL_36XX_RATE( 73728000U, 98, 2, 4, 19923),
++	PLL_36XX_RATE( 67737602U, 90, 2, 4, 20762),
+ 	PLL_36XX_RATE( 65536003U, 131, 3, 4, 4719),
+ 	PLL_36XX_RATE( 49152000U, 197, 3, 5, -25690),
++	PLL_36XX_RATE( 45158401U, 90, 3, 4, 20762),
+ 	PLL_36XX_RATE( 32768001U, 131, 3, 5, 4719),
+ };
+ 
 -- 
-nvpublic
+2.14.2
