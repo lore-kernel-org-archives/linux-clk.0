@@ -1,49 +1,45 @@
-Return-Path: <Tali.Perry@nuvoton.com>
-From: Tali Perry <tali.perry1@gmail.com>
-To: brendanhiggins@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
-        raltherr@google.com, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
-Subject: [PATCH v11 0/2] clk: npcm750: Add NPCM7XX Clock driver and binding
-Date: Thu, 15 Mar 2018 15:45:16 +0200
-Message-Id: <1521121518-32217-1-git-send-email-tali.perry1@gmail.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 7 Mar 2018 10:39:56 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
+	david.brown@linaro.org, rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+Subject: Re: [PATCH v9 14/15] cpufreq: Add module to register cpufreq on
+ Krait CPUs
+Message-ID: <20180307050956.GA6842@vireshk-i7>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+ <1520347148-27852-15-git-send-email-sricharan@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1520347148-27852-15-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 06-03-18, 20:09, Sricharan R wrote:
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Register a cpufreq-generic device whenever we detect that a
+> "qcom,krait" compatible CPU is present in DT.
+> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> [Sricharan: updated to use dev_pm_opp_set_prop_name and
+> 	    nvmem apis]
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |  10 ++
+>  drivers/cpufreq/Makefile             |   1 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
+>  drivers/cpufreq/qcom-cpufreq.c       | 183 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 199 insertions(+)
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq.c
 
-Nuvoton NPCM7XX Clock Controller
-
-Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
-generates and supplies clocks to all modules within the BMC.
-
-10 ==> 11
-update documentation. "eth" replaced with "ethernet" in use case eaxample.
-
-2 ==> 10
-update documentation. add external clocks as inputs to clk driver.
-fix SPDX comment.
-
-1 ==> 2
-This patch includes fix request described here:
-https://patchwork.kernel.org/patch/10200033/
-(move fixed clocks to DT)
-
-Signed-off-by: Tali Perry <tali.perry1@gmail.com>
----
-
-Tali Perry (2):
-  clk: npcm750: Add binding for Nuvoton NPCM7XX clock Controller
-  clk: npcm7xx: Add Nuvoton NPCM7XX Clock Controller driver
-
- .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-npcm7xx.c                          | 757 +++++++++++++++++++++
- include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 ++
- 4 files changed, 902 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
- create mode 100644 drivers/clk/clk-npcm7xx.c
- create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-2.14.1
+viresh
