@@ -1,523 +1,260 @@
-Return-Path: <mike.looijmans@topic.nl>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH v2] clk: Add driver for the si544 clock generator chip
-Date: Thu, 15 Mar 2018 12:50:08 +0100
-Message-Id: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Rob Herring <robh@kernel.org>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "michal.simek@xilinx.com"
+	<michal.simek@xilinx.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Shubhrajyoti Datta
+	<shubhraj@xilinx.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
+ driver
+Date: Wed, 7 Mar 2018 22:47:08 +0000
+Message-ID: <DM2PR0201MB0767031248A9F773620722FDB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
+References: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
+ <1519856861-31384-3-git-send-email-jollys@xilinx.com>
+ <20180306014549.6t3ae5adzc3cpi5v@rob-hp-laptop>
+In-Reply-To: <20180306014549.6t3ae5adzc3cpi5v@rob-hp-laptop>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the driver and devicetree documentation for the
-Silicon Labs SI544 clock generator chip. This is an I2C controlled
-oscillator capable of generating clock signals ranging from 200kHz
-to 1500MHz.
+Hi Rob,
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
----
-v2: Add u64 cast to ls_div_bits calculation loop
-    When ls_div_bits is non-zero, the hs_div must always be even
 
- .../devicetree/bindings/clock/silabs,si544.txt     |  25 ++
- drivers/clk/Kconfig                                |  10 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-si544.c                            | 422 +++++++++++++++++++++
- 4 files changed, 458 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/silabs,si544.txt
- create mode 100644 drivers/clk/clk-si544.c
+> -----Original Message-----
+> From: Rob Herring [mailto:robh@kernel.org]
+> Sent: Monday, March 05, 2018 5:46 PM
+> To: Jolly Shah <JOLLYS@xilinx.com>
+> Cc: mturquette@baylibre.com; sboyd@codeaurora.org;
+> michal.simek@xilinx.com; mark.rutland@arm.com; linux-clk@vger.kernel.org;
+> devicetree@vger.kernel.org; Shubhrajyoti Datta <shubhraj@xilinx.com>; lin=
+ux-
+> kernel@vger.kernel.org; Jolly Shah <JOLLYS@xilinx.com>; Rajan Vaja
+> <RAJANV@xilinx.com>; linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP cloc=
+k
+> driver
+>=20
+> On Wed, Feb 28, 2018 at 02:27:40PM -0800, Jolly Shah wrote:
+> > Add documentation to describe Xilinx ZynqMP clock driver bindings.
+> >
+> > Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> > Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+> > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> > ---
+> >  .../devicetree/bindings/clock/xlnx,zynqmp-clk.txt  | 163
+> > +++++++++++++++++++++
+> >  1 file changed, 163 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+> > b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+> > new file mode 100644
+> > index 0000000..d590330
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+> > @@ -0,0 +1,163 @@
+> > +Device Tree Clock bindings for the Zynq Ultrascale+ MPSoC
+> > +
+> > +The Zynq Ultrascale+ MPSoC has several different clk providers, each
+> > +with there own bindings.
+> > +The purpose of this document is to document their usage.
+> > +
+> > +See clock_bindings.txt for more information on the generic clock bindi=
+ngs.
+> > +
+> > +=3D=3D Clock Controller =3D=3D
+> > +The clock controller is a logical abstraction of Zynq Ultrascale+
+> > +MPSoC clock tree. It reads required input clock frequencies from the
+> > +devicetree and acts as clock provider for all clock consumers of PS cl=
+ocks.
+>=20
+> Umm, the clock controller should correspond to a h/w block, not a "logica=
+l
+> abstraction of the clock tree".
+>=20
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.txt b/Documentation/devicetree/bindings/clock/silabs,si544.txt
-new file mode 100644
-index 0000000..eec1787
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/silabs,si544.txt
-@@ -0,0 +1,25 @@
-+Binding for Silicon Labs 544 programmable I2C clock generator.
-+
-+Reference
-+This binding uses the common clock binding[1]. Details about the device can be
-+found in the datasheet[2].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+[2] Si544 datasheet
-+    https://www.silabs.com/documents/public/data-sheets/si544-datasheet.pdf
-+
-+Required properties:
-+ - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c" according
-+               to the speed grade of the chip.
-+ - reg: I2C device address.
-+ - #clock-cells: From common clock bindings: Shall be 0.
-+
-+Optional properties:
-+ - clock-output-names: From common clock bindings. Recommended to be "si544".
-+
-+Example:
-+	si544: clock-generator@55 {
-+		reg = <0x55>;
-+		#clock-cells = <0>;
-+		compatible = "silabs,si544b";
-+	};
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 98ce9fc..5c7dc8e 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -91,6 +91,16 @@ config COMMON_CLK_SI514
- 	  This driver supports the Silicon Labs 514 programmable clock
- 	  generator.
- 
-+config COMMON_CLK_SI544
-+	tristate "Clock driver for SiLabs 544 devices"
-+	depends on I2C
-+	depends on OF
-+	select REGMAP_I2C
-+	help
-+	---help---
-+	  This driver supports the Silicon Labs 544 programmable clock
-+	  generator.
-+
- config COMMON_CLK_SI570
- 	tristate "Clock driver for SiLabs 570 and compatible devices"
- 	depends on I2C
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 71ec41e..bde614a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
- obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
-+obj-$(CONFIG_COMMON_CLK_SI544)		+= clk-si544.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
- obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
- obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
-diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
-new file mode 100644
-index 0000000..a392acf
---- /dev/null
-+++ b/drivers/clk/clk-si544.c
-@@ -0,0 +1,422 @@
-+/*
-+ * Driver for Silicon Labs Si544 Programmable Oscillator
-+ *
-+ * Copyright (C) 2018 Topic Embedded Products
-+ *
-+ * Author: Mike Looijmans <mike.looijmans@topic.nl>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+/* I2C registers (decimal as in datasheet) */
-+#define SI544_REG_CONTROL	7
-+#define SI544_REG_OE_STATE	17
-+#define SI544_REG_HS_DIV	23
-+#define SI544_REG_LS_HS_DIV	24
-+#define SI544_REG_FBDIV0	26
-+#define SI544_REG_FBDIV8	27
-+#define SI544_REG_FBDIV16	28
-+#define SI544_REG_FBDIV24	29
-+#define SI544_REG_FBDIV32	30
-+#define SI544_REG_FBDIV40	31
-+#define SI544_REG_FCAL_OVR	69
-+#define SI544_REG_ADPLL_DELTA_M0	231
-+#define SI544_REG_ADPLL_DELTA_M8	232
-+#define SI544_REG_ADPLL_DELTA_M16	233
-+#define SI544_REG_PAGE_SELECT	255
-+
-+/* Register values */
-+#define SI544_CONTROL_RESET	BIT(7)
-+#define SI544_CONTROL_MS_ICAL2	BIT(3)
-+
-+#define SI544_OE_STATE_ODC_OE	BIT(0)
-+
-+/* Max freq depends on speed grade */
-+#define SI544_MIN_FREQ	    200000U
-+
-+/* Si544 Internal oscilator runs at 55.05 MHz */
-+#define FXO		  55050000U
-+
-+/* VCO range is 10.8 .. 12.1 GHz, max depends on speed grade */
-+#define FVCO_MIN       10800000000ULL
-+
-+#define HS_DIV_MAX	2046
-+#define HS_DIV_MAX_ODD	33
-+
-+enum si544_speed_grade {
-+	si544a,
-+	si544b,
-+	si544c,
-+};
-+
-+struct clk_si544 {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	struct i2c_client *i2c_client;
-+	enum si544_speed_grade speed_grade;
-+};
-+#define to_clk_si544(_hw)	container_of(_hw, struct clk_si544, hw)
-+
-+/* Multiplier/divider settings */
-+struct clk_si544_muldiv {
-+	u32 fb_div_frac;  /* Integer part of feedback divider (32 bits) */
-+	u16 fb_div_int;  /* Fractional part of feedback divider (11 bits) */
-+	u16 hs_div; /* 1st divider, 5..2046, must be even when >33 */
-+	u8 ls_div_bits; /* 2nd divider, as 2^x, range 0..5 */
-+};
-+
-+/* Enables or disables the output driver */
-+static int si544_enable_output(struct clk_si544 *data, bool enable)
-+{
-+	return regmap_update_bits(data->regmap, SI544_REG_OE_STATE,
-+		SI544_OE_STATE_ODC_OE, enable ? SI544_OE_STATE_ODC_OE : 0);
-+}
-+
-+/* Retrieve clock multiplier and dividers from hardware */
-+static int si544_get_muldiv(struct clk_si544 *data,
-+	struct clk_si544_muldiv *settings)
-+{
-+	int err;
-+	u8 reg[6];
-+
-+	err = regmap_bulk_read(data->regmap, SI544_REG_HS_DIV, reg, 2);
-+	if (err)
-+		return err;
-+
-+	settings->ls_div_bits = (reg[1] >> 4) & 0x07;
-+	settings->hs_div = (reg[1] & 0x07) << 8 | reg[0];
-+
-+	err = regmap_bulk_read(data->regmap, SI544_REG_FBDIV0, reg, 6);
-+	if (err)
-+		return err;
-+
-+	settings->fb_div_int = reg[4] | (reg[5] & 0x07) << 8;
-+	settings->fb_div_frac = reg[0] | reg[1] << 8 | reg[2] << 16 |
-+				reg[3] << 24;
-+	return 0;
-+}
-+
-+static int si544_set_muldiv(struct clk_si544 *data,
-+	struct clk_si544_muldiv *settings)
-+{
-+	int err;
-+	u8 reg[6];
-+
-+	reg[0] = settings->hs_div;
-+	reg[1] = settings->hs_div >> 8 | settings->ls_div_bits << 4;
-+
-+	err = regmap_bulk_write(data->regmap, SI544_REG_HS_DIV, reg, 2);
-+	if (err < 0)
-+		return err;
-+
-+	reg[0] = settings->fb_div_frac;
-+	reg[1] = settings->fb_div_frac >> 8;
-+	reg[2] = settings->fb_div_frac >> 16;
-+	reg[3] = settings->fb_div_frac >> 24;
-+	reg[4] = settings->fb_div_int;
-+	reg[5] = settings->fb_div_int >> 8;
-+
-+	/*
-+	 * Writing to SI544_REG_FBDIV40 triggers the clock change, so that
-+	 * must be written last
-+	 */
-+	return regmap_bulk_write(data->regmap, SI544_REG_FBDIV0, reg, 6);
-+}
-+
-+static bool is_valid_frequency(const struct clk_si544 *data,
-+	unsigned long frequency)
-+{
-+	unsigned long max_freq;
-+
-+	if (frequency < SI544_MIN_FREQ)
-+		return false;
-+
-+	switch (data->speed_grade) {
-+	case si544a:
-+		max_freq = 1500000000;
-+		break;
-+	case si544b:
-+		max_freq = 800000000;
-+		break;
-+	case si544c:
-+		max_freq = 350000000;
-+		break;
-+	default:
-+		return false;
-+	}
-+
-+	if (frequency > max_freq)
-+		return false;
-+
-+	return true;
-+}
-+
-+/* Calculate divider settings for a given frequency */
-+static int si544_calc_muldiv(struct clk_si544_muldiv *settings,
-+	unsigned long frequency)
-+{
-+	u64 vco;
-+	u32 ls_freq;
-+	u32 tmp;
-+	u8 res;
-+
-+	/* Determine the minimum value of LS_DIV and resulting target freq. */
-+	ls_freq = frequency;
-+	settings->ls_div_bits = 0;
-+
-+	if (frequency >= (FVCO_MIN / HS_DIV_MAX))
-+		settings->ls_div_bits = 0;
-+	else {
-+		res = 1;
-+		tmp = 2 * HS_DIV_MAX;
-+		while (tmp <= (HS_DIV_MAX * 32)) {
-+			if (((u64)frequency * tmp) >= FVCO_MIN)
-+				break;
-+			++res;
-+			tmp <<= 1;
-+		}
-+		settings->ls_div_bits = res;
-+		ls_freq = frequency << res;
-+	}
-+
-+	/* Determine minimum HS_DIV by rounding up */
-+	vco = FVCO_MIN + ls_freq - 1;
-+	do_div(vco, ls_freq);
-+	settings->hs_div = vco;
-+	/* round up to even number when required */
-+	if ((settings->hs_div & 1) &&
-+	    ((settings->hs_div > HS_DIV_MAX_ODD) || settings->ls_div_bits))
-+		++settings->hs_div;
-+	/* Calculate VCO frequency (in 10..12GHz range) */
-+	vco = (u64)ls_freq * settings->hs_div;
-+	/* Calculate the integer part of the feedback divider */
-+	tmp = do_div(vco, FXO);
-+	settings->fb_div_int = vco;
-+	/* And the fractional bits using the remainder */
-+	vco = (u64)tmp << 32;
-+	do_div(vco, FXO);
-+	settings->fb_div_frac = vco;
-+
-+	return 0;
-+}
-+
-+/* Calculate resulting frequency given the register settings */
-+static unsigned long si544_calc_rate(struct clk_si544_muldiv *settings)
-+{
-+	u32 d = settings->hs_div * BIT(settings->ls_div_bits);
-+	u64 vco;
-+
-+	/* Calculate VCO while preventing overflow */
-+	vco = (u64)settings->fb_div_int * FXO;
-+	vco += (((u64)settings->fb_div_frac * FXO) + (FXO / 2)) >> 32;
-+
-+	do_div(vco, d);
-+
-+	return vco;
-+}
-+
-+static unsigned long si544_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	struct clk_si544_muldiv settings;
-+	int err;
-+
-+	err = si544_get_muldiv(data, &settings);
-+	if (err) {
-+		dev_err(&data->i2c_client->dev, "unable to retrieve settings\n");
-+		return 0;
-+	}
-+
-+	return si544_calc_rate(&settings);
-+}
-+
-+static long si544_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	struct clk_si544_muldiv settings;
-+	int err;
-+
-+	if (!rate)
-+		return 0;
-+
-+	if (!is_valid_frequency(data, rate))
-+		return -EINVAL;
-+
-+	err = si544_calc_muldiv(&settings, rate);
-+	if (err)
-+		return err;
-+
-+	return si544_calc_rate(&settings);
-+}
-+
-+/*
-+ * Update output frequency for "big" frequency changes
-+ */
-+static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	struct clk_si544_muldiv settings;
-+	int err;
-+
-+	if (!is_valid_frequency(data, rate))
-+		return -EINVAL;
-+
-+	err = si544_calc_muldiv(&settings, rate);
-+	if (err)
-+		return err;
-+
-+	si544_enable_output(data, false);
-+
-+	/* Allow FCAL for this frequency update */
-+	err = regmap_write(data->regmap, SI544_REG_FCAL_OVR, 0);
-+	if (err < 0)
-+		return err;
-+
-+
-+	err = si544_set_muldiv(data, &settings);
-+	if (err < 0)
-+		return err; /* Undefined state now, best to leave disabled */
-+
-+	/* Trigger calibration */
-+	err = regmap_write(data->regmap, SI544_REG_CONTROL,
-+			   SI544_CONTROL_MS_ICAL2);
-+	if (err < 0)
-+		return err;
-+
-+	/* Applying a new frequency can take up to 10ms */
-+	usleep_range(10000, 12000);
-+
-+	si544_enable_output(data, true);
-+
-+	return err;
-+}
-+
-+static const struct clk_ops si544_clk_ops = {
-+	.recalc_rate = si544_recalc_rate,
-+	.round_rate = si544_round_rate,
-+	.set_rate = si544_set_rate,
-+};
-+
-+static bool si544_regmap_is_volatile(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SI544_REG_CONTROL:
-+	case SI544_REG_FCAL_OVR:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static const struct regmap_config si544_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.cache_type = REGCACHE_RBTREE,
-+	.max_register = SI544_REG_PAGE_SELECT,
-+	.volatile_reg = si544_regmap_is_volatile,
-+};
-+
-+static int si544_probe(struct i2c_client *client,
-+		const struct i2c_device_id *id)
-+{
-+	struct clk_si544 *data;
-+	struct clk_init_data init;
-+	int err;
-+
-+	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	init.ops = &si544_clk_ops;
-+	init.flags = 0;
-+	init.num_parents = 0;
-+	data->hw.init = &init;
-+	data->i2c_client = client;
-+	data->speed_grade = id->driver_data;
-+
-+	if (of_property_read_string(client->dev.of_node, "clock-output-names",
-+			&init.name))
-+		init.name = client->dev.of_node->name;
-+
-+	data->regmap = devm_regmap_init_i2c(client, &si544_regmap_config);
-+	if (IS_ERR(data->regmap)) {
-+		dev_err(&client->dev, "failed to allocate register map\n");
-+		return PTR_ERR(data->regmap);
-+	}
-+
-+	i2c_set_clientdata(client, data);
-+
-+	/* Select page 0, just to be sure, there appear to be no more */
-+	err = regmap_write(data->regmap, SI544_REG_PAGE_SELECT, 0);
-+	if (err < 0)
-+		return err;
-+
-+	err = devm_clk_hw_register(&client->dev, &data->hw);
-+	if (err) {
-+		dev_err(&client->dev, "clock registration failed\n");
-+		return err;
-+	}
-+	err = of_clk_add_hw_provider(client->dev.of_node, of_clk_hw_simple_get,
-+				     &data->hw);
-+	if (err) {
-+		dev_err(&client->dev, "unable to add clk provider\n");
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int si544_remove(struct i2c_client *client)
-+{
-+	of_clk_del_provider(client->dev.of_node);
-+	return 0;
-+}
-+
-+static const struct i2c_device_id si544_id[] = {
-+	{ "si544a", si544a },
-+	{ "si544b", si544b },
-+	{ "si544c", si544c },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, si544_id);
-+
-+static const struct of_device_id clk_si544_of_match[] = {
-+	{ .compatible = "silabs,si544a" },
-+	{ .compatible = "silabs,si544b" },
-+	{ .compatible = "silabs,si544c" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, clk_si544_of_match);
-+
-+static struct i2c_driver si544_driver = {
-+	.driver = {
-+		.name = "si544",
-+		.of_match_table = clk_si544_of_match,
-+	},
-+	.probe		= si544_probe,
-+	.remove		= si544_remove,
-+	.id_table	= si544_id,
-+};
-+module_i2c_driver(si544_driver);
-+
-+MODULE_AUTHOR("Mike Looijmans <mike.looijmans@topic.nl>");
-+MODULE_DESCRIPTION("Si544 driver");
-+MODULE_LICENSE("GPL");
--- 
-1.9.1
+Will correct description in next version.
+
+> > +
+> > +Required properties:
+> > + - #clock-cells : Must be 1
+> > + - compatible : "xlnx,zynqmp-clk"
+> > + - clocks : list of clock specifiers which are external input clocks t=
+o the
+> > +	    given clock controller. Please refer the next section to find
+> > +	    the input clocks for a given controller.
+> > + - clock-names : list of names of clocks which are exteral input clock=
+s to the
+> > +		 given clock controller. Please refer to the clock bindings
+> > +		 for more details
+> > +
+> > +Input clocks for zynqmp Ultrascale+ clock controller:
+> > +The Zynq UltraScale+ MPSoC has one primary and four alternative
+> > +reference clock inputs.
+> > +These required clock inputs are the
+> > + - pss_ref_clk (PS reference clock)
+> > + - video_clk (reference clock for video system )
+> > + - pss_alt_ref_clk (alternative PS reference clock)
+> > + - aux_ref_clk
+> > + - gt_crx_ref_clk (transceiver reference clock)
+> > +
+> > +The following strings are optional parameters to the 'clock-names'
+> > +property in order to provide an optional (E)MIO clock source.
+> > + - swdt0_ext_clk
+> > + - swdt1_ext_clk
+> > + - gem0_emio_clk
+> > + - gem1_emio_clk
+> > + - gem2_emio_clk
+> > + - gem3_emio_clk
+> > + - mio_clk_XX		# with XX =3D 00..77
+> > + - mio_clk_50_or_51	#for the mux clock to gem tsu from 50 or 51
+> > +
+> > +
+> > +Output clocks for zynqmp Ultrascale+ clock controller:
+> > +Output clocks are registered based on clock information received from
+> firmware.
+> > +Output clock indexes are mentioned below:
+> > +
+> > +Clock ID:	Output clock name:
+> > +-------------------------------------
+>=20
+> These go in header definition, not here.
+
+Sure. Will move them.
+
+>=20
+> > +0		iopll
+> > +1		rpll
+> > +2		apll
+> > +3		dpll
+> > +4		vpll
+> > +5		iopll_to_fpd
+> > +6		rpll_to_fpd
+> > +7		apll_to_lpd
+> > +8		dpll_to_lpd
+> > +9		vpll_to_lpd
+> > +10		acpu
+> > +11		acpu_half
+> > +12		dbf_fpd
+> > +13		dbf_lpd
+> > +14		dbg_trace
+> > +15		dbg_tstmp
+> > +16		dp_video_ref
+> > +17		dp_audio_ref
+> > +18		dp_stc_ref
+> > +19		gdma_ref
+> > +20		dpdma_ref
+> > +21		ddr_ref
+> > +22		sata_ref
+> > +23		pcie_ref
+> > +24		gpu_ref
+> > +25		gpu_pp0_ref
+> > +26		gpu_pp1_ref
+> > +27		topsw_main
+> > +28		topsw_lsbus
+> > +29		gtgref0_ref
+> > +30		lpd_switch
+> > +31		lpd_lsbus
+> > +32		usb0_bus_ref
+> > +33		usb1_bus_ref
+> > +34		usb3_dual_ref
+> > +35		usb0
+> > +36		usb1
+> > +37		cpu_r5
+> > +38		cpu_r5_core
+> > +39		csu_spb
+> > +40		csu_pll
+> > +41		pcap
+> > +42		iou_switch
+> > +43		gem_tsu_ref
+> > +44		gem_tsu
+> > +45		gem0_ref
+> > +46		gem1_ref
+> > +47		gem2_ref
+> > +48		gem3_ref
+> > +49		gem0_tx
+> > +50		gem1_tx
+> > +51		gem2_tx
+> > +52		gem3_tx
+> > +53		qspi_ref
+> > +54		sdio0_ref
+> > +55		sdio1_ref
+> > +56		uart0_ref
+> > +57		uart1_ref
+> > +58		spi0_ref
+> > +59		spi1_ref
+> > +60		nand_ref
+> > +61		i2c0_ref
+> > +62		i2c1_ref
+> > +63		can0_ref
+> > +64		can1_ref
+> > +65		can0
+> > +66		can1
+> > +67		dll_ref
+> > +68		adma_ref
+> > +69		timestamp_ref
+> > +70		ams_ref
+> > +71		pl0_ref
+> > +72		pl1_ref
+> > +73		pl2_ref
+> > +74		pl3_ref
+> > +75		wdt
+> > +76		iopll_int
+> > +77		iopll_pre_src
+> > +78		iopll_half
+> > +79		iopll_int_mux
+> > +80		iopll_post_src
+> > +81		rpll_int
+> > +82		rpll_pre_src
+> > +83		rpll_half
+> > +84		rpll_int_mux
+> > +85		rpll_post_src
+> > +86		apll_int
+> > +87		apll_pre_src
+> > +88		apll_half
+> > +89		apll_int_mux
+> > +90		apll_post_src
+> > +91		dpll_int
+> > +92		dpll_pre_src
+> > +93		dpll_half
+> > +94		dpll_int_mux
+> > +95		dpll_post_src
+> > +96		vpll_int
+> > +97		vpll_pre_src
+> > +98		vpll_half
+> > +99		vpll_int_mux
+> > +100		vpll_post_src
+> > +101		can0_mio
+> > +102		can1_mio
+> > +
+> > +Example:
+> > +
+> > +clk: clk {
+> > +	#clock-cells =3D <1>;
+> > +	compatible =3D "xlnx,zynqmp-clk";
+>=20
+> How do you control the clocks?
+
+Clocks are controlled by a dedicated platform management controller. Above =
+clock ids are used to identify clocks between master and PMU.
+
+>=20
+> > +	clocks =3D <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>,
+> <&aux_ref_clk>, <&gt_crx_ref_clk>;
+> > +	clock-names =3D "pss_ref_clk", "video_clk",
+> "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk"
+> > +};
+> > --
+> > 2.7.4
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
