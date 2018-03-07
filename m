@@ -1,75 +1,52 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <prasannatsmkumar@gmail.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1519839622-6109-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <CAMuHMdUx3A_8MeZmrwiBRqUS0oGjwrg13fy1QMsA2SUw+dR0Hg@mail.gmail.com>
- <1519839622-6109-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 13 Mar 2018 14:43:52 +0100
-Message-ID: <CAMuHMdVRxTCG0vCEEmhHm4XsZeJaPM1b_LOeZxqNdhRqsH0oZw@mail.gmail.com>
-Subject: Re: [PATCH v6 01/26] ARM: shmobile: Add watchdog support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>, Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Simon Horman <horms@verge.net.au>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+In-Reply-To: <1520437971.3731.22.camel@flygoat.com>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+ <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
+ <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+ <20180307143541.GN4197@saruman> <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
+ <1520437971.3731.22.camel@flygoat.com>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Wed, 7 Mar 2018 21:55:38 +0530
+Message-ID: <CANc+2y42BAF=bZo9WxujMBR-x6y=rKDagA3R68phuAsi1P8BLw@mail.gmail.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: James Hogan <jhogan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>,
+	linux-clk@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>, Mathieu Malaterre <malat@debian.org>,
+	Dominik Peklo <dom.peklo@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabrizio,
-
-On Wed, Feb 28, 2018 at 6:40 PM, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> On R-Car Gen2 and RZ/G1 platforms, we use the SBAR registers to make non
-> boot CPUs run a routine designed to bring up SMP and deal with hot plug.
-> The value contained in the SBAR registers is not initialized by a WDT
-> triggered reset, which means that after a WDT triggered reset we jump
-> to the SMP bring up routine, preventing the system from executing the
-> bootrom code.
+On 7 March 2018 at 21:22, Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+> =E5=9C=A8 2018-03-07=E4=B8=89=E7=9A=84 20:35 +0530=EF=BC=8CPrasannaKumar =
+Muralidharan=E5=86=99=E9=81=93=EF=BC=9A
+>> Hi James,
+>>
+>> Seems Jiaxun is interested in the board and is willing to help.
+>>
+>> I have been told that Ingenic is focusing on IoT market and X1000 is
+>> intended for IoT segment. I think that they would be selling several
+>> 100Ks of chip over the coming years. But I feel Ingenic spends time
+>> only on maintaining their Linux port which is usually based on very
+>> old kernel version.
 >
-> The purpose of this patch is to jump to the bootrom code in case of a
-> WDT triggered reset, and keep the SMP functionality untouched.
-> In order to tell if the code had been called due to the WDT overflowing
-> we are testing WOVF from register RWTCSRA.
+> Ingenic is going to release their XBrust2 core with it's products such
+> as X2000 a few days later. Witch is a pure MIPS64r5 with MXU2(A
+> superset of MIPS's MSA SIMD instruction set). The newest kernel port of
+> X1000 maintain by Ingenic is based on Linux-4.4 [1]. After communicated
+> with Ingenic, they said they are forcusing on China domestic market.
+> But they're looking for partners to enter foriegn market.
 >
-> The new function shmobile_boot_vector_gen2 isn't replacing
-> shmobile_boot_vector for backward compatibility reasons. The kernel
-> will install the best option (either shmobile_boot_vector or
-> shmobile_boot_vector_gen2) to ICRAM1 after parsing the device tree,
-> according to the amount of memory available.
->
-> Since shmobile_boot_vector has become bigger, "reg" property of nodes
-> compatible with "renesas,smp-sram" now need to be set to a value
-> greater or equal to "<0 0x60>".
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v5->v6:
-> * taken ifdefs out as per Geert's suggestion.
+> [1] https://pan.baidu.com/s/1o8MeYts (Well you can download from this
+> Chinese website, ingenic have a gerrit but I don't have access to it.
+> As my experience, it's hard to develop on Chinese-made chips wihout
+> reading Chinese documents.)
 
-My intention was to remove the #ifdefs from the header file only, not
-from arch/arm/mach-shmobile/headsmp.S, as the latter is used for
-other SoC families, too.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Can you take a diff and upload it somewhere else? Download speed is a
+couple of bytes per second. Can you put the diff in github or similar
+other service?
+I would like to see if the port uses DT.
