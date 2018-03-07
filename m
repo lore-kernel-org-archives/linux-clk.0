@@ -1,99 +1,89 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 01/16] clk: sunxi-ng: Add check for minimal rate to NM PLLs
-Date: Thu,  1 Mar 2018 22:34:27 +0100
-Message-Id: <20180301213442.16677-2-jernej.skrabec@siol.net>
-In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
+Return-Path: <prasannatsmkumar@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20180306000832.GL4197@saruman>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+ <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
+From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Date: Wed, 7 Mar 2018 19:14:49 +0530
+Message-ID: <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+To: James Hogan <jhogan@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>,
+	linux-clk@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>, Mathieu Malaterre <malat@debian.org>,
+	Dominik Peklo <dom.peklo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Some NM PLLs doesn't work well when their output clock rate is set below
-certain rate.
+Hi James,
 
-Add support for that constrain.
+Thanks for reviewing this.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu_nm.c |  7 +++++++
- drivers/clk/sunxi-ng/ccu_nm.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+On 6 March 2018 at 05:38, James Hogan <jhogan@kernel.org> wrote:
+> On Wed, Sep 27, 2017 at 08:45:26PM +0530, PrasannaKumar Muralidharan wrote:
+>> Add initial Ingenic X1000 SoC support. Provide minimum necessary
+>> information to boot kernel to an initramfs userspace.
+>>
+>> Signed-off-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+>> ---
+>>  arch/mips/boot/dts/ingenic/x1000.dtsi | 93 +++++++++++++++++++++++++++++++++++
+>>  arch/mips/jz4740/Kconfig              |  6 +++
+>>  arch/mips/jz4740/time.c               |  2 +-
+>>  3 files changed, 100 insertions(+), 1 deletion(-)
+>>  create mode 100644 arch/mips/boot/dts/ingenic/x1000.dtsi
+>
+> arch/mips/jz4780/setup.c, specifically get_board_mach_type() and
+> get_system_type() will need updating too.
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index a16de092bf94..4e2073307f34 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -117,6 +117,13 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate *= nm->fixed_post_div;
- 
-+	if (rate < nm->min_rate) {
-+		rate = nm->min_rate;
-+		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+			rate /= nm->fixed_post_div;
-+		return rate;
-+	}
-+
- 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
- 		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 			rate /= nm->fixed_post_div;
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
-index eba586b4c7d0..1d8b459c50b7 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.h
-+++ b/drivers/clk/sunxi-ng/ccu_nm.h
-@@ -37,6 +37,7 @@ struct ccu_nm {
- 	struct ccu_sdm_internal		sdm;
- 
- 	unsigned int		fixed_post_div;
-+	unsigned int		min_rate;
- 
- 	struct ccu_common	common;
- };
-@@ -88,6 +89,32 @@ struct ccu_nm {
- 		},							\
- 	}
- 
-+#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(_struct, _name, _parent,	\
-+					     _reg, _min_rate,		\
-+					     _nshift, _nwidth,		\
-+					     _mshift, _mwidth,		\
-+					     _frac_en, _frac_sel,	\
-+					     _frac_rate_0, _frac_rate_1,\
-+					     _gate, _lock, _flags)	\
-+	struct ccu_nm _struct = {					\
-+		.enable		= _gate,				\
-+		.lock		= _lock,				\
-+		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
-+		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
-+		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
-+						  _frac_rate_0,		\
-+						  _frac_rate_1),	\
-+		.min_rate	= _min_rate,				\
-+		.common		= {					\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_FRACTIONAL,	\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_nm_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
- #define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
- 				    _nshift, _nwidth,			\
- 				    _mshift, _mwidth,			\
--- 
-2.16.2
+Missed it. Will make necessary changes.
+
+> Does X1000 use a different PRID, or is it basically just a JZ4780 core
+> with different SoC peripherals?
+
+Yes X1000 does have a different PRID (PRID = 0x2ed1024f). X1000 has
+single CPU core so it is definitely not JZ4780.
+
+>> diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/ingenic/x1000.dtsi
+>> new file mode 100644
+>> index 0000000..abbb9ec
+>> --- /dev/null
+>> +++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
+>> @@ -0,0 +1,93 @@
+>> +/*
+>> + * Copyright (C) 2016 PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+>> + *
+>> + * This file is licensed under the terms of the GNU General Public
+>> + * License version 2. This program is licensed "as is" without any
+>> + * warranty of any kind, whether express or implied.
+>
+> (these will need updating to use SPDX identifiers if you respin)
+
+Sure. Will take care while submitting next version.
+
+>> +     cgu: jz4780-cgu@10000000 {
+>
+> not sure jz4780 is appropriate here.
+
+No, it is not. Copy pasted from jz4780.dtsi but missed updating this.
+
+>> +             compatible = "ingenic,x1000-cgu";
+>> +             reg = <0x10000000 0x100>;
+>> +
+>> +             clocks = <&ext>, <&rtc>;
+>> +             clock-names = "ext", "rtc";
+>> +
+>> +             #clock-cells = <1>;
+>> +     };
+>
+> Cheers
+> James
+
+I used to get my code tested from Domink but I could not reach him for
+quite some time. Before buying the development board myself I would
+like to see if anyone can help me in testing. Do you have any contact
+with Ingenic who can help in testing this?
+
+Thanks,
+PrasannaKumar
