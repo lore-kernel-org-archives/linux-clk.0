@@ -1,529 +1,275 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 32/42] ARM: davinci: da830: Remove legacy clock init
-Date: Thu, 15 Mar 2018 21:52:48 -0500
-Message-Id: <1521168778-27236-33-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <monstr@monstr.eu>
+Return-Path: <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+Subject: clk-fixed-rate clock driver usage with fpgas was: Re: Fpga manager
+ help
+To: Alan Tull <atull@kernel.org>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>,
+ linux-fpga@vger.kernel.org,
+ Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+ Grant Likely <grant.likely@secretlab.ca>, linux-clk@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Maxime Ripard <maxime.ripard@bootlin.com>
+References: <CAKfKVtH-HRa2Z5Ff_wss9oK2tN2taSLU6gAfgus=Z1KkhZwMBg@mail.gmail.com>
+ <CANk1AXRm9ME1Yu3y2WRMxG1o9BZq+6pg9T8CWaqKy2v+LwK9RA@mail.gmail.com>
+ <CAKfKVtFkYjwe0JH+f1Bdt7p+o2b_TsKYE0fD6HNs_syXn8D82Q@mail.gmail.com>
+ <be42ac6b-0209-6f90-3802-8be6cd9baac9@monstr.eu>
+ <CANk1AXSkryS-KxczSfen41VvoTVafZcuSLDUhcq-kuiqhYjknQ@mail.gmail.com>
+From: Michal Simek <monstr@monstr.eu>
+Message-ID: <295f64ae-a049-010a-fd68-3fcd46a5d8a1@monstr.eu>
+Date: Thu, 8 Mar 2018 15:04:50 +0100
+MIME-Version: 1.0
+In-Reply-To: <CANk1AXSkryS-KxczSfen41VvoTVafZcuSLDUhcq-kuiqhYjknQ@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="C0kJsjzclDrTrWEm35iZPKWbgrK97652p"
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy clock init code from
-arch/arm/mach-davinci/da830.c.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--C0kJsjzclDrTrWEm35iZPKWbgrK97652p
+Content-Type: multipart/mixed; boundary="MF07sNqwjhPuuP86OW1rpz9TelnNmWuKp";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: Alan Tull <atull@kernel.org>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>,
+ linux-fpga@vger.kernel.org,
+ Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+ Grant Likely <grant.likely@secretlab.ca>, linux-clk@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Maxime Ripard <maxime.ripard@bootlin.com>
+Message-ID: <295f64ae-a049-010a-fd68-3fcd46a5d8a1@monstr.eu>
+Subject: clk-fixed-rate clock driver usage with fpgas was: Re: Fpga manager
+ help
+References: <CAKfKVtH-HRa2Z5Ff_wss9oK2tN2taSLU6gAfgus=Z1KkhZwMBg@mail.gmail.com>
+ <CANk1AXRm9ME1Yu3y2WRMxG1o9BZq+6pg9T8CWaqKy2v+LwK9RA@mail.gmail.com>
+ <CAKfKVtFkYjwe0JH+f1Bdt7p+o2b_TsKYE0fD6HNs_syXn8D82Q@mail.gmail.com>
+ <be42ac6b-0209-6f90-3802-8be6cd9baac9@monstr.eu>
+ <CANk1AXSkryS-KxczSfen41VvoTVafZcuSLDUhcq-kuiqhYjknQ@mail.gmail.com>
+In-Reply-To: <CANk1AXSkryS-KxczSfen41VvoTVafZcuSLDUhcq-kuiqhYjknQ@mail.gmail.com>
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
+--MF07sNqwjhPuuP86OW1rpz9TelnNmWuKp
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-v8 changes:
-- none
+Hi, +linux-clk
 
-v7 changes:
-- rebased
-- add davinci prefix to commit message
+On 21.2.2018 20:25, Alan Tull wrote:
+> On Wed, Feb 21, 2018 at 6:33 AM, Michal Simek <monstr@monstr.eu> wrote:=
 
-v6 changes:
-- rebased
+>> Hi, +Grant and Pantelis,
+>=20
+> Hi Shubhrajyoti,
+>=20
+> I want to make sure I understand your situation here.  So I'll ask
+> some questions, please let me know if I'm misunderstanding.
+>=20
+>>
+>> On 21.2.2018 06:36, Shubhrajyoti Datta wrote:
+>>> Hi Alan,
+>>> Thanks for the help.
+>>>
+>>>
+>>> On Tue, Feb 20, 2018 at 9:54 PM, Alan Tull <atull@kernel.org> wrote:
+>>>> On Mon, Feb 19, 2018 at 1:09 AM, Shubhrajyoti Datta
+>>>> <shubhrajyoti.datta@gmail.com> wrote:
+>>>>
+>>>> Hi Shubhrajyoti,
+>>>>
+>>>>> Hi ,
+>>>>>
+>>>>> Some of the FPGA has a  clock  rate that it needs to operate.
+>=20
+> The FPGA device needs a clock, right?  This isn't dependent on what
+> FPGA image is loaded; this is the clock that makes the FPGA device
+> happy, right?
 
- arch/arm/mach-davinci/board-da830-evm.c |  12 -
- arch/arm/mach-davinci/da830.c           | 412 --------------------------------
- 2 files changed, 424 deletions(-)
+There are several scenarios how to use these clocks but let me describe
+HW. Xilinx fpgas have some clock lines coming from fixed part(PS) to
+programmable logic(PL). Clock rate is setup by initial device
+programming (bootloader) but that's just fixed for the whole live cycle.
 
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index 6e77c45..d283fae 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -110,23 +110,11 @@ static __init void da830_evm_usb_init(void)
- {
- 	int ret;
- 
--#ifdef CONFIG_COMMON_CLK
- 	ret = da8xx_register_usb_phy_clocks();
- 	if (ret)
- 		pr_warn("%s: USB PHY CLK registration failed: %d\n",
- 			__func__, ret);
--#else
--	/* USB_REFCLKIN is not used. */
--	ret = da8xx_register_usb20_phy_clk(false);
--	if (ret)
--		pr_warn("%s: USB 2.0 PHY CLK registration failed: %d\n",
--			__func__, ret);
- 
--	ret = da8xx_register_usb11_phy_clk(false);
--	if (ret)
--		pr_warn("%s: USB 1.1 PHY CLK registration failed: %d\n",
--			__func__, ret);
--#endif
- 	ret = da8xx_register_usb_phy();
- 	if (ret)
- 		pr_warn("%s: USB PHY registration failed: %d\n",
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index c1c2604..470ae48 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -23,11 +23,6 @@
- 
- #include "mux.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include "clock.h"
--#include "psc.h"
--#endif
--
- /* Offsets of the 8 compare registers on the da830 */
- #define DA830_CMP12_0		0x60
- #define DA830_CMP12_1		0x64
-@@ -40,404 +35,6 @@
- 
- #define DA830_REF_FREQ		24000000
- 
--#ifndef CONFIG_COMMON_CLK
--static struct pll_data pll0_data = {
--	.num		= 1,
--	.phys_base	= DA8XX_PLL0_BASE,
--	.flags		= PLL_HAS_PREDIV | PLL_HAS_POSTDIV,
--};
--
--static struct clk ref_clk = {
--	.name		= "ref_clk",
--	.rate		= DA830_REF_FREQ,
--};
--
--static struct clk pll0_clk = {
--	.name		= "pll0",
--	.parent		= &ref_clk,
--	.pll_data	= &pll0_data,
--	.flags		= CLK_PLL,
--};
--
--static struct clk pll0_aux_clk = {
--	.name		= "pll0_aux_clk",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll0_sysclk2 = {
--	.name		= "pll0_sysclk2",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV2,
--};
--
--static struct clk pll0_sysclk3 = {
--	.name		= "pll0_sysclk3",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV3,
--};
--
--static struct clk pll0_sysclk4 = {
--	.name		= "pll0_sysclk4",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV4,
--};
--
--static struct clk pll0_sysclk5 = {
--	.name		= "pll0_sysclk5",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV5,
--};
--
--static struct clk pll0_sysclk6 = {
--	.name		= "pll0_sysclk6",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV6,
--};
--
--static struct clk pll0_sysclk7 = {
--	.name		= "pll0_sysclk7",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV7,
--};
--
--static struct clk i2c0_clk = {
--	.name		= "i2c0",
--	.parent		= &pll0_aux_clk,
--};
--
--static struct clk timerp64_0_clk = {
--	.name		= "timer0",
--	.parent		= &pll0_aux_clk,
--};
--
--static struct clk timerp64_1_clk = {
--	.name		= "timer1",
--	.parent		= &pll0_aux_clk,
--};
--
--static struct clk arm_rom_clk = {
--	.name		= "arm_rom",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_ARM_RAM_ROM,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk scr0_ss_clk = {
--	.name		= "scr0_ss",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_SCR0_SS,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk scr1_ss_clk = {
--	.name		= "scr1_ss",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_SCR1_SS,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk scr2_ss_clk = {
--	.name		= "scr2_ss",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_SCR2_SS,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk dmax_clk = {
--	.name		= "dmax",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_PRUSS,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk tpcc_clk = {
--	.name		= "tpcc",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_TPCC,
--	.flags		= ALWAYS_ENABLED | CLK_PSC,
--};
--
--static struct clk tptc0_clk = {
--	.name		= "tptc0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_TPTC0,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk tptc1_clk = {
--	.name		= "tptc1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_TPTC1,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk mmcsd_clk = {
--	.name		= "mmcsd",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_MMC_SD,
--};
--
--static struct clk uart0_clk = {
--	.name		= "uart0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_UART0,
--};
--
--static struct clk uart1_clk = {
--	.name		= "uart1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_UART1,
--	.gpsc		= 1,
--};
--
--static struct clk uart2_clk = {
--	.name		= "uart2",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_UART2,
--	.gpsc		= 1,
--};
--
--static struct clk spi0_clk = {
--	.name		= "spi0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_SPI0,
--};
--
--static struct clk spi1_clk = {
--	.name		= "spi1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_SPI1,
--	.gpsc		= 1,
--};
--
--static struct clk ecap0_clk = {
--	.name		= "ecap0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_ECAP,
--	.gpsc		= 1,
--};
--
--static struct clk ecap1_clk = {
--	.name		= "ecap1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_ECAP,
--	.gpsc		= 1,
--};
--
--static struct clk ecap2_clk = {
--	.name		= "ecap2",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_ECAP,
--	.gpsc		= 1,
--};
--
--static struct clk pwm0_clk = {
--	.name		= "pwm0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_PWM,
--	.gpsc		= 1,
--};
--
--static struct clk pwm1_clk = {
--	.name		= "pwm1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_PWM,
--	.gpsc		= 1,
--};
--
--static struct clk pwm2_clk = {
--	.name		= "pwm2",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_PWM,
--	.gpsc		= 1,
--};
--
--static struct clk eqep0_clk = {
--	.name		= "eqep0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA830_LPSC1_EQEP,
--	.gpsc		= 1,
--};
--
--static struct clk eqep1_clk = {
--	.name		= "eqep1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA830_LPSC1_EQEP,
--	.gpsc		= 1,
--};
--
--static struct clk lcdc_clk = {
--	.name		= "lcdc",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_LCDC,
--	.gpsc		= 1,
--};
--
--static struct clk mcasp0_clk = {
--	.name		= "mcasp0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_McASP0,
--	.gpsc		= 1,
--};
--
--static struct clk mcasp1_clk = {
--	.name		= "mcasp1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA830_LPSC1_McASP1,
--	.gpsc		= 1,
--};
--
--static struct clk mcasp2_clk = {
--	.name		= "mcasp2",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA830_LPSC1_McASP2,
--	.gpsc		= 1,
--};
--
--static struct clk usb20_clk = {
--	.name		= "usb20",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_USB20,
--	.gpsc		= 1,
--};
--
--static struct clk cppi41_clk = {
--	.name		= "cppi41",
--	.parent		= &usb20_clk,
--};
--
--static struct clk aemif_clk = {
--	.name		= "aemif",
--	.parent		= &pll0_sysclk3,
--	.lpsc		= DA8XX_LPSC0_EMIF25,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk aintc_clk = {
--	.name		= "aintc",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC0_AINTC,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk secu_mgr_clk = {
--	.name		= "secu_mgr",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC0_SECU_MGR,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk emac_clk = {
--	.name		= "emac",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_CPGMAC,
--	.gpsc		= 1,
--};
--
--static struct clk gpio_clk = {
--	.name		= "gpio",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_GPIO,
--	.gpsc		= 1,
--};
--
--static struct clk i2c1_clk = {
--	.name		= "i2c1",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_I2C,
--	.gpsc		= 1,
--};
--
--static struct clk usb11_clk = {
--	.name		= "usb11",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_USB11,
--	.gpsc		= 1,
--};
--
--static struct clk emif3_clk = {
--	.name		= "emif3",
--	.parent		= &pll0_sysclk5,
--	.lpsc		= DA8XX_LPSC1_EMIF3C,
--	.gpsc		= 1,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk arm_clk = {
--	.name		= "arm",
--	.parent		= &pll0_sysclk6,
--	.lpsc		= DA8XX_LPSC0_ARM,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk rmii_clk = {
--	.name		= "rmii",
--	.parent		= &pll0_sysclk7,
--};
--
--static struct clk_lookup da830_clks[] = {
--	CLK(NULL,		"ref",		&ref_clk),
--	CLK(NULL,		"pll0",		&pll0_clk),
--	CLK(NULL,		"pll0_aux",	&pll0_aux_clk),
--	CLK(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
--	CLK(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
--	CLK(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
--	CLK(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
--	CLK(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
--	CLK(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
--	CLK("i2c_davinci.1",	NULL,		&i2c0_clk),
--	CLK(NULL,		"timer0",	&timerp64_0_clk),
--	CLK("davinci-wdt",	NULL,		&timerp64_1_clk),
--	CLK(NULL,		"arm_rom",	&arm_rom_clk),
--	CLK(NULL,		"scr0_ss",	&scr0_ss_clk),
--	CLK(NULL,		"scr1_ss",	&scr1_ss_clk),
--	CLK(NULL,		"scr2_ss",	&scr2_ss_clk),
--	CLK(NULL,		"dmax",		&dmax_clk),
--	CLK(NULL,		"tpcc",		&tpcc_clk),
--	CLK(NULL,		"tptc0",	&tptc0_clk),
--	CLK(NULL,		"tptc1",	&tptc1_clk),
--	CLK("da830-mmc.0",	NULL,		&mmcsd_clk),
--	CLK("serial8250.0",	NULL,		&uart0_clk),
--	CLK("serial8250.1",	NULL,		&uart1_clk),
--	CLK("serial8250.2",	NULL,		&uart2_clk),
--	CLK("spi_davinci.0",	NULL,		&spi0_clk),
--	CLK("spi_davinci.1",	NULL,		&spi1_clk),
--	CLK(NULL,		"ecap0",	&ecap0_clk),
--	CLK(NULL,		"ecap1",	&ecap1_clk),
--	CLK(NULL,		"ecap2",	&ecap2_clk),
--	CLK(NULL,		"pwm0",		&pwm0_clk),
--	CLK(NULL,		"pwm1",		&pwm1_clk),
--	CLK(NULL,		"pwm2",		&pwm2_clk),
--	CLK("eqep.0",		NULL,		&eqep0_clk),
--	CLK("eqep.1",		NULL,		&eqep1_clk),
--	CLK("da8xx_lcdc.0",	"fck",		&lcdc_clk),
--	CLK("davinci-mcasp.0",	NULL,		&mcasp0_clk),
--	CLK("davinci-mcasp.1",	NULL,		&mcasp1_clk),
--	CLK("davinci-mcasp.2",	NULL,		&mcasp2_clk),
--	CLK("musb-da8xx",	NULL,		&usb20_clk),
--	CLK("cppi41-dmaengine",	NULL,		&cppi41_clk),
--	CLK(NULL,		"aemif",	&aemif_clk),
--	CLK(NULL,		"aintc",	&aintc_clk),
--	CLK(NULL,		"secu_mgr",	&secu_mgr_clk),
--	CLK("davinci_emac.1",	NULL,		&emac_clk),
--	CLK("davinci_mdio.0",   "fck",          &emac_clk),
--	CLK(NULL,		"gpio",		&gpio_clk),
--	CLK("i2c_davinci.2",	NULL,		&i2c1_clk),
--	CLK("ohci-da8xx",	NULL,	&usb11_clk),
--	CLK(NULL,		"emif3",	&emif3_clk),
--	CLK(NULL,		"arm",		&arm_clk),
--	CLK(NULL,		"rmii",		&rmii_clk),
--	CLK(NULL,		NULL,		NULL),
--};
--#endif
--
- /*
-  * Device specific mux setup
-  *
-@@ -1135,8 +732,6 @@ static struct map_desc da830_io_desc[] = {
- 	},
- };
- 
--static u32 da830_psc_bases[] = { DA8XX_PSC0_BASE, DA8XX_PSC1_BASE };
--
- /* Contents of JTAG ID register used to identify exact cpu type */
- static struct davinci_id da830_ids[] = {
- 	{
-@@ -1205,8 +800,6 @@ static const struct davinci_soc_info davinci_soc_info_da830 = {
- 	.jtag_id_reg		= DA8XX_SYSCFG0_BASE + DA8XX_JTAG_ID_REG,
- 	.ids			= da830_ids,
- 	.ids_num		= ARRAY_SIZE(da830_ids),
--	.psc_bases		= da830_psc_bases,
--	.psc_bases_num		= ARRAY_SIZE(da830_psc_bases),
- 	.pinmux_base		= DA8XX_SYSCFG0_BASE + 0x120,
- 	.pinmux_pins		= da830_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(da830_pins),
-@@ -1228,16 +821,11 @@ void __init da830_init(void)
- 
- void __init da830_init_time(void)
- {
--#ifdef CONFIG_COMMON_CLK
- 	struct clk *clk;
- 
- 	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
- 
- 	davinci_timer_init(clk);
--#else
--	davinci_clk_init(da830_clks);
--	davinci_timer_init(&timerp64_0_clk);
--#endif
- }
- 
- static struct resource da830_pll_resources[] = {
--- 
-2.7.4
+To be more flexible there is a need to have an option to change clock
+rate depending on bitstream you want to program (It doesn't matter if
+this is full bitstream or partial bitstream).
+For example: That means one set of bitstreams with dt overlay where one
+require 25MHz on clock line and another 50MHz.
+
+
+> If that is the case, this is platform specific setup, which can be
+> done by adding an overlay or it could have been in the base device
+> tree, right?  The second overlay can do the FPGA programming.
+
+I don't think that make sense to have more overlays and mess up things
+just because of setting up proper clock rate for specific PL.
+
+Anyway concept which I am talking about looks like this in DT description=
+=2E
+
+/dts-v1/;
+/plugin/;
+
+/ {
+  fragment {
+    target =3D <&fpga_full>;
+    __overlay__ {
+      #address-cells =3D <1>;
+      #size-cells =3D <1>;
+      firmware-name =3D "download.bin"; /* bitstream */
+      fpga-bridges =3D <&... &...>; /* some bridges */
+
+      pl1: clock {
+	compatible =3D "fixed-factor-clock";
+	clocks =3D <&clk 71>;
+	#clock-cells =3D <0>;
+	clock-frequency =3D <25000000>; /* missing property */
+	clock-div =3D <1>;
+	clock-mult =3D <1>;
+	clock-output-names =3D "pl1"
+      };
+
+      /* The same as above but with different driver */
+      pl1-alt: clock {
+	compatible =3D "fixed-clock";
+	clocks =3D <&clk 71>; /* missing property */
+	#clock-cells =3D <0>;
+	clock-frequency =3D <25000000>;
+	clock-output-names =3D "pl1";
+      };
+      /* or completely new driver based on above two. */
+
+      gpio_on: gpio@XXX {
+	compatible =3D "xlnx,xps-gpio-1.00.a";
+	gpio-controller ;
+	clocks =3D <&pl1>; /* or pl1-alt or new driver */
+      };
+    };
+  };
+};
+
+It means download.bit is loaded and overlay applied. clock driver is
+probed and gpio driver is waiting for it (-EDEFER if not ready).
+
+This concept should ensure that no driver is probed without setting up
+proper clock rate which bitstream was built for.
+
+As you see above I have added pl1 or pl1-alt nodes which are using
+current drivers but we are missing functionality there.
+
+1) In fixed-factor-clock we are missing option to setup clock rate
+directly. That the driver will ask parent for setting up rate. Driver
+contain support added with "allwinner,sun4i-a10-pll3-2x-clk"
+(e6cbf9984ee73) by Maxime Ripard which enables changing rate from childs
+but that's different functionality than we need.
+
+2) in fixed-clock driver we are missing connection with parent to ask
+for setting up described clock.
+
+There is also an option to write new driver. Based on my look the driver
+would be almost the same as above with just small difference. That's why
+I think that will be the best to add this functionality to current
+driver instead of creating similar one.
+
+fixed-factor-clk seems to be better because there is already patch from
+Maxime for passing setting up rate from childs but I would like hear
+your opinion.
+The patch would like just like this
+
+clock-frequency - DT optional parameter.
+
+And in driver:
+
+of_property_read_u32(node, "clock-frequency", &rate);
+if (rate)
+	clk_set_rate(..., rate);
+
+Please let me what you think.
+
+Thanks,
+Michal
+
+>=20
+>>>>> Wanted some help in having suggestions as to  how should this be do=
+ne.
+>>>>>
+>>>>>
+>>>>> I tried the bridge approach.
+>>>>> It worked however since having the possible rate have precompiled i=
+s difficult
+>>>>> because of the wide range of possible frequency.
+>>>>>
+>>>>> So i have a first overlay that updates the rate and second overlay
+>>>>> actually apply.
+>>>>
+>>>> IIUC, that sounds right to me.  The base overlay sets up bridges and=
+
+>>>> fpga regions.  The overlay after that does the programming.  That's
+>>>> consistent with the fpga-region device tree binding documentation.
+>>>
+>>> My options were
+>>> 1) a first overlay that updates the rate and second overlay
+>>>  actually apply.
+>=20
+> So that's what I'm saying above, IIUC
+>=20
+>>> 2) overlay has a pseudo clock driver that sets the rate and acts
+>>> as a provider of clocks so that other drivers are EPROBE_DEFERED.
+>>>
+>>> Do you think I should prefer option 1)
+>> I would prefer option too.
+>=20
+> Option two?
+>=20
+> What does option 2 give us that option 1 doesn't?  Seems like more
+> work, unless there's something in this setup I don't know about, which
+> seems pretty likely right now.
+>=20
+>> If you want to use option 1 then still
+>> devices in second overlay should reference clock setup in the first.
+>=20
+> Now that makes it sound like we're talking about clocks for the
+> hardware that is in FPGA fabric?
+>=20
+>>
+>> Thanks,
+>> Michal
+>>
+>>
+>> --
+>> Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+>> w: www.monstr.eu p: +42-0-721842854
+>> Maintainer of Linux kernel - Xilinx Microblaze
+>> Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+>> U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
+>>
+>>
+
+
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
+
+
+
+--MF07sNqwjhPuuP86OW1rpz9TelnNmWuKp--
+
+--C0kJsjzclDrTrWEm35iZPKWbgrK97652p
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iEYEARECAAYFAlqhQwIACgkQykllyylKDCFXLwCgizl/zLMuR0R62e1roD/mA2gH
+0KsAn2MaJfL/9xp5rwxGoG5BnplYPTVe
+=q9IP
+-----END PGP SIGNATURE-----
+
+--C0kJsjzclDrTrWEm35iZPKWbgrK97652p--
