@@ -1,71 +1,328 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY
+	<loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH v2 06/12] clk: stm32mp1: add Post-dividers for PLL
+Date: Thu, 8 Mar 2018 17:53:59 +0100
+Message-ID: <1520528045-18330-7-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
-References: <20180323130455.11470-1-brgl@bgdev.pl> <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
- <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com> <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 23 Mar 2018 18:16:06 +0100
-Message-ID: <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>
-Cc: David Lechner <david@lechnology.com>, Kevin Hilman <khilman@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Sekhar Nori <nsekhar@ti.com>,
-	devicetree <devicetree@vger.kernel.org>, linux-remoteproc@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-clk@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-23 18:08 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
-> Quoting Bartosz Golaszewski (2018-03-23 09:55:47)
->> 2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
->> > Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
->> >> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> >>
->> >> This series converts the only user of the handcoded, mach-specific reset
->> >> routines in the davinci platform to using the reset framework.
->> >>
->> >> Patch 1 modifies the way lookup entries are registered with the reset
->> >> framework.
->> >>
->> >> Patches 2-4 add necessary lookups/DT-properties.
->> >>
->> >> Patches 5-7 convert the davinci-rproc driver to the reset framework.
->> >>
->> >> Patch 8 removes now dead code.
->> >>
->> >> Philipp: it turned out that it's indeed better to use the reset
->> >> controller's device name for the entry lookup.
->> >>
->> >> Tested both in DT and legacy modes by booting the examples from
->> >> ti-ipc-rtos recipe in meta-ti.
->> >>
->> >> This series applies on top of David Lechner's common-clk-v9 branch[1]
->> >> with Philipp Zabel's reset/next branch[2] pulled in.
->> >>
->> >> It can be found in my github tree as well[3].
->> >>
->> >
->> > What's the merge strategy for the rest of the patches? I should apply
->> > the clk ones after the next -rc1?
->>
->> Or maybe Philipp can provide us with an immutable branch with the reset patches?
->>
->> The you could apply the driver patches and let Sekhar take all the
->> platform code?
->>
->
-> Ok that could work too.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Ohad, Bjorn can you ack the remoteproc patches? Are you OK with
-Stephen taking them through the clock tree? Otherwise it would get
-complicated since they depend on the first clk patch and the last clk
-patch depends on them.
+Each PLL has 3 outputs with post-dividers.
 
-Thanks,
-Bart
+pll1_p is dedicated for Cortex-A7
+pll1_q is not connected
+pll1_r is not connected
+
+pll2_p is dedicated for AXI
+pll2_q is dedicated for GPU
+pll2_r is dedicated for DDR
+
+pll3_p is dedicated for mcu
+pll3_q is for Peripheral Kernel Clock
+pll3_r is for Peripheral Kernel Clock
+
+pll4_p is for Peripheral Kernel Clock
+pll4_q is for Peripheral Kernel Clock
+pll4_r is for Peripheral Kernel Clock
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32mp1.c | 221 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 221 insertions(+)
+
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index d62a3a9..3a99ad7 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -166,6 +166,23 @@ struct stm32_gate_cfg {
+ 	const struct clk_ops	*ops;
+ };
+ 
++struct stm32_div_cfg {
++	struct div_cfg		*div;
++	const struct clk_ops	*ops;
++};
++
++struct stm32_mux_cfg {
++	struct mux_cfg		*mux;
++	const struct clk_ops	*ops;
++};
++
++/* STM32 Composite clock */
++struct stm32_composite_cfg {
++	const struct stm32_gate_cfg	*gate;
++	const struct stm32_div_cfg	*div;
++	const struct stm32_mux_cfg	*mux;
++};
++
+ static struct clk_hw *
+ _clk_hw_register_gate(struct device *dev,
+ 		      struct clk_hw_onecell_data *clk_data,
+@@ -259,6 +276,51 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
+ 	.is_enabled	= clk_gate_is_enabled,
+ };
+ 
++static struct clk_hw *_get_stm32_mux(void __iomem *base,
++				     const struct stm32_mux_cfg *cfg,
++				     spinlock_t *lock)
++{
++	struct clk_mux *mux;
++	struct clk_hw *mux_hw;
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return ERR_PTR(-ENOMEM);
++
++	mux->reg = cfg->mux->reg_off + base;
++	mux->shift = cfg->mux->shift;
++	mux->mask = (1 << cfg->mux->width) - 1;
++	mux->flags = cfg->mux->mux_flags;
++	mux->table = cfg->mux->table;
++
++	mux->lock = lock;
++
++	mux_hw = &mux->hw;
++
++	return mux_hw;
++}
++
++static struct clk_hw *_get_stm32_div(void __iomem *base,
++				     const struct stm32_div_cfg *cfg,
++				     spinlock_t *lock)
++{
++	struct clk_divider *div;
++
++	div = kzalloc(sizeof(*div), GFP_KERNEL);
++
++	if (!div)
++		return ERR_PTR(-ENOMEM);
++
++	div->reg = cfg->div->reg_off + base;
++	div->shift = cfg->div->shift;
++	div->width = cfg->div->width;
++	div->flags = cfg->div->div_flags;
++	div->table = cfg->div->table;
++	div->lock = lock;
++
++	return &div->hw;
++}
++
+ static struct clk_hw *
+ _get_stm32_gate(void __iomem *base,
+ 		const struct stm32_gate_cfg *cfg, spinlock_t *lock)
+@@ -322,6 +384,61 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
+ 	return hw;
+ }
+ 
++static struct clk_hw *
++clk_stm32_register_composite(struct device *dev,
++			     const char *name, const char * const *parent_names,
++			     int num_parents, void __iomem *base,
++			     const struct stm32_composite_cfg *cfg,
++			     unsigned long flags, spinlock_t *lock)
++{
++	const struct clk_ops *mux_ops, *div_ops, *gate_ops;
++	struct clk_hw *mux_hw, *div_hw, *gate_hw;
++
++	mux_hw = NULL;
++	div_hw = NULL;
++	gate_hw = NULL;
++	mux_ops = NULL;
++	div_ops = NULL;
++	gate_ops = NULL;
++
++	if (cfg->mux) {
++		mux_hw = _get_stm32_mux(base, cfg->mux, lock);
++
++		if (!IS_ERR(mux_hw)) {
++			mux_ops = &clk_mux_ops;
++
++			if (cfg->mux->ops)
++				mux_ops = cfg->mux->ops;
++		}
++	}
++
++	if (cfg->div) {
++		div_hw = _get_stm32_div(base, cfg->div, lock);
++
++		if (!IS_ERR(div_hw)) {
++			div_ops = &clk_divider_ops;
++
++			if (cfg->div->ops)
++				div_ops = cfg->div->ops;
++		}
++	}
++
++	if (cfg->gate) {
++		gate_hw = _get_stm32_gate(base, cfg->gate, lock);
++
++		if (!IS_ERR(gate_hw)) {
++			gate_ops = &clk_gate_ops;
++
++			if (cfg->gate->ops)
++				gate_ops = cfg->gate->ops;
++		}
++	}
++
++	return clk_hw_register_composite(dev, name, parent_names, num_parents,
++				       mux_hw, mux_ops, div_hw, div_ops,
++				       gate_hw, gate_ops, flags);
++}
++
+ /* STM32 PLL */
+ 
+ struct stm32_pll_obj {
+@@ -527,6 +644,17 @@ struct clk_hw *_clk_register_pll(struct device *dev,
+ 				    lock);
+ }
+ 
++static struct clk_hw *
++_clk_stm32_register_composite(struct device *dev,
++			      struct clk_hw_onecell_data *clk_data,
++			      void __iomem *base, spinlock_t *lock,
++			      const struct clock_config *cfg)
++{
++	return clk_stm32_register_composite(dev, cfg->name, cfg->parent_names,
++					    cfg->num_parents, base, cfg->cfg,
++					    cfg->flags, lock);
++}
++
+ #define GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags)\
+ {\
+ 	.id		= _id,\
+@@ -624,6 +752,10 @@ struct clk_hw *_clk_register_pll(struct device *dev,
+ 		.ops		= _ops,\
+ 	})
+ 
++#define _GATE(_gate_offset, _gate_bit_idx, _gate_flags)\
++	_STM32_GATE(_gate_offset, _gate_bit_idx, _gate_flags,\
++		    NULL)\
++
+ #define _GATE_MP1(_gate_offset, _gate_bit_idx, _gate_flags)\
+ 	_STM32_GATE(_gate_offset, _gate_bit_idx, _gate_flags,\
+ 		    &mp1_gate_clk_ops)\
+@@ -632,6 +764,44 @@ struct clk_hw *_clk_register_pll(struct device *dev,
+ 	STM32_GATE(_id, _name, _parent, _flags,\
+ 		   _GATE_MP1(_offset, _bit_idx, _gate_flags))
+ 
++#define _STM32_DIV(_div_offset, _div_shift, _div_width,\
++		   _div_flags, _div_table, _ops)\
++	.div = &(struct stm32_div_cfg) {\
++		&(struct div_cfg) {\
++			.reg_off	= _div_offset,\
++			.shift		= _div_shift,\
++			.width		= _div_width,\
++			.div_flags	= _div_flags,\
++			.table		= _div_table,\
++		},\
++		.ops		= _ops,\
++	}
++
++#define _DIV(_div_offset, _div_shift, _div_width, _div_flags, _div_table)\
++	_STM32_DIV(_div_offset, _div_shift, _div_width,\
++		   _div_flags, _div_table, NULL)\
++
++#define PARENT(_parent) ((const char *[]) { _parent})
++
++#define _NO_MUX .mux = NULL
++#define _NO_DIV .div = NULL
++#define _NO_GATE .gate = NULL
++
++#define COMPOSITE(_id, _name, _parents, _flags, _gate, _mux, _div)\
++{\
++	.id		= _id,\
++	.name		= _name,\
++	.parent_names	= _parents,\
++	.num_parents	= ARRAY_SIZE(_parents),\
++	.flags		= _flags,\
++	.cfg		= &(struct stm32_composite_cfg) {\
++		_gate,\
++		_mux,\
++		_div,\
++	},\
++	.func		= _clk_stm32_register_composite,\
++}
++
+ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 	/* Oscillator divider */
+ 	DIV(NO_ID, "clk-hsi-div", "clk-hsi", 0, RCC_HSICFGR, 0, 2,
+@@ -661,6 +831,57 @@ struct clk_hw *_clk_register_pll(struct device *dev,
+ 	PLL(PLL2, "pll2", "ref1", CLK_IGNORE_UNUSED, RCC_PLL2CR),
+ 	PLL(PLL3, "pll3", "ref3", CLK_IGNORE_UNUSED, RCC_PLL3CR),
+ 	PLL(PLL4, "pll4", "ref4", CLK_IGNORE_UNUSED, RCC_PLL4CR),
++
++	/* ODF */
++	COMPOSITE(PLL1_P, "pll1_p", PARENT("pll1"), 0,
++		  _GATE(RCC_PLL1CR, 4, 0),
++		  _NO_MUX,
++		  _DIV(RCC_PLL1CFGR2, 0, 7, 0, NULL)),
++
++	COMPOSITE(PLL2_P, "pll2_p", PARENT("pll2"), 0,
++		  _GATE(RCC_PLL2CR, 4, 0),
++		  _NO_MUX,
++		  _DIV(RCC_PLL2CFGR2, 0, 7, 0, NULL)),
++
++	COMPOSITE(PLL2_Q, "pll2_q", PARENT("pll2"), 0,
++		  _GATE(RCC_PLL2CR, 5, 0),
++		  _NO_MUX,
++		  _DIV(RCC_PLL2CFGR2, 8, 7, 0, NULL)),
++
++	COMPOSITE(PLL2_R, "pll2_r", PARENT("pll2"), CLK_IS_CRITICAL,
++		  _GATE(RCC_PLL2CR, 6, 0),
++		  _NO_MUX,
++		  _DIV(RCC_PLL2CFGR2, 16, 7, 0, NULL)),
++
++	COMPOSITE(PLL3_P, "pll3_p", PARENT("pll3"), 0,
++		  _GATE(RCC_PLL3CR, 4, 0),
++		  _NO_MUX,
++		  _DIV(RCC_PLL3CFGR2, 0, 7, 0, NULL)),
++
++	COMPOSITE(PLL3_Q, "pll3_q", PARENT("pll3"), 0,
++		  _GATE(RCC_PLL3CR, 5, 0),
++		  _NO_MUX,
++		  _DIV(RCC_PLL3CFGR2, 8, 7, 0, NULL)),
++
++	COMPOSITE(PLL3_R, "pll3_r", PARENT("pll3"), 0,
++		  _GATE(RCC_PLL3CR, 6, 0),
++		  _NO_MUX,
++		  _DIV(RCC_PLL3CFGR2, 16, 7, 0, NULL)),
++
++	COMPOSITE(PLL4_P, "pll4_p", PARENT("pll4"), 0,
++		  _GATE(RCC_PLL4CR, 4, 0),
++		  _NO_MUX,
++		  _DIV(RCC_PLL4CFGR2, 0, 7, 0, NULL)),
++
++	COMPOSITE(PLL4_Q, "pll4_q", PARENT("pll4"), 0,
++		  _GATE(RCC_PLL4CR, 5, 0),
++		  _NO_MUX,
++		  _DIV(RCC_PLL4CFGR2, 8, 7, 0, NULL)),
++
++	COMPOSITE(PLL4_R, "pll4_r", PARENT("pll4"), 0,
++		  _GATE(RCC_PLL4CR, 6, 0),
++		  _NO_MUX,
++		  _DIV(RCC_PLL4CFGR2, 16, 7, 0, NULL)),
+ };
+ 
+ struct stm32_clock_match_data {
+-- 
+1.9.1
