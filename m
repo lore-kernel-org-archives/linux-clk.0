@@ -1,97 +1,88 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <shawn.lin@rock-chips.com>
+Cc: shawn.lin@rock-chips.com, Heiko Stuebner <heiko@sntech.de>,
+ linux-clk@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
+ <1520503497.4264.12.camel@baylibre.com>
+ <290e041d-7b53-9e62-92ce-33651ecb8a2f@rock-chips.com>
+ <1520509048.4264.26.camel@baylibre.com>
+ <1520509190.4264.28.camel@baylibre.com>
+ <ceb696cb-9961-00c0-20ef-324c590fb0ed@rock-chips.com>
+ <1520510633.4264.42.camel@baylibre.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <9a48303e-40c2-ef8e-488c-c23af05b87e6@rock-chips.com>
+Date: Thu, 8 Mar 2018 20:11:58 +0800
 MIME-Version: 1.0
-In-Reply-To: <a4ca0ba3-5d31-2d8c-7fa6-f8e9ba9b4535@lechnology.com>
-References: <20180321120807.18032-1-brgl@bgdev.pl> <20180321120807.18032-5-brgl@bgdev.pl>
- <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com> <CAMpxmJUELxNGv5fL1gdNM4nRxdJ9t39G2Nc29yjZRnS0fRyHYg@mail.gmail.com>
- <a4ca0ba3-5d31-2d8c-7fa6-f8e9ba9b4535@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 23 Mar 2018 10:07:30 +0100
-Message-ID: <CAMRc=Mf_nT3WDzPwMxhNcmk5=BUXBj2SobUcad809knqaWyGBQ@mail.gmail.com>
-Subject: Re: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
-To: David Lechner <david@lechnology.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, arm-soc <linux-arm-kernel@lists.infradead.org>,
-	linux-devicetree <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1520510633.4264.42.camel@baylibre.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-21 17:17 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 03/21/2018 11:08 AM, Bartosz Golaszewski wrote:
+On 2018/3/8 20:03, Jerome Brunet wrote:
+> On Thu, 2018-03-08 at 19:46 +0800, Shawn Lin wrote:
+>>>>> Good point!
+>>>>>
+>>>>> (1)So either we should update phase once its rate is updated, for
+>>>>> instance, doing it in clk_change_rate, or
+>>>>
+>>>> I don't think this would be a good option. The phase depending on the rate is
+>>>> just one example. I'm pretty sure one could come up with another example
+>>>>
+>>>>>
+>>>>> (2)we should always try to get the actual phase here.
+>>>>
+>>>> If the callback is available, lets use it. I prefer this second option
+>>>>
 >>
->> 2018-03-21 17:01 GMT+01:00 David Lechner <david@lechnology.com>:
+>> okay.
+>>
+>>>>>
+>>>>> If we do anyway call ->get_phase, we should never need core->phase since
+>>>>> it doesn't reflect the actual phase maybe.
+>>>>
+>>>> The cached value is used by debugfs so it is still a valuable information. I
+>>>> would keep it around for now.
 >>>
->>> On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
->>>>
->>>>
->>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>
->>>> In order to be able to use the reset framework in legacy boot mode as
->>>> well, add the reset lookup table to the psc driver for da850 variant.
->>>>
->>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>> ---
->>>>    drivers/clk/davinci/psc-da850.c | 8 ++++++++
->>>>    drivers/clk/davinci/psc.c       | 1 +
->>>>    2 files changed, 9 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/davinci/psc-da850.c
->>>> b/drivers/clk/davinci/psc-da850.c
->>>> index ccc7eb17bf3a..395db4b2c0ee 100644
->>>> --- a/drivers/clk/davinci/psc-da850.c
->>>> +++ b/drivers/clk/davinci/psc-da850.c
->>>> @@ -6,6 +6,7 @@
->>>>     */
->>>>      #include <linux/clk-provider.h>
->>>> +#include <linux/reset-controller.h>
->>>>    #include <linux/clk.h>
->>>>    #include <linux/clkdev.h>
->>>>    #include <linux/init.h>
->>>> @@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,    "fck",  "ecap.0",
->>>>                                  "fck",  "ecap.1",
->>>>                                  "fck",  "ecap.2");
->>>>    +static struct reset_control_lookup da850_psc0_reset_lookup_table[] =
->>>> {
->>>> +       RESET_LOOKUP("davinci-rproc.0", NULL, 15),
->>>> +};
->>>> +
->>>>    static int da850_psc0_init(struct device *dev, void __iomem *base)
->>>>    {
->>>> +       reset_controller_add_lookup("da850-psc0",
->>>> +                                   da850_psc0_reset_lookup_table,
->>>> +
->>>> ARRAY_SIZE(da850_psc0_reset_lookup_table));
->>>
->>>
->>>
->>> Could there be a race condition here since you are adding the lookup
->>> *before*
->>> you are adding the actual provider? It seems like
->>> reset_controller_add_lookup()
->>> should be after davinci_psc_register_clocks().
+>>> Oh ! and let's not forget that a clock driver is allowed to implement
+>>> set_phase() w/o implementing get_phase() ... so you definitively want to keep
+>>> the cached value around
 >>>
 >>
->> I don't think so, because reset_controller_add_lookup() only adds the
->> lookup structure to the list in reset/core.c. The actual reset
->> controller struct is only located and used when reset_control_get_*()
->> is called, so after probing the user. And it's all protected with
->> mutexes.
->>
->> This made me think though - maybe if we can't locate the controller,
->> we should return -EPROBE_DEFER from probe in davinci-rproc?
->>
->> Bart
->>
->
-> Yes, especially since we know that the PSC driver itself does get
-> deferred already.
+>> Yes, it's a little complicated. I just thought a case that, if the
+>> driver need a fixed phase i.e. by call clk_set_phase(180), but the clk's
+>> phase depends on the clk rate. So if the clk rate changed, the phase is
+>> changed as well. This isn't good to the IP should sample the data based
+>> on the phase shift but never get notified that the phase is changed.
+> 
+> I suppose this use case comes from the mmc (most phase users are mmc drivers) ?
 
-On the other hand if clk_get() succeeded, than the psc driver is
-already initialized and the subsequent call to reset_control_get()
-must succeed. But this is probably too machine-specific for a driver.
+Right.
 
-Bart
+> 
+> The fact that you would want ,for your use case, to lock the phase whatever the
+> rate changes seems like a choice. It makes sense for sure, but maybe not all
+> driver would want to enforce that. I'm not sure we should bake that in the
+> framework itself.
+> 
+> For such case, a solution could be to use clock notifiers to call
+> clk_set_phase() on rate change,
+> 
+> OR
+> 
+> in the clock driver set_rate() callback, cache the phase at the beginning and
+> call set_phase() again before returning.
+> 
+> Anyway, let's keep it simple for now and report the phase correctly. We can
+> still deal these particular situations with some other patches.
+
+Okay, I will update v2 based on your suggestion unless there are any
+objections. But for sure, I will think more about these and check out
+how to make this particular case works.
+
+Thanks for your comment!
+
+> 
+> 
+> 
+> 
