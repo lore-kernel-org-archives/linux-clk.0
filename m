@@ -1,349 +1,138 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 1 Mar 2018 16:45:55 -0600
-From: Rob Herring <robh@kernel.org>
-To: Weiyi Lu <weiyi.lu@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com
-Subject: Re: [PATCH v1 3/5] dt-bindings: clock: add clocks for MT2712
-Message-ID: <20180301224555.44pvl67l5oqibbkg@rob-hp-laptop>
-References: <20180222054851.26096-1-weiyi.lu@mediatek.com>
- <20180222054851.26096-5-weiyi.lu@mediatek.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY
+	<loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH v2 04/12] clk: stm32mp1: add Source Clocks for PLLs
+Date: Thu, 8 Mar 2018 17:53:57 +0100
+Message-ID: <1520528045-18330-5-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180222054851.26096-5-weiyi.lu@mediatek.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 22, 2018 at 01:48:49PM +0800, Weiyi Lu wrote:
-> add new clocks according to ECO design change
-> 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> ---
->  include/dt-bindings/clock/mt2712-clk.h | 294 +++++++++++++++++----------------
->  1 file changed, 151 insertions(+), 143 deletions(-)
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-You can't just renumber your clocks. They are an ABI. Plus, for an ECO 
-there can't have been that much change.
+This patch adds source clocks for PLLs
+This patch also introduces MUX clock API.
 
-> 
-> diff --git a/include/dt-bindings/clock/mt2712-clk.h b/include/dt-bindings/clock/mt2712-clk.h
-> index 48a8e797a617..0690f24391b3 100644
-> --- a/include/dt-bindings/clock/mt2712-clk.h
-> +++ b/include/dt-bindings/clock/mt2712-clk.h
-> @@ -81,148 +81,154 @@
->  #define CLK_TOP_F_BUS_PLL2		42
->  #define CLK_TOP_APLL1			43
->  #define CLK_TOP_APLL1_D2		44
-> -#define CLK_TOP_APLL1_D4		45
-> -#define CLK_TOP_APLL1_D8		46
-> -#define CLK_TOP_APLL1_D16		47
-> -#define CLK_TOP_APLL2			48
-> -#define CLK_TOP_APLL2_D2		49
-> -#define CLK_TOP_APLL2_D4		50
-> -#define CLK_TOP_APLL2_D8		51
-> -#define CLK_TOP_APLL2_D16		52
-> -#define CLK_TOP_LVDSPLL			53
-> -#define CLK_TOP_LVDSPLL_D2		54
-> -#define CLK_TOP_LVDSPLL_D4		55
-> -#define CLK_TOP_LVDSPLL_D8		56
-> -#define CLK_TOP_LVDSPLL2		57
-> -#define CLK_TOP_LVDSPLL2_D2		58
-> -#define CLK_TOP_LVDSPLL2_D4		59
-> -#define CLK_TOP_LVDSPLL2_D8		60
-> -#define CLK_TOP_ETHERPLL_125M		61
-> -#define CLK_TOP_ETHERPLL_50M		62
-> -#define CLK_TOP_CVBS			63
-> -#define CLK_TOP_CVBS_D2			64
-> -#define CLK_TOP_SYS_26M			65
-> -#define CLK_TOP_MMPLL			66
-> -#define CLK_TOP_MMPLL_D2		67
-> -#define CLK_TOP_VENCPLL			68
-> -#define CLK_TOP_VENCPLL_D2		69
-> -#define CLK_TOP_VCODECPLL		70
-> -#define CLK_TOP_VCODECPLL_D2		71
-> -#define CLK_TOP_TVDPLL			72
-> -#define CLK_TOP_TVDPLL_D2		73
-> -#define CLK_TOP_TVDPLL_D4		74
-> -#define CLK_TOP_TVDPLL_D8		75
-> -#define CLK_TOP_TVDPLL_429M		76
-> -#define CLK_TOP_TVDPLL_429M_D2		77
-> -#define CLK_TOP_TVDPLL_429M_D4		78
-> -#define CLK_TOP_MSDCPLL			79
-> -#define CLK_TOP_MSDCPLL_D2		80
-> -#define CLK_TOP_MSDCPLL_D4		81
-> -#define CLK_TOP_MSDCPLL2		82
-> -#define CLK_TOP_MSDCPLL2_D2		83
-> -#define CLK_TOP_MSDCPLL2_D4		84
-> -#define CLK_TOP_CLK26M_D2		85
-> -#define CLK_TOP_D2A_ULCLK_6P5M		86
-> -#define CLK_TOP_VPLL3_DPIX		87
-> -#define CLK_TOP_VPLL_DPIX		88
-> -#define CLK_TOP_LTEPLL_FS26M		89
-> -#define CLK_TOP_DMPLL			90
-> -#define CLK_TOP_DSI0_LNTC		91
-> -#define CLK_TOP_DSI1_LNTC		92
-> -#define CLK_TOP_LVDSTX3_CLKDIG_CTS	93
-> -#define CLK_TOP_LVDSTX_CLKDIG_CTS	94
-> -#define CLK_TOP_CLKRTC_EXT		95
-> -#define CLK_TOP_CLKRTC_INT		96
-> -#define CLK_TOP_CSI0			97
-> -#define CLK_TOP_CVBSPLL			98
-> -#define CLK_TOP_AXI_SEL			99
-> -#define CLK_TOP_MEM_SEL			100
-> -#define CLK_TOP_MM_SEL			101
-> -#define CLK_TOP_PWM_SEL			102
-> -#define CLK_TOP_VDEC_SEL		103
-> -#define CLK_TOP_VENC_SEL		104
-> -#define CLK_TOP_MFG_SEL			105
-> -#define CLK_TOP_CAMTG_SEL		106
-> -#define CLK_TOP_UART_SEL		107
-> -#define CLK_TOP_SPI_SEL			108
-> -#define CLK_TOP_USB20_SEL		109
-> -#define CLK_TOP_USB30_SEL		110
-> -#define CLK_TOP_MSDC50_0_HCLK_SEL	111
-> -#define CLK_TOP_MSDC50_0_SEL		112
-> -#define CLK_TOP_MSDC30_1_SEL		113
-> -#define CLK_TOP_MSDC30_2_SEL		114
-> -#define CLK_TOP_MSDC30_3_SEL		115
-> -#define CLK_TOP_AUDIO_SEL		116
-> -#define CLK_TOP_AUD_INTBUS_SEL		117
-> -#define CLK_TOP_PMICSPI_SEL		118
-> -#define CLK_TOP_DPILVDS1_SEL		119
-> -#define CLK_TOP_ATB_SEL			120
-> -#define CLK_TOP_NR_SEL			121
-> -#define CLK_TOP_NFI2X_SEL		122
-> -#define CLK_TOP_IRDA_SEL		123
-> -#define CLK_TOP_CCI400_SEL		124
-> -#define CLK_TOP_AUD_1_SEL		125
-> -#define CLK_TOP_AUD_2_SEL		126
-> -#define CLK_TOP_MEM_MFG_IN_AS_SEL	127
-> -#define CLK_TOP_AXI_MFG_IN_AS_SEL	128
-> -#define CLK_TOP_SCAM_SEL		129
-> -#define CLK_TOP_NFIECC_SEL		130
-> -#define CLK_TOP_PE2_MAC_P0_SEL		131
-> -#define CLK_TOP_PE2_MAC_P1_SEL		132
-> -#define CLK_TOP_DPILVDS_SEL		133
-> -#define CLK_TOP_MSDC50_3_HCLK_SEL	134
-> -#define CLK_TOP_HDCP_SEL		135
-> -#define CLK_TOP_HDCP_24M_SEL		136
-> -#define CLK_TOP_RTC_SEL			137
-> -#define CLK_TOP_SPINOR_SEL		138
-> -#define CLK_TOP_APLL_SEL		139
-> -#define CLK_TOP_APLL2_SEL		140
-> -#define CLK_TOP_A1SYS_HP_SEL		141
-> -#define CLK_TOP_A2SYS_HP_SEL		142
-> -#define CLK_TOP_ASM_L_SEL		143
-> -#define CLK_TOP_ASM_M_SEL		144
-> -#define CLK_TOP_ASM_H_SEL		145
-> -#define CLK_TOP_I2SO1_SEL		146
-> -#define CLK_TOP_I2SO2_SEL		147
-> -#define CLK_TOP_I2SO3_SEL		148
-> -#define CLK_TOP_TDMO0_SEL		149
-> -#define CLK_TOP_TDMO1_SEL		150
-> -#define CLK_TOP_I2SI1_SEL		151
-> -#define CLK_TOP_I2SI2_SEL		152
-> -#define CLK_TOP_I2SI3_SEL		153
-> -#define CLK_TOP_ETHER_125M_SEL		154
-> -#define CLK_TOP_ETHER_50M_SEL		155
-> -#define CLK_TOP_JPGDEC_SEL		156
-> -#define CLK_TOP_SPISLV_SEL		157
-> -#define CLK_TOP_ETHER_50M_RMII_SEL	158
-> -#define CLK_TOP_CAM2TG_SEL		159
-> -#define CLK_TOP_DI_SEL			160
-> -#define CLK_TOP_TVD_SEL			161
-> -#define CLK_TOP_I2C_SEL			162
-> -#define CLK_TOP_PWM_INFRA_SEL		163
-> -#define CLK_TOP_MSDC0P_AES_SEL		164
-> -#define CLK_TOP_CMSYS_SEL		165
-> -#define CLK_TOP_GCPU_SEL		166
-> -#define CLK_TOP_AUD_APLL1_SEL		167
-> -#define CLK_TOP_AUD_APLL2_SEL		168
-> -#define CLK_TOP_DA_AUDULL_VTX_6P5M_SEL	169
-> -#define CLK_TOP_APLL_DIV0		170
-> -#define CLK_TOP_APLL_DIV1		171
-> -#define CLK_TOP_APLL_DIV2		172
-> -#define CLK_TOP_APLL_DIV3		173
-> -#define CLK_TOP_APLL_DIV4		174
-> -#define CLK_TOP_APLL_DIV5		175
-> -#define CLK_TOP_APLL_DIV6		176
-> -#define CLK_TOP_APLL_DIV7		177
-> -#define CLK_TOP_APLL_DIV_PDN0		178
-> -#define CLK_TOP_APLL_DIV_PDN1		179
-> -#define CLK_TOP_APLL_DIV_PDN2		180
-> -#define CLK_TOP_APLL_DIV_PDN3		181
-> -#define CLK_TOP_APLL_DIV_PDN4		182
-> -#define CLK_TOP_APLL_DIV_PDN5		183
-> -#define CLK_TOP_APLL_DIV_PDN6		184
-> -#define CLK_TOP_APLL_DIV_PDN7		185
-> -#define CLK_TOP_NR_CLK			186
-> +#define CLK_TOP_APLL1_D3		45
-> +#define CLK_TOP_APLL1_D4		46
-> +#define CLK_TOP_APLL1_D8		47
-> +#define CLK_TOP_APLL1_D16		48
-> +#define CLK_TOP_APLL2			49
-> +#define CLK_TOP_APLL2_D2		50
-> +#define CLK_TOP_APLL2_D4		51
-> +#define CLK_TOP_APLL2_D8		52
-> +#define CLK_TOP_APLL2_D16		53
-> +#define CLK_TOP_LVDSPLL			54
-> +#define CLK_TOP_LVDSPLL_D2		55
-> +#define CLK_TOP_LVDSPLL_D4		56
-> +#define CLK_TOP_LVDSPLL_D8		57
-> +#define CLK_TOP_LVDSPLL2		58
-> +#define CLK_TOP_LVDSPLL2_D2		59
-> +#define CLK_TOP_LVDSPLL2_D4		60
-> +#define CLK_TOP_LVDSPLL2_D8		61
-> +#define CLK_TOP_ETHERPLL_125M		62
-> +#define CLK_TOP_ETHERPLL_50M		63
-> +#define CLK_TOP_CVBS			64
-> +#define CLK_TOP_CVBS_D2			65
-> +#define CLK_TOP_SYS_26M			66
-> +#define CLK_TOP_MMPLL			67
-> +#define CLK_TOP_MMPLL_D2		68
-> +#define CLK_TOP_VENCPLL			69
-> +#define CLK_TOP_VENCPLL_D2		70
-> +#define CLK_TOP_VCODECPLL		71
-> +#define CLK_TOP_VCODECPLL_D2		72
-> +#define CLK_TOP_TVDPLL			73
-> +#define CLK_TOP_TVDPLL_D2		74
-> +#define CLK_TOP_TVDPLL_D4		75
-> +#define CLK_TOP_TVDPLL_D8		76
-> +#define CLK_TOP_TVDPLL_429M		77
-> +#define CLK_TOP_TVDPLL_429M_D2		78
-> +#define CLK_TOP_TVDPLL_429M_D4		79
-> +#define CLK_TOP_MSDCPLL			80
-> +#define CLK_TOP_MSDCPLL_D2		81
-> +#define CLK_TOP_MSDCPLL_D4		82
-> +#define CLK_TOP_MSDCPLL2		83
-> +#define CLK_TOP_MSDCPLL2_D2		84
-> +#define CLK_TOP_MSDCPLL2_D4		85
-> +#define CLK_TOP_CLK26M_D2		86
-> +#define CLK_TOP_D2A_ULCLK_6P5M		87
-> +#define CLK_TOP_VPLL3_DPIX		88
-> +#define CLK_TOP_VPLL_DPIX		89
-> +#define CLK_TOP_LTEPLL_FS26M		90
-> +#define CLK_TOP_DMPLL			91
-> +#define CLK_TOP_DSI0_LNTC		92
-> +#define CLK_TOP_DSI1_LNTC		93
-> +#define CLK_TOP_LVDSTX3_CLKDIG_CTS	94
-> +#define CLK_TOP_LVDSTX_CLKDIG_CTS	95
-> +#define CLK_TOP_CLKRTC_EXT		96
-> +#define CLK_TOP_CLKRTC_INT		97
-> +#define CLK_TOP_CSI0			98
-> +#define CLK_TOP_CVBSPLL			99
-> +#define CLK_TOP_AXI_SEL			100
-> +#define CLK_TOP_MEM_SEL			101
-> +#define CLK_TOP_MM_SEL			102
-> +#define CLK_TOP_PWM_SEL			103
-> +#define CLK_TOP_VDEC_SEL		104
-> +#define CLK_TOP_VENC_SEL		105
-> +#define CLK_TOP_MFG_SEL			106
-> +#define CLK_TOP_CAMTG_SEL		107
-> +#define CLK_TOP_UART_SEL		108
-> +#define CLK_TOP_SPI_SEL			109
-> +#define CLK_TOP_USB20_SEL		110
-> +#define CLK_TOP_USB30_SEL		111
-> +#define CLK_TOP_MSDC50_0_HCLK_SEL	112
-> +#define CLK_TOP_MSDC50_0_SEL		113
-> +#define CLK_TOP_MSDC30_1_SEL		114
-> +#define CLK_TOP_MSDC30_2_SEL		115
-> +#define CLK_TOP_MSDC30_3_SEL		116
-> +#define CLK_TOP_AUDIO_SEL		117
-> +#define CLK_TOP_AUD_INTBUS_SEL		118
-> +#define CLK_TOP_PMICSPI_SEL		119
-> +#define CLK_TOP_DPILVDS1_SEL		120
-> +#define CLK_TOP_ATB_SEL			121
-> +#define CLK_TOP_NR_SEL			122
-> +#define CLK_TOP_NFI2X_SEL		123
-> +#define CLK_TOP_IRDA_SEL		124
-> +#define CLK_TOP_CCI400_SEL		125
-> +#define CLK_TOP_AUD_1_SEL		126
-> +#define CLK_TOP_AUD_2_SEL		127
-> +#define CLK_TOP_MEM_MFG_IN_AS_SEL	128
-> +#define CLK_TOP_AXI_MFG_IN_AS_SEL	129
-> +#define CLK_TOP_SCAM_SEL		130
-> +#define CLK_TOP_NFIECC_SEL		131
-> +#define CLK_TOP_PE2_MAC_P0_SEL		132
-> +#define CLK_TOP_PE2_MAC_P1_SEL		133
-> +#define CLK_TOP_DPILVDS_SEL		134
-> +#define CLK_TOP_MSDC50_3_HCLK_SEL	135
-> +#define CLK_TOP_HDCP_SEL		136
-> +#define CLK_TOP_HDCP_24M_SEL		137
-> +#define CLK_TOP_RTC_SEL			138
-> +#define CLK_TOP_SPINOR_SEL		139
-> +#define CLK_TOP_APLL_SEL		140
-> +#define CLK_TOP_APLL2_SEL		141
-> +#define CLK_TOP_A1SYS_HP_SEL		142
-> +#define CLK_TOP_A2SYS_HP_SEL		143
-> +#define CLK_TOP_ASM_L_SEL		144
-> +#define CLK_TOP_ASM_M_SEL		145
-> +#define CLK_TOP_ASM_H_SEL		146
-> +#define CLK_TOP_I2SO1_SEL		147
-> +#define CLK_TOP_I2SO2_SEL		148
-> +#define CLK_TOP_I2SO3_SEL		149
-> +#define CLK_TOP_TDMO0_SEL		150
-> +#define CLK_TOP_TDMO1_SEL		151
-> +#define CLK_TOP_I2SI1_SEL		152
-> +#define CLK_TOP_I2SI2_SEL		153
-> +#define CLK_TOP_I2SI3_SEL		154
-> +#define CLK_TOP_ETHER_125M_SEL		155
-> +#define CLK_TOP_ETHER_50M_SEL		156
-> +#define CLK_TOP_JPGDEC_SEL		157
-> +#define CLK_TOP_SPISLV_SEL		158
-> +#define CLK_TOP_ETHER_50M_RMII_SEL	159
-> +#define CLK_TOP_CAM2TG_SEL		160
-> +#define CLK_TOP_DI_SEL			161
-> +#define CLK_TOP_TVD_SEL			162
-> +#define CLK_TOP_I2C_SEL			163
-> +#define CLK_TOP_PWM_INFRA_SEL		164
-> +#define CLK_TOP_MSDC0P_AES_SEL		165
-> +#define CLK_TOP_CMSYS_SEL		166
-> +#define CLK_TOP_GCPU_SEL		167
-> +#define CLK_TOP_AUD_APLL1_SEL		168
-> +#define CLK_TOP_AUD_APLL2_SEL		169
-> +#define CLK_TOP_APLL1_REF_SEL		170
-> +#define CLK_TOP_APLL2_REF_SEL		171
-> +#define CLK_TOP_DA_AUDULL_VTX_6P5M_SEL	172
-> +#define CLK_TOP_APLL_DIV0		173
-> +#define CLK_TOP_APLL_DIV1		174
-> +#define CLK_TOP_APLL_DIV2		175
-> +#define CLK_TOP_APLL_DIV3		176
-> +#define CLK_TOP_APLL_DIV4		177
-> +#define CLK_TOP_APLL_DIV5		178
-> +#define CLK_TOP_APLL_DIV6		179
-> +#define CLK_TOP_APLL_DIV7		180
-> +#define CLK_TOP_APLL_DIV_PDN0		181
-> +#define CLK_TOP_APLL_DIV_PDN1		182
-> +#define CLK_TOP_APLL_DIV_PDN2		183
-> +#define CLK_TOP_APLL_DIV_PDN3		184
-> +#define CLK_TOP_APLL_DIV_PDN4		185
-> +#define CLK_TOP_APLL_DIV_PDN5		186
-> +#define CLK_TOP_APLL_DIV_PDN6		187
-> +#define CLK_TOP_APLL_DIV_PDN7		188
-> +#define CLK_TOP_NFI2X_EN		189
-> +#define CLK_TOP_NFIECC_EN		190
-> +#define CLK_TOP_NFI1X_CK_EN		191
-> +#define CLK_TOP_NR_CLK			192
->  
->  /* INFRACFG */
->  
-> @@ -281,7 +287,9 @@
->  #define CLK_PERI_MSDC30_3_EN		41
->  #define CLK_PERI_MSDC50_0_HCLK_EN	42
->  #define CLK_PERI_MSDC50_3_HCLK_EN	43
-> -#define CLK_PERI_NR_CLK			44
-> +#define CLK_PERI_MSDC30_0_QTR_EN	44
-> +#define CLK_PERI_MSDC30_3_QTR_EN	45
-> +#define CLK_PERI_NR_CLK			46
->  
->  /* MCUCFG */
->  
-> -- 
-> 2.12.5
-> 
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32mp1.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 56b738e..47984f3 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -103,6 +103,18 @@
+ 
+ #define RCC_CLR	0x4
+ 
++static const char * const ref12_parents[] = {
++	"ck_hsi", "ck_hse"
++};
++
++static const char * const ref3_parents[] = {
++	"ck_hsi", "ck_hse", "ck_csi"
++};
++
++static const char * const ref4_parents[] = {
++	"ck_hsi", "ck_hse", "ck_csi"
++};
++
+ struct clock_config {
+ 	u32 id;
+ 	const char *name;
+@@ -140,6 +152,14 @@ struct div_cfg {
+ 	const struct clk_div_table *table;
+ };
+ 
++struct mux_cfg {
++	u32 reg_off;
++	u8 shift;
++	u8 width;
++	u8 mux_flags;
++	u32 *table;
++};
++
+ struct stm32_gate_cfg {
+ 	struct gate_cfg		*gate;
+ 	const struct clk_ops	*ops;
+@@ -196,6 +216,20 @@ struct stm32_gate_cfg {
+ 					     lock);
+ }
+ 
++static struct clk_hw *
++_clk_hw_register_mux(struct device *dev,
++		     struct clk_hw_onecell_data *clk_data,
++		     void __iomem *base, spinlock_t *lock,
++		     const struct clock_config *cfg)
++{
++	struct mux_cfg *mux_cfg = cfg->cfg;
++
++	return clk_hw_register_mux(dev, cfg->name, cfg->parent_names,
++				   cfg->num_parents, cfg->flags,
++				   mux_cfg->reg_off + base, mux_cfg->shift,
++				   mux_cfg->width, mux_cfg->mux_flags, lock);
++}
++
+ /* MP1 Gate clock with set & clear registers */
+ 
+ static int mp1_gate_clk_enable(struct clk_hw *hw)
+@@ -350,6 +384,22 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
+ 	DIV_TABLE(_id, _name, _parent, _flags, _offset, _shift, _width,\
+ 		  _div_flags, NULL)
+ 
++#define MUX(_id, _name, _parents, _flags, _offset, _shift, _width, _mux_flags)\
++{\
++	.id		= _id,\
++	.name		= _name,\
++	.parent_names	= _parents,\
++	.num_parents	= ARRAY_SIZE(_parents),\
++	.flags		= _flags,\
++	.cfg		=  &(struct mux_cfg) {\
++		.reg_off	= _offset,\
++		.shift		= _shift,\
++		.width		= _width,\
++		.mux_flags	= _mux_flags,\
++	},\
++	.func		= _clk_hw_register_mux,\
++}
++
+ /* STM32 GATE */
+ #define STM32_GATE(_id, _name, _parent, _flags, _gate)\
+ {\
+@@ -392,6 +442,16 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
+ 	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
+ 
+ 	FIXED_FACTOR(CK_HSE_DIV2, "clk-hse-div2", "ck_hse", 0, 1, 2),
++
++	/* ref clock pll */
++	MUX(NO_ID, "ref1", ref12_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK12SELR,
++	    0, 2, CLK_MUX_READ_ONLY),
++
++	MUX(NO_ID, "ref3", ref3_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK3SELR,
++	    0, 2, CLK_MUX_READ_ONLY),
++
++	MUX(NO_ID, "ref4", ref4_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK4SELR,
++	    0, 2, CLK_MUX_READ_ONLY),
+ };
+ 
+ struct stm32_clock_match_data {
+-- 
+1.9.1
