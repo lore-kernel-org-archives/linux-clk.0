@@ -1,129 +1,77 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1521812598.3406.8.camel@pengutronix.de>
-Subject: Re: [PATCH v4 1/8] reset: modify the way reset lookup works for
- board files
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>, Kevin
- Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>,  Russell King <linux@armlinux.org.uk>, David
- Lechner <david@lechnology.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen
- <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, Bartosz Golaszewski
- <bgolaszewski@baylibre.com>
-Date: Fri, 23 Mar 2018 14:43:18 +0100
-In-Reply-To: <20180323130455.11470-2-brgl@bgdev.pl>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
-	 <20180323130455.11470-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v2 0/4] Misc patches to support clocks for SDM845
+Date: Thu,  8 Mar 2018 12:48:11 +0530
+Message-Id: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-03-23 at 14:04 +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
-> introduced reset control lookup mechanism for boards that still use
-> board files.
-> 
-> The routine used to register lookup entries takes the corresponding
-> reset_controlled_dev structure as argument.
-> 
-> It's been determined however that for the first user of this new
-> interface - davinci psc driver - it will be easier to register the
-> lookup entries using the reset controller device name.
-> 
-> This patch changes the way lookup entries are added.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/reset/core.c             | 38 +++++++++++++++++++++++++++++++-------
->  include/linux/reset-controller.h | 14 ++++++++------
->  2 files changed, 39 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 06fa4907afc4..f4a29c046995 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -153,12 +153,10 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
->  
->  /**
->   * reset_controller_add_lookup - register a set of lookup entries
-> - * @rcdev: initialized reset controller device owning the reset line
->   * @lookup: array of reset lookup entries
->   * @num_entries: number of entries in the lookup array
->   */
-> -void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-> -				 struct reset_control_lookup *lookup,
-> +void reset_controller_add_lookup(struct reset_control_lookup *lookup,
->  				 unsigned int num_entries)
->  {
->  	struct reset_control_lookup *entry;
-> @@ -168,13 +166,12 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
->  	for (i = 0; i < num_entries; i++) {
->  		entry = &lookup[i];
->  
-> -		if (!entry->dev_id) {
-> -			pr_warn("%s(): reset lookup entry has no dev_id, skipping\n",
-> +		if (!entry->dev_id || !entry->provider) {
-> +			pr_warn("%s(): reset lookup entry badly specified, skipping\n",
->  				__func__);
->  			continue;
->  		}
->  
-> -		entry->rcdev = rcdev;
->  		list_add_tail(&entry->list, &reset_lookup_list);
->  	}
->  	mutex_unlock(&reset_lookup_mutex);
-> @@ -526,11 +523,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
->  }
->  EXPORT_SYMBOL_GPL(__of_reset_control_get);
->  
-> +static struct reset_controller_dev *
-> +__reset_controller_by_name(const char *name)
-> +{
-> +	struct reset_controller_dev *rcdev;
-> +
-> +	lockdep_assert_held(&reset_list_mutex);
-> +
-> +	list_for_each_entry(rcdev, &reset_controller_list, list) {
-> +		if (!rcdev->dev)
-> +			continue;
-> +
-> +		if (!strcmp(name, dev_name(rcdev->dev)))
-> +			return rcdev;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  static struct reset_control *
->  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
->  				bool shared, bool optional)
->  {
->  	const struct reset_control_lookup *lookup;
-> +	struct reset_controller_dev *rcdev;
->  	const char *dev_id = dev_name(dev);
->  	struct reset_control *rstc = NULL;
->  
-> @@ -547,7 +563,15 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
->  		    ((con_id && lookup->con_id) &&
->  		     !strcmp(con_id, lookup->con_id))) {
->  			mutex_lock(&reset_list_mutex);
-> -			rstc = __reset_control_get_internal(lookup->rcdev,
-> +			rcdev = __reset_controller_by_name(lookup->provider);
-> +			if (!rcdev) {
-> +				mutex_unlock(&reset_list_mutex);
-> +				mutex_unlock(&reset_lookup_mutex);
-> +				/* Reset provider may not be ready yet. */
-> +				return -EPROBE_DEFER;
+Changes in v2:
+Fixup for recalc_rate ops for clk_rcg2_shared_ops:
+There could be few scenarios where shared clocks are configured
+at rate other than CXO by boot. In those cases there would be a
+mismatch between the rate calculated by the recalc shared ops
+and the actual HW register configuration. Fix the same by adding
+an additional check to read current src from CFG register and
+make a decision based on that.
 
-Thanks, I've applied this patch to reset/next with the following change:
+Changes in v1:
+https://lkml.org/lkml/2018/1/31/209
 
--                               return -EPROBE_DEFER;
-+                               return ERR_PTR(-EPROBE_DEFER);
+This patch series does the miscellaneous changes to support
+clock nodes for SDM845. Below are the major changes for
+which the existing code does not have support.
 
-regards
-Philipp
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
+3. Add support for controlling Fabia PLL for which the support
+   is not available in existing alpha PLL code.
+4. Add Global Clock controller (GCC) driver for SDM845. This
+   should allow most non-multimedia device drivers to probe
+   and control their clocks.
+
+Amit Nischal (3):
+  clk: qcom: Clear hardware clock control bit of RCG
+  clk: qcom: Configure the RCGs to a safe source as needed
+  clk: qcom: Add support for controlling Fabia PLL
+
+Taniya Das (1):
+  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |   11 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  324 +-
+ drivers/clk/qcom/clk-alpha-pll.h                   |   18 +-
+ drivers/clk/qcom/clk-rcg.h                         |    8 +-
+ drivers/clk/qcom/clk-rcg2.c                        |  160 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 3619 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  242 ++
+ 9 files changed, 4373 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
