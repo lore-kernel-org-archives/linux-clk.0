@@ -1,119 +1,31 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Richard Genoud <richard.genoud@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Gregory CLEMENT <gregory.clement@free-electrons.com>,  Ralph Sennhauser <ralph.sennhauser@gmail.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: mvebu: armada-38x: add support for missing clocks
-References: <20180308090300.23544-1-richard.genoud@gmail.com>
-	<87h8pq4s92.fsf@bootlin.com>
-Date: Thu, 08 Mar 2018 14:23:43 +0100
-In-Reply-To: <87h8pq4s92.fsf@bootlin.com> (Gregory CLEMENT's message of "Thu,
-	08 Mar 2018 14:22:01 +0100")
-Message-ID: <877eqm4s68.fsf@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <eajames@linux.vnet.ibm.com>
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org, joel@jms.id.au, mturquette@baylibre.com,
+        sboyd@kernel.org, eajames@linux.vnet.ibm.com, mine260309@gmail.com,
+        ryan_chen@aspeedtech.com
+Subject: [PATCH v2 0/2] clk: aspeed: Fix is_enabled and prevent reset if clock enabled
+Date: Thu,  8 Mar 2018 14:57:18 -0600
+Message-Id: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
- 
- On jeu., mars 08 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
+Here are two fixes for the Aspeed clock driver. The first fixes the is_enabled
+clock function to account for different clock gates getting disabled with
+either 0s or 1s. The second patch addresses some issue found with the LPC
+controller clock if it gets reset while the clock is enabled, which it is by
+default. Thanks to Lei Yu for tracking down the LPC issue.
 
-> Hi Richard,
->  
->  On jeu., mars 08 2018, Richard Genoud <richard.genoud@gmail.com> wrote:
->
->> Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
->> or 1333MHz (industrial).
->>
->> They have also some dip-switches to select a different clock (666, 800,
->> 1066, 1200).
->
-> The patch looks goo and it will also be usefull for any other board
-> using these frequencies, thanks for this. I have only one small comment,
-> see below.
+Changes since v1:
+ - Fix is_enabled.
+ - Check for enabled in the spinlock in the enable function.
+ - Use is_enabled instead of more code to read the register.
 
+Eddie James (2):
+  clk: aspeed: Fix is_enabled for certain clocks
+  clk: aspeed: Prevent reset if clock is enabled
 
-I forgot to mention that you can add my
-
-Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-
-Thanks,
-
-Gregory
-
->
->
->>
->> The funny thing is that the recovery button is on the MPP34 fq selector.
->> So, when booting an industrial board with this button down, the frequency
->> 666MHz is selected (and the kernel didn't boot).
->>
->> This patch add all the missing clocks.
->>
->> The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
->>
->> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
->> ---
->>  drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
->>  1 file changed, 7 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
->> index 394aa6f03f01..9ff4ea63932d 100644
->> --- a/drivers/clk/mvebu/armada-38x.c
->> +++ b/drivers/clk/mvebu/armada-38x.c
->> @@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
->>  }
->>  
->>  static const u32 armada_38x_cpu_frequencies[] __initconst = {
->> -	0, 0, 0, 0,
->> -	1066 * 1000 * 1000, 0, 0, 0,
->> +	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
->> +	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
->>  	1332 * 1000 * 1000, 0, 0, 0,
->>  	1600 * 1000 * 1000, 0, 0, 0,
->> -	1866 * 1000 * 1000,
->> +	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
->
-> Maybe you could add a comment here to say that the 2GHz mode didn't have
-> been tested.
->
-> Thanks,
-> Gregory
->
->
->>  };
->>  
->>  static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
->> @@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
->>  };
->>  
->>  static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
->> -	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
->> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
->>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->> +	{1, 2}, {0, 1}, {0, 1}, {1, 2},
->>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->> @@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
->>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->> +	{1, 2}, {0, 1}, {0, 1}, {7, 15},
->>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->
-> -- 
-> Gregory Clement, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> http://bootlin.com
+ drivers/clk/clk-aspeed.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
 -- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+1.8.3.1
