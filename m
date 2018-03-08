@@ -1,39 +1,119 @@
-Return-Path: <dianders@google.com>
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Richard Genoud <richard.genoud@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Gregory CLEMENT <gregory.clement@free-electrons.com>,  Ralph Sennhauser <ralph.sennhauser@gmail.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: mvebu: armada-38x: add support for missing clocks
+References: <20180308090300.23544-1-richard.genoud@gmail.com>
+	<87h8pq4s92.fsf@bootlin.com>
+Date: Thu, 08 Mar 2018 14:23:43 +0100
+In-Reply-To: <87h8pq4s92.fsf@bootlin.com> (Gregory CLEMENT's message of "Thu,
+	08 Mar 2018 14:22:01 +0100")
+Message-ID: <877eqm4s68.fsf@bootlin.com>
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <20180313203719.75639-1-dbasehore@chromium.org>
-References: <20180313203719.75639-1-dbasehore@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 13 Mar 2018 14:57:51 -0700
-Message-ID: <CAD=FV=UK-Rnto+iH8TSuTyzt010HT8Ujk0TX74hA1D5Lh4HfOQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: rockchip: Add 1.6GHz PLL rate
-To: Derek Basehore <dbasehore@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
 Hi,
+ 
+ On jeu., mars 08 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
 
-On Tue, Mar 13, 2018 at 1:37 PM, Derek Basehore <dbasehore@chromium.org> wrote:
-> We need this rate to generate 100, 200, and 228.57MHz from the same
-> PLL. 228.57MHz is useful for a pixel clock when the VPLL is used for
-> and external display.
+> Hi Richard,
+>  
+>  On jeu., mars 08 2018, Richard Genoud <richard.genoud@gmail.com> wrote:
 >
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/clk/rockchip/clk-rk3399.c | 1 +
->  1 file changed, 1 insertion(+)
+>> Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
+>> or 1333MHz (industrial).
+>>
+>> They have also some dip-switches to select a different clock (666, 800,
+>> 1066, 1200).
+>
+> The patch looks goo and it will also be usefull for any other board
+> using these frequencies, thanks for this. I have only one small comment,
+> see below.
 
-Looks good to me.  I spent a little bit of time poking at this and I
-agreed it's the best way to make 1.6 GHz in
-<http://crosreview.com/956677>.  Lin Huang at Rockchip also said:
 
-> yes, we also use this setting for 1.6GHz in our internal branch.
+I forgot to mention that you can add my
 
-...and they seem to agree this is a sane setting.  Thus:
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Thanks,
+
+Gregory
+
+>
+>
+>>
+>> The funny thing is that the recovery button is on the MPP34 fq selector.
+>> So, when booting an industrial board with this button down, the frequency
+>> 666MHz is selected (and the kernel didn't boot).
+>>
+>> This patch add all the missing clocks.
+>>
+>> The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
+>>
+>> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+>> ---
+>>  drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
+>>  1 file changed, 7 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
+>> index 394aa6f03f01..9ff4ea63932d 100644
+>> --- a/drivers/clk/mvebu/armada-38x.c
+>> +++ b/drivers/clk/mvebu/armada-38x.c
+>> @@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
+>>  }
+>>  
+>>  static const u32 armada_38x_cpu_frequencies[] __initconst = {
+>> -	0, 0, 0, 0,
+>> -	1066 * 1000 * 1000, 0, 0, 0,
+>> +	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
+>> +	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
+>>  	1332 * 1000 * 1000, 0, 0, 0,
+>>  	1600 * 1000 * 1000, 0, 0, 0,
+>> -	1866 * 1000 * 1000,
+>> +	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
+>
+> Maybe you could add a comment here to say that the 2GHz mode didn't have
+> been tested.
+>
+> Thanks,
+> Gregory
+>
+>
+>>  };
+>>  
+>>  static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
+>> @@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
+>>  };
+>>  
+>>  static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
+>> -	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+>> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>> +	{1, 2}, {0, 1}, {0, 1}, {1, 2},
+>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>> @@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
+>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>> +	{1, 2}, {0, 1}, {0, 1}, {7, 15},
+>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>
+> -- 
+> Gregory Clement, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> http://bootlin.com
+
+-- 
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
