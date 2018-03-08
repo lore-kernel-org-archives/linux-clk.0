@@ -1,64 +1,85 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 04/16] clk: sunxi-ng: h3: h5: export CLK_PLL_VIDEO
-Date: Thu,  1 Mar 2018 22:34:30 +0100
-Message-Id: <20180301213442.16677-5-jernej.skrabec@siol.net>
-In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY
+	<loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH v2 12/12] clk: stm32mp1: add Debug clocks
+Date: Thu, 8 Mar 2018 17:54:05 +0100
+Message-ID: <1520528045-18330-13-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-CLK_PLL_VIDEO needs to be referenced in HDMI DT entry as a possible
-PHY clock parent.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Export it so it can be used later in DT.
+RCC manages clock for debug and trace.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-h3.h      | 4 +++-
- include/dt-bindings/clock/sun8i-h3-ccu.h | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/clk-stm32mp1.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
-index 1b4baea37d81..73d7392c968c 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.h
-@@ -26,7 +26,9 @@
- #define CLK_PLL_AUDIO_2X	3
- #define CLK_PLL_AUDIO_4X	4
- #define CLK_PLL_AUDIO_8X	5
--#define CLK_PLL_VIDEO		6
-+
-+/* PLL_VIDEO is exported */
-+
- #define CLK_PLL_VE		7
- #define CLK_PLL_DDR		8
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index b3a6ec4..f1d5967 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -260,6 +260,10 @@
+ 	"ck_mpu", "ck_axi", "ck_mcu", "pll4_p", "ck_hse", "ck_hsi"
+ };
  
-diff --git a/include/dt-bindings/clock/sun8i-h3-ccu.h b/include/dt-bindings/clock/sun8i-h3-ccu.h
-index e139fe5c62ec..c5f7e9a70968 100644
---- a/include/dt-bindings/clock/sun8i-h3-ccu.h
-+++ b/include/dt-bindings/clock/sun8i-h3-ccu.h
-@@ -43,6 +43,8 @@
- #ifndef _DT_BINDINGS_CLK_SUN8I_H3_H_
- #define _DT_BINDINGS_CLK_SUN8I_H3_H_
- 
-+#define CLK_PLL_VIDEO		6
++static const char * const ck_trace_src[] = {
++	"ck_axi"
++};
 +
- #define CLK_PLL_PERIPH0		9
+ static const struct clk_div_table axi_div_table[] = {
+ 	{ 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
+ 	{ 4, 4 }, { 5, 4 }, { 6, 4 }, { 7, 4 },
+@@ -280,6 +284,12 @@
+ 	{ 0 },
+ };
  
- #define CLK_CPUX		14
++static const struct clk_div_table ck_trace_div_table[] = {
++	{ 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 8 },
++	{ 4, 16 }, { 5, 16 }, { 6, 16 }, { 7, 16 },
++	{ 0 },
++};
++
+ #define MAX_MUX_CLK 2
+ 
+ struct stm32_mmux {
+@@ -1980,6 +1990,18 @@ enum {
+ 		  _GATE(RCC_MCO2CFGR, 12, 0),
+ 		  _MUX(RCC_MCO2CFGR, 0, 3, 0),
+ 		  _DIV(RCC_MCO2CFGR, 4, 4, 0, NULL)),
++
++	/* Debug clocks */
++	FIXED_FACTOR(NO_ID, "ck_axi_div2", "ck_axi", 0, 1, 2),
++
++	GATE(DBG, "ck_apb_dbg", "ck_axi_div2", 0, RCC_DBGCFGR, 8, 0),
++
++	GATE(CK_DBG, "ck_sys_dbg", "ck_axi", 0, RCC_DBGCFGR, 8, 0),
++
++	COMPOSITE(CK_TRACE, "ck_trace", ck_trace_src, CLK_OPS_PARENT_ENABLE,
++		  _GATE(RCC_DBGCFGR, 9, 0),
++		  _NO_MUX,
++		  _DIV(RCC_DBGCFGR, 0, 3, 0, ck_trace_div_table)),
+ };
+ 
+ struct stm32_clock_match_data {
 -- 
-2.16.2
+1.9.1
