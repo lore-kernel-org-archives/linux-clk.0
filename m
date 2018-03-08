@@ -1,93 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43068 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750783AbeCZHty (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Mar 2018 03:49:54 -0400
-Received: by mail-wr0-f196.google.com with SMTP id p53so10314563wrc.10
-        for <linux-clk@vger.kernel.org>; Mon, 26 Mar 2018 00:49:53 -0700 (PDT)
-Subject: Re: [PATCH 1/4] dt-bindings: clock: meson: update documentation with
- hhi syscon
-To: Rob Herring <robh@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180315115545.1884-1-jbrunet@baylibre.com>
- <20180315115545.1884-2-jbrunet@baylibre.com>
- <20180318125222.kqtybu4hiwvsx3om@rob-hp-laptop>
- <1521385797.6569.90.camel@baylibre.com>
- <CAL_JsqKPFbA4duG8tUKwdJTtxXOG+3kMTwu2qAVxb9zgPckL3g@mail.gmail.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <8712ae70-9771-4438-68e2-9e4b37332de8@baylibre.com>
-Date: Mon, 26 Mar 2018 09:49:51 +0200
+Return-Path: <mine260309@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqKPFbA4duG8tUKwdJTtxXOG+3kMTwu2qAVxb9zgPckL3g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CACPK8Xe5rVtB6hUo4xW9qSz-T+kehvXSRv5g1_6KOO=BYr8Qwg@mail.gmail.com>
+References: <1520440570-25280-1-git-send-email-eajames@linux.vnet.ibm.com> <CACPK8Xe5rVtB6hUo4xW9qSz-T+kehvXSRv5g1_6KOO=BYr8Qwg@mail.gmail.com>
+From: Lei YU <mine260309@gmail.com>
+Date: Thu, 8 Mar 2018 13:38:47 +0800
+Message-ID: <CAARXrtk6ZynSzm=xA1E1M8aSJNb=BZ7jxg4gvWa_QJ_=LaQeog@mail.gmail.com>
+Subject: Re: [PATCH] clk: aspeed: Prevent reset if clock is enabled
+To: Joel Stanley <joel@jms.id.au>
+Cc: Eddie James <eajames@linux.vnet.ibm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Ryan Chen <ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23/03/2018 04:04, Rob Herring wrote:
-> On Sun, Mar 18, 2018 at 10:09 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
->> On Sun, 2018-03-18 at 07:52 -0500, Rob Herring wrote:
->>> On Thu, Mar 15, 2018 at 12:55:42PM +0100, Jerome Brunet wrote:
->>>> The HHI register region hosts more than just clocks and needs to
->>>> accessed drivers other than the clock controller, such as the display
->>>> driver.
->>>>
->>>> This register region should be managed by syscon. It is already the case
->>>> on gxbb/gxl and it soon will be on axg. The clock controllers must use
->>>> this system controller instead of directly mapping the registers.
->>>
->>> Sounds like a kernel problem, not a DT one.
->>
->> It's a platform problem, so it has much a kernel problem (solution already
->> merged) as a DT problem
->>
->> DT wise, we've got two devices mapping the same region
->>
->> in arch/arm64/boot/dts/amlogic/meson-gx.dtsi:
->>> system-controller@0
->>
->> which is used by the display device.
->>
->> and in arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi (same for gxl)
->>> clock-controller@0
->>
->> It has worked so far because the clock controller claims the region w/o
->> reserving it but it remains unsafe since both device may access the same region.
->> The fix is to have the clock controller go through the existing syscon.
-> 
-> We certainly want to avoid multiple nodes using the same mmio region.
-> 
-> 
->>> With a single child, there is really no point to this change. A single
->>> node can provide multiple functions. Look at nodes that are both reset
->>> and clock providers.
->>
->> There is more than a single user, as explained above and in the cover letter of
->> this series.
-> 
-> Right, but a single node can support more than a single user (or
-> provider). You don't have to have multiple nodes to have multiple
-> users/providers.
-> 
-> Rob
-> 
+On Thu, Mar 8, 2018 at 11:42 AM, Joel Stanley <joel@jms.id.au> wrote:
+>> +       /* Only reset/enable/unreset if clock is stopped */
+>> +       regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
+>> +       if (!(reg & clk))
+>> +               return 0;
+>
+> This doesn't generalise to all of the clocks, as some clocks use set
+> to disable. Perhaps we could do something like this:
+>
+>        /* Only reset/enable/unreset if clock is stopped. The LPC clock
+> on ast2500 has issues otherwise */
+>        enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
+>        regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
+>        if ((reg & clk) == enval) {
+>                spin_unlock_irqrestore(gate->lock, flags);
+>                return 0;
+>        }
+>
+> I think we should also do this operation under the lock.
+>
+> Please cc Ryan Chen <ryan_chen@aspeedtech.com> so he can confirm that
+> this workaround is valid, and credit Lei who spent a lot of time
+> investigating this issue. Perhaps "Root-caused-by".
+>
 
-Hi Rob,
+The code has aspeed_clk_is_enabled() already, why not just:
 
-It's a question about user/provider, the syscon node represents the entire mmio
-region which has multiple sparse registers for multiple features, is used
-indirectly by the display driver, ... and has multiple features, non limited to,
-clock controller, multiple power domains,... and it is simpler to represent these
-as subnodes instead of a big fat node.
-
-Today, it is already represented like this within the Documentation/devicetree/bindings/power/amlogic,meson-gx-pwrc.txt
-So this binding is only an extension for the clock controller which was mis-architectured
-at the time due to a mis-knowledge of the HW architecture.
-
-Neil
+    if (aspeed_clk_is_enabled(hw))
+        return 0;
