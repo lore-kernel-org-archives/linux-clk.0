@@ -1,63 +1,95 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sun, 18 Mar 2018 21:14:47 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 1/9] pinctrl: sunxi: refactor irq related register
- function to have desc
-Message-ID: <20180318201447.grzt5yxt64s7terr@flea>
-References: <20180316140215.28663-1-icenowy@aosc.io>
- <20180316140215.28663-2-icenowy@aosc.io>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:22899 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755148AbeCHIjF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Mar 2018 03:39:05 -0500
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ugtukvfxpk66fpis"
-In-Reply-To: <20180316140215.28663-2-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20180308082332.31063-1-suzuki.katsuhiro@socionext.com>
+References: <20180308082332.31063-1-suzuki.katsuhiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 8 Mar 2018 17:38:00 +0900
+Message-ID: <CAK7LNARo_yGJW+OqLvoDUZgztxT+dr7W3xNvvEiQjZRzEtF03w@mail.gmail.com>
+Subject: Re: [PATCH] clk: uniphier: add Pro4/Pro5/PXs2 audio system clock
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+2018-03-08 17:23 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> Add clock for audio subsystem (AIO) on UniPhier
+> Pro4/Pro5/PXs2 SoCs.
+>
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> ---
 
---ugtukvfxpk66fpis
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 16, 2018 at 10:02:07PM +0800, Icenowy Zheng wrote:
-> As the new H6 SoC has holes in the IRQ registers, refactor the IRQ
-> related register function for getting the full pinctrl desc structure.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Maxime
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>  drivers/clk/uniphier/clk-uniphier-sys.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+> index d244e724e198..06c5269f63f5 100644
+> --- a/drivers/clk/uniphier/clk-uniphier-sys.c
+> +++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+> @@ -57,6 +57,14 @@
+>  #define UNIPHIER_PRO4_SYS_CLK_USB3(idx, ch)                            \
+>         UNIPHIER_CLK_GATE("usb3" #ch, (idx), NULL, 0x2104, 16 + (ch))
+>
+> +#define UNIPHIER_PRO4_SYS_CLK_AIO(idx)                                 \
+> +       UNIPHIER_CLK_FACTOR("aio-io200m", -1, "spll", 1, 8),            \
+> +       UNIPHIER_CLK_GATE("aio", (idx), "aio-io200m", 0x2104, 13)
+> +
+> +#define UNIPHIER_PRO5_SYS_CLK_AIO(idx)                                 \
+> +       UNIPHIER_CLK_FACTOR("aio-io200m", -1, "spll", 1, 12),           \
+> +       UNIPHIER_CLK_GATE("aio", (idx), "aio-io200m", 0x2104, 13)
+> +
+>  #define UNIPHIER_LD11_SYS_CLK_AIO(idx)                                 \
+>         UNIPHIER_CLK_FACTOR("aio-io200m", -1, "spll", 1, 10),           \
+>         UNIPHIER_CLK_GATE("aio", (idx), "aio-io200m", 0x2108, 0)
+> @@ -104,6 +112,7 @@ const struct uniphier_clk_data uniphier_pro4_sys_clk_data[] = {
+>         UNIPHIER_PRO4_SYS_CLK_GIO(12),                  /* Ether, SATA, USB3 */
+>         UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
+>         UNIPHIER_PRO4_SYS_CLK_USB3(15, 1),
+> +       UNIPHIER_PRO4_SYS_CLK_AIO(40),
+>         { /* sentinel */ }
+>  };
+>
+> @@ -132,6 +141,7 @@ const struct uniphier_clk_data uniphier_pro5_sys_clk_data[] = {
+>         UNIPHIER_PRO4_SYS_CLK_GIO(12),                          /* PCIe, USB3 */
+>         UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
+>         UNIPHIER_PRO4_SYS_CLK_USB3(15, 1),
+> +       UNIPHIER_PRO5_SYS_CLK_AIO(40),
+>         { /* sentinel */ }
+>  };
+>
+> @@ -149,6 +159,7 @@ const struct uniphier_clk_data uniphier_pxs2_sys_clk_data[] = {
+>         /* The document mentions 0x2104 bit 18, but not functional */
+>         UNIPHIER_CLK_GATE("usb30-phy", 16, NULL, 0x2104, 19),
+>         UNIPHIER_CLK_GATE("usb31-phy", 20, NULL, 0x2104, 20),
+> +       UNIPHIER_PRO5_SYS_CLK_AIO(40),
+>         { /* sentinel */ }
+>  };
+>
+> --
+> 2.16.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
---ugtukvfxpk66fpis
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlquyLMACgkQ0rTAlCFN
-r3Q33A/+NXnDGqCoPIBSpO6iqweFIsLh9I33euKBwZi2mGF0CxUGpW9FZLXN6wqb
-G/RUUygJ/QZD44c7QLqNWCoyLrGQllLHQCo/kTDEzjxr3xFblADHZm6M+HRlB1VR
-EO2BwNjw2MAwnpFzzrj7t1lD0QxEKhRfjcOzdXwlu+5awCTOXLY25aw+BzCTVphu
-tEFnc6oRsMVBN752nH1LJpMnaQHZUw2qF3JG3DPOZ2kKsq+BcwSqrlPEX7bAcbYW
-EU2UCy/u/2UkRY4Ih2KuHkWg8N4UnH/tcKvwsrDeC/bKl80XRaLombD8GFtvvNCa
-YANcWkLaLiYn3H79Pd+E57qaLUQogI7mm0dE04g4nUESx+zwRh3PLIMQcLN41Ob+
-0b84AyfLFYyllfZhl6VbOrAtICqcFx5wzZhD2KgTU+mlMt/JducIGkXEdP/ygxZX
-57h7LouRRkFv2O3z142K+xTvYHONn7jtqVE67YdbnbmgVsa/u3Ib4H3biDVML/en
-n2n7wX/ytdSqKTjaWvlIG0ZZsx0Wvk+MUOl406KlrRxAZREi1SGKqtni4iJvUyO2
-DE3fjrGT2ZpuiJ8E+qtU/5rFNKV0UtMpYgYTEax+dp7bI5F24rx534U6/Y/vDuS7
-1DasG7MiRaX1ajU8L4CEv9DtB48taSx3dnYI4bD8TkE+yBGc9hI=
-=t380
------END PGP SIGNATURE-----
-
---ugtukvfxpk66fpis--
+-- 
+Best Regards
+Masahiro Yamada
