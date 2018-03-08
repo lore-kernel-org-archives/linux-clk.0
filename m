@@ -1,111 +1,150 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:35792 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751809AbeCQX3f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Mar 2018 19:29:35 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-doc@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 3/8] doc: Add doc for the Ingenic TCU hardware
-Date: Sun, 18 Mar 2018 00:28:56 +0100
-Message-Id: <20180317232901.14129-4-paul@crapouillou.net>
-In-Reply-To: <20180317232901.14129-1-paul@crapouillou.net>
-References: <20180110224838.16711-2-paul@crapouillou.net>
- <20180317232901.14129-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY
+	<loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH v2 07/12] clk: stm32mp1: add Sub System clocks
+Date: Thu, 8 Mar 2018 17:54:00 +0100
+Message-ID: <1520528045-18330-8-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a documentation file about the Timer/Counter Unit (TCU)
-present in the Ingenic JZ47xx SoCs.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+The RCC handles three sub-system clocks: ck_mpuss, ck_axiss
+and ck_mcuss.
+This patch adds also some MUX system and several prescalers.
+
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- Documentation/mips/00-INDEX        |  3 +++
- Documentation/mips/ingenic-tcu.txt | 50 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
- create mode 100644 Documentation/mips/ingenic-tcu.txt
+ drivers/clk/clk-stm32mp1.c | 85 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
- v4: New patch in this series
-
-diff --git a/Documentation/mips/00-INDEX b/Documentation/mips/00-INDEX
-index 8ae9cffc2262..8ab8c3f83771 100644
---- a/Documentation/mips/00-INDEX
-+++ b/Documentation/mips/00-INDEX
-@@ -2,3 +2,6 @@
- 	- this file.
- AU1xxx_IDE.README
- 	- README for MIPS AU1XXX IDE driver.
-+ingenic-tcu.txt
-+	- Information file about the Timer/Counter Unit present
-+	  in Ingenic JZ47xx SoCs.
-diff --git a/Documentation/mips/ingenic-tcu.txt b/Documentation/mips/ingenic-tcu.txt
-new file mode 100644
-index 000000000000..2508e5793da8
---- /dev/null
-+++ b/Documentation/mips/ingenic-tcu.txt
-@@ -0,0 +1,50 @@
-+Ingenic JZ47xx SoCs Timer/Counter Unit hardware
-+-----------------------------------------------
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 3a99ad7..77d96d9 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -116,6 +116,42 @@
+ 	"ck_hsi", "ck_hse", "ck_csi"
+ };
+ 
++static const char * const cpu_src[] = {
++	"ck_hsi", "ck_hse", "pll1_p"
++};
 +
-+The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
-+hardware block. It features eight channels, that can be used as counters,
-+timers, or PWM.
++static const char * const axi_src[] = {
++	"ck_hsi", "ck_hse", "pll2_p", "pll3_p"
++};
 +
-+- JZ4770 introduced a separate channel, called Operating System Timer (OST).
-+  It is a 64-bit programmable timer.
++static const char * const per_src[] = {
++	"ck_hsi", "ck_csi", "ck_hse"
++};
 +
-+- Each one of the eight channels has its own clock, which can be reparented
-+  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
-+  their TCSR register.
-+  * The watchdog and OST hardware blocks also feature a TCSR register with
-+	the same format in their register space.
-+  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
-+	and OST clocks.
++static const char * const mcu_src[] = {
++	"ck_hsi", "ck_hse", "ck_csi", "pll3_p"
++};
 +
-+- On SoCs >= JZ4770, there are two different modes:
-+  * Channels 0, 3-7 operate in TCU1 mode: they cannot work in sleep mode,
-+	but are easier to operate.
-+  * Channels 1-2 operate in TCU2 mode: they can work in sleep mode, but
-+	the operation is a bit more complicated than with TCU1 channels.
++static const struct clk_div_table axi_div_table[] = {
++	{ 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
++	{ 4, 4 }, { 5, 4 }, { 6, 4 }, { 7, 4 },
++	{ 0 },
++};
 +
-+- Each channel can generate an interrupt. Some channels share an interrupt
-+  line, some don't, and this changes between SoC versions:
-+  * on JZ4740, timer 0 and timer 1 have their own interrupt line; others share
-+	one interrupt line.
-+  * on JZ4770 and JZ4780, timer 5 has its own interrupt; timers 0-4 and 6-7 all
-+	use one interrupt line; the OST uses the last interrupt.
++static const struct clk_div_table mcu_div_table[] = {
++	{ 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 8 },
++	{ 4, 16 }, { 5, 32 }, { 6, 64 }, { 7, 128 },
++	{ 8, 512 }, { 9, 512 }, { 10, 512}, { 11, 512 },
++	{ 12, 512 }, { 13, 512 }, { 14, 512}, { 15, 512 },
++	{ 0 },
++};
 +
-+Implementation
-+--------------
++static const struct clk_div_table apb_div_table[] = {
++	{ 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 8 },
++	{ 4, 16 }, { 5, 16 }, { 6, 16 }, { 7, 16 },
++	{ 0 },
++};
 +
-+The functionalities of the TCU hardware are spread across multiple drivers:
-+- interrupts:   drivers/irqchip/irq-ingenic-tcu.c
-+- clocks:       drivers/clk/ingenic/tcu.c
-+- timer:        drivers/clocksource/timer-ingenic.c
-+- PWM:          drivers/pwm/pwm-jz4740.c
-+- watchdog:     drivers/watchdog/jz4740_wdt.c
-+- OST:			(none yet)
+ struct clock_config {
+ 	u32 id;
+ 	const char *name;
+@@ -781,6 +817,21 @@ struct clk_hw *_clk_register_pll(struct device *dev,
+ 	_STM32_DIV(_div_offset, _div_shift, _div_width,\
+ 		   _div_flags, _div_table, NULL)\
+ 
++#define _STM32_MUX(_offset, _shift, _width, _mux_flags, _ops)\
++	.mux = &(struct stm32_mux_cfg) {\
++		&(struct mux_cfg) {\
++			.reg_off	= _offset,\
++			.shift		= _shift,\
++			.width		= _width,\
++			.mux_flags	= _mux_flags,\
++			.table		= NULL,\
++		},\
++		.ops		= _ops,\
++	}
 +
-+Because various functionalities of the TCU that belong to different drivers
-+and frameworks can be controlled from the same registers, all of these drivers
-+access their registers through the same regmap.
++#define _MUX(_offset, _shift, _width, _mux_flags)\
++	_STM32_MUX(_offset, _shift, _width, _mux_flags, NULL)\
 +
-+In practice, the devicetree nodes for all of these drivers must be children
-+of a "syscon" node that defines the register area.
-+For more information regarding the devicetree bindings of the TCU drivers,
-+have a look at Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+ #define PARENT(_parent) ((const char *[]) { _parent})
+ 
+ #define _NO_MUX .mux = NULL
+@@ -882,6 +933,40 @@ struct clk_hw *_clk_register_pll(struct device *dev,
+ 		  _GATE(RCC_PLL4CR, 6, 0),
+ 		  _NO_MUX,
+ 		  _DIV(RCC_PLL4CFGR2, 16, 7, 0, NULL)),
++
++	/* MUX system clocks */
++	MUX(CK_PER, "ck_per", per_src, CLK_OPS_PARENT_ENABLE,
++	    RCC_CPERCKSELR, 0, 2, 0),
++
++	MUX(CK_MPU, "ck_mpu", cpu_src, CLK_OPS_PARENT_ENABLE |
++	     CLK_IS_CRITICAL, RCC_MPCKSELR, 0, 2, 0),
++
++	COMPOSITE(CK_AXI, "ck_axi", axi_src, CLK_IS_CRITICAL |
++		   CLK_OPS_PARENT_ENABLE,
++		   _NO_GATE,
++		   _MUX(RCC_ASSCKSELR, 0, 2, 0),
++		   _DIV(RCC_AXIDIVR, 0, 3, 0, axi_div_table)),
++
++	COMPOSITE(CK_MCU, "ck_mcu", mcu_src, CLK_IS_CRITICAL |
++		   CLK_OPS_PARENT_ENABLE,
++		   _NO_GATE,
++		   _MUX(RCC_MSSCKSELR, 0, 2, 0),
++		   _DIV(RCC_MCUDIVR, 0, 4, 0, mcu_div_table)),
++
++	DIV_TABLE(NO_ID, "pclk1", "ck_mcu", CLK_IGNORE_UNUSED, RCC_APB1DIVR, 0,
++		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
++
++	DIV_TABLE(NO_ID, "pclk2", "ck_mcu", CLK_IGNORE_UNUSED, RCC_APB2DIVR, 0,
++		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
++
++	DIV_TABLE(NO_ID, "pclk3", "ck_mcu", CLK_IGNORE_UNUSED, RCC_APB3DIVR, 0,
++		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
++
++	DIV_TABLE(NO_ID, "pclk4", "ck_axi", CLK_IGNORE_UNUSED, RCC_APB4DIVR, 0,
++		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
++
++	DIV_TABLE(NO_ID, "pclk5", "ck_axi", CLK_IGNORE_UNUSED, RCC_APB5DIVR, 0,
++		  3, CLK_DIVIDER_READ_ONLY, apb_div_table),
+ };
+ 
+ struct stm32_clock_match_data {
 -- 
-2.11.0
-
+1.9.1
