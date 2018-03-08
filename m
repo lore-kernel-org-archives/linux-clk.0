@@ -1,64 +1,47 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <jeffy.chen@rock-chips.com>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org,
+	broonie@kernel.org
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v2 1/4] clk: qcom: Clear hardware clock control bit of RCG
-Date: Thu,  8 Mar 2018 12:48:12 +0530
-Message-Id: <1520493495-3084-2-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
-References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH v3 3/4] clk: lpc32xx: Set name of regmap_config
+Date: Thu,  8 Mar 2018 18:21:53 +0800
+Message-Id: <20180308102154.25686-4-jeffy.chen@rock-chips.com>
+In-Reply-To: <20180308102154.25686-1-jeffy.chen@rock-chips.com>
+References: <20180308102154.25686-1-jeffy.chen@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-For upcoming targets like sdm845, POR value of the hardware clock control
-bit is set for most of root clocks which needs to be cleared for software
-to be able to control. For older targets like MSM8996, this bit is reserved
-bit and having POR value as 0 so this patch will work for the older targets
-too. So update the configuration mask to take care of the same to clear
-hardware clock control bit.
+We are now allowing to register debugfs without a valid device, and not
+having a valid name will end up using "dummy*" to create debugfs dir.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 ---
- drivers/clk/qcom/clk-rcg2.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index bbeaf9c..e63db10 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2013, 2018, The Linux Foundation. All rights reserved.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -42,6 +42,7 @@
- #define CFG_MODE_SHIFT		12
- #define CFG_MODE_MASK		(0x3 << CFG_MODE_SHIFT)
- #define CFG_MODE_DUAL_EDGE	(0x2 << CFG_MODE_SHIFT)
-+#define CFG_HW_CLK_CTRL_MASK	BIT(20)
+Changes in v3: None
 
- #define M_REG			0x8
- #define N_REG			0xc
-@@ -276,7 +277,7 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- 	}
+ drivers/clk/nxp/clk-lpc32xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- 	mask = BIT(rcg->hid_width) - 1;
--	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK;
-+	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
- 	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
- 	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
- 	if (rcg->mnd_width && f->n && (f->m != f->n))
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index f5d815f577e0..a2a0a7f3bc57 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -67,6 +67,7 @@
+ #define LPC32XX_USB_CLK_STS		0xF8
+ 
+ static struct regmap_config lpc32xx_scb_regmap_config = {
++	.name = "lpc32xx-scb",
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+-- 
+2.11.0
