@@ -1,46 +1,55 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 9 Mar 2018 17:57:12 -0600
-From: Rob Herring <robh@kernel.org>
-To: gabriel.fernandez@st.com
-Cc: sboyd@kernel.org, Mark Rutland <mark.rutland@arm.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@st.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, gabriel.fernandez.st@gmail.com,
-	olivier.bideau@st.com, Loic PALLARDY <loic.pallardy@st.com>,
-	benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v2 02/12] clk: stm32mp1: Introduce STM32MP1 clock driver
-Message-ID: <20180309235543.cjyywayv3m6fwtbc@rob-hp-laptop>
-References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
- <1520528045-18330-3-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1520528045-18330-3-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <20180308140851.GA25601@botnar.kaiser.cx>
+References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
+ <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com> <20180308140851.GA25601@botnar.kaiser.cx>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 8 Mar 2018 12:07:45 -0300
+Message-ID: <CAOMZO5BdBWExt9FvPrfUG74Y62e4EUs6cqFyfVs5JuUtym00hQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
+To: Martin Kaiser <martin@kaiser.cx>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 08, 2018 at 05:53:55PM +0100, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch introduces the mechanism to probe stm32mp1 driver.
-> It also defines registers definition.
-> This patch also introduces the generic mechanism to register
-> a clock (a simple gate, divider and fixed factor).
-> 
-> All clocks will be defined in one table.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  drivers/clk/Kconfig                       |   6 +
->  drivers/clk/Makefile                      |   1 +
->  drivers/clk/clk-stm32mp1.c                | 364 ++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/stm32mp1-clks.h | 254 +++++++++++++++++++++
+Hi Martin,
 
-This should really be part of the binding patch.
+On Thu, Mar 8, 2018 at 11:08 AM, Martin Kaiser <martin@kaiser.cx> wrote:
+> Hi Fabio,
+>
+> Thus wrote Fabio Estevam (festevam@gmail.com):
+>
+>> I get audio working from SSI1, but I guess this is due to the fact
+>> that the bootloader enables the SSI clock:
+>
+>> I have the following in U-Boot:
+>
+>> /* Enable the clocks */
+>> DATA 4 0x53f8000c 0x1fffffff
+>> DATA 4 0x53f80010 0xffffffff
+>> DATA 4 0x53f80014 0xfdfff
+>
+> I'm using the same initial settings.
+>
+> Nevertheless, ssi1_ipg_per is disbled after loading the kernel.
+>
+> Digging into this a bit more, it turned out that without my patch,
+> clk_disable_unused() recognizes ssi1_ipg_per as unused and disables it.
+>
+> If my patch is applied and ssi1_ipg_per is declared as parent of
+> ssi1_ipg, clk_disable_unused() will not disable it and fsl_ssi_startup()
+> will enable both ssi1_ipg_per and ssi1_ipg before playing sound.
 
->  4 files changed, 625 insertions(+)
->  create mode 100644 drivers/clk/clk-stm32mp1.c
->  create mode 100644 include/dt-bindings/clock/stm32mp1-clks.h
+I can get audio to work fine without your patch on a mx25pdk.
+
+In the other i.MX clock drivers we have this same pattern:
+
+clks[IMX6SL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",     "ipg",
+
+It is not clear to me what is the real issue this patch is trying to fix.
+
+Thanks
