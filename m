@@ -1,187 +1,212 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 20/42] ARM: davinci: pass clock as parameter to davinci_timer_init()
-Date: Thu, 15 Mar 2018 21:52:36 -0500
-Message-Id: <1521168778-27236-21-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY
+	<loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH v2 03/12] clk: stm32mp1: add MP1 gate for hse/hsi/csi oscillators
+Date: Thu, 8 Mar 2018 17:53:56 +0100
+Message-ID: <1520528045-18330-4-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This changes davinci_timer_init() so that we pass the clock as a
-parameter instead of using clk_get(). This is done in preparation
-for converting to the common clock framework.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-It removes the requirement that we have to have a clock with con_id
-of "timer0", which will be good for DT bindings since clock-names =
-"timer0" doesn't really make sense.
+MP1 Gate is a gate with a set and a clear register.
 
-Additionally, when we convert to the common clock framework, most of
-the clocks will be platform devices, which will not be available at
-this point during the boot process, so we will need to pass a clock
-that is available (i.e. ref_clk) instead of the "timer0" clock.
-
-NB: The comment added in time.c is not entirely true when this patch
-is applied, but it will be correct once the conversion to the common
-clock framework is complete in subsequent patches.
-
-Also, drop use of extern in header file since we are touching the
-definition.
-
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
+ drivers/clk/clk-stm32mp1.c | 143 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 143 insertions(+)
 
-v8 changes:
-- none
-
-v7 changes:
-- new in v7
-
- arch/arm/mach-davinci/da830.c               |  2 +-
- arch/arm/mach-davinci/da850.c               |  2 +-
- arch/arm/mach-davinci/dm355.c               |  2 +-
- arch/arm/mach-davinci/dm365.c               |  2 +-
- arch/arm/mach-davinci/dm644x.c              |  2 +-
- arch/arm/mach-davinci/dm646x.c              |  2 +-
- arch/arm/mach-davinci/include/mach/common.h |  3 ++-
- arch/arm/mach-davinci/time.c                | 13 +++++++++----
- 8 files changed, 17 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 350d767..0b17e5a 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -1224,5 +1224,5 @@ void __init da830_init(void)
- void __init da830_init_time(void)
- {
- 	davinci_clk_init(da830_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timerp64_0_clk);
- }
-diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index 34117e61..1dbf01c 100644
---- a/arch/arm/mach-davinci/da850.c
-+++ b/arch/arm/mach-davinci/da850.c
-@@ -1396,5 +1396,5 @@ void __init da850_init(void)
- void __init da850_init_time(void)
- {
- 	davinci_clk_init(da850_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timerp64_0_clk);
- }
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index f294804..0da7516 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -1047,7 +1047,7 @@ void __init dm355_init(void)
- void __init dm355_init_time(void)
- {
- 	davinci_clk_init(dm355_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timer0_clk);
- }
- 
- int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 1e3df9d..871372a 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -1172,7 +1172,7 @@ void __init dm365_init(void)
- void __init dm365_init_time(void)
- {
- 	davinci_clk_init(dm365_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timer0_clk);
- }
- 
- static struct resource dm365_vpss_resources[] = {
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index b409801..71a16fc 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -935,7 +935,7 @@ void __init dm644x_init(void)
- void __init dm644x_init_time(void)
- {
- 	davinci_clk_init(dm644x_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timer0_clk);
- }
- 
- int __init dm644x_init_video(struct vpfe_config *vpfe_cfg,
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index 109ab1f..e1d6e92 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -956,7 +956,7 @@ void __init dm646x_init_time(unsigned long ref_clk_rate,
- 	ref_clk.rate = ref_clk_rate;
- 	aux_clkin.rate = aux_clkin_rate;
- 	davinci_clk_init(dm646x_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timer0_clk);
- }
- 
- static int __init dm646x_init_devices(void)
-diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
-index f0d5e858..5f45d0a 100644
---- a/arch/arm/mach-davinci/include/mach/common.h
-+++ b/arch/arm/mach-davinci/include/mach/common.h
-@@ -12,11 +12,12 @@
- #ifndef __ARCH_ARM_MACH_DAVINCI_COMMON_H
- #define __ARCH_ARM_MACH_DAVINCI_COMMON_H
- 
-+#include <linux/clk.h>
- #include <linux/compiler.h>
- #include <linux/types.h>
- #include <linux/reboot.h>
- 
--extern void davinci_timer_init(void);
-+void davinci_timer_init(struct clk *clk);
- 
- extern void davinci_irq_init(void);
- extern void __iomem *davinci_intc_base;
-diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
-index 1bb991a..2521333 100644
---- a/arch/arm/mach-davinci/time.c
-+++ b/arch/arm/mach-davinci/time.c
-@@ -334,10 +334,8 @@ static struct clock_event_device clockevent_davinci = {
- 	.set_state_oneshot	= davinci_set_oneshot,
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 6261a92..56b738e 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -140,6 +140,11 @@ struct div_cfg {
+ 	const struct clk_div_table *table;
  };
  
--
--void __init davinci_timer_init(void)
-+void __init davinci_timer_init(struct clk *timer_clk)
- {
--	struct clk *timer_clk;
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 	unsigned int clockevent_id;
- 	unsigned int clocksource_id;
-@@ -373,7 +371,14 @@ void __init davinci_timer_init(void)
- 		}
- 	}
++struct stm32_gate_cfg {
++	struct gate_cfg		*gate;
++	const struct clk_ops	*ops;
++};
++
+ static struct clk_hw *
+ _clk_hw_register_gate(struct device *dev,
+ 		      struct clk_hw_onecell_data *clk_data,
+@@ -191,6 +196,112 @@ struct div_cfg {
+ 					     lock);
+ }
  
--	timer_clk = clk_get(NULL, "timer0");
-+	/*
-+	 * REVISIT: Currently, timer_clk will be "ref_clk". However, the actual
-+	 * clock for this device comes from a PLL AUXCLK or a PSC clock
-+	 * (depending on the SoC). The PLL and PSC clocks are not registered
-+	 * until later in boot because they are platform devices. We should try
-+	 * again later to get the real clock so that the real clock is not
-+	 * turned off when disabling unused clocks, which would stop the timer.
-+	 */
- 	BUG_ON(IS_ERR(timer_clk));
- 	clk_prepare_enable(timer_clk);
++/* MP1 Gate clock with set & clear registers */
++
++static int mp1_gate_clk_enable(struct clk_hw *hw)
++{
++	if (!clk_gate_ops.is_enabled(hw))
++		clk_gate_ops.enable(hw);
++
++	return 0;
++}
++
++static void mp1_gate_clk_disable(struct clk_hw *hw)
++{
++	struct clk_gate *gate = to_clk_gate(hw);
++	unsigned long flags = 0;
++
++	if (clk_gate_ops.is_enabled(hw)) {
++		spin_lock_irqsave(gate->lock, flags);
++		writel_relaxed(BIT(gate->bit_idx), gate->reg + RCC_CLR);
++		spin_unlock_irqrestore(gate->lock, flags);
++	}
++}
++
++const struct clk_ops mp1_gate_clk_ops = {
++	.enable		= mp1_gate_clk_enable,
++	.disable	= mp1_gate_clk_disable,
++	.is_enabled	= clk_gate_is_enabled,
++};
++
++static struct clk_hw *
++_get_stm32_gate(void __iomem *base,
++		const struct stm32_gate_cfg *cfg, spinlock_t *lock)
++{
++	struct clk_gate *gate;
++	struct clk_hw *gate_hw;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	gate->reg = cfg->gate->reg_off + base;
++	gate->bit_idx = cfg->gate->bit_idx;
++	gate->flags = cfg->gate->gate_flags;
++	gate->lock = lock;
++	gate_hw = &gate->hw;
++
++	return gate_hw;
++}
++
++static struct clk_hw *
++clk_stm32_register_gate_ops(struct device *dev,
++			    const char *name,
++			    const char *parent_name,
++			    unsigned long flags,
++			    void __iomem *base,
++			    const struct stm32_gate_cfg *cfg,
++			    spinlock_t *lock)
++{
++	struct clk_init_data init = { NULL };
++	struct clk_gate *gate;
++	struct clk_hw *hw;
++	int ret;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = flags;
++
++	init.ops = &clk_gate_ops;
++
++	if (cfg->ops)
++		init.ops = cfg->ops;
++
++	hw = _get_stm32_gate(base, cfg, lock);
++	if (IS_ERR(hw))
++		return ERR_PTR(-ENOMEM);
++
++	hw->init = &init;
++
++	ret = clk_hw_register(dev, hw);
++	if (ret) {
++		kfree(gate);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++
++static struct clk_hw *
++_clk_stm32_register_gate(struct device *dev,
++			 struct clk_hw_onecell_data *clk_data,
++			 void __iomem *base, spinlock_t *lock,
++			 const struct clock_config *cfg)
++{
++	return clk_stm32_register_gate_ops(dev,
++				    cfg->name,
++				    cfg->parent_name,
++				    cfg->flags,
++				    base,
++				    cfg->cfg,
++				    lock);
++}
++
+ #define GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags)\
+ {\
+ 	.id		= _id,\
+@@ -239,12 +350,44 @@ struct div_cfg {
+ 	DIV_TABLE(_id, _name, _parent, _flags, _offset, _shift, _width,\
+ 		  _div_flags, NULL)
+ 
++/* STM32 GATE */
++#define STM32_GATE(_id, _name, _parent, _flags, _gate)\
++{\
++	.id		= _id,\
++	.name		= _name,\
++	.parent_name	= _parent,\
++	.flags		= _flags,\
++	.cfg		= (struct stm32_gate_cfg *) {_gate},\
++	.func		= _clk_stm32_register_gate,\
++}
++
++#define _STM32_GATE(_gate_offset, _gate_bit_idx, _gate_flags, _ops)\
++	(&(struct stm32_gate_cfg) {\
++		&(struct gate_cfg) {\
++			.reg_off	= _gate_offset,\
++			.bit_idx	= _gate_bit_idx,\
++			.gate_flags	= _gate_flags,\
++		},\
++		.ops		= _ops,\
++	})
++
++#define _GATE_MP1(_gate_offset, _gate_bit_idx, _gate_flags)\
++	_STM32_GATE(_gate_offset, _gate_bit_idx, _gate_flags,\
++		    &mp1_gate_clk_ops)\
++
++#define GATE_MP1(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags)\
++	STM32_GATE(_id, _name, _parent, _flags,\
++		   _GATE_MP1(_offset, _bit_idx, _gate_flags))
++
+ static const struct clock_config stm32mp1_clock_cfg[] = {
+ 	/* Oscillator divider */
+ 	DIV(NO_ID, "clk-hsi-div", "clk-hsi", 0, RCC_HSICFGR, 0, 2,
+ 	    CLK_DIVIDER_READ_ONLY),
+ 
+ 	/*  External / Internal Oscillators */
++	GATE_MP1(CK_HSE, "ck_hse", "clk-hse", 0, RCC_OCENSETR, 8, 0),
++	GATE_MP1(CK_CSI, "ck_csi", "clk-csi", 0, RCC_OCENSETR, 4, 0),
++	GATE_MP1(CK_HSI, "ck_hsi", "clk-hsi-div", 0, RCC_OCENSETR, 0, 0),
+ 	GATE(CK_LSI, "ck_lsi", "clk-lsi", 0, RCC_RDLSICR, 0, 0),
+ 	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
  
 -- 
-2.7.4
+1.9.1
