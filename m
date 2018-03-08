@@ -1,47 +1,63 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180322160402.o2lon3bbncgss4sv@flea>
-Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20180322160402.o2lon3bbncgss4sv@flea>
-Message-ID: <152173721645.178046.16783083391543934111@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.17
-Date: Thu, 22 Mar 2018 09:46:56 -0700
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1520509190.4264.28.camel@baylibre.com>
+Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 08 Mar 2018 12:39:50 +0100
+In-Reply-To: <1520509048.4264.26.camel@baylibre.com>
+References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
+	 <1520503497.4264.12.camel@baylibre.com>
+	 <290e041d-7b53-9e62-92ce-33651ecb8a2f@rock-chips.com>
+	 <1520509048.4264.26.camel@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2018-03-22 09:04:02)
-> Hi Mike, Stephen,
-> =
+On Thu, 2018-03-08 at 12:37 +0100, Jerome Brunet wrote:
+> On Thu, 2018-03-08 at 19:28 +0800, Shawn Lin wrote:
+> > > > +    if (core->phase < 0 && core->ops->get_phase)
+> > > 
+> > > Why bother with core->phase < 0 ?
+> > > if core->ops->get_phase is available, why not call it anyway ?
+> > > 
+> > > The phase may have changed since it was cached.
+> > > 
+> > > A typical example would be phases based on adding fixed delays:
+> > > 
+> > > * Take a 200MHz clock and set phase to 180 => a 2.5ns delay is set
+> > > * Clock rate change to 100MHz but delay is still 2.5ns
+> > >     -> cached phase = 180
+> > >     -> actual phase = 90
+> > 
+> > Good point!
+> > 
+> > (1)So either we should update phase once its rate is updated, for
+> > instance, doing it in clk_change_rate, or
+> 
+> I don't think this would be a good option. The phase depending on the rate is
+> just one example. I'm pretty sure one could come up with another example 
+> 
+> > 
+> > (2)we should always try to get the actual phase here.
+> 
+> If the callback is available, lets use it. I prefer this second option
+> 
+> > 
+> > If we do anyway call ->get_phase, we should never need core->phase since
+> > it doesn't reflect the actual phase maybe.
+> 
+> The cached value is used by debugfs so it is still a valuable information. I
+> would keep it around for now.
 
-> Here is our usual pull request for the next merge window.
-> =
+Oh ! and let's not forget that a clock driver is allowed to implement
+set_phase() w/o implementing get_phase() ... so you definitively want to keep
+the cached value around
 
-> Thanks!
-> Maxime
-> =
-
-> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1=
-b2:
-> =
-
->   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-> =
-
-> are available in the Git repository at:
-> =
-
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-for-4.17
-> =
-
-> for you to fetch changes up to f422fa558aada511406432bc5974d3a5bf728227:
-> =
-
->   clk: sunxi-ng: add missing hdmi-slow clock for H6 CCU (2018-03-21 12:27=
-:13 +0100)
-
-Thanks. Pulled into clk-next.
+> 
+> > 
+> > Am I right? If yes, which option is more reasonable?
+> 
+> 
