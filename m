@@ -1,65 +1,64 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 6/8] remoteproc: da8xx: prepare and unprepare the clock where needed
-Date: Fri, 23 Mar 2018 10:36:07 +0100
-Message-Id: <20180323093609.24576-7-brgl@bgdev.pl>
-In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
-References: <20180323093609.24576-1-brgl@bgdev.pl>
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v2 1/4] clk: qcom: Clear hardware clock control bit of RCG
+Date: Thu,  8 Mar 2018 12:48:12 +0530
+Message-Id: <1520493495-3084-2-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+For upcoming targets like sdm845, POR value of the hardware clock control
+bit is set for most of root clocks which needs to be cleared for software
+to be able to control. For older targets like MSM8996, this bit is reserved
+bit and having POR value as 0 so this patch will work for the older targets
+too. So update the configuration mask to take care of the same to clear
+hardware clock control bit.
 
-We're currently switching the platform to using the common clock
-framework. We need to explicitly prepare and unprepare the rproc
-clock.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/clk-rcg2.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 2b24291337b7..f134192922e0 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	ret = clk_enable(dsp_clk);
-+	ret = clk_prepare_enable(dsp_clk);
- 	if (ret) {
--		dev_err(dev, "clk_enable() failed: %d\n", ret);
-+		dev_err(dev, "clk_prepare_enable() failed: %d\n", ret);
- 		return ret;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index bbeaf9c..e63db10 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2013, 2018, The Linux Foundation. All rights reserved.
+  *
+  * This software is licensed under the terms of the GNU General Public
+  * License version 2, as published by the Free Software Foundation, and
+@@ -42,6 +42,7 @@
+ #define CFG_MODE_SHIFT		12
+ #define CFG_MODE_MASK		(0x3 << CFG_MODE_SHIFT)
+ #define CFG_MODE_DUAL_EDGE	(0x2 << CFG_MODE_SHIFT)
++#define CFG_HW_CLK_CTRL_MASK	BIT(20)
+
+ #define M_REG			0x8
+ #define N_REG			0xc
+@@ -276,7 +277,7 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
  	}
- 
-@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
- 	struct da8xx_rproc *drproc = rproc->priv;
- 
- 	davinci_clk_reset_assert(drproc->dsp_clk);
--	clk_disable(drproc->dsp_clk);
-+	clk_disable_unprepare(drproc->dsp_clk);
- 
- 	return 0;
- }
--- 
-2.16.1
+
+ 	mask = BIT(rcg->hid_width) - 1;
+-	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK;
++	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+ 	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
+ 	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
