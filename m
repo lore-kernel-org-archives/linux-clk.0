@@ -1,43 +1,54 @@
-Return-Path: <dianders@google.com>
+Return-Path: <RAJANV@xilinx.com>
+Return-Path: rajan.vaja@xilinx.com
+From: Rajan Vaja <rajan.vaja@xilinx.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<JOLLYS@xilinx.com>, <michals@xilinx.com>, Rajan Vaja <rajanv@xilinx.com>
+Subject: [PATCH] clk: clk-fixed-factor: Use new macro CLK_OF_DECLARE_DRIVER
+Date: Thu, 8 Mar 2018 06:15:00 -0800
+Message-ID: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <1522321466-21755-2-git-send-email-mgautam@codeaurora.org>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org> <1522321466-21755-2-git-send-email-mgautam@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 29 Mar 2018 13:55:55 -0700
-Message-ID: <CAD=FV=UXvf+_rvbFGrHAQ1N0kbrMR_c2=LBVD=AMuL6DAjWO+Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] clk: msm8996-gcc: change halt check for USB/PCIE pipe_clk
-To: Manu Gautam <mgautam@codeaurora.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>, Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Fixed factor clock has two initialization at of_clk_init()
+time and also during platform driver probe. So declare the
+fixed factor clock with CLK_OF_DECLARE_DRIVER instead of
+CLK_OF_DECLARE.
 
-On Thu, Mar 29, 2018 at 4:04 AM, Manu Gautam <mgautam@codeaurora.org> wrote:
-> The USB and PCIE pipe clocks are sourced from external clocks
-> inside the QMP USB/PCIE PHYs. Enabling or disabling of PIPE RCG
-> clocks is dependent on PHY initialization sequence hence
-> update halt_check to BRANCH_HALT_DELAY for these clocks so
-> that clock status bit is not polled when enabling or disabling
-> the clocks. It allows to simplify PHY client driver code which
-> is both user and source of the pipe_clk and avoid error logging
-> related status check on clk_disable/enable.
->
-> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-> ---
->  drivers/clk/qcom/gcc-msm8996.c | 4 ++++
->  1 file changed, 4 insertions(+)
+See below commit for reference:
+"clk: sunxi: apb0: Use new macro CLK_OF_DECLARE_DRIVER"
+(sha1: 915128b621a05c63fa58ca9e4cbdf394bbe592f3)
 
-As per my feedback on <https://patchwork.kernel.org/patch/10314937/>,
-I'm not a fan of this.  Hopefully we can adjust the PHY driver so it's
-not needed.
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Suggested-by: Michal Simek <michal.simek@xilinx.com>
+---
+ drivers/clk/clk-fixed-factor.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
--Doug
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.=
+c
+index a5d402d..d72ef2d 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -196,8 +196,9 @@ void __init of_fixed_factor_clk_setup(struct device_nod=
+e *node)
+ {
+        _of_fixed_factor_clk_setup(node);
+ }
+-CLK_OF_DECLARE(fixed_factor_clk, "fixed-factor-clock",
+-               of_fixed_factor_clk_setup);
++
++CLK_OF_DECLARE_DRIVER(fixed_factor_clk, "fixed-factor-clock",
++                     of_fixed_factor_clk_setup);
+
+ static int of_fixed_factor_clk_remove(struct platform_device *pdev)
+ {
+--
+2.7.4
+
+This email and any attachments are intended for the sole use of the named r=
+ecipient(s) and contain(s) confidential information that may be proprietary=
+, privileged or copyrighted under applicable law. If you are not the intend=
+ed recipient, do not read, copy, or forward this email message or any attac=
+hments. Delete this email message and any attachments immediately.
