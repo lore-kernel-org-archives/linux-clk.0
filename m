@@ -1,97 +1,77 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <richard.genoud@gmail.com>
+Return-Path: <richard.genoud@gmail.com>
+From: Richard Genoud <richard.genoud@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>,
+	Ralph Sennhauser <ralph.sennhauser@gmail.com>,
 	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 8/8] clk: davinci: kill davinci_clk_reset_assert/deassert()
-Date: Tue, 27 Mar 2018 11:20:31 +0200
-Message-Id: <20180327092031.11251-9-brgl@bgdev.pl>
-In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
-References: <20180327092031.11251-1-brgl@bgdev.pl>
+	linux-kernel@vger.kernel.org,
+	Richard Genoud <richard.genoud@gmail.com>
+Subject: [PATCH] clk: mvebu: armada-38x: add support for missing clocks
+Date: Thu,  8 Mar 2018 10:03:00 +0100
+Message-Id: <20180308090300.23544-1-richard.genoud@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
+or 1333MHz (industrial).
 
-This code is no longer used. Remove it.
+They have also some dip-switches to select a different clock (666, 800,
+1066, 1200).
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
+The funny thing is that the recovery button is on the MPP34 fq selector.
+So, when booting an industrial board with this button down, the frequency
+666MHz is selected (and the kernel didn't boot).
+
+This patch add all the missing clocks.
+
+The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
+
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
 ---
- arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------------
- drivers/clk/davinci/psc.c                  | 18 ------------------
- 2 files changed, 39 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+ drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
-deleted file mode 100644
-index 42ed4f2f5ce4..000000000000
---- a/arch/arm/mach-davinci/include/mach/clock.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/*
-- * arch/arm/mach-davinci/include/mach/clock.h
-- *
-- * Clock control driver for DaVinci - header file
-- *
-- * Authors: Vladimir Barinov <source@mvista.com>
-- *
-- * 2007 (c) MontaVista Software, Inc. This file is licensed under
-- * the terms of the GNU General Public License version 2. This program
-- * is licensed "as is" without any warranty of any kind, whether express
-- * or implied.
-- */
--#ifndef __ASM_ARCH_DAVINCI_CLOCK_H
--#define __ASM_ARCH_DAVINCI_CLOCK_H
--
--struct clk;
--
--int davinci_clk_reset_assert(struct clk *c);
--int davinci_clk_reset_deassert(struct clk *c);
--
--#endif
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 063df62381ea..75c4bc6f23e3 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -295,24 +295,6 @@ static int davinci_lpsc_clk_reset(struct clk *clk, bool reset)
- 	return 0;
+diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
+index 394aa6f03f01..9ff4ea63932d 100644
+--- a/drivers/clk/mvebu/armada-38x.c
++++ b/drivers/clk/mvebu/armada-38x.c
+@@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
  }
  
--/*
-- * REVISIT: These exported functions can be removed after a non-DT lookup is
-- * added to the reset controller framework and the davinci-rproc driver is
-- * updated to use the generic reset controller framework.
-- */
--
--int davinci_clk_reset_assert(struct clk *clk)
--{
--	return davinci_lpsc_clk_reset(clk, true);
--}
--EXPORT_SYMBOL(davinci_clk_reset_assert);
--
--int davinci_clk_reset_deassert(struct clk *clk)
--{
--	return davinci_lpsc_clk_reset(clk, false);
--}
--EXPORT_SYMBOL(davinci_clk_reset_deassert);
--
- static int davinci_psc_reset_assert(struct reset_controller_dev *rcdev,
- 				    unsigned long id)
- {
--- 
-2.16.1
+ static const u32 armada_38x_cpu_frequencies[] __initconst = {
+-	0, 0, 0, 0,
+-	1066 * 1000 * 1000, 0, 0, 0,
++	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
++	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
+ 	1332 * 1000 * 1000, 0, 0, 0,
+ 	1600 * 1000 * 1000, 0, 0, 0,
+-	1866 * 1000 * 1000,
++	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
+ };
+ 
+ static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
+@@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
+ };
+ 
+ static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
+-	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+-	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+-	{1, 2}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {1, 2}, {0, 1},
++	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {0, 1}, {1, 2},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+@@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+-	{1, 2}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {0, 1}, {7, 15},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
