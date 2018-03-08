@@ -1,101 +1,68 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen
-	<ohad@wizery.com>
-CC: David Lechner <david@lechnology.com>, Kevin Hilman <khilman@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob
- Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree <devicetree@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>,
-        <linux-clk@vger.kernel.org>,
-        Linux ARM
-	<linux-arm-kernel@lists.infradead.org>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
- <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
- <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
- <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
- <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <6c55e081-57ba-6c39-8494-cda5022aa927@ti.com>
-Date: Tue, 27 Mar 2018 11:39:54 +0530
-MIME-Version: 1.0
-In-Reply-To: <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1520502097.4264.3.camel@baylibre.com>
+Subject: Re: [PATCH] clk: update cached phase to respect the fact when
+ setting phase
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, Stable <stable@vger.kernel.org>
+Date: Thu, 08 Mar 2018 10:41:37 +0100
+In-Reply-To: <1520491781-132529-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1520491781-132529-1-git-send-email-shawn.lin@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bart,
-
-On Friday 23 March 2018 10:46 PM, Bartosz Golaszewski wrote:
-> 2018-03-23 18:08 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
->> Quoting Bartosz Golaszewski (2018-03-23 09:55:47)
->>> 2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
->>>> Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
->>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>>
->>>>> This series converts the only user of the handcoded, mach-specific reset
->>>>> routines in the davinci platform to using the reset framework.
->>>>>
->>>>> Patch 1 modifies the way lookup entries are registered with the reset
->>>>> framework.
->>>>>
->>>>> Patches 2-4 add necessary lookups/DT-properties.
->>>>>
->>>>> Patches 5-7 convert the davinci-rproc driver to the reset framework.
->>>>>
->>>>> Patch 8 removes now dead code.
->>>>>
->>>>> Philipp: it turned out that it's indeed better to use the reset
->>>>> controller's device name for the entry lookup.
->>>>>
->>>>> Tested both in DT and legacy modes by booting the examples from
->>>>> ti-ipc-rtos recipe in meta-ti.
->>>>>
->>>>> This series applies on top of David Lechner's common-clk-v9 branch[1]
->>>>> with Philipp Zabel's reset/next branch[2] pulled in.
->>>>>
->>>>> It can be found in my github tree as well[3].
->>>>>
->>>>
->>>> What's the merge strategy for the rest of the patches? I should apply
->>>> the clk ones after the next -rc1?
->>>
->>> Or maybe Philipp can provide us with an immutable branch with the reset patches?
->>>
->>> The you could apply the driver patches and let Sekhar take all the
->>> platform code?
->>>
->>
->> Ok that could work too.
+On Thu, 2018-03-08 at 14:49 +0800, Shawn Lin wrote:
+> It's found that the final phase set by driver doesn't match that of
+> the output from clk_summary:
 > 
-> Ohad, Bjorn can you ack the remoteproc patches? Are you OK with
-> Stephen taking them through the clock tree? Otherwise it would get
-> complicated since they depend on the first clk patch and the last clk
-> patch depends on them.
+> dwmmc_rockchip fe310000.dwmmc: Successfully tuned phase to 346
+> mmc0: new ultra high speed SDR104 SDIO card at address 0001
+> 
+> cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
+> sdio_sample	0        1        0    50000000 0 0
+> 
+> It seems the cached core->phase isn't updated after the clk was
+> registered. So fix this issue by updating the core->phase if setting
+> phase successfully.
+> 
+> Fixes: 9e4d04adeb1a ("clk: add clk_core_set_phase_nolock function")
+> Cc: Stable <stable@vger.kernel.org>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-I will not be queuing the DTS patches for v4.17. They depend on clock
-framework DTS patches which itself I plan to queue for v4.18. Given
-this, I think the best bet is:
+Good catch Shawn.
+Actually, I have had already sent a fix for this issue
 
-Ohad/Bjorn queue remoteproc patches already acked by Suman and having no
-dependencies. That is, 5/8 and 6/8.
+https://patchwork.kernel.org/patch/10220811/
 
-If Philipp can provide an immutable branch with reset changes, it will
-be great and Stephen can queue 4/8. If not, its best to resend that
-patch to Stephen once v4.17-rc1 is out.
+But I think yours is better as it updates the phase only if the phase has
+actually been set
 
-The remaining patches need to wait till v4.18 (or even v4.19 if
-dependencies don't pan out well).
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Tested-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Thanks,
-Sekhar
+> ---
+> 
+>  drivers/clk/clk.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 0f686a9..617e562 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2309,8 +2309,11 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
+>  
+>  	trace_clk_set_phase(core, degrees);
+>  
+> -	if (core->ops->set_phase)
+> +	if (core->ops->set_phase) {
+>  		ret = core->ops->set_phase(core->hw, degrees);
+> +		if (!ret)
+> +			core->phase = degrees;
+> +	}
+>  
+>  	trace_clk_set_phase_complete(core, degrees);
+>  
