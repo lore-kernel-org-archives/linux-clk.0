@@ -1,83 +1,85 @@
-Return-Path: <richard.genoud@gmail.com>
-Return-Path: <richard.genoud@gmail.com>
-From: Richard Genoud <richard.genoud@gmail.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Ralph Sennhauser <ralph.sennhauser@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Richard Genoud <richard.genoud@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] clk: mvebu: armada-38x: add support for missing clocks
-Date: Tue, 13 Mar 2018 16:27:02 +0100
-Message-Id: <20180313152702.21070-1-richard.genoud@gmail.com>
+Return-Path: <eajames@linux.vnet.ibm.com>
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org, joel@jms.id.au, mturquette@baylibre.com,
+        sboyd@kernel.org, eajames@linux.vnet.ibm.com, mine260309@gmail.com,
+        ryan_chen@aspeedtech.com
+Subject: [PATCH v2 2/2] clk: aspeed: Prevent reset if clock is enabled
+Date: Thu,  8 Mar 2018 14:57:20 -0600
+In-Reply-To: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com>
+Message-Id: <1520542640-9185-3-git-send-email-eajames@linux.vnet.ibm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
-or 1333MHz (industrial).
+According to the Aspeed specification, the reset and enable sequence
+should be done when the clock is stopped. The specification doesn't
+define behavior if the reset is done while the clock is enabled.
 
-They have also some dip-switches to select a different clock (666, 800,
-1066, 1200).
+>From testing on the AST2500, the LPC Controller has problems if the
+clock is reset while enabled.
 
-The funny thing is that the recovery button is on the MPP34 fq selector.
-So, when booting an industrial board with this button down, the frequency
-666MHz is selected (and the kernel didn't boot).
+Therefore, check whether the clock is enabled or not before performing
+the reset and enable sequence in the Aspeed clock driver.
 
-This patch add all the missing clocks.
-
-The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
-
-Fixes: 0e85aeced4d6 ("clk: mvebu: add clock support for Armada 380/385")
-Cc: <stable@vger.kernel.org> # 3.16.x: 9593f4f56cf5: clk: mvebu: armada-38x: add support for 1866MHz variants
-Cc: <stable@vger.kernel.org> # 3.16.x
-
-Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
-Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Root-caused-by: Lei Yu <mine260309@gmail.com>
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 ---
- drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/clk/clk-aspeed.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
-index 394aa6f03f01..9ff4ea63932d 100644
---- a/drivers/clk/mvebu/armada-38x.c
-+++ b/drivers/clk/mvebu/armada-38x.c
-@@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 1687771..5eb50c3 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -205,6 +205,18 @@ struct aspeed_clk_soc_data {
+ 	.calc_pll = aspeed_ast2400_calc_pll,
+ };
+ 
++static int aspeed_clk_is_enabled(struct clk_hw *hw)
++{
++	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
++	u32 clk = BIT(gate->clock_idx);
++	u32 enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
++	u32 reg;
++
++	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
++
++	return ((reg & clk) == enval) ? 1 : 0;
++}
++
+ static int aspeed_clk_enable(struct clk_hw *hw)
+ {
+ 	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
+@@ -215,6 +227,11 @@ static int aspeed_clk_enable(struct clk_hw *hw)
+ 
+ 	spin_lock_irqsave(gate->lock, flags);
+ 
++	if (aspeed_clk_is_enabled(hw)) {
++		spin_unlock_irqrestore(gate->lock, flags);
++		return 0;
++	}
++
+ 	if (gate->reset_idx >= 0) {
+ 		/* Put IP in reset */
+ 		regmap_update_bits(gate->map, ASPEED_RESET_CTRL, rst, rst);
+@@ -255,18 +272,6 @@ static void aspeed_clk_disable(struct clk_hw *hw)
+ 	spin_unlock_irqrestore(gate->lock, flags);
  }
  
- static const u32 armada_38x_cpu_frequencies[] __initconst = {
--	0, 0, 0, 0,
--	1066 * 1000 * 1000, 0, 0, 0,
-+	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
-+	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
- 	1332 * 1000 * 1000, 0, 0, 0,
- 	1600 * 1000 * 1000, 0, 0, 0,
--	1866 * 1000 * 1000,
-+	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
- };
- 
- static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
-@@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
- };
- 
- static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
--	{0, 1}, {0, 1}, {0, 1}, {0, 1},
--	{1, 2}, {0, 1}, {0, 1}, {0, 1},
--	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-+	{1, 2}, {0, 1}, {1, 2}, {0, 1},
-+	{1, 2}, {0, 1}, {1, 2}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-+	{1, 2}, {0, 1}, {0, 1}, {1, 2},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
-@@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
--	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-+	{1, 2}, {0, 1}, {0, 1}, {7, 15},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+-static int aspeed_clk_is_enabled(struct clk_hw *hw)
+-{
+-	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
+-	u32 clk = BIT(gate->clock_idx);
+-	u32 enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
+-	u32 reg;
+-
+-	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
+-
+-	return ((reg & clk) == enval) ? 1 : 0;
+-}
+-
+ static const struct clk_ops aspeed_clk_gate_ops = {
+ 	.enable = aspeed_clk_enable,
+ 	.disable = aspeed_clk_disable,
+-- 
+1.8.3.1
