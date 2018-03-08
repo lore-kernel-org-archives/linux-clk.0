@@ -1,99 +1,62 @@
-Return-Path: <shawn.lin@rock-chips.com>
-Cc: shawn.lin@rock-chips.com, linux-clk@vger.kernel.org,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
-To: Jerome Brunet <jbrunet@baylibre.com>, Heiko Stuebner <heiko@sntech.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
- <1520503497.4264.12.camel@baylibre.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <290e041d-7b53-9e62-92ce-33651ecb8a2f@rock-chips.com>
-Date: Thu, 8 Mar 2018 19:28:59 +0800
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY
+	<loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH v2 00/12] Introduce STM32MP1 clock driver
+Date: Thu, 8 Mar 2018 17:53:53 +0100
+Message-ID: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1520503497.4264.12.camel@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-+ Geert
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-On 2018/3/8 18:04, Jerome Brunet wrote:
-> On Thu, 2018-03-08 at 15:54 +0800, Shawn Lin wrote:
->> It's found that the clock phase output from clk_summary is
->> wrong compared to the actual phase reading from the register.
->>
->> cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
->> sdio_sample     0        1        0 50000000          0 -22
->>
->> It expose an issue that clk core, clk_core_get_phase, always
->> return the cached core->phase which should be either updated
->> by calling clk_set_phase or directly from the first place the
->> clk was registered. When registering the clk, the core->phase
->> geting from ->get_phase() may return negative value indicating
->> error. This is quite common since the clk's phase may be highly
->> related to its praent chain, but it was temporary orphan when
->> registered, since its parent chain hadn't be ready at that time,
->> so the clk drivers decide to return error in this case. However,
->> if no clk_set_phase is called, core->phase would never be updated.
->> This is wrong, and we should try to update it when all its parent
->> chain is settled down, like the way of updating clock rate for that.
->> It's not derserved to complicate the code but just update it if
->> seeing it's a nagative number when calling clk_core_get_phase, which
->> would be much simple and enough.
->>
->> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->> ---
->>
->>   drivers/clk/clk.c | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 0f686a9..b49e4c8 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -2370,6 +2370,15 @@ static int clk_core_get_phase(struct clk_core *core)
->>   	int ret;
->>   
->>   	clk_prepare_lock();
->> +	/*
->> +	 * clk_set_phase always set the phase in [0, 360],
->> +	 * so the only reason for core->phase to be nagative
->> +	 * number is it's a error number propagated back from
->> +	 * the clk drivers. So we should try to update it if
->> +	 * possible.
->> +	 */
->> +	if (core->phase < 0 && core->ops->get_phase)
-> 
-> Why bother with core->phase < 0 ?
-> if core->ops->get_phase is available, why not call it anyway ?
-> 
-> The phase may have changed since it was cached.
-> 
-> A typical example would be phases based on adding fixed delays:
-> 
-> * Take a 200MHz clock and set phase to 180 => a 2.5ns delay is set
-> * Clock rate change to 100MHz but delay is still 2.5ns
->    -> cached phase = 180
->    -> actual phase = 90
+v2:
+  - Don't use MFD, use existing binding of STM32 RCC.
+  - Rework Peripheral and Kernel clocks
+  - cosmetic changes
 
-Good point!
+This patch-set introduces clock driver for STM32MP157 based on Arm Cortex-A7.
+The driver patch is split in several patches (by kind of clock) to facilitate
+code reviewing.
 
-(1)So either we should update phase once its rate is updated, for
-instance, doing it in clk_change_rate, or
+Gabriel Fernandez (12):
+  dt-bindings: Document STM32MP1 Reset Clock Controller (RCC) bindings
+  clk: stm32mp1: Introduce STM32MP1 clock driver
+  clk: stm32mp1: add MP1 gate for hse/hsi/csi oscillators
+  clk: stm32mp1: add Source Clocks for PLLs
+  clk: stm32mp1: add PLL clocks
+  clk: stm32mp1: add Post-dividers for PLL
+  clk: stm32mp1: add Sub System clocks
+  clk: stm32mp1: add Kernel timers
+  clk: stm32mp1: add Peripheral & Kernel Clocks
+  clk: stm32mp1: add RTC clock
+  clk: stm32mp1: add MCO clocks
+  clk: stm32mp1: add Debug clocks
 
-(2)we should always try to get the actual phase here.
+ .../devicetree/bindings/clock/st,stm32mp1-rcc.txt  |   60 +
+ drivers/clk/Kconfig                                |    6 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-stm32mp1.c                         | 2117 ++++++++++++++++++++
+ include/dt-bindings/clock/stm32mp1-clks.h          |  254 +++
+ 5 files changed, 2438 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
+ create mode 100644 drivers/clk/clk-stm32mp1.c
+ create mode 100644 include/dt-bindings/clock/stm32mp1-clks.h
 
-If we do anyway call ->get_phase, we should never need core->phase since
-it doesn't reflect the actual phase maybe.
-
-Am I right? If yes, which option is more reasonable?
-
-
-> 
->> +		core->phase = core->ops->get_phase(core->hw);
->>   	ret = core->phase;
->>   	clk_prepare_unlock();
->>   
-> 
-> 
-> 
-> 
+-- 
+1.9.1
