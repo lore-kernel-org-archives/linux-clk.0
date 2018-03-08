@@ -1,389 +1,73 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 09/11] clk: actions: Add composite clock support
-Date: Sat, 24 Mar 2018 19:01:57 +0530
-Message-Id: <20180324133159.4824-10-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
-References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1520510633.4264.42.camel@baylibre.com>
+Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>, Michael Turquette
+	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org, Geert
+	Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 08 Mar 2018 13:03:53 +0100
+In-Reply-To: <ceb696cb-9961-00c0-20ef-324c590fb0ed@rock-chips.com>
+References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
+	 <1520503497.4264.12.camel@baylibre.com>
+	 <290e041d-7b53-9e62-92ce-33651ecb8a2f@rock-chips.com>
+	 <1520509048.4264.26.camel@baylibre.com>
+	 <1520509190.4264.28.camel@baylibre.com>
+	 <ceb696cb-9961-00c0-20ef-324c590fb0ed@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi composite clock. This clock
-consists of gate, mux, divider, factor and fixed factor clocks.
+On Thu, 2018-03-08 at 19:46 +0800, Shawn Lin wrote:
+> > > > Good point!
+> > > > 
+> > > > (1)So either we should update phase once its rate is updated, for
+> > > > instance, doing it in clk_change_rate, or
+> > > 
+> > > I don't think this would be a good option. The phase depending on the rate is
+> > > just one example. I'm pretty sure one could come up with another example
+> > > 
+> > > > 
+> > > > (2)we should always try to get the actual phase here.
+> > > 
+> > > If the callback is available, lets use it. I prefer this second option
+> > > 
+> 
+> okay.
+> 
+> > > > 
+> > > > If we do anyway call ->get_phase, we should never need core->phase since
+> > > > it doesn't reflect the actual phase maybe.
+> > > 
+> > > The cached value is used by debugfs so it is still a valuable information. I
+> > > would keep it around for now.
+> > 
+> > Oh ! and let's not forget that a clock driver is allowed to implement
+> > set_phase() w/o implementing get_phase() ... so you definitively want to keep
+> > the cached value around
+> > 
+> 
+> Yes, it's a little complicated. I just thought a case that, if the
+> driver need a fixed phase i.e. by call clk_set_phase(180), but the clk's
+> phase depends on the clk rate. So if the clk rate changed, the phase is 
+> changed as well. This isn't good to the IP should sample the data based
+> on the phase shift but never get notified that the phase is changed.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/Makefile        |   1 +
- drivers/clk/actions/owl-composite.c | 199 ++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-composite.h | 124 ++++++++++++++++++++++
- 3 files changed, 324 insertions(+)
- create mode 100644 drivers/clk/actions/owl-composite.c
- create mode 100644 drivers/clk/actions/owl-composite.h
+I suppose this use case comes from the mmc (most phase users are mmc drivers) ?
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 994357fa560b..53431aef6e9c 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -5,3 +5,4 @@ clk-owl-y			+= owl-gate.o
- clk-owl-y			+= owl-mux.o
- clk-owl-y			+= owl-divider.o
- clk-owl-y			+= owl-factor.o
-+clk-owl-y			+= owl-composite.o
-diff --git a/drivers/clk/actions/owl-composite.c b/drivers/clk/actions/owl-composite.c
-new file mode 100644
-index 000000000000..16fdff4efd7f
---- /dev/null
-+++ b/drivers/clk/actions/owl-composite.c
-@@ -0,0 +1,199 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL composite clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "owl-composite.h"
-+
-+static u8 owl_comp_get_parent(struct clk_hw *hw)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+
-+	return owl_mux_helper_get_parent(&comp->common, &comp->mux_hw);
-+}
-+
-+static int owl_comp_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+
-+	return owl_mux_helper_set_parent(&comp->common, &comp->mux_hw, index);
-+}
-+
-+static void owl_comp_disable(struct clk_hw *hw)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+	struct owl_clk_common *common = &comp->common;
-+
-+	owl_gate_set(common, &comp->gate_hw, false);
-+}
-+
-+static int owl_comp_enable(struct clk_hw *hw)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+	struct owl_clk_common *common = &comp->common;
-+
-+	owl_gate_set(common, &comp->gate_hw, true);
-+
-+	return 0;
-+}
-+
-+static int owl_comp_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+	struct owl_clk_common *common = &comp->common;
-+
-+	return owl_gate_is_enabled(common, &comp->gate_hw);
-+}
-+
-+static long owl_comp_div_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+
-+	return owl_divider_helper_round_rate(&comp->common, &comp->rate.div_hw,
-+					rate, parent_rate);
-+}
-+
-+static unsigned long owl_comp_div_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+
-+	return owl_divider_helper_recalc_rate(&comp->common, &comp->rate.div_hw,
-+					parent_rate);
-+}
-+
-+static int owl_comp_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+
-+	return owl_divider_helper_set_rate(&comp->common, &comp->rate.div_hw,
-+					rate, parent_rate);
-+}
-+
-+static long owl_comp_fact_round_rate(struct clk_hw *hw, unsigned long rate,
-+			unsigned long *parent_rate)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+
-+	return owl_factor_helper_round_rate(&comp->common,
-+					&comp->rate.factor_hw,
-+					rate, parent_rate);
-+}
-+
-+static unsigned long owl_comp_fact_recalc_rate(struct clk_hw *hw,
-+			unsigned long parent_rate)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+
-+	return owl_factor_helper_recalc_rate(&comp->common,
-+					&comp->rate.factor_hw,
-+					parent_rate);
-+}
-+
-+static int owl_comp_fact_set_rate(struct clk_hw *hw, unsigned long rate,
-+			unsigned long parent_rate)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+
-+	return owl_factor_helper_set_rate(&comp->common,
-+					&comp->rate.factor_hw,
-+					rate, parent_rate);
-+}
-+
-+static long owl_comp_fix_fact_round_rate(struct clk_hw *hw, unsigned long rate,
-+			unsigned long *parent_rate)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+	struct clk_fixed_factor *fix_fact_hw = &comp->rate.fix_fact_hw;
-+
-+	return comp->fix_fact_ops->round_rate(&fix_fact_hw->hw, rate, parent_rate);
-+}
-+
-+static unsigned long owl_comp_fix_fact_recalc_rate(struct clk_hw *hw,
-+			unsigned long parent_rate)
-+{
-+	struct owl_composite *comp = hw_to_owl_comp(hw);
-+	struct clk_fixed_factor *fix_fact_hw = &comp->rate.fix_fact_hw;
-+
-+	return comp->fix_fact_ops->recalc_rate(&fix_fact_hw->hw, parent_rate);
-+
-+}
-+
-+static int owl_comp_fix_fact_set_rate(struct clk_hw *hw, unsigned long rate,
-+			unsigned long parent_rate)
-+{
-+	/*
-+	 * We must report success but we can do so unconditionally because
-+	 * owl_comp_fix_fact_round_rate returns values that ensure this call is
-+	 * a nop.
-+	 */
-+
-+	return 0;
-+}
-+
-+const struct clk_ops owl_comp_div_ops = {
-+	/* mux_ops */
-+	.get_parent	= owl_comp_get_parent,
-+	.set_parent	= owl_comp_set_parent,
-+
-+	/* gate_ops */
-+	.disable	= owl_comp_disable,
-+	.enable		= owl_comp_enable,
-+	.is_enabled	= owl_comp_is_enabled,
-+
-+	/* div_ops */
-+	.round_rate	= owl_comp_div_round_rate,
-+	.recalc_rate	= owl_comp_div_recalc_rate,
-+	.set_rate	= owl_comp_div_set_rate,
-+};
-+
-+
-+const struct clk_ops owl_comp_fact_ops = {
-+	/* mux_ops */
-+	.get_parent	= owl_comp_get_parent,
-+	.set_parent	= owl_comp_set_parent,
-+
-+	/* gate_ops */
-+	.disable	= owl_comp_disable,
-+	.enable		= owl_comp_enable,
-+	.is_enabled	= owl_comp_is_enabled,
-+
-+	/* fact_ops */
-+	.round_rate	= owl_comp_fact_round_rate,
-+	.recalc_rate	= owl_comp_fact_recalc_rate,
-+	.set_rate	= owl_comp_fact_set_rate,
-+};
-+
-+const struct clk_ops owl_comp_fix_fact_ops = {
-+	/* gate_ops */
-+	.disable	= owl_comp_disable,
-+	.enable		= owl_comp_enable,
-+	.is_enabled	= owl_comp_is_enabled,
-+
-+	/* fix_fact_ops */
-+	.round_rate	= owl_comp_fix_fact_round_rate,
-+	.recalc_rate	= owl_comp_fix_fact_recalc_rate,
-+	.set_rate	= owl_comp_fix_fact_set_rate,
-+};
-+
-+
-+const struct clk_ops owl_comp_pass_ops = {
-+	/* mux_ops */
-+	.get_parent	= owl_comp_get_parent,
-+	.set_parent	= owl_comp_set_parent,
-+
-+	/* gate_ops */
-+	.disable	= owl_comp_disable,
-+	.enable		= owl_comp_enable,
-+	.is_enabled	= owl_comp_is_enabled,
-+};
-diff --git a/drivers/clk/actions/owl-composite.h b/drivers/clk/actions/owl-composite.h
-new file mode 100644
-index 000000000000..b410ed5bf308
---- /dev/null
-+++ b/drivers/clk/actions/owl-composite.h
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL composite clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_COMPOSITE_H_
-+#define _OWL_COMPOSITE_H_
-+
-+#include "owl-common.h"
-+#include "owl-mux.h"
-+#include "owl-gate.h"
-+#include "owl-factor.h"
-+#include "owl-fixed-factor.h"
-+#include "owl-divider.h"
-+
-+union owl_rate {
-+	struct owl_divider_hw	div_hw;
-+	struct owl_factor_hw	factor_hw;
-+	struct clk_fixed_factor	fix_fact_hw;
-+};
-+
-+struct owl_composite {
-+	struct owl_mux_hw	mux_hw;
-+	struct owl_gate_hw	gate_hw;
-+	union owl_rate		rate;
-+
-+	const struct clk_ops	*fix_fact_ops;
-+
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_COMP_DIV(_struct, _name, _parent,				\
-+		     _mux, _gate, _div, _flags)				\
-+	struct owl_composite _struct = {				\
-+		.mux_hw		= _mux,					\
-+		.gate_hw	= _gate,				\
-+		.rate.div_hw	= _div,					\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+						     _parent,		\
-+						      &owl_comp_div_ops,\
-+						     _flags),		\
-+		},							\
-+	}
-+
-+#define OWL_COMP_DIV_FIXED(_struct, _name, _parent,			\
-+		     _gate, _div, _flags)				\
-+	struct owl_composite _struct = {				\
-+		.gate_hw	= _gate,				\
-+		.rate.div_hw	= _div,					\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						     _parent,		\
-+						      &owl_comp_div_ops,\
-+						     _flags),		\
-+		},							\
-+	}
-+
-+#define OWL_COMP_FACTOR(_struct, _name, _parent,			\
-+			_mux, _gate, _factor, _flags)			\
-+	struct owl_composite _struct = {				\
-+		.mux_hw		= _mux,					\
-+		.gate_hw	= _gate,				\
-+		.rate.factor_hw	= _factor,				\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+						     _parent,		\
-+						     &owl_comp_fact_ops,\
-+						     _flags),		\
-+		},							\
-+	}
-+
-+#define OWL_COMP_FIXED_FACTOR(_struct, _name, _parent,			\
-+			_gate, _mul, _div, _flags)			\
-+	struct owl_composite _struct = {				\
-+		.gate_hw		= _gate,			\
-+		.rate.fix_fact_hw.mult	= _mul,				\
-+		.rate.fix_fact_hw.div	= _div,				\
-+		.fix_fact_ops		= &clk_fixed_factor_ops,	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						 _parent,		\
-+						 &owl_comp_fix_fact_ops,\
-+						 _flags),		\
-+		},							\
-+	}
-+
-+#define OWL_COMP_PASS(_struct, _name, _parent,				\
-+		      _mux, _gate, _flags)				\
-+	struct owl_composite _struct = {				\
-+		.mux_hw		= _mux,					\
-+		.gate_hw	= _gate,				\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
-+						     _parent,		\
-+						     &owl_comp_pass_ops,\
-+						     _flags),		\
-+		},							\
-+	}
-+
-+static inline struct owl_composite *hw_to_owl_comp(const struct clk_hw *hw)
-+{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_composite, common);
-+}
-+
-+extern const struct clk_ops owl_comp_div_ops;
-+extern const struct clk_ops owl_comp_fact_ops;
-+extern const struct clk_ops owl_comp_fix_fact_ops;
-+extern const struct clk_ops owl_comp_pass_ops;
-+extern const struct clk_ops clk_fixed_factor_ops;
-+
-+#endif /* _OWL_COMPOSITE_H_ */
--- 
-2.14.1
+The fact that you would want ,for your use case, to lock the phase whatever the
+rate changes seems like a choice. It makes sense for sure, but maybe not all
+driver would want to enforce that. I'm not sure we should bake that in the
+framework itself.
+
+For such case, a solution could be to use clock notifiers to call
+clk_set_phase() on rate change,
+
+OR
+
+in the clock driver set_rate() callback, cache the phase at the beginning and
+call set_phase() again before returning.
+
+Anyway, let's keep it simple for now and report the phase correctly. We can
+still deal these particular situations with some other patches.
