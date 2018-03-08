@@ -1,266 +1,80 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: <ilialin@codeaurora.org>
-To: "'Stephen Boyd'" <sboyd@kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
- <1518616792-29028-9-git-send-email-ilialin@codeaurora.org>
- <152147863176.242365.17292287330283256524@swboyd.mtv.corp.google.com>
-In-Reply-To: <152147863176.242365.17292287330283256524@swboyd.mtv.corp.google.com>
-Subject: RE: [PATCH v3 08/10] clk: qcom: Add ACD path to CPU clock driver for
- msm8996
-Date: Tue, 20 Mar 2018 16:04:05 +0200
-Message-ID: <014101d3c054$52104460$f630cd20$@codeaurora.org>
+Return-Path: <shawn.lin@rock-chips.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, shawn.lin@rock-chips.com,
+ linux-clk@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
+ <1520503497.4264.12.camel@baylibre.com>
+ <290e041d-7b53-9e62-92ce-33651ecb8a2f@rock-chips.com>
+ <1520509048.4264.26.camel@baylibre.com>
+ <1520509190.4264.28.camel@baylibre.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <ceb696cb-9961-00c0-20ef-324c590fb0ed@rock-chips.com>
+Date: Thu, 8 Mar 2018 19:46:46 +0800
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, rnayak@codeaurora.org,
- robh@kernel.org, will.deacon@arm.com, amit.kucheria@linaro.org,
- tfinkel@codeaurora.org, nicolas.dechesne@linaro.org, celster@codeaurora.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <1520509190.4264.28.camel@baylibre.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+On 2018/3/8 19:39, Jerome Brunet wrote:
+> On Thu, 2018-03-08 at 12:37 +0100, Jerome Brunet wrote:
+>> On Thu, 2018-03-08 at 19:28 +0800, Shawn Lin wrote:
+>>>>> +    if (core->phase < 0 && core->ops->get_phase)
+>>>>
+>>>> Why bother with core->phase < 0 ?
+>>>> if core->ops->get_phase is available, why not call it anyway ?
+>>>>
+>>>> The phase may have changed since it was cached.
+>>>>
+>>>> A typical example would be phases based on adding fixed delays:
+>>>>
+>>>> * Take a 200MHz clock and set phase to 180 => a 2.5ns delay is set
+>>>> * Clock rate change to 100MHz but delay is still 2.5ns
+>>>>      -> cached phase = 180
+>>>>      -> actual phase = 90
+>>>
+>>> Good point!
+>>>
+>>> (1)So either we should update phase once its rate is updated, for
+>>> instance, doing it in clk_change_rate, or
+>>
+>> I don't think this would be a good option. The phase depending on the rate is
+>> just one example. I'm pretty sure one could come up with another example
+>>
+>>>
+>>> (2)we should always try to get the actual phase here.
+>>
+>> If the callback is available, lets use it. I prefer this second option
+>>
 
+okay.
 
-> -----Original Message-----
-> From: Stephen Boyd <sboyd@kernel.org>
-> Sent: Monday, March 19, 2018 18:57
-> To: Ilia Lin <ilialin@codeaurora.org>; linux-arm-kernel@lists.infradead.org;
-> linux-arm-msm@vger.kernel.org; linux-clk@vger.kernel.org;
-> sboyd@codeaurora.org
-> Cc: mark.rutland@arm.com; devicetree@vger.kernel.org;
-> rnayak@codeaurora.org; robh@kernel.org; will.deacon@arm.com;
-> amit.kucheria@linaro.org; tfinkel@codeaurora.org; ilialin@codeaurora.org;
-> nicolas.dechesne@linaro.org; celster@codeaurora.org
-> Subject: Re: [PATCH v3 08/10] clk: qcom: Add ACD path to CPU clock driver
-> for msm8996
+>>>
+>>> If we do anyway call ->get_phase, we should never need core->phase since
+>>> it doesn't reflect the actual phase maybe.
+>>
+>> The cached value is used by debugfs so it is still a valuable information. I
+>> would keep it around for now.
 > 
-> Quoting Ilia Lin (2018-02-14 05:59:50)
-> > diff --git a/drivers/clk/qcom/clk-cpu-8996.c
-> > b/drivers/clk/qcom/clk-cpu-8996.c index b0a3b73..1552791 100644
-> > --- a/drivers/clk/qcom/clk-cpu-8996.c
-> > +++ b/drivers/clk/qcom/clk-cpu-8996.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/regmap.h>
-> >  #include <linux/clk-provider.h>
-> >  #include "clk-alpha-pll.h"
-> > +#include <soc/qcom/kryo-l2-accessors.h>
+> Oh ! and let's not forget that a clock driver is allowed to implement
+> set_phase() w/o implementing get_phase() ... so you definitively want to keep
+> the cached value around
 > 
-> Put this above local includes please.
 
-Will be changed in the next spin.
-
-> 
-> >
-> >  #define VCO(a, b, c) { \
-> >         .val = a,\
-> > @@ -29,6 +30,27 @@
-> >  #define ACD_INDEX              2
-> >  #define ALT_INDEX              3
-> >  #define DIV_2_THRESHOLD                600000000
-> > +#define PWRCL_REG_OFFSET 0x0
-> > +#define PERFCL_REG_OFFSET 0x80000
-> > +#define MUX_OFFSET     0x40
-> > +#define ALT_PLL_OFFSET 0x100
-> > +#define SSSCTL_OFFSET 0x160
-> > +/*
-> > +APCy_QLL_SSSCTL value:
-> > +SACDRCLEN=1
-> > +SSWEN=1
-> > +SSTRTEN=1
-> > +SSTPAPMSWEN=1
-> > +*/
-> 
-> Bad comment style and I have no idea what it means.
-
-Will be changed in the next spin.
-
-> 
-> > +#define SSSCTL_VAL 0xF
-> > +
-> > +enum {
-> > +       APC_BASE,
-> > +       EFUSE_BASE,
-> 
-> Is this used? efuse should go through nvmem APIs.
-
-Will be removed in the next spin.
-
-> 
-> > +       NUM_BASES
-> > +};
-> > +
-> > +static void __iomem *vbases[NUM_BASES];
-> 
-> Please just pass this to the function that uses it and drop EFUSE_BASE.
-
-Will be changed in the next spin.
-
-> 
-> >
-> >  static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-> >         [PLL_OFF_L_VAL] = 0x04,
-> > @@ -399,10 +424,64 @@ struct clk_hw_clks {
-> >         return ret;
-> >  }
-> >
-> > +#define CPU_AFINITY_MASK 0xFFF
-> > +#define PWRCL_CPU_REG_MASK 0x3
-> > +#define PERFCL_CPU_REG_MASK 0x103
-> > +
-> > +/* ACD static settings (HMSS HPG 7.2.2) */ #define L2ACDCR_REG
-> > +0x580ULL #define L2ACDTD_REG 0x581ULL #define L2ACDDVMRC_REG
-> 0x584ULL
-> > +#define L2ACDSSCR_REG 0x589ULL #define ACDTD_VAL 0x00006A11
-> #define
-> > +ACDCR_VAL 0x002C5FFD #define ACDSSCR_VAL 0x00000601 #define
-> > +ACDDVMRC_VAL 0x000E0F0F
-> 
-> Please don't have #defines for random register settings. It just obfuscates
-> what's going on at the place where the define is used.
-
-So should I just use the values directly?
-
-> 
-> > +
-> > +static DEFINE_SPINLOCK(acd_lock);
-> > +
-> > +static void qcom_cpu_clk_msm8996_acd_init(void)
-> > +{
-> > +       u64 hwid;
-> > +       unsigned long flags;
-> > +
-> > +       spin_lock_irqsave(&acd_lock, flags);
-> > +
-> > +       hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
-> > +
-> > +       /* Program ACD Tunable-Length Delay (TLD) */
-> > +       set_l2_indirect_reg(L2ACDTD_REG, ACDTD_VAL);
-> > +       /* Initial ACD for *this* cluster */
-> > +       set_l2_indirect_reg(L2ACDDVMRC_REG, ACDDVMRC_VAL);
-> > +       /* Program ACD soft start control bits. */
-> > +       set_l2_indirect_reg(L2ACDSSCR_REG, ACDSSCR_VAL);
-> 
-> Please remove all useless comments, the code is obviously touching
-> registers.
-
-Will be changed in the next spin.
-
-> 
-> > +
-> > +       if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
-> > +               /* Enable Soft Stop/Start */
-> 
-> Sigh.
-> 
-> > +               if (vbases[APC_BASE])
-> 
-> When is this false?
-
-It is checked in the probe. You are right, I'll remove this check and pass the base as argument.
-
-> 
-> > +                       writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
-> > +                                       PWRCL_REG_OFFSET + SSSCTL_OFFSET);
-> > +               /* Ensure SSSCTL config goes through before enabling ACD. */
-> > +               mb();
-> 
-> Use writel instead.
-
-OK
-
-> 
-> > +               /* Program ACD control bits */
-> > +               set_l2_indirect_reg(L2ACDCR_REG, ACDCR_VAL);
-> > +       }
-> > +       if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) {
-> > + //else {
-> 
-> What is that '// else {' stuff?
-
-Missed leftover. Will be changed in the next spin.
-
-> 
-> > +               /* Program ACD control bits */
-> > +               set_l2_indirect_reg(L2ACDCR_REG, ACDCR_VAL);
-> > +               /* Enable Soft Stop/Start */
-> > +               if (vbases[APC_BASE])
-> > +                       writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
-> > +                                       PERFCL_REG_OFFSET + SSSCTL_OFFSET);
-> > +               /* Ensure SSSCTL config goes through before enabling ACD. */
-> > +               mb();
-> 
-> Again, use writel.
-
-OK
-
-> 
-> > +       }
-> > +
-> > +       spin_unlock_irqrestore(&acd_lock, flags); }
-> >  static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device
-> > *pdev)  {
-> >         int ret;
-> > -       void __iomem *base;
-> >         struct resource *res;
-> >         struct regmap *regmap_cpu;
-> >         struct clk_hw_clks *hws;
-> > @@ -415,17 +494,17 @@ static int
-> qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
-> >         if (!data)
-> >                 return -ENOMEM;
-> >
-> > -       hws = devm_kzalloc(dev, sizeof(*hws) + 2 * sizeof(struct clk_hw *),
-> > +       hws = devm_kzalloc(dev, sizeof(*hws) + 4 * sizeof(struct
-> > + clk_hw *),
-> >                            GFP_KERNEL);
-> >         if (!hws)
-> >                 return -ENOMEM;
-> >
-> >         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > -       base = devm_ioremap_resource(dev, res);
-> > -       if (IS_ERR(base))
-> > -               return PTR_ERR(base);
-> > +       vbases[APC_BASE] = devm_ioremap_resource(dev, res);
-> > +       if (IS_ERR(vbases[APC_BASE]))
-> > +               return PTR_ERR(vbases[APC_BASE]);
-> >
-> > -       regmap_cpu = devm_regmap_init_mmio(dev, base,
-> > +       regmap_cpu = devm_regmap_init_mmio(dev, vbases[APC_BASE],
-> >                                            &cpu_msm8996_regmap_config);
-> >         if (IS_ERR(regmap_cpu))
-> >                 return PTR_ERR(regmap_cpu);
-> 
-> Cool, none of this diff is needed.
-
-Since the effuse code will not be implemented in the clock driver, you are right. Will be changed in the next spin.
-
-> 
-> > @@ -433,6 +512,7 @@ static int
-> qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
-> >         ret = qcom_cpu_clk_msm8996_register_clks(dev, hws, regmap_cpu);
-> >         if (ret)
-> >                 return ret;
-> > +       qcom_cpu_clk_msm8996_acd_init();
-> 
-> Pass base here.
-
-Sure.
-
-> 
-> >
-> >         data->hws[0] = &pwrcl_pmux.clkr.hw;
-> >         data->hws[1] = &perfcl_pmux.clkr.hw;
+Yes, it's a little complicated. I just thought a case that, if the
+driver need a fixed phase i.e. by call clk_set_phase(180), but the clk's
+phase depends on the clk rate. So if the clk rate changed, the phase is 
+changed as well. This isn't good to the IP should sample the data based
+on the phase shift but never get notified that the phase is changed.
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
+>>>
+>>> Am I right? If yes, which option is more reasonable?
+>>
+>>
+> 
+> 
+> 
+> 
