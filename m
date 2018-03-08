@@ -1,34 +1,80 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY
+	<loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH v2 11/12] clk: stm32mp1: add MCO clocks
+Date: Thu, 8 Mar 2018 17:54:04 +0100
+Message-ID: <1520528045-18330-12-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180119174401.23051-1-andriy.shevchenko@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20180119174401.23051-1-andriy.shevchenko@linux.intel.com>
-Message-ID: <152124317641.242365.8789766611551244529@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v1 1/1] clk: Remove redundant selection of RATIONAL
-Date: Fri, 16 Mar 2018 16:32:56 -0700
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Andy Shevchenko (2018-01-19 09:44:01)
-> Since the commit
-> =
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
->   0777591e715a ("clk: fractional-divider: switch to rational best approxi=
-mation")
-> =
+Two micro-controller clock output (MCO) pins are available:
+MCO1 and MCO2.
+For each output, it is possible to select a clock source.
+The selected clock can be divided thanks to configurable
+prescaler.
 
-> enables rational best approximation to all common based clocks, there is
-> no need to repeat the selection in each of them.
-> =
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+---
+ drivers/clk/clk-stm32mp1.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-> No functional changes intended.
-> =
-
-
-I'd prefer we leave it alone. It would be better to push the basic clk
-types into Kconfig and then have platforms select the ones they want to
-use.
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 51e3e76..b3a6ec4 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -252,6 +252,14 @@
+ 	"off", "ck_lse", "ck_lsi", "ck_hse_rtc"
+ };
+ 
++static const char * const mco1_src[] = {
++	"ck_hsi", "ck_hse", "ck_csi", "ck_lsi", "ck_lse"
++};
++
++static const char * const mco2_src[] = {
++	"ck_mpu", "ck_axi", "ck_mcu", "pll4_p", "ck_hse", "ck_hsi"
++};
++
+ static const struct clk_div_table axi_div_table[] = {
+ 	{ 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
+ 	{ 4, 4 }, { 5, 4 }, { 6, 4 }, { 7, 4 },
+@@ -1960,6 +1968,18 @@ enum {
+ 		  _MUX(RCC_BDCR, 16, 2, 0),
+ 		  _NO_DIV),
+ 
++	/* MCO clocks */
++	COMPOSITE(CK_MCO1, "ck_mco1", mco1_src, CLK_OPS_PARENT_ENABLE |
++		  CLK_SET_RATE_NO_REPARENT,
++		  _GATE(RCC_MCO1CFGR, 12, 0),
++		  _MUX(RCC_MCO1CFGR, 0, 3, 0),
++		  _DIV(RCC_MCO1CFGR, 4, 4, 0, NULL)),
++
++	COMPOSITE(CK_MCO2, "ck_mco2", mco2_src, CLK_OPS_PARENT_ENABLE |
++		  CLK_SET_RATE_NO_REPARENT,
++		  _GATE(RCC_MCO2CFGR, 12, 0),
++		  _MUX(RCC_MCO2CFGR, 0, 3, 0),
++		  _DIV(RCC_MCO2CFGR, 4, 4, 0, NULL)),
+ };
+ 
+ struct stm32_clock_match_data {
+-- 
+1.9.1
