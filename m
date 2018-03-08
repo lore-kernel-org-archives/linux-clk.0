@@ -1,58 +1,63 @@
-Return-Path: <bgolaszewski@baylibre.com>
+Return-Path: <t-kristo@ti.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>
+CC: linux-clk <linux-clk@vger.kernel.org>,
+        "linux-omap@vger.kernel.org"
+	<linux-omap@vger.kernel.org>,
+        "tony@atomide.com" <tony@atomide.com>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [GIT PULL] TI clock changes for 4.17
+Message-ID: <06cc5fe8-cecd-2b6c-415d-74f533c75be0@ti.com>
+Date: Thu, 8 Mar 2018 12:13:38 +0200
 MIME-Version: 1.0
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Mon, 19 Mar 2018 14:17:01 +0100
-Message-ID: <CAMpxmJX-AxhpPpCnWoaSGYmNh3o8iRjdKacnmozsPWmhpcGdTg@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v8_00=2F42=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
-	arm-soc <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-16 3:52 GMT+01:00 David Lechner <david@lechnology.com>:
-> This series converts mach-davinci to use the common clock framework.
->
-> The series works like this, the first 19 patches create new clock drivers
-> using the common clock framework. There are basically 3 groups of clocks -
-> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
-> unique init data, which is the reason for so many patches.
->
-> Then, starting with "ARM: davinci: pass clock as parameter to
-> davinci_timer_init()", we get the mach code ready for the switch by adding the
-> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
-> around the legacy clocks so that we can switch easily between the old and the
-> new.
->
-> "ARM: davinci: switch to common clock framework" actually flips the switch
-> to start using the new clock drivers. Then the next 8 patches remove all
-> of the old clock code.
->
-> The final three patches add device tree clock support to the one SoC that
-> supports it.
->
-> This series has been tested on LEGO MINDSTORMS EV3 (device tree) and TI
-> OMAP-L138 LCDK (both device tree and legacy board file).
->
+Hi Stephen, Michael,
 
-Hi David,
+These patches are targeted for 4.17 merge window. I grouped both 
+omap+keystone clock changes into single pull request.
 
-thanks, with the u-boot fix everything seems to work fine. I tested
-da850-lcdk and da850-evm boards in DT and board file modes.
+Tero
 
-I'll be working with this series in the following days and will do
-some thorough testing and rebase my aemif series on top of it. I'll
-also use the recently merged reset support for board files to get rid
-of the exported reset functions.
+---
 
-Thanks for your work!
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-Best regards,
-Bartosz Golaszewski
+   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+   https://github.com/t-kristo/linux-pm.git tags/ti-clk-for-4.17
+
+for you to fetch changes up to 3c13933c60338ce6fb2369bd0e93f91e52ddc17d:
+
+   clk: keystone: sci-clk: add support for dynamically probing clocks 
+(2018-03-08 11:43:15 +0200)
+
+----------------------------------------------------------------
+Tero Kristo (6):
+       dt-bindings: clock: ti: add latching support to mux and divider 
+clocks
+       clk: ti: add support for register read-modify-write low-level 
+operation
+       clk: ti: add generic support for clock latching
+       clk: ti: add support for clock latching to divider clocks
+       clk: ti: add support for clock latching to mux clocks
+       clk: keystone: sci-clk: add support for dynamically probing clocks
+
+  .../devicetree/bindings/clock/ti/divider.txt       |   3 +
+  Documentation/devicetree/bindings/clock/ti/mux.txt |   3 +
+  drivers/clk/keystone/sci-clk.c                     | 380 
++++++----------------
+  drivers/clk/ti/clk.c                               |  38 +++
+  drivers/clk/ti/clock.h                             |   4 +
+  drivers/clk/ti/divider.c                           |  26 +-
+  drivers/clk/ti/mux.c                               |  13 +-
+  include/linux/clk/ti.h                             |   2 +
+  8 files changed, 170 insertions(+), 299 deletions(-)
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
