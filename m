@@ -1,119 +1,289 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Subject: [GIT PULL v2] Amlogic clock driver updates for 4.17
-To: sboyd@codeaurora.org, mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
- khilman@baylibre.com
-Message-ID: <73587ed8-923d-e123-29a1-b6c3b710a0eb@baylibre.com>
-Date: Tue, 13 Mar 2018 10:30:38 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-db5eur01on0072.outbound.protection.outlook.com ([104.47.2.72]:59541
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755155AbeCHJoz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Mar 2018 04:44:55 -0500
+From: Bai Ping <ping.bai@nxp.com>
+To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
+        kernel@pengutronix.de
+Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+Subject: [PATCH v4 3/4] Document: dt: binding: imx: update clock doc for imx6sll
+Date: Thu,  8 Mar 2018 17:47:24 +0800
+Message-Id: <1520502445-22576-3-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1520502445-22576-1-git-send-email-ping.bai@nxp.com>
+References: <1520502445-22576-1-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear clock maintainers,
+Add clock binding doc update for imx6sll.
 
-Below is a request to pull a 1st batch of Amlogic clock driver updates for this
-cycle.
-The PR is composed of 3 series :
-- pll fixes for GXBB, GXL and AXG
-- use regmap in clock controllers for GXBB, GXL and AXG
-- general clock updates for Meson8, GXBB, GXL and AXG
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+---
+ change from v3-> v4:
+ - use SPDX license identifier
+ - correct the binding doc format
+---
+ .../devicetree/bindings/clock/imx6sll-clock.txt    |  36 ++++
+ include/dt-bindings/clock/imx6sll-clock.h          | 202 +++++++++++++++++++++
+ 2 files changed, 238 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+ create mode 100644 include/dt-bindings/clock/imx6sll-clock.h
 
-These 2 last series were depending on patches merged on the clk-helpers
-topic branch, thus based on this branch.
+diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+new file mode 100644
+index 0000000..fee849d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
+@@ -0,0 +1,36 @@
++* Clock bindings for Freescale i.MX6 SLL
++
++Required properties:
++- compatible: Should be "fsl,imx6sll-ccm"
++- reg: Address and length of the register set
++- #clock-cells: Should be <1>
++- clocks: list of clock specifiers, must contain an entry for each required
++  entry in clock-names
++- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
++
++The clock consumer should specify the desired clock by having the clock
++ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6sll-clock.h
++for the full list of i.MX6 SLL clock IDs.
++
++Examples:
++
++#include <dt-bindings/clock/imx6sll-clock.h>
++
++clks: clock-controller@20c4000 {
++		compatible = "fsl,imx6sll-ccm";
++		reg = <0x020c4000 0x4000>;
++		interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++		#clock-cells = <1>;
++		clocks = <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
++		clock-names = "ckil", "osc", "ipp_di0", "ipp_di1";
++};
++
++uart1: serial@2020000 {
++		compatible = "fsl,imx6sl-uart", "fsl,imx6q-uart", "fsl,imx21-uart";
++		reg = <0x02020000 0x4000>;
++		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&clks IMX6SLL_CLK_UART1_IPG>,
++			 <&clks IMX6SLL_CLK_UART1_SERIAL>;
++		clock-names = "ipg", "per";
++};
+diff --git a/include/dt-bindings/clock/imx6sll-clock.h b/include/dt-bindings/clock/imx6sll-clock.h
+new file mode 100644
+index 0000000..151111e
+--- /dev/null
++++ b/include/dt-bindings/clock/imx6sll-clock.h
+@@ -0,0 +1,202 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017-2018 NXP.
++ *
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_IMX6SLL_H
++#define __DT_BINDINGS_CLOCK_IMX6SLL_H
++
++#define IMX6SLL_CLK_DUMMY		0
++#define IMX6SLL_CLK_CKIL		1
++#define IMX6SLL_CLK_OSC			2
++#define IMX6SLL_PLL1_BYPASS_SRC		3
++#define IMX6SLL_PLL2_BYPASS_SRC		4
++#define IMX6SLL_PLL3_BYPASS_SRC		5
++#define IMX6SLL_PLL4_BYPASS_SRC		6
++#define IMX6SLL_PLL5_BYPASS_SRC		7
++#define IMX6SLL_PLL6_BYPASS_SRC		8
++#define IMX6SLL_PLL7_BYPASS_SRC		9
++#define IMX6SLL_CLK_PLL1		10
++#define IMX6SLL_CLK_PLL2		11
++#define IMX6SLL_CLK_PLL3		12
++#define IMX6SLL_CLK_PLL4		13
++#define IMX6SLL_CLK_PLL5		14
++#define IMX6SLL_CLK_PLL6		15
++#define IMX6SLL_CLK_PLL7		16
++#define IMX6SLL_PLL1_BYPASS		17
++#define IMX6SLL_PLL2_BYPASS		18
++#define IMX6SLL_PLL3_BYPASS		19
++#define IMX6SLL_PLL4_BYPASS		20
++#define IMX6SLL_PLL5_BYPASS		21
++#define IMX6SLL_PLL6_BYPASS		22
++#define IMX6SLL_PLL7_BYPASS		23
++#define IMX6SLL_CLK_PLL1_SYS		24
++#define IMX6SLL_CLK_PLL2_BUS		25
++#define IMX6SLL_CLK_PLL3_USB_OTG	26
++#define IMX6SLL_CLK_PLL4_AUDIO		27
++#define IMX6SLL_CLK_PLL5_VIDEO		28
++#define IMX6SLL_CLK_PLL6_ENET		29
++#define IMX6SLL_CLK_PLL7_USB_HOST	30
++#define IMX6SLL_CLK_USBPHY1		31
++#define IMX6SLL_CLK_USBPHY2		32
++#define IMX6SLL_CLK_USBPHY1_GATE	33
++#define IMX6SLL_CLK_USBPHY2_GATE	34
++#define IMX6SLL_CLK_PLL2_PFD0		35
++#define IMX6SLL_CLK_PLL2_PFD1		36
++#define IMX6SLL_CLK_PLL2_PFD2		37
++#define IMX6SLL_CLK_PLL2_PFD3		38
++#define IMX6SLL_CLK_PLL3_PFD0		39
++#define IMX6SLL_CLK_PLL3_PFD1		40
++#define IMX6SLL_CLK_PLL3_PFD2		41
++#define IMX6SLL_CLK_PLL3_PFD3		42
++#define IMX6SLL_CLK_PLL4_POST_DIV	43
++#define IMX6SLL_CLK_PLL4_AUDIO_DIV	44
++#define IMX6SLL_CLK_PLL5_POST_DIV	45
++#define IMX6SLL_CLK_PLL5_VIDEO_DIV	46
++#define IMX6SLL_CLK_PLL2_198M		47
++#define IMX6SLL_CLK_PLL3_120M		48
++#define IMX6SLL_CLK_PLL3_80M		49
++#define IMX6SLL_CLK_PLL3_60M		50
++#define IMX6SLL_CLK_STEP		51
++#define IMX6SLL_CLK_PLL1_SW		52
++#define IMX6SLL_CLK_AXI_ALT_SEL		53
++#define IMX6SLL_CLK_AXI_SEL		54
++#define IMX6SLL_CLK_PERIPH_PRE		55
++#define IMX6SLL_CLK_PERIPH2_PRE		56
++#define IMX6SLL_CLK_PERIPH_CLK2_SEL	57
++#define IMX6SLL_CLK_PERIPH2_CLK2_SEL	58
++#define IMX6SLL_CLK_PERCLK_SEL		59
++#define IMX6SLL_CLK_USDHC1_SEL		60
++#define IMX6SLL_CLK_USDHC2_SEL		61
++#define IMX6SLL_CLK_USDHC3_SEL		62
++#define IMX6SLL_CLK_SSI1_SEL		63
++#define IMX6SLL_CLK_SSI2_SEL		64
++#define IMX6SLL_CLK_SSI3_SEL		65
++#define IMX6SLL_CLK_PXP_SEL		66
++#define IMX6SLL_CLK_LCDIF_PRE_SEL	67
++#define IMX6SLL_CLK_LCDIF_SEL		68
++#define IMX6SLL_CLK_EPDC_PRE_SEL	69
++#define IMX6SLL_CLK_SPDIF_SEL		70
++#define IMX6SLL_CLK_ECSPI_SEL		71
++#define IMX6SLL_CLK_UART_SEL		72
++#define IMX6SLL_CLK_ARM			73
++#define IMX6SLL_CLK_PERIPH		74
++#define IMX6SLL_CLK_PERIPH2		75
++#define IMX6SLL_CLK_PERIPH2_CLK2	76
++#define IMX6SLL_CLK_PERIPH_CLK2		77
++#define IMX6SLL_CLK_MMDC_PODF		78
++#define IMX6SLL_CLK_AXI_PODF		79
++#define IMX6SLL_CLK_AHB			80
++#define IMX6SLL_CLK_IPG			81
++#define IMX6SLL_CLK_PERCLK		82
++#define IMX6SLL_CLK_USDHC1_PODF		83
++#define IMX6SLL_CLK_USDHC2_PODF		84
++#define IMX6SLL_CLK_USDHC3_PODF		85
++#define IMX6SLL_CLK_SSI1_PRED		86
++#define IMX6SLL_CLK_SSI2_PRED		87
++#define IMX6SLL_CLK_SSI3_PRED		88
++#define IMX6SLL_CLK_SSI1_PODF		89
++#define IMX6SLL_CLK_SSI2_PODF		90
++#define IMX6SLL_CLK_SSI3_PODF		91
++#define IMX6SLL_CLK_PXP_PODF		92
++#define IMX6SLL_CLK_LCDIF_PRED		93
++#define IMX6SLL_CLK_LCDIF_PODF		94
++#define IMX6SLL_CLK_EPDC_SEL		95
++#define IMX6SLL_CLK_EPDC_PODF		96
++#define IMX6SLL_CLK_SPDIF_PRED		97
++#define IMX6SLL_CLK_SPDIF_PODF		98
++#define IMX6SLL_CLK_ECSPI_PODF		99
++#define IMX6SLL_CLK_UART_PODF		100
++
++/* CCGR 0 */
++#define IMX6SLL_CLK_AIPSTZ1		101
++#define IMX6SLL_CLK_AIPSTZ2		102
++#define IMX6SLL_CLK_DCP			103
++#define IMX6SLL_CLK_UART2_IPG		104
++#define IMX6SLL_CLK_UART2_SERIAL	105
++
++/* CCGR 1 */
++#define IMX6SLL_CLK_ECSPI1		106
++#define IMX6SLL_CLK_ECSPI2		107
++#define IMX6SLL_CLK_ECSPI3		108
++#define IMX6SLL_CLK_ECSPI4		109
++#define IMX6SLL_CLK_UART3_IPG		110
++#define IMX6SLL_CLK_UART3_SERIAL	111
++#define IMX6SLL_CLK_UART4_IPG		112
++#define IMX6SLL_CLK_UART4_SERIAL	113
++#define IMX6SLL_CLK_EPIT1		114
++#define IMX6SLL_CLK_EPIT2		115
++#define IMX6SLL_CLK_GPT_BUS		116
++#define IMX6SLL_CLK_GPT_SERIAL		117
++
++/* CCGR2 */
++#define IMX6SLL_CLK_CSI			118
++#define IMX6SLL_CLK_I2C1		119
++#define IMX6SLL_CLK_I2C2		120
++#define IMX6SLL_CLK_I2C3		121
++#define IMX6SLL_CLK_OCOTP		122
++#define IMX6SLL_CLK_LCDIF_APB		123
++#define IMX6SLL_CLK_PXP			124
++
++/* CCGR3 */
++#define IMX6SLL_CLK_UART5_IPG		125
++#define IMX6SLL_CLK_UART5_SERIAL	126
++#define IMX6SLL_CLK_EPDC_AXI		127
++#define IMX6SLL_CLK_EPDC_PIX		128
++#define IMX6SLL_CLK_LCDIF_PIX		129
++#define IMX6SLL_CLK_WDOG1		130
++#define IMX6SLL_CLK_MMDC_P0_FAST	131
++#define IMX6SLL_CLK_MMDC_P0_IPG		132
++#define IMX6SLL_CLK_OCRAM		133
++
++/* CCGR4 */
++#define IMX6SLL_CLK_PWM1		134
++#define IMX6SLL_CLK_PWM2		135
++#define IMX6SLL_CLK_PWM3		136
++#define IMX6SLL_CLK_PWM4		137
++
++/* CCGR 5 */
++#define IMX6SLL_CLK_ROM			138
++#define IMX6SLL_CLK_SDMA		139
++#define IMX6SLL_CLK_KPP			140
++#define IMX6SLL_CLK_WDOG2		141
++#define IMX6SLL_CLK_SPBA		142
++#define IMX6SLL_CLK_SPDIF		143
++#define IMX6SLL_CLK_SPDIF_GCLK		144
++#define IMX6SLL_CLK_SSI1		145
++#define IMX6SLL_CLK_SSI1_IPG		146
++#define IMX6SLL_CLK_SSI2		147
++#define IMX6SLL_CLK_SSI2_IPG		148
++#define IMX6SLL_CLK_SSI3		149
++#define IMX6SLL_CLK_SSI3_IPG		150
++#define IMX6SLL_CLK_UART1_IPG		151
++#define IMX6SLL_CLK_UART1_SERIAL	152
++
++/* CCGR 6 */
++#define IMX6SLL_CLK_USBOH3		153
++#define IMX6SLL_CLK_USDHC1		154
++#define IMX6SLL_CLK_USDHC2		155
++#define IMX6SLL_CLK_USDHC3		156
++
++#define IMX6SLL_CLK_IPP_DI0		157
++#define IMX6SLL_CLK_IPP_DI1		158
++#define IMX6SLL_CLK_LDB_DI0_SEL		159
++#define IMX6SLL_CLK_LDB_DI0_DIV_3_5	160
++#define IMX6SLL_CLK_LDB_DI0_DIV_7	161
++#define IMX6SLL_CLK_LDB_DI0_DIV_SEL	162
++#define IMX6SLL_CLK_LDB_DI0		163
++#define IMX6SLL_CLK_LDB_DI1_SEL		164
++#define IMX6SLL_CLK_LDB_DI1_DIV_3_5	165
++#define IMX6SLL_CLK_LDB_DI1_DIV_7	166
++#define IMX6SLL_CLK_LDB_DI1_DIV_SEL	167
++#define IMX6SLL_CLK_LDB_DI1		168
++#define IMX6SLL_CLK_EXTERN_AUDIO_SEL    169
++#define IMX6SLL_CLK_EXTERN_AUDIO_PRED   170
++#define IMX6SLL_CLK_EXTERN_AUDIO_PODF   171
++#define IMX6SLL_CLK_EXTERN_AUDIO        172
++
++#define IMX6SLL_CLK_END			173
++
++#endif /* __DT_BINDINGS_CLOCK_IMX6SLL_H */
+-- 
+1.9.1
 
-Cheers
-Neil
-
-The following changes since commit f5edaefee2d621f4e7628f1421c58a2361572d3a:
-
-  clk: qcom: use divider_ro_round_rate helper (2018-03-12 15:10:27 -0700)
-
-are available in the git repository at:
-
-  git://github.com/BayLibre/clk-meson.git tags/clk-for-v4.17-1
-
-for you to fetch changes up to 5b13ef64eebdc9e989fac2a3eb9aaa252a3edda6:
-
-  clk: meson: clean-up clk81 clocks (2018-03-13 10:10:00 +0100)
-
-----------------------------------------------------------------
- - pll fixes for GXBB, GXL and AXG
- - use regmap in clock controllers for GXBB, GXL and AXG
- - general clock updates for Meson8, GXBB, GXL and AXG
-Based on the clk-helpers topic branch as a dependency.
-
-----------------------------------------------------------------
-Jerome Brunet (40):
-      clk: meson: check pll rate param table before using it
-      clk: meson: remove useless pll rate params tables
-      clk: meson: remove unnecessary rounding in the pll clock
-      clk: meson: use the frac parameter width instead of a constant
-      clk: meson: add od3 to the pll driver
-      clk: meson: add the gxl hdmi pll
-      clk: meson: fix rate calculation of plls with a fractional part
-      clk: meson: gxbb: add the fractional part of the fixed_pll
-      clk: meson: axg: add the fractional part of the fixed_pll
-      clk: meson: add axg misc bit to the mpll driver
-      clk: meson: use dev pointer where possible
-      clk: meson: use devm_of_clk_add_hw_provider
-      clk: meson: only one loop index is necessary in probe
-      clk: meson: remove obsolete comments
-      clk: meson: add regmap clocks
-      clk: meson: switch gxbb ao_clk to clk_regmap
-      clk: meson: remove superseded aoclk_gate_regmap
-      clk: meson: add regmap to the clock controllers
-      clk: meson: migrate gates to clk_regmap
-      clk: meson: migrate dividers to clk_regmap
-      clk: meson: migrate muxes to clk_regmap
-      clk: meson: add regmap helpers for parm
-      clk: meson: migrate mplls clocks to clk_regmap
-      clk: meson: migrate the audio divider clock to clk_regmap
-      clk: meson: migrate plls clocks to clk_regmap
-      clk: meson: split divider and gate part of mpll
-      clk: meson: rework meson8b cpu clock
-      clk: meson: remove obsolete cpu_clk
-      clk: meson: use hhi syscon if available
-      clk: meson: add fractional part of meson8b fixed_pll
-      clk: meson: poke pll CNTL last
-      clk: meson: remove special gp0 lock loop
-      clk: meson: improve pll driver results with frac
-      clk: meson: add gp0 frac parameter for axg and gxl
-      clk: meson: add ROUND_CLOSEST to the pll driver
-      clk: meson: axg: add hifi clock bindings
-      clk: meson: axg: add hifi pll clock
-      clk: meson: add mpll pre-divider
-      clk: meson: add fdiv clock gates
-      clk: meson: clean-up clk81 clocks
-
-Neil Armstrong (1):
-      Merge branch 'topic/pll-fixes' into next/drivers
-
-Yixun Lan (1):
-      clk: meson: axg: fix the od shift of the sys_pll
-
- drivers/clk/meson/Kconfig             |    9 +
- drivers/clk/meson/Makefile            |    5 +-
- drivers/clk/meson/axg.c               |  955 +++++++++++---------
- drivers/clk/meson/axg.h               |   12 +-
- drivers/clk/meson/clk-audio-divider.c |   63 +-
- drivers/clk/meson/clk-cpu.c           |  178 ----
- drivers/clk/meson/clk-mpll.c          |  125 +--
- drivers/clk/meson/clk-pll.c           |  306 ++++---
- drivers/clk/meson/clk-regmap.c        |  166 ++++
- drivers/clk/meson/clk-regmap.h        |  111 +++
- drivers/clk/meson/clkc.h              |  107 +--
- drivers/clk/meson/gxbb-aoclk-regmap.c |   46 -
- drivers/clk/meson/gxbb-aoclk.c        |   20 +-
- drivers/clk/meson/gxbb-aoclk.h        |   11 -
- drivers/clk/meson/gxbb.c              | 1591 ++++++++++++++++++---------------
- drivers/clk/meson/gxbb.h              |   14 +-
- drivers/clk/meson/meson8b.c           |  706 +++++++++------
- drivers/clk/meson/meson8b.h           |   17 +-
- include/dt-bindings/clock/axg-clkc.h  |    1 +
- 19 files changed, 2460 insertions(+), 1983 deletions(-)
- delete mode 100644 drivers/clk/meson/clk-cpu.c
- create mode 100644 drivers/clk/meson/clk-regmap.c
- create mode 100644 drivers/clk/meson/clk-regmap.h
- delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
