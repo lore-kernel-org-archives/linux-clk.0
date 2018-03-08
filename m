@@ -1,71 +1,99 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Peter Chen <peter.chen@freescale.com>,
-	Irina Tirdea <irina.tirdea@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com,
-	Anson Huang <anson.huang@nxp.com>,
-	Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] clk: imx7d: Add USB clock information
-Date: Tue, 27 Mar 2018 17:11:20 +0300
-Message-Id: <1522159880-16694-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <shawn.lin@rock-chips.com>
+Cc: shawn.lin@rock-chips.com, linux-clk@vger.kernel.org,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
+To: Jerome Brunet <jbrunet@baylibre.com>, Heiko Stuebner <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
+ <1520503497.4264.12.camel@baylibre.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <290e041d-7b53-9e62-92ce-33651ecb8a2f@rock-chips.com>
+Date: Thu, 8 Mar 2018 19:28:59 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+In-Reply-To: <1520503497.4264.12.camel@baylibre.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Peter Chen <peter.chen@freescale.com>
++ Geert
 
-Add USB clock information, the pll_usb_main_clk is USB_PLL at CCM
-which is the output of USBOTG2 PHY.
+On 2018/3/8 18:04, Jerome Brunet wrote:
+> On Thu, 2018-03-08 at 15:54 +0800, Shawn Lin wrote:
+>> It's found that the clock phase output from clk_summary is
+>> wrong compared to the actual phase reading from the register.
+>>
+>> cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
+>> sdio_sample     0        1        0 50000000          0 -22
+>>
+>> It expose an issue that clk core, clk_core_get_phase, always
+>> return the cached core->phase which should be either updated
+>> by calling clk_set_phase or directly from the first place the
+>> clk was registered. When registering the clk, the core->phase
+>> geting from ->get_phase() may return negative value indicating
+>> error. This is quite common since the clk's phase may be highly
+>> related to its praent chain, but it was temporary orphan when
+>> registered, since its parent chain hadn't be ready at that time,
+>> so the clk drivers decide to return error in this case. However,
+>> if no clk_set_phase is called, core->phase would never be updated.
+>> This is wrong, and we should try to update it when all its parent
+>> chain is settled down, like the way of updating clock rate for that.
+>> It's not derserved to complicate the code but just update it if
+>> seeing it's a nagative number when calling clk_core_get_phase, which
+>> would be much simple and enough.
+>>
+>> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+>> ---
+>>
+>>   drivers/clk/clk.c | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index 0f686a9..b49e4c8 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -2370,6 +2370,15 @@ static int clk_core_get_phase(struct clk_core *core)
+>>   	int ret;
+>>   
+>>   	clk_prepare_lock();
+>> +	/*
+>> +	 * clk_set_phase always set the phase in [0, 360],
+>> +	 * so the only reason for core->phase to be nagative
+>> +	 * number is it's a error number propagated back from
+>> +	 * the clk drivers. So we should try to update it if
+>> +	 * possible.
+>> +	 */
+>> +	if (core->phase < 0 && core->ops->get_phase)
+> 
+> Why bother with core->phase < 0 ?
+> if core->ops->get_phase is available, why not call it anyway ?
+> 
+> The phase may have changed since it was cached.
+> 
+> A typical example would be phases based on adding fixed delays:
+> 
+> * Take a 200MHz clock and set phase to 180 => a 2.5ns delay is set
+> * Clock rate change to 100MHz but delay is still 2.5ns
+>    -> cached phase = 180
+>    -> actual phase = 90
 
-Signed-off-by: Peter Chen <peter.chen@freescale.com>
-Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Good point!
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 89bfa75..39d110b 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -801,7 +801,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
- 	clks[IMX7D_SNVS_CLK] = imx_clk_gate4("snvs_clk", "ipg_root_clk", base + 0x4250, 0);
- 	clks[IMX7D_CAAM_CLK] = imx_clk_gate4("caam_clk", "ipg_root_clk", base + 0x4240, 0);
--	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
-+	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4690, 0);
- 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
- 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
- 	clks[IMX7D_PCIE_PHY_ROOT_CLK] = imx_clk_gate4("pcie_phy_root_clk", "pcie_phy_post_div", base + 0x4600, 0);
-@@ -867,6 +867,9 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_CSI_MCLK_ROOT_CLK] = imx_clk_gate4("csi_mclk_root_clk", "csi_mclk_post_div", base + 0x4490, 0);
- 	clks[IMX7D_AUDIO_MCLK_ROOT_CLK] = imx_clk_gate4("audio_mclk_root_clk", "audio_mclk_post_div", base + 0x4790, 0);
- 	clks[IMX7D_WRCLK_ROOT_CLK] = imx_clk_gate4("wrclk_root_clk", "wrclk_post_div", base + 0x47a0, 0);
-+	clks[IMX7D_USB_CTRL_CLK] = imx_clk_gate4("usb_ctrl_clk", "ahb_root_clk", base + 0x4680, 0);
-+	clks[IMX7D_USB_PHY1_CLK] = imx_clk_gate4("usb_phy1_clk", "pll_usb1_main_clk", base + 0x46a0, 0);
-+	clks[IMX7D_USB_PHY2_CLK] = imx_clk_gate4("usb_phy2_clk", "pll_usb_main_clk", base + 0x46b0, 0);
- 	clks[IMX7D_ADC_ROOT_CLK] = imx_clk_gate4("adc_root_clk", "ipg_root_clk", base + 0x4200, 0);
- 
- 	clks[IMX7D_GPT_3M_CLK] = imx_clk_fixed_factor("gpt_3m", "osc", 1, 8);
-@@ -892,6 +895,10 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	/* set uart module clock's parent clock source that must be great then 80MHz */
- 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
- 
-+	/* Set clock rate for USBPHY, the USB_PLL at CCM is from USBOTG2 */
-+	clks[IMX7D_USB1_MAIN_480M_CLK] = imx_clk_fixed_factor("pll_usb1_main_clk", "osc", 20, 1);
-+	clks[IMX7D_USB_MAIN_480M_CLK] = imx_clk_fixed_factor("pll_usb_main_clk", "osc", 20, 1);
-+
- 	imx_register_uart_clocks(uart_clks);
- 
- }
--- 
-2.7.4
+(1)So either we should update phase once its rate is updated, for
+instance, doing it in clk_change_rate, or
+
+(2)we should always try to get the actual phase here.
+
+If we do anyway call ->get_phase, we should never need core->phase since
+it doesn't reflect the actual phase maybe.
+
+Am I right? If yes, which option is more reasonable?
+
+
+> 
+>> +		core->phase = core->ops->get_phase(core->hw);
+>>   	ret = core->phase;
+>>   	clk_prepare_unlock();
+>>   
+> 
+> 
+> 
+> 
