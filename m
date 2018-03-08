@@ -1,46 +1,48 @@
-Return-Path: <mike.looijmans@topic.nl>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH] clk: clk-gpio: Allow GPIO to sleep in set/get_parent
-Date: Tue, 13 Mar 2018 09:54:03 +0100
-Message-Id: <1520931243-29091-1-git-send-email-mike.looijmans@topic.nl>
+Return-Path: <postmaster@kaiser.cx>
+Date: Thu, 8 Mar 2018 15:08:51 +0100
+From: Martin Kaiser <martin@kaiser.cx>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
+Message-ID: <20180308140851.GA25601@botnar.kaiser.cx>
+References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
+ <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
+Sender: Martin Kaiser <martin@botnar.kaiser.cx>
 List-ID: <linux-clk.vger.kernel.org>
 
-When changing or retrieving clock parents, the caller is in a sleepable
-state (like prepare) so the GPIO operation need not be atomic. Replace
-gpiod_{g|s}et_value with gpiod_{g|s}et_value_cansleep in the {g|s}et_parent
-calls for the GPIO based clock mux.
+Hi Fabio,
 
-This fixes a "slowpath" warning when the GPIO controller is an I2C expander
-or something similar.
+Thus wrote Fabio Estevam (festevam@gmail.com):
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
----
- drivers/clk/clk-gpio.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> I get audio working from SSI1, but I guess this is due to the fact
+> that the bootloader enables the SSI clock:
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index 151513c..40af4fb 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -73,14 +73,14 @@ static u8 clk_gpio_mux_get_parent(struct clk_hw *hw)
- {
- 	struct clk_gpio *clk = to_clk_gpio(hw);
- 
--	return gpiod_get_value(clk->gpiod);
-+	return gpiod_get_value_cansleep(clk->gpiod);
- }
- 
- static int clk_gpio_mux_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct clk_gpio *clk = to_clk_gpio(hw);
- 
--	gpiod_set_value(clk->gpiod, index);
-+	gpiod_set_value_cansleep(clk->gpiod, index);
- 
- 	return 0;
- }
--- 
-1.9.1
+> I have the following in U-Boot:
+
+> /* Enable the clocks */
+> DATA 4 0x53f8000c 0x1fffffff
+> DATA 4 0x53f80010 0xffffffff
+> DATA 4 0x53f80014 0xfdfff
+
+I'm using the same initial settings.
+
+Nevertheless, ssi1_ipg_per is disbled after loading the kernel.
+
+Digging into this a bit more, it turned out that without my patch,
+clk_disable_unused() recognizes ssi1_ipg_per as unused and disables it.
+
+If my patch is applied and ssi1_ipg_per is declared as parent of
+ssi1_ipg, clk_disable_unused() will not disable it and fsl_ssi_startup()
+will enable both ssi1_ipg_per and ssi1_ipg before playing sound.
+
+Best regards,
+Martin
