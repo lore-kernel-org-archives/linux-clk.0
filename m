@@ -1,77 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:42130 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751732AbeCVS4r (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Mar 2018 14:56:47 -0400
-Subject: Re: [PATCH v3 08/10] clk: qcom: Add ACD path to CPU clock driver for
- msm8996
-To: Stephen Boyd <sboyd@kernel.org>, Ilia Lin <ilialin@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
-        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
-        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
-        nicolas.dechesne@linaro.org, celster@codeaurora.org
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
- <1518616792-29028-9-git-send-email-ilialin@codeaurora.org>
- <152147863176.242365.17292287330283256524@swboyd.mtv.corp.google.com>
- <41f3b246-43f4-450d-5c6b-34cdad7b15dd@arm.com>
- <152149448251.242365.16980775001987673274@swboyd.mtv.corp.google.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <d9e9e276-ba8c-7d8c-b110-da0a0b778e6d@arm.com>
-Date: Thu, 22 Mar 2018 18:56:42 +0000
+Return-Path: <joel.stan@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <152149448251.242365.16980775001987673274@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Sender: joel.stan@gmail.com
+In-Reply-To: <CAARXrtk6ZynSzm=xA1E1M8aSJNb=BZ7jxg4gvWa_QJ_=LaQeog@mail.gmail.com>
+References: <1520440570-25280-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <CACPK8Xe5rVtB6hUo4xW9qSz-T+kehvXSRv5g1_6KOO=BYr8Qwg@mail.gmail.com> <CAARXrtk6ZynSzm=xA1E1M8aSJNb=BZ7jxg4gvWa_QJ_=LaQeog@mail.gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+Date: Thu, 8 Mar 2018 16:13:28 +1030
+Message-ID: <CACPK8Xe55+_aOJD+dhpLrYfnw8_kjE-daXuRhu42p=O3K5Rztw@mail.gmail.com>
+Subject: Re: [PATCH] clk: aspeed: Prevent reset if clock is enabled
+To: Lei YU <mine260309@gmail.com>
+Cc: Eddie James <eajames@linux.vnet.ibm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Ryan Chen <ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19/03/18 21:21, Stephen Boyd wrote:
-> Quoting Robin Murphy (2018-03-19 11:16:15)
->> On 19/03/18 16:57, Stephen Boyd wrote:
->> [...]
->>>> +
->>>
->>>> +                       writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
->>>> +                                       PWRCL_REG_OFFSET + SSSCTL_OFFSET);
->>>> +               /* Ensure SSSCTL config goes through before enabling ACD. */
->>>> +               mb();
->>>
->>> Use writel instead.
+On Thu, Mar 8, 2018 at 4:08 PM, Lei YU <mine260309@gmail.com> wrote:
+> On Thu, Mar 8, 2018 at 11:42 AM, Joel Stanley <joel@jms.id.au> wrote:
+>>> +       /* Only reset/enable/unreset if clock is stopped */
+>>> +       regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
+>>> +       if (!(reg & clk))
+>>> +               return 0;
 >>
->> Note that writel() only gives an implicit wmb() *before* the store to
->> ensure ordering against any previous writes. If this code really needs
->> to ensure that the given write has definitely completed before any other
->> accesses happen, then it still needs an explicit barrier *after* the
->> write*(), unless perhaps the next access is always guaranteed to be a
->> non-relaxed write (thus implicitly providing a suitable DSB).
+>> This doesn't generalise to all of the clocks, as some clocks use set
+>> to disable. Perhaps we could do something like this:
 >>
-> 
-> Ah right. So this should be a wmb() too? I suspect it's to order with
-> the write to the l2 indirect registers, but reading that register before
-> the MMIO write is not a problem. The comment above the l2 accessors
-> could be slightly more specific here and it would help immensely.
+>>        /* Only reset/enable/unreset if clock is stopped. The LPC clock
+>> on ast2500 has issues otherwise */
+>>        enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
+>>        regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
+>>        if ((reg & clk) == enval) {
+>>                spin_unlock_irqrestore(gate->lock, flags);
+>>                return 0;
+>>        }
+>>
+>> I think we should also do this operation under the lock.
+>>
+>> Please cc Ryan Chen <ryan_chen@aspeedtech.com> so he can confirm that
+>> this workaround is valid, and credit Lei who spent a lot of time
+>> investigating this issue. Perhaps "Root-caused-by".
+>>
+>
+> The code has aspeed_clk_is_enabled() already, why not just:
+>
+>     if (aspeed_clk_is_enabled(hw))
+>         return 0;
 
-It depends a bit on what exactly the hardware requires. If it's merely 
-that write(s) to register A (and perhaps others) arrive before any write 
-to register B, then the sensible thing to do would be to just make the 
-write to B non-relaxed, i.e.:
+Good suggestion.
 
-	writel_relaxed(x, base + A);
-	...
-	writel(y, base + B);
+We should also fix up aspeed_clk_is_enabled() for clocks that have
+CLK_GATE_SET_TO_DISABLE set.
 
-That still only guarantees that the previous write(s) have been pushed 
-all the way to the endpoint before the write to B is issued, though - 
-for many devices that's sufficient, but in some cases the only way to be 
-totally sure that the write has both been received *and* taken effect is 
-by reading back some suitable indicator before proceeding.
+Cheers,
 
-If we only care about making sure writes are pushed out, rather than 
-synchronising more complicated memory accesses between multiple agents, 
-then a full mb() is probably overkill (as ordering against outstanding 
-loads too only adds more overhead in the interconnect), and wmb() 
-(ideally implicit in a subsequent writel() as above) should be enough.
-
-Robin.
+Joel
