@@ -1,64 +1,154 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46319 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753696AbeCFOd0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 09:33:26 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 1/6] soc: samsung: pm_domains: Add blacklisting clock
- handling
-Date: Tue, 06 Mar 2018 15:33:07 +0100
-Message-id: <20180306143312.21035-2-m.szyprowski@samsung.com>
-In-reply-to: <20180306143312.21035-1-m.szyprowski@samsung.com>
-References: <20180306143312.21035-1-m.szyprowski@samsung.com>
-        <CGME20180306143323eucas1p1d420abb34b827a3128503859e0c21727@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: =?utf-8?B?T25kxZllag==?= Jirman <megi@xff.cz>
+Cc: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] [PATCH v3 06/16] drm/sun4i: Release exclusive clock lock when disabling TCON
+Date: Thu, 08 Mar 2018 23:57:40 +0100
+Message-ID: <3764594.86uYqsI6mN@jernej-laptop>
+In-Reply-To: <20180308224717.a6ieadihwh7u5rbu@core.my.home>
+References: <20180301213442.16677-1-jernej.skrabec@siol.net> <20180301213442.16677-7-jernej.skrabec@siol.net> <20180308224717.a6ieadihwh7u5rbu@core.my.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Handling of clock reparenting will be move to clock controller driver, so
-add possibility to blacklist clock handling on systems, where the clock
-controller already does all needed operations. This is needed to avoid
-potential deadlock on clock reparenting during power domain on/off
-procedure.
+Hi,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/soc/samsung/pm_domains.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Dne =C4=8Detrtek, 08. marec 2018 ob 23:47:17 CET je Ond=C5=99ej Jirman napi=
+sal(a):
+> Hi,
+>=20
+> On Thu, Mar 01, 2018 at 10:34:32PM +0100, Jernej Skrabec wrote:
+> > Currently exclusive TCON clock lock is never released, which, for
+> > example, prevents changing resolution on HDMI.
+> >=20
+> > In order to fix that, release clock when disabling TCON. TCON is always
+> > disabled first before new mode is set.
+> >=20
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> >=20
+> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 1d714c06ec9d..7f6c4125c89f
+> > 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > @@ -102,10 +102,12 @@ static void sun4i_tcon_channel_set_status(struct
+> > sun4i_tcon *tcon, int channel,>=20
+> >  		return;
+> >  =09
+> >  	}
+> >=20
+> > -	if (enabled)
+> > +	if (enabled) {
+> >=20
+> >  		clk_prepare_enable(clk);
+> >=20
+> > -	else
+> > +	} else {
+> > +		clk_rate_exclusive_put(clk);
+> >=20
+> >  		clk_disable_unprepare(clk);
+> >=20
+> > +	}
+> >=20
+> >  }
+>=20
+> At least in the linux-next/master I can't see clk_rate_exclusive_get call:
+>=20
 
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index b6a436594a19..cef30bdf19b1 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -147,6 +147,9 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
- 	return kstrdup_const(name, GFP_KERNEL);
- }
- 
-+static const char *soc_force_no_clk[] = {
-+};
-+
- static __init int exynos4_pm_init_power_domain(void)
- {
- 	struct device_node *np;
-@@ -183,6 +186,11 @@ static __init int exynos4_pm_init_power_domain(void)
- 		pd->pd.power_on = exynos_pd_power_on;
- 		pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
- 
-+		for (i = 0; i < ARRAY_SIZE(soc_force_no_clk); i++)
-+			if (of_find_compatible_node(NULL, NULL,
-+						    soc_force_no_clk[i]))
-+				goto no_clk;
-+
- 		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
- 			char clk_name[8];
- 
--- 
-2.15.0
+It is in drm-misc/drm-misc-fixes:
+https://cgit.freedesktop.org/drm/drm-misc/commit/?h=3Ddrm-misc-fixes&id=3D7=
+9d103a565d16b1893d990b2ee5e0fe71767759f
 
+My patch is also applied in same branch, so there should be no issues while=
+=20
+merging all those branches.
+
+linux-next doesn't have either patches currently: https://git.kernel.org/pu=
+b/
+scm/linux/kernel/git/next/linux-next.git/log/drivers/gpu/drm/sun4i
+
+This is issue only if you manually apply one patch without the other.
+
+Best regards,
+Jernej
+
+> $ git grep 'exclusive' linux-next/master -- drivers/gpu/drm/sun4i
+>=20
+> linux-next/master:sun4i_hdmi.h:    * On sun5i the threshold is exclusive,
+> i.e. does not include, linux-next/master:sun4i_tcon.c:         =20
+> clk_rate_exclusive_put(clk); linux-next/master:sun4i_tcon.c: =20
+> clk_set_rate_exclusive(tcon->dclk, mode->crtc_clock * 1000);
+> linux-next/master:sun4i_tcon.c:   clk_set_rate_exclusive(tcon->sclk1,
+> mode->crtc_clock * 1000);
+>=20
+> and the kernel complains too:
+>=20
+> [  841.915161] ------------[ cut here ]------------
+> [  841.915187] WARNING: CPU: 0 PID: 273 at
+> /workspace/megous.com/orangepi-pc/linux-4.16/drivers/clk/clk.c:608
+> clk_rate_exclusive_put+0x48/0x4c [  841.915194] CPU: 0 PID: 273 Comm: Xorg
+> Not tainted 4.16.0-rc4-00268-gbac2ecf73ed0 #13 [  841.915196] Hardware
+> name: Allwinner sun8i Family
+> [  841.915217] [<c0228440>] (unwind_backtrace) from [<c0225b90>]
+> (show_stack+0x10/0x14) [  841.915228] [<c0225b90>] (show_stack) from
+> [<c0b094bc>] (dump_stack+0x88/0x9c) [  841.915237] [<c0b094bc>]
+> (dump_stack) from [<c0240294>] (__warn+0xd4/0xf0) [  841.915244]
+> [<c0240294>] (__warn) from [<c0240380>] (warn_slowpath_null+0x40/0x48) [=
+=20
+> 841.915250] [<c0240380>] (warn_slowpath_null) from [<c0619b6c>]
+> (clk_rate_exclusive_put+0x48/0x4c) [  841.915261] [<c0619b6c>]
+> (clk_rate_exclusive_put) from [<c0694624>]
+> (sun4i_tcon_set_status+0x178/0x2f0) [  841.915269] [<c0694624>]
+> (sun4i_tcon_set_status) from [<c06930c0>]
+> (sun4i_crtc_atomic_disable+0x7c/0xe4) [  841.915279] [<c06930c0>]
+> (sun4i_crtc_atomic_disable) from [<c06637fc>]
+> (drm_atomic_helper_commit_modeset_disables+0x390/0x46c) [  841.915288]
+> [<c06637fc>] (drm_atomic_helper_commit_modeset_disables) from [<c0664df4>]
+> (drm_atomic_helper_commit_tail_rpm+0x18/0x64) [  841.915295] [<c0664df4>]
+> (drm_atomic_helper_commit_tail_rpm) from [<c0664da8>]
+> (commit_tail+0x40/0x6c) [  841.915302] [<c0664da8>] (commit_tail) from
+> [<c06652b0>] (drm_atomic_helper_commit+0xbc/0x128) [  841.915311]
+> [<c06652b0>] (drm_atomic_helper_commit) from [<c0668d40>]
+> (restore_fbdev_mode_atomic+0x100/0x1fc) [  841.915319] [<c0668d40>]
+> (restore_fbdev_mode_atomic) from [<c0668f1c>]
+> (drm_fb_helper_dpms+0x50/0x130) [  841.915328] [<c0668f1c>]
+> (drm_fb_helper_dpms) from [<c0669e9c>] (drm_fb_helper_blank+0x54/0x90) [=
+=20
+> 841.915337] [<c0669e9c>] (drm_fb_helper_blank) from [<c06088cc>]
+> (fb_blank+0x54/0xa8) [  841.915343] [<c06088cc>] (fb_blank) from
+> [<c0608c80>] (do_fb_ioctl+0x360/0x62c) [  841.915351] [<c0608c80>]
+> (do_fb_ioctl) from [<c0362648>] (do_vfs_ioctl+0x9c/0x774) [  841.915358]
+> [<c0362648>] (do_vfs_ioctl) from [<c0362d54>] (SyS_ioctl+0x34/0x58) [=20
+> 841.915364] [<c0362d54>] (SyS_ioctl) from [<c0201120>]
+> (ret_fast_syscall+0x0/0x4c) [  841.915368] Exception stack(0xe5fc5fa8 to
+> 0xe5fc5ff0)
+> [  841.915373] 5fa0:                   00674f10 00675460 0000000b 00004611
+> 00000001 00000000 [  841.915379] 5fc0: 00674f10 00675460 00000001 00000036
+> 00650474 00000000 006504a4 00675df8 [  841.915382] 5fe0: b61a502c be8acb2c
+> b6192c38 b6b152ec
+> [  841.915386] ---[ end trace fa81b956197707f8 ]---
+>=20
+> It looks like clk_rate_exclusive_put inside sun4i_tcon_channel_set_status=
+ is
+> called without first calling some function that would call
+> clk_set_rate_exclusive, leading to unbalanced get/put calls.
+>=20
+> regards,
+>   o.
+>=20
+> >  static void sun4i_tcon_lvds_set_status(struct sun4i_tcon *tcon,
+> >=20
+> > --
+> > 2.16.2
+> >=20
+> > --
+> > You received this message because you are subscribed to the Google Grou=
+ps
+> > "linux-sunxi" group. To unsubscribe from this group and stop receiving
+> > emails from it, send an email to
+> > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
+> > https://groups.google.com/d/optout.
