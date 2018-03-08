@@ -1,78 +1,52 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 02/16] clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
-Date: Thu,  1 Mar 2018 22:34:28 +0100
-Message-Id: <20180301213442.16677-3-jernej.skrabec@siol.net>
-In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5AA09F22.2070903@samsung.com>
+Date: Thu, 08 Mar 2018 11:25:38 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+Subject: Re: [PATCH] clk: samsung: exynos5420: Add CLK_SET_RATE_PARENT flag
+ to mout_mau_epll_clk
+In-reply-to: <20180307164656.12194-1-s.nawrocki@samsung.com>
+References: <CGME20180307164708epcas1p27e6599e85617f559c5c4c8eb92a70a47@epcas1p2.samsung.com>
+	<20180307164656.12194-1-s.nawrocki@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Although user manuals for H3 and H5 SoCs state that minimal rate
-supported by video PLL is around 30 MHz, it seems that in reality
-minimal rate is around 192 MHz.
+Hi Sylwester,
 
-Experiments showed that any rate below 96 MHz doesn't produce any video
-output at all. Even at this frequency, stable output depends on right
-factors. For example, when N = 4 and M = 1, output is stable and when N
-= 8 and M = 2, it's not.
+On 2018년 03월 08일 01:46, Sylwester Nawrocki wrote:
+> This allows changing the EPLL output frequency through the audio subsystem
+> clock tree leaf clocks. This change is needed to support audio on the HDMI
+> interface on Peach-Pi(t) Chromebook.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 8c050ff63536..1f204ba37f0f 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -621,7 +621,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+>  
+>  	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
+>  			mout_group5_5800_p, SRC_TOP7, 16, 2),
+> -	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2),
+> +	MUX_F(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2,
+> +	      CLK_SET_RATE_PARENT, 0),
+>  
+>  	MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
+>  };
+> 
 
-BSP clock driver suggest that minimum stable frequency is 192 MHz. That
-would also be in line with A64 SoC, which has similar periphery.
+Looks good to me.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Set minimal video PLL rate for H3/H5 to 192 MHz.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 29bc0566b776..b9f39078c0b2 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -69,17 +69,18 @@ static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				       BIT(28),	/* lock */
- 				       CLK_SET_RATE_UNGATE);
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
--					"osc24M", 0x0010,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video_clk, "pll-video",
-+					    "osc24M", 0x0010,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,	/* N */
-+					    0, 4,	/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					"osc24M", 0x0018,
 -- 
-2.16.2
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
