@@ -1,100 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:36941 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751747AbeCSIMd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Mar 2018 04:12:33 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 2/2] arm64: allwinner: h6: temporarily drop the usage of CCU headers in DTSI
-Date: Mon, 19 Mar 2018 16:11:08 +0800
-Message-Id: <20180319081108.23496-2-icenowy@aosc.io>
-In-Reply-To: <20180319081108.23496-1-icenowy@aosc.io>
-References: <20180319081108.23496-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 08/11] clk: tegra: build clk-dfll.c for Tegra124 and
+ Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-9-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <6ea88ecd-20bb-31f6-74ad-7f7e3aaecfe1@nvidia.com>
+Date: Thu, 8 Mar 2018 23:22:09 +0000
+MIME-Version: 1.0
+In-Reply-To: <1517934852-23255-9-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-As the CCU driver will be merged in different tree with the device tree,
-temporarily drop the usage of CCU headers in the DTSI file, and replace
-macros with the corresponding numbers.
 
-After they are both merged into Linus' tree, it can be switched back to
-use the CCU headers.
+On 06/02/18 16:34, Peter De Schrijver wrote:
+> Tegra210 has a DFLL as well and can share the majority of the code with
+> the Tegra124 implementation. So build the same code for both platforms.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/Kconfig  | 5 +++++
+>  drivers/clk/tegra/Makefile | 2 +-
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/Kconfig b/drivers/clk/tegra/Kconfig
+> index 7ddacae..57902ab 100644
+> --- a/drivers/clk/tegra/Kconfig
+> +++ b/drivers/clk/tegra/Kconfig
+> @@ -5,3 +5,8 @@ config TEGRA_CLK_EMC
+>  config CLK_TEGRA_BPMP
+>  	def_bool y
+>  	depends on TEGRA_BPMP
+> +
+> +config TEGRA_CLK_DFLL
+> +	depends on (ARCH_TEGRA_124_SOC || ARCH_TEGRA_210_SOC)
+> +	select PM_OPP
+> +	def_bool y
+> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> index b716923..fc7f4b4 100644
+> --- a/drivers/clk/tegra/Makefile
+> +++ b/drivers/clk/tegra/Makefile
+> @@ -19,7 +19,7 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
+>  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
+>  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
+>  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
+> -obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-dfll-fcpu.o
+> +obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
+>  obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+>  obj-y					+= cvb.o
+>  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+> 
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 4debc3962830..56563150d61a 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -4,8 +4,6 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
--#include <dt-bindings/clock/sun50i-h6-ccu.h>
--#include <dt-bindings/reset/sun50i-h6-ccu.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -117,7 +115,7 @@
- 				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&ccu CLK_APB1>, <&osc24M>, <&osc32k>;
-+			clocks = <&ccu 26>, <&osc24M>, <&osc32k>;
- 			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			#gpio-cells = <3>;
-@@ -136,8 +134,8 @@
- 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&ccu CLK_BUS_UART0>;
--			resets = <&ccu RST_BUS_UART0>;
-+			clocks = <&ccu 70>;
-+			resets = <&ccu 21>;
- 			status = "disabled";
- 		};
- 
-@@ -147,8 +145,8 @@
- 			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&ccu CLK_BUS_UART1>;
--			resets = <&ccu RST_BUS_UART1>;
-+			clocks = <&ccu 71>;
-+			resets = <&ccu 22>;
- 			status = "disabled";
- 		};
- 
-@@ -158,8 +156,8 @@
- 			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&ccu CLK_BUS_UART2>;
--			resets = <&ccu RST_BUS_UART2>;
-+			clocks = <&ccu 72>;
-+			resets = <&ccu 23>;
- 			status = "disabled";
- 		};
- 
-@@ -169,8 +167,8 @@
- 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
--			clocks = <&ccu CLK_BUS_UART3>;
--			resets = <&ccu RST_BUS_UART3>;
-+			clocks = <&ccu 73>;
-+			resets = <&ccu 24>;
- 			status = "disabled";
- 		};
- 	};
+Cheers
+Jon
+
 -- 
-2.15.1
-
+nvpublic
