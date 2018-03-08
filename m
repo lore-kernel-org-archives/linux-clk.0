@@ -1,709 +1,406 @@
-Return-Path: <linus.walleij@linaro.org>
-Return-Path: <linus.walleij@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH] clk: ux500: Drop AB8540/9540 support
-Date: Thu, 22 Mar 2018 11:16:18 +0100
-Message-Id: <20180322101618.9655-1-linus.walleij@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr50060.outbound.protection.outlook.com ([40.107.5.60]:6400
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755155AbeCHJpB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Mar 2018 04:45:01 -0500
+From: Bai Ping <ping.bai@nxp.com>
+To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
+        kernel@pengutronix.de
+Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+Subject: [PATCH v4 4/4] driver: clk: imx: add clock driver for imx6sll
+Date: Thu,  8 Mar 2018 17:47:25 +0800
+Message-Id: <1520502445-22576-4-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1520502445-22576-1-git-send-email-ping.bai@nxp.com>
+References: <1520502445-22576-1-git-send-email-ping.bai@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The AB8540 was an evolved version of the AB8500, but it was never
-mass produced or put into products, only reference designs exist.
-The upstream support was never completed and it is unlikely that
-this will happen so drop the support for now to simplify
-maintenance of the AB8500.
+Add clk driver support for imx6sll.
 
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Loic Pallardy <loic.pallardy@st.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
 ---
- drivers/clk/ux500/Makefile     |   2 -
- drivers/clk/ux500/abx500-clk.c |  16 --
- drivers/clk/ux500/u8540_clk.c  | 597 -----------------------------------------
- drivers/clk/ux500/u9540_clk.c  |  18 --
- 4 files changed, 633 deletions(-)
- delete mode 100644 drivers/clk/ux500/u8540_clk.c
- delete mode 100644 drivers/clk/ux500/u9540_clk.c
+ change v1->v2
+ - fix minor comment from stephen
+ change v2->v3
+ - remove init_on array, use CLK_IS_CRITICAL flag to make sure
+   system critical clock is always on
+ change v3->v4:
+ - update the license identifier to SPDX
+ - reformat the code indent
+---
 
-diff --git a/drivers/clk/ux500/Makefile b/drivers/clk/ux500/Makefile
-index fedc083dc8be..53fd29002401 100644
---- a/drivers/clk/ux500/Makefile
-+++ b/drivers/clk/ux500/Makefile
-@@ -10,8 +10,6 @@ obj-y += clk-sysctrl.o
- 
- # Clock definitions
- obj-y += u8500_of_clk.o
--obj-y += u9540_clk.o
--obj-y += u8540_clk.o
- 
- # ABX500 clock driver
- obj-y += abx500-clk.o
-diff --git a/drivers/clk/ux500/abx500-clk.c b/drivers/clk/ux500/abx500-clk.c
-index 2257d12ba988..5a86cd8fe5de 100644
---- a/drivers/clk/ux500/abx500-clk.c
-+++ b/drivers/clk/ux500/abx500-clk.c
-@@ -88,18 +88,6 @@ static int ab8500_reg_clks(struct device *dev)
- 	return 0;
- }
- 
--/* Clock definitions for ab8540 */
--static int ab8540_reg_clks(struct device *dev)
--{
--	return 0;
--}
--
--/* Clock definitions for ab9540 */
--static int ab9540_reg_clks(struct device *dev)
--{
--	return 0;
--}
--
- static int abx500_clk_probe(struct platform_device *pdev)
- {
- 	struct ab8500 *parent = dev_get_drvdata(pdev->dev.parent);
-@@ -107,10 +95,6 @@ static int abx500_clk_probe(struct platform_device *pdev)
- 
- 	if (is_ab8500(parent) || is_ab8505(parent)) {
- 		ret = ab8500_reg_clks(&pdev->dev);
--	} else if (is_ab8540(parent)) {
--		ret = ab8540_reg_clks(&pdev->dev);
--	} else if (is_ab9540(parent)) {
--		ret = ab9540_reg_clks(&pdev->dev);
- 	} else {
- 		dev_err(&pdev->dev, "non supported plf id\n");
- 		return -ENODEV;
-diff --git a/drivers/clk/ux500/u8540_clk.c b/drivers/clk/ux500/u8540_clk.c
-deleted file mode 100644
-index 133859f0e2bf..000000000000
---- a/drivers/clk/ux500/u8540_clk.c
-+++ /dev/null
-@@ -1,597 +0,0 @@
--/*
-- * Clock definitions for u8540 platform.
-- *
-- * Copyright (C) 2012 ST-Ericsson SA
-- * Author: Ulf Hansson <ulf.hansson@linaro.org>
-- *
-- * License terms: GNU General Public License (GPL) version 2
-- */
--
--#include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/clkdev.h>
--#include <linux/clk-provider.h>
--#include <linux/mfd/dbx500-prcmu.h>
--#include "clk.h"
--
--/* CLKRST4 is missing making it hard to index things */
--enum clkrst_index {
--	CLKRST1_INDEX = 0,
--	CLKRST2_INDEX,
--	CLKRST3_INDEX,
--	CLKRST5_INDEX,
--	CLKRST6_INDEX,
--	CLKRST_MAX,
--};
--
--static void u8540_clk_init(struct device_node *np)
--{
--	struct clk *clk;
--	u32 bases[CLKRST_MAX];
--	int i;
--
--	for (i = 0; i < ARRAY_SIZE(bases); i++) {
--		struct resource r;
--
--		if (of_address_to_resource(np, i, &r))
--			/* Not much choice but to continue */
--			pr_err("failed to get CLKRST %d base address\n",
--			       i + 1);
--		bases[i] = r.start;
--	}
--
--	/* Clock sources. */
--	/* Fixed ClockGen */
--	clk = clk_reg_prcmu_gate("soc0_pll", NULL, PRCMU_PLLSOC0,
--				CLK_IGNORE_UNUSED);
--	clk_register_clkdev(clk, "soc0_pll", NULL);
--
--	clk = clk_reg_prcmu_gate("soc1_pll", NULL, PRCMU_PLLSOC1,
--				CLK_IGNORE_UNUSED);
--	clk_register_clkdev(clk, "soc1_pll", NULL);
--
--	clk = clk_reg_prcmu_gate("ddr_pll", NULL, PRCMU_PLLDDR,
--				CLK_IGNORE_UNUSED);
--	clk_register_clkdev(clk, "ddr_pll", NULL);
--
--	clk = clk_register_fixed_rate(NULL, "rtc32k", NULL,
--				CLK_IGNORE_UNUSED,
--				32768);
--	clk_register_clkdev(clk, "clk32k", NULL);
--	clk_register_clkdev(clk, "apb_pclk", "rtc-pl031");
--
--	clk = clk_register_fixed_rate(NULL, "ulp38m4", NULL,
--				CLK_IGNORE_UNUSED,
--				38400000);
--
--	clk = clk_reg_prcmu_gate("uartclk", NULL, PRCMU_UARTCLK, 0);
--	clk_register_clkdev(clk, NULL, "UART");
--
--	/* msp02clk needs a abx500 clk as parent. Handle by abx500 clk driver */
--	clk = clk_reg_prcmu_gate("msp02clk", "ab9540_sysclk12_b1",
--			PRCMU_MSP02CLK, 0);
--	clk_register_clkdev(clk, NULL, "MSP02");
--
--	clk = clk_reg_prcmu_gate("msp1clk", NULL, PRCMU_MSP1CLK, 0);
--	clk_register_clkdev(clk, NULL, "MSP1");
--
--	clk = clk_reg_prcmu_gate("i2cclk", NULL, PRCMU_I2CCLK, 0);
--	clk_register_clkdev(clk, NULL, "I2C");
--
--	clk = clk_reg_prcmu_gate("slimclk", NULL, PRCMU_SLIMCLK, 0);
--	clk_register_clkdev(clk, NULL, "slim");
--
--	clk = clk_reg_prcmu_gate("per1clk", NULL, PRCMU_PER1CLK, 0);
--	clk_register_clkdev(clk, NULL, "PERIPH1");
--
--	clk = clk_reg_prcmu_gate("per2clk", NULL, PRCMU_PER2CLK, 0);
--	clk_register_clkdev(clk, NULL, "PERIPH2");
--
--	clk = clk_reg_prcmu_gate("per3clk", NULL, PRCMU_PER3CLK, 0);
--	clk_register_clkdev(clk, NULL, "PERIPH3");
--
--	clk = clk_reg_prcmu_gate("per5clk", NULL, PRCMU_PER5CLK, 0);
--	clk_register_clkdev(clk, NULL, "PERIPH5");
--
--	clk = clk_reg_prcmu_gate("per6clk", NULL, PRCMU_PER6CLK, 0);
--	clk_register_clkdev(clk, NULL, "PERIPH6");
--
--	clk = clk_reg_prcmu_gate("per7clk", NULL, PRCMU_PER7CLK, 0);
--	clk_register_clkdev(clk, NULL, "PERIPH7");
--
--	clk = clk_reg_prcmu_scalable("lcdclk", NULL, PRCMU_LCDCLK, 0,
--				CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "lcd");
--	clk_register_clkdev(clk, "lcd", "mcde");
--
--	clk = clk_reg_prcmu_opp_gate("bmlclk", NULL, PRCMU_BMLCLK, 0);
--	clk_register_clkdev(clk, NULL, "bml");
--
--	clk = clk_reg_prcmu_scalable("hsitxclk", NULL, PRCMU_HSITXCLK, 0,
--				     CLK_SET_RATE_GATE);
--
--	clk = clk_reg_prcmu_scalable("hsirxclk", NULL, PRCMU_HSIRXCLK, 0,
--				     CLK_SET_RATE_GATE);
--
--	clk = clk_reg_prcmu_scalable("hdmiclk", NULL, PRCMU_HDMICLK, 0,
--				     CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "hdmi");
--	clk_register_clkdev(clk, "hdmi", "mcde");
--
--	clk = clk_reg_prcmu_gate("apeatclk", NULL, PRCMU_APEATCLK, 0);
--	clk_register_clkdev(clk, NULL, "apeat");
--
--	clk = clk_reg_prcmu_gate("apetraceclk", NULL, PRCMU_APETRACECLK, 0);
--	clk_register_clkdev(clk, NULL, "apetrace");
--
--	clk = clk_reg_prcmu_gate("mcdeclk", NULL, PRCMU_MCDECLK, 0);
--	clk_register_clkdev(clk, NULL, "mcde");
--	clk_register_clkdev(clk, "mcde", "mcde");
--	clk_register_clkdev(clk, NULL, "dsilink.0");
--	clk_register_clkdev(clk, NULL, "dsilink.1");
--	clk_register_clkdev(clk, NULL, "dsilink.2");
--
--	clk = clk_reg_prcmu_opp_gate("ipi2cclk", NULL, PRCMU_IPI2CCLK, 0);
--	clk_register_clkdev(clk, NULL, "ipi2");
--
--	clk = clk_reg_prcmu_gate("dsialtclk", NULL, PRCMU_DSIALTCLK, 0);
--	clk_register_clkdev(clk, NULL, "dsialt");
--
--	clk = clk_reg_prcmu_gate("dmaclk", NULL, PRCMU_DMACLK, 0);
--	clk_register_clkdev(clk, NULL, "dma40.0");
--
--	clk = clk_reg_prcmu_gate("b2r2clk", NULL, PRCMU_B2R2CLK, 0);
--	clk_register_clkdev(clk, NULL, "b2r2");
--	clk_register_clkdev(clk, NULL, "b2r2_core");
--	clk_register_clkdev(clk, NULL, "U8500-B2R2.0");
--	clk_register_clkdev(clk, NULL, "b2r2_1_core");
--
--	clk = clk_reg_prcmu_scalable("tvclk", NULL, PRCMU_TVCLK, 0,
--				     CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "tv");
--	clk_register_clkdev(clk, "tv", "mcde");
--
--	clk = clk_reg_prcmu_gate("sspclk", NULL, PRCMU_SSPCLK, 0);
--	clk_register_clkdev(clk, NULL, "SSP");
--
--	clk = clk_reg_prcmu_gate("rngclk", NULL, PRCMU_RNGCLK, 0);
--	clk_register_clkdev(clk, NULL, "rngclk");
--
--	clk = clk_reg_prcmu_gate("uiccclk", NULL, PRCMU_UICCCLK, 0);
--	clk_register_clkdev(clk, NULL, "uicc");
--
--	clk = clk_reg_prcmu_gate("timclk", NULL, PRCMU_TIMCLK, 0);
--	clk_register_clkdev(clk, NULL, "mtu0");
--	clk_register_clkdev(clk, NULL, "mtu1");
--
--	clk = clk_reg_prcmu_opp_volt_scalable("sdmmcclk", NULL,
--					PRCMU_SDMMCCLK, 100000000,
--					CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "sdmmc");
--
--	clk = clk_reg_prcmu_opp_volt_scalable("sdmmchclk", NULL,
--					PRCMU_SDMMCHCLK, 400000000,
--					CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "sdmmchclk");
--
--	clk = clk_reg_prcmu_gate("hvaclk", NULL, PRCMU_HVACLK, 0);
--	clk_register_clkdev(clk, NULL, "hva");
--
--	clk = clk_reg_prcmu_gate("g1clk", NULL, PRCMU_G1CLK, 0);
--	clk_register_clkdev(clk, NULL, "g1");
--
--	clk = clk_reg_prcmu_scalable("spare1clk", NULL, PRCMU_SPARE1CLK, 0,
--				     CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, "dsilcd", "mcde");
--
--	clk = clk_reg_prcmu_scalable("dsi_pll", "hdmiclk",
--				PRCMU_PLLDSI, 0, CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, "dsihs2", "mcde");
--	clk_register_clkdev(clk, "hs_clk", "dsilink.2");
--
--	clk = clk_reg_prcmu_scalable("dsilcd_pll", "spare1clk",
--				PRCMU_PLLDSI_LCD, 0, CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, "dsilcd_pll", "mcde");
--
--	clk = clk_reg_prcmu_scalable("dsi0clk", "dsi_pll",
--				PRCMU_DSI0CLK, 0, CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, "dsihs0", "mcde");
--
--	clk = clk_reg_prcmu_scalable("dsi0lcdclk", "dsilcd_pll",
--				PRCMU_DSI0CLK_LCD, 0, CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, "dsihs0", "mcde");
--	clk_register_clkdev(clk, "hs_clk", "dsilink.0");
--
--	clk = clk_reg_prcmu_scalable("dsi1clk", "dsi_pll",
--				PRCMU_DSI1CLK, 0, CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, "dsihs1", "mcde");
--
--	clk = clk_reg_prcmu_scalable("dsi1lcdclk", "dsilcd_pll",
--				PRCMU_DSI1CLK_LCD, 0, CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, "dsihs1", "mcde");
--	clk_register_clkdev(clk, "hs_clk", "dsilink.1");
--
--	clk = clk_reg_prcmu_scalable("dsi0escclk", "tvclk",
--				PRCMU_DSI0ESCCLK, 0, CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, "lp_clk", "dsilink.0");
--	clk_register_clkdev(clk, "dsilp0", "mcde");
--
--	clk = clk_reg_prcmu_scalable("dsi1escclk", "tvclk",
--				PRCMU_DSI1ESCCLK, 0, CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, "lp_clk", "dsilink.1");
--	clk_register_clkdev(clk, "dsilp1", "mcde");
--
--	clk = clk_reg_prcmu_scalable("dsi2escclk", "tvclk",
--				PRCMU_DSI2ESCCLK, 0, CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, "lp_clk", "dsilink.2");
--	clk_register_clkdev(clk, "dsilp2", "mcde");
--
--	clk = clk_reg_prcmu_scalable_rate("armss", NULL,
--				PRCMU_ARMSS, 0, CLK_IGNORE_UNUSED);
--	clk_register_clkdev(clk, "armss", NULL);
--
--	clk = clk_register_fixed_factor(NULL, "smp_twd", "armss",
--				CLK_IGNORE_UNUSED, 1, 2);
--	clk_register_clkdev(clk, NULL, "smp_twd");
--
--	/* PRCC P-clocks */
--	/* Peripheral 1 : PRCC P-clocks */
--	clk = clk_reg_prcc_pclk("p1_pclk0", "per1clk", bases[CLKRST1_INDEX],
--				BIT(0), 0);
--	clk_register_clkdev(clk, "apb_pclk", "uart0");
--
--	clk = clk_reg_prcc_pclk("p1_pclk1", "per1clk", bases[CLKRST1_INDEX],
--				BIT(1), 0);
--	clk_register_clkdev(clk, "apb_pclk", "uart1");
--
--	clk = clk_reg_prcc_pclk("p1_pclk2", "per1clk", bases[CLKRST1_INDEX],
--				BIT(2), 0);
--	clk_register_clkdev(clk, "apb_pclk", "nmk-i2c.1");
--
--	clk = clk_reg_prcc_pclk("p1_pclk3", "per1clk", bases[CLKRST1_INDEX],
--				BIT(3), 0);
--	clk_register_clkdev(clk, "apb_pclk", "msp0");
--	clk_register_clkdev(clk, "apb_pclk", "dbx5x0-msp-i2s.0");
--
--	clk = clk_reg_prcc_pclk("p1_pclk4", "per1clk", bases[CLKRST1_INDEX],
--				BIT(4), 0);
--	clk_register_clkdev(clk, "apb_pclk", "msp1");
--	clk_register_clkdev(clk, "apb_pclk", "dbx5x0-msp-i2s.1");
--
--	clk = clk_reg_prcc_pclk("p1_pclk5", "per1clk", bases[CLKRST1_INDEX],
--				BIT(5), 0);
--	clk_register_clkdev(clk, "apb_pclk", "sdi0");
--
--	clk = clk_reg_prcc_pclk("p1_pclk6", "per1clk", bases[CLKRST1_INDEX],
--				BIT(6), 0);
--	clk_register_clkdev(clk, "apb_pclk", "nmk-i2c.2");
--
--	clk = clk_reg_prcc_pclk("p1_pclk7", "per1clk", bases[CLKRST1_INDEX],
--				BIT(7), 0);
--	clk_register_clkdev(clk, NULL, "spi3");
--
--	clk = clk_reg_prcc_pclk("p1_pclk8", "per1clk", bases[CLKRST1_INDEX],
--				BIT(8), 0);
--	clk_register_clkdev(clk, "apb_pclk", "slimbus0");
--
--	clk = clk_reg_prcc_pclk("p1_pclk9", "per1clk", bases[CLKRST1_INDEX],
--				BIT(9), 0);
--	clk_register_clkdev(clk, NULL, "gpio.0");
--	clk_register_clkdev(clk, NULL, "gpio.1");
--	clk_register_clkdev(clk, NULL, "gpioblock0");
--	clk_register_clkdev(clk, "apb_pclk", "ab85xx-codec.0");
--
--	clk = clk_reg_prcc_pclk("p1_pclk10", "per1clk", bases[CLKRST1_INDEX],
--				BIT(10), 0);
--	clk_register_clkdev(clk, "apb_pclk", "nmk-i2c.4");
--
--	clk = clk_reg_prcc_pclk("p1_pclk11", "per1clk", bases[CLKRST1_INDEX],
--				BIT(11), 0);
--	clk_register_clkdev(clk, "apb_pclk", "msp3");
--	clk_register_clkdev(clk, "apb_pclk", "dbx5x0-msp-i2s.3");
--
--	/* Peripheral 2 : PRCC P-clocks */
--	clk = clk_reg_prcc_pclk("p2_pclk0", "per2clk", bases[CLKRST2_INDEX],
--				BIT(0), 0);
--	clk_register_clkdev(clk, "apb_pclk", "nmk-i2c.3");
--
--	clk = clk_reg_prcc_pclk("p2_pclk1", "per2clk", bases[CLKRST2_INDEX],
--				BIT(1), 0);
--	clk_register_clkdev(clk, NULL, "spi2");
--
--	clk = clk_reg_prcc_pclk("p2_pclk2", "per2clk", bases[CLKRST2_INDEX],
--				BIT(2), 0);
--	clk_register_clkdev(clk, NULL, "spi1");
--
--	clk = clk_reg_prcc_pclk("p2_pclk3", "per2clk", bases[CLKRST2_INDEX],
--				BIT(3), 0);
--	clk_register_clkdev(clk, NULL, "pwl");
--
--	clk = clk_reg_prcc_pclk("p2_pclk4", "per2clk", bases[CLKRST2_INDEX],
--				BIT(4), 0);
--	clk_register_clkdev(clk, "apb_pclk", "sdi4");
--
--	clk = clk_reg_prcc_pclk("p2_pclk5", "per2clk", bases[CLKRST2_INDEX],
--				BIT(5), 0);
--	clk_register_clkdev(clk, "apb_pclk", "msp2");
--	clk_register_clkdev(clk, "apb_pclk", "dbx5x0-msp-i2s.2");
--
--	clk = clk_reg_prcc_pclk("p2_pclk6", "per2clk", bases[CLKRST2_INDEX],
--				BIT(6), 0);
--	clk_register_clkdev(clk, "apb_pclk", "sdi1");
--
--	clk = clk_reg_prcc_pclk("p2_pclk7", "per2clk", bases[CLKRST2_INDEX],
--				BIT(7), 0);
--	clk_register_clkdev(clk, "apb_pclk", "sdi3");
--
--	clk = clk_reg_prcc_pclk("p2_pclk8", "per2clk", bases[CLKRST2_INDEX],
--				BIT(8), 0);
--	clk_register_clkdev(clk, NULL, "spi0");
--
--	clk = clk_reg_prcc_pclk("p2_pclk9", "per2clk", bases[CLKRST2_INDEX],
--				BIT(9), 0);
--	clk_register_clkdev(clk, "hsir_hclk", "ste_hsi.0");
--
--	clk = clk_reg_prcc_pclk("p2_pclk10", "per2clk", bases[CLKRST2_INDEX],
--				BIT(10), 0);
--	clk_register_clkdev(clk, "hsit_hclk", "ste_hsi.0");
--
--	clk = clk_reg_prcc_pclk("p2_pclk11", "per2clk", bases[CLKRST2_INDEX],
--				BIT(11), 0);
--	clk_register_clkdev(clk, NULL, "gpio.6");
--	clk_register_clkdev(clk, NULL, "gpio.7");
--	clk_register_clkdev(clk, NULL, "gpioblock1");
--
--	clk = clk_reg_prcc_pclk("p2_pclk12", "per2clk", bases[CLKRST2_INDEX],
--				BIT(12), 0);
--	clk_register_clkdev(clk, "msp4-pclk", "ab85xx-codec.0");
--
--	/* Peripheral 3 : PRCC P-clocks */
--	clk = clk_reg_prcc_pclk("p3_pclk0", "per3clk", bases[CLKRST3_INDEX],
--				BIT(0), 0);
--	clk_register_clkdev(clk, NULL, "fsmc");
--
--	clk = clk_reg_prcc_pclk("p3_pclk1", "per3clk", bases[CLKRST3_INDEX],
--				BIT(1), 0);
--	clk_register_clkdev(clk, "apb_pclk", "ssp0");
--
--	clk = clk_reg_prcc_pclk("p3_pclk2", "per3clk", bases[CLKRST3_INDEX],
--				BIT(2), 0);
--	clk_register_clkdev(clk, "apb_pclk", "ssp1");
--
--	clk = clk_reg_prcc_pclk("p3_pclk3", "per3clk", bases[CLKRST3_INDEX],
--				BIT(3), 0);
--	clk_register_clkdev(clk, "apb_pclk", "nmk-i2c.0");
--
--	clk = clk_reg_prcc_pclk("p3_pclk4", "per3clk", bases[CLKRST3_INDEX],
--				BIT(4), 0);
--	clk_register_clkdev(clk, "apb_pclk", "sdi2");
--
--	clk = clk_reg_prcc_pclk("p3_pclk5", "per3clk", bases[CLKRST3_INDEX],
--				BIT(5), 0);
--	clk_register_clkdev(clk, "apb_pclk", "ske");
--	clk_register_clkdev(clk, "apb_pclk", "nmk-ske-keypad");
--
--	clk = clk_reg_prcc_pclk("p3_pclk6", "per3clk", bases[CLKRST3_INDEX],
--				BIT(6), 0);
--	clk_register_clkdev(clk, "apb_pclk", "uart2");
--
--	clk = clk_reg_prcc_pclk("p3_pclk7", "per3clk", bases[CLKRST3_INDEX],
--				BIT(7), 0);
--	clk_register_clkdev(clk, "apb_pclk", "sdi5");
--
--	clk = clk_reg_prcc_pclk("p3_pclk8", "per3clk", bases[CLKRST3_INDEX],
--				BIT(8), 0);
--	clk_register_clkdev(clk, NULL, "gpio.2");
--	clk_register_clkdev(clk, NULL, "gpio.3");
--	clk_register_clkdev(clk, NULL, "gpio.4");
--	clk_register_clkdev(clk, NULL, "gpio.5");
--	clk_register_clkdev(clk, NULL, "gpioblock2");
--
--	clk = clk_reg_prcc_pclk("p3_pclk9", "per3clk", bases[CLKRST3_INDEX],
--				BIT(9), 0);
--	clk_register_clkdev(clk, "apb_pclk", "nmk-i2c.5");
--
--	clk = clk_reg_prcc_pclk("p3_pclk10", "per3clk", bases[CLKRST3_INDEX],
--				BIT(10), 0);
--	clk_register_clkdev(clk, "apb_pclk", "nmk-i2c.6");
--
--	clk = clk_reg_prcc_pclk("p3_pclk11", "per3clk", bases[CLKRST3_INDEX],
--				BIT(11), 0);
--	clk_register_clkdev(clk, "apb_pclk", "uart3");
--
--	clk = clk_reg_prcc_pclk("p3_pclk12", "per3clk", bases[CLKRST3_INDEX],
--				BIT(12), 0);
--	clk_register_clkdev(clk, "apb_pclk", "uart4");
--
--	/* Peripheral 5 : PRCC P-clocks */
--	clk = clk_reg_prcc_pclk("p5_pclk0", "per5clk", bases[CLKRST5_INDEX],
--				BIT(0), 0);
--	clk_register_clkdev(clk, "usb", "musb-ux500.0");
--	clk_register_clkdev(clk, "usbclk", "ab-iddet.0");
--
--	clk = clk_reg_prcc_pclk("p5_pclk1", "per5clk", bases[CLKRST5_INDEX],
--				BIT(1), 0);
--	clk_register_clkdev(clk, NULL, "gpio.8");
--	clk_register_clkdev(clk, NULL, "gpioblock3");
--
--	/* Peripheral 6 : PRCC P-clocks */
--	clk = clk_reg_prcc_pclk("p6_pclk0", "per6clk", bases[CLKRST6_INDEX],
--				BIT(0), 0);
--	clk_register_clkdev(clk, "apb_pclk", "rng");
--
--	clk = clk_reg_prcc_pclk("p6_pclk1", "per6clk", bases[CLKRST6_INDEX],
--				BIT(1), 0);
--	clk_register_clkdev(clk, NULL, "cryp0");
--	clk_register_clkdev(clk, NULL, "cryp1");
--
--	clk = clk_reg_prcc_pclk("p6_pclk2", "per6clk", bases[CLKRST6_INDEX],
--				BIT(2), 0);
--	clk_register_clkdev(clk, NULL, "hash0");
--
--	clk = clk_reg_prcc_pclk("p6_pclk3", "per6clk", bases[CLKRST6_INDEX],
--				BIT(3), 0);
--	clk_register_clkdev(clk, NULL, "pka");
--
--	clk = clk_reg_prcc_pclk("p6_pclk4", "per6clk", bases[CLKRST6_INDEX],
--				BIT(4), 0);
--	clk_register_clkdev(clk, NULL, "db8540-hash1");
--
--	clk = clk_reg_prcc_pclk("p6_pclk5", "per6clk", bases[CLKRST6_INDEX],
--				BIT(5), 0);
--	clk_register_clkdev(clk, NULL, "cfgreg");
--
--	clk = clk_reg_prcc_pclk("p6_pclk6", "per6clk", bases[CLKRST6_INDEX],
--				BIT(6), 0);
--	clk_register_clkdev(clk, "apb_pclk", "mtu0");
--
--	clk = clk_reg_prcc_pclk("p6_pclk7", "per6clk", bases[CLKRST6_INDEX],
--				BIT(7), 0);
--	clk_register_clkdev(clk, "apb_pclk", "mtu1");
--
--	/*
--	 * PRCC K-clocks  ==> see table PRCC_PCKEN/PRCC_KCKEN
--	 * This differs from the internal implementation:
--	 * We don't use the PERPIH[n| clock as parent, since those _should_
--	 * only be used as parents for the P-clocks.
--	 * TODO: "parentjoin" with corresponding P-clocks for all K-clocks.
--	 */
--
--	/* Peripheral 1 : PRCC K-clocks */
--	clk = clk_reg_prcc_kclk("p1_uart0_kclk", "uartclk",
--			bases[CLKRST1_INDEX], BIT(0), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "uart0");
--
--	clk = clk_reg_prcc_kclk("p1_uart1_kclk", "uartclk",
--			bases[CLKRST1_INDEX], BIT(1), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "uart1");
--
--	clk = clk_reg_prcc_kclk("p1_i2c1_kclk", "i2cclk",
--			bases[CLKRST1_INDEX], BIT(2), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "nmk-i2c.1");
--
--	clk = clk_reg_prcc_kclk("p1_msp0_kclk", "msp02clk",
--			bases[CLKRST1_INDEX], BIT(3), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "msp0");
--	clk_register_clkdev(clk, NULL, "dbx5x0-msp-i2s.0");
--
--	clk = clk_reg_prcc_kclk("p1_msp1_kclk", "msp1clk",
--			bases[CLKRST1_INDEX], BIT(4), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "msp1");
--	clk_register_clkdev(clk, NULL, "dbx5x0-msp-i2s.1");
--
--	clk = clk_reg_prcc_kclk("p1_sdi0_kclk", "sdmmchclk",
--			bases[CLKRST1_INDEX], BIT(5), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "sdi0");
--
--	clk = clk_reg_prcc_kclk("p1_i2c2_kclk", "i2cclk",
--			bases[CLKRST1_INDEX], BIT(6), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "nmk-i2c.2");
--
--	clk = clk_reg_prcc_kclk("p1_slimbus0_kclk", "slimclk",
--			bases[CLKRST1_INDEX], BIT(8), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "slimbus0");
--
--	clk = clk_reg_prcc_kclk("p1_i2c4_kclk", "i2cclk",
--			bases[CLKRST1_INDEX], BIT(9), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "nmk-i2c.4");
--
--	clk = clk_reg_prcc_kclk("p1_msp3_kclk", "msp1clk",
--			bases[CLKRST1_INDEX], BIT(10), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "msp3");
--	clk_register_clkdev(clk, NULL, "dbx5x0-msp-i2s.3");
--
--	/* Peripheral 2 : PRCC K-clocks */
--	clk = clk_reg_prcc_kclk("p2_i2c3_kclk", "i2cclk",
--			bases[CLKRST2_INDEX], BIT(0), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "nmk-i2c.3");
--
--	clk = clk_reg_prcc_kclk("p2_pwl_kclk", "rtc32k",
--			bases[CLKRST2_INDEX], BIT(1), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "pwl");
--
--	clk = clk_reg_prcc_kclk("p2_sdi4_kclk", "sdmmchclk",
--			bases[CLKRST2_INDEX], BIT(2), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "sdi4");
--
--	clk = clk_reg_prcc_kclk("p2_msp2_kclk", "msp02clk",
--			bases[CLKRST2_INDEX], BIT(3), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "msp2");
--	clk_register_clkdev(clk, NULL, "dbx5x0-msp-i2s.2");
--
--	clk = clk_reg_prcc_kclk("p2_sdi1_kclk", "sdmmchclk",
--			bases[CLKRST2_INDEX], BIT(4), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "sdi1");
--
--	clk = clk_reg_prcc_kclk("p2_sdi3_kclk", "sdmmcclk",
--			bases[CLKRST2_INDEX], BIT(5), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "sdi3");
--
--	clk = clk_reg_prcc_kclk("p2_ssirx_kclk", "hsirxclk",
--			bases[CLKRST2_INDEX], BIT(6),
--			CLK_SET_RATE_GATE|CLK_SET_RATE_PARENT);
--	clk_register_clkdev(clk, "hsir_hsirxclk", "ste_hsi.0");
--
--	clk = clk_reg_prcc_kclk("p2_ssitx_kclk", "hsitxclk",
--			bases[CLKRST2_INDEX], BIT(7),
--			CLK_SET_RATE_GATE|CLK_SET_RATE_PARENT);
--	clk_register_clkdev(clk, "hsit_hsitxclk", "ste_hsi.0");
--
--	/* Should only be 9540, but might be added for 85xx as well */
--	clk = clk_reg_prcc_kclk("p2_msp4_kclk", "msp02clk",
--			bases[CLKRST2_INDEX], BIT(9), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "msp4");
--	clk_register_clkdev(clk, "msp4", "ab85xx-codec.0");
--
--	/* Peripheral 3 : PRCC K-clocks */
--	clk = clk_reg_prcc_kclk("p3_ssp0_kclk", "sspclk",
--			bases[CLKRST3_INDEX], BIT(1), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "ssp0");
--
--	clk = clk_reg_prcc_kclk("p3_ssp1_kclk", "sspclk",
--			bases[CLKRST3_INDEX], BIT(2), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "ssp1");
--
--	clk = clk_reg_prcc_kclk("p3_i2c0_kclk", "i2cclk",
--			bases[CLKRST3_INDEX], BIT(3), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "nmk-i2c.0");
--
--	clk = clk_reg_prcc_kclk("p3_sdi2_kclk", "sdmmchclk",
--			bases[CLKRST3_INDEX], BIT(4), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "sdi2");
--
--	clk = clk_reg_prcc_kclk("p3_ske_kclk", "rtc32k",
--			bases[CLKRST3_INDEX], BIT(5), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "ske");
--	clk_register_clkdev(clk, NULL, "nmk-ske-keypad");
--
--	clk = clk_reg_prcc_kclk("p3_uart2_kclk", "uartclk",
--			bases[CLKRST3_INDEX], BIT(6), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "uart2");
--
--	clk = clk_reg_prcc_kclk("p3_sdi5_kclk", "sdmmcclk",
--			bases[CLKRST3_INDEX], BIT(7), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "sdi5");
--
--	clk = clk_reg_prcc_kclk("p3_i2c5_kclk", "i2cclk",
--			bases[CLKRST3_INDEX], BIT(8), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "nmk-i2c.5");
--
--	clk = clk_reg_prcc_kclk("p3_i2c6_kclk", "i2cclk",
--			bases[CLKRST3_INDEX], BIT(9), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "nmk-i2c.6");
--
--	clk = clk_reg_prcc_kclk("p3_uart3_kclk", "uartclk",
--			bases[CLKRST3_INDEX], BIT(10), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "uart3");
--
--	clk = clk_reg_prcc_kclk("p3_uart4_kclk", "uartclk",
--			bases[CLKRST3_INDEX], BIT(11), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "uart4");
--
--	/* Peripheral 6 : PRCC K-clocks */
--	clk = clk_reg_prcc_kclk("p6_rng_kclk", "rngclk",
--			bases[CLKRST6_INDEX], BIT(0), CLK_SET_RATE_GATE);
--	clk_register_clkdev(clk, NULL, "rng");
--}
--CLK_OF_DECLARE(u8540_clks, "stericsson,u8540-clks", u8540_clk_init);
-diff --git a/drivers/clk/ux500/u9540_clk.c b/drivers/clk/ux500/u9540_clk.c
-deleted file mode 100644
-index 7b6bca49ce42..000000000000
---- a/drivers/clk/ux500/u9540_clk.c
-+++ /dev/null
-@@ -1,18 +0,0 @@
--/*
-- * Clock definitions for u9540 platform.
-- *
-- * Copyright (C) 2012 ST-Ericsson SA
-- * Author: Ulf Hansson <ulf.hansson@linaro.org>
-- *
-- * License terms: GNU General Public License (GPL) version 2
-- */
--
--#include <linux/clk-provider.h>
--#include <linux/mfd/dbx500-prcmu.h>
--#include "clk.h"
--
--static void u9540_clk_init(struct device_node *np)
--{
--	/* register clocks here */
--}
--CLK_OF_DECLARE(u9540_clks, "stericsson,u9540-clks", u9540_clk_init);
+ drivers/clk/imx/Makefile      |   1 +
+ drivers/clk/imx/clk-imx6sll.c | 344 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 345 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-imx6sll.c
+
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index f91f2b2..8c3baa7 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -22,6 +22,7 @@ obj-$(CONFIG_SOC_IMX35)  += clk-imx35.o
+ obj-$(CONFIG_SOC_IMX5)   += clk-imx51-imx53.o
+ obj-$(CONFIG_SOC_IMX6Q)  += clk-imx6q.o
+ obj-$(CONFIG_SOC_IMX6SL) += clk-imx6sl.o
++obj-$(CONFIG_SOC_IMX6SLL) += clk-imx6sll.o
+ obj-$(CONFIG_SOC_IMX6SX) += clk-imx6sx.o
+ obj-$(CONFIG_SOC_IMX6UL) += clk-imx6ul.o
+ obj-$(CONFIG_SOC_IMX7D)  += clk-imx7d.o
+diff --git a/drivers/clk/imx/clk-imx6sll.c b/drivers/clk/imx/clk-imx6sll.c
+new file mode 100644
+index 0000000..e938db5
+--- /dev/null
++++ b/drivers/clk/imx/clk-imx6sll.c
+@@ -0,0 +1,344 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017-2018 NXP.
++ */
++
++#include <dt-bindings/clock/imx6sll-clock.h>
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/types.h>
++
++#include "clk.h"
++
++#define CCM_ANALOG_PLL_BYPASS		(0x1 << 16)
++#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
++#define CCDR				0x4
++#define xPLL_CLR(offset)		(offset + 0x8)
++
++static const char *pll_bypass_src_sels[] = { "osc", "dummy", };
++static const char *pll1_bypass_sels[] = { "pll1", "pll1_bypass_src", };
++static const char *pll2_bypass_sels[] = { "pll2", "pll2_bypass_src", };
++static const char *pll3_bypass_sels[] = { "pll3", "pll3_bypass_src", };
++static const char *pll4_bypass_sels[] = { "pll4", "pll4_bypass_src", };
++static const char *pll5_bypass_sels[] = { "pll5", "pll5_bypass_src", };
++static const char *pll6_bypass_sels[] = { "pll6", "pll6_bypass_src", };
++static const char *pll7_bypass_sels[] = { "pll7", "pll7_bypass_src", };
++static const char *step_sels[] = { "osc", "pll2_pfd2_396m", };
++static const char *pll1_sw_sels[] = { "pll1_sys", "step", };
++static const char *axi_alt_sels[] = { "pll2_pfd2_396m", "pll3_pfd1_540m", };
++static const char *axi_sels[] = {"periph", "axi_alt_sel", };
++static const char *periph_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll2_198m", };
++static const char *periph2_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll4_audio_div", };
++static const char *periph_clk2_sels[] = { "pll3_usb_otg", "osc", "osc", };
++static const char *periph2_clk2_sels[] = { "pll3_usb_otg", "osc", };
++static const char *periph_sels[] = { "periph_pre", "periph_clk2", };
++static const char *periph2_sels[] = { "periph2_pre", "periph2_clk2", };
++static const char *usdhc_sels[] = { "pll2_pfd2_396m", "pll2_pfd0_352m", };
++static const char *ssi_sels[] = {"pll3_pfd2_508m", "pll3_pfd3_454m", "pll4_audio_div", "dummy",};
++static const char *spdif_sels[] = { "pll4_audio_div", "pll3_pfd2_508m", "pll5_video_div", "pll3_usb_otg", };
++static const char *ldb_di0_div_sels[] = { "ldb_di0_div_3_5", "ldb_di0_div_7", };
++static const char *ldb_di1_div_sels[] = { "ldb_di1_div_3_5", "ldb_di1_div_7", };
++static const char *ldb_di0_sels[] = { "pll5_video_div", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll2_pfd3_594m", "pll2_pfd1_594m", "pll3_pfd3_454m", };
++static const char *ldb_di1_sels[] = { "pll3_usb_otg", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll2_bus", "pll3_pfd3_454m", "pll3_pfd2_508m", };
++static const char *lcdif_pre_sels[] = { "pll2_bus", "pll3_pfd3_454m", "pll5_video_div", "pll2_pfd0_352m", "pll2_pfd1_594m", "pll3_pfd1_540m", };
++static const char *ecspi_sels[] = { "pll3_60m", "osc", };
++static const char *uart_sels[] = { "pll3_80m", "osc", };
++static const char *perclk_sels[] = { "ipg", "osc", };
++static const char *lcdif_sels[] = { "lcdif_podf", "ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
++
++static const char *epdc_pre_sels[] = { "pll2_bus", "pll3_usb_otg", "pll5_video_div", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll3_pfd2_508m", };
++static const char *epdc_sels[] = { "epdc_podf", "ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
++
++static struct clk *clks[IMX6SLL_CLK_END];
++static struct clk_onecell_data clk_data;
++
++static const struct clk_div_table post_div_table[] = {
++	{ .val = 2, .div = 1, },
++	{ .val = 1, .div = 2, },
++	{ .val = 0, .div = 4, },
++	{ }
++};
++
++static const struct clk_div_table video_div_table[] = {
++	{ .val = 0, .div = 1, },
++	{ .val = 1, .div = 2, },
++	{ .val = 2, .div = 1, },
++	{ .val = 3, .div = 4, },
++	{ }
++};
++
++static u32 share_count_audio;
++static u32 share_count_ssi1;
++static u32 share_count_ssi2;
++static u32 share_count_ssi3;
++
++static void __init imx6sll_clocks_init(struct device_node *ccm_node)
++{
++	struct device_node *np;
++	void __iomem *base;
++
++	clks[IMX6SLL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
++
++	clks[IMX6SLL_CLK_CKIL] = of_clk_get_by_name(ccm_node, "ckil");
++	clks[IMX6SLL_CLK_OSC] = of_clk_get_by_name(ccm_node, "osc");
++
++	/* ipp_di clock is external input */
++	clks[IMX6SLL_CLK_IPP_DI0] = of_clk_get_by_name(ccm_node, "ipp_di0");
++	clks[IMX6SLL_CLK_IPP_DI1] = of_clk_get_by_name(ccm_node, "ipp_di1");
++
++	np = of_find_compatible_node(NULL, NULL, "fsl,imx6sll-anatop");
++	base = of_iomap(np, 0);
++	WARN_ON(!base);
++
++	/* Do not bypass PLLs initially */
++	writel_relaxed(CCM_ANALOG_PLL_BYPASS, base + xPLL_CLR(0x0));
++	writel_relaxed(CCM_ANALOG_PLL_BYPASS, base + xPLL_CLR(0x10));
++	writel_relaxed(CCM_ANALOG_PLL_BYPASS, base + xPLL_CLR(0x20));
++	writel_relaxed(CCM_ANALOG_PLL_BYPASS, base + xPLL_CLR(0x30));
++	writel_relaxed(CCM_ANALOG_PLL_BYPASS, base + xPLL_CLR(0x70));
++	writel_relaxed(CCM_ANALOG_PLL_BYPASS, base + xPLL_CLR(0xa0));
++	writel_relaxed(CCM_ANALOG_PLL_BYPASS, base + xPLL_CLR(0xe0));
++
++	clks[IMX6SLL_PLL1_BYPASS_SRC] = imx_clk_mux("pll1_bypass_src", base + 0x00, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
++	clks[IMX6SLL_PLL2_BYPASS_SRC] = imx_clk_mux("pll2_bypass_src", base + 0x30, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
++	clks[IMX6SLL_PLL3_BYPASS_SRC] = imx_clk_mux("pll3_bypass_src", base + 0x10, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
++	clks[IMX6SLL_PLL4_BYPASS_SRC] = imx_clk_mux("pll4_bypass_src", base + 0x70, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
++	clks[IMX6SLL_PLL5_BYPASS_SRC] = imx_clk_mux("pll5_bypass_src", base + 0xa0, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
++	clks[IMX6SLL_PLL6_BYPASS_SRC] = imx_clk_mux("pll6_bypass_src", base + 0xe0, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
++	clks[IMX6SLL_PLL7_BYPASS_SRC] = imx_clk_mux("pll7_bypass_src", base + 0x20, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
++
++	clks[IMX6SLL_CLK_PLL1] = imx_clk_pllv3(IMX_PLLV3_SYS,	 "pll1", "pll1_bypass_src", base + 0x00, 0x7f);
++	clks[IMX6SLL_CLK_PLL2] = imx_clk_pllv3(IMX_PLLV3_GENERIC, "pll2", "pll2_bypass_src", base + 0x30, 0x1);
++	clks[IMX6SLL_CLK_PLL3] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll3", "pll3_bypass_src", base + 0x10, 0x3);
++	clks[IMX6SLL_CLK_PLL4] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll4", "pll4_bypass_src", base + 0x70, 0x7f);
++	clks[IMX6SLL_CLK_PLL5] = imx_clk_pllv3(IMX_PLLV3_AV,	 "pll5", "pll5_bypass_src", base + 0xa0, 0x7f);
++	clks[IMX6SLL_CLK_PLL6] = imx_clk_pllv3(IMX_PLLV3_ENET,	 "pll6", "pll6_bypass_src", base + 0xe0, 0x3);
++	clks[IMX6SLL_CLK_PLL7] = imx_clk_pllv3(IMX_PLLV3_USB,	 "pll7", "pll7_bypass_src", base + 0x20, 0x3);
++
++	clks[IMX6SLL_PLL1_BYPASS] = imx_clk_mux_flags("pll1_bypass", base + 0x00, 16, 1, pll1_bypass_sels, ARRAY_SIZE(pll1_bypass_sels), CLK_SET_RATE_PARENT);
++	clks[IMX6SLL_PLL2_BYPASS] = imx_clk_mux_flags("pll2_bypass", base + 0x30, 16, 1, pll2_bypass_sels, ARRAY_SIZE(pll2_bypass_sels), CLK_SET_RATE_PARENT);
++	clks[IMX6SLL_PLL3_BYPASS] = imx_clk_mux_flags("pll3_bypass", base + 0x10, 16, 1, pll3_bypass_sels, ARRAY_SIZE(pll3_bypass_sels), CLK_SET_RATE_PARENT);
++	clks[IMX6SLL_PLL4_BYPASS] = imx_clk_mux_flags("pll4_bypass", base + 0x70, 16, 1, pll4_bypass_sels, ARRAY_SIZE(pll4_bypass_sels), CLK_SET_RATE_PARENT);
++	clks[IMX6SLL_PLL5_BYPASS] = imx_clk_mux_flags("pll5_bypass", base + 0xa0, 16, 1, pll5_bypass_sels, ARRAY_SIZE(pll5_bypass_sels), CLK_SET_RATE_PARENT);
++	clks[IMX6SLL_PLL6_BYPASS] = imx_clk_mux_flags("pll6_bypass", base + 0xe0, 16, 1, pll6_bypass_sels, ARRAY_SIZE(pll6_bypass_sels), CLK_SET_RATE_PARENT);
++	clks[IMX6SLL_PLL7_BYPASS] = imx_clk_mux_flags("pll7_bypass", base + 0x20, 16, 1, pll7_bypass_sels, ARRAY_SIZE(pll7_bypass_sels), CLK_SET_RATE_PARENT);
++
++	clks[IMX6SLL_CLK_PLL1_SYS]	= imx_clk_fixed_factor("pll1_sys", "pll1_bypass", 1, 1);
++	clks[IMX6SLL_CLK_PLL2_BUS]	= imx_clk_gate("pll2_bus",	   "pll2_bypass", base + 0x30, 13);
++	clks[IMX6SLL_CLK_PLL3_USB_OTG]	= imx_clk_gate("pll3_usb_otg",	   "pll3_bypass", base + 0x10, 13);
++	clks[IMX6SLL_CLK_PLL4_AUDIO]	= imx_clk_gate("pll4_audio",	   "pll4_bypass", base + 0x70, 13);
++	clks[IMX6SLL_CLK_PLL5_VIDEO]	= imx_clk_gate("pll5_video",	   "pll5_bypass", base + 0xa0, 13);
++	clks[IMX6SLL_CLK_PLL6_ENET]	= imx_clk_gate("pll6_enet",	   "pll6_bypass", base + 0xe0, 13);
++	clks[IMX6SLL_CLK_PLL7_USB_HOST]	= imx_clk_gate("pll7_usb_host",	   "pll7_bypass", base + 0x20, 13);
++
++	/*
++	 * Bit 20 is the reserved and read-only bit, we do this only for:
++	 * - Do nothing for usbphy clk_enable/disable
++	 * - Keep refcount when do usbphy clk_enable/disable, in that case,
++	 * the clk framework many need to enable/disable usbphy's parent
++	 */
++	clks[IMX6SLL_CLK_USBPHY1] = imx_clk_gate("usbphy1", "pll3_usb_otg",  base + 0x10, 20);
++	clks[IMX6SLL_CLK_USBPHY2] = imx_clk_gate("usbphy2", "pll7_usb_host", base + 0x20, 20);
++
++	/*
++	 * usbphy*_gate needs to be on after system boots up, and software
++	 * never needs to control it anymore.
++	 */
++	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
++		clks[IMX6SLL_CLK_USBPHY1_GATE] = imx_clk_gate_flags("usbphy1_gate", "dummy", base + 0x10, 6, CLK_IS_CRITICAL);
++		clks[IMX6SLL_CLK_USBPHY2_GATE] = imx_clk_gate_flags("usbphy2_gate", "dummy", base + 0x20, 6, CLK_IS_CRITICAL);
++	}
++
++	/*					name		   parent_name	   reg		idx */
++	clks[IMX6SLL_CLK_PLL2_PFD0] = imx_clk_pfd("pll2_pfd0_352m", "pll2_bus", base + 0x100, 0);
++	clks[IMX6SLL_CLK_PLL2_PFD1] = imx_clk_pfd("pll2_pfd1_594m", "pll2_bus", base + 0x100, 1);
++	clks[IMX6SLL_CLK_PLL2_PFD2] = imx_clk_pfd("pll2_pfd2_396m", "pll2_bus", base + 0x100, 2);
++	clks[IMX6SLL_CLK_PLL2_PFD3] = imx_clk_pfd("pll2_pfd3_594m", "pll2_bus",	base + 0x100, 3);
++	clks[IMX6SLL_CLK_PLL3_PFD0] = imx_clk_pfd("pll3_pfd0_720m", "pll3_usb_otg", base + 0xf0, 0);
++	clks[IMX6SLL_CLK_PLL3_PFD1] = imx_clk_pfd("pll3_pfd1_540m", "pll3_usb_otg", base + 0xf0, 1);
++	clks[IMX6SLL_CLK_PLL3_PFD2] = imx_clk_pfd("pll3_pfd2_508m", "pll3_usb_otg", base + 0xf0, 2);
++	clks[IMX6SLL_CLK_PLL3_PFD3] = imx_clk_pfd("pll3_pfd3_454m", "pll3_usb_otg", base + 0xf0, 3);
++
++	clks[IMX6SLL_CLK_PLL4_POST_DIV]  = clk_register_divider_table(NULL, "pll4_post_div", "pll4_audio",
++		 CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x70, 19, 2, 0, post_div_table, &imx_ccm_lock);
++	clks[IMX6SLL_CLK_PLL4_AUDIO_DIV] = clk_register_divider(NULL, "pll4_audio_div", "pll4_post_div",
++		 CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x170, 15, 1, 0, &imx_ccm_lock);
++	clks[IMX6SLL_CLK_PLL5_POST_DIV]  = clk_register_divider_table(NULL, "pll5_post_div", "pll5_video",
++		 CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xa0, 19, 2, 0, post_div_table, &imx_ccm_lock);
++	clks[IMX6SLL_CLK_PLL5_VIDEO_DIV] = clk_register_divider_table(NULL, "pll5_video_div", "pll5_post_div",
++		 CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x170, 30, 2, 0, video_div_table, &imx_ccm_lock);
++
++	/*						   name		parent_name	 mult  div */
++	clks[IMX6SLL_CLK_PLL2_198M] = imx_clk_fixed_factor("pll2_198m", "pll2_pfd2_396m", 1, 2);
++	clks[IMX6SLL_CLK_PLL3_120M] = imx_clk_fixed_factor("pll3_120m", "pll3_usb_otg",   1, 4);
++	clks[IMX6SLL_CLK_PLL3_80M]  = imx_clk_fixed_factor("pll3_80m",  "pll3_usb_otg",   1, 6);
++	clks[IMX6SLL_CLK_PLL3_60M]  = imx_clk_fixed_factor("pll3_60m",  "pll3_usb_otg",   1, 8);
++
++	np = ccm_node;
++	base = of_iomap(np, 0);
++	WARN_ON(!base);
++
++	clks[IMX6SLL_CLK_STEP] 	 	  = imx_clk_mux("step", base + 0x0c, 8, 1, step_sels, ARRAY_SIZE(step_sels));
++	clks[IMX6SLL_CLK_PLL1_SW] 	  = imx_clk_mux_flags("pll1_sw",   base + 0x0c, 2,  1, pll1_sw_sels, ARRAY_SIZE(pll1_sw_sels), 0);
++	clks[IMX6SLL_CLK_AXI_ALT_SEL]	  = imx_clk_mux("axi_alt_sel",	   base + 0x14, 7,  1, axi_alt_sels, ARRAY_SIZE(axi_alt_sels));
++	clks[IMX6SLL_CLK_AXI_SEL] 	  = imx_clk_mux_flags("axi_sel",   base + 0x14, 6,  1, axi_sels, ARRAY_SIZE(axi_sels), 0);
++	clks[IMX6SLL_CLK_PERIPH_PRE]	  = imx_clk_mux("periph_pre",      base + 0x18, 18, 2, periph_pre_sels, ARRAY_SIZE(periph_pre_sels));
++	clks[IMX6SLL_CLK_PERIPH2_PRE]	  = imx_clk_mux("periph2_pre",     base + 0x18, 21, 2, periph2_pre_sels, ARRAY_SIZE(periph2_pre_sels));
++	clks[IMX6SLL_CLK_PERIPH_CLK2_SEL]  = imx_clk_mux("periph_clk2_sel",  base + 0x18, 12, 2, periph_clk2_sels, ARRAY_SIZE(periph_clk2_sels));
++	clks[IMX6SLL_CLK_PERIPH2_CLK2_SEL] = imx_clk_mux("periph2_clk2_sel", base + 0x18, 20, 1, periph2_clk2_sels, ARRAY_SIZE(periph2_clk2_sels));
++	clks[IMX6SLL_CLK_USDHC2_SEL]	  = imx_clk_mux("usdhc2_sel",   base + 0x1c, 17, 1, usdhc_sels, ARRAY_SIZE(usdhc_sels));
++	clks[IMX6SLL_CLK_USDHC1_SEL]	  = imx_clk_mux("usdhc1_sel",   base + 0x1c, 16, 1, usdhc_sels, ARRAY_SIZE(usdhc_sels));
++	clks[IMX6SLL_CLK_USDHC3_SEL]	  = imx_clk_mux("usdhc3_sel",   base + 0x1c, 18, 1, usdhc_sels, ARRAY_SIZE(usdhc_sels));
++	clks[IMX6SLL_CLK_SSI1_SEL]	  = imx_clk_mux("ssi1_sel",     base + 0x1c, 10, 2, ssi_sels, ARRAY_SIZE(ssi_sels));
++	clks[IMX6SLL_CLK_SSI2_SEL]	  = imx_clk_mux("ssi2_sel",     base + 0x1c, 12, 2, ssi_sels, ARRAY_SIZE(ssi_sels));
++	clks[IMX6SLL_CLK_SSI3_SEL]	  = imx_clk_mux("ssi3_sel",     base + 0x1c, 14, 2, ssi_sels, ARRAY_SIZE(ssi_sels));
++	clks[IMX6SLL_CLK_PERCLK_SEL] 	  = imx_clk_mux("perclk_sel",	base + 0x1c, 6,  1, perclk_sels, ARRAY_SIZE(perclk_sels));
++	clks[IMX6SLL_CLK_UART_SEL]	  = imx_clk_mux("uart_sel",	base + 0x24, 6,  1, uart_sels, ARRAY_SIZE(uart_sels));
++	clks[IMX6SLL_CLK_SPDIF_SEL]	  = imx_clk_mux("spdif_sel",	base + 0x30, 20, 2, spdif_sels, ARRAY_SIZE(spdif_sels));
++	clks[IMX6SLL_CLK_EXTERN_AUDIO_SEL] = imx_clk_mux("extern_audio_sel", base + 0x30, 7,  2, spdif_sels, ARRAY_SIZE(spdif_sels));
++	clks[IMX6SLL_CLK_EPDC_PRE_SEL]	  = imx_clk_mux("epdc_pre_sel",	base + 0x34, 15, 3, epdc_pre_sels, ARRAY_SIZE(epdc_pre_sels));
++	clks[IMX6SLL_CLK_EPDC_SEL]	  = imx_clk_mux("epdc_sel",	base + 0x34, 9, 3, epdc_sels, ARRAY_SIZE(epdc_sels));
++	clks[IMX6SLL_CLK_ECSPI_SEL]	  = imx_clk_mux("ecspi_sel",	base + 0x38, 18, 1, ecspi_sels, ARRAY_SIZE(ecspi_sels));
++	clks[IMX6SLL_CLK_LCDIF_PRE_SEL]	  = imx_clk_mux("lcdif_pre_sel", base + 0x38, 15, 3, lcdif_pre_sels, ARRAY_SIZE(lcdif_pre_sels));
++	clks[IMX6SLL_CLK_LCDIF_SEL]	  = imx_clk_mux("lcdif_sel", 	 base + 0x38, 9, 3, lcdif_sels, ARRAY_SIZE(lcdif_sels));
++
++	clks[IMX6SLL_CLK_PERIPH]  = imx_clk_busy_mux("periph",  base + 0x14, 25, 1, base + 0x48, 5, periph_sels, ARRAY_SIZE(periph_sels));
++	clks[IMX6SLL_CLK_PERIPH2] = imx_clk_busy_mux("periph2", base + 0x14, 26, 1, base + 0x48, 3, periph2_sels, ARRAY_SIZE(periph2_sels));
++
++	clks[IMX6SLL_CLK_PERIPH_CLK2]	= imx_clk_divider("periph_clk2",   "periph_clk2_sel",  	base + 0x14, 27, 3);
++	clks[IMX6SLL_CLK_PERIPH2_CLK2]	= imx_clk_divider("periph2_clk2",  "periph2_clk2_sel", 	base + 0x14, 0,  3);
++	clks[IMX6SLL_CLK_IPG]		= imx_clk_divider("ipg",	   "ahb",		base + 0x14, 8,	 2);
++	clks[IMX6SLL_CLK_LCDIF_PODF]	= imx_clk_divider("lcdif_podf",	   "lcdif_pred",	base + 0x18, 23, 3);
++	clks[IMX6SLL_CLK_PERCLK]	= imx_clk_divider("perclk",	   "perclk_sel",	base + 0x1c, 0,  6);
++	clks[IMX6SLL_CLK_USDHC3_PODF]   = imx_clk_divider("usdhc3_podf",   "usdhc3_sel",	base + 0x24, 19, 3);
++	clks[IMX6SLL_CLK_USDHC2_PODF]	= imx_clk_divider("usdhc2_podf",   "usdhc2_sel",	base + 0x24, 16, 3);
++	clks[IMX6SLL_CLK_USDHC1_PODF]	= imx_clk_divider("usdhc1_podf",   "usdhc1_sel",	base + 0x24, 11, 3);
++	clks[IMX6SLL_CLK_UART_PODF]	= imx_clk_divider("uart_podf",	   "uart_sel",		base + 0x24, 0,  6);
++	clks[IMX6SLL_CLK_SSI3_PRED]	= imx_clk_divider("ssi3_pred",	   "ssi3_sel",		base + 0x28, 22, 3);
++	clks[IMX6SLL_CLK_SSI3_PODF]	= imx_clk_divider("ssi3_podf",	   "ssi3_pred",		base + 0x28, 16, 6);
++	clks[IMX6SLL_CLK_SSI1_PRED]	= imx_clk_divider("ssi1_pred",	   "ssi1_sel",		base + 0x28, 6,	 3);
++	clks[IMX6SLL_CLK_SSI1_PODF]	= imx_clk_divider("ssi1_podf",	   "ssi1_pred",		base + 0x28, 0,	 6);
++	clks[IMX6SLL_CLK_SSI2_PRED]	= imx_clk_divider("ssi2_pred",	   "ssi2_sel",		base + 0x2c, 6,	 3);
++	clks[IMX6SLL_CLK_SSI2_PODF]	= imx_clk_divider("ssi2_podf",	   "ssi2_pred",		base + 0x2c, 0,  6);
++	clks[IMX6SLL_CLK_SPDIF_PRED]	= imx_clk_divider("spdif_pred",	   "spdif_sel",		base + 0x30, 25, 3);
++	clks[IMX6SLL_CLK_SPDIF_PODF]	= imx_clk_divider("spdif_podf",	   "spdif_pred",	base + 0x30, 22, 3);
++	clks[IMX6SLL_CLK_EXTERN_AUDIO_PRED] = imx_clk_divider("extern_audio_pred", "extern_audio_sel",  base + 0x30, 12, 3);
++	clks[IMX6SLL_CLK_EXTERN_AUDIO_PODF] = imx_clk_divider("extern_audio_podf", "extern_audio_pred", base + 0x30, 9,  3);
++	clks[IMX6SLL_CLK_EPDC_PODF]  = imx_clk_divider("epdc_podf",  "epdc_pre_sel",  base + 0x34, 12, 3);
++	clks[IMX6SLL_CLK_ECSPI_PODF] = imx_clk_divider("ecspi_podf", "ecspi_sel",     base + 0x38, 19, 6);
++	clks[IMX6SLL_CLK_LCDIF_PRED] = imx_clk_divider("lcdif_pred", "lcdif_pre_sel", base + 0x38, 12, 3);
++
++	clks[IMX6SLL_CLK_ARM]		= imx_clk_busy_divider("arm", 	    "pll1_sw",	base +	0x10, 0,  3,  base + 0x48, 16);
++	clks[IMX6SLL_CLK_MMDC_PODF]	= imx_clk_busy_divider("mmdc_podf", "periph2",	base +  0x14, 3,  3,  base + 0x48, 2);
++	clks[IMX6SLL_CLK_AXI_PODF]	= imx_clk_busy_divider("axi",       "axi_sel",	base +  0x14, 16, 3,  base + 0x48, 0);
++	clks[IMX6SLL_CLK_AHB]		= imx_clk_busy_divider("ahb",	    "periph",	base +  0x14, 10, 3,  base + 0x48, 1);
++
++	clks[IMX6SLL_CLK_LDB_DI0_DIV_3_5] = imx_clk_fixed_factor("ldb_di0_div_3_5", "ldb_di0_sel", 2, 7);
++	clks[IMX6SLL_CLK_LDB_DI0_DIV_7]	  = imx_clk_fixed_factor("ldb_di0_div_7",   "ldb_di0_sel", 1, 7);
++	clks[IMX6SLL_CLK_LDB_DI1_DIV_3_5] = imx_clk_fixed_factor("ldb_di1_div_3_5", "ldb_di1_sel", 2, 7);
++	clks[IMX6SLL_CLK_LDB_DI1_DIV_7]	  = imx_clk_fixed_factor("ldb_di1_div_7",   "ldb_di1_sel", 1, 7);
++
++	clks[IMX6SLL_CLK_LDB_DI0_SEL]	= imx_clk_mux("ldb_di0_sel", base + 0x2c, 9, 3, ldb_di0_sels, ARRAY_SIZE(ldb_di0_sels));
++	clks[IMX6SLL_CLK_LDB_DI1_SEL]   = imx_clk_mux("ldb_di1_sel", base + 0x1c, 7, 3, ldb_di1_sels, ARRAY_SIZE(ldb_di1_sels));
++	clks[IMX6SLL_CLK_LDB_DI0_DIV_SEL] = imx_clk_mux("ldb_di0_div_sel", base + 0x20, 10, 1, ldb_di0_div_sels, ARRAY_SIZE(ldb_di0_div_sels));
++	clks[IMX6SLL_CLK_LDB_DI1_DIV_SEL] = imx_clk_mux("ldb_di1_div_sel", base + 0x20, 10, 1, ldb_di1_div_sels, ARRAY_SIZE(ldb_di1_div_sels));
++
++	/* CCGR0 */
++	clks[IMX6SLL_CLK_AIPSTZ1]	= imx_clk_gate2_flags("aips_tz1", "ahb", base + 0x68, 0, CLK_IS_CRITICAL);
++	clks[IMX6SLL_CLK_AIPSTZ2]	= imx_clk_gate2_flags("aips_tz2", "ahb", base + 0x68, 2, CLK_IS_CRITICAL);
++	clks[IMX6SLL_CLK_DCP]		= imx_clk_gate2("dcp", "ahb", base + 0x68, 10);
++	clks[IMX6SLL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg", "ipg", base + 0x68, 28);
++	clks[IMX6SLL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf", base + 0x68, 28);
++
++	/* CCGR1 */
++	clks[IMX6SLL_CLK_ECSPI1]	= imx_clk_gate2("ecspi1",	"ecspi_podf", base + 0x6c, 0);
++	clks[IMX6SLL_CLK_ECSPI2]	= imx_clk_gate2("ecspi2",	"ecspi_podf", base + 0x6c, 2);
++	clks[IMX6SLL_CLK_ECSPI3]	= imx_clk_gate2("ecspi3",	"ecspi_podf", base + 0x6c, 4);
++	clks[IMX6SLL_CLK_ECSPI4]	= imx_clk_gate2("ecspi4",	"ecspi_podf", base + 0x6c, 6);
++	clks[IMX6SLL_CLK_UART3_IPG]	= imx_clk_gate2("uart3_ipg",	"ipg", base + 0x6c, 10);
++	clks[IMX6SLL_CLK_UART3_SERIAL]	= imx_clk_gate2("uart3_serial",	"uart_podf", base + 0x6c, 10);
++	clks[IMX6SLL_CLK_EPIT1]		= imx_clk_gate2("epit1",	"perclk", base + 0x6c, 12);
++	clks[IMX6SLL_CLK_EPIT2]		= imx_clk_gate2("epit2",	"perclk", base + 0x6c, 14);
++	clks[IMX6SLL_CLK_GPT_BUS]	= imx_clk_gate2("gpt1_bus",	"perclk", base + 0x6c, 20);
++	clks[IMX6SLL_CLK_GPT_SERIAL]	= imx_clk_gate2("gpt1_serial",	"perclk", base + 0x6c, 22);
++	clks[IMX6SLL_CLK_UART4_IPG]	= imx_clk_gate2("uart4_ipg",	"ipg", base + 0x6c, 24);
++	clks[IMX6SLL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serail",	"uart_podf", base + 0x6c, 24);
++
++	/* CCGR2 */
++	clks[IMX6SLL_CLK_CSI]		= imx_clk_gate2("csi",		"axi",    base + 0x70,	2);
++	clks[IMX6SLL_CLK_I2C1]		= imx_clk_gate2("i2c1",		"perclk", base + 0x70,	6);
++	clks[IMX6SLL_CLK_I2C2]		= imx_clk_gate2("i2c2",		"perclk", base + 0x70,	8);
++	clks[IMX6SLL_CLK_I2C3]		= imx_clk_gate2("i2c3",		"perclk", base + 0x70,	10);
++	clks[IMX6SLL_CLK_OCOTP]		= imx_clk_gate2("ocotp",	"ipg",    base + 0x70,	12);
++	clks[IMX6SLL_CLK_LCDIF_APB]	= imx_clk_gate2("lcdif_apb",	"axi",    base + 0x70,	28);
++	clks[IMX6SLL_CLK_PXP]		= imx_clk_gate2("pxp",		"axi",    base + 0x70,	30);
++
++	/* CCGR3 */
++	clks[IMX6SLL_CLK_UART5_IPG]	= imx_clk_gate2("uart5_ipg",	"ipg",		base + 0x74, 2);
++	clks[IMX6SLL_CLK_UART5_SERIAL]	= imx_clk_gate2("uart5_serial",	"uart_podf",	base + 0x74, 2);
++	clks[IMX6SLL_CLK_EPDC_AXI]	= imx_clk_gate2("epdc_aclk",	"axi",		base + 0x74, 4);
++	clks[IMX6SLL_CLK_EPDC_PIX]	= imx_clk_gate2("epdc_pix",	"epdc_podf",	base + 0x74, 4);
++	clks[IMX6SLL_CLK_LCDIF_PIX]	= imx_clk_gate2("lcdif_pix",	"lcdif_podf",	base + 0x74, 10);
++	clks[IMX6SLL_CLK_WDOG1]		= imx_clk_gate2("wdog1",	"ipg",		base + 0x74, 16);
++	clks[IMX6SLL_CLK_MMDC_P0_FAST]	= imx_clk_gate_flags("mmdc_p0_fast", "mmdc_podf",  base + 0x74,	20, CLK_IS_CRITICAL);
++	clks[IMX6SLL_CLK_MMDC_P0_IPG]	= imx_clk_gate2_flags("mmdc_p0_ipg", "ipg",	   base + 0x74,	24, CLK_IS_CRITICAL);
++	clks[IMX6SLL_CLK_OCRAM]		= imx_clk_gate_flags("ocram","ahb",		   base + 0x74,	28, CLK_IS_CRITICAL);
++
++	/* CCGR4 */
++	clks[IMX6SLL_CLK_PWM1]		= imx_clk_gate2("pwm1", "perclk", base + 0x78, 16);
++	clks[IMX6SLL_CLK_PWM2]		= imx_clk_gate2("pwm2", "perclk", base + 0x78, 18);
++	clks[IMX6SLL_CLK_PWM3]		= imx_clk_gate2("pwm3", "perclk", base + 0x78, 20);
++	clks[IMX6SLL_CLK_PWM4]		= imx_clk_gate2("pwm4", "perclk", base + 0x78, 22);
++
++	/* CCGR5 */
++	clks[IMX6SLL_CLK_ROM]		= imx_clk_gate2_flags("rom", "ahb", base + 0x7c, 0, CLK_IS_CRITICAL);
++	clks[IMX6SLL_CLK_SDMA]		= imx_clk_gate2("sdma",	 "ahb",	base + 0x7c, 6);
++	clks[IMX6SLL_CLK_WDOG2]		= imx_clk_gate2("wdog2", "ipg",	base + 0x7c, 10);
++	clks[IMX6SLL_CLK_SPBA]		= imx_clk_gate2("spba",	 "ipg",	base + 0x7c, 12);
++	clks[IMX6SLL_CLK_EXTERN_AUDIO]	= imx_clk_gate2_shared("extern_audio",  "extern_audio_podf", base + 0x7c, 14, &share_count_audio);
++	clks[IMX6SLL_CLK_SPDIF]		= imx_clk_gate2_shared("spdif",		"spdif_podf",	base + 0x7c, 14, &share_count_audio);
++	clks[IMX6SLL_CLK_SPDIF_GCLK]	= imx_clk_gate2_shared("spdif_gclk",	"ipg",		base + 0x7c, 14, &share_count_audio);
++	clks[IMX6SLL_CLK_SSI1]		= imx_clk_gate2_shared("ssi1",		"ssi1_podf",	base + 0x7c, 18, &share_count_ssi1);
++	clks[IMX6SLL_CLK_SSI1_IPG]	= imx_clk_gate2_shared("ssi1_ipg",	"ipg",		base + 0x7c, 18, &share_count_ssi1);
++	clks[IMX6SLL_CLK_SSI2]		= imx_clk_gate2_shared("ssi2",		"ssi2_podf",	base + 0x7c, 20, &share_count_ssi2);
++	clks[IMX6SLL_CLK_SSI2_IPG]	= imx_clk_gate2_shared("ssi2_ipg",	"ipg",		base + 0x7c, 20, &share_count_ssi2);
++	clks[IMX6SLL_CLK_SSI3]		= imx_clk_gate2_shared("ssi3",		"ssi3_podf",	base + 0x7c, 22, &share_count_ssi3);
++	clks[IMX6SLL_CLK_SSI3_IPG]	= imx_clk_gate2_shared("ssi3_ipg",	"ipg",		base + 0x7c, 22, &share_count_ssi3);
++	clks[IMX6SLL_CLK_UART1_IPG]	= imx_clk_gate2("uart1_ipg",	"ipg",		base + 0x7c, 24);
++	clks[IMX6SLL_CLK_UART1_SERIAL]	= imx_clk_gate2("uart1_serial",	"uart_podf",	base + 0x7c, 24);
++
++	/* CCGR6 */
++	clks[IMX6SLL_CLK_USBOH3]	= imx_clk_gate2("usboh3", "ipg",	  base + 0x80,	0);
++	clks[IMX6SLL_CLK_USDHC1]	= imx_clk_gate2("usdhc1", "usdhc1_podf",  base + 0x80,	2);
++	clks[IMX6SLL_CLK_USDHC2]	= imx_clk_gate2("usdhc2", "usdhc2_podf",  base + 0x80,	4);
++	clks[IMX6SLL_CLK_USDHC3]	= imx_clk_gate2("usdhc3", "usdhc3_podf",  base + 0x80,	6);
++
++	/* mask handshake of mmdc */
++	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
++
++	imx_check_clocks(clks, ARRAY_SIZE(clks));
++
++	clk_data.clks = clks;
++	clk_data.clk_num = ARRAY_SIZE(clks);
++	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
++
++	/* Lower the AHB clock rate before changing the clock source. */
++	clk_set_rate(clks[IMX6SLL_CLK_AHB], 99000000);
++
++	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
++	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_CLK2_SEL], clks[IMX6SLL_CLK_PLL3_USB_OTG]);
++	clk_set_parent(clks[IMX6SLL_CLK_PERIPH], clks[IMX6SLL_CLK_PERIPH_CLK2]);
++	clk_set_parent(clks[IMX6SLL_CLK_PERIPH_PRE], clks[IMX6SLL_CLK_PLL2_BUS]);
++	clk_set_parent(clks[IMX6SLL_CLK_PERIPH], clks[IMX6SLL_CLK_PERIPH_PRE]);
++
++	clk_set_rate(clks[IMX6SLL_CLK_AHB], 132000000);
++}
++
++CLK_OF_DECLARE(imx6sll, "fsl,imx6sll-ccm", imx6sll_clocks_init);
 -- 
-2.14.3
+1.9.1
+
