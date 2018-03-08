@@ -1,65 +1,124 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 6/8] remoteproc: da8xx: prepare and unprepare the clock where needed
-Date: Wed, 21 Mar 2018 13:08:05 +0100
-Message-Id: <20180321120807.18032-7-brgl@bgdev.pl>
-In-Reply-To: <20180321120807.18032-1-brgl@bgdev.pl>
-References: <20180321120807.18032-1-brgl@bgdev.pl>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 02/11] clk: tegra: retrieve regulator info from
+ framework
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-3-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <4ccd7c38-45f5-03d2-cb28-84fd5f967401@nvidia.com>
+Date: Thu, 8 Mar 2018 22:26:40 +0000
+MIME-Version: 1.0
+In-Reply-To: <1517934852-23255-3-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We're currently switching the platform to using the common clock
-framework. We need to explicitly prepare and unprepare the rproc
-clock.
+On 06/02/18 16:34, Peter De Schrijver wrote:
+> The CVB table contains calibration data for the CPU DFLL based on
+> process charaterization. The regulator step and offset parameters depend
+> on the regulator supplying vdd-cpu , not on the specific Tegra SKU.
+> Hence than hardcoding those regulator parameters in the CVB table,
+> retrieve them from the regulator framework and store them as part of the
+> tegra_dfll_soc_data struct.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-dfll.h               |  2 ++
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 42 +++++++++++++++++++++++++-----
+>  drivers/clk/tegra/cvb.c                    | 16 +++++++++---
+>  drivers/clk/tegra/cvb.h                    |  6 ++---
+>  4 files changed, 53 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
+> index 83352c8..e7cbc5b 100644
+> --- a/drivers/clk/tegra/clk-dfll.h
+> +++ b/drivers/clk/tegra/clk-dfll.h
+> @@ -21,6 +21,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/reset.h>
+>  #include <linux/types.h>
+> +#include "cvb.h"
+>  
+>  /**
+>   * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFLL driver
+> @@ -35,6 +36,7 @@ struct tegra_dfll_soc_data {
+>  	struct device *dev;
+>  	unsigned long max_freq;
+>  	const struct cvb_table *cvb;
+> +	struct rail_alignment alignment;
+>  
+>  	void (*init_clock_trimmers)(void);
+>  	void (*set_clock_trimmers_high)(void);
+> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> index 269d359..e2dbb79 100644
+> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/regulator/consumer.h>
+>  #include <soc/tegra/fuse.h>
+>  
+>  #include "clk.h"
+> @@ -42,9 +43,6 @@
+>  		.process_id = -1,
+>  		.min_millivolts = 900,
+>  		.max_millivolts = 1260,
+> -		.alignment = {
+> -			.step_uv = 10000, /* 10mV */
+> -		},
+>  		.speedo_scale = 100,
+>  		.voltage_scale = 1000,
+>  		.entries = {
+> @@ -82,6 +80,34 @@
+>  	},
+>  };
+>  
+> +static int get_alignment_from_regulator(struct device *dev,
+> +					struct rail_alignment *align)
+> +{
+> +	int min_uV, max_uV, n_voltages, ret;
+> +	struct regulator *reg;
+> +
+> +	reg = devm_regulator_get(dev, "vdd-cpu");
+> +	if (IS_ERR(reg))
+> +		return PTR_ERR(reg);
+> +
+> +	ret = regulator_get_constraint_voltages(reg, &min_uV, &max_uV);
+> +	if (!ret)
+> +		align->offset_uv = min_uV;
+> +	else
+> +		return ret;
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Nit-pick ... looks a bit odd, why not ...
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 592bf0fc52e8..83f2d66ad3a9 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	rv = clk_enable(dsp_clk);
-+	rv = clk_prepare_enable(dsp_clk);
- 	if (rv) {
--		dev_err(dev, "clk_enable() failed: %d\n", rv);
-+		dev_err(dev, "clk_prepare_enable() failed: %d\n", rv);
- 		return rv;
- 	}
- 
-@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
- 	struct da8xx_rproc *drproc = rproc->priv;
- 
- 	davinci_clk_reset_assert(drproc->dsp_clk);
--	clk_disable(drproc->dsp_clk);
-+	clk_disable_unprepare(drproc->dsp_clk);
- 
- 	return 0;
- }
+	if (ret)
+		return ret;
+
+	align->offset_uv = min_uV;
+
+> +
+> +	align->step_uv = regulator_get_linear_step(reg);
+> +	if (!align->step_uv && !ret) {
+
+Do you need to test 'ret' here?
+
+> +		n_voltages = regulator_count_voltages(reg);
+> +		if (n_voltages > 1)
+> +			align->step_uv = (max_uV - min_uV) / (n_voltages - 1);
+
+Later in the patch !align->step_uv is treated as an error, so if
+n_voltages should always be greater 1 then why not return an error here?
+Seems that this should not happen?
+
+Cheers
+Jon
+
 -- 
-2.16.1
+nvpublic
