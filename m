@@ -1,102 +1,99 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Tue, 13 Mar 2018 11:51:17 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
-Message-ID: <20180313095117.GX6190@tbergstrom-lnx.Nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
- <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Richard Genoud <richard.genoud@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Gregory CLEMENT <gregory.clement@free-electrons.com>,  Ralph Sennhauser <ralph.sennhauser@gmail.com>,  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: mvebu: armada-38x: add support for missing clocks
+References: <20180308090300.23544-1-richard.genoud@gmail.com>
+Date: Thu, 08 Mar 2018 14:22:01 +0100
+In-Reply-To: <20180308090300.23544-1-richard.genoud@gmail.com> (Richard
+	Genoud's message of "Thu, 8 Mar 2018 10:03:00 +0100")
+Message-ID: <87h8pq4s92.fsf@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 12, 2018 at 12:15:22PM +0000, Jon Hunter wrote:
-> 
-> On 06/02/18 16:34, Peter De Schrijver wrote:
-> > Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-> > support in this driver. Also allow for the case where the CPU voltage is
-> > controlled directly by the DFLL rather than by a separate regulator object.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
-> >  1 file changed, 8 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> > index 4353025..f8e01a8 100644
-> > --- a/drivers/cpufreq/tegra124-cpufreq.c
-> > +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> > @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
-> >  {
-> >  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-> >  	clk_disable_unprepare(priv->dfll_clk);
-> > -	regulator_sync_voltage(priv->vdd_cpu_reg);
-> > +	if (priv->vdd_cpu_reg)
-> > +		regulator_sync_voltage(priv->vdd_cpu_reg);
-> >  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
-> >  }
-> 
-> OK, so this bit does not make sense to me. In the above we are switching
-> from the DFLL to the PLL (ie. disabling the DFLL) and so to ensure we
-> are operating at the correct voltage after disabling the DFLL we need to
-> sync the voltage. Seems we would need to do this for all devices, no?
-> How is the different between Tegra124 and Tegra210?
+Hi Richard,
+ 
+ On jeu., mars 08 2018, Richard Genoud <richard.genoud@gmail.com> wrote:
 
-Yes. So in case of i2c the regulator framework will reapply the voltage it
-knows which in our case is the boot voltage for VDD_CPU because noone else
-from a regulator framework pov has ever changed the voltage. In case of PWM
-putting the PWM output pad in tri state will cause the OVR regulator to output
-a hardware defined voltage. This is done as part of the dfll_clk_disable()
-function. To summarize:
+> Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
+> or 1333MHz (industrial).
+>
+> They have also some dip-switches to select a different clock (666, 800,
+> 1066, 1200).
 
-switch from pll_x to DFLL for i2c regulator:
+The patch looks goo and it will also be usefull for any other board
+using these frequencies, thanks for this. I have only one small comment,
+see below.
 
-entry: voltage is boot voltage set bootloader
-1) set dfll rate to pll_x rate
-2) set parent to pll_p so we run at 408MHz which is below Fmax@Vmin when
-   running from PLL
-3) enable DFLL this will switch to closed loop mode and start controlling
-   the voltage via i2c, however because we are below Fmax@Vmin there's no
-   V/f curve violation.
-4) change parent from pll_x to DFLL
 
-switch from DFLL to pll_x for i2c regulator:
+>
+> The funny thing is that the recovery button is on the MPP34 fq selector.
+> So, when booting an industrial board with this button down, the frequency
+> 666MHz is selected (and the kernel didn't boot).
+>
+> This patch add all the missing clocks.
+>
+> The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
+>
+> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+> ---
+>  drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
+> index 394aa6f03f01..9ff4ea63932d 100644
+> --- a/drivers/clk/mvebu/armada-38x.c
+> +++ b/drivers/clk/mvebu/armada-38x.c
+> @@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
+>  }
+>  
+>  static const u32 armada_38x_cpu_frequencies[] __initconst = {
+> -	0, 0, 0, 0,
+> -	1066 * 1000 * 1000, 0, 0, 0,
+> +	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
+> +	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
+>  	1332 * 1000 * 1000, 0, 0, 0,
+>  	1600 * 1000 * 1000, 0, 0, 0,
+> -	1866 * 1000 * 1000,
+> +	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
 
-entry: voltage is whatever the DFLL has programmed but not lower than Vmin
-1) set parent to pll_p so we run at 408MHz (below Fmax@Vmin)
-2) disable DFLL, this will cause the voltage to be the last value programmed
-   by the DFLL.
-3) go back to the voltage as programmed by the boot loader using
-   regulator_sync_voltage().
-4) change parent from DFLL to pll_x. Because pll_x is still programmed at
-   the bootloader frequency, we're within the V/f curve.
+Maybe you could add a comment here to say that the 2GHz mode didn't have
+been tested.
 
-switch from pll_x to DFLL for PWM regulator:
+Thanks,
+Gregory
 
-entry: voltage is boot voltage set by hardware because PWM pin is in tristate
-1) set dfll rate to pll_x rate
-2) set parent to pll_p so we run at 408MHz which is below Fmax@Vmin when
-   running from PLL
-3) enable DFLL this will set the PWM pad to output, switch to closed loop mode
-   and start controlling the voltage via PWM, however because we are below
-   Fmax@Vmin there's no V/f curve violation.
-4) change parent from pll_x to DFLL
 
-switch from DFLL to pll_x for PWM regulator:
+>  };
+>  
+>  static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
+> @@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
+>  };
+>  
+>  static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
+> -	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+> +	{1, 2}, {0, 1}, {0, 1}, {1, 2},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+> @@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
+>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+> +	{1, 2}, {0, 1}, {0, 1}, {7, 15},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
 
-entry: voltage is whatever the DFLL has programmed but not lower than Vmin
-1) set parent to pll_p so we run at 408MHz (below Fmax@Vmin)
-2) disable DFLL, this will cause the PWM pad to be programmed to tristate
-   and the voltage to change back to the hardware defined voltage.
-3) change parent from DFLL to pll_x. Because pll_x is still programmed at
-   the bootloader frequency, we're within the V/f curve.
-
-Peter.
+-- 
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
