@@ -1,75 +1,102 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	alexandre.belloni@bootlin.com
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Joseph Lo <josephl@nvidia.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Brian Norris <briannorris@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	linux-rockchip@lists.infradead.org,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-input@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	devicetree@vger.kernel.org,
-	stephen lu <lumotuwe@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-rtc@vger.kernel.org,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Lee Jones <lee.jones@linaro.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>
-Subject: [RESEND PATCH v4 0/4] Set name of regmap_config
-Date: Fri,  9 Mar 2018 16:43:47 +0800
-Message-Id: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
+Return-Path: <jiaxun.yang@flygoat.com>
+Message-Id: <20180309035233.qVBm8aIa@smtp4p.mail.yandex.net>
+Date: Fri, 09 Mar 2018 08:52:22 +0800
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+In-Reply-To: <CANc+2y42BAF=bZo9WxujMBR-x6y=rKDagA3R68phuAsi1P8BLw@mail.gmail.com>
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
+Cc: James Hogan <jhogan@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Michael
+ Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, "open list:OPEN
+ FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+ Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org, open
+ list <linux-kernel@vger.kernel.org>, Paul Cercueil <paul@crapouillou.net>,
+ Mathieu Malaterre <malat@debian.org>, Dominik Peklo <dom.peklo@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="--_com.samsung.android.email_5988424235328260"
 List-ID: <linux-clk.vger.kernel.org>
 
+----_com.samsung.android.email_5988424235328260
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 
-After 9b947a13e7f6 ("regmap: use debugfs even when no device"), we are
-allowing regmap to create debugfs without a valid device. Some of them
-would end up using "dummy*" as debugfs name.
+U29ycnkgZm9yIHRoZSBkZWxheS5XZSd2ZSB1cGxvYWRlZCB0aGUgYnNwIDQuNCBrZXJuZWwgaGVy
+ZS4KCmh0dHBzOi8vZ2l0aHViLmNvbS9JbmdlbmljLWNvbW11bml0eS9saW51eC14YnVyc3QtYnNw
+ClRoYW5rcy4KQmVzdCBSZWdhcmRzSmlheHVuIFlhbmcKCueUse+8miBQcmFzYW5uYUt1bWFyIE11
+cmFsaWRoYXJhbiA8cHJhc2FubmF0c21rdW1hckBnbWFpbC5jb20+IOaXpeacnzogMjAxOC8zLzgg
+IDAwOjI1ICAoR01UKzA4OjAwKeS4u+mimO+8miBSZTogW1JGQyAzLzRdIE1JUFM6IEluZ2VuaWM6
+IEluaXRpYWwgWDEwMDAgU29DIHN1cHBvcnQgCk9uIDcgTWFyY2ggMjAxOCBhdCAyMToyMiwgSmlh
+eHVuIFlhbmcgPGppYXh1bi55YW5nQGZseWdvYXQuY29tPiB3cm90ZToKPiDlnKggMjAxOC0wMy0w
+N+S4ieeahCAyMDozNSArMDUzMO+8jFByYXNhbm5hS3VtYXIgTXVyYWxpZGhhcmFu5YaZ6YGT77ya
+Cj4+IEhpIEphbWVzLAo+Pgo+PiBTZWVtcyBKaWF4dW4gaXMgaW50ZXJlc3RlZCBpbiB0aGUgYm9h
+cmQgYW5kIGlzIHdpbGxpbmcgdG8gaGVscC4KPj4KPj4gSSBoYXZlIGJlZW4gdG9sZCB0aGF0IElu
+Z2VuaWMgaXMgZm9jdXNpbmcgb24gSW9UIG1hcmtldCBhbmQgWDEwMDAgaXMKPj4gaW50ZW5kZWQg
+Zm9yIElvVCBzZWdtZW50LiBJIHRoaW5rIHRoYXQgdGhleSB3b3VsZCBiZSBzZWxsaW5nIHNldmVy
+YWwKPj4gMTAwS3Mgb2YgY2hpcCBvdmVyIHRoZSBjb21pbmcgeWVhcnMuIEJ1dCBJIGZlZWwgSW5n
+ZW5pYyBzcGVuZHMgdGltZQo+PiBvbmx5IG9uIG1haW50YWluaW5nIHRoZWlyIExpbnV4IHBvcnQg
+d2hpY2ggaXMgdXN1YWxseSBiYXNlZCBvbiB2ZXJ5Cj4+IG9sZCBrZXJuZWwgdmVyc2lvbi4KPgo+
+IEluZ2VuaWMgaXMgZ29pbmcgdG8gcmVsZWFzZSB0aGVpciBYQnJ1c3QyIGNvcmUgd2l0aCBpdCdz
+IHByb2R1Y3RzIHN1Y2gKPiBhcyBYMjAwMCBhIGZldyBkYXlzIGxhdGVyLiBXaXRjaCBpcyBhIHB1
+cmUgTUlQUzY0cjUgd2l0aCBNWFUyKEEKPiBzdXBlcnNldCBvZiBNSVBTJ3MgTVNBIFNJTUQgaW5z
+dHJ1Y3Rpb24gc2V0KS4gVGhlIG5ld2VzdCBrZXJuZWwgcG9ydCBvZgo+IFgxMDAwIG1haW50YWlu
+IGJ5IEluZ2VuaWMgaXMgYmFzZWQgb24gTGludXgtNC40IFsxXS4gQWZ0ZXIgY29tbXVuaWNhdGVk
+Cj4gd2l0aCBJbmdlbmljLCB0aGV5IHNhaWQgdGhleSBhcmUgZm9yY3VzaW5nIG9uIENoaW5hIGRv
+bWVzdGljIG1hcmtldC4KPiBCdXQgdGhleSdyZSBsb29raW5nIGZvciBwYXJ0bmVycyB0byBlbnRl
+ciBmb3JpZWduIG1hcmtldC4KPgo+IFsxXSBodHRwczovL3Bhbi5iYWlkdS5jb20vcy8xbzhNZVl0
+cyAoV2VsbCB5b3UgY2FuIGRvd25sb2FkIGZyb20gdGhpcwo+IENoaW5lc2Ugd2Vic2l0ZSwgaW5n
+ZW5pYyBoYXZlIGEgZ2Vycml0IGJ1dCBJIGRvbid0IGhhdmUgYWNjZXNzIHRvIGl0Lgo+IEFzIG15
+IGV4cGVyaWVuY2UsIGl0J3MgaGFyZCB0byBkZXZlbG9wIG9uIENoaW5lc2UtbWFkZSBjaGlwcyB3
+aWhvdXQKPiByZWFkaW5nIENoaW5lc2UgZG9jdW1lbnRzLikKCkNhbiB5b3UgdGFrZSBhIGRpZmYg
+YW5kIHVwbG9hZCBpdCBzb21ld2hlcmUgZWxzZT8gRG93bmxvYWQgc3BlZWQgaXMgYQpjb3VwbGUg
+b2YgYnl0ZXMgcGVyIHNlY29uZC4gQ2FuIHlvdSBwdXQgdGhlIGRpZmYgaW4gZ2l0aHViIG9yIHNp
+bWlsYXIKb3RoZXIgc2VydmljZT8KSSB3b3VsZCBsaWtlIHRvIHNlZSBpZiB0aGUgcG9ydCB1c2Vz
+IERULgo=
 
-This series try to set names in some regmap_config to avoid that.
+----_com.samsung.android.email_5988424235328260
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: base64
 
+PGh0bWw+PGhlYWQ+PG1ldGEgaHR0cC1lcXVpdj0iQ29udGVudC1UeXBlIiBjb250ZW50PSJ0ZXh0
+L2h0bWw7IGNoYXJzZXQ9VVRGLTgiPjwvaGVhZD48Ym9keT48ZGl2PlNvcnJ5IGZvciB0aGUgZGVs
+YXkuPC9kaXY+PGRpdj5XZSd2ZSB1cGxvYWRlZCB0aGUgYnNwIDQuNCBrZXJuZWwgaGVyZS48L2Rp
+dj48ZGl2Pjxicj48L2Rpdj48ZGl2Pjxicj48L2Rpdj48ZGl2Pmh0dHBzOi8vZ2l0aHViLmNvbS9J
+bmdlbmljLWNvbW11bml0eS9saW51eC14YnVyc3QtYnNwPC9kaXY+PGRpdj48YnI+PC9kaXY+PGRp
+dj5UaGFua3MuPC9kaXY+PGRpdj48YnI+PC9kaXY+PGRpdiBpZD0iY29tcG9zZXJfc2lnbmF0dXJl
+Ij48bWV0YSBodHRwLWVxdWl2PSJDb250ZW50LVR5cGUiIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hh
+cnNldD1VVEYtOCI+QmVzdCBSZWdhcmRzPGRpdj5KaWF4dW4gWWFuZzwvZGl2PjwvZGl2PjxkaXY+
+PGJyPjwvZGl2PjxkaXYgc3R5bGU9ImZvbnQtc2l6ZToxMDAlO2NvbG9yOiMwMDAwMDAiPjwhLS0g
+b3JpZ2luYWxNZXNzYWdlIC0tPjxkaXY+PGJyPjwvZGl2PjxkaXY+55Sx77yaIFByYXNhbm5hS3Vt
+YXIgTXVyYWxpZGhhcmFuICZsdDtwcmFzYW5uYXRzbWt1bWFyQGdtYWlsLmNvbSZndDsgPC9kaXY+
+PGRpdj7ml6XmnJ86IDIwMTgvMy84ICAwMDoyNSAgKEdNVCswODowMCk8L2Rpdj48ZGl2PuS4u+mi
+mO+8miBSZTogW1JGQyAzLzRdIE1JUFM6IEluZ2VuaWM6IEluaXRpYWwgWDEwMDAgU29DIHN1cHBv
+cnQgPC9kaXY+PGRpdj48YnI+PC9kaXY+PC9kaXY+T24gNyBNYXJjaCAyMDE4IGF0IDIxOjIyLCBK
+aWF4dW4gWWFuZyAmbHQ7amlheHVuLnlhbmdAZmx5Z29hdC5jb20mZ3Q7IHdyb3RlOjxicj4mZ3Q7
+IOWcqCAyMDE4LTAzLTA35LiJ55qEIDIwOjM1ICswNTMw77yMUHJhc2FubmFLdW1hciBNdXJhbGlk
+aGFyYW7lhpnpgZPvvJo8YnI+Jmd0OyZndDsgSGkgSmFtZXMsPGJyPiZndDsmZ3Q7PGJyPiZndDsm
+Z3Q7IFNlZW1zIEppYXh1biBpcyBpbnRlcmVzdGVkIGluIHRoZSBib2FyZCBhbmQgaXMgd2lsbGlu
+ZyB0byBoZWxwLjxicj4mZ3Q7Jmd0Ozxicj4mZ3Q7Jmd0OyBJIGhhdmUgYmVlbiB0b2xkIHRoYXQg
+SW5nZW5pYyBpcyBmb2N1c2luZyBvbiBJb1QgbWFya2V0IGFuZCBYMTAwMCBpczxicj4mZ3Q7Jmd0
+OyBpbnRlbmRlZCBmb3IgSW9UIHNlZ21lbnQuIEkgdGhpbmsgdGhhdCB0aGV5IHdvdWxkIGJlIHNl
+bGxpbmcgc2V2ZXJhbDxicj4mZ3Q7Jmd0OyAxMDBLcyBvZiBjaGlwIG92ZXIgdGhlIGNvbWluZyB5
+ZWFycy4gQnV0IEkgZmVlbCBJbmdlbmljIHNwZW5kcyB0aW1lPGJyPiZndDsmZ3Q7IG9ubHkgb24g
+bWFpbnRhaW5pbmcgdGhlaXIgTGludXggcG9ydCB3aGljaCBpcyB1c3VhbGx5IGJhc2VkIG9uIHZl
+cnk8YnI+Jmd0OyZndDsgb2xkIGtlcm5lbCB2ZXJzaW9uLjxicj4mZ3Q7PGJyPiZndDsgSW5nZW5p
+YyBpcyBnb2luZyB0byByZWxlYXNlIHRoZWlyIFhCcnVzdDIgY29yZSB3aXRoIGl0J3MgcHJvZHVj
+dHMgc3VjaDxicj4mZ3Q7IGFzIFgyMDAwIGEgZmV3IGRheXMgbGF0ZXIuIFdpdGNoIGlzIGEgcHVy
+ZSBNSVBTNjRyNSB3aXRoIE1YVTIoQTxicj4mZ3Q7IHN1cGVyc2V0IG9mIE1JUFMncyBNU0EgU0lN
+RCBpbnN0cnVjdGlvbiBzZXQpLiBUaGUgbmV3ZXN0IGtlcm5lbCBwb3J0IG9mPGJyPiZndDsgWDEw
+MDAgbWFpbnRhaW4gYnkgSW5nZW5pYyBpcyBiYXNlZCBvbiBMaW51eC00LjQgWzFdLiBBZnRlciBj
+b21tdW5pY2F0ZWQ8YnI+Jmd0OyB3aXRoIEluZ2VuaWMsIHRoZXkgc2FpZCB0aGV5IGFyZSBmb3Jj
+dXNpbmcgb24gQ2hpbmEgZG9tZXN0aWMgbWFya2V0Ljxicj4mZ3Q7IEJ1dCB0aGV5J3JlIGxvb2tp
+bmcgZm9yIHBhcnRuZXJzIHRvIGVudGVyIGZvcmllZ24gbWFya2V0Ljxicj4mZ3Q7PGJyPiZndDsg
+WzFdIGh0dHBzOi8vcGFuLmJhaWR1LmNvbS9zLzFvOE1lWXRzIChXZWxsIHlvdSBjYW4gZG93bmxv
+YWQgZnJvbSB0aGlzPGJyPiZndDsgQ2hpbmVzZSB3ZWJzaXRlLCBpbmdlbmljIGhhdmUgYSBnZXJy
+aXQgYnV0IEkgZG9uJ3QgaGF2ZSBhY2Nlc3MgdG8gaXQuPGJyPiZndDsgQXMgbXkgZXhwZXJpZW5j
+ZSwgaXQncyBoYXJkIHRvIGRldmVsb3Agb24gQ2hpbmVzZS1tYWRlIGNoaXBzIHdpaG91dDxicj4m
+Z3Q7IHJlYWRpbmcgQ2hpbmVzZSBkb2N1bWVudHMuKTxicj48YnI+Q2FuIHlvdSB0YWtlIGEgZGlm
+ZiBhbmQgdXBsb2FkIGl0IHNvbWV3aGVyZSBlbHNlPyBEb3dubG9hZCBzcGVlZCBpcyBhPGJyPmNv
+dXBsZSBvZiBieXRlcyBwZXIgc2Vjb25kLiBDYW4geW91IHB1dCB0aGUgZGlmZiBpbiBnaXRodWIg
+b3Igc2ltaWxhcjxicj5vdGhlciBzZXJ2aWNlPzxicj5JIHdvdWxkIGxpa2UgdG8gc2VlIGlmIHRo
+ZSBwb3J0IHVzZXMgRFQuPGJyPjwvYm9keT48L2h0bWw+
 
-Changes in v4:
-Not to use rtc dev to init regmap, the gpbr is not directly related to
-the rtc.
-
-Changes in v3:
-Modify commit message.
-
-Jeffy Chen (4):
-  mfd: syscon: Set name of regmap_config
-  rtc: at91sam9: Set name of regmap_config
-  clk: lpc32xx: Set name of regmap_config
-  ARM: rockchip: Set name of regmap_config
-
- arch/arm/mach-rockchip/platsmp.c | 1 +
- drivers/clk/nxp/clk-lpc32xx.c    | 1 +
- drivers/mfd/syscon.c             | 1 +
- drivers/rtc/rtc-at91sam9.c       | 1 +
- 4 files changed, 4 insertions(+)
-
--- 
-2.11.0
+----_com.samsung.android.email_5988424235328260--
