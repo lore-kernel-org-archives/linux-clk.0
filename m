@@ -1,47 +1,48 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org,
-	broonie@kernel.org
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH v3 3/4] clk: lpc32xx: Set name of regmap_config
-Date: Thu,  8 Mar 2018 18:21:53 +0800
-Message-Id: <20180308102154.25686-4-jeffy.chen@rock-chips.com>
-In-Reply-To: <20180308102154.25686-1-jeffy.chen@rock-chips.com>
-References: <20180308102154.25686-1-jeffy.chen@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-db5eur01on0087.outbound.protection.outlook.com ([104.47.2.87]:32352
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750742AbeCIFAu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 9 Mar 2018 00:00:50 -0500
+From: Jacky Bai <ping.bai@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>
+CC: "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        "jacky.baip@gmail.com" <jacky.baip@gmail.com>
+Subject: RE: [PATCH v4 1/4] driver: clk: imx: Add CLK_IS_CRITICAL flag for
+ busy divider and busy mux
+Date: Fri, 9 Mar 2018 05:00:45 +0000
+Message-ID: <HE1PR04MB311302F75DB42DEB034EF61F87DE0@HE1PR04MB3113.eurprd04.prod.outlook.com>
+References: <1520502445-22576-1-git-send-email-ping.bai@nxp.com>
+ <20180309023136.GD3217@dragon>
+In-Reply-To: <20180309023136.GD3217@dragon>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We are now allowing to register debugfs without a valid device, and not
-having a valid name will end up using "dummy*" to create debugfs dir.
+> Subject: Re: [PATCH v4 1/4] driver: clk: imx: Add CLK_IS_CRITICAL flag fo=
+r busy
+> divider and busy mux
+>=20
+> On Thu, Mar 08, 2018 at 05:47:22PM +0800, Bai Ping wrote:
+> > The busy divider and busy mux is actually used by the system critical
+> > clocks, so add 'CLK_IS_CRITICAL' to clocks registered with these two ty=
+pe.
+> >
+> > Signed-off-by: Bai Ping <ping.bai@nxp.com>
+>=20
+> "clk: imx: ..." for patch prefix is good enough.
+>=20
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
----
+OK, will be updated in V5.
 
-Changes in v3: None
-
- drivers/clk/nxp/clk-lpc32xx.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index f5d815f577e0..a2a0a7f3bc57 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -67,6 +67,7 @@
- #define LPC32XX_USB_CLK_STS		0xF8
- 
- static struct regmap_config lpc32xx_scb_regmap_config = {
-+	.name = "lpc32xx-scb",
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
--- 
-2.11.0
+Jacky
+> Shawn
