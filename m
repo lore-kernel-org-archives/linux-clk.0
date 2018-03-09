@@ -1,70 +1,69 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Fri, 9 Mar 2018 08:16:03 +0000
+From: Lee Jones <lee.jones@linaro.org>
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: linux-kernel@vger.kernel.org, broonie@kernel.org,
+	alexandre.belloni@bootlin.com, linux-rtc@vger.kernel.org,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
+	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	Russell King <linux@armlinux.org.uk>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 0/4] Set name of regmap_config
+Message-ID: <20180309081603.4u5pgwwsfxernodm@dell>
+References: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
 MIME-Version: 1.0
-To: Mike Looijmans <mike.looijmans@topic.nl>, Rob Herring <robh@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <ec813ab3-88db-f6e3-eca1-b6ea58936fcf@topic.nl>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, mturquette@baylibre.com, mark.rutland@arm.com
-References: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
- <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
- <ec813ab3-88db-f6e3-eca1-b6ea58936fcf@topic.nl>
-Message-ID: <152149373621.242365.4815290210815209160@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2] clk: Add driver for the si544 clock generator chip
-Date: Mon, 19 Mar 2018 14:08:56 -0700
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Mike Looijmans (2018-03-19 08:04:15)
-> On 18-03-18 13:52, Rob Herring wrote:
-> > On Thu, Mar 15, 2018 at 12:50:08PM +0100, Mike Looijmans wrote:
-> >> +Required properties:
-> >> + - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c=
-" according
-> >> +               to the speed grade of the chip.
-> >> + - reg: I2C device address.
-> >> + - #clock-cells: From common clock bindings: Shall be 0.
-> >> +
-> >> +Optional properties:
-> >> + - clock-output-names: From common clock bindings. Recommended to be =
-"si544".
-> > =
+On Fri, 09 Mar 2018, Jeffy Chen wrote:
 
-> > What's the point if there is only 1 clock output?
-> =
+> 
+> After 9b947a13e7f6 ("regmap: use debugfs even when no device"), we are
+> allowing regmap to create debugfs without a valid device. Some of them
+> would end up using "dummy*" as debugfs name.
+> 
+> This series try to set names in some regmap_config to avoid that.
+> 
+> 
+> Changes in v4:
+> Not to use rtc dev to init regmap, the gpbr is not directly related to
+> the rtc.
+> 
+> Changes in v3:
+> Modify commit message.
+> 
+> Jeffy Chen (4):
+>   mfd: syscon: Set name of regmap_config
+>   rtc: at91sam9: Set name of regmap_config
+>   clk: lpc32xx: Set name of regmap_config
+>   ARM: rockchip: Set name of regmap_config
+> 
+>  arch/arm/mach-rockchip/platsmp.c | 1 +
+>  drivers/clk/nxp/clk-lpc32xx.c    | 1 +
+>  drivers/mfd/syscon.c             | 1 +
 
-> I have a board with 6 of these chips, and the clock registration fails if=
- they =
+It's difficult to review, since we cannot see what's happening with
+the rest of the patch set.  Would you mind re-sending the whole set to
+all parties please?
 
-> don't have unique names. Providing a clock-output-names property was the =
+>  drivers/rtc/rtc-at91sam9.c       | 1 +
+>  4 files changed, 4 insertions(+)
+> 
 
-> easiest way around it.
-> =
-
-> Should I just omit the line or change the wording to reflect the above or=
- is =
-
-> there a better solution (maybe I can use the DT node name as clock name i=
-n the =
-
-> driver, will look into that)
-
-I would leave clock-output-names for now. One day we can get off of
-strings in CCF. Soon perhaps.
-
-> =
-
-> > =
-
-> >> +
-> >> +Example:
-> >> +    si544: clock-generator@55 {
-> > =
-
-> > clock-controller@55 is the standard node name.
-> =
-
-> I'll change and post patch v3
-> =
-
-
-I made some comments on v1. Please fold those into v3.
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
