@@ -1,146 +1,54 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Message-ID: <1521209975.23017.14.camel@linux.intel.com>
-Subject: Re: [PATCH v1] clk: Re-use DEFINE_SHOW_ATTRIBUTE() macro
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>,  linux-clk@vger.kernel.org
-Date: Fri, 16 Mar 2018 16:19:35 +0200
-In-Reply-To: <20180214154800.55292-1-andriy.shevchenko@linux.intel.com>
-References: <20180214154800.55292-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Rajan Vaja <rajan.vaja@xilinx.com>, mturquette@baylibre.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, JOLLYS@xilinx.com,
+ michals@xilinx.com, Rajan Vaja <rajanv@xilinx.com>
+References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
+Message-ID: <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: clk-fixed-factor: Use new macro CLK_OF_DECLARE_DRIVER
+Date: Fri, 09 Mar 2018 10:24:51 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-02-14 at 17:48 +0200, Andy Shevchenko wrote:
-> ...instead of open coding file operations followed by custom ->open()
-> callbacks per each attribute.
-> 
+Quoting Rajan Vaja (2018-03-08 06:15:00)
+> Fixed factor clock has two initialization at of_clk_init()
+> time and also during platform driver probe. So declare the
+> fixed factor clock with CLK_OF_DECLARE_DRIVER instead of
+> CLK_OF_DECLARE.
+> =
 
-Any comments so far?
+> See below commit for reference:
+> "clk: sunxi: apb0: Use new macro CLK_OF_DECLARE_DRIVER"
+> (sha1: 915128b621a05c63fa58ca9e4cbdf394bbe592f3)
+> =
 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+> Suggested-by: Michal Simek <michal.simek@xilinx.com>
 > ---
->  drivers/clk/clk.c | 60 +++++++---------------------------------------
-> ---------
->  1 file changed, 7 insertions(+), 53 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 0f686a9dac3e..cc97b18ac31f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2486,19 +2486,7 @@ static int clk_summary_show(struct seq_file *s,
-> void *data)
->  
->  	return 0;
->  }
-> -
-> -
-> -static int clk_summary_open(struct inode *inode, struct file *file)
-> -{
-> -	return single_open(file, clk_summary_show, inode->i_private);
-> -}
-> -
-> -static const struct file_operations clk_summary_fops = {
-> -	.open		= clk_summary_open,
-> -	.read		= seq_read,
-> -	.llseek		= seq_lseek,
-> -	.release	= single_release,
-> -};
-> +DEFINE_SHOW_ATTRIBUTE(clk_summary);
->  
->  static void clk_dump_one(struct seq_file *s, struct clk_core *c, int
-> level)
->  {
-> @@ -2532,7 +2520,7 @@ static void clk_dump_subtree(struct seq_file *s,
-> struct clk_core *c, int level)
->  	seq_putc(s, '}');
->  }
->  
-> -static int clk_dump(struct seq_file *s, void *data)
-> +static int clk_dump_show(struct seq_file *s, void *data)
->  {
->  	struct clk_core *c;
->  	bool first_node = true;
-> @@ -2555,19 +2543,7 @@ static int clk_dump(struct seq_file *s, void
-> *data)
->  	seq_puts(s, "}\n");
->  	return 0;
->  }
-> -
-> -
-> -static int clk_dump_open(struct inode *inode, struct file *file)
-> -{
-> -	return single_open(file, clk_dump, inode->i_private);
-> -}
-> -
-> -static const struct file_operations clk_dump_fops = {
-> -	.open		= clk_dump_open,
-> -	.read		= seq_read,
-> -	.llseek		= seq_lseek,
-> -	.release	= single_release,
-> -};
-> +DEFINE_SHOW_ATTRIBUTE(clk_dump);
->  
->  static const struct {
->  	unsigned long flag;
-> @@ -2589,7 +2565,7 @@ static const struct {
->  #undef ENTRY
->  };
->  
-> -static int clk_flags_dump(struct seq_file *s, void *data)
-> +static int clk_flags_show(struct seq_file *s, void *data)
->  {
->  	struct clk_core *core = s->private;
->  	unsigned long flags = core->flags;
-> @@ -2608,20 +2584,9 @@ static int clk_flags_dump(struct seq_file *s,
-> void *data)
->  
->  	return 0;
->  }
-> +DEFINE_SHOW_ATTRIBUTE(clk_flags);
->  
-> -static int clk_flags_open(struct inode *inode, struct file *file)
-> -{
-> -	return single_open(file, clk_flags_dump, inode->i_private);
-> -}
-> -
-> -static const struct file_operations clk_flags_fops = {
-> -	.open		= clk_flags_open,
-> -	.read		= seq_read,
-> -	.llseek		= seq_lseek,
-> -	.release	= single_release,
-> -};
-> -
-> -static int possible_parents_dump(struct seq_file *s, void *data)
-> +static int possible_parents_show(struct seq_file *s, void *data)
->  {
->  	struct clk_core *core = s->private;
->  	int i;
-> @@ -2633,18 +2598,7 @@ static int possible_parents_dump(struct
-> seq_file *s, void *data)
->  
->  	return 0;
->  }
-> -
-> -static int possible_parents_open(struct inode *inode, struct file
-> *file)
-> -{
-> -	return single_open(file, possible_parents_dump, inode-
-> >i_private);
-> -}
-> -
-> -static const struct file_operations possible_parents_fops = {
-> -	.open		= possible_parents_open,
-> -	.read		= seq_read,
-> -	.llseek		= seq_lseek,
-> -	.release	= single_release,
-> -};
-> +DEFINE_SHOW_ATTRIBUTE(possible_parents);
->  
->  static int clk_debug_create_one(struct clk_core *core, struct dentry
-> *pdentry)
->  {
+>  drivers/clk/clk-fixed-factor.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> =
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-facto=
+r.c
+> index a5d402d..d72ef2d 100644
+> --- a/drivers/clk/clk-fixed-factor.c
+> +++ b/drivers/clk/clk-fixed-factor.c
+> @@ -196,8 +196,9 @@ void __init of_fixed_factor_clk_setup(struct device_n=
+ode *node)
+>  {
+>         _of_fixed_factor_clk_setup(node);
+>  }
+> -CLK_OF_DECLARE(fixed_factor_clk, "fixed-factor-clock",
+> -               of_fixed_factor_clk_setup);
+> +
+> +CLK_OF_DECLARE_DRIVER(fixed_factor_clk, "fixed-factor-clock",
+> +                     of_fixed_factor_clk_setup);
+> =
+
+
+Is the intent to register the clk twice? I believe things are working as
+intended without this patch, so maybe you can explain a little more what
+you're trying to fix.
