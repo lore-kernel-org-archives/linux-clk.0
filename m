@@ -1,62 +1,62 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 08/16] drm/sun4i: Add support for H3 mixer 0
-Date: Thu,  1 Mar 2018 22:34:34 +0100
-Message-Id: <20180301213442.16677-9-jernej.skrabec@siol.net>
-In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+ <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <92084f1b-848a-39e6-7d77-7ceaa6a6f1d3@gmail.com>
+Date: Fri, 9 Mar 2018 17:35:46 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180308144437.GJ3529@ulmo>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This mixer supports 1 VI plane, 3 UI plane and HW scaling on all planes.
+On 08.03.2018 17:44, Thierry Reding wrote:
+> On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
+>> On 15.01.2018 13:56, Dmitry Osipenko wrote:
+>>> On 10.01.2018 16:59, Dmitry Osipenko wrote:
+>>>> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
+>>>> as critical.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>> ---
+>>>>
+>>>> Change log:
+>>>> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
+>>>>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
+>>>>         and Tegra30.
+>>>>
+>>>> v3:     Dropped marking PLL_P outputs as critical, because seems they are
+>>>>         not so critical. Although, I still haven't got a definitive answer
+>>>>         about what exact HW functions are affected by the fixed-clocks.
+>>>>         Anyway it should be cleaner to correct the actual drivers.
+>>>
+>>> Stephen / Michael, would it be possible to schedule these patches for 4.16? My
+>>> T20 and T30 devices aren't working without the 'critical clocks' patch. Things
+>>> happen to work with the opensource u-boot, but not with the proprietary
+>>> bootloader. It's probably not a big deal that out-of-tree devices are broken,
+>>> although would be nice to have one problem less.
+>>
+>> Guys, is there anything I could do to get these patches in linux-next?
+> 
+> I've picked these up into the for-4.17/clk branch in the Tegra tree. I
+> already have that branch for the MBIST patches which are a dependency
+> for the for-4.17/soc branch.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Thank you very much! Could you please add stable tag to this ("Mark HCLK, SCLK
+and EMC as critical") patch? It would be nice to have 4.16 unbroken eventually
+for those who (have to) use downstream android bootloader.
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 9b0256d31a61..126899d6f0d3 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -492,6 +492,14 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer1_cfg = {
- 	.vi_num		= 1,
- };
- 
-+static const struct sun8i_mixer_cfg sun8i_h3_mixer0_cfg = {
-+	.ccsc		= 0,
-+	.mod_rate	= 432000000,
-+	.scaler_mask	= 0xf,
-+	.ui_num		= 3,
-+	.vi_num		= 1,
-+};
-+
- static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.vi_num = 2,
- 	.ui_num = 1,
-@@ -509,6 +517,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-1",
- 		.data = &sun8i_a83t_mixer1_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun8i-h3-de2-mixer-0",
-+		.data = &sun8i_h3_mixer0_cfg,
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
--- 
-2.16.2
+Cc: <stable@vger.kernel.org> # v4.16
+
+> Stephen, Mike, let me know if you have any objections to carrying these
+> in the Tegra tree.
