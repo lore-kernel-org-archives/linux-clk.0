@@ -1,41 +1,121 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Fri, 9 Mar 2018 16:07:54 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Michal Simek <monstr@monstr.eu>
+Cc: Alan Tull <atull@kernel.org>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>,
+	linux-fpga@vger.kernel.org,
+	Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+	Grant Likely <grant.likely@secretlab.ca>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: clk-fixed-rate clock driver usage with fpgas was: Re: Fpga
+ manager help
+Message-ID: <20180309150754.aa3pqgnpjzkpxpgy@flea>
+References: <CAKfKVtH-HRa2Z5Ff_wss9oK2tN2taSLU6gAfgus=Z1KkhZwMBg@mail.gmail.com>
+ <CANk1AXRm9ME1Yu3y2WRMxG1o9BZq+6pg9T8CWaqKy2v+LwK9RA@mail.gmail.com>
+ <CAKfKVtFkYjwe0JH+f1Bdt7p+o2b_TsKYE0fD6HNs_syXn8D82Q@mail.gmail.com>
+ <be42ac6b-0209-6f90-3802-8be6cd9baac9@monstr.eu>
+ <CANk1AXSkryS-KxczSfen41VvoTVafZcuSLDUhcq-kuiqhYjknQ@mail.gmail.com>
+ <295f64ae-a049-010a-fd68-3fcd46a5d8a1@monstr.eu>
+ <20180309081219.yzsy2ktq75af2tjv@flea.lan>
+ <74d66882-662c-59c5-59c5-d59d8eb14280@monstr.eu>
 MIME-Version: 1.0
-To: Kai Zhao <zhaokai1@hisilicon.com>, Kaihua Zhong <zhongkaihua@huawei.com>,
- Leo Yan <leo.yan@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
- Ruyi Wang <wangruyi@huawei.com>, Stephen Boyd <sboyd@codeaurora.org>,
- Tao Wang <kevin.wangtao@hisilicon.com>, Wei Yongjun <weiyongjun1@huawei.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-clk@vger.kernel.org
-References: <1515047794-170174-1-git-send-email-weiyongjun1@huawei.com>
-Message-ID: <152089282248.147033.8539609925147287088@swboyd.mtv.corp.google.com>
-Subject: =?utf-8?q?Re=3A_=5BPATCH_-next=5D_clk=3A_hisilicon=3A_hi3660=EF=BC=9AFix_?=
- =?utf-8?q?potential_NULL_dereference_in_hi3660=5Fstub=5Fclk=5Fprobe=28=29?=
-Date: Mon, 12 Mar 2018 15:13:42 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="y7nmixcsn6b3acny"
+In-Reply-To: <74d66882-662c-59c5-59c5-d59d8eb14280@monstr.eu>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Wei Yongjun (2018-01-03 22:36:34)
-> platform_get_resource() may return NULL, add proper check to
-> avoid potential NULL dereferencing.
-> =
 
-> This is detected by Coccinelle semantic patch.
-> =
+--y7nmixcsn6b3acny
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
-> =
+Hi Michal,
 
-> res =3D platform_get_resource(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when !=3D res =3D=3D NULL
-> e =3D devm_ioremap(e1, res->start, e2);
-> =
+On Fri, Mar 09, 2018 at 09:28:52AM +0100, Michal Simek wrote:
+> Hi Maxime,
+>=20
+>=20
+> On 9.3.2018 09:12, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > Sorry if I'm off-topic, I'm not sure I fully got the context
+>=20
+> let me explain below.
+>=20
+> >=20
+> > On Thu, Mar 08, 2018 at 03:04:50PM +0100, Michal Simek wrote:
+> >>       pl1: clock {
+> >> 		compatible =3D "fixed-factor-clock";
+> >> 		clocks =3D <&clk 71>;
+> >> 		#clock-cells =3D <0>;
+> >> 		clock-frequency =3D <25000000>; /* missing property */
+> >> 		clock-div =3D <1>;
+> >> 		clock-mult =3D <1>;
+> >> 		clock-output-names =3D "pl1"
+> >>       };
+> >=20
+> > In this case, I'm not sure why the clock-frequency property is needed
+> > in the first place. If you have a divider and factor of 1, then your
+> > rate should be the one from your parent clock.
+>=20
+> Correct but this is DT overlay for FPGAs and every bitstream has
+> different need for setting up parent clock.
+>=20
+> Let me give you an example:
+> You have zynq board (arm32 in fixed part with bunch of hard IPs like
+> ethernet/usb/sd/qspi/nand) and you have fpga(programmable logic) next to
+> it. And depends on your need you can load bitstream to fpga to do some
+> work for you. One design is synthesized for max clock 200MHz and another
+> one on 10MHz because of whatever reason.
+> fpga manager/region and DT overlays are providing you and option to
+> change these two hw designs at run time based on your needs.
+> It means you need to describe input clock for both cases and you need to
+> ask for setting up different clock parent rate.
+>=20
+> That's why we need to describe this rate somewhere and example above is
+> using clock-frequency properly with fixed-factor-clock in div=3D1/mult=3D1
+> setting.
+>=20
+> >=20
+> > The clock-frequency is redundant with what you already have.
+>=20
+> But this is DT overlay and every bitstream has different need as above.
+> It means different requirement for parent rate.
 
-> Fixes: 4f16f7ff3bc0 ("clk: hisilicon: Add support for Hi3660 stub clocks")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Ah, I see, so you want to change the clk 71 (in this case) to 25MHz in
+the snippet above.
 
-Applied to clk-fixes
+Have you looked at the assigned-clock-rates property? It should cover
+it.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--y7nmixcsn6b3acny
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqio0oACgkQ0rTAlCFN
+r3SmHA/+MFv5PKSSJZPJufbA8WRip5MRhc3UHAqkAQfMtXPDGyLL3BtM9dVSFwNq
+klEPSoaCfKZVY7xdKxQHTfUChO9bQ/DtrJlSrLIQqPkfnzK2hGlYLTWFYr+NUJSE
+F3iAOABEWoMxOc8DbPH9oIqchRO7k7+85ZpLyhQEOwwnyq95RzceVCptXtJMOdie
+oyOCiSE2hlWWSO7QpZkUWY4nnouveU/FLg4xnN9sTQZGVcCcpuv/ljzHKpUw6wwe
+dqXhb/9vx10neEr2tBk6UuoAwr8qvUt8XrqFHXI3PYmHQieMWb8q0YHSTIf5L5ly
+MYCT353i0lRSYm8jwaRx+gB/rjYh53BDD81/Is9+jyRAeEkCS62NxGcsaCwHX6dM
+V9M6MUFCeysRLVL6bhi3+Nawa3wqaosVm61n+rV5rVmN2Yr8fQGVcCpKmBj14fPV
+dts2stkk8sdCXnBZAUEbqvnwYAINA6iTNLVDVjJg5wHsFkyvP3N4Gdxgmqpn8Ks4
+ZX+KxwYZ0VkqxiLgX9nT91SyDUnZ5fc/41E7YrWqxec4ByvzTOvjZ/JkT1LiFsxE
+fjGd4WVssQarOJg3tYqdYYxjif7MoyVAJzd7Ekwuf/IXeLtClT4+ekBofz9RtFVl
+ZHDSIJ/BRm27tUuqq+VfVutVLu5XofnHf8DYxE2p9EoOKZ5Q/SI=
+=6o6W
+-----END PGP SIGNATURE-----
+
+--y7nmixcsn6b3acny--
