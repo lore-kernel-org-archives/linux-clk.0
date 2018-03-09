@@ -1,122 +1,72 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:39658 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeCTCGl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Mar 2018 22:06:41 -0400
-Received: by mail-pl0-f68.google.com with SMTP id k22-v6so60974pls.6
-        for <linux-clk@vger.kernel.org>; Mon, 19 Mar 2018 19:06:41 -0700 (PDT)
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de
-Cc: dbasehore@chromium.org, shawn.lin@rock-chips.com,
-        briannorris@chromium.org, linux-rockchip@lists.infradead.org,
-        dianders@chromium.org, linux-clk@vger.kernel.org,
-        Lin Huang <hl@rock-chips.com>
-Subject: [PATCH v3 2/2] arm64: dts: rockchip: assign clock rate for some cpll child clock
-Date: Tue, 20 Mar 2018 10:06:29 +0800
-Message-Id: <1521511589-17844-2-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1521511589-17844-1-git-send-email-hl@rock-chips.com>
-References: <1521511589-17844-1-git-send-email-hl@rock-chips.com>
+Received: from mail-db5eur01on0041.outbound.protection.outlook.com ([104.47.2.41]:41040
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750937AbeCIFB2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 9 Mar 2018 00:01:28 -0500
+From: Jacky Bai <ping.bai@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>
+CC: "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        "jacky.baip@gmail.com" <jacky.baip@gmail.com>
+Subject: RE: [PATCH v4 4/4] driver: clk: imx: add clock driver for imx6sll
+Date: Fri, 9 Mar 2018 05:01:23 +0000
+Message-ID: <HE1PR04MB3113EF8891AECF0E0922E6C687DE0@HE1PR04MB3113.eurprd04.prod.outlook.com>
+References: <1520502445-22576-1-git-send-email-ping.bai@nxp.com>
+ <1520502445-22576-4-git-send-email-ping.bai@nxp.com>
+ <20180309024513.GE3217@dragon>
+In-Reply-To: <20180309024513.GE3217@dragon>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-These clocks do not assign default clock frequency, and use the
-default cru register value to get frequency, so if cpll increase
-frequency, these clocks also increase their frequency, that may
-exceed their signed off frequency. So assign default clock for
-them to avoid it.
+> Subject: Re: [PATCH v4 4/4] driver: clk: imx: add clock driver for imx6sl=
+l
+>=20
+> On Thu, Mar 08, 2018 at 05:47:25PM +0800, Bai Ping wrote:
+> > diff --git a/drivers/clk/imx/clk-imx6sll.c
+> > b/drivers/clk/imx/clk-imx6sll.c new file mode 100644 index
+> > 0000000..e938db5
+> > --- /dev/null
+> > +++ b/drivers/clk/imx/clk-imx6sll.c
+> > @@ -0,0 +1,344 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
+> > + * Copyright 2017-2018 NXP.
+> > + */
+> > +
+> > +#include <dt-bindings/clock/imx6sll-clock.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/clkdev.h>
+> > +#include <linux/err.h>
+> > +#include <linux/init.h>
+> > +#include <linux/io.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/of_irq.h>
+> > +#include <linux/types.h>
+> > +
+> > +#include "clk.h"
+> > +
+> > +#define CCM_ANALOG_PLL_BYPASS		(0x1 << 16)
+> > +#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
+> > +#define CCDR				0x4
+>=20
+> We agreed to remove this define, right?
 
-NOTE: on none of the boards currently in mainline do we expect
-CPLL to be anything other than 800 MHz, but some future boards
-might have it. It's still good to be explicit about the clock
-rates to make diffing against future boards easier and also to
-rely less on BIOS muxing.
+Sorry, this is missed, will correct it.
+Jacky
 
-Change-Id: If79368aeda5c51dbf2a3b6659f17052a2ae4a401
-Signed-off-by: Lin Huang <hl@rock-chips.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
----
-Changes in v2:
-- None
-Changes in v3:
-- Update commit message
-
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi |  8 +++++++-
- arch/arm64/boot/dts/rockchip/rk3399.dtsi     | 14 ++++++++++++--
- 2 files changed, 19 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-index 18f546f..84e367b 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-@@ -588,7 +588,10 @@
- 		<&cru ACLK_PERILP0>, <&cru HCLK_PERILP0>,
- 		<&cru PCLK_PERILP0>, <&cru ACLK_CCI>,
- 		<&cru HCLK_PERILP1>, <&cru PCLK_PERILP1>,
--		<&cru ACLK_VIO>;
-+		<&cru ACLK_VIO>,
-+		<&cru ACLK_GIC_PRE>,
-+		<&cru PCLK_DDR>,
-+		<&cru ACLK_HDCP>;
- 	assigned-clock-rates =
- 		<600000000>, <800000000>,
- 		<1000000000>,
-@@ -597,6 +600,9 @@
- 		<100000000>, <100000000>,
- 		<50000000>, <800000000>,
- 		<100000000>, <50000000>,
-+		<400000000>,
-+		<200000000>,
-+		<200000000>,
- 		<400000000>;
- };
- 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 4550c0f..b358533 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -315,6 +315,8 @@
- 		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
- 			 <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
- 		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-+		assigned-clocks = <&cru HCLK_SD>;
-+		assigned-clock-rates = <200000000>;
- 		fifo-depth = <0x100>;
- 		power-domains = <&power RK3399_PD_SD>;
- 		resets = <&cru SRST_SDMMC>;
-@@ -466,8 +468,10 @@
- 		clocks = <&cru SCLK_DP_CORE>, <&cru PCLK_DP_CTRL>,
- 			 <&cru SCLK_SPDIF_REC_DPTX>, <&cru PCLK_VIO_GRF>;
- 		clock-names = "core-clk", "pclk", "spdif", "grf";
--		phys = <&tcphy0_dp>, <&tcphy1_dp>;
-+		assigned-clocks = <&cru SCLK_DP_CORE>, <&cru SCLK_SPDIF_REC_DPTX>;
-+		assigned-clock-rates = <100000000>, <200000000>;
- 		power-domains = <&power RK3399_PD_HDCP>;
-+		phys = <&tcphy0_dp>, <&tcphy1_dp>;
- 		resets = <&cru SRST_DPTX_SPDIF_REC>, <&cru SRST_P_UPHY0_DPTX>,
- 			 <&cru SRST_P_UPHY0_APB>, <&cru SRST_DP_CORE>;
- 		reset-names = "spdif", "dptx", "apb", "core";
-@@ -1323,7 +1327,10 @@
- 			<&cru ACLK_PERILP0>, <&cru HCLK_PERILP0>,
- 			<&cru PCLK_PERILP0>, <&cru ACLK_CCI>,
- 			<&cru HCLK_PERILP1>, <&cru PCLK_PERILP1>,
--			<&cru ACLK_VIO>;
-+			<&cru ACLK_VIO>,
-+			<&cru ACLK_GIC_PRE>,
-+			<&cru PCLK_DDR>,
-+			<&cru ACLK_HDCP>;
- 		assigned-clock-rates =
- 			 <594000000>,  <800000000>,
- 			<1000000000>,
-@@ -1332,6 +1339,9 @@
- 			 <100000000>,  <100000000>,
- 			  <50000000>, <600000000>,
- 			 <100000000>,   <50000000>,
-+			 <400000000>,
-+			 <200000000>,
-+			 <200000000>,
- 			 <400000000>;
- 	};
- 
--- 
-2.7.4
-
+>=20
+> Shawn
+>=20
+> > +#define xPLL_CLR(offset)		(offset + 0x8)
