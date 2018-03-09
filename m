@@ -1,169 +1,69 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
+Return-Path: <jeffy.chen@rock-chips.com>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Joseph Lo <josephl@nvidia.com>,
 	Rob Herring <robh+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Brian Norris <briannorris@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	linux-rockchip@lists.infradead.org,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-input@vger.kernel.org,
+	Will Deacon <will.deacon@arm.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	devicetree@vger.kernel.org,
+	stephen lu <lumotuwe@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
 	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 1/8] reset: modify the way reset lookup works for board files
-Date: Fri, 23 Mar 2018 10:36:02 +0100
-Message-Id: <20180323093609.24576-2-brgl@bgdev.pl>
-In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
-References: <20180323093609.24576-1-brgl@bgdev.pl>
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Vladimir Zapolskiy <vz@mleia.com>
+Subject: [RESEND PATCH v4 3/4] clk: lpc32xx: Set name of regmap_config
+Date: Fri,  9 Mar 2018 16:43:50 +0800
+Message-Id: <20180309084351.32009-4-jeffy.chen@rock-chips.com>
+In-Reply-To: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
+References: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+We are now allowing to register debugfs without a valid device, and not
+having a valid name will end up using "dummy*" to create debugfs dir.
 
-Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
-introduced reset control lookup mechanism for boards that still use
-board files.
-
-The routine used to register lookup entries takes the corresponding
-reset_controlled_dev structure as argument.
-
-It's been determined however that for the first user of this new
-interface - davinci psc driver - it will be easier to register the
-lookup entries using the reset controller device name.
-
-This patch changes the way lookup entries are added.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 ---
- drivers/reset/core.c             | 33 +++++++++++++++++++++++++++++----
- include/linux/reset-controller.h |  8 +++++---
- 2 files changed, 34 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 06fa4907afc4..f37048e55336 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -153,11 +153,11 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+Changes in v4: None
+Changes in v3: None
+
+ drivers/clk/nxp/clk-lpc32xx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index f5d815f577e0..a2a0a7f3bc57 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -67,6 +67,7 @@
+ #define LPC32XX_USB_CLK_STS		0xF8
  
- /**
-  * reset_controller_add_lookup - register a set of lookup entries
-- * @rcdev: initialized reset controller device owning the reset line
-+ * @provider: name of the reset controller provider
-  * @lookup: array of reset lookup entries
-  * @num_entries: number of entries in the lookup array
-  */
--void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-+void reset_controller_add_lookup(const char *provider,
- 				 struct reset_control_lookup *lookup,
- 				 unsigned int num_entries)
- {
-@@ -174,7 +174,7 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
- 			continue;
- 		}
- 
--		entry->rcdev = rcdev;
-+		entry->provider = provider;
- 		list_add_tail(&entry->list, &reset_lookup_list);
- 	}
- 	mutex_unlock(&reset_lookup_mutex);
-@@ -526,11 +526,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
- }
- EXPORT_SYMBOL_GPL(__of_reset_control_get);
- 
-+static struct reset_controller_dev *
-+__reset_controller_by_name(const char *name)
-+{
-+	struct reset_controller_dev *rcdev;
-+
-+	lockdep_assert_held(&reset_list_mutex);
-+
-+	list_for_each_entry(rcdev, &reset_controller_list, list) {
-+		if (!rcdev->dev)
-+			continue;
-+
-+		if (!strcmp(name, dev_name(rcdev->dev)))
-+			return rcdev;
-+	}
-+
-+	return NULL;
-+}
-+
- static struct reset_control *
- __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 				bool shared, bool optional)
- {
- 	const struct reset_control_lookup *lookup;
-+	struct reset_controller_dev *rcdev;
- 	const char *dev_id = dev_name(dev);
- 	struct reset_control *rstc = NULL;
- 
-@@ -547,7 +566,13 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 		    ((con_id && lookup->con_id) &&
- 		     !strcmp(con_id, lookup->con_id))) {
- 			mutex_lock(&reset_list_mutex);
--			rstc = __reset_control_get_internal(lookup->rcdev,
-+			rcdev = __reset_controller_by_name(lookup->provider);
-+			if (!rcdev) {
-+				mutex_unlock(&reset_list_mutex);
-+				continue;
-+			}
-+
-+			rstc = __reset_control_get_internal(rcdev,
- 							    lookup->index,
- 							    shared);
- 			mutex_unlock(&reset_list_mutex);
-diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
-index 25698f6c1fae..1a6c25d825d3 100644
---- a/include/linux/reset-controller.h
-+++ b/include/linux/reset-controller.h
-@@ -30,14 +30,14 @@ struct of_phandle_args;
-  * struct reset_control_lookup - represents a single lookup entry
-  *
-  * @list: internal list of all reset lookup entries
-- * @rcdev: reset controller device controlling this reset line
-+ * @provider: name of the reset controller device controlling this reset line
-  * @index: ID of the reset controller in the reset controller device
-  * @dev_id: name of the device associated with this reset line
-  * @con_id name of the reset line (can be NULL)
-  */
- struct reset_control_lookup {
- 	struct list_head list;
--	struct reset_controller_dev *rcdev;
-+	const char *provider;
- 	unsigned int index;
- 	const char *dev_id;
- 	const char *con_id;
-@@ -57,6 +57,7 @@ struct reset_control_lookup {
-  * @owner: kernel module of the reset controller driver
-  * @list: internal list of reset controller devices
-  * @reset_control_head: head of internal list of requested reset controls
-+ * @dev: corresponding driver model device struct
-  * @of_node: corresponding device tree node as phandle target
-  * @of_reset_n_cells: number of cells in reset line specifiers
-  * @of_xlate: translation function to translate from specifier as found in the
-@@ -68,6 +69,7 @@ struct reset_controller_dev {
- 	struct module *owner;
- 	struct list_head list;
- 	struct list_head reset_control_head;
-+	struct device *dev;
- 	struct device_node *of_node;
- 	int of_reset_n_cells;
- 	int (*of_xlate)(struct reset_controller_dev *rcdev,
-@@ -82,7 +84,7 @@ struct device;
- int devm_reset_controller_register(struct device *dev,
- 				   struct reset_controller_dev *rcdev);
- 
--void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-+void reset_controller_add_lookup(const char *provider,
- 				 struct reset_control_lookup *lookup,
- 				 unsigned int num_entries);
- 
+ static struct regmap_config lpc32xx_scb_regmap_config = {
++	.name = "lpc32xx-scb",
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
 -- 
-2.16.1
+2.11.0
