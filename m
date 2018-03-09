@@ -1,123 +1,31 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH net-next 10/12] ARM: dts: sun8i: r40: bananapi-m2-ultra: Sort device node dereferences
-Date: Sat, 17 Mar 2018 17:28:55 +0800
-Message-Id: <20180317092857.4396-11-wens@csie.org>
-In-Reply-To: <20180317092857.4396-1-wens@csie.org>
-References: <20180317092857.4396-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:39558 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750902AbeCICcU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Mar 2018 21:32:20 -0500
+Date: Fri, 9 Mar 2018 10:31:37 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Bai Ping <ping.bai@nxp.com>
+Cc: sboyd@kernel.org, robh+dt@kernel.org, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+Subject: Re: [PATCH v4 1/4] driver: clk: imx: Add CLK_IS_CRITICAL flag for
+ busy divider and busy mux
+Message-ID: <20180309023136.GD3217@dragon>
+References: <1520502445-22576-1-git-send-email-ping.bai@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1520502445-22576-1-git-send-email-ping.bai@nxp.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The device nodes dereference (&foo) usages should be sorted by the label
-names, barring any parsing order issues such as the #include statement
-for the PMIC's .dtsi file that must come after the PMIC.
+On Thu, Mar 08, 2018 at 05:47:22PM +0800, Bai Ping wrote:
+> The busy divider and busy mux is actually used by the system critical clocks,
+> so add 'CLK_IS_CRITICAL' to clocks registered with these two type.
+> 
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
 
-Move the mmc and ohci blocks in front of the PMIC's regulator blocks.
+"clk: imx: ..." for patch prefix is good enough.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts | 69 ++++++++++++-----------
- 1 file changed, 35 insertions(+), 34 deletions(-)
-
-diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-index 27d9ccd0ef2f..c6da21e43572 100644
---- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-+++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-@@ -114,6 +114,41 @@
- 
- #include "axp22x.dtsi"
- 
-+&mmc0 {
-+	vmmc-supply = <&reg_dcdc1>;
-+	bus-width = <4>;
-+	cd-gpios = <&pio 7 13 GPIO_ACTIVE_HIGH>; /* PH13 */
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&mmc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc1_pg_pins>;
-+	vmmc-supply = <&reg_dldo2>;
-+	vqmmc-supply = <&reg_dldo1>;
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	bus-width = <4>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&mmc2 {
-+	vmmc-supply = <&reg_dcdc1>;
-+	vqmmc-supply = <&reg_dcdc1>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
-+
- &reg_aldo3 {
- 	regulator-always-on;
- 	regulator-min-microvolt = <2700000>;
-@@ -161,40 +196,6 @@
- 	regulator-name = "vcc-wifi";
- };
- 
--&mmc0 {
--	vmmc-supply = <&reg_dcdc1>;
--	bus-width = <4>;
--	cd-gpios = <&pio 7 13 GPIO_ACTIVE_LOW>; /* PH13 */
--	status = "okay";
--};
--
--&mmc1 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&mmc1_pg_pins>;
--	vmmc-supply = <&reg_dldo2>;
--	vqmmc-supply = <&reg_dldo1>;
--	mmc-pwrseq = <&wifi_pwrseq>;
--	bus-width = <4>;
--	non-removable;
--	status = "okay";
--};
--
--&mmc2 {
--	vmmc-supply = <&reg_dcdc1>;
--	vqmmc-supply = <&reg_dcdc1>;
--	bus-width = <8>;
--	non-removable;
--	status = "okay";
--};
--
--&ohci1 {
--	status = "okay";
--};
--
--&ohci2 {
--	status = "okay";
--};
--
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
--- 
-2.16.2
+Shawn
