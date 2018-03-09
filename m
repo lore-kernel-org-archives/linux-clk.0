@@ -1,52 +1,60 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
+        Loic PALLARDY
+	<loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: [PATCH RESEND 1/2] clk: stm32: END_PRIMARY_CLK should be declare after CLK_SYSCLK
+Date: Fri, 9 Mar 2018 07:57:30 +0100
+Message-ID: <1520578651-28849-2-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1520578651-28849-1-git-send-email-gabriel.fernandez@st.com>
+References: <1520578651-28849-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
-References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 6 Mar 2018 19:23:11 -0300
-Message-ID: <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
-To: Martin Kaiser <martin@kaiser.cx>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
-On Tue, Mar 6, 2018 at 7:02 PM, Martin Kaiser <martin@kaiser.cx> wrote:
-> The ssi1_ipg clock depends on ssi1_ipg_per. Set ssi1_ipg_per as parent
-> clock of ssi1_ipg. Without this link, the fsl_ssi driver does not
-> activate the ssi1_ipg clock correctly and ssi1 is unable to transfer
-> audio data.
->
-> Fix the parent clock of ssi2 as well, it shows the same behaviour.
->
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> ---
-> Dear all,
->
-> could you have a look at this patch? This makes SSI1 and 2 work for me.
+Update of END_PRIMARY_CLK was missed, it should be after CLK_SYSCLK
+hsi and sysclk are overwritten by gpioa and gpiob.
 
-I get audio working from SSI1, but I guess this is due to the fact
-that the bootloader enables the SSI clock:
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Tested-by: Philippe Cornu <philippe.cornu@st.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ include/dt-bindings/clock/stm32fx-clock.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I have the following in U-Boot:
-
-/* Enable the clocks */
-DATA 4 0x53f8000c 0x1fffffff
-DATA 4 0x53f80010 0xffffffff
-DATA 4 0x53f80014 0xfdfff
-
-I will try tomorrow to disable the SSI1 clock from U-Boot and apply your patch.
-
-Will let you know how my testing goes.
-
-> With the default "ipg" parent clocks, I get no ipg clocks on the SSIs.
-> However, I was wondering why we don't need anything similar e.g. for the
-> UARTs...
-
-Maybe your bootloader is already turning on the UART clocks?
+diff --git a/include/dt-bindings/clock/stm32fx-clock.h b/include/dt-bindings/clock/stm32fx-clock.h
+index 49bb3c2..4d523b0 100644
+--- a/include/dt-bindings/clock/stm32fx-clock.h
++++ b/include/dt-bindings/clock/stm32fx-clock.h
+@@ -33,11 +33,11 @@
+ #define CLK_SAI2		11
+ #define CLK_I2SQ_PDIV		12
+ #define CLK_SAIQ_PDIV		13
+-
+-#define END_PRIMARY_CLK		14
+-
+ #define CLK_HSI			14
+ #define CLK_SYSCLK		15
++
++#define END_PRIMARY_CLK		16
++
+ #define CLK_HDMI_CEC		16
+ #define CLK_SPDIF		17
+ #define CLK_USART1		18
+-- 
+1.9.1
