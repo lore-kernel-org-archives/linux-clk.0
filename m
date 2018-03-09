@@ -1,216 +1,50 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 04/11] clk: actions: Add gate clock support
-Date: Sat, 24 Mar 2018 19:01:52 +0530
-Message-Id: <20180324133159.4824-5-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
-References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <5AA249BC.6020705@rock-chips.com>
+Date: Fri, 09 Mar 2018 16:45:48 +0800
+From: JeffyChen <jeffy.chen@rock-chips.com>
+MIME-Version: 1.0
+To: Lee Jones <lee.jones@linaro.org>
+CC: linux-kernel@vger.kernel.org, broonie@kernel.org,
+        alexandre.belloni@bootlin.com, linux-rtc@vger.kernel.org,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>,
+        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 0/4] Set name of regmap_config
+References: <20180309015146.8297-1-jeffy.chen@rock-chips.com> <20180309081603.4u5pgwwsfxernodm@dell>
+In-Reply-To: <20180309081603.4u5pgwwsfxernodm@dell>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi gate clock together with helper
-functions to be used in composite clock.
+Hi Lee,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/Makefile   |  1 +
- drivers/clk/actions/owl-gate.c | 77 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-gate.h | 73 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 151 insertions(+)
- create mode 100644 drivers/clk/actions/owl-gate.c
- create mode 100644 drivers/clk/actions/owl-gate.h
+Thanks for your reply.
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 64a50fc2d335..1f0917872c9d 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
- 
- clk-owl-y			+= owl-common.o
-+clk-owl-y			+= owl-gate.o
-diff --git a/drivers/clk/actions/owl-gate.c b/drivers/clk/actions/owl-gate.c
-new file mode 100644
-index 000000000000..b87b76e17472
---- /dev/null
-+++ b/drivers/clk/actions/owl-gate.c
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL gate clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "owl-gate.h"
-+
-+void owl_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable)
-+{
-+	int set = gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+	u32 reg;
-+
-+	set ^= enable;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (set)
-+		reg |= BIT(gate_hw->bit_idx);
-+	else
-+		reg &= ~BIT(gate_hw->bit_idx);
-+
-+	regmap_write(common->regmap, gate_hw->reg, reg);
-+}
-+
-+static void owl_gate_disable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	owl_gate_set(common, &gate->gate_hw, false);
-+}
-+
-+static int owl_gate_enable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	owl_gate_set(common, &gate->gate_hw, true);
-+
-+	return 0;
-+}
-+
-+int owl_clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw)
-+{
-+	u32 reg;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE)
-+		reg ^= BIT(gate_hw->bit_idx);
-+
-+	return !!(reg & BIT(gate_hw->bit_idx));
-+}
-+
-+static int owl_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	return owl_clk_is_enabled(common, &gate->gate_hw);
-+}
-+
-+const struct clk_ops owl_gate_ops = {
-+	.disable	= owl_gate_disable,
-+	.enable		= owl_gate_enable,
-+	.is_enabled	= owl_gate_is_enabled,
-+};
-diff --git a/drivers/clk/actions/owl-gate.h b/drivers/clk/actions/owl-gate.h
-new file mode 100644
-index 000000000000..f37b33a1be6b
---- /dev/null
-+++ b/drivers/clk/actions/owl-gate.h
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL gate clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_GATE_H_
-+#define _OWL_GATE_H_
-+
-+#include "owl-common.h"
-+
-+struct owl_gate_hw {
-+	u32			reg;
-+	u8			bit_idx;
-+	u8			gate_flags;
-+};
-+
-+struct owl_gate {
-+	struct owl_gate_hw	gate_hw;
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_GATE_HW(_reg, _bit_idx, _gate_flags)	\
-+	{						\
-+		.reg		= _reg,			\
-+		.bit_idx	= _bit_idx,		\
-+		.gate_flags	= _gate_flags,		\
-+	}
-+
-+#define OWL_GATE(_struct, _name, _parent, _reg,				\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		}							\
-+	}								\
-+
-+#define OWL_GATE_NO_PARENT(_struct, _name, _reg,			\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_NO_PARENT(_name,	\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		},							\
-+	}								\
-+
-+static inline struct owl_gate *hw_to_owl_gate(const struct clk_hw *hw)
-+{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_gate, common);
-+}
-+
-+void owl_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable);
-+int owl_gate_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw);
-+
-+extern const struct clk_ops owl_gate_ops;
-+
-+#endif /* _OWL_GATE_H_ */
--- 
-2.14.1
+On 03/09/2018 04:16 PM, Lee Jones wrote:
+>> >
+>> >Jeffy Chen (4):
+>> >   mfd: syscon: Set name of regmap_config
+>> >   rtc: at91sam9: Set name of regmap_config
+>> >   clk: lpc32xx: Set name of regmap_config
+>> >   ARM: rockchip: Set name of regmap_config
+>> >
+>> >  arch/arm/mach-rockchip/platsmp.c | 1 +
+>> >  drivers/clk/nxp/clk-lpc32xx.c    | 1 +
+>> >  drivers/mfd/syscon.c             | 1 +
+> It's difficult to review, since we cannot see what's happening with
+> the rest of the patch set.  Would you mind re-sending the whole set to
+> all parties please?
+sure, i can do that :)
+
+>
