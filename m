@@ -1,75 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:35348 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753370AbeCQX3a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Mar 2018 19:29:30 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-doc@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 2/8] dt-bindings: ingenic: Add DT bindings for TCU clocks
-Date: Sun, 18 Mar 2018 00:28:55 +0100
-Message-Id: <20180317232901.14129-3-paul@crapouillou.net>
-In-Reply-To: <20180317232901.14129-1-paul@crapouillou.net>
-References: <20180110224838.16711-2-paul@crapouillou.net>
- <20180317232901.14129-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jeffy.chen@rock-chips.com>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH v4 3/4] clk: lpc32xx: Set name of regmap_config
+Date: Fri,  9 Mar 2018 09:51:45 +0800
+Message-Id: <20180309015146.8297-4-jeffy.chen@rock-chips.com>
+In-Reply-To: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
+References: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This header provides clock numbers for the ingenic,tcu
-DT binding.
+We are now allowing to register debugfs without a valid device, and not
+having a valid name will end up using "dummy*" to create debugfs dir.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 ---
- include/dt-bindings/clock/ingenic,tcu.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
 
- v2: Use SPDX identifier for the license
- v3: No change
- v4: No change
+Changes in v4: None
+Changes in v3: None
 
-diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
-new file mode 100644
-index 000000000000..179815d7b3bb
---- /dev/null
-+++ b/include/dt-bindings/clock/ingenic,tcu.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides clock numbers for the ingenic,tcu DT binding.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-+#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-+
-+#define JZ4740_CLK_TIMER0	0
-+#define JZ4740_CLK_TIMER1	1
-+#define JZ4740_CLK_TIMER2	2
-+#define JZ4740_CLK_TIMER3	3
-+#define JZ4740_CLK_TIMER4	4
-+#define JZ4740_CLK_TIMER5	5
-+#define JZ4740_CLK_TIMER6	6
-+#define JZ4740_CLK_TIMER7	7
-+#define JZ4740_CLK_WDT		8
-+#define JZ4740_CLK_LAST		JZ4740_CLK_WDT
-+
-+#define JZ4770_CLK_OST		9
-+#define JZ4770_CLK_LAST		JZ4770_CLK_OST
-+
-+#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
+ drivers/clk/nxp/clk-lpc32xx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index f5d815f577e0..a2a0a7f3bc57 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -67,6 +67,7 @@
+ #define LPC32XX_USB_CLK_STS		0xF8
+ 
+ static struct regmap_config lpc32xx_scb_regmap_config = {
++	.name = "lpc32xx-scb",
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
 -- 
 2.11.0
-
