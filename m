@@ -1,37 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:44724 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751221AbeCWI0F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Mar 2018 04:26:05 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Lin Huang <hl@rock-chips.com>
-Cc: dbasehore@chromium.org, shawn.lin@rock-chips.com,
-        briannorris@chromium.org, linux-rockchip@lists.infradead.org,
-        dianders@chromium.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] clk: rockchip: assign correct id for pclk_ddr and hclk_sd in rk3399
-Date: Fri, 23 Mar 2018 09:26:00 +0100
-Message-ID: <5398945.fsProPGqoW@phil>
-In-Reply-To: <1521511589-17844-1-git-send-email-hl@rock-chips.com>
-References: <1521511589-17844-1-git-send-email-hl@rock-chips.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-clk-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180308144437.GJ3529@ulmo>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+ <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
+Message-ID: <152061678678.13890.15810434310624804730@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+Date: Fri, 09 Mar 2018 09:33:06 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 20. März 2018, 03:06:28 CET schrieb Lin Huang:
-> Since hclk_sd and pclk_ddr source clock from CPLL or GPLL,
-> and these two PLL may change their frequency. If we do not
-> assign right id to pclk_ddr and hclk_sd, they will alway use
-> default cur register value, and may get the frequency
-> exceed their signed off frequency. So assign correct Id
-> for them, then we can assign frequency for them in dts.
-> 
-> Change-Id: I6c4d15d37ddabe4ed34e2351cf26e660672ae9ee
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+Quoting Thierry Reding (2018-03-08 06:44:37)
+> On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
+> > On 15.01.2018 13:56, Dmitry Osipenko wrote:
+> > > On 10.01.2018 16:59, Dmitry Osipenko wrote:
+> > >> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these cloc=
+ks
+> > >> as critical.
+> > >>
+> > >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > >> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > >> ---
+> > >>
+> > >> Change log:
+> > >> v2:     Fixed accidentally missed marking EMC as critical on Tegra30=
+ and
+> > >>         Tegra124. Switched to a use of common EMC gate definition on=
+ Tegra20
+> > >>         and Tegra30.
+> > >>
+> > >> v3:     Dropped marking PLL_P outputs as critical, because seems the=
+y are
+> > >>         not so critical. Although, I still haven't got a definitive =
+answer
+> > >>         about what exact HW functions are affected by the fixed-cloc=
+ks.
+> > >>         Anyway it should be cleaner to correct the actual drivers.
+> > > =
 
-applied for 4.17 after dropping the Change-Id
+> > > Stephen / Michael, would it be possible to schedule these patches for=
+ 4.16? My
+> > > T20 and T30 devices aren't working without the 'critical clocks' patc=
+h. Things
+> > > happen to work with the opensource u-boot, but not with the proprieta=
+ry
+> > > bootloader. It's probably not a big deal that out-of-tree devices are=
+ broken,
+> > > although would be nice to have one problem less.
+> > =
 
-Thanks
-Heiko
+> > Guys, is there anything I could do to get these patches in linux-next?
+> =
+
+> I've picked these up into the for-4.17/clk branch in the Tegra tree. I
+> already have that branch for the MBIST patches which are a dependency
+> for the for-4.17/soc branch.
+> =
+
+> Stephen, Mike, let me know if you have any objections to carrying these
+> in the Tegra tree.
+> =
+
+
+Are you going to send us a PR at some point?
