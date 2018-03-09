@@ -1,62 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-he1eur01on0076.outbound.protection.outlook.com ([104.47.0.76]:32359
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751847AbeCWJtn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:49:43 -0400
-From: Abel Vesa <abel.vesa@nxp.com>
-To: "festevam@gmail.com" <festevam@gmail.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC: Anson Huang <anson.huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Adriana Reus <adriana.reus@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "abelvesa@linux.com" <abelvesa@linux.com>
-Subject: Return checks for clock calls
-Date: Fri, 23 Mar 2018 09:49:38 +0000
-Message-ID: <20180323094937.5wx5exah6tfyl43u@fsr-ub1664-175>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-clk@vger.kernel.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH v2] clk: Don't show the incorrect clock phase
+Date: Fri,  9 Mar 2018 08:56:39 +0800
+Message-Id: <1520556999-74737-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn, Fabio,
+It's found that the clock phase output from clk_summary is
+wrong compared to the actual phase reading from the register.
 
-I'm trying to get the imx clks changes upstreamed. To that end, I reached t=
-his
-old commit that adds some wrappers over the generic clk API. Here is the co=
-mmit
-message:
+cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
+sdio_sample     0        1        0 50000000          0 -22
 
-	ARM: imx6: add return check for clock calls
+It exposes an issue that clk core, clk_core_get_phase, always
+returns the cached core->phase which should be either updated
+by calling clk_set_phase or directly from the first place the
+clk was registered.
 
-	There are a bunch of clk_enable_prepare, clk_set_parent and clk_set_rate
-	calls in imx6 clock driver's initialization.  They are called without
-	retunr check.  If there is something going wrong with the calls, they
-	will just fail silently.
+When registering the clk, the core->phase geting from ->get_phase()
+may return negative value indicating error. This is quite common
+since the clk's phase may be highly related to its parent chain,
+but it was temporarily orphan when registered, since its parent
+chains hadn't be ready at that time, so the clk drivers decide to
+return error in this case. However, if no clk_set_phase is called or
+maybe the ->set_phase() isn't even implemented, the core->phase would
+never be updated. This is wrong, and we should try to update it when
+all its parent chains are settled down, like the way of updating clock
+rate for that. But it's not deserved to complicate the code now and
+just update it anyway when calling clk_core_get_phase, which would be
+much simple and enough.
 
-	The patch creates a set of helper functions imx_clk_enable_prepare,
-	imx_clk_set_parent and imx_clk_set_rate, and use them instead from clock
-	initialization to check the return and print error message to tell
-	failures if any.
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-	Signed-off-by: Shawn Guo <shawn.guo@freescale.com>
+---
 
-And it adds the imx_clk_set_parent, imx_clk_prepare_enable and
-imx_clk_set_rate which basically just print an error message if the generic
-functions have failed.
+Changes in v2:
+- fix the typos suggested by Geert
+- update cached phase anyway suggested by Jerome
 
-The only plus of these wrappers is that we at least see that the generic
-functions have failed, but the behaviour is not changed in any way.
+ drivers/clk/clk.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Question is, do we want this upstreamed considering that we need to replace=
- the
-calls throughout all the older imx socs ?
-
-Abel=
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0f686a9..4070664 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2370,6 +2370,17 @@ static int clk_core_get_phase(struct clk_core *core)
+ 	int ret;
+ 
+ 	clk_prepare_lock();
++	/*
++	 * Always try to update cached phase if possible since
++	 * (1) It may be invalid at the first place when registering
++	 * the hw clock but never got updated if no ->set_phase() be
++	 * implemented or called.
++	 * (2) It may be stale along with the other factors, for instance,
++	 * the hw clock's rate is changed but current framework doesn't
++	 * notify the change of phase concurrent with that of rate.
++	 */
++	if (core->ops->get_phase)
++		core->phase = core->ops->get_phase(core->hw);
+ 	ret = core->phase;
+ 	clk_prepare_unlock();
+ 
+-- 
+1.9.1
