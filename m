@@ -1,46 +1,72 @@
-Return-Path: <weiyi.lu@mediatek.com>
-Message-ID: <1521526068.13313.8.camel@mtksdaap41>
-Subject: Re: [PATCH v2 0/5] update Mediatek MT2712 clock and scpsys support
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>
-CC: Mike Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
-	James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Date: Tue, 20 Mar 2018 14:07:48 +0800
-In-Reply-To: <20180312070342.4335-1-weiyi.lu@mediatek.com>
-References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Return-Path: weiyi.lu@mediatek.com
+To: Michael Turquette <mturquette@baylibre.com>,
+ Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180212160903.GA4287@ulmo>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, jonathanh@nvidia.com,
+ linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
+ <20180212160903.GA4287@ulmo>
+Message-ID: <152061995415.26240.7042528449566855659@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
+Date: Fri, 09 Mar 2018 10:25:54 -0800
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-03-12 at 15:03 +0800, Weiyi Lu wrote:
-> This series is based on v4.16-rc1 and composed of scpsys control (PATCH 1-2) and clock control (PATCH 3-5).
-> Basically, all changes are for the ECO design change of MT2712.
-> 
-> changes since v1:
-> - Avoid renumbering clocks. Append new clocks at the bottom of each own subsystem.
-> 
-Hi Matthias & Stephen,
+Quoting Thierry Reding (2018-02-12 08:09:03)
+> On Thu, Jan 25, 2018 at 04:00:09PM +0200, Peter De Schrijver wrote:
+> > This patch series introduces the Memory Built-In Self Test (MBIST)
+> > work around (WAR) needed when power ungating certain domains. More
+> > details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose =
+to
+> > implement the WAR in the Tegra210 clock driver, because most accesses a=
+re
+> > to CAR registers and for the VENC domain, we need to make sure the CSI
+> > clock source is not changed during the WAR execution.
+> > =
 
-Sorry to bother. Just saw patch 1/2 are already pushed to v4.16-next-soc
-and patch 3/5 are applied onto clk-next. What about the patch 4(arm64:
-dts: add clock device nodes of MT2712). Does there any problem remain or
-it cause some problems? Many thanks.
-> Weiyi Lu (5):
->   dt-bindings: soc: update MT2712 power dt-bindings
->   soc: mediatek: update power domain data of MT2712
->   dt-bindings: clock: add clocks for MT2712
->   arm64: dts: add clock device nodes of MT2712
->   clk: mediatek: update clock driver of MT2712
-> 
->  arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 28 +++++++++++++
->  drivers/clk/mediatek/clk-mt2712.c         | 69 ++++++++++++++++++++++++-------
->  drivers/soc/mediatek/mtk-scpsys.c         | 42 ++++++++++++++++++-
->  include/dt-bindings/clock/mt2712-clk.h    | 12 +++++-
->  include/dt-bindings/power/mt2712-power.h  |  3 ++
->  5 files changed, 136 insertions(+), 18 deletions(-)
-> 
+> > Changes in v4:
+> > * moved locking and clock control to tegra210_clk_handle_mbist_war()
+> > * propagate errors during WAR execution to user
+> > * rework error handling tegra210_mbist_clk_init() slightly
+> > =
+
+> > Changes in v3:
+> > * fix compile problem on non-Tegra210 platforms
+> > * fix clock handling bug in tegra210_generic_mbist_war()
+> > * addressed minor comments
+> > =
+
+> > Changes in v2:
+> > * Use readl for fence_delay() rather than readl_relaxed
+> > * clarify MBIST and WAR acronyms
+> > =
+
+> > Peter De Schrijver (4):
+> >   clk: tegra: Add la clock for Tegra210
+> >   clk: tegra: add fence_delay for clock registers
+> >   clk: tegra: MBIST work around for Tegra210
+> >   soc/tegra: pmc: MBIST work around for Tegra210
+> > =
+
+> >  drivers/clk/tegra/clk-tegra210.c         | 357 +++++++++++++++++++++++=
++++++++-
+> >  drivers/clk/tegra/clk.h                  |   7 +
+> >  drivers/soc/tegra/pmc.c                  |   7 +
+> >  include/dt-bindings/clock/tegra210-car.h |   2 +-
+> >  include/linux/clk/tegra.h                |   6 +
+> >  5 files changed, 376 insertions(+), 3 deletions(-)
+> =
+
+> Hi Mike, Stephen,
+> =
+
+> since there's a dependency from patch 4 to patch 3 in the series, do you
+> mind if I take this in via the Tegra tree? I can send out a pull request
+> for the clock branch sometime later in the release cycle and pick up any
+> other Tegra clock related patches that may show up in the meantime.
+> =
+
+
+Ok.
