@@ -1,130 +1,69 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 31/42] ARM: davinci: switch to common clock framework
-Date: Thu, 15 Mar 2018 21:52:47 -0500
-Message-Id: <1521168778-27236-32-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <RAJANV@xilinx.com>
+From: Rajan Vaja <RAJANV@xilinx.com>
+To: 'Stephen Boyd' <sboyd@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jolly Shah
+	<JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>
+Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
+ CLK_OF_DECLARE_DRIVER
+Date: Fri, 9 Mar 2018 19:27:40 +0000
+Message-ID: <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
+References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
+ <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
+In-Reply-To: <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This switches ARCH_DAVINCI to use the common clock framework. The legacy
-clock code in arch/arm/mach-davinci/ is no longer used. New drivers in
-drivers/clk/davinci/ are used instead.
-
-A few macros had to be moved to prevent compilation errors.
-
-Signed-off-by: David Lechner <david@lechnology.com>
----
-
-v8 changes:
-- none
-
-v7 changes:
-- s/compile/compilation and space instead of tab
-- add PM_GENERIC_DOMAINS dependencies
-
-v6 changes:
-- clean up indent on Common objects section
-
- arch/arm/Kconfig                | 5 ++++-
- arch/arm/mach-davinci/Makefile  | 4 ++--
- arch/arm/mach-davinci/clock.h   | 4 ----
- arch/arm/mach-davinci/davinci.h | 4 ++++
- arch/arm/mach-davinci/psc.h     | 2 --
- 5 files changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 7e3d535..563fade 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -608,13 +608,16 @@ config ARCH_S3C24XX
- config ARCH_DAVINCI
- 	bool "TI DaVinci"
- 	select ARCH_HAS_HOLES_MEMORYMODEL
--	select CLKDEV_LOOKUP
-+	select COMMON_CLK
- 	select CPU_ARM926T
- 	select GENERIC_ALLOCATOR
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_IRQ_CHIP
- 	select GPIOLIB
- 	select HAVE_IDE
-+	select PM_GENERIC_DOMAINS if PM
-+	select PM_GENERIC_DOMAINS_OF if PM && OF
-+	select RESET_CONTROLLER
- 	select USE_OF
- 	select ZONE_DMA
- 	help
-diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
-index 4e81780..8725d8b 100644
---- a/arch/arm/mach-davinci/Makefile
-+++ b/arch/arm/mach-davinci/Makefile
-@@ -5,8 +5,8 @@
- #
- 
- # Common objects
--obj-y 			:= time.o clock.o serial.o psc.o \
--			   usb.o common.o sram.o aemif.o
-+obj-y 					:= time.o serial.o usb.o \
-+					   common.o sram.o aemif.o
- 
- obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
- 
-diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
-index d7894d5..2d05856 100644
---- a/arch/arm/mach-davinci/clock.h
-+++ b/arch/arm/mach-davinci/clock.h
-@@ -12,10 +12,6 @@
- #ifndef __ARCH_ARM_DAVINCI_CLOCK_H
- #define __ARCH_ARM_DAVINCI_CLOCK_H
- 
--#define DAVINCI_PLL1_BASE 0x01c40800
--#define DAVINCI_PLL2_BASE 0x01c40c00
--#define MAX_PLL 2
--
- /* PLL/Reset register offsets */
- #define PLLCTL          0x100
- #define PLLCTL_PLLEN    BIT(0)
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index a200977..a227f80 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -35,6 +35,10 @@
- #include <media/davinci/vpbe.h>
- #include <media/davinci/vpbe_osd.h>
- 
-+#define DAVINCI_PLL1_BASE		0x01c40800
-+#define DAVINCI_PLL2_BASE		0x01c40c00
-+#define DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01c41000
-+
- #define DAVINCI_SYSTEM_MODULE_BASE	0x01c40000
- #define SYSMOD_VDAC_CONFIG		0x2c
- #define SYSMOD_VIDCLKCTL		0x38
-diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
-index 8af9f09..b58707c 100644
---- a/arch/arm/mach-davinci/psc.h
-+++ b/arch/arm/mach-davinci/psc.h
-@@ -27,8 +27,6 @@
- #ifndef __ASM_ARCH_PSC_H
- #define __ASM_ARCH_PSC_H
- 
--#define	DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01C41000
--
- /* Power and Sleep Controller (PSC) Domains */
- #define DAVINCI_GPSC_ARMDOMAIN		0
- #define DAVINCI_GPSC_DSPDOMAIN		1
--- 
-2.7.4
+SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0aGUgcmV2aWV3Lg0KDQo+IC0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtlcm5lbC5v
+cmddDQo+IFNlbnQ6IEZyaWRheSwgTWFyY2ggMDksIDIwMTggMTA6MjUgQU0NCj4gVG86IFJhamFu
+IFZhamEgPFJBSkFOVkB4aWxpbnguY29tPjsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb20NCj4gQ2M6
+IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
+IEpvbGx5IFNoYWgNCj4gPEpPTExZU0B4aWxpbnguY29tPjsgTWljaGFsIFNpbWVrIDxtaWNoYWxz
+QHhpbGlueC5jb20+OyBSYWphbiBWYWphDQo+IDxSQUpBTlZAeGlsaW54LmNvbT4NCj4gU3ViamVj
+dDogUmU6IFtQQVRDSF0gY2xrOiBjbGstZml4ZWQtZmFjdG9yOiBVc2UgbmV3IG1hY3JvDQo+IENM
+S19PRl9ERUNMQVJFX0RSSVZFUg0KPiANCj4gUXVvdGluZyBSYWphbiBWYWphICgyMDE4LTAzLTA4
+IDA2OjE1OjAwKQ0KPiA+IEZpeGVkIGZhY3RvciBjbG9jayBoYXMgdHdvIGluaXRpYWxpemF0aW9u
+IGF0IG9mX2Nsa19pbml0KCkgdGltZSBhbmQNCj4gPiBhbHNvIGR1cmluZyBwbGF0Zm9ybSBkcml2
+ZXIgcHJvYmUuIFNvIGRlY2xhcmUgdGhlIGZpeGVkIGZhY3RvciBjbG9jaw0KPiA+IHdpdGggQ0xL
+X09GX0RFQ0xBUkVfRFJJVkVSIGluc3RlYWQgb2YgQ0xLX09GX0RFQ0xBUkUuDQo+ID4NCj4gPiBT
+ZWUgYmVsb3cgY29tbWl0IGZvciByZWZlcmVuY2U6DQo+ID4gImNsazogc3VueGk6IGFwYjA6IFVz
+ZSBuZXcgbWFjcm8gQ0xLX09GX0RFQ0xBUkVfRFJJVkVSIg0KPiA+IChzaGExOiA5MTUxMjhiNjIx
+YTA1YzYzZmE1OGNhOWU0Y2JkZjM5NGJiZTU5MmYzKQ0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
+UmFqYW4gVmFqYSA8cmFqYW52QHhpbGlueC5jb20+DQo+ID4gU3VnZ2VzdGVkLWJ5OiBNaWNoYWwg
+U2ltZWsgPG1pY2hhbC5zaW1la0B4aWxpbnguY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2Ns
+ay9jbGstZml4ZWQtZmFjdG9yLmMgfCA1ICsrKy0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGlu
+c2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9jbGsvY2xrLWZpeGVkLWZhY3Rvci5jDQo+ID4gYi9kcml2ZXJzL2Nsay9jbGstZml4ZWQtZmFj
+dG9yLmMgaW5kZXggYTVkNDAyZC4uZDcyZWYyZCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Ns
+ay9jbGstZml4ZWQtZmFjdG9yLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9jbGstZml4ZWQtZmFj
+dG9yLmMNCj4gPiBAQCAtMTk2LDggKzE5Niw5IEBAIHZvaWQgX19pbml0IG9mX2ZpeGVkX2ZhY3Rv
+cl9jbGtfc2V0dXAoc3RydWN0DQo+ID4gZGV2aWNlX25vZGUgKm5vZGUpICB7DQo+ID4gICAgICAg
+ICBfb2ZfZml4ZWRfZmFjdG9yX2Nsa19zZXR1cChub2RlKTsgIH0NCj4gPiAtQ0xLX09GX0RFQ0xB
+UkUoZml4ZWRfZmFjdG9yX2NsaywgImZpeGVkLWZhY3Rvci1jbG9jayIsDQo+ID4gLSAgICAgICAg
+ICAgICAgIG9mX2ZpeGVkX2ZhY3Rvcl9jbGtfc2V0dXApOw0KPiA+ICsNCj4gPiArQ0xLX09GX0RF
+Q0xBUkVfRFJJVkVSKGZpeGVkX2ZhY3Rvcl9jbGssICJmaXhlZC1mYWN0b3ItY2xvY2siLA0KPiA+
+ICsgICAgICAgICAgICAgICAgICAgICBvZl9maXhlZF9mYWN0b3JfY2xrX3NldHVwKTsNCj4gPg0K
+PiANCj4gSXMgdGhlIGludGVudCB0byByZWdpc3RlciB0aGUgY2xrIHR3aWNlPyBJIGJlbGlldmUg
+dGhpbmdzIGFyZSB3b3JraW5nIGFzDQo+IGludGVuZGVkIHdpdGhvdXQgdGhpcyBwYXRjaCwgc28g
+bWF5YmUgeW91IGNhbiBleHBsYWluIGEgbGl0dGxlIG1vcmUgd2hhdA0KPiB5b3UncmUgdHJ5aW5n
+IHRvIGZpeC4NCltSYWphbl0gWWVzLiBEdXJpbmcgb2ZfY2xrX2luaXQoKSBpZiBzb21lIERUIGZp
+eGVkIGZhY3RvciBjbG9jayBoYXMgcGFyZW50IHdoaWNoIGlzIG5laXRoZXIgbWVudGlvbmVkIGlu
+IG91dHB1dC1jbG9jay1uYW1lcyBvZiBjbG9jayBjb250cm9sbGVyIG5vciByZWdpc3RlcmVkIGFz
+IGNsb2NrIHByb3ZpZGVyLCBvZl9jbGtfaW5pdCgpIHdpbGwgdHJ5IHRvIGZvcmNlZnVsbHkgcmVn
+aXN0ZXIgaW4gc2Vjb25kIGxvb3AuIA0KDQogICAgICAgICAgICAgICAgICAgICAgICBpZiAoZm9y
+Y2UgfHwgcGFyZW50X3JlYWR5KGNsa19wcm92aWRlci0+bnApKSB7DQoNCiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgLyogRG9uJ3QgcG9wdWxhdGUgcGxhdGZvcm0gZGV2aWNlcyAqLw0K
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvZl9ub2RlX3NldF9mbGFnKGNsa19wcm92
+aWRlci0+bnAsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgT0ZfUE9QVUxBVEVEKTsNCg0KU28gcmVnaXN0cmF0aW9uIG9mIHRoaXMgRFQgZml4ZWQtZmFj
+dG9yIGNsb2NrIHdvdWxkIGZhaWwgYXMgcGFyZW50IHdvdWxkIGJlIE5VTEwgYXMgYmVsb3cgKGNh
+bGxlZCBmcm9tIF9vZl9maXhlZF9mYWN0b3JfY2xrX3NldHVwKCkpOg0KcGFyZW50X25hbWUgPSBv
+Zl9jbGtfZ2V0X3BhcmVudF9uYW1lKG5vZGUsIDApOw0KDQpPbiB0aGUgb3RoZXIgaGFuZCwgZXZl
+biBpZiByZWdpc3RyYXRpb24gZmFpbGVkLCB0aGF0IG5vZGUgd2lsbCBiZSBtYXJrZWQgYXMgT0Zf
+UE9QVUxBVEVELCBzbyBwcm9iZSBvZiBjbGstZml4ZWQtZmFjdG9yLmMgd2lsbCBhbHNvIG5vdCBi
+ZSBjYWxsZWQgYW5kIHRoYXQgRFQgZml4ZWQtZmFjdG9yIGNsb2NrIHdvdWxkIG5ldmVyIGJlIHJl
+Z2lzdGVyZWQuIA0KDQpTYW1lIHRoaW5nIGlzIGRpc2N1c3NlZCBhdCAgaHR0cHM6Ly9sa21sLm9y
+Zy9sa21sLzIwMTcvNi81LzY4MSAuDQo=
