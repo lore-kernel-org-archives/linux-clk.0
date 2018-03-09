@@ -1,80 +1,105 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Tue, 13 Mar 2018 11:28:16 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
-Message-ID: <20180313092816.GW6190@tbergstrom-lnx.Nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
- <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
- <20180309081438.GO6190@tbergstrom-lnx.Nvidia.com>
- <50b05dda-4577-0c86-a8e5-eb7095ee1f59@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <50b05dda-4577-0c86-a8e5-eb7095ee1f59@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.135]:38696 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751113AbeCIB5T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Mar 2018 20:57:19 -0500
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH] clk: rockchip: Restore the clock phase after the rate was changed
+Date: Fri,  9 Mar 2018 09:51:03 +0800
+Message-Id: <1520560263-123065-1-git-send-email-shawn.lin@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 12, 2018 at 10:14:17AM +0000, Jon Hunter wrote:
-> 
-> On 09/03/18 08:14, Peter De Schrijver wrote:
-> > On Thu, Mar 08, 2018 at 11:25:04PM +0000, Jon Hunter wrote:
-> >>
-> >> On 06/02/18 16:34, Peter De Schrijver wrote:
-> >>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-> >>> support in this driver. Also allow for the case where the CPU voltage is
-> >>> controlled directly by the DFLL rather than by a separate regulator object.
-> >>>
-> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >>> ---
-> >>>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
-> >>>  1 file changed, 8 insertions(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> >>> index 4353025..f8e01a8 100644
-> >>> --- a/drivers/cpufreq/tegra124-cpufreq.c
-> >>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> >>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
-> >>>  {
-> >>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-> >>>  	clk_disable_unprepare(priv->dfll_clk);
-> >>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
-> >>> +	if (priv->vdd_cpu_reg)
-> >>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
-> >>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
-> >>>  }
-> >>>  
-> >>> @@ -89,10 +90,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
-> >>>  		return -ENODEV;
-> >>>  
-> >>>  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
-> >>> -	if (IS_ERR(priv->vdd_cpu_reg)) {
-> >>> -		ret = PTR_ERR(priv->vdd_cpu_reg);
-> >>> -		goto out_put_np;
-> >>> -	}
-> >>> +	if (IS_ERR(priv->vdd_cpu_reg) != -EPROBE_DEFER)
-> >>> +		priv->vdd_cpu_reg = NULL;
-> >>> +	else
-> >>> +		return -EPROBE_DEFER;
-> >>
-> >> I am still not sure that we should rely on the fact that the regulator
-> >> is not present in DT to imply that we do not need it. I think that we
-> >> should be checking if we are using I2C mode here.
-> >>
-> > 
-> > The cpufreq driver doesn't know this however. Also the current approach of
-> > setting the same voltage when switching to pll_x is incorrect. The CVB
-> > tables when using pll_x include more margin than when using the DFLL.
-> 
-> Ah yes I see now. However, we are going to need to update the DT doc,
-> because 'vdd-cpu-supply' is listed as required.
-> 
+There are many factors affecting the clock phase, including clock
+rate, temperature, logic voltage and silicon process, etc. But clock
+rate is the most significant one here, and the driver should be aware
+of the change of the clock rate. As mmc controller need a fixed phase
+after tuning was completed, at least before explicitly doing re-tune,
+so this patch try to restore the clock phase by monitoring the event
+of rate change.
 
-Ok.
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
-Peter.
+ drivers/clk/rockchip/clk-mmc-phase.c | 39 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index fe7d9ed..dc4c227 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -25,6 +25,8 @@ struct rockchip_mmc_clock {
+ 	void __iomem	*reg;
+ 	int		id;
+ 	int		shift;
++	int		cached_phase;
++	struct notifier_block clk_rate_change_nb;
+ };
+ 
+ #define to_mmc_clock(_hw) container_of(_hw, struct rockchip_mmc_clock, hw)
+@@ -162,6 +164,29 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int degrees)
+ 	.set_phase	= rockchip_mmc_set_phase,
+ };
+ 
++#define to_rockchip_mmc_clock(x) \
++	container_of(x, struct rockchip_mmc_clock, clk_rate_change_nb)
++static int rockchip_mmc_clk_rate_notify(struct notifier_block *nb,
++					unsigned long event, void *data)
++{
++	struct rockchip_mmc_clock *mmc_clock = to_rockchip_mmc_clock(nb);
++
++	/*
++	 * rockchip_mmc_clk is mostly used by mmc controllers to sample
++	 * the intput data, which expects the fixed phase after the tuning
++	 * process. However if the clock rate is changed, the phase is stale
++	 * and may break the data sampling. So here we try to restore the phase
++	 * for that case.
++	 */
++	if (event == PRE_RATE_CHANGE)
++		mmc_clock->cached_phase =
++			rockchip_mmc_get_phase(&mmc_clock->hw);
++	else if (event == POST_RATE_CHANGE)
++		rockchip_mmc_set_phase(&mmc_clock->hw, mmc_clock->cached_phase);
++
++	return NOTIFY_DONE;
++}
++
+ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg, int shift)
+@@ -169,6 +194,7 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 	struct clk_init_data init;
+ 	struct rockchip_mmc_clock *mmc_clock;
+ 	struct clk *clk;
++	int ret;
+ 
+ 	mmc_clock = kmalloc(sizeof(*mmc_clock), GFP_KERNEL);
+ 	if (!mmc_clock)
+@@ -186,7 +212,18 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 
+ 	clk = clk_register(NULL, &mmc_clock->hw);
+ 	if (IS_ERR(clk))
+-		kfree(mmc_clock);
++		goto err_register;
+ 
++	mmc_clock->clk_rate_change_nb.notifier_call =
++				&rockchip_mmc_clk_rate_notify;
++	ret = clk_notifier_register(clk, &mmc_clock->clk_rate_change_nb);
++	if (ret)
++		goto err_notifier;
++
++	return clk;
++err_notifier:
++	clk_unregister(clk);
++err_register:
++	kfree(mmc_clock);
+ 	return clk;
+ }
+-- 
+1.9.1
+
+
