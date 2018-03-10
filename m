@@ -1,73 +1,69 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-To: Suman Anna <s-anna@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Stephen
- Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad
- Ben-Cohen <ohad@wizery.com>
-CC: David Lechner <david@lechnology.com>, Kevin Hilman <khilman@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob
- Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree <devicetree@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>,
-        <linux-clk@vger.kernel.org>,
-        Linux ARM
-	<linux-arm-kernel@lists.infradead.org>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
- <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
- <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
- <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
- <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
- <c78817f9-02fd-0ded-609e-5014efdd4a77@ti.com>
- <0683b11c-fefa-5fc7-793e-1a662a5f0480@ti.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <44218403-5e7f-dd12-6d01-a52987fc4cc8@ti.com>
-Date: Tue, 27 Mar 2018 10:54:54 +0530
-MIME-Version: 1.0
-In-Reply-To: <0683b11c-fefa-5fc7-793e-1a662a5f0480@ti.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jiaxun.yang@flygoat.com>
+Message-ID: <1520708711.24016.27.camel@flygoat.com>
+Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+To: Mathieu Malaterre <malat@debian.org>, PrasannaKumar Muralidharan
+	 <prasannatsmkumar@gmail.com>
+Cc: James Hogan <jhogan@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Michael
+ Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, "open list:OPEN
+ FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+ Linux-MIPS <linux-mips@linux-mips.org>,  linux-clk@vger.kernel.org, open
+ list <linux-kernel@vger.kernel.org>, Paul Cercueil <paul@crapouillou.net>,
+ Dominik Peklo <dom.peklo@gmail.com>
+Date: Sun, 11 Mar 2018 03:05:11 +0800
+In-Reply-To: <CA+7wUsyTrHZ=yk7EObc4ZaeXFcdgxVZL=9v2Mtz9=1_5dBz6Hg@mail.gmail.com>
+References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
+	 <20170927151527.25570-4-prasannatsmkumar@gmail.com>
+	 <20180306000832.GL4197@saruman>
+	 <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+	 <20180307143541.GN4197@saruman>
+	 <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
+	 <1520437971.3731.22.camel@flygoat.com>
+	 <CANc+2y42BAF=bZo9WxujMBR-x6y=rKDagA3R68phuAsi1P8BLw@mail.gmail.com>
+	 <CA+7wUsyTrHZ=yk7EObc4ZaeXFcdgxVZL=9v2Mtz9=1_5dBz6Hg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Suman,
-
-On Tuesday 27 March 2018 06:12 AM, Suman Anna wrote:
-> I tried booting your tree [3] on the OMAPL138-LCDK board. I am using
-> NFS, and I am unable to get to the console. I don't have any issues
-> booting latest -next branch (next-20180326) which only has the reset and
-> clock driver related changes.
+在 2018-03-07三的 19:13 +0100，Mathieu Malaterre写道：
+> > > [1] https://pan.baidu.com/s/1o8MeYts (Well you can download from
+> > > this
+> > > Chinese website, ingenic have a gerrit but I don't have access to
+> > > it.
+> > > As my experience, it's hard to develop on Chinese-made chips
+> > > wihout
+> > > reading Chinese documents.)
+> > 
+> > Can you take a diff and upload it somewhere else? Download speed is
+> > a
+> > couple of bytes per second. Can you put the diff in github or
+> > similar
+> > other service?
+> > I would like to see if the port uses DT.
 > 
-> Here's the log towards the end of the boot..
-> ---
-> pinctrl-single 1c14120.pinmux: 160 pins, size 80
-> Serial: 8250/16550 driver, 3 ports, IRQ sharing disabled
-> console [ttyS2] disabled
-> 1d0d000.serial: ttyS2 at MMIO 0x1d0d000 (irq = 61, base_baud = 8250000)
-> is a TI DA8xx/66AK2x
-> console [ttyS2] enabled
-> brd: module loaded
-> libphy: Fixed MDIO Bus: probed
-> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
-> davinci_mdio 1e24000.mdio: no live phy, scanning all
-> davinci_mdio: probe of 1e24000.mdio failed with error -5
-> i2c /dev entries driver
-> <nothing after this>
+> Technically this was documented here:
+Well that's only Technically for the English world. Most Ingeinc
+costumers are Chinese so they're providing detailed support for Chinese
+world.
+According Ingenic's announcement, the ftp have been deprecated for a
+long time and it's only exsiting for archive reason.
 
-This is because of a bug in bootloader PLL configuration which got
-uncovered only with CCF conversion. The bootloader that comes
-pre-flashed with the board or the latest U-Boot master should work fine.
+> 
+> ftp://ftp.ingenic.cn/DevSupport/Linux/Linux-3.0.8/JZ4780/JZ4780_linux
+> _development_guide_EN.pdf
+> 
+> Go to §2.1 Download Source Code:
+> 
+> 1) Download repo a) $ mkdir b) $ cd c) $ wget
+> http://git.ingenic.cn:8082/bj/repo d) $ chmod +x repo
+> 
+Repo is a sourcecode managing system used by Android. The gerrit is
+still here but need extra premission to reach. Now ingenic release
+there soucecode by "Baidu Netdisk". It's hard to access by foreign
+users. So we put the shourcecode here: https://github.com/Ingenic-commu
+nity/linux-xburst-bsp
 
-Here is the log with latest U-Boot master:
-https://pastebin.ubuntu.com/p/HkwY9g4YDc/
-
-Thanks,
-Sekhar
+Thanks
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
