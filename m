@@ -1,193 +1,90 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <postmaster@kaiser.cx>
+Date: Sun, 11 Mar 2018 17:39:46 +0100
+From: Martin Kaiser <martin@kaiser.cx>
+To: Fabio Estevam <festevam@gmail.com>,
+	Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
+Message-ID: <20180311163946.GA11507@botnar.kaiser.cx>
+References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
+ <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
+ <20180308140851.GA25601@botnar.kaiser.cx>
+ <CAOMZO5BdBWExt9FvPrfUG74Y62e4EUs6cqFyfVs5JuUtym00hQ@mail.gmail.com>
+ <20180308164654.GA31199@botnar.kaiser.cx>
+ <CAOMZO5Czv7Rj-wA9L42S9GJhufjw3br0d+iLcf070NWH4SjCbA@mail.gmail.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20180223081443.ak6kl3z72kamcxob@verge.net.au>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdX=m9ui6GczF51SJH2X7Cw1OnxoH9pfk1DybpDX-A873Q@mail.gmail.com>
- <20180221161326.ktvf3mlzzxith5kw@verge.net.au> <CAMuHMdUTSmrWggMK4ehSL3Ux-JUzVpamTuToveuXogjuvGKkaw@mail.gmail.com>
- <20180221183223.qacrmmuzoqlzzbpo@verge.net.au> <CAMuHMdXCt1-coXGgtgFBm4rZLGBRMvSjbgeBSweiyKrOfCF0Xg@mail.gmail.com>
- <20180223081443.ak6kl3z72kamcxob@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Mar 2018 11:20:11 +0100
-Message-ID: <CAMuHMdVKPFSVTbnQy9RwAg13OC3R=H1PN9+1FyU0SDHQPa1cuQ@mail.gmail.com>
-Subject: Re: [PATCH v5 00/26] Fix watchdog on Renesas R-Car Gen2 and RZ/G1
-To: Simon Horman <horms@verge.net.au>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>, Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOMZO5Czv7Rj-wA9L42S9GJhufjw3br0d+iLcf070NWH4SjCbA@mail.gmail.com>
+Sender: Martin Kaiser <martin@botnar.kaiser.cx>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simon,
+Hi Fabio & Lothar,
 
-On Fri, Feb 23, 2018 at 9:14 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Thu, Feb 22, 2018 at 09:38:39AM +0100, Geert Uytterhoeven wrote:
->> On Wed, Feb 21, 2018 at 7:32 PM, Simon Horman <horms@verge.net.au> wrote:
->> > On Wed, Feb 21, 2018 at 05:30:12PM +0100, Geert Uytterhoeven wrote:
->> >> On Wed, Feb 21, 2018 at 5:13 PM, Simon Horman <horms@verge.net.au> wrote:
->> >> > On Tue, Feb 20, 2018 at 01:51:28PM +0100, Geert Uytterhoeven wrote:
->> >> >> On Mon, Feb 12, 2018 at 6:44 PM, Fabrizio Castro
->> >> >> <fabrizio.castro@bp.renesas.com> wrote:
->> >> >> > this series has been around for some time as RFC, and it has collected
->> >> >> > useful comments from the community along the way.
->> >> >> > The solution proposed by this patch set works for most R-Car Gen2 and
->> >> >> > RZ/G1 devices, but not all of them. We now know that for some R-Car
->> >> >> > Gen2 early revisions there is no proper software fix. Anyway, no
->> >> >> > product has been built around early revisions, but development boards
->> >> >> > mounting early revisions (basically prototypes) are still out there.
->> >> >> > As a result, this series isn't enabling the internal watchdog on R-Car
->> >> >> > Gen2 boards, developers may enable it in board specific device trees
->> >> >> > if needed.
->> >> >> > This series has been tested by me on the iwg20d, iwg22d, Lager, Alt,
->> >> >> > and Koelsch boards.
->> >> >> >
->> >> >> > The problem
->> >> >> > ===========
->> >> >> > To deal with SMP on R-Car Gen2 and RZ/G1, we install a reset vector
->> >> >> > to ICRAM1 and we program the [S]BAR registers so that when we turn ON
->> >> >> > the non-boot CPUs they are redirected to the reset vector installed by
->> >> >> > Linux in ICRAM1, and eventually they continue the execution to RAM,
->> >> >> > where the SMP bring-up code will take care of the rest.
->> >> >> > The content of the [S]BAR registers survives a watchdog triggered reset,
->> >> >> > and as such after the watchdog fires the boot core will try and execute
->> >> >> > the SMP bring-up code instead of jumping to the bootrom code.
->> >> >> >
->> >> >> > The fix
->> >> >> > =======
->> >> >> > The main strategy for the solution is to let the reset vector decide
->> >> >> > if it needs to jump to shmobile_boot_fn or to the bootrom code.
->> >> >> > In a watchdog triggered reset scenario, since the [S]BAR registers keep
->> >> >> > their values, the boot CPU will jump into the newly designed reset
->> >> >> > vector, the assembly routine will eventually test WOVF (a bit in register
->> >> >> > RWTCSRA that indicates if the watchdog counter has overflown, the value
->> >> >> > of this bit gets retained in this scenario), and jump to the bootrom code
->> >> >> > which will in turn load up the bootloader, etc.
->> >> >> > When bringing up SMP or using CPU hotplug, the reset vector will jump
->> >> >> > to shmobile_boot_fn instead.
->> >> >> >
->> >> >> > Thank you All for your help.
->> >> >> >
->> >> >> > Best regards,
->> >> >> >
->> >> >> > Fabrizio Castro (26):
->> >> >> >   ARM: shmobile: Add watchdog support
->> >> >> >   ARM: dts: r8a7743: Adjust SMP routine size
->> >> >> >   ARM: dts: r8a7745: Adjust SMP routine size
->> >> >> >   ARM: dts: r8a7790: Adjust SMP routine size
->> >> >> >   ARM: dts: r8a7791: Adjust SMP routine size
->> >> >> >   ARM: dts: r8a7792: Adjust SMP routine size
->> >> >> >   ARM: dts: r8a7793: Adjust SMP routine size
->> >> >> >   ARM: dts: r8a7794: Adjust SMP routine size
->> >> >> >   soc: renesas: rcar-rst: Enable watchdog as reset trigger for Gen2
->> >> >> >   ARM: shmobile: rcar-gen2: Add watchdog support
->> >> >> >   dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
->> >> >> >   watchdog: renesas_wdt: Add R-Car Gen2 support
->> >> >> >   watchdog: renesas_wdt: Add restart handler
->> >> >> >   ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
->> >> >> >   clk: renesas: r8a7743: Add rwdt clock
->> >> >> >   clk: renesas: r8a7745: Add rwdt clock
->> >> >> >   clk: renesas: r8a7790: Add rwdt clock
->> >> >> >   clk: renesas: r8a7791/r8a7793: Add rwdt clock
->> >> >> >   clk: renesas: r8a7794: Add rwdt clock
->> >> >> >   ARM: dts: r8a7743: Add watchdog support to SoC dtsi
->> >> >> >   ARM: dts: r8a7745: Add watchdog support to SoC dtsi
->> >> >> >   ARM: dts: r8a7790: Add watchdog support to SoC dtsi
->> >> >> >   ARM: dts: r8a7791: Add watchdog support to SoC dtsi
->> >> >> >   ARM: dts: r8a7794: Add watchdog support to SoC dtsi
->> >> >> >   ARM: dts: iwg20m: Add watchdog support to SoM dtsi
->> >> >> >   ARM: dts: iwg22m: Add watchdog support to SoM dtsi
->> >> >> >
->> >> >> >  .../devicetree/bindings/watchdog/renesas-wdt.txt   | 19 ++++++--
->> >> >> >  arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |  5 ++
->> >> >> >  arch/arm/boot/dts/r8a7743.dtsi                     | 12 ++++-
->> >> >> >  arch/arm/boot/dts/r8a7745-iwg22m.dtsi              |  5 ++
->> >> >> >  arch/arm/boot/dts/r8a7745.dtsi                     | 12 ++++-
->> >> >> >  arch/arm/boot/dts/r8a7790.dtsi                     | 12 ++++-
->> >> >> >  arch/arm/boot/dts/r8a7791.dtsi                     | 12 ++++-
->> >> >> >  arch/arm/boot/dts/r8a7792.dtsi                     |  2 +-
->> >> >> >  arch/arm/boot/dts/r8a7793.dtsi                     |  2 +-
->> >> >> >  arch/arm/boot/dts/r8a7794.dtsi                     | 12 ++++-
->> >> >> >  arch/arm/configs/shmobile_defconfig                |  1 +
->> >> >> >  arch/arm/mach-shmobile/common.h                    |  6 +++
->> >> >> >  arch/arm/mach-shmobile/headsmp.S                   | 55 ++++++++++++++++++++++
->> >> >> >  arch/arm/mach-shmobile/platsmp-apmu.c              |  1 +
->> >> >> >  arch/arm/mach-shmobile/pm-rcar-gen2.c              | 15 ++++--
->> >> >> >  drivers/clk/renesas/r8a7743-cpg-mssr.c             |  2 +
->> >> >> >  drivers/clk/renesas/r8a7745-cpg-mssr.c             |  2 +
->> >> >> >  drivers/clk/renesas/r8a7790-cpg-mssr.c             |  2 +
->> >> >> >  drivers/clk/renesas/r8a7791-cpg-mssr.c             |  2 +
->> >> >> >  drivers/clk/renesas/r8a7794-cpg-mssr.c             |  2 +
->> >> >> >  drivers/soc/renesas/rcar-rst.c                     | 35 +++++++++++---
->> >> >> >  drivers/watchdog/renesas_wdt.c                     | 39 +++++++++++++--
->> >> >>
->> >> >> Thanks, I've queued the clock patches in clk-renesas-for-v4.17, as they are
->> >> >> a hard dependency for:
->> >> >>   (1) The new reset vector in arch/arm/mach-shmobile/
->> >> >>   (2) The watchdog driver.
->> >> >>
->> >> >> Note that the watchdog driver itself (2) has a hard dependency on the
->> >> >> new reset vector (1).
->> >> >
->> >> > Thanks, I have marked the watchdog driver patch as Deferred.
->> >> > Please resubmit or otherwise ping me once they dependencies
->> >> > are in an rc release.
->> >>
->> >> I gave the dependencies a bit more thought.
->> >>
->> >> I think we can gain once release cycle if you would postpone the DTS patches
->> >> (both SMP routine size adjustments and RWDT device node additions) to v4.18.
->> >> Then all other parts can be upstreamed in parallel in v4.17, as nothing
->> >> will be activated before the DTS parts are in.
->> >>
->> >> Does this look sane?
->> >
->> > What about new DTS on old kernels of a specific vintage?
->>
->> New DTS would work fine on v4.16 and older, which don't have any of the
->> other patches from this series.
->> New DTS would work fine on v4.17, assumed all other patches from this
->> series get into v4.17.
->>
->> The only issue would be a new DTS on a kernel that has some but not all
->> other patches from this series.
->
-> Thanks for the analysis. I think this is the key point. What is the risk of
-> that happening?
+Thus wrote Fabio Estevam (festevam@gmail.com):
 
-I think the risk is fairly low.
-You control when the DTS changes go in, and also when they are backported
-to LTSI.
+> On Thu, Mar 8, 2018 at 1:46 PM, Martin Kaiser <martin@kaiser.cx> wrote:
 
->> If we want to fast-track everything into v4.17, we need a stable branch, to be
->> pulled by all 5 actors (clk-renesas, mach-shmobile, soc-renesas, watchdog,
->> renesas-dts).
->
-> It seems that watchdog is the only item on that list that neither you nor I
-> sign off on. So I conclude that if the watchdog patch goes in early enough
-> in the cycle then we ought to be in good shape.
->
-> None the less, is it worth the risk?
+> >> I can get audio to work fine without your patch on a mx25pdk.
 
-Do we want the functionality early, or can we wait until v4.19?
+> > this is surprising. How come the ssi1_ipg_per clock is not turned off by
+> > clk_disable_unused()? Where is it used? Do you have
 
-Gr{oetje,eeting}s,
+> > <&clks 55>
 
-                        Geert
+> > anywhere in your DT?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> No, I don't. imx25-pdk board operates SSI in slave mode.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> > (My codec chip does not use a dedicated clock line. It takes the bit clock that
+> > is the output of SSI. Are you maybe using ssi1_ipg_per for your codec and
+> > enable it there?)
+
+> The difference between our boards is that you use SSI in master mode
+> and mx25pdk in slave mode.
+
+> > In my first mail, I was wondering about imx25 uart1, where we also have
+> > uart1_ipg and uart_ipg_per and the clock seeting is
+
+> >    clk[uart1_ipg] = imx_clk_gate("uart1_ipg", "ipg", ccm(CCM_CGCR2), 14);
+
+> > In this case, both uart1 and uart_ipg_per are listed in the device tree
+
+> >          uart1: serial@43f90000 {
+> > ...
+> >             clocks = <&clks 120>, <&clks 57>;
+> >             clock-names = "ipg", "per";
+> >          };
+
+> > Documentation/devicetree/bindings/clock/imx25-clock.txt
+> >    uart_ipg_per      57
+> >    uart1_ipg      120
+
+> > and the driver enables both clocks explicitly. So they are not unused.
+
+
+> > Doing something like this is not an option for ssi, this will not work with
+> > imx31, 35 etc.
+
+> The solution to this is passing the "baud" clock as Lothar pointed out.
+
+ok, I got your point now.
+
+The ssi1_ipg clock does not depend on ssi1_ipg_per. This is in line with
+the clock generation scheme in the reference manual.
+
+And there's configurations where ssi1_ipg should be switched on, but not
+ssi1_ipg_per.
+
+I'll look into using the baud clock on my board.
+
+Thanks to both of you for taking the time to explain this.
+
+Best regards,
+
+   Martin
