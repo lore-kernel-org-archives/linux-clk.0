@@ -1,59 +1,65 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1521106668.4264.50.camel@baylibre.com>
-Subject: Re: [GIT PULL v2] Amlogic clock driver updates for 4.17
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
- <narmstrong@baylibre.com>,  mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	khilman@baylibre.com
-Date: Thu, 15 Mar 2018 10:37:48 +0100
-In-Reply-To: <152106708246.85099.11923483552201514869@swboyd.mtv.corp.google.com>
-References: <73587ed8-923d-e123-29a1-b6c3b710a0eb@baylibre.com>
-	 <152106708246.85099.11923483552201514869@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <mturquette@baylibre.com>
+Date: Sun, 11 Mar 2018 15:31:58 -0700
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v2 0/8] clk: helpers and fixes
+To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180214134340.17242-1-jbrunet@baylibre.com>
+In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
+MIME-Version: 1.0
+Message-Id: <1520807121.n44nt5z8tk.astroid@resonance.none>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-03-14 at 15:38 -0700, Stephen Boyd wrote:
-> Quoting Neil Armstrong (2018-03-13 02:30:38)
-> > Dear clock maintainers,
-> > 
-> > Below is a request to pull a 1st batch of Amlogic clock driver updates for this
-> > cycle.
-> > The PR is composed of 3 series :
-> > - pll fixes for GXBB, GXL and AXG
-> > - use regmap in clock controllers for GXBB, GXL and AXG
-> > - general clock updates for Meson8, GXBB, GXL and AXG
-> > 
-> > These 2 last series were depending on patches merged on the clk-helpers
-> > topic branch, thus based on this branch.
-> > 
-> 
-> Thanks. Pulled into clk-next. Also, marked some things static and
-> dropped a local variable that was causing a warning.
-> 
-> WARNING: 'Tested-by:' is the preferred signature form
-> #18: 
-> Tested-By: David Lechner <david@lechnology.com>
-> 
-> drivers/clk/meson/meson8b.c:512:19: warning: symbol 'meson8b_mpeg_clk_div' was not declared. Should it be static?
-> drivers/clk/meson/meson8b.c:526:19: warning: symbol 'meson8b_clk81' was not declared. Should it be static?
-> drivers/clk/meson/meson8b.c:540:19: warning: symbol 'meson8b_cpu_in_sel' was not declared. Should it be static?
-> drivers/clk/meson/meson8b.c:591:19: warning: symbol 'meson8b_cpu_scale_div' was not declared. Should it be static?
-> drivers/clk/meson/meson8b.c:608:19: warning: symbol 'meson8b_cpu_scale_out_sel' was not declared. Should it be static?
-> drivers/clk/meson/meson8b.c:626:19: warning: symbol 'meson8b_cpu_clk' was not declared. Should it be static?
-> drivers/clk/meson/gxbb.c:392:27: warning: symbol 'gxbb_gp0_init_regs' was not declared. Should it be static?
-> drivers/clk/meson/gxbb.c:439:27: warning: symbol 'gxl_gp0_init_regs' was not declared. Should it be static?
-> drivers/clk/meson/axg.c:195:27: warning: symbol 'axg_gp0_init_regs' was not declared. Should it be static?
-> drivers/clk/meson/axg.c:248:27: warning: symbol 'axg_hifi_init_regs' was not declared. Should it be static?
-> drivers/clk/meson/meson8b.c: In function 'meson8b_clkc_probe':
-> drivers/clk/meson/meson8b.c:1052:14: warning: unused variable 'clk' [-Wunused-variable]
+Excerpts from Jerome Brunet's message of February 14, 2018 5:43 am:
+> This changset is consist of various patches I have recently sent
+> for the clock framework. They are gathered here for your convinience.
+>=20
+> The first two changes exports helpers of the generic clocks (divider and
+> mux). The goal is to avoid code duplication when writing clock driver
+> derived from these generic clock drivers.
+>=20
+> The rest fixes various issues found in the clock framework while working =
+on
+> a rework of meson's clock controllers [0]
 
-Thanks for fixing and letting us know Stephen !
-We'll be more careful next time
+Applied to clk-helpers towards v4.17.
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+Mike
+
+>=20
+> Changes since the v1s:
+>  * dropped lpc32xx divider read-only patches as requested by
+>    Vladimir Zapolskiy [2]
+>  * Squashed generic divider read-only patches
+>  * Squashed mux documentations patches
+>=20
+> [0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.co=
+m
+> [2]: https://lkml.kernel.org/r/54782a8f-9735-a574-d8e1-7ff3e9173229@mleia=
+.com
+>=20
+> Jerome Brunet (8):
+>   clk: divider: export clk_div_mask() helper
+>   clk: mux: add helper function for index/value translation
+>   clk: fix determine rate error with pass-through clock
+>   clk: migrate the count of orphaned clocks at init
+>   clk: call the clock init() callback before any other ops callback
+>   clk: fix mux clock documentation
+>   clk: divider: read-only divider can propagate rate change
+>   clk: qcom: use divider_ro_round_rate helper
+>=20
+>  drivers/clk/clk-divider.c             | 58 ++++++++++++++++++---------
+>  drivers/clk/clk-mux.c                 | 75 ++++++++++++++++++++---------=
+------
+>  drivers/clk/clk.c                     | 63 ++++++++++++++++-------------
+>  drivers/clk/qcom/clk-regmap-divider.c | 20 +++-------
+>  include/linux/clk-provider.h          | 23 ++++++++++-
+>  5 files changed, 146 insertions(+), 93 deletions(-)
+>=20
+> --=20
+> 2.14.3
+>=20
+>=20
+=
