@@ -1,32 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:55980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751656AbeCTHZY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Mar 2018 03:25:24 -0400
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <mturquette@baylibre.com>
+Date: Sun, 11 Mar 2018 15:42:37 -0700
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v2 00/12] Introduce STM32MP1 clock driver
+To: Alexandre Torgue <alexandre.torgue@st.com>, Gabriel Fernandez
+	<gabriel.fernandez@st.com>, Lee Jones <lee.jones@linaro.org>, Mark Rutland
+	<mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+	sboyd@kernel.org
+Cc: benjamin GAIGNARD <benjamin.gaignard@st.com>, devicetree@vger.kernel.org,
+	gabriel.fernandez.st@gmail.com, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Loic PALLARDY
+	<loic.pallardy@st.com>, olivier.bideau@st.com
+References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
 MIME-Version: 1.0
-To: Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <75e15960cb001e5fc04c1d5157848e5c524bf963.1521514928.git.ryder.lee@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-References: <004f07aef08148321c320ea09f8169982f73dd2b.1521514928.git.ryder.lee@mediatek.com>
- <75e15960cb001e5fc04c1d5157848e5c524bf963.1521514928.git.ryder.lee@mediatek.com>
-Message-ID: <152153072337.254778.2137352951861299387@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/2] clk: mediatek: add audsys support for MT2701
-Date: Tue, 20 Mar 2018 00:25:23 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Message-Id: <1520808064.5otv3fo1pe.astroid@resonance.none>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ryder Lee (2018-03-19 20:16:52)
-> Add clock driver support for MT2701 audsys.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
+Excerpts from gabriel.fernandez@st.com's message of March 8, 2018 8:53 am:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>=20
+> v2:
+>   - Don't use MFD, use existing binding of STM32 RCC.
+>   - Rework Peripheral and Kernel clocks
+>   - cosmetic changes
+>=20
+> This patch-set introduces clock driver for STM32MP157 based on Arm Cortex=
+-A7.
+> The driver patch is split in several patches (by kind of clock) to facili=
+tate
+> code reviewing.
 
-Applied to clk-next
+Applied to clk-stm32mp1 towards v4.17.
 
+Regards,
+Mike
+
+>=20
+> Gabriel Fernandez (12):
+>   dt-bindings: Document STM32MP1 Reset Clock Controller (RCC) bindings
+>   clk: stm32mp1: Introduce STM32MP1 clock driver
+>   clk: stm32mp1: add MP1 gate for hse/hsi/csi oscillators
+>   clk: stm32mp1: add Source Clocks for PLLs
+>   clk: stm32mp1: add PLL clocks
+>   clk: stm32mp1: add Post-dividers for PLL
+>   clk: stm32mp1: add Sub System clocks
+>   clk: stm32mp1: add Kernel timers
+>   clk: stm32mp1: add Peripheral & Kernel Clocks
+>   clk: stm32mp1: add RTC clock
+>   clk: stm32mp1: add MCO clocks
+>   clk: stm32mp1: add Debug clocks
+>=20
+>  .../devicetree/bindings/clock/st,stm32mp1-rcc.txt  |   60 +
+>  drivers/clk/Kconfig                                |    6 +
+>  drivers/clk/Makefile                               |    1 +
+>  drivers/clk/clk-stm32mp1.c                         | 2117 ++++++++++++++=
+++++++
+>  include/dt-bindings/clock/stm32mp1-clks.h          |  254 +++
+>  5 files changed, 2438 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp1-r=
+cc.txt
+>  create mode 100644 drivers/clk/clk-stm32mp1.c
+>  create mode 100644 include/dt-bindings/clock/stm32mp1-clks.h
+>=20
+> --=20
+> 1.9.1
+>=20
+>=20
+=
