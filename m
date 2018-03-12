@@ -1,158 +1,79 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v4 7/8] remoteproc: da8xx: use the reset framework
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin
- Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner
-	<david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson
-	<bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
- <20180323130455.11470-8-brgl@bgdev.pl>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <c09d4838-4938-4744-7ce9-4de99080cbe3@ti.com>
-Date: Mon, 26 Mar 2018 16:28:41 -0500
+Return-Path: <mturquette@baylibre.com>
+Date: Sun, 11 Mar 2018 22:54:08 -0700
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v2 4/8] clk: migrate the count of orphaned clocks at init
+To: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>, Jerome Brunet
+	<jbrunet@baylibre.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+References: <20180214134340.17242-1-jbrunet@baylibre.com>
+	<20180214134340.17242-5-jbrunet@baylibre.com> <1970074.VYjjbDuVRv@diego>
+In-Reply-To: <1970074.VYjjbDuVRv@diego>
 MIME-Version: 1.0
-In-Reply-To: <20180323130455.11470-8-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
+Message-Id: <1520834013.z6bypcssbs.astroid@resonance.none>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bart,
+Excerpts from Heiko St=C3=BCbner's message of February 15, 2018 1:01 pm:
+> Am Mittwoch, 14. Februar 2018, 14:43:36 CET schrieb Jerome Brunet:
+>> The orphan clocks reparents should migrate any existing count from the
+>> orphan clock to its new acestor clocks, otherwise we may have
+>> inconsistent counts in the tree and end-up with gated critical clocks
+>>=20
+>> Assuming we have two clocks, A and B.
+>> * Clock A has CLK_IS_CRITICAL flag set.
+>> * Clock B is an ancestor of A which can gate. Clock B gate is left
+>>   enabled by the bootloader.
+>>=20
+>> Step 1: Clock A is registered. Since it is a critical clock, it is
+>> enabled. The clock being still an orphan, no parent are enabled.
+>>=20
+>> Step 2: Clock B is registered and reparented to clock A (potentially
+>> through several other clocks). We are now in situation where the enable
+>> count of clock A is 1 while the enable count of its ancestors is 0, whic=
+h
+>> is not good.
+>>=20
+>> Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
+>> clock B being 0, clock B is gated and and critical clock A actually gets
+>> disabled.
+>>=20
+>> This situation was found while adding fdiv_clk gates to the meson8b
+>> platform.  These clocks parent clk81 critical clock, which is the mother
+>> of all peripheral clocks in this system. Because of the issue described
+>> here, the system is crashing when clk_disable_unused() is called.
+>>=20
+>> The situation is solved by reverting
+>> commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting during
+>> registration"). To avoid breaking again the situation described in this
+>> commit
+>> description, enabling critical clock should be done before walking the
+>> orphan list. This way, a parent critical clock may not be accidentally
+>> disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
+>>=20
+>> Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during
+>> registration") Cc: Stephen Boyd <sboyd@codeaurora.org>
+>> Cc: Shawn Guo <shawnguo@kernel.org>
+>> Cc: Dong Aisheng <aisheng.dong@nxp.com>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>=20
+> On a rk3288-veyron Chromebook
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+>=20
+> This made the hdmi on the machine work again with 4.16-rc1 .
+> (hdmi-cec clock is sourced from the i2c connected pmic which provides
+> the 32kHz clock needed)
+>=20
+> So it would be really cool if this could make it into 4.16-rc :-)
 
-On 03/23/2018 08:04 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Switch to using the reset framework instead of handcoded reset routines
-> we used so far.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/remoteproc/da8xx_remoteproc.c | 32 +++++++++++++++++++++++++++-----
->  1 file changed, 27 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-> index f134192922e0..3689473f8b49 100644
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -10,6 +10,7 @@
->  
->  #include <linux/bitops.h>
->  #include <linux/clk.h>
-> +#include <linux/reset.h>
->  #include <linux/err.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
-> @@ -20,8 +21,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/remoteproc.h>
->  
-> -#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
-> -
->  #include "remoteproc_internal.h"
->  
->  static char *da8xx_fw_name;
-> @@ -72,6 +71,7 @@ struct da8xx_rproc {
->  	struct da8xx_rproc_mem *mem;
->  	int num_mems;
->  	struct clk *dsp_clk;
-> +	struct reset_control *dsp_reset;
->  	void (*ack_fxn)(struct irq_data *data);
->  	struct irq_data *irq_data;
->  	void __iomem *chipsig;
-> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
->  	struct device *dev = rproc->dev.parent;
->  	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
->  	struct clk *dsp_clk = drproc->dsp_clk;
-> +	struct reset_control *dsp_reset = drproc->dsp_reset;
->  	int ret;
->  
->  	/* hw requires the start (boot) address be on 1KB boundary */
-> @@ -155,7 +156,11 @@ static int da8xx_rproc_start(struct rproc *rproc)
->  		return ret;
->  	}
->  
-> -	davinci_clk_reset_deassert(dsp_clk);
-> +	ret = reset_control_deassert(dsp_reset);
-> +	if (ret) {
-> +		dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
-> +		return ret;
+I separated this patch out into clk-fixes to be set for -rc5 or -rc6.
 
-need to unwind the clk_prepare_enable() here.
+Regards,
+Mike
 
-> +	}
->  
->  	return 0;
->  }
-> @@ -163,8 +168,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
->  static int da8xx_rproc_stop(struct rproc *rproc)
->  {
->  	struct da8xx_rproc *drproc = rproc->priv;
-> +	int ret;
-> +
-> +	ret = reset_control_assert(drproc->dsp_reset);
-> +	if (ret) {
-> +		dev_err(rproc->dev.parent,
-> +			"reset_control_assert() failed: %d\n", ret);
-
-prefer the trace statement to be on the same line as dev_err, you can
-just keep the ret on the next line. I am fine with defining a local dev
-variable as well (mirrors da8xx_rproc_start() to have the trace in a
-single line).
-
-> +		return ret;
-> +	}
->  
-> -	davinci_clk_reset_assert(drproc->dsp_clk);
->  	clk_disable_unprepare(drproc->dsp_clk);
->  
->  	return 0;
-> @@ -232,6 +244,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  	struct resource *bootreg_res;
->  	struct resource *chipsig_res;
->  	struct clk *dsp_clk;
-> +	struct reset_control *dsp_reset;
->  	void __iomem *chipsig;
->  	void __iomem *bootreg;
->  	int irq;
-> @@ -268,6 +281,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  		return PTR_ERR(dsp_clk);
->  	}
->  
-> +	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
-> +	if (IS_ERR(dsp_reset)) {
-> +		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
-> +			dev_err(dev, "unable to get reset control: %ld\n",
-> +				PTR_ERR(dsp_reset));
-> +
-> +		return PTR_ERR(dsp_reset);
-> +	}
-> +
->  	if (dev->of_node) {
->  		ret = of_reserved_mem_device_init(dev);
->  		if (ret) {
-> @@ -309,7 +331,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
->  	 * held in reset at the time it is called.
->  	 */
-> -	ret = davinci_clk_reset_assert(drproc->dsp_clk);
-> +	ret = reset_control_assert(dsp_reset);
->  	if (ret)
->  		goto free_rproc;
->  
-
-The reset API usage changes themselves look good otherwise.
-
-regards
-Suman
+>=20
+>=20
+> Heiko
+>=20
+=
