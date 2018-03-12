@@ -1,80 +1,36 @@
-Return-Path: <shawn.lin@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, shawn.lin@rock-chips.com,
- linux-clk@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
- <1520503497.4264.12.camel@baylibre.com>
- <290e041d-7b53-9e62-92ce-33651ecb8a2f@rock-chips.com>
- <1520509048.4264.26.camel@baylibre.com>
- <1520509190.4264.28.camel@baylibre.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <ceb696cb-9961-00c0-20ef-324c590fb0ed@rock-chips.com>
-Date: Thu, 8 Mar 2018 19:46:46 +0800
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1520509190.4264.28.camel@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180312070430.GA23060@ulmo>
+Cc: Dmitry Osipenko <digetx@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+ <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
+ <152061678678.13890.15810434310624804730@swboyd.mtv.corp.google.com>
+ <20180312070430.GA23060@ulmo>
+Message-ID: <152089530498.147033.16290802622553476545@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+Date: Mon, 12 Mar 2018 15:55:04 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018/3/8 19:39, Jerome Brunet wrote:
-> On Thu, 2018-03-08 at 12:37 +0100, Jerome Brunet wrote:
->> On Thu, 2018-03-08 at 19:28 +0800, Shawn Lin wrote:
->>>>> +    if (core->phase < 0 && core->ops->get_phase)
->>>>
->>>> Why bother with core->phase < 0 ?
->>>> if core->ops->get_phase is available, why not call it anyway ?
->>>>
->>>> The phase may have changed since it was cached.
->>>>
->>>> A typical example would be phases based on adding fixed delays:
->>>>
->>>> * Take a 200MHz clock and set phase to 180 => a 2.5ns delay is set
->>>> * Clock rate change to 100MHz but delay is still 2.5ns
->>>>      -> cached phase = 180
->>>>      -> actual phase = 90
->>>
->>> Good point!
->>>
->>> (1)So either we should update phase once its rate is updated, for
->>> instance, doing it in clk_change_rate, or
->>
->> I don't think this would be a good option. The phase depending on the rate is
->> just one example. I'm pretty sure one could come up with another example
->>
->>>
->>> (2)we should always try to get the actual phase here.
->>
->> If the callback is available, lets use it. I prefer this second option
->>
+Quoting Thierry Reding (2018-03-12 00:04:30)
+> On Fri, Mar 09, 2018 at 09:33:06AM -0800, Stephen Boyd wrote:
+> > =
 
-okay.
+> > Are you going to send us a PR at some point?
+> =
 
->>>
->>> If we do anyway call ->get_phase, we should never need core->phase since
->>> it doesn't reflect the actual phase maybe.
->>
->> The cached value is used by debugfs so it is still a valuable information. I
->> would keep it around for now.
-> 
-> Oh ! and let's not forget that a clock driver is allowed to implement
-> set_phase() w/o implementing get_phase() ... so you definitively want to keep
-> the cached value around
-> 
-
-Yes, it's a little complicated. I just thought a case that, if the
-driver need a fixed phase i.e. by call clk_set_phase(180), but the clk's
-phase depends on the clk rate. So if the clk rate changed, the phase is 
-changed as well. This isn't good to the IP should sample the data based
-on the phase shift but never get notified that the phase is changed.
+> Yes, I was going to let the patches cook a little in linux-next and send
+> a PR by the end of the week. Does that sound okay?
+> =
 
 
->>
->>>
->>> Am I right? If yes, which option is more reasonable?
->>
->>
-> 
-> 
-> 
-> 
+Perfect! Thanks.
