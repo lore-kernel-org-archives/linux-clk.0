@@ -1,148 +1,69 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v9 01/15] ARM: Add Krait L2 register accessor functions
-Date: Tue,  6 Mar 2018 20:08:54 +0530
-Message-Id: <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
-References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Mon, 12 Mar 2018 16:26:45 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Jiancheng Xue <xuejiancheng@hisilicon.com>, linux-clk@vger.kernel.org
+Subject: [GIT PULL v2] Hi3798cv200 clock driver update for 4.17
+Message-ID: <20180312082644.GA26859@dragon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Hi Stephen, Mike,
 
-Krait CPUs have a handful of L2 cache controller registers that
-live behind a cp15 based indirection register. First you program
-the indirection register (l2cpselr) to point the L2 'window'
-register (l2cpdr) at what you want to read/write.  Then you
-read/write the 'window' register to do what you want. The
-l2cpselr register is not banked per-cpu so we must lock around
-accesses to it to prevent other CPUs from re-pointing l2cpdr
-underneath us.
+This is v2 of Hi3798cv200 clock driver pull request [1].  It includes
+the eMMC phase clock support patches [2] on top of v1.  I believe they
+are ready to go.  Please consider to pull it for 4.17.  Thanks.
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- arch/arm/common/Kconfig                   |  3 ++
- arch/arm/common/Makefile                  |  1 +
- arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
- arch/arm/include/asm/krait-l2-accessors.h | 10 +++++++
- 4 files changed, 62 insertions(+)
- create mode 100644 arch/arm/common/krait-l2-accessors.c
- create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
+Shawn
 
-diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
-index e5ad070..c8e1986 100644
---- a/arch/arm/common/Kconfig
-+++ b/arch/arm/common/Kconfig
-@@ -7,6 +7,9 @@ config DMABOUNCE
- 	bool
- 	select ZONE_DMA
- 
-+config KRAIT_L2_ACCESSORS
-+	bool
-+
- config SHARP_LOCOMO
- 	bool
- 
-diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-index 70b4a14..eec6cd1 100644
---- a/arch/arm/common/Makefile
-+++ b/arch/arm/common/Makefile
-@@ -7,6 +7,7 @@ obj-y				+= firmware.o
- 
- obj-$(CONFIG_SA1111)		+= sa1111.o
- obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
-+obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
- obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
- obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
- obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
-diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
-new file mode 100644
-index 0000000..9a97dda
---- /dev/null
-+++ b/arch/arm/common/krait-l2-accessors.c
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/spinlock.h>
-+#include <linux/export.h>
-+
-+#include <asm/barrier.h>
-+#include <asm/krait-l2-accessors.h>
-+
-+static DEFINE_RAW_SPINLOCK(krait_l2_lock);
-+
-+void krait_set_l2_indirect_reg(u32 addr, u32 val)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&krait_l2_lock, flags);
-+	/*
-+	 * Select the L2 window by poking l2cpselr, then write to the window
-+	 * via l2cpdr.
-+	 */
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
-+	isb();
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
-+	isb();
-+
-+	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
-+}
-+EXPORT_SYMBOL(krait_set_l2_indirect_reg);
-+
-+u32 krait_get_l2_indirect_reg(u32 addr)
-+{
-+	u32 val;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&krait_l2_lock, flags);
-+	/*
-+	 * Select the L2 window by poking l2cpselr, then read from the window
-+	 * via l2cpdr.
-+	 */
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
-+	isb();
-+	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
-+
-+	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
-+
-+	return val;
-+}
-+EXPORT_SYMBOL(krait_get_l2_indirect_reg);
-diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
-new file mode 100644
-index 0000000..dd7c474
---- /dev/null
-+++ b/arch/arm/include/asm/krait-l2-accessors.h
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
-+#define __ASMARM_KRAIT_L2_ACCESSORS_H
-+
-+extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
-+extern u32 krait_get_l2_indirect_reg(u32 addr);
-+
-+#endif
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+[1] https://www.spinics.net/lists/linux-clk/msg23911.html
+[2] https://patchwork.kernel.org/patch/10258235/
+
+
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/clk-hi3798cv200-4.17
+
+for you to fetch changes up to d1b0399543cec5fa5d3a2d33b525a7cd7912e635:
+
+  clk: hi3798cv200: add emmc sample and drive clock (2018-03-12 15:56:58 +0800)
+
+----------------------------------------------------------------
+Hi3798CV200 clock driver updates for 4.17:
+ - Add COMBPHY0 and USB2_OTG_UTMI clock support.
+ - Correct the parent clock of HISTB_IR_CLK.
+ - Fix unregister call sequence in hi3798cv200_clk_register() function.
+ - A coding-style improvement on Hi3798CV200 driver code indent.
+ - Add a HiSilicon specific phase clock type and using the type for eMMC
+   clocks on Hi3798CV200.
+
+----------------------------------------------------------------
+Jianguo Sun (1):
+      clk: hi3798cv200: add COMBPHY0 clock support
+
+Shawn Guo (3):
+      clk: hi3798cv200: fix unregister call sequence in error path
+      clk: hi3798cv200: add support for HISTB_USB2_OTG_UTMI_CLK
+      clk: hi3798cv200: fix define indentation
+
+Younian Wang (1):
+      clk: hi3798cv200: correct IR clock parent
+
+tianshuliang (2):
+      clk: hisilicon: add hisi phase clock support
+      clk: hi3798cv200: add emmc sample and drive clock
+
+ drivers/clk/hisilicon/Makefile          |   2 +-
+ drivers/clk/hisilicon/clk-hisi-phase.c  | 121 ++++++++++++++++++++++++++++++++
+ drivers/clk/hisilicon/clk.c             |  24 +++++++
+ drivers/clk/hisilicon/clk.h             |  19 +++++
+ drivers/clk/hisilicon/crg-hi3798cv200.c | 100 ++++++++++++++++----------
+ include/dt-bindings/clock/histb-clock.h |  55 ++++++++-------
+ 6 files changed, 257 insertions(+), 64 deletions(-)
+ create mode 100644 drivers/clk/hisilicon/clk-hisi-phase.c
