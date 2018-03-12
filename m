@@ -1,285 +1,62 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v9 14/15] cpufreq: Add module to register cpufreq on Krait CPUs
-Date: Tue,  6 Mar 2018 20:09:07 +0530
-Message-Id: <1520347148-27852-15-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
-References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 12 Mar 2018 11:10:36 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 07/11] dt-bindings: tegra: Update DFLL binding for PWM
+ regulator
+Message-ID: <20180312091036.GR6190@tbergstrom-lnx.Nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-8-git-send-email-pdeschrijver@nvidia.com>
+ <c747bc00-8c04-c297-e945-784e45655421@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <c747bc00-8c04-c297-e945-784e45655421@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+On Thu, Mar 08, 2018 at 11:21:40PM +0000, Jon Hunter wrote:
+> 
+> On 06/02/18 16:34, Peter De Schrijver wrote:
+> > Add new properties to configure the DFLL PWM regulator support. Also
+> > add an example and make the I2C clock only required when I2C support is
+> > used.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  .../bindings/clock/nvidia,tegra124-dfll.txt        | 76 +++++++++++++++++++++-
+> >  1 file changed, 74 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> > index dff236f..a4903f7 100644
+> > --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> > +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> > @@ -23,7 +23,8 @@ Required properties:
+> >  - clock-names: Must include the following entries:
+> >    - soc: Clock source for the DFLL control logic.
+> >    - ref: The closed loop reference clock
+> > -  - i2c: Clock source for the integrated I2C master.
+> > +  - i2c: Clock source for the integrated I2C master (only required when
+> > +	 using I2C mode).
+> >  - resets: Must contain an entry for each entry in reset-names.
+> >    See ../reset/reset.txt for details.
+> >  - reset-names: Must include the following entries:
+> > @@ -45,10 +46,28 @@ Required properties for the control loop parameters:
+> >  Optional properties for the control loop parameters:
+> >  - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
+> >  
+> > +Optional properties for mode selection:
+> > +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
+> > +
+> 
+> Do we need this property? Seems that we should be able to detect if it
+> is I2C or PWM based upon the other properties.
+> 
 
-Register a cpufreq-generic device whenever we detect that a
-"qcom,krait" compatible CPU is present in DT.
+I guess we could look for nvidia,pwm-period and switch to PWM mode if this is
+found, but I think it's more clear to have explicit property.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-[Sricharan: updated to use dev_pm_opp_set_prop_name and
-	    nvmem apis]
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/cpufreq/Kconfig.arm          |  10 ++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
- drivers/cpufreq/qcom-cpufreq.c       | 183 +++++++++++++++++++++++++++++++++++
- 4 files changed, 199 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq.c
-
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 3a88e33..826f9e7 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -133,6 +133,16 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
- 
-+config ARM_QCOM_CPUFREQ
-+	bool "CPUfreq driver for the QCOM SoCs with KRAIT processors"
-+	depends on ARCH_QCOM
-+	select PM_OPP
-+	help
-+	  This enables the CPUFreq driver for Qualcomm SoCs with
-+	  KRAIT processors.
-+
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index c60c1e1..1ca3390 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..e2e9a99 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -127,6 +127,11 @@
- 	{ .compatible = "ti,am43", },
- 	{ .compatible = "ti,dra7", },
- 
-+	{ .compatible = "qcom,ipq8064", },
-+	{ .compatible = "qcom,apq8064", },
-+	{ .compatible = "qcom,msm8974", },
-+	{ .compatible = "qcom,msm8960", },
-+
- 	{ }
- };
- 
-diff --git a/drivers/cpufreq/qcom-cpufreq.c b/drivers/cpufreq/qcom-cpufreq.c
-new file mode 100644
-index 0000000..6d71a3c
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq.c
-@@ -0,0 +1,183 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/cpu.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+
-+static void __init get_krait_bin_format_a(int *speed, int *pvs, int *pvs_ver,
-+					  struct nvmem_cell *pvs_nvmem, u8 *buf)
-+{
-+	u32 pte_efuse;
-+
-+	pte_efuse = *((u32 *)buf);
-+
-+	*speed = pte_efuse & 0xf;
-+	if (*speed == 0xf)
-+		*speed = (pte_efuse >> 4) & 0xf;
-+
-+	if (*speed == 0xf) {
-+		*speed = 0;
-+		pr_warn("Speed bin: Defaulting to %d\n", *speed);
-+	} else {
-+		pr_info("Speed bin: %d\n", *speed);
-+	}
-+
-+	*pvs = (pte_efuse >> 10) & 0x7;
-+	if (*pvs == 0x7)
-+		*pvs = (pte_efuse >> 13) & 0x7;
-+
-+	if (*pvs == 0x7) {
-+		*pvs = 0;
-+		pr_warn("PVS bin: Defaulting to %d\n", *pvs);
-+	} else {
-+		pr_info("PVS bin: %d\n", *pvs);
-+	}
-+
-+	kfree(buf);
-+}
-+
-+static void __init get_krait_bin_format_b(int *speed, int *pvs, int *pvs_ver,
-+					  struct nvmem_cell *pvs_nvmem, u8 *buf)
-+{
-+	u32 pte_efuse, redundant_sel;
-+
-+	pte_efuse = *((u32 *)buf);
-+	redundant_sel = (pte_efuse >> 24) & 0x7;
-+	*speed = pte_efuse & 0x7;
-+
-+	/* 4 bits of PVS are in efuse register bits 31, 8-6. */
-+	*pvs = ((pte_efuse >> 28) & 0x8) | ((pte_efuse >> 6) & 0x7);
-+	*pvs_ver = (pte_efuse >> 4) & 0x3;
-+
-+	switch (redundant_sel) {
-+	case 1:
-+		*speed = (pte_efuse >> 27) & 0xf;
-+		break;
-+	case 2:
-+		*pvs = (pte_efuse >> 27) & 0xf;
-+		break;
-+	}
-+
-+	/* Check SPEED_BIN_BLOW_STATUS */
-+	if (pte_efuse & BIT(3)) {
-+		pr_info("Speed bin: %d\n", *speed);
-+	} else {
-+		pr_warn("Speed bin not set. Defaulting to 0!\n");
-+		*speed = 0;
-+	}
-+
-+	/* Check PVS_BLOW_STATUS */
-+	pte_efuse = *(((u32 *)buf) + 4);
-+	if (pte_efuse) {
-+		pr_info("PVS bin: %d\n", *pvs);
-+	} else {
-+		pr_warn("PVS bin not set. Defaulting to 0!\n");
-+		*pvs = 0;
-+	}
-+
-+	pr_info("PVS version: %d\n", *pvs_ver);
-+	kfree(buf);
-+}
-+
-+static int __init qcom_cpufreq_populate_opps(struct nvmem_cell *pvs_nvmem,
-+					     struct opp_table **tbl)
-+{
-+	int speed = 0, pvs = 0, pvs_ver = 0, cpu, ret;
-+	struct device *cpu_dev;
-+	u8 *buf;
-+	size_t len;
-+	char pvs_name[] = "speedXX-pvsXX-vXX";
-+
-+	buf = nvmem_cell_read(pvs_nvmem, &len);
-+	if (len == 4)
-+		get_krait_bin_format_a(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
-+	else if (len == 8)
-+		get_krait_bin_format_b(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
-+	else
-+		pr_warn("Unable to read nvmem data. Defaulting to 0!\n");
-+
-+	snprintf(pvs_name, sizeof(pvs_name), "speed%d-pvs%d-v%d",
-+		 speed, pvs, pvs_ver);
-+
-+	for (cpu = 0; cpu < num_possible_cpus(); cpu++) {
-+		cpu_dev = get_cpu_device(cpu);
-+		if (!cpu_dev)
-+			return -ENODEV;
-+
-+		tbl[cpu] = dev_pm_opp_set_prop_name(cpu_dev, pvs_name);
-+
-+		if (IS_ERR(tbl[cpu])) {
-+			ret = PTR_ERR(tbl[cpu]);
-+			tbl[cpu] = 0;
-+			pr_warn("failed to add OPP name %s\n", pvs_name);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init qcom_cpufreq_driver_init(void)
-+{
-+	struct platform_device *pdev;
-+	struct device *cpu_dev;
-+	struct device_node *np;
-+	struct nvmem_cell *pvs_nvmem;
-+	struct opp_table *tbl[NR_CPUS] = { NULL };
-+	int ret, cpu = 0;
-+
-+	cpu_dev = get_cpu_device(0);
-+	if (!cpu_dev)
-+		return -ENODEV;
-+
-+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-+	if (!np)
-+		return -ENOENT;
-+
-+	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
-+		ret = -ENOENT;
-+		goto free_np;
-+	}
-+
-+	pvs_nvmem = of_nvmem_cell_get(np, NULL);
-+	if (IS_ERR(pvs_nvmem)) {
-+		dev_err(cpu_dev, "Could not get nvmem cell\n");
-+		ret = PTR_ERR(pvs_nvmem);
-+		goto free_np;
-+	}
-+
-+	ret = qcom_cpufreq_populate_opps(pvs_nvmem, tbl);
-+	if (ret)
-+		goto free_opp_name;
-+
-+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	if (IS_ERR(pdev)) {
-+		ret = PTR_ERR(pdev);
-+		goto free_opp_name;
-+	}
-+
-+	of_node_put(np);
-+
-+	return 0;
-+
-+free_opp_name:
-+	while (tbl[cpu]) {
-+		dev_pm_opp_put_prop_name(tbl[cpu]);
-+		cpu++;
-+	}
-+
-+free_np:
-+	of_node_put(np);
-+
-+	return ret;
-+}
-+late_initcall(qcom_cpufreq_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
-+MODULE_AUTHOR("Stephen Boyd <sboyd@codeaurora.org>");
-+MODULE_LICENSE("GPL v2");
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Peter.
