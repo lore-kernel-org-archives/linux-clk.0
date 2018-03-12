@@ -1,85 +1,37 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 01/11] arm64: dts: actions: Add S900 clock management unit nodes
-Date: Mon, 26 Mar 2018 23:08:55 +0530
-Message-Id: <20180326173905.22313-2-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
-References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <weiyi.lu@mediatek.com>
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
+	<weiyi.lu@mediatek.com>
+Subject: [PATCH v2 0/5] update Mediatek MT2712 clock and scpsys support 
+Date: Mon, 12 Mar 2018 15:03:36 +0800
+Message-ID: <20180312070342.4335-1-weiyi.lu@mediatek.com>
+Return-Path: weiyi.lu@mediatek.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Actions Semi S900 Clock Management Unit (CMU) nodes
+This series is based on v4.16-rc1 and composed of scpsys control (PATCH 1-2) and clock control (PATCH 3-5).
+Basically, all changes are for the ECO design change of MT2712.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/actions/s900.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+changes since v1:
+- Avoid renumbering clocks. Append new clocks at the bottom of each own subsystem.
 
-diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-index 11406f6d3a6d..fee0c9557656 100644
---- a/arch/arm64/boot/dts/actions/s900.dtsi
-+++ b/arch/arm64/boot/dts/actions/s900.dtsi
-@@ -4,6 +4,7 @@
-  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-  */
- 
-+#include <dt-bindings/clock/actions,s900-cmu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
- / {
-@@ -88,6 +89,18 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	losc: losc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		#clock-cells = <0>;
-+	};
-+
-+	diff24M: diff24M {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		#clock-cells = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
-@@ -154,6 +167,13 @@
- 			status = "disabled";
- 		};
- 
-+		cmu: clock-controller@e0160000 {
-+			compatible = "actions,s900-cmu";
-+			reg = <0x0 0xe0160000 0x0 0x1000>;
-+			clocks = <&hosc>, <&losc>;
-+			#clock-cells = <1>;
-+		};
-+
- 		timer: timer@e0228000 {
- 			compatible = "actions,s900-timer";
- 			reg = <0x0 0xe0228000 0x0 0x8000>;
--- 
-2.14.1
+Weiyi Lu (5):
+  dt-bindings: soc: update MT2712 power dt-bindings
+  soc: mediatek: update power domain data of MT2712
+  dt-bindings: clock: add clocks for MT2712
+  arm64: dts: add clock device nodes of MT2712
+  clk: mediatek: update clock driver of MT2712
+
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 28 +++++++++++++
+ drivers/clk/mediatek/clk-mt2712.c         | 69 ++++++++++++++++++++++++-------
+ drivers/soc/mediatek/mtk-scpsys.c         | 42 ++++++++++++++++++-
+ include/dt-bindings/clock/mt2712-clk.h    | 12 +++++-
+ include/dt-bindings/power/mt2712-power.h  |  3 ++
+ 5 files changed, 136 insertions(+), 18 deletions(-)
