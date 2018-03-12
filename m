@@ -1,55 +1,69 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Mon, 19 Mar 2018 05:28:08 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: kbuild-all@01.org, mturquette@baylibre.com, sboyd@kernel.org,
-	afaerber@suse.de, robh+dt@kernel.org, mark.rutland@arm.com,
-	liuwei@actions-semi.com, mp-cs@actions-semi.com,
-	96boards@ucrobotics.com, devicetree@vger.kernel.org,
-	davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org, viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com, bdong@ucrobotics.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v5 12/12] clk: actions: Add S900 SoC clock support
-Message-ID: <201803190542.EmeV4ajI%fengguang.wu@intel.com>
-References: <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr10051.outbound.protection.outlook.com ([40.107.1.51]:2657
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751911AbeCLJ0t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 12 Mar 2018 05:26:49 -0400
+From: Bai Ping <ping.bai@nxp.com>
+To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
+        kernel@pengutronix.de
+Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+Subject: [PATCH v5 2/4] clk: imx: add new gate/gate2 wrapper funtion
+Date: Mon, 12 Mar 2018 17:29:15 +0800
+Message-Id: <1520846957-22348-2-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
+References: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Manivannan,
+Add new gate/gate2 wrapper function to register clocks with optional flags.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on v4.16-rc4]
-[cannot apply to next-20180316]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Manivannan-Sadhasivam/Add-clock-driver-for-Actions-S900-SoC/20180319-015124
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/clk/actions/owl-s900.c:33:46: sparse: constant 2700000000 is so big it is long
-   drivers/clk/actions/owl-s900.c:604:18: sparse: Initializer entry defined twice
-   drivers/clk/actions/owl-s900.c:639:18:   also defined here
-
-vim +33 drivers/clk/actions/owl-s900.c
-
-    31	
-    32	static struct clk_pll_table clk_edp_pll_table[] = {
-  > 33		{0, 810000000}, {1, 1350000000}, {2, 2700000000},
-    34		{0, 0},
-    35	};
-    36	
-
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ change from v3->v4:
+ - no
+ change from v4->5:
+ - optimize commit subject
+---
+ drivers/clk/imx/clk.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index d69c4bb..8076ec0 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -123,6 +123,13 @@ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
+ 			shift, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_gate_flags(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, unsigned long flags)
++{
++	return clk_register_gate(NULL, name, parent, flags | CLK_SET_RATE_PARENT, reg,
++			shift, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift)
+ {
+@@ -137,6 +144,13 @@ static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
+ 			shift, 0x3, 0, &imx_ccm_lock, NULL);
+ }
+ 
++static inline struct clk *imx_clk_gate2_flags(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, unsigned long flags)
++{
++	return clk_register_gate2(NULL, name, parent, flags | CLK_SET_RATE_PARENT, reg,
++			shift, 0x3, 0, &imx_ccm_lock, NULL);
++}
++
+ static inline struct clk *imx_clk_gate2_shared(const char *name,
+ 		const char *parent, void __iomem *reg, u8 shift,
+ 		unsigned int *share_count)
+-- 
+1.9.1
+
