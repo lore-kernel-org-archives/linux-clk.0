@@ -1,30 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:34862 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751668AbeCWJVw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Mar 2018 05:21:52 -0400
-Date: Fri, 23 Mar 2018 10:21:48 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH] clk: renesas: r8a77965: Add MSIOF controller clocks
-Message-ID: <20180323092148.jji2x4mg2xmrlt5j@verge.net.au>
-References: <1521795895-24033-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
+Date: Mon, 12 Mar 2018 12:15:22 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1521795895-24033-1-git-send-email-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 23, 2018 at 10:04:54AM +0100, Geert Uytterhoeven wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> This patch adds MSIOF{0,1,2,3} clocks to the R8A77965 SoC.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+On 06/02/18 16:34, Peter De Schrijver wrote:
+> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> support in this driver. Also allow for the case where the CPU voltage is
+> controlled directly by the DFLL rather than by a separate regulator object.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> index 4353025..f8e01a8 100644
+> --- a/drivers/cpufreq/tegra124-cpufreq.c
+> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+>  {
+>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+>  	clk_disable_unprepare(priv->dfll_clk);
+> -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> +	if (priv->vdd_cpu_reg)
+> +		regulator_sync_voltage(priv->vdd_cpu_reg);
+>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+>  }
+
+OK, so this bit does not make sense to me. In the above we are switching
+from the DFLL to the PLL (ie. disabling the DFLL) and so to ensure we
+are operating at the correct voltage after disabling the DFLL we need to
+sync the voltage. Seems we would need to do this for all devices, no?
+How is the different between Tegra124 and Tegra210?
+
+Cheers
+Jon
+
+-- 
+nvpublic
