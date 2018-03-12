@@ -1,235 +1,52 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 03/11] clk: actions: Add common clock driver support
-Date: Mon, 26 Mar 2018 23:08:57 +0530
-Message-Id: <20180326173905.22313-4-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
-References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <s.nawrocki@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Subject: Re: [PATCH] clk: samsung: exynos5420: Add CLK_SET_RATE_PARENT flag
+ to mout_mau_epll_clk
+To: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	b.zolnierkie@samsung.com, m.szyprowski@samsung.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <6c79e24e-4127-4702-1dee-80fa0c409966@samsung.com>
+Date: Mon, 12 Mar 2018 11:29:47 +0100
+In-reply-to: <5AA09F22.2070903@samsung.com>
+References: <CGME20180307164708epcas1p27e6599e85617f559c5c4c8eb92a70a47@epcas1p2.samsung.com>
+	<20180307164656.12194-1-s.nawrocki@samsung.com>
+	<5AA09F22.2070903@samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi common clock driver with generic structures
-and interface functions.
+On 03/08/2018 03:25 AM, Chanwoo Choi wrote:
+> On 2018년 03월 08일 01:46, Sylwester Nawrocki wrote:
+>> This allows changing the EPLL output frequency through the audio subsystem
+>> clock tree leaf clocks. This change is needed to support audio on the HDMI
+>> interface on Peach-Pi(t) Chromebook.
+>>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos5420.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+>> index 8c050ff63536..1f204ba37f0f 100644
+>> --- a/drivers/clk/samsung/clk-exynos5420.c
+>> +++ b/drivers/clk/samsung/clk-exynos5420.c
+>> @@ -621,7 +621,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+>>  
+>>  	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
+>>  			mout_group5_5800_p, SRC_TOP7, 16, 2),
+>> -	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2),
+>> +	MUX_F(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2,
+>> +	      CLK_SET_RATE_PARENT, 0),
+>>  
+>>  	MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
+>>  };
+>>
+> Looks good to me.
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/Kconfig              |  1 +
- drivers/clk/Makefile             |  1 +
- drivers/clk/actions/Kconfig      |  4 ++
- drivers/clk/actions/Makefile     |  3 ++
- drivers/clk/actions/owl-common.c | 89 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-common.h | 41 ++++++++++++++++++
- 6 files changed, 139 insertions(+)
- create mode 100644 drivers/clk/actions/Kconfig
- create mode 100644 drivers/clk/actions/Makefile
- create mode 100644 drivers/clk/actions/owl-common.c
- create mode 100644 drivers/clk/actions/owl-common.h
+Thanks for your review, patch applied to the clk/samsung tree.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 98ce9fc6e6c0..6313a4f4327a 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -238,6 +238,7 @@ config COMMON_CLK_VC5
- 	  This driver supports the IDT VersaClock 5 and VersaClock 6
- 	  programmable clock generators.
- 
-+source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 71ec41e6364f..b7909df532ed 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -56,6 +56,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
- obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
- 
- # please keep this section sorted lexicographically by directory path name
-+obj-y					+= actions/
- obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
- obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
- obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
-diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
-new file mode 100644
-index 000000000000..13a3e5083d43
---- /dev/null
-+++ b/drivers/clk/actions/Kconfig
-@@ -0,0 +1,4 @@
-+config CLK_ACTIONS
-+	bool "Clock driver for Actions Semi SoCs"
-+	depends on ARCH_ACTIONS || COMPILE_TEST
-+	default ARCH_ACTIONS
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-new file mode 100644
-index 000000000000..64a50fc2d335
---- /dev/null
-+++ b/drivers/clk/actions/Makefile
-@@ -0,0 +1,3 @@
-+obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
-+
-+clk-owl-y			+= owl-common.o
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-new file mode 100644
-index 000000000000..61c1071b5180
---- /dev/null
-+++ b/drivers/clk/actions/owl-common.c
-@@ -0,0 +1,89 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL common clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "owl-common.h"
-+
-+static const struct regmap_config owl_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x00cc,
-+	.fast_io	= true,
-+};
-+
-+static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
-+			 struct regmap *regmap)
-+{
-+	int i;
-+	struct owl_clk_common *clks;
-+
-+	for (i = 0; i < desc->num_clks; i++) {
-+		clks = desc->clks[i];
-+		if (!clks)
-+			continue;
-+
-+		clks->regmap = regmap;
-+	}
-+}
-+
-+int owl_clk_regmap_init(struct platform_device *pdev,
-+			 const struct owl_clk_desc *desc)
-+{
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct resource *res;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &owl_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		pr_err("failed to init regmap\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	owl_clk_set_regmap(desc, regmap);
-+
-+	return 0;
-+}
-+
-+int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
-+{
-+	int i, ret;
-+	struct clk_hw *hw;
-+
-+	for (i = 0; i < hw_clks->num; i++) {
-+
-+		hw = hw_clks->hws[i];
-+
-+		if (IS_ERR_OR_NULL(hw))
-+			continue;
-+
-+		ret = devm_clk_hw_register(dev, hw);
-+		if (ret) {
-+			dev_err(dev, "Couldn't register clock %d - %s\n",
-+				i, hw->init->name);
-+			return ret;
-+		}
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_clks);
-+	if (ret)
-+		dev_err(dev, "Failed to add clock provider\n");
-+
-+	return ret;
-+}
-diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
-new file mode 100644
-index 000000000000..4fd726ec54a6
---- /dev/null
-+++ b/drivers/clk/actions/owl-common.h
-@@ -0,0 +1,41 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL common clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_COMMON_H_
-+#define _OWL_COMMON_H_
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_platform.h>
-+#include <linux/regmap.h>
-+
-+struct device_node;
-+
-+struct owl_clk_common {
-+	struct regmap			*regmap;
-+	struct clk_hw			hw;
-+};
-+
-+struct owl_clk_desc {
-+	struct owl_clk_common		**clks;
-+	unsigned long			num_clks;
-+	struct clk_hw_onecell_data	*hw_clks;
-+};
-+
-+static inline struct owl_clk_common *
-+	hw_to_owl_clk_common(const struct clk_hw *hw)
-+{
-+	return container_of(hw, struct owl_clk_common, hw);
-+}
-+
-+int owl_clk_regmap_init(struct platform_device *pdev,
-+			 const struct owl_clk_desc *desc);
-+int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks);
-+
-+#endif /* _OWL_COMMON_H_ */
 -- 
-2.14.1
+Regards,
+Sylwester
