@@ -1,79 +1,58 @@
-Return-Path: <andy.shevchenko@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr00072.outbound.protection.outlook.com ([40.107.0.72]:8160
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751229AbeCLJ0i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 12 Mar 2018 05:26:38 -0400
+From: Bai Ping <ping.bai@nxp.com>
+To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
+        kernel@pengutronix.de
+Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+Subject: [PATCH v5 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy divider and busy mux
+Date: Mon, 12 Mar 2018 17:29:14 +0800
+Message-Id: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <CAP8WD_ZUbO+aKUV1-tPS_5APkpSAwbi=K=koVEDWWUfzF0tW+A@mail.gmail.com>
-References: <CAP8WD_ZUbO+aKUV1-tPS_5APkpSAwbi=K=koVEDWWUfzF0tW+A@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Mar 2018 17:14:21 +0200
-Message-ID: <CAHp75VdgU8sOQAwDZFU5biP+u6zE35fNtwuTC4F1fg_cTvJkSQ@mail.gmail.com>
-Subject: Re: x86 : Kconfig : INTEL_PMC_CORE not specific enough
-To: whiteheadm@acm.org, "Cox, Alan" <alan.cox@intel.com>
-Cc: linux-clk@vger.kernel.org,
-	Platform Driver <platform-driver-x86@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-	Vishwanath Somayaji <vishwanath.somayaji@intel.com>, Irina Tirdea <irina.tirdea@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-+Cc: Alan (perhaps he has something to add or correct me)
+The busy divider and busy mux is actually used by the system critical clocks,
+so add 'CLK_IS_CRITICAL' to clocks registered with these two type.
 
-On Tue, Mar 13, 2018 at 1:20 PM, tedheadster <tedheadster@gmail.com> wrote:
-> Intel PMC Core and CLK API teams,
->   I am trying to build a minimal kernel config on old
-> regression-testing hardware. Presently there is the following
-> drivers/platform/x86/Kconfig item:
->
-> config PMC_ATOM
->        def_bool y
->        depends on PCI
->        select COMMON_CLK
->
-> This creates a cascade of Kconfig "select" statements and pulls in two files:
->
-> drivers/clk/x86/clk-pmc-atom.c
-> drivers/platform/x86/intel_pmc_core.c
->
-> The Kconfig seems too general to me. Compiling for my i586 Pentium-I
-> pulls in these files (I think) unnecessarily. Why does _anybody_ with
-> a PCI bus need these ATOM-specific files?
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+---
+ change from V3->v4:
+ - fix a typo in commit log
+ change from v4->v5:
+ - optimize the commit subject
+---
+ drivers/clk/imx/clk-busy.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Long story, but main concern here, that if you do s/ATOM/X86/ it will
-be more clear since we provide as less kernels as possible to cover
-all x86 architectures.
-
-Currently we have one kernel per:
-- any x86_64 case
-- any i686 case
-- uniprocessor i586 TSC case (Intel Quark)
-- (the rest exotic cases which is probably no-one using anymore)
-
-Your change disrupts this quite badly.
-
-So, I think your point that you don't need it by default, and here is
-another story related to the design of Intel BayTrail / CherryTrail
-platforms where we have a nasty bug and we can't use the driver as a
-module.
-
-> Would this change (or something similar) make sense?
-
-No.
-
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -1217,5 +1217,5 @@ endif # X86_PLATFORM_DEVICES
->
->  config PMC_ATOM
->         def_bool y
-> -       depends on PCI
-> +       depends on PCI && MATOM
-
-MATOM is for really old CPUs. Mentioned BayTrail et al rather normal
-x86 in that sense.
-
->         select COMMON_CLK
-
-Definitely NAK by the reasons mentioned above.
-
+diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+index 6df3389..9903652 100644
+--- a/drivers/clk/imx/clk-busy.c
++++ b/drivers/clk/imx/clk-busy.c
+@@ -101,7 +101,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 
+ 	init.name = name;
+ 	init.ops = &clk_busy_divider_ops;
+-	init.flags = CLK_SET_RATE_PARENT;
++	init.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+ 
+@@ -175,7 +175,7 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 
+ 	init.name = name;
+ 	init.ops = &clk_busy_mux_ops;
+-	init.flags = 0;
++	init.flags = CLK_IS_CRITICAL;
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+1.9.1
+
