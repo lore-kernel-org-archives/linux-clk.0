@@ -1,85 +1,69 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Return-Path: <benjamin.gaignard@linaro.org>
+Return-Path: <benjamin.gaignard@linaro.org>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v5 02/12] arm64: dts: actions: Add S900 clock management unit nodes
-Date: Sat, 17 Mar 2018 15:39:42 +0530
-Message-Id: <20180317100952.28538-3-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
-References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+	Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v3] clk: stm32: add configuration flags for each of the stm32 drivers
+Date: Mon, 12 Mar 2018 10:32:48 +0100
+Message-Id: <20180312093248.27512-1-benjamin.gaignard@st.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Actions Semi S900 Clock Management Unit (CMU) nodes
+Add two configuration flags to be able to not compile all the time
+stm32f and stm32h7 drivers when ARCH_STM32 is set.
+That help to save some space on those small platforms.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Acked-by: Gabriel Fernandez <gabriel.fernandez@st.com>
 ---
- arch/arm64/boot/dts/actions/s900.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+version 3:
+- rebase on clk-next where clk-stm32mp1 branch has been merged
 
-diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-index 11406f6d3a6d..fee0c9557656 100644
---- a/arch/arm64/boot/dts/actions/s900.dtsi
-+++ b/arch/arm64/boot/dts/actions/s900.dtsi
-@@ -4,6 +4,7 @@
-  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-  */
+ drivers/clk/Kconfig  | 14 ++++++++++++++
+ drivers/clk/Makefile |  4 ++--
+ 2 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index cbb9b0c05442..a26cde051158 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -244,6 +244,20 @@ config COMMON_CLK_STM32MP157
+ 	---help---
+ 	  Support for stm32mp157 SoC family clocks
  
-+#include <dt-bindings/clock/actions,s900-cmu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
- / {
-@@ -88,6 +89,18 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	losc: losc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		#clock-cells = <0>;
-+	};
++config COMMON_CLK_STM32F
++	bool "Clock driver for stm32f4 and stm32f7 SoC families"
++	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
++	help
++	---help---
++	  Support for stm32f4 and stm32f7 SoC families clocks
 +
-+	diff24M: diff24M {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		#clock-cells = <0>;
-+	};
++config COMMON_CLK_STM32H7
++	bool "Clock driver for stm32h7 SoC family"
++	depends on MACH_STM32H743
++	help
++	---help---
++	  Support for stm32h7 SoC family clocks
 +
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
-@@ -154,6 +167,13 @@
- 			status = "disabled";
- 		};
- 
-+		cmu: clock-controller@e0160000 {
-+			compatible = "actions,s900-cmu";
-+			reg = <0x0 0xe0160000 0x0 0x1000>;
-+			clocks = <&hosc>, <&losc>;
-+			#clock-cells = <1>;
-+		};
-+
- 		timer: timer@e0228000 {
- 			compatible = "actions,s900-timer";
- 			reg = <0x0 0xe0228000 0x0 0x8000>;
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 8d812c701aa6..e0c106ed9407 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -45,8 +45,8 @@ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
+ obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
+ obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
+ obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
+-obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
+-obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
++obj-$(CONFIG_COMMON_CLK_STM32F)		+= clk-stm32f4.o
++obj-$(CONFIG_COMMON_CLK_STM32H7)	+= clk-stm32h7.o
+ obj-$(CONFIG_COMMON_CLK_STM32MP157)	+= clk-stm32mp1.o
+ obj-$(CONFIG_ARCH_TANGO)		+= clk-tango4.o
+ obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
 -- 
-2.14.1
+2.15.0
