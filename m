@@ -1,52 +1,71 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
+Return-Path: <jeffy.chen@rock-chips.com>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Joseph Lo <josephl@nvidia.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	lee.jones@linaro.org,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Brian Norris <briannorris@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	linux-rockchip@lists.infradead.org,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-input@vger.kernel.org,
+	Will Deacon <will.deacon@arm.com>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	devicetree@vger.kernel.org,
+	stephen lu <lumotuwe@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Peter Chen <peter.chen@freescale.com>,
-	Irina Tirdea <irina.tirdea@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com,
-	Anson Huang <anson.huang@nxp.com>,
-	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
-	Abel Vesa <abelvesa@linux.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Abel Vesa <abel.vesa@nxp.com>
-Subject: [RESEND 0/4] Update imx7 clocks
-Date: Wed, 28 Mar 2018 09:46:34 +0300
-Message-Id: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH v5 3/4] clk: lpc32xx: Set name of regmap_config
+Date: Mon, 12 Mar 2018 17:51:41 +0800
+Message-Id: <20180312095142.30854-4-jeffy.chen@rock-chips.com>
+In-Reply-To: <20180312095142.30854-1-jeffy.chen@rock-chips.com>
+References: <20180312095142.30854-1-jeffy.chen@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Resent as a patcheset now.
+We are now allowing to register debugfs without a valid device, and not
+having a valid name will end up using "dummy*" to create debugfs dir.
 
-I sent the initial patches as individual ones,
-without specifying the order they need to be applied in.
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+---
 
-https://lkml.org/lkml/2018/3/27/535
-https://lkml.org/lkml/2018/3/27/536
-https://lkml.org/lkml/2018/3/27/539
-https://lkml.org/lkml/2018/3/27/542
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
 
+ drivers/clk/nxp/clk-lpc32xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Anson Huang (2):
-  clk: imx7d: Correct dram pll type
-  clk: imx7d: Correct ahb clk parent select
-
-Dong Aisheng (1):
-  clk: imx7d: Move clks_init_on before any clock operations
-
-Peter Chen (1):
-  clk: imx7d: Add USB clock information
-
- drivers/clk/imx/clk-imx7d.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index f5d815f577e0..a2a0a7f3bc57 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -67,6 +67,7 @@
+ #define LPC32XX_USB_CLK_STS		0xF8
+ 
+ static struct regmap_config lpc32xx_scb_regmap_config = {
++	.name = "lpc32xx-scb",
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
 -- 
-2.7.4
+2.11.0
