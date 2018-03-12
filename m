@@ -1,98 +1,156 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the reset framework
-Date: Fri, 23 Mar 2018 14:04:47 +0100
-Message-Id: <20180323130455.11470-1-brgl@bgdev.pl>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+To: sboyd@codeaurora.org, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ khilman@baylibre.com
+From: Neil Armstrong <narmstrong@baylibre.com>
+Subject: [GIT PULL] Amlogic clock driver updates for 4.17
+Message-ID: <f7bad58b-d7a3-779b-8551-76c030023ec5@baylibre.com>
+Date: Mon, 12 Mar 2018 12:04:26 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Dear clock maintainers,
 
-This series converts the only user of the handcoded, mach-specific reset
-routines in the davinci platform to using the reset framework.
+Below is a request to pull a 1st batch of Amlogic clock driver updates for this
+cycle.
+The PR is composed of 3 series :
+- pll fixes for GXBB, GXL and AXG
+- use regmap in clock controllers for GXBB, GXL and AXG
+- general clock updates for Meson8, GXBB, GXL and AXG
 
-Patch 1 modifies the way lookup entries are registered with the reset
-framework.
+These 2 last series were depending on patches merged on clk-next, thus clk-next
+was merged in between.
 
-Patches 2-4 add necessary lookups/DT-properties.
+Cheers
+Neil
 
-Patches 5-7 convert the davinci-rproc driver to the reset framework.
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-Patch 8 removes now dead code.
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
-Philipp: it turned out that it's indeed better to use the reset
-controller's device name for the entry lookup.
+are available in the git repository at:
 
-Tested both in DT and legacy modes by booting the examples from
-ti-ipc-rtos recipe in meta-ti.
+  git://github.com/BayLibre/clk-meson.git next/drivers
 
-This series applies on top of David Lechner's common-clk-v9 branch[1]
-with Philipp Zabel's reset/next branch[2] pulled in.
+for you to fetch changes up to 0d6368ef015e734a36f043289b92ca493a121147:
 
-It can be found in my github tree as well[3].
+  clk: meson: clean-up clk81 clocks (2018-03-12 11:48:28 +0100)
 
-[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
-[2] git://git.pengutronix.de/git/pza/linux reset/next
-[3] git@github.com:brgl/linux.git topic/davinci-reset
+----------------------------------------------------------------
+Gabriel Fernandez (12):
+      dt-bindings: Document STM32MP1 Reset Clock Controller (RCC) bindings
+      clk: stm32mp1: Introduce STM32MP1 clock driver
+      clk: stm32mp1: add MP1 gate for hse/hsi/csi oscillators
+      clk: stm32mp1: add Source Clocks for PLLs
+      clk: stm32mp1: add PLL clocks
+      clk: stm32mp1: add Post-dividers for PLL
+      clk: stm32mp1: add Sub System clocks
+      clk: stm32mp1: add Kernel timers
+      clk: stm32mp1: add Peripheral & Kernel Clocks
+      clk: stm32mp1: add RTC clock
+      clk: stm32mp1: add MCO clocks
+      clk: stm32mp1: add Debug clocks
 
-v1 -> v2:
-- fixed the device tree patches the descriptions of which were mixed up
-- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
-  reset provider, since it's possible that the lookup table was not yet
-  registered
-- made the local variable naming consistent in the davinci-rproc driver
-- fixed a typo in PATCH 5/8
+Jerome Brunet (48):
+      clk: meson: check pll rate param table before using it
+      clk: meson: remove useless pll rate params tables
+      clk: meson: remove unnecessary rounding in the pll clock
+      clk: meson: use the frac parameter width instead of a constant
+      clk: meson: add od3 to the pll driver
+      clk: meson: add the gxl hdmi pll
+      clk: meson: fix rate calculation of plls with a fractional part
+      clk: meson: gxbb: add the fractional part of the fixed_pll
+      clk: meson: axg: add the fractional part of the fixed_pll
+      clk: meson: add axg misc bit to the mpll driver
+      clk: migrate the count of orphaned clocks at init
+      clk: divider: export clk_div_mask() helper
+      clk: mux: add helper function for index/value translation
+      clk: fix determine rate error with pass-through clock
+      clk: call the clock init() callback before any other ops callback
+      clk: fix mux clock documentation
+      clk: divider: read-only divider can propagate rate change
+      clk: qcom: use divider_ro_round_rate helper
+      clk: meson: use dev pointer where possible
+      clk: meson: use devm_of_clk_add_hw_provider
+      clk: meson: only one loop index is necessary in probe
+      clk: meson: remove obsolete comments
+      clk: meson: add regmap clocks
+      clk: meson: switch gxbb ao_clk to clk_regmap
+      clk: meson: remove superseded aoclk_gate_regmap
+      clk: meson: add regmap to the clock controllers
+      clk: meson: migrate gates to clk_regmap
+      clk: meson: migrate dividers to clk_regmap
+      clk: meson: migrate muxes to clk_regmap
+      clk: meson: add regmap helpers for parm
+      clk: meson: migrate mplls clocks to clk_regmap
+      clk: meson: migrate the audio divider clock to clk_regmap
+      clk: meson: migrate plls clocks to clk_regmap
+      clk: meson: split divider and gate part of mpll
+      clk: meson: rework meson8b cpu clock
+      clk: meson: remove obsolete cpu_clk
+      clk: meson: use hhi syscon if available
+      clk: meson: add fractional part of meson8b fixed_pll
+      clk: meson: poke pll CNTL last
+      clk: meson: remove special gp0 lock loop
+      clk: meson: improve pll driver results with frac
+      clk: meson: add gp0 frac parameter for axg and gxl
+      clk: meson: add ROUND_CLOSEST to the pll driver
+      clk: meson: axg: add hifi clock bindings
+      clk: meson: axg: add hifi pll clock
+      clk: meson: add mpll pre-divider
+      clk: meson: add fdiv clock gates
+      clk: meson: clean-up clk81 clocks
 
-v2 -> v3:
-- modify PATCH 1/8: drop the provider argument from the function adding
-  lookup entries and instead pass the provider name to the RESET_LOOKUP
-  macro, return -EPROBE_DEFER if we locate a correct lookup entry but
-  cannot get the corresponding reset controller
-- modify the reset lookup entry in psc-da850
-- don't manually return -EPROBE_DEFER from davinci-rproc, instead don't
-  emit an error message if devm_reset_control_get_exclusive() returns
-  this error code
+Michael Turquette (3):
+      Merge branch 'clk-fixes' into clk-next
+      Merge branch 'clk-helpers' into clk-next
+      Merge branch 'clk-phase' into clk-next
 
-v3 -> v4:
-- make index the second parameter in RESET_LOOKUP() (right after the
-  provider name)
+Neil Armstrong (1):
+      Merge branch 'clk-next' into next/drivers
 
-Bartosz Golaszewski (8):
-  reset: modify the way reset lookup works for board files
-  ARM: davinci: dts: make psc0 a reset provider
-  ARM: davinci: dts: add a reset control to the dsp node
-  clk: davinci: add a reset lookup table for psc0
-  remoteproc: da8xx: add the missing retval check for clk_enable()
-  remoteproc: da8xx: prepare and unprepare the clock where needed
-  remoteproc: da8xx: use the reset framework
-  clk: davinci: kill davinci_clk_reset_assert/deassert()
+Shawn Lin (1):
+      clk: update cached phase to respect the fact when setting phase
 
- arch/arm/boot/dts/da850.dtsi               |  2 ++
- arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------
- drivers/clk/davinci/psc-da850.c            |  7 +++++
- drivers/clk/davinci/psc.c                  | 19 +-------------
- drivers/remoteproc/da8xx_remoteproc.c      | 42 +++++++++++++++++++++++++-----
- drivers/reset/core.c                       | 38 ++++++++++++++++++++++-----
- include/linux/reset-controller.h           | 14 +++++-----
- 7 files changed, 84 insertions(+), 59 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+Yixun Lan (1):
+      clk: meson: axg: fix the od shift of the sys_pll
 
--- 
-2.16.1
+ .../devicetree/bindings/clock/st,stm32mp1-rcc.txt  |   60 +
+ drivers/clk/Kconfig                                |    6 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-divider.c                          |   58 +-
+ drivers/clk/clk-mux.c                              |   75 +-
+ drivers/clk/clk-stm32mp1.c                         | 2117 ++++++++++++++++++++
+ drivers/clk/clk.c                                  |   67 +-
+ drivers/clk/meson/Kconfig                          |    9 +
+ drivers/clk/meson/Makefile                         |    5 +-
+ drivers/clk/meson/axg.c                            |  955 +++++----
+ drivers/clk/meson/axg.h                            |   12 +-
+ drivers/clk/meson/clk-audio-divider.c              |   63 +-
+ drivers/clk/meson/clk-cpu.c                        |  178 --
+ drivers/clk/meson/clk-mpll.c                       |  125 +-
+ drivers/clk/meson/clk-pll.c                        |  306 +--
+ drivers/clk/meson/clk-regmap.c                     |  166 ++
+ drivers/clk/meson/clk-regmap.h                     |  111 +
+ drivers/clk/meson/clkc.h                           |  107 +-
+ drivers/clk/meson/gxbb-aoclk-regmap.c              |   46 -
+ drivers/clk/meson/gxbb-aoclk.c                     |   20 +-
+ drivers/clk/meson/gxbb-aoclk.h                     |   11 -
+ drivers/clk/meson/gxbb.c                           | 1591 ++++++++-------
+ drivers/clk/meson/gxbb.h                           |   14 +-
+ drivers/clk/meson/meson8b.c                        |  706 ++++---
+ drivers/clk/meson/meson8b.h                        |   17 +-
+ drivers/clk/qcom/clk-regmap-divider.c              |   20 +-
+ include/dt-bindings/clock/axg-clkc.h               |    1 +
+ include/dt-bindings/clock/stm32mp1-clks.h          |  254 +++
+ include/linux/clk-provider.h                       |   23 +-
+ 29 files changed, 5048 insertions(+), 2076 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
+ create mode 100644 drivers/clk/clk-stm32mp1.c
+ delete mode 100644 drivers/clk/meson/clk-cpu.c
+ create mode 100644 drivers/clk/meson/clk-regmap.c
+ create mode 100644 drivers/clk/meson/clk-regmap.h
+ delete mode 100644 drivers/clk/meson/gxbb-aoclk-regmap.c
+ create mode 100644 include/dt-bindings/clock/stm32mp1-clks.h
