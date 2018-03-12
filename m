@@ -1,79 +1,69 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
- <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
- <20180309081438.GO6190@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <50b05dda-4577-0c86-a8e5-eb7095ee1f59@nvidia.com>
-Date: Mon, 12 Mar 2018 10:14:17 +0000
+Return-Path: <mturquette@baylibre.com>
+Date: Sun, 11 Mar 2018 18:28:35 -0700
+From: Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] clk: update cached phase to respect the fact when setting
+ phase
+To: Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@kernel.org>,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org, Stable
+	<stable@vger.kernel.org>
+References: <1520491781-132529-1-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1520491781-132529-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20180309081438.GO6190@tbergstrom-lnx.Nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Message-Id: <1520818089.ojh5tew3kt.astroid@resonance.none>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Excerpts from Shawn Lin's message of March 7, 2018 10:49 pm:
+> It's found that the final phase set by driver doesn't match that of
+> the output from clk_summary:
+>=20
+> dwmmc_rockchip fe310000.dwmmc: Successfully tuned phase to 346
+> mmc0: new ultra high speed SDR104 SDIO card at address 0001
+>=20
+> cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
+> sdio_sample	0        1        0    50000000 0 0
+>=20
+> It seems the cached core->phase isn't updated after the clk was
+> registered. So fix this issue by updating the core->phase if setting
+> phase successfully.
+>=20
+> Fixes: 9e4d04adeb1a ("clk: add clk_core_set_phase_nolock function")
+> Cc: Stable <stable@vger.kernel.org>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-On 09/03/18 08:14, Peter De Schrijver wrote:
-> On Thu, Mar 08, 2018 at 11:25:04PM +0000, Jon Hunter wrote:
->>
->> On 06/02/18 16:34, Peter De Schrijver wrote:
->>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
->>> support in this driver. Also allow for the case where the CPU voltage is
->>> controlled directly by the DFLL rather than by a separate regulator object.
->>>
->>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> ---
->>>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
->>>  1 file changed, 8 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
->>> index 4353025..f8e01a8 100644
->>> --- a/drivers/cpufreq/tegra124-cpufreq.c
->>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
->>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
->>>  {
->>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
->>>  	clk_disable_unprepare(priv->dfll_clk);
->>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
->>> +	if (priv->vdd_cpu_reg)
->>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
->>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
->>>  }
->>>  
->>> @@ -89,10 +90,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
->>>  		return -ENODEV;
->>>  
->>>  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
->>> -	if (IS_ERR(priv->vdd_cpu_reg)) {
->>> -		ret = PTR_ERR(priv->vdd_cpu_reg);
->>> -		goto out_put_np;
->>> -	}
->>> +	if (IS_ERR(priv->vdd_cpu_reg) != -EPROBE_DEFER)
->>> +		priv->vdd_cpu_reg = NULL;
->>> +	else
->>> +		return -EPROBE_DEFER;
->>
->> I am still not sure that we should rely on the fact that the regulator
->> is not present in DT to imply that we do not need it. I think that we
->> should be checking if we are using I2C mode here.
->>
-> 
-> The cpufreq driver doesn't know this however. Also the current approach of
-> setting the same voltage when switching to pll_x is incorrect. The CVB
-> tables when using pll_x include more margin than when using the DFLL.
+Applied to clk-phase towards v4.17.
 
-Ah yes I see now. However, we are going to need to update the DT doc,
-because 'vdd-cpu-supply' is listed as required.
+Regards,
+Mike
 
-Cheers
-Jon
-
--- 
-nvpublic
+> ---
+>=20
+>  drivers/clk/clk.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 0f686a9..617e562 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2309,8 +2309,11 @@ static int clk_core_set_phase_nolock(struct clk_co=
+re *core, int degrees)
+> =20
+>  	trace_clk_set_phase(core, degrees);
+> =20
+> -	if (core->ops->set_phase)
+> +	if (core->ops->set_phase) {
+>  		ret =3D core->ops->set_phase(core->hw, degrees);
+> +		if (!ret)
+> +			core->phase =3D degrees;
+> +	}
+> =20
+>  	trace_clk_set_phase_complete(core, degrees);
+> =20
+> --=20
+> 1.9.1
+>=20
+>=20
+>=20
+=
