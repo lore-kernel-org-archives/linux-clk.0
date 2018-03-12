@@ -1,52 +1,87 @@
-Return-Path: <prasannatsmkumar@gmail.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
+ <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
+ <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
+ <92084f1b-848a-39e6-7d77-7ceaa6a6f1d3@gmail.com>
+ <20180312071548.GB23060@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5fc86cc6-947f-ec7c-0c57-905f7aecdfbb@gmail.com>
+Date: Mon, 12 Mar 2018 15:37:28 +0300
 MIME-Version: 1.0
-In-Reply-To: <1520437971.3731.22.camel@flygoat.com>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
- <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
- <20180307143541.GN4197@saruman> <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
- <1520437971.3731.22.camel@flygoat.com>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date: Wed, 7 Mar 2018 21:55:38 +0530
-Message-ID: <CANc+2y42BAF=bZo9WxujMBR-x6y=rKDagA3R68phuAsi1P8BLw@mail.gmail.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: James Hogan <jhogan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>,
-	linux-clk@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>, Mathieu Malaterre <malat@debian.org>,
-	Dominik Peklo <dom.peklo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180312071548.GB23060@ulmo>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 7 March 2018 at 21:22, Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
-> =E5=9C=A8 2018-03-07=E4=B8=89=E7=9A=84 20:35 +0530=EF=BC=8CPrasannaKumar =
-Muralidharan=E5=86=99=E9=81=93=EF=BC=9A
->> Hi James,
+On 12.03.2018 10:15, Thierry Reding wrote:
+> On Fri, Mar 09, 2018 at 05:35:46PM +0300, Dmitry Osipenko wrote:
+>> On 08.03.2018 17:44, Thierry Reding wrote:
+>>> On Thu, Mar 01, 2018 at 04:33:29PM +0300, Dmitry Osipenko wrote:
+>>>> On 15.01.2018 13:56, Dmitry Osipenko wrote:
+>>>>> On 10.01.2018 16:59, Dmitry Osipenko wrote:
+>>>>>> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
+>>>>>> as critical.
+>>>>>>
+>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>>>>> ---
+>>>>>>
+>>>>>> Change log:
+>>>>>> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
+>>>>>>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
+>>>>>>         and Tegra30.
+>>>>>>
+>>>>>> v3:     Dropped marking PLL_P outputs as critical, because seems they are
+>>>>>>         not so critical. Although, I still haven't got a definitive answer
+>>>>>>         about what exact HW functions are affected by the fixed-clocks.
+>>>>>>         Anyway it should be cleaner to correct the actual drivers.
+>>>>>
+>>>>> Stephen / Michael, would it be possible to schedule these patches for 4.16? My
+>>>>> T20 and T30 devices aren't working without the 'critical clocks' patch. Things
+>>>>> happen to work with the opensource u-boot, but not with the proprietary
+>>>>> bootloader. It's probably not a big deal that out-of-tree devices are broken,
+>>>>> although would be nice to have one problem less.
+>>>>
+>>>> Guys, is there anything I could do to get these patches in linux-next?
+>>>
+>>> I've picked these up into the for-4.17/clk branch in the Tegra tree. I
+>>> already have that branch for the MBIST patches which are a dependency
+>>> for the for-4.17/soc branch.
 >>
->> Seems Jiaxun is interested in the board and is willing to help.
+>> Thank you very much! Could you please add stable tag to this ("Mark HCLK, SCLK
+>> and EMC as critical") patch? It would be nice to have 4.16 unbroken eventually
+>> for those who (have to) use downstream android bootloader.
 >>
->> I have been told that Ingenic is focusing on IoT market and X1000 is
->> intended for IoT segment. I think that they would be selling several
->> 100Ks of chip over the coming years. But I feel Ingenic spends time
->> only on maintaining their Linux port which is usually based on very
->> old kernel version.
->
-> Ingenic is going to release their XBrust2 core with it's products such
-> as X2000 a few days later. Witch is a pure MIPS64r5 with MXU2(A
-> superset of MIPS's MSA SIMD instruction set). The newest kernel port of
-> X1000 maintain by Ingenic is based on Linux-4.4 [1]. After communicated
-> with Ingenic, they said they are forcusing on China domestic market.
-> But they're looking for partners to enter foriegn market.
->
-> [1] https://pan.baidu.com/s/1o8MeYts (Well you can download from this
-> Chinese website, ingenic have a gerrit but I don't have access to it.
-> As my experience, it's hard to develop on Chinese-made chips wihout
-> reading Chinese documents.)
+>> Cc: <stable@vger.kernel.org> # v4.16
+> 
+> Should we add a Fixes: line instead? That way it will get automatically
+> backported to all applicable stable releases.
+> 
+> This is a little complicated because the clocks were introduced in
+> different commits, most of them a very long time ago:
+> 
+> 	a7c8485a0ebbdce303c6709e208bb4fd08aff8ad (sclk)
+> 	2db04f16b589c6c96bd07df3f1ef8558bfdb6810 (emc)
+> 	76ebc134d45d7e6e1dc29fdcef4e539c5bc76eb8 (emc)
+> 	...
+> 
+> So Fixes: is perhaps not desirable after all, but then, so isn't tagging
+> v4.16 specifically because this is a bug since almost forever, so v4.16
+> is fairly arbitrary. Shouldn't we at least get this fixed for the last
+> couple of LTS releases?
 
-Can you take a diff and upload it somewhere else? Download speed is a
-couple of bytes per second. Can you put the diff in github or similar
-other service?
-I would like to see if the port uses DT.
+That issue was masked in earlier kernels and only appears in 4.16, there is no
+need to backport it further. I thought that adding of 'stable' tag is enough to
+get patch backported automatically, so let's add 'fixes' instead:
+
+Fixes: 109eba2eb61a ("clk: tegra: Mark APB clock as critical")
+
+This patch applies cleanly to 4.16, everything should be fine.
