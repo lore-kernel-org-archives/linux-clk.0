@@ -1,73 +1,65 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1520510633.4264.42.camel@baylibre.com>
-Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>, Michael Turquette
-	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org, Geert
-	Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 08 Mar 2018 13:03:53 +0100
-In-Reply-To: <ceb696cb-9961-00c0-20ef-324c590fb0ed@rock-chips.com>
-References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
-	 <1520503497.4264.12.camel@baylibre.com>
-	 <290e041d-7b53-9e62-92ce-33651ecb8a2f@rock-chips.com>
-	 <1520509048.4264.26.camel@baylibre.com>
-	 <1520509190.4264.28.camel@baylibre.com>
-	 <ceb696cb-9961-00c0-20ef-324c590fb0ed@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39213 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932514AbeCMKqZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Mar 2018 06:46:25 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2] clk: samsung: exynos5250: Add missing clocks for FIMC
+ LITE SYSMMU devices
+Date: Tue, 13 Mar 2018 11:46:12 +0100
+Message-id: <20180313104612.24257-1-m.szyprowski@samsung.com>
+References: <CGME20180313104621eucas1p1905014d182b444b86605d07702e91533@eucas1p1.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-03-08 at 19:46 +0800, Shawn Lin wrote:
-> > > > Good point!
-> > > > 
-> > > > (1)So either we should update phase once its rate is updated, for
-> > > > instance, doing it in clk_change_rate, or
-> > > 
-> > > I don't think this would be a good option. The phase depending on the rate is
-> > > just one example. I'm pretty sure one could come up with another example
-> > > 
-> > > > 
-> > > > (2)we should always try to get the actual phase here.
-> > > 
-> > > If the callback is available, lets use it. I prefer this second option
-> > > 
-> 
-> okay.
-> 
-> > > > 
-> > > > If we do anyway call ->get_phase, we should never need core->phase since
-> > > > it doesn't reflect the actual phase maybe.
-> > > 
-> > > The cached value is used by debugfs so it is still a valuable information. I
-> > > would keep it around for now.
-> > 
-> > Oh ! and let's not forget that a clock driver is allowed to implement
-> > set_phase() w/o implementing get_phase() ... so you definitively want to keep
-> > the cached value around
-> > 
-> 
-> Yes, it's a little complicated. I just thought a case that, if the
-> driver need a fixed phase i.e. by call clk_set_phase(180), but the clk's
-> phase depends on the clk rate. So if the clk rate changed, the phase is 
-> changed as well. This isn't good to the IP should sample the data based
-> on the phase shift but never get notified that the phase is changed.
+FIMC LITE SYSMMU devices are defined in exynos5250.dtsi, but clocks for
+them are not instantiated by Exynos5250 clock provider driver. Add needed
+definitions for those clocks to fix IOMMU probe failure:
 
-I suppose this use case comes from the mmc (most phase users are mmc drivers) ?
+ERROR: could not get clock /soc/sysmmu@13c40000:sysmmu(0)
+exynos-sysmmu 13c40000.sysmmu: Failed to get device clock(s)!
+exynos-sysmmu: probe of 13c40000.sysmmu failed with error -38
+ERROR: could not get clock /soc/sysmmu@13c50000:sysmmu(0)
+exynos-sysmmu 13c50000.sysmmu: Failed to get device clock(s)!
+exynos-sysmmu: probe of 13c50000.sysmmu failed with error -38
 
-The fact that you would want ,for your use case, to lock the phase whatever the
-rate changes seems like a choice. It makes sense for sure, but maybe not all
-driver would want to enforce that. I'm not sure we should bake that in the
-framework itself.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: bfed1074f213 ("clk: exynos5250: Add missing sysmmu clocks for DISP and ISP blocks")
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5250.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-For such case, a solution could be to use clock notifiers to call
-clk_set_phase() on rate change,
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 06e5ddcb30db..347fd80c351b 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -561,6 +561,8 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
+ 		0),
+ 	GATE(CLK_GSCL3, "gscl3", "mout_aclk266_gscl_sub", GATE_IP_GSCL, 3, 0,
+ 		0),
++	GATE(CLK_CAMIF_TOP, "camif_top", "mout_aclk266_gscl_sub",
++			GATE_IP_GSCL, 4, 0, 0),
+ 	GATE(CLK_GSCL_WA, "gscl_wa", "div_gscl_wa", GATE_IP_GSCL, 5, 0, 0),
+ 	GATE(CLK_GSCL_WB, "gscl_wb", "div_gscl_wb", GATE_IP_GSCL, 6, 0, 0),
+ 	GATE(CLK_SMMU_GSCL0, "smmu_gscl0", "mout_aclk266_gscl_sub",
+@@ -571,6 +573,10 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
+ 			GATE_IP_GSCL, 9, 0, 0),
+ 	GATE(CLK_SMMU_GSCL3, "smmu_gscl3", "mout_aclk266_gscl_sub",
+ 			GATE_IP_GSCL, 10, 0, 0),
++	GATE(CLK_SMMU_FIMC_LITE0, "smmu_fimc_lite0", "mout_aclk266_gscl_sub",
++			GATE_IP_GSCL, 11, 0, 0),
++	GATE(CLK_SMMU_FIMC_LITE1, "smmu_fimc_lite1", "mout_aclk266_gscl_sub",
++			GATE_IP_GSCL, 12, 0, 0),
+ 
+ 
+ 	GATE(CLK_MFC, "mfc", "mout_aclk333_sub", GATE_IP_MFC, 0, 0, 0),
+-- 
+2.15.0
 
-OR
-
-in the clock driver set_rate() callback, cache the phase at the beginning and
-call set_phase() again before returning.
-
-Anyway, let's keep it simple for now and report the phase correctly. We can
-still deal these particular situations with some other patches.
