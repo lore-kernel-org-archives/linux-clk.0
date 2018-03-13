@@ -1,62 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41411 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752244AbeCPDCh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Mar 2018 23:02:37 -0400
-Received: by mail-pl0-f66.google.com with SMTP id b7-v6so1009945plr.8
-        for <linux-clk@vger.kernel.org>; Thu, 15 Mar 2018 20:02:36 -0700 (PDT)
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-        dbasehore@chromium.org, diander@chromium.org,
-        briannorris@chromium.org, shawn.lin@rock-chips.com,
-        Lin Huang <hl@rock-chips.com>
-Subject: [PATCH v2 1/2] clk: rockchip: assign correct id for pclk_ddr and hclk_sd in rk3399
-Date: Fri, 16 Mar 2018 11:02:27 +0800
-Message-Id: <1521169348-8552-1-git-send-email-hl@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Rob Herring <robh@kernel.org>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "michal.simek@xilinx.com"
+	<michal.simek@xilinx.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Shubhrajyoti Datta
+	<shubhraj@xilinx.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
+ driver
+Date: Tue, 13 Mar 2018 18:39:13 +0000
+Message-ID: <DM2PR0201MB0767FFBAECF3A0B30251DBB8B8D20@DM2PR0201MB0767.namprd02.prod.outlook.com>
+References: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
+ <1519856861-31384-3-git-send-email-jollys@xilinx.com>
+ <20180306014549.6t3ae5adzc3cpi5v@rob-hp-laptop>
+ <DM2PR0201MB0767031248A9F773620722FDB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
+ <CAL_JsqKUC47xB5O2Y6c3efVCjJY=V+XO3xyLTU9rNia40bdZkg@mail.gmail.com>
+In-Reply-To: <CAL_JsqKUC47xB5O2Y6c3efVCjJY=V+XO3xyLTU9rNia40bdZkg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Since hclk_sd and pclk_ddr source clock from CPLL or GPLL,
-and these two PLL may change their frequency. If we do not
-assign right id to pclk_ddr and hclk_sd, they will alway use
-default cur register value, and may get the frequency
-exceed their signed off frequency. So assign correct Id
-for them, then we can assign frequency for them in dts.
-
-Change-Id: I6c4d15d37ddabe4ed34e2351cf26e660672ae9ee
-Signed-off-by: Lin Huang <hl@rock-chips.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
----
-Changes in v2:
-- add more detail in commit message
-
- drivers/clk/rockchip/clk-rk3399.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 3e57c6e..bca10d6 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -671,7 +671,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKGATE_CON(9), 7, GFLAGS,
- 			&rk3399_uart3_fracmux),
- 
--	COMPOSITE(0, "pclk_ddr", mux_pll_src_cpll_gpll_p, CLK_IGNORE_UNUSED,
-+	COMPOSITE(PCLK_DDR, "pclk_ddr", mux_pll_src_cpll_gpll_p, CLK_IGNORE_UNUSED,
- 			RK3399_CLKSEL_CON(6), 15, 1, MFLAGS, 8, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(3), 4, GFLAGS),
- 
-@@ -887,7 +887,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
- 			RK3399_CLKGATE_CON(31), 8, GFLAGS),
- 
- 	/* sdio & sdmmc */
--	COMPOSITE(0, "hclk_sd", mux_pll_src_cpll_gpll_p, 0,
-+	COMPOSITE(HCLK_SD, "hclk_sd", mux_pll_src_cpll_gpll_p, 0,
- 			RK3399_CLKSEL_CON(13), 15, 1, MFLAGS, 8, 5, DFLAGS,
- 			RK3399_CLKGATE_CON(12), 13, GFLAGS),
- 	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_sd", 0,
--- 
-2.7.4
-
+SGkgUm9iLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFJvYiBIZXJy
+aW5nIFttYWlsdG86cm9iaEBrZXJuZWwub3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIE1hcmNoIDA3
+LCAyMDE4IDU6MjAgUE0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29tPg0KPiBD
+YzogbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNib3lkQGNvZGVhdXJvcmEub3JnOw0KPiBtaWNo
+YWwuc2ltZWtAeGlsaW54LmNvbTsgbWFyay5ydXRsYW5kQGFybS5jb207IGxpbnV4LWNsa0B2Z2Vy
+Lmtlcm5lbC5vcmc7DQo+IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBTaHViaHJhanlvdGkg
+RGF0dGEgPHNodWJocmFqQHhpbGlueC5jb20+OyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVs
+Lm9yZzsgUmFqYW4gVmFqYSA8UkFKQU5WQHhpbGlueC5jb20+OyBsaW51eC1hcm0tDQo+IGtlcm5l
+bEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi8zXSBkdC1iaW5k
+aW5nczogY2xvY2s6IEFkZCBiaW5kaW5ncyBmb3IgWnlucU1QIGNsb2NrDQo+IGRyaXZlcg0KPiAN
+Cj4gT24gV2VkLCBNYXIgNywgMjAxOCBhdCA0OjQ3IFBNLCBKb2xseSBTaGFoIDxKT0xMWVNAeGls
+aW54LmNvbT4gd3JvdGU6DQo+ID4gSGkgUm9iLA0KPiA+DQo+ID4NCj4gPj4gLS0tLS1PcmlnaW5h
+bCBNZXNzYWdlLS0tLS0NCj4gPj4gRnJvbTogUm9iIEhlcnJpbmcgW21haWx0bzpyb2JoQGtlcm5l
+bC5vcmddDQo+ID4+IFNlbnQ6IE1vbmRheSwgTWFyY2ggMDUsIDIwMTggNTo0NiBQTQ0KPiA+PiBU
+bzogSm9sbHkgU2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+DQo+ID4+IENjOiBtdHVycXVldHRlQGJh
+eWxpYnJlLmNvbTsgc2JveWRAY29kZWF1cm9yYS5vcmc7DQo+ID4+IG1pY2hhbC5zaW1la0B4aWxp
+bnguY29tOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gPj4gbGludXgtY2xrQHZnZXIua2VybmVs
+Lm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IFNodWJocmFqeW90aQ0KPiA+PiBEYXR0
+YSA8c2h1YmhyYWpAeGlsaW54LmNvbT47IGxpbnV4LSBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBK
+b2xseQ0KPiA+PiBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT47IFJhamFuIFZhamEgPFJBSkFOVkB4
+aWxpbnguY29tPjsNCj4gPj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+
+ID4+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi8zXSBkdC1iaW5kaW5nczogY2xvY2s6IEFkZCBiaW5k
+aW5ncyBmb3IgWnlucU1QDQo+ID4+IGNsb2NrIGRyaXZlcg0KPiA+Pg0KPiA+PiBPbiBXZWQsIEZl
+YiAyOCwgMjAxOCBhdCAwMjoyNzo0MFBNIC0wODAwLCBKb2xseSBTaGFoIHdyb3RlOg0KPiA+PiA+
+IEFkZCBkb2N1bWVudGF0aW9uIHRvIGRlc2NyaWJlIFhpbGlueCBaeW5xTVAgY2xvY2sgZHJpdmVy
+IGJpbmRpbmdzLg0KPiA+PiA+DQo+ID4+ID4gU2lnbmVkLW9mZi1ieTogSm9sbHkgU2hhaCA8am9s
+bHlzQHhpbGlueC5jb20+DQo+ID4+ID4gU2lnbmVkLW9mZi1ieTogUmFqYW4gVmFqYSA8cmFqYW52
+QHhpbGlueC5jb20+DQo+ID4+ID4gU2lnbmVkLW9mZi1ieTogU2h1YmhyYWp5b3RpIERhdHRhIDxz
+aHViaHJhanlvdGkuZGF0dGFAeGlsaW54LmNvbT4NCj4gPj4gPiAtLS0NCj4gDQo+ID4+ID4gKzk1
+ICAgICAgICAgZHBsbF9wb3N0X3NyYw0KPiA+PiA+ICs5NiAgICAgICAgIHZwbGxfaW50DQo+ID4+
+ID4gKzk3ICAgICAgICAgdnBsbF9wcmVfc3JjDQo+ID4+ID4gKzk4ICAgICAgICAgdnBsbF9oYWxm
+DQo+ID4+ID4gKzk5ICAgICAgICAgdnBsbF9pbnRfbXV4DQo+ID4+ID4gKzEwMCAgICAgICAgICAg
+ICAgICB2cGxsX3Bvc3Rfc3JjDQo+ID4+ID4gKzEwMSAgICAgICAgICAgICAgICBjYW4wX21pbw0K
+PiA+PiA+ICsxMDIgICAgICAgICAgICAgICAgY2FuMV9taW8NCj4gPj4gPiArDQo+ID4+ID4gK0V4
+YW1wbGU6DQo+ID4+ID4gKw0KPiA+PiA+ICtjbGs6IGNsayB7DQo+ID4+ID4gKyAgICNjbG9jay1j
+ZWxscyA9IDwxPjsNCj4gPj4gPiArICAgY29tcGF0aWJsZSA9ICJ4bG54LHp5bnFtcC1jbGsiOw0K
+PiA+Pg0KPiA+PiBIb3cgZG8geW91IGNvbnRyb2wgdGhlIGNsb2Nrcz8NCj4gPg0KPiA+IENsb2Nr
+cyBhcmUgY29udHJvbGxlZCBieSBhIGRlZGljYXRlZCBwbGF0Zm9ybSBtYW5hZ2VtZW50IGNvbnRy
+b2xsZXIuIEFib3ZlDQo+IGNsb2NrIGlkcyBhcmUgdXNlZCB0byBpZGVudGlmeSBjbG9ja3MgYmV0
+d2VlbiBtYXN0ZXIgYW5kIFBNVS4NCj4gDQo+IFdoYXQgaXMgdGhlIGludGVyZmFjZSB0byB0aGUg
+InBsYXRmb3JtIG1hbmFnZW1lbnQgY29udHJvbGxlciI/IEJlY2F1c2UgeW91DQo+IGhhdmUgbm8g
+cmVnaXN0ZXJzLCBJJ20gZ3Vlc3NpbmcgYSBmaXJtd2FyZSBpbnRlcmZhY2U/IElmIHNvLCB0aGVu
+IGp1c3QgZGVmaW5lIHRoZQ0KPiBmaXJtd2FyZSBub2RlIGFzIGEgY2xvY2sgcHJvdmlkZXIuDQoN
+ClllcyBpdCBpcyBmaXJtd2FyZSBpbnRlcmZhY2UuIEFsb25nIHdpdGggY2xvY2tzLCBmaXJtd2Fy
+ZSBpbnRlcmZhY2UgYWxzbyBjb250cm9scyBwb3dlciBhbmQgcGluY3RybCBvcGVyYXRpb25zIGFz
+IG1ham9yLg0KSSBhbSBub3Qgc3VyZSBpZiBJIHVuZGVyc3RhbmQgeW91IGNvcnJlY3RseS4gRG8g
+eW91IHN1Z2dlc3QgdG8gcmVnaXN0ZXIgY2xvY2tzIHRocm91Z2ggRmlybXdhcmUgZHJpdmVyIG9y
+IGp1c3QgdXNlIGZpcm13YXJlIERUIG5vZGUgYXMgY2xvY2sgcHJvdmlkZXIgYW5kIGNsb2NrIGRy
+aXZlciBEVCBub2RlIGNhbiByZWZlcmVuY2UgY2xvY2tzIGZyb20gRlcgbm9kZSB0byByZWdpc3Rl
+ciBzYW1lPw0KIA0KPiANCj4gUm9iDQo=
