@@ -1,70 +1,278 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 04/41] clk: davinci: Add platform information for TI
- DA850 PLL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1516468460-4908-1-git-send-email-david@lechnology.com>
- <1516468460-4908-5-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <834cb7ce-9406-a806-3ec1-a59766bd8a9d@ti.com>
-Date: Thu, 1 Feb 2018 14:28:57 +0530
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jason
+ Cooper <jason@lakedaemon.net>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian
+ Hesselbarth <sebastian.hesselbarth@gmail.com>,  Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,  linux-arm-kernel@lists.infradead.org,
+  Antoine Tenart <antoine.tenart@bootlin.com>,  =?utf-8?Q?Miqu=C3=A8l?=
+ Raynal <miquel.raynal@bootlin.com>,  Nadav Haklai <nadavh@marvell.com>,
+  Shadi Ammouri <shadi@marvell.com>,  Omri Itach <omrii@marvell.com>,
+  Hanna Hawa <hannah@marvell.com>,  Igal Liberman <igall@marvell.com>,
+  Marcin Wojtas <mw@semihalf.com>
+Subject: Re: [PATCH] clk: mvebu: cp110: Fix clock tree representation
+References: <20180228140751.10819-1-gregory.clement@bootlin.com>
+Date: Tue, 13 Mar 2018 12:32:47 +0100
+In-Reply-To: <20180228140751.10819-1-gregory.clement@bootlin.com> (Gregory
+	CLEMENT's message of "Wed, 28 Feb 2018 15:07:51 +0100")
+Message-ID: <87bmfs1a8w.fsf@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <1516468460-4908-5-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Saturday 20 January 2018 10:43 PM, David Lechner wrote:
-> This adds platform-specific declarations for the PLL clocks on TI DA850/
-> OMAP-L138/AM18XX SoCs.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+Hi,
+=20
+ On mer., f=C3=A9vr. 28 2018, Gregory CLEMENT <gregory.clement@bootlin.com>=
+ wrote:
 
-> +static const struct davinci_pll_clk_info da850_pll1_info __initconst = {
-> +	.name = "pll1",
-> +	.unlock_reg = CFGCHIP(3),
-> +	.unlock_mask = CFGCHIP3_PLL1_MASTER_LOCK,
+> Thanks to new documentation, we have a better view of the clock tree.
+> There were few mistakes in the first version of this driver, the main one
+> being the parental link between the clocks. Actually the tree is more
+> flat that we though. Most of the IP blocks require two clocks: one for
+> the IP itself and one for accessing the registers, and unlike what we
+> wrote there is no link between these two clocks.
+>
+> The other mistakes were about the name of the clocks: the root clock is
+> not the Audio PLL but the PLL0, and what we called the EIP clock is named
+> the x2 Core clock and is used by other IP block than the EIP ones.
 
-I guess this will change with the cfgchip handling discussion last week.
+Do you have any feedback on this patch?
 
-> +	.pllm_mask = GENMASK(4, 0),
-> +	.pllm_min = 4,
-> +	.pllm_max = 32,
-> +	.pllout_min_rate = 300000000,
-> +	.pllout_max_rate = 600000000,
-> +	.flags = PLL_HAS_POSTDIV,
-> +};
-> +
+I would like to have time to address them if you have any remark.
 
-[...]
+Else do you want a Pull Request or could you apply it directly?
 
-> +void __init da850_pll_clk_init(void __iomem *pll0, void __iomem *pll1)
-> +{
-> +	const struct davinci_pll_sysclk_info *info;
-> +
-> +	davinci_pll_clk_register(&da850_pll0_info, "ref_clk", pll0);
-> +
-> +	davinci_pll_auxclk_register("pll0_auxclk", pll0);
-> +
-> +	for (info = da850_pll0_sysclk_info; info->name; info++)
-> +		davinci_pll_sysclk_register(info, pll0);
-> +
-> +	davinci_pll_obsclk_register(&da850_pll0_obsclk_info, pll0);
-> +
-> +	davinci_pll_clk_register(&da850_pll1_info, "oscin", pll1);
-
-Both PLL0 and PLL1 use the same reference clock. So this should be
-"ref_clk". I dont think we ever need to register a clock called oscin
-along with "ref_clk". There is only one reference clock. It can either
-be obtained using internal oscillator or external oscillator.
+The only other patch around the mvebu clocks was set a few days ago [1]
+and seems to be eventually a fix patch. That means that there would be
+only one patch in the Pull Request for 4.17, but I can do it if you
+prefer.
 
 Thanks,
-Sekhar
+
+Gregory
+
+[1]: "[PATCH] clk: mvebu: armada-38x: add support for missing clocks"
+https://lkml.org/lkml/2018/3/8/812
+
+
+>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
+>  drivers/clk/mvebu/cp110-system-controller.c | 94 ++++++++++++-----------=
+------
+>  1 file changed, 39 insertions(+), 55 deletions(-)
+>
+> diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mv=
+ebu/cp110-system-controller.c
+> index ca9a0a536174..75bf7b8f282f 100644
+> --- a/drivers/clk/mvebu/cp110-system-controller.c
+> +++ b/drivers/clk/mvebu/cp110-system-controller.c
+> @@ -13,18 +13,17 @@
+>  /*
+>   * CP110 has 6 core clocks:
+>   *
+> - *  - APLL		(1 Ghz)
+> - *    - PPv2 core	(1/3 APLL)
+> - *    - EIP		(1/2 APLL)
+> - *     - Core		(1/2 EIP)
+> - *    - SDIO		(2/5 APLL)
+> + *  - PLL0		(1 Ghz)
+> + *    - PPv2 core	(1/3 PLL0)
+> + *    - x2 Core		(1/2 PLL0)
+> + *	- Core		(1/2 x2 Core)
+> + *    - SDIO		(2/5 PLL0)
+>   *
+>   *  - NAND clock, which is either:
+>   *    - Equal to SDIO clock
+> - *    - 2/5 APLL
+> + *    - 2/5 PLL0
+>   *
+> - * CP110 has 32 gatable clocks, for the various peripherals in the
+> - * IP. They have fairly complicated parent/child relationships.
+> + * CP110 has 32 gatable clocks, for the various peripherals in the IP.
+>   */
+>=20=20
+>  #define pr_fmt(fmt) "cp110-system-controller: " fmt
+> @@ -53,9 +52,9 @@ enum {
+>  #define CP110_CLK_NUM \
+>  	(CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS)
+>=20=20
+> -#define CP110_CORE_APLL			0
+> +#define CP110_CORE_PLL0			0
+>  #define CP110_CORE_PPV2			1
+> -#define CP110_CORE_EIP			2
+> +#define CP110_CORE_X2CORE		2
+>  #define CP110_CORE_CORE			3
+>  #define CP110_CORE_NAND			4
+>  #define CP110_CORE_SDIO			5
+> @@ -237,7 +236,7 @@ static int cp110_syscon_common_probe(struct platform_=
+device *pdev,
+>  	struct regmap *regmap;
+>  	struct device *dev =3D &pdev->dev;
+>  	struct device_node *np =3D dev->of_node;
+> -	const char *ppv2_name, *apll_name, *core_name, *eip_name, *nand_name,
+> +	const char *ppv2_name, *pll0_name, *core_name, *x2core_name, *nand_name,
+>  		*sdio_name;
+>  	struct clk_hw_onecell_data *cp110_clk_data;
+>  	struct clk_hw *hw, **cp110_clks;
+> @@ -263,20 +262,20 @@ static int cp110_syscon_common_probe(struct platfor=
+m_device *pdev,
+>  	cp110_clks =3D cp110_clk_data->hws;
+>  	cp110_clk_data->num =3D CP110_CLK_NUM;
+>=20=20
+> -	/* Register the APLL which is the root of the hw tree */
+> -	apll_name =3D cp110_unique_name(dev, syscon_node, "apll");
+> -	hw =3D clk_hw_register_fixed_rate(NULL, apll_name, NULL, 0,
+> +	/* Register the PLL0 which is the root of the hw tree */
+> +	pll0_name =3D cp110_unique_name(dev, syscon_node, "pll0");
+> +	hw =3D clk_hw_register_fixed_rate(NULL, pll0_name, NULL, 0,
+>  					1000 * 1000 * 1000);
+>  	if (IS_ERR(hw)) {
+>  		ret =3D PTR_ERR(hw);
+> -		goto fail_apll;
+> +		goto fail_pll0;
+>  	}
+>=20=20
+> -	cp110_clks[CP110_CORE_APLL] =3D hw;
+> +	cp110_clks[CP110_CORE_PLL0] =3D hw;
+>=20=20
+> -	/* PPv2 is APLL/3 */
+> +	/* PPv2 is PLL0/3 */
+>  	ppv2_name =3D cp110_unique_name(dev, syscon_node, "ppv2-core");
+> -	hw =3D clk_hw_register_fixed_factor(NULL, ppv2_name, apll_name, 0, 1, 3=
+);
+> +	hw =3D clk_hw_register_fixed_factor(NULL, ppv2_name, pll0_name, 0, 1, 3=
+);
+>  	if (IS_ERR(hw)) {
+>  		ret =3D PTR_ERR(hw);
+>  		goto fail_ppv2;
+> @@ -284,30 +283,32 @@ static int cp110_syscon_common_probe(struct platfor=
+m_device *pdev,
+>=20=20
+>  	cp110_clks[CP110_CORE_PPV2] =3D hw;
+>=20=20
+> -	/* EIP clock is APLL/2 */
+> -	eip_name =3D cp110_unique_name(dev, syscon_node, "eip");
+> -	hw =3D clk_hw_register_fixed_factor(NULL, eip_name, apll_name, 0, 1, 2);
+> +	/* X2CORE clock is PLL0/2 */
+> +	x2core_name =3D cp110_unique_name(dev, syscon_node, "x2core");
+> +	hw =3D clk_hw_register_fixed_factor(NULL, x2core_name, pll0_name,
+> +					  0, 1, 2);
+>  	if (IS_ERR(hw)) {
+>  		ret =3D PTR_ERR(hw);
+>  		goto fail_eip;
+>  	}
+>=20=20
+> -	cp110_clks[CP110_CORE_EIP] =3D hw;
+> +	cp110_clks[CP110_CORE_X2CORE] =3D hw;
+>=20=20
+> -	/* Core clock is EIP/2 */
+> +	/* Core clock is X2CORE/2 */
+>  	core_name =3D cp110_unique_name(dev, syscon_node, "core");
+> -	hw =3D clk_hw_register_fixed_factor(NULL, core_name, eip_name, 0, 1, 2);
+> +	hw =3D clk_hw_register_fixed_factor(NULL, core_name, x2core_name,
+> +					  0, 1, 2);
+>  	if (IS_ERR(hw)) {
+>  		ret =3D PTR_ERR(hw);
+>  		goto fail_core;
+>  	}
+>=20=20
+>  	cp110_clks[CP110_CORE_CORE] =3D hw;
+> -	/* NAND can be either APLL/2.5 or core clock */
+> +	/* NAND can be either PLL0/2.5 or core clock */
+>  	nand_name =3D cp110_unique_name(dev, syscon_node, "nand-core");
+>  	if (nand_clk_ctrl & NF_CLOCK_SEL_400_MASK)
+>  		hw =3D clk_hw_register_fixed_factor(NULL, nand_name,
+> -						   apll_name, 0, 2, 5);
+> +						   pll0_name, 0, 2, 5);
+>  	else
+>  		hw =3D clk_hw_register_fixed_factor(NULL, nand_name,
+>  						   core_name, 0, 1, 1);
+> @@ -318,10 +319,10 @@ static int cp110_syscon_common_probe(struct platfor=
+m_device *pdev,
+>=20=20
+>  	cp110_clks[CP110_CORE_NAND] =3D hw;
+>=20=20
+> -	/* SDIO clock is APLL/2.5 */
+> +	/* SDIO clock is PLL0/2.5 */
+>  	sdio_name =3D cp110_unique_name(dev, syscon_node, "sdio-core");
+>  	hw =3D clk_hw_register_fixed_factor(NULL, sdio_name,
+> -					  apll_name, 0, 2, 5);
+> +					  pll0_name, 0, 2, 5);
+>  	if (IS_ERR(hw)) {
+>  		ret =3D PTR_ERR(hw);
+>  		goto fail_sdio;
+> @@ -341,40 +342,23 @@ static int cp110_syscon_common_probe(struct platfor=
+m_device *pdev,
+>  			continue;
+>=20=20
+>  		switch (i) {
+> -		case CP110_GATE_AUDIO:
+> -		case CP110_GATE_COMM_UNIT:
+> -		case CP110_GATE_EIP150:
+> -		case CP110_GATE_EIP197:
+> -		case CP110_GATE_SLOW_IO:
+> -			parent =3D gate_name[CP110_GATE_MAIN];
+> -			break;
+> -		case CP110_GATE_MG:
+> -			parent =3D gate_name[CP110_GATE_MG_CORE];
+> -			break;
+>  		case CP110_GATE_NAND:
+>  			parent =3D nand_name;
+>  			break;
+> +		case CP110_GATE_MG:
+> +		case CP110_GATE_GOP_DP:
+>  		case CP110_GATE_PPV2:
+>  			parent =3D ppv2_name;
+>  			break;
+>  		case CP110_GATE_SDIO:
+>  			parent =3D sdio_name;
+>  			break;
+> -		case CP110_GATE_GOP_DP:
+> -			parent =3D gate_name[CP110_GATE_SDMMC_GOP];
+> -			break;
+> -		case CP110_GATE_XOR1:
+> -		case CP110_GATE_XOR0:
+> -		case CP110_GATE_PCIE_X1_0:
+> -		case CP110_GATE_PCIE_X1_1:
+> +		case CP110_GATE_MAIN:
+> +		case CP110_GATE_PCIE_XOR:
+>  		case CP110_GATE_PCIE_X4:
+> -			parent =3D gate_name[CP110_GATE_PCIE_XOR];
+> -			break;
+> -		case CP110_GATE_SATA:
+> -		case CP110_GATE_USB3H0:
+> -		case CP110_GATE_USB3H1:
+> -		case CP110_GATE_USB3DEV:
+> -			parent =3D gate_name[CP110_GATE_SATA_USB];
+> +		case CP110_GATE_EIP150:
+> +		case CP110_GATE_EIP197:
+> +			parent =3D x2core_name;
+>  			break;
+>  		default:
+>  			parent =3D core_name;
+> @@ -413,12 +397,12 @@ static int cp110_syscon_common_probe(struct platfor=
+m_device *pdev,
+>  fail_nand:
+>  	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_CORE]);
+>  fail_core:
+> -	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_EIP]);
+> +	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_X2CORE]);
+>  fail_eip:
+>  	clk_hw_unregister_fixed_factor(cp110_clks[CP110_CORE_PPV2]);
+>  fail_ppv2:
+> -	clk_hw_unregister_fixed_rate(cp110_clks[CP110_CORE_APLL]);
+> -fail_apll:
+> +	clk_hw_unregister_fixed_rate(cp110_clks[CP110_CORE_PLL0]);
+> +fail_pll0:
+>  	return ret;
+>  }
+>=20=20
+> --=20
+> 2.16.1
+>
+
+--=20
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
