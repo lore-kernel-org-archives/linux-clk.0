@@ -1,74 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.134]:56668 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933740AbeCTAxS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Mar 2018 20:53:18 -0400
-Cc: shawn.lin@rock-chips.com, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] clk: rockchip: Don't restore invalid cached phase
-To: Heiko Stuebner <heiko@sntech.de>
-References: <1521450902-32142-1-git-send-email-shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <b8891a77-2c43-bf0b-f3a0-abc85ffafc37@rock-chips.com>
-Date: Tue, 20 Mar 2018 08:53:13 +0800
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1521450902-32142-1-git-send-email-shawn.lin@rock-chips.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Sender: dianders@google.com
+In-Reply-To: <20180313203719.75639-1-dbasehore@chromium.org>
+References: <20180313203719.75639-1-dbasehore@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 13 Mar 2018 14:57:51 -0700
+Message-ID: <CAD=FV=UK-Rnto+iH8TSuTyzt010HT8Ujk0TX74hA1D5Lh4HfOQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: Add 1.6GHz PLL rate
+To: Derek Basehore <dbasehore@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Sorry, It turns out still some corner case need to address, please
-drop this.
+Hi,
 
-On 2018/3/19 17:15, Shawn Lin wrote:
-> We inevitably cache the invalid phase when the clock provider
-> be reparented from orphan to its real parent in the first place,
-> thus we may mess up the initialization of MMC cards since we
-> only set the default sample phase and drive phase later on.
-> So we should skip to restore the invalid phase. And this patch
-> also corrects the error path to return invalid pointer to clk if
-> clk_notifier_register failed introduced by the same offending
-> commit.
-> 
-> Fixes: 60cf09e45fbc ("clk: rockchip: Restore the clock phase after the rate was changed")
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+On Tue, Mar 13, 2018 at 1:37 PM, Derek Basehore <dbasehore@chromium.org> wrote:
+> We need this rate to generate 100, 200, and 228.57MHz from the same
+> PLL. 228.57MHz is useful for a pixel clock when the VPLL is used for
+> and external display.
+>
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
 > ---
-> 
->   drivers/clk/rockchip/clk-mmc-phase.c | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-> index dc4c227..c8c6119 100644
-> --- a/drivers/clk/rockchip/clk-mmc-phase.c
-> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
-> @@ -181,7 +181,8 @@ static int rockchip_mmc_clk_rate_notify(struct notifier_block *nb,
->   	if (event == PRE_RATE_CHANGE)
->   		mmc_clock->cached_phase =
->   			rockchip_mmc_get_phase(&mmc_clock->hw);
-> -	else if (event == POST_RATE_CHANGE)
-> +	else if (mmc_clock->cached_phase != -EINVAL &&
-> +		 event == POST_RATE_CHANGE)
->   		rockchip_mmc_set_phase(&mmc_clock->hw, mmc_clock->cached_phase);
->   
->   	return NOTIFY_DONE;
-> @@ -211,8 +212,10 @@ struct clk *rockchip_clk_register_mmc(const char *name,
->   	mmc_clock->shift = shift;
->   
->   	clk = clk_register(NULL, &mmc_clock->hw);
-> -	if (IS_ERR(clk))
-> +	if (IS_ERR(clk)) {
-> +		ret = PTR_ERR(clk);
->   		goto err_register;
-> +	}
->   
->   	mmc_clock->clk_rate_change_nb.notifier_call =
->   				&rockchip_mmc_clk_rate_notify;
-> @@ -225,5 +228,5 @@ struct clk *rockchip_clk_register_mmc(const char *name,
->   	clk_unregister(clk);
->   err_register:
->   	kfree(mmc_clock);
-> -	return clk;
-> +	return ERR_PTR(ret);
->   }
-> 
+>  drivers/clk/rockchip/clk-rk3399.c | 1 +
+>  1 file changed, 1 insertion(+)
 
+Looks good to me.  I spent a little bit of time poking at this and I
+agreed it's the best way to make 1.6 GHz in
+<http://crosreview.com/956677>.  Lin Huang at Rockchip also said:
+
+> yes, we also use this setting for 1.6GHz in our internal branch.
+
+...and they seem to agree this is a sane setting.  Thus:
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
