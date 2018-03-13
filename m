@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/4] ARM64: dts: meson: hhi syscon and clock controllers
-Date: Thu, 15 Mar 2018 12:55:41 +0100
-Message-Id: <20180315115545.1884-1-jbrunet@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <shawnguo@kernel.org>
+Date: Tue, 13 Mar 2018 09:39:06 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+	kernel@pengutronix.de, linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] i.MX new clock additions for 4.17
+Message-ID: <20180313013905.GF26859@dragon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-The HHI register region provides more than just clocks. Several drivers may
-need to access this region, such as the clock controllers and the display
-driver.
+Hi Stephen, Mike,
 
-Meson-gx clock controllers has been developed and merged before we knew the
-hhi could be needed elsewhere, which is why it requests the region directly.
-Meson-axg was built following the model of meson-gx.
+This pull request includes a few new clock additions for i.MX7D clock
+driver.  Please consider to pull it for 4.17.  As I have a DT branch
+built on top of this pull request to resolve the dependency on these new
+clock IDs, please keep the tag stable.  Thanks.
 
-To fix this situation, the clock controller should be a child of the hhi
-system controllers. The hhi system controller node already exists on meson-gx.
-It needs to be added on the axg.
+Shawn
 
-This changeset depends on [0]. This dependency has been merged in
-clk-next. A topic branch is available here [1]
 
-[0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.com
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=clk-amlogic
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-Jerome Brunet (4):
-  dt-bindings: clock: meson: update documentation with hhi syscon
-  ARM64: dts: meson-gx: sysctrl is the parent of the clock controller
-  ARM64: dts: meson-axg: use hhi syscon for the clock controller
-  ARM64: dts: meson-gx: fix gxl clock controller compatible
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
- .../devicetree/bindings/clock/amlogic,gxbb-clkc.txt      | 16 +++++++++++-----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi               | 12 ++++++++----
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi              |  5 ++---
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi               |  7 +++----
- 4 files changed, 24 insertions(+), 16 deletions(-)
+are available in the git repository at:
 
--- 
-2.14.3
+  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/clk-imx-4.17-newid
+
+for you to fetch changes up to 1691cc375a39d13a70829cabdd87ca9116a16907:
+
+  clk: imx: imx7d: add the Keypad Port module clock (2018-02-28 14:43:00 +0800)
+
+----------------------------------------------------------------
+i.MX new clock additions for 4.17:
+ - New clocks for i.MX7D SNVS, CAAM and Keypad.
+
+----------------------------------------------------------------
+Anson Huang (1):
+      clk: imx: imx7d: add the snvs clock
+
+Rui Miguel Silva (1):
+      clk: imx7d: add CAAM clock
+
+Stefan Agner (1):
+      clk: imx: imx7d: add the Keypad Port module clock
+
+ drivers/clk/imx/clk-imx7d.c             | 3 +++
+ include/dt-bindings/clock/imx7d-clock.h | 5 ++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
