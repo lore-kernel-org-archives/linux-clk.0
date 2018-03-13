@@ -1,201 +1,84 @@
-Return-Path: <Tali.Perry@nuvoton.com>
-From: Tali Perry <tali.perry1@gmail.com>
-To: brendanhiggins@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
-        raltherr@google.com, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
-Subject: [PATCH v11 1/2] clk: npcm750: Add binding for Nuvoton NPCM7XX clock\n
-Date: Thu, 15 Mar 2018 15:45:17 +0200
-Message-Id: <1521121518-32217-2-git-send-email-tali.perry1@gmail.com>
-In-Reply-To: <1521121518-32217-1-git-send-email-tali.perry1@gmail.com>
-References: <1521121518-32217-1-git-send-email-tali.perry1@gmail.com>
+Return-Path: <tedheadster@gmail.com>
+MIME-Version: 1.0
+Reply-To: whiteheadm@acm.org
+In-Reply-To: <CAHp75VdgU8sOQAwDZFU5biP+u6zE35fNtwuTC4F1fg_cTvJkSQ@mail.gmail.com>
+References: <CAP8WD_ZUbO+aKUV1-tPS_5APkpSAwbi=K=koVEDWWUfzF0tW+A@mail.gmail.com>
+ <CAHp75VdgU8sOQAwDZFU5biP+u6zE35fNtwuTC4F1fg_cTvJkSQ@mail.gmail.com>
+From: tedheadster <tedheadster@gmail.com>
+Date: Tue, 13 Mar 2018 13:13:55 -0400
+Message-ID: <CAP8WD_ZhUB1v30MHqkWq782WBDEXk+CS4+y1zC60_-tnDyK2nw@mail.gmail.com>
+Subject: Re: x86 : Kconfig : INTEL_PMC_CORE not specific enough
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "Cox, Alan" <alan.cox@intel.com>, linux-clk@vger.kernel.org,
+	Platform Driver <platform-driver-x86@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+	Vishwanath Somayaji <vishwanath.somayaji@intel.com>, Irina Tirdea <irina.tirdea@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-* Nuvoton NPCM7XX Clock Controller
+> Long story, but main concern here, that if you do s/ATOM/X86/ it will
+> be more clear since we provide as less kernels as possible to cover
+> all x86 architectures.
+>
+> Currently we have one kernel per:
+> - any x86_64 case
+> - any i686 case
+> - uniprocessor i586 TSC case (Intel Quark)
+> - (the rest exotic cases which is probably no-one using anymore)
+>
+> Your change disrupts this quite badly.
 
-Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
-generates and supplies clocks to all modules within the BMC.
+This simplifies your situation, but it forces everybody else to
+include extra code they will never use.
 
-10 ==> 11
-update documentation. "eth" replaced with "ethernet" in use case eaxample.
+>
+> So, I think your point that you don't need it by default, and here is
+> another story related to the design of Intel BayTrail / CherryTrail
+> platforms where we have a nasty bug and we can't use the driver as a
+> module.
+>
 
-2 ==> 10
-update documentation. add external clocks as inputs to clk driver.
-fix SPDX comment.
-
-1 ==> 2
-This patch includes fix request described here:
-https://patchwork.kernel.org/patch/10200033/
-(move fixed clocks to DT)
-
-Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-
----
+Please explain the history so we can understand.
 
 
- .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++++++++++++++++++++
- include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 +++++++++
- 2 files changed, 144 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
- create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+In more detail, here are the Kconfig dependencies:
 
-diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
-new file mode 100644
-index 000000000000..f82064546d11
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
-@@ -0,0 +1,100 @@
-+* Nuvoton NPCM7XX Clock Controller
-+
-+Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
-+generates and supplies clocks to all modules within the BMC.
-+
-+External clocks:
-+
-+There are six fixed clocks that are generated outside the BMC. All clocks are of
-+a known fixed value that cannot be changed. clk_refclk, clk_mcbypck and
-+clk_sysbypck are inputs to the clock controller.
-+clk_rg1refck, clk_rg2refck and clk_xin are external clocks suppling the
-+network. They are set on the device tree, but not used by the clock module. The
-+network devices use them directly.
-+Example can be found below.
-+
-+All available clocks are defined as preprocessor macros in:
-+dt-bindings/clock/nuvoton,npcm7xx-clock.h
-+and can be reused as DT sources.
-+
-+Required Properties of clock controller:
-+
-+	- compatible: "nuvoton,npcm750-clk" : for clock controller of Nuvoton
-+		  Poleg BMC NPCM750
-+
-+	- reg: physical base address of the clock controller and length of
-+		memory mapped region.
-+
-+	- #clock-cells: should be 1.
-+
-+Example: Clock controller node:
-+
-+	clk: clock-controller@f0801000 {
-+		compatible = "nuvoton,npcm750-clk";
-+		#clock-cells = <1>;
-+		reg = <0xf0801000 0x1000>;
-+		clock-names = "refclk", "sysbypck", "mcbypck";
-+		clocks = <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
-+	};
-+
-+Example: Required external clocks for network:
-+
-+	/* external reference clock */
-+	clk_refclk: clk-refclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <25000000>;
-+		clock-output-names = "refclk";
-+	};
-+
-+	/* external reference clock for cpu. float in normal operation */
-+	clk_sysbypck: clk-sysbypck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <800000000>;
-+		clock-output-names = "sysbypck";
-+	};
-+
-+	/* external reference clock for MC. float in normal operation */
-+	clk_mcbypck: clk-mcbypck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <800000000>;
-+		clock-output-names = "mcbypck";
-+	};
-+
-+	 /* external clock signal rg1refck, supplied by the phy */
-+	clk_rg1refck: clk-rg1refck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <125000000>;
-+		clock-output-names = "clk_rg1refck";
-+	};
-+
-+	 /* external clock signal rg2refck, supplied by the phy */
-+	clk_rg2refck: clk-rg2refck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <125000000>;
-+		clock-output-names = "clk_rg2refck";
-+	};
-+
-+	clk_xin: clk-xin {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <50000000>;
-+		clock-output-names = "clk_xin";
-+	};
-+
-+
-+Example: GMAC controller node that consumes two clocks: a generated clk by the
-+clock controller and a fixed clock from DT (clk_rg1refck).
-+
-+	ethernet0: ethernet@f0802000 {
-+		compatible = "snps,dwmac";
-+		reg = <0xf0802000 0x2000>;
-+		interrupts = <0 14 4>;
-+		interrupt-names = "macirq";
-+		clocks	= <&clk_rg1refck>, <&clk NPCM7XX_CLK_AHB>;
-+		clock-names = "stmmaceth", "clk_gmac";
-+	};
-diff --git a/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
-new file mode 100644
-index 000000000000..f21522605b94
---- /dev/null
-+++ b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
-@@ -0,0 +1,44 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Nuvoton NPCM7xx Clock Generator binding
-+ * clock binding number for all clocks supportted by nuvoton,npcm7xx-clk
-+ *
-+ * Copyright (C) 2018 Nuvoton Technologies tali.perry@nuvoton.com
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_NPCM7XX_H
-+#define __DT_BINDINGS_CLOCK_NPCM7XX_H
-+
-+
-+#define NPCM7XX_CLK_CPU 0
-+#define NPCM7XX_CLK_GFX_PIXEL 1
-+#define NPCM7XX_CLK_MC 2
-+#define NPCM7XX_CLK_ADC 3
-+#define NPCM7XX_CLK_AHB 4
-+#define NPCM7XX_CLK_TIMER 5
-+#define NPCM7XX_CLK_UART 6
-+#define NPCM7XX_CLK_MMC  7
-+#define NPCM7XX_CLK_SPI3 8
-+#define NPCM7XX_CLK_PCI  9
-+#define NPCM7XX_CLK_AXI 10
-+#define NPCM7XX_CLK_APB4 11
-+#define NPCM7XX_CLK_APB3 12
-+#define NPCM7XX_CLK_APB2 13
-+#define NPCM7XX_CLK_APB1 14
-+#define NPCM7XX_CLK_APB5 15
-+#define NPCM7XX_CLK_CLKOUT 16
-+#define NPCM7XX_CLK_GFX  17
-+#define NPCM7XX_CLK_SU   18
-+#define NPCM7XX_CLK_SU48 19
-+#define NPCM7XX_CLK_SDHC 20
-+#define NPCM7XX_CLK_SPI0 21
-+#define NPCM7XX_CLK_SPIX 22
-+
-+#define NPCM7XX_CLK_REFCLK 23
-+#define NPCM7XX_CLK_SYSBYPCK 24
-+#define NPCM7XX_CLK_MCBYPCK 25
-+
-+#define NPCM7XX_NUM_CLOCKS	 (NPCM7XX_CLK_MCBYPCK+1)
-+
-+#endif
--- 
-2.14.1
+- Symbol: PMC_ATOM [=y]
+- Depends on: X86 [=y] && PCI [=y]
+- Selects: COMMON_CLK [=y]
+
+Symbol: COMMON_CLK [=y]
+- Selected by:  PMC_ATOM [=y] && X86 [=y] && PCI [=y]
+- Selects: HAVE_CLK_PREPARE [=y] && CLKDEV_LOOKUP [=y] && SRCU [=y] &&
+RATIONAL [=y]
+
+So having _any_ X86 and PCI pulls in these four files:
+
+drivers/clk/x86/clk-pmc-atom.c
+drivers/platform/x86/pmc_atom.c (you are right, I cut-and-pasted the
+wrong file earlier)
+drivers/clk/clkdev.c
+lib/rational.c
+
+
+>> Would this change (or something similar) make sense?
+>
+> No.
+>
+
+Okay, my novice solution isn't the right way. There must be an elegant
+way to leave this configured in by default (what you want), and still
+be able to turn it off if you desire (what I want).
+
+
+> MATOM is for really old CPUs. Mentioned BayTrail et al rather normal
+> x86 in that sense.
+>
+>>         select COMMON_CLK
+>
+> Definitely NAK by the reasons mentioned above.
+>
+
+
+- Matthew
