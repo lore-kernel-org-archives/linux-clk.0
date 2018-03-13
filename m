@@ -1,44 +1,83 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Thu, 22 Mar 2018 16:41:52 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: kbuild-all@01.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [RFC PATCH] net: stmmac: dwmac-sun8i: sun8i_ccu_reg_field can be
- static
-Message-ID: <20180322084152.GA79138@ivytown2.lkp.intel.com>
-References: <20180317092857.4396-10-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180317092857.4396-10-wens@csie.org>
+Return-Path: <richard.genoud@gmail.com>
+Return-Path: <richard.genoud@gmail.com>
+From: Richard Genoud <richard.genoud@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Ralph Sennhauser <ralph.sennhauser@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Richard Genoud <richard.genoud@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] clk: mvebu: armada-38x: add support for missing clocks
+Date: Tue, 13 Mar 2018 16:27:02 +0100
+Message-Id: <20180313152702.21070-1-richard.genoud@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
+or 1333MHz (industrial).
 
-Fixes: 0e59c15b2797 ("net: stmmac: dwmac-sun8i: Add support for GMAC on Allwinner R40 SoC")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+They have also some dip-switches to select a different clock (666, 800,
+1066, 1200).
+
+The funny thing is that the recovery button is on the MPP34 fq selector.
+So, when booting an industrial board with this button down, the frequency
+666MHz is selected (and the kernel didn't boot).
+
+This patch add all the missing clocks.
+
+The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
+
+Fixes: 0e85aeced4d6 ("clk: mvebu: add clock support for Armada 380/385")
+Cc: <stable@vger.kernel.org> # 3.16.x: 9593f4f56cf5: clk: mvebu: armada-38x: add support for 1866MHz variants
+Cc: <stable@vger.kernel.org> # 3.16.x
+
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- dwmac-sun8i.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-index be6705e8..622fb2b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-@@ -98,7 +98,7 @@ const struct reg_field sun8i_syscon_reg_field = {
+diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
+index 394aa6f03f01..9ff4ea63932d 100644
+--- a/drivers/clk/mvebu/armada-38x.c
++++ b/drivers/clk/mvebu/armada-38x.c
+@@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
+ }
+ 
+ static const u32 armada_38x_cpu_frequencies[] __initconst = {
+-	0, 0, 0, 0,
+-	1066 * 1000 * 1000, 0, 0, 0,
++	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
++	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
+ 	1332 * 1000 * 1000, 0, 0, 0,
+ 	1600 * 1000 * 1000, 0, 0, 0,
+-	1866 * 1000 * 1000,
++	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
  };
  
- /* EMAC clock register @ 0x164 in the CCU address range */
--const struct reg_field sun8i_ccu_reg_field = {
-+static const struct reg_field sun8i_ccu_reg_field = {
- 	.reg = 0x164,
- 	.lsb = 0,
- 	.msb = 31,
+ static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
+@@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
+ };
+ 
+ static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
+-	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+-	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+-	{1, 2}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {1, 2}, {0, 1},
++	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {0, 1}, {1, 2},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+@@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+ 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+-	{1, 2}, {0, 1}, {0, 1}, {0, 1},
++	{1, 2}, {0, 1}, {0, 1}, {7, 15},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+ 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
