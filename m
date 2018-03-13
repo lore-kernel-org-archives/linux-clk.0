@@ -1,76 +1,29 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Mon, 26 Mar 2018 00:29:40 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: kbuild-all@01.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com, hdegoede@redhat.com,
-	b.zolnierkie@samsung.com, linux@armlinux.org.uk,
-	linux-fbdev@vger.kernel.org, linux-imx@nxp.com, sboyd@kernel.org,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH V2 4/4] video: simplefb: switch to use clk_bulk API to
- simplify clock operations
-Message-ID: <201803260023.gnm8GYCI%fengguang.wu@intel.com>
-References: <1521600894-29919-5-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: rockchip: Restore the clock phase after the rate was changed
+Date: Tue, 13 Mar 2018 14:54:56 +0100
+Message-ID: <2637424.pcYNiY109b@diego>
+In-Reply-To: <1520560263-123065-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1520560263-123065-1-git-send-email-shawn.lin@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1521600894-29919-5-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset="iso-8859-1"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dong,
+Am Freitag, 9. M=E4rz 2018, 02:51:03 CET schrieb Shawn Lin:
+> There are many factors affecting the clock phase, including clock
+> rate, temperature, logic voltage and silicon process, etc. But clock
+> rate is the most significant one here, and the driver should be aware
+> of the change of the clock rate. As mmc controller need a fixed phase
+> after tuning was completed, at least before explicitly doing re-tune,
+> so this patch try to restore the clock phase by monitoring the event
+> of rate change.
+>=20
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-Thank you for the patch! Perhaps something to improve:
+applied for 4.17
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on v4.16-rc6 next-20180323]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-url:    https://github.com/0day-ci/linux/commits/Dong-Aisheng/clk-new-APIs-to-handle-all-available-clocks/20180323-185821
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-
-smatch warnings:
-drivers/video/fbdev/simplefb.c:222 simplefb_clocks_get() warn: unsigned 'par->clk_count' is never less than zero.
-
-vim +222 drivers/video/fbdev/simplefb.c
-
-   193	
-   194	#if defined CONFIG_OF && defined CONFIG_COMMON_CLK
-   195	/*
-   196	 * Clock handling code.
-   197	 *
-   198	 * Here we handle the clocks property of our "simple-framebuffer" dt node.
-   199	 * This is necessary so that we can make sure that any clocks needed by
-   200	 * the display engine that the bootloader set up for us (and for which it
-   201	 * provided a simplefb dt node), stay up, for the life of the simplefb
-   202	 * driver.
-   203	 *
-   204	 * When the driver unloads, we cleanly disable, and then release the clocks.
-   205	 *
-   206	 * We only complain about errors here, no action is taken as the most likely
-   207	 * error can only happen due to a mismatch between the bootloader which set
-   208	 * up simplefb, and the clock definitions in the device tree. Chances are
-   209	 * that there are no adverse effects, and if there are, a clean teardown of
-   210	 * the fb probe will not help us much either. So just complain and carry on,
-   211	 * and hope that the user actually gets a working fb at the end of things.
-   212	 */
-   213	static int simplefb_clocks_get(struct simplefb_par *par,
-   214				       struct platform_device *pdev)
-   215	{
-   216		struct device_node *np = pdev->dev.of_node;
-   217	
-   218		if (dev_get_platdata(&pdev->dev) || !np)
-   219			return 0;
-   220	
-   221		par->clk_count = clk_bulk_get_all(&pdev->dev, &par->clks);
- > 222		if ((par->clk_count < 0) && (par->clk_count == -EPROBE_DEFER))
-   223			return -EPROBE_DEFER;
-   224	
-   225		return 0;
-   226	}
-   227	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Thanks
+Heiko
