@@ -1,115 +1,219 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 13 Mar 2018 11:03:30 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 05/11] clk: tegra: prepare dfll driver for PWM
+ regulator
+Message-ID: <20180313090330.GV6190@tbergstrom-lnx.Nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-6-git-send-email-pdeschrijver@nvidia.com>
+ <011f626d-8bd5-3cae-bfbf-f49a1b2833fb@nvidia.com>
+ <20180312091407.GS6190@tbergstrom-lnx.Nvidia.com>
+ <daf13282-8ad9-cfeb-c7a3-59cb24682b73@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <6bbe9bf3-24c1-acd9-200d-513520d34558@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <1519071723-31790-11-git-send-email-david@lechnology.com> <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
- <93696fc8-bb93-aa20-3506-3d7216c17cd2@lechnology.com> <CAMpxmJVpMgikNfB4HgNCs+ep+EOHqH5bthiW82LsnDqzLfE5mg@mail.gmail.com>
- <6bbe9bf3-24c1-acd9-200d-513520d34558@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 5 Mar 2018 14:02:17 +0100
-Message-ID: <CAMRc=Mdhi=byn4gPY6tVxgGjn9cgvc3smUkjV=Ku9i3euaZZtQ@mail.gmail.com>
-Subject: Re: [PATCH v7 10/42] clk: davinci: New driver for davinci PSC clocks
-To: David Lechner <david@lechnology.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-devicetree <devicetree@vger.kernel.org>, arm-soc <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <daf13282-8ad9-cfeb-c7a3-59cb24682b73@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-01 17:44 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 03/01/2018 02:36 AM, Bartosz Golaszewski wrote:
->>
->> 2018-02-28 22:40 GMT+01:00 David Lechner <david@lechnology.com>:
->>>
->>> On 02/28/2018 06:38 AM, Bartosz Golaszewski wrote:
->>>>
->>>>
->>>>
->>>> I think I found the reason for the strange crashes we were
->>>> experiencing (emac core->name being NULL) thanks to Sekhar who pointed
->>>> me in the right direction.
->>>>
->>>> The mdio driver fails to probe with v7 due to the supplied clock rate
->>>> being wrong. Before failing we register the emac clock with
->>>> pm_clk_add_clk(). When clock_ops puts the clock, it decreases the
->>>> reference count of the clock, but we never actually increased it in
->>>> the first place in the line above. The core clock code then destroys
->>>> the associated clk_core structure. When the next user comes around (in
->>>> our case the clk debug functions) the system crashes.
->>>>
->>>> I believe there to be two issues: one is with v7 - we need to increase
->>>> the clock reference count in davinci_psc_genpd_attach_dev().
->>>>
->>>> Second is the error path in the clock framework - we should remove the
->>>> destroyed clk_core from the debug list, which is not being done now.
->>>>
->>>> Why we even need to track the refcount of clk_core is a mistery for me
->>>> though. Stephen, Mike?
->>>>
->>>> Best regards,
->>>> Bartosz Golaszewski
->>>
->>>
->>>
->>> Great find. I figured it had to be something like this, but I wasn't
->>> able to reproduce the problem yet.
->>>
->>> I suppose it is time to spin up a v8 with some fixes.
->>
->>
->> I still don't know why the mdio clock rate is much lower than in
->> mainline though. Any ideas?
->>
->> Thanks,
->> Bart
->>
->
-> Now that you have fixed the crash, can you answer the questions I have
-> asked earlier?
->
->> Can you post the output of this command so that I can see how your
->
-> clocks are setup:
->
-> cat /sys/kernel/debug/clk/clk_summary
->
->> Using your workaround, can you run:
->
->
-> cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
->
-> If you see:
->   1e27000.clock-controller: emac  off-0
->
-> then genpd is not working like it is supposed to. You should see something
-> like this for device that are working:
->           1e27000.clock-controller: uart2  on
->     /devices/platform/soc@1c00000/1d0d000.serial        active
+On Mon, Mar 12, 2018 at 11:08:51AM +0000, Jon Hunter wrote:
+> 
+> On 12/03/18 09:14, Peter De Schrijver wrote:
+> > On Thu, Mar 08, 2018 at 10:50:06PM +0000, Jon Hunter wrote:
+> >>
+> >> On 06/02/18 16:34, Peter De Schrijver wrote:
+> >>> This patch prepares the dfll driver to work with PWM regulators.
+> >>> To do this we introduce a new array lut_uv which gives the voltage for
+> >>> a given index generated by the dfll logic. This index will then be
+> >>> translated to a PMIC voltage ID in case of I2C using the i2c_lut. In case
+> >>> of a PWM regulator, it will be used to determine the PWM duty cycle.
+> >>> We also introduce lut_bottom which holds the lowest voltage we will ever
+> >>> need. In case of I2C this can be set to zero because the i2c_lut will be
+> >>> initialized such that entry 0 will be the lowest voltage we will ever
+> >>> need. In case of PWM, the lowest voltage is determined by the regulator
+> >>> hardware so we need this software limit. Note that this is different
+> >>> from lut_min which gives the lowest voltage we allow taking temperature
+> >>> into account. In a future patchset we will update lut_vmin dynamically.
+> >>> Similarly lut_max will be the highest voltage allowed taking temperature
+> >>> into accouint. Also this will be updated dynamically once temperature
+> >>> dependence will be introduced.
+> >>>
+> >>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> >>> ---
+> >>>  drivers/clk/tegra/clk-dfll.c | 62 ++++++++++++++++++++++++++------------------
+> >>>  1 file changed, 37 insertions(+), 25 deletions(-)
+> >>>
+> >>> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> >>> index 0a7deee..fa97763 100644
+> >>> --- a/drivers/clk/tegra/clk-dfll.c
+> >>> +++ b/drivers/clk/tegra/clk-dfll.c
+> >>> @@ -301,9 +301,10 @@ struct tegra_dfll {
+> >>>  	u32				i2c_slave_addr;
+> >>>  
+> >>>  	/* i2c_lut array entries are regulator framework selectors */
+> >>> -	unsigned			i2c_lut[MAX_DFLL_VOLTAGES];
+> >>> -	int				i2c_lut_size;
+> >>> -	u8				lut_min, lut_max, lut_safe;
+> >>> +	unsigned int			i2c_lut[MAX_DFLL_VOLTAGES];
+> >>> +	unsigned int			lut_uv[MAX_DFLL_VOLTAGES];
+> >>> +	int				lut_size;
+> >>> +	u8				lut_bottom, lut_min, lut_max, lut_safe;
+> >>>  };
+> >>>  
+> >>>  #define clk_hw_to_dfll(_hw) container_of(_hw, struct tegra_dfll, dfll_clk_hw)
+> >>> @@ -531,10 +532,10 @@ static void dfll_load_i2c_lut(struct tegra_dfll *td)
+> >>>  	u32 val;
+> >>>  
+> >>>  	for (i = 0; i < MAX_DFLL_VOLTAGES; i++) {
+> >>> -		if (i < td->lut_min)
+> >>> -			lut_index = td->lut_min;
+> >>> -		else if (i > td->lut_max)
+> >>> -			lut_index = td->lut_max;
+> >>> +		if (i < td->lut_bottom)
+> >>> +			lut_index = td->lut_bottom;
+> >>> +		else if (i > td->lut_size - 1)
+> >>> +			lut_index = td->lut_size - 1;
+> >>>  		else
+> >>>  			lut_index = i;
+> >>>  
+> >>> @@ -594,9 +595,9 @@ static void dfll_init_out_if(struct tegra_dfll *td)
+> >>>  {
+> >>>  	u32 val;
+> >>>  
+> >>> -	td->lut_min = 0;
+> >>> -	td->lut_max = td->i2c_lut_size - 1;
+> >>> -	td->lut_safe = td->lut_min + 1;
+> >>> +	td->lut_min = td->lut_bottom;
+> >>> +	td->lut_max = td->lut_size - 1;
+> >>> +	td->lut_safe = td->lut_min + (td->lut_min < td->lut_max ? 1 : 0);
+> >>>  
+> >>>  	dfll_i2c_writel(td, 0, DFLL_OUTPUT_CFG);
+> >>>  	val = (td->lut_safe << DFLL_OUTPUT_CFG_SAFE_SHIFT) |
+> >>> @@ -619,11 +620,11 @@ static void dfll_init_out_if(struct tegra_dfll *td)
+> >>>   */
+> >>>  
+> >>>  /**
+> >>> - * find_lut_index_for_rate - determine I2C LUT index for given DFLL rate
+> >>> + * find_lut_index_for_rate - determine LUT index for given DFLL rate
+> >>>   * @td: DFLL instance
+> >>>   * @rate: clock rate
+> >>>   *
+> >>> - * Determines the index of a I2C LUT entry for a voltage that approximately
+> >>> + * Determines the index of a LUT entry for a voltage that approximately
+> >>>   * produces the given DFLL clock rate. This is used when forcing a value
+> >>>   * to the integrator during rate changes. Returns -ENOENT if a suitable
+> >>>   * LUT index is not found.
+> >>> @@ -637,11 +638,11 @@ static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long rate)
+> >>>  	if (IS_ERR(opp))
+> >>>  		return PTR_ERR(opp);
+> >>>  
+> >>> -	uv = dev_pm_opp_get_voltage(opp);
+> >>> +	uv = dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
+> >>>  	dev_pm_opp_put(opp);
+> >>>  
+> >>> -	for (i = 0; i < td->i2c_lut_size; i++) {
+> >>> -		if (regulator_list_voltage(td->vdd_reg, td->i2c_lut[i]) == uv)
+> >>> +	for (i = td->lut_bottom; i < td->lut_size; i++) {
+> >>> +		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >= uv)
+> >>>  			return i;
+> >>>  	}
+> >>>  
+> >>> @@ -1377,15 +1378,17 @@ static int dfll_init(struct tegra_dfll *td)
+> >>>   */
+> >>>  static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
+> >>>  {
+> >>> -	int i, n_voltages, reg_uV;
+> >>> +	int i, n_voltages, reg_mult, align_mult;
+> >>>  
+> >>> +	align_mult = uV / td->soc->alignment.step_uv;
+> >>>  	n_voltages = regulator_count_voltages(td->vdd_reg);
+> >>>  	for (i = 0; i < n_voltages; i++) {
+> >>> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
+> >>> -		if (reg_uV < 0)
+> >>> +		reg_mult = regulator_list_voltage(td->vdd_reg, i) /
+> >>> +				td->soc->alignment.step_uv;
+> >>> +		if (reg_mult < 0)
+> >>>  			break;
+> >>>  
+> >>> -		if (uV == reg_uV)
+> >>> +		if (align_mult == reg_mult)
+> >>>  			return i;
+> >>>  	}
+> >>>  
+> >>> @@ -1399,15 +1402,17 @@ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
+> >>>   * */
+> >>>  static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
+> >>>  {
+> >>> -	int i, n_voltages, reg_uV;
+> >>> +	int i, n_voltages, reg_mult, align_mult;
+> >>>  
+> >>> +	align_mult = uV / td->soc->alignment.step_uv;
+> >>>  	n_voltages = regulator_count_voltages(td->vdd_reg);
+> >>>  	for (i = 0; i < n_voltages; i++) {
+> >>> -		reg_uV = regulator_list_voltage(td->vdd_reg, i);
+> >>> -		if (reg_uV < 0)
+> >>> +		reg_mult = regulator_list_voltage(td->vdd_reg, i) /
+> >>> +				td->soc->alignment.step_uv;
+> >>> +		if (reg_mult < 0)
+> >>>  			break;
+> >>>  
+> >>> -		if (uV <= reg_uV)
+> >>> +		if (align_mult <= reg_mult)
+> >>>  			return i;
+> >>>  	}
+> >>>  
+> >>> @@ -1450,8 +1455,10 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td)
+> >>>  	if (lut < 0)
+> >>>  		goto out;
+> >>>  	td->i2c_lut[0] = lut;
+> >>> +	td->lut_bottom = 0;
+> >>>  
+> >>>  	for (j = 1, rate = 0; ; rate++) {
+> >>> +
+> >>>  		opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+> >>>  		if (IS_ERR(opp))
+> >>>  			break;
+> >>> @@ -1484,13 +1491,18 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td)
+> >>>  		if (v >= v_max)
+> >>>  			break;
+> >>>  	}
+> >>> -	td->i2c_lut_size = j;
+> >>> +	td->lut_size = j;
+> >>>  
+> >>>  	if (!td->dvco_rate_min)
+> >>>  		dev_err(td->dev, "no opp above DFLL minimum voltage %d mV\n",
+> >>>  			td->soc->cvb->min_millivolts);
+> >>> -	else
+> >>> +	else {
+> >>>  		ret = 0;
+> >>> +		for (j = 0; j < td->lut_size; j++)
+> >>> +			td->lut_uv[j] =
+> >>> +				regulator_list_voltage(td->vdd_reg,
+> >>> +						       td->i2c_lut[j]);
+> >>> +	}
+> >>>  
+> >>>  out:
+> >>>  	return ret;
+> >>>
+> >>
+> >> I am a bit confused by this patch as I don't fully understand from the
+> >> description what is being changed. For example, there are a few places
+> >> where you are dividing by td->soc->alignment.step_uv, which seems to be
+> >> changing the calculations/behaviour for I2C unless I am missing something?
+> >>
+> > 
+> > The goal is to use td->lut_uv for all voltage related lookups so we can unify
+> > the code for i2c and PWM regulators.
+> 
+> Yes but looking at the patch there is more going on here than just that.
+> Any changes to the exisiting i2c code should be a separate change unless
+> I am completely misunderstanding you.
+> 
 
-Hi David, Sekhar,
+This requires changes to the existing i2c code, which is what this patch does.
 
-I tried booting the board today over tftp but didn't succeed. I then
-switched to a normal boot from SD card and the boot process froze at
-the same moment (right after the DHCP config, or after rtc config if I
-disabled DHCP in bootargs). I then realized that the emac clock can't
-be the culprit. After some digging I found out that the late_initcall
-to clk_disable_unused() disables sysclk6 - the parent of the arm
-clock, which of course freezes the device.
-
-If I remove the call to clk_disable_unused(), I can boot just fine.
-
-The following other clocks are disabled before pll0_sysclk6:
-pll1_sysclk3
-pll0_obsclk
-pll0_sysclk7
-
-davinci_lpsc_clk_enable() is never called for these clocks - in fact
-it's not called for any parent that's not explicitly defined in
-psc-da850.c - I believe this may be one of the reasons. I will get
-back to debugging it tomorrow.
-
-Best regards,
-Bartosz Golaszewski
+Peter.
