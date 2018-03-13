@@ -1,245 +1,63 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v9 08/15] clk: qcom: Add support for Krait clocks
-Date: Tue,  6 Mar 2018 20:09:01 +0530
-Message-Id: <1520347148-27852-9-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
-References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57864 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752163AbeCMJjZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Mar 2018 05:39:25 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] clk: samsung: exynos5250: Add missing clocks for FIMC LITE
+ SYSMMU devices
+Date: Tue, 13 Mar 2018 10:39:08 +0100
+Message-id: <20180313093908.25389-1-m.szyprowski@samsung.com>
+References: <CGME20180313093920eucas1p206d31e1de5f30a8ad1b624527d4ccab5@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+FIMC LITE SYSMMU device are defined in exynos5250.dtsi, but clocks for
+them are not instantiated by Exynos5250 clock provider driver. Add
+needed definitions for those clocks to fix IOMMU probe failure:
 
-The Krait clocks are made up of a series of muxes and a divider
-that choose between a fixed rate clock and dedicated HFPLLs for
-each CPU. Instead of using mmio accesses to remux parents, the
-Krait implementation exposes the remux control via cp15
-registers. Support these clocks.
+ERROR: could not get clock /soc/sysmmu@13c40000:sysmmu(0)
+exynos-sysmmu 13c40000.sysmmu: Failed to get device clock(s)!
+exynos-sysmmu: probe of 13c40000.sysmmu failed with error -38
+ERROR: could not get clock /soc/sysmmu@13c50000:sysmmu(0)
+exynos-sysmmu 13c50000.sysmmu: Failed to get device clock(s)!
+exynos-sysmmu: probe of 13c50000.sysmmu failed with error -38
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/clk/qcom/Kconfig     |   4 ++
- drivers/clk/qcom/Makefile    |   1 +
- drivers/clk/qcom/clk-krait.c | 124 +++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-krait.h |  38 +++++++++++++
- 4 files changed, 167 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-krait.c
- create mode 100644 drivers/clk/qcom/clk-krait.h
+ drivers/clk/samsung/clk-exynos5250.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d9ae51e..bf14f56 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -234,3 +234,7 @@ config QCOM_HFPLL
- 	  Support for the high-frequency PLLs present on Qualcomm devices.
- 	  Say Y if you want to support CPU frequency scaling on devices
- 	  such as MSM8974, APQ8084, etc.
-+
-+config KRAIT_CLOCKS
-+	bool
-+	select KRAIT_L2_ACCESSORS
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index c57b808..e1e96f6 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
- clk-qcom-y += clk-regmap-divider.o
- clk-qcom-y += clk-regmap-mux.o
- clk-qcom-y += clk-regmap-mux-div.o
-+clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
- clk-qcom-y += clk-hfpll.o
- clk-qcom-y += reset.o
- clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
-diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
-new file mode 100644
-index 0000000..2e41767
---- /dev/null
-+++ b/drivers/clk/qcom/clk-krait.c
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/clk-provider.h>
-+#include <linux/spinlock.h>
-+
-+#include <asm/krait-l2-accessors.h>
-+
-+#include "clk-krait.h"
-+
-+/* Secondary and primary muxes share the same cp15 register */
-+static DEFINE_SPINLOCK(krait_clock_reg_lock);
-+
-+#define LPL_SHIFT	8
-+static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
-+{
-+	unsigned long flags;
-+	u32 regval;
-+
-+	spin_lock_irqsave(&krait_clock_reg_lock, flags);
-+	regval = krait_get_l2_indirect_reg(mux->offset);
-+	regval &= ~(mux->mask << mux->shift);
-+	regval |= (sel & mux->mask) << mux->shift;
-+	if (mux->lpl) {
-+		regval &= ~(mux->mask << (mux->shift + LPL_SHIFT));
-+		regval |= (sel & mux->mask) << (mux->shift + LPL_SHIFT);
-+	}
-+	krait_set_l2_indirect_reg(mux->offset, regval);
-+	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
-+
-+	/* Wait for switch to complete. */
-+	mb();
-+	udelay(1);
-+}
-+
-+static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
-+	u32 sel;
-+
-+	sel = clk_mux_reindex(index, mux->parent_map, 0);
-+	mux->en_mask = sel;
-+	/* Don't touch mux if CPU is off as it won't work */
-+	if (__clk_is_enabled(hw->clk))
-+		__krait_mux_set_sel(mux, sel);
-+
-+	return 0;
-+}
-+
-+static u8 krait_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
-+	u32 sel;
-+
-+	sel = krait_get_l2_indirect_reg(mux->offset);
-+	sel >>= mux->shift;
-+	sel &= mux->mask;
-+	mux->en_mask = sel;
-+
-+	return clk_mux_get_parent(hw, sel, mux->parent_map, 0);
-+}
-+
-+const struct clk_ops krait_mux_clk_ops = {
-+	.set_parent = krait_mux_set_parent,
-+	.get_parent = krait_mux_get_parent,
-+	.determine_rate = __clk_mux_determine_rate_closest,
-+};
-+EXPORT_SYMBOL_GPL(krait_mux_clk_ops);
-+
-+/* The divider can divide by 2, 4, 6 and 8. But we only really need div-2. */
-+static long krait_div2_round_rate(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long *parent_rate)
-+{
-+	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), rate * 2);
-+	return DIV_ROUND_UP(*parent_rate, 2);
-+}
-+
-+static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long parent_rate)
-+{
-+	struct krait_div2_clk *d = to_krait_div2_clk(hw);
-+	unsigned long flags;
-+	u32 val;
-+	u32 mask = BIT(d->width) - 1;
-+
-+	if (d->lpl)
-+		mask = mask << (d->shift + LPL_SHIFT) | mask << d->shift;
-+
-+	spin_lock_irqsave(&krait_clock_reg_lock, flags);
-+	val = krait_get_l2_indirect_reg(d->offset);
-+	val &= ~mask;
-+	krait_set_l2_indirect_reg(d->offset, val);
-+	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
-+
-+	return 0;
-+}
-+
-+static unsigned long
-+krait_div2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct krait_div2_clk *d = to_krait_div2_clk(hw);
-+	u32 mask = BIT(d->width) - 1;
-+	u32 div;
-+
-+	div = krait_get_l2_indirect_reg(d->offset);
-+	div >>= d->shift;
-+	div &= mask;
-+	div = (div + 1) * 2;
-+
-+	return DIV_ROUND_UP(parent_rate, div);
-+}
-+
-+const struct clk_ops krait_div2_clk_ops = {
-+	.round_rate = krait_div2_round_rate,
-+	.set_rate = krait_div2_set_rate,
-+	.recalc_rate = krait_div2_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(krait_div2_clk_ops);
-diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
-new file mode 100644
-index 0000000..71890bc
---- /dev/null
-+++ b/drivers/clk/qcom/clk-krait.h
-@@ -0,0 +1,38 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#ifndef __QCOM_CLK_KRAIT_H
-+#define __QCOM_CLK_KRAIT_H
-+
-+#include <linux/clk-provider.h>
-+
-+struct krait_mux_clk {
-+	unsigned int	*parent_map;
-+	u32		offset;
-+	u32		mask;
-+	u32		shift;
-+	u32		en_mask;
-+	bool		lpl;
-+
-+	struct clk_hw	hw;
-+	struct notifier_block   clk_nb;
-+};
-+
-+#define to_krait_mux_clk(_hw) container_of(_hw, struct krait_mux_clk, hw)
-+
-+extern const struct clk_ops krait_mux_clk_ops;
-+
-+struct krait_div2_clk {
-+	u32		offset;
-+	u8		width;
-+	u32		shift;
-+	bool		lpl;
-+
-+	struct clk_hw	hw;
-+};
-+
-+#define to_krait_div2_clk(_hw) container_of(_hw, struct krait_div2_clk, hw)
-+
-+extern const struct clk_ops krait_div2_clk_ops;
-+
-+#endif
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 06e5ddcb30db..347fd80c351b 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -561,6 +561,8 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
+ 		0),
+ 	GATE(CLK_GSCL3, "gscl3", "mout_aclk266_gscl_sub", GATE_IP_GSCL, 3, 0,
+ 		0),
++	GATE(CLK_CAMIF_TOP, "camif_top", "mout_aclk266_gscl_sub",
++			GATE_IP_GSCL, 4, 0, 0),
+ 	GATE(CLK_GSCL_WA, "gscl_wa", "div_gscl_wa", GATE_IP_GSCL, 5, 0, 0),
+ 	GATE(CLK_GSCL_WB, "gscl_wb", "div_gscl_wb", GATE_IP_GSCL, 6, 0, 0),
+ 	GATE(CLK_SMMU_GSCL0, "smmu_gscl0", "mout_aclk266_gscl_sub",
+@@ -571,6 +573,10 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
+ 			GATE_IP_GSCL, 9, 0, 0),
+ 	GATE(CLK_SMMU_GSCL3, "smmu_gscl3", "mout_aclk266_gscl_sub",
+ 			GATE_IP_GSCL, 10, 0, 0),
++	GATE(CLK_SMMU_FIMC_LITE0, "smmu_fimc_lite0", "mout_aclk266_gscl_sub",
++			GATE_IP_GSCL, 11, 0, 0),
++	GATE(CLK_SMMU_FIMC_LITE1, "smmu_fimc_lite1", "mout_aclk266_gscl_sub",
++			GATE_IP_GSCL, 12, 0, 0),
+ 
+ 
+ 	GATE(CLK_MFC, "mfc", "mout_aclk333_sub", GATE_IP_MFC, 0, 0, 0),
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.15.0
+
