@@ -1,30 +1,30 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:59164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751377AbeCMBAh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 12 Mar 2018 21:00:37 -0400
+Date: Tue, 13 Mar 2018 08:59:42 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Bai Ping <ping.bai@nxp.com>, robh+dt@kernel.org
+Cc: sboyd@kernel.org, kernel@pengutronix.de, aisheng.dong@nxp.com,
+        linux-imx@nxp.com, jacky.baip@gmail.com, fabio.estevam@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 3/4] dt-bindings: imx: update clock doc for imx6sll
+Message-ID: <20180313005941.GD26859@dragon>
+References: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
+ <1520846957-22348-3-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
-To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521168778-27236-5-git-send-email-david@lechnology.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
- David Lechner <david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-5-git-send-email-david@lechnology.com>
-Message-ID: <152156542199.183971.1908939942741562071@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v8 04/42] clk: davinci: Add platform information for TI DA850 PLL
-Date: Tue, 20 Mar 2018 10:03:41 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1520846957-22348-3-git-send-email-ping.bai@nxp.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting David Lechner (2018-03-15 19:52:20)
-> This adds platform-specific declarations for the PLL clocks on TI DA850/
-> OMAP-L138/AM18XX SoCs.
-> =
+On Mon, Mar 12, 2018 at 05:29:16PM +0800, Bai Ping wrote:
+> Add clock binding doc update for imx6sll.
+> 
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
+The series looks good to me now, but I need Rob's ACK on this one to
+queue up the series for 4.17.
 
-Applied to clk-next
+Shawn
