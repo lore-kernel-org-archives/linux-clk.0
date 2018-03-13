@@ -1,357 +1,207 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-doc@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 7/8] clocksource: Add a new timer-ingenic driver
-Date: Sun, 18 Mar 2018 00:29:00 +0100
-Message-Id: <20180317232901.14129-8-paul@crapouillou.net>
-In-Reply-To: <20180317232901.14129-1-paul@crapouillou.net>
-References: <20180110224838.16711-2-paul@crapouillou.net>
- <20180317232901.14129-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <chunkeey@gmail.com>
+Return-Path: <chunkeey@gmail.com>
+From: Christian Lamparter <chunkeey@gmail.com>
+To: linux-clk@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	David Brown <david.brown@linaro.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	Mathias Kresin <dev@kresin.me>
+Subject: [PATCH] clk: fix apss cpu overclocking and crash
+Date: Tue, 13 Mar 2018 17:29:15 +0100
+Message-Id: <20180313162915.18307-1-chunkeey@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver will use the TCU (Timer Counter Unit) present on the Ingenic
-JZ47xx SoCs to provide the kernel with a clocksource and timers.
+There's an interaction issue between the clk changes:"
+clk: qcom: ipq4019: Add the apss cpu pll divider clock node
+clk: qcom: ipq4019: remove fixed clocks and add pll clocks
+" and the cpufreq-dt.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+cpufreq-dt is now spamming the kernel-log with the following:
+
+[ 1099.190658] cpu cpu0: dev_pm_opp_set_rate: failed to find current OPP
+for freq 761142857 (-34)
+
+or worse:
+
+|[    4.995284] cpufreq: cpufreq_online: CPU0: Running at unlisted freq: 716800 KHz
+|[    4.996223] cpu cpu0: dev_pm_opp_set_rate: failed to find current OPP for freq 716800000 (-34)
+|[    5.003530] cpu cpu0: dev_pm_opp_set_rate: failed to find OPP for freq 716000000 (-34)
+|[    5.012174] cpufreq: __target_index: Failed to change cpu frequency: -34
+|[    5.020102] ------------[ cut here ]------------
+|[    5.026922] Kernel BUG at c05adfa0 [verbose debug info unavailable]
+|[    5.031526] Internal error: Oops - BUG: 0 [#1] SMP ARM
+|[    5.037514] Modules linked in:
+|[    5.042723] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.14.18 #0
+|[    5.045759] Hardware name: Generic DT based system
+|[    5.051925] task: c7828000 task.stack: c7826000
+|[    5.056530] PC is at cpufreq_online+0x380/0x5cc
+|[    5.060953] LR is at __wake_up_common_lock+0x6c/0x84
+|[    5.065466] pc : [<c05adfa0>]    lr : [<c0343488>]    psr: a0000013
+|[    5.070674] sp : c7827d60  ip : c64d83e0  fp : c64d83b4
+|[    5.076662] r10: 00000004  r9 : c0d42c5c  r8 : 00000001
+|[    5.081872] r7 : c0e5a0b4  r6 : 00000000  r5 : 00000000  r4 : c64d8300
+|[    5.087082] r3 : 00000000  r2 : 00000001  r1 : 60000013  r0 : ffffffde
+|[    5.093682] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+|[    5.100191] Control: 10c5387d  Table: 8020406a  DAC: 00000051
+|[    5.107393] Process swapper/0 (pid: 1, stack limit = 0xc7826210)
+|[    5.113124] Stack: (0xc7827d60 to 0xc7828000)
+|[    5.119205] 7d60: 00000000 c06bd6f0 c0e03d48 c64d8304 00000009 00000000 c0e16cc0 c0e5a0b4
+|[...]
+|[    5.286668] [<c05adfa0>] (cpufreq_online) from [<c05ae250>] (cpufreq_add_dev+0x54/0x7c)
+|[    5.294820] [<c05ae250>] (cpufreq_add_dev) from [<c0523c98>] (subsys_interface_register+0x9c/0xc8)
+|[    5.302633] [<c0523c98>] (subsys_interface_register) from [<c05ad3d8>] (cpufreq_register_driver+0x100/0x1ec)
+|[    5.311661] [<c05ad3d8>] (cpufreq_register_driver) from [<c05b07f8>] (dt_cpufreq_probe+0xc0/0xf8)
+|[    5.321646] [<c05b07f8>] (dt_cpufreq_probe) from [<c05264f4>] (platform_drv_probe+0x38/0x6c)
+|[    5.330412] [<c05264f4>] (platform_drv_probe) from [<c0524ff4>] (driver_probe_device+0x130/0x284)
+|[    5.338919] [<c0524ff4>] (driver_probe_device) from [<c0523a4c>] (bus_for_each_drv+0x80/0x90)
+|[    5.347684] [<c0523a4c>] (bus_for_each_drv) from [<c0524e4c>] (__device_attach+0x70/0xc4)
+|[    5.356192] [<c0524e4c>] (__device_attach) from [<c0524500>] (bus_probe_device+0x28/0x80)
+|[    5.364348] [<c0524500>] (bus_probe_device) from [<c0522b90>] (device_add+0x2ac/0x4fc)
+|[    5.372509] [<c0522b90>] (device_add) from [<c052635c>] (platform_device_add+0x130/0x1c0)
+|[    5.380323] [<c052635c>] (platform_device_add) from [<c0526b20>] (platform_device_register_full+0xa4/0xf4)
+|[    5.388576] [<c0526b20>] (platform_device_register_full) from [<c0916644>] (cpufreq_dt_platdev_init+0xb0/0xd4)
+|[    5.398124] [<c0916644>] (cpufreq_dt_platdev_init) from [<c0301994>] (do_one_initcall+0xb4/0x170)
+
+This only happens on certain devices like the Compex WPJ428
+and AVM FritzBox!4040. However, other devices like the Asus
+RT-AC58U and Meraki MR33 work just fine.
+
+The issue stem from the fact that all higher CPU-Clocks
+are achieved by switching the clock-parent to the P_DDRPLLAPSS
+(ddrpllapss). Which is set by Qualcomm's proprietary bootcode
+as part of the DDR calibration.
+
+For example, the FB4040 uses 256 MiB Nanya NT5CC128M16IP clocked
+at round 533 MHz. ddrpllsdcc is set to 190285714 Hz which is a
+result of the gcc_apss_ddrpll_vco's reg 0x2e020 = 0x026f0032.
+this translates to fdbdiv = 111, refclkdiv = 2. with parent_rate = 48 MHz
+(XO) and the formula in clk_fepll_vco_calc_rate():
+rate = ((parent_rate / refclkdiv) * 2 * fdbkdiv) / fixed_div
+     = ((48000000 / 2) * 2 * 111) / 28
+     = 190285714 Hz
+
+(fixed_div = 28 according to the gcc_apss_sdcc_clk struct)
+
+whereas the 128 MiB Nanya NT5CC64M16GP-DI in the ASUS RT-AC58U is
+clocked at a slightly higher 537 MHz. ddrpllsdcc = 192000000 Hz.
+the gcc_apss_ddrpll_vco's reg 0x2e020 is 0x00270032.
+this is equal to fdbdiv = 112, refclkdiv = 2, fixed_div = 28, with
+parent_rate = 48 MHz (XO) and the formula in clk_fepll_vco_calc_rate():
+rate = ((parent_rate / refclkdiv) * 2 * fdbkdiv) / fixed_div
+     = ((48000000 / 2) * 2 * 112) / 28
+     = 192000000 Hz
+
+This patch attempts to fix the issue by modifying
+clk_cpu_div_round_rate(), clk_cpu_div_set_rate(), clk_cpu_div_recalc_rate()
+to use a new qcom_find_freq_close() function, which returns the closest
+matching frequency, instead of the next higher. This way, the SoC in
+the FB4040 (with its max clock speed of 710.4 MHz) will no longer
+try to overclock to 761 MHz. And it will also prevent the crash since
+the clk_cpu_div_recalc_rate() now always returns the closest rate within
+the frequency table. This will also make it possible for the opp-code
+to take a fast-path through dev_pm_opp_set_rate():
+<https://elixir.bootlin.com/linux/v4.16-rc5/source/drivers/opp/core.c#L669>
+Since the rate returned by clk_get_rate() will now always match.
+
+Fixes: d83dcacea18 ("clk: qcom: ipq4019: Add the apss cpu pll divider clock node")
+Cc: Mathias Kresin <dev@kresin.me>
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
 ---
- drivers/clocksource/Kconfig         |   8 ++
- drivers/clocksource/Makefile        |   1 +
- drivers/clocksource/timer-ingenic.c | 278 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 287 insertions(+)
- create mode 100644 drivers/clocksource/timer-ingenic.c
+Note:
 
- v2: Use SPDX identifier for the license
- v3: - Move documentation to its own patch
-     - Search the devicetree for PWM clients, and use all the TCU
-	   channels that won't be used for PWM
- v4: - Add documentation about why we search for PWM clients
-     - Verify that the PWM clients are for the TCU PWM driver
+The register reads were obtained by performing:
+'cat /sys/kernel/debug/regmap/1800000.clock-controller/registers | grep 2e020'
+on both devices.
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index d2e5382821a4..481422145fb4 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -592,4 +592,12 @@ config CLKSRC_ST_LPC
- 	  Enable this option to use the Low Power controller timer
- 	  as clocksource.
+As an alternative, it would also be possible to fix this by setting the
+gcc_apss_ddrpll_vco to 0x027f0032. (No idea if this is a good idea though,
+since it messes with the DDR - and 0x027f0032 is not universal as the MR33
+for example uses 0x02700031).
+
+Or calculate the DDR related frequencies in the tables ftbl_gcc_apps_clk,
+ftbl_apss_ddr_pll and ftbl_gcc_sdcc1_apps_clk based on the gcc_apss_ddrpll_vco
+setting.
+
+... So what will it be? (And please keep me in the CC.)
+---
+ drivers/clk/qcom/gcc-ipq4019.c | 34 +++++++++++++++++++++++++++++++---
+ 1 file changed, 31 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 46cb256b4aa2..e5fb159500b4 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -1253,6 +1253,29 @@ static const struct clk_fepll_vco gcc_fepll_vco = {
+ 	.reg = 0x2f020,
+ };
  
-+config INGENIC_TIMER
-+	bool "Clocksource/timer using the TCU in Ingenic JZ SoCs"
-+	depends on MACH_INGENIC || COMPILE_TEST
-+	select CLKSRC_OF
-+	default y
-+	help
-+	  Support for the timer/counter unit of the Ingenic JZ SoCs.
 +
- endmenu
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index d6dec4489d66..98691e8999fe 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -74,5 +74,6 @@ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
- obj-$(CONFIG_H8300_TMR8)		+= h8300_timer8.o
- obj-$(CONFIG_H8300_TMR16)		+= h8300_timer16.o
- obj-$(CONFIG_H8300_TPU)			+= h8300_tpu.o
-+obj-$(CONFIG_INGENIC_TIMER)		+= timer-ingenic.o
- obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
- obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
-diff --git a/drivers/clocksource/timer-ingenic.c b/drivers/clocksource/timer-ingenic.c
-new file mode 100644
-index 000000000000..8c777c0c0023
---- /dev/null
-+++ b/drivers/clocksource/timer-ingenic.c
-@@ -0,0 +1,278 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Ingenic JZ47xx SoC TCU clocksource driver
-+ * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/clockchips.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mfd/syscon/ingenic-tcu.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+#define NUM_CHANNELS	8
-+
-+struct ingenic_tcu;
-+
-+struct ingenic_tcu_channel {
-+	unsigned int idx;
-+	struct clk *clk;
-+};
-+
-+struct ingenic_tcu {
-+	struct ingenic_tcu_channel channels[NUM_CHANNELS];
-+	unsigned long requested;
-+	struct regmap *map;
-+};
-+
-+struct ingenic_clock_event_device {
-+	struct clock_event_device cevt;
-+	struct ingenic_tcu_channel *channel;
-+	char name[32];
-+};
-+
-+#define ingenic_cevt(_evt) \
-+	container_of(_evt, struct ingenic_clock_event_device, cevt)
-+
-+static inline struct ingenic_tcu *to_ingenic_tcu(struct ingenic_tcu_channel *ch)
++const struct freq_tbl *qcom_find_freq_close(const struct freq_tbl *f,
++						unsigned long rate)
 +{
-+	return container_of(ch, struct ingenic_tcu, channels[ch->idx]);
-+}
++	const struct freq_tbl *last = NULL;
 +
-+static int ingenic_tcu_cevt_set_state_shutdown(struct clock_event_device *evt)
-+{
-+	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(evt);
-+	struct ingenic_tcu_channel *channel = jzcevt->channel;
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+	unsigned int idx = channel->idx;
++	for ( ; f->freq; f++) {
++		if (rate == f->freq)
++			return f;
 +
-+	regmap_write(tcu->map, TCU_REG_TECR, BIT(idx));
-+	return 0;
-+}
-+
-+static int ingenic_tcu_cevt_set_next(unsigned long next,
-+		struct clock_event_device *evt)
-+{
-+	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(evt);
-+	struct ingenic_tcu_channel *channel = jzcevt->channel;
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+	unsigned int idx = channel->idx;
-+
-+	if (next > 0xffff)
-+		return -EINVAL;
-+
-+	regmap_write(tcu->map, TCU_REG_TDFRc(idx), (unsigned int) next);
-+	regmap_write(tcu->map, TCU_REG_TCNTc(idx), 0);
-+	regmap_write(tcu->map, TCU_REG_TESR, BIT(idx));
-+
-+	return 0;
-+}
-+
-+static irqreturn_t ingenic_tcu_cevt_cb(int irq, void *dev_id)
-+{
-+	struct clock_event_device *cevt = dev_id;
-+	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(cevt);
-+	struct ingenic_tcu_channel *channel = jzcevt->channel;
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+	unsigned int idx = channel->idx;
-+
-+	regmap_write(tcu->map, TCU_REG_TECR, BIT(idx));
-+
-+	if (cevt->event_handler)
-+		cevt->event_handler(cevt);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int __init ingenic_tcu_req_channel(struct ingenic_tcu_channel *channel)
-+{
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+	char buf[16];
-+	int err;
-+
-+	if (test_and_set_bit(channel->idx, &tcu->requested))
-+		return -EBUSY;
-+
-+	snprintf(buf, sizeof(buf), "timer%u", channel->idx);
-+	channel->clk = clk_get(NULL, buf);
-+	if (IS_ERR(channel->clk)) {
-+		err = PTR_ERR(channel->clk);
-+		goto out_release;
-+	}
-+
-+	err = clk_prepare_enable(channel->clk);
-+	if (err)
-+		goto out_clk_put;
-+
-+	return 0;
-+
-+out_clk_put:
-+	clk_put(channel->clk);
-+out_release:
-+	clear_bit(channel->idx, &tcu->requested);
-+	return err;
-+}
-+
-+static int __init ingenic_tcu_reset_channel(struct device_node *np,
-+		struct ingenic_tcu_channel *channel)
-+{
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+
-+	return regmap_update_bits(tcu->map, TCU_REG_TCSRc(channel->idx),
-+				0xffff & ~TCU_TCSR_RESERVED_BITS, 0);
-+}
-+
-+static void __init ingenic_tcu_free_channel(struct ingenic_tcu_channel *channel)
-+{
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
-+
-+	clk_disable_unprepare(channel->clk);
-+	clk_put(channel->clk);
-+	clear_bit(channel->idx, &tcu->requested);
-+}
-+
-+static const char * const ingenic_tcu_timer_names[] = {
-+	"TCU0", "TCU1", "TCU2", "TCU3", "TCU4", "TCU5", "TCU6", "TCU7",
-+};
-+
-+static int __init ingenic_tcu_setup_cevt(struct device_node *np,
-+		struct ingenic_tcu *tcu, unsigned int idx)
-+{
-+	struct ingenic_tcu_channel *channel = &tcu->channels[idx];
-+	struct ingenic_clock_event_device *jzcevt;
-+	unsigned long rate;
-+	int err, virq;
-+
-+	err = ingenic_tcu_req_channel(channel);
-+	if (err)
-+		return err;
-+
-+	err = ingenic_tcu_reset_channel(np, channel);
-+	if (err)
-+		goto err_out_free_channel;
-+
-+	rate = clk_get_rate(channel->clk);
-+	if (!rate) {
-+		err = -EINVAL;
-+		goto err_out_free_channel;
-+	}
-+
-+	jzcevt = kzalloc(sizeof(*jzcevt), GFP_KERNEL);
-+	if (!jzcevt) {
-+		err = -ENOMEM;
-+		goto err_out_free_channel;
-+	}
-+
-+	virq = irq_of_parse_and_map(np, idx);
-+	if (!virq) {
-+		err = -EINVAL;
-+		goto err_out_kfree_jzcevt;
-+	}
-+
-+	err = request_irq(virq, ingenic_tcu_cevt_cb, IRQF_TIMER,
-+			ingenic_tcu_timer_names[idx], &jzcevt->cevt);
-+	if (err)
-+		goto err_out_irq_dispose_mapping;
-+
-+	jzcevt->channel = channel;
-+	snprintf(jzcevt->name, sizeof(jzcevt->name), "ingenic-tcu-chan%u",
-+		 channel->idx);
-+
-+	jzcevt->cevt.cpumask = cpumask_of(smp_processor_id());
-+	jzcevt->cevt.features = CLOCK_EVT_FEAT_ONESHOT;
-+	jzcevt->cevt.name = jzcevt->name;
-+	jzcevt->cevt.rating = 200;
-+	jzcevt->cevt.set_state_shutdown = ingenic_tcu_cevt_set_state_shutdown;
-+	jzcevt->cevt.set_next_event = ingenic_tcu_cevt_set_next;
-+
-+	clockevents_config_and_register(&jzcevt->cevt, rate, 10, (1 << 16) - 1);
-+
-+	return 0;
-+
-+err_out_irq_dispose_mapping:
-+	irq_dispose_mapping(virq);
-+err_out_kfree_jzcevt:
-+	kfree(jzcevt);
-+err_out_free_channel:
-+	ingenic_tcu_free_channel(channel);
-+	return err;
-+}
-+
-+static int __init ingenic_tcu_init(struct device_node *np)
-+{
-+	unsigned long available_channels = GENMASK(NUM_CHANNELS - 1, 0);
-+	struct device_node *node, *pwm_driver_node;
-+	struct ingenic_tcu *tcu;
-+	unsigned int i, channel;
-+	int err;
-+	u32 val;
-+
-+	/* Parse the devicetree for clients of the TCU PWM driver;
-+	 * every TCU channel not requested for PWM will be used as
-+	 * a timer.
-+	 */
-+	for_each_node_with_property(node, "pwms") {
-+		/* Get the PWM channel ID (field 1 of the "pwms" node) */
-+		err = of_property_read_u32_index(node, "pwms", 1, &val);
-+		if (!err && val >= NUM_CHANNELS)
-+			err = -EINVAL;
-+		if (err) {
-+			pr_err("timer-ingenic: Unable to parse PWM nodes!");
-+			break;
++		if (f->freq > rate) {
++			if (!last ||
++			    (f->freq - rate) < (rate - last->freq))
++				return f;
++			else
++				return last;
 +		}
-+
-+		/* Get the PWM driver node (field 0 of the "pwms" node) */
-+		pwm_driver_node = of_parse_phandle(node, "pwms", 0);
-+		if (!pwm_driver_node) {
-+			pr_err("timer-ingenic: Unable to find PWM driver node");
-+			break;
-+		}
-+
-+		/* Verify that the node we found is for the TCU PWM driver,
-+		 * by checking that this driver and the PWM driver passed
-+		 * as phandle share the same parent (the "ingenic,tcu"
-+		 * compatible MFD/syscon node).
-+		 */
-+		if (pwm_driver_node->parent != np->parent)
-+			continue;
-+
-+		pr_info("timer-ingenic: Reserving channel %u for PWM", val);
-+		available_channels &= ~BIT(val);
++		last = f;
 +	}
 +
-+	tcu = kzalloc(sizeof(*tcu), GFP_KERNEL);
-+	if (!tcu)
-+		return -ENOMEM;
-+
-+	tcu->map = syscon_node_to_regmap(np->parent);
-+	if (IS_ERR(tcu->map)) {
-+		err = PTR_ERR(tcu->map);
-+		kfree(tcu);
-+		return err;
-+	}
-+
-+	for (i = 0; i < NUM_CHANNELS; i++)
-+		tcu->channels[i].idx = i;
-+
-+	for_each_set_bit(channel, &available_channels, NUM_CHANNELS) {
-+		err = ingenic_tcu_setup_cevt(np, tcu, channel);
-+		if (err) {
-+			pr_warn("timer-ingenic: Unable to init TCU channel %u: %i",
-+					channel, err);
-+			continue;
-+		}
-+	}
-+
-+	return 0;
++	return last;
 +}
 +
-+/* We only probe via devicetree, no need for a platform driver */
-+CLOCKSOURCE_OF_DECLARE(jz4740_tcu, "ingenic,jz4740-tcu", ingenic_tcu_init);
-+CLOCKSOURCE_OF_DECLARE(jz4770_tcu, "ingenic,jz4770-tcu", ingenic_tcu_init);
-+CLOCKSOURCE_OF_DECLARE(jz4780_tcu, "ingenic,jz4780-tcu", ingenic_tcu_init);
+ /*
+  * Round rate function for APSS CPU PLL Clock divider.
+  * It looks up the frequency table and returns the next higher frequency
+@@ -1265,7 +1288,7 @@ static long clk_cpu_div_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_hw *p_hw;
+ 	const struct freq_tbl *f;
+ 
+-	f = qcom_find_freq(pll->freq_tbl, rate);
++	f = qcom_find_freq_close(pll->freq_tbl, rate);
+ 	if (!f)
+ 		return -EINVAL;
+ 
+@@ -1288,7 +1311,7 @@ static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 mask;
+ 	int ret;
+ 
+-	f = qcom_find_freq(pll->freq_tbl, rate);
++	f = qcom_find_freq_close(pll->freq_tbl, rate);
+ 	if (!f)
+ 		return -EINVAL;
+ 
+@@ -1315,6 +1338,7 @@ static unsigned long
+ clk_cpu_div_recalc_rate(struct clk_hw *hw,
+ 			unsigned long parent_rate)
+ {
++	const struct freq_tbl *f;
+ 	struct clk_fepll *pll = to_clk_fepll(hw);
+ 	u32 cdiv, pre_div;
+ 	u64 rate;
+@@ -1335,7 +1359,11 @@ clk_cpu_div_recalc_rate(struct clk_hw *hw,
+ 	rate = clk_fepll_vco_calc_rate(pll, parent_rate) * 2;
+ 	do_div(rate, pre_div);
+ 
+-	return rate;
++	f = qcom_find_freq_close(pll->freq_tbl, rate);
++	if (!f)
++		return rate;
++
++	return f->freq;
+ };
+ 
+ static const struct clk_ops clk_regmap_cpu_div_ops = {
 -- 
-2.11.0
+2.16.2
