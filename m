@@ -1,92 +1,62 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-Date: Sun, 18 Mar 2018 07:52:22 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: meson: update documentation with
- hhi syscon
-Message-ID: <20180318125222.kqtybu4hiwvsx3om@rob-hp-laptop>
-References: <20180315115545.1884-1-jbrunet@baylibre.com>
- <20180315115545.1884-2-jbrunet@baylibre.com>
+Return-Path: <joel.stan@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180315115545.1884-2-jbrunet@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
- Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
- Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+Sender: joel.stan@gmail.com
+In-Reply-To: <1520542640-9185-2-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com> <1520542640-9185-2-git-send-email-eajames@linux.vnet.ibm.com>
+From: Joel Stanley <joel@jms.id.au>
+Date: Tue, 13 Mar 2018 16:10:01 +1030
+Message-ID: <CACPK8Xcx4P2kF8ryg=-WgZjjkVo3uzv+G2JGPiZiU3UGWV+4yg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: aspeed: Fix is_enabled for certain clocks
+To: Eddie James <eajames@linux.vnet.ibm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org, Lei YU <mine260309@gmail.com>,
+	Ryan Chen <ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 12:55:42PM +0100, Jerome Brunet wrote:
-> The HHI register region hosts more than just clocks and needs to
-> accessed drivers other than the clock controller, such as the display
-> driver.
-> 
-> This register region should be managed by syscon. It is already the case
-> on gxbb/gxl and it soon will be on axg. The clock controllers must use
-> this system controller instead of directly mapping the registers.
+On Fri, Mar 9, 2018 at 7:27 AM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+> Some of the Aspeed clocks are disabled by setting the relevant bit in
+> the "clock stop control" register to one, while others are disabled by
+> setting their bit to zero. The driver already uses a flag per gate  to
+> identify this behavior, but doesn't apply it in the clock is_enabled
+> function.
+>
+> Use the existing gate flag to correctly return whether or not a clock
+> is enabled in the aspeed_clk_is_enabled function.
+>
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 
-Sounds like a kernel problem, not a DT one.
+Fixes: 6671507f0fbd ("clk: aspeed: Handle inverse polarity of USB port
+1 clock gate")
 
-> 
-> This changes the bindings of gxbb and axg's clock controllers. This is
-> due to an initial 'incomplete' knowledge of these SoCs, which is why the
-> meson bindings are unstable ATM.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Joel Stanley <joel@jms.id.au>
+
+Cheers,
+
+Joel
+
 > ---
->  .../devicetree/bindings/clock/amlogic,gxbb-clkc.txt      | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> index e2b377ed6f91..e950599566a9 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> @@ -10,9 +10,6 @@ Required Properties:
->  		"amlogic,gxl-clkc" for GXL and GXM SoC,
->  		"amlogic,axg-clkc" for AXG SoC.
->  
-> -- reg: physical base address of the clock controller and length of memory
-> -       mapped region.
-> -
->  - #clock-cells: should be 1.
->  
->  Each clock is assigned an identifier and client nodes can use this identifier
-> @@ -20,13 +17,22 @@ to specify the clock which they consume. All available clocks are defined as
->  preprocessor macros in the dt-bindings/clock/gxbb-clkc.h header and can be
->  used in device tree sources.
->  
-> +Parent node should have the following properties :
-> +- compatible: "syscon", "simple-mfd, and "amlogic,meson-gx-hhi-sysctrl" or
-> +              "amlogic,meson-axg-hhi-sysctrl"
-> +- reg: base address and size of the HHI system control register space.
-> +
->  Example: Clock controller node:
->  
-> -	clkc: clock-controller@c883c000 {
-> +sysctrl: system-controller@0 {
-> +	compatible = "amlogic,meson-gx-hhi-sysctrl", "syscon", "simple-mfd";
-> +	reg = <0 0 0 0x400>;
-> +
-> +	clkc: clock-controller {
-
-With a single child, there is really no point to this change. A single 
-node can provide multiple functions. Look at nodes that are both reset 
-and clock providers.
-
-What other functions are there?
-
-Rob
-
-_______________________________________________
-linux-amlogic mailing list
-linux-amlogic@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-amlogic
+>  drivers/clk/clk-aspeed.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+> index 9f7f931..1687771 100644
+> --- a/drivers/clk/clk-aspeed.c
+> +++ b/drivers/clk/clk-aspeed.c
+> @@ -259,11 +259,12 @@ static int aspeed_clk_is_enabled(struct clk_hw *hw)
+>  {
+>         struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
+>         u32 clk = BIT(gate->clock_idx);
+> +       u32 enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
+>         u32 reg;
+>
+>         regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
+>
+> -       return (reg & clk) ? 0 : 1;
+> +       return ((reg & clk) == enval) ? 1 : 0;
+>  }
+>
+>  static const struct clk_ops aspeed_clk_gate_ops = {
+> --
+> 1.8.3.1
+>
