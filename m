@@ -1,231 +1,132 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v4 01/14] soc: qcom: Separate kryo l2 accessors from PMU driver
-Date: Fri, 30 Mar 2018 00:26:34 +0300
-Message-Id: <1522358807-10413-2-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <richard.genoud@gmail.com>
+Return-Path: <richard.genoud@gmail.com>
+Subject: Re: [PATCH] clk: mvebu: armada-38x: add support for missing clocks
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Gregory CLEMENT <gregory.clement@free-electrons.com>,
+ Ralph Sennhauser <ralph.sennhauser@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180308090300.23544-1-richard.genoud@gmail.com>
+ <87h8pq4s92.fsf@bootlin.com> <877eqm4s68.fsf@bootlin.com>
+From: Richard Genoud <richard.genoud@gmail.com>
+Message-ID: <ce834e07-5151-bb5a-b880-244e44e2ef08@gmail.com>
+Date: Tue, 13 Mar 2018 11:20:35 +0100
+MIME-Version: 1.0
+In-Reply-To: <877eqm4s68.fsf@bootlin.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver provides kernel level API for other drivers
-to access the MSM8996 L2 cache registers.
-Separating the L2 access code from the PMU driver and
-making it public to allow other drivers use it.
-The accesses must be separated with a single spinlock,
-maintained in this driver.
+On 08/03/2018 14:23, Gregory CLEMENT wrote:
+> Hi,
+>  
+>  On jeu., mars 08 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
+> 
+>> Hi Richard,
+>>  
+>>  On jeu., mars 08 2018, Richard Genoud <richard.genoud@gmail.com> wrote:
+>>
+>>> Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
+>>> or 1333MHz (industrial).
+>>>
+>>> They have also some dip-switches to select a different clock (666, 800,
+>>> 1066, 1200).
+>>
+>> The patch looks goo and it will also be usefull for any other board
+>> using these frequencies, thanks for this. I have only one small comment,
+>> see below.
+> 
+> 
+> I forgot to mention that you can add my
+> 
+> Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> 
+> Thanks,
+> 
+> Gregory
+> 
+>>
+>>
+>>>
+>>> The funny thing is that the recovery button is on the MPP34 fq selector.
+>>> So, when booting an industrial board with this button down, the frequency
+>>> 666MHz is selected (and the kernel didn't boot).
+>>>
+>>> This patch add all the missing clocks.
+>>>
+>>> The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
+>>>
+>>> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+>>> ---
+>>>  drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
+>>>  1 file changed, 7 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
+>>> index 394aa6f03f01..9ff4ea63932d 100644
+>>> --- a/drivers/clk/mvebu/armada-38x.c
+>>> +++ b/drivers/clk/mvebu/armada-38x.c
+>>> @@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
+>>>  }
+>>>  
+>>>  static const u32 armada_38x_cpu_frequencies[] __initconst = {
+>>> -	0, 0, 0, 0,
+>>> -	1066 * 1000 * 1000, 0, 0, 0,
+>>> +	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
+>>> +	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
+>>>  	1332 * 1000 * 1000, 0, 0, 0,
+>>>  	1600 * 1000 * 1000, 0, 0, 0,
+>>> -	1866 * 1000 * 1000,
+>>> +	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
+>>
+>> Maybe you could add a comment here to say that the 2GHz mode didn't have
+>> been tested.
+Well, if I add a comment there saying "2GHz mode hasn't been tested",
+I'm afraid it will stay there forever, even after being tested.
+(if it's working, nobody will look at it, and if it's not, it's in the commit message anyway).
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/perf/qcom_l2_pmu.c           | 44 +-----------------------
- drivers/soc/qcom/Makefile            |  2 ++
- drivers/soc/qcom/kryo-l2-accessors.c | 66 ++++++++++++++++++++++++++++++++++++
- include/soc/qcom/kryo-l2-accessors.h | 20 +++++++++++
- 4 files changed, 89 insertions(+), 43 deletions(-)
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+I was also thinking that this could go in -stable since it fixes a hang.
+In this case, commit 9593f4f56cf5 ("clk: mvebu: armada-38x: add support for 1866MHz variants")
+should also go with it.
 
-diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-index 842135c..2a8363e 100644
---- a/drivers/perf/qcom_l2_pmu.c
-+++ b/drivers/perf/qcom_l2_pmu.c
-@@ -31,6 +31,7 @@
- #include <asm/barrier.h>
- #include <asm/local64.h>
- #include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
- 
- #define MAX_L2_CTRS             9
- 
-@@ -87,8 +88,6 @@
- #define L2_COUNTER_RELOAD       BIT_ULL(31)
- #define L2_CYCLE_COUNTER_RELOAD BIT_ULL(63)
- 
--#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
--#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
- 
- #define reg_idx(reg, i)         (((i) * IA_L2_REG_OFFSET) + reg##_BASE)
- 
-@@ -107,48 +106,7 @@
- #define L2_EVENT_STREX                     0x421
- #define L2_EVENT_CLREX                     0x422
- 
--static DEFINE_RAW_SPINLOCK(l2_access_lock);
- 
--/**
-- * set_l2_indirect_reg: write value to an L2 register
-- * @reg: Address of L2 register.
-- * @value: Value to be written to register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static void set_l2_indirect_reg(u64 reg, u64 val)
--{
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	write_sysreg_s(val, L2CPUSRDR_EL1);
--	isb();
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--}
--
--/**
-- * get_l2_indirect_reg: read an L2 register value
-- * @reg: Address of L2 register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static u64 get_l2_indirect_reg(u64 reg)
--{
--	u64 val;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	val = read_sysreg_s(L2CPUSRDR_EL1);
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--
--	return val;
--}
- 
- struct cluster_pmu;
- 
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index dcebf28..7e50fb5 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -12,3 +12,5 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
- obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
- obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
- obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
-+obj-$(CONFIG_QCOM_APR) += apr.o
-+obj-y +=	kryo-l2-accessors.o
-diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
-new file mode 100644
-index 0000000..b0356c2
---- /dev/null
-+++ b/drivers/soc/qcom/kryo-l2-accessors.c
-@@ -0,0 +1,66 @@
-+/*
-+ * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * SPDX-License-Identifier: GPL-2.0
-+ */
-+
-+#include <linux/spinlock.h>
-+#include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
-+
-+#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
-+#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
-+
-+static DEFINE_RAW_SPINLOCK(l2_access_lock);
-+
-+/**
-+ * set_l2_indirect_reg: write value to an L2 register
-+ * @reg: Address of L2 register.
-+ * @value: Value to be written to register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+void set_l2_indirect_reg(u64 reg, u64 val)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	write_sysreg_s(val, L2CPUSRDR_EL1);
-+	isb();
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+}
-+EXPORT_SYMBOL(set_l2_indirect_reg);
-+
-+/**
-+ * get_l2_indirect_reg: read an L2 register value
-+ * @reg: Address of L2 register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+u64 get_l2_indirect_reg(u64 reg)
-+{
-+	u64 val;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	val = read_sysreg_s(L2CPUSRDR_EL1);
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+
-+	return val;
-+}
-+EXPORT_SYMBOL(get_l2_indirect_reg);
-diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
-new file mode 100644
-index 0000000..3c796cf
---- /dev/null
-+++ b/include/soc/qcom/kryo-l2-accessors.h
-@@ -0,0 +1,20 @@
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-+#define __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-+
-+void set_l2_indirect_reg(u64 reg_addr, u64 val);
-+u64 get_l2_indirect_reg(u64 reg_addr);
-+
-+#endif
--- 
-1.9.1
+
+
+Thanks !
+
+>>
+>> Thanks,
+>> Gregory
+>>
+>>
+>>>  };
+>>>  
+>>>  static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
+>>> @@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
+>>>  };
+>>>  
+>>>  static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
+>>> -	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+>>> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
+>>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>> +	{1, 2}, {0, 1}, {0, 1}, {1, 2},
+>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>> @@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
+>>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
+>>> +	{1, 2}, {0, 1}, {0, 1}, {7, 15},
+>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
+>>
+>> -- 
+>> Gregory Clement, Bootlin (formerly Free Electrons)
+>> Embedded Linux and Kernel engineering
+>> http://bootlin.com
+> 
