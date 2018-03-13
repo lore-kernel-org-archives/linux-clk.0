@@ -1,129 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.134]:57148 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751522AbeCTCNH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Mar 2018 22:13:07 -0400
-Cc: heiko@sntech.de, shawn.lin@rock-chips.com, dbasehore@chromium.org,
-        briannorris@chromium.org, linux-rockchip@lists.infradead.org,
-        dianders@chromium.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] arm64: dts: rockchip: assign clock rate for some
- cpll child clock
-To: Lin Huang <hl@rock-chips.com>
-References: <1521511589-17844-1-git-send-email-hl@rock-chips.com>
- <1521511589-17844-2-git-send-email-hl@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <13843114-3db5-b98c-a71d-c61911a8a42c@rock-chips.com>
-Date: Tue, 20 Mar 2018 10:12:59 +0800
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 13 Mar 2018 11:51:17 +0200
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
+	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
+ Tegra210
+Message-ID: <20180313095117.GX6190@tbergstrom-lnx.Nvidia.com>
+References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
+ <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
+ <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1521511589-17844-2-git-send-email-hl@rock-chips.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018/3/20 10:06, Lin Huang wrote:
-> These clocks do not assign default clock frequency, and use the
-> default cru register value to get frequency, so if cpll increase
-> frequency, these clocks also increase their frequency, that may
-> exceed their signed off frequency. So assign default clock for
-> them to avoid it.
+On Mon, Mar 12, 2018 at 12:15:22PM +0000, Jon Hunter wrote:
 > 
-> NOTE: on none of the boards currently in mainline do we expect
-> CPLL to be anything other than 800 MHz, but some future boards
-> might have it. It's still good to be explicit about the clock
-> rates to make diffing against future boards easier and also to
-> rely less on BIOS muxing.
+> On 06/02/18 16:34, Peter De Schrijver wrote:
+> > Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
+> > support in this driver. Also allow for the case where the CPU voltage is
+> > controlled directly by the DFLL rather than by a separate regulator object.
+> > 
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> > index 4353025..f8e01a8 100644
+> > --- a/drivers/cpufreq/tegra124-cpufreq.c
+> > +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> > @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+> >  {
+> >  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> >  	clk_disable_unprepare(priv->dfll_clk);
+> > -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> > +	if (priv->vdd_cpu_reg)
+> > +		regulator_sync_voltage(priv->vdd_cpu_reg);
+> >  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+> >  }
 > 
-> Change-Id: If79368aeda5c51dbf2a3b6659f17052a2ae4a401
+> OK, so this bit does not make sense to me. In the above we are switching
+> from the DFLL to the PLL (ie. disabling the DFLL) and so to ensure we
+> are operating at the correct voltage after disabling the DFLL we need to
+> sync the voltage. Seems we would need to do this for all devices, no?
+> How is the different between Tegra124 and Tegra210?
 
-Should remove Change-Id for future patch(es), thought Heiko may help
-do it when applied.
+Yes. So in case of i2c the regulator framework will reapply the voltage it
+knows which in our case is the boot voltage for VDD_CPU because noone else
+from a regulator framework pov has ever changed the voltage. In case of PWM
+putting the PWM output pad in tri state will cause the OVR regulator to output
+a hardware defined voltage. This is done as part of the dfll_clk_disable()
+function. To summarize:
 
-Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+switch from pll_x to DFLL for i2c regulator:
 
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> Changes in v2:
-> - None
-> Changes in v3:
-> - Update commit message
-> 
->   arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi |  8 +++++++-
->   arch/arm64/boot/dts/rockchip/rk3399.dtsi     | 14 ++++++++++++--
->   2 files changed, 19 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-> index 18f546f..84e367b 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-> @@ -588,7 +588,10 @@
->   		<&cru ACLK_PERILP0>, <&cru HCLK_PERILP0>,
->   		<&cru PCLK_PERILP0>, <&cru ACLK_CCI>,
->   		<&cru HCLK_PERILP1>, <&cru PCLK_PERILP1>,
-> -		<&cru ACLK_VIO>;
-> +		<&cru ACLK_VIO>,
-> +		<&cru ACLK_GIC_PRE>,
-> +		<&cru PCLK_DDR>,
-> +		<&cru ACLK_HDCP>;
->   	assigned-clock-rates =
->   		<600000000>, <800000000>,
->   		<1000000000>,
-> @@ -597,6 +600,9 @@
->   		<100000000>, <100000000>,
->   		<50000000>, <800000000>,
->   		<100000000>, <50000000>,
-> +		<400000000>,
-> +		<200000000>,
-> +		<200000000>,
->   		<400000000>;
->   };
->   
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> index 4550c0f..b358533 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> @@ -315,6 +315,8 @@
->   		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
->   			 <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
->   		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> +		assigned-clocks = <&cru HCLK_SD>;
-> +		assigned-clock-rates = <200000000>;
->   		fifo-depth = <0x100>;
->   		power-domains = <&power RK3399_PD_SD>;
->   		resets = <&cru SRST_SDMMC>;
-> @@ -466,8 +468,10 @@
->   		clocks = <&cru SCLK_DP_CORE>, <&cru PCLK_DP_CTRL>,
->   			 <&cru SCLK_SPDIF_REC_DPTX>, <&cru PCLK_VIO_GRF>;
->   		clock-names = "core-clk", "pclk", "spdif", "grf";
-> -		phys = <&tcphy0_dp>, <&tcphy1_dp>;
-> +		assigned-clocks = <&cru SCLK_DP_CORE>, <&cru SCLK_SPDIF_REC_DPTX>;
-> +		assigned-clock-rates = <100000000>, <200000000>;
->   		power-domains = <&power RK3399_PD_HDCP>;
-> +		phys = <&tcphy0_dp>, <&tcphy1_dp>;
->   		resets = <&cru SRST_DPTX_SPDIF_REC>, <&cru SRST_P_UPHY0_DPTX>,
->   			 <&cru SRST_P_UPHY0_APB>, <&cru SRST_DP_CORE>;
->   		reset-names = "spdif", "dptx", "apb", "core";
-> @@ -1323,7 +1327,10 @@
->   			<&cru ACLK_PERILP0>, <&cru HCLK_PERILP0>,
->   			<&cru PCLK_PERILP0>, <&cru ACLK_CCI>,
->   			<&cru HCLK_PERILP1>, <&cru PCLK_PERILP1>,
-> -			<&cru ACLK_VIO>;
-> +			<&cru ACLK_VIO>,
-> +			<&cru ACLK_GIC_PRE>,
-> +			<&cru PCLK_DDR>,
-> +			<&cru ACLK_HDCP>;
->   		assigned-clock-rates =
->   			 <594000000>,  <800000000>,
->   			<1000000000>,
-> @@ -1332,6 +1339,9 @@
->   			 <100000000>,  <100000000>,
->   			  <50000000>, <600000000>,
->   			 <100000000>,   <50000000>,
-> +			 <400000000>,
-> +			 <200000000>,
-> +			 <200000000>,
->   			 <400000000>;
->   	};
->   
-> 
+entry: voltage is boot voltage set bootloader
+1) set dfll rate to pll_x rate
+2) set parent to pll_p so we run at 408MHz which is below Fmax@Vmin when
+   running from PLL
+3) enable DFLL this will switch to closed loop mode and start controlling
+   the voltage via i2c, however because we are below Fmax@Vmin there's no
+   V/f curve violation.
+4) change parent from pll_x to DFLL
 
+switch from DFLL to pll_x for i2c regulator:
+
+entry: voltage is whatever the DFLL has programmed but not lower than Vmin
+1) set parent to pll_p so we run at 408MHz (below Fmax@Vmin)
+2) disable DFLL, this will cause the voltage to be the last value programmed
+   by the DFLL.
+3) go back to the voltage as programmed by the boot loader using
+   regulator_sync_voltage().
+4) change parent from DFLL to pll_x. Because pll_x is still programmed at
+   the bootloader frequency, we're within the V/f curve.
+
+switch from pll_x to DFLL for PWM regulator:
+
+entry: voltage is boot voltage set by hardware because PWM pin is in tristate
+1) set dfll rate to pll_x rate
+2) set parent to pll_p so we run at 408MHz which is below Fmax@Vmin when
+   running from PLL
+3) enable DFLL this will set the PWM pad to output, switch to closed loop mode
+   and start controlling the voltage via PWM, however because we are below
+   Fmax@Vmin there's no V/f curve violation.
+4) change parent from pll_x to DFLL
+
+switch from DFLL to pll_x for PWM regulator:
+
+entry: voltage is whatever the DFLL has programmed but not lower than Vmin
+1) set parent to pll_p so we run at 408MHz (below Fmax@Vmin)
+2) disable DFLL, this will cause the PWM pad to be programmed to tristate
+   and the voltage to change back to the hardware defined voltage.
+3) change parent from DFLL to pll_x. Because pll_x is still programmed at
+   the bootloader frequency, we're within the V/f curve.
+
+Peter.
