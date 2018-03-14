@@ -1,47 +1,59 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [GIT PULL] TI clock changes for 4.17
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: linux-clk <linux-clk@vger.kernel.org>,
-        "linux-omap@vger.kernel.org"
-	<linux-omap@vger.kernel.org>,
-        "tony@atomide.com" <tony@atomide.com>,
-        Santosh
- Shilimkar <ssantosh@kernel.org>
-References: <06cc5fe8-cecd-2b6c-415d-74f533c75be0@ti.com>
- <152106412431.179530.18028994453678074314@swboyd.mtv.corp.google.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <28179265-c129-7797-84b5-9bca7f2d411d@ti.com>
-Date: Thu, 15 Mar 2018 08:49:59 +0200
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <152106412431.179530.18028994453678074314@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1519985872-3809-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1519985872-3809-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <152106382662.179530.17640698731932597086@swboyd.mtv.corp.google.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.17
+Date: Wed, 14 Mar 2018 14:43:46 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14/03/18 23:48, Stephen Boyd wrote:
-> Quoting Tero Kristo (2018-03-08 02:13:38)
->> Hi Stephen, Michael,
->>
->> These patches are targeted for 4.17 merge window. I grouped both
->> omap+keystone clock changes into single pull request.
->>
-> 
-> Thanks. Pulled into clk-next. BTW, I see that some of the 'basic' clk
-> type code in TI driver isn't used anymore. Is there a plan to delete
-> that code in the future? For example, drivers/clk/ti/divider.c has
-> ti_clk_build_component_div() that nobody uses.
+Quoting Geert Uytterhoeven (2018-03-02 02:17:52)
+>         Hi Mike, Stephen,
+> =
 
-I've kept that legacy code around for now, as I've been contemplating if 
-we should move over to have the clock data within the driver instead of 
-having pure DT clocks. Any thoughts on that?
+> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1=
+b2:
+> =
 
-I can send patches once the next merge is over to remove all unused code 
-though, we can find the removed code from history if it is ever needed 
-for something.
+>   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+> =
 
--Tero
+> are available in the git repository at:
+> =
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v4.17-tag1
+> =
+
+> for you to fetch changes up to 7ce36da900c0a2ff4777d9ba51c4f1cb74205463:
+> =
+
+>   clk: renesas: cpg-mssr: Add support for R-Car M3-N (2018-02-26 09:13:29=
+ +0100)
+> =
+
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.17
+> =
+
+>   - Update legacy DT Kconfig default,
+>   - Add support for CPU (Z/Z2) clocks on R-Car H3 and M3-W,
+>   - Add support for the watchdog module clocks on R-Car Gen2 and RZ/G1,
+>   - Add support for the new R-Car M3-N and V3H SoCs.
+> =
+
+> Thanks for pulling!
+> =
+
+
+Thanks. Pulled into clk-next.
+
+Did you need to use clk_readl() or was it just copy-paste? I hope we can
+get rid of that function at some point.
