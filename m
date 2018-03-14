@@ -1,60 +1,41 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180320090400.6bgugy6fgze3ohsd@linaro.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, daniel.thompson@linaro.org,
- manivannanece23@gmail.com, bdong@ucrobotics.com, viresh.kumar@linaro.org,
- mturquette@baylibre.com, 96boards@ucrobotics.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, davem@davemloft.net,
- hzhang@ucrobotics.com, robh+dt@kernel.org, mp-cs@actions-semi.com,
- liuwei@actions-semi.com, mchehab@kernel.org, afaerber@suse.de,
+In-Reply-To: <ab5ad9c2-2016-47ca-b748-833ff6e75f70@codeaurora.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, robh@kernel.org,
+ linux-pm@vger.kernel.org, rjw@rjwysocki.net, mturquette@baylibre.com,
+ sboyd@codeaurora.org, linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
+ david.brown@linaro.org, robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ andy.gross@linaro.org, linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
-References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
- <20180317100952.28538-10-manivannan.sadhasivam@linaro.org>
- <152150820384.254778.6585368643028088392@swboyd.mtv.corp.google.com>
- <20180320090400.6bgugy6fgze3ohsd@linaro.org>
-Message-ID: <152156612855.183971.17769572831805053841@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 09/12] clk: actions: Add fixed factor clock support
-Date: Tue, 20 Mar 2018 10:15:28 -0700
+References: <1519638811-17269-1-git-send-email-sricharan@codeaurora.org>
+ <1519638811-17269-15-git-send-email-sricharan@codeaurora.org>
+ <20180226100425.GO26947@vireshk-i7>
+ <ab5ad9c2-2016-47ca-b748-833ff6e75f70@codeaurora.org>
+Message-ID: <152104594491.179530.16525167791258003396@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v7 14/15] cpufreq: Add module to register cpufreq on Krait CPUs
+Date: Wed, 14 Mar 2018 09:45:44 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Manivannan Sadhasivam (2018-03-20 02:04:00)
-> On Mon, Mar 19, 2018 at 06:10:03PM -0700, Stephen Boyd wrote:
-> > > +        * nop.
-> > > +        */
-> > > +
-> > > +       return 0;
-> > > +}
-> > > +
-> > > +const struct clk_ops owl_fix_fact_ops =3D {
-> > > +       .round_rate     =3D owl_fix_fact_round_rate,
-> > > +       .recalc_rate    =3D owl_fix_fact_recalc_rate,
-> > > +       .set_rate       =3D owl_fix_fact_set_rate,
-> > > +};
+Quoting Sricharan R (2018-02-26 02:15:59)
+> Hi Viresh,
+> =
+
+> On 2/26/2018 3:34 PM, Viresh Kumar wrote:
+> > On 26-02-18, 15:23, Sricharan R wrote:
+> >> From: Stephen Boyd <sboyd@codeaurora.org>
 > > =
 
-> > Why can't you use the regular fixed factor clk code and ops?
-> >
+> > Is this email id still valid ?
+> > =
+
 > =
 
-> That's going to be really messy. Since I'm having the clk_hw embedded ins=
-ide
-> owl_clk_common and using it for registering all the clocks, using generic
-> fixed factor functions will be a different approach _only_ for this clock=
- and
-> it won't look good I guess. Also, it may become complicated with composite
-> clocks.
-> =
-
-> If you still want to use the generic fixed factor code, I can do that in
-> next revision.
+>  Yes. codeaurora id should exist.
 > =
 
 
-The qcom clk driver has support for the 'regmap' clk_hws and the
-non-regmap based clk_hws. I suggest having a list of clk_hw pointers
-that you register in a loop and then have other lists that you use to
-register wrapper structs, etc. Otherwise we're left with a bunch of code
-that's copy/pasted around.
+Yes it exists and I am checking it.
