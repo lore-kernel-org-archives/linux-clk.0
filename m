@@ -1,436 +1,126 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v4 08/14] dt: qcom: Add opp and thermal to the msm8996
-Date: Fri, 30 Mar 2018 00:26:41 +0300
-Message-Id: <1522358807-10413-9-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44793 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750902AbeCNCwq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Mar 2018 22:52:46 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 9-v6so964813ple.11
+        for <linux-clk@vger.kernel.org>; Tue, 13 Mar 2018 19:52:46 -0700 (PDT)
+Date: Tue, 13 Mar 2018 19:52:44 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Jeremy McNicoll <jeremymc@redhat.com>
+Cc: sboyd@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
+        andy.gross@linaro.org, robh@kernel.org, arnd@arndb.de,
+        riteshh@codeaurora.org, git@kchr.de, ulf.hansson@linaro.org,
+        jszhang@marvell.com
+Subject: Re: [PATCH V4 4/6] arm64: dts: smem enablement for msm8992
+Message-ID: <20180314025244.GD11034@tuxbook-pro>
+References: <20170127195831.GH8801@codeaurora.org>
+ <1485755073-6416-1-git-send-email-jeremymc@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1485755073-6416-1-git-send-email-jeremymc@redhat.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 275 +++++++++++++++++++++++++++++++++-
- 1 file changed, 267 insertions(+), 8 deletions(-)
+On Sun 29 Jan 21:44 PST 2017, Jeremy McNicoll wrote:
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 410ae78..a0792bd 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -14,6 +14,7 @@
- #include <dt-bindings/clock/qcom,gcc-msm8996.h>
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
-+#include <dt-bindings/thermal/thermal.h>
- 
- / {
- 	model = "Qualcomm Technologies, Inc. MSM8996";
-@@ -97,6 +98,11 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 			      compatible = "cache";
-@@ -109,6 +115,11 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 		};
- 
-@@ -117,6 +128,11 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 			L2_1: l2-cache {
- 			      compatible = "cache";
-@@ -129,6 +145,11 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x101>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 		};
- 
-@@ -155,6 +176,182 @@
- 		};
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <  307200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-422400000 {
-+			opp-hz = /bits/ 64 <  422400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <  480000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <  556800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <  652800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <  729600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-844800000 {
-+			opp-hz = /bits/ 64 <  844800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-960000000 {
-+			opp-hz = /bits/ 64 <  960000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 < 1036800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 < 1113600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 < 1190400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1228800000 {
-+			opp-hz = /bits/ 64 < 1228800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 < 1324800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 < 1401600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 < 1478400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1593600000 {
-+			opp-hz = /bits/ 64 < 1593600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <  307200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-403200000 {
-+			opp-hz = /bits/ 64 <  403200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <  480000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <  556800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <  652800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <  729600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-806400000 {
-+			opp-hz = /bits/ 64 <  806400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-883200000 {
-+			opp-hz = /bits/ 64 <  883200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-940800000 {
-+			opp-hz = /bits/ 64 <  940800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 < 1036800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 < 1113600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 < 1190400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1248000000 {
-+			opp-hz = /bits/ 64 < 1248000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 < 1324800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 < 1401600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 < 1478400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1555200000 {
-+			opp-hz = /bits/ 64 < 1555200000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1632000000 {
-+			opp-hz = /bits/ 64 < 1632000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1708800000 {
-+			opp-hz = /bits/ 64 < 1708800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1785600000 {
-+			opp-hz = /bits/ 64 < 1785600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1824000000 {
-+			opp-hz = /bits/ 64 < 1824000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1920000000 {
-+			opp-hz = /bits/ 64 < 1920000000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1996800000 {
-+			opp-hz = /bits/ 64 < 1996800000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2073600000 {
-+			opp-hz = /bits/ 64 < 2073600000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2150400000 {
-+			opp-hz = /bits/ 64 < 2150400000 >;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
-+
- 	thermal-zones {
- 		cpu-thermal0 {
- 			polling-delay-passive = <250>;
-@@ -163,18 +360,34 @@
- 			thermal-sensors = <&tsens0 3>;
- 
- 			trips {
--				cpu_alert0: trip0 {
-+				cpu_alert0: cpu_alert0 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn0: cpu_warn0 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu_crit0: trip1 {
-+				cpu_crit0: cpu_crit0 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn0>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal1 {
-@@ -184,18 +397,34 @@
- 			thermal-sensors = <&tsens0 5>;
- 
- 			trips {
--				cpu_alert1: trip0 {
-+				cpu_alert1: cpu_alert1 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn1: cpu_warn1 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu_crit1: trip1 {
-+				cpu_crit1: cpu_crit1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert1>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn1>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal2 {
-@@ -205,18 +434,33 @@
- 			thermal-sensors = <&tsens0 8>;
- 
- 			trips {
--				cpu_alert2: trip0 {
-+				cpu_alert2: cpu_alert2 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn2: cpu_warn2 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu_crit2: trip1 {
-+				cpu_crit2: cpu_crit2 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert2>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn2>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal3 {
-@@ -226,9 +470,14 @@
- 			thermal-sensors = <&tsens0 10>;
- 
- 			trips {
--				cpu_alert3: trip0 {
-+				cpu_alert3: cpu_alert3 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn3: cpu_warn3 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
-@@ -238,6 +487,16 @@
- 					type = "critical";
- 				};
- 			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert3>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn3>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 	};
- 
-@@ -414,7 +673,7 @@
- 		};
- 
- 		kryocc: clock-controller@6400000 {
--			compatible = "qcom,apcc-msm8996";
-+			compatible = "qcom,msm8996-apcc";
- 			reg = <0x6400000 0x90000>;
- 			#clock-cells = <1>;
- 		};
--- 
-1.9.1
+> SMEM allows various subsystems/processors to share
+> memory/data (heap format) in order to enable various
+> peripherals.
+> 
+
+Fyi, the sfpb_mutex is actually called tcsr_mutex, but downstream kept
+the old name...
+
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
+> ---
+> 
+>  [ Moved sfpb_mutex and smem outside sock as they didn't have
+>   'reg' entries.  Everything else is exactly the same. ]
+> 
+>  arch/arm64/boot/dts/qcom/msm8992.dtsi | 42 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+> index 13fb6f7..1715787 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+> @@ -79,6 +79,19 @@
+>  		regulator-always-on;
+>  	};
+>  
+> +	sfpb_mutex: hwmutex {
+> +		compatible = "qcom,sfpb-mutex";
+> +		syscon = <&sfpb_mutex_regs 0x0 0x100>;
+> +		#hwlock-cells = <1>;
+> +	};
+> +
+> +	smem {
+> +		compatible = "qcom,smem";
+> +		memory-region = <&smem_region>;
+> +		qcom,rpm-msg-ram = <&rpm_msg_ram>;
+> +		hwlocks = <&sfpb_mutex 3>;
+> +	};
+> +
+>  	soc {
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+> @@ -93,6 +106,11 @@
+>  				<0xf9002000 0x1000>;
+>  		};
+>  
+> +		apcs: syscon@f900d000 {
+> +			compatible = "syscon";
+> +			reg = <0xf900d000 0x2000>;
+> +		};
+> +
+>  		timer@f9020000 {
+>  			#address-cells = <1>;
+>  			#size-cells = <1>;
+> @@ -183,12 +201,36 @@
+>  			#power-domain-cells = <1>;
+>  			reg = <0xfc400000 0x2000>;
+>  		};
+> +
+> +		rpm_msg_ram: memory@fc428000 {
+> +			compatible = "qcom,rpm-msg-ram";
+> +			reg = <0xfc428000 0x4000>;
+> +		};
+> +
+> +		sfpb_mutex_regs: syscon@fd484000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			compatible = "syscon";
+> +			reg = <0xfd484000 0x400>;
+> +		};
+>  	};
+>  
+>  	memory {
+>  		device_type = "memory";
+>  		reg = <0 0 0 0>; // bootloader will update
+>  	};
+> +
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		smem_region: smem@6a00000 {
+> +			reg = <0x0 0x6a00000 0x0 0x200000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+>  };
+>  
+>  
+> -- 
+> 2.6.1
+> 
