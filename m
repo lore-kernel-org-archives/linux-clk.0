@@ -1,29 +1,36 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>, Shawn Guo <shawnguo@kernel.org>,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180312082644.GA26859@dragon>
-Cc: Jiancheng Xue <xuejiancheng@hisilicon.com>, linux-clk@vger.kernel.org
-References: <20180312082644.GA26859@dragon>
-Message-ID: <152106341167.179530.4712744286063403232@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL v2] Hi3798cv200 clock driver update for 4.17
-Date: Wed, 14 Mar 2018 14:36:51 -0700
+Return-Path: <s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>
+Subject: [PATCH] clk: samsung: Add fout=196608001 Hz EPLL rate entry for
+ exynos4412
+Date: Wed, 14 Mar 2018 12:32:26 +0100
+Message-id: <20180314113226.1807-1-s.nawrocki@samsung.com>
+References: <CGME20180314113237epcas2p15a4a9304f6b69e9bca7556d910d3b861@epcas2p1.samsung.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Shawn Guo (2018-03-12 01:26:45)
-> Hi Stephen, Mike,
-> =
+This additional frequency is required for HDMI audio support
+on Odroid U3 board.
 
-> This is v2 of Hi3798cv200 clock driver pull request [1].  It includes
-> the eMMC phase clock support patches [2] on top of v1.  I believe they
-> are ready to go.  Please consider to pull it for 4.17.  Thanks.
-> =
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Shawn
-> =
-
-
-Thanks. Pulled into clk-next with a fixup on top to mark the phase ops
-static.
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index edf125525a36..0421960eb963 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1319,6 +1319,7 @@ static const struct samsung_pll_rate_table exynos4x12_apll_rates[] __initconst =
+ };
+ 
+ static const struct samsung_pll_rate_table exynos4x12_epll_rates[] __initconst = {
++	PLL_36XX_RATE(24 * MHZ, 196608001, 197, 3, 3, -25690),
+ 	PLL_36XX_RATE(24 * MHZ, 192000000, 48, 3, 1,     0),
+ 	PLL_36XX_RATE(24 * MHZ, 180633605, 45, 3, 1, 10381),
+ 	PLL_36XX_RATE(24 * MHZ, 180000000, 45, 3, 1,     0),
+-- 
+2.14.2
