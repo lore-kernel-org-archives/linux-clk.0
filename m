@@ -1,54 +1,39 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, kbuild-all@01.org,
- mturquette@baylibre.com, sboyd@codeaurora.org, michal.simek@xilinx.com,
- robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org,
- rajanv@xilinx.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Jolly Shah <jollys@xilinx.com>, Tejas Patel <tejasp@xilinx.com>,
- Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: Re: [PATCH 3/3] drivers: clk: Add ZynqMP clock driver
-To: Jolly Shah <jolly.shah@xilinx.com>
-References: <1519856861-31384-4-git-send-email-jollys@xilinx.com>
- <201803031109.JhmyjZJJ%fengguang.wu@intel.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <eddd8944-77c4-1813-4bd0-b7aa1cb70574@arm.com>
-Date: Mon, 5 Mar 2018 10:37:28 +0000
+Return-Path: <eajames@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 0/2] clk: aspeed: Fix is_enabled and prevent reset if
+ clock enabled
+To: Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org, joel@jms.id.au, mturquette@baylibre.com,
+        mine260309@gmail.com, ryan_chen@aspeedtech.com
+References: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <152064250369.205167.5918389143946901453@swboyd.mtv.corp.google.com>
+From: Eddie James <eajames@linux.vnet.ibm.com>
+Date: Wed, 14 Mar 2018 14:11:42 -0500
 MIME-Version: 1.0
-In-Reply-To: <201803031109.JhmyjZJJ%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <152064250369.205167.5918389143946901453@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <b137a12a-82d9-2e5d-8408-f743162d1628@linux.vnet.ibm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
 
-On 03/03/18 03:32, kbuild test robot wrote:
-> Hi Jolly,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on clk/clk-next]
-> [also build test ERROR on v4.16-rc3 next-20180302]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Jolly-Shah/drivers-clk-Add-ZynqMp-clock-driver-support/20180303-063643
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: arm64-allmodconfig (attached as .config)
-> compiler: aarch64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm64 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from drivers/clk/zynqmp/pll.c:9:0:
->>> include/linux/clk/zynqmp.h:10:10: fatal error: linux/firmware/xilinx/zynqmp/firmware.h: No such file or directory
->     #include <linux/firmware/xilinx/zynqmp/firmware.h>
->              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On 03/09/2018 06:41 PM, Stephen Boyd wrote:
+> Quoting Eddie James (2018-03-08 12:57:18)
+>> Here are two fixes for the Aspeed clock driver. The first fixes the is_enabled
+>> clock function to account for different clock gates getting disabled with
+>> either 0s or 1s. The second patch addresses some issue found with the LPC
+>> controller clock if it gets reset while the clock is enabled, which it is by
+>> default. Thanks to Lei Yu for tracking down the LPC issue.
+>>
+> Can you please add some "Fixes:" tags to these patches? Or just indicate
+> the tags and I can pick them up. If it doesn't happen, I'll just apply
+> these early next week.
 
-Another reason to have the complete series together, for better review
-and better build coverage.
+Sure, sorry for the late response...
 
--- 
-Regards,
-Sudeep
+Patch 1 fixes 6671507f0fbd582b4003f837ab791d03ade8e0f4
+Patch 2 fixes 15ed8ce5f84e2b3718690915dbee12ebd497dc0f
+
+Thanks!
+Eddie
+
+>
