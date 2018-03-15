@@ -1,77 +1,131 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v2 0/4] Misc patches to support clocks for SDM845
-Date: Thu,  8 Mar 2018 12:48:11 +0530
-Message-Id: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <prvs=0612a99263=mike.looijmans@topicproducts.com>
+Subject: Re: [PATCH] clk: Add driver for the si544 clock generator chip
+To: Dan Carpenter <dan.carpenter@oracle.com>, <kbuild@01.org>
+CC: <kbuild-all@01.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>
+References: <20180315103517.qkdqagrasoogp3yj@mwanda>
+From: Mike Looijmans <mike.looijmans@topic.nl>
+Message-ID: <846a65b6-0a4e-7f64-d421-840573917630@topic.nl>
+Date: Thu, 15 Mar 2018 12:05:06 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180315103517.qkdqagrasoogp3yj@mwanda>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes in v2:
-Fixup for recalc_rate ops for clk_rcg2_shared_ops:
-There could be few scenarios where shared clocks are configured
-at rate other than CXO by boot. In those cases there would be a
-mismatch between the rate calculated by the recalc shared ops
-and the actual HW register configuration. Fix the same by adding
-an additional check to read current src from CFG register and
-make a decision based on that.
+=EF=BB=BFOn 15-03-18 11:35, Dan Carpenter wrote:
+> Hi Mike,
+>=20
+> Thank you for the patch! Perhaps something to improve:
+>=20
+> [auto build test WARNING on v4.16-rc4]
+> [also build test WARNING on next-20180314]
+> [if your patch is applied to the wrong git tree, please drop us a note to=
+ help improve the system]
+>=20
+> url:    https://github.com/0day-ci/linux/commits/Mike-Looijmans/clk-Add-d=
+river-for-the-si544-clock-generator-chip/20180314-122736
+>=20
+> smatch warnings:
+> drivers/clk/clk-si544.c:188 si544_calc_muldiv() warn: impossible conditio=
+n '((frequency * tmp) >=3D 10800000000) =3D> (0-u32max >=3D 10800000000)'
 
-Changes in v1:
-https://lkml.org/lkml/2018/1/31/209
+Indeed, there's a u64 cast missing.
 
-This patch series does the miscellaneous changes to support
-clock nodes for SDM845. Below are the major changes for
-which the existing code does not have support.
+I've also missed that the hs_div cannot be odd when ls_div is non-zero.
 
-1. Clear hardware clock control bit of RCGs where HW clock
-   control bit is set by default so that software can control
-   those root clocks.
-2. Introduces clk_rcg2_shared_ops to support clock controller
-   drivers for SDM845. With new shared ops, RCGs with shared
-   branches will be configured to a safe source in disable
-   path and actual RCG update configuration will be done in
-   enable path instead of doing config update in set_rate.
-   In set_rate(), just cache the rate instead of doing actual
-   configuration update. Also each RCG in clock controller
-   driver will have their own safe configuration frequency
-   table to switch to safe frequency.
-3. Add support for controlling Fabia PLL for which the support
-   is not available in existing alpha PLL code.
-4. Add Global Clock controller (GCC) driver for SDM845. This
-   should allow most non-multimedia device drivers to probe
-   and control their clocks.
+I'll compose a v2 patch fixing these issues.
 
-Amit Nischal (3):
-  clk: qcom: Clear hardware clock control bit of RCG
-  clk: qcom: Configure the RCGs to a safe source as needed
-  clk: qcom: Add support for controlling Fabia PLL
+> # https://github.com/0day-ci/linux/commit/aba3d3de8751c1457bcf0b75bcc901f=
+289a18426
+> git remote add linux-review https://github.com/0day-ci/linux
+> git remote update linux-review
+> git checkout aba3d3de8751c1457bcf0b75bcc901f289a18426
+> vim +188 drivers/clk/clk-si544.c
+>=20
+> aba3d3de Mike Looijmans 2018-03-13  168
+> aba3d3de Mike Looijmans 2018-03-13  169  /* Calculate divider settings fo=
+r a given frequency */
+> aba3d3de Mike Looijmans 2018-03-13  170  static int si544_calc_muldiv(str=
+uct clk_si544_muldiv *settings,
+> aba3d3de Mike Looijmans 2018-03-13  171  	unsigned long frequency)
+> aba3d3de Mike Looijmans 2018-03-13  172  {
+> aba3d3de Mike Looijmans 2018-03-13  173  	u64 vco;
+> aba3d3de Mike Looijmans 2018-03-13  174  	u32 ls_freq;
+> aba3d3de Mike Looijmans 2018-03-13  175  	u32 tmp;
+> aba3d3de Mike Looijmans 2018-03-13  176  	u8 res;
+> aba3d3de Mike Looijmans 2018-03-13  177
+> aba3d3de Mike Looijmans 2018-03-13  178  	/* Determine the minimum value =
+of LS_DIV and resulting target freq. */
+> aba3d3de Mike Looijmans 2018-03-13  179  	ls_freq =3D frequency;
+> aba3d3de Mike Looijmans 2018-03-13  180  	settings->ls_div_bits =3D 0;
+> aba3d3de Mike Looijmans 2018-03-13  181
+> aba3d3de Mike Looijmans 2018-03-13  182  	if (frequency >=3D (FVCO_MIN / =
+HS_DIV_MAX))
+> aba3d3de Mike Looijmans 2018-03-13  183  		settings->ls_div_bits =3D 0;
+> aba3d3de Mike Looijmans 2018-03-13  184  	else {
+> aba3d3de Mike Looijmans 2018-03-13  185  		res =3D 1;
+> aba3d3de Mike Looijmans 2018-03-13  186  		tmp =3D 2 * HS_DIV_MAX;
+> aba3d3de Mike Looijmans 2018-03-13  187  		while (tmp <=3D (HS_DIV_MAX * =
+32)) {
+> aba3d3de Mike Looijmans 2018-03-13 @188  			if ((frequency * tmp) >=3D FV=
+CO_MIN)
+> aba3d3de Mike Looijmans 2018-03-13  189  				break;
+> aba3d3de Mike Looijmans 2018-03-13  190  			++res;
+> aba3d3de Mike Looijmans 2018-03-13  191  			tmp <<=3D 1;
+> aba3d3de Mike Looijmans 2018-03-13  192  		}
+> aba3d3de Mike Looijmans 2018-03-13  193  		settings->ls_div_bits =3D res;
+> aba3d3de Mike Looijmans 2018-03-13  194  		ls_freq =3D frequency << res;
+> aba3d3de Mike Looijmans 2018-03-13  195  	}
+> aba3d3de Mike Looijmans 2018-03-13  196
+> aba3d3de Mike Looijmans 2018-03-13  197  	/* Determine minimum HS_DIV by =
+rounding up */
+> aba3d3de Mike Looijmans 2018-03-13  198  	vco =3D FVCO_MIN + ls_freq - 1;
+> aba3d3de Mike Looijmans 2018-03-13  199  	do_div(vco, ls_freq);
+> aba3d3de Mike Looijmans 2018-03-13  200  	settings->hs_div =3D vco;
+> aba3d3de Mike Looijmans 2018-03-13  201  	/* round up to even number if n=
+eeded */
+> aba3d3de Mike Looijmans 2018-03-13  202  	if ((settings->hs_div > HS_DIV_=
+MAX_ODD) && (settings->hs_div & 1))
+> aba3d3de Mike Looijmans 2018-03-13  203  		++settings->hs_div;
+> aba3d3de Mike Looijmans 2018-03-13  204  	/* Calculate VCO frequency (in =
+10..12GHz range) */
+> aba3d3de Mike Looijmans 2018-03-13  205  	vco =3D (u64)ls_freq * settings=
+->hs_div;
+> aba3d3de Mike Looijmans 2018-03-13  206  	/* Calculate the integer part o=
+f the feedback divider */
+> aba3d3de Mike Looijmans 2018-03-13  207  	tmp =3D do_div(vco, FXO);
+> aba3d3de Mike Looijmans 2018-03-13  208  	settings->fb_div_int =3D vco;
+> aba3d3de Mike Looijmans 2018-03-13  209  	/* And the fractional bits usin=
+g the remainder */
+> aba3d3de Mike Looijmans 2018-03-13  210  	vco =3D (u64)tmp << 32;
+> aba3d3de Mike Looijmans 2018-03-13  211  	do_div(vco, FXO);
+> aba3d3de Mike Looijmans 2018-03-13  212  	settings->fb_div_frac =3D vco;
+> aba3d3de Mike Looijmans 2018-03-13  213
+> aba3d3de Mike Looijmans 2018-03-13  214  	return 0;
+> aba3d3de Mike Looijmans 2018-03-13  215  }
+> aba3d3de Mike Looijmans 2018-03-13  216
+>=20
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Ce=
+nter
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corpora=
+tion
+>=20
 
-Taniya Das (1):
-  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
 
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- drivers/clk/qcom/Kconfig                           |   11 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/clk-alpha-pll.c                   |  324 +-
- drivers/clk/qcom/clk-alpha-pll.h                   |   18 +-
- drivers/clk/qcom/clk-rcg.h                         |    8 +-
- drivers/clk/qcom/clk-rcg2.c                        |  160 +-
- drivers/clk/qcom/gcc-sdm845.c                      | 3619 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h        |  242 ++
- 9 files changed, 4373 insertions(+), 11 deletions(-)
- create mode 100644 drivers/clk/qcom/gcc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
 
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Kind regards,
+
+Mike Looijmans
+System Expert
+
+TOPIC Products
+Materiaalweg 4, NL-5681 RJ Best
+Postbus 440, NL-5680 AK Best
+Telefoon: +31 (0) 499 33 69 79
+E-mail: mike.looijmans@topicproducts.com
+Website: www.topicproducts.com
+
+Please consider the environment before printing this e-mail
