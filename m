@@ -1,161 +1,66 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 01/42] dt-bindings: clock: Add new bindings for TI Davinci PLL clocks
-Date: Thu, 15 Mar 2018 21:52:17 -0500
-Message-Id: <1521168778-27236-2-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Rajan Vaja <RAJANV@xilinx.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Jolly Shah <JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>
+References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
+ <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
+ <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
+Message-ID: <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro CLK_OF_DECLARE_DRIVER
+Date: Thu, 15 Mar 2018 11:47:12 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds a new binding for the PLL IP blocks in the mach-davinci
-family of processors. Currently, only da850 has device tree support
-but these bindings can also work for other SoCs in this family just
-by adding new compatible strings.
+Quoting Rajan Vaja (2018-03-09 11:27:40)
+> > From: Stephen Boyd [mailto:sboyd@kernel.org]
+> > =
 
-Note: Although these PLL controllers are very similar to the TI Keystone
-SoCs, we are not re-using those bindings. The Keystone bindings use a
-legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
-have a slightly different PLL register layout and a number of quirks
-that can't be handled by the existing bindings, so the keystone bindings
-could not be used as-is anyway.
+> > Is the intent to register the clk twice? I believe things are working as
+> > intended without this patch, so maybe you can explain a little more what
+> > you're trying to fix.
+> [Rajan] Yes. During of_clk_init() if some DT fixed factor clock has
+> parent which is neither mentioned in output-clock-names of clock
+> controller nor registered as clock provider, of_clk_init() will try to
+> forcefully register in second loop. =
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
+> =
 
-v8 changes:
-- None
+>                         if (force || parent_ready(clk_provider->np)) {
+> =
 
-v7 changes:
-- None (there was some debate about having child nodes, but the consensus was
-  that this is "good enough" as it is)
+>                                 /* Don't populate platform devices */
+>                                 of_node_set_flag(clk_provider->np,
+>                                                  OF_POPULATED);
+> =
 
-v6 changes:
-- Added clock-names property
-- Added ti,clkmode-square-wave property
-- Added pllout child node
-- Added obsclk child node
-- Expanded examples
+> So registration of this DT fixed-factor clock would fail as parent
+> would be NULL as below (called from _of_fixed_factor_clk_setup()):
+> parent_name =3D of_clk_get_parent_name(node, 0);
+> =
 
+> On the other hand, even if registration failed, that node will be
+> marked as OF_POPULATED, so probe of clk-fixed-factor.c will also not
+> be called and that DT fixed-factor clock would never be registered. =
 
- .../devicetree/bindings/clock/ti/davinci/pll.txt   | 96 ++++++++++++++++++++++
- 1 file changed, 96 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+> =
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
-new file mode 100644
-index 0000000..36998e1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
-@@ -0,0 +1,96 @@
-+Binding for TI DaVinci PLL Controllers
-+
-+The PLL provides clocks to most of the components on the SoC. In addition
-+to the PLL itself, this controller also contains bypasses, gates, dividers,
-+an multiplexers for various clock signals.
-+
-+Required properties:
-+- compatible: shall be one of:
-+	- "ti,da850-pll0" for PLL0 on DA850/OMAP-L138/AM18XX
-+	- "ti,da850-pll1" for PLL1 on DA850/OMAP-L138/AM18XX
-+- reg: physical base address and size of the controller's register area.
-+- clocks: phandles corresponding to the clock names
-+- clock-names: names of the clock sources - depends on compatible string
-+	- for "ti,da850-pll0", shall be "clksrc", "extclksrc"
-+	- for "ti,da850-pll1", shall be "clksrc"
-+
-+Optional properties:
-+- ti,clkmode-square-wave: Indicates that the the board is supplying a square
-+	wave input on the OSCIN pin instead of using a crystal oscillator.
-+	This property is only valid when compatible = "ti,da850-pll0".
-+
-+
-+Optional child nodes:
-+
-+pllout
-+	Describes the main PLL clock output (before POSTDIV). The node name must
-+	be "pllout".
-+
-+	Required properties:
-+	- #clock-cells: shall be 0
-+
-+sysclk
-+	Describes the PLLDIVn divider clocks that provide the SYSCLKn clock
-+	domains. The node name must be "sysclk". Consumers of this node should
-+	use "n" in "SYSCLKn" as the index parameter for the clock cell.
-+
-+	Required properties:
-+	- #clock-cells: shall be 1
-+
-+auxclk
-+	Describes the AUXCLK output of the PLL. The node name must be "auxclk".
-+	This child node is only valid when compatible = "ti,da850-pll0".
-+
-+	Required properties:
-+	- #clock-cells: shall be 0
-+
-+obsclk
-+	Describes the OBSCLK output of the PLL. The node name must be "obsclk".
-+
-+	Required properties:
-+	- #clock-cells: shall be 0
-+
-+
-+Examples:
-+
-+	pll0: clock-controller@11000 {
-+		compatible = "ti,da850-pll0";
-+		reg = <0x11000 0x1000>;
-+		clocks = <&ref_clk>, <&pll1_sysclk 3>;
-+		clock-names = "clksrc", "extclksrc";
-+		ti,clkmode-square-wave;
-+
-+		pll0_pllout: pllout {
-+			#clock-cells = <0>;
-+		};
-+
-+		pll0_sysclk: sysclk {
-+			#clock-cells = <1>;
-+		};
-+
-+		pll0_auxclk: auxclk {
-+			#clock-cells = <0>;
-+		};
-+
-+		pll0_obsclk: obsclk {
-+			#clock-cells = <0>;
-+		};
-+	};
-+
-+	pll1: clock-controller@21a000 {
-+		compatible = "ti,da850-pll1";
-+		reg = <0x21a000 0x1000>;
-+		clocks = <&ref_clk>;
-+		clock-names = "clksrc";
-+
-+		pll0_sysclk: sysclk {
-+			#clock-cells = <1>;
-+		};
-+
-+		pll0_obsclk: obsclk {
-+			#clock-cells = <0>;
-+		};
-+	};
-+
-+Also see:
-+- Documentation/devicetree/bindings/clock/clock-bindings.txt
--- 
-2.7.4
+> Same thing is discussed at  https://lkml.org/lkml/2017/6/5/681 .
+
+Ok. I believe the answer is to fix the DT to describe the parent chain
+properly with clock-output-names. Otherwise, we have no good way of
+figuring out what the name should be.
+
+The alternative is to start working on a solution for having the clk
+framework stop using strings to describe clk topology. My plan there is
+to allow clk registration to indicate that another parent names array
+should be used with clk_get() of the device or node pointer that's
+associated with the clk during registration to find the parent . If we
+had that, then we could hook up clks into the tree by calling clk_get()
+in the framework and map through the clock-names property. This also
+gets us to a point where clk names don't have to be globally unique,
+which would be nice.
