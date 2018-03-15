@@ -1,97 +1,49 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 8/8] clk: davinci: kill davinci_clk_reset_assert/deassert()
-Date: Fri, 23 Mar 2018 10:36:09 +0100
-Message-Id: <20180323093609.24576-9-brgl@bgdev.pl>
-In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
-References: <20180323093609.24576-1-brgl@bgdev.pl>
+Return-Path: <Tali.Perry@nuvoton.com>
+From: Tali Perry <tali.perry1@gmail.com>
+To: brendanhiggins@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
+        raltherr@google.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
+Subject: [PATCH v11 0/2] clk: npcm750: Add NPCM7XX Clock driver and binding
+Date: Thu, 15 Mar 2018 15:45:16 +0200
+Message-Id: <1521121518-32217-1-git-send-email-tali.perry1@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This code is no longer used. Remove it.
+Nuvoton NPCM7XX Clock Controller
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
+Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
+generates and supplies clocks to all modules within the BMC.
+
+10 ==> 11
+update documentation. "eth" replaced with "ethernet" in use case eaxample.
+
+2 ==> 10
+update documentation. add external clocks as inputs to clk driver.
+fix SPDX comment.
+
+1 ==> 2
+This patch includes fix request described here:
+https://patchwork.kernel.org/patch/10200033/
+(move fixed clocks to DT)
+
+Signed-off-by: Tali Perry <tali.perry1@gmail.com>
 ---
- arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------------
- drivers/clk/davinci/psc.c                  | 18 ------------------
- 2 files changed, 39 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
 
-diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
-deleted file mode 100644
-index 42ed4f2f5ce4..000000000000
---- a/arch/arm/mach-davinci/include/mach/clock.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/*
-- * arch/arm/mach-davinci/include/mach/clock.h
-- *
-- * Clock control driver for DaVinci - header file
-- *
-- * Authors: Vladimir Barinov <source@mvista.com>
-- *
-- * 2007 (c) MontaVista Software, Inc. This file is licensed under
-- * the terms of the GNU General Public License version 2. This program
-- * is licensed "as is" without any warranty of any kind, whether express
-- * or implied.
-- */
--#ifndef __ASM_ARCH_DAVINCI_CLOCK_H
--#define __ASM_ARCH_DAVINCI_CLOCK_H
--
--struct clk;
--
--int davinci_clk_reset_assert(struct clk *c);
--int davinci_clk_reset_deassert(struct clk *c);
--
--#endif
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 063df62381ea..75c4bc6f23e3 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -295,24 +295,6 @@ static int davinci_lpsc_clk_reset(struct clk *clk, bool reset)
- 	return 0;
- }
- 
--/*
-- * REVISIT: These exported functions can be removed after a non-DT lookup is
-- * added to the reset controller framework and the davinci-rproc driver is
-- * updated to use the generic reset controller framework.
-- */
--
--int davinci_clk_reset_assert(struct clk *clk)
--{
--	return davinci_lpsc_clk_reset(clk, true);
--}
--EXPORT_SYMBOL(davinci_clk_reset_assert);
--
--int davinci_clk_reset_deassert(struct clk *clk)
--{
--	return davinci_lpsc_clk_reset(clk, false);
--}
--EXPORT_SYMBOL(davinci_clk_reset_deassert);
--
- static int davinci_psc_reset_assert(struct reset_controller_dev *rcdev,
- 				    unsigned long id)
- {
+Tali Perry (2):
+  clk: npcm750: Add binding for Nuvoton NPCM7XX clock Controller
+  clk: npcm7xx: Add Nuvoton NPCM7XX Clock Controller driver
+
+ .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-npcm7xx.c                          | 757 +++++++++++++++++++++
+ include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 ++
+ 4 files changed, 902 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+ create mode 100644 drivers/clk/clk-npcm7xx.c
+ create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+
 -- 
-2.16.1
+2.14.1
