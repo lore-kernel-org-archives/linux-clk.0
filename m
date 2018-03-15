@@ -1,59 +1,34 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v2 3/5] dt-bindings: clock: add clocks for MT2712
-Date: Mon, 12 Mar 2018 15:03:40 +0800
-Message-ID: <20180312070342.4335-5-weiyi.lu@mediatek.com>
-In-Reply-To: <20180312070342.4335-1-weiyi.lu@mediatek.com>
-References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Eddie James <eajames@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1520542640-9185-3-git-send-email-eajames@linux.vnet.ibm.com>
+Cc: linux-clk@vger.kernel.org, joel@jms.id.au, mturquette@baylibre.com,
+ eajames@linux.vnet.ibm.com, mine260309@gmail.com, ryan_chen@aspeedtech.com
+References: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1520542640-9185-3-git-send-email-eajames@linux.vnet.ibm.com>
+Message-ID: <152113767831.111154.2144307841968232404@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 2/2] clk: aspeed: Prevent reset if clock is enabled
+Date: Thu, 15 Mar 2018 11:14:38 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-add new clocks according to ECO design change
+Quoting Eddie James (2018-03-08 12:57:20)
+> According to the Aspeed specification, the reset and enable sequence
+> should be done when the clock is stopped. The specification doesn't
+> define behavior if the reset is done while the clock is enabled.
+> =
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- include/dt-bindings/clock/mt2712-clk.h | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+> From testing on the AST2500, the LPC Controller has problems if the
+> clock is reset while enabled.
+> =
 
-diff --git a/include/dt-bindings/clock/mt2712-clk.h b/include/dt-bindings/clock/mt2712-clk.h
-index 48a8e797a617..76265836a1e1 100644
---- a/include/dt-bindings/clock/mt2712-clk.h
-+++ b/include/dt-bindings/clock/mt2712-clk.h
-@@ -222,7 +222,13 @@
- #define CLK_TOP_APLL_DIV_PDN5		183
- #define CLK_TOP_APLL_DIV_PDN6		184
- #define CLK_TOP_APLL_DIV_PDN7		185
--#define CLK_TOP_NR_CLK			186
-+#define CLK_TOP_APLL1_D3		186
-+#define CLK_TOP_APLL1_REF_SEL		187
-+#define CLK_TOP_APLL2_REF_SEL		188
-+#define CLK_TOP_NFI2X_EN		189
-+#define CLK_TOP_NFIECC_EN		190
-+#define CLK_TOP_NFI1X_CK_EN		191
-+#define CLK_TOP_NR_CLK			192
- 
- /* INFRACFG */
- 
-@@ -281,7 +287,9 @@
- #define CLK_PERI_MSDC30_3_EN		41
- #define CLK_PERI_MSDC50_0_HCLK_EN	42
- #define CLK_PERI_MSDC50_3_HCLK_EN	43
--#define CLK_PERI_NR_CLK			44
-+#define CLK_PERI_MSDC30_0_QTR_EN	44
-+#define CLK_PERI_MSDC30_3_QTR_EN	45
-+#define CLK_PERI_NR_CLK			46
- 
- /* MCUCFG */
- 
--- 
-2.12.5
+> Therefore, check whether the clock is enabled or not before performing
+> the reset and enable sequence in the Aspeed clock driver.
+> =
+
+> Root-caused-by: Lei Yu <mine260309@gmail.com>
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> ---
+
+Applied to clk-fixes
