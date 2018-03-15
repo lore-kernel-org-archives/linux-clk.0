@@ -1,34 +1,65 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Fabio Estevam <fabio.estevam@nxp.com>, sboyd@codeaurora.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1516107034-6600-1-git-send-email-fabio.estevam@nxp.com>
-Cc: mturquette@baylibre.com, geert@linux-m68k.org, festevam@gmail.com,
- linux-clk@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
-References: <1516107034-6600-1-git-send-email-fabio.estevam@nxp.com>
-Message-ID: <152124298994.242365.15138927083324261955@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2] clk: Print the clock name and warning cause
-Date: Fri, 16 Mar 2018 16:29:49 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/4] ARM64: dts: meson-gx: sysctrl is the parent of the clock controller
+Date: Thu, 15 Mar 2018 12:55:43 +0100
+Message-Id: <20180315115545.1884-3-jbrunet@baylibre.com>
+In-Reply-To: <20180315115545.1884-1-jbrunet@baylibre.com>
+References: <20180315115545.1884-1-jbrunet@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Fabio Estevam (2018-01-16 04:50:34)
-> When getting the clock related warnings, it is useful to know what
-> is the clock name that is causing the problem and the cause of the
-> problem.
-> =
+The parent of the meson-gx clock controller should be the hhi system
+controller, not the HIU bus. This way, the HHI register region can be
+used safely by multiple drivers
 
-> Add the clock name and the the warning cause to the log, so that the
-> output becomes clearer like this:
-> =
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 5 ++---
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 5 ++---
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-> [    2.383969] ------------[ cut here ]------------
-> [    2.388720] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:814 clk_core_d=
-isable+0xd4/0xf8
-> [    2.396658] uart4_ipg_gate already disabled
-> =
-
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-> ---
-
-Applied to clk-next
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index cac72acb85b1..a48d2b821a49 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -304,11 +304,10 @@
+ 	clock-names = "isfr", "iahb", "venci";
+ };
+ 
+-&hiubus {
+-	clkc: clock-controller@0 {
++&sysctrl {
++	clkc: clock-controller {
+ 		compatible = "amlogic,gxbb-clkc";
+ 		#clock-cells = <1>;
+-		reg = <0x0 0x0 0x0 0x3db>;
+ 	};
+ };
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index e1a39cbed8c9..6b7dfa2d48e4 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -206,11 +206,10 @@
+ 	clock-names = "isfr", "iahb", "venci";
+ };
+ 
+-&hiubus {
+-	clkc: clock-controller@0 {
++&sysctrl {
++	clkc: clock-controller {
+ 		compatible = "amlogic,gxl-clkc", "amlogic,gxbb-clkc";
+ 		#clock-cells = <1>;
+-		reg = <0x0 0x0 0x0 0x3db>;
+ 	};
+ };
+ 
+-- 
+2.14.3
