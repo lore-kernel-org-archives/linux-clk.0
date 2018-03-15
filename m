@@ -1,64 +1,60 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@kernel.org,
-	mturquette@baylibre.com
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	stanimir.varbanov@linaro.org,
-	vivek.gautam@codeaurora.org,
-	srinivas.kandagatla@linaro.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 1/3] clk: qcom: gdsc: Add support for ALWAYS_ON gdscs
-Date: Fri, 23 Mar 2018 13:56:14 +0530
-Message-Id: <20180323082616.10142-2-rnayak@codeaurora.org>
-In-Reply-To: <20180323082616.10142-1-rnayak@codeaurora.org>
-References: <20180323082616.10142-1-rnayak@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+ riku.voipio@linaro.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180312104945.3001-1-riku.voipio@linaro.org>
+Cc: arnd@linaro.org, linux-arm-kernel@lists.infradead.org,
+ Riku Voipio <riku.voipio@linaro.org>, John Stultz <john.stultz@linaro.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Wei Xu <xuwei5@hisilicon.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <20180312104945.3001-1-riku.voipio@linaro.org>
+Message-ID: <152113644553.107923.8652081506535849458@swboyd.mtv.corp.google.com>
+Subject: Re: [RESEND PATCH] clk: enable hi655x common clk automatically
+Date: Thu, 15 Mar 2018 10:54:05 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Some GDSCs might have software control to turn them off, but we might
-want to keep them enabled always, in some cases because of lack of
-support in kernel to handle a graceful turning off/on of such GDSCs.
-Most common instances would be the GDCSs which power up the noc/bus
-fabrics, which need bus drivers to handle them and atleast support for
-which is missing on all qcom SoCs.
+Quoting riku.voipio@linaro.org (2018-03-12 03:49:45)
+> From: Riku Voipio <riku.voipio@linaro.org>
+> =
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- drivers/clk/qcom/gdsc.c | 8 ++++++++
- drivers/clk/qcom/gdsc.h | 1 +
- 2 files changed, 9 insertions(+)
+> Without COMMON_CLK_HI655X Wifi and bluetooth are non-functional on Hikey.
+> As suggested by Arnd, enable the driver automatically when the parent
+> driver is selected. With sensible defaults in place, we can leave other
+> choices for EXPERT.
+> =
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a4f3580587b7..15f4bb5efd68 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -291,6 +291,14 @@ static int gdsc_init(struct gdsc *sc)
- 	if ((sc->flags & VOTABLE) && on)
- 		gdsc_enable(&sc->pd);
- 
-+	/* If ALWAYS_ON GDSCs are not ON, turn them ON */
-+	if (sc->flags & ALWAYS_ON) {
-+		if (!on)
-+			gdsc_enable(&sc->pd);
-+		on = true;
-+		sc->pd.flags |= GENPD_FLAG_ALWAYS_ON;
-+	}
-+
- 	if (on || (sc->pwrsts & PWRSTS_RET))
- 		gdsc_force_mem_on(sc);
- 	else
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 39648348e5ec..7fd78cec7e5b 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -53,6 +53,7 @@ struct gdsc {
- #define VOTABLE		BIT(0)
- #define CLAMP_IO	BIT(1)
- #define HW_CTRL		BIT(2)
-+#define ALWAYS_ON	BIT(3)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> Cc: John Stultz <john.stultz@linaro.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Wei Xu <xuwei5@hisilicon.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Suggested-by: Arnd Bergmann <arnd@linaro.org>
+> Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
+> ---
+> Previous discussion at https://patchwork.kernel.org/patch/9767143/
+> ---
+>  drivers/clk/Kconfig | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> =
+
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 98ce9fc6e6c0..448ce83b334d 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -55,8 +55,10 @@ config COMMON_CLK_RK808
+>           by control register.
+>  =
+
+>  config COMMON_CLK_HI655X
+> -       tristate "Clock driver for Hi655x"
+> -       depends on MFD_HI655X_PMIC || COMPILE_TEST
+> +       tristate "Clock driver for Hi655x" if EXPERT
+
+Hmm. This would be the first EXPERT usage in the clk code. I guess
+that's ok.
+
+> +       depends on (MFD_HI655X_PMIC || COMPILE_TEST)
+> +       depends on REGMAP
+> +       default MFD_HI655X_PMIC
