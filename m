@@ -1,311 +1,656 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <P.Bruenn@beckhoff.com>
+From: =?iso-8859-1?Q?Patrick_Br=FCnn?= <P.Bruenn@beckhoff.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, linux-kernel-dev
+	<linux-kernel-dev@beckhoff.com>
+Subject: Re: [PATCH] clk: imx51: uart4, uart5 gates only exist on imx50,
+ imx53
+Date: Thu, 15 Mar 2018 12:43:13 +0000
+Message-ID: <3BB206AB2B1BD448954845CE6FF69A8E01F81FD1B9@nt-mail04>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20180313200548.fgexoxlha3coa7hs@verge.net.au>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdX=m9ui6GczF51SJH2X7Cw1OnxoH9pfk1DybpDX-A873Q@mail.gmail.com>
- <20180221161326.ktvf3mlzzxith5kw@verge.net.au> <CAMuHMdUTSmrWggMK4ehSL3Ux-JUzVpamTuToveuXogjuvGKkaw@mail.gmail.com>
- <20180221183223.qacrmmuzoqlzzbpo@verge.net.au> <CAMuHMdXCt1-coXGgtgFBm4rZLGBRMvSjbgeBSweiyKrOfCF0Xg@mail.gmail.com>
- <20180223081443.ak6kl3z72kamcxob@verge.net.au> <CAMuHMdVKPFSVTbnQy9RwAg13OC3R=H1PN9+1FyU0SDHQPa1cuQ@mail.gmail.com>
- <20180313200548.fgexoxlha3coa7hs@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 14 Mar 2018 09:17:31 +0100
-Message-ID: <CAMuHMdUntJeeM1=+SKwjQGogeuV0PywiE4WwqysFPVdSqeymEg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/26] Fix watchdog on Renesas R-Car Gen2 and RZ/G1
-To: Simon Horman <horms@verge.net.au>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>, Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simon,
+Hi list,
 
-On Tue, Mar 13, 2018 at 9:05 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Thu, Mar 01, 2018 at 11:20:11AM +0100, Geert Uytterhoeven wrote:
->> On Fri, Feb 23, 2018 at 9:14 AM, Simon Horman <horms@verge.net.au> wrote=
-:
->> > On Thu, Feb 22, 2018 at 09:38:39AM +0100, Geert Uytterhoeven wrote:
->> >> On Wed, Feb 21, 2018 at 7:32 PM, Simon Horman <horms@verge.net.au> wr=
-ote:
->> >> > On Wed, Feb 21, 2018 at 05:30:12PM +0100, Geert Uytterhoeven wrote:
->> >> >> On Wed, Feb 21, 2018 at 5:13 PM, Simon Horman <horms@verge.net.au>=
- wrote:
->> >> >> > On Tue, Feb 20, 2018 at 01:51:28PM +0100, Geert Uytterhoeven wro=
-te:
->> >> >> >> On Mon, Feb 12, 2018 at 6:44 PM, Fabrizio Castro
->> >> >> >> <fabrizio.castro@bp.renesas.com> wrote:
->> >> >> >> > this series has been around for some time as RFC, and it has =
-collected
->> >> >> >> > useful comments from the community along the way.
->> >> >> >> > The solution proposed by this patch set works for most R-Car =
-Gen2 and
->> >> >> >> > RZ/G1 devices, but not all of them. We now know that for some=
- R-Car
->> >> >> >> > Gen2 early revisions there is no proper software fix. Anyway,=
- no
->> >> >> >> > product has been built around early revisions, but developmen=
-t boards
->> >> >> >> > mounting early revisions (basically prototypes) are still out=
- there.
->> >> >> >> > As a result, this series isn't enabling the internal watchdog=
- on R-Car
->> >> >> >> > Gen2 boards, developers may enable it in board specific devic=
-e trees
->> >> >> >> > if needed.
->> >> >> >> > This series has been tested by me on the iwg20d, iwg22d, Lage=
-r, Alt,
->> >> >> >> > and Koelsch boards.
->> >> >> >> >
->> >> >> >> > The problem
->> >> >> >> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> >> >> >> > To deal with SMP on R-Car Gen2 and RZ/G1, we install a reset =
-vector
->> >> >> >> > to ICRAM1 and we program the [S]BAR registers so that when we=
- turn ON
->> >> >> >> > the non-boot CPUs they are redirected to the reset vector ins=
-talled by
->> >> >> >> > Linux in ICRAM1, and eventually they continue the execution t=
-o RAM,
->> >> >> >> > where the SMP bring-up code will take care of the rest.
->> >> >> >> > The content of the [S]BAR registers survives a watchdog trigg=
-ered reset,
->> >> >> >> > and as such after the watchdog fires the boot core will try a=
-nd execute
->> >> >> >> > the SMP bring-up code instead of jumping to the bootrom code.
->> >> >> >> >
->> >> >> >> > The fix
->> >> >> >> > =3D=3D=3D=3D=3D=3D=3D
->> >> >> >> > The main strategy for the solution is to let the reset vector=
- decide
->> >> >> >> > if it needs to jump to shmobile_boot_fn or to the bootrom cod=
-e.
->> >> >> >> > In a watchdog triggered reset scenario, since the [S]BAR regi=
-sters keep
->> >> >> >> > their values, the boot CPU will jump into the newly designed =
-reset
->> >> >> >> > vector, the assembly routine will eventually test WOVF (a bit=
- in register
->> >> >> >> > RWTCSRA that indicates if the watchdog counter has overflown,=
- the value
->> >> >> >> > of this bit gets retained in this scenario), and jump to the =
-bootrom code
->> >> >> >> > which will in turn load up the bootloader, etc.
->> >> >> >> > When bringing up SMP or using CPU hotplug, the reset vector w=
-ill jump
->> >> >> >> > to shmobile_boot_fn instead.
->> >> >> >> >
->> >> >> >> > Thank you All for your help.
->> >> >> >> >
->> >> >> >> > Best regards,
->> >> >> >> >
->> >> >> >> > Fabrizio Castro (26):
->> >> >> >> >   ARM: shmobile: Add watchdog support
->> >> >> >> >   ARM: dts: r8a7743: Adjust SMP routine size
->> >> >> >> >   ARM: dts: r8a7745: Adjust SMP routine size
->> >> >> >> >   ARM: dts: r8a7790: Adjust SMP routine size
->> >> >> >> >   ARM: dts: r8a7791: Adjust SMP routine size
->> >> >> >> >   ARM: dts: r8a7792: Adjust SMP routine size
->> >> >> >> >   ARM: dts: r8a7793: Adjust SMP routine size
->> >> >> >> >   ARM: dts: r8a7794: Adjust SMP routine size
->> >> >> >> >   soc: renesas: rcar-rst: Enable watchdog as reset trigger fo=
-r Gen2
->> >> >> >> >   ARM: shmobile: rcar-gen2: Add watchdog support
->> >> >> >> >   dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 support
->> >> >> >> >   watchdog: renesas_wdt: Add R-Car Gen2 support
->> >> >> >> >   watchdog: renesas_wdt: Add restart handler
->> >> >> >> >   ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
->> >> >> >> >   clk: renesas: r8a7743: Add rwdt clock
->> >> >> >> >   clk: renesas: r8a7745: Add rwdt clock
->> >> >> >> >   clk: renesas: r8a7790: Add rwdt clock
->> >> >> >> >   clk: renesas: r8a7791/r8a7793: Add rwdt clock
->> >> >> >> >   clk: renesas: r8a7794: Add rwdt clock
->> >> >> >> >   ARM: dts: r8a7743: Add watchdog support to SoC dtsi
->> >> >> >> >   ARM: dts: r8a7745: Add watchdog support to SoC dtsi
->> >> >> >> >   ARM: dts: r8a7790: Add watchdog support to SoC dtsi
->> >> >> >> >   ARM: dts: r8a7791: Add watchdog support to SoC dtsi
->> >> >> >> >   ARM: dts: r8a7794: Add watchdog support to SoC dtsi
->> >> >> >> >   ARM: dts: iwg20m: Add watchdog support to SoM dtsi
->> >> >> >> >   ARM: dts: iwg22m: Add watchdog support to SoM dtsi
->> >> >> >> >
->> >> >> >> >  .../devicetree/bindings/watchdog/renesas-wdt.txt   | 19 ++++=
-++--
->> >> >> >> >  arch/arm/boot/dts/r8a7743-iwg20m.dtsi              |  5 ++
->> >> >> >> >  arch/arm/boot/dts/r8a7743.dtsi                     | 12 ++++=
--
->> >> >> >> >  arch/arm/boot/dts/r8a7745-iwg22m.dtsi              |  5 ++
->> >> >> >> >  arch/arm/boot/dts/r8a7745.dtsi                     | 12 ++++=
--
->> >> >> >> >  arch/arm/boot/dts/r8a7790.dtsi                     | 12 ++++=
--
->> >> >> >> >  arch/arm/boot/dts/r8a7791.dtsi                     | 12 ++++=
--
->> >> >> >> >  arch/arm/boot/dts/r8a7792.dtsi                     |  2 +-
->> >> >> >> >  arch/arm/boot/dts/r8a7793.dtsi                     |  2 +-
->> >> >> >> >  arch/arm/boot/dts/r8a7794.dtsi                     | 12 ++++=
--
->> >> >> >> >  arch/arm/configs/shmobile_defconfig                |  1 +
->> >> >> >> >  arch/arm/mach-shmobile/common.h                    |  6 +++
->> >> >> >> >  arch/arm/mach-shmobile/headsmp.S                   | 55 ++++=
-++++++++++++++++++
->> >> >> >> >  arch/arm/mach-shmobile/platsmp-apmu.c              |  1 +
->> >> >> >> >  arch/arm/mach-shmobile/pm-rcar-gen2.c              | 15 ++++=
---
->> >> >> >> >  drivers/clk/renesas/r8a7743-cpg-mssr.c             |  2 +
->> >> >> >> >  drivers/clk/renesas/r8a7745-cpg-mssr.c             |  2 +
->> >> >> >> >  drivers/clk/renesas/r8a7790-cpg-mssr.c             |  2 +
->> >> >> >> >  drivers/clk/renesas/r8a7791-cpg-mssr.c             |  2 +
->> >> >> >> >  drivers/clk/renesas/r8a7794-cpg-mssr.c             |  2 +
->> >> >> >> >  drivers/soc/renesas/rcar-rst.c                     | 35 ++++=
-+++++++---
->> >> >> >> >  drivers/watchdog/renesas_wdt.c                     | 39 ++++=
-+++++++++--
->> >> >> >>
->> >> >> >> Thanks, I've queued the clock patches in clk-renesas-for-v4.17,=
- as they are
->> >> >> >> a hard dependency for:
->> >> >> >>   (1) The new reset vector in arch/arm/mach-shmobile/
->> >> >> >>   (2) The watchdog driver.
->> >> >> >>
->> >> >> >> Note that the watchdog driver itself (2) has a hard dependency =
-on the
->> >> >> >> new reset vector (1).
->> >> >> >
->> >> >> > Thanks, I have marked the watchdog driver patch as Deferred.
->> >> >> > Please resubmit or otherwise ping me once they dependencies
->> >> >> > are in an rc release.
->> >> >>
->> >> >> I gave the dependencies a bit more thought.
->> >> >>
->> >> >> I think we can gain once release cycle if you would postpone the D=
-TS patches
->> >> >> (both SMP routine size adjustments and RWDT device node additions)=
- to v4.18.
->> >> >> Then all other parts can be upstreamed in parallel in v4.17, as no=
-thing
->> >> >> will be activated before the DTS parts are in.
->> >> >>
->> >> >> Does this look sane?
->> >> >
->> >> > What about new DTS on old kernels of a specific vintage?
->> >>
->> >> New DTS would work fine on v4.16 and older, which don't have any of t=
-he
->> >> other patches from this series.
->> >> New DTS would work fine on v4.17, assumed all other patches from this
->> >> series get into v4.17.
->> >>
->> >> The only issue would be a new DTS on a kernel that has some but not a=
-ll
->> >> other patches from this series.
->> >
->> > Thanks for the analysis. I think this is the key point. What is the ri=
-sk of
->> > that happening?
->>
->> I think the risk is fairly low.
->> You control when the DTS changes go in, and also when they are backporte=
-d
->> to LTSI.
->>
->> >> If we want to fast-track everything into v4.17, we need a stable bran=
-ch, to be
->> >> pulled by all 5 actors (clk-renesas, mach-shmobile, soc-renesas, watc=
-hdog,
->> >> renesas-dts).
->> >
->> > It seems that watchdog is the only item on that list that neither you =
-nor I
->> > sign off on. So I conclude that if the watchdog patch goes in early en=
-ough
->> > in the cycle then we ought to be in good shape.
->> >
->> > None the less, is it worth the risk?
->>
->> Do we want the functionality early, or can we wait until v4.19?
->
-> I understand that the watchdog driver has been accepted and that as thing=
-s
-> currently stand if it is enabled in the build it will be enabled in DT an=
-d
-> a crash will result. From my POV that is a regression so I have decided
-> to adopt the alternate plan proposed by Geert above: in short drop DT
-> patches (to avoid enabling broken driver) and enqueue mach-shmobile
-> patches (which don't make things any worse.
->
-> Patch-by-patch things are as follows.
->
-> Dropped from "[PATCH v5 00/26] Fix watchdog on Renesas R-Car Gen2 and RZ/=
-G1":
->
-> 979d28f29742 ARM: dts: r8a7743: Adjust SMP routine size
-> 0b205f679f5d ARM: dts: r8a7745: Adjust SMP routine size
-> 2ad21a1d78b3 ARM: dts: r8a7790: Adjust SMP routine size
-> 82c978459c77 ARM: dts: r8a7791: Adjust SMP routine size
-> d303698e6ff3 ARM: dts: r8a7792: Adjust SMP routine size
-> d8b8b9a1e295 ARM: dts: r8a7793: Adjust SMP routine size
-> 70b3ab369773 ARM: dts: r8a7794: Adjust SMP routine size
->
-> ebf26cf1b1de ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-> 5a4566ab3777 ARM: dts: r8a7745: Add watchdog support to SoC dtsi
-> acd58e2bb1e5 ARM: dts: r8a7790: Add watchdog support to SoC dtsi
-> e3f89168e72f ARM: dts: r8a7791: Add watchdog support to SoC dtsi
-> e76a6a69a1fc ARM: dts: r8a7794: Add watchdog support to SoC dtsi
-> 242cc1ab7f7c ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-> 748ed07f6c7c ARM: dts: iwg22m: Add watchdog support to SoM dtsi
->
->
-> Dropped from "[PATCH/RFC 00/11] ARM: dts: rcar-gen2: Enable watchdog supp=
-ort":
->
-> c257202482e2 ARM: dts: r8a7792: Add RWDT node
-> 01ec04dec8eb ARM: dts: r8a7793: Add RWDT node
-> 8e6ebe4f2f94 ARM: dts: lager: Enable watchdog support
-> f223ad0198f6 ARM: dts: koelsch: Enable watchdog support
-> 1d14d2bb700d ARM: dts: porter: Enable watchdog support
-> bf71652fc955 ARM: dts: blanche: Enable watchdog support
-> 13a0b10aeea4 ARM: dts: wheat: Enable watchdog support
-> 4e247bf110b8 ARM: dts: gose: Enable watchdog support
-> 2dcbd24bbf5e ARM: dts: alt: Enable watchdog support
-> 7f6844c900b4 ARM: dts: silk: Enable watchdog support
->
-> And applied:
->
-> [v5] ARM: shmobile: rcar-gen2: Add watchdog support
-> [v5] ARM: shmobile: Add watchdog support
->
-> In the case of the last patch above I removed the #ifdef from the header =
-file.
+since v4.16-rc1 my board imx53-cx9020 shows multiple WARNINGs like this:
+[    0.408673] ------------[ cut here ]------------
+[    0.408713] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:811 clk_core_dis=
+able+0x1ac/0x1b0
+[    0.408717] Modules linked in:
+[    0.408736] CPU: 0 PID: 1 Comm: swapper Not tainted 4.16.0-rc5 #312
+[    0.408741] Hardware name: Freescale i.MX53 (Device Tree Support)
+[    0.408777] [<c011057c>] (unwind_backtrace) from [<c010db3c>] (show_stac=
+k+0x20/0x24)
+[    0.408792] [<c010db3c>] (show_stack) from [<c07a0034>] (dump_stack+0x24=
+/0x28)
+[    0.408808] [<c07a0034>] (dump_stack) from [<c012b524>] (__warn+0x100/0x=
+118)
+[    0.408820] [<c012b524>] (__warn) from [<c012b62c>] (warn_slowpath_null+=
+0x50/0x58)
+[    0.408831] [<c012b62c>] (warn_slowpath_null) from [<c0475550>] (clk_cor=
+e_disable+0x1ac/0x1b0)
+[    0.408845] [<c0475550>] (clk_core_disable) from [<c0475858>] (clk_core_=
+disable_lock+0x28/0x34)
+[    0.408857] [<c0475858>] (clk_core_disable_lock) from [<c0475890>] (clk_=
+disable+0x2c/0x30)
+[    0.408872] [<c0475890>] (clk_disable) from [<c0b2c128>] (imx_clk_disabl=
+e_uart+0x5c/0x70)
+[    0.408887] [<c0b2c128>] (imx_clk_disable_uart) from [<c01029a4>] (do_on=
+e_initcall+0x64/0x19c)
+[    0.408905] [<c01029a4>] (do_one_initcall) from [<c0b00fac>] (kernel_ini=
+t_freeable+0x14c/0x1e0)
+[    0.408920] [<c0b00fac>] (kernel_init_freeable) from [<c07b5a30>] (kerne=
+l_init+0x18/0x124)
+[    0.408932] [<c07b5a30>] (kernel_init) from [<c01010e8>] (ret_from_fork+=
+0x14/0x2c)
+[    0.408938] Exception stack(0xdf90dfb0 to 0xdf90dff8)
+[    0.408946] dfa0:                                     00000000 00000000 =
+00000000 00000000
+[    0.408955] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 =
+00000000 00000000
+[    0.408963] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    0.408968] ---[ end trace 6801852caf2a2e4e ]---
 
-Thank you, sounds good to me.
+At first I suspected the new rtc-mxc_v2 driver, but even with CONFIG_RTC_DR=
+V_MXC_V2 not set
+I get the same WARNINGs.
+Reverting commit 59dc3d8c867370b4860c9df3eb5483da46823a4b made them disappe=
+ar (w/o rtc driver).
 
-BTW, who will take "dt-bindings: watchdog: renesas-wdt: Add R-Car Gen2 supp=
-ort"?
-G=C3=BCnter, Wim: will you take this through the watchdog tree, too?
+I have no idea what's happening, as CX9020 is using uart2. Do you have an i=
+dea?
 
-Thanks again!
+Thanks and regards,
+Patrick
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+p.s.: full kernel log:
+dmesg
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 4.16.0-rc5 (patrickbr@lbs1) (gcc version 6.3.0=
+ 20170516 (Debian 6.3.0-18)) #312 PREEMPT Thu Mar 15 13:20:28 CET 2018
+[    0.000000] CPU: ARMv7 Processor [412fc085] revision 5 (ARMv7), cr=3D10c=
+5387d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instr=
+uction cache
+[    0.000000] OF: fdt: Machine model: Beckhoff CX9020 Embedded PC
+[    0.000000] Memory policy: Data cache writeback
+[    0.000000] cma: Reserved 16 MiB at 0xcf000000
+[    0.000000] On node 0 totalpages: 262144
+[    0.000000]   Normal zone: 1152 pages used for memmap
+[    0.000000]   Normal zone: 0 pages reserved
+[    0.000000]   Normal zone: 131072 pages, LIFO batch:31
+[    0.000000]   HighMem zone: 131072 pages, LIFO batch:31
+[    0.000000] CPU: All CPU(s) started in SVC mode.
+[    0.000000] random: fast init done
+[    0.000000] pcpu-alloc: s0 r0 d32768 u32768 alloc=3D1*32768
+[    0.000000] pcpu-alloc: [0] 0
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 26099=
+2
+[    0.000000] Kernel command line: console=3Dttymxc1,115200 libphy.num_phy=
+s=3D2 console=3Dtty0 quiet root=3D/dev/mmcblk0p1 ro rootfstype=3Dext4 rootw=
+ait fixrtc
+[    0.000000] Dentry cache hash table entries: 65536 (order: 6, 262144 byt=
+es)
+[    0.000000] Inode-cache hash table entries: 32768 (order: 5, 131072 byte=
+s)
+[    0.000000] Memory: 1009948K/1048576K available (7168K kernel code, 542K=
+ rwdata, 2280K rodata, 1024K init, 690K bss, 22244K reserved, 16384K cma-re=
+served, 507904K highmem)
+[    0.000000] Virtual kernel memory layout:
+                   vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+                   fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
+                   vmalloc : 0xe0800000 - 0xff800000   ( 496 MB)
+                   lowmem  : 0xc0000000 - 0xe0000000   ( 512 MB)
+                   pkmap   : 0xbfe00000 - 0xc0000000   (   2 MB)
+                   modules : 0xbf000000 - 0xbfe00000   (  14 MB)
+                     .text : 0x(ptrval) - 0x(ptrval)   (8160 kB)
+                     .init : 0x(ptrval) - 0x(ptrval)   (1024 kB)
+                     .data : 0x(ptrval) - 0x(ptrval)   ( 543 kB)
+                      .bss : 0x(ptrval) - 0x(ptrval)   ( 691 kB)
+[    0.000000] SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D1, N=
+odes=3D1
+[    0.000000] ftrace: allocating 24415 entries in 72 pages
+[    0.000000] Preemptible hierarchical RCU implementation.
+[    0.000000]  Tasks RCU enabled.
+[    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+[    0.000000] TrustZone Interrupt Controller (TZIC) initialized
+[    0.000000] CPU identified as i.MX53, unknown revision
+[    0.000000] Switching to timer-based delay loop, resolution 29ns
+[    0.000010] sched_clock: 32 bits at 33MHz, resolution 29ns, wraps every =
+64424507889ns
+[    0.000023] clocksource: mxc_timer1: mask: 0xffffffff max_cycles: 0xffff=
+ffff, max_idle_ns: 57337812242 ns
+[    0.000697] Console: colour dummy device 80x30
+[    0.000716] console [tty0] enabled
+[    0.000746] Calibrating delay loop (skipped), value calculated using tim=
+er frequency.. 66.66 BogoMIPS (lpj=3D333333)
+[    0.000761] pid_max: default: 32768 minimum: 301
+[    0.001062] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes)
+[    0.001075] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 by=
+tes)
+[    0.001910] CPU: Testing write buffer coherency: ok
+[    0.002695] Setting up static identity map for 0x70100000 - 0x7010003c
+[    0.002865] Hierarchical SRCU implementation.
+[    0.006423] devtmpfs: initialized
+[    0.011240] VFP support v0.3: implementor 41 architecture 3 part 30 vari=
+ant c rev 2
+[    0.011525] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xfffffff=
+f, max_idle_ns: 19112604462750000 ns
+[    0.011544] futex hash table entries: 256 (order: -1, 3072 bytes)
+[    0.012785] pinctrl core: initialized pinctrl subsystem
+[    0.013833] NET: Registered protocol family 16
+[    0.015747] DMA: preallocated 256 KiB pool for atomic coherent allocatio=
+ns
+[    0.019106] hw-breakpoint: debug architecture 0x4 unsupported.
+[    0.022635] imx53-pinctrl 53fa8000.iomuxc: initialized IMX pinctrl drive=
+r
+[    0.043050] SCSI subsystem initialized
+[    0.043379] libata version 3.00 loaded.
+[    0.043626] usbcore: registered new interface driver usbfs
+[    0.043678] usbcore: registered new interface driver hub
+[    0.043759] usbcore: registered new device driver usb
+[    0.043919] usb_phy_generic usbphy-0: usbphy-0 supply vcc not found, usi=
+ng dummy regulator
+[    0.044105] usb_phy_generic usbphy-1: usbphy-1 supply vcc not found, usi=
+ng dummy regulator
+[    0.044921] i2c i2c-1: IMX I2C adapter registered
+[    0.044938] i2c i2c-1: can't use DMA, using PIO instead.
+[    0.045040] pps_core: LinuxPPS API ver. 1 registered
+[    0.045046] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo =
+Giometti <giometti@linux.it>
+[    0.045065] PTP clock support registered
+[    0.046347] clocksource: Switched to clocksource mxc_timer1
+[    0.119772] NET: Registered protocol family 2
+[    0.120518] tcp_listen_portaddr_hash hash table entries: 512 (order: 0, =
+4096 bytes)
+[    0.120545] TCP established hash table entries: 4096 (order: 2, 16384 by=
+tes)
+[    0.120584] TCP bind hash table entries: 4096 (order: 2, 16384 bytes)
+[    0.120621] TCP: Hash tables configured (established 4096 bind 4096)
+[    0.120772] UDP hash table entries: 256 (order: 0, 4096 bytes)
+[    0.120788] UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
+[    0.120942] NET: Registered protocol family 1
+[    0.121589] hw perfevents: no interrupt-affinity property for /pmu, gues=
+sing.
+[    0.121681] hw perfevents: enabled with armv7_cortex_a8 PMU driver, 5 co=
+unters available
+[    0.123109] workingset: timestamp_bits=3D14 max_order=3D18 bucket_order=
+=3D4
+[    0.128601] zbud: loaded
+[    0.130396] fuse init (API version 7.26)
+[    0.135702] bounce: pool size: 64 pages
+[    0.135815] Block layer SCSI generic (bsg) driver version 0.4 loaded (ma=
+jor 249)
+[    0.136033] io scheduler noop registered
+[    0.136040] io scheduler deadline registered
+[    0.136453] io scheduler cfq registered (default)
+[    0.136463] io scheduler mq-deadline registered
+[    0.139061] imx-sdma 63fb0000.sdma: Direct firmware load for imx/sdma/sd=
+ma-imx53.bin failed with error -2
+[    0.139073] imx-sdma 63fb0000.sdma: Falling back to user helper
+[    0.141381] Serial: 8250/16550 driver, 6 ports, IRQ sharing disabled
+[    0.143414] 53fc0000.serial: ttymxc1 at MMIO 0x53fc0000 (irq =3D 48, bas=
+e_baud =3D 4166666) is a IMX
+[    0.143679] console [ttymxc1] enabled
+[    0.145425] tfp410-bridge dvi-converter: Connector's ddc i2c bus found
+[    0.146948] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    0.146957] [drm] No driver support for vblank timestamp query.
+[    0.147158] imx-drm display-subsystem: bound imx-ipuv3-crtc.2 (ops ipu_c=
+rtc_ops)
+[    0.147260] imx-drm display-subsystem: bound imx-ipuv3-crtc.3 (ops ipu_c=
+rtc_ops)
+[    0.147371] imx-drm display-subsystem: bound display-0 (ops imx_pd_ops)
+[    0.260163] Console: switching to colour frame buffer device 240x75
+[    0.275934] imx-drm display-subsystem: fb0:  frame buffer device
+[    0.276637] [drm] Initialized imx-drm 1.0.0 20120507 for display-subsyst=
+em on minor 0
+[    0.276686] imx-ipuv3 18000000.ipu: IPUv3M probed
+[    0.278061] libphy: Fixed MDIO Bus: probed
+[    0.278975] fec 63fec000.ethernet: 63fec000.ethernet supply phy not foun=
+d, using dummy regulator
+[    0.286076] libphy: fec_enet_mii_bus: probed
+[    0.287846] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+[    0.287873] ehci-platform: EHCI generic platform driver
+[    0.292128] ci_hdrc ci_hdrc.0: doesn't support gadget
+[    0.292140] ci_hdrc ci_hdrc.0: no supported roles
+[    0.300260] ci_hdrc ci_hdrc.1: EHCI Host Controller
+[    0.300513] ci_hdrc ci_hdrc.1: new USB bus registered, assigned bus numb=
+er 1
+[    0.326390] ci_hdrc ci_hdrc.1: USB 2.0 started, EHCI 1.00
+[    0.326667] usb usb1: New USB device found, idVendor=3D1d6b, idProduct=
+=3D0002
+[    0.326676] usb usb1: New USB device strings: Mfr=3D3, Product=3D2, Seri=
+alNumber=3D1
+[    0.326683] usb usb1: Product: EHCI Host Controller
+[    0.326689] usb usb1: Manufacturer: Linux 4.16.0-rc5 ehci_hcd
+[    0.326696] usb usb1: SerialNumber: ci_hdrc.1
+[    0.327293] hub 1-0:1.0: USB hub found
+[    0.327340] hub 1-0:1.0: 1 port detected
+[    0.328670] mousedev: PS/2 mouse device common for all mice
+[    0.328678] i2c /dev entries driver
+[    0.329890] imx2-wdt 53f98000.wdog: timeout 60 sec (nowayout=3D1)
+[    0.330272] sdhci: Secure Digital Host Controller Interface driver
+[    0.330277] sdhci: Copyright(c) Pierre Ossman
+[    0.330281] sdhci-pltfm: SDHCI platform and OF driver helper
+[    0.330982] sdhci-esdhc-imx 50004000.esdhc: Got CD GPIO
+[    0.356584] mmc0: SDHCI controller on 50004000.esdhc [50004000.esdhc] us=
+ing ADMA
+[    0.357342] sdhci-esdhc-imx 50008000.esdhc: Got CD GPIO
+[    0.382616] mmc1: SDHCI controller on 50008000.esdhc [50008000.esdhc] us=
+ing ADMA
+[    0.383766] hidraw: raw HID events driver (C) Jiri Kosina
+[    0.384195] usbcore: registered new interface driver usbhid
+[    0.384201] usbhid: USB HID core driver
+[    0.385807] NET: Registered protocol family 10
+[    0.387827] Segment Routing with IPv6
+[    0.387906] mip6: Mobile IPv6
+[    0.387922] NET: Registered protocol family 17
+[    0.387964] Key type dns_resolver registered
+[    0.388149] ThumbEE CPU extension supported.
+[    0.388742] registered taskstats version 1
+[    0.388946] zswap: loaded using pool lzo/zbud
+[    0.390385] Key type encrypted registered
+[    0.391467] mmc0: host does not support reading read-only switch, assumi=
+ng write-enable
+[    0.394571] mmc0: new high speed SD card at address b368
+[    0.396122] mmcblk0: mmc0:b368 AF UD 471 MiB
+[    0.405724] hctosys: unable to open rtc device (rtc0)
+[    0.406481]  mmcblk0: p1
+[    0.408673] ------------[ cut here ]------------
+[    0.408713] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:811 clk_core_dis=
+able+0x1ac/0x1b0
+[    0.408717] Modules linked in:
+[    0.408736] CPU: 0 PID: 1 Comm: swapper Not tainted 4.16.0-rc5 #312
+[    0.408741] Hardware name: Freescale i.MX53 (Device Tree Support)
+[    0.408777] [<c011057c>] (unwind_backtrace) from [<c010db3c>] (show_stac=
+k+0x20/0x24)
+[    0.408792] [<c010db3c>] (show_stack) from [<c07a0034>] (dump_stack+0x24=
+/0x28)
+[    0.408808] [<c07a0034>] (dump_stack) from [<c012b524>] (__warn+0x100/0x=
+118)
+[    0.408820] [<c012b524>] (__warn) from [<c012b62c>] (warn_slowpath_null+=
+0x50/0x58)
+[    0.408831] [<c012b62c>] (warn_slowpath_null) from [<c0475550>] (clk_cor=
+e_disable+0x1ac/0x1b0)
+[    0.408845] [<c0475550>] (clk_core_disable) from [<c0475858>] (clk_core_=
+disable_lock+0x28/0x34)
+[    0.408857] [<c0475858>] (clk_core_disable_lock) from [<c0475890>] (clk_=
+disable+0x2c/0x30)
+[    0.408872] [<c0475890>] (clk_disable) from [<c0b2c128>] (imx_clk_disabl=
+e_uart+0x5c/0x70)
+[    0.408887] [<c0b2c128>] (imx_clk_disable_uart) from [<c01029a4>] (do_on=
+e_initcall+0x64/0x19c)
+[    0.408905] [<c01029a4>] (do_one_initcall) from [<c0b00fac>] (kernel_ini=
+t_freeable+0x14c/0x1e0)
+[    0.408920] [<c0b00fac>] (kernel_init_freeable) from [<c07b5a30>] (kerne=
+l_init+0x18/0x124)
+[    0.408932] [<c07b5a30>] (kernel_init) from [<c01010e8>] (ret_from_fork+=
+0x14/0x2c)
+[    0.408938] Exception stack(0xdf90dfb0 to 0xdf90dff8)
+[    0.408946] dfa0:                                     00000000 00000000 =
+00000000 00000000
+[    0.408955] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 =
+00000000 00000000
+[    0.408963] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    0.408968] ---[ end trace 6801852caf2a2e4e ]---
+[    0.408974] ------------[ cut here ]------------
+[    0.408985] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:684 clk_core_unp=
+repare+0x1a8/0x1c0
+[    0.408988] Modules linked in:
+[    0.408999] CPU: 0 PID: 1 Comm: swapper Tainted: G        W        4.16.=
+0-rc5 #312
+[    0.409003] Hardware name: Freescale i.MX53 (Device Tree Support)
+[    0.409014] [<c011057c>] (unwind_backtrace) from [<c010db3c>] (show_stac=
+k+0x20/0x24)
+[    0.409024] [<c010db3c>] (show_stack) from [<c07a0034>] (dump_stack+0x24=
+/0x28)
+[    0.409034] [<c07a0034>] (dump_stack) from [<c012b524>] (__warn+0x100/0x=
+118)
+[    0.409043] [<c012b524>] (__warn) from [<c012b62c>] (warn_slowpath_null+=
+0x50/0x58)
+[    0.409054] [<c012b62c>] (warn_slowpath_null) from [<c04751e8>] (clk_cor=
+e_unprepare+0x1a8/0x1c0)
+[    0.409067] [<c04751e8>] (clk_core_unprepare) from [<c0476714>] (clk_unp=
+repare+0x34/0x3c)
+[    0.409078] [<c0476714>] (clk_unprepare) from [<c0b2c130>] (imx_clk_disa=
+ble_uart+0x64/0x70)
+[    0.409089] [<c0b2c130>] (imx_clk_disable_uart) from [<c01029a4>] (do_on=
+e_initcall+0x64/0x19c)
+[    0.409100] [<c01029a4>] (do_one_initcall) from [<c0b00fac>] (kernel_ini=
+t_freeable+0x14c/0x1e0)
+[    0.409110] [<c0b00fac>] (kernel_init_freeable) from [<c07b5a30>] (kerne=
+l_init+0x18/0x124)
+[    0.409120] [<c07b5a30>] (kernel_init) from [<c01010e8>] (ret_from_fork+=
+0x14/0x2c)
+[    0.409125] Exception stack(0xdf90dfb0 to 0xdf90dff8)
+[    0.409132] dfa0:                                     00000000 00000000 =
+00000000 00000000
+[    0.409141] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 =
+00000000 00000000
+[    0.409148] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    0.409153] ---[ end trace 6801852caf2a2e4f ]---
+[    0.409158] ------------[ cut here ]------------
+[    0.409166] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:811 clk_core_dis=
+able+0x1ac/0x1b0
+[    0.409169] Modules linked in:
+[    0.409178] CPU: 0 PID: 1 Comm: swapper Tainted: G        W        4.16.=
+0-rc5 #312
+[    0.409182] Hardware name: Freescale i.MX53 (Device Tree Support)
+[    0.409193] [<c011057c>] (unwind_backtrace) from [<c010db3c>] (show_stac=
+k+0x20/0x24)
+[    0.409202] [<c010db3c>] (show_stack) from [<c07a0034>] (dump_stack+0x24=
+/0x28)
+[    0.409211] [<c07a0034>] (dump_stack) from [<c012b524>] (__warn+0x100/0x=
+118)
+[    0.409221] [<c012b524>] (__warn) from [<c012b62c>] (warn_slowpath_null+=
+0x50/0x58)
+[    0.409231] [<c012b62c>] (warn_slowpath_null) from [<c0475550>] (clk_cor=
+e_disable+0x1ac/0x1b0)
+[    0.409242] [<c0475550>] (clk_core_disable) from [<c0475858>] (clk_core_=
+disable_lock+0x28/0x34)
+[    0.409253] [<c0475858>] (clk_core_disable_lock) from [<c0475890>] (clk_=
+disable+0x2c/0x30)
+[    0.409263] [<c0475890>] (clk_disable) from [<c0b2c128>] (imx_clk_disabl=
+e_uart+0x5c/0x70)
+[    0.409273] [<c0b2c128>] (imx_clk_disable_uart) from [<c01029a4>] (do_on=
+e_initcall+0x64/0x19c)
+[    0.409283] [<c01029a4>] (do_one_initcall) from [<c0b00fac>] (kernel_ini=
+t_freeable+0x14c/0x1e0)
+[    0.409293] [<c0b00fac>] (kernel_init_freeable) from [<c07b5a30>] (kerne=
+l_init+0x18/0x124)
+[    0.409303] [<c07b5a30>] (kernel_init) from [<c01010e8>] (ret_from_fork+=
+0x14/0x2c)
+[    0.409307] Exception stack(0xdf90dfb0 to 0xdf90dff8)
+[    0.409314] dfa0:                                     00000000 00000000 =
+00000000 00000000
+[    0.409323] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 =
+00000000 00000000
+[    0.409331] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    0.409336] ---[ end trace 6801852caf2a2e50 ]---
+[    0.409340] ------------[ cut here ]------------
+[    0.409349] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:684 clk_core_unp=
+repare+0x1a8/0x1c0
+[    0.409352] Modules linked in:
+[    0.409361] CPU: 0 PID: 1 Comm: swapper Tainted: G        W        4.16.=
+0-rc5 #312
+[    0.409365] Hardware name: Freescale i.MX53 (Device Tree Support)
+[    0.409375] [<c011057c>] (unwind_backtrace) from [<c010db3c>] (show_stac=
+k+0x20/0x24)
+[    0.409384] [<c010db3c>] (show_stack) from [<c07a0034>] (dump_stack+0x24=
+/0x28)
+[    0.409393] [<c07a0034>] (dump_stack) from [<c012b524>] (__warn+0x100/0x=
+118)
+[    0.409402] [<c012b524>] (__warn) from [<c012b62c>] (warn_slowpath_null+=
+0x50/0x58)
+[    0.409412] [<c012b62c>] (warn_slowpath_null) from [<c04751e8>] (clk_cor=
+e_unprepare+0x1a8/0x1c0)
+[    0.409423] [<c04751e8>] (clk_core_unprepare) from [<c0476714>] (clk_unp=
+repare+0x34/0x3c)
+[    0.409434] [<c0476714>] (clk_unprepare) from [<c0b2c130>] (imx_clk_disa=
+ble_uart+0x64/0x70)
+[    0.409445] [<c0b2c130>] (imx_clk_disable_uart) from [<c01029a4>] (do_on=
+e_initcall+0x64/0x19c)
+[    0.409455] [<c01029a4>] (do_one_initcall) from [<c0b00fac>] (kernel_ini=
+t_freeable+0x14c/0x1e0)
+[    0.409465] [<c0b00fac>] (kernel_init_freeable) from [<c07b5a30>] (kerne=
+l_init+0x18/0x124)
+[    0.409475] [<c07b5a30>] (kernel_init) from [<c01010e8>] (ret_from_fork+=
+0x14/0x2c)
+[    0.409480] Exception stack(0xdf90dfb0 to 0xdf90dff8)
+[    0.409486] dfa0:                                     00000000 00000000 =
+00000000 00000000
+[    0.409495] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 =
+00000000 00000000
+[    0.409503] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    0.409508] ---[ end trace 6801852caf2a2e51 ]---
+[    0.409512] ------------[ cut here ]------------
+[    0.409521] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:811 clk_core_dis=
+able+0x1ac/0x1b0
+[    0.409524] Modules linked in:
+[    0.409533] CPU: 0 PID: 1 Comm: swapper Tainted: G        W        4.16.=
+0-rc5 #312
+[    0.409537] Hardware name: Freescale i.MX53 (Device Tree Support)
+[    0.409547] [<c011057c>] (unwind_backtrace) from [<c010db3c>] (show_stac=
+k+0x20/0x24)
+[    0.409556] [<c010db3c>] (show_stack) from [<c07a0034>] (dump_stack+0x24=
+/0x28)
+[    0.409565] [<c07a0034>] (dump_stack) from [<c012b524>] (__warn+0x100/0x=
+118)
+[    0.409574] [<c012b524>] (__warn) from [<c012b62c>] (warn_slowpath_null+=
+0x50/0x58)
+[    0.409585] [<c012b62c>] (warn_slowpath_null) from [<c0475550>] (clk_cor=
+e_disable+0x1ac/0x1b0)
+[    0.409596] [<c0475550>] (clk_core_disable) from [<c0475858>] (clk_core_=
+disable_lock+0x28/0x34)
+[    0.409607] [<c0475858>] (clk_core_disable_lock) from [<c0475890>] (clk_=
+disable+0x2c/0x30)
+[    0.409617] [<c0475890>] (clk_disable) from [<c0b2c128>] (imx_clk_disabl=
+e_uart+0x5c/0x70)
+[    0.409627] [<c0b2c128>] (imx_clk_disable_uart) from [<c01029a4>] (do_on=
+e_initcall+0x64/0x19c)
+[    0.409637] [<c01029a4>] (do_one_initcall) from [<c0b00fac>] (kernel_ini=
+t_freeable+0x14c/0x1e0)
+[    0.409647] [<c0b00fac>] (kernel_init_freeable) from [<c07b5a30>] (kerne=
+l_init+0x18/0x124)
+[    0.409656] [<c07b5a30>] (kernel_init) from [<c01010e8>] (ret_from_fork+=
+0x14/0x2c)
+[    0.409661] Exception stack(0xdf90dfb0 to 0xdf90dff8)
+[    0.409668] dfa0:                                     00000000 00000000 =
+00000000 00000000
+[    0.409677] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 =
+00000000 00000000
+[    0.409684] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    0.409689] ---[ end trace 6801852caf2a2e52 ]---
+[    0.409693] ------------[ cut here ]------------
+[    0.409702] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:684 clk_core_unp=
+repare+0x1a8/0x1c0
+[    0.409704] Modules linked in:
+[    0.409714] CPU: 0 PID: 1 Comm: swapper Tainted: G        W        4.16.=
+0-rc5 #312
+[    0.409718] Hardware name: Freescale i.MX53 (Device Tree Support)
+[    0.409728] [<c011057c>] (unwind_backtrace) from [<c010db3c>] (show_stac=
+k+0x20/0x24)
+[    0.409737] [<c010db3c>] (show_stack) from [<c07a0034>] (dump_stack+0x24=
+/0x28)
+[    0.409746] [<c07a0034>] (dump_stack) from [<c012b524>] (__warn+0x100/0x=
+118)
+[    0.409755] [<c012b524>] (__warn) from [<c012b62c>] (warn_slowpath_null+=
+0x50/0x58)
+[    0.409766] [<c012b62c>] (warn_slowpath_null) from [<c04751e8>] (clk_cor=
+e_unprepare+0x1a8/0x1c0)
+[    0.409776] [<c04751e8>] (clk_core_unprepare) from [<c0476714>] (clk_unp=
+repare+0x34/0x3c)
+[    0.409787] [<c0476714>] (clk_unprepare) from [<c0b2c130>] (imx_clk_disa=
+ble_uart+0x64/0x70)
+[    0.409797] [<c0b2c130>] (imx_clk_disable_uart) from [<c01029a4>] (do_on=
+e_initcall+0x64/0x19c)
+[    0.409808] [<c01029a4>] (do_one_initcall) from [<c0b00fac>] (kernel_ini=
+t_freeable+0x14c/0x1e0)
+[    0.409818] [<c0b00fac>] (kernel_init_freeable) from [<c07b5a30>] (kerne=
+l_init+0x18/0x124)
+[    0.409827] [<c07b5a30>] (kernel_init) from [<c01010e8>] (ret_from_fork+=
+0x14/0x2c)
+[    0.409832] Exception stack(0xdf90dfb0 to 0xdf90dff8)
+[    0.409839] dfa0:                                     00000000 00000000 =
+00000000 00000000
+[    0.409848] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 =
+00000000 00000000
+[    0.409856] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    0.409861] ---[ end trace 6801852caf2a2e53 ]---
+[    0.409865] ------------[ cut here ]------------
+[    0.409873] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:811 clk_core_dis=
+able+0x1ac/0x1b0
+[    0.409876] Modules linked in:
+[    0.409885] CPU: 0 PID: 1 Comm: swapper Tainted: G        W        4.16.=
+0-rc5 #312
+[    0.409889] Hardware name: Freescale i.MX53 (Device Tree Support)
+[    0.409899] [<c011057c>] (unwind_backtrace) from [<c010db3c>] (show_stac=
+k+0x20/0x24)
+[    0.409908] [<c010db3c>] (show_stack) from [<c07a0034>] (dump_stack+0x24=
+/0x28)
+[    0.409917] [<c07a0034>] (dump_stack) from [<c012b524>] (__warn+0x100/0x=
+118)
+[    0.409926] [<c012b524>] (__warn) from [<c012b62c>] (warn_slowpath_null+=
+0x50/0x58)
+[    0.409936] [<c012b62c>] (warn_slowpath_null) from [<c0475550>] (clk_cor=
+e_disable+0x1ac/0x1b0)
+[    0.409947] [<c0475550>] (clk_core_disable) from [<c0475858>] (clk_core_=
+disable_lock+0x28/0x34)
+[    0.409958] [<c0475858>] (clk_core_disable_lock) from [<c0475890>] (clk_=
+disable+0x2c/0x30)
+[    0.409968] [<c0475890>] (clk_disable) from [<c0b2c128>] (imx_clk_disabl=
+e_uart+0x5c/0x70)
+[    0.409978] [<c0b2c128>] (imx_clk_disable_uart) from [<c01029a4>] (do_on=
+e_initcall+0x64/0x19c)
+[    0.409988] [<c01029a4>] (do_one_initcall) from [<c0b00fac>] (kernel_ini=
+t_freeable+0x14c/0x1e0)
+[    0.409999] [<c0b00fac>] (kernel_init_freeable) from [<c07b5a30>] (kerne=
+l_init+0x18/0x124)
+[    0.410008] [<c07b5a30>] (kernel_init) from [<c01010e8>] (ret_from_fork+=
+0x14/0x2c)
+[    0.410013] Exception stack(0xdf90dfb0 to 0xdf90dff8)
+[    0.410020] dfa0:                                     00000000 00000000 =
+00000000 00000000
+[    0.410028] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 =
+00000000 00000000
+[    0.410036] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    0.410041] ---[ end trace 6801852caf2a2e54 ]---
+[    0.410045] ------------[ cut here ]------------
+[    0.410054] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:684 clk_core_unp=
+repare+0x1a8/0x1c0
+[    0.410056] Modules linked in:
+[    0.410066] CPU: 0 PID: 1 Comm: swapper Tainted: G        W        4.16.=
+0-rc5 #312
+[    0.410070] Hardware name: Freescale i.MX53 (Device Tree Support)
+[    0.410080] [<c011057c>] (unwind_backtrace) from [<c010db3c>] (show_stac=
+k+0x20/0x24)
+[    0.410089] [<c010db3c>] (show_stack) from [<c07a0034>] (dump_stack+0x24=
+/0x28)
+[    0.410098] [<c07a0034>] (dump_stack) from [<c012b524>] (__warn+0x100/0x=
+118)
+[    0.410108] [<c012b524>] (__warn) from [<c012b62c>] (warn_slowpath_null+=
+0x50/0x58)
+[    0.410118] [<c012b62c>] (warn_slowpath_null) from [<c04751e8>] (clk_cor=
+e_unprepare+0x1a8/0x1c0)
+[    0.410129] [<c04751e8>] (clk_core_unprepare) from [<c0476714>] (clk_unp=
+repare+0x34/0x3c)
+[    0.410140] [<c0476714>] (clk_unprepare) from [<c0b2c130>] (imx_clk_disa=
+ble_uart+0x64/0x70)
+[    0.410150] [<c0b2c130>] (imx_clk_disable_uart) from [<c01029a4>] (do_on=
+e_initcall+0x64/0x19c)
+[    0.410160] [<c01029a4>] (do_one_initcall) from [<c0b00fac>] (kernel_ini=
+t_freeable+0x14c/0x1e0)
+[    0.410170] [<c0b00fac>] (kernel_init_freeable) from [<c07b5a30>] (kerne=
+l_init+0x18/0x124)
+[    0.410179] [<c07b5a30>] (kernel_init) from [<c01010e8>] (ret_from_fork+=
+0x14/0x2c)
+[    0.410184] Exception stack(0xdf90dfb0 to 0xdf90dff8)
+[    0.410191] dfa0:                                     00000000 00000000 =
+00000000 00000000
+[    0.410200] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 =
+00000000 00000000
+[    0.410208] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    0.410213] ---[ end trace 6801852caf2a2e55 ]---
+[    0.416573] EXT4-fs (mmcblk0p1): mounted filesystem without journal. Opt=
+s: (null)
+[    0.416661] VFS: Mounted root (ext4 filesystem) readonly on device 179:1=
+.
+[    0.420559] devtmpfs: mounted
+[    0.425193] Freeing unused kernel memory: 1024K
+[    0.696469] usb 1-1: new high-speed USB device number 2 using ci_hdrc
+[    0.809863] systemd[1]: System time before build time, advancing clock.
+[    0.839865] systemd[1]: Failed to insert module 'autofs4': No such file =
+or directory
+[    0.873145] systemd[1]: systemd 232 running in system mode. (+PAM +AUDIT=
+ +SELINUX +IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNU=
+TLS +ACL +XZ +LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD +IDN)
+[    0.873826] systemd[1]: Detected architecture arm.
+[    0.874785] systemd[1]: Set hostname to <CX9020>.
+[    0.897151] usb 1-1: New USB device found, idVendor=3D0424, idProduct=3D=
+2514
+[    0.897168] usb 1-1: New USB device strings: Mfr=3D0, Product=3D0, Seria=
+lNumber=3D0
+[    0.897873] hub 1-1:1.0: USB hub found
+[    0.897991] hub 1-1:1.0: 4 ports detected
+[    1.216525] usb 1-1.1: new high-speed USB device number 3 using ci_hdrc
+[    1.360035] systemd[1]: Reached target Swap.
+[    1.360585] systemd[1]: Reached target Remote File Systems.
+[    1.360946] systemd[1]: Listening on fsck to fsckd communication Socket.
+[    1.361440] systemd[1]: Started Dispatch Password Requests to Console Di=
+rectory Watch.
+[    1.361811] systemd[1]: Listening on /dev/initctl Compatibility Named Pi=
+pe.
+[    1.362201] systemd[1]: Started Forward Password Requests to Wall Direct=
+ory Watch.
+[    1.363297] systemd[1]: Created slice System Slice.
+[    1.377182] usb 1-1.1: New USB device found, idVendor=3D05e3, idProduct=
+=3D0610
+[    1.377198] usb 1-1.1: New USB device strings: Mfr=3D1, Product=3D2, Ser=
+ialNumber=3D0
+[    1.377205] usb 1-1.1: Product: USB2.0 Hub
+[    1.377211] usb 1-1.1: Manufacturer: GenesysLogic
+[    1.379076] hub 1-1.1:1.0: USB hub found
+[    1.380676] hub 1-1.1:1.0: 4 ports detected
+[    3.676492] usb 1-1.1.2: new high-speed USB device number 4 using ci_hdr=
+c
+[    3.827769] usb 1-1.1.2: New USB device found, idVendor=3D0451, idProduc=
+t=3D8142
+[    3.827788] usb 1-1.1.2: New USB device strings: Mfr=3D0, Product=3D0, S=
+erialNumber=3D1
+[    3.827796] usb 1-1.1.2: SerialNumber: 7A030869B55E
+[    3.828516] hub 1-1.1.2:1.0: USB hub found
+[    3.828753] hub 1-1.1.2:1.0: 4 ports detected
+[    3.867227] EXT4-fs (mmcblk0p1): re-mounted. Opts: errors=3Dremount-ro
+[    4.110288] systemd-journald[91]: Received request to flush runtime jour=
+nal from PID 1
+[    4.146573] usb 1-1.1.2.4: new high-speed USB device number 5 using ci_h=
+drc
+[    4.301003] usb 1-1.1.2.4: New USB device found, idVendor=3D0451, idProd=
+uct=3D8142
+[    4.301018] usb 1-1.1.2.4: New USB device strings: Mfr=3D0, Product=3D0,=
+ SerialNumber=3D1
+[    4.301026] usb 1-1.1.2.4: SerialNumber: 7A030849B55E
+[    4.301778] hub 1-1.1.2.4:1.0: USB hub found
+[    4.302002] hub 1-1.1.2.4:1.0: 4 ports detected
+[    4.616480] usb 1-1.1.2.4.3: new full-speed USB device number 6 using ci=
+_hdrc
+[    4.790027] usb 1-1.1.2.4.3: New USB device found, idVendor=3D0451, idPr=
+oduct=3Dca01
+[    4.790047] usb 1-1.1.2.4.3: New USB device strings: Mfr=3D1, Product=3D=
+2, SerialNumber=3D3
+[    4.790055] usb 1-1.1.2.4.3: Product: Texas Instruments USBtoI2C Solutio=
+n
+[    4.790062] usb 1-1.1.2.4.3: Manufacturer: Texas Instruments
+[    4.790068] usb 1-1.1.2.4.3: SerialNumber:
+[    4.804574] hid-generic 0003:0451:CA01.0001: hiddev0,hidraw0: USB HID v1=
+.00 Device [Texas Instruments Texas Instruments USBtoI2C Solution] on usb-c=
+i_hdrc.1-1.1.2.4.3/input0
+[    4.873609] Generic PHY 63fec000.ethernet-1:01: attached PHY driver [Gen=
+eric PHY] (mii_bus:phy_addr=3D63fec000.ethernet-1:01, irq=3DPOLL)
+[    4.873815] IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready
+[    5.106386] usb 1-1.1.2.4.2: new low-speed USB device number 7 using ci_=
+hdrc
+[    5.266510] usb 1-1.1.2.4.2: New USB device found, idVendor=3D046a, idPr=
+oduct=3D0011
+[    5.266524] usb 1-1.1.2.4.2: New USB device strings: Mfr=3D0, Product=3D=
+0, SerialNumber=3D0
+[    5.282646] input: HID 046a:0011 as /devices/platform/soc/50000000.aips/=
+53f80200.usb/ci_hdrc.1/usb1/1-1/1-1.1/1-1.1.2/1-1.1.2.4/1-1.1.2.4.2/1-1.1.2=
+.4.2:1.0/0003:046A:0011.0002/input/input0
+[    5.346763] hid-generic 0003:046A:0011.0002: input,hidraw1: USB HID v1.1=
+1 Keyboard [HID 046a:0011] on usb-ci_hdrc.1-1.1.2.4.2/input0
+[    6.966965] fec 63fec000.ethernet eth0: Link is Up - 100Mbps/Full - flow=
+ control rx/tx
+[    6.967001] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+[   19.811909] random: crng init done
+---
+Beckhoff Automation GmbH & Co. KG | Managing Director: Dipl. Phys. Hans Bec=
+khoff
+Registered office: Verl, Germany | Register court: Guetersloh HRA 7075
