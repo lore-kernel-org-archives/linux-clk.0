@@ -1,60 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from botnar.kaiser.cx ([176.28.20.183]:40896 "EHLO botnar.kaiser.cx"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753805AbeCFWCz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Mar 2018 17:02:55 -0500
-From: Martin Kaiser <martin@kaiser.cx>
-To: Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
-Date: Tue,  6 Mar 2018 23:02:15 +0100
-Message-Id: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/4] ARM64: dts: meson: hhi syscon and clock controllers
+Date: Thu, 15 Mar 2018 12:55:41 +0100
+Message-Id: <20180315115545.1884-1-jbrunet@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The ssi1_ipg clock depends on ssi1_ipg_per. Set ssi1_ipg_per as parent
-clock of ssi1_ipg. Without this link, the fsl_ssi driver does not
-activate the ssi1_ipg clock correctly and ssi1 is unable to transfer
-audio data.
+The HHI register region provides more than just clocks. Several drivers may
+need to access this region, such as the clock controllers and the display
+driver.
 
-Fix the parent clock of ssi2 as well, it shows the same behaviour.
+Meson-gx clock controllers has been developed and merged before we knew the
+hhi could be needed elsewhere, which is why it requests the region directly.
+Meson-axg was built following the model of meson-gx.
 
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
----
-Dear all,
+To fix this situation, the clock controller should be a child of the hhi
+system controllers. The hhi system controller node already exists on meson-gx.
+It needs to be added on the axg.
 
-could you have a look at this patch? This makes SSI1 and 2 work for me.
-With the default "ipg" parent clocks, I get no ipg clocks on the SSIs.
-However, I was wondering why we don't need anything similar e.g. for the
-UARTs...
+This changeset depends on [0]. This dependency has been merged in
+clk-next. A topic branch is available here [1]
 
-Best regards,
-Martin
+[0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.com
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=clk-amlogic
 
- drivers/clk/imx/clk-imx25.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Jerome Brunet (4):
+  dt-bindings: clock: meson: update documentation with hhi syscon
+  ARM64: dts: meson-gx: sysctrl is the parent of the clock controller
+  ARM64: dts: meson-axg: use hhi syscon for the clock controller
+  ARM64: dts: meson-gx: fix gxl clock controller compatible
 
-diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
-index 23686f7..ee2852f 100644
---- a/drivers/clk/imx/clk-imx25.c
-+++ b/drivers/clk/imx/clk-imx25.c
-@@ -217,8 +217,8 @@ static int __init __mx25_clocks_init(void __iomem *ccm_base)
- 	clk[sim2_ipg] = imx_clk_gate("sim2_ipg", "ipg", ccm(CCM_CGCR2),  8);
- 	clk[slcdc_ipg] = imx_clk_gate("slcdc_ipg", "ipg", ccm(CCM_CGCR2),  9);
- 	clk[spba_ipg] = imx_clk_gate("spba_ipg", "ipg", ccm(CCM_CGCR2),  10);
--	clk[ssi1_ipg] = imx_clk_gate("ssi1_ipg", "ipg", ccm(CCM_CGCR2), 11);
--	clk[ssi2_ipg] = imx_clk_gate("ssi2_ipg", "ipg", ccm(CCM_CGCR2), 12);
-+	clk[ssi1_ipg] = imx_clk_gate("ssi1_ipg", "ssi1_ipg_per", ccm(CCM_CGCR2), 11);
-+	clk[ssi2_ipg] = imx_clk_gate("ssi2_ipg", "ssi2_ipg_per", ccm(CCM_CGCR2), 12);
- 	clk[tsc_ipg] = imx_clk_gate("tsc_ipg", "ipg", ccm(CCM_CGCR2), 13);
- 	clk[uart1_ipg] = imx_clk_gate("uart1_ipg", "ipg", ccm(CCM_CGCR2), 14);
- 	clk[uart2_ipg] = imx_clk_gate("uart2_ipg", "ipg", ccm(CCM_CGCR2), 15);
+ .../devicetree/bindings/clock/amlogic,gxbb-clkc.txt      | 16 +++++++++++-----
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi               | 12 ++++++++----
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi              |  5 ++---
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi               |  7 +++----
+ 4 files changed, 24 insertions(+), 16 deletions(-)
+
 -- 
-2.1.4
-
+2.14.3
