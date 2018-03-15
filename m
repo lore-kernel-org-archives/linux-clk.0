@@ -1,65 +1,83 @@
-Return-Path: <mturquette@baylibre.com>
-Date: Sun, 11 Mar 2018 15:31:58 -0700
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2 0/8] clk: helpers and fixes
-To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180214134340.17242-1-jbrunet@baylibre.com>
-In-Reply-To: <20180214134340.17242-1-jbrunet@baylibre.com>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Subject: Re: [RFC PATCH] clk: qcom: rpmcc: Add support to XO buffered clocks
+To: Stephen Boyd <sboyd@kernel.org>, andy.gross@linaro.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: david.brown@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org,
+ linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, georgi.djakov@linaro.org
+References: <20180315143724.13859-1-srinivas.kandagatla@linaro.org>
+ <152113633637.107923.1559162375425599621@swboyd.mtv.corp.google.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <256371b1-82aa-4fe4-b767-4025395082fd@linaro.org>
+Date: Thu, 15 Mar 2018 18:04:42 +0000
 MIME-Version: 1.0
-Message-Id: <1520807121.n44nt5z8tk.astroid@resonance.none>
+In-Reply-To: <152113633637.107923.1559162375425599621@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Excerpts from Jerome Brunet's message of February 14, 2018 5:43 am:
-> This changset is consist of various patches I have recently sent
-> for the clock framework. They are gathered here for your convinience.
->=20
-> The first two changes exports helpers of the generic clocks (divider and
-> mux). The goal is to avoid code duplication when writing clock driver
-> derived from these generic clock drivers.
->=20
-> The rest fixes various issues found in the clock framework while working =
-on
-> a rework of meson's clock controllers [0]
+Thanks for the review comments,
 
-Applied to clk-helpers towards v4.17.
+On 15/03/18 17:52, Stephen Boyd wrote:
+> Quoting srinivas.kandagatla@linaro.org (2018-03-15 07:37:24)
+>> diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+>> index c60f61b10c7f..261f5505e714 100644
+>> --- a/drivers/clk/qcom/clk-rpm.c
+>> +++ b/drivers/clk/qcom/clk-rpm.c
+>> @@ -56,6 +57,19 @@
+>>                  },                                                            \
+>>          }
+>>   
+>> +#define DEFINE_CLK_RPM_XO_BUFFER(_platform, _name, _active, offset)          \
+>> +       static struct clk_rpm _platform##_##_name = {                         \
+>> +               .rpm_clk_id = QCOM_RPM_CXO_BUFFERS,                           \
+>> +               .xo_offset = (offset),                                        \
+>> +               .rate = 19200000,                                             \
+> 
+> Shouldn't these rates also come from parent, i.e. pxo_board? So drop
+> this line?
+Yep, will remove this.
+> 
+>> +               .hw.init = &(struct clk_init_data){                           \
+>> +                       .ops = &clk_rpm_fixed_ops,                            \
+>> +                       .name = #_name,                                       \
+>> +                       .parent_names = (const char *[]){ "pxo_board" },      \
+>> +                       .num_parents = 1,                                     \
+>> +               },                                                            \
+>> +       }
+>> +
+>>   #define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)             \
+>>          static struct clk_rpm _platform##_##_name = {                         \
+>>                  .rpm_clk_id = (r_id),                                         \
+>> @@ -128,6 +142,8 @@
+>>   
+>>   struct clk_rpm {
+>>          const int rpm_clk_id;
+>> +       const int xo_offset;
+>> +       u32 xo_buffer_value;
+>>          const bool active_only;
+>>          unsigned long rate;
+>>          bool enabled;
+>> @@ -308,6 +330,11 @@ static void clk_rpm_fixed_unprepare(struct clk_hw *hw)
+>>          u32 value = 0;
+>>          int ret;
+>>   
+>> +       if (r->rpm_clk_id == QCOM_RPM_CXO_BUFFERS) {
+>> +               r->xo_buffer_value &= ~(QCOM_RPM_XO_MODE_ON << r->xo_offset);
+>> +               value = r->xo_buffer_value;
+>> +       }
+>> +
+> 
+> I seem to recall that the xo buffers are within the same "word" or
+> something like that for each of the buffers. So we would need to make
+> sure we don't overwrite the bits in there between clks that are
+Code as it is will not work.
+> enabling/disabling stuff. Maybe make some sort of shared variable they
+> all point to and then put a mutex around it? May also be worth making
+> more clk_ops at that point to not conflate with the simpler on/off code.
+Yep, I will give something like that a try in next version.
 
-Regards,
-Mike
 
->=20
-> Changes since the v1s:
->  * dropped lpc32xx divider read-only patches as requested by
->    Vladimir Zapolskiy [2]
->  * Squashed generic divider read-only patches
->  * Squashed mux documentations patches
->=20
-> [0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.co=
-m
-> [2]: https://lkml.kernel.org/r/54782a8f-9735-a574-d8e1-7ff3e9173229@mleia=
-.com
->=20
-> Jerome Brunet (8):
->   clk: divider: export clk_div_mask() helper
->   clk: mux: add helper function for index/value translation
->   clk: fix determine rate error with pass-through clock
->   clk: migrate the count of orphaned clocks at init
->   clk: call the clock init() callback before any other ops callback
->   clk: fix mux clock documentation
->   clk: divider: read-only divider can propagate rate change
->   clk: qcom: use divider_ro_round_rate helper
->=20
->  drivers/clk/clk-divider.c             | 58 ++++++++++++++++++---------
->  drivers/clk/clk-mux.c                 | 75 ++++++++++++++++++++---------=
-------
->  drivers/clk/clk.c                     | 63 ++++++++++++++++-------------
->  drivers/clk/qcom/clk-regmap-divider.c | 20 +++-------
->  include/linux/clk-provider.h          | 23 ++++++++++-
->  5 files changed, 146 insertions(+), 93 deletions(-)
->=20
-> --=20
-> 2.14.3
->=20
->=20
-=
+-srini
+
+> 
