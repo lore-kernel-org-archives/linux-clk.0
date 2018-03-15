@@ -1,260 +1,201 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: =?utf-8?B?T25kxZllag==?= Jirman <megi@xff.cz>
-Cc: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 06/16] drm/sun4i: Release exclusive clock lock when disabling TCON
-Date: Fri, 09 Mar 2018 07:19:33 +0100
-Message-ID: <2311763.nDsHW3lYFU@jernej-laptop>
-In-Reply-To: <20180309004455.5s2ohse4jpwinre5@core.my.home>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net> <20180309001314.bu3zcv5gyqsc52fx@core.my.home> <20180309004455.5s2ohse4jpwinre5@core.my.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <Tali.Perry@nuvoton.com>
+From: Tali Perry <tali.perry1@gmail.com>
+To: brendanhiggins@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
+        raltherr@google.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
+Subject: [PATCH v11 1/2] clk: npcm750: Add binding for Nuvoton NPCM7XX clock\n
+Date: Thu, 15 Mar 2018 15:45:17 +0200
+Message-Id: <1521121518-32217-2-git-send-email-tali.perry1@gmail.com>
+In-Reply-To: <1521121518-32217-1-git-send-email-tali.perry1@gmail.com>
+References: <1521121518-32217-1-git-send-email-tali.perry1@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+* Nuvoton NPCM7XX Clock Controller
 
-Dne petek, 09. marec 2018 ob 01:44:55 CET je Ond=C5=99ej Jirman napisal(a):
-> Hi,
->=20
-> I've debugged this further and it seems that the code has incorrect
-> assumptions. See docs for mode_set_nofb.
->=20
-> https://elixir.bootlin.com/linux/v4.16-rc4/source/include/drm/drm_modeset=
-_he
-> lper_vtables.h#L209
->
+Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
+generates and supplies clocks to all modules within the BMC.
 
-Does this happen with https://github.com/jernejsk/linux-1/tree/h3_hdmi_v3 ?
+10 ==> 11
+update documentation. "eth" replaced with "ethernet" in use case eaxample.
 
-I also tested running X, but I don't remember having the issue.
-=20
-> I've added traces to a few functions that call clk_.*exclusive.*()
-> functions, and I see this after a few restarts of Xorg server:
->=20
-> [    0.783842] *** sun4i_tcon1_mode_set()
-> [    0.783886] *** sun4i_tcon_channel_set_status(..., 1, true)
-> [    6.881690] *** sun4i_tcon_channel_set_status(..., 1, false)
-> [    6.881758] *** sun4i_tcon_channel_set_status(..., 1, true)
-> [   52.335085] *** sun4i_tcon_channel_set_status(..., 1, false)
-> [   52.335343] *** sun4i_tcon_channel_set_status(..., 1, true)
-> [   68.921079] *** sun4i_tcon_channel_set_status(..., 1, false)
-> [   68.921337] *** sun4i_tcon_channel_set_status(..., 1, true)
->=20
-> mode_set_nofb is called just once, yet sun4i_tcon_channel_set_status(...,=
- 1,
-> false) is called multiple times, which leads to unbalanced calls to
-> clk_set_rate_exclusive and clk_rate_exclusive_put.
->=20
-> I don't know how to fix this.
+2 ==> 10
+update documentation. add external clocks as inputs to clk driver.
+fix SPDX comment.
 
-Since there is no function to check if clock is protected, flag can be=20
-introduced within TCON which is set when clock rate is protected and unset=
-=20
-when it is unprotected. That way we could track if clk_rate_exclusive_put()=
-=20
-needs to be called or not.
+1 ==> 2
+This patch includes fix request described here:
+https://patchwork.kernel.org/patch/10200033/
+(move fixed clocks to DT)
 
-Best regards,
-Jernej
+Signed-off-by: Tali Perry <tali.perry1@gmail.com>
 
->=20
-> regards,
->   o.
->=20
-> On Fri, Mar 09, 2018 at 01:13:14AM +0100, 'Ond=C5=99ej Jirman' via linux-=
-sunxi=20
-wrote:
-> > Hi Jernej,
-> >=20
-> > On Thu, Mar 08, 2018 at 11:57:40PM +0100, Jernej =C5=A0krabec wrote:
-> > > Hi,
-> > >=20
-> > > Dne =C4=8Detrtek, 08. marec 2018 ob 23:47:17 CET je Ond=C5=99ej Jirma=
-n napisal(a):
-> > > > Hi,
-> > > >=20
-> > > > On Thu, Mar 01, 2018 at 10:34:32PM +0100, Jernej Skrabec wrote:
-> > > > > Currently exclusive TCON clock lock is never released, which, for
-> > > > > example, prevents changing resolution on HDMI.
-> > > > >=20
-> > > > > In order to fix that, release clock when disabling TCON. TCON is
-> > > > > always
-> > > > > disabled first before new mode is set.
-> > > > >=20
-> > > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > > > ---
-> > > > >=20
-> > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 6 ++++--
-> > > > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > > > >=20
-> > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index
-> > > > > 1d714c06ec9d..7f6c4125c89f
-> > > > > 100644
-> > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > @@ -102,10 +102,12 @@ static void
-> > > > > sun4i_tcon_channel_set_status(struct
-> > > > > sun4i_tcon *tcon, int channel,>
-> > > > >=20
-> > > > >  		return;
-> > > > >  =09
-> > > > >  	}
-> > > > >=20
-> > > > > -	if (enabled)
-> > > > > +	if (enabled) {
-> > > > >=20
-> > > > >  		clk_prepare_enable(clk);
-> > > > >=20
-> > > > > -	else
-> > > > > +	} else {
-> > > > > +		clk_rate_exclusive_put(clk);
-> > > > >=20
-> > > > >  		clk_disable_unprepare(clk);
-> > > > >=20
-> > > > > +	}
-> > > > >=20
-> > > > >  }
-> > > >=20
-> > > > At least in the linux-next/master I can't see clk_rate_exclusive_ge=
-t=20
-call:
-> > > It is in drm-misc/drm-misc-fixes:
-> > > https://cgit.freedesktop.org/drm/drm-misc/commit/?h=3Ddrm-misc-fixes&=
-id=3D79
-> > > d103a565d16b1893d990b2ee5e0fe71767759f
-> > >=20
-> > > My patch is also applied in same branch, so there should be no issues
-> > > while
-> > > merging all those branches.
-> > >=20
-> > > linux-next doesn't have either patches currently:
-> > > https://git.kernel.org/pub/
-> > > scm/linux/kernel/git/next/linux-next.git/log/drivers/gpu/drm/sun4i
-> > >=20
-> > > This is issue only if you manually apply one patch without the other.
-> >=20
-> > I have (and had) both patches applied. There's perhaps some code path,
-> > where sun4i_tcon_channel_set_status(..., false) is called in unbalanced
-> > way with regards to clk_set_rate_exclusive().
-> >=20
-> > The issue occurs when starting Xorg. But Xorg works fine.
-> >=20
-> > regards,
-> >=20
-> >   o.
-> >  =20
-> > > Best regards,
-> > > Jernej
-> > >=20
-> > > > $ git grep 'exclusive' linux-next/master -- drivers/gpu/drm/sun4i
-> > > >=20
-> > > > linux-next/master:sun4i_hdmi.h:    * On sun5i the threshold is
-> > > > exclusive,
-> > > > i.e. does not include, linux-next/master:sun4i_tcon.c:
-> > > > clk_rate_exclusive_put(clk); linux-next/master:sun4i_tcon.c:
-> > > > clk_set_rate_exclusive(tcon->dclk, mode->crtc_clock * 1000);
-> > > > linux-next/master:sun4i_tcon.c:   clk_set_rate_exclusive(tcon->sclk=
-1,
-> > > > mode->crtc_clock * 1000);
-> > > >=20
-> > > > and the kernel complains too:
-> > > >=20
-> > > > [  841.915161] ------------[ cut here ]------------
-> > > > [  841.915187] WARNING: CPU: 0 PID: 273 at
-> > > > /workspace/megous.com/orangepi-pc/linux-4.16/drivers/clk/clk.c:608
-> > > > clk_rate_exclusive_put+0x48/0x4c [  841.915194] CPU: 0 PID: 273 Com=
-m:
-> > > > Xorg
-> > > > Not tainted 4.16.0-rc4-00268-gbac2ecf73ed0 #13 [  841.915196] Hardw=
-are
-> > > > name: Allwinner sun8i Family
-> > > > [  841.915217] [<c0228440>] (unwind_backtrace) from [<c0225b90>]
-> > > > (show_stack+0x10/0x14) [  841.915228] [<c0225b90>] (show_stack) from
-> > > > [<c0b094bc>] (dump_stack+0x88/0x9c) [  841.915237] [<c0b094bc>]
-> > > > (dump_stack) from [<c0240294>] (__warn+0xd4/0xf0) [  841.915244]
-> > > > [<c0240294>] (__warn) from [<c0240380>] (warn_slowpath_null+0x40/0x=
-48)
-> > > > [
-> > > > 841.915250] [<c0240380>] (warn_slowpath_null) from [<c0619b6c>]
-> > > > (clk_rate_exclusive_put+0x48/0x4c) [  841.915261] [<c0619b6c>]
-> > > > (clk_rate_exclusive_put) from [<c0694624>]
-> > > > (sun4i_tcon_set_status+0x178/0x2f0) [  841.915269] [<c0694624>]
-> > > > (sun4i_tcon_set_status) from [<c06930c0>]
-> > > > (sun4i_crtc_atomic_disable+0x7c/0xe4) [  841.915279] [<c06930c0>]
-> > > > (sun4i_crtc_atomic_disable) from [<c06637fc>]
-> > > > (drm_atomic_helper_commit_modeset_disables+0x390/0x46c) [  841.9152=
-88]
-> > > > [<c06637fc>] (drm_atomic_helper_commit_modeset_disables) from
-> > > > [<c0664df4>]
-> > > > (drm_atomic_helper_commit_tail_rpm+0x18/0x64) [  841.915295]
-> > > > [<c0664df4>]
-> > > > (drm_atomic_helper_commit_tail_rpm) from [<c0664da8>]
-> > > > (commit_tail+0x40/0x6c) [  841.915302] [<c0664da8>] (commit_tail) f=
-rom
-> > > > [<c06652b0>] (drm_atomic_helper_commit+0xbc/0x128) [  841.915311]
-> > > > [<c06652b0>] (drm_atomic_helper_commit) from [<c0668d40>]
-> > > > (restore_fbdev_mode_atomic+0x100/0x1fc) [  841.915319] [<c0668d40>]
-> > > > (restore_fbdev_mode_atomic) from [<c0668f1c>]
-> > > > (drm_fb_helper_dpms+0x50/0x130) [  841.915328] [<c0668f1c>]
-> > > > (drm_fb_helper_dpms) from [<c0669e9c>] (drm_fb_helper_blank+0x54/0x=
-90)
-> > > > [
-> > > > 841.915337] [<c0669e9c>] (drm_fb_helper_blank) from [<c06088cc>]
-> > > > (fb_blank+0x54/0xa8) [  841.915343] [<c06088cc>] (fb_blank) from
-> > > > [<c0608c80>] (do_fb_ioctl+0x360/0x62c) [  841.915351] [<c0608c80>]
-> > > > (do_fb_ioctl) from [<c0362648>] (do_vfs_ioctl+0x9c/0x774) [=20
-> > > > 841.915358]
-> > > > [<c0362648>] (do_vfs_ioctl) from [<c0362d54>] (SyS_ioctl+0x34/0x58)=
- [
-> > > > 841.915364] [<c0362d54>] (SyS_ioctl) from [<c0201120>]
-> > > > (ret_fast_syscall+0x0/0x4c) [  841.915368] Exception stack(0xe5fc5f=
-a8
-> > > > to
-> > > > 0xe5fc5ff0)
-> > > > [  841.915373] 5fa0:                   00674f10 00675460 0000000b
-> > > > 00004611
-> > > > 00000001 00000000 [  841.915379] 5fc0: 00674f10 00675460 00000001
-> > > > 00000036
-> > > > 00650474 00000000 006504a4 00675df8 [  841.915382] 5fe0: b61a502c
-> > > > be8acb2c
-> > > > b6192c38 b6b152ec
-> > > > [  841.915386] ---[ end trace fa81b956197707f8 ]---
-> > > >=20
-> > > > It looks like clk_rate_exclusive_put inside
-> > > > sun4i_tcon_channel_set_status is called without first calling some
-> > > > function that would call
-> > > > clk_set_rate_exclusive, leading to unbalanced get/put calls.
-> > > >=20
-> > > > regards,
-> > > >=20
-> > > >   o.
-> > > >  =20
-> > > > >  static void sun4i_tcon_lvds_set_status(struct sun4i_tcon *tcon,
-> > > > >=20
-> > > > > --
-> > > > > 2.16.2
-> > > > >=20
-> > > > > --
-> > > > > You received this message because you are subscribed to the Google
-> > > > > Groups
-> > > > > "linux-sunxi" group. To unsubscribe from this group and stop
-> > > > > receiving
-> > > > > emails from it, send an email to
-> > > > > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
-> > > > > https://groups.google.com/d/optout.
-> > >=20
-> > > --
-> > > You received this message because you are subscribed to the Google
-> > > Groups "linux-sunxi" group. To unsubscribe from this group and stop
-> > > receiving emails from it, send an email to
-> > > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
-> > > https://groups.google.com/d/optout.
-> >=20
-> > --
-> > You received this message because you are subscribed to the Google Grou=
-ps
-> > "linux-sunxi" group. To unsubscribe from this group and stop receiving
-> > emails from it, send an email to
-> > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
-> > https://groups.google.com/d/optout.
+---
+
+
+ .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++++++++++++++++++++
+ include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 +++++++++
+ 2 files changed, 144 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+ create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+
+diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+new file mode 100644
+index 000000000000..f82064546d11
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+@@ -0,0 +1,100 @@
++* Nuvoton NPCM7XX Clock Controller
++
++Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
++generates and supplies clocks to all modules within the BMC.
++
++External clocks:
++
++There are six fixed clocks that are generated outside the BMC. All clocks are of
++a known fixed value that cannot be changed. clk_refclk, clk_mcbypck and
++clk_sysbypck are inputs to the clock controller.
++clk_rg1refck, clk_rg2refck and clk_xin are external clocks suppling the
++network. They are set on the device tree, but not used by the clock module. The
++network devices use them directly.
++Example can be found below.
++
++All available clocks are defined as preprocessor macros in:
++dt-bindings/clock/nuvoton,npcm7xx-clock.h
++and can be reused as DT sources.
++
++Required Properties of clock controller:
++
++	- compatible: "nuvoton,npcm750-clk" : for clock controller of Nuvoton
++		  Poleg BMC NPCM750
++
++	- reg: physical base address of the clock controller and length of
++		memory mapped region.
++
++	- #clock-cells: should be 1.
++
++Example: Clock controller node:
++
++	clk: clock-controller@f0801000 {
++		compatible = "nuvoton,npcm750-clk";
++		#clock-cells = <1>;
++		reg = <0xf0801000 0x1000>;
++		clock-names = "refclk", "sysbypck", "mcbypck";
++		clocks = <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
++	};
++
++Example: Required external clocks for network:
++
++	/* external reference clock */
++	clk_refclk: clk-refclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++		clock-output-names = "refclk";
++	};
++
++	/* external reference clock for cpu. float in normal operation */
++	clk_sysbypck: clk-sysbypck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <800000000>;
++		clock-output-names = "sysbypck";
++	};
++
++	/* external reference clock for MC. float in normal operation */
++	clk_mcbypck: clk-mcbypck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <800000000>;
++		clock-output-names = "mcbypck";
++	};
++
++	 /* external clock signal rg1refck, supplied by the phy */
++	clk_rg1refck: clk-rg1refck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++		clock-output-names = "clk_rg1refck";
++	};
++
++	 /* external clock signal rg2refck, supplied by the phy */
++	clk_rg2refck: clk-rg2refck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++		clock-output-names = "clk_rg2refck";
++	};
++
++	clk_xin: clk-xin {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <50000000>;
++		clock-output-names = "clk_xin";
++	};
++
++
++Example: GMAC controller node that consumes two clocks: a generated clk by the
++clock controller and a fixed clock from DT (clk_rg1refck).
++
++	ethernet0: ethernet@f0802000 {
++		compatible = "snps,dwmac";
++		reg = <0xf0802000 0x2000>;
++		interrupts = <0 14 4>;
++		interrupt-names = "macirq";
++		clocks	= <&clk_rg1refck>, <&clk NPCM7XX_CLK_AHB>;
++		clock-names = "stmmaceth", "clk_gmac";
++	};
+diff --git a/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+new file mode 100644
+index 000000000000..f21522605b94
+--- /dev/null
++++ b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Nuvoton NPCM7xx Clock Generator binding
++ * clock binding number for all clocks supportted by nuvoton,npcm7xx-clk
++ *
++ * Copyright (C) 2018 Nuvoton Technologies tali.perry@nuvoton.com
++ *
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_NPCM7XX_H
++#define __DT_BINDINGS_CLOCK_NPCM7XX_H
++
++
++#define NPCM7XX_CLK_CPU 0
++#define NPCM7XX_CLK_GFX_PIXEL 1
++#define NPCM7XX_CLK_MC 2
++#define NPCM7XX_CLK_ADC 3
++#define NPCM7XX_CLK_AHB 4
++#define NPCM7XX_CLK_TIMER 5
++#define NPCM7XX_CLK_UART 6
++#define NPCM7XX_CLK_MMC  7
++#define NPCM7XX_CLK_SPI3 8
++#define NPCM7XX_CLK_PCI  9
++#define NPCM7XX_CLK_AXI 10
++#define NPCM7XX_CLK_APB4 11
++#define NPCM7XX_CLK_APB3 12
++#define NPCM7XX_CLK_APB2 13
++#define NPCM7XX_CLK_APB1 14
++#define NPCM7XX_CLK_APB5 15
++#define NPCM7XX_CLK_CLKOUT 16
++#define NPCM7XX_CLK_GFX  17
++#define NPCM7XX_CLK_SU   18
++#define NPCM7XX_CLK_SU48 19
++#define NPCM7XX_CLK_SDHC 20
++#define NPCM7XX_CLK_SPI0 21
++#define NPCM7XX_CLK_SPIX 22
++
++#define NPCM7XX_CLK_REFCLK 23
++#define NPCM7XX_CLK_SYSBYPCK 24
++#define NPCM7XX_CLK_MCBYPCK 25
++
++#define NPCM7XX_NUM_CLOCKS	 (NPCM7XX_CLK_MCBYPCK+1)
++
++#endif
+-- 
+2.14.1
