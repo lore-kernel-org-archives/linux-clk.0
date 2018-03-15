@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1521385797.6569.90.camel@baylibre.com>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: meson: update documentation
- with hhi syscon
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Rob Herring <robh@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Sun, 18 Mar 2018 16:09:57 +0100
-In-Reply-To: <20180318125222.kqtybu4hiwvsx3om@rob-hp-laptop>
-References: <20180315115545.1884-1-jbrunet@baylibre.com>
-         <20180315115545.1884-2-jbrunet@baylibre.com>
-         <20180318125222.kqtybu4hiwvsx3om@rob-hp-laptop>
+Return-Path: <ulf.hansson@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <20180312104945.3001-1-riku.voipio@linaro.org>
+References: <20180312104945.3001-1-riku.voipio@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 15 Mar 2018 14:47:06 +0100
+Message-ID: <CAPDyKFqjcak8buKYvy4OFy=5rUk95OPMHjDcwGs=NtNiD0hhww@mail.gmail.com>
+Subject: Re: [RESEND PATCH] clk: enable hi655x common clk automatically
+To: Riku Voipio <riku.voipio@linaro.org>
+Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann <arnd@linaro.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, John Stultz <john.stultz@linaro.org>,
+	Wei Xu <xuwei5@hisilicon.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 2018-03-18 at 07:52 -0500, Rob Herring wrote:
-> On Thu, Mar 15, 2018 at 12:55:42PM +0100, Jerome Brunet wrote:
-> > The HHI register region hosts more than just clocks and needs to
-> > accessed drivers other than the clock controller, such as the display
-> > driver.
-> > 
-> > This register region should be managed by syscon. It is already the case
-> > on gxbb/gxl and it soon will be on axg. The clock controllers must use
-> > this system controller instead of directly mapping the registers.
-> 
-> Sounds like a kernel problem, not a DT one.
+On 12 March 2018 at 11:49,  <riku.voipio@linaro.org> wrote:
+> From: Riku Voipio <riku.voipio@linaro.org>
+>
+> Without COMMON_CLK_HI655X Wifi and bluetooth are non-functional on Hikey.
+> As suggested by Arnd, enable the driver automatically when the parent
+> driver is selected. With sensible defaults in place, we can leave other
+> choices for EXPERT.
+>
+> Cc: John Stultz <john.stultz@linaro.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Wei Xu <xuwei5@hisilicon.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Suggested-by: Arnd Bergmann <arnd@linaro.org>
+> Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
 
-It's a platform problem, so it has much a kernel problem (solution already
-merged) as a DT problem
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-DT wise, we've got two devices mapping the same region
+Kind regards
+Uffe
 
-in arch/arm64/boot/dts/amlogic/meson-gx.dtsi:
-> system-controller@0 
-
-which is used by the display device.
-
-and in arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi (same for gxl)
-> clock-controller@0
-
-It has worked so far because the clock controller claims the region w/o
-reserving it but it remains unsafe since both device may access the same region.
-The fix is to have the clock controller go through the existing syscon.
-
-> 
-> > 
-> 
-> With a single child, there is really no point to this change. A single 
-> node can provide multiple functions. Look at nodes that are both reset 
-> and clock providers.
-
-There is more than a single user, as explained above and in the cover letter of
-this series.
-
-> 
-> What other functions are there?
-> 
-> Rob
+> ---
+> Previous discussion at https://patchwork.kernel.org/patch/9767143/
+> ---
+>  drivers/clk/Kconfig | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 98ce9fc6e6c0..448ce83b334d 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -55,8 +55,10 @@ config COMMON_CLK_RK808
+>           by control register.
+>
+>  config COMMON_CLK_HI655X
+> -       tristate "Clock driver for Hi655x"
+> -       depends on MFD_HI655X_PMIC || COMPILE_TEST
+> +       tristate "Clock driver for Hi655x" if EXPERT
+> +       depends on (MFD_HI655X_PMIC || COMPILE_TEST)
+> +       depends on REGMAP
+> +       default MFD_HI655X_PMIC
+>         ---help---
+>           This driver supports the hi655x PMIC clock. This
+>           multi-function device has one fixed-rate oscillator, clocked
+> --
+> 2.15.1
+>
