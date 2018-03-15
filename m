@@ -1,57 +1,91 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:40252 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750836AbeCICp5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Mar 2018 21:45:57 -0500
-Date: Fri, 9 Mar 2018 10:45:14 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Bai Ping <ping.bai@nxp.com>
-Cc: sboyd@kernel.org, robh+dt@kernel.org, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        aisheng.dong@nxp.com, jacky.baip@gmail.com
-Subject: Re: [PATCH v4 4/4] driver: clk: imx: add clock driver for imx6sll
-Message-ID: <20180309024513.GE3217@dragon>
-References: <1520502445-22576-1-git-send-email-ping.bai@nxp.com>
- <1520502445-22576-4-git-send-email-ping.bai@nxp.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1520502445-22576-4-git-send-email-ping.bai@nxp.com>
-Sender: linux-clk-owner@vger.kernel.org
+To: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, srinivas.kandagatla@linaro.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180315143724.13859-1-srinivas.kandagatla@linaro.org>
+Cc: david.brown@linaro.org, mturquette@baylibre.com, robh+dt@kernel.org,
+ linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, georgi.djakov@linaro.org,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+References: <20180315143724.13859-1-srinivas.kandagatla@linaro.org>
+Message-ID: <152113633637.107923.1559162375425599621@swboyd.mtv.corp.google.com>
+Subject: Re: [RFC PATCH] clk: qcom: rpmcc: Add support to XO buffered clocks
+Date: Thu, 15 Mar 2018 10:52:16 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 08, 2018 at 05:47:25PM +0800, Bai Ping wrote:
-> diff --git a/drivers/clk/imx/clk-imx6sll.c b/drivers/clk/imx/clk-imx6sll.c
-> new file mode 100644
-> index 0000000..e938db5
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-imx6sll.c
-> @@ -0,0 +1,344 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> + * Copyright 2017-2018 NXP.
-> + */
-> +
-> +#include <dt-bindings/clock/imx6sll-clock.h>
-> +#include <linux/clk.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/types.h>
-> +
-> +#include "clk.h"
-> +
-> +#define CCM_ANALOG_PLL_BYPASS		(0x1 << 16)
-> +#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
-> +#define CCDR				0x4
+Quoting srinivas.kandagatla@linaro.org (2018-03-15 07:37:24)
+> diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+> index c60f61b10c7f..261f5505e714 100644
+> --- a/drivers/clk/qcom/clk-rpm.c
+> +++ b/drivers/clk/qcom/clk-rpm.c
+> @@ -56,6 +57,19 @@
+>                 },                                                       =
+     \
+>         }
+>  =
 
-We agreed to remove this define, right?
+> +#define DEFINE_CLK_RPM_XO_BUFFER(_platform, _name, _active, offset)     =
+     \
+> +       static struct clk_rpm _platform##_##_name =3D {                  =
+       \
+> +               .rpm_clk_id =3D QCOM_RPM_CXO_BUFFERS,                    =
+       \
+> +               .xo_offset =3D (offset),                                 =
+       \
+> +               .rate =3D 19200000,                                      =
+       \
 
-Shawn
+Shouldn't these rates also come from parent, i.e. pxo_board? So drop
+this line?
 
-> +#define xPLL_CLR(offset)		(offset + 0x8)
+> +               .hw.init =3D &(struct clk_init_data){                    =
+       \
+> +                       .ops =3D &clk_rpm_fixed_ops,                     =
+       \
+> +                       .name =3D #_name,                                =
+       \
+> +                       .parent_names =3D (const char *[]){ "pxo_board" }=
+,      \
+> +                       .num_parents =3D 1,                              =
+       \
+> +               },                                                       =
+     \
+> +       }
+> +
+>  #define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)        =
+     \
+>         static struct clk_rpm _platform##_##_name =3D {                  =
+       \
+>                 .rpm_clk_id =3D (r_id),                                  =
+       \
+> @@ -128,6 +142,8 @@
+>  =
+
+>  struct clk_rpm {
+>         const int rpm_clk_id;
+> +       const int xo_offset;
+> +       u32 xo_buffer_value;
+>         const bool active_only;
+>         unsigned long rate;
+>         bool enabled;
+> @@ -308,6 +330,11 @@ static void clk_rpm_fixed_unprepare(struct clk_hw *h=
+w)
+>         u32 value =3D 0;
+>         int ret;
+>  =
+
+> +       if (r->rpm_clk_id =3D=3D QCOM_RPM_CXO_BUFFERS) {
+> +               r->xo_buffer_value &=3D ~(QCOM_RPM_XO_MODE_ON << r->xo_of=
+fset);
+> +               value =3D r->xo_buffer_value;
+> +       }
+> +
+
+I seem to recall that the xo buffers are within the same "word" or
+something like that for each of the buffers. So we would need to make
+sure we don't overwrite the bits in there between clks that are
+enabling/disabling stuff. Maybe make some sort of shared variable they
+all point to and then put a mutex around it? May also be worth making
+more clk_ops at that point to not conflate with the simpler on/off code.
