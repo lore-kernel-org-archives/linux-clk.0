@@ -1,63 +1,108 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs4.siol.net ([213.250.19.137]:54515 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751319AbeCURNt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 21 Mar 2018 13:13:49 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, icenowy@aosc.io
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH 2/7] dt-bindings: add binding for the Allwinner A64 DE2 bus
-Date: Wed, 21 Mar 2018 18:13:42 +0100
-Message-ID: <2866474.lRHIcLtROC@jernej-laptop>
-In-Reply-To: <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io>
-References: <20180316175354.21437-1-icenowy@aosc.io> <20180320184646.dynqv6qubzabroe4@flea> <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io>
+Received: from mail-vk0-f49.google.com ([209.85.213.49]:35766 "EHLO
+        mail-vk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751977AbeCOQUG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Mar 2018 12:20:06 -0400
+Received: by mail-vk0-f49.google.com with SMTP id r197so3793473vke.2
+        for <linux-clk@vger.kernel.org>; Thu, 15 Mar 2018 09:20:06 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <b0b083c6-3a99-c0ed-9f1b-bba203eaa6bc@rock-chips.com>
+References: <1521104071-19595-1-git-send-email-hl@rock-chips.com>
+ <18794d71-ec37-7af4-3de6-7a43a5c66010@rock-chips.com> <df78009d-924f-6b9c-6bf6-f1f69d162708@rock-chips.com>
+ <b0b083c6-3a99-c0ed-9f1b-bba203eaa6bc@rock-chips.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 15 Mar 2018 09:20:04 -0700
+Message-ID: <CAD=FV=UaGaE0FX7ofQgSqsyir08psc0-EkHq9_WTW7EQvTZPog@mail.gmail.com>
+Subject: Re: [PATCH] clk: rockchip: assign correct id for pclk_ddr and hclk_sd
+ in rk3399
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: hl <hl@rock-chips.com>, Derek Basehore <dbasehore@chromium.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Brian Norris <briannorris@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        diander@chromium.org, linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi all,
+Hi,
 
-Dne sreda, 21. marec 2018 ob 03:18:13 CET je Icenowy Zheng napisal(a):
-> 于 2018年3月21日 GMT+08:00 上午2:46:46, Maxime Ripard <maxime.ripard@bootlin.com> 
-写到:
-> >On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
-> >> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64 SoC
-> >
-> >to
-> >
-> >> be claimed, otherwise the whole DE2 space is inaccessible.
-> >> 
-> >> Add a device tree binding of the DE2 part as a sub-bus.
-> >
-> >Where did you get the info that it was a bus?
-> 
-> There's no direct evidence, just some guess.
-> 
-> The DE2 is a whole part that is just allocated a memory
-> space at the user manual, and the SRAM controls the
-> access to all modules in the DE2.
-> 
-> So it might be a bus.
-> 
-> Implement it as a bus is a clear representation on A64.
+On Thu, Mar 15, 2018 at 6:40 AM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+> [Correct Doug's email address]
+>
+> On 2018/3/15 17:12, hl wrote:
+>>
+>> Hi Shawn,
+>>
+>>
+>> On Thursday, March 15, 2018 05:01 PM, Shawn Lin wrote:
+>>>
+>>> Hi Huang,
+>>>
+>>> On 2018/3/15 16:54, Lin Huang wrote:
+>>>>
+>>>> Assign id PCLK_DDR to pclk_ddr, id HCLK_SD to hclk_sd, so we can
+>>>> assign frequency for them in dts.
+>>>
+>>>
+>>> I'm curious under which condition that we need assign frequency for
+>>> hclk_sd?
+>>
+>> We may set CPLL frequency higher than 800MHz, with that we need assign
+>> clock
+>> to hclk_sd, otherwise it will exceed 200MHz, since we use the default cru
+>> register value to get hclk_sd for now.
+>> you can check
+>>
+>> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/956678/5
+>
+>
+> Okay, thanks for pointing me to the actual user case.
+> I'm fine with that, however, what I am thinking now is:
+>
+> (1) It's worth elaborating more in the commit msg.
 
-Since there is already syscon for same mmio region, we migh as well use it 
-when loading ccu-sun8i-de2 driver on A64.
-
-Other options, like SRAM driver or bus driver, might better represent HW, but 
-then we would have two DT nodes covering same mmio region, which I think is 
-not really acceptable.
-
-Any suggestions?
-
-BTW, H6 has same design in this regard.
-
-Best regards,
-Jernej
-
+Seems like a nice idea to me.
 
 
+> (2) The reason you need set hclk_sd is that it depends on the
+> defualt settings but lack real owner to explicitly set it to <=200MHz.
+
+Actually, in the case of hclk_sd there _is_ an owner to set it to <=
+200 MHz.  I'll comment on the gerrit review, but the assigned clock
+for hclk_sd probably belongs in the node "sdmmc: dwmmc@fe320000".
+
+...but in any case, you still need the clock ID to do that.
+
+
+> So my another question is if that is more about aspect of power
+> consumption, then it looks okay to me. But if that is a SoC limitation,
+> then we are under risk for that. Either we should never rely on the
+> default settings, or we should set its rate range after registering this
+> clock provider.
+
+I have always wondered about perhaps encoding the min/max clock rate
+for each clock somewhere in the source code.  Then whenever we change
+clock rates we could enforce that we don't ever go past this min/max.
+In think, in theory, this is possible by registering for all the right
+callbacks / notifications.  ...but I suspect that doing in a generic /
+performant way might be very difficult.  Specifically, whenever a
+clock changes you may need to make all sorts of decisions about
+re-parenting and also checking whether all your children are out fo
+spec.
+
+So without encoding the min/max and having it magically auto-resolve,
+the best we can do is just to assign a sane clock rate.  If there's no
+subsystem owning this clock then doing so at clock init time is sane
+(and that's what we do with many clocks).  If a subsystem owns it,
+doing it when the subsystem is probed is sane.
+
+
+So, to summarize, I'm happy with this change.  I wouldn't mind a
+little more justification in the CL description but personally I won't
+make a big deal about it.
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+
+-Doug
