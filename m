@@ -1,43 +1,36 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 15 Mar 2018 09:07:49 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Jiancheng Xue <xuejiancheng@hisilicon.com>,
+	linux-clk@vger.kernel.org
+Subject: Re: [GIT PULL v2] Hi3798cv200 clock driver update for 4.17
+Message-ID: <20180315010748.GH26859@dragon>
+References: <20180312082644.GA26859@dragon>
+ <152106341167.179530.4712744286063403232@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 1 Mar 2018 14:28:30 +0100
-Message-ID: <CACRpkdbu9Kxvuwr-nLHxyEYiTeGK38o7MKCFf-MMjYxwgcJPPA@mail.gmail.com>
-Subject: Re: [PATCH v8 00/15] Krait clocks + Krait CPUfreq
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: viresh kumar <viresh.kumar@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@armlinux.org.uk>,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-pm@vger.kernel.org,
-	Rob Herring <robh@kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <152106341167.179530.4712744286063403232@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sricharan,
+On Wed, Mar 14, 2018 at 02:36:51PM -0700, Stephen Boyd wrote:
+> Quoting Shawn Guo (2018-03-12 01:26:45)
+> > Hi Stephen, Mike,
+> > 
+> > This is v2 of Hi3798cv200 clock driver pull request [1].  It includes
+> > the eMMC phase clock support patches [2] on top of v1.  I believe they
+> > are ready to go.  Please consider to pull it for 4.17.  Thanks.
+> > 
+> > Shawn
+> > 
+> 
+> Thanks. Pulled into clk-next with a fixup on top to mark the phase ops
+> static.
 
-thanks for picking up Stephen's patch set and working on this
-clocking business!
+Stephen,
 
-Would you happen to know if the MSM8660/APQ8060 that
-I'm using a bit has the same Krait clocking so I need to augment
-that SoC to use this too (on top of this, naturally, this is a good first
-step)?
+Thanks a lot for fixing that up.
 
-On Tue, Feb 27, 2018 at 3:06 PM, Sricharan R <sricharan@codeaurora.org> wrote:
-
->   * Dropped the DT update from the series. Will send separately
-
-Are these available somewhere so I can test the sum total on
-the Nexus 7 and see if I get some graphics? I've been sticking a
-patch from Stephen's series in for some time and it makes the
-MDP graphics works on the 2013 Nexus 7.
-
-Yours,
-Linus Walleij
+Shawn
