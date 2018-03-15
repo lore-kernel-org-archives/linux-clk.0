@@ -1,47 +1,63 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/5] clk: renesas: r8a7745: Fix LB clock divider
-Date: Thu, 29 Mar 2018 19:33:07 +0200
-Message-Id: <1522344790-20061-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <152106382662.179530.17640698731932597086@swboyd.mtv.corp.google.com>
+References: <1519985872-3809-1-git-send-email-geert+renesas@glider.be> <152106382662.179530.17640698731932597086@swboyd.mtv.corp.google.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 15 Mar 2018 10:27:33 +0100
+Message-ID: <CAMuHMdVPXzJcJLkdH2+Qzz11dT95=3FrgZUR9n4Co7mC=7vEig@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.17
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-the LB clock divider depends on the value of the MD18 pin.
+Hi Stephen,
 
-On RZ/G1E, the LB clock divider is fixed to 24.  Hence model the clock
-as a fixed factor clock instead.
+On Wed, Mar 14, 2018 at 10:43 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2018-03-02 02:17:52)
+>> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+>>
+>>   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.17-tag1
+>>
+>> for you to fetch changes up to 7ce36da900c0a2ff4777d9ba51c4f1cb74205463:
+>>
+>>   clk: renesas: cpg-mssr: Add support for R-Car M3-N (2018-02-26 09:13:29 +0100)
+>>
+>> ----------------------------------------------------------------
+>> clk: renesas: Updates for v4.17
+>>
+>>   - Update legacy DT Kconfig default,
+>>   - Add support for CPU (Z/Z2) clocks on R-Car H3 and M3-W,
+>>   - Add support for the watchdog module clocks on R-Car Gen2 and RZ/G1,
+>>   - Add support for the new R-Car M3-N and V3H SoCs.
+>>
+>> Thanks for pulling!
+>>
+>
+> Thanks. Pulled into clk-next.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks!
 
-diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-index 87f5a3619e4f9d60..4b0a9243b7481176 100644
---- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-@@ -51,7 +51,6 @@ static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
- 	DEF_FIXED(".pll1_div2",	CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
- 
- 	/* Core Clock Outputs */
--	DEF_BASE("lb",   R8A7745_CLK_LB,   CLK_TYPE_GEN2_LB,	CLK_PLL1),
- 	DEF_BASE("sdh",  R8A7745_CLK_SDH,  CLK_TYPE_GEN2_SDH,	CLK_PLL1),
- 	DEF_BASE("sd0",  R8A7745_CLK_SD0,  CLK_TYPE_GEN2_SD0,	CLK_PLL1),
- 	DEF_BASE("qspi", R8A7745_CLK_QSPI, CLK_TYPE_GEN2_QSPI,	CLK_PLL1_DIV2),
-@@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7745_core_clks[] __initconst = {
- 	DEF_FIXED("zs",    R8A7745_CLK_ZS,	CLK_PLL1,	    6, 1),
- 	DEF_FIXED("hp",    R8A7745_CLK_HP,	CLK_PLL1,	   12, 1),
- 	DEF_FIXED("b",     R8A7745_CLK_B,	CLK_PLL1,	   12, 1),
-+	DEF_FIXED("lb",    R8A7745_CLK_LB,	CLK_PLL1,	   24, 1),
- 	DEF_FIXED("p",     R8A7745_CLK_P,	CLK_PLL1,	   24, 1),
- 	DEF_FIXED("cl",    R8A7745_CLK_CL,	CLK_PLL1,	   48, 1),
- 	DEF_FIXED("cp",    R8A7745_CLK_CP,	CLK_PLL1,	   48, 1),
--- 
-2.7.4
+> Did you need to use clk_readl() or was it just copy-paste? I hope we can
+> get rid of that function at some point.
+
+That's an oversight. I will get rid of them in the second pull request
+for v4.17.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
