@@ -1,56 +1,151 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521738560-14797-1-git-send-email-geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1521738560-14797-1-git-send-email-geert+renesas@glider.be>
-Message-ID: <152182342557.178046.1299115603511900356@swboyd.mtv.corp.google.com>
-Subject: Re: [git pull] clk: renesas: Updates for v4.17 (take two)
-Date: Fri, 23 Mar 2018 09:43:45 -0700
+Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+From: srinivas.kandagatla@linaro.org
+To: Stephen Boyd <sboyd@kernel.org>,
+	andy.gross@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Cc: david.brown@linaro.org,
+	mturquette@baylibre.com,
+	robh+dt@kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	georgi.djakov@linaro.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [RFC PATCH] clk: qcom: rpmcc: Add support to XO buffered clocks
+Date: Thu, 15 Mar 2018 14:37:24 +0000
+Message-Id: <20180315143724.13859-1-srinivas.kandagatla@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-03-22 10:09:20)
->         Hi Mike, Stephen,
-> =
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-> The following changes since commit 7ce36da900c0a2ff4777d9ba51c4f1cb742054=
-63:
-> =
+XO is onchip buffer clock to generate 19.2MHz.
 
->   clk: renesas: cpg-mssr: Add support for R-Car M3-N (2018-02-26 09:13:29=
- +0100)
-> =
+This patch adds support to 5 XO buffer clocks found on PMIC8921,
+these buffer clocks can be controlled from external pin or in
+manual mode.
 
-> are available in the git repository at:
-> =
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/clk/qcom/clk-rpm.c             | 39 +++++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/qcom,rpmcc.h |  5 +++++
+ 2 files changed, 43 insertions(+), 1 deletion(-)
 
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/clk-renesas-for-v4.17-tag2
-> =
-
-> for you to fetch changes up to 472f5f391819b4b22ec040f227aea26f515b6ae2:
-> =
-
->   clk: renesas: cpg-mssr: Adjust r8a77980 ifdef (2018-03-21 17:35:02 +010=
-0)
-> =
-
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v4.17 (take two)
-> =
-
->   - Fix the incorrect display clock on R-Car M3-N,
->   - Always use readl()/writel(),
->   - Small fixes.
-> =
-
-> Thanks for pulling!
-> =
-
-
-Thanks. Pulled.
+diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+index c60f61b10c7f..261f5505e714 100644
+--- a/drivers/clk/qcom/clk-rpm.c
++++ b/drivers/clk/qcom/clk-rpm.c
+@@ -29,6 +29,7 @@
+ 
+ #define QCOM_RPM_MISC_CLK_TYPE				0x306b6c63
+ #define QCOM_RPM_SCALING_ENABLE_ID			0x2
++#define QCOM_RPM_XO_MODE_ON				0x2
+ 
+ #define DEFINE_CLK_RPM(_platform, _name, _active, r_id)			      \
+ 	static struct clk_rpm _platform##_##_active;			      \
+@@ -56,6 +57,19 @@
+ 		},							      \
+ 	}
+ 
++#define DEFINE_CLK_RPM_XO_BUFFER(_platform, _name, _active, offset)	      \
++	static struct clk_rpm _platform##_##_name = {			      \
++		.rpm_clk_id = QCOM_RPM_CXO_BUFFERS,			      \
++		.xo_offset = (offset),					      \
++		.rate = 19200000,					      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_rpm_fixed_ops,			      \
++			.name = #_name,					      \
++			.parent_names = (const char *[]){ "pxo_board" },      \
++			.num_parents = 1,				      \
++		},							      \
++	}
++
+ #define DEFINE_CLK_RPM_FIXED(_platform, _name, _active, r_id, r)	      \
+ 	static struct clk_rpm _platform##_##_name = {			      \
+ 		.rpm_clk_id = (r_id),					      \
+@@ -128,6 +142,8 @@
+ 
+ struct clk_rpm {
+ 	const int rpm_clk_id;
++	const int xo_offset;
++	u32 xo_buffer_value;
+ 	const bool active_only;
+ 	unsigned long rate;
+ 	bool enabled;
+@@ -159,7 +175,8 @@ static int clk_rpm_handoff(struct clk_rpm *r)
+ 	 * The vendor tree simply reads the status for this
+ 	 * RPM clock.
+ 	 */
+-	if (r->rpm_clk_id == QCOM_RPM_PLL_4)
++	if (r->rpm_clk_id == QCOM_RPM_PLL_4 ||
++		r->rpm_clk_id == QCOM_RPM_CXO_BUFFERS)
+ 		return 0;
+ 
+ 	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
+@@ -294,6 +311,11 @@ static int clk_rpm_fixed_prepare(struct clk_hw *hw)
+ 	u32 value = 1;
+ 	int ret;
+ 
++	if (r->rpm_clk_id == QCOM_RPM_CXO_BUFFERS) {
++		r->xo_buffer_value |= (QCOM_RPM_XO_MODE_ON << r->xo_offset);
++		value = r->xo_buffer_value;
++	}
++
+ 	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
+ 			     r->rpm_clk_id, &value, 1);
+ 	if (!ret)
+@@ -308,6 +330,11 @@ static void clk_rpm_fixed_unprepare(struct clk_hw *hw)
+ 	u32 value = 0;
+ 	int ret;
+ 
++	if (r->rpm_clk_id == QCOM_RPM_CXO_BUFFERS) {
++		r->xo_buffer_value &= ~(QCOM_RPM_XO_MODE_ON << r->xo_offset);
++		value = r->xo_buffer_value;
++	}
++
+ 	ret = qcom_rpm_write(r->rpm, QCOM_RPM_ACTIVE_STATE,
+ 			     r->rpm_clk_id, &value, 1);
+ 	if (!ret)
+@@ -449,6 +476,11 @@ DEFINE_CLK_RPM(apq8064, mmfpb_clk, mmfpb_a_clk, QCOM_RPM_MMFPB_CLK);
+ DEFINE_CLK_RPM(apq8064, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
+ DEFINE_CLK_RPM(apq8064, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
+ DEFINE_CLK_RPM(apq8064, qdss_clk, qdss_a_clk, QCOM_RPM_QDSS_CLK);
++DEFINE_CLK_RPM_XO_BUFFER(apq8064, xo_d0_clk, xo_d0_a_clk, 0);
++DEFINE_CLK_RPM_XO_BUFFER(apq8064, xo_d1_clk, xo_d1_a_clk, 8);
++DEFINE_CLK_RPM_XO_BUFFER(apq8064, xo_a0_clk, xo_a0_a_clk, 16);
++DEFINE_CLK_RPM_XO_BUFFER(apq8064, xo_a1_clk, xo_a1_a_clk, 24);
++DEFINE_CLK_RPM_XO_BUFFER(apq8064, xo_a2_clk, xo_a2_a_clk, 28);
+ 
+ static struct clk_rpm *apq8064_clks[] = {
+ 	[RPM_APPS_FABRIC_CLK] = &apq8064_afab_clk,
+@@ -469,6 +501,11 @@ static struct clk_rpm *apq8064_clks[] = {
+ 	[RPM_SFPB_A_CLK] = &apq8064_sfpb_a_clk,
+ 	[RPM_QDSS_CLK] = &apq8064_qdss_clk,
+ 	[RPM_QDSS_A_CLK] = &apq8064_qdss_a_clk,
++	[RPM_XO_D0] = &apq8064_xo_d0_clk,
++	[RPM_XO_D1] = &apq8064_xo_d1_clk,
++	[RPM_XO_A0] = &apq8064_xo_a0_clk,
++	[RPM_XO_A1] = &apq8064_xo_a1_clk,
++	[RPM_XO_A2] = &apq8064_xo_a2_clk,
+ };
+ 
+ static const struct rpm_clk_desc rpm_clk_apq8064 = {
+diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
+index b8337a5fa347..c585b82b9c05 100644
+--- a/include/dt-bindings/clock/qcom,rpmcc.h
++++ b/include/dt-bindings/clock/qcom,rpmcc.h
+@@ -40,6 +40,11 @@
+ #define RPM_SMI_CLK				22
+ #define RPM_SMI_A_CLK				23
+ #define RPM_PLL4_CLK				24
++#define RPM_XO_D0				25
++#define RPM_XO_D1				26
++#define RPM_XO_A0				27
++#define RPM_XO_A1				28
++#define RPM_XO_A2				29
+ 
+ /* SMD RPM clocks */
+ #define RPM_SMD_XO_CLK_SRC				0
+-- 
+2.16.2
