@@ -1,31 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:44590 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751797AbeCWISJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Mar 2018 04:18:09 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 1/3] clk: rockchip: Fix wrong parents for MMC phase clock for rk3328
-Date: Fri, 23 Mar 2018 09:18:05 +0100
-Message-ID: <2350960.e3EHEgP2OW@phil>
-In-Reply-To: <1521599960-34381-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1521599960-34381-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <RAJANV@xilinx.com>
+From: Rajan Vaja <RAJANV@xilinx.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jolly Shah
+	<JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>
+Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
+ CLK_OF_DECLARE_DRIVER
+Date: Fri, 16 Mar 2018 11:49:37 +0000
+Message-ID: <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
+References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
+ <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
+ <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
+ <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
+In-Reply-To: <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 21. März 2018, 03:39:18 CET schrieb Shawn Lin:
-> commit c420c1e4db22 ("clk: rockchip: Prevent calculating mmc phase if
-> clock rate is zero") catches some gremlins for clk-rk3328.c that the
-> parents of MMC phase clock should be clk_{sdmmc, sdio, emmc}, but not
-> sclk_{sdmmc, sdio, emmc}.
-> 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-
-applied for 4.17
-
-
-Thanks
-Heiko
+SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0aGUgY29tbWVudC4NCg0KPiAtLS0tLU9yaWdpbmFs
+IE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwu
+b3JnXQ0KPiBTZW50OiAxNiBNYXJjaCAyMDE4IDEyOjE3IEFNDQo+IFRvOiBSYWphbiBWYWphIDxS
+QUpBTlZAeGlsaW54LmNvbT4NCj4gQ2M6IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4
+LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEpvbGx5IFNoYWgNCj4gPEpPTExZU0B4aWxpbnguY29t
+PjsgTWljaGFsIFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+Ow0KPiBtdHVycXVldHRlQGJheWxp
+YnJlLmNvbQ0KPiBTdWJqZWN0OiBSRTogW1BBVENIXSBjbGs6IGNsay1maXhlZC1mYWN0b3I6IFVz
+ZSBuZXcgbWFjcm8NCj4gQ0xLX09GX0RFQ0xBUkVfRFJJVkVSDQo+IA0KPiBRdW90aW5nIFJhamFu
+IFZhamEgKDIwMTgtMDMtMDkgMTE6Mjc6NDApDQo+ID4gPiBGcm9tOiBTdGVwaGVuIEJveWQgW21h
+aWx0bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiA+ID4NCj4gPiA+IElzIHRoZSBpbnRlbnQgdG8gcmVn
+aXN0ZXIgdGhlIGNsayB0d2ljZT8gSSBiZWxpZXZlIHRoaW5ncyBhcmUgd29ya2luZyBhcw0KPiA+
+ID4gaW50ZW5kZWQgd2l0aG91dCB0aGlzIHBhdGNoLCBzbyBtYXliZSB5b3UgY2FuIGV4cGxhaW4g
+YSBsaXR0bGUgbW9yZSB3aGF0DQo+ID4gPiB5b3UncmUgdHJ5aW5nIHRvIGZpeC4NCj4gPiBbUmFq
+YW5dIFllcy4gRHVyaW5nIG9mX2Nsa19pbml0KCkgaWYgc29tZSBEVCBmaXhlZCBmYWN0b3IgY2xv
+Y2sgaGFzDQo+ID4gcGFyZW50IHdoaWNoIGlzIG5laXRoZXIgbWVudGlvbmVkIGluIG91dHB1dC1j
+bG9jay1uYW1lcyBvZiBjbG9jaw0KPiA+IGNvbnRyb2xsZXIgbm9yIHJlZ2lzdGVyZWQgYXMgY2xv
+Y2sgcHJvdmlkZXIsIG9mX2Nsa19pbml0KCkgd2lsbCB0cnkgdG8NCj4gPiBmb3JjZWZ1bGx5IHJl
+Z2lzdGVyIGluIHNlY29uZCBsb29wLg0KPiA+DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAg
+aWYgKGZvcmNlIHx8IHBhcmVudF9yZWFkeShjbGtfcHJvdmlkZXItPm5wKSkgew0KPiA+DQo+ID4g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAvKiBEb24ndCBwb3B1bGF0ZSBwbGF0Zm9y
+bSBkZXZpY2VzICovDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvZl9ub2Rl
+X3NldF9mbGFnKGNsa19wcm92aWRlci0+bnAsDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIE9GX1BPUFVMQVRFRCk7DQo+ID4NCj4gPiBTbyByZWdp
+c3RyYXRpb24gb2YgdGhpcyBEVCBmaXhlZC1mYWN0b3IgY2xvY2sgd291bGQgZmFpbCBhcyBwYXJl
+bnQNCj4gPiB3b3VsZCBiZSBOVUxMIGFzIGJlbG93IChjYWxsZWQgZnJvbSBfb2ZfZml4ZWRfZmFj
+dG9yX2Nsa19zZXR1cCgpKToNCj4gPiBwYXJlbnRfbmFtZSA9IG9mX2Nsa19nZXRfcGFyZW50X25h
+bWUobm9kZSwgMCk7DQo+ID4NCj4gPiBPbiB0aGUgb3RoZXIgaGFuZCwgZXZlbiBpZiByZWdpc3Ry
+YXRpb24gZmFpbGVkLCB0aGF0IG5vZGUgd2lsbCBiZQ0KPiA+IG1hcmtlZCBhcyBPRl9QT1BVTEFU
+RUQsIHNvIHByb2JlIG9mIGNsay1maXhlZC1mYWN0b3IuYyB3aWxsIGFsc28gbm90DQo+ID4gYmUg
+Y2FsbGVkIGFuZCB0aGF0IERUIGZpeGVkLWZhY3RvciBjbG9jayB3b3VsZCBuZXZlciBiZSByZWdp
+c3RlcmVkLg0KPiA+DQo+ID4gU2FtZSB0aGluZyBpcyBkaXNjdXNzZWQgYXQgIGh0dHBzOi8vbGtt
+bC5vcmcvbGttbC8yMDE3LzYvNS82ODEgLg0KPiANCj4gT2suIEkgYmVsaWV2ZSB0aGUgYW5zd2Vy
+IGlzIHRvIGZpeCB0aGUgRFQgdG8gZGVzY3JpYmUgdGhlIHBhcmVudCBjaGFpbg0KPiBwcm9wZXJs
+eSB3aXRoIGNsb2NrLW91dHB1dC1uYW1lcy4gT3RoZXJ3aXNlLCB3ZSBoYXZlIG5vIGdvb2Qgd2F5
+IG9mDQo+IGZpZ3VyaW5nIG91dCB3aGF0IHRoZSBuYW1lIHNob3VsZCBiZS4NCltSYWphbl0gY2xv
+Y2sgRFQgYmluZGluZyBkb2Mgc2F5cyB0aGF0IGNsb2NrLW91dHB1dC1uYW1lcyBwcm9wZXJ0eQ0K
+aXMgb3B0aW9uYWwgYW5kIHNvbWV0aW1lcyBub3QgcmVjb21tZW5kZWQuIA0KSSB0aGluayB0aGlz
+IHBhdGNoIGZpeGVzIHRoZSBpc3N1ZSB3ZSBoYXZlIHdoaWNoIG1hbmRhdGVzIHRvIGFkZCBjbG9j
+ay1vdXRwdXQtbmFtZXMNCnByb3BlcnR5IChmb3IgdGhpcyBwYXJ0aWN1bGFyIGNhc2UpLiBBbHNv
+LCBJSVVDIHBsYXRmb3JtIGRyaXZlciBwcm9iZSBpbiBjbGstZml4ZWQtZmFjdG9yLmMNCndpbGwg
+bmV2ZXIgYmUgY2FsbGVkIHVubGVzcyB3ZSB1c2UgQ0xLX09GX0RFQ0xBUkVfRFJJVkVSLg0KSSBj
+b21wbGV0ZWx5IGFncmVlIHRoYXQgcHJvcGVyIHNvbHV0aW9uIHdvdWxkIGJlIHRvIHN0b3AgdXNp
+bmcgc3RyaW5ncyB0bw0KZGVzY3JpYmUgY2xvY2sgdG9wb2xvZ3kuDQoNCj4gDQo+IFRoZSBhbHRl
+cm5hdGl2ZSBpcyB0byBzdGFydCB3b3JraW5nIG9uIGEgc29sdXRpb24gZm9yIGhhdmluZyB0aGUg
+Y2xrDQo+IGZyYW1ld29yayBzdG9wIHVzaW5nIHN0cmluZ3MgdG8gZGVzY3JpYmUgY2xrIHRvcG9s
+b2d5LiBNeSBwbGFuIHRoZXJlIGlzDQo+IHRvIGFsbG93IGNsayByZWdpc3RyYXRpb24gdG8gaW5k
+aWNhdGUgdGhhdCBhbm90aGVyIHBhcmVudCBuYW1lcyBhcnJheQ0KPiBzaG91bGQgYmUgdXNlZCB3
+aXRoIGNsa19nZXQoKSBvZiB0aGUgZGV2aWNlIG9yIG5vZGUgcG9pbnRlciB0aGF0J3MNCj4gYXNz
+b2NpYXRlZCB3aXRoIHRoZSBjbGsgZHVyaW5nIHJlZ2lzdHJhdGlvbiB0byBmaW5kIHRoZSBwYXJl
+bnQgLiBJZiB3ZQ0KPiBoYWQgdGhhdCwgdGhlbiB3ZSBjb3VsZCBob29rIHVwIGNsa3MgaW50byB0
+aGUgdHJlZSBieSBjYWxsaW5nIGNsa19nZXQoKQ0KPiBpbiB0aGUgZnJhbWV3b3JrIGFuZCBtYXAg
+dGhyb3VnaCB0aGUgY2xvY2stbmFtZXMgcHJvcGVydHkuIFRoaXMgYWxzbw0KPiBnZXRzIHVzIHRv
+IGEgcG9pbnQgd2hlcmUgY2xrIG5hbWVzIGRvbid0IGhhdmUgdG8gYmUgZ2xvYmFsbHkgdW5pcXVl
+LA0KPiB3aGljaCB3b3VsZCBiZSBuaWNlLg0K
