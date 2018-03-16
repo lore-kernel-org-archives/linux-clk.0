@@ -1,84 +1,48 @@
-Return-Path: <tedheadster@gmail.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v8 42/42] ARM: dts: da850: Add clocks
+To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-43-git-send-email-david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <cf0c4153-b65d-da57-cd0f-0a16cb186377@lechnology.com>
+Date: Fri, 16 Mar 2018 12:20:02 -0500
 MIME-Version: 1.0
-Reply-To: whiteheadm@acm.org
-In-Reply-To: <CAHp75VdgU8sOQAwDZFU5biP+u6zE35fNtwuTC4F1fg_cTvJkSQ@mail.gmail.com>
-References: <CAP8WD_ZUbO+aKUV1-tPS_5APkpSAwbi=K=koVEDWWUfzF0tW+A@mail.gmail.com>
- <CAHp75VdgU8sOQAwDZFU5biP+u6zE35fNtwuTC4F1fg_cTvJkSQ@mail.gmail.com>
-From: tedheadster <tedheadster@gmail.com>
-Date: Tue, 13 Mar 2018 13:13:55 -0400
-Message-ID: <CAP8WD_ZhUB1v30MHqkWq782WBDEXk+CS4+y1zC60_-tnDyK2nw@mail.gmail.com>
-Subject: Re: x86 : Kconfig : INTEL_PMC_CORE not specific enough
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Cox, Alan" <alan.cox@intel.com>, linux-clk@vger.kernel.org,
-	Platform Driver <platform-driver-x86@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-	Vishwanath Somayaji <vishwanath.somayaji@intel.com>, Irina Tirdea <irina.tirdea@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1521168778-27236-43-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-> Long story, but main concern here, that if you do s/ATOM/X86/ it will
-> be more clear since we provide as less kernels as possible to cover
-> all x86 architectures.
->
-> Currently we have one kernel per:
-> - any x86_64 case
-> - any i686 case
-> - uniprocessor i586 TSC case (Intel Quark)
-> - (the rest exotic cases which is probably no-one using anymore)
->
-> Your change disrupts this quite badly.
+On 03/15/2018 09:52 PM, David Lechner wrote:
+> This adds clock provider nodes for da850 and wires them up to all of the
+> devices.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
 
-This simplifies your situation, but it forces everybody else to
-include extra code they will never use.
+...
 
->
-> So, I think your point that you don't need it by default, and here is
-> another story related to the design of Intel BayTrail / CherryTrail
-> platforms where we have a nasty bug and we can't use the driver as a
-> module.
->
+This is the mcasp0: mcasp@100000 node...
 
-Please explain the history so we can understand.
+> @@ -560,6 +720,7 @@
+>   			dmas = <&edma0 1 1>,
+>   				<&edma0 0 1>;
+>   			dma-names = "tx", "rx";
+> +			clocks = <&psc1 7>;
 
+After some testing, it looks like it needs to be:
 
-In more detail, here are the Kconfig dependencies:
++			power-domains = <&psc1 7>;
 
-- Symbol: PMC_ATOM [=y]
-- Depends on: X86 [=y] && PCI [=y]
-- Selects: COMMON_CLK [=y]
+instead of
 
-Symbol: COMMON_CLK [=y]
-- Selected by:  PMC_ATOM [=y] && X86 [=y] && PCI [=y]
-- Selects: HAVE_CLK_PREPARE [=y] && CLKDEV_LOOKUP [=y] && SRCU [=y] &&
-RATIONAL [=y]
++			clocks = <&psc1 7>;
 
-So having _any_ X86 and PCI pulls in these four files:
-
-drivers/clk/x86/clk-pmc-atom.c
-drivers/platform/x86/pmc_atom.c (you are right, I cut-and-pasted the
-wrong file earlier)
-drivers/clk/clkdev.c
-lib/rational.c
-
-
->> Would this change (or something similar) make sense?
->
-> No.
->
-
-Okay, my novice solution isn't the right way. There must be an elegant
-way to leave this configured in by default (what you want), and still
-be able to turn it off if you desire (what I want).
-
-
-> MATOM is for really old CPUs. Mentioned BayTrail et al rather normal
-> x86 in that sense.
->
->>         select COMMON_CLK
->
-> Definitely NAK by the reasons mentioned above.
->
-
-
-- Matthew
+>   		};
+>   
+>   		lcdc: display@213000 {
