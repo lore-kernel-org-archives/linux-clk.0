@@ -1,235 +1,236 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 06/11] clk: actions: Add divider clock support
-Date: Sat, 24 Mar 2018 19:01:54 +0530
-Message-Id: <20180324133159.4824-7-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
-References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 06/42] clk: davinci: Add platform information for TI DM365 PLL
+Date: Thu, 15 Mar 2018 21:52:22 -0500
+Message-Id: <1521168778-27236-7-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi divider clock together with
-helper functions to be used in composite clock.
+This adds platform-specific declarations for the PLL clocks on TI
+DM365 based systems.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/actions/Makefile      |  1 +
- drivers/clk/actions/owl-divider.c | 94 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-divider.h | 75 +++++++++++++++++++++++++++++++
- 3 files changed, 170 insertions(+)
- create mode 100644 drivers/clk/actions/owl-divider.c
- create mode 100644 drivers/clk/actions/owl-divider.h
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 2d4aa8f35d90..5ce75df57e1a 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -3,3 +3,4 @@ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
- clk-owl-y			+= owl-common.o
- clk-owl-y			+= owl-gate.o
- clk-owl-y			+= owl-mux.o
-+clk-owl-y			+= owl-divider.o
-diff --git a/drivers/clk/actions/owl-divider.c b/drivers/clk/actions/owl-divider.c
+v8 changes:
+- drop __init and __initconst attributes
+- add a clkdev lookup for each SYSCLK
+
+v7 changes:
+- split registration functions for each PLL
+- Add platform_device_id lookup
+
+v6 changes:
+- Added dm365_pll{1,2}_info with controller-specific information
+- Changed OBSCLK data
+- Add empty lines between function calls
+
+ drivers/clk/davinci/Makefile    |   1 +
+ drivers/clk/davinci/pll-dm365.c | 145 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/pll.c       |   2 +
+ drivers/clk/davinci/pll.h       |   3 +
+ 4 files changed, 151 insertions(+)
+ create mode 100644 drivers/clk/davinci/pll-dm365.c
+
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index 6720bd0..353aa02 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -5,4 +5,5 @@ obj-y += pll.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
++obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
+ endif
+diff --git a/drivers/clk/davinci/pll-dm365.c b/drivers/clk/davinci/pll-dm365.c
 new file mode 100644
-index 000000000000..cddac00fe324
+index 0000000..5f8d9f4
 --- /dev/null
-+++ b/drivers/clk/actions/owl-divider.c
-@@ -0,0 +1,94 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL divider clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++++ b/drivers/clk/davinci/pll-dm365.c
+@@ -0,0 +1,145 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PLL clock descriptions for TI DM365
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
++#include <linux/bitops.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/types.h>
 +
-+#include "owl-divider.h"
++#include "pll.h"
 +
-+long owl_divider_helper_round_rate(struct owl_clk_common *common,
-+				const struct owl_divider_hw *div_hw,
-+				unsigned long rate,
-+				unsigned long *parent_rate)
++#define OCSEL_OCSRC_ENABLE	0
++
++static const struct davinci_pll_clk_info dm365_pll1_info = {
++	.name = "pll1",
++	.pllm_mask = GENMASK(9, 0),
++	.pllm_min = 1,
++	.pllm_max = 1023,
++	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV |
++		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_PLLM_2X,
++};
++
++SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(5, pll1_sysclk5, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(6, pll1_sysclk6, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(7, pll1_sysclk7, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(8, pll1_sysclk8, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(9, pll1_sysclk9, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++
++/*
++ * This is a bit of a hack to make OCSEL[OCSRC] on DM365 look like OCSEL[OCSRC]
++ * on DA850. On DM365, OCSEL[OCSRC] is just an enable/disable bit instead of a
++ * multiplexer. By modeling it as a single parent mux clock, the clock code will
++ * still do the right thing in this case.
++ */
++static const char * const dm365_pll_obsclk_parent_names[] = {
++	"oscin",
++};
++
++static u32 dm365_pll_obsclk_table[] = {
++	OCSEL_OCSRC_ENABLE,
++};
++
++static const struct davinci_pll_obsclk_info dm365_pll1_obsclk_info = {
++	.name = "pll1_obsclk",
++	.parent_names = dm365_pll_obsclk_parent_names,
++	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
++	.table = dm365_pll_obsclk_table,
++	.ocsrc_mask = BIT(4),
++};
++
++int dm365_pll1_init(struct device *dev, void __iomem *base)
 +{
-+	return divider_round_rate(&common->hw, rate, parent_rate,
-+				  div_hw->table, div_hw->width,
-+				  div_hw->div_flags);
-+}
++	struct clk *clk;
 +
-+static long owl_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	struct owl_divider *div = hw_to_owl_divider(hw);
++	davinci_pll_clk_register(dev, &dm365_pll1_info, "ref_clk", base);
 +
-+	return owl_divider_helper_round_rate(&div->common, &div->div_hw,
-+					     rate, parent_rate);
-+}
++	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
++	clk_register_clkdev(clk, "pll1_sysclk1", "dm365-psc");
 +
-+unsigned long owl_divider_helper_recalc_rate(struct owl_clk_common *common,
-+					 const struct owl_divider_hw *div_hw,
-+					 unsigned long parent_rate)
-+{
-+	unsigned long val;
-+	unsigned int reg;
++	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk2, base);
++	clk_register_clkdev(clk, "pll1_sysclk2", "dm365-psc");
 +
-+	regmap_read(common->regmap, div_hw->reg, &reg);
-+	val = reg >> div_hw->shift;
-+	val &= (1 << div_hw->width) - 1;
++	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk3, base);
++	clk_register_clkdev(clk, "pll1_sysclk3", "dm365-psc");
 +
-+	return divider_recalc_rate(&common->hw, parent_rate,
-+				   val, div_hw->table,
-+				   div_hw->div_flags,
-+				   div_hw->width);
-+}
++	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk4, base);
++	clk_register_clkdev(clk, "pll1_sysclk4", "dm365-psc");
 +
-+static unsigned long owl_divider_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	struct owl_divider *div = hw_to_owl_divider(hw);
++	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk5, base);
++	clk_register_clkdev(clk, "pll1_sysclk5", "dm365-psc");
 +
-+	return owl_divider_helper_recalc_rate(&div->common,
-+					      &div->div_hw, parent_rate);
-+}
++	davinci_pll_sysclk_register(dev, &pll1_sysclk6, base);
 +
-+int owl_divider_helper_set_rate(const struct owl_clk_common *common,
-+				const struct owl_divider_hw *div_hw,
-+				unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	unsigned long val;
-+	unsigned int reg;
++	davinci_pll_sysclk_register(dev, &pll1_sysclk7, base);
 +
-+	val = divider_get_val(rate, parent_rate, div_hw->table,
-+			      div_hw->width, 0);
++	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk8, base);
++	clk_register_clkdev(clk, "pll1_sysclk8", "dm365-psc");
 +
-+	regmap_read(common->regmap, div_hw->reg, &reg);
-+	reg &= ~GENMASK(div_hw->width + div_hw->shift - 1, div_hw->shift);
++	davinci_pll_sysclk_register(dev, &pll1_sysclk9, base);
 +
-+	regmap_write(common->regmap, div_hw->reg,
-+			  reg | (val << div_hw->shift));
++	clk = davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
++	clk_register_clkdev(clk, "pll1_auxclk", "dm355-psc");
++
++	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
++
++	davinci_pll_obsclk_register(dev, &dm365_pll1_obsclk_info, base);
 +
 +	return 0;
 +}
 +
-+static int owl_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
++static const struct davinci_pll_clk_info dm365_pll2_info = {
++	.name = "pll2",
++	.pllm_mask = GENMASK(9, 0),
++	.pllm_min = 1,
++	.pllm_max = 1023,
++	.flags = PLL_HAS_PREDIV | PLL_HAS_POSTDIV | PLL_POSTDIV_ALWAYS_ENABLED |
++		 PLL_PLLM_2X,
++};
++
++SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(3, pll2_sysclk3, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(4, pll2_sysclk4, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(5, pll2_sysclk5, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++
++static const struct davinci_pll_obsclk_info dm365_pll2_obsclk_info = {
++	.name = "pll2_obsclk",
++	.parent_names = dm365_pll_obsclk_parent_names,
++	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
++	.table = dm365_pll_obsclk_table,
++	.ocsrc_mask = BIT(4),
++};
++
++int dm365_pll2_init(struct device *dev, void __iomem *base)
 +{
-+	struct owl_divider *div = hw_to_owl_divider(hw);
++	struct clk *clk;
 +
-+	return owl_divider_helper_set_rate(&div->common, &div->div_hw,
-+					rate, parent_rate);
++	davinci_pll_clk_register(dev, &dm365_pll2_info, "oscin", base);
++
++	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
++
++	clk = davinci_pll_sysclk_register(dev, &pll2_sysclk2, base);
++	clk_register_clkdev(clk, "pll1_sysclk2", "dm365-psc");
++
++	davinci_pll_sysclk_register(dev, &pll2_sysclk3, base);
++
++	clk = davinci_pll_sysclk_register(dev, &pll2_sysclk4, base);
++	clk_register_clkdev(clk, "pll1_sysclk4", "dm365-psc");
++
++	davinci_pll_sysclk_register(dev, &pll2_sysclk5, base);
++
++	davinci_pll_auxclk_register(dev, "pll2_auxclk", base);
++
++	davinci_pll_obsclk_register(dev, &dm365_pll2_obsclk_info, base);
++
++	return 0;
 +}
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 305d2e9..3d8f4d2 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -782,6 +782,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
+ 	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
+ 	{ .name = "dm355-pll1",  .driver_data = (kernel_ulong_t)dm355_pll1_init  },
+ 	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
++	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
++	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index d90d308..bf9fdc8 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -129,4 +129,7 @@ int of_da850_pll1_init(struct device *dev, void __iomem *base);
+ int dm355_pll1_init(struct device *dev, void __iomem *base);
+ int dm355_pll2_init(struct device *dev, void __iomem *base);
+ 
++int dm365_pll1_init(struct device *dev, void __iomem *base);
++int dm365_pll2_init(struct device *dev, void __iomem *base);
 +
-+const struct clk_ops owl_divider_ops = {
-+	.recalc_rate = owl_divider_recalc_rate,
-+	.round_rate = owl_divider_round_rate,
-+	.set_rate = owl_divider_set_rate,
-+};
-diff --git a/drivers/clk/actions/owl-divider.h b/drivers/clk/actions/owl-divider.h
-new file mode 100644
-index 000000000000..92d3e3d23967
---- /dev/null
-+++ b/drivers/clk/actions/owl-divider.h
-@@ -0,0 +1,75 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL divider clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_DIVIDER_H_
-+#define _OWL_DIVIDER_H_
-+
-+#include "owl-common.h"
-+
-+struct owl_divider_hw {
-+	u32			reg;
-+	u8			shift;
-+	u8			width;
-+	u8			div_flags;
-+	struct clk_div_table	*table;
-+};
-+
-+struct owl_divider {
-+	struct owl_divider_hw	div_hw;
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_DIVIDER_HW(_reg, _shift, _width, _div_flags, _table)	\
-+	{								\
-+		.reg		= _reg,					\
-+		.shift		= _shift,				\
-+		.width		= _width,				\
-+		.div_flags	= _div_flags,				\
-+		.table		= _table,				\
-+	}
-+
-+#define OWL_DIVIDER(_struct, _name, _parent, _reg,			\
-+		    _shift, _width, _table, _div_flags, _flags)		\
-+	struct owl_divider _struct = {					\
-+		.div_hw	= OWL_DIVIDER_HW(_reg, _shift, _width,		\
-+					 _div_flags, _table),		\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &owl_divider_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
-+static inline struct owl_divider *hw_to_owl_divider(const struct clk_hw *hw)
-+{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_divider, common);
-+}
-+
-+long owl_divider_helper_round_rate(struct owl_clk_common *common,
-+				const struct owl_divider_hw *div_hw,
-+				unsigned long rate,
-+				unsigned long *parent_rate);
-+
-+unsigned long owl_divider_helper_recalc_rate(struct owl_clk_common *common,
-+					 const struct owl_divider_hw *div_hw,
-+					 unsigned long parent_rate);
-+
-+int owl_divider_helper_set_rate(const struct owl_clk_common *common,
-+				const struct owl_divider_hw *div_hw,
-+				unsigned long rate,
-+				unsigned long parent_rate);
-+
-+extern const struct clk_ops owl_divider_ops;
-+
-+#endif /* _OWL_DIVIDER_H_ */
+ #endif /* __CLK_DAVINCI_PLL_H___ */
 -- 
-2.14.1
+2.7.4
