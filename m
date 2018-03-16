@@ -1,60 +1,38 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Peter Chen <peter.chen@freescale.com>,
-	Irina Tirdea <irina.tirdea@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com,
-	Anson Huang <anson.huang@nxp.com>,
-	Anson Huang <b20788@freescale.com>,
-	Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] clk: imx7d: Correct dram pll type
-Date: Tue, 27 Mar 2018 17:15:59 +0300
-Message-Id: <1522160159-25250-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <152121759057.209902.1121973322672096604@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 0/8] clk: renesas: Always use readl()/writel()
+Date: Fri, 16 Mar 2018 09:26:30 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Anson Huang <b20788@freescale.com>
+Quoting Geert Uytterhoeven (2018-03-16 06:40:14)
+>         Hi Mike, Stephen,
+> =
 
-DRAM PLL is a audio/video type PLL, need to correct
-it to get correct ops of PLL.
+> On arm32/arm64, there is no reason to use the (soon deprecated)
+> clk_readl()/clk_writel(), and the generic readl()/writel() should be
+> used in instead.
+> =
 
-There is a test_div placed before DRAM PLL's gate, so
-add this test div clk.
+> Commit 30ad3cf00e94f4a7 ("clk: renesas: rcar-gen3-cpg: Always use
+> readl()/writel()") already got rid of them in the R-Car Gen3 clock
+> driver, but Stephen noticed that a few new users crept in recently.
+> =
 
-Signed-off-by: Anson Huang <b20788@freescale.com>
-Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> Hence this series fixes that, and replaces all other uses in the Renesas
+> clock drivers as a bonus.
+> =
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 89bfa75..45c83b6 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -441,11 +441,13 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
- 
- 	clks[IMX7D_PLL_ARM_MAIN_CLK] = imx_clk_gate("pll_arm_main_clk", "pll_arm_main_bypass", base + 0x60, 13);
--	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_main_bypass", base + 0x70, 13);
-+	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_test_div", base + 0x70, 13);
- 	clks[IMX7D_PLL_SYS_MAIN_CLK] = imx_clk_gate("pll_sys_main_clk", "pll_sys_main_bypass", base + 0xb0, 13);
- 	clks[IMX7D_PLL_AUDIO_MAIN_CLK] = imx_clk_gate("pll_audio_main_clk", "pll_audio_main_bypass", base + 0xf0, 13);
- 	clks[IMX7D_PLL_VIDEO_MAIN_CLK] = imx_clk_gate("pll_video_main_clk", "pll_video_main_bypass", base + 0x130, 13);
- 
-+	clks[IMX7D_PLL_DRAM_TEST_DIV]  = clk_register_divider_table(NULL, "pll_dram_test_div", "pll_dram_main_bypass",
-+				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x70, 21, 2, 0, test_div_table, &imx_ccm_lock);
- 	clks[IMX7D_PLL_AUDIO_TEST_DIV]  = clk_register_divider_table(NULL, "pll_audio_test_div", "pll_audio_main_clk",
- 				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 19, 2, 0, test_div_table, &imx_ccm_lock);
- 	clks[IMX7D_PLL_AUDIO_POST_DIV] = clk_register_divider_table(NULL, "pll_audio_post_div", "pll_audio_test_div",
--- 
-2.7.4
+> I plan to queue these up in clk-renesas-for-v4.17.
+> =
+
+
+Ok. I'll wait for the PR. Thanks!
