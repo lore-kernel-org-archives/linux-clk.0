@@ -1,351 +1,213 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 10/11] clk: actions: Add pll clock support
-Date: Sat, 24 Mar 2018 19:01:58 +0530
-Message-Id: <20180324133159.4824-11-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
-References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 24/42] ARM: davinci: dm365: add new clock init using common clock framework
+Date: Thu, 15 Mar 2018 21:52:40 -0500
+Message-Id: <1521168778-27236-25-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi PLL clock.
+This adds the new board-specific clock init in mach-davinci/dm365.c
+using the new common clock framework drivers.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
+
+Also clean up the #includes since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/actions/Makefile  |   1 +
- drivers/clk/actions/owl-pll.c | 194 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-pll.h |  92 ++++++++++++++++++++
- 3 files changed, 287 insertions(+)
- create mode 100644 drivers/clk/actions/owl-pll.c
- create mode 100644 drivers/clk/actions/owl-pll.h
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 53431aef6e9c..31b68eab9309 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -6,3 +6,4 @@ clk-owl-y			+= owl-mux.o
- clk-owl-y			+= owl-divider.o
- clk-owl-y			+= owl-factor.o
- clk-owl-y			+= owl-composite.o
-+clk-owl-y			+= owl-pll.o
-diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
-new file mode 100644
-index 000000000000..058e06d7099f
---- /dev/null
-+++ b/drivers/clk/actions/owl-pll.c
-@@ -0,0 +1,194 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL pll clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+v8 changes:
+- none
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
+
+ arch/arm/mach-davinci/board-dm365-evm.c |  2 +
+ arch/arm/mach-davinci/davinci.h         |  1 +
+ arch/arm/mach-davinci/dm365.c           | 88 ++++++++++++++++++++++++++++-----
+ 3 files changed, 79 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
+index 0ac085b..36b69a1 100644
+--- a/arch/arm/mach-davinci/board-dm365-evm.c
++++ b/arch/arm/mach-davinci/board-dm365-evm.c
+@@ -741,6 +741,8 @@ static __init void dm365_evm_init(void)
+ {
+ 	int ret;
+ 
++	dm365_register_clocks();
 +
+ 	ret = dm365_gpio_register();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index 6b6abf0a..c865226 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -94,6 +94,7 @@ int dm355_gpio_register(void);
+ /* DM365 function declarations */
+ void dm365_init(void);
+ void dm365_init_time(void);
++void dm365_register_clocks(void);
+ void dm365_init_asp(void);
+ void dm365_init_vc(void);
+ void dm365_init_ks(struct davinci_ks_platform_data *pdata);
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 871372a..93067e1 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -12,32 +12,35 @@
+  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-#include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/serial_8250.h>
+-#include <linux/platform_device.h>
 +#include <linux/clk-provider.h>
-+#include <linux/slab.h>
-+#include <linux/io.h>
-+#include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+-#include <linux/spi/spi.h>
++#include <linux/init.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_data/keyscan-davinci.h>
+ #include <linux/platform_data/spi-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
++#include <linux/spi/spi.h>
+ 
+ #include <asm/mach/map.h>
+ 
++#include <mach/common.h>
+ #include <mach/cputype.h>
+-#include "psc.h"
+-#include <mach/mux.h>
+ #include <mach/irqs.h>
+-#include <mach/time.h>
++#include <mach/mux.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
 +
-+#include "owl-pll.h"
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
+ #define DM365_RTC_BASE			0x01c69000
+@@ -54,6 +57,7 @@
+ #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
+ #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num		= 1,
+ 	.phys_base	= DAVINCI_PLL1_BASE,
+@@ -485,7 +489,7 @@ static struct clk_lookup dm365_clks[] = {
+ 	CLK(NULL, "mjcp", &mjcp_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
+-
++#endif
+ /*----------------------------------------------------------------------*/
+ 
+ #define INTMUX		0x18
+@@ -1171,8 +1175,68 @@ void __init dm365_init(void)
+ 
+ void __init dm365_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	struct clk *clk;
 +
-+static u32 owl_pll_calculate_mul(struct owl_pll_hw *pll_hw, unsigned long rate)
-+{
-+	u32 mul;
++	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM365_REF_FREQ);
 +
-+	mul = DIV_ROUND_CLOSEST(rate, pll_hw->bfreq);
-+	if (mul < pll_hw->min_mul)
-+		mul = pll_hw->min_mul;
-+	else if (mul > pll_hw->max_mul)
-+		mul = pll_hw->max_mul;
-+
-+	return mul &= mul_mask(pll_hw);
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(dm365_clks);
+ 	davinci_timer_init(&timer0_clk);
++#endif
 +}
 +
-+static unsigned long _get_table_rate(const struct clk_pll_table *table,
-+		unsigned int val)
-+{
-+	const struct clk_pll_table *clkt;
-+
-+	for (clkt = table; clkt->rate; clkt++)
-+		if (clkt->val == val)
-+			return clkt->rate;
-+
-+	return 0;
-+}
-+
-+static const struct clk_pll_table *_get_pll_table(
-+		const struct clk_pll_table *table, unsigned long rate)
-+{
-+	const struct clk_pll_table *clkt;
-+
-+	for (clkt = table; clkt->rate; clkt++) {
-+		if (clkt->rate == rate) {
-+			table = clkt;
-+			break;
-+		} else if (clkt->rate < rate)
-+			table = clkt;
-+	}
-+
-+	return table;
-+}
-+
-+static long owl_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct clk_pll_table *clkt;
-+	u32 mul;
-+
-+	if (pll_hw->table) {
-+		clkt = _get_pll_table(pll_hw->table, rate);
-+		return clkt->rate;
-+	}
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return pll_hw->bfreq;
-+
-+	mul = owl_pll_calculate_mul(pll_hw, rate);
-+
-+	return pll_hw->bfreq * mul;
-+}
-+
-+static unsigned long owl_pll_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	u32 val;
-+
-+	if (pll_hw->table) {
-+		regmap_read(common->regmap, pll_hw->reg, &val);
-+
-+		val = val >> pll_hw->shift;
-+		val &= mul_mask(pll_hw);
-+
-+		return _get_table_rate(pll_hw->table, val);
-+	}
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return pll_hw->bfreq;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &val);
-+
-+	val = val >> pll_hw->shift;
-+	val &= mul_mask(pll_hw);
-+
-+	return pll_hw->bfreq * val;
-+}
-+
-+static int owl_pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	u32 reg;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	return !!(reg & BIT(pll_hw->bit_idx));
-+}
-+
-+static void owl_pll_set(const struct owl_clk_common *common,
-+		       const struct owl_pll_hw *pll_hw, bool enable)
-+{
-+	u32 reg;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	if (enable)
-+		reg |= BIT(pll_hw->bit_idx);
-+	else
-+		reg &= ~BIT(pll_hw->bit_idx);
-+
-+	regmap_write(common->regmap, pll_hw->reg, reg);
-+}
-+
-+static int owl_pll_enable(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	const struct owl_clk_common *common = &pll->common;
-+
-+	owl_pll_set(common, &pll->pll_hw, true);
-+
-+	return 0;
-+}
-+
-+static void owl_pll_disable(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	const struct owl_clk_common *common = &pll->common;
-+
-+	owl_pll_set(common, &pll->pll_hw, false);
-+}
-+
-+static int owl_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	const struct clk_pll_table *clkt;
-+	u32 val, reg;
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return 0;
-+
-+	if (pll_hw->table) {
-+		clkt = _get_pll_table(pll_hw->table, rate);
-+		val = clkt->val;
-+	} else {
-+		val = owl_pll_calculate_mul(pll_hw, rate);
-+	}
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	reg &= ~mul_mask(pll_hw);
-+	reg |= val << pll_hw->shift;
-+
-+	regmap_write(common->regmap, pll_hw->reg, reg);
-+
-+	udelay(PLL_STABILITY_WAIT_US);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops owl_pll_ops = {
-+	.enable = owl_pll_enable,
-+	.disable = owl_pll_disable,
-+	.is_enabled = owl_pll_is_enabled,
-+	.round_rate = owl_pll_round_rate,
-+	.recalc_rate = owl_pll_recalc_rate,
-+	.set_rate = owl_pll_set_rate,
-+};
-diff --git a/drivers/clk/actions/owl-pll.h b/drivers/clk/actions/owl-pll.h
-new file mode 100644
-index 000000000000..0aae30abd5dc
---- /dev/null
-+++ b/drivers/clk/actions/owl-pll.h
-@@ -0,0 +1,92 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL pll clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_PLL_H_
-+#define _OWL_PLL_H_
-+
-+#include "owl-common.h"
-+
-+/* last entry should have rate = 0 */
-+struct clk_pll_table {
-+	unsigned int		val;
-+	unsigned long		rate;
++static struct resource dm365_pll1_resources[] = {
++	{
++		.start	= DAVINCI_PLL1_BASE,
++		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
 +};
 +
-+struct owl_pll_hw {
-+	u32			reg;
-+	u32			bfreq;
-+	u8			bit_idx;
-+	u8			shift;
-+	u8			width;
-+	u8			min_mul;
-+	u8			max_mul;
-+	const struct clk_pll_table *table;
++static struct platform_device dm365_pll1_device = {
++	.name		= "dm365-pll1",
++	.id		= -1,
++	.resource	= dm365_pll1_resources,
++	.num_resources	= ARRAY_SIZE(dm365_pll1_resources),
 +};
 +
-+struct owl_pll {
-+	struct owl_pll_hw	pll_hw;
-+	struct owl_clk_common	common;
++static struct resource dm365_pll2_resources[] = {
++	{
++		.start	= DAVINCI_PLL2_BASE,
++		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
 +};
 +
-+#define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,			\
-+		   _width, _min_mul, _max_mul, _table)			\
-+	{								\
-+		.reg		= _reg,					\
-+		.bfreq		= _bfreq,				\
-+		.bit_idx	= _bit_idx,				\
-+		.shift		= _shift,				\
-+		.width		= _width,				\
-+		.min_mul	= _min_mul,				\
-+		.max_mul	= _max_mul,				\
-+		.table		= _table,				\
-+	}
++static struct platform_device dm365_pll2_device = {
++	.name		= "dm365-pll2",
++	.id		= -1,
++	.resource	= dm365_pll2_resources,
++	.num_resources	= ARRAY_SIZE(dm365_pll2_resources),
++};
 +
-+#define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,	\
-+		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
-+	struct owl_pll _struct = {					\
-+		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
-+				     _width, _min_mul,			\
-+				     _max_mul, _table),			\
-+		.common = {						\
-+			.regmap = NULL,					\
-+			.hw.init = CLK_HW_INIT(_name,			\
-+					       _parent,			\
-+					       &owl_pll_ops,		\
-+					       _flags),			\
-+		},							\
-+	}
++static struct resource dm365_psc_resources[] = {
++	{
++		.start	= DAVINCI_PWR_SLEEP_CNTRL_BASE,
++		.end	= DAVINCI_PWR_SLEEP_CNTRL_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
 +
-+#define OWL_PLL_NO_PARENT(_struct, _name, _reg, _bfreq, _bit_idx,	\
-+		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
-+	struct owl_pll _struct = {					\
-+		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
-+				     _width, _min_mul,			\
-+				     _max_mul, _table),			\
-+		.common = {						\
-+			.regmap = NULL,					\
-+			.hw.init = CLK_HW_INIT_NO_PARENT(_name,		\
-+					       &owl_pll_ops,		\
-+					       _flags),			\
-+		},							\
-+	}
++static struct platform_device dm365_psc_device = {
++	.name		= "dm365-psc",
++	.id		= -1,
++	.resource	= dm365_psc_resources,
++	.num_resources	= ARRAY_SIZE(dm365_psc_resources),
++};
 +
-+#define mul_mask(m)		((1 << ((m)->width)) - 1)
-+#define PLL_STABILITY_WAIT_US	(50)
-+
-+static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
++void __init dm365_register_clocks(void)
 +{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_pll, common);
-+}
-+
-+extern const struct clk_ops owl_pll_ops;
-+
-+#endif /* _OWL_PLL_H_ */
++	platform_device_register(&dm365_pll1_device);
++	platform_device_register(&dm365_pll2_device);
++	platform_device_register(&dm365_psc_device);
+ }
+ 
+ static struct resource dm365_vpss_resources[] = {
 -- 
-2.14.1
+2.7.4
