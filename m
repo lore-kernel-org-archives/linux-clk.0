@@ -1,323 +1,186 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1519656455-14629-3-git-send-email-dinguyen@kernel.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, mturquette@baylibre.com,
- dinguyen@kernel.org, robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1519656455-14629-1-git-send-email-dinguyen@kernel.org>
- <1519656455-14629-3-git-send-email-dinguyen@kernel.org>
-Message-ID: <152148346040.242365.18406406194344107023@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCHv6 3/3] clk: socfpga: stratix10: add clock driver for Stratix10
- platform
-Date: Mon, 19 Mar 2018 11:17:40 -0700
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 14/42] clk: davinci: Add platform information for TI DM365 PSC
+Date: Thu, 15 Mar 2018 21:52:30 -0500
+Message-Id: <1521168778-27236-15-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dinh Nguyen (2018-02-26 06:47:35)
-> diff --git a/drivers/clk/socfpga/Makefile b/drivers/clk/socfpga/Makefile
-> index 9146c20..87ef977 100644
-> --- a/drivers/clk/socfpga/Makefile
-> +++ b/drivers/clk/socfpga/Makefile
-> @@ -1,6 +1,11 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +ifeq ($(CONFIG_ARCH_SOCFPGA),y)
+This adds platform-specific declarations for the PSC clocks on TI
+DM365 based systems.
 
-Ugh, any chance to make this better if we get three?
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+---
 
->  obj-y +=3D clk.o
->  obj-y +=3D clk-gate.o
->  obj-y +=3D clk-pll.o
->  obj-y +=3D clk-periph.o
->  obj-y +=3D clk-pll-a10.o clk-periph-a10.o clk-gate-a10.o
-> +else
-> +obj-y +=3D clk-s10.o
-> +obj-y +=3D clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o
-> +endif
-> diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk=
--gate-s10.c
-> new file mode 100644
-> index 0000000..5b09aef
-> --- /dev/null
-> +++ b/drivers/clk/socfpga/clk-gate-s10.c
-> @@ -0,0 +1,124 @@
-> +// SPDX-License-Identifier:    GPL-2.0
-> +/*
-> + * Copyright (C) 2017, Intel Corporation
-> + */
-> +#include <linux/clk-provider.h>
-> +#include <linux/slab.h>
-> +#include "clk.h"
-> +
-> +#define SOCFPGA_CS_PDBG_CLK    "cs_pdbg_clk"
+v8 changes:
+- drop use of __init and __initconst attributes
+- add parent clock mappings
 
-Drop the define? It's used once.
+v7 changes:
+- split registration function into two, one for each PSC
+- add platform_device_id table
+- don't wrap lines for readability
+- add LPSC_ALWAYS_ENABLED flag to timer0 clock
 
-> +#define to_socfpga_gate_clk(p) container_of(p, struct socfpga_gate_clk, =
-hw.hw)
-> +
-> +static unsigned long socfpga_gate_clk_recalc_rate(struct clk_hw *hwclk,
-> +                                                 unsigned long parent_ra=
-te)
-> +{
-> +       struct socfpga_gate_clk *socfpgaclk =3D to_socfpga_gate_clk(hwclk=
-);
-> +       u32 div =3D 1, val;
-> +
-> +       if (socfpgaclk->fixed_div) {
-> +               div =3D socfpgaclk->fixed_div;
-> +       } else if (socfpgaclk->div_reg) {
-> +               val =3D readl(socfpgaclk->div_reg) >> socfpgaclk->shift;
-> +               val &=3D GENMASK(socfpgaclk->width - 1, 0);
-> +               div =3D (1 << val);
-> +       }
-> +       return parent_rate / div;
-> +}
-> +
-> +static unsigned long socfpga_dbg_clk_recalc_rate(struct clk_hw *hwclk,
-> +                                                 unsigned long parent_ra=
-te)
-> +{
-> +       struct socfpga_gate_clk *socfpgaclk =3D to_socfpga_gate_clk(hwclk=
-);
-> +       u32 div =3D 1, val;
-> +
-> +       val =3D readl(socfpgaclk->div_reg) >> socfpgaclk->shift;
-> +       val &=3D GENMASK(socfpgaclk->width - 1, 0);
-> +       div =3D (1 << val);
-> +       div =3D div ? 4 : 1;
-> +
-> +       return parent_rate / div;
-> +}
-> +
-> +static u8 socfpga_gate_get_parent(struct clk_hw *hwclk)
-> +{
-> +       struct socfpga_gate_clk *socfpgaclk =3D to_socfpga_gate_clk(hwclk=
-);
-> +       u32 mask;
-> +       u8 parent =3D 0;
-> +
-> +       if (socfpgaclk->bypass_reg) {
-> +               mask =3D (0x1 << socfpgaclk->bypass_shift);
-> +               parent =3D ((readl(socfpgaclk->bypass_reg) & mask) >>
-> +                         socfpgaclk->bypass_shift);
-> +       }
-> +       return parent;
-> +}
-> +
-> +static struct clk_ops gateclk_ops =3D {
+v6 changes:
+- change how clkdev lookups are declared
 
-const?
+ drivers/clk/davinci/Makefile    |  1 +
+ drivers/clk/davinci/psc-dm365.c | 96 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/davinci/psc.c       |  1 +
+ drivers/clk/davinci/psc.h       |  1 +
+ 4 files changed, 99 insertions(+)
+ create mode 100644 drivers/clk/davinci/psc-dm365.c
 
-> +       .recalc_rate =3D socfpga_gate_clk_recalc_rate,
-> +       .get_parent =3D socfpga_gate_get_parent,
-> +};
-> +
-> +static struct clk_ops dbgclk_ops =3D {
-
-const?
-
-> +       .recalc_rate =3D socfpga_dbg_clk_recalc_rate,
-> +       .get_parent =3D socfpga_gate_get_parent,
-> +};
-> +
-> +struct clk *s10_register_gate(char *name, const char *parent_name,
-> +                             const char * const *parent_names,
-> +                             u8 num_parents, unsigned long flags,
-> +                             void __iomem *regbase, unsigned long gate_r=
-eg,
-> +                             unsigned long gate_idx, unsigned long div_r=
-eg,
-> +                             unsigned long div_offset, u8 div_width,
-> +                             unsigned long bypass_reg, u8 bypass_shift,
-> +                             u8 fixed_div)
-> +{
-> +       struct clk *clk;
-> +       struct socfpga_gate_clk *socfpga_clk;
-> +       struct clk_init_data init;
-> +
-> +       socfpga_clk =3D kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
-> +       if (WARN_ON(!socfpga_clk))
-
-Allocation failures already print a nice stack so maybe just return NULL
-if nothing allocates.
-
-> +               return NULL;
-> +
-> +       socfpga_clk->hw.reg =3D regbase + gate_reg;
-> +       socfpga_clk->hw.bit_idx =3D gate_idx;
-> +
-> +       gateclk_ops.enable =3D clk_gate_ops.enable;
-> +       gateclk_ops.disable =3D clk_gate_ops.disable;
-> +
-> +       socfpga_clk->fixed_div =3D fixed_div;
-> +
-> +       if (div_reg)
-> +               socfpga_clk->div_reg =3D regbase + div_reg;
-> +       else
-> +               socfpga_clk->div_reg =3D NULL;
-> +
-> +       socfpga_clk->width =3D div_width;
-> +       socfpga_clk->shift =3D div_offset;
-> +
-> +       if (bypass_reg)
-> +               socfpga_clk->bypass_reg =3D regbase + bypass_reg;
-> +       else
-> +               socfpga_clk->bypass_reg =3D NULL;
-> +       socfpga_clk->bypass_shift =3D bypass_shift;
-> +
-> +       if (streq(name, SOCFPGA_CS_PDBG_CLK))
-> +               init.ops =3D &dbgclk_ops;
-> +       else
-> +               init.ops =3D &gateclk_ops;
-> +
-> +       init.name =3D name;
-> +       init.flags =3D flags;
-> +
-> +       init.num_parents =3D num_parents;
-> +       init.parent_names =3D parent_names ? parent_names : &parent_name;
-> +       socfpga_clk->hw.hw.init =3D &init;
-> +
-> +       clk =3D clk_register(NULL, &socfpga_clk->hw.hw);
-> +       if (WARN_ON(IS_ERR(clk))) {
-> +               kfree(socfpga_clk);
-> +               return NULL;
-> +       }
-> +
-> +       return clk;
-> +}
-> diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
-> new file mode 100644
-> index 0000000..31572cb
-> --- /dev/null
-> +++ b/drivers/clk/socfpga/clk-s10.c
-> @@ -0,0 +1,319 @@
-[...]
-> +
-> +static int s10_clk_register_pll(const struct stratix10_pll_clock *clks,
-> +                                int nums, struct stratix10_clock_data *d=
-ata)
-> +{
-> +       struct clk *clk;
-> +       void __iomem *base =3D data->base;
-> +       int i;
-> +
-> +       for (i =3D 0; i < nums; i++) {
-> +               clk =3D s10_register_pll(clks[i].name, clks[i].parent_nam=
-es,
-> +                                   clks[i].num_parents,
-> +                                   clks[i].flags, base,
-> +                                   clks[i].offset);
-> +               if (IS_ERR(clk)) {
-> +                       pr_err("%s: failed to register clock %s\n",
-> +                              __func__, clks[i].name);
-> +                       continue;
-> +               }
-> +               data->clk_data.clks[clks[i].id] =3D clk;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +struct stratix10_clock_data *__socfpga_s10_clk_init(struct device_node *=
-np,
-
-static?
-
-> +                                                   int nr_clks)
-> +{
-> +       struct stratix10_clock_data *clk_data;
-> +       struct clk **clk_table;
-> +       void __iomem *base;
-> +
-> +       base =3D of_iomap(np, 0);
-> +       if (!base) {
-> +               pr_err("%s: failed to map clock registers\n", __func__);
-> +               goto err;
-> +       }
-> +
-> +       clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
-> +       if (!clk_data)
-> +               goto err;
-> +
-> +       clk_data->base =3D base;
-> +       clk_table =3D kcalloc(nr_clks, sizeof(*clk_table), GFP_KERNEL);
-> +       if (!clk_table)
-> +               goto err_data;
-> +
-> +       clk_data->clk_data.clks =3D clk_table;
-> +       clk_data->clk_data.clk_num =3D nr_clks;
-> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_da=
-ta);
-> +       return clk_data;
-> +
-> +err_data:
-> +       kfree(clk_data);
-> +err:
-> +       return NULL;
-> +}
-> +
-> +
-> +void __init socfpga_s10_init(struct device_node *node)
-
-static?
-
-> +{
-> +       struct stratix10_clock_data *clk_data;
-> +
-> +       clk_data =3D __socfpga_s10_clk_init(node, STRATIX10_NUM_CLKS);
-> +       if (!clk_data)
-> +               return;
-> +
-> +       s10_clk_register_pll(s10_pll_clks, ARRAY_SIZE(s10_pll_clks), clk_=
-data);
-> +
-> +       s10_clk_register_c_perip(s10_main_perip_c_clks,
-> +                                ARRAY_SIZE(s10_main_perip_c_clks), clk_d=
-ata);
-> +
-> +       s10_clk_register_cnt_perip(s10_main_perip_cnt_clks,
-> +                                  ARRAY_SIZE(s10_main_perip_cnt_clks),
-> +                                  clk_data);
-> +
-> +       s10_clk_register_gate(s10_gate_clks, ARRAY_SIZE(s10_gate_clks),
-> +                             clk_data);
-> +}
-> +
-> +CLK_OF_DECLARE(stratix10_clock, "intel,stratix10-clkmgr", socfpga_s10_in=
-it);
-
-Can it be a platform device? We prefer those over the CLK_OF_DECLARE
-style.
-
-> diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/st=
-ratix10-clk.h
-> new file mode 100644
-> index 0000000..10f1532
-> --- /dev/null
-> +++ b/drivers/clk/socfpga/stratix10-clk.h
-> @@ -0,0 +1,86 @@
-> +/* SPDX-License-Identifier:    GPL-2.0 */
-> +/*
-> + * Copyright (C) 2017, Intel Corporation
-> + */
-> +
-> +#ifndef        __STRATIX10_CLK_H
-> +#define        __STRATIX10_CLK_H
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/spinlock.h>
-
-Why include this? And why clk-provider.h?
-
-> +
-> +struct platform_device;
-
-Why?
-
-> +
-> +struct stratix10_clock_data {
-> +       struct clk_onecell_data clk_data;
-> +       void __iomem            *base;
-> +};
+diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
+index e0da5c3..78dc1eb 100644
+--- a/drivers/clk/davinci/Makefile
++++ b/drivers/clk/davinci/Makefile
+@@ -13,4 +13,5 @@ obj-y += psc.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= psc-da830.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= psc-da850.o
+ obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= psc-dm355.o
++obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= psc-dm365.o
+ endif
+diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+new file mode 100644
+index 0000000..3ad915f
+--- /dev/null
++++ b/drivers/clk/davinci/psc-dm365.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * PSC clock descriptions for TI DaVinci DM365
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/types.h>
++
++#include "psc.h"
++
++LPSC_CLKDEV1(vpss_slave_clkdev,		"slave",	"vpss");
++LPSC_CLKDEV1(spi1_clkdev,		NULL,		"spi_davinci.1");
++LPSC_CLKDEV1(mmcsd1_clkdev,		NULL,		"da830-mmc.1");
++LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
++LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
++LPSC_CLKDEV1(spi2_clkdev,		NULL,		"spi_davinci.2");
++LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
++LPSC_CLKDEV1(mmcsd0_clkdev,		NULL,		"da830-mmc.0");
++LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
++LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
++LPSC_CLKDEV1(uart1_clkdev,		NULL,		"serial8250.1");
++LPSC_CLKDEV1(spi0_clkdev,		NULL,		"spi_davinci.0");
++/* REVISIT: gpio-davinci.c should be modified to drop con_id */
++LPSC_CLKDEV1(gpio_clkdev,		"gpio",		NULL);
++LPSC_CLKDEV1(timer0_clkdev,		"timer0",	NULL);
++LPSC_CLKDEV1(timer2_clkdev,		NULL,		"davinci-wdt");
++LPSC_CLKDEV1(spi3_clkdev,		NULL,		"spi_davinci.3");
++LPSC_CLKDEV1(spi4_clkdev,		NULL,		"spi_davinci.4");
++LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
++					"fck",		"davinci_mdio.0");
++LPSC_CLKDEV1(voice_codec_clkdev,	NULL,		"davinci_voicecodec");
++LPSC_CLKDEV1(vpss_dac_clkdev,		"vpss_dac",	NULL);
++LPSC_CLKDEV1(vpss_master_clkdev,	"master",	"vpss");
++
++static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
++	LPSC(1,  0, vpss_slave,  pll1_sysclk5, vpss_slave_clkdev,  0),
++	LPSC(5,  0, timer3,      pll1_auxclk,  NULL,               0),
++	LPSC(6,  0, spi1,        pll1_sysclk4, spi1_clkdev,        0),
++	LPSC(7,  0, mmcsd1,      pll1_sysclk4, mmcsd1_clkdev,      0),
++	LPSC(8,  0, asp0,        pll1_sysclk4, asp0_clkdev,        0),
++	LPSC(9,  0, usb,         pll1_auxclk,  usb_clkdev,         0),
++	LPSC(10, 0, pwm3,        pll1_auxclk,  NULL,               0),
++	LPSC(11, 0, spi2,        pll1_sysclk4, spi2_clkdev,        0),
++	LPSC(12, 0, rto,         pll1_sysclk4, NULL,               0),
++	LPSC(14, 0, aemif,       pll1_sysclk4, aemif_clkdev,       0),
++	LPSC(15, 0, mmcsd0,      pll1_sysclk8, mmcsd0_clkdev,      0),
++	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
++	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
++	LPSC(20, 0, uart1,       pll1_sysclk4, uart1_clkdev,       0),
++	LPSC(22, 0, spi0,        pll1_sysclk4, spi0_clkdev,        0),
++	LPSC(23, 0, pwm0,        pll1_auxclk,  NULL,               0),
++	LPSC(24, 0, pwm1,        pll1_auxclk,  NULL,               0),
++	LPSC(25, 0, pwm2,        pll1_auxclk,  NULL,               0),
++	LPSC(26, 0, gpio,        pll1_sysclk4, gpio_clkdev,        0),
++	LPSC(27, 0, timer0,      pll1_auxclk,  timer0_clkdev,      LPSC_ALWAYS_ENABLED),
++	LPSC(28, 0, timer1,      pll1_auxclk,  NULL,               0),
++	/* REVISIT: why can't this be disabled? */
++	LPSC(29, 0, timer2,      pll1_auxclk,  timer2_clkdev,      LPSC_ALWAYS_ENABLED),
++	LPSC(31, 0, arm,         pll2_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
++	LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
++	LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
++	LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
++	LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
++	LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
++	LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
++	LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
++	{ }
++};
++
++static int dm365_psc_init(struct device *dev, void __iomem *base)
++{
++	return davinci_psc_register_clocks(dev, dm365_psc_info, 52, base);
++}
++
++static struct clk_bulk_data dm365_psc_parent_clks[] = {
++	{ .id = "pll1_sysclk1" },
++	{ .id = "pll1_sysclk3" },
++	{ .id = "pll1_sysclk4" },
++	{ .id = "pll1_sysclk5" },
++	{ .id = "pll1_sysclk8" },
++	{ .id = "pll2_sysclk2" },
++	{ .id = "pll2_sysclk4" },
++	{ .id = "pll1_auxclk"  },
++};
++
++const struct davinci_psc_init_data dm365_psc_init_data = {
++	.parent_clks		= dm365_psc_parent_clks,
++	.num_parent_clks	= ARRAY_SIZE(dm365_psc_parent_clks),
++	.psc_init		= &dm365_psc_init,
++};
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 0825b62..7bcf316 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -493,6 +493,7 @@ static const struct platform_device_id davinci_psc_id_table[] = {
+ 	{ .name = "da850-psc0", .driver_data = (kernel_ulong_t)&da850_psc0_init_data },
+ 	{ .name = "da850-psc1", .driver_data = (kernel_ulong_t)&da850_psc1_init_data },
+ 	{ .name = "dm355-psc",  .driver_data = (kernel_ulong_t)&dm355_psc_init_data  },
++	{ .name = "dm365-psc",  .driver_data = (kernel_ulong_t)&dm365_psc_init_data  },
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
+index d672e72..4f6210e 100644
+--- a/drivers/clk/davinci/psc.h
++++ b/drivers/clk/davinci/psc.h
+@@ -101,5 +101,6 @@ extern const struct davinci_psc_init_data da850_psc1_init_data;
+ extern const struct davinci_psc_init_data of_da850_psc0_init_data;
+ extern const struct davinci_psc_init_data of_da850_psc1_init_data;
+ extern const struct davinci_psc_init_data dm355_psc_init_data;
++extern const struct davinci_psc_init_data dm365_psc_init_data;
+ 
+ #endif /* __CLK_DAVINCI_PSC_H__ */
+-- 
+2.7.4
