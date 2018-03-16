@@ -1,65 +1,152 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v4 4/6] dt-bindings: clock: mediatek: update audsys documentation to adapt MFD device
-Date: Tue, 6 Mar 2018 17:09:29 +0800
-Message-ID: <ad47a5c633fea2f75720dcd4b24fa6c41592d38b.1520327262.git.ryder.lee@mediatek.com>
-In-Reply-To: <cover.1520327262.git.ryder.lee@mediatek.com>
-References: <cover.1520327262.git.ryder.lee@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 41/42] ARM: davinci: da8xx-dt: switch to device tree clocks
+Date: Thu, 15 Mar 2018 21:52:57 -0500
+Message-Id: <1521168778-27236-42-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The MediaTek audio hardware block that exposes functionalities that are
-handled by separate subsystems in the kernel.  These functions are all
-mapped somewhere at 0x112xxxxx, and there are some control bits are mixed
-up with other functions within the same registers.
+This removes all of the clock init code from da8xx-dt.c. This includes
+all of the OF_DEV_AUXDATA that was just used for looking up clocks.
 
-This patch modifies example to illustrate child nodes.
-
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- .../bindings/arm/mediatek/mediatek,audsys.txt         | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-index 9b8f578..97b304e 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-@@ -13,10 +13,19 @@ The AUDSYS controller uses the common clk binding from
- Documentation/devicetree/bindings/clock/clock-bindings.txt
- The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+v8 changes:
+- none
+
+v7 changes:
+- rebased
+- drop of_platform_default_populate(NULL, NULL, NULL)
+- add change in pm_domain.c
+
+Note: I didn't see this until it was too late, but Bartosz has an interesting
+alternative for the legacy PM domain stuff at
+https://github.com/brgl/linux/commit/0197b11512e44206708f4bd320c369a2a163e82d
+
+v6 changes:
+- removed misleading statement from commit message
+
+ arch/arm/mach-davinci/da8xx-dt.c  | 58 ---------------------------------------
+ arch/arm/mach-davinci/pm_domain.c |  5 ++++
+ 2 files changed, 5 insertions(+), 58 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
+index 088bc5c..23ac410 100644
+--- a/arch/arm/mach-davinci/da8xx-dt.c
++++ b/arch/arm/mach-davinci/da8xx-dt.c
+@@ -19,67 +19,10 @@
+ #include "cp_intc.h"
+ #include <mach/da8xx.h>
  
-+Required sub-nodes:
-+-------
-+For common binding part and usage, refer to
-+../sonud/mt2701-afe-pcm.txt.
-+
- Example:
- 
--audsys: audsys@11220000 {
--	compatible = "mediatek,mt7622-audsys", "syscon";
--	reg = <0 0x11220000 0 0x1000>;
--	#clock-cells = <1>;
+-static struct of_dev_auxdata da850_aemif_auxdata_lookup[] = {
+-	OF_DEV_AUXDATA("ti,davinci-nand", 0x62000000, "davinci-nand.0", NULL),
+-	{}
 -};
-+	audsys: clock-controller@11220000 {
-+		compatible = "mediatek,mt7622-audsys", "syscon";
-+		reg = <0 0x11220000 0 0x2000>;
-+		#clock-cells = <1>;
+-
+-static struct aemif_platform_data aemif_data = {
+-	.dev_lookup = da850_aemif_auxdata_lookup,
+-};
+-
+-static struct of_dev_auxdata da850_auxdata_lookup[] __initdata = {
+-	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01c22000, "i2c_davinci.1", NULL),
+-	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01e28000, "i2c_davinci.2", NULL),
+-	OF_DEV_AUXDATA("ti,davinci-wdt", 0x01c21000, "davinci-wdt", NULL),
+-	OF_DEV_AUXDATA("ti,da830-mmc", 0x01c40000, "da830-mmc.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f00000, "ehrpwm.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f02000, "ehrpwm.1", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f06000, "ecap.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f07000, "ecap.1", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f08000, "ecap.2", NULL),
+-	OF_DEV_AUXDATA("ti,da830-spi", 0x01c41000, "spi_davinci.0", NULL),
+-	OF_DEV_AUXDATA("ti,da830-spi", 0x01f0e000, "spi_davinci.1", NULL),
+-	OF_DEV_AUXDATA("ns16550a", 0x01c42000, "serial8250.0", NULL),
+-	OF_DEV_AUXDATA("ns16550a", 0x01d0c000, "serial8250.1", NULL),
+-	OF_DEV_AUXDATA("ns16550a", 0x01d0d000, "serial8250.2", NULL),
+-	OF_DEV_AUXDATA("ti,davinci_mdio", 0x01e24000, "davinci_mdio.0", NULL),
+-	OF_DEV_AUXDATA("ti,davinci-dm6467-emac", 0x01e20000, "davinci_emac.1",
+-		       NULL),
+-	OF_DEV_AUXDATA("ti,da830-mcasp-audio", 0x01d00000, "davinci-mcasp.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-aemif", 0x68000000, "ti-aemif", &aemif_data),
+-	OF_DEV_AUXDATA("ti,da850-tilcdc", 0x01e13000, "da8xx_lcdc.0", NULL),
+-	OF_DEV_AUXDATA("ti,da830-ohci", 0x01e25000, "ohci-da8xx", NULL),
+-	OF_DEV_AUXDATA("ti,da830-musb", 0x01e00000, "musb-da8xx", NULL),
+-	OF_DEV_AUXDATA("ti,da830-usb-phy", 0x01c1417c, "da8xx-usb-phy", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ahci", 0x01e18000, "ahci_da850", NULL),
+-	OF_DEV_AUXDATA("ti,da850-vpif", 0x01e17000, "vpif", NULL),
+-	OF_DEV_AUXDATA("ti,da850-dsp", 0x11800000, "davinci-rproc.0", NULL),
+-	{}
+-};
+-
+ #ifdef CONFIG_ARCH_DAVINCI_DA850
+ 
+ static void __init da850_init_machine(void)
+ {
+-	/* All existing boards use 100MHz SATA refclkpn */
+-	static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
+-
+-	int ret;
+-
+-	da850_register_clocks();
+-
+-	ret = da8xx_register_usb_phy_clocks();
+-	if (ret)
+-		pr_warn("%s: USB PHY CLK registration failed: %d\n",
+-			__func__, ret);
+-
+-	ret = da850_register_sata_refclk(sata_refclkpn);
+-	if (ret)
+-		pr_warn("%s: registering SATA REFCLK failed: %d",
+-			__func__, ret);
+-
+-	of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
+ 	davinci_pm_init();
+ 	pdata_quirks_init();
+ }
+@@ -94,7 +37,6 @@ static const char *const da850_boards_compat[] __initconst = {
+ 
+ DT_MACHINE_START(DA850_DT, "Generic DA850/OMAP-L138/AM18x")
+ 	.map_io		= da850_init,
+-	.init_time	= da850_init_time,
+ 	.init_machine	= da850_init_machine,
+ 	.dt_compat	= da850_boards_compat,
+ 	.init_late	= davinci_init_late,
+diff --git a/arch/arm/mach-davinci/pm_domain.c b/arch/arm/mach-davinci/pm_domain.c
+index 78eac2c..e251fd5 100644
+--- a/arch/arm/mach-davinci/pm_domain.c
++++ b/arch/arm/mach-davinci/pm_domain.c
+@@ -13,6 +13,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/pm_clock.h>
+ #include <linux/platform_device.h>
++#include <linux/of.h>
+ 
+ static struct dev_pm_domain davinci_pm_domain = {
+ 	.ops = {
+@@ -28,6 +29,10 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
+ 
+ static int __init davinci_pm_runtime_init(void)
+ {
++	if (of_have_populated_dt())
++		return 0;
 +
-+		afe: audio-controller {
-+			...
-+		};
-+	};
++	/* Use pm_clk as fallback if we're not using genpd. */
+ 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
+ 
+ 	return 0;
 -- 
-1.9.1
+2.7.4
