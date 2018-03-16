@@ -1,48 +1,48 @@
-Return-Path: <postmaster@kaiser.cx>
-Date: Thu, 8 Mar 2018 15:08:51 +0100
-From: Martin Kaiser <martin@kaiser.cx>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
-Message-ID: <20180308140851.GA25601@botnar.kaiser.cx>
-References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
- <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [linux-sunxi] [PATCH v4 4/9] pinctrl: sunxi: add support for the
+ Allwinner H6 main pin controller
+To: icenowy@aosc.io, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <20180316140215.28663-1-icenowy@aosc.io>
+ <20180316140215.28663-5-icenowy@aosc.io>
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <a74d898f-7047-eebf-027e-106c40be2b9d@arm.com>
+Date: Fri, 16 Mar 2018 17:07:28 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
-Sender: Martin Kaiser <martin@botnar.kaiser.cx>
+In-Reply-To: <20180316140215.28663-5-icenowy@aosc.io>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabio,
+Hi,
 
-Thus wrote Fabio Estevam (festevam@gmail.com):
+On 16/03/18 14:02, Icenowy Zheng wrote:
+> The Allwinner H6 SoC has two pin controllers, one main controller
+> (called CPUX-PORT in user manual) and one controller in CPUs power
+> domain (called CPUS-PORT in user manual).
+> 
+> This commit introduces support for the main pin controller on H6.
+> 
+> The pin bank A and B are not wired out and hidden from the SoC's
+> documents, however it's shown that the "ATE" (an AC200 chip
+> co-packaged with the H6 die) is connected to the main SoC die via these
+> pin banks. The information about these banks is just copied from the BSP
+> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
+> format. The GPIO functions are dropped, as they're impossible to use --
+> except a GPIO&IRQ only pin (PB20) which might be the IRQ of ATE.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-> I get audio working from SSI1, but I guess this is due to the fact
-> that the bootloader enables the SSI clock:
+As mentioned before, I checked every single pin against the manual and
+this looks correct to me.
 
-> I have the following in U-Boot:
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-> /* Enable the clocks */
-> DATA 4 0x53f8000c 0x1fffffff
-> DATA 4 0x53f80010 0xffffffff
-> DATA 4 0x53f80014 0xfdfff
-
-I'm using the same initial settings.
-
-Nevertheless, ssi1_ipg_per is disbled after loading the kernel.
-
-Digging into this a bit more, it turned out that without my patch,
-clk_disable_unused() recognizes ssi1_ipg_per as unused and disables it.
-
-If my patch is applied and ssi1_ipg_per is declared as parent of
-ssi1_ipg, clk_disable_unused() will not disable it and fsl_ssi_startup()
-will enable both ssi1_ipg_per and ssi1_ipg before playing sound.
-
-Best regards,
-Martin
+Thanks!
+Andre.
