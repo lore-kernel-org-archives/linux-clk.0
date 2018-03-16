@@ -1,108 +1,130 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v3 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin
- Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner
-	<david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson
-	<bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>
-References: <20180327092031.11251-1-brgl@bgdev.pl>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <c57f0342-3690-1d07-35c1-6e12beae9462@ti.com>
-Date: Wed, 28 Mar 2018 17:41:18 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 31/42] ARM: davinci: switch to common clock framework
+Date: Thu, 15 Mar 2018 21:52:47 -0500
+Message-Id: <1521168778-27236-32-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bjorn,
+This switches ARCH_DAVINCI to use the common clock framework. The legacy
+clock code in arch/arm/mach-davinci/ is no longer used. New drivers in
+drivers/clk/davinci/ are used instead.
 
-On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> This series converts the only user of the handcoded, mach-specific reset
-> routines in the davinci platform to using the reset framework.
-> 
-> Patches 1-3 add necessary lookups/DT-properties.
-> 
-> Patches 4-6 fix issues found in the remoteproc davinci driver.
+A few macros had to be moved to prevent compilation errors.
 
-Can you pick up patches 4 through 6 for 4.17 itself through the
-remoteproc tree? They can be picked up independent of the CCF
-conversion. Anyway, the actual CCF conversion and the reset framework
-adaptation patch would need the dts patches to be picked up first to
-maintain functionality, and I do not think Sekhar is picking up the dts
-changes for 4.17 this late.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-regards
-Suman
+v8 changes:
+- none
 
-> 
-> Patch 7 converts the davinci-rproc driver to the reset framework.
-> 
-> Patch 8 removes now dead code.
-> 
-> Philipp: it turned out that it's indeed better to use the reset
-> controller's device name for the entry lookup.
-> 
-> Tested both in DT and legacy modes by booting the examples from
-> ti-ipc-rtos recipe in meta-ti.
-> 
-> This series applies on top of David Lechner's common-clk-v9 branch[1]
-> with Philipp Zabel's reset/next branch[2] pulled in.
-> 
-> It can be found in my github tree as well[3].
-> 
-> [1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
-> [2] git://git.pengutronix.de/git/pza/linux reset/next
-> [3] git@github.com:brgl/linux.git topic/davinci-reset
-> 
-> v1 -> v2:
-> - fixed the device tree patches the descriptions of which were mixed up
-> - return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
->   reset provider, since it's possible that the lookup table was not yet
->   registered
-> - made the local variable naming consistent in the davinci-rproc driver
-> - fixed a typo in PATCH 5/8
-> 
-> v2 -> v3:
-> - reworded the commit messages (s/remoteproc: da8xx/remoteproc\/davinci/)
-> - call clk_disable_unprepare() if reset_control_deassert() fails in
->   da8xx_rproc_start()
-> - added a patch fixing the S_IRUGO checkpatch warning, since we're
->   already modifying this driver anyway
-> - added a temp variable for code brevity in da8xx_rproc_stop()
-> - removed patch 1/8 (already applied to reset/next)
-> 
-> Bartosz Golaszewski (8):
->   ARM: davinci: dts: make psc0 a reset provider
->   ARM: davinci: dts: add a reset control to the dsp node
->   clk: davinci: add a reset lookup table for psc0
->   remoteproc/davinci: add the missing retval check for clk_enable()
->   remoteproc/davinci: prepare and unprepare the clock where needed
->   remoteproc/davinci: use octal permissions for module_param()
->   remoteproc/davinci: use the reset framework
->   clk: davinci: kill davinci_clk_reset_assert/deassert()
-> 
->  arch/arm/boot/dts/da850.dtsi               |  2 ++
->  arch/arm/mach-davinci/include/mach/clock.h | 21 --------------
->  drivers/clk/davinci/psc-da850.c            |  7 +++++
->  drivers/clk/davinci/psc.c                  | 19 +------------
->  drivers/remoteproc/da8xx_remoteproc.c      | 45 ++++++++++++++++++++++++------
->  5 files changed, 47 insertions(+), 47 deletions(-)
->  delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
-> 
+v7 changes:
+- s/compile/compilation and space instead of tab
+- add PM_GENERIC_DOMAINS dependencies
+
+v6 changes:
+- clean up indent on Common objects section
+
+ arch/arm/Kconfig                | 5 ++++-
+ arch/arm/mach-davinci/Makefile  | 4 ++--
+ arch/arm/mach-davinci/clock.h   | 4 ----
+ arch/arm/mach-davinci/davinci.h | 4 ++++
+ arch/arm/mach-davinci/psc.h     | 2 --
+ 5 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 7e3d535..563fade 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -608,13 +608,16 @@ config ARCH_S3C24XX
+ config ARCH_DAVINCI
+ 	bool "TI DaVinci"
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+-	select CLKDEV_LOOKUP
++	select COMMON_CLK
+ 	select CPU_ARM926T
+ 	select GENERIC_ALLOCATOR
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_IRQ_CHIP
+ 	select GPIOLIB
+ 	select HAVE_IDE
++	select PM_GENERIC_DOMAINS if PM
++	select PM_GENERIC_DOMAINS_OF if PM && OF
++	select RESET_CONTROLLER
+ 	select USE_OF
+ 	select ZONE_DMA
+ 	help
+diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
+index 4e81780..8725d8b 100644
+--- a/arch/arm/mach-davinci/Makefile
++++ b/arch/arm/mach-davinci/Makefile
+@@ -5,8 +5,8 @@
+ #
+ 
+ # Common objects
+-obj-y 			:= time.o clock.o serial.o psc.o \
+-			   usb.o common.o sram.o aemif.o
++obj-y 					:= time.o serial.o usb.o \
++					   common.o sram.o aemif.o
+ 
+ obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
+ 
+diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
+index d7894d5..2d05856 100644
+--- a/arch/arm/mach-davinci/clock.h
++++ b/arch/arm/mach-davinci/clock.h
+@@ -12,10 +12,6 @@
+ #ifndef __ARCH_ARM_DAVINCI_CLOCK_H
+ #define __ARCH_ARM_DAVINCI_CLOCK_H
+ 
+-#define DAVINCI_PLL1_BASE 0x01c40800
+-#define DAVINCI_PLL2_BASE 0x01c40c00
+-#define MAX_PLL 2
+-
+ /* PLL/Reset register offsets */
+ #define PLLCTL          0x100
+ #define PLLCTL_PLLEN    BIT(0)
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index a200977..a227f80 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -35,6 +35,10 @@
+ #include <media/davinci/vpbe.h>
+ #include <media/davinci/vpbe_osd.h>
+ 
++#define DAVINCI_PLL1_BASE		0x01c40800
++#define DAVINCI_PLL2_BASE		0x01c40c00
++#define DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01c41000
++
+ #define DAVINCI_SYSTEM_MODULE_BASE	0x01c40000
+ #define SYSMOD_VDAC_CONFIG		0x2c
+ #define SYSMOD_VIDCLKCTL		0x38
+diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
+index 8af9f09..b58707c 100644
+--- a/arch/arm/mach-davinci/psc.h
++++ b/arch/arm/mach-davinci/psc.h
+@@ -27,8 +27,6 @@
+ #ifndef __ASM_ARCH_PSC_H
+ #define __ASM_ARCH_PSC_H
+ 
+-#define	DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01C41000
+-
+ /* Power and Sleep Controller (PSC) Domains */
+ #define DAVINCI_GPSC_ARMDOMAIN		0
+ #define DAVINCI_GPSC_DSPDOMAIN		1
+-- 
+2.7.4
