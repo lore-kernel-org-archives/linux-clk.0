@@ -1,74 +1,35 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [RESEND PATCH] clk: rockchip: Prevent calculating mmc phase if clock rate is zero
-Date: Mon,  5 Mar 2018 11:25:58 +0800
-Message-Id: <1520220358-181119-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:57716 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751348AbeCPWod (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Mar 2018 18:44:33 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Dong Aisheng <aisheng.dong@nxp.com>, linux-doc@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1516369035-24740-1-git-send-email-aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Stephen Boyd <sboyd@codeaurora.org>
+References: <1516369035-24740-1-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <152124027193.242365.12812965857871498513@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/1] Documentation: clk: enable lock is not held for
+ clk_is_enabled API
+Date: Fri, 16 Mar 2018 15:44:31 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The MMC sample and drv clock for rockchip platforms are derived from
-the bus clock output to the MMC/SDIO card. So it should never happens
-that the clk rate is zero given it should inherits the clock rate from
-its parent. If something goes wrong and makes the clock rate to be zero,
-the calculation would be wrong but may still make the mmc tuning process
-work luckily. However it makes people harder to debug when the following
-data transfer is unstable.
+Quoting Dong Aisheng (2018-01-19 05:37:15)
+> The core does not need to hold enable lock for clk_is_enabled API.
+> Update the doc to reflect it.
+> 
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Suggested-by: Stephen Boyd <sboyd@codeaurora.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
-Resend this since the former log output missed '\n'
+Applied to clk-next
 
-
- drivers/clk/rockchip/clk-mmc-phase.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-index 077fcdc..c0c14e4 100644
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -58,6 +58,12 @@ static int rockchip_mmc_get_phase(struct clk_hw *hw)
- 	u16 degrees;
- 	u32 delay_num = 0;
- 
-+	/* See the comment for rockchip_mmc_set_phase below */
-+	if (!rate) {
-+		pr_err("%s: invalid clk rate\n", __func__);
-+		return -EINVAL;
-+	}
-+
- 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
- 
- 	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
-@@ -84,6 +90,25 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int degrees)
- 	u32 raw_value;
- 	u32 delay;
- 
-+	/*
-+	 * The below calculation is based on the output clock from
-+	 * MMC host to the card, which expects the phase clock inherits
-+	 * the clock rate from its parent, namely the output clock
-+	 * provider of MMC host. However, things may go wrong if
-+	 * (1) It is orphan.
-+	 * (2) It is assigned to the wrong parent.
-+	 *
-+	 * This check help debug the case (1), which seems to be the
-+	 * most likely problem we often made and explicitly makes people
-+	 * harder to debug the unstable mmc tuning stuff. So hope people
-+	 * to have a close look at this comment to help check out what was
-+	 * happening.
-+	 */
-+	if (!rate) {
-+		pr_err("%s: invalid clk rate\n", __func__);
-+		return -EINVAL;
-+	}
-+
- 	nineties = degrees / 90;
- 	remainder = (degrees % 90);
- 
--- 
-1.9.1
