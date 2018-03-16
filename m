@@ -1,161 +1,62 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 03/42] clk: davinci: Add platform information for TI DA830 PLL
-Date: Thu, 15 Mar 2018 21:52:19 -0500
-Message-Id: <1521168778-27236-4-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41411 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752244AbeCPDCh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Mar 2018 23:02:37 -0400
+Received: by mail-pl0-f66.google.com with SMTP id b7-v6so1009945plr.8
+        for <linux-clk@vger.kernel.org>; Thu, 15 Mar 2018 20:02:36 -0700 (PDT)
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        dbasehore@chromium.org, diander@chromium.org,
+        briannorris@chromium.org, shawn.lin@rock-chips.com,
+        Lin Huang <hl@rock-chips.com>
+Subject: [PATCH v2 1/2] clk: rockchip: assign correct id for pclk_ddr and hclk_sd in rk3399
+Date: Fri, 16 Mar 2018 11:02:27 +0800
+Message-Id: <1521169348-8552-1-git-send-email-hl@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PLL clocks on TI DA830/
-OMAP-L137/AM17XX SoCs.
+Since hclk_sd and pclk_ddr source clock from CPLL or GPLL,
+and these two PLL may change their frequency. If we do not
+assign right id to pclk_ddr and hclk_sd, they will alway use
+default cur register value, and may get the frequency
+exceed their signed off frequency. So assign correct Id
+for them, then we can assign frequency for them in dts.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Change-Id: I6c4d15d37ddabe4ed34e2351cf26e660672ae9ee
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
 ---
+Changes in v2:
+- add more detail in commit message
 
-v8 changes:
-- drop __init and __initconst attributes
-- add a clkdev lookup for each SYSCLK
+ drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v7 changes:
-- include clkdev lookup registration here instead of in mach-davinci
-- Add platform_device_id lookup
-
-v6 changes:
-- Added da830_pll_info with controller-specific information
-- Add empty lines between function calls
-
-
- drivers/clk/davinci/Makefile    |  1 +
- drivers/clk/davinci/pll-da830.c | 70 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/davinci/pll.c       |  1 +
- drivers/clk/davinci/pll.h       |  4 +++
- 4 files changed, 76 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-da830.c
-
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index d9673bd..9061e19 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -2,4 +2,5 @@
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 3e57c6e..bca10d6 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -671,7 +671,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(9), 7, GFLAGS,
+ 			&rk3399_uart3_fracmux),
  
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-y += pll.o
-+obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- endif
-diff --git a/drivers/clk/davinci/pll-da830.c b/drivers/clk/davinci/pll-da830.c
-new file mode 100644
-index 0000000..929a3d3
---- /dev/null
-+++ b/drivers/clk/davinci/pll-da830.c
-@@ -0,0 +1,70 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DA830/OMAP-L137/AM17XX
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/clkdev.h>
-+#include <linux/bitops.h>
-+#include <linux/init.h>
-+#include <linux/types.h>
-+
-+#include "pll.h"
-+
-+static const struct davinci_pll_clk_info da830_pll_info = {
-+	.name = "pll0",
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 4,
-+	.pllm_max = 32,
-+	.pllout_min_rate = 300000000,
-+	.pllout_max_rate = 600000000,
-+	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV,
-+};
-+
-+/*
-+ * NB: Technically, the clocks flagged as SYSCLK_FIXED_DIV are "fixed ratio",
-+ * meaning that we could change the divider as long as we keep the correct
-+ * ratio between all of the clocks, but we don't support that because there is
-+ * currently not a need for it.
-+ */
-+
-+SYSCLK(2, pll0_sysclk2, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(3, pll0_sysclk3, pll0_pllen, 5, 0);
-+SYSCLK(4, pll0_sysclk4, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(5, pll0_sysclk5, pll0_pllen, 5, 0);
-+SYSCLK(6, pll0_sysclk6, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(7, pll0_sysclk7, pll0_pllen, 5, 0);
-+
-+int da830_pll_init(struct device *dev, void __iomem *base)
-+{
-+	struct clk *clk;
-+
-+	davinci_pll_clk_register(dev, &da830_pll_info, "ref_clk", base);
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk2, base);
-+	clk_register_clkdev(clk, "pll0_sysclk2", "da830-psc0");
-+	clk_register_clkdev(clk, "pll0_sysclk2", "da830-psc1");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk3, base);
-+	clk_register_clkdev(clk, "pll0_sysclk3", "da830-psc0");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk4, base);
-+	clk_register_clkdev(clk, "pll0_sysclk4", "da830-psc0");
-+	clk_register_clkdev(clk, "pll0_sysclk4", "da830-psc1");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk5, base);
-+	clk_register_clkdev(clk, "pll0_sysclk5", "da830-psc1");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk6, base);
-+	clk_register_clkdev(clk, "pll0_sysclk6", "da830-psc0");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk7, base);
-+
-+	clk = davinci_pll_auxclk_register(dev, "pll0_auxclk", base);
-+	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-+	clk_register_clkdev(clk, "timer0", NULL);
-+	clk_register_clkdev(clk, NULL, "davinci-wdt");
-+
-+	return 0;
-+}
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 22ee95c..eaf8049 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -775,6 +775,7 @@ static const struct of_device_id davinci_pll_of_match[] = {
- };
+-	COMPOSITE(0, "pclk_ddr", mux_pll_src_cpll_gpll_p, CLK_IGNORE_UNUSED,
++	COMPOSITE(PCLK_DDR, "pclk_ddr", mux_pll_src_cpll_gpll_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(6), 15, 1, MFLAGS, 8, 5, DFLAGS,
+ 			RK3399_CLKGATE_CON(3), 4, GFLAGS),
  
- static const struct platform_device_id davinci_pll_id_table[] = {
-+	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
- 	{ }
- };
+@@ -887,7 +887,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(31), 8, GFLAGS),
  
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index 52103ae..0de2c61 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -117,4 +117,8 @@ int of_davinci_pll_init(struct device *dev,
- 			u8 max_sysclk_id,
- 			void __iomem *base);
- 
-+/* Platform-specific callbacks */
-+
-+int da830_pll_init(struct device *dev, void __iomem *base);
-+
- #endif /* __CLK_DAVINCI_PLL_H___ */
+ 	/* sdio & sdmmc */
+-	COMPOSITE(0, "hclk_sd", mux_pll_src_cpll_gpll_p, 0,
++	COMPOSITE(HCLK_SD, "hclk_sd", mux_pll_src_cpll_gpll_p, 0,
+ 			RK3399_CLKSEL_CON(13), 15, 1, MFLAGS, 8, 5, DFLAGS,
+ 			RK3399_CLKGATE_CON(12), 13, GFLAGS),
+ 	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_sd", 0,
 -- 
 2.7.4
+
