@@ -1,47 +1,97 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/5] clk: renesas: r8a7791/r8a7793: Fix LB clock divider
-Date: Thu, 29 Mar 2018 19:33:08 +0200
-Message-Id: <1522344790-20061-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:44023 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750982AbeCPOD5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:03:57 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 2/9] pinctrl: sunxi: introduce IRQ bank conversion function
+Date: Fri, 16 Mar 2018 22:02:08 +0800
+Message-Id: <20180316140215.28663-3-icenowy@aosc.io>
+In-Reply-To: <20180316140215.28663-1-icenowy@aosc.io>
+References: <20180316140215.28663-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-the LB clock divider depends on the value of the MD18 pin.
+The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
+GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5. Some
+refactors in the sunxi pinctrl framework are needed.
 
-On R-Car M2-W and M2-N, the LB clock divider is fixed to 24.  Hence
-model the clock as a fixed factor clock instead.
+This commit introduces a IRQ bank conversion function, which replaces
+the "(bank_base + bank)" code in IRQ register access.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Extracted in v4.
 
-diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-index 820b220b09cc6bdb..1b91f03b75980766 100644
---- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-@@ -57,7 +57,6 @@ static struct cpg_core_clk r8a7791_core_clks[] __initdata = {
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index a13bd57d880d..466840d886f6 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -263,14 +263,19 @@ static inline u32 sunxi_pull_offset(u16 pin)
+ 	return pin_num * PULL_PINS_BITS;
+ }
  
- 	/* Core Clock Outputs */
- 	DEF_BASE("z",    R8A7791_CLK_Z,    CLK_TYPE_GEN2_Z,    CLK_PLL0),
--	DEF_BASE("lb",   R8A7791_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
- 	DEF_BASE("adsp", R8A7791_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
- 	DEF_BASE("sdh",  R8A7791_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
- 	DEF_BASE("sd0",  R8A7791_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
-@@ -70,6 +69,7 @@ static struct cpg_core_clk r8a7791_core_clks[] __initdata = {
- 	DEF_FIXED("hp",     R8A7791_CLK_HP,    CLK_PLL1,         12, 1),
- 	DEF_FIXED("i",      R8A7791_CLK_I,     CLK_PLL1,          2, 1),
- 	DEF_FIXED("b",      R8A7791_CLK_B,     CLK_PLL1,         12, 1),
-+	DEF_FIXED("lb",     R8A7791_CLK_LB,    CLK_PLL1,         24, 1),
- 	DEF_FIXED("p",      R8A7791_CLK_P,     CLK_PLL1,         24, 1),
- 	DEF_FIXED("cl",     R8A7791_CLK_CL,    CLK_PLL1,         48, 1),
- 	DEF_FIXED("m2",     R8A7791_CLK_M2,    CLK_PLL1,          8, 1),
++static inline u32 sunxi_irq_hw_bank_num(const struct sunxi_pinctrl_desc *desc, u8 bank)
++{
++	return desc->irq_bank_base + bank;
++}
++
+ static inline u32 sunxi_irq_cfg_reg(const struct sunxi_pinctrl_desc *desc,
+ 				    u16 irq)
+ {
+-	unsigned bank_base = desc->irq_bank_base;
+ 	u8 bank = irq / IRQ_PER_BANK;
+ 	u8 reg = (irq % IRQ_PER_BANK) / IRQ_CFG_IRQ_PER_REG * 0x04;
+ 
+-	return IRQ_CFG_REG + (bank_base + bank) * IRQ_MEM_SIZE + reg;
++	return IRQ_CFG_REG +
++	       sunxi_irq_hw_bank_num(desc, bank) * IRQ_MEM_SIZE + reg;
+ }
+ 
+ static inline u32 sunxi_irq_cfg_offset(u16 irq)
+@@ -281,9 +286,7 @@ static inline u32 sunxi_irq_cfg_offset(u16 irq)
+ 
+ static inline u32 sunxi_irq_ctrl_reg_from_bank(const struct sunxi_pinctrl_desc *desc, u8 bank)
+ {
+-	unsigned bank_base = desc->irq_bank_base;
+-
+-	return IRQ_CTRL_REG + (bank_base + bank) * IRQ_MEM_SIZE;
++	return IRQ_CTRL_REG + sunxi_irq_hw_bank_num(desc, bank) * IRQ_MEM_SIZE;
+ }
+ 
+ static inline u32 sunxi_irq_ctrl_reg(const struct sunxi_pinctrl_desc *desc,
+@@ -302,16 +305,14 @@ static inline u32 sunxi_irq_ctrl_offset(u16 irq)
+ 
+ static inline u32 sunxi_irq_debounce_reg_from_bank(const struct sunxi_pinctrl_desc *desc, u8 bank)
+ {
+-	unsigned bank_base = desc->irq_bank_base;
+-
+-	return IRQ_DEBOUNCE_REG + (bank_base + bank) * IRQ_MEM_SIZE;
++	return IRQ_DEBOUNCE_REG +
++	       sunxi_irq_hw_bank_num(desc, bank) * IRQ_MEM_SIZE;
+ }
+ 
+ static inline u32 sunxi_irq_status_reg_from_bank(const struct sunxi_pinctrl_desc *desc, u8 bank)
+ {
+-	unsigned bank_base = desc->irq_bank_base;
+-
+-	return IRQ_STATUS_REG + (bank_base + bank) * IRQ_MEM_SIZE;
++	return IRQ_STATUS_REG +
++	       sunxi_irq_hw_bank_num(desc, bank) * IRQ_MEM_SIZE;
+ }
+ 
+ static inline u32 sunxi_irq_status_reg(const struct sunxi_pinctrl_desc *desc,
 -- 
-2.7.4
+2.15.1
+
