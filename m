@@ -1,69 +1,38 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Fri, 9 Mar 2018 08:16:03 +0000
-From: Lee Jones <lee.jones@linaro.org>
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: linux-kernel@vger.kernel.org, broonie@kernel.org,
-	alexandre.belloni@bootlin.com, linux-rtc@vger.kernel.org,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	Russell King <linux@armlinux.org.uk>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/4] Set name of regmap_config
-Message-ID: <20180309081603.4u5pgwwsfxernodm@dell>
-References: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180309015146.8297-1-jeffy.chen@rock-chips.com>
+To: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ mark.rutland@arm.com, matthias.bgg@gmail.com, robh+dt@kernel.org,
+ sean.wang@mediatek.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <7365f2286ff2cebcfb590715cb4a15dedd089046.1518895232.git.sean.wang@mediatek.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Sean Wang <sean.wang@mediatek.com>, Rob Herring <robh@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+References: <cover.1518895232.git.sean.wang@mediatek.com>
+ <7365f2286ff2cebcfb590715cb4a15dedd089046.1518895232.git.sean.wang@mediatek.com>
+Message-ID: <152123261872.225550.10226809804986023416@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 01/15] dt-bindings: clock: mediatek: add missing required
+ #reset-cells
+Date: Fri, 16 Mar 2018 13:36:58 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 09 Mar 2018, Jeffy Chen wrote:
+Quoting sean.wang@mediatek.com (2018-02-17 11:54:36)
+> From: Sean Wang <sean.wang@mediatek.com>
+> =
 
-> 
-> After 9b947a13e7f6 ("regmap: use debugfs even when no device"), we are
-> allowing regmap to create debugfs without a valid device. Some of them
-> would end up using "dummy*" as debugfs name.
-> 
-> This series try to set names in some regmap_config to avoid that.
-> 
-> 
-> Changes in v4:
-> Not to use rtc dev to init regmap, the gpbr is not directly related to
-> the rtc.
-> 
-> Changes in v3:
-> Modify commit message.
-> 
-> Jeffy Chen (4):
->   mfd: syscon: Set name of regmap_config
->   rtc: at91sam9: Set name of regmap_config
->   clk: lpc32xx: Set name of regmap_config
->   ARM: rockchip: Set name of regmap_config
-> 
->  arch/arm/mach-rockchip/platsmp.c | 1 +
->  drivers/clk/nxp/clk-lpc32xx.c    | 1 +
->  drivers/mfd/syscon.c             | 1 +
+> All ethsys, pciesys and ssusbsys internally include reset controller, so
+> explicitly add back these missing cell definitions to related bindings
+> and examples.
+> =
 
-It's difficult to review, since we cannot see what's happening with
-the rest of the patch set.  Would you mind re-sending the whole set to
-all parties please?
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-clk@vger.kernel.org
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
 
->  drivers/rtc/rtc-at91sam9.c       | 1 +
->  4 files changed, 4 insertions(+)
-> 
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Acked-by: Stephen Boyd <sboyd@kernel.org>
