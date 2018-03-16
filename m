@@ -1,42 +1,58 @@
-Return-Path: <nikita.yoush@cogentembedded.com>
-Return-Path: <nikita.yoush@cogentembedded.com>
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] clk: cs2000: set pm_ops in hibernate-compatible way
-Date: Tue, 20 Mar 2018 11:33:23 +0300
-Message-Id: <20180320083323.23289-1-nikita.yoush@cogentembedded.com>
+Return-Path: <riku.voipio@linaro.org>
+MIME-Version: 1.0
+In-Reply-To: <152113644553.107923.8652081506535849458@swboyd.mtv.corp.google.com>
+References: <20180312104945.3001-1-riku.voipio@linaro.org> <152113644553.107923.8652081506535849458@swboyd.mtv.corp.google.com>
+From: Riku Voipio <riku.voipio@linaro.org>
+Date: Fri, 16 Mar 2018 11:42:44 +0200
+Message-ID: <CAAqcGHkAKVShOL2atHwcdQMHt5wGpx+zmHQbzJPs1wc1VvLyrg@mail.gmail.com>
+Subject: Re: [RESEND PATCH] clk: enable hi655x common clk automatically
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, Arnd Bergmann <arnd@linaro.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, John Stultz <john.stultz@linaro.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Wei Xu <xuwei5@hisilicon.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Use SET_LATE_SYSTEM_SLEEP_PM_OPS() macro instead of direct assignment to
-.resume_early field.
+On 15 March 2018 at 19:54, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting riku.voipio@linaro.org (2018-03-12 03:49:45)
+>> From: Riku Voipio <riku.voipio@linaro.org>
+>>
+>> Without COMMON_CLK_HI655X Wifi and bluetooth are non-functional on Hikey.
+>> As suggested by Arnd, enable the driver automatically when the parent
+>> driver is selected. With sensible defaults in place, we can leave other
+>> choices for EXPERT.
+>>
+>> Cc: John Stultz <john.stultz@linaro.org>
+>> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+>> Cc: Wei Xu <xuwei5@hisilicon.com>
+>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Suggested-by: Arnd Bergmann <arnd@linaro.org>
+>> Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
+>> ---
+>> Previous discussion at https://patchwork.kernel.org/patch/9767143/
+>> ---
+>>  drivers/clk/Kconfig | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+>> index 98ce9fc6e6c0..448ce83b334d 100644
+>> --- a/drivers/clk/Kconfig
+>> +++ b/drivers/clk/Kconfig
+>> @@ -55,8 +55,10 @@ config COMMON_CLK_RK808
+>>           by control register.
+>>
+>>  config COMMON_CLK_HI655X
+>> -       tristate "Clock driver for Hi655x"
+>> -       depends on MFD_HI655X_PMIC || COMPILE_TEST
+>> +       tristate "Clock driver for Hi655x" if EXPERT
+>
+> Hmm. This would be the first EXPERT usage in the clk code. I guess
+> that's ok.
 
-This fixes initialization of CS2000 in restore from hibernation in case
-of kernel used to load image did not initialize CS2000 while kernel
-being restored had CS2000 initialized.
+Put it this way - would you comfortable letting a non-expert fiddle this option?
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- drivers/clk/clk-cs2000-cp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index e8ea81c30f0c..c58019750b7e 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -549,7 +549,7 @@ static int cs2000_resume(struct device *dev)
- }
- 
- static const struct dev_pm_ops cs2000_pm_ops = {
--	.resume_early	= cs2000_resume,
-+	SET_LATE_SYSTEM_SLEEP_PM_OPS(NULL, cs2000_resume)
- };
- 
- static struct i2c_driver cs2000_driver = {
--- 
-2.11.0
+>> +       depends on (MFD_HI655X_PMIC || COMPILE_TEST)
+>> +       depends on REGMAP
+>> +       default MFD_HI655X_PMIC
