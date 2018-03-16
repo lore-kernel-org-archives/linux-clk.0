@@ -1,29 +1,43 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
- mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180317100952.28538-9-manivannan.sadhasivam@linaro.org>
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
- devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
- daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
- <20180317100952.28538-9-manivannan.sadhasivam@linaro.org>
-Message-ID: <152150810065.254778.16540244897508639172@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 08/12] clk: actions: Add factor clock support
-Date: Mon, 19 Mar 2018 18:08:20 -0700
+Return-Path: <l.stach@pengutronix.de>
+Message-ID: <1521195019.3492.7.camel@pengutronix.de>
+Subject: Re: [PATCH v2 4/4] clk: imx: add clock driver for i.MX8MQ CCM
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, "A . s . Dong" <aisheng.dong@nxp.com>,
+ devicetree@vger.kernel.org, patchwork-lst@pengutronix.de, Rob Herring
+ <robh+dt@kernel.org>, linux-imx@nxp.com, kernel@pengutronix.de, Fabio
+ Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Fri, 16 Mar 2018 11:10:19 +0100
+In-Reply-To: <20180315213304.ejvgpkhxtblr6xb3@pengutronix.de>
+References: <20180201175412.9480-1-l.stach@pengutronix.de>
+	 <20180201175412.9480-4-l.stach@pengutronix.de>
+	 <20180315213304.ejvgpkhxtblr6xb3@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Manivannan Sadhasivam (2018-03-17 03:09:48)
-> Add support for Actions Semi factor clock together with
-> helper functions to be used in composite clock.
-> =
+Am Donnerstag, den 15.03.2018, 22:33 +0100 schrieb Sascha Hauer:
+> On Thu, Feb 01, 2018 at 06:54:12PM +0100, Lucas Stach wrote:
+> > Add driver for the Clock Control Module found on i.MX8MQ.
+> > 
+> > This is largely based on the downstream driver from Anson Huang and
+> > Bai Ping at NXP, with only some small adaptions to mainline from me.
+> > 
+> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> 
+> A general thought: The i.MX8M finally has a consistent clock tree. We
+> have for example 70 Peripheral clock slices consisting of a mux, a gate
+> and two dividers, all 70 looking the same.
+> For these it might make sense to create a more complex clock type
+> providing mux, gate and set rate functionality in one clock. This would
+> drastically reduce the number of clocks we have to handle.
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+I agree. It seems we are missing the 4.17 merge window with this
+anyways, due to the large number of changes still required and time
+constraints on my side, so a larger rework of the driver might be
+possible if we target 4.18.
 
-Adddress kbuild robot comments and I'll apply.
+Regards,
+Lucas
