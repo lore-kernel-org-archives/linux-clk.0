@@ -1,123 +1,544 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH V2 3/4] clk: add managed version of clk_bulk_get_all
-Date: Wed, 21 Mar 2018 10:54:53 +0800
-Message-ID: <1521600894-29919-4-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1521600894-29919-1-git-send-email-aisheng.dong@nxp.com>
-References: <1521600894-29919-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-fbdev@vger.kernel.org,
- b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com,
- Stephen Boyd <sboyd@codeaurora.org>, linux@armlinux.org.uk,
- linux-kernel@vger.kernel.org, hdegoede@redhat.com, linux-imx@nxp.com,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 42/42] ARM: dts: da850: Add clocks
+Date: Thu, 15 Mar 2018 21:52:58 -0500
+Message-Id: <1521168778-27236-43-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch introduces the managed version of clk_bulk_get_all.
+This adds clock provider nodes for da850 and wires them up to all of the
+devices.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
-v1->v2:
- * new patch
----
- drivers/clk/clk-devres.c | 24 ++++++++++++++++++++++++
- include/linux/clk.h      | 23 +++++++++++++++++++++++
- 2 files changed, 47 insertions(+)
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index d854e26..6d3ca5e 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -70,6 +70,30 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- }
- EXPORT_SYMBOL_GPL(devm_clk_bulk_get);
+v8 changes:
+- fix typo in clock-names property of psc0
+- added power-domains properties to nodes that define that property in their
+  device tree bindings
+
+v7 changes:
+- move ref_clk frequency to board-specific DT files
+- enable sata_refclk in da850-lcdk.dts
+- drop async2 fixed factor clock
+- add power-domains for devices that use them
+- fix USB PHY clock-names property
+- move assigned-clocks to PSC device node
+- drop clocks property from devices that don't use it (e.g. EDMA)
+- add clock to RTC node
+- add clock-ranges to usb0 and aemif nodes
+- add clock-names property to aemif node
+- fix typo in psc1 clock-names
+
+v6 changes:
+- updated for device tree bindings changes earlier in this series
+- use single async2 clock instead of duplicate fixed factor clocks
+- add clock-names property to mdio node
+
+ arch/arm/boot/dts/da850-enbw-cmc.dts |   4 +
+ arch/arm/boot/dts/da850-evm.dts      |   4 +
+ arch/arm/boot/dts/da850-lcdk.dts     |   9 ++
+ arch/arm/boot/dts/da850-lego-ev3.dts |   4 +
+ arch/arm/boot/dts/da850.dtsi         | 167 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 188 insertions(+)
+
+diff --git a/arch/arm/boot/dts/da850-enbw-cmc.dts b/arch/arm/boot/dts/da850-enbw-cmc.dts
+index 14dff3e..0102ffc 100644
+--- a/arch/arm/boot/dts/da850-enbw-cmc.dts
++++ b/arch/arm/boot/dts/da850-enbw-cmc.dts
+@@ -35,6 +35,10 @@
+ 	};
+ };
  
-+int __must_check devm_clk_bulk_get_all(struct device *dev,
-+				       struct clk_bulk_data **clks)
-+{
-+	struct clk_bulk_devres *devres;
-+	int ret;
++&ref_clk {
++	clock-frequency = <24000000>;
++};
 +
-+	devres = devres_alloc(devm_clk_bulk_release,
-+			      sizeof(*devres), GFP_KERNEL);
-+	if (!devres)
-+		return -ENOMEM;
-+
-+	ret = clk_bulk_get_all(dev, clks);
-+	if (ret > 0) {
-+		devres->clks = *clks;
-+		devres->num_clks = ret;
-+		devres_add(dev, devres);
-+	} else {
-+		devres_free(devres);
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
-+
- static int devm_clk_match(struct device *dev, void *res, void *data)
- {
- 	struct clk **c = res;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index a76fdff..fe48e01 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -313,6 +313,22 @@ int __must_check clk_bulk_get_all(struct device *dev,
-  */
- int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 				   struct clk_bulk_data *clks);
-+/**
-+ * devm_clk_bulk_get_all - managed get multiple clk consumers
-+ * @dev: device for clock "consumer"
-+ * @clks: pointer to the clk_bulk_data table of consumer
-+ *
-+ * Returns a positive value for the number of clocks obtained while the
-+ * clock references are stored in the clk_bulk_data table in @clks field.
-+ * Returns 0 if there're none and a negative value if something failed.
-+ *
-+ * This helper function allows drivers to get several clk
-+ * consumers in one operation with management, the clks will
-+ * automatically be freed when the device is unbound.
-+ */
-+
-+int __must_check devm_clk_bulk_get_all(struct device *dev,
-+				       struct clk_bulk_data **clks);
+ &edma0 {
+ 	ti,edma-reserved-slot-ranges = <32 50>;
+ };
+diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
+index c82368c..38a53dd 100644
+--- a/arch/arm/boot/dts/da850-evm.dts
++++ b/arch/arm/boot/dts/da850-evm.dts
+@@ -200,6 +200,10 @@
+ 	};
+ };
  
- /**
-  * devm_clk_get - lookup and obtain a managed reference to a clock producer.
-@@ -658,6 +674,13 @@ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clk
- 	return 0;
- }
++&ref_clk {
++	clock-frequency = <24000000>;
++};
++
+ /include/ "tps6507x.dtsi"
  
-+static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
-+						     struct clk_bulk_data **clks);
-+{
+ &tps {
+diff --git a/arch/arm/boot/dts/da850-lcdk.dts b/arch/arm/boot/dts/da850-lcdk.dts
+index a1f4d6d..90b917c 100644
+--- a/arch/arm/boot/dts/da850-lcdk.dts
++++ b/arch/arm/boot/dts/da850-lcdk.dts
+@@ -123,6 +123,10 @@
+ 	};
+ };
+ 
++&ref_clk {
++	clock-frequency = <24000000>;
++};
 +
-+	return 0;
-+}
+ &pmx_core {
+ 	status = "okay";
+ 
+@@ -175,6 +179,11 @@
+ 	status = "okay";
+ };
+ 
++&sata_refclk {
++	status = "okay";
++	clock-frequency = <100000000>;
++};
 +
- static inline struct clk *devm_get_clk_from_child(struct device *dev,
- 				struct device_node *np, const char *con_id)
- {
+ &sata {
+ 	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/da850-lego-ev3.dts b/arch/arm/boot/dts/da850-lego-ev3.dts
+index 1ffd877..4425cb4 100644
+--- a/arch/arm/boot/dts/da850-lego-ev3.dts
++++ b/arch/arm/boot/dts/da850-lego-ev3.dts
+@@ -203,6 +203,10 @@
+ 	};
+ };
+ 
++&ref_clk {
++	clock-frequency = <24000000>;
++};
++
+ &pmx_core {
+ 	status = "okay";
+ 
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index c66cf78..e8117c7 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -21,6 +21,26 @@
+ 			#interrupt-cells = <1>;
+ 			ti,intc-size = <101>;
+ 			reg = <0xfffee000 0x2000>;
++			clocks = <&psc0 6>;
++		};
++	};
++	clocks: clocks {
++		ref_clk: ref_clk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-output-names = "ref_clk";
++		};
++		sata_refclk: sata_refclk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-output-names = "sata_refclk";
++			status = "disabled";
++		};
++		usb_refclkin: usb_refclkin {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-output-names = "usb_refclkin";
++			status = "disabled";
+ 		};
+ 	};
+ 	dsp: dsp@11800000 {
+@@ -33,6 +53,7 @@
+ 		reg-names = "l2sram", "l1pram", "l1dram", "host1cfg", "chipsig";
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <28>;
++		clocks = <&psc0 15>;
+ 		status = "disabled";
+ 	};
+ 	soc@1c00000 {
+@@ -43,6 +64,37 @@
+ 		ranges = <0x0 0x01c00000 0x400000>;
+ 		interrupt-parent = <&intc>;
+ 
++		psc0: clock-controller@10000 {
++			compatible = "ti,da850-psc0";
++			reg = <0x10000 0x1000>;
++			#clock-cells = <1>;
++			#power-domain-cells = <1>;
++			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
++				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
++				 <&async1_clk>;
++			clock-names = "pll0_sysclk1", "pll0_sysclk2",
++				      "pll0_sysclk4", "pll0_sysclk6",
++				      "async1";
++		};
++		pll0: clock-controller@11000 {
++			compatible = "ti,da850-pll0";
++			reg = <0x11000 0x1000>;
++			clocks = <&ref_clk>, <&pll1_sysclk 3>;
++			clock-names = "clksrc", "extclksrc";
++
++			pll0_pllout: pllout {
++				#clock-cells = <0>;
++			};
++			pll0_sysclk: sysclk {
++				#clock-cells = <1>;
++			};
++			pll0_auxclk: auxclk {
++				#clock-cells = <0>;
++			};
++			pll0_obsclk: obsclk {
++				#clock-cells = <0>;
++			};
++		};
+ 		pmx_core: pinmux@14120 {
+ 			compatible = "pinctrl-single";
+ 			reg = <0x14120 0x50>;
+@@ -264,8 +316,41 @@
+ 			usb_phy: usb-phy {
+ 				compatible = "ti,da830-usb-phy";
+ 				#phy-cells = <1>;
++				clocks = <&usb_phy_clk 0>, <&usb_phy_clk 1>;
++				clock-names = "usb0_clk48", "usb1_clk48";
+ 				status = "disabled";
+ 			};
++			usb_phy_clk: usb-phy-clocks {
++				compatible = "ti,da830-usb-phy-clocks";
++				#clock-cells = <1>;
++				clocks = <&psc1 1>, <&usb_refclkin>,
++					 <&pll0_auxclk>;
++				clock-names = "fck", "usb_refclkin", "auxclk";
++			};
++			ehrpwm_tbclk: ehrpwm_tbclk {
++				compatible = "ti,da830-tbclksync";
++				#clock-cells = <0>;
++				clocks = <&psc1 17>;
++				clock-names = "fck";
++			};
++			div4p5_clk: div4.5 {
++				compatible = "ti,da830-div4p5ena";
++				#clock-cells = <0>;
++				clocks = <&pll0_pllout>;
++				clock-names = "pll0_pllout";
++			};
++			async1_clk: async1 {
++				compatible = "ti,da850-async1-clksrc";
++				#clock-cells = <0>;
++				clocks = <&pll0_sysclk 3>, <&div4p5_clk>;
++				clock-names = "pll0_sysclk3", "div4.5";
++			};
++			async3_clk: async3 {
++				compatible = "ti,da850-async3-clksrc";
++				#clock-cells = <0>;
++				clocks = <&pll0_sysclk 2>, <&pll1_sysclk 2>;
++				clock-names = "pll0_sysclk2", "pll1_sysclk2";
++			};
+ 		};
+ 		edma0: edma@0 {
+ 			compatible = "ti,edma3-tpcc";
+@@ -277,18 +362,21 @@
+ 			#dma-cells = <2>;
+ 
+ 			ti,tptcs = <&edma0_tptc0 7>, <&edma0_tptc1 0>;
++			power-domains = <&psc0 0>;
+ 		};
+ 		edma0_tptc0: tptc@8000 {
+ 			compatible = "ti,edma3-tptc";
+ 			reg =	<0x8000 0x400>;
+ 			interrupts = <13>;
+ 			interrupt-names = "edm3_tcerrint";
++			power-domains = <&psc0 1>;
+ 		};
+ 		edma0_tptc1: tptc@8400 {
+ 			compatible = "ti,edma3-tptc";
+ 			reg =	<0x8400 0x400>;
+ 			interrupts = <32>;
+ 			interrupt-names = "edm3_tcerrint";
++			power-domains = <&psc0 2>;
+ 		};
+ 		edma1: edma@230000 {
+ 			compatible = "ti,edma3-tpcc";
+@@ -300,12 +388,14 @@
+ 			#dma-cells = <2>;
+ 
+ 			ti,tptcs = <&edma1_tptc0 7>;
++			power-domains = <&psc1 0>;
+ 		};
+ 		edma1_tptc0: tptc@238000 {
+ 			compatible = "ti,edma3-tptc";
+ 			reg =	<0x238000 0x400>;
+ 			interrupts = <95>;
+ 			interrupt-names = "edm3_tcerrint";
++			power-domains = <&psc1 21>;
+ 		};
+ 		serial0: serial@42000 {
+ 			compatible = "ti,da830-uart", "ns16550a";
+@@ -313,6 +403,8 @@
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			interrupts = <25>;
++			clocks = <&psc0 9>;
++			power-domains = <&psc0 9>;
+ 			status = "disabled";
+ 		};
+ 		serial1: serial@10c000 {
+@@ -321,6 +413,8 @@
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			interrupts = <53>;
++			clocks = <&psc1 12>;
++			power-domains = <&psc1 12>;
+ 			status = "disabled";
+ 		};
+ 		serial2: serial@10d000 {
+@@ -329,6 +423,8 @@
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+ 			interrupts = <61>;
++			clocks = <&psc1 13>;
++			power-domains = <&psc1 13>;
+ 			status = "disabled";
+ 		};
+ 		rtc0: rtc@23000 {
+@@ -336,6 +432,8 @@
+ 			reg = <0x23000 0x1000>;
+ 			interrupts = <19
+ 				      19>;
++			clocks = <&pll0_auxclk>;
++			clock-names = "int-clk";
+ 			status = "disabled";
+ 		};
+ 		i2c0: i2c@22000 {
+@@ -344,6 +442,7 @@
+ 			interrupts = <15>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			clocks = <&pll0_auxclk>;
+ 			status = "disabled";
+ 		};
+ 		i2c1: i2c@228000 {
+@@ -352,11 +451,19 @@
+ 			interrupts = <51>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			clocks = <&psc1 11>;
++			power-domains = <&psc1 11>;
+ 			status = "disabled";
+ 		};
++		clocksource: timer@20000 {
++			compatible = "ti,davinci-timer";
++			reg = <0x20000 0x1000>;
++			clocks = <&pll0_auxclk>;
++		};
+ 		wdt: wdt@21000 {
+ 			compatible = "ti,davinci-wdt";
+ 			reg = <0x21000 0x1000>;
++			clocks = <&pll0_auxclk>;
+ 			status = "disabled";
+ 		};
+ 		mmc0: mmc@40000 {
+@@ -367,12 +474,14 @@
+ 			interrupts = <16>;
+ 			dmas = <&edma0 16 0>, <&edma0 17 0>;
+ 			dma-names = "rx", "tx";
++			clocks = <&psc0 5>;
+ 			status = "disabled";
+ 		};
+ 		vpif: video@217000 {
+ 			compatible = "ti,da850-vpif";
+ 			reg = <0x217000 0x1000>;
+ 			interrupts = <92>;
++			clocks = <&psc1 9>;
+ 			status = "disabled";
+ 
+ 			/* VPIF capture port */
+@@ -395,6 +504,7 @@
+ 			interrupts = <72>;
+ 			dmas = <&edma1 28 0>, <&edma1 29 0>;
+ 			dma-names = "rx", "tx";
++			clocks = <&psc1 18>;
+ 			status = "disabled";
+ 		};
+ 		ehrpwm0: pwm@300000 {
+@@ -402,6 +512,8 @@
+ 				     "ti,am33xx-ehrpwm";
+ 			#pwm-cells = <3>;
+ 			reg = <0x300000 0x2000>;
++			clocks = <&psc1 17>, <&ehrpwm_tbclk>;
++			clock-names = "fck", "tbclk";
+ 			status = "disabled";
+ 		};
+ 		ehrpwm1: pwm@302000 {
+@@ -409,6 +521,8 @@
+ 				     "ti,am33xx-ehrpwm";
+ 			#pwm-cells = <3>;
+ 			reg = <0x302000 0x2000>;
++			clocks = <&psc1 17>, <&ehrpwm_tbclk>;
++			clock-names = "fck", "tbclk";
+ 			status = "disabled";
+ 		};
+ 		ecap0: ecap@306000 {
+@@ -416,6 +530,8 @@
+ 				     "ti,am33xx-ecap";
+ 			#pwm-cells = <3>;
+ 			reg = <0x306000 0x80>;
++			clocks = <&psc1 20>;
++			clock-names = "fck";
+ 			status = "disabled";
+ 		};
+ 		ecap1: ecap@307000 {
+@@ -423,6 +539,8 @@
+ 				     "ti,am33xx-ecap";
+ 			#pwm-cells = <3>;
+ 			reg = <0x307000 0x80>;
++			clocks = <&psc1 20>;
++			clock-names = "fck";
+ 			status = "disabled";
+ 		};
+ 		ecap2: ecap@308000 {
+@@ -430,6 +548,8 @@
+ 				     "ti,am33xx-ecap";
+ 			#pwm-cells = <3>;
+ 			reg = <0x308000 0x80>;
++			clocks = <&psc1 20>;
++			clock-names = "fck";
+ 			status = "disabled";
+ 		};
+ 		spi0: spi@41000 {
+@@ -442,6 +562,8 @@
+ 			interrupts = <20>;
+ 			dmas = <&edma0 14 0>, <&edma0 15 0>;
+ 			dma-names = "rx", "tx";
++			clocks = <&psc0 4>;
++			power-domains = <&psc0 4>;
+ 			status = "disabled";
+ 		};
+ 		spi1: spi@30e000 {
+@@ -454,6 +576,8 @@
+ 			interrupts = <56>;
+ 			dmas = <&edma0 18 0>, <&edma0 19 0>;
+ 			dma-names = "rx", "tx";
++			clocks = <&psc1 10>;
++			power-domains = <&psc1 10>;
+ 			status = "disabled";
+ 		};
+ 		usb0: usb@200000 {
+@@ -465,6 +589,8 @@
+ 			dr_mode = "otg";
+ 			phys = <&usb_phy 0>;
+ 			phy-names = "usb-phy";
++			clocks = <&psc1 1>;
++			clock-ranges;
+ 			status = "disabled";
+ 
+ 			#address-cells = <1>;
+@@ -495,13 +621,31 @@
+ 			compatible = "ti,da850-ahci";
+ 			reg = <0x218000 0x2000>, <0x22c018 0x4>;
+ 			interrupts = <67>;
++			clocks = <&psc1 8>, <&sata_refclk>;
++			clock-names = "fck", "refclk";
+ 			status = "disabled";
+ 		};
++		pll1: clock-controller@21a000 {
++			compatible = "ti,da850-pll1";
++			reg = <0x21a000 0x1000>;
++			clocks = <&ref_clk>;
++			clock-names = "clksrc";
++
++			pll1_sysclk: sysclk {
++				#clock-cells = <1>;
++			};
++			pll1_obsclk: obsclk {
++				#clock-cells = <0>;
++			};
++		};
+ 		mdio: mdio@224000 {
+ 			compatible = "ti,davinci_mdio";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0x224000 0x1000>;
++			clocks = <&psc1 5>;
++			clock-names = "fck";
++			power-domains = <&psc1 5>;
+ 			status = "disabled";
+ 		};
+ 		eth0: ethernet@220000 {
+@@ -517,6 +661,8 @@
+ 					35
+ 					36
+ 					>;
++			clocks = <&psc1 5>;
++			power-domains = <&psc1 5>;
+ 			status = "disabled";
+ 		};
+ 		usb1: usb@225000 {
+@@ -525,6 +671,7 @@
+ 			interrupts = <59>;
+ 			phys = <&usb_phy 1>;
+ 			phy-names = "usb-phy";
++			clocks = <&psc1 2>;
+ 			status = "disabled";
+ 		};
+ 		gpio: gpio@226000 {
+@@ -542,6 +689,19 @@
+ 			status = "disabled";
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
++			clocks = <&psc1 3>;
++			clock-names = "gpio";
++		};
++		psc1: clock-controller@227000 {
++			compatible = "ti,da850-psc1";
++			reg = <0x227000 0x1000>;
++			#clock-cells = <1>;
++			#power-domain-cells = <1>;
++			clocks = <&pll0_sysclk 2>, <&pll0_sysclk 4>,
++				 <&async3_clk>;
++			clock-names = "pll0_sysclk2", "pll0_sysclk4", "async3";
++			assigned-clocks = <&async3_clk>;
++			assigned-clock-parents = <&pll1_sysclk 2>;
+ 		};
+ 		pinconf: pin-controller@22c00c {
+ 			compatible = "ti,da850-pupd";
+@@ -560,6 +720,7 @@
+ 			dmas = <&edma0 1 1>,
+ 				<&edma0 0 1>;
+ 			dma-names = "tx", "rx";
++			clocks = <&psc1 7>;
+ 		};
+ 
+ 		lcdc: display@213000 {
+@@ -567,6 +728,9 @@
+ 			reg = <0x213000 0x1000>;
+ 			interrupts = <52>;
+ 			max-pixelclock = <37500>;
++			clocks = <&psc1 16>;
++			clock-names = "fck";
++			power-domains = <&psc1 16>;
+ 			status = "disabled";
+ 		};
+ 	};
+@@ -578,6 +742,9 @@
+ 		reg = <0x68000000 0x00008000>;
+ 		ranges = <0 0 0x60000000 0x08000000
+ 			  1 0 0x68000000 0x00008000>;
++		clocks = <&psc0 3>;
++		clock-names = "aemif";
++		clock-ranges;
+ 		status = "disabled";
+ 	};
+ 	memctrl: memory-controller@b0000000 {
 -- 
 2.7.4
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
