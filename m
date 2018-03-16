@@ -1,74 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:30789 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750801AbeCFJHF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 04:07:05 -0500
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v4 0/6] Fix the overlapping registers issue for the MediTek audio system
-Date: Tue, 6 Mar 2018 17:06:34 +0800
-Message-ID: <cover.1520326090.git.ryder.lee@mediatek.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Lucas Stach <l.stach@pengutronix.de>, Sascha Hauer
+	<s.hauer@pengutronix.de>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "patchwork-lst@pengutronix.de"
+	<patchwork-lst@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo
+	<shawnguo@kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2 4/4] clk: imx: add clock driver for i.MX8MQ CCM
+Date: Fri, 16 Mar 2018 10:29:29 +0000
+Message-ID: <AM3PR04MB3060D75EF763926D9732BB780D70@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <20180201175412.9480-1-l.stach@pengutronix.de>
+	 <20180201175412.9480-4-l.stach@pengutronix.de>
+	 <20180315213304.ejvgpkhxtblr6xb3@pengutronix.de>
+ <1521195019.3492.7.camel@pengutronix.de>
+In-Reply-To: <1521195019.3492.7.camel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-This is the new round of the audsys. I add devm_of_platform_populate() in the clock driver
-to populate the child devices (AFE) so that we can handle the dependency for all functions. 
-
-changes since v4:
- - remove "simple-mfd" from mediatek,audsys.txt.
- - switch to use devm_of_platform_populate() to populate the child devices.
- 
-changes since v3:
- - Rebase to v4.16.
- - Modify clock driver for the sake of the backward compatibility.
- - Rewrite commit message of patch 4/5 to make it more specific.
-
-changes since v2:
- - Drop useless changes in clk-mt7622-aud.c.
- - Revise binding text: 
-        - Add more information about audio subsystem.
-        - Separate clock node and AFE node.
- - Update license header.
-
-changes since v1:
- - To avoid writing an MFD driver, we add "simple-mfd" in the audsys binding.
- - Move three top clocks to audio driver [1] as we remove mfd/mtk-audsys.c in 
-v1.
-
-Ryder Lee (6):
-  clk: mediatek: update missing clock data for MT7622 audsys
-  clk: mediatek: add devm_of_platform_populate() for MT7622 audsys
-  clk: mediatek: add audsys support for MT2701
-  dt-bindings: clock: mediatek: update audsys documentation to adapt MFD
-    device
-  dt-bindings: clock: mediatek: add audsys support for MT2701
-  arm: dts: mediatek: modify audio related nodes for both MT2701 and
-    MT7623
-
- .../bindings/arm/mediatek/mediatek,audsys.txt      |  20 ++-
- arch/arm/boot/dts/mt2701.dtsi                      | 188 ++++++++++----------
- arch/arm/boot/dts/mt7623.dtsi                      | 190 ++++++++++-----------
- drivers/clk/mediatek/Kconfig                       |   6 +
- drivers/clk/mediatek/Makefile                      |   1 +
- drivers/clk/mediatek/clk-mt2701-aud.c              | 177 +++++++++++++++++++
- drivers/clk/mediatek/clk-mt7622-aud.c              |   9 +-
- include/dt-bindings/clock/mt7622-clk.h             |   3 +-
- 8 files changed, 390 insertions(+), 204 deletions(-)
- create mode 100644 drivers/clk/mediatek/clk-mt2701-aud.c
-
--- 
-1.9.1
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMdWNhcyBTdGFjaCBbbWFpbHRv
+Omwuc3RhY2hAcGVuZ3V0cm9uaXguZGVdDQo+IFNlbnQ6IEZyaWRheSwgTWFyY2ggMTYsIDIwMTgg
+NjoxMCBQTQ0KPiBUbzogU2FzY2hhIEhhdWVyIDxzLmhhdWVyQHBlbmd1dHJvbml4LmRlPg0KPiBD
+YzogTWljaGFlbCBUdXJxdWV0dGUgPG10dXJxdWV0dGVAYmF5bGlicmUuY29tPjsgU3RlcGhlbiBC
+b3lkDQo+IDxzYm95ZEBjb2RlYXVyb3JhLm9yZz47IEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54
+cC5jb20+Ow0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgcGF0Y2h3b3JrLWxzdEBwZW5n
+dXRyb25peC5kZTsgUm9iIEhlcnJpbmcNCj4gPHJvYmgrZHRAa2VybmVsLm9yZz47IGRsLWxpbnV4
+LWlteCA8bGludXgtaW14QG54cC5jb20+Ow0KPiBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7IEZhYmlv
+IEVzdGV2YW0gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IFNoYXduDQo+IEd1byA8c2hhd25ndW9A
+a2VybmVsLm9yZz47IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS0NCj4ga2Vy
+bmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiA0LzRdIGNs
+azogaW14OiBhZGQgY2xvY2sgZHJpdmVyIGZvciBpLk1YOE1RIENDTQ0KPiANCj4gQW0gRG9ubmVy
+c3RhZywgZGVuIDE1LjAzLjIwMTgsIDIyOjMzICswMTAwIHNjaHJpZWIgU2FzY2hhIEhhdWVyOg0K
+PiA+IE9uIFRodSwgRmViIDAxLCAyMDE4IGF0IDA2OjU0OjEyUE0gKzAxMDAsIEx1Y2FzIFN0YWNo
+IHdyb3RlOg0KPiA+ID4gQWRkIGRyaXZlciBmb3IgdGhlIENsb2NrIENvbnRyb2wgTW9kdWxlIGZv
+dW5kIG9uIGkuTVg4TVEuDQo+ID4gPg0KPiA+ID4gVGhpcyBpcyBsYXJnZWx5IGJhc2VkIG9uIHRo
+ZSBkb3duc3RyZWFtIGRyaXZlciBmcm9tIEFuc29uIEh1YW5nIGFuZA0KPiA+ID4gQmFpIFBpbmcg
+YXQgTlhQLCB3aXRoIG9ubHkgc29tZSBzbWFsbCBhZGFwdGlvbnMgdG8gbWFpbmxpbmUgZnJvbSBt
+ZS4NCj4gPiA+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBMdWNhcyBTdGFjaCA8bC5zdGFjaEBwZW5n
+dXRyb25peC5kZT4NCj4gPg0KPiA+IEEgZ2VuZXJhbCB0aG91Z2h0OiBUaGUgaS5NWDhNIGZpbmFs
+bHkgaGFzIGEgY29uc2lzdGVudCBjbG9jayB0cmVlLiBXZQ0KPiA+IGhhdmUgZm9yIGV4YW1wbGUg
+NzAgUGVyaXBoZXJhbCBjbG9jayBzbGljZXMgY29uc2lzdGluZyBvZiBhIG11eCwgYQ0KPiA+IGdh
+dGUgYW5kIHR3byBkaXZpZGVycywgYWxsIDcwIGxvb2tpbmcgdGhlIHNhbWUuDQo+ID4gRm9yIHRo
+ZXNlIGl0IG1pZ2h0IG1ha2Ugc2Vuc2UgdG8gY3JlYXRlIGEgbW9yZSBjb21wbGV4IGNsb2NrIHR5
+cGUNCj4gPiBwcm92aWRpbmcgbXV4LCBnYXRlIGFuZCBzZXQgcmF0ZSBmdW5jdGlvbmFsaXR5IGlu
+IG9uZSBjbG9jay4gVGhpcw0KPiA+IHdvdWxkIGRyYXN0aWNhbGx5IHJlZHVjZSB0aGUgbnVtYmVy
+IG9mIGNsb2NrcyB3ZSBoYXZlIHRvIGhhbmRsZS4NCj4gDQo+IEkgYWdyZWUuIEl0IHNlZW1zIHdl
+IGFyZSBtaXNzaW5nIHRoZSA0LjE3IG1lcmdlIHdpbmRvdyB3aXRoIHRoaXMgYW55d2F5cywNCj4g
+ZHVlIHRvIHRoZSBsYXJnZSBudW1iZXIgb2YgY2hhbmdlcyBzdGlsbCByZXF1aXJlZCBhbmQgdGlt
+ZSBjb25zdHJhaW50cyBvbiBteQ0KPiBzaWRlLCBzbyBhIGxhcmdlciByZXdvcmsgb2YgdGhlIGRy
+aXZlciBtaWdodCBiZSBwb3NzaWJsZSBpZiB3ZSB0YXJnZXQgNC4xOC4NCj4gDQoNClllcywgdGhh
+dCB3b3VsZCBiZSB3b3J0aCBhIHRyeS4NCg0KVGhhbmtzIGZvciBkb2luZyBpdC4NCg0KUmVnYXJk
+cw0KRG9uZyBBaXNoZW5nDQoNCj4gUmVnYXJkcywNCj4gTHVjYXMNCg==
