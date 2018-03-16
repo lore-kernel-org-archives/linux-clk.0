@@ -1,80 +1,101 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 4/8] clk: davinci: add a reset lookup table for psc0
-Date: Fri, 23 Mar 2018 10:36:05 +0100
-Message-Id: <20180323093609.24576-5-brgl@bgdev.pl>
-In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
-References: <20180323093609.24576-1-brgl@bgdev.pl>
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 40/42] ARM: davinci: add device tree support to timer
+Date: Thu, 15 Mar 2018 21:52:56 -0500
+Message-Id: <1521168778-27236-41-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+This adds device tree support to the davinci timer so that when clocks
+are moved to device tree, the timer will still work.
 
-In order to be able to use the reset framework in legacy boot mode as
-well, add the reset lookup table to the psc driver for da850 variant.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/davinci/psc-da850.c | 8 ++++++++
- drivers/clk/davinci/psc.c       | 1 +
- 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
-index ccc7eb17bf3a..395db4b2c0ee 100644
---- a/drivers/clk/davinci/psc-da850.c
-+++ b/drivers/clk/davinci/psc-da850.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/reset-controller.h>
+v8 changes:
+- none
+
+v7 changes:
+- add workaround for platform devices not available in early boot
+
+v6 changes:
+- none
+
+ arch/arm/mach-davinci/Kconfig |  1 +
+ arch/arm/mach-davinci/time.c  | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+
+diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
+index ba9912b..da8a039 100644
+--- a/arch/arm/mach-davinci/Kconfig
++++ b/arch/arm/mach-davinci/Kconfig
+@@ -59,6 +59,7 @@ config MACH_DA8XX_DT
+ 	default y
+ 	depends on ARCH_DAVINCI_DA850
+ 	select PINCTRL
++	select TIMER_OF
+ 	help
+ 	  Say y here to include support for TI DaVinci DA850 based using
+ 	  Flattened Device Tree. More information at Documentation/devicetree
+diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
+index d6a78f7..590b118 100644
+--- a/arch/arm/mach-davinci/time.c
++++ b/arch/arm/mach-davinci/time.c
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
  #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/init.h>
-@@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
- 				"fck",	"ecap.1",
- 				"fck",	"ecap.2");
+ #include <linux/err.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/sched_clock.h>
  
-+static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
-+	RESET_LOOKUP("davinci-rproc.0", NULL, 15),
-+};
-+
- static int da850_psc0_init(struct device *dev, void __iomem *base)
- {
-+	reset_controller_add_lookup("da850-psc0",
-+				    da850_psc0_reset_lookup_table,
-+				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
- 	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
+@@ -405,3 +406,33 @@ void __init davinci_timer_init(struct clk *timer_clk)
+ 	for (i=0; i< ARRAY_SIZE(timers); i++)
+ 		timer32_config(&timers[i]);
  }
- 
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 3b0e59dfbdd7..063df62381ea 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
- 
- 	psc->rcdev.ops = &davinci_psc_reset_ops;
- 	psc->rcdev.owner = THIS_MODULE;
-+	psc->rcdev.dev = dev;
- 	psc->rcdev.of_node = dev->of_node;
- 	psc->rcdev.of_reset_n_cells = 1;
- 	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
++
++static int __init of_davinci_timer_init(struct device_node *np)
++{
++	struct clk *clk;
++
++	clk = of_clk_get(np, 0);
++	if (IS_ERR(clk)) {
++		struct of_phandle_args clkspec;
++
++		/*
++		 * Fall back to using ref_clk if the actual clock is not
++		 * available. This currently always happens because platform
++		 * clocks (i.e PLLs and PSCs) are registered as platform
++		 * devices and therefore are not available at this point in
++		 * the boot process.
++		 */
++		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
++		if (IS_ERR(clkspec.np)) {
++			pr_err("%s: No clock available for timer!\n", __func__);
++			return PTR_ERR(clkspec.np);
++		}
++		clk = of_clk_get_from_provider(&clkspec);
++		of_node_put(clkspec.np);
++	}
++
++	davinci_timer_init(clk);
++
++	return 0;
++}
++TIMER_OF_DECLARE(davinci_timer, "ti,davinci-timer", of_davinci_timer_init);
 -- 
-2.16.1
+2.7.4
