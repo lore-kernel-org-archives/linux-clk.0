@@ -1,131 +1,198 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:52848 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751522AbeCPR4n (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:56:43 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 7/7] arm64: allwinner: a64: add HDMI regulator to all DTs' simplefb_hdmi
-Date: Sat, 17 Mar 2018 01:53:54 +0800
-Message-Id: <20180316175354.21437-8-icenowy@aosc.io>
-In-Reply-To: <20180316175354.21437-1-icenowy@aosc.io>
-References: <20180316175354.21437-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 21/42] ARM: davinci: da830: add new clock init using common clock framework
+Date: Thu, 15 Mar 2018 21:52:37 -0500
+Message-Id: <1521168778-27236-22-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On usual A64 board design the power of HDMI controller is connected to
-DLDO1 of the AXP803 PMIC. If this regulator is shut down, the HDMI
-output will be blank. Therefore the simplefb driver should keep this
-regulator on.
+This adds the new board-specific clock init in mach-davinci/da830.c
+using the new common clock framework drivers.
 
-Add the regulator to all currently available A64 boards' simplefb_hdmi
-device node.
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Also clean up the #includes since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts     | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts       | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts        | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts     | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts           | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts | 4 ++++
- 6 files changed, 24 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 2250dec9974c..2fd343512d41 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -282,6 +282,10 @@
- 	regulator-name = "vcc-rtc";
- };
+v8 changes:
+- none
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- clkdev lookup is moved to drivers/clk
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
+- include da8xx_register_cfgchip()
+
+ arch/arm/mach-davinci/board-da830-evm.c    |  2 +
+ arch/arm/mach-davinci/da830.c              | 77 +++++++++++++++++++++++++++---
+ arch/arm/mach-davinci/include/mach/da8xx.h |  1 +
+ 3 files changed, 74 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index 004f9c8..3973124 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -551,6 +551,8 @@ static __init void da830_evm_init(void)
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 	int ret;
  
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
++	da830_register_clocks();
++
+ 	ret = da830_register_gpio();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index 0b17e5a..c1c2604 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -8,23 +8,26 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
++#include <linux/clk-provider.h>
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+-#include <linux/clk.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ 
+ #include <asm/mach/map.h>
+ 
+-#include "psc.h"
+-#include <mach/irqs.h>
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
++#include <mach/cputype.h>
+ #include <mach/da8xx.h>
++#include <mach/irqs.h>
++#include <mach/time.h>
+ 
+-#include "clock.h"
+ #include "mux.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
++
+ /* Offsets of the 8 compare registers on the da830 */
+ #define DA830_CMP12_0		0x60
+ #define DA830_CMP12_1		0x64
+@@ -37,6 +40,7 @@
+ 
+ #define DA830_REF_FREQ		24000000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll0_data = {
+ 	.num		= 1,
+ 	.phys_base	= DA8XX_PLL0_BASE,
+@@ -432,6 +436,7 @@ static struct clk_lookup da830_clks[] = {
+ 	CLK(NULL,		"rmii",		&rmii_clk),
+ 	CLK(NULL,		NULL,		NULL),
+ };
++#endif
+ 
+ /*
+  * Device specific mux setup
+@@ -1223,6 +1228,66 @@ void __init da830_init(void)
+ 
+ void __init da830_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	struct clk *clk;
++
++	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
++
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(da830_clks);
+ 	davinci_timer_init(&timerp64_0_clk);
++#endif
++}
++
++static struct resource da830_pll_resources[] = {
++	{
++		.start	= DA8XX_PLL0_BASE,
++		.end	= DA8XX_PLL0_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
 +};
 +
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index e2dce48fa29a..98dbff19f5cc 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -195,6 +195,10 @@
- 	regulator-name = "vcc-rtc";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
++static struct platform_device da830_pll_device = {
++	.name		= "da830-pll",
++	.id		= -1,
++	.resource	= da830_pll_resources,
++	.num_resources	= ARRAY_SIZE(da830_pll_resources),
 +};
 +
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index 3b3081b10ecb..3f531393eaee 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -214,6 +214,10 @@
- 	regulator-name = "vcc-rtc";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
++static struct resource da830_psc0_resources[] = {
++	{
++		.start	= DA8XX_PSC0_BASE,
++		.end	= DA8XX_PSC0_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
 +};
 +
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-index bf42690a3361..1221764f5719 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-@@ -191,6 +191,10 @@
- 	regulator-name = "vcc-rtc";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
++static struct platform_device da830_psc0_device = {
++	.name		= "da830-psc0",
++	.id		= -1,
++	.resource	= da830_psc0_resources,
++	.num_resources	= ARRAY_SIZE(da830_psc0_resources),
 +};
 +
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-index a75825798a71..1b9b92e541d2 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-@@ -229,6 +229,10 @@
- 	regulator-name = "vcc-rtc";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
++static struct resource da830_psc1_resources[] = {
++	{
++		.start	= DA8XX_PSC1_BASE,
++		.end	= DA8XX_PSC1_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
 +};
 +
- /* On Euler connector */
- &spdif {
- 	status = "disabled";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-index abe179de35d7..c21f2331add6 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-@@ -134,6 +134,10 @@
- 	regulator-name = "vcc-wifi";
- };
- 
-+&simplefb_hdmi {
-+	vcc-hdmi-supply = <&reg_dldo1>;
++static struct platform_device da830_psc1_device = {
++	.name		= "da830-psc1",
++	.id		= -1,
++	.resource	= da830_psc1_resources,
++	.num_resources	= ARRAY_SIZE(da830_psc1_resources),
 +};
 +
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
++void __init da830_register_clocks(void)
++{
++	platform_device_register(&da830_pll_device);
++	platform_device_register(&da830_psc0_device);
++	platform_device_register(&da830_psc1_device);
+ }
+diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
+index 9fd6d01..64861ac 100644
+--- a/arch/arm/mach-davinci/include/mach/da8xx.h
++++ b/arch/arm/mach-davinci/include/mach/da8xx.h
+@@ -89,6 +89,7 @@ extern unsigned int da850_max_speed;
+ 
+ void da830_init(void);
+ void da830_init_time(void);
++void da830_register_clocks(void);
+ 
+ void da850_init(void);
+ void da850_init_time(void);
 -- 
-2.15.1
-
+2.7.4
