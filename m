@@ -1,59 +1,91 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
- <mturquette@baylibre.com>, <sboyd@kernel.org>
-Subject: [PATCH 3/4] arm: imx: Correct ahb clk parent select
-Date: Thu, 22 Mar 2018 11:55:28 +0200
-Message-ID: <1521712529-632-4-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1521712529-632-1-git-send-email-abel.vesa@nxp.com>
-References: <1521712529-632-1-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Abel Vesa <abel.vesa@nxp.com>, anson.huang@nxp.com,
- linux-kernel@vger.kernel.org, linux-imx@nxp.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr30062.outbound.protection.outlook.com ([40.107.3.62]:34176
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751824AbeCPG0p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Mar 2018 02:26:45 -0400
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Jacky Bai <ping.bai@nxp.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+CC: Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "jacky.baip@gmail.com" <jacky.baip@gmail.com>
+Subject: RE: [PATCH v5 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy
+ divider and busy mux
+Date: Fri, 16 Mar 2018 06:26:41 +0000
+Message-ID: <AM3PR04MB3060671D694BAE450C5FC4A80D70@AM3PR04MB306.eurprd04.prod.outlook.com>
+References: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
 Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Anson Huang <anson.huang@nxp.com>
+> -----Original Message-----
+> From: Jacky Bai
+> Sent: Monday, March 12, 2018 5:29 PM
+> To: sboyd@kernel.org; robh+dt@kernel.org; shawnguo@kernel.org;
+> kernel@pengutronix.de
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>; linux-clk@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>;
+> A.s. Dong <aisheng.dong@nxp.com>; jacky.baip@gmail.com
+> Subject: [PATCH v5 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy divid=
+er
+> and busy mux
+>=20
+> The busy divider and busy mux is actually used by the system critical clo=
+cks,
+> so add 'CLK_IS_CRITICAL' to clocks registered with these two type.
+>=20
 
-Design team change the ahb's clk parent options but did NOT update the DOC
-accordingly in time, so the AHB/IPG's clk rate in clk tree is incorrect, AHB is
-67.5MHz and IPG is 33.75MHz, but using scope to monitor them, they are actually
-135MHz and 67.5MHz, update the clk parent option to make clk tree info correct.
+We probably could fine tune clk_init_on for other platforms later.
+So:
+Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Signed-off-by: Anson Huang <anson.huang@nxp.com>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards
+Dong Aisheng
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index d786f98..3553b68 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -74,7 +74,7 @@ static const char *nand_usdhc_bus_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
- 
- static const char *ahb_channel_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
- 	"pll_dram_533m_clk", "pll_sys_pfd0_392m_clk",
--	"pll_enet_125m_clk", "pll_usb_main_clk", "pll_audio_post_div",
-+	"pll_enet_250m_clk", "pll_usb_main_clk", "pll_audio_post_div",
- 	"pll_video_post_div", };
- 
- static const char *dram_phym_sel[] = { "pll_dram_main_clk",
--- 
-2.7.4
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+> ---
+>  change from V3->v4:
+>  - fix a typo in commit log
+>  change from v4->v5:
+>  - optimize the commit subject
+> ---
+>  drivers/clk/imx/clk-busy.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c inde=
+x
+> 6df3389..9903652 100644
+> --- a/drivers/clk/imx/clk-busy.c
+> +++ b/drivers/clk/imx/clk-busy.c
+> @@ -101,7 +101,7 @@ struct clk *imx_clk_busy_divider(const char *name,
+> const char *parent_name,
+>=20
+>  	init.name =3D name;
+>  	init.ops =3D &clk_busy_divider_ops;
+> -	init.flags =3D CLK_SET_RATE_PARENT;
+> +	init.flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL;
+>  	init.parent_names =3D &parent_name;
+>  	init.num_parents =3D 1;
+>=20
+> @@ -175,7 +175,7 @@ struct clk *imx_clk_busy_mux(const char *name, void
+> __iomem *reg, u8 shift,
+>=20
+>  	init.name =3D name;
+>  	init.ops =3D &clk_busy_mux_ops;
+> -	init.flags =3D 0;
+> +	init.flags =3D CLK_IS_CRITICAL;
+>  	init.parent_names =3D parent_names;
+>  	init.num_parents =3D num_parents;
+>=20
+> --
+> 1.9.1
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
