@@ -1,93 +1,146 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 3/6] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-Date: Wed, 28 Mar 2018 10:50:47 +0800
-Message-ID: <20180328025050.221585-4-yixun.lan@amlogic.com>
-In-Reply-To: <20180328025050.221585-1-yixun.lan@amlogic.com>
-References: <20180328025050.221585-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Message-ID: <1521209975.23017.14.camel@linux.intel.com>
+Subject: Re: [PATCH v1] clk: Re-use DEFINE_SHOW_ATTRIBUTE() macro
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,  linux-clk@vger.kernel.org
+Date: Fri, 16 Mar 2018 16:19:35 +0200
+In-Reply-To: <20180214154800.55292-1-andriy.shevchenko@linux.intel.com>
+References: <20180214154800.55292-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Add dt-bindings headers for the Meson-AXG's AO clock and
-reset controller.
+On Wed, 2018-02-14 at 17:48 +0200, Andy Shevchenko wrote:
+> ...instead of open coding file operations followed by custom ->open()
+> callbacks per each attribute.
+> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
- include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
- create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+Any comments so far?
 
-diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
-new file mode 100644
-index 000000000000..61955016a55b
---- /dev/null
-+++ b/include/dt-bindings/clock/axg-aoclkc.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define CLKID_AO_REMOTE		0
-+#define CLKID_AO_I2C_MASTER	1
-+#define CLKID_AO_I2C_SLAVE	2
-+#define CLKID_AO_UART1		3
-+#define CLKID_AO_UART2		4
-+#define CLKID_AO_IR_BLASTER	5
-+#define CLKID_AO_SAR_ADC	6
-+#define CLKID_AO_CLK81		7
-+#define CLKID_AO_SAR_ADC_SEL	8
-+#define CLKID_AO_SAR_ADC_DIV	9
-+#define CLKID_AO_SAR_ADC_CLK	10
-+#define CLKID_AO_ALT_XTAL	11
-+
-+#endif
-diff --git a/include/dt-bindings/reset/axg-aoclkc.h b/include/dt-bindings/reset/axg-aoclkc.h
-new file mode 100644
-index 000000000000..d342c0b6b2a7
---- /dev/null
-+++ b/include/dt-bindings/reset/axg-aoclkc.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define RESET_AO_REMOTE		0
-+#define RESET_AO_I2C_MASTER	1
-+#define RESET_AO_I2C_SLAVE	2
-+#define RESET_AO_UART1		3
-+#define RESET_AO_UART2		4
-+#define RESET_AO_IR_BLASTER	5
-+
-+#endif
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/clk/clk.c | 60 +++++++---------------------------------------
+> ---------
+>  1 file changed, 7 insertions(+), 53 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 0f686a9dac3e..cc97b18ac31f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2486,19 +2486,7 @@ static int clk_summary_show(struct seq_file *s,
+> void *data)
+>  
+>  	return 0;
+>  }
+> -
+> -
+> -static int clk_summary_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, clk_summary_show, inode->i_private);
+> -}
+> -
+> -static const struct file_operations clk_summary_fops = {
+> -	.open		= clk_summary_open,
+> -	.read		= seq_read,
+> -	.llseek		= seq_lseek,
+> -	.release	= single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(clk_summary);
+>  
+>  static void clk_dump_one(struct seq_file *s, struct clk_core *c, int
+> level)
+>  {
+> @@ -2532,7 +2520,7 @@ static void clk_dump_subtree(struct seq_file *s,
+> struct clk_core *c, int level)
+>  	seq_putc(s, '}');
+>  }
+>  
+> -static int clk_dump(struct seq_file *s, void *data)
+> +static int clk_dump_show(struct seq_file *s, void *data)
+>  {
+>  	struct clk_core *c;
+>  	bool first_node = true;
+> @@ -2555,19 +2543,7 @@ static int clk_dump(struct seq_file *s, void
+> *data)
+>  	seq_puts(s, "}\n");
+>  	return 0;
+>  }
+> -
+> -
+> -static int clk_dump_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, clk_dump, inode->i_private);
+> -}
+> -
+> -static const struct file_operations clk_dump_fops = {
+> -	.open		= clk_dump_open,
+> -	.read		= seq_read,
+> -	.llseek		= seq_lseek,
+> -	.release	= single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(clk_dump);
+>  
+>  static const struct {
+>  	unsigned long flag;
+> @@ -2589,7 +2565,7 @@ static const struct {
+>  #undef ENTRY
+>  };
+>  
+> -static int clk_flags_dump(struct seq_file *s, void *data)
+> +static int clk_flags_show(struct seq_file *s, void *data)
+>  {
+>  	struct clk_core *core = s->private;
+>  	unsigned long flags = core->flags;
+> @@ -2608,20 +2584,9 @@ static int clk_flags_dump(struct seq_file *s,
+> void *data)
+>  
+>  	return 0;
+>  }
+> +DEFINE_SHOW_ATTRIBUTE(clk_flags);
+>  
+> -static int clk_flags_open(struct inode *inode, struct file *file)
+> -{
+> -	return single_open(file, clk_flags_dump, inode->i_private);
+> -}
+> -
+> -static const struct file_operations clk_flags_fops = {
+> -	.open		= clk_flags_open,
+> -	.read		= seq_read,
+> -	.llseek		= seq_lseek,
+> -	.release	= single_release,
+> -};
+> -
+> -static int possible_parents_dump(struct seq_file *s, void *data)
+> +static int possible_parents_show(struct seq_file *s, void *data)
+>  {
+>  	struct clk_core *core = s->private;
+>  	int i;
+> @@ -2633,18 +2598,7 @@ static int possible_parents_dump(struct
+> seq_file *s, void *data)
+>  
+>  	return 0;
+>  }
+> -
+> -static int possible_parents_open(struct inode *inode, struct file
+> *file)
+> -{
+> -	return single_open(file, possible_parents_dump, inode-
+> >i_private);
+> -}
+> -
+> -static const struct file_operations possible_parents_fops = {
+> -	.open		= possible_parents_open,
+> -	.read		= seq_read,
+> -	.llseek		= seq_lseek,
+> -	.release	= single_release,
+> -};
+> +DEFINE_SHOW_ATTRIBUTE(possible_parents);
+>  
+>  static int clk_debug_create_one(struct clk_core *core, struct dentry
+> *pdentry)
+>  {
+
 -- 
-2.15.1
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
