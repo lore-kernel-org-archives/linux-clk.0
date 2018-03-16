@@ -1,46 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33048 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752120AbeC0NHS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Mar 2018 09:07:18 -0400
-Received: by mail-it0-f68.google.com with SMTP id z143-v6so15925469itc.0
-        for <linux-clk@vger.kernel.org>; Tue, 27 Mar 2018 06:07:17 -0700 (PDT)
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180316140215.28663-3-icenowy@aosc.io>
-References: <20180316140215.28663-1-icenowy@aosc.io> <20180316140215.28663-3-icenowy@aosc.io>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 27 Mar 2018 15:07:17 +0200
-Message-ID: <CACRpkdYZQZTGm3R_Jq28mVf5krSBVyHO5WwtqO6rgAYBFHHTZw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/9] pinctrl: sunxi: introduce IRQ bank conversion function
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180316142139.5347-1-thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20180316142139.5347-1-thierry.reding@gmail.com>
+Message-ID: <152122341143.70929.3178263900250578646@swboyd.mtv.corp.google.com>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.17-rc1
+Date: Fri, 16 Mar 2018 11:03:31 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 3:02 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+Quoting Thierry Reding (2018-03-16 07:21:39)
+> Hi Michael, Stephen,
+> =
 
-> The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
-> GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5. Some
-> refactors in the sunxi pinctrl framework are needed.
->
-> This commit introduces a IRQ bank conversion function, which replaces
-> the "(bank_base + bank)" code in IRQ register access.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Extracted in v4.
+> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1=
+b2:
+> =
 
-Patch applied with Maxime's ACK.
+>   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+> =
 
-Yours,
-Linus Walleij
+> are available in the Git repository at:
+> =
+
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
+a-for-4.17-clk
+> =
+
+> for you to fetch changes up to c35b518f9ba06c9de79fb3ff62eed7462d804995:
+> =
+
+>   clk: tegra: Fix pll_u rate configuration (2018-03-12 13:59:06 +0100)
+> =
+
+
+Thanks. Pulled into clk-next.
