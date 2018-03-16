@@ -1,114 +1,59 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v4 00/14] CPU scaling support for msm8996
-Date: Fri, 30 Mar 2018 00:26:33 +0300
-Message-Id: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:44133 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752984AbeCPOFP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:05:15 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 6/9] dt-bindings: add device tree binding for Allwinner H6 main CCU
+Date: Fri, 16 Mar 2018 22:02:12 +0800
+Message-Id: <20180316140215.28663-7-icenowy@aosc.io>
+In-Reply-To: <20180316140215.28663-1-icenowy@aosc.io>
+References: <20180316140215.28663-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-[v4]
- * Adressed comments from Stephen
- * Added CPU regulator support
- * Added qcom-cpufreq-kryo driver
+The Allwinner H6 main CCU uses the internal oscillator of the SoC, which
+is different with old SoCs' main CCU.
 
-[v3]
- * Rebased on top of the latest PLL driver changes
- * Addressed comment from Rob Herring for bindings
+Add device tree binding for the Allwinner H6 main CCU.
 
-[v2]
- * Addressed comments from Rob Herring for bindings
- * Addressed comments from Mark Rutland for memory barrier
- * Addressed comments from Julien Thierry for clock reenabling condition
- * Tuned the HW configuration for clock frequencies below 600MHz
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Extracted in v4.
 
-Clocks:
-This series adds support for the CPU clocks on msm8996 devices.
-The driver uses the existing PLL drivers and is required to control
-the CPU frequency scaling on the MSM8996.
+ Documentation/devicetree/bindings/clock/sunxi-ccu.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Regulators:
-Added SAW regulator support to the SPMI regulator driver. The SAW regulators
-will be controlled through special CPU registers instead of direct
-SPMI accesses.
-
-Cpufreq:
-The qcom-cpufreq-kryo driver is aimed to support different SOC versions.
-The driver reads eFuse information and chooses the required OPP subset
-by passing the OPP supported-hw parameter.
-
-A previous post of RFC can be found here:
-https://patchwork.kernel.org/patch/10218991/
-
-
-Ilia Lin (10):
-  soc: qcom: Separate kryo l2 accessors from PMU driver
-  clk: qcom: Add DT bindings for CPU clock driver for msm8996
-  clk: qcom: Add ACD path to CPU clock driver for msm8996
-  dt: qcom: Add opp and thermal to the msm8996
-  regulator: qcom_spmi: Add support for SAW
-  dt-bindings: Add support for SAW documentation
-  dt: qcom: Add SAW regulator for 8x96 CPUs
-  cpufreq: Add Kryo CPU scaling driver
-  dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
-  dt: qcom: Add qcom-cpufreq-kryo driver configuration
-
-Rajendra Nayak (4):
-  clk: qcom: Make clk_alpha_pll_configure available to modules
-  clk: qcom: Add CPU clock driver for msm8996
-  clk: qcom: cpu-8996: Add support to switch to alternate PLL
-  clk: qcom: cpu-8996: Add support to switch below 600Mhz
-
- .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
- .../devicetree/bindings/cpufreq/kryo-cpufreq.txt   | 693 +++++++++++++++++++++
- .../bindings/regulator/qcom,spmi-regulator.txt     |  45 ++
- arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 658 ++++++++++++++++++-
- drivers/clk/clk-fixed-factor.c                     |   2 +-
- drivers/clk/qcom/Kconfig                           |   8 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
- drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
- drivers/clk/qcom/clk-cpu-8996.c                    | 520 ++++++++++++++++
- drivers/cpufreq/Kconfig.arm                        |  11 +
- drivers/cpufreq/Makefile                           |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c                | 147 +++++
- drivers/perf/qcom_l2_pmu.c                         |  44 +-
- drivers/regulator/qcom_spmi-regulator.c            | 133 +++-
- drivers/soc/qcom/Makefile                          |   2 +
- drivers/soc/qcom/kryo-l2-accessors.c               |  66 ++
- include/soc/qcom/kryo-l2-accessors.h               |  20 +
- 20 files changed, 2324 insertions(+), 56 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
- create mode 100644 Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
-
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 4ca21c3a6fc9..460ef27b1008 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -20,6 +20,7 @@ Required properties :
+ 		- "allwinner,sun50i-a64-ccu"
+ 		- "allwinner,sun50i-a64-r-ccu"
+ 		- "allwinner,sun50i-h5-ccu"
++		- "allwinner,sun50i-h6-ccu"
+ 		- "nextthing,gr8-ccu"
+ 
+ - reg: Must contain the registers base address and length
+@@ -31,6 +32,9 @@ Required properties :
+ - #clock-cells : must contain 1
+ - #reset-cells : must contain 1
+ 
++For the main CCU on H6, one more clock is needed:
++- "iosc": the SoC's internal frequency oscillator
++
+ For the PRCM CCUs on A83T/H3/A64, two more clocks are needed:
+ - "pll-periph": the SoC's peripheral PLL from the main CCU
+ - "iosc": the SoC's internal frequency oscillator
 -- 
-1.9.1
+2.15.1
+
