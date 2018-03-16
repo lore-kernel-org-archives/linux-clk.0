@@ -1,47 +1,49 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180316140215.28663-1-icenowy@aosc.io>
-References: <20180316140215.28663-1-icenowy@aosc.io>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 27 Mar 2018 15:12:20 +0200
-Message-ID: <CACRpkdYW4N-zuPGGz+=GHUX69xBTS3w=EYhiP7dDvr+DZNUJUw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/9] Initial Allwinner H6 support
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+To: ALKML <linux-arm-kernel@lists.infradead.org>,
+ DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Sudeep Holla <sudeep.holla@arm.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Alexey Klimov <klimov.linux@gmail.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ linux-clk@vger.kernel.org
+References: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
+ <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
+Message-ID: <152124137391.242365.17144416413429914606@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v6 16/20] clk: add support for clocks provided by SCMI
+Date: Fri, 16 Mar 2018 16:02:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 3:02 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+Quoting Sudeep Holla (2018-02-23 08:23:46)
+> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> new file mode 100644
+> index 000000000000..1e4d7a57779b
+> --- /dev/null
+> +++ b/drivers/clk/clk-scmi.c
+> +                       hws[idx] =3D &sclk->hw;
+> +               }
+> +       }
+> +
+> +       return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data=
+);
 
-> This patchset adds initial support for the Allwinner H6 SoC.
->
-> It's quite different from earlier Allwinner SoCs. For example, the
-> memory map is refactored, and the CCU is rearranged. It's also the first
-> Allwinner SoC with PCI Express interface (although the implementation
-> of the PCI Express controller is broken), and the second one with USB
-> 3.0 (the first one is A80).
->
-> This patchset adds the most basical support for it, including the main pin
-> controller, the main CCU and the basical device tree.
->
-> Icenowy Zheng (9):
->   pinctrl: sunxi: refactor irq related register function to have desc
->   pinctrl: sunxi: introduce IRQ bank conversion function
->   pinctrl: sunxi: change irq_bank_base to irq_bank_map
->   pinctrl: sunxi: add support for the Allwinner H6 main pin controller
+devm_of_clk_add_hw_provider?
 
-I applied these pinctrl patches for v4.17 so anything dependent on that
-can now be merged.
+> +}
+> +
+> +static void scmi_clocks_remove(struct scmi_device *sdev)
+> +{
+> +       struct device *dev =3D &sdev->dev;
+> +       struct device_node *np =3D dev->of_node;
+> +
+> +       of_clk_del_provider(np);
+> +}
+> +
 
-Yours,
-Linus Walleij
+Drop?
+
+You can keep my acked-by otherwise.
