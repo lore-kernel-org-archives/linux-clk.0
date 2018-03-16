@@ -1,69 +1,131 @@
-Return-Path: <shawn.guo@linaro.org>
-Return-Path: <shawn.guo@linaro.org>
-From: Shawn Guo <shawn.guo@linaro.org>
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Jiancheng Xue <xuejiancheng@hisilicon.com>,
-	Jianguo Sun <sunjianguo1@huawei.com>,
-	linux-clk@vger.kernel.org,
-	tianshuliang <tianshuliang@hisilicon.com>,
-	Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH v2 2/2] clk: hi3798cv200: add emmc sample and drive clock
-Date: Mon,  5 Mar 2018 15:01:32 +0800
-Message-Id: <1520233292-14704-3-git-send-email-shawn.guo@linaro.org>
-In-Reply-To: <1520233292-14704-1-git-send-email-shawn.guo@linaro.org>
-References: <1520233292-14704-1-git-send-email-shawn.guo@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52848 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751522AbeCPR4n (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:56:43 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 7/7] arm64: allwinner: a64: add HDMI regulator to all DTs' simplefb_hdmi
+Date: Sat, 17 Mar 2018 01:53:54 +0800
+Message-Id: <20180316175354.21437-8-icenowy@aosc.io>
+In-Reply-To: <20180316175354.21437-1-icenowy@aosc.io>
+References: <20180316175354.21437-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: tianshuliang <tianshuliang@hisilicon.com>
+On usual A64 board design the power of HDMI controller is connected to
+DLDO1 of the AXP803 PMIC. If this regulator is shut down, the HDMI
+output will be blank. Therefore the simplefb driver should keep this
+regulator on.
 
-It adds eMMC sample clock HISTB_MMC_SAMPLE_CLK and drive clock
-HISTB_MMC_DRV_CLK support for Hi3798cv200 SoC.
+Add the regulator to all currently available A64 boards' simplefb_hdmi
+device node.
 
-Signed-off-by: tianshuliang <tianshuliang@hisilicon.com>
-Signed-off-by: Jiancheng Xue <xuejiancheng@hisilicon.com>
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/hisilicon/crg-hi3798cv200.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts     | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts       | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts        | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts     | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts           | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts | 4 ++++
+ 6 files changed, 24 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
-index d6e3971bac9e..743eec131528 100644
---- a/drivers/clk/hisilicon/crg-hi3798cv200.c
-+++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
-@@ -97,6 +97,18 @@
- 		0x9c, 8, 2, 0, sdio_mux_table, },
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index 2250dec9974c..2fd343512d41 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -282,6 +282,10 @@
+ 	regulator-name = "vcc-rtc";
  };
  
-+static u32 mmc_phase_regvals[] = {0, 1, 2, 3, 4, 5, 6, 7};
-+static u32 mmc_phase_degrees[] = {0, 45, 90, 135, 180, 225, 270, 315};
-+
-+static struct hisi_phase_clock hi3798cv200_phase_clks[] = {
-+	{ HISTB_MMC_SAMPLE_CLK, "mmc_sample", "clk_mmc_ciu",
-+		CLK_SET_RATE_PARENT, 0xa0, 12, 3, mmc_phase_degrees,
-+		mmc_phase_regvals, ARRAY_SIZE(mmc_phase_regvals) },
-+	{ HISTB_MMC_DRV_CLK, "mmc_drive", "clk_mmc_ciu",
-+		CLK_SET_RATE_PARENT, 0xa0, 16, 3, mmc_phase_degrees,
-+		mmc_phase_regvals, ARRAY_SIZE(mmc_phase_regvals) },
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
 +};
 +
- static const struct hisi_gate_clock hi3798cv200_gate_clks[] = {
- 	/* UART */
- 	{ HISTB_UART2_CLK, "clk_uart2", "75m",
-@@ -186,6 +198,14 @@ static struct hisi_clock_data *hi3798cv200_clk_register(
- 	if (!clk_data)
- 		return ERR_PTR(-ENOMEM);
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+index e2dce48fa29a..98dbff19f5cc 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+@@ -195,6 +195,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
  
-+	/* hisi_phase_clock is resource managed */
-+	ret = hisi_clk_register_phase(&pdev->dev,
-+				hi3798cv200_phase_clks,
-+				ARRAY_SIZE(hi3798cv200_phase_clks),
-+				clk_data);
-+	if (ret)
-+		return ERR_PTR(ret);
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
 +
- 	ret = hisi_clk_register_fixed_rate(hi3798cv200_fixed_rate_clks,
- 				     ARRAY_SIZE(hi3798cv200_fixed_rate_clks),
- 				     clk_data);
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+index 3b3081b10ecb..3f531393eaee 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+@@ -214,6 +214,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+index bf42690a3361..1221764f5719 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+@@ -191,6 +191,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+index a75825798a71..1b9b92e541d2 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+@@ -229,6 +229,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ /* On Euler connector */
+ &spdif {
+ 	status = "disabled";
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+index abe179de35d7..c21f2331add6 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+@@ -134,6 +134,10 @@
+ 	regulator-name = "vcc-wifi";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
 -- 
-1.9.1
+2.15.1
+
