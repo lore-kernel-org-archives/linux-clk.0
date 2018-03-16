@@ -13,224 +13,407 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 06/42] clk: davinci: Add platform information for TI DM365 PLL
-Date: Thu, 15 Mar 2018 21:52:22 -0500
-Message-Id: <1521168778-27236-7-git-send-email-david@lechnology.com>
+Subject: [PATCH v8 37/42] ARM: davinci: dm646x: Remove legacy clock init
+Date: Thu, 15 Mar 2018 21:52:53 -0500
+Message-Id: <1521168778-27236-38-git-send-email-david@lechnology.com>
 In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
 References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PLL clocks on TI
-DM365 based systems.
+This removes the unused legacy clock init code from
+arch/arm/mach-davinci/dm646x.c.
 
 Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
 
 v8 changes:
-- drop __init and __initconst attributes
-- add a clkdev lookup for each SYSCLK
+- rebased
 
 v7 changes:
-- split registration functions for each PLL
-- Add platform_device_id lookup
+- rebased
+- add davinci prefix to commit message
 
 v6 changes:
-- Added dm365_pll{1,2}_info with controller-specific information
-- Changed OBSCLK data
-- Add empty lines between function calls
+- rebased
 
- drivers/clk/davinci/Makefile    |   1 +
- drivers/clk/davinci/pll-dm365.c | 145 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/davinci/pll.c       |   2 +
- drivers/clk/davinci/pll.h       |   3 +
- 4 files changed, 151 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-dm365.c
+ arch/arm/mach-davinci/dm646x.c | 329 -----------------------------------------
+ 1 file changed, 329 deletions(-)
 
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 6720bd0..353aa02 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -5,4 +5,5 @@ obj-y += pll.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
- endif
-diff --git a/drivers/clk/davinci/pll-dm365.c b/drivers/clk/davinci/pll-dm365.c
-new file mode 100644
-index 0000000..5f8d9f4
---- /dev/null
-+++ b/drivers/clk/davinci/pll-dm365.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DM365
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/clkdev.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+
-+#include "pll.h"
-+
-+#define OCSEL_OCSRC_ENABLE	0
-+
-+static const struct davinci_pll_clk_info dm365_pll1_info = {
-+	.name = "pll1",
-+	.pllm_mask = GENMASK(9, 0),
-+	.pllm_min = 1,
-+	.pllm_max = 1023,
-+	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV |
-+		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_PLLM_2X,
-+};
-+
-+SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(5, pll1_sysclk5, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(6, pll1_sysclk6, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(7, pll1_sysclk7, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(8, pll1_sysclk8, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(9, pll1_sysclk9, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+
-+/*
-+ * This is a bit of a hack to make OCSEL[OCSRC] on DM365 look like OCSEL[OCSRC]
-+ * on DA850. On DM365, OCSEL[OCSRC] is just an enable/disable bit instead of a
-+ * multiplexer. By modeling it as a single parent mux clock, the clock code will
-+ * still do the right thing in this case.
-+ */
-+static const char * const dm365_pll_obsclk_parent_names[] = {
-+	"oscin",
-+};
-+
-+static u32 dm365_pll_obsclk_table[] = {
-+	OCSEL_OCSRC_ENABLE,
-+};
-+
-+static const struct davinci_pll_obsclk_info dm365_pll1_obsclk_info = {
-+	.name = "pll1_obsclk",
-+	.parent_names = dm365_pll_obsclk_parent_names,
-+	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
-+	.table = dm365_pll_obsclk_table,
-+	.ocsrc_mask = BIT(4),
-+};
-+
-+int dm365_pll1_init(struct device *dev, void __iomem *base)
-+{
-+	struct clk *clk;
-+
-+	davinci_pll_clk_register(dev, &dm365_pll1_info, "ref_clk", base);
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
-+	clk_register_clkdev(clk, "pll1_sysclk1", "dm365-psc");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk2, base);
-+	clk_register_clkdev(clk, "pll1_sysclk2", "dm365-psc");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk3, base);
-+	clk_register_clkdev(clk, "pll1_sysclk3", "dm365-psc");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk4, base);
-+	clk_register_clkdev(clk, "pll1_sysclk4", "dm365-psc");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk5, base);
-+	clk_register_clkdev(clk, "pll1_sysclk5", "dm365-psc");
-+
-+	davinci_pll_sysclk_register(dev, &pll1_sysclk6, base);
-+
-+	davinci_pll_sysclk_register(dev, &pll1_sysclk7, base);
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk8, base);
-+	clk_register_clkdev(clk, "pll1_sysclk8", "dm365-psc");
-+
-+	davinci_pll_sysclk_register(dev, &pll1_sysclk9, base);
-+
-+	clk = davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
-+	clk_register_clkdev(clk, "pll1_auxclk", "dm355-psc");
-+
-+	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
-+
-+	davinci_pll_obsclk_register(dev, &dm365_pll1_obsclk_info, base);
-+
-+	return 0;
-+}
-+
-+static const struct davinci_pll_clk_info dm365_pll2_info = {
-+	.name = "pll2",
-+	.pllm_mask = GENMASK(9, 0),
-+	.pllm_min = 1,
-+	.pllm_max = 1023,
-+	.flags = PLL_HAS_PREDIV | PLL_HAS_POSTDIV | PLL_POSTDIV_ALWAYS_ENABLED |
-+		 PLL_PLLM_2X,
-+};
-+
-+SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(3, pll2_sysclk3, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(4, pll2_sysclk4, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(5, pll2_sysclk5, pll2_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+
-+static const struct davinci_pll_obsclk_info dm365_pll2_obsclk_info = {
-+	.name = "pll2_obsclk",
-+	.parent_names = dm365_pll_obsclk_parent_names,
-+	.num_parents = ARRAY_SIZE(dm365_pll_obsclk_parent_names),
-+	.table = dm365_pll_obsclk_table,
-+	.ocsrc_mask = BIT(4),
-+};
-+
-+int dm365_pll2_init(struct device *dev, void __iomem *base)
-+{
-+	struct clk *clk;
-+
-+	davinci_pll_clk_register(dev, &dm365_pll2_info, "oscin", base);
-+
-+	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll2_sysclk2, base);
-+	clk_register_clkdev(clk, "pll1_sysclk2", "dm365-psc");
-+
-+	davinci_pll_sysclk_register(dev, &pll2_sysclk3, base);
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll2_sysclk4, base);
-+	clk_register_clkdev(clk, "pll1_sysclk4", "dm365-psc");
-+
-+	davinci_pll_sysclk_register(dev, &pll2_sysclk5, base);
-+
-+	davinci_pll_auxclk_register(dev, "pll2_auxclk", base);
-+
-+	davinci_pll_obsclk_register(dev, &dm365_pll2_obsclk_info, base);
-+
-+	return 0;
-+}
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 305d2e9..3d8f4d2 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -782,6 +782,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
- 	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
- 	{ .name = "dm355-pll1",  .driver_data = (kernel_ulong_t)dm355_pll1_init  },
- 	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
-+	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
-+	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
- 	{ }
+diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
+index 553782f..d14ffd6 100644
+--- a/arch/arm/mach-davinci/dm646x.c
++++ b/arch/arm/mach-davinci/dm646x.c
+@@ -31,11 +31,6 @@
+ #include "davinci.h"
+ #include "mux.h"
+ 
+-#ifndef CONFIG_COMMON_CLK
+-#include "clock.h"
+-#include "psc.h"
+-#endif
+-
+ #define DAVINCI_VPIF_BASE       (0x01C12000)
+ 
+ #define VDD3P3V_VID_MASK	(BIT_MASK(3) | BIT_MASK(2) | BIT_MASK(1) |\
+@@ -50,319 +45,6 @@
+ #define DM646X_EMAC_CNTRL_RAM_OFFSET	0x2000
+ #define DM646X_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
+-#ifndef CONFIG_COMMON_CLK
+-static struct pll_data pll1_data = {
+-	.num       = 1,
+-	.phys_base = DAVINCI_PLL1_BASE,
+-};
+-
+-static struct pll_data pll2_data = {
+-	.num       = 2,
+-	.phys_base = DAVINCI_PLL2_BASE,
+-};
+-
+-static struct clk ref_clk = {
+-	.name = "ref_clk",
+-	/* rate is initialized in dm646x_init_time() */
+-};
+-
+-static struct clk aux_clkin = {
+-	.name = "aux_clkin",
+-	/* rate is initialized in dm646x_init_time() */
+-};
+-
+-static struct clk pll1_clk = {
+-	.name = "pll1",
+-	.parent = &ref_clk,
+-	.pll_data = &pll1_data,
+-	.flags = CLK_PLL,
+-};
+-
+-static struct clk pll1_sysclk1 = {
+-	.name = "pll1_sysclk1",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV1,
+-};
+-
+-static struct clk pll1_sysclk2 = {
+-	.name = "pll1_sysclk2",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV2,
+-};
+-
+-static struct clk pll1_sysclk3 = {
+-	.name = "pll1_sysclk3",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV3,
+-};
+-
+-static struct clk pll1_sysclk4 = {
+-	.name = "pll1_sysclk4",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV4,
+-};
+-
+-static struct clk pll1_sysclk5 = {
+-	.name = "pll1_sysclk5",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV5,
+-};
+-
+-static struct clk pll1_sysclk6 = {
+-	.name = "pll1_sysclk6",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV6,
+-};
+-
+-static struct clk pll1_sysclk8 = {
+-	.name = "pll1_sysclk8",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV8,
+-};
+-
+-static struct clk pll1_sysclk9 = {
+-	.name = "pll1_sysclk9",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV9,
+-};
+-
+-static struct clk pll1_sysclkbp = {
+-	.name = "pll1_sysclkbp",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-	.div_reg = BPDIV,
+-};
+-
+-static struct clk pll1_aux_clk = {
+-	.name = "pll1_aux_clk",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-};
+-
+-static struct clk pll2_clk = {
+-	.name = "pll2_clk",
+-	.parent = &ref_clk,
+-	.pll_data = &pll2_data,
+-	.flags = CLK_PLL,
+-};
+-
+-static struct clk pll2_sysclk1 = {
+-	.name = "pll2_sysclk1",
+-	.parent = &pll2_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV1,
+-};
+-
+-static struct clk dsp_clk = {
+-	.name = "dsp",
+-	.parent = &pll1_sysclk1,
+-	.lpsc = DM646X_LPSC_C64X_CPU,
+-	.usecount = 1,			/* REVISIT how to disable? */
+-};
+-
+-static struct clk arm_clk = {
+-	.name = "arm",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_ARM,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk edma_cc_clk = {
+-	.name = "edma_cc",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_TPCC,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk edma_tc0_clk = {
+-	.name = "edma_tc0",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_TPTC0,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk edma_tc1_clk = {
+-	.name = "edma_tc1",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_TPTC1,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk edma_tc2_clk = {
+-	.name = "edma_tc2",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_TPTC2,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk edma_tc3_clk = {
+-	.name = "edma_tc3",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM646X_LPSC_TPTC3,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk uart0_clk = {
+-	.name = "uart0",
+-	.parent = &aux_clkin,
+-	.lpsc = DM646X_LPSC_UART0,
+-};
+-
+-static struct clk uart1_clk = {
+-	.name = "uart1",
+-	.parent = &aux_clkin,
+-	.lpsc = DM646X_LPSC_UART1,
+-};
+-
+-static struct clk uart2_clk = {
+-	.name = "uart2",
+-	.parent = &aux_clkin,
+-	.lpsc = DM646X_LPSC_UART2,
+-};
+-
+-static struct clk i2c_clk = {
+-	.name = "I2CCLK",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_I2C,
+-};
+-
+-static struct clk gpio_clk = {
+-	.name = "gpio",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_GPIO,
+-};
+-
+-static struct clk mcasp0_clk = {
+-	.name = "mcasp0",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_McASP0,
+-};
+-
+-static struct clk mcasp1_clk = {
+-	.name = "mcasp1",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_McASP1,
+-};
+-
+-static struct clk aemif_clk = {
+-	.name = "aemif",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_AEMIF,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk emac_clk = {
+-	.name = "emac",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_EMAC,
+-};
+-
+-static struct clk pwm0_clk = {
+-	.name = "pwm0",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_PWM0,
+-	.usecount = 1,            /* REVIST: disabling hangs system */
+-};
+-
+-static struct clk pwm1_clk = {
+-	.name = "pwm1",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_PWM1,
+-	.usecount = 1,            /* REVIST: disabling hangs system */
+-};
+-
+-static struct clk timer0_clk = {
+-	.name = "timer0",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_TIMER0,
+-};
+-
+-static struct clk timer1_clk = {
+-	.name = "timer1",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM646X_LPSC_TIMER1,
+-};
+-
+-static struct clk timer2_clk = {
+-	.name = "timer2",
+-	.parent = &pll1_sysclk3,
+-	.flags = ALWAYS_ENABLED, /* no LPSC, always enabled; c.f. spruep9a */
+-};
+-
+-
+-static struct clk ide_clk = {
+-	.name = "ide",
+-	.parent = &pll1_sysclk4,
+-	.lpsc = DAVINCI_LPSC_ATA,
+-};
+-
+-static struct clk vpif0_clk = {
+-	.name = "vpif0",
+-	.parent = &ref_clk,
+-	.lpsc = DM646X_LPSC_VPSSMSTR,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk vpif1_clk = {
+-	.name = "vpif1",
+-	.parent = &ref_clk,
+-	.lpsc = DM646X_LPSC_VPSSSLV,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-static struct clk_lookup dm646x_clks[] = {
+-	CLK(NULL, "ref", &ref_clk),
+-	CLK(NULL, "aux", &aux_clkin),
+-	CLK(NULL, "pll1", &pll1_clk),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk1),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk2),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk3),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk4),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk5),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk6),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk8),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk9),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclkbp),
+-	CLK(NULL, "pll1_aux", &pll1_aux_clk),
+-	CLK(NULL, "pll2", &pll2_clk),
+-	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
+-	CLK(NULL, "dsp", &dsp_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK(NULL, "edma_cc", &edma_cc_clk),
+-	CLK(NULL, "edma_tc0", &edma_tc0_clk),
+-	CLK(NULL, "edma_tc1", &edma_tc1_clk),
+-	CLK(NULL, "edma_tc2", &edma_tc2_clk),
+-	CLK(NULL, "edma_tc3", &edma_tc3_clk),
+-	CLK("serial8250.0", NULL, &uart0_clk),
+-	CLK("serial8250.1", NULL, &uart1_clk),
+-	CLK("serial8250.2", NULL, &uart2_clk),
+-	CLK("i2c_davinci.1", NULL, &i2c_clk),
+-	CLK(NULL, "gpio", &gpio_clk),
+-	CLK("davinci-mcasp.0", NULL, &mcasp0_clk),
+-	CLK("davinci-mcasp.1", NULL, &mcasp1_clk),
+-	CLK(NULL, "aemif", &aemif_clk),
+-	CLK("davinci_emac.1", NULL, &emac_clk),
+-	CLK("davinci_mdio.0", "fck", &emac_clk),
+-	CLK(NULL, "pwm0", &pwm0_clk),
+-	CLK(NULL, "pwm1", &pwm1_clk),
+-	CLK(NULL, "timer0", &timer0_clk),
+-	CLK(NULL, "timer1", &timer1_clk),
+-	CLK("davinci-wdt", NULL, &timer2_clk),
+-	CLK("palm_bk3710", NULL, &ide_clk),
+-	CLK(NULL, "vpif0", &vpif0_clk),
+-	CLK(NULL, "vpif1", &vpif1_clk),
+-	CLK(NULL, NULL, NULL),
+-};
+-#endif
+-
+ static struct emac_platform_data dm646x_emac_pdata = {
+ 	.ctrl_reg_offset	= DM646X_EMAC_CNTRL_OFFSET,
+ 	.ctrl_mod_reg_offset	= DM646X_EMAC_CNTRL_MOD_OFFSET,
+@@ -801,8 +483,6 @@ static struct davinci_id dm646x_ids[] = {
+ 	},
  };
  
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index d90d308..bf9fdc8 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -129,4 +129,7 @@ int of_da850_pll1_init(struct device *dev, void __iomem *base);
- int dm355_pll1_init(struct device *dev, void __iomem *base);
- int dm355_pll2_init(struct device *dev, void __iomem *base);
+-static u32 dm646x_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
+-
+ /*
+  * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
+  * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
+@@ -887,8 +567,6 @@ static const struct davinci_soc_info davinci_soc_info_dm646x = {
+ 	.jtag_id_reg		= 0x01c40028,
+ 	.ids			= dm646x_ids,
+ 	.ids_num		= ARRAY_SIZE(dm646x_ids),
+-	.psc_bases		= dm646x_psc_bases,
+-	.psc_bases_num		= ARRAY_SIZE(dm646x_psc_bases),
+ 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
+ 	.pinmux_pins		= dm646x_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm646x_pins),
+@@ -959,7 +637,6 @@ void __init dm646x_init(void)
+ void __init dm646x_init_time(unsigned long ref_clk_rate,
+ 			     unsigned long aux_clkin_rate)
+ {
+-#ifdef CONFIG_COMMON_CLK
+ 	struct clk *clk;
  
-+int dm365_pll1_init(struct device *dev, void __iomem *base);
-+int dm365_pll2_init(struct device *dev, void __iomem *base);
-+
- #endif /* __CLK_DAVINCI_PLL_H___ */
+ 	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, ref_clk_rate);
+@@ -968,12 +645,6 @@ void __init dm646x_init_time(unsigned long ref_clk_rate,
+ 
+ 	clk = clk_register_fixed_rate(NULL, "aux_clkin", NULL, 0, aux_clkin_rate);
+ 	clk_register_clkdev(clk, "aux_clkin", "dm646x-psc");
+-#else
+-	ref_clk.rate = ref_clk_rate;
+-	aux_clkin.rate = aux_clkin_rate;
+-	davinci_clk_init(dm646x_clks);
+-	davinci_timer_init(&timer0_clk);
+-#endif
+ }
+ 
+ static struct resource dm646x_pll1_resources[] = {
 -- 
 2.7.4
