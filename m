@@ -1,65 +1,43 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 03/16] clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
-Date: Thu,  1 Mar 2018 22:34:29 +0100
-Message-Id: <20180301213442.16677-4-jernej.skrabec@siol.net>
-In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ David Lechner <david@lechnology.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
+ arm-soc <linux-arm-kernel@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <1519071723-31790-1-git-send-email-david@lechnology.com>
+ <1519071723-31790-11-git-send-email-david@lechnology.com>
+ <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
+Message-ID: <152122292977.70929.17084619305591596735@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v7 10/42] clk: davinci: New driver for davinci PSC clocks
+Date: Fri, 16 Mar 2018 10:55:29 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Some units have to be able to set it's own clock precisely to work
-correctly. Allow them to do so by adding CLK_SET_RATE_PARENT flag.
+Quoting Bartosz Golaszewski (2018-02-28 04:38:38)
+> 2018-02-19 21:21 GMT+01:00 David Lechner <david@lechnology.com>:
+> =
 
-Add this flag to DE, TCON and HDMI clocks.
+> I believe there to be two issues: one is with v7 - we need to increase
+> the clock reference count in davinci_psc_genpd_attach_dev().
+> =
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+> Second is the error path in the clock framework - we should remove the
+> destroyed clk_core from the debug list, which is not being done now.
+> =
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index b9f39078c0b2..77ed0b0ba681 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -452,11 +452,13 @@ static SUNXI_CCU_GATE(dram_ts_clk,	"dram-ts",	"dram",
- 
- static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
- static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
--				 0x104, 0, 4, 24, 3, BIT(31), 0);
-+				 0x104, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static const char * const tcon_parents[] = { "pll-video" };
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_clk, "tcon", tcon_parents,
--				 0x118, 0, 4, 24, 3, BIT(31), 0);
-+				 0x118, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static const char * const tve_parents[] = { "pll-de", "pll-periph1" };
- static SUNXI_CCU_M_WITH_MUX_GATE(tve_clk, "tve", tve_parents,
-@@ -487,7 +489,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 
- static const char * const hdmi_parents[] = { "pll-video" };
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
--				 0x150, 0, 4, 24, 2, BIT(31), 0);
-+				 0x150, 0, 4, 24, 2, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(hdmi_ddc_clk,	"hdmi-ddc",	"osc24M",
- 		      0x154, BIT(31), 0);
--- 
-2.16.2
+> Why we even need to track the refcount of clk_core is a mistery for me
+> though. Stephen, Mike?
+> =
+
+
+Which part of the code are we talking about? I see that
+__clk_core_init() calls clk_debug_register() when ret =3D=3D 0 and that
+looks fine. I do wonder why clk_debug_register() even returns a value
+though because we ignore it.
