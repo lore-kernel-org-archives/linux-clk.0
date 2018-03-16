@@ -1,51 +1,126 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 1/8] ARM: davinci: dts: make psc0 a reset provider
-Date: Tue, 27 Mar 2018 11:20:24 +0200
-Message-Id: <20180327092031.11251-2-brgl@bgdev.pl>
-In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
-References: <20180327092031.11251-1-brgl@bgdev.pl>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52765 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753121AbeCPRzx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:55:53 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 3/7] bus: add bus driver for accessing Allwinner A64 DE2
+Date: Sat, 17 Mar 2018 01:53:50 +0800
+Message-Id: <20180316175354.21437-4-icenowy@aosc.io>
+In-Reply-To: <20180316175354.21437-1-icenowy@aosc.io>
+References: <20180316175354.21437-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The "Display Engine 2.0" (usually called DE2) on the Allwinner A64 SoC
+is different from the ones on other Allwinner SoCs. It requires a SRAM
+region to be claimed, otherwise all DE2 subblocks won't be accessible.
 
-The psc driver registers with the reset framework as a provider. Add
-the #reset-cells property to the psc0 node.
+Add a bus driver for the Allwinner A64 DE2 part which claims the SRAM
+region when probing.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm/boot/dts/da850.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/bus/Kconfig      | 10 ++++++++++
+ drivers/bus/Makefile     |  1 +
+ drivers/bus/sun50i-de2.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+)
+ create mode 100644 drivers/bus/sun50i-de2.c
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index a3b9a99b43ca..dad64dbf1f23 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -123,6 +123,7 @@
- 			compatible = "ti,da850-psc0";
- 			reg = <0x10000 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
- 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
- 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+index ff70850031c5..cc8e4b4b6b59 100644
+--- a/drivers/bus/Kconfig
++++ b/drivers/bus/Kconfig
+@@ -95,6 +95,16 @@ config SIMPLE_PM_BUS
+ 	  Controller (BSC, sometimes called "LBSC within Bus Bridge", or
+ 	  "External Bus Interface") as found on several Renesas ARM SoCs.
+ 
++config SUN50I_DE2_BUS
++	bool "Allwinner A64 DE2 Bus Driver"
++	  default ARM64
++	  depends on ARCH_SUNXI
++	  select SUNXI_SRAM
++	  help
++	  Say y here to enable support for Allwinner A64 DE2 bus driver. It's
++	  mostly transparent, but a SRAM region needs to be claimed in the SRAM
++	  controller to make the all blocks in the DE2 part accessible.
++
+ config SUNXI_RSB
+ 	tristate "Allwinner sunXi Reduced Serial Bus Driver"
+ 	  default MACH_SUN8I || MACH_SUN9I || ARM64
+diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
+index 3d473b8adeac..746ff0cebe10 100644
+--- a/drivers/bus/Makefile
++++ b/drivers/bus/Makefile
+@@ -19,6 +19,7 @@ obj-$(CONFIG_OMAP_INTERCONNECT)	+= omap_l3_smx.o omap_l3_noc.o
+ 
+ obj-$(CONFIG_OMAP_OCP2SCP)	+= omap-ocp2scp.o
+ obj-$(CONFIG_QCOM_EBI2)		+= qcom-ebi2.o
++obj-$(CONFIG_SUN50I_DE2_BUS)	+= sun50i-de2.o
+ obj-$(CONFIG_SUNXI_RSB)		+= sunxi-rsb.o
+ obj-$(CONFIG_SIMPLE_PM_BUS)	+= simple-pm-bus.o
+ obj-$(CONFIG_TEGRA_ACONNECT)	+= tegra-aconnect.o
+diff --git a/drivers/bus/sun50i-de2.c b/drivers/bus/sun50i-de2.c
+new file mode 100644
+index 000000000000..836828ef96d5
+--- /dev/null
++++ b/drivers/bus/sun50i-de2.c
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Allwinner A64 Display Engine 2.0 Bus Driver
++ *
++ * Copyright (C) 2018 Icenowy Zheng <icenowy@aosc.io>
++ */
++
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/soc/sunxi/sunxi_sram.h>
++
++static int sun50i_de2_bus_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	int ret;
++
++	ret = sunxi_sram_claim(&pdev->dev);
++	if (ret) {
++		dev_err(&pdev->dev, "Error couldn't map SRAM to device\n");
++		return ret;
++	}
++
++	if (np)
++		of_platform_populate(np, NULL, NULL, &pdev->dev);
++
++	return 0;
++}
++
++static int sun50i_de2_bus_remove(struct platform_device *pdev)
++{
++	sunxi_sram_release(&pdev->dev);
++	return 0;
++}
++
++static const struct of_device_id sun50i_de2_bus_of_match[] = {
++	{ .compatible = "allwinner,sun50i-a64-de2", },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver sun50i_de2_bus_driver = {
++	.probe = sun50i_de2_bus_probe,
++	.remove = sun50i_de2_bus_remove,
++	.driver = {
++		.name = "sun50i-de2-bus",
++		.of_match_table = sun50i_de2_bus_of_match,
++	},
++};
++
++builtin_platform_driver(sun50i_de2_bus_driver);
 -- 
-2.16.1
+2.15.1
+
