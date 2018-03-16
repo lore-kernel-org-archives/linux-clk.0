@@ -1,61 +1,151 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>
-CC: <arnd@arndb.de>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH] clk: ti: fix flag space conflict with clkctrl clocks
-Date: Tue, 27 Mar 2018 20:47:04 +0300
-Message-ID: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 17/42] dt-bindings: clock: Add bindings for DA8XX CFGCHIP clocks
+Date: Thu, 15 Mar 2018 21:52:33 -0500
+Message-Id: <1521168778-27236-18-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The introduction of support for CLK_SET_RATE_PARENT flag for clkctrl
-clocks used a generic clock flag, which causes a conflict with the
-rest of the clkctrl flags, namely the NO_IDLEST flag. This can cause
-boot failures on certain platforms where this flag is introduced, by
-omitting the wait for the clockctrl module to be fully enabled before
-proceeding with rest of the code.
+This adds a new binding for the clocks present in the CFGCHIP syscon
+registers in TI DA8XX SoCs.
 
-Fix this by moving all the clkctrl specific flags to their own bit-range.
-
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Fixes: 49159a9dc3da ("clk: ti: add support for CLK_SET_RATE_PARENT flag")
-Reported-by: Christophe Lyon <christophe.lyon@linaro.org>
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/ti/clock.h | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index 90b86aa..b582780 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -76,6 +76,11 @@ enum {
- #define CLKF_CORE			(1 << 9)
- #define CLKF_J_TYPE			(1 << 10)
- 
-+/* CLKCTRL flags */
-+#define CLKF_SW_SUP			BIT(5)
-+#define CLKF_HW_SUP			BIT(6)
-+#define CLKF_NO_IDLEST			BIT(7)
+v8 changes:
+- none
+
+v7 changes:
+- none
+
+v6 changes:
+- combine "dt-bindings: clock: Add bindings for DA8XX CFGCHIP gate clocks",
+  "dt-bindings: clock: Add binding for TI DA8XX CFGCHIP mux clocks" and
+  "dt-bindings: clock: Add bindings for TI DA8XX USB PHY clocks" into a single
+  file containing all CFGCHIP clocks bindings
+- added compatible = "ti,da830-div4p5ena"
+- added compatible = "ti,da850-async1-clksrc"
+- renamed other compatible strings
+- changed and added some clk-names strings
+- USB PHY clocks are combined into a single node with #clock-cells = <1>
+
+ .../bindings/clock/ti/davinci/da8xx-cfgchip.txt    | 93 ++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+new file mode 100644
+index 0000000..1e03dce
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti/davinci/da8xx-cfgchip.txt
+@@ -0,0 +1,93 @@
++Binding for TI DA8XX/OMAP-L13X/AM17XX/AM18XX CFGCHIP clocks
 +
- #define CLK(dev, con, ck)		\
- 	{				\
- 		.lk = {			\
-@@ -185,10 +190,6 @@ struct omap_clkctrl_data {
- extern const struct omap_clkctrl_data dm814_clkctrl_data[];
- extern const struct omap_clkctrl_data dm816_clkctrl_data[];
- 
--#define CLKF_SW_SUP	BIT(0)
--#define CLKF_HW_SUP	BIT(1)
--#define CLKF_NO_IDLEST	BIT(2)
--
- typedef void (*ti_of_clk_init_cb_t)(void *, struct device_node *);
- 
- struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
++TI DA8XX/OMAP-L13X/AM17XX/AM18XX SoCs contain a general purpose set of
++registers call CFGCHIPn. Some of these registers function as clock
++gates. This document describes the bindings for those clocks.
++
++All of the clock nodes described below must be child nodes of a CFGCHIP node
++(compatible = "ti,da830-cfgchip").
++
++USB PHY clocks
++--------------
++Required properties:
++- compatible: shall be "ti,da830-usb-phy-clocks".
++- #clock-cells: from common clock binding; shall be set to 1.
++- clocks: phandles to the parent clocks corresponding to clock-names
++- clock-names: shall be "fck", "usb_refclkin", "auxclk"
++
++This node provides two clocks. The clock at index 0 is the USB 2.0 PHY 48MHz
++clock and the clock at index 1 is the USB 1.1 PHY 48MHz clock.
++
++eHRPWM Time Base Clock (TBCLK)
++------------------------------
++Required properties:
++- compatible: shall be "ti,da830-tbclksync".
++- #clock-cells: from common clock binding; shall be set to 0.
++- clocks: phandle to the parent clock
++- clock-names: shall be "fck"
++
++PLL DIV4.5 divider
++------------------
++Required properties:
++- compatible: shall be "ti,da830-div4p5ena".
++- #clock-cells: from common clock binding; shall be set to 0.
++- clocks: phandle to the parent clock
++- clock-names: shall be "pll0_pllout"
++
++EMIFA clock source (ASYNC1)
++---------------------------
++Required properties:
++- compatible: shall be "ti,da850-async1-clksrc".
++- #clock-cells: from common clock binding; shall be set to 0.
++- clocks: phandles to the parent clocks corresponding to clock-names
++- clock-names: shall be "pll0_sysclk3", "div4.5"
++
++ASYNC3 clock source
++-------------------
++Required properties:
++- compatible: shall be "ti,da850-async3-clksrc".
++- #clock-cells: from common clock binding; shall be set to 0.
++- clocks: phandles to the parent clocks corresponding to clock-names
++- clock-names: shall be "pll0_sysclk2", "pll1_sysclk2"
++
++Examples:
++
++	cfgchip: syscon@1417c {
++		compatible = "ti,da830-cfgchip", "syscon", "simple-mfd";
++		reg = <0x1417c 0x14>;
++
++		usb_phy_clk: usb-phy-clocks {
++			compatible = "ti,da830-usb-phy-clocks";
++			#clock-cells = <1>;
++			clocks = <&psc1 1>, <&usb_refclkin>, <&pll0_auxclk>;
++			clock-names = "fck", "usb_refclkin", "auxclk";
++		};
++		ehrpwm_tbclk: ehrpwm_tbclk {
++			compatible = "ti,da830-tbclksync";
++			#clock-cells = <0>;
++			clocks = <&psc1 17>;
++			clock-names = "fck";
++		};
++		div4p5_clk: div4.5 {
++			compatible = "ti,da830-div4p5ena";
++			#clock-cells = <0>;
++			clocks = <&pll0_pllout>;
++			clock-names = "pll0_pllout";
++		};
++		async1_clk: async1 {
++			compatible = "ti,da850-async1-clksrc";
++			#clock-cells = <0>;
++			clocks = <&pll0_sysclk 3>, <&div4p5_clk>;
++			clock-names = "pll0_sysclk3", "div4.5";
++		};
++		async3_clk: async3 {
++			compatible = "ti,da850-async3-clksrc";
++			#clock-cells = <0>;
++			clocks = <&pll0_sysclk 2>, <&pll1_sysclk 2>;
++			clock-names = "pll0_sysclk2", "pll1_sysclk2";
++		};
++	};
++
++Also see:
++- Documentation/devicetree/bindings/clock/clock-bindings.txt
++
 -- 
-1.9.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.4
