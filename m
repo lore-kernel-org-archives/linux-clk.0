@@ -1,54 +1,45 @@
-Return-Path: <RAJANV@xilinx.com>
-Return-Path: rajan.vaja@xilinx.com
-From: Rajan Vaja <rajan.vaja@xilinx.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<JOLLYS@xilinx.com>, <michals@xilinx.com>, Rajan Vaja <rajanv@xilinx.com>
-Subject: [PATCH] clk: clk-fixed-factor: Use new macro CLK_OF_DECLARE_DRIVER
-Date: Thu, 8 Mar 2018 06:15:00 -0800
-Message-ID: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/8] clk: renesas: mstp: Always use readl()/writel()
+Date: Fri, 16 Mar 2018 14:40:16 +0100
+Message-Id: <1521207622-3311-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Fixed factor clock has two initialization at of_clk_init()
-time and also during platform driver probe. So declare the
-fixed factor clock with CLK_OF_DECLARE_DRIVER instead of
-CLK_OF_DECLARE.
+On arm32, there is no reason to use the (soon deprecated)
+clk_readl()/clk_writel().  Hence use the generic readl()/writel()
+instead.
 
-See below commit for reference:
-"clk: sunxi: apb0: Use new macro CLK_OF_DECLARE_DRIVER"
-(sha1: 915128b621a05c63fa58ca9e4cbdf394bbe592f3)
-
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Suggested-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/clk-fixed-factor.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/clk-mstp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.=
-c
-index a5d402d..d72ef2d 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -196,8 +196,9 @@ void __init of_fixed_factor_clk_setup(struct device_nod=
-e *node)
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index d6a57dc23679711b..2b7e3eb651e3d375 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -64,13 +64,13 @@ struct mstp_clock {
+ static inline u32 cpg_mstp_read(struct mstp_clock_group *group,
+ 				u32 __iomem *reg)
  {
-        _of_fixed_factor_clk_setup(node);
+-	return group->width_8bit ? readb(reg) : clk_readl(reg);
++	return group->width_8bit ? readb(reg) : readl(reg);
  }
--CLK_OF_DECLARE(fixed_factor_clk, "fixed-factor-clock",
--               of_fixed_factor_clk_setup);
-+
-+CLK_OF_DECLARE_DRIVER(fixed_factor_clk, "fixed-factor-clock",
-+                     of_fixed_factor_clk_setup);
-
- static int of_fixed_factor_clk_remove(struct platform_device *pdev)
+ 
+ static inline void cpg_mstp_write(struct mstp_clock_group *group, u32 val,
+ 				  u32 __iomem *reg)
  {
---
+-	group->width_8bit ? writeb(val, reg) : clk_writel(val, reg);
++	group->width_8bit ? writeb(val, reg) : writel(val, reg);
+ }
+ 
+ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+-- 
 2.7.4
-
-This email and any attachments are intended for the sole use of the named r=
-ecipient(s) and contain(s) confidential information that may be proprietary=
-, privileged or copyrighted under applicable law. If you are not the intend=
-ed recipient, do not read, copy, or forward this email message or any attac=
-hments. Delete this email message and any attachments immediately.
