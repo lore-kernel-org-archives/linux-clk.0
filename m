@@ -1,214 +1,147 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.133]:41092 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932721AbeCPBWJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Mar 2018 21:22:09 -0400
+Cc: shawn.lin@rock-chips.com, Derek Basehore <dbasehore@chromium.org>,
+        hl <hl@rock-chips.com>, Brian Norris <briannorris@chromium.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        diander@chromium.org, linux-clk <linux-clk@vger.kernel.org>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] clk: rockchip: assign correct id for pclk_ddr and hclk_sd
+ in rk3399
+To: Doug Anderson <dianders@chromium.org>
+References: <1521104071-19595-1-git-send-email-hl@rock-chips.com>
+ <18794d71-ec37-7af4-3de6-7a43a5c66010@rock-chips.com>
+ <df78009d-924f-6b9c-6bf6-f1f69d162708@rock-chips.com>
+ <b0b083c6-3a99-c0ed-9f1b-bba203eaa6bc@rock-chips.com>
+ <CAD=FV=UaGaE0FX7ofQgSqsyir08psc0-EkHq9_WTW7EQvTZPog@mail.gmail.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <3f8a539d-9b1b-f0b6-1bf8-60be102f9bda@rock-chips.com>
+Date: Fri, 16 Mar 2018 09:22:00 +0800
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1522161443-54428-7-git-send-email-biju.das@bp.renesas.com>
-References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com> <1522161443-54428-7-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 28 Mar 2018 14:20:39 +0200
-Message-ID: <CAMuHMdU42sZzUoiWCUUhWAUqDKHY_WT8wHNz34bN0YZLqUjOhQ@mail.gmail.com>
-Subject: Re: [PATCH 06/12] clk: renesas: cpg-mssr: Add r8a77470 support
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAD=FV=UaGaE0FX7ofQgSqsyir08psc0-EkHq9_WTW7EQvTZPog@mail.gmail.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Biju,
+Hi Doug,
 
-On Tue, Mar 27, 2018 at 4:37 PM, Biju Das <biju.das@bp.renesas.com> wrote:
-> Add RZ/G1C (R8A77470) Clock Pulse Generator / Module Standby and Software
-> Reset support.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On 2018/3/16 0:20, Doug Anderson wrote:
+> Hi,
+> 
+> On Thu, Mar 15, 2018 at 6:40 AM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>> [Correct Doug's email address]
+>>
+>> On 2018/3/15 17:12, hl wrote:
+>>>
+>>> Hi Shawn,
+>>>
+>>>
+>>> On Thursday, March 15, 2018 05:01 PM, Shawn Lin wrote:
+>>>>
+>>>> Hi Huang,
+>>>>
+>>>> On 2018/3/15 16:54, Lin Huang wrote:
+>>>>>
+>>>>> Assign id PCLK_DDR to pclk_ddr, id HCLK_SD to hclk_sd, so we can
+>>>>> assign frequency for them in dts.
+>>>>
+>>>>
+>>>> I'm curious under which condition that we need assign frequency for
+>>>> hclk_sd?
+>>>
+>>> We may set CPLL frequency higher than 800MHz, with that we need assign
+>>> clock
+>>> to hclk_sd, otherwise it will exceed 200MHz, since we use the default cru
+>>> register value to get hclk_sd for now.
+>>> you can check
+>>>
+>>> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/956678/5
+>>
+>>
+>> Okay, thanks for pointing me to the actual user case.
+>> I'm fine with that, however, what I am thinking now is:
+>>
+>> (1) It's worth elaborating more in the commit msg.
+> 
+> Seems like a nice idea to me.
+> 
+> 
+>> (2) The reason you need set hclk_sd is that it depends on the
+>> defualt settings but lack real owner to explicitly set it to <=200MHz.
+> 
+> Actually, in the case of hclk_sd there _is_ an owner to set it to <=
+> 200 MHz.  I'll comment on the gerrit review, but the assigned clock
+> for hclk_sd probably belongs in the node "sdmmc: dwmmc@fe320000".
 
-Thanks for your patch!
+Agreed. hclk_sd is the parent for hclk_sdmmc and hclk_sdmmc_noc, so
+it makes more sense to me for sdmmc node to pick it up in rk3399.dtsi
 
-> --- /dev/null
-> +++ b/drivers/clk/renesas/r8a7747x-cpg-mssr.c
+> 
+> ...but in any case, you still need the clock ID to do that.
+> 
 
-For consistency, I'd call this r8a77470-cpg-mssr.c.
+yep.
 
-> @@ -0,0 +1,229 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * r8a7747 Clock Pulse Generator / Module Standby and Software Reset
+> 
+>> So my another question is if that is more about aspect of power
+>> consumption, then it looks okay to me. But if that is a SoC limitation,
+>> then we are under risk for that. Either we should never rely on the
+>> default settings, or we should set its rate range after registering this
+>> clock provider.
+> 
+> I have always wondered about perhaps encoding the min/max clock rate
+> for each clock somewhere in the source code.  Then whenever we change
+> clock rates we could enforce that we don't ever go past this min/max. > In think, in theory, this is possible by registering for all the right
+> callbacks / notifications.  ...but I suspect that doing in a generic /
+> performant way might be very difficult.  Specifically, whenever a
+> clock changes you may need to make all sorts of decisions about
+> re-parenting and also checking whether all your children are out fo
+> spec.
 
-r8a77470
+Agreed.
 
-> +static const struct cpg_core_clk r8a77470_core_clks[] __initconst = {
-> +       /* External Clock Inputs */
-> +       DEF_INPUT("extal",      CLK_EXTAL),
-> +       DEF_INPUT("usb_extal",  CLK_USB_EXTAL),
-> +
-> +       /* Internal Core Clocks */
-> +       DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN2_MAIN, CLK_EXTAL),
-> +       DEF_BASE(".pll0",       CLK_PLL0, CLK_TYPE_GEN2_PLL0, CLK_MAIN),
-> +       DEF_BASE(".pll1",       CLK_PLL1, CLK_TYPE_GEN2_PLL1, CLK_MAIN),
-> +       DEF_BASE(".pll3",       CLK_PLL3, CLK_TYPE_GEN2_PLL3, CLK_MAIN),
-> +
-> +       DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
-> +
-> +       /* Core Clock Outputs */
-> +       DEF_BASE("lb",   R8A77470_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
+> 
+> So without encoding the min/max and having it magically auto-resolve,
+> the best we can do is just to assign a sane clock rate.  If there's no
+> subsystem owning this clock then doing so at clock init time is sane
+> (and that's what we do with many clocks).  If a subsystem owns it,
+> doing it when the subsystem is probed is sane.
+> 
 
-DEF_FIXED("lb", R8A77470_CLK_LB, CLK_PLL1, 24, 1)
-and move it down between "b" and "p".
+I'm not convinced it was invented to abuse encoding the rate range for
+each clock, but just enclose the the hardware limitation within the
+clock framework and per-SoC clock providers. That being said, the author
+of per-SoC clock providers is more fimilar with the hardware limitation
+than BSP guys, so it's less prone to make fatal mistake by encoding this
+kinda limitation somewhere in clk provider drivers.
 
-Note: apparently the dependency on MD18 is true for R-Car H2 only, so
-I will fix this in the other clock drivers.
+But yes, I didn't see any hardware limitation here for hclk_sd, so my
+best guess is 200MHz is a tradeoff for perf and power. This looks sane
+to me by doing it at clock init time, so FWIW for this patch,
 
-> +/*
-> + * CPG Clock Data
-> + */
-> +
-> +/*
-> + *    MD       EXTAL           PLL0    PLL1    PLL3
-> + * 14 13       (MHz)           *1      *2
-> + *---------------------------------------------------
-> + * 0  0                20              x80/2   x78     x50
-> + * 0  1                26              x60/2   x60     x56
-> + * 1  0                Prohibitted setting
-> + * 1  1                30              x52/2   x52     x50
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-It looks like all PLL0/PLL1/PLL3 values are already the predivided values,
-unlike in other clock drivers? ...
+However, I'm incline to assigne hclk_sd by sdmmc node in Huang's CL.
+Then we may never warry about leaving it along again when we randomly
+adjust clk hierarchy again. It applies to all this kinda clk providers.
 
-> + *
-> + * *1 :        Table 7.4 indicates VCO output (PLL0 = VCO/2)
-> + * *2 :        Table 7.4 indicates VCO output (PLL1 = VCO)
-> + */
-> +#define CPG_PLL_CONFIG_INDEX(md)       ((((md) & BIT(14)) >> 13) | \
-> +                                        (((md) & BIT(13)) >> 13))
-> +
-> +static const struct rcar_gen2_cpg_pll_config cpg_pll_configs[8] __initconst = {
+> 
+> So, to summarize, I'm happy with this change.  I wouldn't mind a
+> little more justification in the CL description but personally I won't
+> make a big deal about it.
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> 
+> 
+> -Doug
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> 
+> 
+> 
 
-cpg_pll_configs[4]
-
-> +       /* EXTAL div    PLL1 mult       PLL3 mult */
-> +       { 1,            78,             50,     },
-> +       { 1,            60,             56,     },
-> +       { /* Invalid*/                          },
-> +       { 1,            52,             50,     },
-
-... so I think these should be multiplied by the predivider, which will allow
-to drop the corresponding test for RZ/G1C in rcar_gen2_cpg_clk_register.
-
-
-> +};
-> +
-> +static int __init r8a7747x_cpg_mssr_init(struct device *dev)
-
-r8a77470_cpg_mssr_init
-
-> --- a/drivers/clk/renesas/rcar-gen2-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen2-cpg.c
-> @@ -16,6 +16,7 @@
->  #include <linux/init.h>
->  #include <linux/io.h>
->  #include <linux/slab.h>
-> +#include <linux/sys_soc.h>
->
->  #include "renesas-cpg-mssr.h"
->  #include "rcar-gen2-cpg.h"
-> @@ -257,10 +258,21 @@ static const struct clk_div_table cpg_sd01_div_table[] = {
->         {  0,  0 },
->  };
->
-> +static const struct clk_div_table rz_g1c_cpg_sd01_div_table[] = {
-> +       {  5, 12 }, {  6, 16 }, {  7, 18 }, {  8, 24 },
-> +       { 10, 36 }, { 11, 48 }, { 12, 10 }, {  0,  0 },
-> +};
-
-This table is identical to cpg_sd01_div_table[], except for the missing first
-entry. So perhaps you could just use &cpg_sd01_div_table[1] instead?
-
-> +
-> +
->  static const struct rcar_gen2_cpg_pll_config *cpg_pll_config __initdata;
->  static unsigned int cpg_pll0_div __initdata;
->  static u32 cpg_mode __initdata;
->
-> +static const struct soc_device_attribute r8a7747xes[] = {
-> +       { .soc_id = "r8a77470", .revision = "ES2.*" },
-
-So this does not apply to ES3.0 and later?
-What about ES1.*?
-
-> +       { /* sentinel */ }
-> +};
-
-> @@ -303,7 +315,10 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
->                 break;
->
->         case CLK_TYPE_GEN2_PLL1:
-> -               mult = cpg_pll_config->pll1_mult / 2;
-> +               if (soc_device_match(r8a7747xes))
-> +                       mult = cpg_pll_config->pll1_mult;
-> +               else
-> +                       mult = cpg_pll_config->pll1_mult / 2;
-
-If think this can be dropped if the values in cpg_pll_configs[] are
-multiplied by 2.
-
-> @@ -314,7 +329,10 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
->                 return cpg_z_clk_register(core->name, parent_name, base);
->
->         case CLK_TYPE_GEN2_LB:
-> -               div = cpg_mode & BIT(18) ? 36 : 24;
-> +               if (soc_device_match(r8a7747xes))
-> +                       div = 24;
-> +               else
-> +                       div = cpg_mode & BIT(18) ? 36 : 24;
-
-Can be dropped if LB is modeled as a fixed clock instead.
-
->                 break;
->
->         case CLK_TYPE_GEN2_ADSP:
-> @@ -326,12 +344,20 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
->                 break;
->
->         case CLK_TYPE_GEN2_SD0:
-> -               table = cpg_sd01_div_table;
-> +               if (soc_device_match(r8a7747xes))
-> +                       table = rz_g1c_cpg_sd01_div_table;
-> +               else
-> +                       table = cpg_sd01_div_table;
-
-table = cpg_sd01_div_table;
-if (soc_device_match(r8a7747xes))
-        table++;
-
-> +
->                 shift = 4;
->                 break;
->
->         case CLK_TYPE_GEN2_SD1:
-> -               table = cpg_sd01_div_table;
-> +               if (soc_device_match(r8a7747xes))
-> +                       table = rz_g1c_cpg_sd01_div_table;
-> +               else
-> +                       table = cpg_sd01_div_table;
-
-Likewise.
-
-> +
->                 shift = 0;
->                 break;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
