@@ -1,50 +1,34 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 7/7] ARM64: dts: meson-axg: add an 32K alt aoclk
-Date: Fri, 23 Mar 2018 22:38:16 +0800
-Message-ID: <20180323143816.200573-8-yixun.lan@amlogic.com>
-In-Reply-To: <20180323143816.200573-1-yixun.lan@amlogic.com>
-References: <20180323143816.200573-1-yixun.lan@amlogic.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+To: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1515112695-3160-1-git-send-email-david@lechnology.com>
+Cc: David Lechner <david@lechnology.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+ =?utf-8?q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>,
+ Maxime Ripard <maxime.ripard@free-electrons.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+References: <1515112695-3160-1-git-send-email-david@lechnology.com>
+Message-ID: <152123935331.242365.4716792321487612827@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 0/7] clk: add helper functions for managing clk_onecell_data
+Date: Fri, 16 Mar 2018 15:29:13 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The ao_clk81 in AO domain have two clock source,
-one from a 32K alt crystal we name it as ao_alt_clk,
-another is the clk81 signal from EE domain.
+Quoting David Lechner (2018-01-04 16:38:05)
+> I am writing some clock drivers that use struct clk_onecell_data a few
+> times, so I decided to write a helper function to allocate the memory
+> since it is a two step process and can be tedious. Then I noticed that
+> mediatek already had such a helper function, so I have moved that to the
+> clk core and made use of it in other drivers where possible.
+> =
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index b3d394f5d95a..48584d5a329b 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -109,6 +109,13 @@
- 		#clock-cells = <0>;
- 	};
- 
-+	ao_alt_xtal: ao_alt_xtal-clk {
-+		compatible = "fixed-clock";
-+		clock-frequency = <32000000>;
-+		clock-output-names = "ao_alt_xtal";
-+		#clock-cells = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
--- 
-2.15.1
+We're actively trying to discourage driver authors from adding more
+clk_onecell_data and pushing them to register clks and providers with
+the clk_hw structures. So thanks for doing the consolidation work, but
+no thanks. We can wait for the conversion to hw pointers instead.
