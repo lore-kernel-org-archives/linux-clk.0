@@ -1,103 +1,75 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH net-next 00/12] ARM: sun8i: r40: Add Ethernet support
-Date: Sat, 17 Mar 2018 17:28:45 +0800
-Message-Id: <20180317092857.4396-1-wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 6/7] arm64: allwinner: a64: add simplefb for A64 SoC
+Date: Sat, 17 Mar 2018 01:53:53 +0800
+Message-Id: <20180316175354.21437-7-icenowy@aosc.io>
+In-Reply-To: <20180316175354.21437-1-icenowy@aosc.io>
+References: <20180316175354.21437-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi everyone,
+The A64 SoC features two display pipelines, one has a LCD output, the
+other has a HDMI output.
 
-This series adds support for the DWMAC based Ethernet controller found
-on the Allwinner R40 SoC. The controller is either a DWMAC clone or
-DWMAC core with its registers rearranged. This is already supported by
-the dwmac-sun8i driver. The glue layer control registers, unlike other
-sun8i family SoCs, is not in the system controller region, but in the
-clock control unit, like with the older A20 and A31 SoCs.
+Add support for simplefb for these pipelines on A64 SoC.
 
-Mark (Brown), could you take a look at the regmap bits in patches 2 and
-7? While we reuse the bindings for dwmac-sun8i using a syscon phandle
-reference, we need some custom plumbing for the clock driver to export
-a regmap that only allows access to the GMAC register to the dwmac-sun8i
-driver. An alternative would be to allow drivers to register custom
-syscon devices with their own regmap and locking.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-Patch 1 converts the CLK_OF_DECLARE style clock driver to a platform
-one, so the regmap introduced later has a struct device to tie to.
-
-Patch 2 adds a regmap that is exported by the clock driver for the
-dwmac-sun8i driver to use.
-
-Patch 3 and 4 clean up the dwmac-sun8i binding.
-
-Patch 5 adds device tree binding for Allwinner R40's Ethernet
-controller.
-
-Patch 6 converts regmap access of the syscon region in the dwmac-sun8i
-driver to regmap_field, in anticipation of different field widths on
-the R40.
-
-Patch 7 introduces custom plumbing in the dwmac-sun8i driver to fetch
-a regmap from the clock module, by looking up a device via a phandle,
-then getting the regmap associated with that device.
-
-Patch 8 adds support for different or absent TX/RX delay chain ranges
-to the dwmac-sun8i driver.
-
-Patch 9 adds support for the R40's ethernet controller.
-
-Patch 10 cleans up the Bananapi M2 Ultra device tree file.
-
-Patch 11 adds a GMAC device node and RGMII mode pinmux setting for the
-R40.
-
-Patch 12 enables Ethernet on the Bananapi M2 Ultra.
-
-
-Please have a look.
-
-Regards
-ChenYu
-
-Chen-Yu Tsai (10):
-  dt-bindings: net: dwmac-sun8i: Clean up clock delay chain descriptions
-  dt-bindings: net: dwmac-sun8i: Sort syscon compatibles by alphabetical
-    order
-  dt-bindings: net: dwmac-sun8i: Add binding for GMAC on Allwinner R40
-    SoC
-  net: stmmac: dwmac-sun8i: Use regmap_field for syscon register access
-  net: stmmac: dwmac-sun8i: Allow getting syscon regmap from CCU device
-  net: stmmac: dwmac-sun8i: Support different ranges for TX/RX delay
-    chains
-  net: stmmac: dwmac-sun8i: Add support for GMAC on Allwinner R40 SoC
-  ARM: dts: sun8i: r40: bananapi-m2-ultra: Sort device node dereferences
-  ARM: dts: sun8i: r40: Add device node and RGMII pinmux node for GMAC
-  ARM: dts: sun8i: r40: bananapi-m2-ultra: Enable GMAC ethernet
-    controller
-
-Icenowy Zheng (2):
-  clk: sunxi-ng: r40: rewrite init code to a platform driver
-  clk: sunxi-ng: r40: export a regmap to access the GMAC register
-
- .../devicetree/bindings/net/dwmac-sun8i.txt        |  17 ++-
- arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  99 ++++++++++------
- arch/arm/boot/dts/sun8i-r40.dtsi                   |  34 ++++++
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c               |  70 +++++++++--
- drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  | 128 +++++++++++++++++----
- 5 files changed, 278 insertions(+), 70 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 1f92015503ea..7767d0761b2e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -42,9 +42,11 @@
+  *     OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
++#include <dt-bindings/clock/sun8i-de2.h>
+ #include <dt-bindings/clock/sun50i-a64-ccu.h>
+ #include <dt-bindings/clock/sun8i-r-ccu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/sun8i-de2.h>
+ #include <dt-bindings/reset/sun50i-a64-ccu.h>
+ 
+ / {
+@@ -52,6 +54,30 @@
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+ 
++	chosen {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		simplefb_lcd: framebuffer-lcd {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer0-lcd0";
++			clocks = <&display_clocks CLK_MIXER0>,
++				 <&ccu CLK_TCON0>;
++			status = "disabled";
++		};
++
++		simplefb_hdmi: framebuffer-hdmi {
++			compatible = "allwinner,simple-framebuffer",
++				     "simple-framebuffer";
++			allwinner,pipeline = "mixer1-lcd1-hdmi";
++			clocks = <&display_clocks CLK_MIXER1>,
++				 <&ccu CLK_TCON1>, <&ccu CLK_HDMI>;
++			status = "disabled";
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
-2.16.2
+2.15.1
