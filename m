@@ -1,75 +1,74 @@
-Return-Path: <joel.stan@gmail.com>
-MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <CACPK8Xe5rVtB6hUo4xW9qSz-T+kehvXSRv5g1_6KOO=BYr8Qwg@mail.gmail.com>
-References: <1520440570-25280-1-git-send-email-eajames@linux.vnet.ibm.com> <CACPK8Xe5rVtB6hUo4xW9qSz-T+kehvXSRv5g1_6KOO=BYr8Qwg@mail.gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-Date: Thu, 8 Mar 2018 14:23:44 +1030
-Message-ID: <CACPK8XdK5EWvuN7Cu+q8-BrWAbeGTz_kV0UW1sWj=jv5whD5Hw@mail.gmail.com>
-Subject: Re: [PATCH] clk: aspeed: Prevent reset if clock is enabled
-To: Eddie James <eajames@linux.vnet.ibm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org, Lei YU <mine260309@gmail.com>,
-	Ryan Chen <ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 3/8] clk: renesas: r8a73a4: Always use readl()/writel()
+Date: Fri, 16 Mar 2018 14:40:17 +0100
+Message-Id: <1521207622-3311-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 8, 2018 at 2:12 PM, Joel Stanley <joel@jms.id.au> wrote:
-> Hi Eddie,
->
-> On Thu, Mar 8, 2018 at 3:06 AM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
->> According to the Aspeed specification, the reset and enable sequence
->> should be done when the clock is stopped. The specification doesn't
->> define behavior if the reset is done while the clock is enabled.
->>
->> From testing on the AST2500, the LPC Controller has problems if the
->> clock is reset while enabled.
->>
->> Therefore, check whether the clock is enabled or not before performing
->> the reset and enable sequence in the Aspeed clock driver.
->>
->> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
->> ---
->>  drivers/clk/clk-aspeed.c | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
->> index 9f7f931..a13054d 100644
->> --- a/drivers/clk/clk-aspeed.c
->> +++ b/drivers/clk/clk-aspeed.c
->> @@ -212,6 +212,12 @@ static int aspeed_clk_enable(struct clk_hw *hw)
->>         u32 clk = BIT(gate->clock_idx);
->>         u32 rst = BIT(gate->reset_idx);
->>         u32 enval;
->> +       u32 reg;
->> +
->> +       /* Only reset/enable/unreset if clock is stopped */
->> +       regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
->> +       if (!(reg & clk))
->> +               return 0;
->
-> This doesn't generalise to all of the clocks, as some clocks use set
-> to disable. Perhaps we could do something like this:
->
->        /* Only reset/enable/unreset if clock is stopped. The LPC clock
-> on ast2500 has issues otherwise */
+On arm32, there is no reason to use the (soon deprecated)
+clk_readl()/clk_writel().  Hence use the generic readl()/writel()
+instead.
 
-We've seen this on both the ast2400 and ast2500, so if you do take my
-suggestion perhaps just say "The LPC clock has issues otherwise".
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-r8a73a4.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
->        enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
->        regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
->        if ((reg & clk) == enval) {
->                spin_unlock_irqrestore(gate->lock, flags);
->                return 0;
->        }
->
-> I think we should also do this operation under the lock.
->
-> Please cc Ryan Chen <ryan_chen@aspeedtech.com> so he can confirm that
-> this workaround is valid, and credit Lei who spent a lot of time
-> investigating this issue. Perhaps "Root-caused-by".
->
-> Cheers,
->
-> Joel
+diff --git a/drivers/clk/renesas/clk-r8a73a4.c b/drivers/clk/renesas/clk-r8a73a4.c
+index 28d204bb659e7879..7b903ce4c9015ad7 100644
+--- a/drivers/clk/renesas/clk-r8a73a4.c
++++ b/drivers/clk/renesas/clk-r8a73a4.c
+@@ -71,7 +71,7 @@ r8a73a4_cpg_register_clock(struct device_node *np, struct r8a73a4_cpg *cpg,
+ 
+ 
+ 	if (!strcmp(name, "main")) {
+-		u32 ckscr = clk_readl(cpg->reg + CPG_CKSCR);
++		u32 ckscr = readl(cpg->reg + CPG_CKSCR);
+ 
+ 		switch ((ckscr >> 28) & 3) {
+ 		case 0:	/* extal1 */
+@@ -95,14 +95,14 @@ r8a73a4_cpg_register_clock(struct device_node *np, struct r8a73a4_cpg *cpg,
+ 		 * clock implementation and we currently have no need to change
+ 		 * the multiplier value.
+ 		 */
+-		u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
++		u32 value = readl(cpg->reg + CPG_PLL0CR);
+ 
+ 		parent_name = "main";
+ 		mult = ((value >> 24) & 0x7f) + 1;
+ 		if (value & BIT(20))
+ 			div = 2;
+ 	} else if (!strcmp(name, "pll1")) {
+-		u32 value = clk_readl(cpg->reg + CPG_PLL1CR);
++		u32 value = readl(cpg->reg + CPG_PLL1CR);
+ 
+ 		parent_name = "main";
+ 		/* XXX: enable bit? */
+@@ -125,7 +125,7 @@ r8a73a4_cpg_register_clock(struct device_node *np, struct r8a73a4_cpg *cpg,
+ 		default:
+ 			return ERR_PTR(-EINVAL);
+ 		}
+-		value = clk_readl(cpg->reg + cr);
++		value = readl(cpg->reg + cr);
+ 		switch ((value >> 5) & 7) {
+ 		case 0:
+ 			parent_name = "main";
+@@ -161,8 +161,7 @@ r8a73a4_cpg_register_clock(struct device_node *np, struct r8a73a4_cpg *cpg,
+ 			shift = 0;
+ 		}
+ 		div *= 32;
+-		mult = 0x20 - ((clk_readl(cpg->reg + CPG_FRQCRC) >> shift)
+-		       & 0x1f);
++		mult = 0x20 - ((readl(cpg->reg + CPG_FRQCRC) >> shift) & 0x1f);
+ 	} else {
+ 		struct div4_clk *c;
+ 
+-- 
+2.7.4
