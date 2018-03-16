@@ -1,90 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-        <fabio.estevam@nxp.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <shengjiu.wang@nxp.com>
-CC: <Linux-imx@nxp.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH 1/2] clk: imx6sx: add missing lvds2 clock to the clock tree
-Date: Sun, 18 Mar 2018 11:14:12 +0800
-Message-ID: <1521342853-2941-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:43983 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750982AbeCPODk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Mar 2018 10:03:40 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 0/9] Initial Allwinner H6 support
+Date: Fri, 16 Mar 2018 22:02:06 +0800
+Message-Id: <20180316140215.28663-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6SX has lvds2 (analog clock2), an I/O clock like lvds1.
-And this lvds2, along with lvds1, can be used to provide
-external clock source to the internal pll, such as pll4_audio
-and pll5_video.
+This patchset adds initial support for the Allwinner H6 SoC.
 
-This patch mainly adds the lvds2 to the clock tree and fix its
-relationship with pll accordingly.
+It's quite different from earlier Allwinner SoCs. For example, the
+memory map is refactored, and the CCU is rearranged. It's also the first
+Allwinner SoC with PCI Express interface (although the implementation
+of the PCI Express controller is broken), and the second one with USB
+3.0 (the first one is A80).
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- drivers/clk/imx/clk-imx6sx.c             | 6 +++++-
- include/dt-bindings/clock/imx6sx-clock.h | 6 +++++-
- 2 files changed, 10 insertions(+), 2 deletions(-)
+This patchset adds the most basical support for it, including the main pin
+controller, the main CCU and the basical device tree.
 
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index e6d389e..d180797 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -80,7 +80,7 @@ static const char *lvds_sels[]	= {
- 	"arm", "pll1_sys", "dummy", "dummy", "dummy", "dummy", "dummy", "pll5_video_div",
- 	"dummy", "dummy", "pcie_ref_125m", "dummy", "usbphy1", "usbphy2",
- };
--static const char *pll_bypass_src_sels[] = { "osc", "lvds1_in", };
-+static const char *pll_bypass_src_sels[] = { "osc", "lvds1_in", "lvds2_in", "dummy", };
- static const char *pll1_bypass_sels[] = { "pll1", "pll1_bypass_src", };
- static const char *pll2_bypass_sels[] = { "pll2", "pll2_bypass_src", };
- static const char *pll3_bypass_sels[] = { "pll3", "pll3_bypass_src", };
-@@ -160,6 +160,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 
- 	/* Clock source from external clock via CLK1 PAD */
- 	clks[IMX6SX_CLK_ANACLK1] = imx_obtain_fixed_clock("anaclk1", 0);
-+	clks[IMX6SX_CLK_ANACLK2] = imx_obtain_fixed_clock("anaclk2", 0);
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6sx-anatop");
- 	base = of_iomap(np, 0);
-@@ -228,7 +229,9 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SX_CLK_PCIE_REF_125M] = imx_clk_gate("pcie_ref_125m", "pcie_ref", base + 0xe0, 19);
- 
- 	clks[IMX6SX_CLK_LVDS1_OUT] = imx_clk_gate_exclusive("lvds1_out", "lvds1_sel", base + 0x160, 10, BIT(12));
-+	clks[IMX6SX_CLK_LVDS2_OUT] = imx_clk_gate_exclusive("lvds2_out", "lvds2_sel", base + 0x160, 11, BIT(13));
- 	clks[IMX6SX_CLK_LVDS1_IN]  = imx_clk_gate_exclusive("lvds1_in",  "anaclk1",   base + 0x160, 12, BIT(10));
-+	clks[IMX6SX_CLK_LVDS2_IN]  = imx_clk_gate_exclusive("lvds2_in",  "anaclk2",   base + 0x160, 13, BIT(11));
- 
- 	clks[IMX6SX_CLK_ENET_REF] = clk_register_divider_table(NULL, "enet_ref", "pll6_enet", 0,
- 			base + 0xe0, 0, 2, 0, clk_enet_ref_table,
-@@ -270,6 +273,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 
- 	/*                                                name                reg           shift   width   parent_names       num_parents */
- 	clks[IMX6SX_CLK_LVDS1_SEL]          = imx_clk_mux("lvds1_sel",        base + 0x160, 0,      5,      lvds_sels,         ARRAY_SIZE(lvds_sels));
-+	clks[IMX6SX_CLK_LVDS2_SEL]          = imx_clk_mux("lvds2_sel",        base + 0x160, 5,      5,      lvds_sels,         ARRAY_SIZE(lvds_sels));
- 
- 	np = ccm_node;
- 	base = of_iomap(np, 0);
-diff --git a/include/dt-bindings/clock/imx6sx-clock.h b/include/dt-bindings/clock/imx6sx-clock.h
-index 36f0324..cd2d6c5 100644
---- a/include/dt-bindings/clock/imx6sx-clock.h
-+++ b/include/dt-bindings/clock/imx6sx-clock.h
-@@ -275,6 +275,10 @@
- #define IMX6SX_PLL6_BYPASS		262
- #define IMX6SX_PLL7_BYPASS		263
- #define IMX6SX_CLK_SPDIF_GCLK		264
--#define IMX6SX_CLK_CLK_END		265
-+#define IMX6SX_CLK_LVDS2_SEL		265
-+#define IMX6SX_CLK_LVDS2_OUT		266
-+#define IMX6SX_CLK_LVDS2_IN		267
-+#define IMX6SX_CLK_ANACLK2		268
-+#define IMX6SX_CLK_CLK_END		269
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX6SX_H */
+Icenowy Zheng (9):
+  pinctrl: sunxi: refactor irq related register function to have desc
+  pinctrl: sunxi: introduce IRQ bank conversion function
+  pinctrl: sunxi: change irq_bank_base to irq_bank_map
+  pinctrl: sunxi: add support for the Allwinner H6 main pin controller
+  clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
+  dt-bindings: add device tree binding for Allwinner H6 main CCU
+  clk: sunxi-ng: add support for the Allwinner H6 CCU
+  arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
+  arm64: allwinner: h6: add support for Pine H64 board
+
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |    4 +
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    1 +
+ arch/arm64/boot/dts/allwinner/Makefile             |    1 +
+ .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      |   29 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi       |  177 +++
+ drivers/clk/sunxi-ng/Kconfig                       |    5 +
+ drivers/clk/sunxi-ng/Makefile                      |    1 +
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c               | 1207 ++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.h               |   56 +
+ drivers/clk/sunxi-ng/ccu_nkmp.c                    |   20 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.h                    |    2 +
+ drivers/pinctrl/sunxi/Kconfig                      |    4 +
+ drivers/pinctrl/sunxi/Makefile                     |    1 +
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c          |  614 ++++++++++
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c          |    4 +-
+ drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c          |    4 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              |   22 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h              |   40 +-
+ include/dt-bindings/clock/sun50i-h6-ccu.h          |  124 ++
+ include/dt-bindings/reset/sun50i-h6-ccu.h          |   73 ++
+ 20 files changed, 2359 insertions(+), 30 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.h
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
+ create mode 100644 include/dt-bindings/clock/sun50i-h6-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-h6-ccu.h
+
 -- 
-2.7.4
+2.15.1
+
