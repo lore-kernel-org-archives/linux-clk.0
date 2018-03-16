@@ -1,65 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38629 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933544AbeCEKZc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Mar 2018 05:25:32 -0500
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v6 6/6] ARM: dts: imx6: RIoTboard provide standby on power off option
-Date: Mon,  5 Mar 2018 11:25:23 +0100
-Message-Id: <20180305102524.5905-7-o.rempel@pengutronix.de>
-In-Reply-To: <20180305102524.5905-1-o.rempel@pengutronix.de>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180119174401.23051-1-andriy.shevchenko@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20180119174401.23051-1-andriy.shevchenko@linux.intel.com>
+Message-ID: <152124317641.242365.8789766611551244529@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1 1/1] clk: Remove redundant selection of RATIONAL
+Date: Fri, 16 Mar 2018 16:32:56 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This board, as well as some other boards with i.MX6 and a PMIC, uses a
-"PMIC_STBY_REQ" line to notify the PMIC about a state change.
-The PMIC is programmed for a specific state change before triggering the
-line.
-In this case, PMIC_STBY_REQ can be used for stand by, sleep
-and power off modes.
+Quoting Andy Shevchenko (2018-01-19 09:44:01)
+> Since the commit
+> =
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/boot/dts/imx6dl-riotboard.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+>   0777591e715a ("clk: fractional-divider: switch to rational best approxi=
+mation")
+> =
 
-diff --git a/arch/arm/boot/dts/imx6dl-riotboard.dts b/arch/arm/boot/dts/imx6dl-riotboard.dts
-index 23e108204e1e..c507532baed3 100644
---- a/arch/arm/boot/dts/imx6dl-riotboard.dts
-+++ b/arch/arm/boot/dts/imx6dl-riotboard.dts
-@@ -90,6 +90,10 @@
- 	status = "okay";
- };
- 
-+&clks {
-+	fsl,pmic-stby-poweroff;
-+};
-+
- &fec {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet>;
-@@ -170,6 +174,7 @@
- 		reg = <0x08>;
- 		interrupt-parent = <&gpio5>;
- 		interrupts = <16 8>;
-+		fsl,pmic-stby-poweroff;
- 
- 		regulators {
- 			reg_vddcore: sw1ab {				/* VDDARM_IN */
--- 
-2.16.1
+> enables rational best approximation to all common based clocks, there is
+> no need to repeat the selection in each of them.
+> =
 
+> No functional changes intended.
+> =
+
+
+I'd prefer we leave it alone. It would be better to push the basic clk
+types into Kconfig and then have platforms select the ones they want to
+use.
