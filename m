@@ -1,43 +1,56 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 3/7] dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
-Date: Fri, 23 Mar 2018 22:38:12 +0800
-Message-ID: <20180323143816.200573-4-yixun.lan@amlogic.com>
-In-Reply-To: <20180323143816.200573-1-yixun.lan@amlogic.com>
-References: <20180323143816.200573-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 0/7] Allwinner A64 DE2 CCU support with dedicated DE2 bus driver
+Date: Sat, 17 Mar 2018 01:53:47 +0800
+Message-Id: <20180316175354.21437-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the dt-binding documentation to support new compatible string
-for the Amlogic's Meson-AXG SoC.
+This patchset tries to implement the Allwinner A64 DE2 as a bus driver,
+in order to model the fact that the SRAM claim controls the access to
+the whole DE2 memory space.
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt | 1 +
- 1 file changed, 1 insertion(+)
+PATCH 1 and PATCH 4 are for the CCU part.
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-index 786dc39ca904..3a880528030e 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-@@ -9,6 +9,7 @@ Required Properties:
- 	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
- 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
- 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
-+	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
- 	followed by the common "amlogic,meson-gx-aoclkc"
- 
- - #clock-cells: should be 1.
+PATCH 2 is the device tree binding for the A64 DE2 bus, and PATCH 3
+implements the bus driver.
+
+PATCH 5 is a modified version of A64 DE2 CCU patch, which uses the A64
+DE2 bus.
+
+PATCH 6 and 7 are just the simplefb patches for A64.
+
+Icenowy Zheng (7):
+  dt-bindings: add compatible string for the A64 DE2 CCU
+  dt-bindings: add binding for the Allwinner A64 DE2 bus
+  bus: add bus driver for accessing Allwinner A64 DE2
+  clk: sunxi-ng: add A64 compatible string
+  arm64: allwinner: a64: add DE2 CCU related device tree nodes
+  arm64: allwinner: a64: add simplefb for A64 SoC
+  arm64: allwinner: a64: add HDMI regulator to all DTs' simplefb_hdmi
+
+ .../devicetree/bindings/bus/sun50i-de2-bus.txt     | 37 ++++++++++++
+ .../devicetree/bindings/clock/sun8i-de2.txt        |  1 +
+ .../boot/dts/allwinner/sun50i-a64-bananapi-m64.dts |  4 ++
+ .../boot/dts/allwinner/sun50i-a64-nanopi-a64.dts   |  4 ++
+ .../boot/dts/allwinner/sun50i-a64-olinuxino.dts    |  4 ++
+ .../boot/dts/allwinner/sun50i-a64-orangepi-win.dts |  4 ++
+ .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  4 ++
+ .../dts/allwinner/sun50i-a64-sopine-baseboard.dts  |  4 ++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 68 ++++++++++++++++++++++
+ drivers/bus/Kconfig                                | 10 ++++
+ drivers/bus/Makefile                               |  1 +
+ drivers/bus/sun50i-de2.c                           | 49 ++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c               | 11 ++--
+ 13 files changed, 194 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+ create mode 100644 drivers/bus/sun50i-de2.c
+
 -- 
 2.15.1
