@@ -1,71 +1,226 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:38066 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754670AbeCRUP2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 18 Mar 2018 16:15:28 -0400
-Date: Sun, 18 Mar 2018 21:15:19 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 3/9] pinctrl: sunxi: change irq_bank_base to
- irq_bank_map
-Message-ID: <20180318201519.smbzfswz4wxdw45q@flea>
-References: <20180316140215.28663-1-icenowy@aosc.io>
- <20180316140215.28663-4-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z2sqvwi4q4veb6mo"
-In-Reply-To: <20180316140215.28663-4-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 23/42] ARM: davinci: dm355: add new clock init using common clock framework
+Date: Thu, 15 Mar 2018 21:52:39 -0500
+Message-Id: <1521168778-27236-24-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds the new board-specific clock init in mach-davinci/dm355.c
+using the new common clock framework drivers.
 
---z2sqvwi4q4veb6mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-On Fri, Mar 16, 2018 at 10:02:09PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
-> GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5.
->=20
-> Change the current code that uses IRQ bank base to a IRQ bank map, in
-> order to support the case that holes exist among IRQ banks.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Also clean up the #includes since we are adding some here.
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-Thanks!
-Maxime
+v8 changes:
+- none
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- add davinci prefix to commit description
 
---z2sqvwi4q4veb6mo
-Content-Type: application/pgp-signature; name="signature.asc"
+v6 changes:
+- add blank lines between function calls
 
------BEGIN PGP SIGNATURE-----
+ arch/arm/mach-davinci/board-dm355-evm.c     |  2 +
+ arch/arm/mach-davinci/board-dm355-leopard.c |  2 +
+ arch/arm/mach-davinci/davinci.h             |  1 +
+ arch/arm/mach-davinci/dm355.c               | 88 +++++++++++++++++++++++++----
+ 4 files changed, 81 insertions(+), 12 deletions(-)
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlquyNYACgkQ0rTAlCFN
-r3TW1Q/6AhP+y1a59KM4kK2xfXsQnuIBbS5Ud38VfpLSyZXRP6G5OHuXAImFJlJK
-iWzPlKiPWHfy94e8fX9jWGLZDJ58mCLLNJ8YKwtNS4GmpeFvtxWTckRMLKs/WKCt
-z0vcYazmfkbvUzeAfgGCpIG0yPifdOK/KT+Kk9vC8W0kyIRegRSqwzwqZJ5b3FMF
-rzqHBNDiARDgVSmT/rCtKMtESJo24G69Oqhe8EEImQWvRqVz5D0RG/Wc65MfUJcT
-xN3wxsLcL5oBrxrOq+ktgAkOx8nAgKd+hkLlj8DZzHMa7JJXSNa15N8lm5Qd6zW6
-TbllyJpgb6rnOPSY3EqkeyuAycf5WuIMHDnNRLrVCGvSQ2qIWWSFdTvT/keVPbd3
-NZD0iAK1H+xBxg7jvZq2aNaCbEPVoIAGaglQvUVfWSDFkIc50Z8ENoiyLNYwHSNT
-a403vIFpJOw+k/Bzu2XPFe5rN2FdGki+pwjphuhYatwT/JnUMW/DGmf18YwzqMVF
-fJEmN5OTaHyOdMDFRhqtNNXDuQlKYwE3E066bQGcOxskHImdo37wbhqL7nYm4KSq
-b8qgqq+1pMAFxH0Untu/+jbrcVGdtPfRS8ouVIy+1mHR1uNm/+j1DItZx+XTqVG4
-8N3I7YmT0ZT73EGAWwINr1a1dtKS4IN46Q8QB5RtltciCYvRhh0=
-=z7zK
------END PGP SIGNATURE-----
-
---z2sqvwi4q4veb6mo--
+diff --git a/arch/arm/mach-davinci/board-dm355-evm.c b/arch/arm/mach-davinci/board-dm355-evm.c
+index cb30637..ea03ddc 100644
+--- a/arch/arm/mach-davinci/board-dm355-evm.c
++++ b/arch/arm/mach-davinci/board-dm355-evm.c
+@@ -384,6 +384,8 @@ static __init void dm355_evm_init(void)
+ 	struct clk *aemif;
+ 	int ret;
+ 
++	dm355_register_clocks();
++
+ 	ret = dm355_gpio_register();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/board-dm355-leopard.c b/arch/arm/mach-davinci/board-dm355-leopard.c
+index 59743bd..09f8216 100644
+--- a/arch/arm/mach-davinci/board-dm355-leopard.c
++++ b/arch/arm/mach-davinci/board-dm355-leopard.c
+@@ -233,6 +233,8 @@ static __init void dm355_leopard_init(void)
+ 	struct clk *aemif;
+ 	int ret;
+ 
++	dm355_register_clocks();
++
+ 	ret = dm355_gpio_register();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index 270cef8..6b6abf0a 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -84,6 +84,7 @@ int davinci_init_wdt(void);
+ /* DM355 function declarations */
+ void dm355_init(void);
+ void dm355_init_time(void);
++void dm355_register_clocks(void);
+ void dm355_init_spi0(unsigned chipselect_mask,
+ 		const struct spi_board_info *info, unsigned len);
+ void dm355_init_asp1(u32 evt_enable);
+diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
+index 0da7516..f53e07a 100644
+--- a/arch/arm/mach-davinci/dm355.c
++++ b/arch/arm/mach-davinci/dm355.c
+@@ -8,31 +8,34 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
+-#include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/serial_8250.h>
+-#include <linux/platform_device.h>
++#include <linux/clk-provider.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+-#include <linux/spi/spi.h>
++#include <linux/init.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_data/spi-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
++#include <linux/spi/spi.h>
+ 
+ #include <asm/mach/map.h>
+ 
++#include <mach/common.h>
+ #include <mach/cputype.h>
+-#include "psc.h"
+-#include <mach/mux.h>
+ #include <mach/irqs.h>
+-#include <mach/time.h>
++#include <mach/mux.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
++
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ #define DM355_UART2_BASE	(IO_PHYS + 0x206000)
+ #define DM355_OSD_BASE		(IO_PHYS + 0x70200)
+@@ -43,6 +46,7 @@
+  */
+ #define DM355_REF_FREQ		24000000	/* 24 or 36 MHz */
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num       = 1,
+ 	.phys_base = DAVINCI_PLL1_BASE,
+@@ -382,7 +386,7 @@ static struct clk_lookup dm355_clks[] = {
+ 	CLK(NULL, "usb", &usb_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
+-
++#endif
+ /*----------------------------------------------------------------------*/
+ 
+ static u64 dm355_spi0_dma_mask = DMA_BIT_MASK(32);
+@@ -1046,8 +1050,68 @@ void __init dm355_init(void)
+ 
+ void __init dm355_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	struct clk *clk;
++
++	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM355_REF_FREQ);
++
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(dm355_clks);
+ 	davinci_timer_init(&timer0_clk);
++#endif
++}
++
++static struct resource dm355_pll1_resources[] = {
++	{
++		.start	= DAVINCI_PLL1_BASE,
++		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device dm355_pll1_device = {
++	.name		= "dm355-pll1",
++	.id		= -1,
++	.resource	= dm355_pll1_resources,
++	.num_resources	= ARRAY_SIZE(dm355_pll1_resources),
++};
++
++static struct resource dm355_pll2_resources[] = {
++	{
++		.start	= DAVINCI_PLL2_BASE,
++		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device dm355_pll2_device = {
++	.name		= "dm355-pll2",
++	.id		= -1,
++	.resource	= dm355_pll2_resources,
++	.num_resources	= ARRAY_SIZE(dm355_pll2_resources),
++};
++
++static struct resource dm355_psc_resources[] = {
++	{
++		.start	= DAVINCI_PWR_SLEEP_CNTRL_BASE,
++		.end	= DAVINCI_PWR_SLEEP_CNTRL_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device dm355_psc_device = {
++	.name		= "dm355-psc",
++	.id		= -1,
++	.resource	= dm355_psc_resources,
++	.num_resources	= ARRAY_SIZE(dm355_psc_resources),
++};
++
++void __init dm355_register_clocks(void)
++{
++	platform_device_register(&dm355_pll1_device);
++	platform_device_register(&dm355_pll2_device);
++	platform_device_register(&dm355_psc_device);
+ }
+ 
+ int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
+-- 
+2.7.4
