@@ -1,71 +1,55 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	alexandre.belloni@bootlin.com
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Joseph Lo <josephl@nvidia.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	lee.jones@linaro.org,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Brian Norris <briannorris@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	linux-rockchip@lists.infradead.org,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-input@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Matthias Kaehlcke <mka@chromium.org>,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	stephen lu <lumotuwe@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>
-Subject: [PATCH v5 3/4] clk: lpc32xx: Set name of regmap_config
-Date: Mon, 12 Mar 2018 17:51:41 +0800
-Message-Id: <20180312095142.30854-4-jeffy.chen@rock-chips.com>
-In-Reply-To: <20180312095142.30854-1-jeffy.chen@rock-chips.com>
-References: <20180312095142.30854-1-jeffy.chen@rock-chips.com>
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v8 30/42] ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
+Date: Thu, 15 Mar 2018 21:52:46 -0500
+Message-Id: <1521168778-27236-31-git-send-email-david@lechnology.com>
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We are now allowing to register debugfs without a valid device, and not
-having a valid name will end up using "dummy*" to create debugfs dir.
+This removes CONFIG_DAVINCI_RESET_CLOCKS. The option has been removed from
+the kernel.
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
 
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
+v8 changes:
+- none
 
- drivers/clk/nxp/clk-lpc32xx.c | 1 +
- 1 file changed, 1 insertion(+)
+v7 changes:
+- none
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index f5d815f577e0..a2a0a7f3bc57 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -67,6 +67,7 @@
- #define LPC32XX_USB_CLK_STS		0xF8
- 
- static struct regmap_config lpc32xx_scb_regmap_config = {
-+	.name = "lpc32xx-scb",
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
+v6 changes:
+- none
+
+ arch/arm/configs/davinci_all_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
+index c302a04..0f4d20b 100644
+--- a/arch/arm/configs/davinci_all_defconfig
++++ b/arch/arm/configs/davinci_all_defconfig
+@@ -31,7 +31,6 @@ CONFIG_MACH_MITYOMAPL138=y
+ CONFIG_MACH_OMAPL138_HAWKBOARD=y
+ CONFIG_DAVINCI_MUX_DEBUG=y
+ CONFIG_DAVINCI_MUX_WARNINGS=y
+-CONFIG_DAVINCI_RESET_CLOCKS=y
+ CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
+ CONFIG_CMA=y
 -- 
-2.11.0
+2.7.4
