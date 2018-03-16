@@ -1,59 +1,77 @@
-Return-Path: <prasannatsmkumar@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20180307151025.GP4197@saruman>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-4-prasannatsmkumar@gmail.com> <20180306000832.GL4197@saruman>
- <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
- <20180307143541.GN4197@saruman> <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
- <20180307151025.GP4197@saruman>
-From: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Date: Wed, 7 Mar 2018 20:52:27 +0530
-Message-ID: <CANc+2y6yNkgrJnM64D-JyL3jyWwk_Tes4MZfMw0NRmsf5v7=4w@mail.gmail.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-To: James Hogan <jhogan@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ralf Baechle <ralf@linux-mips.org>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-MIPS <linux-mips@linux-mips.org>,
-	linux-clk@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>, Mathieu Malaterre <malat@debian.org>,
-	Dominik Peklo <dom.peklo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:52748 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753102AbeCPRzr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Mar 2018 13:55:47 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 2/7] dt-bindings: add binding for the Allwinner A64 DE2 bus
+Date: Sat, 17 Mar 2018 01:53:49 +0800
+Message-Id: <20180316175354.21437-3-icenowy@aosc.io>
+In-Reply-To: <20180316175354.21437-1-icenowy@aosc.io>
+References: <20180316175354.21437-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 7 March 2018 at 20:40, James Hogan <jhogan@kernel.org> wrote:
-> On Wed, Mar 07, 2018 at 08:35:00PM +0530, PrasannaKumar Muralidharan wrote:
->> On 7 March 2018 at 20:05, James Hogan <jhogan@kernel.org> wrote:
->> > On Wed, Mar 07, 2018 at 07:14:49PM +0530, PrasannaKumar Muralidharan wrote:
->> >> > Does X1000 use a different PRID, or is it basically just a JZ4780 core
->> >> > with different SoC peripherals?
->> >>
->> >> Yes X1000 does have a different PRID (PRID = 0x2ed1024f). X1000 has
->> >
->> > Right, so thats 0x2e000000 | PRID_COMP_INGENIC_D1 | PRID_IMP_JZRISC |
->> > 0x4f, which cpu-probe.c already handles (apparently the D1 company code
->> > is used for JZ4770 & JZ4775 too).
->>
->> Okay. Does this mean I need not modify get_board_mach_type() and
->> get_system_type()?
->
-> You still need to modify them, otherwise it won't understand
-> "ingenic,x1000" compatible string, and will call it a JZ4740 in
-> /proc/cpuinfo.
+All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64 SoC to
+be claimed, otherwise the whole DE2 space is inaccessible.
 
-Oh okay. Will make the changes.
+Add a device tree binding of the DE2 part as a sub-bus.
 
->> >> I used to get my code tested from Domink but I could not reach him for
->> >> quite some time. Before buying the development board myself I would
->> >> like to see if anyone can help me in testing. Do you have any contact
->> >> with Ingenic who can help in testing this?
->> >
->> > Not personally, but I'll ask around. Of course if nobody much cares
->> > about it in practice and nobody has the hardware, there may be little
->> > value in supporting it upstream.
->>
->> Seems Jiaxun is interested in the board and is willing to help.
->
-> Okay, cool.
->
-> Cheers
-> James
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ .../devicetree/bindings/bus/sun50i-de2-bus.txt     | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+
+diff --git a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+new file mode 100644
+index 000000000000..87dfb33fb3be
+--- /dev/null
++++ b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+@@ -0,0 +1,37 @@
++Device tree bindings for Allwinner A64 DE2 bus
++
++The Allwinner A64 DE2 is on a special bus, which needs a SRAM region (SRAM C)
++to be claimed for enabling the access.
++
++Required properties:
++
++ - compatible:		Should contain "allwinner,sun50i-a64-de2"
++ - reg:			A resource specifier for the register space
++ - #address-cells:	Must be set to 1
++ - #size-cells:		Must be set to 1
++ - ranges:		Must be set up to map the address space inside the
++			DE2, for the sub-blocks of DE2.
++ - allwinner,sram:	the SRAM that needs to be claimed
++
++Example:
++
++	de2@1000000 {
++		compatible = "allwinner,sun50i-a64-de2";
++		reg = <0x1000000 0x400000>;
++		allwinner,sram = <&de2_sram 1>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x1000000 0x400000>;
++
++		display_clocks: clock@0 {
++			compatible = "allwinner,sun50i-a64-de2-clk";
++			reg = <0x0 0x100000>;
++			clocks = <&ccu CLK_DE>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++	};
+-- 
+2.15.1
+
