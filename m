@@ -1,37 +1,36 @@
-Return-Path: <sboyd@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:59114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752678AbeCPWx7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Mar 2018 18:53:59 -0400
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Mike Looijmans <mike.looijmans@topic.nl>, Rob Herring <robh@kernel.org>
+To: Chunyan Zhang <zhang.lyra@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <f25eb71c-efd9-f842-1a98-76c86b03a34a@topic.nl>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, mturquette@baylibre.com, mark.rutland@arm.com
-References: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
- <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
- <ec813ab3-88db-f6e3-eca1-b6ea58936fcf@topic.nl>
- <152149373621.242365.4815290210815209160@swboyd.mtv.corp.google.com>
- <f25eb71c-efd9-f842-1a98-76c86b03a34a@topic.nl>
-Message-ID: <152153033462.254778.17337398489852735308@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2] clk: Add driver for the si544 clock generator chip
-Date: Tue, 20 Mar 2018 00:18:54 -0700
+In-Reply-To: <1518170109-15216-1-git-send-email-zhang.lyra@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chunyan Zhang <zhang.lyra@gmail.com>
+References: <1518169691-14870-2-git-send-email-zhang.lyra@gmail.com>
+ <1518170109-15216-1-git-send-email-zhang.lyra@gmail.com>
+Message-ID: <152124083804.242365.2908934110735507785@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/2] clk: sprd: add RTC gate for SC9860
+Date: Fri, 16 Mar 2018 15:53:58 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Mike Looijmans (2018-03-20 00:15:36)
-> Thanks, found them on patchwork, somehow they didn't end up in my mailbox.
-> =
+Quoting Chunyan Zhang (2018-02-09 01:55:09)
+> From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> 
+> Add a few gate clocks which are used for gating RTC for some
+> devices on AON area of SC9860.
+> 
+> This patch has been tested on SC9860, with this patch and proper DT
+> configurations, the watchdog can be initialized and work well.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> ---
 
-> Comments are clear, will incorporate them, I only have trouble with your =
+Applied to clk-next
 
-> remark on the DT documentation "Can this reference stuff go to the bottom=
- of =
-
-> this document?". I copied the style from the other documents in the same =
-
-> directory, I'm slightly puzzled about where the reference part should go =
-now.
-> =
-
-> =
-
-
-Ok. It's fine either way.
