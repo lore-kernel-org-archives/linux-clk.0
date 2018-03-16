@@ -1,67 +1,196 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:40262 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753164AbeC1PBt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Mar 2018 11:01:49 -0400
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v4 0/8] Ingenic JZ47xx Timer/Counter Unit drivers
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+ Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
+ Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v4 1/9] pinctrl: sunxi: refactor irq related register function
+ to have desc
+Date: Fri, 16 Mar 2018 22:02:07 +0800
+Message-Id: <20180316140215.28663-2-icenowy@aosc.io>
+In-Reply-To: <20180316140215.28663-1-icenowy@aosc.io>
+References: <20180316140215.28663-1-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Icenowy Zheng <icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Wed, 28 Mar 2018 17:01:47 +0200
-From: Paul Cercueil <paul@crapouillou.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-doc@vger.kernel.org
-Subject: 
-In-Reply-To: <aeb57b92-6932-9774-dc50-7563d30846bf@linaro.org>
-References: <20180110224838.16711-2-paul@crapouillou.net>
- <20180317232901.14129-1-paul@crapouillou.net>
- <aeb57b92-6932-9774-dc50-7563d30846bf@linaro.org>
-Message-ID: <2fb3344b4034385ed89bcdf7da2347d4@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Le 2018-03-18 23:13, Daniel Lezcano a écrit :
-> On 18/03/2018 00:28, Paul Cercueil wrote:
->> Hi,
->> 
->> This is the 4th version of my TCU patchset.
->> 
->> The major change is a greatly improved documentation, both in-code
->> and as separate text files, to describe how the hardware works and
->> how the devicetree bindings should be used.
->> 
->> There are also cosmetic changes in the irqchip driver, and the
->> clocksource driver will now use as timers all TCU channels not
->> requested by the TCU PWM driver.
-> 
-> Hi Paul,
-> 
-> I don't know why but you series appears in reply to [PATCH v3 2/9]. Not
-> sure if it is my mailer or how you are sending the patches but if it is
-> the latter can you in the future, when resending a new version, not use
-> the in-reply-to option. It will be easier to follow the versions.
-> 
-> Thanks.
-> 
->  -- Daniel
+As the new H6 SoC has holes in the IRQ registers, refactor the IRQ
+related register function for getting the full pinctrl desc structure.
 
-Hi Daniel,
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v4:
+- Adjusted parameter sequence.
 
-I guess I did a mistake. I always reply to the first patch of the 
-previous
-version of the patchset (is that correct?).
+Patch introduced in v3.
 
-Thanks,
--Paul
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 22 ++++++++++------------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h | 26 ++++++++++++++++++--------
+ 2 files changed, 28 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 341312d66512..af7264654151 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -835,7 +835,7 @@ static void sunxi_pinctrl_irq_release_resources(struct irq_data *d)
+ static int sunxi_pinctrl_irq_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+-	u32 reg = sunxi_irq_cfg_reg(d->hwirq, pctl->desc->irq_bank_base);
++	u32 reg = sunxi_irq_cfg_reg(pctl->desc, d->hwirq);
+ 	u8 index = sunxi_irq_cfg_offset(d->hwirq);
+ 	unsigned long flags;
+ 	u32 regval;
+@@ -882,8 +882,7 @@ static int sunxi_pinctrl_irq_set_type(struct irq_data *d, unsigned int type)
+ static void sunxi_pinctrl_irq_ack(struct irq_data *d)
+ {
+ 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+-	u32 status_reg = sunxi_irq_status_reg(d->hwirq,
+-					      pctl->desc->irq_bank_base);
++	u32 status_reg = sunxi_irq_status_reg(pctl->desc, d->hwirq);
+ 	u8 status_idx = sunxi_irq_status_offset(d->hwirq);
+ 
+ 	/* Clear the IRQ */
+@@ -893,7 +892,7 @@ static void sunxi_pinctrl_irq_ack(struct irq_data *d)
+ static void sunxi_pinctrl_irq_mask(struct irq_data *d)
+ {
+ 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+-	u32 reg = sunxi_irq_ctrl_reg(d->hwirq, pctl->desc->irq_bank_base);
++	u32 reg = sunxi_irq_ctrl_reg(pctl->desc, d->hwirq);
+ 	u8 idx = sunxi_irq_ctrl_offset(d->hwirq);
+ 	unsigned long flags;
+ 	u32 val;
+@@ -910,7 +909,7 @@ static void sunxi_pinctrl_irq_mask(struct irq_data *d)
+ static void sunxi_pinctrl_irq_unmask(struct irq_data *d)
+ {
+ 	struct sunxi_pinctrl *pctl = irq_data_get_irq_chip_data(d);
+-	u32 reg = sunxi_irq_ctrl_reg(d->hwirq, pctl->desc->irq_bank_base);
++	u32 reg = sunxi_irq_ctrl_reg(pctl->desc, d->hwirq);
+ 	u8 idx = sunxi_irq_ctrl_offset(d->hwirq);
+ 	unsigned long flags;
+ 	u32 val;
+@@ -1002,7 +1001,7 @@ static void sunxi_pinctrl_irq_handler(struct irq_desc *desc)
+ 	if (bank == pctl->desc->irq_banks)
+ 		return;
+ 
+-	reg = sunxi_irq_status_reg_from_bank(bank, pctl->desc->irq_bank_base);
++	reg = sunxi_irq_status_reg_from_bank(pctl->desc, bank);
+ 	val = readl(pctl->membase + reg);
+ 
+ 	if (val) {
+@@ -1234,8 +1233,7 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
+ 
+ 		writel(src | div << 4,
+ 		       pctl->membase +
+-		       sunxi_irq_debounce_reg_from_bank(i,
+-							pctl->desc->irq_bank_base));
++		       sunxi_irq_debounce_reg_from_bank(pctl->desc, i));
+ 	}
+ 
+ 	return 0;
+@@ -1410,11 +1408,11 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+ 
+ 	for (i = 0; i < pctl->desc->irq_banks; i++) {
+ 		/* Mask and clear all IRQs before registering a handler */
+-		writel(0, pctl->membase + sunxi_irq_ctrl_reg_from_bank(i,
+-						pctl->desc->irq_bank_base));
++		writel(0, pctl->membase +
++			  sunxi_irq_ctrl_reg_from_bank(pctl->desc, i));
+ 		writel(0xffffffff,
+-		       pctl->membase + sunxi_irq_status_reg_from_bank(i,
+-						pctl->desc->irq_bank_base));
++		       pctl->membase +
++		       sunxi_irq_status_reg_from_bank(pctl->desc, i));
+ 
+ 		irq_set_chained_handler_and_data(pctl->irq[i],
+ 						 sunxi_pinctrl_irq_handler,
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index 11b128f54ed2..a13bd57d880d 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -263,8 +263,10 @@ static inline u32 sunxi_pull_offset(u16 pin)
+ 	return pin_num * PULL_PINS_BITS;
+ }
+ 
+-static inline u32 sunxi_irq_cfg_reg(u16 irq, unsigned bank_base)
++static inline u32 sunxi_irq_cfg_reg(const struct sunxi_pinctrl_desc *desc,
++				    u16 irq)
+ {
++	unsigned bank_base = desc->irq_bank_base;
+ 	u8 bank = irq / IRQ_PER_BANK;
+ 	u8 reg = (irq % IRQ_PER_BANK) / IRQ_CFG_IRQ_PER_REG * 0x04;
+ 
+@@ -277,16 +279,19 @@ static inline u32 sunxi_irq_cfg_offset(u16 irq)
+ 	return irq_num * IRQ_CFG_IRQ_BITS;
+ }
+ 
+-static inline u32 sunxi_irq_ctrl_reg_from_bank(u8 bank, unsigned bank_base)
++static inline u32 sunxi_irq_ctrl_reg_from_bank(const struct sunxi_pinctrl_desc *desc, u8 bank)
+ {
++	unsigned bank_base = desc->irq_bank_base;
++
+ 	return IRQ_CTRL_REG + (bank_base + bank) * IRQ_MEM_SIZE;
+ }
+ 
+-static inline u32 sunxi_irq_ctrl_reg(u16 irq, unsigned bank_base)
++static inline u32 sunxi_irq_ctrl_reg(const struct sunxi_pinctrl_desc *desc,
++				     u16 irq)
+ {
+ 	u8 bank = irq / IRQ_PER_BANK;
+ 
+-	return sunxi_irq_ctrl_reg_from_bank(bank, bank_base);
++	return sunxi_irq_ctrl_reg_from_bank(desc, bank);
+ }
+ 
+ static inline u32 sunxi_irq_ctrl_offset(u16 irq)
+@@ -295,21 +300,26 @@ static inline u32 sunxi_irq_ctrl_offset(u16 irq)
+ 	return irq_num * IRQ_CTRL_IRQ_BITS;
+ }
+ 
+-static inline u32 sunxi_irq_debounce_reg_from_bank(u8 bank, unsigned bank_base)
++static inline u32 sunxi_irq_debounce_reg_from_bank(const struct sunxi_pinctrl_desc *desc, u8 bank)
+ {
++	unsigned bank_base = desc->irq_bank_base;
++
+ 	return IRQ_DEBOUNCE_REG + (bank_base + bank) * IRQ_MEM_SIZE;
+ }
+ 
+-static inline u32 sunxi_irq_status_reg_from_bank(u8 bank, unsigned bank_base)
++static inline u32 sunxi_irq_status_reg_from_bank(const struct sunxi_pinctrl_desc *desc, u8 bank)
+ {
++	unsigned bank_base = desc->irq_bank_base;
++
+ 	return IRQ_STATUS_REG + (bank_base + bank) * IRQ_MEM_SIZE;
+ }
+ 
+-static inline u32 sunxi_irq_status_reg(u16 irq, unsigned bank_base)
++static inline u32 sunxi_irq_status_reg(const struct sunxi_pinctrl_desc *desc,
++				       u16 irq)
+ {
+ 	u8 bank = irq / IRQ_PER_BANK;
+ 
+-	return sunxi_irq_status_reg_from_bank(bank, bank_base);
++	return sunxi_irq_status_reg_from_bank(desc, bank);
+ }
+ 
+ static inline u32 sunxi_irq_status_offset(u16 irq)
+-- 
+2.15.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
