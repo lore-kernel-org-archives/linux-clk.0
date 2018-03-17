@@ -1,226 +1,384 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1520493495-3084-3-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Amit Nischal <anischal@codeaurora.org>
-References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
- <1520493495-3084-3-git-send-email-anischal@codeaurora.org>
-Message-ID: <152150582284.254778.15552235408861080239@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2 2/4] clk: qcom: Configure the RCGs to a safe source as needed
-Date: Mon, 19 Mar 2018 17:30:22 -0700
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v5 10/12] clk: actions: Add composite clock support
+Date: Sat, 17 Mar 2018 15:39:50 +0530
+Message-Id: <20180317100952.28538-11-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-03-07 23:18:13)
-> For some root clock generators, there could be child branches which are
-> controlled by an entity other than application processor subsystem. For
-> such RCGs, as per application processor subsystem clock driver, all of its
-> downstream clocks are disabled and RCG is in disabled state but in actual
-> downstream clocks can be left enabled before.
+Add support for Actions Semi composite clock. This clock
+consists of gate, mux, divider, factor and fixed factor clocks.
 
-s/actual/reality?
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/Makefile        |   1 +
+ drivers/clk/actions/owl-composite.c | 200 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-composite.h | 118 +++++++++++++++++++++
+ 3 files changed, 319 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-composite.c
+ create mode 100644 drivers/clk/actions/owl-composite.h
 
-> =
-
-> So in this scenario, when RCG is disabled as per clock driver's point of
-> view and when rate scaling request comes before downstream clock enable
-> request, then RCG fails to update its configuration because in actual RCG
-
-s/actual/reality?
-
-> is on and it expects its new source to alredy in enable state  but in
-
-s/alredy/already be/
-
-> reality new source is in off state. In order to avoid letting the RCG to
-
-s/is in off state/is off/
-s/letting/having/
-
-> go into an invalid state, add support to just cache the rate of RCG during
-
-s/just//
-
-> set_rate(), defer actual RCG configuration update to be done during
-> clk_enable() as at this point of time, both its new parent and safe source
-> will be already enabled and RCG can safely switch to new parent.
-> =
-
-> During clk_disable() request, configure it to safe source as both
-> its parents, safe source and current parent will be enabled and RCG can
-> safely execute a switch. Also add support to have safe configuration
-> frequency table structure for each shared RCG.
-> =
-
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> ---
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index 2a7489a..205fa34 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -146,6 +146,9 @@ struct clk_dyn_rcg {
->   * @hid_width: number of bits in half integer divider
->   * @parent_map: map from software's parent index to hardware's src_sel f=
-ield
->   * @freq_tbl: frequency table
-> + * @current_freq: last cached frequency when using branches with shared =
-RCGs
-> + * @safe_src_freq_tbl : frequency table of safe source when using branch=
-es
-> + *                     with shared RCGs
->   * @clkr: regmap clock handle
->   *
->   */
-> @@ -155,6 +158,8 @@ struct clk_rcg2 {
->         u8                      hid_width;
->         const struct parent_map *parent_map;
->         const struct freq_tbl   *freq_tbl;
-> +       unsigned long           current_freq;
-> +       const struct freq_tbl   *safe_src_freq_tbl;
-
-Can we store safe_src index instead? And then construct the frequency
-table entry on the fly at the call site? I think it would greatly
-clarify that we don't really care about the rate of the clk at all.
-Instead, all we care about is making sure the mux is set to whatever
-source selection can provide an always on signal.
-
->         struct clk_regmap       clkr;
->  };
-> =
-
-> @@ -167,5 +172,6 @@ struct clk_rcg2 {
->  extern const struct clk_ops clk_byte2_ops;
->  extern const struct clk_ops clk_pixel_ops;
->  extern const struct clk_ops clk_gfx3d_ops;
-> +extern const struct clk_ops clk_rcg2_shared_ops;
-> =
-
->  #endif
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index e63db10..a52de54 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -790,3 +790,158 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, un=
-signed long rate,
->         .determine_rate =3D clk_gfx3d_determine_rate,
->  };
-> +
-> +static unsigned long
-> +clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> +{
-> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> +
-> +       if (!__clk_is_enabled(hw->clk)) {
-> +               if (!rcg->current_freq) {
-> +                       if (!clk_rcg2_get_parent(hw))
-
-This is checking for 0 source selection of parent? So basically if
-source is XO selected then return what we know is the XO speed? We
-should be able to do that by returning parent_rate though?
-
-> +                               rcg->current_freq =3D
-> +                                       rcg->safe_src_freq_tbl->freq;
-> +                       else
-> +                               rcg->current_freq =3D
-> +                                       clk_rcg2_recalc_rate(hw, parent_r=
-ate);
-> +               }
-> +
-> +               return rcg->current_freq;
-> +       }
-> +
-> +       return rcg->current_freq =3D clk_rcg2_recalc_rate(hw, parent_rate=
-);
-
-I don't get this function.
-
-To simplify just return cached rate if it's set and clk is off,
-otherwise read the hardware?
-
-	if (!__clk_is_enabled(hw->clk) && rcg->current_freq)
-		return rcg->current_freq;
-
-	return clk_rcg2_recalc_rate(hw, parent_rate);
-
-I would also rename current_freq to something like cached_freq and then
-*only* assign it when someone calls clk_set_rate() (and save around the
-frequency table pointer instead of raw frequency). Out of boot, we will
-return the right frequency and clk_set_rate() called before enable will
-cache the rate to what we want.
-
-> +}
-> +
-> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
-> +{
-> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> +
-> +       if (rcg->current_freq =3D=3D rcg->safe_src_freq_tbl->freq) {
-> +               clk_rcg2_set_force_enable(hw);
-> +               clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
-> +               clk_rcg2_clear_force_enable(hw);
-> +
-> +               return 0;
-> +       }
-> +
-> +       /*
-> +        * Switch from safe source to the stashed mux selection. The curr=
-ent
-> +        * parent has already been prepared and enabled at this point, and
-> +        * the safe source is always on while application processor subsy=
-stem
-> +        * is online. Therefore, the RCG can safely switch its source.
-> +        */
-> +
-> +       return clk_rcg2_shared_force_enable_clear(hw, rcg->current_freq);
-
-Not much is different between clk_rcg2_shared_force_enable_clear() and
-the three lines above inside that if condition. The only difference is
-we don't search for a rate in the frequency table. Ugh, but we can't
-change the frequency table because of hw clk control stuff that relies
-on the table in software matching the table in hardware? Sad.
-
-Can we at least change the if condition above to be something like:
-
-	if (rcg->force_safe_src) {
-		clk_rcg2_set_force_enable(...
-
-And then set the force_safe_src bool when we want enable to skip normal
-rate restoration behavior? We should be able to use that flag in other
-places too, like where we check for the clk being enabled in software or
-not.
-
-> +}
-> +
-> +static void clk_rcg2_shared_disable(struct clk_hw *hw)
-> +{
-> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> +
-> +       /*
-> +        * Park the RCG at a safe configuration - sourced off from safe s=
-ource.
-> +        * Force enable and disable the RCG while configuring it to safeg=
-uard
-> +        * against any update signal coming from the downstream clock.
-> +        * The current parent is still prepared and enabled at this point=
-, and
-> +        * the safe source is always on while application processor subsy=
-stem
-> +        * is online. Therefore, the RCG can safely switch its parent.
-> +        */
-> +       clk_rcg2_set_force_enable(hw);
-> +       clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
-> +       clk_rcg2_clear_force_enable(hw);
-> +}
-> +
-
-Yeah, all this stuff would get simpler if we stopped using frequencies.
-Hopefully I made sense!
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index b618696ba54e..dc905b285bdc 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -6,3 +6,4 @@ clk-owl-y			+= owl-mux.o
+ clk-owl-y			+= owl-divider.o
+ clk-owl-y			+= owl-factor.o
+ clk-owl-y			+= owl-fixed-factor.o
++clk-owl-y			+= owl-composite.o
+diff --git a/drivers/clk/actions/owl-composite.c b/drivers/clk/actions/owl-composite.c
+new file mode 100644
+index 000000000000..d0ffbfc2c34c
+--- /dev/null
++++ b/drivers/clk/actions/owl-composite.c
+@@ -0,0 +1,200 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL composite clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include "owl-composite.h"
++
++static u8 owl_comp_get_parent(struct clk_hw *hw)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++
++	return owl_mux_helper_get_parent(&comp->common, &comp->mux_hw);
++}
++
++static int owl_comp_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++
++	return owl_mux_helper_set_parent(&comp->common, &comp->mux_hw, index);
++}
++
++static void owl_comp_disable(struct clk_hw *hw)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++	struct owl_clk_common *common = &comp->common;
++
++	clk_gate_set(common, &comp->gate_hw, false);
++}
++
++static int owl_comp_enable(struct clk_hw *hw)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++	struct owl_clk_common *common = &comp->common;
++
++	clk_gate_set(common, &comp->gate_hw, true);
++
++	return 0;
++}
++
++static int owl_comp_is_enabled(struct clk_hw *hw)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++	struct owl_clk_common *common = &comp->common;
++
++	return clk_is_enabled(common, &comp->gate_hw);
++}
++
++static long owl_comp_div_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++
++	return owl_divider_helper_round_rate(&comp->common, &comp->rate.div_hw,
++					rate, parent_rate);
++}
++
++static unsigned long owl_comp_div_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++
++	return owl_divider_helper_recalc_rate(&comp->common, &comp->rate.div_hw,
++					parent_rate);
++}
++
++static int owl_comp_div_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++
++	return owl_divider_helper_set_rate(&comp->common, &comp->rate.div_hw,
++					rate, parent_rate);
++}
++
++static long owl_comp_fact_round_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long *parent_rate)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++
++	return owl_factor_helper_round_rate(&comp->common,
++					&comp->rate.factor_hw,
++					rate, parent_rate);
++}
++
++static unsigned long owl_comp_fact_recalc_rate(struct clk_hw *hw,
++			unsigned long parent_rate)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++
++	return owl_factor_helper_recalc_rate(&comp->common,
++					&comp->rate.factor_hw,
++					parent_rate);
++}
++
++static int owl_comp_fact_set_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long parent_rate)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++
++	return owl_factor_helper_set_rate(&comp->common,
++					&comp->rate.factor_hw,
++					rate, parent_rate);
++}
++
++static long owl_comp_fix_fact_round_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long *parent_rate)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++
++	return owl_fix_fact_helper_round_rate(&comp->common,
++					&comp->rate.fix_fact_hw,
++					rate, parent_rate);
++}
++
++static unsigned long owl_comp_fix_fact_recalc_rate(struct clk_hw *hw,
++			unsigned long parent_rate)
++{
++	struct owl_composite *comp = hw_to_owl_comp(hw);
++
++	return owl_fix_fact_helper_recalc_rate(&comp->common,
++					&comp->rate.fix_fact_hw,
++					parent_rate);
++}
++
++static int owl_comp_fix_fact_set_rate(struct clk_hw *hw, unsigned long rate,
++			unsigned long parent_rate)
++{
++	/*
++	 * We must report success but we can do so unconditionally because
++	 * clk_fix_fact_round_rate returns values that ensure this call is a
++	 * nop.
++	 */
++
++	return 0;
++}
++
++const struct clk_ops owl_comp_div_ops = {
++	/* mux_ops */
++	.get_parent	= owl_comp_get_parent,
++	.set_parent	= owl_comp_set_parent,
++
++	/* gate_ops */
++	.disable	= owl_comp_disable,
++	.enable		= owl_comp_enable,
++	.is_enabled	= owl_comp_is_enabled,
++
++	/* div_ops */
++	.round_rate	= owl_comp_div_round_rate,
++	.recalc_rate	= owl_comp_div_recalc_rate,
++	.set_rate	= owl_comp_div_set_rate,
++};
++
++
++const struct clk_ops owl_comp_fact_ops = {
++	/* mux_ops */
++	.get_parent	= owl_comp_get_parent,
++	.set_parent	= owl_comp_set_parent,
++
++	/* gate_ops */
++	.disable	= owl_comp_disable,
++	.enable		= owl_comp_enable,
++	.is_enabled	= owl_comp_is_enabled,
++
++	/* fact_ops */
++	.round_rate	= owl_comp_fact_round_rate,
++	.recalc_rate	= owl_comp_fact_recalc_rate,
++	.set_rate	= owl_comp_fact_set_rate,
++};
++
++const struct clk_ops owl_comp_fix_fact_ops = {
++	/* gate_ops */
++	.disable	= owl_comp_disable,
++	.enable		= owl_comp_enable,
++	.is_enabled	= owl_comp_is_enabled,
++
++	/* fix_fact_ops */
++	.round_rate	= owl_comp_fix_fact_round_rate,
++	.recalc_rate	= owl_comp_fix_fact_recalc_rate,
++	.set_rate	= owl_comp_fix_fact_set_rate,
++};
++
++
++const struct clk_ops owl_comp_pass_ops = {
++	/* mux_ops */
++	.get_parent	= owl_comp_get_parent,
++	.set_parent	= owl_comp_set_parent,
++
++	/* gate_ops */
++	.disable	= owl_comp_disable,
++	.enable		= owl_comp_enable,
++	.is_enabled	= owl_comp_is_enabled,
++};
+diff --git a/drivers/clk/actions/owl-composite.h b/drivers/clk/actions/owl-composite.h
+new file mode 100644
+index 000000000000..0763ba1ce2ad
+--- /dev/null
++++ b/drivers/clk/actions/owl-composite.h
+@@ -0,0 +1,118 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL composite clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_COMPOSITE_H_
++#define _OWL_COMPOSITE_H_
++
++#include "owl-common.h"
++#include "owl-mux.h"
++#include "owl-gate.h"
++#include "owl-factor.h"
++#include "owl-fixed-factor.h"
++#include "owl-divider.h"
++
++union owl_rate {
++	struct owl_divider_hw	div_hw;
++	struct owl_factor_hw	factor_hw;
++	struct owl_fix_fact_hw	fix_fact_hw;
++};
++
++struct owl_composite {
++	struct owl_mux_hw	mux_hw;
++	struct owl_gate_hw	gate_hw;
++	union owl_rate		rate;
++	struct owl_clk_common	common;
++};
++
++#define OWL_COMP_DIV(_struct, _name, _parent,				\
++		     _mux, _gate, _div, _flags)				\
++	struct owl_composite _struct = {				\
++		.mux_hw		= _mux,					\
++		.gate_hw	= _gate,				\
++		.rate.div_hw	= _div,					\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
++						     _parent,		\
++						      &owl_comp_div_ops,\
++						     _flags),		\
++		},							\
++	}
++
++#define OWL_COMP_DIV_FIXED(_struct, _name, _parent,			\
++		     _gate, _div, _flags)				\
++	struct owl_composite _struct = {				\
++		.gate_hw	= _gate,				\
++		.rate.div_hw	= _div,					\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						     _parent,		\
++						      &owl_comp_div_ops,\
++						     _flags),		\
++		},							\
++	}
++
++#define OWL_COMP_FACTOR(_struct, _name, _parent,			\
++			_mux, _gate, _factor, _flags)			\
++	struct owl_composite _struct = {				\
++		.mux_hw		= _mux,					\
++		.gate_hw	= _gate,				\
++		.rate.factor_hw	= _factor,				\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
++						     _parent,		\
++						     &owl_comp_fact_ops,\
++						     _flags),		\
++		},							\
++	}
++
++#define OWL_COMP_FIXED_FACTOR(_struct, _name, _parent,			\
++			_gate, _fix_fact, _flags)			\
++	struct owl_composite _struct = {				\
++		.gate_hw		= _gate,			\
++		.rate.fix_fact_hw	= _fix_fact,			\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						 _parent,		\
++						 &owl_comp_fix_fact_ops,\
++						 _flags),		\
++		},							\
++	}
++
++#define OWL_COMP_PASS(_struct, _name, _parent,				\
++		      _mux, _gate, _flags)				\
++	struct owl_composite _struct = {				\
++		.mux_hw		= _mux,					\
++		.gate_hw	= _gate,				\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
++						     _parent,		\
++						     &owl_comp_pass_ops,\
++						     _flags),		\
++		},							\
++	}
++
++static inline struct owl_composite *hw_to_owl_comp(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_composite, common);
++}
++
++extern const struct clk_ops owl_comp_div_ops;
++extern const struct clk_ops owl_comp_fact_ops;
++extern const struct clk_ops owl_comp_fix_fact_ops;
++extern const struct clk_ops owl_comp_pass_ops;
++
++#endif /* _OWL_COMPOSITE_H_ */
+-- 
+2.14.1
