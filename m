@@ -1,29 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180316175354.21437-2-icenowy@aosc.io>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-References: <20180316175354.21437-1-icenowy@aosc.io>
- <20180316175354.21437-2-icenowy@aosc.io>
-Message-ID: <152149685123.242365.3440079243287970205@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/7] dt-bindings: add compatible string for the A64 DE2 CCU
-Date: Mon, 19 Mar 2018 15:00:51 -0700
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-doc@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v4 8/8] MAINTAINERS: Add myself as maintainer for Ingenic TCU drivers
+Date: Sun, 18 Mar 2018 00:29:01 +0100
+Message-Id: <20180317232901.14129-9-paul@crapouillou.net>
+In-Reply-To: <20180317232901.14129-1-paul@crapouillou.net>
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Icenowy Zheng (2018-03-16 10:53:48)
-> The Allwinner A64 SoC has a DE2 CCU like the one in the DE2 of Allwinner
-> H5 SoC.
-> 
-> Add a compatible string for it.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
+Add myself as maintainer for the ingenic-tcu-intc interrupt controller
+driver, the ingenic-tcu-clocks clock driver, and the ingenic-tcu
+clocksource driver.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+ v2: No change
+ v3: No change
+ v4: No change
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4623caf8d72d..46d3955b92aa 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6959,6 +6959,15 @@ L:	linux-mtd@lists.infradead.org
+ S:	Maintained
+ F:	drivers/mtd/nand/jz4780_*
+ 
++INGENIC JZ47xx TCU drivers
++M:	Paul Cercueil <paul@crapouillou.net>
++S:	Maintained
++F:	drivers/clk/ingenic/tcu.c
++F:	drivers/irqchip/irq-ingenic-tcu.c
++F:	drivers/clocksource/timer-ingenic.c
++F:	include/linux/mfd/syscon/ingenic-tcu.h
++F:	include/dt-bindings/clock/ingenic,tcu.h
++
+ INOTIFY
+ M:	Jan Kara <jack@suse.cz>
+ R:	Amir Goldstein <amir73il@gmail.com>
+-- 
+2.11.0
