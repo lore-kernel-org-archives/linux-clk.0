@@ -1,69 +1,109 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:34765 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966781AbeCAJ3q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 1 Mar 2018 04:29:46 -0500
-Date: Thu, 1 Mar 2018 10:29:33 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Received: from outils.crapouillou.net ([89.234.176.41]:34888 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751809AbeCQX3Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Mar 2018 19:29:24 -0400
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 5/7] clk: sunxi-ng: add support for the Allwinner H6
- CCU
-Message-ID: <20180301092933.eqibjnepoj3ecvo6@flea>
-References: <20180223123555.64009-6-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="s63sgyrl3h62372d"
-In-Reply-To: <20180223123555.64009-6-icenowy@aosc.io>
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-doc@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v4 1/8] mfd: syscon: Add ingenic-tcu.h header
+Date: Sun, 18 Mar 2018 00:28:54 +0100
+Message-Id: <20180317232901.14129-2-paul@crapouillou.net>
+In-Reply-To: <20180317232901.14129-1-paul@crapouillou.net>
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This header contains macros for the registers that are present in the
+regmap shared by all the drivers related to the TCU (Timer Counter Unit)
+of the Ingenic JZ47xx SoCs.
 
---s63sgyrl3h62372d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
+ include/linux/mfd/syscon/ingenic-tcu.h | 54 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
+ create mode 100644 include/linux/mfd/syscon/ingenic-tcu.h
 
-On Fri, Feb 23, 2018 at 08:35:53PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC has a CCU which has been largely rearranged.
->=20
-> Add support for it in the sunxi-ng CCU framework.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Acked-by: Rob Herring <robh@kernel.org>
+ v2: Use SPDX identifier for the license
+ v3: - Use macros instead of enum
+     - Add 'TCU_' at the beginning of each macro
+	 - Remove useless include <linux/regmap.h>
+ v4: No change
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+diff --git a/include/linux/mfd/syscon/ingenic-tcu.h b/include/linux/mfd/syscon/ingenic-tcu.h
+new file mode 100644
+index 000000000000..96dd59f7c3b2
+--- /dev/null
++++ b/include/linux/mfd/syscon/ingenic-tcu.h
+@@ -0,0 +1,54 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Header file for the Ingenic JZ47xx TCU driver
++ */
++#ifndef __LINUX_CLK_INGENIC_TCU_H_
++#define __LINUX_CLK_INGENIC_TCU_H_
++
++#include <linux/bitops.h>
++
++#define TCU_REG_WDT_TDR		0x00
++#define TCU_REG_WDT_TCER	0x04
++#define TCU_REG_WDT_TCNT	0x08
++#define TCU_REG_WDT_TCSR	0x0c
++#define TCU_REG_TER		0x10
++#define TCU_REG_TESR		0x14
++#define TCU_REG_TECR		0x18
++#define TCU_REG_TSR		0x1c
++#define TCU_REG_TFR		0x20
++#define TCU_REG_TFSR		0x24
++#define TCU_REG_TFCR		0x28
++#define TCU_REG_TSSR		0x2c
++#define TCU_REG_TMR		0x30
++#define TCU_REG_TMSR		0x34
++#define TCU_REG_TMCR		0x38
++#define TCU_REG_TSCR		0x3c
++#define TCU_REG_TDFR0		0x40
++#define TCU_REG_TDHR0		0x44
++#define TCU_REG_TCNT0		0x48
++#define TCU_REG_TCSR0		0x4c
++#define TCU_REG_OST_DR		0xe0
++#define TCU_REG_OST_CNTL	0xe4
++#define TCU_REG_OST_CNTH	0xe8
++#define TCU_REG_OST_TCSR	0xec
++#define TCU_REG_TSTR		0xf0
++#define TCU_REG_TSTSR		0xf4
++#define TCU_REG_TSTCR		0xf8
++#define TCU_REG_OST_CNTHBUF	0xfc
++
++#define TCU_TCSR_RESERVED_BITS		0x3f
++#define TCU_TCSR_PARENT_CLOCK_MASK	0x07
++#define TCU_TCSR_PRESCALE_LSB		3
++#define TCU_TCSR_PRESCALE_MASK		0x38
++
++#define TCU_TCSR_PWM_SD		BIT(9)	/* 0: Shutdown abruptly 1: gracefully */
++#define TCU_TCSR_PWM_INITL_HIGH	BIT(8)	/* Sets the initial output level */
++#define TCU_TCSR_PWM_EN		BIT(7)	/* PWM pin output enable */
++
++#define TCU_CHANNEL_STRIDE	0x10
++#define TCU_REG_TDFRc(c)	(TCU_REG_TDFR0 + ((c) * TCU_CHANNEL_STRIDE))
++#define TCU_REG_TDHRc(c)	(TCU_REG_TDHR0 + ((c) * TCU_CHANNEL_STRIDE))
++#define TCU_REG_TCNTc(c)	(TCU_REG_TCNT0 + ((c) * TCU_CHANNEL_STRIDE))
++#define TCU_REG_TCSRc(c)	(TCU_REG_TCSR0 + ((c) * TCU_CHANNEL_STRIDE))
++
++#endif /* __LINUX_CLK_INGENIC_TCU_H_ */
+-- 
+2.11.0
 
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---s63sgyrl3h62372d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqXx/wACgkQ0rTAlCFN
-r3QliQ//fe49xJfjzFjOrXyAoTIVrDoHzFPPRbLwC1kMiDypGE/WGyU/ofTX8u3o
-1EjXj2TQorYDHwl/+8QGHOnfnDWg5gUmJOeVCvdS8fhcjReTC8Ofrwnti3SHERjK
-K5YjBYIxByAvZOfAc6ohAKVP2RxuOR1owAEYRIi0/7SvRwH+4LRmCTB9PGiJsqSn
-lenCiR6ZYcP1Ny08VVi620EiLV9aNY8pQBRh1oL/EFudT4Gg3it3L7DIWgYs2on7
-Dpt+UdPxH+ZCpqnlYUGzL/Thw/Kd9F32ZpqWDywzu88g/HPcAXwoTYtYWpOpE3Cu
-mUyf7aSxJ+wkZRcmTlJtbMp94fSDS2ZtZQqF7E1i2YqGtmxrS7pdSQDEcKE6YqKz
-ITZSveu9SmIFkd1NEfpRDDw/ouuzS+IjcR0Unn6TQ9o7knLTMK8nJDDk7dsLpb95
-oRgLBBMwYsalT0XC0m0PtKvqaALRGWEaV6ncOilNKZvgZLb2Wd5o8yQnqLXw7LpP
-BEaI017FQa96DDCXooLP4l1FKsD/s38PvqFQrUGD/OynBvcnehV2tLMHJ0ABvXVT
-+aO0poJG6+H4xk4J/m427F9OVTIUcqQJAU8NqPQ/YVp1j0UiLC+aycWXrS1ztBVS
-1nrR3rqp1un4XBs0cbUQBPAuTHSQf7Xr4HVexA47zklbEGwGrss=
-=t6pH
------END PGP SIGNATURE-----
-
---s63sgyrl3h62372d--
