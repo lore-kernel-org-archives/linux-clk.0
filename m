@@ -1,233 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46345 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753466AbeCFOd3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Mar 2018 09:33:29 -0500
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 5/6] soc: samsung: pm_domains: Deprecate support for
- clocks
-Date: Tue, 06 Mar 2018 15:33:11 +0100
-Message-id: <20180306143312.21035-6-m.szyprowski@samsung.com>
-In-reply-to: <20180306143312.21035-1-m.szyprowski@samsung.com>
-References: <20180306143312.21035-1-m.szyprowski@samsung.com>
-        <CGME20180306143324eucas1p2ec351b007e6c5a1e3a07437ff0aa9e97@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH net-next 01/12] clk: sunxi-ng: r40: rewrite init code to a platform driver
+Date: Sat, 17 Mar 2018 17:28:46 +0800
+Message-Id: <20180317092857.4396-2-wens@csie.org>
+In-Reply-To: <20180317092857.4396-1-wens@csie.org>
+References: <20180317092857.4396-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Handling of special clock operations on power domain on/off sequences has
-been moved to respective Exynos clock controller drivers, so there is no
-need to keep the duplicated (and conflicting) code in Exynos power domain
-driver. Mark clock related properties in Exynos power domain bindings as
-deprecated. This change has no inpact on backwards-compatibility, as the
-new drivers properly work with old DTBs (deprecated properties are
-ignored).
+From: Icenowy Zheng <icenowy@aosc.io>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+As we need to register a regmap on the R40 CCU, there needs to be a
+device structure bound to the CCU device node.
+
+Rewrite the R40 CCU driver initial code to make it a proper platform
+driver, thus we will have a platform device bound to it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- .../devicetree/bindings/power/pd-samsung.txt       | 20 +----
- drivers/soc/samsung/pm_domains.c                   | 90 +---------------------
- 2 files changed, 5 insertions(+), 105 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 39 ++++++++++++++++++++++++++----------
+ 1 file changed, 28 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/pd-samsung.txt b/Documentation/devicetree/bindings/power/pd-samsung.txt
-index 549f7dee9b9d..92ef355e8f64 100644
---- a/Documentation/devicetree/bindings/power/pd-samsung.txt
-+++ b/Documentation/devicetree/bindings/power/pd-samsung.txt
-@@ -15,23 +15,13 @@ Required Properties:
- Optional Properties:
- - label: Human readable string with domain name. Will be visible in userspace
- 	to let user to distinguish between multiple domains in SoC.
--- clocks: List of clock handles. The parent clocks of the input clocks to the
--	devices in this power domain are set to oscclk before power gating
--	and restored back after powering on a domain. This is required for
--	all domains which are powered on and off and not required for unused
--	domains.
--- clock-names: The following clocks can be specified:
--	- oscclk: Oscillator clock.
--	- clkN: Input clocks to the devices in this power domain. These clocks
--		will be reparented to oscclk before switching power domain off.
--		Their original parent will be brought back after turning on
--		the domain. Maximum of 4 clocks (N = 0 to 3) are supported.
--	- asbN: Clocks required by asynchronous bridges (ASB) present in
--		the power domain. These clock should be enabled during power
--		domain on/off operations.
- - power-domains: phandle pointing to the parent power domain, for more details
- 		 see Documentation/devicetree/bindings/power/power_domain.txt
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index 933f2e68f42a..c3aa839a453d 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -12,7 +12,8 @@
+  */
  
-+Deprecated Properties:
-+- clocks
-+- clock-names
-+
- Node of a device using power domains must have a power-domains property
- defined with a phandle to respective power domain.
+ #include <linux/clk-provider.h>
+-#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
  
-@@ -47,8 +37,6 @@ Example:
- 	mfc_pd: power-domain@10044060 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044060 0x20>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_USER_ACLK333>;
--		clock-names = "oscclk", "clk0";
- 		#power-domain-cells = <0>;
- 		label = "MFC";
- 	};
-diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index caf45cf7aa8e..ab8582971bfc 100644
---- a/drivers/soc/samsung/pm_domains.c
-+++ b/drivers/soc/samsung/pm_domains.c
-@@ -13,14 +13,11 @@
- #include <linux/err.h>
- #include <linux/slab.h>
- #include <linux/pm_domain.h>
--#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/sched.h>
- 
--#define MAX_CLK_PER_DOMAIN	4
--
- struct exynos_pm_domain_config {
- 	/* Value for LOCAL_PWR_CFG and STATUS fields for each domain */
- 	u32 local_pwr_cfg;
-@@ -33,10 +30,6 @@ struct exynos_pm_domain {
- 	void __iomem *base;
- 	bool is_off;
- 	struct generic_pm_domain pd;
--	struct clk *oscclk;
--	struct clk *clk[MAX_CLK_PER_DOMAIN];
--	struct clk *pclk[MAX_CLK_PER_DOMAIN];
--	struct clk *asb_clk[MAX_CLK_PER_DOMAIN];
- 	u32 local_pwr_cfg;
+ #include "ccu_common.h"
+ #include "ccu_reset.h"
+@@ -1250,17 +1251,17 @@ static struct ccu_mux_nb sun8i_r40_cpu_nb = {
+ 	.bypass_index	= 1, /* index of 24 MHz oscillator */
  };
  
-@@ -46,29 +39,10 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	void __iomem *base;
- 	u32 timeout, pwr;
- 	char *op;
--	int i;
- 
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
- 	base = pd->base;
- 
--	for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--		if (IS_ERR(pd->asb_clk[i]))
--			break;
--		clk_prepare_enable(pd->asb_clk[i]);
--	}
--
--	/* Set oscclk before powering off a domain*/
--	if (!power_on) {
--		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--			if (IS_ERR(pd->clk[i]))
--				break;
--			pd->pclk[i] = clk_get_parent(pd->clk[i]);
--			if (clk_set_parent(pd->clk[i], pd->oscclk))
--				pr_err("%s: error setting oscclk as parent to clock %d\n",
--						domain->name, i);
--		}
--	}
--
- 	pwr = power_on ? pd->local_pwr_cfg : 0;
- 	writel_relaxed(pwr, base);
- 
-@@ -86,26 +60,6 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 		usleep_range(80, 100);
- 	}
- 
--	/* Restore clocks after powering on a domain*/
--	if (power_on) {
--		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--			if (IS_ERR(pd->clk[i]))
--				break;
--
--			if (IS_ERR(pd->pclk[i]))
--				continue; /* Skip on first power up */
--			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
--				pr_err("%s: error setting parent to clock%d\n",
--						domain->name, i);
--		}
--	}
--
--	for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--		if (IS_ERR(pd->asb_clk[i]))
--			break;
--		clk_disable_unprepare(pd->asb_clk[i]);
--	}
--
- 	return 0;
- }
- 
-@@ -147,12 +101,6 @@ static __init const char *exynos_get_domain_name(struct device_node *node)
- 	return kstrdup_const(name, GFP_KERNEL);
- }
- 
--static const char *soc_force_no_clk[] = {
--	"samsung,exynos5250-clock",
--	"samsung,exynos5420-clock",
--	"samsung,exynos5800-clock",
--};
--
- static __init int exynos4_pm_init_power_domain(void)
+-static void __init sun8i_r40_ccu_setup(struct device_node *node)
++static int sun8i_r40_ccu_probe(struct platform_device *pdev)
  {
- 	struct device_node *np;
-@@ -161,7 +109,7 @@ static __init int exynos4_pm_init_power_domain(void)
- 	for_each_matching_node_and_match(np, exynos_pm_domain_of_match, &match) {
- 		const struct exynos_pm_domain_config *pm_domain_cfg;
- 		struct exynos_pm_domain *pd;
--		int on, i;
-+		int on;
++	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
++	int ret;
  
- 		pm_domain_cfg = match->data;
+-	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
+-	if (IS_ERR(reg)) {
+-		pr_err("%s: Could not map the clock registers\n",
+-		       of_node_full_name(node));
+-		return;
+-	}
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reg = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(reg))
++		return PTR_ERR(reg);
  
-@@ -189,42 +137,6 @@ static __init int exynos4_pm_init_power_domain(void)
- 		pd->pd.power_on = exynos_pd_power_on;
- 		pd->local_pwr_cfg = pm_domain_cfg->local_pwr_cfg;
+ 	/* Force the PLL-Audio-1x divider to 4 */
+ 	val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
+@@ -1277,7 +1278,9 @@ static void __init sun8i_r40_ccu_setup(struct device_node *node)
+ 	val &= ~GENMASK(25, 20);
+ 	writel(val, reg + SUN8I_R40_USB_CLK_REG);
  
--		for (i = 0; i < ARRAY_SIZE(soc_force_no_clk); i++)
--			if (of_find_compatible_node(NULL, NULL,
--						    soc_force_no_clk[i]))
--				goto no_clk;
--
--		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--			char clk_name[8];
--
--			snprintf(clk_name, sizeof(clk_name), "asb%d", i);
--			pd->asb_clk[i] = of_clk_get_by_name(np, clk_name);
--			if (IS_ERR(pd->asb_clk[i]))
--				break;
--		}
--
--		pd->oscclk = of_clk_get_by_name(np, "oscclk");
--		if (IS_ERR(pd->oscclk))
--			goto no_clk;
--
--		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
--			char clk_name[8];
--
--			snprintf(clk_name, sizeof(clk_name), "clk%d", i);
--			pd->clk[i] = of_clk_get_by_name(np, clk_name);
--			if (IS_ERR(pd->clk[i]))
--				break;
--			/*
--			 * Skip setting parent on first power up.
--			 * The parent at this time may not be useful at all.
--			 */
--			pd->pclk[i] = ERR_PTR(-EINVAL);
--		}
--
--		if (IS_ERR(pd->clk[0]))
--			clk_put(pd->oscclk);
--
--no_clk:
- 		on = readl_relaxed(pd->base + 0x4) & pd->local_pwr_cfg;
+-	sunxi_ccu_probe(node, reg, &sun8i_r40_ccu_desc);
++	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_r40_ccu_desc);
++	if (ret)
++		return ret;
  
- 		pm_genpd_init(&pd->pd, NULL, !on);
+ 	/* Gate then ungate PLL CPU after any rate changes */
+ 	ccu_pll_notifier_register(&sun8i_r40_pll_cpu_nb);
+@@ -1285,6 +1288,20 @@ static void __init sun8i_r40_ccu_setup(struct device_node *node)
+ 	/* Reparent CPU during PLL CPU rate changes */
+ 	ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
+ 				  &sun8i_r40_cpu_nb);
++
++	return 0;
+ }
+-CLK_OF_DECLARE(sun8i_r40_ccu, "allwinner,sun8i-r40-ccu",
+-	       sun8i_r40_ccu_setup);
++
++static const struct of_device_id sun8i_r40_ccu_ids[] = {
++	{ .compatible = "allwinner,sun8i-r40-ccu" },
++	{ }
++};
++
++static struct platform_driver sun8i_r40_ccu_driver = {
++	.probe	= sun8i_r40_ccu_probe,
++	.driver	= {
++		.name	= "sun8i-r40-ccu",
++		.of_match_table	= sun8i_r40_ccu_ids,
++	},
++};
++builtin_platform_driver(sun8i_r40_ccu_driver);
 -- 
-2.15.0
-
+2.16.2
