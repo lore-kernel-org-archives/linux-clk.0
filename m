@@ -1,29 +1,93 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: Restore the clock phase after the rate was changed
-Date: Tue, 13 Mar 2018 14:54:56 +0100
-Message-ID: <2637424.pcYNiY109b@diego>
-In-Reply-To: <1520560263-123065-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1520560263-123065-1-git-send-email-shawn.lin@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to access the GMAC register
+Date: Sat, 17 Mar 2018 17:28:47 +0800
+Message-Id: <20180317092857.4396-3-wens@csie.org>
+In-Reply-To: <20180317092857.4396-1-wens@csie.org>
+References: <20180317092857.4396-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Freitag, 9. M=E4rz 2018, 02:51:03 CET schrieb Shawn Lin:
-> There are many factors affecting the clock phase, including clock
-> rate, temperature, logic voltage and silicon process, etc. But clock
-> rate is the most significant one here, and the driver should be aware
-> of the change of the clock rate. As mmc controller need a fixed phase
-> after tuning was completed, at least before explicitly doing re-tune,
-> so this patch try to restore the clock phase by monitoring the event
-> of rate change.
->=20
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-applied for 4.17
+There's a GMAC configuration register, which exists on A64/A83T/H3/H5 in
+the syscon part, in the CCU of R40 SoC.
 
+Export a regmap of the CCU.
 
-Thanks
-Heiko
+Read access is not restricted to all registers, but only the GMAC
+register is allowed to be written.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index c3aa839a453d..54c7a6106206 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -1251,9 +1251,35 @@ static struct ccu_mux_nb sun8i_r40_cpu_nb = {
+ 	.bypass_index	= 1, /* index of 24 MHz oscillator */
+ };
+ 
++/*
++ * Add a regmap for the GMAC driver (dwmac-sun8i) to access the
++ * GMAC configuration register.
++ * Only this register is allowed to be written, in order to
++ * prevent overriding critical clock configuration.
++ */
++
++#define SUN8I_R40_GMAC_CFG_REG 0x164
++static bool sun8i_r40_ccu_regmap_writeable_reg(struct device *dev,
++					       unsigned int reg)
++{
++	if (reg == SUN8I_R40_GMAC_CFG_REG)
++		return true;
++	return false;
++}
++
++static struct regmap_config sun8i_r40_ccu_regmap_config = {
++	.reg_bits	= 32,
++	.val_bits	= 32,
++	.reg_stride	= 4,
++	.max_register	= 0x320, /* PLL_LOCK_CTRL_REG */
++
++	.writeable_reg	= sun8i_r40_ccu_regmap_writeable_reg,
++};
++
+ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
++	struct regmap *regmap;
+ 	void __iomem *reg;
+ 	u32 val;
+ 	int ret;
+@@ -1278,6 +1304,11 @@ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
+ 	val &= ~GENMASK(25, 20);
+ 	writel(val, reg + SUN8I_R40_USB_CLK_REG);
+ 
++	regmap = devm_regmap_init_mmio(&pdev->dev, reg,
++				       &sun8i_r40_ccu_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
+ 	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_r40_ccu_desc);
+ 	if (ret)
+ 		return ret;
+-- 
+2.16.2
