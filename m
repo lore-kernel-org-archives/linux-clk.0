@@ -1,55 +1,68 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20180308140851.GA25601@botnar.kaiser.cx>
-References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
- <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com> <20180308140851.GA25601@botnar.kaiser.cx>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 8 Mar 2018 12:07:45 -0300
-Message-ID: <CAOMZO5BdBWExt9FvPrfUG74Y62e4EUs6cqFyfVs5JuUtym00hQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
-To: Martin Kaiser <martin@kaiser.cx>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH net-next 05/12] dt-bindings: net: dwmac-sun8i: Add binding for GMAC on Allwinner R40 SoC
+Date: Sat, 17 Mar 2018 17:28:50 +0800
+Message-Id: <20180317092857.4396-6-wens@csie.org>
+In-Reply-To: <20180317092857.4396-1-wens@csie.org>
+References: <20180317092857.4396-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
+The Allwinner R40 SoC has the EMAC controller supported by dwmac-sun8i.
+It is named "GMAC", while EMAC refers to the 10/100 Mbps Ethernet
+controller supported by sun4i-emac. The controller is the same, but
+the R40 has the glue layer controls in the clock control unit (CCU),
+with a reduced RX delay chain, and no TX delay chain.
 
-On Thu, Mar 8, 2018 at 11:08 AM, Martin Kaiser <martin@kaiser.cx> wrote:
-> Hi Fabio,
->
-> Thus wrote Fabio Estevam (festevam@gmail.com):
->
->> I get audio working from SSI1, but I guess this is due to the fact
->> that the bootloader enables the SSI clock:
->
->> I have the following in U-Boot:
->
->> /* Enable the clocks */
->> DATA 4 0x53f8000c 0x1fffffff
->> DATA 4 0x53f80010 0xffffffff
->> DATA 4 0x53f80014 0xfdfff
->
-> I'm using the same initial settings.
->
-> Nevertheless, ssi1_ipg_per is disbled after loading the kernel.
->
-> Digging into this a bit more, it turned out that without my patch,
-> clk_disable_unused() recognizes ssi1_ipg_per as unused and disables it.
->
-> If my patch is applied and ssi1_ipg_per is declared as parent of
-> ssi1_ipg, clk_disable_unused() will not disable it and fsl_ssi_startup()
-> will enable both ssi1_ipg_per and ssi1_ipg before playing sound.
+This patch adds the R40 specific bits to the dwmac-sun8i binding.
 
-I can get audio to work fine without your patch on a mx25pdk.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-In the other i.MX clock drivers we have this same pattern:
-
-clks[IMX6SL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",     "ipg",
-
-It is not clear to me what is the real issue this patch is trying to fix.
-
-Thanks
+diff --git a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
+index 74b3ef79e57a..fe4a48a1eb50 100644
+--- a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
++++ b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
+@@ -7,6 +7,7 @@ Required properties:
+ - compatible: must be one of the following string:
+ 		"allwinner,sun8i-a83t-emac"
+ 		"allwinner,sun8i-h3-emac"
++		"allwinner,sun8i-r40-gmac"
+ 		"allwinner,sun8i-v3s-emac"
+ 		"allwinner,sun50i-a64-emac"
+ - reg: address and length of the register for the device.
+@@ -24,14 +25,17 @@ Required properties:
+  compatible string:
+   - allwinner,sun8i-a83t-system-controller
+   - allwinner,sun8i-h3-system-controller
++  - allwinner,sun8i-r40-ccu
+   - allwinner,sun8i-v3s-system-controller
+   - allwinner,sun50i-a64-system-controller
+ 
+ Optional properties:
+ - allwinner,tx-delay-ps: TX clock delay chain value in ps.
+ 			 Range is 0-700. Default is 0.
++			 Unavailable for allwinner,sun8i-r40-gmac
+ - allwinner,rx-delay-ps: RX clock delay chain value in ps.
+ 			 Range is 0-3100. Default is 0.
++			 Range is 0-700 for allwinner,sun8i-r40-gmac
+ Both delay properties need to be a multiple of 100. They control the
+ clock delay for external RGMII PHY. They are do apply to the internal
+ PHY or external non-RGMII PHYs.
+-- 
+2.16.2
