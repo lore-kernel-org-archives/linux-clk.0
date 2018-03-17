@@ -1,44 +1,82 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:32859 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752189AbeC0NFT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Mar 2018 09:05:19 -0400
-Received: by mail-it0-f65.google.com with SMTP id z143-v6so15920190itc.0
-        for <linux-clk@vger.kernel.org>; Tue, 27 Mar 2018 06:05:19 -0700 (PDT)
-MIME-Version: 1.0
-In-Reply-To: <20180316140215.28663-2-icenowy@aosc.io>
-References: <20180316140215.28663-1-icenowy@aosc.io> <20180316140215.28663-2-icenowy@aosc.io>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 27 Mar 2018 15:05:18 +0200
-Message-ID: <CACRpkdbO0KQEG_OXbswJkmWm=Ceiutx7vux6GJp8XVun+NiRbw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/9] pinctrl: sunxi: refactor irq related register
- function to have desc
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH net-next 09/12] net: stmmac: dwmac-sun8i: Add support for GMAC on Allwinner R40 SoC
+Date: Sat, 17 Mar 2018 17:28:54 +0800
+Message-Id: <20180317092857.4396-10-wens@csie.org>
+In-Reply-To: <20180317092857.4396-1-wens@csie.org>
+References: <20180317092857.4396-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 3:02 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+The Allwinner R40 SoC has the EMAC controller supported by dwmac-sun8i.
+It is named "GMAC", while EMAC refers to the 10/100 Mbps Ethernet
+controller supported by sun4i-emac. The controller is the same, but
+the R40 has the glue layer controls in the clock control unit (CCU),
+with a reduced RX delay chain, and no TX delay chain.
 
-> As the new H6 SoC has holes in the IRQ registers, refactor the IRQ
-> related register function for getting the full pinctrl desc structure.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v4:
-> - Adjusted parameter sequence.
+This patch adds support for it using the framework laid out by previous
+patches to map the differences.
 
-Patch applied with Maxime's ACK.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+index 08d263567a52..be6705e89e95 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -97,6 +97,13 @@ const struct reg_field sun8i_syscon_reg_field = {
+ 	.msb = 31,
+ };
+ 
++/* EMAC clock register @ 0x164 in the CCU address range */
++const struct reg_field sun8i_ccu_reg_field = {
++	.reg = 0x164,
++	.lsb = 0,
++	.msb = 31,
++};
++
+ static const struct emac_variant emac_variant_h3 = {
+ 	.default_syscon_value = 0x58000,
+ 	.syscon_field = &sun8i_syscon_reg_field,
+@@ -125,6 +132,15 @@ static const struct emac_variant emac_variant_a83t = {
+ 	.tx_delay_max = 7,
+ };
+ 
++static const struct emac_variant emac_variant_r40 = {
++	.default_syscon_value = 0,
++	.syscon_field = &sun8i_ccu_reg_field,
++	.syscon_from_dev = true,
++	.support_mii = true,
++	.support_rgmii = true,
++	.rx_delay_max = 7,
++};
++
+ static const struct emac_variant emac_variant_a64 = {
+ 	.default_syscon_value = 0,
+ 	.syscon_field = &sun8i_syscon_reg_field,
+@@ -1148,6 +1164,8 @@ static const struct of_device_id sun8i_dwmac_match[] = {
+ 		.data = &emac_variant_v3s },
+ 	{ .compatible = "allwinner,sun8i-a83t-emac",
+ 		.data = &emac_variant_a83t },
++	{ .compatible = "allwinner,sun8i-r40-gmac",
++		.data = &emac_variant_r40 },
+ 	{ .compatible = "allwinner,sun50i-a64-emac",
+ 		.data = &emac_variant_a64 },
+ 	{ }
+-- 
+2.16.2
