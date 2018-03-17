@@ -1,68 +1,232 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-Date: Fri, 23 Mar 2018 22:38:09 +0800
-Message-ID: <20180323143816.200573-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v5 01/12] dt-bindings: clock: Add Actions S900 clock bindings
+Date: Sat, 17 Mar 2018 15:39:41 +0530
+Message-Id: <20180317100952.28538-2-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-  This patch try to add AO clock and Reset driver for Amlogic's
-Meson-AXG SoC.
+Add Actions Semi S900 clock bindings.
 
- patch 1: it's a generic independent fix for the previous clock driver
- patch 2: factor the common code into a dedicated files
- patch 3-5: add the driver for AXG SoC
- patch 6-7: add the DTS part
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 ++++++++
+ include/dt-bindings/clock/actions,s900-cmu.h       | 129 +++++++++++++++++++++
+ 2 files changed, 176 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+ create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
 
-changes since v1 at [0]: 
- - rebase to clk-meson's branch 'next/drivers' [1]
- - fix license, update to BSD-3-Clause
- - drop un-used include header file
- - 
-                                                                                                                                            
-[0] https://lkml.kernel.org/r/<20180209070026.193879-1-yixun.lan@amlogic.com>
-
-
-Qiufang Dai (2):
-  clk: meson-axg: Add AO Clock and Reset controller driver
-  arm64: dts: meson-axg: add AO clock driver DT info
-
-Yixun Lan (5):
-  clk: meson: drop meson_aoclk_gate_regmap_ops
-  clk: meson: aoclk: refactor common code into dedicated file
-  dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
-  dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-  ARM64: dts: meson-axg: add an 32K alt aoclk
-
- .../bindings/clock/amlogic,gxbb-aoclkc.txt         |   1 +
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  19 +++
- drivers/clk/meson/Makefile                         |   4 +-
- drivers/clk/meson/axg-aoclk.c                      | 162 +++++++++++++++++++++
- drivers/clk/meson/axg-aoclk.h                      |  31 ++++
- drivers/clk/meson/gxbb-aoclk.c                     |  81 ++++-------
- drivers/clk/meson/gxbb-aoclk.h                     |   9 +-
- drivers/clk/meson/meson-aoclk.c                    |  76 ++++++++++
- drivers/clk/meson/meson-aoclk.h                    |  30 ++++
- include/dt-bindings/clock/axg-aoclkc.h             |  26 ++++
- include/dt-bindings/reset/axg-aoclkc.h             |  20 +++
- 11 files changed, 399 insertions(+), 60 deletions(-)
- create mode 100644 drivers/clk/meson/axg-aoclk.c
- create mode 100644 drivers/clk/meson/axg-aoclk.h
- create mode 100644 drivers/clk/meson/meson-aoclk.c
- create mode 100644 drivers/clk/meson/meson-aoclk.h
- create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
- create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
-
+diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+new file mode 100644
+index 000000000000..93e4fb827cd6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+@@ -0,0 +1,47 @@
++* Actions S900 Clock Management Unit (CMU)
++
++The Actions S900 clock management unit generates and supplies clock to various
++controllers within the SoC. The clock binding described here is applicable to
++S900 SoC.
++
++Required Properties:
++
++- compatible: should be "actions,s900-cmu"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- clocks: Reference to the parent clocks ("hosc", "losc")
++- #clock-cells: should be 1.
++
++Each clock is assigned an identifier, and client nodes can use this identifier
++to specify the clock which they consume.
++
++All available clocks are defined as preprocessor macros in
++dt-bindings/clock/actions,s900-cmu.h header and can be used in device
++tree sources.
++
++External clocks:
++
++The hosc clock used as input for the plls is generated outside the SoC. It is
++expected that it is defined using standard clock bindings as "hosc".
++
++Actions S900 CMU also requires one more clock:
++ - "losc" - internal low frequency oscillator
++
++Example: Clock Management Unit node:
++
++        cmu: clock-controller@e0160000 {
++                compatible = "actions,s900-cmu";
++                reg = <0x0 0xe0160000 0x0 0x1000>;
++                clocks = <&hosc>, <&losc>;
++                #clock-cells = <1>;
++        };
++
++Example: UART controller node that consumes clock generated by the clock
++management unit:
++
++        uart: serial@e012a000 {
++                compatible = "actions,s900-uart", "actions,owl-uart";
++                reg = <0x0 0xe012a000 0x0 0x2000>;
++                interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&cmu CLK_UART5>;
++        };
+diff --git a/include/dt-bindings/clock/actions,s900-cmu.h b/include/dt-bindings/clock/actions,s900-cmu.h
+new file mode 100644
+index 000000000000..7c1251565f43
+--- /dev/null
++++ b/include/dt-bindings/clock/actions,s900-cmu.h
+@@ -0,0 +1,129 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Device Tree binding constants for Actions Semi S900 Clock Management Unit
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Copyright (c) 2018 Linaro Ltd.
++
++#ifndef __DT_BINDINGS_CLOCK_S900_CMU_H
++#define __DT_BINDINGS_CLOCK_S900_CMU_H
++
++#define CLK_NONE			0
++
++/* fixed rate clocks */
++#define CLK_LOSC			1
++#define CLK_HOSC			2
++
++/* pll clocks */
++#define CLK_CORE_PLL			3
++#define CLK_DEV_PLL			4
++#define CLK_DDR_PLL			5
++#define CLK_NAND_PLL			6
++#define CLK_DISPLAY_PLL			7
++#define CLK_DSI_PLL			8
++#define CLK_ASSIST_PLL			9
++#define CLK_AUDIO_PLL			10
++
++/* system clock */
++#define CLK_CPU				15
++#define CLK_DEV				16
++#define CLK_NOC				17
++#define CLK_NOC_MUX			18
++#define CLK_NOC_DIV			19
++#define CLK_AHB				20
++#define CLK_APB				21
++#define CLK_DMAC			22
++
++/* peripheral device clock */
++#define CLK_GPIO			23
++
++#define CLK_BISP			24
++#define CLK_CSI0			25
++#define CLK_CSI1			26
++
++#define CLK_DE0				27
++#define CLK_DE1				28
++#define CLK_DE2				29
++#define CLK_DE3				30
++#define CLK_DSI				32
++
++#define CLK_GPU				33
++#define CLK_GPU_CORE			34
++#define CLK_GPU_MEM			35
++#define CLK_GPU_SYS			36
++
++#define CLK_HDE				37
++#define CLK_I2C0			38
++#define CLK_I2C1			39
++#define CLK_I2C2			40
++#define CLK_I2C3			41
++#define CLK_I2C4			42
++#define CLK_I2C5			43
++#define CLK_I2SRX			44
++#define CLK_I2STX			45
++#define CLK_IMX				46
++#define CLK_LCD				47
++#define CLK_NAND0			48
++#define CLK_NAND1			49
++#define CLK_PWM0			50
++#define CLK_PWM1			51
++#define CLK_PWM2			52
++#define CLK_PWM3			53
++#define CLK_PWM4			54
++#define CLK_PWM5			55
++#define CLK_SD0				56
++#define CLK_SD1				57
++#define CLK_SD2				58
++#define CLK_SD3				59
++#define CLK_SENSOR			60
++#define CLK_SPEED_SENSOR		61
++#define CLK_SPI0			62
++#define CLK_SPI1			63
++#define CLK_SPI2			64
++#define CLK_SPI3			65
++#define CLK_THERMAL_SENSOR		66
++#define CLK_UART0			67
++#define CLK_UART1			68
++#define CLK_UART2			69
++#define CLK_UART3			70
++#define CLK_UART4			71
++#define CLK_UART5			72
++#define CLK_UART6			73
++#define CLK_VCE				74
++#define CLK_VDE				75
++
++#define CLK_USB3_480MPLL0		76
++#define CLK_USB3_480MPHY0		77
++#define CLK_USB3_5GPHY			78
++#define CLK_USB3_CCE			79
++#define CLK_USB3_MAC			80
++
++#define CLK_TIMER			83
++
++#define CLK_HDMI_AUDIO			84
++
++#define CLK_24M				85
++
++#define CLK_EDP				86
++
++#define CLK_24M_EDP			87
++#define CLK_EDP_PLL			88
++#define CLK_EDP_LINK			89
++
++#define CLK_USB2H0_PLLEN		90
++#define CLK_USB2H0_PHY			91
++#define CLK_USB2H0_CCE			92
++#define CLK_USB2H1_PLLEN		93
++#define CLK_USB2H1_PHY			94
++#define CLK_USB2H1_CCE			95
++
++#define CLK_DDR0			96
++#define CLK_DDR1			97
++#define CLK_DMM				98
++
++#define CLK_ETH_MAC			99
++#define CLK_RMII_REF			100
++
++#define CLK_NR_CLKS			(CLK_RMII_REF + 1)
++
++#endif /* __DT_BINDINGS_CLOCK_S900_CMU_H */
 -- 
-2.15.1
+2.14.1
