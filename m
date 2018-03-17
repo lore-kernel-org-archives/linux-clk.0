@@ -1,63 +1,230 @@
-Return-Path: <boris.brezillon@bootlin.com>
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Florian Fainelli <f.fainelli@gmail.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	bcm-kernel-feedback-list@broadcom.com,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Lee Jones <lee@kernel.org>,
-	Eric Anholt <eric@anholt.net>,
-	linux-rpi-kernel@lists.infradead.org,
-	Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] clk: bcm2835: De-assert/assert PLL reset signal when appropriate
-Date: Thu, 22 Mar 2018 10:11:30 +0100
-Message-Id: <20180322091130.5997-1-boris.brezillon@bootlin.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v5 04/12] clk: actions: Add common clock driver support
+Date: Sat, 17 Mar 2018 15:39:44 +0530
+Message-Id: <20180317100952.28538-5-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to enable a PLL, not only the PLL has to be powered up and
-locked, but you also have to de-assert the reset signal. The last part
-was missing. Add it so PLLs that were not enabled by the FW/bootloader
-can be enabled from Linux.
+Add support for Actions Semi common clock driver with generic structures
+and interface functions.
 
-Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
-Changes in v2:
-- simplify bcm2835_pll_off()
----
- drivers/clk/bcm/clk-bcm2835.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/clk/Kconfig              |  1 +
+ drivers/clk/Makefile             |  1 +
+ drivers/clk/actions/Kconfig      |  4 ++
+ drivers/clk/actions/Makefile     |  3 ++
+ drivers/clk/actions/owl-common.c | 84 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-common.h | 41 ++++++++++++++++++++
+ 6 files changed, 134 insertions(+)
+ create mode 100644 drivers/clk/actions/Kconfig
+ create mode 100644 drivers/clk/actions/Makefile
+ create mode 100644 drivers/clk/actions/owl-common.c
+ create mode 100644 drivers/clk/actions/owl-common.h
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index a07f6451694a..fa0d5c8611a0 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -602,9 +602,7 @@ static void bcm2835_pll_off(struct clk_hw *hw)
- 	const struct bcm2835_pll_data *data = pll->data;
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 98ce9fc6e6c0..6313a4f4327a 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -238,6 +238,7 @@ config COMMON_CLK_VC5
+ 	  This driver supports the IDT VersaClock 5 and VersaClock 6
+ 	  programmable clock generators.
  
- 	spin_lock(&cprman->regs_lock);
--	cprman_write(cprman, data->cm_ctrl_reg,
--		     cprman_read(cprman, data->cm_ctrl_reg) |
--		     CM_PLL_ANARST);
-+	cprman_write(cprman, data->cm_ctrl_reg, CM_PLL_ANARST);
- 	cprman_write(cprman, data->a2w_ctrl_reg,
- 		     cprman_read(cprman, data->a2w_ctrl_reg) |
- 		     A2W_PLL_CTRL_PWRDN);
-@@ -640,6 +638,10 @@ static int bcm2835_pll_on(struct clk_hw *hw)
- 		cpu_relax();
- 	}
++source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 71ec41e6364f..b7909df532ed 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -56,6 +56,7 @@ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
+ obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
  
-+	cprman_write(cprman, data->a2w_ctrl_reg,
-+		     cprman_read(cprman, data->a2w_ctrl_reg) |
-+		     A2W_PLL_CTRL_PRST_DISABLE);
+ # please keep this section sorted lexicographically by directory path name
++obj-y					+= actions/
+ obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
+ obj-$(CONFIG_ARCH_ARTPEC)		+= axis/
+ obj-$(CONFIG_ARC_PLAT_AXS10X)		+= axs10x/
+diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
+new file mode 100644
+index 000000000000..13a3e5083d43
+--- /dev/null
++++ b/drivers/clk/actions/Kconfig
+@@ -0,0 +1,4 @@
++config CLK_ACTIONS
++	bool "Clock driver for Actions Semi SoCs"
++	depends on ARCH_ACTIONS || COMPILE_TEST
++	default ARCH_ACTIONS
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+new file mode 100644
+index 000000000000..64a50fc2d335
+--- /dev/null
++++ b/drivers/clk/actions/Makefile
+@@ -0,0 +1,3 @@
++obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
 +
- 	return 0;
- }
- 
++clk-owl-y			+= owl-common.o
+diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+new file mode 100644
+index 000000000000..a7cb698fdc86
+--- /dev/null
++++ b/drivers/clk/actions/owl-common.c
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL common clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/regmap.h>
++
++#include "owl-common.h"
++
++static const struct regmap_config owl_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0xffff,
++	.fast_io	= true,
++};
++
++static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
++			 struct regmap *regmap)
++{
++	int i;
++	struct owl_clk_common *clks;
++
++	for (i = 0; i < desc->num_clks; i++) {
++		clks = desc->clks[i];
++		if (!clks)
++			continue;
++
++		clks->regmap = regmap;
++	}
++}
++
++int owl_clk_regmap_init(struct platform_device *pdev,
++			 const struct owl_clk_desc *desc)
++{
++	void __iomem *base;
++	struct device_node *node = pdev->dev.of_node;
++	struct regmap *regmap;
++
++	base = of_iomap(node, 0);
++	regmap = devm_regmap_init_mmio(&pdev->dev, base, &owl_regmap_config);
++	if (IS_ERR_OR_NULL(regmap)) {
++		pr_err("failed to init regmap\n");
++		return PTR_ERR(regmap);
++	}
++
++	owl_clk_set_regmap(desc, regmap);
++
++	return 0;
++}
++
++int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
++{
++	int i, ret;
++	struct clk_hw *hw;
++
++	for (i = 0; i < hw_clks->num; i++) {
++
++		hw = hw_clks->hws[i];
++
++		if (!hw)
++			continue;
++
++		ret = devm_clk_hw_register(dev, hw);
++		if (ret) {
++			dev_err(dev, "Couldn't register clock %d - %s\n",
++				i, hw->init->name);
++			return ret;
++		}
++	}
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_clks);
++	if (ret)
++		dev_err(dev, "Failed to add clock provider\n");
++
++	return ret;
++}
+diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
+new file mode 100644
+index 000000000000..4fd726ec54a6
+--- /dev/null
++++ b/drivers/clk/actions/owl-common.h
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL common clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_COMMON_H_
++#define _OWL_COMMON_H_
++
++#include <linux/clk-provider.h>
++#include <linux/of_platform.h>
++#include <linux/regmap.h>
++
++struct device_node;
++
++struct owl_clk_common {
++	struct regmap			*regmap;
++	struct clk_hw			hw;
++};
++
++struct owl_clk_desc {
++	struct owl_clk_common		**clks;
++	unsigned long			num_clks;
++	struct clk_hw_onecell_data	*hw_clks;
++};
++
++static inline struct owl_clk_common *
++	hw_to_owl_clk_common(const struct clk_hw *hw)
++{
++	return container_of(hw, struct owl_clk_common, hw);
++}
++
++int owl_clk_regmap_init(struct platform_device *pdev,
++			 const struct owl_clk_desc *desc);
++int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks);
++
++#endif /* _OWL_COMMON_H_ */
 -- 
 2.14.1
