@@ -1,328 +1,393 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
- <mturquette@baylibre.com>, <sboyd@kernel.org>
-Subject: [PATCH 2/4] arm: imx: Correct dram pll type
-Date: Thu, 22 Mar 2018 11:55:27 +0200
-Message-ID: <1521712529-632-3-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1521712529-632-1-git-send-email-abel.vesa@nxp.com>
-References: <1521712529-632-1-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Abel Vesa <abel.vesa@nxp.com>, anson.huang@nxp.com,
- linux-kernel@vger.kernel.org, linux-imx@nxp.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:37140 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752359AbeCQX3w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Mar 2018 19:29:52 -0400
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-doc@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v4 6/8] clk: ingenic: Add JZ47xx TCU clocks driver
+Date: Sun, 18 Mar 2018 00:28:59 +0100
+Message-Id: <20180317232901.14129-7-paul@crapouillou.net>
+In-Reply-To: <20180317232901.14129-1-paul@crapouillou.net>
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Anson Huang <anson.huang@nxp.com>
+The TCU (Timer Counter Unit) of the Ingenic JZ47xx SoCs features 8
+channels, each one having its own clock, that can be started and
+stopped, reparented, and reclocked.
 
-DRAM PLL is a audio/video type PLL, need to correct it to get correct ops of
-PLL.
+This driver only modifies the bits of the registers of the TCU that are
+related to clocks control. It provides one clock per TCU channel (plus
+one for the watchdog and one for the OS timer) that can be used by other
+drivers.
 
-There is a test_div placed before DRAM PLL's gate, so add this test div clk.
-
-Signed-off-by: Anson Huang <anson.huang@nxp.com>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/imx/clk-imx7d.c | 97 ++++++++++++++++++++++++---------------------
- 1 file changed, 52 insertions(+), 45 deletions(-)
+ drivers/clk/ingenic/Makefile |   2 +-
+ drivers/clk/ingenic/tcu.c    | 319 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 320 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/ingenic/tcu.c
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 80dc211..d786f98 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -51,20 +51,20 @@ static const char *arm_a7_sel[] = { "osc", "pll_arm_main_clk",
- 
- static const char *arm_m4_sel[] = { "osc", "pll_sys_main_240m_clk",
- 	"pll_enet_250m_clk", "pll_sys_pfd2_270m_clk",
--	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"pll_usb_main_clk", };
- 
- static const char *axi_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk", "pll_sys_pfd5_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_sys_pfd7_clk", };
-+	"pll_audio_post_div", "pll_video_post_div", "pll_sys_pfd7_clk", };
- 
- static const char *disp_axi_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk", "pll_sys_pfd6_clk",
--	"pll_sys_pfd7_clk", "pll_audio_post_div", "pll_video_main_clk", };
-+	"pll_sys_pfd7_clk", "pll_audio_post_div", "pll_video_post_div", };
- 
- static const char *enet_axi_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
- 	"pll_dram_533m_clk", "pll_enet_250m_clk",
--	"pll_sys_main_240m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_sys_main_240m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"pll_sys_pfd4_clk", };
- 
- static const char *nand_usdhc_bus_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
-@@ -75,7 +75,7 @@ static const char *nand_usdhc_bus_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
- static const char *ahb_channel_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
- 	"pll_dram_533m_clk", "pll_sys_pfd0_392m_clk",
- 	"pll_enet_125m_clk", "pll_usb_main_clk", "pll_audio_post_div",
--	"pll_video_main_clk", };
-+	"pll_video_post_div", };
- 
- static const char *dram_phym_sel[] = { "pll_dram_main_clk",
- 	"dram_phym_alt_clk", };
-@@ -86,7 +86,7 @@ static const char *dram_sel[] = { "pll_dram_main_clk",
- static const char *dram_phym_alt_sel[] = { "osc", "pll_dram_533m_clk",
- 	"pll_sys_main_clk", "pll_enet_500m_clk",
- 	"pll_usb_main_clk", "pll_sys_pfd7_clk", "pll_audio_post_div",
--	"pll_video_main_clk", };
-+	"pll_video_post_div", };
- 
- static const char *dram_alt_sel[] = { "osc", "pll_dram_533m_clk",
- 	"pll_sys_main_clk", "pll_enet_500m_clk",
-@@ -108,62 +108,62 @@ static const char *pcie_phy_sel[] = { "osc", "pll_enet_100m_clk",
- 
- static const char *epdc_pixel_sel[] = { "osc", "pll_sys_pfd1_332m_clk",
- 	"pll_dram_533m_clk", "pll_sys_main_clk", "pll_sys_pfd5_clk",
--	"pll_sys_pfd6_clk", "pll_sys_pfd7_clk", "pll_video_main_clk", };
-+	"pll_sys_pfd6_clk", "pll_sys_pfd7_clk", "pll_video_post_div", };
- 
- static const char *lcdif_pixel_sel[] = { "osc", "pll_sys_pfd5_clk",
- 	"pll_dram_533m_clk", "ext_clk_3", "pll_sys_pfd4_clk",
--	"pll_sys_pfd2_270m_clk", "pll_video_main_clk",
-+	"pll_sys_pfd2_270m_clk", "pll_video_post_div",
- 	"pll_usb_main_clk", };
- 
- static const char *mipi_dsi_sel[] = { "osc", "pll_sys_pfd5_clk",
- 	"pll_sys_pfd3_clk", "pll_sys_main_clk", "pll_sys_pfd0_196m_clk",
--	"pll_dram_533m_clk", "pll_video_main_clk", "pll_audio_post_div", };
-+	"pll_dram_533m_clk", "pll_video_post_div", "pll_audio_post_div", };
- 
- static const char *mipi_csi_sel[] = { "osc", "pll_sys_pfd4_clk",
- 	"pll_sys_pfd3_clk", "pll_sys_main_clk", "pll_sys_pfd0_196m_clk",
--	"pll_dram_533m_clk", "pll_video_main_clk", "pll_audio_post_div", };
-+	"pll_dram_533m_clk", "pll_video_post_div", "pll_audio_post_div", };
- 
- static const char *mipi_dphy_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_dram_533m_clk", "pll_sys_pfd5_clk", "ref_1m_clk", "ext_clk_2",
--	"pll_video_main_clk", "ext_clk_3", };
-+	"pll_video_post_div", "ext_clk_3", };
- 
- static const char *sai1_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_post_div",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_clk_2", };
- 
- static const char *sai2_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_post_div",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_clk_2", };
- 
- static const char *sai3_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_post_div",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_clk_3", };
- 
- static const char *spdif_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
--	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_main_clk",
-+	"pll_audio_post_div", "pll_dram_533m_clk", "pll_video_post_div",
- 	"pll_sys_pfd4_clk", "pll_enet_125m_clk", "ext_3_clk", };
- 
- static const char *enet1_ref_sel[] = { "osc", "pll_enet_125m_clk",
- 	"pll_enet_50m_clk", "pll_enet_25m_clk",
--	"pll_sys_main_120m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_sys_main_120m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"ext_clk_4", };
- 
- static const char *enet1_time_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_audio_post_div", "ext_clk_1", "ext_clk_2", "ext_clk_3",
--	"ext_clk_4", "pll_video_main_clk", };
-+	"ext_clk_4", "pll_video_post_div", };
- 
- static const char *enet2_ref_sel[] = { "osc", "pll_enet_125m_clk",
- 	"pll_enet_50m_clk", "pll_enet_25m_clk",
--	"pll_sys_main_120m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_sys_main_120m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"ext_clk_4", };
- 
- static const char *enet2_time_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_audio_post_div", "ext_clk_1", "ext_clk_2", "ext_clk_3",
--	"ext_clk_4", "pll_video_main_clk", };
-+	"ext_clk_4", "pll_video_post_div", };
- 
- static const char *enet_phy_ref_sel[] = { "osc", "pll_enet_25m_clk",
- 	"pll_enet_50m_clk", "pll_enet_125m_clk",
--	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_dram_533m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"pll_sys_pfd3_clk", };
- 
- static const char *eim_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
-@@ -174,7 +174,7 @@ static const char *eim_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- static const char *nand_sel[] = { "osc", "pll_sys_main_clk",
- 	"pll_dram_533m_clk", "pll_sys_pfd0_392m_clk", "pll_sys_pfd3_clk",
- 	"pll_enet_500m_clk", "pll_enet_250m_clk",
--	"pll_video_main_clk", };
-+	"pll_video_post_div", };
- 
- static const char *qspi_sel[] = { "osc", "pll_sys_pfd4_clk",
- 	"pll_dram_533m_clk", "pll_enet_500m_clk", "pll_sys_pfd3_clk",
-@@ -204,22 +204,22 @@ static const char *can2_sel[] = { "osc", "pll_sys_main_120m_clk",
- 
- static const char *i2c1_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_post_div", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *i2c2_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_post_div", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *i2c3_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_post_div", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *i2c4_sel[] = { "osc", "pll_sys_main_120m_clk",
- 	"pll_enet_50m_clk", "pll_dram_533m_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_usb_main_clk",
-+	"pll_audio_post_div", "pll_video_post_div", "pll_usb_main_clk",
- 	"pll_sys_pfd2_135m_clk", };
- 
- static const char *uart1_sel[] = { "osc", "pll_sys_main_240m_clk",
-@@ -279,27 +279,27 @@ static const char *ecspi4_sel[] = { "osc", "pll_sys_main_240m_clk",
- 
- static const char *pwm1_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_1", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_1", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *pwm2_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_1", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_1", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *pwm3_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_2", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_2", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *pwm4_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_2", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_2", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *flextimer1_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_3", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_3", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *flextimer2_sel[] = { "osc", "pll_enet_100m_clk",
- 	"pll_sys_main_120m_clk", "pll_enet_40m_clk", "pll_audio_post_div",
--	"ext_clk_3", "ref_1m_clk", "pll_video_main_clk", };
-+	"ext_clk_3", "ref_1m_clk", "pll_video_post_div", };
- 
- static const char *sim1_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
-@@ -308,23 +308,23 @@ static const char *sim1_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 
- static const char *sim2_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
--	"pll_usb_main_clk", "pll_video_main_clk", "pll_enet_125m_clk",
-+	"pll_usb_main_clk", "pll_video_post_div", "pll_enet_125m_clk",
- 	"pll_sys_pfd7_clk", };
- 
- static const char *gpt1_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
-+	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_post_div",
- 	"ref_1m_clk", "pll_audio_post_div", "ext_clk_1", };
- 
- static const char *gpt2_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
-+	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_post_div",
- 	"ref_1m_clk", "pll_audio_post_div", "ext_clk_2", };
- 
- static const char *gpt3_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
-+	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_post_div",
- 	"ref_1m_clk", "pll_audio_post_div", "ext_clk_3", };
- 
- static const char *gpt4_sel[] = { "osc", "pll_enet_100m_clk",
--	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_main_clk",
-+	"pll_sys_pfd0_392m_clk", "pll_enet_40m_clk", "pll_video_post_div",
- 	"ref_1m_clk", "pll_audio_post_div", "ext_clk_4", };
- 
- static const char *trace_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
-@@ -339,12 +339,12 @@ static const char *wdog_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 
- static const char *csi_mclk_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
--	"pll_enet_125m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_enet_125m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"pll_usb_main_clk", };
- 
- static const char *audio_mclk_sel[] = { "osc", "pll_sys_pfd2_135m_clk",
- 	"pll_sys_main_120m_clk", "pll_dram_533m_clk",
--	"pll_enet_125m_clk", "pll_audio_post_div", "pll_video_main_clk",
-+	"pll_enet_125m_clk", "pll_audio_post_div", "pll_video_post_div",
- 	"pll_usb_main_clk", };
- 
- static const char *wrclk_sel[] = { "osc", "pll_enet_40m_clk",
-@@ -358,13 +358,13 @@ static const char *clko1_sel[] = { "osc", "pll_sys_main_clk",
- 
- static const char *clko2_sel[] = { "osc", "pll_sys_main_240m_clk",
- 	"pll_sys_pfd0_392m_clk", "pll_sys_pfd1_166m_clk", "pll_sys_pfd4_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "ckil", };
-+	"pll_audio_post_div", "pll_video_post_div", "ckil", };
- 
- static const char *lvds1_sel[] = { "pll_arm_main_clk",
- 	"pll_sys_main_clk", "pll_sys_pfd0_392m_clk", "pll_sys_pfd1_332m_clk",
- 	"pll_sys_pfd2_270m_clk", "pll_sys_pfd3_clk", "pll_sys_pfd4_clk",
- 	"pll_sys_pfd5_clk", "pll_sys_pfd6_clk", "pll_sys_pfd7_clk",
--	"pll_audio_post_div", "pll_video_main_clk", "pll_enet_500m_clk",
-+	"pll_audio_post_div", "pll_video_post_div", "pll_enet_500m_clk",
- 	"pll_enet_250m_clk", "pll_enet_125m_clk", "pll_enet_100m_clk",
- 	"pll_enet_50m_clk", "pll_enet_40m_clk", "pll_enet_25m_clk",
- 	"pll_dram_main_clk", };
-@@ -441,15 +441,22 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
- 
- 	clks[IMX7D_PLL_ARM_MAIN_CLK] = imx_clk_gate("pll_arm_main_clk", "pll_arm_main_bypass", base + 0x60, 13);
--	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_main_bypass", base + 0x70, 13);
-+	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_test_div", base + 0x70, 13);
- 	clks[IMX7D_PLL_SYS_MAIN_CLK] = imx_clk_gate("pll_sys_main_clk", "pll_sys_main_bypass", base + 0xb0, 13);
--	clks[IMX7D_PLL_AUDIO_MAIN_CLK] = imx_clk_gate("pll_audio_main_clk", "pll_audio_main_bypass", base + 0xf0, 13);
--	clks[IMX7D_PLL_VIDEO_MAIN_CLK] = imx_clk_gate("pll_video_main_clk", "pll_video_main_bypass", base + 0x130, 13);
-+	clks[IMX7D_PLL_AUDIO_MAIN_CLK] = imx_clk_gate("pll_audio_main_clk", "pll_audio_test_div", base + 0xf0, 13);
-+	clks[IMX7D_PLL_VIDEO_MAIN_CLK] = imx_clk_gate("pll_video_main_clk", "pll_video_test_div", base + 0x130, 13);
- 
--	clks[IMX7D_PLL_AUDIO_TEST_DIV]  = clk_register_divider_table(NULL, "pll_audio_test_div", "pll_audio_main_clk",
-+	clks[IMX7D_PLL_DRAM_TEST_DIV]  = clk_register_divider_table(NULL, "pll_dram_test_div", "pll_dram_main_bypass",
-+				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x70, 21, 2, 0, test_div_table, &imx_ccm_lock);
-+	clks[IMX7D_PLL_AUDIO_TEST_DIV]  = clk_register_divider_table(NULL, "pll_audio_test_div", "pll_audio_main_bypass",
- 				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 19, 2, 0, test_div_table, &imx_ccm_lock);
--	clks[IMX7D_PLL_AUDIO_POST_DIV] = clk_register_divider_table(NULL, "pll_audio_post_div", "pll_audio_test_div",
-+	clks[IMX7D_PLL_AUDIO_POST_DIV] = clk_register_divider_table(NULL, "pll_audio_post_div", "pll_audio_main_clk",
- 				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 22, 2, 0, post_div_table, &imx_ccm_lock);
-+	clks[IMX7D_PLL_VIDEO_TEST_DIV]  = clk_register_divider_table(NULL, "pll_video_test_div", "pll_video_main_bypass",
-+				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x130, 19, 2, 0, test_div_table, &imx_ccm_lock);
-+	clks[IMX7D_PLL_VIDEO_POST_DIV] = clk_register_divider_table(NULL, "pll_video_post_div", "pll_video_main_clk",
-+				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x130, 22, 2, 0, post_div_table, &imx_ccm_lock);
+ v2: - Use SPDX identifier for the license
+     - Fix broken build caused by typo when correcting patch
+ v3: - Move documentation to its own patch
+     - Get rid of ingenic_tcu structure. The "struct regmap *map" was
+	   added to struct ingenic_tcu_clk, the other fields are gone.
+	 - Replace clk_register / clk_register_clockdev /
+	   of_clk_add_provider with their "clk_hw" variant.
+ v4: No change
+
+diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
+index 1456e4cdb562..9dcadd4fed4c 100644
+--- a/drivers/clk/ingenic/Makefile
++++ b/drivers/clk/ingenic/Makefile
+@@ -1,4 +1,4 @@
+-obj-y				+= cgu.o
++obj-y				+= cgu.o tcu.o
+ obj-$(CONFIG_MACH_JZ4740)	+= jz4740-cgu.o
+ obj-$(CONFIG_MACH_JZ4770)	+= jz4770-cgu.o
+ obj-$(CONFIG_MACH_JZ4780)	+= jz4780-cgu.o
+diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
+new file mode 100644
+index 000000000000..b550b6ac8fb4
+--- /dev/null
++++ b/drivers/clk/ingenic/tcu.c
+@@ -0,0 +1,319 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Ingenic JZ47xx SoC TCU clocks driver
++ * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
++ */
 +
- 
- 	clks[IMX7D_PLL_SYS_PFD0_392M_CLK] = imx_clk_pfd("pll_sys_pfd0_392m_clk", "pll_sys_main_clk", base + 0xc0, 0);
- 	clks[IMX7D_PLL_SYS_PFD1_332M_CLK] = imx_clk_pfd("pll_sys_pfd1_332m_clk", "pll_sys_main_clk", base + 0xc0, 1);
++#include <linux/bitops.h>
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/mfd/syscon.h>
++#include <linux/mfd/syscon/ingenic-tcu.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/ingenic,tcu.h>
++
++enum ingenic_version {
++	ID_JZ4740,
++	ID_JZ4770,
++	ID_JZ4780,
++};
++
++struct ingenic_tcu_clk_info {
++	struct clk_init_data init_data;
++	u8 gate_bit;
++	u8 tcsr_reg;
++};
++
++struct ingenic_tcu_clk {
++	struct clk_hw hw;
++
++	struct regmap *map;
++	const struct ingenic_tcu_clk_info *info;
++
++	unsigned int idx;
++};
++
++#define to_tcu_clk(_hw) container_of(_hw, struct ingenic_tcu_clk, hw)
++
++static int ingenic_tcu_enable(struct clk_hw *hw)
++{
++	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
++	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
++
++	regmap_write(tcu_clk->map, TCU_REG_TSCR, BIT(info->gate_bit));
++	return 0;
++}
++
++static void ingenic_tcu_disable(struct clk_hw *hw)
++{
++	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
++	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
++
++	regmap_write(tcu_clk->map, TCU_REG_TSSR, BIT(info->gate_bit));
++}
++
++static int ingenic_tcu_is_enabled(struct clk_hw *hw)
++{
++	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
++	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
++	unsigned int value;
++
++	regmap_read(tcu_clk->map, TCU_REG_TSR, &value);
++
++	return !(value & BIT(info->gate_bit));
++}
++
++static u8 ingenic_tcu_get_parent(struct clk_hw *hw)
++{
++	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
++	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
++	unsigned int val = 0;
++	int ret;
++
++	ret = regmap_read(tcu_clk->map, info->tcsr_reg, &val);
++	WARN_ONCE(ret < 0, "Unable to read TCSR %i", tcu_clk->idx);
++
++	return ffs(val & TCU_TCSR_PARENT_CLOCK_MASK) - 1;
++}
++
++static int ingenic_tcu_set_parent(struct clk_hw *hw, u8 idx)
++{
++	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
++	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
++	struct regmap *map = tcu_clk->map;
++	int ret;
++
++	/*
++	 * Our clock provider has the CLK_SET_PARENT_GATE flag set, so we know
++	 * that the clk is in unprepared state. To be able to access TCSR
++	 * we must ungate the clock supply and we gate it again when done.
++	 */
++
++	regmap_write(map, TCU_REG_TSCR, BIT(info->gate_bit));
++
++	ret = regmap_update_bits(map, info->tcsr_reg,
++			TCU_TCSR_PARENT_CLOCK_MASK, BIT(idx));
++	WARN_ONCE(ret < 0, "Unable to update TCSR %i", tcu_clk->idx);
++
++	regmap_write(map, TCU_REG_TSSR, BIT(info->gate_bit));
++
++	return 0;
++}
++
++static unsigned long ingenic_tcu_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
++	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
++	unsigned int prescale;
++	int ret;
++
++	ret = regmap_read(tcu_clk->map, info->tcsr_reg, &prescale);
++	WARN_ONCE(ret < 0, "Unable to read TCSR %i", tcu_clk->idx);
++
++	prescale = (prescale & TCU_TCSR_PRESCALE_MASK) >> TCU_TCSR_PRESCALE_LSB;
++
++	return parent_rate >> (prescale * 2);
++}
++
++static long ingenic_tcu_round_rate(struct clk_hw *hw, unsigned long req_rate,
++		unsigned long *parent_rate)
++{
++	unsigned long rate = *parent_rate;
++	unsigned int shift;
++
++	if (req_rate > rate)
++		return -EINVAL;
++
++	for (shift = 0; shift < 10; shift += 2)
++		if ((rate >> shift) <= req_rate)
++			break;
++
++	return rate >> shift;
++}
++
++static int ingenic_tcu_set_rate(struct clk_hw *hw, unsigned long req_rate,
++		unsigned long parent_rate)
++{
++	struct ingenic_tcu_clk *tcu_clk = to_tcu_clk(hw);
++	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
++	struct regmap *map = tcu_clk->map;
++	u8 prescale = (ffs(parent_rate / req_rate) / 2)
++			<< TCU_TCSR_PRESCALE_LSB;
++	int ret;
++
++	/*
++	 * Our clock provider has the CLK_SET_RATE_GATE flag set, so we know
++	 * that the clk is in unprepared state. To be able to access TCSR
++	 * we must ungate the clock supply and we gate it again when done.
++	 */
++
++	regmap_write(map, TCU_REG_TSCR, BIT(info->gate_bit));
++
++	ret = regmap_update_bits(map, info->tcsr_reg,
++				TCU_TCSR_PRESCALE_MASK, prescale);
++	WARN_ONCE(ret < 0, "Unable to update TCSR %i", tcu_clk->idx);
++
++	regmap_write(map, TCU_REG_TSSR, BIT(info->gate_bit));
++
++	return 0;
++}
++
++static const struct clk_ops ingenic_tcu_clk_ops = {
++	.get_parent	= ingenic_tcu_get_parent,
++	.set_parent	= ingenic_tcu_set_parent,
++
++	.recalc_rate	= ingenic_tcu_recalc_rate,
++	.round_rate	= ingenic_tcu_round_rate,
++	.set_rate	= ingenic_tcu_set_rate,
++
++	.enable		= ingenic_tcu_enable,
++	.disable	= ingenic_tcu_disable,
++	.is_enabled	= ingenic_tcu_is_enabled,
++};
++
++static const char * const ingenic_tcu_timer_parents[] = {
++	"pclk",
++	"rtc",
++	"ext",
++};
++
++static const struct ingenic_tcu_clk_info ingenic_tcu_clk_info[] = {
++#define DEF_TIMER(_name, _gate_bit, _tcsr)				\
++	{								\
++		.init_data = {						\
++			.name = _name,					\
++			.parent_names = ingenic_tcu_timer_parents,	\
++			.num_parents = ARRAY_SIZE(ingenic_tcu_timer_parents),\
++			.ops = &ingenic_tcu_clk_ops,			\
++			.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE,\
++		},							\
++		.gate_bit = _gate_bit,					\
++		.tcsr_reg = _tcsr,					\
++	}
++	[JZ4740_CLK_TIMER0] = DEF_TIMER("timer0", 0, TCU_REG_TCSRc(0)),
++	[JZ4740_CLK_TIMER1] = DEF_TIMER("timer1", 1, TCU_REG_TCSRc(1)),
++	[JZ4740_CLK_TIMER2] = DEF_TIMER("timer2", 2, TCU_REG_TCSRc(2)),
++	[JZ4740_CLK_TIMER3] = DEF_TIMER("timer3", 3, TCU_REG_TCSRc(3)),
++	[JZ4740_CLK_TIMER4] = DEF_TIMER("timer4", 4, TCU_REG_TCSRc(4)),
++	[JZ4740_CLK_TIMER5] = DEF_TIMER("timer5", 5, TCU_REG_TCSRc(5)),
++	[JZ4740_CLK_TIMER6] = DEF_TIMER("timer6", 6, TCU_REG_TCSRc(6)),
++	[JZ4740_CLK_TIMER7] = DEF_TIMER("timer7", 7, TCU_REG_TCSRc(7)),
++	[JZ4740_CLK_WDT]    = DEF_TIMER("wdt",   16, TCU_REG_WDT_TCSR),
++	[JZ4770_CLK_OST]    = DEF_TIMER("ost",   15, TCU_REG_OST_TCSR),
++#undef DEF_TIMER
++};
++
++static int ingenic_tcu_register_clock(struct regmap *map, unsigned int idx,
++		const struct ingenic_tcu_clk_info *info,
++		struct clk_hw_onecell_data *clocks)
++{
++	struct ingenic_tcu_clk *tcu_clk;
++	int err;
++
++	tcu_clk = kzalloc(sizeof(*tcu_clk), GFP_KERNEL);
++	if (!tcu_clk)
++		return -ENOMEM;
++
++	tcu_clk->hw.init = &info->init_data;
++	tcu_clk->idx = idx;
++	tcu_clk->info = info;
++	tcu_clk->map = map;
++
++	/* Set EXT as the default parent clock */
++	ingenic_tcu_set_parent(&tcu_clk->hw, 2);
++
++	ingenic_tcu_disable(&tcu_clk->hw);
++
++	err = clk_hw_register(NULL, &tcu_clk->hw);
++	if (err)
++		goto err_free_tcu_clk;
++
++	err = clk_hw_register_clkdev(&tcu_clk->hw, info->init_data.name, NULL);
++	if (err)
++		goto err_clk_unregister;
++
++	clocks->hws[idx] = &tcu_clk->hw;
++	return 0;
++
++err_clk_unregister:
++	clk_hw_unregister(&tcu_clk->hw);
++err_free_tcu_clk:
++	kfree(tcu_clk);
++	return err;
++}
++
++static void __init ingenic_tcu_init(struct device_node *np,
++		enum ingenic_version id)
++{
++	struct clk_hw_onecell_data *clocks;
++	struct regmap *map;
++	size_t i, nb_clks;
++	int ret = -ENOMEM;
++
++	if (id >= ID_JZ4770)
++		nb_clks = (JZ4770_CLK_LAST - JZ4740_CLK_TIMER0) + 1;
++	else
++		nb_clks = (JZ4740_CLK_LAST - JZ4740_CLK_TIMER0) + 1;
++
++	map = syscon_node_to_regmap(np->parent);
++	if (IS_ERR(map)) {
++		pr_err("%s: failed to map TCU registers\n", __func__);
++		return;
++	}
++
++	clocks = kzalloc(sizeof(*clocks) +
++					 sizeof(*clocks->hws) * nb_clks,
++					 GFP_KERNEL);
++	if (!clocks)
++		return;
++
++	clocks->num = nb_clks;
++
++	for (i = 0; i < nb_clks; i++) {
++		ret = ingenic_tcu_register_clock(map, i,
++				&ingenic_tcu_clk_info[JZ4740_CLK_TIMER0 + i],
++				clocks);
++		if (ret) {
++			pr_err("%s: cannot register clocks\n", __func__);
++			goto err_unregister;
++		}
++	}
++
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clocks);
++	if (ret) {
++		pr_err("%s: cannot add OF clock provider\n", __func__);
++		goto err_unregister;
++	}
++
++	return;
++
++err_unregister:
++	for (i = 0; i < clocks->num; i++)
++		if (clocks->hws[i])
++			clk_hw_unregister(clocks->hws[i]);
++	kfree(clocks);
++}
++
++static void __init jz4740_tcu_init(struct device_node *np)
++{
++	ingenic_tcu_init(np, ID_JZ4740);
++}
++
++static void __init jz4770_tcu_init(struct device_node *np)
++{
++	ingenic_tcu_init(np, ID_JZ4770);
++}
++
++static void __init jz4780_tcu_init(struct device_node *np)
++{
++	ingenic_tcu_init(np, ID_JZ4780);
++}
++
++/* We only probe via devicetree, no need for a platform driver */
++CLK_OF_DECLARE(jz4740_tcu, "ingenic,jz4740-tcu-clocks", jz4740_tcu_init);
++CLK_OF_DECLARE(jz4770_tcu, "ingenic,jz4770-tcu-clocks", jz4770_tcu_init);
++CLK_OF_DECLARE(jz4780_tcu, "ingenic,jz4780-tcu-clocks", jz4780_tcu_init);
 -- 
-2.7.4
+2.11.0
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
