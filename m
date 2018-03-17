@@ -1,47 +1,148 @@
-Return-Path: <eajames@linux.vnet.ibm.com>
-From: Eddie James <eajames@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org, joel@jms.id.au, mturquette@baylibre.com,
-        sboyd@kernel.org, eajames@linux.vnet.ibm.com, mine260309@gmail.com,
-        ryan_chen@aspeedtech.com
-Subject: [PATCH v2 1/2] clk: aspeed: Fix is_enabled for certain clocks
-Date: Thu,  8 Mar 2018 14:57:19 -0600
-In-Reply-To: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1520542640-9185-1-git-send-email-eajames@linux.vnet.ibm.com>
-Message-Id: <1520542640-9185-2-git-send-email-eajames@linux.vnet.ibm.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v5 00/12] Add clock driver for Actions S900 SoC
+Date: Sat, 17 Mar 2018 15:39:40 +0530
+Message-Id: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some of the Aspeed clocks are disabled by setting the relevant bit in
-the "clock stop control" register to one, while others are disabled by
-setting their bit to zero. The driver already uses a flag per gate  to
-identify this behavior, but doesn't apply it in the clock is_enabled
-function.
+This patchset adds clock support for Actions Semi OWL series
+S900 SoC with relevant clock bindings and device tree info.
 
-Use the existing gate flag to correctly return whether or not a clock
-is enabled in the aspeed_clk_is_enabled function.
+Driver has been validated on Bubblegum-96 board.
 
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
----
- drivers/clk/clk-aspeed.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks,
+Mani
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 9f7f931..1687771 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -259,11 +259,12 @@ static int aspeed_clk_is_enabled(struct clk_hw *hw)
- {
- 	struct aspeed_clk_gate *gate = to_aspeed_clk_gate(hw);
- 	u32 clk = BIT(gate->clock_idx);
-+	u32 enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
- 	u32 reg;
- 
- 	regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
- 
--	return (reg & clk) ? 0 : 1;
-+	return ((reg & clk) == enval) ? 1 : 0;
- }
- 
- static const struct clk_ops aspeed_clk_gate_ops = {
+Changes in V5:
+
+* Changed I2C clocks to fixed factor clocks
+* Fixed minor issue in S900 PLL clock names
+* Fixed S900 Kconfig
+* Rebased on top of 4.16-rc5
+
+Changes in V4:
+
+* Moved to SPDX license tag for dt-bindings
+* Fixed a warning in owl-common.h
+* Rebased on top of 4.16-rc3
+
+Changes in V3:
+
+* Completely refactored the clock driver based on sunxi-ng
+  clock structure
+* Removed all owl_ prefixed functions for registering the
+  clock driver and used the registration functions directly
+* Moved to SPDX based license tag
+* Removed module dependencies from the driver
+* Made I2C clocks as simple gate clocks due to the lack of
+  information about factor rates
+* Added Ack from Rob for DT bindings
+* Sourced CMU clock for UART5
+
+Changes in V2: (https://lkml.org/lkml/2017/11/6/840)
+
+* Changed the directory structure to actions/ and used owl- prefix
+  for sources.
+* Fixed MAINTAINERS and added Andreas as Designated Reviewer (R:).
+* Introduced new Kconfig for S900 code part (CONFIG_CLK_OWL_S900).
+* Changed the license from GPLv2 to GPLv2+.
+* Moved fixed clock sources to DT
+* Changed clock-controller node name to cmu in DT
+* Added clocks property to cmu node in DT
+* Changed compatible property value to "actions,s900-cmu"
+* Fixed example UART controller node in documentation
+* Fixed tab vs space issue
+
+Changes in V1: (https://lkml.org/lkml/2017/10/31/808)
+
+* Addressed last year's review comments from Stephen
+* https://patchwork.kernel.org/patch/9254471/
+
+Manivannan Sadhasivam (12):
+  dt-bindings: clock: Add Actions S900 clock bindings
+  arm64: dts: actions: Add S900 clock management unit nodes
+  arm64: dts: actions: Source CMU clock for UART5
+  clk: actions: Add common clock driver support
+  clk: actions: Add gate clock support
+  clk: actions: Add mux clock support
+  clk: actions: Add divider clock support
+  clk: actions: Add factor clock support
+  clk: actions: Add fixed factor clock support
+  clk: actions: Add composite clock support
+  clk: actions: Add pll clock support
+  clk: actions: Add S900 SoC clock support
+
+ .../devicetree/bindings/clock/actions,s900-cmu.txt |  47 ++
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts  |   8 +-
+ arch/arm64/boot/dts/actions/s900.dtsi              |  20 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/actions/Kconfig                        |  14 +
+ drivers/clk/actions/Makefile                       |  13 +
+ drivers/clk/actions/owl-common.c                   |  84 +++
+ drivers/clk/actions/owl-common.h                   |  41 ++
+ drivers/clk/actions/owl-composite.c                | 200 ++++++
+ drivers/clk/actions/owl-composite.h                | 118 ++++
+ drivers/clk/actions/owl-divider.c                  |  94 +++
+ drivers/clk/actions/owl-divider.h                  |  75 +++
+ drivers/clk/actions/owl-factor.c                   | 222 +++++++
+ drivers/clk/actions/owl-factor.h                   |  83 +++
+ drivers/clk/actions/owl-fixed-factor.c             |  81 +++
+ drivers/clk/actions/owl-fixed-factor.h             |  62 ++
+ drivers/clk/actions/owl-gate.c                     |  77 +++
+ drivers/clk/actions/owl-gate.h                     |  73 +++
+ drivers/clk/actions/owl-mux.c                      |  60 ++
+ drivers/clk/actions/owl-mux.h                      |  61 ++
+ drivers/clk/actions/owl-pll.c                      | 194 ++++++
+ drivers/clk/actions/owl-pll.h                      |  92 +++
+ drivers/clk/actions/owl-s900.c                     | 690 +++++++++++++++++++++
+ drivers/clk/actions/owl-s900.h                     |  61 ++
+ include/dt-bindings/clock/actions,s900-cmu.h       | 129 ++++
+ 26 files changed, 2594 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+ create mode 100644 drivers/clk/actions/Kconfig
+ create mode 100644 drivers/clk/actions/Makefile
+ create mode 100644 drivers/clk/actions/owl-common.c
+ create mode 100644 drivers/clk/actions/owl-common.h
+ create mode 100644 drivers/clk/actions/owl-composite.c
+ create mode 100644 drivers/clk/actions/owl-composite.h
+ create mode 100644 drivers/clk/actions/owl-divider.c
+ create mode 100644 drivers/clk/actions/owl-divider.h
+ create mode 100644 drivers/clk/actions/owl-factor.c
+ create mode 100644 drivers/clk/actions/owl-factor.h
+ create mode 100644 drivers/clk/actions/owl-fixed-factor.c
+ create mode 100644 drivers/clk/actions/owl-fixed-factor.h
+ create mode 100644 drivers/clk/actions/owl-gate.c
+ create mode 100644 drivers/clk/actions/owl-gate.h
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
+ create mode 100644 drivers/clk/actions/owl-pll.c
+ create mode 100644 drivers/clk/actions/owl-pll.h
+ create mode 100644 drivers/clk/actions/owl-s900.c
+ create mode 100644 drivers/clk/actions/owl-s900.h
+ create mode 100644 include/dt-bindings/clock/actions,s900-cmu.h
+
 -- 
-1.8.3.1
+2.14.1
