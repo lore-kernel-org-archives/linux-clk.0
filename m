@@ -1,216 +1,131 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
 	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 04/11] clk: actions: Add gate clock support
-Date: Mon, 26 Mar 2018 23:08:58 +0530
-Message-Id: <20180326173905.22313-5-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
-References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH net-next 08/12] net: stmmac: dwmac-sun8i: Support different ranges for TX/RX delay chains
+Date: Sat, 17 Mar 2018 17:28:53 +0800
+Message-Id: <20180317092857.4396-9-wens@csie.org>
+In-Reply-To: <20180317092857.4396-1-wens@csie.org>
+References: <20180317092857.4396-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi gate clock together with helper
-functions to be used in composite clock.
+On the R40 SoC, the RX delay chain only has a range of 0~7 (hundred
+picoseconds), instead of 0~31. Also the TX delay chain is completely
+absent.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+This patch adds support for different ranges by adding per-compatible
+maximum values in the variant data. A maximum of 0 indicates that the
+delay chain is not supported or absent.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/actions/Makefile   |  1 +
- drivers/clk/actions/owl-gate.c | 77 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-gate.h | 73 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 151 insertions(+)
- create mode 100644 drivers/clk/actions/owl-gate.c
- create mode 100644 drivers/clk/actions/owl-gate.h
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 32 ++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 64a50fc2d335..1f0917872c9d 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+index a51175bcfd11..08d263567a52 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -50,6 +50,12 @@
+  * @support_mii:		Does the MAC handle MII
+  * @support_rmii:		Does the MAC handle RMII
+  * @support_rgmii:		Does the MAC handle RGMII
++ *
++ * @rx_delay_max:		Maximum raw value for RX delay chain
++ * @tx_delay_max:		Maximum raw value for TX delay chain
++ *				These two also indicate the bitmask for
++ *				the RX and TX delay chain registers. A
++ *				value of zero indicates this is not supported.
+  */
+ struct emac_variant {
+ 	u32 default_syscon_value;
+@@ -59,6 +65,8 @@ struct emac_variant {
+ 	bool support_mii;
+ 	bool support_rmii;
+ 	bool support_rgmii;
++	u8 rx_delay_max;
++	u8 tx_delay_max;
+ };
  
- clk-owl-y			+= owl-common.o
-+clk-owl-y			+= owl-gate.o
-diff --git a/drivers/clk/actions/owl-gate.c b/drivers/clk/actions/owl-gate.c
-new file mode 100644
-index 000000000000..f11500ba46a7
---- /dev/null
-+++ b/drivers/clk/actions/owl-gate.c
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL gate clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "owl-gate.h"
-+
-+void owl_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable)
-+{
-+	int set = gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+	u32 reg;
-+
-+	set ^= enable;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (set)
-+		reg |= BIT(gate_hw->bit_idx);
-+	else
-+		reg &= ~BIT(gate_hw->bit_idx);
-+
-+	regmap_write(common->regmap, gate_hw->reg, reg);
-+}
-+
-+static void owl_gate_disable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	owl_gate_set(common, &gate->gate_hw, false);
-+}
-+
-+static int owl_gate_enable(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	owl_gate_set(common, &gate->gate_hw, true);
-+
-+	return 0;
-+}
-+
-+int owl_gate_clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw)
-+{
-+	u32 reg;
-+
-+	regmap_read(common->regmap, gate_hw->reg, &reg);
-+
-+	if (gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE)
-+		reg ^= BIT(gate_hw->bit_idx);
-+
-+	return !!(reg & BIT(gate_hw->bit_idx));
-+}
-+
-+static int owl_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_gate *gate = hw_to_owl_gate(hw);
-+	struct owl_clk_common *common = &gate->common;
-+
-+	return owl_gate_clk_is_enabled(common, &gate->gate_hw);
-+}
-+
-+const struct clk_ops owl_gate_ops = {
-+	.disable	= owl_gate_disable,
-+	.enable		= owl_gate_enable,
-+	.is_enabled	= owl_gate_is_enabled,
-+};
-diff --git a/drivers/clk/actions/owl-gate.h b/drivers/clk/actions/owl-gate.h
-new file mode 100644
-index 000000000000..c2d61ceebce2
---- /dev/null
-+++ b/drivers/clk/actions/owl-gate.h
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL gate clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_GATE_H_
-+#define _OWL_GATE_H_
-+
-+#include "owl-common.h"
-+
-+struct owl_gate_hw {
-+	u32			reg;
-+	u8			bit_idx;
-+	u8			gate_flags;
-+};
-+
-+struct owl_gate {
-+	struct owl_gate_hw	gate_hw;
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_GATE_HW(_reg, _bit_idx, _gate_flags)	\
-+	{						\
-+		.reg		= _reg,			\
-+		.bit_idx	= _bit_idx,		\
-+		.gate_flags	= _gate_flags,		\
-+	}
-+
-+#define OWL_GATE(_struct, _name, _parent, _reg,				\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		}							\
-+	}								\
-+
-+#define OWL_GATE_NO_PARENT(_struct, _name, _reg,			\
-+		_bit_idx, _gate_flags, _flags)				\
-+	struct owl_gate _struct = {					\
-+		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
-+		.common = {						\
-+			.regmap		= NULL,				\
-+			.hw.init	= CLK_HW_INIT_NO_PARENT(_name,	\
-+						      &owl_gate_ops,	\
-+						      _flags),		\
-+		},							\
-+	}								\
-+
-+static inline struct owl_gate *hw_to_owl_gate(const struct clk_hw *hw)
-+{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_gate, common);
-+}
-+
-+void owl_gate_set(const struct owl_clk_common *common,
-+		 const struct owl_gate_hw *gate_hw, bool enable);
-+int owl_gate_clk_is_enabled(const struct owl_clk_common *common,
-+		   const struct owl_gate_hw *gate_hw);
-+
-+extern const struct clk_ops owl_gate_ops;
-+
-+#endif /* _OWL_GATE_H_ */
+ /* struct sunxi_priv_data - hold all sunxi private data
+@@ -95,7 +103,9 @@ static const struct emac_variant emac_variant_h3 = {
+ 	.soc_has_internal_phy = true,
+ 	.support_mii = true,
+ 	.support_rmii = true,
+-	.support_rgmii = true
++	.support_rgmii = true,
++	.rx_delay_max = 31,
++	.tx_delay_max = 7,
+ };
+ 
+ static const struct emac_variant emac_variant_v3s = {
+@@ -110,7 +120,9 @@ static const struct emac_variant emac_variant_a83t = {
+ 	.syscon_field = &sun8i_syscon_reg_field,
+ 	.soc_has_internal_phy = false,
+ 	.support_mii = true,
+-	.support_rgmii = true
++	.support_rgmii = true,
++	.rx_delay_max = 31,
++	.tx_delay_max = 7,
+ };
+ 
+ static const struct emac_variant emac_variant_a64 = {
+@@ -119,7 +131,9 @@ static const struct emac_variant emac_variant_a64 = {
+ 	.soc_has_internal_phy = false,
+ 	.support_mii = true,
+ 	.support_rmii = true,
+-	.support_rgmii = true
++	.support_rgmii = true,
++	.rx_delay_max = 31,
++	.tx_delay_max = 7,
+ };
+ 
+ #define EMAC_BASIC_CTL0 0x00
+@@ -223,9 +237,7 @@ static const struct emac_variant emac_variant_a64 = {
+ #define SYSCON_RMII_EN		BIT(13) /* 1: enable RMII (overrides EPIT) */
+ 
+ /* Generic system control EMAC_CLK bits */
+-#define SYSCON_ETXDC_MASK		GENMASK(2, 0)
+ #define SYSCON_ETXDC_SHIFT		10
+-#define SYSCON_ERXDC_MASK		GENMASK(4, 0)
+ #define SYSCON_ERXDC_SHIFT		5
+ /* EMAC PHY Interface Type */
+ #define SYSCON_EPIT			BIT(2) /* 1: RGMII, 0: MII */
+@@ -851,8 +863,9 @@ static int sun8i_dwmac_set_syscon(struct stmmac_priv *priv)
+ 		}
+ 		val /= 100;
+ 		dev_dbg(priv->device, "set tx-delay to %x\n", val);
+-		if (val <= SYSCON_ETXDC_MASK) {
+-			reg &= ~(SYSCON_ETXDC_MASK << SYSCON_ETXDC_SHIFT);
++		if (val <= gmac->variant->tx_delay_max) {
++			reg &= ~(gmac->variant->tx_delay_max <<
++				 SYSCON_ETXDC_SHIFT);
+ 			reg |= (val << SYSCON_ETXDC_SHIFT);
+ 		} else {
+ 			dev_err(priv->device, "Invalid TX clock delay: %d\n",
+@@ -868,8 +881,9 @@ static int sun8i_dwmac_set_syscon(struct stmmac_priv *priv)
+ 		}
+ 		val /= 100;
+ 		dev_dbg(priv->device, "set rx-delay to %x\n", val);
+-		if (val <= SYSCON_ERXDC_MASK) {
+-			reg &= ~(SYSCON_ERXDC_MASK << SYSCON_ERXDC_SHIFT);
++		if (val <= gmac->variant->rx_delay_max) {
++			reg &= ~(gmac->variant->rx_delay_max <<
++				 SYSCON_ERXDC_SHIFT);
+ 			reg |= (val << SYSCON_ERXDC_SHIFT);
+ 		} else {
+ 			dev_err(priv->device, "Invalid RX clock delay: %d\n",
 -- 
-2.14.1
+2.16.2
