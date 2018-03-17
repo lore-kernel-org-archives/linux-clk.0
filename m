@@ -1,138 +1,89 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
-        Loic PALLARDY
-	<loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: [PATCH v2 04/12] clk: stm32mp1: add Source Clocks for PLLs
-Date: Thu, 8 Mar 2018 17:53:57 +0100
-Message-ID: <1520528045-18330-5-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
-References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH net-next 11/12] ARM: dts: sun8i: r40: Add device node and RGMII pinmux node for GMAC
+Date: Sat, 17 Mar 2018 17:28:56 +0800
+Message-Id: <20180317092857.4396-12-wens@csie.org>
+In-Reply-To: <20180317092857.4396-1-wens@csie.org>
+References: <20180317092857.4396-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+The R40 SoC has a GMAC (gigabit capable Ethernet controller). Add a
+device node for it. The only publicly available board for this SoC
+uses an RGMII PHY. Add a pinmux node for it as well.
 
-This patch adds source clocks for PLLs
-This patch also introduces MUX clock API.
+Since this SoC also has an old 10/100 Mbps EMAC, which also has an
+MDIO bus controller, the MDIO bus for the GMAC is labeled "gmac_mdio".
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/clk-stm32mp1.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ arch/arm/boot/dts/sun8i-r40.dtsi | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 56b738e..47984f3 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -103,6 +103,18 @@
+diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
+index 173dcc1652d2..bd97ca3dc2fa 100644
+--- a/arch/arm/boot/dts/sun8i-r40.dtsi
++++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+@@ -265,6 +265,19 @@
+ 			#interrupt-cells = <3>;
+ 			#gpio-cells = <3>;
  
- #define RCC_CLR	0x4
++			gmac_rgmii_pins: gmac-rgmii-pins {
++				pins = "PA0", "PA1", "PA2", "PA3",
++				       "PA4", "PA5", "PA6", "PA7",
++				       "PA8", "PA10", "PA11", "PA12",
++				       "PA13", "PA15", "PA16";
++				function = "gmac";
++				/*
++				 * data lines in RGMII mode use DDR mode
++				 * and need a higher signal drive strength
++				 */
++				drive-strength = <40>;
++			};
++
+ 			i2c0_pins: i2c0-pins {
+ 				pins = "PB0", "PB1";
+ 				function = "i2c0";
+@@ -451,6 +464,27 @@
+ 			#size-cells = <0>;
+ 		};
  
-+static const char * const ref12_parents[] = {
-+	"ck_hsi", "ck_hse"
-+};
++		gmac: ethernet@1c50000 {
++			compatible = "allwinner,sun8i-r40-gmac";
++			syscon = <&ccu>;
++			reg = <0x01c50000 0x10000>;
++			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "macirq";
++			resets = <&ccu RST_BUS_GMAC>;
++			reset-names = "stmmaceth";
++			clocks = <&ccu CLK_BUS_GMAC>;
++			clock-names = "stmmaceth";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
 +
-+static const char * const ref3_parents[] = {
-+	"ck_hsi", "ck_hse", "ck_csi"
-+};
++			gmac_mdio: mdio {
++				compatible = "snps,dwmac-mdio";
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
++		};
 +
-+static const char * const ref4_parents[] = {
-+	"ck_hsi", "ck_hse", "ck_csi"
-+};
-+
- struct clock_config {
- 	u32 id;
- 	const char *name;
-@@ -140,6 +152,14 @@ struct div_cfg {
- 	const struct clk_div_table *table;
- };
- 
-+struct mux_cfg {
-+	u32 reg_off;
-+	u8 shift;
-+	u8 width;
-+	u8 mux_flags;
-+	u32 *table;
-+};
-+
- struct stm32_gate_cfg {
- 	struct gate_cfg		*gate;
- 	const struct clk_ops	*ops;
-@@ -196,6 +216,20 @@ struct stm32_gate_cfg {
- 					     lock);
- }
- 
-+static struct clk_hw *
-+_clk_hw_register_mux(struct device *dev,
-+		     struct clk_hw_onecell_data *clk_data,
-+		     void __iomem *base, spinlock_t *lock,
-+		     const struct clock_config *cfg)
-+{
-+	struct mux_cfg *mux_cfg = cfg->cfg;
-+
-+	return clk_hw_register_mux(dev, cfg->name, cfg->parent_names,
-+				   cfg->num_parents, cfg->flags,
-+				   mux_cfg->reg_off + base, mux_cfg->shift,
-+				   mux_cfg->width, mux_cfg->mux_flags, lock);
-+}
-+
- /* MP1 Gate clock with set & clear registers */
- 
- static int mp1_gate_clk_enable(struct clk_hw *hw)
-@@ -350,6 +384,22 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
- 	DIV_TABLE(_id, _name, _parent, _flags, _offset, _shift, _width,\
- 		  _div_flags, NULL)
- 
-+#define MUX(_id, _name, _parents, _flags, _offset, _shift, _width, _mux_flags)\
-+{\
-+	.id		= _id,\
-+	.name		= _name,\
-+	.parent_names	= _parents,\
-+	.num_parents	= ARRAY_SIZE(_parents),\
-+	.flags		= _flags,\
-+	.cfg		=  &(struct mux_cfg) {\
-+		.reg_off	= _offset,\
-+		.shift		= _shift,\
-+		.width		= _width,\
-+		.mux_flags	= _mux_flags,\
-+	},\
-+	.func		= _clk_hw_register_mux,\
-+}
-+
- /* STM32 GATE */
- #define STM32_GATE(_id, _name, _parent, _flags, _gate)\
- {\
-@@ -392,6 +442,16 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
- 	GATE(CK_LSE, "ck_lse", "clk-lse", 0, RCC_BDCR, 0, 0),
- 
- 	FIXED_FACTOR(CK_HSE_DIV2, "clk-hse-div2", "ck_hse", 0, 1, 2),
-+
-+	/* ref clock pll */
-+	MUX(NO_ID, "ref1", ref12_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK12SELR,
-+	    0, 2, CLK_MUX_READ_ONLY),
-+
-+	MUX(NO_ID, "ref3", ref3_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK3SELR,
-+	    0, 2, CLK_MUX_READ_ONLY),
-+
-+	MUX(NO_ID, "ref4", ref4_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK4SELR,
-+	    0, 2, CLK_MUX_READ_ONLY),
- };
- 
- struct stm32_clock_match_data {
+ 		gic: interrupt-controller@1c81000 {
+ 			compatible = "arm,gic-400";
+ 			reg = <0x01c81000 0x1000>,
 -- 
-1.9.1
+2.16.2
