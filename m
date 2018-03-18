@@ -1,36 +1,55 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-bn3nam01on0052.outbound.protection.outlook.com ([104.47.33.52]:63724
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753256AbeCRDRV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 17 Mar 2018 23:17:21 -0400
+From: Anson Huang <Anson.Huang@nxp.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+        <fabio.estevam@nxp.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <shengjiu.wang@nxp.com>
+CC: <Linux-imx@nxp.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz clock source
+Date: Sun, 18 Mar 2018 11:14:13 +0800
+Message-ID: <1521342853-2941-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1521342853-2941-1-git-send-email-Anson.Huang@nxp.com>
+References: <1521342853-2941-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-To: Rob Herring <robh+dt@kernel.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <ad47a5c633fea2f75720dcd4b24fa6c41592d38b.1520327262.git.ryder.lee@mediatek.com>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-References: <cover.1520327262.git.ryder.lee@mediatek.com>
- <ad47a5c633fea2f75720dcd4b24fa6c41592d38b.1520327262.git.ryder.lee@mediatek.com>
-Message-ID: <152149209476.242365.12761078522449253601@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 4/6] dt-bindings: clock: mediatek: update audsys documentation
- to adapt MFD device
-Date: Mon, 19 Mar 2018 13:41:34 -0700
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ryder Lee (2018-03-06 01:09:29)
-> The MediaTek audio hardware block that exposes functionalities that are
-> handled by separate subsystems in the kernel.  These functions are all
-> mapped somewhere at 0x112xxxxx, and there are some control bits are mixed
-> up with other functions within the same registers.
-> 
-> This patch modifies example to illustrate child nodes.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
+On i.MX6SX SabreAuto board, there is external 24MHz clock
+source for analog clock2, add this clock source to clock tree.
 
-Applied to clk-next
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/boot/dts/imx6sx-sabreauto.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
+index 72da5ac..83f7cac 100644
+--- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
++++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
+@@ -18,6 +18,14 @@
+ 		reg = <0x80000000 0x80000000>;
+ 	};
+ 
++	clocks {
++		codec_osc: anaclk2 {
++			#clock-cells = <0>;
++			compatible = "fixed-clock";
++			clock-frequency = <24576000>;
++		};
++	};
++
+ 	regulators {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+-- 
+2.7.4
+
