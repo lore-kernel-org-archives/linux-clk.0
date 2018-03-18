@@ -1,55 +1,76 @@
-Return-Path: <s.nawrocki@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Subject: Re: [PATCH] clk: samsung: exynos5420: Add more entries to EPLL rate
- table
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <848fd858-ab59-a54a-41dd-37ce606a52f5@samsung.com>
-Date: Mon, 12 Mar 2018 11:31:23 +0100
-In-reply-to: <5AA097FA.5070704@samsung.com>
-References: <20180307164656.12194-1-s.nawrocki@samsung.com>
-	<CGME20180307164733epcas1p3695c022315be8d2839ac9e88016e3a76@epcas1p3.samsung.com>
-	<20180307164656.12194-2-s.nawrocki@samsung.com>
-	<5AA097FA.5070704@samsung.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Sun, 18 Mar 2018 07:52:19 -0500
+From: Rob Herring <robh@kernel.org>
+To: Mike Looijmans <mike.looijmans@topic.nl>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v2] clk: Add driver for the si544 clock generator chip
+Message-ID: <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
+References: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/08/2018 02:55 AM, Chanwoo Choi wrote:
-> On 2018년 03월 08일 01:46, Sylwester Nawrocki wrote:
->> Adding these EPLL output frequency entries allows to support all required
->> audio sample rates on the CODEC and the HDMI interface on Peach-Pit
->> Chromebook.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos5420.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
->> index 1f204ba37f0f..f2607cb97a97 100644
->> --- a/drivers/clk/samsung/clk-exynos5420.c
->> +++ b/drivers/clk/samsung/clk-exynos5420.c
->> @@ -1360,8 +1360,11 @@ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
->>  	PLL_36XX_RATE(180633609U, 301, 5, 3, 3671),
->>  	PLL_36XX_RATE(131072006U, 131, 3, 3, 4719),
->>  	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
->> +	PLL_36XX_RATE( 73728000U, 98, 2, 4, 19923),
->> +	PLL_36XX_RATE( 67737602U, 90, 2, 4, 20762),
->>  	PLL_36XX_RATE( 65536003U, 131, 3, 4, 4719),
->>  	PLL_36XX_RATE( 49152000U, 197, 3, 5, -25690),
->> +	PLL_36XX_RATE( 45158401U, 90, 3, 4, 20762),
->>  	PLL_36XX_RATE( 32768001U, 131, 3, 5, 4719),
->>  };
->>  
->>
-> Looks good to me.
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+On Thu, Mar 15, 2018 at 12:50:08PM +0100, Mike Looijmans wrote:
+> This patch adds the driver and devicetree documentation for the
+> Silicon Labs SI544 clock generator chip. This is an I2C controlled
+> oscillator capable of generating clock signals ranging from 200kHz
+> to 1500MHz.
+> 
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> ---
+> v2: Add u64 cast to ls_div_bits calculation loop
+>     When ls_div_bits is non-zero, the hs_div must always be even
+> 
+>  .../devicetree/bindings/clock/silabs,si544.txt     |  25 ++
+>  drivers/clk/Kconfig                                |  10 +
+>  drivers/clk/Makefile                               |   1 +
+>  drivers/clk/clk-si544.c                            | 422 +++++++++++++++++++++
+>  4 files changed, 458 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si544.txt
+>  create mode 100644 drivers/clk/clk-si544.c
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.txt b/Documentation/devicetree/bindings/clock/silabs,si544.txt
+> new file mode 100644
+> index 0000000..eec1787
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/silabs,si544.txt
+> @@ -0,0 +1,25 @@
+> +Binding for Silicon Labs 544 programmable I2C clock generator.
+> +
+> +Reference
+> +This binding uses the common clock binding[1]. Details about the device can be
+> +found in the datasheet[2].
+> +
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +[2] Si544 datasheet
+> +    https://www.silabs.com/documents/public/data-sheets/si544-datasheet.pdf
+> +
+> +Required properties:
+> + - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c" according
+> +               to the speed grade of the chip.
+> + - reg: I2C device address.
+> + - #clock-cells: From common clock bindings: Shall be 0.
+> +
+> +Optional properties:
+> + - clock-output-names: From common clock bindings. Recommended to be "si544".
 
-Thanks for your review, patch applied to the clk/samsung tree.
+What's the point if there is only 1 clock output?
 
--- 
-Regards,
-Sylwester
+> +
+> +Example:
+> +	si544: clock-generator@55 {
+
+clock-controller@55 is the standard node name.
+
+> +		reg = <0x55>;
+> +		#clock-cells = <0>;
+> +		compatible = "silabs,si544b";
+> +	};
+
+Otherwise, for the binding:
+
+Reviewed-by: Rob Herring <robh@kernel.org>
