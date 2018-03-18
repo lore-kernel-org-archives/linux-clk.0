@@ -1,49 +1,31 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Thu, 22 Mar 2018 15:42:17 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: kbuild-all@01.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH net-next 06/12] net: stmmac: dwmac-sun8i: Use
- regmap_field for syscon register access
-Message-ID: <201803221541.uip2NtFU%fengguang.wu@intel.com>
-References: <20180317092857.4396-7-wens@csie.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Sun, 18 Mar 2018 07:48:41 -0500
+From: Rob Herring <robh@kernel.org>
+To: Weiyi Lu <weiyi.lu@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	James Liao <jamesjj.liao@mediatek.com>,
+	Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+	srv_heupstream@mediatek.com
+Subject: Re: [PATCH v2 3/5] dt-bindings: clock: add clocks for MT2712
+Message-ID: <20180318124841.ap6benlquyomteuq@rob-hp-laptop>
+References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
+ <20180312070342.4335-5-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180317092857.4396-7-wens@csie.org>
+In-Reply-To: <20180312070342.4335-5-weiyi.lu@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chen-Yu,
+On Mon, Mar 12, 2018 at 03:03:40PM +0800, Weiyi Lu wrote:
+> add new clocks according to ECO design change
+> 
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
+>  include/dt-bindings/clock/mt2712-clk.h | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
 
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on next-20180309]
-[also build test WARNING on v4.16-rc6]
-[cannot apply to v4.16-rc4 v4.16-rc3 v4.16-rc2]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Chen-Yu-Tsai/ARM-sun8i-r40-Add-Ethernet-support/20180318-161723
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c:82:24: sparse: symbol 'sun8i_syscon_reg_field' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Reviewed-by: Rob Herring <robh@kernel.org>
