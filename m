@@ -1,62 +1,67 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH net-next 03/12] dt-bindings: net: dwmac-sun8i: Clean up
+ clock delay chain descriptions
+To: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, netdev@vger.kernel.org,
+ Corentin Labbe <clabbe.montjoie@gmail.com>, Icenowy Zheng <icenowy@aosc.io>
+References: <20180317092857.4396-1-wens@csie.org>
+ <20180317092857.4396-4-wens@csie.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <eb47a027-c678-7496-ef58-fc8e96be7dd9@cogentembedded.com>
+Date: Sun, 18 Mar 2018 12:21:44 +0300
 MIME-Version: 1.0
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <a64f8f5e-2d6b-a277-17cc-4c6102dc7aaa@samsung.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-References: <CGME20180315190219epcas1p364b2b0777c6f60c55a60119ea3d16480@epcas1p3.samsung.com>
- <a64f8f5e-2d6b-a277-17cc-4c6102dc7aaa@samsung.com>
-Message-ID: <152122345522.70929.15804290996122965031@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL] clk/samsung updates for 4.17
-Date: Fri, 16 Mar 2018 11:04:15 -0700
+In-Reply-To: <20180317092857.4396-4-wens@csie.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sylwester Nawrocki (2018-03-15 12:02:15)
-> =
+Hello!
 
-> Hi Stephen, Mike,
-> =
+On 3/17/2018 12:28 PM, Chen-Yu Tsai wrote:
 
-> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1=
-b2:
-> =
+> The clock delay chains found in the glue layer for dwmac-sun8i are only
+> used with RGMII PHYs. They are not intended for non-RGMII PHYs, such as
+> MII external PHYs or the internal PHY. Also, a recent SoC has a smaller
+> range of possible values for the delay chain.
+> 
+> This patch reformats the delay chain section of the device tree binding
+> to make it clear that the delay chains only apply to RGMII PHYs, and
+> make it easier to add the R40-specific bits later.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>   Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 11 +++++++----
+>   1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
+> index 3d6d5fa0c4d5..b8a3028d6c30 100644
+> --- a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
+> +++ b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
+> @@ -28,10 +28,13 @@ Required properties:
+>     - allwinner,sun8i-a83t-system-controller
+>   
+>   Optional properties:
+> -- allwinner,tx-delay-ps: TX clock delay chain value in ps. Range value is 0-700. Default is 0)
+> -- allwinner,rx-delay-ps: RX clock delay chain value in ps. Range value is 0-3100. Default is 0)
+> -Both delay properties need to be a multiple of 100. They control the delay for
+> -external PHY.
+> +- allwinner,tx-delay-ps: TX clock delay chain value in ps.
+> +			 Range is 0-700. Default is 0.
+> +- allwinner,rx-delay-ps: RX clock delay chain value in ps.
+> +			 Range is 0-3100. Default is 0.
+> +Both delay properties need to be a multiple of 100. They control the
+> +clock delay for external RGMII PHY. They are do apply to the internal
 
->   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-> =
+   s/are do/do not/?
 
-> are available in the git repository at:
-> =
+> +PHY or external non-RGMII PHYs.
+>   
+>   Optional properties for the following compatibles:
+>     - "allwinner,sun8i-h3-emac",
 
->   git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/cl=
-k-v4.17-samsung
-> =
-
-> for you to fetch changes up to 182c084da5d1e4d7c02d913de154cf5167521580:
-> =
-
->   clk: samsung: Add fout=3D196608001 Hz EPLL rate entry for exynos4412 (2=
-018-03-15 19:27:29 +0100)
-> =
-
-> ----------------------------------------------------------------
-> clk/samsung updates for v4.17
-> =
-
-> This change set includes the PLL rate definition fixes and an addition
-> of compile time PLL rate validation macros. It adds definitions of some
-> missing clocks and extends the PLL rate tables required in the sound
-> subsystem.
-> In order to handle dependencies of clocks on the power domains a clock
-> provider sub-driver is added for Exynos5 SoCs. In newer Exynos SoCs
-> there is no need to do such things as the clocks/power domain relations
-> are more clearly defined and better documented.
-> =
-
-
-Thanks. Pulled into clk-next. I also threw a patch on top to fix some
-sparse warnings that came out when I compile tested stuff.
+MBR, Sergei
