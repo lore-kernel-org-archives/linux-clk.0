@@ -1,65 +1,90 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39213 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932514AbeCMKqZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Mar 2018 06:46:25 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2] clk: samsung: exynos5250: Add missing clocks for FIMC
- LITE SYSMMU devices
-Date: Tue, 13 Mar 2018 11:46:12 +0100
-Message-id: <20180313104612.24257-1-m.szyprowski@samsung.com>
-References: <CGME20180313104621eucas1p1905014d182b444b86605d07702e91533@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>,
+        <fabio.estevam@nxp.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <shengjiu.wang@nxp.com>
+CC: <Linux-imx@nxp.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH 1/2] clk: imx6sx: add missing lvds2 clock to the clock tree
+Date: Sun, 18 Mar 2018 11:14:12 +0800
+Message-ID: <1521342853-2941-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-FIMC LITE SYSMMU devices are defined in exynos5250.dtsi, but clocks for
-them are not instantiated by Exynos5250 clock provider driver. Add needed
-definitions for those clocks to fix IOMMU probe failure:
+i.MX6SX has lvds2 (analog clock2), an I/O clock like lvds1.
+And this lvds2, along with lvds1, can be used to provide
+external clock source to the internal pll, such as pll4_audio
+and pll5_video.
 
-ERROR: could not get clock /soc/sysmmu@13c40000:sysmmu(0)
-exynos-sysmmu 13c40000.sysmmu: Failed to get device clock(s)!
-exynos-sysmmu: probe of 13c40000.sysmmu failed with error -38
-ERROR: could not get clock /soc/sysmmu@13c50000:sysmmu(0)
-exynos-sysmmu 13c50000.sysmmu: Failed to get device clock(s)!
-exynos-sysmmu: probe of 13c50000.sysmmu failed with error -38
+This patch mainly adds the lvds2 to the clock tree and fix its
+relationship with pll accordingly.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: bfed1074f213 ("clk: exynos5250: Add missing sysmmu clocks for DISP and ISP blocks")
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 ---
- drivers/clk/samsung/clk-exynos5250.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/imx/clk-imx6sx.c             | 6 +++++-
+ include/dt-bindings/clock/imx6sx-clock.h | 6 +++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 06e5ddcb30db..347fd80c351b 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -561,6 +561,8 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 		0),
- 	GATE(CLK_GSCL3, "gscl3", "mout_aclk266_gscl_sub", GATE_IP_GSCL, 3, 0,
- 		0),
-+	GATE(CLK_CAMIF_TOP, "camif_top", "mout_aclk266_gscl_sub",
-+			GATE_IP_GSCL, 4, 0, 0),
- 	GATE(CLK_GSCL_WA, "gscl_wa", "div_gscl_wa", GATE_IP_GSCL, 5, 0, 0),
- 	GATE(CLK_GSCL_WB, "gscl_wb", "div_gscl_wb", GATE_IP_GSCL, 6, 0, 0),
- 	GATE(CLK_SMMU_GSCL0, "smmu_gscl0", "mout_aclk266_gscl_sub",
-@@ -571,6 +573,10 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 			GATE_IP_GSCL, 9, 0, 0),
- 	GATE(CLK_SMMU_GSCL3, "smmu_gscl3", "mout_aclk266_gscl_sub",
- 			GATE_IP_GSCL, 10, 0, 0),
-+	GATE(CLK_SMMU_FIMC_LITE0, "smmu_fimc_lite0", "mout_aclk266_gscl_sub",
-+			GATE_IP_GSCL, 11, 0, 0),
-+	GATE(CLK_SMMU_FIMC_LITE1, "smmu_fimc_lite1", "mout_aclk266_gscl_sub",
-+			GATE_IP_GSCL, 12, 0, 0),
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index e6d389e..d180797 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -80,7 +80,7 @@ static const char *lvds_sels[]	= {
+ 	"arm", "pll1_sys", "dummy", "dummy", "dummy", "dummy", "dummy", "pll5_video_div",
+ 	"dummy", "dummy", "pcie_ref_125m", "dummy", "usbphy1", "usbphy2",
+ };
+-static const char *pll_bypass_src_sels[] = { "osc", "lvds1_in", };
++static const char *pll_bypass_src_sels[] = { "osc", "lvds1_in", "lvds2_in", "dummy", };
+ static const char *pll1_bypass_sels[] = { "pll1", "pll1_bypass_src", };
+ static const char *pll2_bypass_sels[] = { "pll2", "pll2_bypass_src", };
+ static const char *pll3_bypass_sels[] = { "pll3", "pll3_bypass_src", };
+@@ -160,6 +160,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
  
+ 	/* Clock source from external clock via CLK1 PAD */
+ 	clks[IMX6SX_CLK_ANACLK1] = imx_obtain_fixed_clock("anaclk1", 0);
++	clks[IMX6SX_CLK_ANACLK2] = imx_obtain_fixed_clock("anaclk2", 0);
  
- 	GATE(CLK_MFC, "mfc", "mout_aclk333_sub", GATE_IP_MFC, 0, 0, 0),
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6sx-anatop");
+ 	base = of_iomap(np, 0);
+@@ -228,7 +229,9 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_CLK_PCIE_REF_125M] = imx_clk_gate("pcie_ref_125m", "pcie_ref", base + 0xe0, 19);
+ 
+ 	clks[IMX6SX_CLK_LVDS1_OUT] = imx_clk_gate_exclusive("lvds1_out", "lvds1_sel", base + 0x160, 10, BIT(12));
++	clks[IMX6SX_CLK_LVDS2_OUT] = imx_clk_gate_exclusive("lvds2_out", "lvds2_sel", base + 0x160, 11, BIT(13));
+ 	clks[IMX6SX_CLK_LVDS1_IN]  = imx_clk_gate_exclusive("lvds1_in",  "anaclk1",   base + 0x160, 12, BIT(10));
++	clks[IMX6SX_CLK_LVDS2_IN]  = imx_clk_gate_exclusive("lvds2_in",  "anaclk2",   base + 0x160, 13, BIT(11));
+ 
+ 	clks[IMX6SX_CLK_ENET_REF] = clk_register_divider_table(NULL, "enet_ref", "pll6_enet", 0,
+ 			base + 0xe0, 0, 2, 0, clk_enet_ref_table,
+@@ -270,6 +273,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 
+ 	/*                                                name                reg           shift   width   parent_names       num_parents */
+ 	clks[IMX6SX_CLK_LVDS1_SEL]          = imx_clk_mux("lvds1_sel",        base + 0x160, 0,      5,      lvds_sels,         ARRAY_SIZE(lvds_sels));
++	clks[IMX6SX_CLK_LVDS2_SEL]          = imx_clk_mux("lvds2_sel",        base + 0x160, 5,      5,      lvds_sels,         ARRAY_SIZE(lvds_sels));
+ 
+ 	np = ccm_node;
+ 	base = of_iomap(np, 0);
+diff --git a/include/dt-bindings/clock/imx6sx-clock.h b/include/dt-bindings/clock/imx6sx-clock.h
+index 36f0324..cd2d6c5 100644
+--- a/include/dt-bindings/clock/imx6sx-clock.h
++++ b/include/dt-bindings/clock/imx6sx-clock.h
+@@ -275,6 +275,10 @@
+ #define IMX6SX_PLL6_BYPASS		262
+ #define IMX6SX_PLL7_BYPASS		263
+ #define IMX6SX_CLK_SPDIF_GCLK		264
+-#define IMX6SX_CLK_CLK_END		265
++#define IMX6SX_CLK_LVDS2_SEL		265
++#define IMX6SX_CLK_LVDS2_OUT		266
++#define IMX6SX_CLK_LVDS2_IN		267
++#define IMX6SX_CLK_ANACLK2		268
++#define IMX6SX_CLK_CLK_END		269
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6SX_H */
 -- 
-2.15.0
-
+2.7.4
