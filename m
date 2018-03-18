@@ -1,66 +1,75 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sun, 18 Mar 2018 21:16:18 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 4/9] pinctrl: sunxi: add support for the Allwinner H6
+ main pin controller
+Message-ID: <20180318201618.wk6ypgjljhkwpei7@flea>
+References: <20180316140215.28663-1-icenowy@aosc.io>
+ <20180316140215.28663-5-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <20180308164654.GA31199@botnar.kaiser.cx>
-References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
- <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
- <20180308140851.GA25601@botnar.kaiser.cx> <CAOMZO5BdBWExt9FvPrfUG74Y62e4EUs6cqFyfVs5JuUtym00hQ@mail.gmail.com>
- <20180308164654.GA31199@botnar.kaiser.cx>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 9 Mar 2018 23:37:33 -0300
-Message-ID: <CAOMZO5Czv7Rj-wA9L42S9GJhufjw3br0d+iLcf070NWH4SjCbA@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
-To: Martin Kaiser <martin@kaiser.cx>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="czeyzjeg3gm3fdy3"
+In-Reply-To: <20180316140215.28663-5-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Martin,
 
-On Thu, Mar 8, 2018 at 1:46 PM, Martin Kaiser <martin@kaiser.cx> wrote:
+--czeyzjeg3gm3fdy3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> I can get audio to work fine without your patch on a mx25pdk.
->
-> this is surprising. How come the ssi1_ipg_per clock is not turned off by
-> clk_disable_unused()? Where is it used? Do you have
->
-> <&clks 55>
->
-> anywhere in your DT?
+On Fri, Mar 16, 2018 at 10:02:10PM +0800, Icenowy Zheng wrote:
+> The Allwinner H6 SoC has two pin controllers, one main controller
+> (called CPUX-PORT in user manual) and one controller in CPUs power
+> domain (called CPUS-PORT in user manual).
+>=20
+> This commit introduces support for the main pin controller on H6.
+>=20
+> The pin bank A and B are not wired out and hidden from the SoC's
+> documents, however it's shown that the "ATE" (an AC200 chip
+> co-packaged with the H6 die) is connected to the main SoC die via these
+> pin banks. The information about these banks is just copied from the BSP
+> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
+> format. The GPIO functions are dropped, as they're impossible to use --
+> except a GPIO&IRQ only pin (PB20) which might be the IRQ of ATE.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Acked-by: Rob Herring <robh@kernel.org>
 
-No, I don't. imx25-pdk board operates SSI in slave mode.
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-> (My codec chip does not use a dedicated clock line. It takes the bit clock that
-> is the output of SSI. Are you maybe using ssi1_ipg_per for your codec and
-> enable it there?)
+Maxime
 
-The difference between our boards is that you use SSI in master mode
-and mx25pdk in slave mode.
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-> In my first mail, I was wondering about imx25 uart1, where we also have
-> uart1_ipg and uart_ipg_per and the clock seeting is
->
->    clk[uart1_ipg] = imx_clk_gate("uart1_ipg", "ipg", ccm(CCM_CGCR2), 14);
->
-> In this case, both uart1 and uart_ipg_per are listed in the device tree
->
->          uart1: serial@43f90000 {
-> ...
->             clocks = <&clks 120>, <&clks 57>;
->             clock-names = "ipg", "per";
->          };
->
-> Documentation/devicetree/bindings/clock/imx25-clock.txt
->    uart_ipg_per      57
->    uart1_ipg      120
->
-> and the driver enables both clocks explicitly. So they are not unused.
->
->
-> Doing something like this is not an option for ssi, this will not work with
-> imx31, 35 etc.
+--czeyzjeg3gm3fdy3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The solution to this is passing the "baud" clock as Lothar pointed out.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlquyREACgkQ0rTAlCFN
+r3Rq4A/8DcJWJHup9/bUO/SRXYyqPzJ/20bsVUg534Ev/PfoDpq15j4ygd32o5Bk
+LZ0SPBKeKnS27DIeHwBuJTx+RCewBzdfSQC6gMH1q+7/0D9dlGHz+9XdpSpSeXpg
+azpPLDC0fE7TMNIqQW3EtFDm2j1hxNwQJshcnQ1A+58t/CksdSZB+JNNKyZaeuqe
+04NS6KnbUDTj0Kk1F6CidQvXDhwWMM6jLTiAKH4y13nG263eMxXMMkt88sqKXGrY
+yY5AUQMA+TpAvEX5EDOz07DdWTcHgp8cddV9JBNH87B8+4fAAp3Vb3tis0lY/Whx
+OhFtFvlsC/SV/mor9l+xlDfjnDWjwIwvcETCkgZppP9XRZ3e6BNbKWElnEhvWpgN
+j1eD1jQ9L0PY7VdxwsHZVO7CRvSZ/QbedaU+oYMSd8NIKKE3/SnjpnPRIlAm+v69
+2LllOHUOXVzilIf6fK06w5KjAwCrwn7KoHnBAE7O67Uqv5ivHKSsHHTBd19OC1kM
+Fy2n9PHMaFFgmrzhomcN0FHefZdKc4PKKB+V88KSqrpQPJ2kVh9ovYcBexpxugff
+uRSQQnupy5TaFf9MC4CGnWJjo6YfHq2y2ocAu8Se/xvAI1E9UAIq4p6vr4wf3CPl
+ZrKmlT4LM+1MahpjttsWsyQCTDvvlOWF+PoQKMC5cFeb0qNJu4I=
+=LKmd
+-----END PGP SIGNATURE-----
+
+--czeyzjeg3gm3fdy3--
