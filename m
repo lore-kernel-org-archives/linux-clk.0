@@ -1,65 +1,68 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 08/11] clk: tegra: build clk-dfll.c for Tegra124 and
- Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-9-git-send-email-pdeschrijver@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <6ea88ecd-20bb-31f6-74ad-7f7e3aaecfe1@nvidia.com>
-Date: Thu, 8 Mar 2018 23:22:09 +0000
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sun, 18 Mar 2018 21:15:03 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 2/9] pinctrl: sunxi: introduce IRQ bank conversion
+ function
+Message-ID: <20180318201503.g3ksrwcxzjurll3m@flea>
+References: <20180316140215.28663-1-icenowy@aosc.io>
+ <20180316140215.28663-3-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <1517934852-23255-9-git-send-email-pdeschrijver@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pcmdpne3ti4c4xtj"
+In-Reply-To: <20180316140215.28663-3-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
-On 06/02/18 16:34, Peter De Schrijver wrote:
-> Tegra210 has a DFLL as well and can share the majority of the code with
-> the Tegra124 implementation. So build the same code for both platforms.
-> 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/Kconfig  | 5 +++++
->  drivers/clk/tegra/Makefile | 2 +-
->  2 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/Kconfig b/drivers/clk/tegra/Kconfig
-> index 7ddacae..57902ab 100644
-> --- a/drivers/clk/tegra/Kconfig
-> +++ b/drivers/clk/tegra/Kconfig
-> @@ -5,3 +5,8 @@ config TEGRA_CLK_EMC
->  config CLK_TEGRA_BPMP
->  	def_bool y
->  	depends on TEGRA_BPMP
-> +
-> +config TEGRA_CLK_DFLL
-> +	depends on (ARCH_TEGRA_124_SOC || ARCH_TEGRA_210_SOC)
-> +	select PM_OPP
-> +	def_bool y
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index b716923..fc7f4b4 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -19,7 +19,7 @@ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
->  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
->  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
-> -obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-dfll-fcpu.o
-> +obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
->  obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
->  obj-y					+= cvb.o
->  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
-> 
+--pcmdpne3ti4c4xtj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+On Fri, Mar 16, 2018 at 10:02:08PM +0800, Icenowy Zheng wrote:
+> The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
+> GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5. Some
+> refactors in the sunxi pinctrl framework are needed.
+>=20
+> This commit introduces a IRQ bank conversion function, which replaces
+> the "(bank_base + bank)" code in IRQ register access.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Cheers
-Jon
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
--- 
-nvpublic
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--pcmdpne3ti4c4xtj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlquyMYACgkQ0rTAlCFN
+r3TSDw//VmvyAb+NmW2CFFLCwcnIfzjIthgNXsT9LVtnDQQiWBXyZ/LblXOCS8AM
+5x/O2KCVP+mkjjAhYPaCmaCLW30MMEBEE+vyeVX0FFpUgIghPbiC0WD1K5RSTrX8
+Qqwv63v/I+8KdssjVLn56nGxC6JBBEeY9nqwt5yfCheun1yp1J1viKr+9Oxik6cG
+G7BQXaMVG9Ytw9zMQNZgP+qNZK1OoZaDuZlAnUasJX0YfWwPpeomFg3w9ab4i89Y
+sidN/6ErwUI8zFuztC13RxIbMhqWRWibyqCXumDp/jZ/fs+s2q3hqCXWhmjC1wrZ
+hbj20BGkg7gx9CHTRGSHP1D7hCOExCWCPc8ciDZHQsyXGhkJXm/oOdIrtaLO1J2w
+jxIJ/iUlZqGTS7AO+jGpMalhvK2x9fcVhUQEqy+NNoaN+3jcjc68AbeIVSEGVR1P
+At34knsS0y8vThWJlsZrvX480wKg5qPm3EnP28MjdLKw20xse/+4Y+L2h+yUKV4w
+5lM1yeDQUXojCS4NanDvYxZJmS3ureEEkWjE0BuwzY6bLqg5/bELsumAEsbbS8DX
+FehZNEh9WiBYtMVmZY08SD9zuDnCQrhbsudxhpcOkMkNRHMoroF7uzH9wR0Wj+1n
+Pe1KM1W64ohr0tAHQUhMrpZdYk24upgT9hTW6tWKPT7CA2HUOq8=
+=NJrC
+-----END PGP SIGNATURE-----
+
+--pcmdpne3ti4c4xtj--
