@@ -1,63 +1,59 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH V2 0/4] clk: new APIs to handle all available clocks
-Date: Wed, 21 Mar 2018 10:54:50 +0800
-Message-ID: <1521600894-29919-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v4 0/8] Ingenic JZ47xx Timer/Counter Unit drivers
+To: Paul Cercueil <paul@crapouillou.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-doc@vger.kernel.org
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <aeb57b92-6932-9774-dc50-7563d30846bf@linaro.org>
+Date: Sun, 18 Mar 2018 23:13:13 +0100
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-fbdev@vger.kernel.org,
- b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com,
- linux@armlinux.org.uk, linux-kernel@vger.kernel.org, hdegoede@redhat.com,
- linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <20180317232901.14129-1-paul@crapouillou.net>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series is a continue of discussion from here,
-https://patchwork.kernel.org/patch/9986293/
-that some users may want to handle all available clocks from device
-tree without need to know the detailed clock information likes clock
-numbers and names. This is useful in writing some generic drivers to
-handle clock part.
+On 18/03/2018 00:28, Paul Cercueil wrote:
+> Hi,
+> 
+> This is the 4th version of my TCU patchset.
+> 
+> The major change is a greatly improved documentation, both in-code
+> and as separate text files, to describe how the hardware works and
+> how the devicetree bindings should be used.
+> 
+> There are also cosmetic changes in the irqchip driver, and the
+> clocksource driver will now use as timers all TCU channels not
+> requested by the TCU PWM driver.
 
-Note:
-This patch series is tested on MX6Q SDB cpufreq driver with a minor change
-to switch to use clk_bulk_get_all.
-But patch 4 only test compiling. Hopefully someone could help test
-the function.
+Hi Paul,
 
-v1->v2:
- * add clk_bulk_{get|put}_all() which only supports DT platform currently
- * remove _all variants and the wrapper struct clk_bulk
- * make of_clk_bulk_get and of_clk_bulk_get_all private until someone
-   proves they need it because they don't have a struct device pointer.
+I don't know why but you series appears in reply to [PATCH v3 2/9]. Not
+sure if it is my mailer or how you are sending the patches but if it is
+the latter can you in the future, when resending a new version, not use
+the in-reply-to option. It will be easier to follow the versions.
 
-Dong Aisheng (4):
-  clk: bulk: add of_clk_bulk_get()
-  clk: add new APIs to operate on all available clocks
-  clk: add managed version of clk_bulk_get_all
-  video: simplefb: switch to use clk_bulk API to simplify clock
-    operations
+Thanks.
 
- drivers/clk/clk-bulk.c         | 89 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/clk-devres.c       | 24 ++++++++++++
- drivers/video/fbdev/simplefb.c | 69 ++++++--------------------------
- include/linux/clk.h            | 65 +++++++++++++++++++++++++++++-
- 4 files changed, 190 insertions(+), 57 deletions(-)
+ -- Daniel
+
+
 
 -- 
-2.7.4
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
