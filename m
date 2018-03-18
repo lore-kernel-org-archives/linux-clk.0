@@ -1,59 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:44638 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751221AbeCWITa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Mar 2018 04:19:30 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 3/3] clk: rockchip: Correct the behaviour of restoring cached phase
-Date: Fri, 23 Mar 2018 09:19:28 +0100
-Message-ID: <2617278.f7F6Nr675k@phil>
-In-Reply-To: <1521599960-34381-3-git-send-email-shawn.lin@rock-chips.com>
-References: <1521599960-34381-1-git-send-email-shawn.lin@rock-chips.com> <1521599960-34381-3-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <vz@mleia.com>
+Subject: Re: [PATCH v5 3/4] clk: lpc32xx: Set name of regmap_config
+To: Jeffy Chen <jeffy.chen@rock-chips.com>, linux-kernel@vger.kernel.org,
+ broonie@kernel.org, alexandre.belloni@bootlin.com
+Cc: Guenter Roeck <linux@roeck-us.net>, Arnd Bergmann <arnd@arndb.de>,
+ Joseph Lo <josephl@nvidia.com>, Rob Herring <robh+dt@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, lee.jones@linaro.org,
+ Emil Renner Berthing <kernel@esmil.dk>, Heiko Stuebner <heiko@sntech.de>,
+ Brian Norris <briannorris@chromium.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Philippe Ombredanne <pombredanne@nexb.com>,
+ linux-rockchip@lists.infradead.org,
+ Kate Stewart <kstewart@linuxfoundation.org>, linux-input@vger.kernel.org,
+ Will Deacon <will.deacon@arm.com>, Matthias Kaehlcke <mka@chromium.org>,
+ devicetree@vger.kernel.org, stephen lu <lumotuwe@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Arvind Yadav <arvind.yadav.cs@gmail.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Sylvain Lemieux <slemieux.tyco@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@st.com>,
+ linux-clk@vger.kernel.org,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Jerome Brunet <jbrunet@baylibre.com>
+References: <20180312095142.30854-1-jeffy.chen@rock-chips.com>
+ <20180312095142.30854-4-jeffy.chen@rock-chips.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Message-ID: <23a9cbf8-9b1d-f7ec-b980-a16c9b2c4d84@mleia.com>
+Date: Sun, 18 Mar 2018 23:57:39 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180312095142.30854-4-jeffy.chen@rock-chips.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 21. März 2018, 03:39:20 CET schrieb Shawn Lin:
-> We can't restore every phase, for instance the invalid phase and
-> the phase for coming rate which is out of the scope of boards'
-> ability. And this patch also corrects the error path to return
-> invalid pointer to clk if clk_notifier_register failed introduced
-> by the same offending commit.
+Hi Jeffy,
+
+On 03/12/2018 11:51 AM, Jeffy Chen wrote:
+> We are now allowing to register debugfs without a valid device, and not
+> having a valid name will end up using "dummy*" to create debugfs dir.
 > 
-> Fixes: 60cf09e45fbc ("clk: rockchip: Restore the clock phase after the rate was changed")
-> Reported-by: wlq <wlq@rock-chips.com>
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-> Tested-by: wlq <wlq@rock-chips.com>
-
-I've split off the part below [fix for error handling] into a separate
-patch and applied both patches for 4.17
-
-
-Thanks
-Heiko
-
-> @@ -211,8 +223,10 @@ struct clk *rockchip_clk_register_mmc(const char *name,
->  	mmc_clock->shift = shift;
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+> ---
+> 
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3: None
+> 
+>  drivers/clk/nxp/clk-lpc32xx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+> index f5d815f577e0..a2a0a7f3bc57 100644
+> --- a/drivers/clk/nxp/clk-lpc32xx.c
+> +++ b/drivers/clk/nxp/clk-lpc32xx.c
+> @@ -67,6 +67,7 @@
+>  #define LPC32XX_USB_CLK_STS		0xF8
 >  
->  	clk = clk_register(NULL, &mmc_clock->hw);
-> -	if (IS_ERR(clk))
-> +	if (IS_ERR(clk)) {
-> +		ret = PTR_ERR(clk);
->  		goto err_register;
-> +	}
->  
->  	mmc_clock->clk_rate_change_nb.notifier_call =
->  				&rockchip_mmc_clk_rate_notify;
-> @@ -225,5 +239,5 @@ struct clk *rockchip_clk_register_mmc(const char *name,
->  	clk_unregister(clk);
->  err_register:
->  	kfree(mmc_clock);
-> -	return clk;
-> +	return ERR_PTR(ret);
->  }
+>  static struct regmap_config lpc32xx_scb_regmap_config = {
+> +	.name = "lpc32xx-scb",
+
+please rename it to "scb", LPC32xx SoC name is already known from the context.
+
+When it's done, feel free to add to the next version my
+
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
+
+>  	.reg_bits = 32,
+>  	.val_bits = 32,
+>  	.reg_stride = 4,
 > 
 
+Thank you for the change.
 
+--
+With best wishes,
+Vladimir
