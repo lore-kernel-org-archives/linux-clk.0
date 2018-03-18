@@ -1,212 +1,55 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 26/42] ARM: davinci: dm646x: add new clock init using common clock framework
-Date: Thu, 15 Mar 2018 21:52:42 -0500
-Message-Id: <1521168778-27236-27-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <fengguang.wu@intel.com>
+Date: Mon, 19 Mar 2018 05:28:08 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: kbuild-all@01.org, mturquette@baylibre.com, sboyd@kernel.org,
+	afaerber@suse.de, robh+dt@kernel.org, mark.rutland@arm.com,
+	liuwei@actions-semi.com, mp-cs@actions-semi.com,
+	96boards@ucrobotics.com, devicetree@vger.kernel.org,
+	davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com, bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v5 12/12] clk: actions: Add S900 SoC clock support
+Message-ID: <201803190542.EmeV4ajI%fengguang.wu@intel.com>
+References: <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specific clock init in mach-davinci/dm646x.c
-using the new common clock framework drivers.
+Hi Manivannan,
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+Thank you for the patch! Perhaps something to improve:
 
-Also clean up the #includes since we are adding some here.
+[auto build test WARNING on v4.16-rc4]
+[cannot apply to next-20180316]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Signed-off-by: David Lechner <david@lechnology.com>
+url:    https://github.com/0day-ci/linux/commits/Manivannan-Sadhasivam/Add-clock-driver-for-Actions-S900-SoC/20180319-015124
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/clk/actions/owl-s900.c:33:46: sparse: constant 2700000000 is so big it is long
+   drivers/clk/actions/owl-s900.c:604:18: sparse: Initializer entry defined twice
+   drivers/clk/actions/owl-s900.c:639:18:   also defined here
+
+vim +33 drivers/clk/actions/owl-s900.c
+
+    31	
+    32	static struct clk_pll_table clk_edp_pll_table[] = {
+  > 33		{0, 810000000}, {1, 1350000000}, {2, 2700000000},
+    34		{0, 0},
+    35	};
+    36	
+
 ---
-
-v8 changes:
-- register clkdev lookup for ref_clk and aux_clkin
-
-v7 changes:
-- add clock platform device declarations
-- register platform devices instead of registering clocks directly
-- add davinci prefix to commit description
-
-v6 changes:
-- add blank lines between function calls
-
- arch/arm/mach-davinci/board-dm646x-evm.c |  2 +
- arch/arm/mach-davinci/davinci.h          |  1 +
- arch/arm/mach-davinci/dm646x.c           | 85 +++++++++++++++++++++++++++++---
- 3 files changed, 80 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 2d37f5b..d672804 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -772,6 +772,8 @@ static __init void evm_init(void)
- 	int ret;
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 
-+	dm646x_register_clocks();
-+
- 	ret = dm646x_gpio_register();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index 2861a6f..a200977 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -115,6 +115,7 @@ int dm644x_gpio_register(void);
- /* DM646x function declarations */
- void dm646x_init(void);
- void dm646x_init_time(unsigned long ref_clk_rate, unsigned long aux_clkin_rate);
-+void dm646x_register_clocks(void);
- void dm646x_init_mcasp0(struct snd_platform_data *pdata);
- void dm646x_init_mcasp1(struct snd_platform_data *pdata);
- int dm646x_init_edma(struct edma_rsv_info *rsv);
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index e1d6e92..553782f 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -8,29 +8,33 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
--#include <linux/clk.h>
--#include <linux/serial_8250.h>
--#include <linux/platform_device.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
-+#include <linux/platform_device.h>
-+#include <linux/serial_8250.h>
- 
- #include <asm/mach/map.h>
- 
-+#include <mach/common.h>
- #include <mach/cputype.h>
- #include <mach/irqs.h>
--#include "psc.h"
- #include <mach/mux.h>
--#include <mach/time.h>
- #include <mach/serial.h>
--#include <mach/common.h>
-+#include <mach/time.h>
- 
-+#include "asp.h"
- #include "davinci.h"
--#include "clock.h"
- #include "mux.h"
--#include "asp.h"
-+
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
- 
- #define DAVINCI_VPIF_BASE       (0x01C12000)
- 
-@@ -46,6 +50,7 @@
- #define DM646X_EMAC_CNTRL_RAM_OFFSET	0x2000
- #define DM646X_EMAC_CNTRL_RAM_SIZE	0x2000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll1_data = {
- 	.num       = 1,
- 	.phys_base = DAVINCI_PLL1_BASE,
-@@ -356,6 +361,7 @@ static struct clk_lookup dm646x_clks[] = {
- 	CLK(NULL, "vpif1", &vpif1_clk),
- 	CLK(NULL, NULL, NULL),
- };
-+#endif
- 
- static struct emac_platform_data dm646x_emac_pdata = {
- 	.ctrl_reg_offset	= DM646X_EMAC_CNTRL_OFFSET,
-@@ -953,10 +959,73 @@ void __init dm646x_init(void)
- void __init dm646x_init_time(unsigned long ref_clk_rate,
- 			     unsigned long aux_clkin_rate)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	struct clk *clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, ref_clk_rate);
-+	clk_register_clkdev(clk, "ref_clk", "dm646x-psc");
-+	davinci_timer_init(clk);
-+
-+	clk = clk_register_fixed_rate(NULL, "aux_clkin", NULL, 0, aux_clkin_rate);
-+	clk_register_clkdev(clk, "aux_clkin", "dm646x-psc");
-+#else
- 	ref_clk.rate = ref_clk_rate;
- 	aux_clkin.rate = aux_clkin_rate;
- 	davinci_clk_init(dm646x_clks);
- 	davinci_timer_init(&timer0_clk);
-+#endif
-+}
-+
-+static struct resource dm646x_pll1_resources[] = {
-+	{
-+		.start	= DAVINCI_PLL1_BASE,
-+		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm646x_pll1_device = {
-+	.name		= "dm646x-pll1",
-+	.id		= -1,
-+	.resource	= dm646x_pll1_resources,
-+	.num_resources	= ARRAY_SIZE(dm646x_pll1_resources),
-+};
-+
-+static struct resource dm646x_pll2_resources[] = {
-+	{
-+		.start	= DAVINCI_PLL2_BASE,
-+		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm646x_pll2_device = {
-+	.name		= "dm646x-pll2",
-+	.id		= -1,
-+	.resource	= dm646x_pll2_resources,
-+	.num_resources	= ARRAY_SIZE(dm646x_pll2_resources),
-+};
-+
-+static struct resource dm646x_psc_resources[] = {
-+	{
-+		.start	= DAVINCI_PWR_SLEEP_CNTRL_BASE,
-+		.end	= DAVINCI_PWR_SLEEP_CNTRL_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm646x_psc_device = {
-+	.name		= "dm646x-psc",
-+	.id		= -1,
-+	.resource	= dm646x_psc_resources,
-+	.num_resources	= ARRAY_SIZE(dm646x_psc_resources),
-+};
-+
-+void __init dm646x_register_clocks(void)
-+{
-+	platform_device_register(&dm646x_pll1_device);
-+	platform_device_register(&dm646x_pll2_device);
-+	platform_device_register(&dm646x_psc_device);
- }
- 
- static int __init dm646x_init_devices(void)
--- 
-2.7.4
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
