@@ -1,87 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:45061 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755559AbeCHOgH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Mar 2018 09:36:07 -0500
-Date: Thu, 8 Mar 2018 15:36:03 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] MBIST work around (WAR) for Tegra210
-Message-ID: <20180308143603.GI3529@ulmo>
-References: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 19 Mar 2018 14:44:56 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 0/9] Initial Allwinner H6 support
+Message-ID: <20180319134456.shebby73ngqavsnl@flea>
+References: <20180316140215.28663-1-icenowy@aosc.io>
+ <20180318201744.dw6hnm2vdybaunev@flea>
+ <F40271A8-3782-4A69-8C40-3909EB296C66@aosc.io>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OfrWf2Fun5Ae4m0Y"
-In-Reply-To: <1516888813-32180-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <F40271A8-3782-4A69-8C40-3909EB296C66@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, Mar 19, 2018 at 09:28:23AM +0800, Icenowy Zheng wrote:
+> 
+> 
+> 于 2018年3月19日 GMT+08:00 上午4:17:44, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+> >On Fri, Mar 16, 2018 at 10:02:06PM +0800, Icenowy Zheng wrote:
+> >> This patchset adds initial support for the Allwinner H6 SoC.
+> >> 
+> >> It's quite different from earlier Allwinner SoCs. For example, the
+> >> memory map is refactored, and the CCU is rearranged. It's also the
+> >first
+> >> Allwinner SoC with PCI Express interface (although the implementation
+> >> of the PCI Express controller is broken), and the second one with USB
+> >> 3.0 (the first one is A80).
+> >> 
+> >> This patchset adds the most basical support for it, including the
+> >main pin
+> >> controller, the main CCU and the basical device tree.
+> >> 
+> >> Icenowy Zheng (9):
+> >>   pinctrl: sunxi: refactor irq related register function to have desc
+> >>   pinctrl: sunxi: introduce IRQ bank conversion function
+> >>   pinctrl: sunxi: change irq_bank_base to irq_bank_map
+> >>   pinctrl: sunxi: add support for the Allwinner H6 main pin
+> >controller
+> >>   clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
+> >>   dt-bindings: add device tree binding for Allwinner H6 main CCU
+> >>   clk: sunxi-ng: add support for the Allwinner H6 CCU
+> >>   arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
+> >>   arm64: allwinner: h6: add support for Pine H64 board
+> >
+> >Applied the !pinctrl patches.
+> 
+> Oops, one clock (CLK_HDMI_SLOW) is missing in the CCU
+> driver, as Jernej pointed out.
+> 
+> Should I send a patch that fix it?
 
---OfrWf2Fun5Ae4m0Y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, please.
 
-On Thu, Jan 25, 2018 at 04:00:09PM +0200, Peter De Schrijver wrote:
-> This patch series introduces the Memory Built-In Self Test (MBIST)
-> work around (WAR) needed when power ungating certain domains. More
-> details can be found in 'clk: tegra: MBIST WAR for Tegra210'. I choose to
-> implement the WAR in the Tegra210 clock driver, because most accesses are
-> to CAR registers and for the VENC domain, we need to make sure the CSI
-> clock source is not changed during the WAR execution.
->=20
-> Changes in v4:
-> * moved locking and clock control to tegra210_clk_handle_mbist_war()
-> * propagate errors during WAR execution to user
-> * rework error handling tegra210_mbist_clk_init() slightly
->=20
-> Changes in v3:
-> * fix compile problem on non-Tegra210 platforms
-> * fix clock handling bug in tegra210_generic_mbist_war()
-> * addressed minor comments
->=20
-> Changes in v2:
-> * Use readl for fence_delay() rather than readl_relaxed
-> * clarify MBIST and WAR acronyms
->=20
-> Peter De Schrijver (4):
->   clk: tegra: Add la clock for Tegra210
->   clk: tegra: add fence_delay for clock registers
->   clk: tegra: MBIST work around for Tegra210
->   soc/tegra: pmc: MBIST work around for Tegra210
->=20
->  drivers/clk/tegra/clk-tegra210.c         | 357 +++++++++++++++++++++++++=
-+++++-
->  drivers/clk/tegra/clk.h                  |   7 +
->  drivers/soc/tegra/pmc.c                  |   7 +
->  include/dt-bindings/clock/tegra210-car.h |   2 +-
->  include/linux/clk/tegra.h                |   6 +
->  5 files changed, 376 insertions(+), 3 deletions(-)
+Thanks!
+Maxime
 
-Applied, thanks.
-
-Thierry
-
---OfrWf2Fun5Ae4m0Y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqhSlAACgkQ3SOs138+
-s6FS9g//UCZIZoj318gwbBMJQ7KNHEtwkRi07WNzhw/oUftfV248aBr4Rdt6fBrU
-P9iF84wJAWf3OzSxHuzKGZDjELNiwk/Gsw/tv6AVDgePpqvbgzfpLvN5WXNfCqxc
-09b9UUM17VHaGmjwnbk59Kn740tyHf06g+d/8WiMWab+8LZiXO86y+y93JVmsMdN
-jq7gzUkfnB0OfbvCC2j2XLtQnETJLpawxeRYza9e0XW1nRkTDiDeYQNqxBaukdio
-sU9XZSiB6NUW6e/brZdIbGTOVNeXreT0PtDCmr8yo07uNG5oUzIMEeB04jijf3Ln
-YiN+EQyoBRWOtqcu6fI/S9655OXTTJDCbG3rP/gLDuMLVVjSwMyFo1iMjoiBY54K
-Ly3ck6n1aAN9dVbJiBUsD+4o1qyxysl2/byL/R43XeeeP/7fWM46MOI3hzSnyi5z
-I7URkkyGoBB8IJu7H0gHfau8PeZ8CnfGdPcHf3GO5wqdEkvpktnrfIQe9+5cOPCQ
-UsK97Z+9tKrIh9Ov4s45yAxgmJggZuq7n39c6Or533UbZgvGd0i59JXm4ErkxLBa
-Js54UR0zZJJ4LPjsoYArUg7Mc27ilzLWRVYd5UiIfSGpcFaM5hocenHNHgFYrXhN
-tRxGeczHoZwj8FieK6/fHmMzxfYpI2kazRHLymeT+hom1vMKBIw=
-=KFqc
------END PGP SIGNATURE-----
-
---OfrWf2Fun5Ae4m0Y--
+-- 
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
