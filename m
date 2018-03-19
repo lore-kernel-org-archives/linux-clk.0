@@ -1,62 +1,48 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180312104945.3001-1-riku.voipio@linaro.org>
-References: <20180312104945.3001-1-riku.voipio@linaro.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 15 Mar 2018 14:47:06 +0100
-Message-ID: <CAPDyKFqjcak8buKYvy4OFy=5rUk95OPMHjDcwGs=NtNiD0hhww@mail.gmail.com>
-Subject: Re: [RESEND PATCH] clk: enable hi655x common clk automatically
-To: Riku Voipio <riku.voipio@linaro.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Arnd Bergmann <arnd@linaro.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, John Stultz <john.stultz@linaro.org>,
-	Wei Xu <xuwei5@hisilicon.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Michael Turquette <mturquette@baylibre.com>,
+ Richard Genoud <richard.genoud@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180313152702.21070-1-richard.genoud@gmail.com>
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Ralph Sennhauser <ralph.sennhauser@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Richard Genoud <richard.genoud@gmail.com>,
+ stable@vger.kernel.org
+References: <20180313152702.21070-1-richard.genoud@gmail.com>
+Message-ID: <152149322220.242365.11252668841166595824@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2] clk: mvebu: armada-38x: add support for missing clocks
+Date: Mon, 19 Mar 2018 14:00:22 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 12 March 2018 at 11:49,  <riku.voipio@linaro.org> wrote:
-> From: Riku Voipio <riku.voipio@linaro.org>
->
-> Without COMMON_CLK_HI655X Wifi and bluetooth are non-functional on Hikey.
-> As suggested by Arnd, enable the driver automatically when the parent
-> driver is selected. With sensible defaults in place, we can leave other
-> choices for EXPERT.
->
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Wei Xu <xuwei5@hisilicon.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Suggested-by: Arnd Bergmann <arnd@linaro.org>
-> Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
+Quoting Richard Genoud (2018-03-13 08:27:02)
+> Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
+> or 1333MHz (industrial).
+> =
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> They have also some dip-switches to select a different clock (666, 800,
+> 1066, 1200).
+> =
 
-Kind regards
-Uffe
+> The funny thing is that the recovery button is on the MPP34 fq selector.
+> So, when booting an industrial board with this button down, the frequency
+> 666MHz is selected (and the kernel didn't boot).
+> =
 
+> This patch add all the missing clocks.
+> =
+
+> The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
+> =
+
+> Fixes: 0e85aeced4d6 ("clk: mvebu: add clock support for Armada 380/385")
+> Cc: <stable@vger.kernel.org> # 3.16.x: 9593f4f56cf5: clk: mvebu: armada-3=
+8x: add support for 1866MHz variants
+> Cc: <stable@vger.kernel.org> # 3.16.x
+> =
+
+> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+> Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 > ---
-> Previous discussion at https://patchwork.kernel.org/patch/9767143/
-> ---
->  drivers/clk/Kconfig | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 98ce9fc6e6c0..448ce83b334d 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -55,8 +55,10 @@ config COMMON_CLK_RK808
->           by control register.
->
->  config COMMON_CLK_HI655X
-> -       tristate "Clock driver for Hi655x"
-> -       depends on MFD_HI655X_PMIC || COMPILE_TEST
-> +       tristate "Clock driver for Hi655x" if EXPERT
-> +       depends on (MFD_HI655X_PMIC || COMPILE_TEST)
-> +       depends on REGMAP
-> +       default MFD_HI655X_PMIC
->         ---help---
->           This driver supports the hi655x PMIC clock. This
->           multi-function device has one fixed-rate oscillator, clocked
-> --
-> 2.15.1
->
+
+Applied to clk-next
