@@ -1,27 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Derek Basehore <dbasehore@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH] clk: rockchip: Add 1.6GHz PLL rate
-Date: Wed, 14 Mar 2018 00:38:40 +0100
-Message-ID: <13704601.M15qmmjcHi@phil>
-In-Reply-To: <20180313203719.75639-1-dbasehore@chromium.org>
-References: <20180313203719.75639-1-dbasehore@chromium.org>
+Date: Mon, 19 Mar 2018 09:28:23 +0800
+In-Reply-To: <20180318201744.dw6hnm2vdybaunev@flea>
+References: <20180316140215.28663-1-icenowy@aosc.io> <20180318201744.dw6hnm2vdybaunev@flea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v4 0/9] Initial Allwinner H6 support
+To: linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+CC: devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <F40271A8-3782-4A69-8C40-3909EB296C66@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 13. M�rz 2018, 21:37:19 CET schrieb Derek Basehore:
-> We need this rate to generate 100, 200, and 228.57MHz from the same
-> PLL. 228.57MHz is useful for a pixel clock when the VPLL is used for
-> and external display.
-> 
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
 
-applied for 4.17
 
-Thanks
-Heiko
+于 2018年3月19日 GMT+08:00 上午4:17:44, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Fri, Mar 16, 2018 at 10:02:06PM +0800, Icenowy Zheng wrote:
+>> This patchset adds initial support for the Allwinner H6 SoC.
+>> 
+>> It's quite different from earlier Allwinner SoCs. For example, the
+>> memory map is refactored, and the CCU is rearranged. It's also the
+>first
+>> Allwinner SoC with PCI Express interface (although the implementation
+>> of the PCI Express controller is broken), and the second one with USB
+>> 3.0 (the first one is A80).
+>> 
+>> This patchset adds the most basical support for it, including the
+>main pin
+>> controller, the main CCU and the basical device tree.
+>> 
+>> Icenowy Zheng (9):
+>>   pinctrl: sunxi: refactor irq related register function to have desc
+>>   pinctrl: sunxi: introduce IRQ bank conversion function
+>>   pinctrl: sunxi: change irq_bank_base to irq_bank_map
+>>   pinctrl: sunxi: add support for the Allwinner H6 main pin
+>controller
+>>   clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
+>>   dt-bindings: add device tree binding for Allwinner H6 main CCU
+>>   clk: sunxi-ng: add support for the Allwinner H6 CCU
+>>   arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
+>>   arm64: allwinner: h6: add support for Pine H64 board
+>
+>Applied the !pinctrl patches.
+
+Oops, one clock (CLK_HDMI_SLOW) is missing in the CCU
+driver, as Jernej pointed out.
+
+Should I send a patch that fix it?
+
+>
+>Thanks!
+>Maxime
