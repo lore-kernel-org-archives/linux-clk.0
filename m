@@ -1,67 +1,40 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
-CC: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-	Shubhrajyoti Datta <shubhraj@xilinx.com>, Rajan Vaja <RAJANV@xilinx.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
- driver
-Date: Tue, 20 Mar 2018 19:15:05 +0000
-Message-ID: <DM2PR0201MB0767673F4B956454260B67ECB8AB0@DM2PR0201MB0767.namprd02.prod.outlook.com>
-References: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
- <1519856861-31384-3-git-send-email-jollys@xilinx.com>
- <20180306014549.6t3ae5adzc3cpi5v@rob-hp-laptop>
- <DM2PR0201MB0767031248A9F773620722FDB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
- <CAL_JsqKUC47xB5O2Y6c3efVCjJY=V+XO3xyLTU9rNia40bdZkg@mail.gmail.com>
- <DM2PR0201MB0767FFBAECF3A0B30251DBB8B8D20@DM2PR0201MB0767.namprd02.prod.outlook.com>
- <152148383577.242365.14896728603053993045@swboyd.mtv.corp.google.com>
-In-Reply-To: <152148383577.242365.14896728603053993045@swboyd.mtv.corp.google.com>
+Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+To: mark.rutland@arm.com, matthias.bgg@gmail.com, mturquette@baylibre.com,
+ p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@codeaurora.org,
+ sean.wang@mediatek.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <b6eafb38f8d697bd8d00c8d86a0b22be809f8062.1519874655.git.sean.wang@mediatek.com>
+Cc: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>,
+ stable@vger.kernel.org
+References: <cd26a3bdc9f29e237089395fbba93e28549ddf25.1519874655.git.sean.wang@mediatek.com>
+ <b6eafb38f8d697bd8d00c8d86a0b22be809f8062.1519874655.git.sean.wang@mediatek.com>
+Message-ID: <152149113900.242365.801086554904089563@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/2] clk: mediatek: fix PWM clock source by adding a fixed-factor
+ clock
+Date: Mon, 19 Mar 2018 13:25:39 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgUm9iIGFuZCBTdGVwaGFuLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZy
-b206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtlcm5lbC5vcmddDQo+IFNlbnQ6IE1vbmRh
-eSwgTWFyY2ggMTksIDIwMTggMTE6MjQgQU0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxp
-bnguY29tPjsgUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4NCj4gQ2M6IG1hcmsucnV0bGFu
-ZEBhcm0uY29tOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2
-Z2VyLmtlcm5lbC5vcmc7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzYm95ZEBjb2RlYXVyb3Jh
-Lm9yZzsNCj4gbWljaGFsLnNpbWVrQHhpbGlueC5jb207IFNodWJocmFqeW90aSBEYXR0YSA8c2h1
-YmhyYWpAeGlsaW54LmNvbT47IFJhamFuDQo+IFZhamEgPFJBSkFOVkB4aWxpbnguY29tPjsgbGlu
-dXgtY2xrQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZw0KPiBTdWJqZWN0OiBSRTogW1BBVENIIDIvM10gZHQtYmluZGluZ3M6IGNsb2NrOiBB
-ZGQgYmluZGluZ3MgZm9yIFp5bnFNUCBjbG9jaw0KPiBkcml2ZXINCj4gDQo+IFF1b3RpbmcgSm9s
-bHkgU2hhaCAoMjAxOC0wMy0xMyAxMTozOToxMykNCj4gPiBIaSBSb2IsDQo+ID4gPg0KPiA+ID4g
-V2hhdCBpcyB0aGUgaW50ZXJmYWNlIHRvIHRoZSAicGxhdGZvcm0gbWFuYWdlbWVudCBjb250cm9s
-bGVyIj8NCj4gPiA+IEJlY2F1c2UgeW91IGhhdmUgbm8gcmVnaXN0ZXJzLCBJJ20gZ3Vlc3Npbmcg
-YSBmaXJtd2FyZSBpbnRlcmZhY2U/IElmDQo+ID4gPiBzbywgdGhlbiBqdXN0IGRlZmluZSB0aGUg
-ZmlybXdhcmUgbm9kZSBhcyBhIGNsb2NrIHByb3ZpZGVyLg0KPiA+DQo+ID4gWWVzIGl0IGlzIGZp
-cm13YXJlIGludGVyZmFjZS4gQWxvbmcgd2l0aCBjbG9ja3MsIGZpcm13YXJlIGludGVyZmFjZSBh
-bHNvIGNvbnRyb2xzDQo+IHBvd2VyIGFuZCBwaW5jdHJsIG9wZXJhdGlvbnMgYXMgbWFqb3IuDQo+
-ID4gSSBhbSBub3Qgc3VyZSBpZiBJIHVuZGVyc3RhbmQgeW91IGNvcnJlY3RseS4gRG8geW91IHN1
-Z2dlc3QgdG8gcmVnaXN0ZXIgY2xvY2tzDQo+IHRocm91Z2ggRmlybXdhcmUgZHJpdmVyIG9yIGp1
-c3QgdXNlIGZpcm13YXJlIERUIG5vZGUgYXMgY2xvY2sgcHJvdmlkZXIgYW5kDQo+IGNsb2NrIGRy
-aXZlciBEVCBub2RlIGNhbiByZWZlcmVuY2UgY2xvY2tzIGZyb20gRlcgbm9kZSB0byByZWdpc3Rl
-ciBzYW1lPw0KPiANCj4gSSB3b3VsZCBzdWdnZXN0IG1ha2luZyB0aGUgZmlybXdhcmUgZHJpdmVy
-IHJlZ2lzdGVyIHRoZSBjbGtzIGFuZCBhY3QgYXMgdGhlIGNsaw0KPiBwcm92aWRlci4gTm90IHN1
-cmUgd2hhdCBSb2Igd2FudHMuDQoNCkZpcm13YXJlIGRyaXZlciBqdXN0IHByb3ZpZGVzIEFQSSBp
-bnRlcmZhY2UgYW5kIGRvZXNu4oCZdCBhY3R1YWxseSBjb250cm9sIHRoZSBjbG9ja3MuIEFsb25n
-IHdpdGggY2xvY2tzLCBpdCBwcm92aWRlcyBpbnRlcmZhY2UgZm9yIHBvd2VyIGFuZCBwaW5tdXgg
-Y29udHJvbCBhbHNvLiBTaGFsbCB3ZSByZWdpc3RlciBjbG9ja3MvcGlucy9wb3dlciBkb21haW5z
-IGluIEZXIGRyaXZlciBvciBmb2xsb3cgc29tZXRoaW5nIGxpa2Ugc2NwaSBhcyBiZWxvdyBhbmQg
-a2VlcCByZWdpc3RyYXRpb24gc2VwYXJhdGU/IA0KDQp6eW5xbXBfZmlybXdhcmUgIHsNCgkJY29t
-cGF0aWJsZSA9ICJ4bG54LHp5bnFtcC1maXJtd2FyZSI7DQoJCW1ldGhvZCA9ICJzbWMiOw0KCQkN
-CgkJenlucW1wX2NsazogenlucW1wX2NsayB7DQoJCQkJY29tcGF0aWJsZSA9ICJ4bG54LHp5bnFt
-cC1jbGsiOw0KCQkJCSNjbG9jay1jZWxscyA9IDwxPjsNCgkJCQljbG9ja3MgPSA8JnBzc19yZWZf
-Y2xrPiwgPCZ2aWRlb19jbGs+LCA8JnBzc19hbHRfcmVmX2Nsaz4NCgkJCQljbG9jay1uYW1lcyA9
-ICJwc3NfcmVmX2NsayIsICJ2aWRlb19jbGsiLCAicHNzX2FsdF9yZWZfY2xrIg0KCQl9Ow0KCQkN
-CgkJenlucW1wLWdlbnBkOiB6eW5xbXAtZ2VucGQgew0KCQkJCWNvbXBhdGlibGUgPSAieGxueCx6
-eW5xbXAtZ2VucGQiOw0KCQkJCS4uLg0KCQl9Ow0KCQl6eW5xbXAtcGluY3RybDogenlucW1wLXBp
-bmN0cmwgew0KICAgICAgICAgICAgICAgIAkJCWNvbXBhdGlibGUgPSAieGxueCx6eW5xbXAtcGlu
-Y3RybCI7DQoJCQkgICAgICAgICAgICAgICAgLi4uDQogICAgICAgIAkJfTsNCgl9Ow0KDQpUaGFu
-a3MsDQpKb2xseSBTaGFoDQoNCg==
+Quoting sean.wang@mediatek.com (2018-02-28 19:27:51)
+> From: Sean Wang <sean.wang@mediatek.com>
+> =
+
+> The clock for which all PWM devices on MT7623 or MT2701 actually depending
+> on has to be divided by four from its parent clock axi_sel in the clock
+> path prior to PWM devices.
+> =
+
+> Consequently, adding a fixed-factor clock axisel_d4 as one-fourth of
+> clock axi_sel allows that PWM devices can have the correct resolution
+> calculation.
+> =
+
+> Cc: stable@vger.kernel.org
+> Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+
+Applied to clk-next
