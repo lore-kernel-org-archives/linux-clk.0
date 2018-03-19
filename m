@@ -1,175 +1,76 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 08/42] clk: davinci: Add platform information for TI DM646x PLL
-Date: Thu, 15 Mar 2018 21:52:24 -0500
-Message-Id: <1521168778-27236-9-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+MIME-Version: 1.0
+To: Rob Herring <robh+dt@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <f1445b95864af04f1f90d3be96d0a485d1bb4560.1520327262.git.ryder.lee@mediatek.com>
+References: <cover.1520327262.git.ryder.lee@mediatek.com>
+ <f1445b95864af04f1f90d3be96d0a485d1bb4560.1520327262.git.ryder.lee@mediatek.com>
+Message-ID: <152149148431.242365.4625152577833480987@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 3/6] clk: mediatek: add audsys support for MT2701
+Date: Mon, 19 Mar 2018 13:31:24 -0700
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Ryder Lee <ryder.lee@mediatek.com>,
+ Garlic Tseng <garlic.tseng@mediatek.com>, linux-kernel@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>, linux-mediatek@lists.infradead.org,
+ Matthias Brugger <matthias.bgg@gmail.com>, Lee Jones <lee.jones@linaro.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PLL clocks on TI
-DM646x based systems.
+Quoting Ryder Lee (2018-03-06 01:09:28)
+> +
+> +static const struct of_device_id of_match_clk_mt2701_aud[] = {
+> +       { .compatible = "mediatek,mt2701-audsys", },
+> +       {}
+> +};
+> +
+> +static int clk_mt2701_aud_probe(struct platform_device *pdev)
+> +{
+> +       struct clk_onecell_data *clk_data;
+> +       struct device_node *node = pdev->dev.of_node;
+> +       int r;
+> +
+> +       clk_data = mtk_alloc_clk_data(CLK_AUD_NR);
+> +
+> +       mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+> +                              clk_data);
+> +
+> +       r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> +       if (r) {
+> +               dev_err(&pdev->dev,
+> +                       "could not register clock provider: %s: %d\n",
+> +                       pdev->name, r);
+> +
+> +               return r;
+> +       }
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+This fails to remove the clk provider when devm_of_platform_populate()
+returns an error.
 
-v8 changes:
-- drop __init and __initconst attributes
-- add a clkdev lookup for each SYSCLK
-- drop fixed-factor clock for timer2
+> +
+> +       return devm_of_platform_populate(&pdev->dev);
+> +}
+> +
+> +static struct platform_driver clk_mt2701_aud_drv = {
+> +       .probe = clk_mt2701_aud_probe,
+> +       .driver = {
+> +               .name = "clk-mt2701-aud",
+> +               .of_match_table = of_match_clk_mt2701_aud,
+> +       },
+> +};
+> +
+> +builtin_platform_driver(clk_mt2701_aud_drv);
 
-v7 changes:
-- split registration functions for each PLL
-- Add platform_device_id lookup
-
-v6 changes:
-- Added dm646x_pll{1,2}_info with controller-specific information
-- Add empty lines between function calls
-
- drivers/clk/davinci/Makefile     |  1 +
- drivers/clk/davinci/pll-dm646x.c | 84 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/davinci/pll.c        |  2 +
- drivers/clk/davinci/pll.h        |  3 ++
- 4 files changed, 90 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-dm646x.c
-
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 59d8ab6..d471386 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -7,4 +7,5 @@ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
- obj-$(CONFIG_ARCH_DAVINCI_DM355)	+= pll-dm355.o
- obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= pll-dm365.o
- obj-$(CONFIG_ARCH_DAVINCI_DM644x)	+= pll-dm644x.o
-+obj-$(CONFIG_ARCH_DAVINCI_DM646x)	+= pll-dm646x.o
- endif
-diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
-new file mode 100644
-index 0000000..a61cc32
---- /dev/null
-+++ b/drivers/clk/davinci/pll-dm646x.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DM646X
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/init.h>
-+#include <linux/types.h>
-+
-+#include "pll.h"
-+
-+static const struct davinci_pll_clk_info dm646x_pll1_info = {
-+	.name = "pll1",
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 14,
-+	.pllm_max = 32,
-+	.flags = PLL_HAS_CLKMODE,
-+};
-+
-+SYSCLK(1, pll1_sysclk1, pll1_pllen, 4, SYSCLK_FIXED_DIV);
-+SYSCLK(2, pll1_sysclk2, pll1_pllen, 4, SYSCLK_FIXED_DIV);
-+SYSCLK(3, pll1_sysclk3, pll1_pllen, 4, SYSCLK_FIXED_DIV);
-+SYSCLK(4, pll1_sysclk4, pll1_pllen, 4, 0);
-+SYSCLK(5, pll1_sysclk5, pll1_pllen, 4, 0);
-+SYSCLK(6, pll1_sysclk6, pll1_pllen, 4, 0);
-+SYSCLK(8, pll1_sysclk8, pll1_pllen, 4, 0);
-+SYSCLK(9, pll1_sysclk9, pll1_pllen, 4, 0);
-+
-+int dm646x_pll1_init(struct device *dev, void __iomem *base)
-+{
-+	struct clk *clk;
-+
-+	davinci_pll_clk_register(dev, &dm646x_pll1_info, "ref_clk", base);
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
-+	clk_register_clkdev(clk, "pll1_sysclk1", "dm646x-psc");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk2, base);
-+	clk_register_clkdev(clk, "pll1_sysclk2", "dm646x-psc");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk3, base);
-+	clk_register_clkdev(clk, "pll1_sysclk3", "dm646x-psc");
-+	clk_register_clkdev(clk, NULL, "davinci-wdt");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk4, base);
-+	clk_register_clkdev(clk, "pll1_sysclk4", "dm646x-psc");
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk5, base);
-+	clk_register_clkdev(clk, "pll1_sysclk5", "dm646x-psc");
-+
-+	davinci_pll_sysclk_register(dev, &pll1_sysclk6, base);
-+
-+	davinci_pll_sysclk_register(dev, &pll1_sysclk8, base);
-+
-+	davinci_pll_sysclk_register(dev, &pll1_sysclk9, base);
-+
-+	davinci_pll_sysclkbp_clk_register(dev, "pll1_sysclkbp", base);
-+
-+	davinci_pll_auxclk_register(dev, "pll1_auxclk", base);
-+
-+	return 0;
-+}
-+
-+static const struct davinci_pll_clk_info dm646x_pll2_info = {
-+	.name = "pll2",
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 14,
-+	.pllm_max = 32,
-+	.flags = 0,
-+};
-+
-+SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
-+
-+int dm646x_pll2_init(struct device *dev, void __iomem *base)
-+{
-+	davinci_pll_clk_register(dev, &dm646x_pll2_info, "oscin", base);
-+
-+	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
-+
-+	return 0;
-+}
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 0a1e68f..588a489 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -786,6 +786,8 @@ static const struct platform_device_id davinci_pll_id_table[] = {
- 	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
- 	{ .name = "dm644x-pll1", .driver_data = (kernel_ulong_t)dm644x_pll1_init },
- 	{ .name = "dm644x-pll2", .driver_data = (kernel_ulong_t)dm644x_pll2_init },
-+	{ .name = "dm646x-pll1", .driver_data = (kernel_ulong_t)dm646x_pll1_init },
-+	{ .name = "dm646x-pll2", .driver_data = (kernel_ulong_t)dm646x_pll2_init },
- 	{ }
- };
- 
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index d8af4f5..b1b6fb2 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -135,4 +135,7 @@ int dm365_pll2_init(struct device *dev, void __iomem *base);
- int dm644x_pll1_init(struct device *dev, void __iomem *base);
- int dm644x_pll2_init(struct device *dev, void __iomem *base);
- 
-+int dm646x_pll1_init(struct device *dev, void __iomem *base);
-+int dm646x_pll2_init(struct device *dev, void __iomem *base);
-+
- #endif /* __CLK_DAVINCI_PLL_H___ */
--- 
-2.7.4
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
