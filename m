@@ -1,46 +1,51 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 13/16] drm/sun4i: Allow building on arm64
-Date: Thu,  1 Mar 2018 22:34:39 +0100
-Message-Id: <20180301213442.16677-14-jernej.skrabec@siol.net>
-In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
+Return-Path: <jeffy.chen@rock-chips.com>
+Message-ID: <5AAF35A8.3040107@rock-chips.com>
+Date: Mon, 19 Mar 2018 11:59:36 +0800
+From: JeffyChen <jeffy.chen@rock-chips.com>
+MIME-Version: 1.0
+To: Vladimir Zapolskiy <vz@mleia.com>, linux-kernel@vger.kernel.org,
+ broonie@kernel.org, alexandre.belloni@bootlin.com
+CC: Guenter Roeck <linux@roeck-us.net>, Arnd Bergmann <arnd@arndb.de>,
+ Joseph Lo <josephl@nvidia.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ lee.jones@linaro.org, Emil Renner Berthing <kernel@esmil.dk>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Brian Norris <briannorris@chromium.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ linux-rockchip@lists.infradead.org,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ linux-input@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+ Matthias Kaehlcke <mka@chromium.org>,
+ devicetree@vger.kernel.org, stephen lu <lumotuwe@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Arvind Yadav <arvind.yadav.cs@gmail.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Sylvain Lemieux <slemieux.tyco@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Gabriel Fernandez <gabriel.fernandez@st.com>, linux-clk@vger.kernel.org,
+ Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+ Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH v5 3/4] clk: lpc32xx: Set name of regmap_config
+References: <20180312095142.30854-1-jeffy.chen@rock-chips.com> <20180312095142.30854-4-jeffy.chen@rock-chips.com> <23a9cbf8-9b1d-f7ec-b980-a16c9b2c4d84@mleia.com>
+In-Reply-To: <23a9cbf8-9b1d-f7ec-b980-a16c9b2c4d84@mleia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-64-bit ARM SoCs from Allwinner have DE2/TCON/HDMI periphery which
-is compatible to 32-bit SoCs, so allow building DRM driver for
-arm64 architecture.
+Hi Vladimir,
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 03/19/2018 05:57 AM, Vladimir Zapolskiy wrote:
+>> >  static struct regmap_config lpc32xx_scb_regmap_config = {
+>> >+	.name = "lpc32xx-scb",
+> please rename it to "scb", LPC32xx SoC name is already known from the context.
+>
+> When it's done, feel free to add to the next version my
+>
+> Acked-by: Vladimir Zapolskiy<vz@mleia.com>
+>
 
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index 7327da3bc94f..eee6bc0eaf97 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -1,6 +1,6 @@
- config DRM_SUN4I
- 	tristate "DRM Support for Allwinner A10 Display Engine"
--	depends on DRM && ARM && COMMON_CLK
-+	depends on DRM && (ARM || ARM64) && COMMON_CLK
- 	depends on ARCH_SUNXI || COMPILE_TEST
- 	select DRM_GEM_CMA_HELPER
- 	select DRM_KMS_HELPER
--- 
-2.16.2
+ok, will do, thanks:)
