@@ -1,65 +1,65 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 02/11] arm64: dts: actions: Source CMU clock for UART5
-Date: Sat, 24 Mar 2018 19:01:50 +0530
-Message-Id: <20180324133159.4824-3-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
-References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <david@lechnology.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v8_00/42]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
+ arm-soc <linux-arm-kernel@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <CAMpxmJX-AxhpPpCnWoaSGYmNh3o8iRjdKacnmozsPWmhpcGdTg@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <af89be8d-04dd-e845-1d5b-afdd7e55629f@lechnology.com>
+Date: Mon, 19 Mar 2018 10:59:47 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAMpxmJX-AxhpPpCnWoaSGYmNh3o8iRjdKacnmozsPWmhpcGdTg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Remove fixed clock and source CMU (Clock Management Unit) clock for
-UART5 driver in Actions Semi S900 SoC.
+On 03/19/2018 08:17 AM, Bartosz Golaszewski wrote:
+> 2018-03-16 3:52 GMT+01:00 David Lechner <david@lechnology.com>:
+>> This series converts mach-davinci to use the common clock framework.
+>>
+>> The series works like this, the first 19 patches create new clock drivers
+>> using the common clock framework. There are basically 3 groups of clocks -
+>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
+>> unique init data, which is the reason for so many patches.
+>>
+>> Then, starting with "ARM: davinci: pass clock as parameter to
+>> davinci_timer_init()", we get the mach code ready for the switch by adding the
+>> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+>> around the legacy clocks so that we can switch easily between the old and the
+>> new.
+>>
+>> "ARM: davinci: switch to common clock framework" actually flips the switch
+>> to start using the new clock drivers. Then the next 8 patches remove all
+>> of the old clock code.
+>>
+>> The final three patches add device tree clock support to the one SoC that
+>> supports it.
+>>
+>> This series has been tested on LEGO MINDSTORMS EV3 (device tree) and TI
+>> OMAP-L138 LCDK (both device tree and legacy board file).
+>>
+> 
+> Hi David,
+> 
+> thanks, with the u-boot fix everything seems to work fine. I tested
+> da850-lcdk and da850-evm boards in DT and board file modes.
+> 
+> I'll be working with this series in the following days and will do
+> some thorough testing and rebase my aemif series on top of it. I'll
+> also use the recently merged reset support for board files to get rid
+> of the exported reset functions.
+> 
+> Thanks for your work!
+> 
+> Best regards,
+> Bartosz Golaszewski
+> 
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-index 21ca80f9941c..ff043c961d75 100644
---- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-+++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-@@ -24,12 +24,6 @@
- 		device_type = "memory";
- 		reg = <0x0 0x0 0x0 0x80000000>;
- 	};
--
--	uart5_clk: uart5-clk {
--		compatible = "fixed-clock";
--		clock-frequency = <921600>;
--		#clock-cells = <0>;
--	};
- };
- 
- &timer {
-@@ -38,5 +32,5 @@
- 
- &uart5 {
- 	status = "okay";
--	clocks = <&uart5_clk>;
-+	clocks = <&cmu CLK_UART5>;
- };
--- 
-2.14.1
+Sounds like a good plan to me. FYI, I've started a common-clk-v9 branch
+on my GitHub already with a few minor fixes.
