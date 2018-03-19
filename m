@@ -1,53 +1,61 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Subject: Re: [PATCH v3 08/10] clk: qcom: Add ACD path to CPU clock driver for
+ msm8996
+To: Stephen Boyd <sboyd@kernel.org>, Ilia Lin <ilialin@codeaurora.org>,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, sboyd@codeaurora.org
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-9-git-send-email-ilialin@codeaurora.org>
+ <152147863176.242365.17292287330283256524@swboyd.mtv.corp.google.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <41f3b246-43f4-450d-5c6b-34cdad7b15dd@arm.com>
+Date: Mon, 19 Mar 2018 18:16:15 +0000
 MIME-Version: 1.0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
- mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180317100952.28538-9-manivannan.sadhasivam@linaro.org>
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
- devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
- daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
- <20180317100952.28538-9-manivannan.sadhasivam@linaro.org>
-Message-ID: <152150829204.254778.2737344357539002182@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 08/12] clk: actions: Add factor clock support
-Date: Mon, 19 Mar 2018 18:11:32 -0700
+In-Reply-To: <152147863176.242365.17292287330283256524@swboyd.mtv.corp.google.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, rnayak@codeaurora.org,
+ robh@kernel.org, will.deacon@arm.com, amit.kucheria@linaro.org,
+ tfinkel@codeaurora.org, nicolas.dechesne@linaro.org, celster@codeaurora.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Manivannan Sadhasivam (2018-03-17 03:09:48)
-> +
-> +static int clk_val_best(struct clk_hw *hw, unsigned long rate,
-> +                       unsigned long *best_parent_rate)
-> +{
+On 19/03/18 16:57, Stephen Boyd wrote:
 [...]
-> +               }
-> +
-> +               parent_rate =3D clk_hw_round_rate(clk_hw_get_parent(hw),
-> +                               try_parent_rate);
-> +               cur_rate =3D DIV_ROUND_UP(parent_rate, clkt->div) * clkt-=
->mul;
-> +               if (cur_rate <=3D rate && cur_rate > best) {
-> +                       bestval =3D clkt->val;
-> +                       best =3D cur_rate;
-> +                       *best_parent_rate =3D parent_rate;
-> +               }
-> +       }
-> +
-> +       if (!bestval) {
-> +               bestval =3D _get_table_maxval(clkt);
-> +               *best_parent_rate =3D clk_hw_round_rate(
-> +                               clk_hw_get_parent(hw), 1);
-> +       }
-> +
-> +       return bestval;
+>> +
+>> +       if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
+>> +               /* Enable Soft Stop/Start */
+> 
+> Sigh.
+> 
+>> +               if (vbases[APC_BASE])
+> 
+> When is this false?
+> 
+>> +                       writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
+>> +                                       PWRCL_REG_OFFSET + SSSCTL_OFFSET);
+>> +               /* Ensure SSSCTL config goes through before enabling ACD. */
+>> +               mb();
+> 
+> Use writel instead.
 
-Also, if this is largely copy/paste from the factor clk code then
-perhaps those functions can be exported to here and reused instead of
-copy/paste.
+Note that writel() only gives an implicit wmb() *before* the store to 
+ensure ordering against any previous writes. If this code really needs 
+to ensure that the given write has definitely completed before any other 
+accesses happen, then it still needs an explicit barrier *after* the 
+write*(), unless perhaps the next access is always guaranteed to be a 
+non-relaxed write (thus implicitly providing a suitable DSB).
 
-> +}
+Robin.
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
