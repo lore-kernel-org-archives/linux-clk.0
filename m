@@ -1,40 +1,135 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34380 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750855AbeCNLNt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Mar 2018 07:13:49 -0400
-Subject: Re: [PATCH v2] clk: samsung: exynos5250: Add missing clocks for
- FIMC LITE SYSMMU devices
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <c16f4391-fd3a-3093-fe92-e43c8fe50e63@samsung.com>
-Date: Wed, 14 Mar 2018 12:13:42 +0100
-MIME-version: 1.0
-In-reply-to: <20180313104612.24257-1-m.szyprowski@samsung.com>
-Content-type: text/plain; charset="utf-8"
-References: <CGME20180313104621eucas1p1905014d182b444b86605d07702e91533@eucas1p1.samsung.com>
-        <20180313104612.24257-1-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+MIME-Version: 1.0
+To: Ilia Lin <ilialin@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ sboyd@codeaurora.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1518616792-29028-2-git-send-email-ilialin@codeaurora.org>
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-2-git-send-email-ilialin@codeaurora.org>
+Message-ID: <152148150406.242365.14021083340615345047@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 01/10] soc: qcom: Separate kryo l2 accessors from PMU
+ driver
+Date: Mon, 19 Mar 2018 10:45:04 -0700
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, rnayak@codeaurora.org,
+ robh@kernel.org, will.deacon@arm.com, amit.kucheria@linaro.org,
+ tfinkel@codeaurora.org, ilialin@codeaurora.org, nicolas.dechesne@linaro.org,
+ celster@codeaurora.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/13/2018 11:46 AM, Marek Szyprowski wrote:
-> FIMC LITE SYSMMU devices are defined in exynos5250.dtsi, but clocks for
-> them are not instantiated by Exynos5250 clock provider driver. Add needed
-> definitions for those clocks to fix IOMMU probe failure:
-> 
-> ERROR: could not get clock /soc/sysmmu@13c40000:sysmmu(0)
-> exynos-sysmmu 13c40000.sysmmu: Failed to get device clock(s)!
-> exynos-sysmmu: probe of 13c40000.sysmmu failed with error -38
-> ERROR: could not get clock /soc/sysmmu@13c50000:sysmmu(0)
-> exynos-sysmmu 13c50000.sysmmu: Failed to get device clock(s)!
-> exynos-sysmmu: probe of 13c50000.sysmmu failed with error -38
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Fixes: bfed1074f213 ("clk: exynos5250: Add missing sysmmu clocks for DISP and ISP blocks")
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Quoting Ilia Lin (2018-02-14 05:59:43)
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index fbedbd8..78a103b 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -145,6 +145,13 @@ config ARCH_REALTEK
+>           This enables support for the ARMv8 based Realtek chipsets,
+>           like the RTD1295.
+>  
+> +config ARCH_MSM8996
+> +    bool "Enable Support for Qualcomm Technologies, Inc. MSM8996"
+> +       depends on ARCH_QCOM
 
-Patch applied, thanks.
+Is this really the proposed approach? Doesn't the PMU code use these
+accessors? I would think the accessors are compiled if ARCH_QCOM=y so
+that the PMU stuff keeps working. Drop this Kconfig addition?
+
+> +       help
+> +       This enables support for the MSM8996 chipset. If you do not
+> +       wish to build a kernel that runs on this chipset, say 'N' here.
+> +
+>  config ARCH_ROCKCHIP
+>         bool "Rockchip Platforms"
+>         select ARCH_HAS_RESET_CONTROLLER
+> diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
+> index 4fdc848..8cece9e 100644
+> --- a/drivers/perf/qcom_l2_pmu.c
+> +++ b/drivers/perf/qcom_l2_pmu.c
+> @@ -1,4 +1,4 @@
+> -/* Copyright (c) 2015-2017 The Linux Foundation. All rights reserved.
+> +/* Copyright (c) 2015-2018 The Linux Foundation. All rights reserved.
+
+Sorry, this makes little sense. First off, code is only being deleted
+and more than half the file isn't being modified so why update copyright
+dates?
+
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License version 2 and
+> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+> index dcebf28..4e91e2a 100644
+> --- a/drivers/soc/qcom/Makefile
+> +++ b/drivers/soc/qcom/Makefile
+> @@ -12,3 +12,4 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
+>  obj-$(CONFIG_QCOM_SMP2P)       += smp2p.o
+>  obj-$(CONFIG_QCOM_SMSM)        += smsm.o
+>  obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
+> +obj-$(CONFIG_ARCH_MSM8996) +=  kryo-l2-accessors.o
+> diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
+> new file mode 100644
+> index 0000000..6743848
+> --- /dev/null
+> +++ b/drivers/soc/qcom/kryo-l2-accessors.c
+> @@ -0,0 +1,64 @@
+> +/*
+> + * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+
+SPDX tags?
+
+> diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
+> new file mode 100644
+> index 0000000..e9a5eab
+> --- /dev/null
+> +++ b/include/soc/qcom/kryo-l2-accessors.h
+> @@ -0,0 +1,22 @@
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef __ASM_ARCH_MSM_MSM_KRYO_L2_ACCESSORS_H
+> +#define __ASM_ARCH_MSM_MSM_KRYO_L2_ACCESSORS_H
+
+Maybe change this tO __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
+
+> +
+> +#ifdef CONFIG_ARCH_QCOM
+> +void set_l2_indirect_reg(u64 reg_addr, u64 val);
+> +u64 get_l2_indirect_reg(u64 reg_addr);
+> +#endif
+
+This ifdef isn't doing much. Drop it? Or provide the inline nop
+alternatives.
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
