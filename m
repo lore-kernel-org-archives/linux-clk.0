@@ -1,80 +1,134 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
-        Loic PALLARDY
-	<loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: [PATCH v2 11/12] clk: stm32mp1: add MCO clocks
-Date: Thu, 8 Mar 2018 17:54:04 +0100
-Message-ID: <1520528045-18330-12-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
-References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <david@lechnology.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v8_00/42]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+To: Adam Ford <aford173@gmail.com>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
+ arm-soc <linux-arm-kernel@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <CAMpxmJX-AxhpPpCnWoaSGYmNh3o8iRjdKacnmozsPWmhpcGdTg@mail.gmail.com>
+ <af89be8d-04dd-e845-1d5b-afdd7e55629f@lechnology.com>
+ <CAHCN7xKQ47DnVXiZTJ-0myoth2SJ3wnyvDb2i07uKZDgomhgwQ@mail.gmail.com>
+ <CAMpxmJWoP+BDYeuqCnQ2txWy7wkxKuyjKODJqgDtRkq0ahY1mw@mail.gmail.com>
+ <CAMpxmJX+BqnU=cK0KMOOCrXd4bB2RRZ30A-U3f3tk6K05csrTw@mail.gmail.com>
+ <CAHCN7xLt6QqHodd=0HKXBxLjjn8ua5Re7NYW=sPeH+TmnXpkJQ@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <4dc2725d-0dee-1c7f-1e6d-9a93e6228826@lechnology.com>
+Date: Mon, 19 Mar 2018 17:54:27 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CAHCN7xLt6QqHodd=0HKXBxLjjn8ua5Re7NYW=sPeH+TmnXpkJQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 03/19/2018 12:52 PM, Adam Ford wrote:
+> On Mon, Mar 19, 2018 at 11:15 AM, Bartosz Golaszewski
+> <bgolaszewski@baylibre.com> wrote:
+>> 2018-03-19 17:14 GMT+01:00 Bartosz Golaszewski <bgolaszewski@baylibre.com>:
+>>> 2018-03-19 17:11 GMT+01:00 Adam Ford <aford173@gmail.com>:
+>>>> On Mon, Mar 19, 2018 at 10:59 AM, David Lechner <david@lechnology.com> wrote:
+>>>>> On 03/19/2018 08:17 AM, Bartosz Golaszewski wrote:
+>>>>>>
+>>>>>> 2018-03-16 3:52 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>>>>>
+>>>>>>> This series converts mach-davinci to use the common clock framework.
+>>>>>>>
+>>>>>>> The series works like this, the first 19 patches create new clock drivers
+>>>>>>> using the common clock framework. There are basically 3 groups of clocks
+>>>>>>> -
+>>>>>>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each
+>>>>>>> have
+>>>>>>> unique init data, which is the reason for so many patches.
+>>>>>>>
+>>>>>>> Then, starting with "ARM: davinci: pass clock as parameter to
+>>>>>>> davinci_timer_init()", we get the mach code ready for the switch by
+>>>>>>> adding the
+>>>>>>> code needed for the new clock drivers and adding #ifndef
+>>>>>>> CONFIG_COMMON_CLK
+>>>>>>> around the legacy clocks so that we can switch easily between the old and
+>>>>>>> the
+>>>>>>> new.
+>>>>>>>
+>>>>>>> "ARM: davinci: switch to common clock framework" actually flips the
+>>>>>>> switch
+>>>>>>> to start using the new clock drivers. Then the next 8 patches remove all
+>>>>>>> of the old clock code.
+>>>>>>>
+>>>>>>> The final three patches add device tree clock support to the one SoC that
+>>>>>>> supports it.
+>>>>>>>
+>>>>>>> This series has been tested on LEGO MINDSTORMS EV3 (device tree) and TI
+>>>>>>> OMAP-L138 LCDK (both device tree and legacy board file).
+>>>>>>>
+> 
+> 
+> Does anyone have an LCD connected to the LCDC controller with device
+> tree?  I posted an RFC patch a while ago for the DA850-EVM, but I got
+> distracted and forgot about it, so I never working on getting the
+> patch ready for acceptance.
+> 
+> I am trying to test the LCD now, but I cannot get the screen to come
+> up, but in the process, it appears as if the clocking to the LCD isn't
+> quite right.  I know it used to work, but I am going to probe some
+> pins, but I am getting warning messages I have never received before.
+> The desired clock frequency is 9000000, but when I use the cpufreq in
+> ondemand mode, I get the following messages:
+> 
+> #  echo ondemand > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+> # tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+> tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+>   calculated rate (54000000Hz)
+> tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+>   calculated rate (54000000Hz)
+> tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+> tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+> tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+>   calculated rate (54000000Hz)
+> tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+>   calculated rate (54000000Hz)
+> tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+> tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+> tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+>   calculated rate (54000000Hz)
+> tilcdc 1e13000.display: effective pixel clock rate (50000000Hz) differs from the
+>   calculated rate (54000000Hz)
+> tilcdc 1e13000.display: tilcdc_crtc_irq(0x00000161): FIFO underflow
+> 
+> As ondemend is used and the processor scaling happens, the above
+> message appears on and off.
+> 
+> I do not know if it impacts the LCD image since I haven't been able to
+> get it working yet, but I'll troubleshoot it and when/if I can get the
+> LCD working, I'll turn on the ondemand again and see how it behaves.
+> 
+> adam
+> 
+> 
 
-Two micro-controller clock output (MCO) pins are available:
-MCO1 and MCO2.
-For each output, it is possible to select a clock source.
-The selected clock can be divided thanks to configurable
-prescaler.
+I've just been using the VGA connector on the LCDK since that is the only
+hardware I have that uses the LCDC controller and I haven't tried it with
+ondemand CPU freq yet.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32mp1.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+But, I do know this. The parent clock for the LCDC (PLL0 SYSCLK2) must be
+(according to the TRM) set to a fixed ratio to the ARM clock (/2), so it
+can only have certain rates. The tilcdc driver then tries to pick a
+divider for that rate to get close enough to the requested 54MHz. Also,
+this divider must be at least 2. It can't be 1 (or 0).
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 51e3e76..b3a6ec4 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -252,6 +252,14 @@
- 	"off", "ck_lse", "ck_lsi", "ck_hse_rtc"
- };
- 
-+static const char * const mco1_src[] = {
-+	"ck_hsi", "ck_hse", "ck_csi", "ck_lsi", "ck_lse"
-+};
-+
-+static const char * const mco2_src[] = {
-+	"ck_mpu", "ck_axi", "ck_mcu", "pll4_p", "ck_hse", "ck_hsi"
-+};
-+
- static const struct clk_div_table axi_div_table[] = {
- 	{ 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
- 	{ 4, 4 }, { 5, 4 }, { 6, 4 }, { 7, 4 },
-@@ -1960,6 +1968,18 @@ enum {
- 		  _MUX(RCC_BDCR, 16, 2, 0),
- 		  _NO_DIV),
- 
-+	/* MCO clocks */
-+	COMPOSITE(CK_MCO1, "ck_mco1", mco1_src, CLK_OPS_PARENT_ENABLE |
-+		  CLK_SET_RATE_NO_REPARENT,
-+		  _GATE(RCC_MCO1CFGR, 12, 0),
-+		  _MUX(RCC_MCO1CFGR, 0, 3, 0),
-+		  _DIV(RCC_MCO1CFGR, 4, 4, 0, NULL)),
-+
-+	COMPOSITE(CK_MCO2, "ck_mco2", mco2_src, CLK_OPS_PARENT_ENABLE |
-+		  CLK_SET_RATE_NO_REPARENT,
-+		  _GATE(RCC_MCO2CFGR, 12, 0),
-+		  _MUX(RCC_MCO2CFGR, 0, 3, 0),
-+		  _DIV(RCC_MCO2CFGR, 4, 4, 0, NULL)),
- };
- 
- struct stm32_clock_match_data {
--- 
-1.9.1
+So, if the CPU throttles down to 100, 200, or 300MHz, then 50Mz is as
+close as any integer divider can get. The kernel prints a warning if
+the difference between the requested and actual rate is over 5%. There
+is a note in the kernel comments that this 5% value is arbitrary, so
+maybe it needs to change to 10%?
+
+I haven't dug deep enough to understand why the driver thinks it needs
+a 54MHz pixel when you think it should be 9MHz.
+
+I am also occasionally seeing the underflow error when the CPU is busy.
+Maybe there is some more tweaking that could be done with the master
+priority controller (unrelated to this patch series)? Or maybe if you
+want to use the LCDC, then you just need to run at 475MHz all of the
+time?
