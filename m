@@ -1,95 +1,60 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 00/16] Implement H3/H5 HDMI driver
-Date: Thu,  1 Mar 2018 22:34:26 +0100
-Message-Id: <20180301213442.16677-1-jernej.skrabec@siol.net>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Fabio Estevam <festevam@gmail.com>
+CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Russell King - ARM Linux
+	<linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, "S.j. Wang" <shengjiu.wang@nxp.com>, dl-linux-imx
+	<linux-imx@nxp.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM
+ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:OPEN
+ FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk
+	<linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz clock
+ source
+Date: Mon, 19 Mar 2018 02:09:39 +0000
+Message-ID: <AM3PR04MB1315E9D8E8C4492876E6CFF3F5D40@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1521342853-2941-1-git-send-email-Anson.Huang@nxp.com>
+ <1521342853-2941-2-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5CG6XuJ7N8W--zEwEVd9JHj887_7aNp+K8D-Xt1OnKh7A@mail.gmail.com>
+In-Reply-To: <CAOMZO5CG6XuJ7N8W--zEwEVd9JHj887_7aNp+K8D-Xt1OnKh7A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This series implements H3/H5 HDMI driver. It was tested on OrangePi 2 (H3),
-OrangePi Plus2e (H3) and OrangePi PC2 (H5) with many resolutions and it
-works well.
-
-Code is based on linux-next, next-20180228 tag.
-
-Best regards,
-Jernej
-
-Changes in v3:
-- Removed TCON patch to skip LVDS procesing
-- Added TCON patch to release exclusive clock lock
-- Minimal clock rate is now returned immediately in round_rate for NM PLLs
-
-Changes in v2:
-- Fixed build warning on arm64
-- Fixed condition in determine_rate function in HDMI PHY clock driver
-- Added defines for polarity settings in HDMI PHY
-- Added patch to skip LVDS code path altogether if TCON doesn't support it.
-- round_rate for NM PLLs now rounds to minimal rate if requested rate is
-  lower.
-- set_rate for NM PLLs doesn't fail if requested rate is lower than minimal
-  (round_rate is called before which already guarantees that rate is not
-   lower than minimal).
-
-Jernej Skrabec (16):
-  clk: sunxi-ng: Add check for minimal rate to NM PLLs
-  clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
-  clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
-  clk: sunxi-ng: h3: h5: export CLK_PLL_VIDEO
-  dt-bindings: display: sun4i-drm: Add compatibles for H3 HDMI pipeline
-  drm/sun4i: Release exclusive clock lock when disabling TCON
-  drm/sun4i: Add support for H3 display engine
-  drm/sun4i: Add support for H3 mixer 0
-  drm/sun4i: Fix polarity configuration for DW HDMI PHY
-  drm/sun4i: Add support for variants to DW HDMI PHY
-  drm/sun4i: Move and expand DW HDMI PHY register macros
-  drm/sun4i: Add support for H3 HDMI PHY variant
-  drm/sun4i: Allow building on arm64
-  ARM: dts: sunxi: h3/h5: Add HDMI pipeline
-  ARM: dts: sun8i: h3: Enable HDMI output on H3 boards
-  ARM64: dts: sun50i: h5: Enable HDMI output on H5 boards
-
- .../bindings/display/sunxi/sun4i-drm.txt           |   6 +
- arch/arm/boot/dts/sun8i-h3-bananapi-m2-plus.dts    |  25 ++
- arch/arm/boot/dts/sun8i-h3-beelink-x2.dts          |  25 ++
- arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts |  25 ++
- arch/arm/boot/dts/sun8i-h3-nanopi-m1.dts           |  25 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-2.dts          |  25 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-lite.dts       |  25 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-one.dts        |  24 ++
- arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts         |  25 ++
- arch/arm/boot/dts/sunxi-h3-h5.dtsi                 | 108 ++++++
- .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  |  25 ++
- .../dts/allwinner/sun50i-h5-orangepi-prime.dts     |  25 ++
- .../allwinner/sun50i-h5-orangepi-zero-plus2.dts    |  25 ++
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |  32 +-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |   4 +-
- drivers/clk/sunxi-ng/ccu_nm.c                      |   7 +
- drivers/clk/sunxi-ng/ccu_nm.h                      |  27 ++
- drivers/gpu/drm/sun4i/Kconfig                      |   2 +-
- drivers/gpu/drm/sun4i/Makefile                     |   1 +
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |   1 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   6 +-
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              | 157 ++++++++-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c             | 369 ++++++++++++++++++---
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c         | 132 ++++++++
- drivers/gpu/drm/sun4i/sun8i_mixer.c                |  12 +
- include/dt-bindings/clock/sun8i-h3-ccu.h           |   2 +
- 26 files changed, 1070 insertions(+), 70 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-
--- 
-2.16.2
+SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
+Z21haWwuY29tXQ0KPiBTZW50OiBTdW5kYXksIE1hcmNoIDE4LCAyMDE4IDk6MDQgUE0NCj4gVG86
+IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPg0KPiBDYzogU2hhd24gR3VvIDxzaGF3
+bmd1b0BrZXJuZWwub3JnPjsgU2FzY2hhIEhhdWVyDQo+IDxrZXJuZWxAcGVuZ3V0cm9uaXguZGU+
+OyBGYWJpbyBFc3RldmFtIDxmYWJpby5lc3RldmFtQG54cC5jb20+OyBSb2INCj4gSGVycmluZyA8
+cm9iaCtkdEBrZXJuZWwub3JnPjsgTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47
+DQo+IFJ1c3NlbGwgS2luZyAtIEFSTSBMaW51eCA8bGludXhAYXJtbGludXgub3JnLnVrPjsgTWlj
+aGFlbCBUdXJxdWV0dGUNCj4gPG10dXJxdWV0dGVAYmF5bGlicmUuY29tPjsgU3RlcGhlbiBCb3lk
+IDxzYm95ZEBrZXJuZWwub3JnPjsgUy5qLiBXYW5nDQo+IDxzaGVuZ2ppdS53YW5nQG54cC5jb20+
+OyBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPjsgbW9kZXJhdGVkDQo+IGxpc3Q6QVJN
+L0ZSRUVTQ0FMRSBJTVggLyBNWEMgQVJNIEFSQ0hJVEVDVFVSRQ0KPiA8bGludXgtYXJtLWtlcm5l
+bEBsaXN0cy5pbmZyYWRlYWQub3JnPjsgb3BlbiBsaXN0Ok9QRU4gRklSTVdBUkUgQU5EDQo+IEZM
+QVRURU5FRCBERVZJQ0UgVFJFRSBCSU5ESU5HUyA8ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc+
+OyBsaW51eC1rZXJuZWwNCj4gPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBsaW51eC1j
+bGsgPGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi8y
+XSBBUk06IGR0czogaW14NnN4LXNhYnJlYXV0bzogYWRkIGV4dGVybmFsIDI0TUh6IGNsb2NrDQo+
+IHNvdXJjZQ0KPiANCj4gT24gU3VuLCBNYXIgMTgsIDIwMTggYXQgMTI6MTQgQU0sIEFuc29uIEh1
+YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0KPiB3cm90ZToNCj4gDQo+ID4gZGlmZiAtLWdpdCBh
+L2FyY2gvYXJtL2Jvb3QvZHRzL2lteDZzeC1zYWJyZWF1dG8uZHRzDQo+ID4gYi9hcmNoL2FybS9i
+b290L2R0cy9pbXg2c3gtc2FicmVhdXRvLmR0cw0KPiA+IGluZGV4IDcyZGE1YWMuLjgzZjdjYWMg
+MTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnN4LXNhYnJlYXV0by5kdHMN
+Cj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9pbXg2c3gtc2FicmVhdXRvLmR0cw0KPiA+IEBA
+IC0xOCw2ICsxOCwxNCBAQA0KPiA+ICAgICAgICAgICAgICAgICByZWcgPSA8MHg4MDAwMDAwMCAw
+eDgwMDAwMDAwPjsNCj4gPiAgICAgICAgIH07DQo+ID4NCj4gPiArICAgICAgIGNsb2NrcyB7DQo+
+ID4gKyAgICAgICAgICAgICAgIGNvZGVjX29zYzogYW5hY2xrMiB7DQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgI2Nsb2NrLWNlbGxzID0gPDA+Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAg
+ICAgIGNvbXBhdGlibGUgPSAiZml4ZWQtY2xvY2siOw0KPiA+ICsgICAgICAgICAgICAgICAgICAg
+ICAgIGNsb2NrLWZyZXF1ZW5jeSA9IDwyNDU3NjAwMD47DQo+ID4gKyAgICAgICAgICAgICAgIH07
+DQo+ID4gKyAgICAgICB9Ow0KPiANCj4gVGhlIGNsb2NrcyBjb250YWluZXIgc2hvdWxkIGJlIHJl
+bW92ZWQgYW5kIHRoZSBjbG9jayBub2RlIGNvdWxkIGJlIHB1dCBkaXJlY3RseQ0KPiBpbnRvIHRo
+ZSByb290IG5vZGUuDQo+IA0KPiBBbHNvLCBJIGRvIG5vdCBzZWUgJ2NvZGVjX29zYycgYmVpbmcg
+dXNlZCBpbiB0aGlzIGR0cy4NCiANClRoaXMgY2xvY2sgd2lsbCBiZSB1c2VkIGJ5IGNzNDI4ODgg
+Y29kZWMsIHRoaXMgcGF0Y2ggaXMgb25seSB0byBhZGQgYmFzaWMgY2xvY2sgc291cmNlDQp0byBj
+b21wbGV0ZSB0aGUgY2xvY2sgdHJlZS4gVGhhbmtzLg0KDQpBbnNvbi4NCg==
