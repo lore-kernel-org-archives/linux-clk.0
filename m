@@ -1,68 +1,51 @@
-Return-Path: <dinguyen@kernel.org>
-Subject: Re: [PATCHv6 3/3] clk: socfpga: stratix10: add clock driver for
- Stratix10 platform
-To: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- mturquette@baylibre.com, robh+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <1519656455-14629-1-git-send-email-dinguyen@kernel.org>
- <1519656455-14629-3-git-send-email-dinguyen@kernel.org>
- <152148346040.242365.18406406194344107023@swboyd.mtv.corp.google.com>
-From: Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <f0d3fc46-5fa1-4e77-ef73-284bf2ee0d61@kernel.org>
-Date: Tue, 20 Mar 2018 23:09:02 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:47052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965782AbeCSRqi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Mar 2018 13:46:38 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <152148346040.242365.18406406194344107023@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+To: Ilia Lin <ilialin@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1518616792-29028-5-git-send-email-ilialin@codeaurora.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
+        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
+        ilialin@codeaurora.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-5-git-send-email-ilialin@codeaurora.org>
+Message-ID: <152148159682.242365.14310882079879566131@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 04/10] clk: qcom: Add DT bindings for CPU clock driver for
+ msm8996
+Date: Mon, 19 Mar 2018 10:46:36 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 03/19/2018 01:17 PM, Stephen Boyd wrote:
-> Quoting Dinh Nguyen (2018-02-26 06:47:35)
->> diff --git a/drivers/clk/socfpga/Makefile b/drivers/clk/socfpga/Makefile
->> index 9146c20..87ef977 100644
->> --- a/drivers/clk/socfpga/Makefile
->> +++ b/drivers/clk/socfpga/Makefile
->> @@ -1,6 +1,11 @@
->>  # SPDX-License-Identifier: GPL-2.0
->> +ifeq ($(CONFIG_ARCH_SOCFPGA),y)
+Quoting Ilia Lin (2018-02-14 05:59:46)
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
 > 
-> Ugh, any chance to make this better if we get three?
-> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+> new file mode 100644
+> index 0000000..e7cf15a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+> @@ -0,0 +1,17 @@
+> +Qualcomm CPUSS clock controller for Kryo CPUs
+> +----------------------------------------------------
+> +
+> +Required properties :
+> +- compatible : shall contain only one of the following:
+> +
+> +                       "qcom-msm8996-apcc"
 
-I'll try.
+Do you mean qcom,msm8996-apcc?
 
-...
-
-> 
->> +{
->> +       struct stratix10_clock_data *clk_data;
->> +
->> +       clk_data = __socfpga_s10_clk_init(node, STRATIX10_NUM_CLKS);
->> +       if (!clk_data)
->> +               return;
->> +
->> +       s10_clk_register_pll(s10_pll_clks, ARRAY_SIZE(s10_pll_clks), clk_data);
->> +
->> +       s10_clk_register_c_perip(s10_main_perip_c_clks,
->> +                                ARRAY_SIZE(s10_main_perip_c_clks), clk_data);
->> +
->> +       s10_clk_register_cnt_perip(s10_main_perip_cnt_clks,
->> +                                  ARRAY_SIZE(s10_main_perip_cnt_clks),
->> +                                  clk_data);
->> +
->> +       s10_clk_register_gate(s10_gate_clks, ARRAY_SIZE(s10_gate_clks),
->> +                             clk_data);
->> +}
->> +
->> +CLK_OF_DECLARE(stratix10_clock, "intel,stratix10-clkmgr", socfpga_s10_init);
-> 
-> Can it be a platform device? We prefer those over the CLK_OF_DECLARE
-> style.
-> 
-
-Thanks for the review! I'll change it to a platform device and address
-your other comments in v7.
-
-Dinh
+Rob?
