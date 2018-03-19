@@ -1,132 +1,47 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 09/42] dt-bindings: clock: New bindings for TI Davinci PSC
-Date: Thu, 15 Mar 2018 21:52:25 -0500
-Message-Id: <1521168778-27236-10-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <jeffy.chen@rock-chips.com>
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Sylvain Lemieux <slemieux.tyco@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@st.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH v6] clk: lpc32xx: Set name of regmap_config
+Date: Mon, 19 Mar 2018 11:58:54 +0800
+Message-Id: <20180319035854.3265-1-jeffy.chen@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds a new binding for the Power Sleep Controller (PSC) for the
-mach-davinci family of processors.
+We are now allowing to register debugfs without a valid device, and not
+having a valid name will end up using "dummy*" to create debugfs dir.
 
-Note: Although TI Keystone has a very similar PSC, we are not using the
-existing bindings. Keystone is using a legacy one-node-per-clock binding
-(actually two nodes if you count the separate reset binding for the same
-IP block). Also, some davinci LPSCs have quirks that aren't handled by
-the keystone bindings, so we would be adding one compatible string per
-clock with quirks instead of just a new compatible string for each
-controller.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
 ---
 
-v8 changes:
-- None
+Changes in v6:
+Modify name as Vladimir suggested.
 
-v7 changes:
-- Fixed clock-names property typo
-- Added #power-domain-cells property
+ drivers/clk/nxp/clk-lpc32xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-v6 changes:
-- added clocks and clock-names properties
-- expanded examples
-
-
- .../devicetree/bindings/clock/ti/davinci/psc.txt   | 71 ++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-new file mode 100644
-index 0000000..dae4ad8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
-@@ -0,0 +1,71 @@
-+Binding for TI DaVinci Power Sleep Controller (PSC)
-+
-+The PSC provides power management, clock gating and reset functionality. It is
-+primarily used for clocking.
-+
-+Required properties:
-+- compatible: shall be one of:
-+	- "ti,da850-psc0" for PSC0 on DA850/OMAP-L138/AM18XX
-+	- "ti,da850-psc1" for PSC1 on DA850/OMAP-L138/AM18XX
-+- reg: physical base address and size of the controller's register area
-+- #clock-cells: from common clock binding; shall be set to 1
-+- #power-domain-cells: from generic power domain binding; shall be set to 1.
-+- clocks: phandles to clocks corresponding to the clock-names property
-+- clock-names: list of parent clock names - depends on compatible value
-+	- for "ti,da850-psc0", shall be "pll0_sysclk1", "pll0_sysclk2",
-+	  "pll0_sysclk4", "pll0_sysclk6", "async1"
-+	- for "ti,da850-psc1", shall be "pll0_sysclk2", "pll0_sysclk4", "async3"
-+
-+Optional properties:
-+- #reset-cells: from reset binding; shall be set to 1 - only applicable when
-+  at least one local domain provides a local reset.
-+
-+Consumers:
-+
-+	Clock, power domain and reset consumers shall use the local power domain
-+	module ID (LPSC) as the index corresponding to the clock cell. Refer to
-+	the device-specific datasheet to find these numbers. NB: Most local
-+	domains	only provide a clock/power domain and not a reset.
-+
-+Examples:
-+
-+	psc0: clock-controller@10000 {
-+		compatible = "ti,da850-psc0";
-+		reg = <0x10000 0x1000>;
-+		#clock-cells = <1>;
-+		#power-domain-cells = <1>;
-+		#reset-cells = <1>;
-+		clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
-+			 <&pll0_sysclk 4>, <&pll0_sysclk 6>, <&async1_clk>;
-+		clock_names = "pll0_sysclk1", "pll0_sysclk2",
-+			      "pll0_sysclk4", "pll0_sysclk6", "async1";
-+	};
-+	psc1: clock-controller@227000 {
-+		compatible = "ti,da850-psc1";
-+		reg = <0x227000 0x1000>;
-+		#clock-cells = <1>;
-+		#power-domain-cells = <1>;
-+		clocks = <&pll0_sysclk 2>, <&pll0_sysclk 4>, <&async3_clk>;
-+		clock_names = "pll0_sysclk2", "pll0_sysclk4", "async3";
-+	};
-+
-+	/* consumer */
-+	dsp: dsp@11800000 {
-+		compatible = "ti,da850-dsp";
-+		reg = <0x11800000 0x40000>,
-+		      <0x11e00000 0x8000>,
-+		      <0x11f00000 0x8000>,
-+		      <0x01c14044 0x4>,
-+		      <0x01c14174 0x8>;
-+		reg-names = "l2sram", "l1pram", "l1dram", "host1cfg", "chipsig";
-+		interrupt-parent = <&intc>;
-+		interrupts = <28>;
-+		clocks = <&psc0 15>;
-+		power-domains = <&psc0 15>;
-+		resets = <&psc0 15>;
-+	};
-+
-+Also see:
-+- Documentation/devicetree/bindings/clock/clock-bindings.txt
-+- Documentation/devicetree/bindings/power/power_domain.txt
-+- Documentation/devicetree/bindings/reset/reset.txt
+diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+index f5d815f577e0..5eeecee17b69 100644
+--- a/drivers/clk/nxp/clk-lpc32xx.c
++++ b/drivers/clk/nxp/clk-lpc32xx.c
+@@ -67,6 +67,7 @@
+ #define LPC32XX_USB_CLK_STS		0xF8
+ 
+ static struct regmap_config lpc32xx_scb_regmap_config = {
++	.name = "scb",
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
 -- 
-2.7.4
+2.11.0
