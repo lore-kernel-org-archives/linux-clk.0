@@ -1,64 +1,100 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Neil Armstrong <narmstrong@baylibre.com>, mturquette@baylibre.com,
- sboyd@codeaurora.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <73587ed8-923d-e123-29a1-b6c3b710a0eb@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
- khilman@baylibre.com
-References: <73587ed8-923d-e123-29a1-b6c3b710a0eb@baylibre.com>
-Message-ID: <152106708246.85099.11923483552201514869@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL v2] Amlogic clock driver updates for 4.17
-Date: Wed, 14 Mar 2018 15:38:02 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:36941 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751747AbeCSIMd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Mar 2018 04:12:33 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 2/2] arm64: allwinner: h6: temporarily drop the usage of CCU headers in DTSI
+Date: Mon, 19 Mar 2018 16:11:08 +0800
+Message-Id: <20180319081108.23496-2-icenowy@aosc.io>
+In-Reply-To: <20180319081108.23496-1-icenowy@aosc.io>
+References: <20180319081108.23496-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Neil Armstrong (2018-03-13 02:30:38)
-> Dear clock maintainers,
-> =
+As the CCU driver will be merged in different tree with the device tree,
+temporarily drop the usage of CCU headers in the DTSI file, and replace
+macros with the corresponding numbers.
 
-> Below is a request to pull a 1st batch of Amlogic clock driver updates fo=
-r this
-> cycle.
-> The PR is composed of 3 series :
-> - pll fixes for GXBB, GXL and AXG
-> - use regmap in clock controllers for GXBB, GXL and AXG
-> - general clock updates for Meson8, GXBB, GXL and AXG
-> =
+After they are both merged into Linus' tree, it can be switched back to
+use the CCU headers.
 
-> These 2 last series were depending on patches merged on the clk-helpers
-> topic branch, thus based on this branch.
-> =
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 4debc3962830..56563150d61a 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -4,8 +4,6 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+-#include <dt-bindings/clock/sun50i-h6-ccu.h>
+-#include <dt-bindings/reset/sun50i-h6-ccu.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -117,7 +115,7 @@
+ 				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&ccu CLK_APB1>, <&osc24M>, <&osc32k>;
++			clocks = <&ccu 26>, <&osc24M>, <&osc32k>;
+ 			clock-names = "apb", "hosc", "losc";
+ 			gpio-controller;
+ 			#gpio-cells = <3>;
+@@ -136,8 +134,8 @@
+ 			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu CLK_BUS_UART0>;
+-			resets = <&ccu RST_BUS_UART0>;
++			clocks = <&ccu 70>;
++			resets = <&ccu 21>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -147,8 +145,8 @@
+ 			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu CLK_BUS_UART1>;
+-			resets = <&ccu RST_BUS_UART1>;
++			clocks = <&ccu 71>;
++			resets = <&ccu 22>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -158,8 +156,8 @@
+ 			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu CLK_BUS_UART2>;
+-			resets = <&ccu RST_BUS_UART2>;
++			clocks = <&ccu 72>;
++			resets = <&ccu 23>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -169,8 +167,8 @@
+ 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+-			clocks = <&ccu CLK_BUS_UART3>;
+-			resets = <&ccu RST_BUS_UART3>;
++			clocks = <&ccu 73>;
++			resets = <&ccu 24>;
+ 			status = "disabled";
+ 		};
+ 	};
+-- 
+2.15.1
 
-Thanks. Pulled into clk-next. Also, marked some things static and
-dropped a local variable that was causing a warning.
-
-WARNING: 'Tested-by:' is the preferred signature form
-#18: =
-
-Tested-By: David Lechner <david@lechnology.com>
-
-drivers/clk/meson/meson8b.c:512:19: warning: symbol 'meson8b_mpeg_clk_div' =
-was not declared. Should it be static?
-drivers/clk/meson/meson8b.c:526:19: warning: symbol 'meson8b_clk81' was not=
- declared. Should it be static?
-drivers/clk/meson/meson8b.c:540:19: warning: symbol 'meson8b_cpu_in_sel' wa=
-s not declared. Should it be static?
-drivers/clk/meson/meson8b.c:591:19: warning: symbol 'meson8b_cpu_scale_div'=
- was not declared. Should it be static?
-drivers/clk/meson/meson8b.c:608:19: warning: symbol 'meson8b_cpu_scale_out_=
-sel' was not declared. Should it be static?
-drivers/clk/meson/meson8b.c:626:19: warning: symbol 'meson8b_cpu_clk' was n=
-ot declared. Should it be static?
-drivers/clk/meson/gxbb.c:392:27: warning: symbol 'gxbb_gp0_init_regs' was n=
-ot declared. Should it be static?
-drivers/clk/meson/gxbb.c:439:27: warning: symbol 'gxl_gp0_init_regs' was no=
-t declared. Should it be static?
-drivers/clk/meson/axg.c:195:27: warning: symbol 'axg_gp0_init_regs' was not=
- declared. Should it be static?
-drivers/clk/meson/axg.c:248:27: warning: symbol 'axg_hifi_init_regs' was no=
-t declared. Should it be static?
-drivers/clk/meson/meson8b.c: In function 'meson8b_clkc_probe':
-drivers/clk/meson/meson8b.c:1052:14: warning: unused variable 'clk' [-Wunus=
-ed-variable]
