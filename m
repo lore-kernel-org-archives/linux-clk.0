@@ -1,85 +1,116 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	hdegoede@redhat.com,
-	b.zolnierkie@samsung.com,
-	linux@armlinux.org.uk,
-	linux-fbdev@vger.kernel.org,
-	linux-imx@nxp.com,
-	sboyd@kernel.org,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>
-Subject: [PATCH V2 1/4] clk: bulk: add of_clk_bulk_get()
-Date: Wed, 21 Mar 2018 11:19:48 +0800
-Message-Id: <1521602391-30356-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
-References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <prvs=06163c8545=mike.looijmans@topicproducts.com>
+Subject: Re: [PATCH v2] clk: Add driver for the si544 clock generator chip
+To: Rob Herring <robh@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <mark.rutland@arm.com>
+References: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
+ <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
+From: Mike Looijmans <mike.looijmans@topic.nl>
+Message-ID: <ec813ab3-88db-f6e3-eca1-b6ea58936fcf@topic.nl>
+Date: Mon, 19 Mar 2018 16:04:15 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+In-Reply-To: <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-'clock-names' property is optional in DT, so of_clk_bulk_get() is
-introduced here to handle this for DT users without 'clock-names'
-specified. Later clk_bulk_get_all() will be implemented on top of
-it and this API will be kept private until someone proves they need
-it because they don't have a struct device pointer.
+=EF=BB=BFOn 18-03-18 13:52, Rob Herring wrote:
+> On Thu, Mar 15, 2018 at 12:50:08PM +0100, Mike Looijmans wrote:
+>> This patch adds the driver and devicetree documentation for the
+>> Silicon Labs SI544 clock generator chip. This is an I2C controlled
+>> oscillator capable of generating clock signals ranging from 200kHz
+>> to 1500MHz.
+>>
+>> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+>> ---
+>> v2: Add u64 cast to ls_div_bits calculation loop
+>>      When ls_div_bits is non-zero, the hs_div must always be even
+>>
+>>   .../devicetree/bindings/clock/silabs,si544.txt     |  25 ++
+>>   drivers/clk/Kconfig                                |  10 +
+>>   drivers/clk/Makefile                               |   1 +
+>>   drivers/clk/clk-si544.c                            | 422 +++++++++++++=
+++++++++
+>>   4 files changed, 458 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/silabs,si54=
+4.txt
+>>   create mode 100644 drivers/clk/clk-si544.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.txt b/=
+Documentation/devicetree/bindings/clock/silabs,si544.txt
+>> new file mode 100644
+>> index 0000000..eec1787
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/silabs,si544.txt
+>> @@ -0,0 +1,25 @@
+>> +Binding for Silicon Labs 544 programmable I2C clock generator.
+>> +
+>> +Reference
+>> +This binding uses the common clock binding[1]. Details about the device=
+ can be
+>> +found in the datasheet[2].
+>> +
+>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +[2] Si544 datasheet
+>> +    https://www.silabs.com/documents/public/data-sheets/si544-datasheet=
+.pdf
+>> +
+>> +Required properties:
+>> + - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c" =
+according
+>> +               to the speed grade of the chip.
+>> + - reg: I2C device address.
+>> + - #clock-cells: From common clock bindings: Shall be 0.
+>> +
+>> +Optional properties:
+>> + - clock-output-names: From common clock bindings. Recommended to be "s=
+i544".
+>=20
+> What's the point if there is only 1 clock output?
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Reported-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/clk-bulk.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+I have a board with 6 of these chips, and the clock registration fails if t=
+hey=20
+don't have unique names. Providing a clock-output-names property was the=20
+easiest way around it.
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 4c10456..4b357b2 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -19,6 +19,38 @@
- #include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/export.h>
-+#include <linux/of.h>
-+
-+#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
-+static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-+					struct clk_bulk_data *clks)
-+{
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < num_clks; i++)
-+		clks[i].clk = NULL;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		clks[i].clk = of_clk_get(np, i);
-+		if (IS_ERR(clks[i].clk)) {
-+			ret = PTR_ERR(clks[i].clk);
-+			pr_err("%pOF: Failed to get clk index: %d ret: %d\n",
-+			       np, i, ret);
-+			clks[i].clk = NULL;
-+			goto err;
-+		}
-+	}
-+
-+	return 0;
-+
-+err:
-+	clk_bulk_put(i, clks);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(of_clk_bulk_get);
-+#endif
- 
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
- {
--- 
-2.7.4
+Should I just omit the line or change the wording to reflect the above or i=
+s=20
+there a better solution (maybe I can use the DT node name as clock name in =
+the=20
+driver, will look into that)
+
+>=20
+>> +
+>> +Example:
+>> +	si544: clock-generator@55 {
+>=20
+> clock-controller@55 is the standard node name.
+
+I'll change and post patch v3
+
+>=20
+>> +		reg =3D <0x55>;
+>> +		#clock-cells =3D <0>;
+>> +		compatible =3D "silabs,si544b";
+>> +	};
+>=20
+> Otherwise, for the binding:
+>=20
+> Reviewed-by: Rob Herring <robh@kernel.org>
+>=20
+
+
+
+Kind regards,
+
+Mike Looijmans
+System Expert
+
+TOPIC Products
+Materiaalweg 4, NL-5681 RJ Best
+Postbus 440, NL-5680 AK Best
+Telefoon: +31 (0) 499 33 69 79
+E-mail: mike.looijmans@topicproducts.com
+Website: www.topicproducts.com
+
+Please consider the environment before printing this e-mail
