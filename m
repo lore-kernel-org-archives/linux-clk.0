@@ -1,519 +1,193 @@
-Return-Path: <mike.looijmans@topic.nl>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH] clk: Add driver for the si544 clock generator chip
-Date: Tue, 13 Mar 2018 09:43:59 +0100
-Message-Id: <1520930639-11642-1-git-send-email-mike.looijmans@topic.nl>
+Return-Path: <bgolaszewski@baylibre.com>
+MIME-Version: 1.0
+In-Reply-To: <CAMpxmJWoP+BDYeuqCnQ2txWy7wkxKuyjKODJqgDtRkq0ahY1mw@mail.gmail.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <CAMpxmJX-AxhpPpCnWoaSGYmNh3o8iRjdKacnmozsPWmhpcGdTg@mail.gmail.com>
+ <af89be8d-04dd-e845-1d5b-afdd7e55629f@lechnology.com> <CAHCN7xKQ47DnVXiZTJ-0myoth2SJ3wnyvDb2i07uKZDgomhgwQ@mail.gmail.com>
+ <CAMpxmJWoP+BDYeuqCnQ2txWy7wkxKuyjKODJqgDtRkq0ahY1mw@mail.gmail.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Mon, 19 Mar 2018 17:15:36 +0100
+Message-ID: <CAMpxmJX+BqnU=cK0KMOOCrXd4bB2RRZ30A-U3f3tk6K05csrTw@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v8_00=2F42=5D_ARM=3A_davinci=3A_convert_to_common?=
+	=?UTF-8?Q?_clock_framework=E2=80=8B?=
+To: Adam Ford <aford173@gmail.com>
+Cc: David Lechner <david@lechnology.com>, linux-clk@vger.kernel.org,
+	linux-devicetree <devicetree@vger.kernel.org>, arm-soc <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the driver and devicetree documentation for the
-Silicon Labs SI544 clock generator chip. This is an I2C controlled
-oscillator capable of generating clock signals ranging from 200kHz
-to 1500MHz.
+2018-03-19 17:14 GMT+01:00 Bartosz Golaszewski <bgolaszewski@baylibre.com>:
+> 2018-03-19 17:11 GMT+01:00 Adam Ford <aford173@gmail.com>:
+>> On Mon, Mar 19, 2018 at 10:59 AM, David Lechner <david@lechnology.com> wrote:
+>>> On 03/19/2018 08:17 AM, Bartosz Golaszewski wrote:
+>>>>
+>>>> 2018-03-16 3:52 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>>>
+>>>>> This series converts mach-davinci to use the common clock framework.
+>>>>>
+>>>>> The series works like this, the first 19 patches create new clock drivers
+>>>>> using the common clock framework. There are basically 3 groups of clocks
+>>>>> -
+>>>>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each
+>>>>> have
+>>>>> unique init data, which is the reason for so many patches.
+>>>>>
+>>>>> Then, starting with "ARM: davinci: pass clock as parameter to
+>>>>> davinci_timer_init()", we get the mach code ready for the switch by
+>>>>> adding the
+>>>>> code needed for the new clock drivers and adding #ifndef
+>>>>> CONFIG_COMMON_CLK
+>>>>> around the legacy clocks so that we can switch easily between the old and
+>>>>> the
+>>>>> new.
+>>>>>
+>>>>> "ARM: davinci: switch to common clock framework" actually flips the
+>>>>> switch
+>>>>> to start using the new clock drivers. Then the next 8 patches remove all
+>>>>> of the old clock code.
+>>>>>
+>>>>> The final three patches add device tree clock support to the one SoC that
+>>>>> supports it.
+>>>>>
+>>>>> This series has been tested on LEGO MINDSTORMS EV3 (device tree) and TI
+>>>>> OMAP-L138 LCDK (both device tree and legacy board file).
+>>>>>
+>>>>
+>>>> Hi David,
+>>>>
+>>>> thanks, with the u-boot fix everything seems to work fine. I tested
+>>>> da850-lcdk and da850-evm boards in DT and board file modes.
+>>>>
+>>
+>> I tested MMC and Ethernet.  Both appear to be operating normally, but
+>> I have having USB issues.
+>>
+>> Should I be testing cpufreq?  I noticed that when changing the
+>> frequencies, the USB appears to stop recognizing connections and
+>> disconnections.
+>>
+>> I did some testing on the DA850-EVM with USB from your repo, and I'm
+>> getting some crashing on MUSB unplug that do not appear in the
+>> 4.16-RC6 from linux-stable:
+>>
+>>
+>> ------------[ cut here ]------------
+>> WARNING: CPU: 0 PID: 13 at drivers/dma/cppi41.c:694
+>> cppi41_stop_chan+0x1f4/0x378 [cppi41]
+>> Modules linked in: evbug evdev mousedev hid_generic usbhid hid
+>> usb_f_ss_lb g_zero libcomposite configfs ofpart cmdlinepart m25p80
+>> spi_nor cppi41 adv7343 tvp514x vpif_display vpif_capture
+>> videobuf2_dma_con
+>> tig videobuf2_memops videobuf2_v4l2 videobuf2_common v4l2_fwnode
+>> v4l2_common snd_soc_simple_card tilcdc spi_davinci
+>> snd_soc_simple_card_utils videodev pwm_tiecap spi_bitbang da8xx
+>> drm_kms_helper phy_gener
+>> ic syscopyarea ohci_da8xx musb_hdrc sysfillrect sysimgblt fb_sys_fops
+>> ohci_hcd udc_core drm usbcore drm_panel_orientation_quirks usb_common
+>> snd_soc_tlv320aic3x vpif snd_soc_davinci_mcasp snd_soc_edma snd_
+>> soc_core snd_pcm_dmaengine snd_pcm rtc_omap snd_timer snd soundcore
+>> phy_da8xx_usb davinci_nand nand nand_ecc mtd pwm_bl backlight
+>> cpufreq_dt ti_aemif
+>> CPU: 0 PID: 13 Comm: kworker/0:1 Not tainted 4.16.0-rc5-g291ba8b-dirty #3
+>> Hardware name: Generic DA850/OMAP-L138/AM18x
+>> Workqueue: usb_hub_wq hub_event [usbcore]
+>> Backtrace:
+>> [<c000df94>] (dump_backtrace) from [<c000e264>] (show_stack+0x18/0x1c)
+>>  r7:00000009 r6:00000000 r5:bf339ad0 r4:00000000
+>> [<c000e24c>] (show_stack) from [<c04864c0>] (dump_stack+0x20/0x28)
+>> [<c04864a0>] (dump_stack) from [<c001ac38>] (__warn+0xd4/0xfc)
+>> [<c001ab64>] (__warn) from [<c001ad7c>] (warn_slowpath_null+0x44/0x50)
+>>  r8:c6c43080 r7:c05f1008 r6:bf338744 r5:000002b6 r4:bf339ad0
+>> [<c001ad38>] (warn_slowpath_null) from [<bf338744>]
+>> (cppi41_stop_chan+0x1f4/0x378 [cppi41])
+>>  r6:c5e59410 r5:c5e59420 r4:c5feca50
+>> [<bf338550>] (cppi41_stop_chan [cppi41]) from [<bf213dac>]
+>> (cppi41_dma_channel_abort+0xe0/0x2a8 [musb_hdrc])
+>>  r8:c6929180 r7:00000000 r6:c5c67290 r5:bf2175a0 r4:00000008
+>> [<bf213ccc>] (cppi41_dma_channel_abort [musb_hdrc]) from [<bf20c4bc>]
+>> (musb_cleanup_urb+0x60/0x210 [musb_hdrc])
+>>  r10:00000001 r9:c5fca010 r8:c5c67290 r7:a0000093 r6:00000080 r5:c55b5100
+>>  r4:c5fca5a8
+>> [<bf20c45c>] (musb_cleanup_urb [musb_hdrc]) from [<bf20ca8c>]
+>> (musb_urb_dequeue+0xfc/0x164 [musb_hdrc])
+>>  r10:00000001 r9:40408280 r8:c5fca010 r7:a0000093 r6:00000000 r5:c55b5380
+>>  r4:c55b5100
+>> [<bf20c990>] (musb_urb_dequeue [musb_hdrc]) from [<bf10fd7c>]
+>> (unlink1+0x34/0x13c [usbcore])
+>>  r10:00000100 r9:c5cb2a00 r8:c55b5100 r7:ffffff94 r6:c5c6c000 r5:c5dd2380
+>>  r4:c55b5100 r3:bf20c990
+>> [<bf10fd48>] (unlink1 [usbcore]) from [<bf112424>]
+>> (usb_hcd_flush_endpoint+0x164/0x1a4 [usbcore])
+>>  r9:c5cb2a00 r8:c55b5100 r7:c5c6c000 r6:c5dd2398 r5:c5dd2380 r4:ffffe000
+>> [<bf1122c0>] (usb_hcd_flush_endpoint [usbcore]) from [<bf11563c>]
+>> (usb_disable_endpoint+0x50/0x94 [usbcore])
+>>  r9:c5cb2a00 r8:bf39e898 r7:00000000 r6:c5c43000 r5:c5c43000 r4:c5dd2380
+>> [<bf1155ec>] (usb_disable_endpoint [usbcore]) from [<bf1156c4>]
+>> (usb_disable_interface+0x44/0x58 [usbcore])
+>>  r5:c5dd2348 r4:00000000
+>> [<bf115680>] (usb_disable_interface [usbcore]) from [<bf118044>]
+>> (usb_unbind_interface+0x1c0/0x268 [usbcore])
+>>  r7:c5cb2c00 r6:bf39e898 r5:c5cb2c20 r4:c5cb2c20
+>> [<bf117e84>] (usb_unbind_interface [usbcore]) from [<c02ce180>]
+>> (device_release_driver_internal+0x160/0x208)
+>>  r10:00000100 r9:c5cb2a00 r8:00000034 r7:00000000 r6:bf39e898 r5:c5cb2c54
+>>  r4:c5cb2c20
+>> [<c02ce020>] (device_release_driver_internal) from [<c02ce240>]
+>> (device_release_driver+0x18/0x1c)
+>>  r9:c5cb2a00 r8:c05f1008 r7:c5c43070 r6:bf12895c r5:c5cb2c20 r4:c5dc91ac
+>> [<c02ce228>] (device_release_driver) from [<c02ccf70>]
+>> (bus_remove_device+0xd0/0x100)
+>> [<c02ccea0>] (bus_remove_device) from [<c02c9c60>] (device_del+0x120/0x378)
+>>  r7:c5c43070 r6:c5cb2c28 r5:00000000 r4:c5cb2c20
+>> [<c02c9b40>] (device_del) from [<bf11576c>]
+>> (usb_disable_device+0x94/0x1d8 [usbcore])
+>>  r10:00000100 r9:c5cb2a00 r8:c5cb2c00 r7:c5c6c000 r6:00000001 r5:00000000
+>>  r4:c5c43000
+>> [<bf1156d8>] (usb_disable_device [usbcore]) from [<bf10bccc>]
+>> (usb_disconnect+0xb4/0x244 [usbcore])
+>>  r9:c5cb2a00 r8:c5c2d600 r7:c5c430a4 r6:c5c43070 r5:c5c43000 r4:00000000
+>> [<bf10bc18>] (usb_disconnect [usbcore]) from [<bf10d788>]
+>> (hub_event+0x678/0x11dc [usbcore])
+>>  r10:00000100 r9:c05f1008 r8:c5c2dcf8 r7:c68fc400 r6:00000001 r5:40000000
+>>  r4:00000000
+>> [<bf10d110>] (hub_event [usbcore]) from [<c0031db0>]
+>> (process_one_work+0x1d8/0x41c)
+>>  r10:00000008 r9:00000000 r8:c060b1d0 r7:00000000 r6:c7ede200 r5:c6882480
+>>  r4:c5c2dcf8
+>> [<c0031bd8>] (process_one_work) from [<c0032030>] (worker_thread+0x3c/0x670)
+>>  r10:00000008 r9:c060b1e4 r8:c061ab60 r7:c6882498 r6:ffffe000 r5:c060b1d0
+>>  r4:c6882480
+>> [<c0031ff4>] (worker_thread) from [<c0038270>] (kthread+0x134/0x14c)
+>>  r10:c683fe90 r9:c0031ff4 r8:c6882480 r7:c6896000 r6:00000000 r5:c687bd80
+>>  r4:c6803e80
+>> [<c003813c>] (kthread) from [<c00090e0>] (ret_from_fork+0x14/0x34)
+>> Exception stack(0xc6897fb0 to 0xc6897ff8)
+>> 7fa0:                                     00000000 00000000 00000000 00000000
+>> 7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>> 7fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>>  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c003813c
+>>  r4:c687bd80
+>> ---[ end trace cb9c7f93aaa3ed36 ]---
+>> ------------[ cut here ]------------
+>>
+>>
+>> adam
+>>
+>
+> Hi Adam,
+>
+> this is a known issue and it's present in mainline and even in TI BSP.
+> It's been deprioritized for now, but I'll return to debugging it once
+> the common clock conversion is complete.
+>
+> Thanks,
+> Bartosz
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
----
- .../devicetree/bindings/clock/silabs,si544.txt     |  25 ++
- drivers/clk/Kconfig                                |  10 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-si544.c                            | 421 +++++++++++++++++++++
- 4 files changed, 457 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/silabs,si544.txt
- create mode 100644 drivers/clk/clk-si544.c
+Ugh, -ETOOEARLY
 
-diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.txt b/Documentation/devicetree/bindings/clock/silabs,si544.txt
-new file mode 100644
-index 0000000..eec1787
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/silabs,si544.txt
-@@ -0,0 +1,25 @@
-+Binding for Silicon Labs 544 programmable I2C clock generator.
-+
-+Reference
-+This binding uses the common clock binding[1]. Details about the device can be
-+found in the datasheet[2].
-+
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-+[2] Si544 datasheet
-+    https://www.silabs.com/documents/public/data-sheets/si544-datasheet.pdf
-+
-+Required properties:
-+ - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c" according
-+               to the speed grade of the chip.
-+ - reg: I2C device address.
-+ - #clock-cells: From common clock bindings: Shall be 0.
-+
-+Optional properties:
-+ - clock-output-names: From common clock bindings. Recommended to be "si544".
-+
-+Example:
-+	si544: clock-generator@55 {
-+		reg = <0x55>;
-+		#clock-cells = <0>;
-+		compatible = "silabs,si544b";
-+	};
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 98ce9fc..5c7dc8e 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -91,6 +91,16 @@ config COMMON_CLK_SI514
- 	  This driver supports the Silicon Labs 514 programmable clock
- 	  generator.
- 
-+config COMMON_CLK_SI544
-+	tristate "Clock driver for SiLabs 544 devices"
-+	depends on I2C
-+	depends on OF
-+	select REGMAP_I2C
-+	help
-+	---help---
-+	  This driver supports the Silicon Labs 544 programmable clock
-+	  generator.
-+
- config COMMON_CLK_SI570
- 	tristate "Clock driver for SiLabs 570 and compatible devices"
- 	depends on I2C
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 71ec41e..bde614a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
- obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
-+obj-$(CONFIG_COMMON_CLK_SI544)		+= clk-si544.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
- obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
- obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
-diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
-new file mode 100644
-index 0000000..1947e48
---- /dev/null
-+++ b/drivers/clk/clk-si544.c
-@@ -0,0 +1,421 @@
-+/*
-+ * Driver for Silicon Labs Si544 Programmable Oscillator
-+ *
-+ * Copyright (C) 2018 Topic Embedded Products
-+ *
-+ * Author: Mike Looijmans <mike.looijmans@topic.nl>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+/* I2C registers (decimal as in datasheet) */
-+#define SI544_REG_CONTROL	7
-+#define SI544_REG_OE_STATE	17
-+#define SI544_REG_HS_DIV	23
-+#define SI544_REG_LS_HS_DIV	24
-+#define SI544_REG_FBDIV0	26
-+#define SI544_REG_FBDIV8	27
-+#define SI544_REG_FBDIV16	28
-+#define SI544_REG_FBDIV24	29
-+#define SI544_REG_FBDIV32	30
-+#define SI544_REG_FBDIV40	31
-+#define SI544_REG_FCAL_OVR	69
-+#define SI544_REG_ADPLL_DELTA_M0	231
-+#define SI544_REG_ADPLL_DELTA_M8	232
-+#define SI544_REG_ADPLL_DELTA_M16	233
-+#define SI544_REG_PAGE_SELECT	255
-+
-+/* Register values */
-+#define SI544_CONTROL_RESET	BIT(7)
-+#define SI544_CONTROL_MS_ICAL2	BIT(3)
-+
-+#define SI544_OE_STATE_ODC_OE	BIT(0)
-+
-+/* Max freq depends on speed grade */
-+#define SI544_MIN_FREQ	    200000U
-+
-+/* Si544 Internal oscilator runs at 55.05 MHz */
-+#define FXO		  55050000U
-+
-+/* VCO range is 10.8 .. 12.1 GHz, max depends on speed grade */
-+#define FVCO_MIN       10800000000ULL
-+
-+#define HS_DIV_MAX	2046
-+#define HS_DIV_MAX_ODD	33
-+
-+enum si544_speed_grade {
-+	si544a,
-+	si544b,
-+	si544c,
-+};
-+
-+struct clk_si544 {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	struct i2c_client *i2c_client;
-+	enum si544_speed_grade speed_grade;
-+};
-+#define to_clk_si544(_hw)	container_of(_hw, struct clk_si544, hw)
-+
-+/* Multiplier/divider settings */
-+struct clk_si544_muldiv {
-+	u32 fb_div_frac;  /* Integer part of feedback divider (32 bits) */
-+	u16 fb_div_int;  /* Fractional part of feedback divider (11 bits) */
-+	u16 hs_div; /* 1st divider, 5..2046, must be even when >33 */
-+	u8 ls_div_bits; /* 2nd divider, as 2^x, range 0..5 */
-+};
-+
-+/* Enables or disables the output driver */
-+static int si544_enable_output(struct clk_si544 *data, bool enable)
-+{
-+	return regmap_update_bits(data->regmap, SI544_REG_OE_STATE,
-+		SI544_OE_STATE_ODC_OE, enable ? SI544_OE_STATE_ODC_OE : 0);
-+}
-+
-+/* Retrieve clock multiplier and dividers from hardware */
-+static int si544_get_muldiv(struct clk_si544 *data,
-+	struct clk_si544_muldiv *settings)
-+{
-+	int err;
-+	u8 reg[6];
-+
-+	err = regmap_bulk_read(data->regmap, SI544_REG_HS_DIV, reg, 2);
-+	if (err)
-+		return err;
-+
-+	settings->ls_div_bits = (reg[1] >> 4) & 0x07;
-+	settings->hs_div = (reg[1] & 0x07) << 8 | reg[0];
-+
-+	err = regmap_bulk_read(data->regmap, SI544_REG_FBDIV0, reg, 6);
-+	if (err)
-+		return err;
-+
-+	settings->fb_div_int = reg[4] | (reg[5] & 0x07) << 8;
-+	settings->fb_div_frac = reg[0] | reg[1] << 8 | reg[2] << 16 |
-+				reg[3] << 24;
-+	return 0;
-+}
-+
-+static int si544_set_muldiv(struct clk_si544 *data,
-+	struct clk_si544_muldiv *settings)
-+{
-+	int err;
-+	u8 reg[6];
-+
-+	reg[0] = settings->hs_div;
-+	reg[1] = settings->hs_div >> 8 | settings->ls_div_bits << 4;
-+
-+	err = regmap_bulk_write(data->regmap, SI544_REG_HS_DIV, reg, 2);
-+	if (err < 0)
-+		return err;
-+
-+	reg[0] = settings->fb_div_frac;
-+	reg[1] = settings->fb_div_frac >> 8;
-+	reg[2] = settings->fb_div_frac >> 16;
-+	reg[3] = settings->fb_div_frac >> 24;
-+	reg[4] = settings->fb_div_int;
-+	reg[5] = settings->fb_div_int >> 8;
-+
-+	/*
-+	 * Writing to SI544_REG_FBDIV40 triggers the clock change, so that
-+	 * must be written last
-+	 */
-+	return regmap_bulk_write(data->regmap, SI544_REG_FBDIV0, reg, 6);
-+}
-+
-+static bool is_valid_frequency(const struct clk_si544 *data,
-+	unsigned long frequency)
-+{
-+	unsigned long max_freq;
-+
-+	if (frequency < SI544_MIN_FREQ)
-+		return false;
-+
-+	switch (data->speed_grade) {
-+	case si544a:
-+		max_freq = 1500000000;
-+		break;
-+	case si544b:
-+		max_freq = 800000000;
-+		break;
-+	case si544c:
-+		max_freq = 350000000;
-+		break;
-+	default:
-+		return false;
-+	}
-+
-+	if (frequency > max_freq)
-+		return false;
-+
-+	return true;
-+}
-+
-+/* Calculate divider settings for a given frequency */
-+static int si544_calc_muldiv(struct clk_si544_muldiv *settings,
-+	unsigned long frequency)
-+{
-+	u64 vco;
-+	u32 ls_freq;
-+	u32 tmp;
-+	u8 res;
-+
-+	/* Determine the minimum value of LS_DIV and resulting target freq. */
-+	ls_freq = frequency;
-+	settings->ls_div_bits = 0;
-+
-+	if (frequency >= (FVCO_MIN / HS_DIV_MAX))
-+		settings->ls_div_bits = 0;
-+	else {
-+		res = 1;
-+		tmp = 2 * HS_DIV_MAX;
-+		while (tmp <= (HS_DIV_MAX * 32)) {
-+			if ((frequency * tmp) >= FVCO_MIN)
-+				break;
-+			++res;
-+			tmp <<= 1;
-+		}
-+		settings->ls_div_bits = res;
-+		ls_freq = frequency << res;
-+	}
-+
-+	/* Determine minimum HS_DIV by rounding up */
-+	vco = FVCO_MIN + ls_freq - 1;
-+	do_div(vco, ls_freq);
-+	settings->hs_div = vco;
-+	/* round up to even number if needed */
-+	if ((settings->hs_div > HS_DIV_MAX_ODD) && (settings->hs_div & 1))
-+		++settings->hs_div;
-+	/* Calculate VCO frequency (in 10..12GHz range) */
-+	vco = (u64)ls_freq * settings->hs_div;
-+	/* Calculate the integer part of the feedback divider */
-+	tmp = do_div(vco, FXO);
-+	settings->fb_div_int = vco;
-+	/* And the fractional bits using the remainder */
-+	vco = (u64)tmp << 32;
-+	do_div(vco, FXO);
-+	settings->fb_div_frac = vco;
-+
-+	return 0;
-+}
-+
-+/* Calculate resulting frequency given the register settings */
-+static unsigned long si544_calc_rate(struct clk_si544_muldiv *settings)
-+{
-+	u32 d = settings->hs_div * BIT(settings->ls_div_bits);
-+	u64 vco;
-+
-+	/* Calculate VCO while preventing overflow */
-+	vco = (u64)settings->fb_div_int * FXO;
-+	vco += (((u64)settings->fb_div_frac * FXO) + (FXO / 2)) >> 32;
-+
-+	do_div(vco, d);
-+
-+	return vco;
-+}
-+
-+static unsigned long si544_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	struct clk_si544_muldiv settings;
-+	int err;
-+
-+	err = si544_get_muldiv(data, &settings);
-+	if (err) {
-+		dev_err(&data->i2c_client->dev, "unable to retrieve settings\n");
-+		return 0;
-+	}
-+
-+	return si544_calc_rate(&settings);
-+}
-+
-+static long si544_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	struct clk_si544_muldiv settings;
-+	int err;
-+
-+	if (!rate)
-+		return 0;
-+
-+	if (!is_valid_frequency(data, rate))
-+		return -EINVAL;
-+
-+	err = si544_calc_muldiv(&settings, rate);
-+	if (err)
-+		return err;
-+
-+	return si544_calc_rate(&settings);
-+}
-+
-+/*
-+ * Update output frequency for "big" frequency changes
-+ */
-+static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	struct clk_si544_muldiv settings;
-+	int err;
-+
-+	if (!is_valid_frequency(data, rate))
-+		return -EINVAL;
-+
-+	err = si544_calc_muldiv(&settings, rate);
-+	if (err)
-+		return err;
-+
-+	si544_enable_output(data, false);
-+
-+	/* Allow FCAL for this frequency update */
-+	err = regmap_write(data->regmap, SI544_REG_FCAL_OVR, 0);
-+	if (err < 0)
-+		return err;
-+
-+
-+	err = si544_set_muldiv(data, &settings);
-+	if (err < 0)
-+		return err; /* Undefined state now, best to leave disabled */
-+
-+	/* Trigger calibration */
-+	err = regmap_write(data->regmap, SI544_REG_CONTROL,
-+			   SI544_CONTROL_MS_ICAL2);
-+	if (err < 0)
-+		return err;
-+
-+	/* Applying a new frequency can take up to 10ms */
-+	usleep_range(10000, 12000);
-+
-+	si544_enable_output(data, true);
-+
-+	return err;
-+}
-+
-+static const struct clk_ops si544_clk_ops = {
-+	.recalc_rate = si544_recalc_rate,
-+	.round_rate = si544_round_rate,
-+	.set_rate = si544_set_rate,
-+};
-+
-+static bool si544_regmap_is_volatile(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case SI544_REG_CONTROL:
-+	case SI544_REG_FCAL_OVR:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static const struct regmap_config si544_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.cache_type = REGCACHE_RBTREE,
-+	.max_register = SI544_REG_PAGE_SELECT,
-+	.volatile_reg = si544_regmap_is_volatile,
-+};
-+
-+static int si544_probe(struct i2c_client *client,
-+		const struct i2c_device_id *id)
-+{
-+	struct clk_si544 *data;
-+	struct clk_init_data init;
-+	int err;
-+
-+	data = devm_kzalloc(&client->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	init.ops = &si544_clk_ops;
-+	init.flags = 0;
-+	init.num_parents = 0;
-+	data->hw.init = &init;
-+	data->i2c_client = client;
-+	data->speed_grade = id->driver_data;
-+
-+	if (of_property_read_string(client->dev.of_node, "clock-output-names",
-+			&init.name))
-+		init.name = client->dev.of_node->name;
-+
-+	data->regmap = devm_regmap_init_i2c(client, &si544_regmap_config);
-+	if (IS_ERR(data->regmap)) {
-+		dev_err(&client->dev, "failed to allocate register map\n");
-+		return PTR_ERR(data->regmap);
-+	}
-+
-+	i2c_set_clientdata(client, data);
-+
-+	/* Select page 0, just to be sure, there appear to be no more */
-+	err = regmap_write(data->regmap, SI544_REG_PAGE_SELECT, 0);
-+	if (err < 0)
-+		return err;
-+
-+	err = devm_clk_hw_register(&client->dev, &data->hw);
-+	if (err) {
-+		dev_err(&client->dev, "clock registration failed\n");
-+		return err;
-+	}
-+	err = of_clk_add_hw_provider(client->dev.of_node, of_clk_hw_simple_get,
-+				     &data->hw);
-+	if (err) {
-+		dev_err(&client->dev, "unable to add clk provider\n");
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int si544_remove(struct i2c_client *client)
-+{
-+	of_clk_del_provider(client->dev.of_node);
-+	return 0;
-+}
-+
-+static const struct i2c_device_id si544_id[] = {
-+	{ "si544a", si544a },
-+	{ "si544b", si544b },
-+	{ "si544c", si544c },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, si544_id);
-+
-+static const struct of_device_id clk_si544_of_match[] = {
-+	{ .compatible = "silabs,si544a" },
-+	{ .compatible = "silabs,si544b" },
-+	{ .compatible = "silabs,si544c" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, clk_si544_of_match);
-+
-+static struct i2c_driver si544_driver = {
-+	.driver = {
-+		.name = "si544",
-+		.of_match_table = clk_si544_of_match,
-+	},
-+	.probe		= si544_probe,
-+	.remove		= si544_remove,
-+	.id_table	= si544_id,
-+};
-+module_i2c_driver(si544_driver);
-+
-+MODULE_AUTHOR("Mike Looijmans <mike.looijmans@topic.nl>");
-+MODULE_DESCRIPTION("Si544 driver");
-+MODULE_LICENSE("GPL");
--- 
-1.9.1
+I meant the ohci dying during cpufreq bug, not the crash you posted.
+
+Bart
