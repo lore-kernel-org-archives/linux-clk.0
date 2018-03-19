@@ -1,30 +1,29 @@
-Return-Path: <sboyd@kernel.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521168778-27236-19-git-send-email-david@lechnology.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
- David Lechner <david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-19-git-send-email-david@lechnology.com>
-Message-ID: <152156546648.183971.7479024904530808735@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v8 18/42] clk: davinci: New driver for TI DA8XX CFGCHIP clocks
-Date: Tue, 20 Mar 2018 10:04:26 -0700
+In-Reply-To: <20180316175354.21437-2-icenowy@aosc.io>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+References: <20180316175354.21437-1-icenowy@aosc.io>
+ <20180316175354.21437-2-icenowy@aosc.io>
+Message-ID: <152149685123.242365.3440079243287970205@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/7] dt-bindings: add compatible string for the A64 DE2 CCU
+Date: Mon, 19 Mar 2018 15:00:51 -0700
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting David Lechner (2018-03-15 19:52:34)
-> This adds a new driver for the gate and multiplexer clocks in the
-> CFGCHIPn syscon registers on TI DA8XX-type SoCs.
-> =
-
-> Signed-off-by: David Lechner <david@lechnology.com>
+Quoting Icenowy Zheng (2018-03-16 10:53:48)
+> The Allwinner A64 SoC has a DE2 CCU like the one in the DE2 of Allwinner
+> H5 SoC.
+> 
+> Add a compatible string for it.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
 
-Applied to clk-next
+Acked-by: Stephen Boyd <sboyd@kernel.org>
