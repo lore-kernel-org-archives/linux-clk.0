@@ -1,32 +1,37 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 1 Mar 2018 16:41:51 -0600
-From: Rob Herring <robh@kernel.org>
-To: Weiyi Lu <weiyi.lu@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com
-Subject: Re: [PATCH v1 1/5] dt-bindings: soc: update MT2712 power dt-bindings
-Message-ID: <20180301224151.bl3syre32pqfcsls@rob-hp-laptop>
-References: <20180222054851.26096-1-weiyi.lu@mediatek.com>
- <20180222054851.26096-3-weiyi.lu@mediatek.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180222054851.26096-3-weiyi.lu@mediatek.com>
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+ Gabriel Fernandez <gabriel.fernandez@st.com>,
+ Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1520578651-28849-2-git-send-email-gabriel.fernandez@st.com>
+Cc: devicetree@vger.kernel.org, benjamin GAIGNARD <benjamin.gaignard@st.com>,
+ Loic PALLARDY <loic.pallardy@st.com>, olivier.bideau@st.com,
+ linux-kernel@vger.kernel.org, gabriel.fernandez.st@gmail.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1520578651-28849-1-git-send-email-gabriel.fernandez@st.com>
+ <1520578651-28849-2-git-send-email-gabriel.fernandez@st.com>
+Message-ID: <152149233843.242365.271342087460300826@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH RESEND 1/2] clk: stm32: END_PRIMARY_CLK should be declare after
+ CLK_SYSCLK
+Date: Mon, 19 Mar 2018 13:45:38 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Feb 22, 2018 at 01:48:47PM +0800, Weiyi Lu wrote:
-> Add new power domains(MFG_SC1/MFG_SC2/MFG_SC3)
-> for MT2712 according to ECO design change.
-> 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> ---
->  include/dt-bindings/power/mt2712-power.h | 3 +++
->  1 file changed, 3 insertions(+)
+Quoting gabriel.fernandez@st.com (2018-03-08 22:57:30)
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> =
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> Update of END_PRIMARY_CLK was missed, it should be after CLK_SYSCLK
+> hsi and sysclk are overwritten by gpioa and gpiob.
+> =
+
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Tested-by: Philippe Cornu <philippe.cornu@st.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+
+Applied to clk-next
