@@ -1,48 +1,58 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1520502187.4264.5.camel@baylibre.com>
-Subject: Re: [PATCH] clk: fix phase reported being zero
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 08 Mar 2018 10:43:07 +0100
-In-Reply-To: <20180215101958.22676-1-jbrunet@baylibre.com>
-References: <20180215101958.22676-1-jbrunet@baylibre.com>
+Return-Path: <bgolaszewski@baylibre.com>
+MIME-Version: 1.0
+In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Mon, 19 Mar 2018 14:17:01 +0100
+Message-ID: <CAMpxmJX-AxhpPpCnWoaSGYmNh3o8iRjdKacnmozsPWmhpcGdTg@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v8_00=2F42=5D_ARM=3A_davinci=3A_convert_to_common?=
+	=?UTF-8?Q?_clock_framework=E2=80=8B?=
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
+	arm-soc <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-02-15 at 11:19 +0100, Jerome Brunet wrote:
-> While introducing clk_core_set_phase_nolock, assigning core->phase was
-> mistakenly removed. Fixing this now
-> 
-> Fixes: 9e4d04adeb1a ("clk: add clk_core_set_phase_nolock function")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+2018-03-16 3:52 GMT+01:00 David Lechner <david@lechnology.com>:
+> This series converts mach-davinci to use the common clock framework.
+>
+> The series works like this, the first 19 patches create new clock drivers
+> using the common clock framework. There are basically 3 groups of clocks -
+> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
+> unique init data, which is the reason for so many patches.
+>
+> Then, starting with "ARM: davinci: pass clock as parameter to
+> davinci_timer_init()", we get the mach code ready for the switch by adding the
+> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+> around the legacy clocks so that we can switch easily between the old and the
+> new.
+>
+> "ARM: davinci: switch to common clock framework" actually flips the switch
+> to start using the new clock drivers. Then the next 8 patches remove all
+> of the old clock code.
+>
+> The final three patches add device tree clock support to the one SoC that
+> supports it.
+>
+> This series has been tested on LEGO MINDSTORMS EV3 (device tree) and TI
+> OMAP-L138 LCDK (both device tree and legacy board file).
+>
 
-Please drop this patch if favor of 
+Hi David,
 
-https://lkml.kernel.org/r/1520491781-132529-1-git-send-email-shawn.lin@rock-chip
-s.com
+thanks, with the u-boot fix everything seems to work fine. I tested
+da850-lcdk and da850-evm boards in DT and board file modes.
 
-Thanks
-Jerome
+I'll be working with this series in the following days and will do
+some thorough testing and rebase my aemif series on top of it. I'll
+also use the recently merged reset support for board files to get rid
+of the exported reset functions.
 
-> ---
->  drivers/clk/clk.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 9d56be6ead39..b33d362239e7 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2314,6 +2314,9 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
->  	if (core->ops->set_phase)
->  		ret = core->ops->set_phase(core->hw, degrees);
->  
-> +	if (!ret)
-> +		core->phase = degrees;
-> +
->  	trace_clk_set_phase_complete(core, degrees);
->  
->  	return ret;
+Thanks for your work!
+
+Best regards,
+Bartosz Golaszewski
