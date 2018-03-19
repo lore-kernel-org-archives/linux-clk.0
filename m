@@ -1,30 +1,38 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 7 Mar 2018 13:37:48 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 05/16] dt-bindings: display: sun4i-drm: Add
- compatibles for H3 HDMI pipeline
-Message-ID: <20180307193748.5uvdab2rbndhuvog@rob-hp-laptop>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
- <20180301213442.16677-6-jernej.skrabec@siol.net>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180301213442.16677-6-jernej.skrabec@siol.net>
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Eric Anholt <eric@anholt.net>,
+ Florian Fainelli <f.fainelli@gmail.com>, Lee Jones <lee@kernel.org>,
+ Mike Turquette <mturquette@baylibre.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Stephen Warren <swarren@wwwdotorg.org>,
+ bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180208134338.24590-1-boris.brezillon@bootlin.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, stable@vger.kernel.org
+References: <20180208134338.24590-1-boris.brezillon@bootlin.com>
+Message-ID: <152147697810.242365.18045288520177640685@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/4] clk: bcm2835: Fix ana->maskX definitions
+Date: Mon, 19 Mar 2018 09:29:38 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 01, 2018 at 10:34:31PM +0100, Jernej Skrabec wrote:
-> Add missing compatibles for H3 HDMI pipeline. These compatibles can also
-> be used with H5 SoC.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
+Quoting Boris Brezillon (2018-02-08 05:43:35)
+> ana->maskX values are already '~'-ed in bcm2835_pll_set_rate(). Remove
+> the '~' in the definition to fix ANA setup.
+> =
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> Note that this commit fixes a long standing bug preventing one from
+> using an HDMI display if it's plugged after the FW has booted Linux.
+> This is because PLLH is used by the HDMI encoder to generate the pixel
+> clock.
+> =
+
+> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio=
+ domain clocks")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> Reviewed-by: Eric Anholt <eric@anholt.net>
+> ---
+
+Applied to clk-fixes
