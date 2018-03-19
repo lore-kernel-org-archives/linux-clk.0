@@ -1,37 +1,149 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v3 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
- Bjorn Andersson <bjorn.andersson@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-remoteproc@vger.kernel.org,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180327092031.11251-1-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <6166e140-b417-dd22-10cf-843db3958226@lechnology.com>
-Date: Tue, 27 Mar 2018 11:48:47 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:33326 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966741AbeCSQsn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Mar 2018 12:48:43 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: Ilia Lin <ilialin@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1518616792-29028-10-git-send-email-ilialin@codeaurora.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
+        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
+        ilialin@codeaurora.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-10-git-send-email-ilialin@codeaurora.org>
+Message-ID: <152147812199.242365.11821734771337881765@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 09/10] DT: QCOM: Add cpufreq-dt to msm8996
+Date: Mon, 19 Mar 2018 09:48:42 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Wasn't there a v4 already? Is this really v5 instead of v3?
+Quoting Ilia Lin (2018-02-14 05:59:51)
+> diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+> index 492a011..930f68b 100644
+> --- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Copyright (c) 2014-2016, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2014-2016,2018 The Linux Foundation. All rights reserved.
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License version 2 and
 
+Why?
 
-On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> This series converts the only user of the handcoded, mach-specific reset
-> routines in the davinci platform to using the reset framework.
-> 
-> Patches 1-3 add necessary lookups/DT-properties.
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 4b2afcc..0359197 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -144,6 +152,182 @@
+>                 };
+>         };
+>  
+> +       cluster0_opp: opp_table0 {
+> +               compatible = "operating-points-v2";
+> +               opp-shared;
+> +
+> +               opp@307200000 {
+> +                       opp-hz = /bits/ 64 <  307200000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@422400000 {
+> +                       opp-hz = /bits/ 64 <  422400000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@480000000 {
 
-Should I just squash the DT changes into my common-clock-v9 branch
-since those patches haven't been picked up yet anyway? That will be
-2 fewer patches to keep track of.
+It looks like opp-480000000 now instead of opp@<freq>.
+
+> +                       opp-hz = /bits/ 64 <  480000000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@556800000 {
+> +                       opp-hz = /bits/ 64 <  556800000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@652800000 {
+> +                       opp-hz = /bits/ 64 <  652800000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@729600000 {
+> +                       opp-hz = /bits/ 64 <  729600000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@844800000 {
+> +                       opp-hz = /bits/ 64 <  844800000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@960000000 {
+> +                       opp-hz = /bits/ 64 <  960000000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@1036800000 {
+> +                       opp-hz = /bits/ 64 < 1036800000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@1113600000 {
+> +                       opp-hz = /bits/ 64 < 1113600000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@1190400000 {
+> +                       opp-hz = /bits/ 64 < 1190400000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@1228800000 {
+> +                       opp-hz = /bits/ 64 < 1228800000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@1324800000 {
+> +                       opp-hz = /bits/ 64 < 1324800000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@1401600000 {
+> +                       opp-hz = /bits/ 64 < 1401600000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@1478400000 {
+> +                       opp-hz = /bits/ 64 < 1478400000 >;
+> +                       clock-latency-ns = <200000>;
+> +               };
+> +               opp@1593600000 {
+[...]
+> +
+> +       };
+>         thermal-zones {
+>                 cpu-thermal0 {
+>                         polling-delay-passive = <250>;
+> @@ -403,7 +587,7 @@
+>                 };
+>  
+>                 kryocc: clock-controller@6400000 {
+> -                       compatible = "qcom,apcc-msm8996";
+> +                       compatible = "qcom-msm8996-apcc";
+
+Bad change?
+
+>                         reg = <0x6400000 0x90000>;
+>                         #clock-cells = <1>;
+>                 };
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index 3b585e4..b6cd0ae 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -95,6 +95,9 @@
+>         { .compatible = "xlnx,zynq-7000", },
+>         { .compatible = "xlnx,zynqmp", },
+>  
+> +       { .compatible = "qcom,msm8996", },
+> +       { .compatible = "qcom,apq8096", },
+> +
+
+Why can't we base it on the kryocc node being present? Or even populate
+the cpufreq-dt from the kryocc driver?
