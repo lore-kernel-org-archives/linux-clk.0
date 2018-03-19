@@ -1,29 +1,127 @@
-Return-Path: <sboyd@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:47556 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S968210AbeCSRr4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Mar 2018 13:47:56 -0400
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org
+To: Ilia Lin <ilialin@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1510330017-32200-1-git-send-email-sudeep.holla@arm.com>
-Cc: Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-References: <1510330017-32200-1-git-send-email-sudeep.holla@arm.com>
-Message-ID: <152123945267.242365.14442807869805498253@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: versatile: add min/max rate boundaries for vexpress osc
- clock
-Date: Fri, 16 Mar 2018 15:30:52 -0700
+In-Reply-To: <1518616792-29028-6-git-send-email-ilialin@codeaurora.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
+        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
+        ilialin@codeaurora.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-6-git-send-email-ilialin@codeaurora.org>
+Message-ID: <152148167517.242365.13429407450120461901@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 05/10] clk: qcom: cpu-8996: Add support to switch to alternate
+ PLL
+Date: Mon, 19 Mar 2018 10:47:55 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sudeep Holla (2017-11-10 08:06:57)
-> Clock framework has a provider API(clk_hw_set_rate_range) to set the
-> min/max rate of a clock. Use the same to set the boundaries for the
-> vexpress osc clock.
-> =
+Quoting Ilia Lin (2018-02-14 05:59:47)
+> From: Rajendra Nayak <rnayak@codeaurora.org>
+> 
+> Each of the CPU clusters on msm8996 and powered via a primary
 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+s/and/are/
+
+> PLL and a secondary PLL. The primary PLL is what drivers the
+
+s/drivers/drives/
+
+I make the same typo all the time!
+
+> CPU clk, except for times when we are reprogramming the PLL
+> itself, when we temporarily switch to an alternate PLL.
+> Use clock rate change notifiers to support this.
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 > ---
+>  drivers/clk/qcom/clk-cpu-8996.c | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+> index 42489f1..75bd014 100644
+> --- a/drivers/clk/qcom/clk-cpu-8996.c
+> +++ b/drivers/clk/qcom/clk-cpu-8996.c
+> @@ -140,10 +140,14 @@ struct clk_cpu_8996_mux {
+>         u32     reg;
+>         u32     shift;
+>         u32     width;
+> +       struct notifier_block nb;
+>         struct clk_hw   *pll;
+>         struct clk_regmap clkr;
+>  };
+>  
+> +#define to_clk_cpu_8996_mux_nb(_nb) \
+> +       container_of(_nb, struct clk_cpu_8996_mux, nb)
+> +
+>  static inline
+>  struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
+>  {
+> @@ -194,6 +198,27 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+>         return 0;
+>  }
+>  
+> +int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+> +                       void *data)
+> +{
+> +       int ret;
+> +       struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
+> +
+> +       switch (event) {
+> +       case PRE_RATE_CHANGE:
+> +               ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
+> +               break;
+> +       case POST_RATE_CHANGE:
+> +               ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
+> +               break;
+> +       default:
+> +               ret = 0;
+> +               break;
+> +       }
+> +
+> +       return notifier_from_errno(ret);
+> +};
+> +
+>  const struct clk_ops clk_cpu_8996_mux_ops = {
+>         .set_parent = clk_cpu_8996_mux_set_parent,
+>         .get_parent = clk_cpu_8996_mux_get_parent,
+> @@ -237,6 +262,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+>         .shift = 0,
+>         .width = 2,
+>         .pll = &pwrcl_pll.clkr.hw,
+> +       .nb.notifier_call = cpu_clk_notifier_cb,
+>         .clkr.hw.init = &(struct clk_init_data) {
+>                 .name = "pwrcl_pmux",
+>                 .parent_names = (const char *[]){
+> @@ -256,6 +282,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+>         .shift = 0,
+>         .width = 2,
+>         .pll = &perfcl_pll.clkr.hw,
+> +       .nb.notifier_call = cpu_clk_notifier_cb,
+>         .clkr.hw.init = &(struct clk_init_data) {
+>                 .name = "perfcl_pmux",
+>                 .parent_names = (const char *[]){
+> @@ -331,6 +358,14 @@ struct clk_hw_clks {
+>         clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+>         clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+>  
+> +       ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
+> +       if (ret)
+> +               return ret;
+> +
 
-Applied to clk-next
+Please resend this with the other patches that need rework.
