@@ -1,64 +1,101 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH 0/3] clk: meson: drop unnecessary AO clock flags
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-References: <20180326081809.49493-1-yixun.lan@amlogic.com>
- <1522142509.2632.42.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <c99b705b-f98a-4b77-7113-78dec326d9b6@amlogic.com>
-Date: Tue, 27 Mar 2018 20:42:02 +0800
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v2 2/5] soc: mediatek: update power domain data of MT2712
+To: Weiyi Lu <weiyi.lu@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>,
+ Mike Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>
+Cc: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, srv_heupstream@mediatek.com
+References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
+ <20180312070342.4335-4-weiyi.lu@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <dda77bd3-cbf2-1954-bc52-7f851ec4844f@gmail.com>
+Date: Mon, 19 Mar 2018 02:33:06 +0100
 MIME-Version: 1.0
-In-Reply-To: <1522142509.2632.42.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: yixun.lan@amlogic.com
+In-Reply-To: <20180312070342.4335-4-weiyi.lu@mediatek.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-HI Jerome
 
-On 03/27/2018 05:21 PM, Jerome Brunet wrote:
-> On Mon, 2018-03-26 at 16:18 +0800, Yixun Lan wrote:
->>   This first two patches will drop unnecessary flags for
->> the AO clock driver.
->>   The third DTS patch is a follow-up fix for the second patch,
->> and I've tested them on P200, P212, Q200, S400 boards.
->>
->>  Note: this patch series was made on top of patch [0]
->>
->> [0] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
->>
->> Yixun Lan (3):
->>   clk: meson: drop CLK_SET_RATE_PARENT flag
->>   clk: meson: drop CLK_IGNORE_UNUSED flag
->>   ARM64: dts: meson: fix clock source of the pclk for UART_AO
-> 
-> Please add patch 1 and 2 to the next version of your clkc_ao series
-> 
-I was thinking about patch 1 & 2 as independent patch of the clkc_ao
-series..
 
-anyway, as your suggestion in another thread,
-I could include the patch 1 into next clkc_ao series
-send patch 3 (DTS part) independently to Kevin, once patch 3 accepted
-into mainline, I will then send patch 2 as a fix
-(this will avoid breaking bisect)
+On 03/12/2018 08:03 AM, Weiyi Lu wrote:
+> 1. split MFG power domain into MFG/MFG_SC1/MFG_SC2/MFG_SC3
+> according to MT2712 ECO design change
+> 2. add subdomain support for MT2712
+> 
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 
-> Patch 3 should sent independently to Kevin, with note warning about the
-> different dependencies (see comment in patch 3)
+Pushed to v4.16-next/soc
+
+Thanks!
+
+> ---
+>  drivers/soc/mediatek/mtk-scpsys.c | 42 +++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 40 insertions(+), 2 deletions(-)
 > 
->>
->>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 4 ++--
->>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++--
->>  arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 4 ++--
->>  drivers/clk/meson/axg-aoclk.c               | 1 -
->>  drivers/clk/meson/gxbb-aoclk.c              | 1 -
->>  5 files changed, 6 insertions(+), 8 deletions(-)
->>
-> 
-> .
+> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+> index 59bd749c2f25..edf8fd6c2c85 100644
+> --- a/drivers/soc/mediatek/mtk-scpsys.c
+> +++ b/drivers/soc/mediatek/mtk-scpsys.c
+> @@ -664,12 +664,48 @@ static const struct scp_domain_data scp_domain_data_mt2712[] = {
+>  		.name = "mfg",
+>  		.sta_mask = PWR_STATUS_MFG,
+>  		.ctl_offs = SPM_MFG_PWR_CON,
+> -		.sram_pdn_bits = GENMASK(11, 8),
+> -		.sram_pdn_ack_bits = GENMASK(19, 16),
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(16, 16),
+>  		.clk_id = {CLK_MFG},
+>  		.bus_prot_mask = BIT(14) | BIT(21) | BIT(23),
+>  		.active_wakeup = true,
+>  	},
+> +	[MT2712_POWER_DOMAIN_MFG_SC1] = {
+> +		.name = "mfg_sc1",
+> +		.sta_mask = BIT(22),
+> +		.ctl_offs = 0x02c0,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(16, 16),
+> +		.clk_id = {CLK_NONE},
+> +		.active_wakeup = true,
+> +	},
+> +	[MT2712_POWER_DOMAIN_MFG_SC2] = {
+> +		.name = "mfg_sc2",
+> +		.sta_mask = BIT(23),
+> +		.ctl_offs = 0x02c4,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(16, 16),
+> +		.clk_id = {CLK_NONE},
+> +		.active_wakeup = true,
+> +	},
+> +	[MT2712_POWER_DOMAIN_MFG_SC3] = {
+> +		.name = "mfg_sc3",
+> +		.sta_mask = BIT(30),
+> +		.ctl_offs = 0x01f8,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(16, 16),
+> +		.clk_id = {CLK_NONE},
+> +		.active_wakeup = true,
+> +	},
+> +};
+> +
+> +static const struct scp_subdomain scp_subdomain_mt2712[] = {
+> +	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VDEC},
+> +	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_VENC},
+> +	{MT2712_POWER_DOMAIN_MM, MT2712_POWER_DOMAIN_ISP},
+> +	{MT2712_POWER_DOMAIN_MFG, MT2712_POWER_DOMAIN_MFG_SC1},
+> +	{MT2712_POWER_DOMAIN_MFG_SC1, MT2712_POWER_DOMAIN_MFG_SC2},
+> +	{MT2712_POWER_DOMAIN_MFG_SC2, MT2712_POWER_DOMAIN_MFG_SC3},
+>  };
+>  
+>  /*
+> @@ -905,6 +941,8 @@ static const struct scp_soc_data mt2701_data = {
+>  static const struct scp_soc_data mt2712_data = {
+>  	.domains = scp_domain_data_mt2712,
+>  	.num_domains = ARRAY_SIZE(scp_domain_data_mt2712),
+> +	.subdomains = scp_subdomain_mt2712,
+> +	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt2712),
+>  	.regs = {
+>  		.pwr_sta_offs = SPM_PWR_STATUS,
+>  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
 > 
