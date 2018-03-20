@@ -1,36 +1,50 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 5 Mar 2018 19:51:02 -0600
-From: Rob Herring <robh@kernel.org>
-To: sean.wang@mediatek.com
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
-	mark.rutland@arm.com, p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clock: mediatek: add binding for
- fixed-factor clock axisel_d4
-Message-ID: <20180306015102.alzc5a7sxmtbphzz@rob-hp-laptop>
-References: <cd26a3bdc9f29e237089395fbba93e28549ddf25.1519874655.git.sean.wang@mediatek.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cd26a3bdc9f29e237089395fbba93e28549ddf25.1519874655.git.sean.wang@mediatek.com>
+To: Jiancheng Xue <xuejiancheng@hisilicon.com>,
+ Markus Elfring <elfring@users.sourceforge.net>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Shawn Guo <shawn.guo@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>,
+ tianshuliang <tianshuliang@hisilicon.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521555574-29189-1-git-send-email-weiyongjun1@huawei.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-clk@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <1521555574-29189-1-git-send-email-weiyongjun1@huawei.com>
+Message-ID: <152156633511.183971.8534897713854322596@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH -next] clk: hisilicon: fix potential NULL dereference in
+ hisi_clk_alloc()
+Date: Tue, 20 Mar 2018 10:18:55 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 01, 2018 at 11:27:50AM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Just add binding for a fixed-factor clock axisel_d4, which would be
-> referenced by PWM devices on MT7623 or MT2701 SoC.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 1de9b21633d6 ("clk: mediatek: Add dt-bindings for MT2701 clocks")
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> ---
->  include/dt-bindings/clock/mt2701-clk.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Quoting Wei Yongjun (2018-03-20 07:19:34)
+> platform_get_resource() may fail and return NULL, so we should
+> better check it's return value to avoid a NULL pointer dereference
+> a bit later in the code.
+> =
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> This is detected by Coccinelle semantic patch.
+> =
+
+> @@
+> expression pdev, res, n, t, e, e1, e2;
+> @@
+> =
+
+> res =3D platform_get_resource(pdev, t, n);
+> + if (!res)
+> +   return -EINVAL;
+> ... when !=3D res =3D=3D NULL
+> e =3D devm_ioremap(e1, res->start, e2);
+> =
+
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+
+Please add Fixes: tags.
+
+This is an old one.
+
+Fixes: 322269163a36 ("clk: hisilicon: add hisi_clk_alloc function.")
+
+Applied to clk-next.
