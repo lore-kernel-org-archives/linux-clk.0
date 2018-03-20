@@ -1,89 +1,60 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Michael Turquette <mturquette@baylibre.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAMuHMdVsb+5T-DYfF9v6ANhVxhRk6_r+XPA34mW7Q=90HnitAA@mail.gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Stephen Boyd <sboyd@codeaurora.org>, Jonathan Hunter <jonathanh@nvidia.com>,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>,
- linux-tegra@vger.kernel.org,
- Maxime Ripard <maxime.ripard@free-electrons.com>,
- linux-clk <linux-clk@vger.kernel.org>, "Stephen Boyd <sboyd@codeaurora.org>,
- Emilio Lopez <emilio@elopez.com.ar>,
- Hans de Goede <hdegoede@redhat.com>, linux-clk <linux-clk@vger.kernel.org>,
- linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
-References: <1516375101-29836-1-git-send-email-geert+renesas@glider.be>
- <1516375101-29836-3-git-send-email-geert+renesas@glider.be>
- <11171053.oOJPuGlHoK@phil>
- <CAEG3pNCioW_FVXj3-j4KC_yO6ZYGXQB_eanHWSb9NUE9kYsWag@mail.gmail.com>
- <CAMuHMdVsb+5T-DYfF9v6ANhVxhRk6_r+XPA34mW7Q=90HnitAA@mail.gmail.com>
-Message-ID: <152089394512.147033.16036395348488651030@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/3] soc: rockchip: power-domain: Use of_clk_get_parent_count()
- instead of open coding
-Date: Mon, 12 Mar 2018 15:32:25 -0700
+In-Reply-To: <20180320090400.6bgugy6fgze3ohsd@linaro.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+ manivannanece23@gmail.com, bdong@ucrobotics.com, viresh.kumar@linaro.org,
+ mturquette@baylibre.com, 96boards@ucrobotics.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, amit.kucheria@linaro.org, davem@davemloft.net,
+ hzhang@ucrobotics.com, robh+dt@kernel.org, mp-cs@actions-semi.com,
+ liuwei@actions-semi.com, mchehab@kernel.org, afaerber@suse.de,
+ linux-arm-kernel@lists.infradead.org
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+ <20180317100952.28538-10-manivannan.sadhasivam@linaro.org>
+ <152150820384.254778.6585368643028088392@swboyd.mtv.corp.google.com>
+ <20180320090400.6bgugy6fgze3ohsd@linaro.org>
+Message-ID: <152156612855.183971.17769572831805053841@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 09/12] clk: actions: Add fixed factor clock support
+Date: Tue, 20 Mar 2018 10:15:28 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-03-02 05:15:35)
-> Hi Mike,
-> =
+Quoting Manivannan Sadhasivam (2018-03-20 02:04:00)
+> On Mon, Mar 19, 2018 at 06:10:03PM -0700, Stephen Boyd wrote:
+> > > +        * nop.
+> > > +        */
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +const struct clk_ops owl_fix_fact_ops =3D {
+> > > +       .round_rate     =3D owl_fix_fact_round_rate,
+> > > +       .recalc_rate    =3D owl_fix_fact_recalc_rate,
+> > > +       .set_rate       =3D owl_fix_fact_set_rate,
+> > > +};
+> > =
 
-> On Sun, Feb 18, 2018 at 8:09 PM, Michael Turquette
-> <mturquette@baylibre.com> wrote:
-> > Moving of_clk_get_parent_count to clk.h seems reasonable to me. It's
-> > more of an of-specific helper than a provider-specific helper.
+> > Why can't you use the regular fixed factor clk code and ops?
 > >
-> > Anyone up to submit a patch so that this one doesn't need to include
-> > clk-provider.h?
 > =
 
-> I gave it a try.
-> Just moving of_clk_get_parent_count() from clk-provider.h to clk.h causes
-> breakage, as half of the clock providers using of_clk_get_parent_count()
-> do not include <linux/clk.h>:
+> That's going to be really messy. Since I'm having the clk_hw embedded ins=
+ide
+> owl_clk_common and using it for registering all the clocks, using generic
+> fixed factor functions will be a different approach _only_ for this clock=
+ and
+> it won't look good I guess. Also, it may become complicated with composite
+> clocks.
 > =
 
->     drivers/clk/at91/clk-generated.c
->     drivers/clk/at91/clk-main.c
->     drivers/clk/at91/clk-master.c
->     drivers/clk/at91/clk-programmable.c
->     drivers/clk/at91/clk-slow.c
->     drivers/clk/at91/clk-smd.c
->     drivers/clk/at91/clk-usb.c
->     drivers/clk/at91/sckc.c
->     drivers/clk/clk-axi-clkgen.c
->     drivers/clk/clk-gpio.c
->     drivers/clk/clk-hsdk-pll.c
->     drivers/clk/h8300/clk-div.c
->     drivers/clk/h8300/clk-h8s2678.c
->     drivers/clk/renesas/clk-div6.c
->     drivers/clk/ti/composite.c
->     drivers/clk/ti/gate.c
->     drivers/clk/ti/mux.c
-> =
-
-> So our options are:
->   1. Add #include <linux/clk.h> to each of the above,
->   2. Add #include <linux/clk.h> to <linux/clk-provider.h>,
->   3. Do nothing, i.e. users of of_clk_get_parent_count () need to
->       #include <linux/clk-provider.h>, cfr. this patch series.
-> =
-
-> Any preference? Any option I'm missing?
+> If you still want to use the generic fixed factor code, I can do that in
+> next revision.
 > =
 
 
-#2 is a definite no.
-
-How about option #4? Move of_clk_get_parent_count() and
-of_clk_get_parent_name() to a new include/linux/of_clk.h, include that
-in clk-provider.h, and then have non-clk provider drivers include that
-file? After that, we can also move of_clk_init() into this new file, and
-then non-provider arch code can call of_clk_init() without including the
-provider APIs. I'd also like to get rid of the include of linux/of.h in
-clk-provider.h, but that's a ways away.
+The qcom clk driver has support for the 'regmap' clk_hws and the
+non-regmap based clk_hws. I suggest having a list of clk_hw pointers
+that you register in a loop and then have other lists that you use to
+register wrapper structs, etc. Otherwise we're left with a bunch of code
+that's copy/pasted around.
