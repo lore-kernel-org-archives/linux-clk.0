@@ -1,79 +1,128 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 3/8] clk: davinci: add a reset lookup table for psc0
-Date: Fri, 30 Mar 2018 17:28:51 +0200
-Message-Id: <20180330152856.12297-4-brgl@bgdev.pl>
-In-Reply-To: <20180330152856.12297-1-brgl@bgdev.pl>
-References: <20180330152856.12297-1-brgl@bgdev.pl>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
+ mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180317100952.28538-5-manivannan.sadhasivam@linaro.org>
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+ devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+ daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+ viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+ <20180317100952.28538-5-manivannan.sadhasivam@linaro.org>
+Message-ID: <152150774389.254778.79582051178250322@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 04/12] clk: actions: Add common clock driver support
+Date: Mon, 19 Mar 2018 18:02:23 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Quoting Manivannan Sadhasivam (2018-03-17 03:09:44)
+> diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-c=
+ommon.c
+> new file mode 100644
+> index 000000000000..a7cb698fdc86
+> --- /dev/null
+> +++ b/drivers/clk/actions/owl-common.c
+> @@ -0,0 +1,84 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// OWL common clock driver
+> +//
+> +// Copyright (c) 2014 Actions Semi Inc.
+> +// Author: David Liu <liuwei@actions-semi.com>
+> +//
+> +// Copyright (c) 2018 Linaro Ltd.
+> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/regmap.h>
+> +
+> +#include "owl-common.h"
+> +
+> +static const struct regmap_config owl_regmap_config =3D {
+> +       .reg_bits       =3D 32,
+> +       .reg_stride     =3D 4,
+> +       .val_bits       =3D 32,
+> +       .max_register   =3D 0xffff,
 
-In order to be able to use the reset framework in legacy boot mode as
-well, add the reset lookup table to the psc driver for da850 variant.
+Is that actually the end?
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/clk/davinci/psc-da850.c | 7 +++++++
- drivers/clk/davinci/psc.c       | 1 +
- 2 files changed, 8 insertions(+)
+> +       .fast_io        =3D true,
+> +};
+> +
+> +static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
+> +                        struct regmap *regmap)
+> +{
+> +       int i;
+> +       struct owl_clk_common *clks;
+> +
+> +       for (i =3D 0; i < desc->num_clks; i++) {
+> +               clks =3D desc->clks[i];
+> +               if (!clks)
+> +                       continue;
+> +
+> +               clks->regmap =3D regmap;
+> +       }
+> +}
+> +
+> +int owl_clk_regmap_init(struct platform_device *pdev,
+> +                        const struct owl_clk_desc *desc)
+> +{
+> +       void __iomem *base;
+> +       struct device_node *node =3D pdev->dev.of_node;
+> +       struct regmap *regmap;
+> +
+> +       base =3D of_iomap(node, 0);
 
-diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
-index ccc7eb17bf3a..d196dcbed560 100644
---- a/drivers/clk/davinci/psc-da850.c
-+++ b/drivers/clk/davinci/psc-da850.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/reset-controller.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/init.h>
-@@ -66,8 +67,14 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
- 				"fck",	"ecap.1",
- 				"fck",	"ecap.2");
- 
-+static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
-+	RESET_LOOKUP("da850-psc0", 15, "davinci-rproc.0", NULL),
-+};
-+
- static int da850_psc0_init(struct device *dev, void __iomem *base)
- {
-+	reset_controller_add_lookup(da850_psc0_reset_lookup_table,
-+				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
- 	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
- }
- 
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 3b0e59dfbdd7..063df62381ea 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
- 
- 	psc->rcdev.ops = &davinci_psc_reset_ops;
- 	psc->rcdev.owner = THIS_MODULE;
-+	psc->rcdev.dev = dev;
- 	psc->rcdev.of_node = dev->of_node;
- 	psc->rcdev.of_reset_n_cells = 1;
- 	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
--- 
-2.16.3
+Please use platform device apis to find and map the ioresources.
+
+> +       regmap =3D devm_regmap_init_mmio(&pdev->dev, base, &owl_regmap_co=
+nfig);
+> +       if (IS_ERR_OR_NULL(regmap)) {
+
+Isn't it just IS_ERR() for regmap errors?
+
+> +               pr_err("failed to init regmap\n");
+> +               return PTR_ERR(regmap);
+> +       }
+> +
+> +       owl_clk_set_regmap(desc, regmap);
+> +
+> +       return 0;
+> +}
+> +
+> +int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clk=
+s)
+> +{
+> +       int i, ret;
+> +       struct clk_hw *hw;
+> +
+> +       for (i =3D 0; i < hw_clks->num; i++) {
+> +
+> +               hw =3D hw_clks->hws[i];
+> +
+> +               if (!hw)
+
+Style: Stick that if to the assignment before.
+
+> +                       continue;
+> +
+> +               ret =3D devm_clk_hw_register(dev, hw);
+> +               if (ret) {
+> +                       dev_err(dev, "Couldn't register clock %d - %s\n",
+> +                               i, hw->init->name);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, h=
+w_clks);
+> +       if (ret)
+> +               dev_err(dev, "Failed to add clock provider\n");
+> +
+> +       return ret;
+> +}
