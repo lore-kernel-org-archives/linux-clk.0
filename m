@@ -1,351 +1,107 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 10/11] clk: actions: Add pll clock support
-Date: Mon, 26 Mar 2018 23:09:04 +0530
-Message-Id: <20180326173905.22313-11-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
-References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:42473 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750828AbeCTHPj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Mar 2018 03:15:39 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180317232901.14129-3-paul@crapouillou.net>
+References: <20180110224838.16711-2-paul@crapouillou.net> <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-3-paul@crapouillou.net>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Tue, 20 Mar 2018 08:15:17 +0100
+Message-ID: <CA+7wUsyAkW+Bgmp6MuWTce1jMG-ug1b-UqFVen_vVeKFiW5Fww@mail.gmail.com>
+Subject: Re: [PATCH v4 2/8] dt-bindings: ingenic: Add DT bindings for TCU clocks
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi PLL clock.
+Hi Paul,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/Makefile  |   1 +
- drivers/clk/actions/owl-pll.c | 194 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-pll.h |  92 ++++++++++++++++++++
- 3 files changed, 287 insertions(+)
- create mode 100644 drivers/clk/actions/owl-pll.c
- create mode 100644 drivers/clk/actions/owl-pll.h
+Two things:
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 53431aef6e9c..31b68eab9309 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -6,3 +6,4 @@ clk-owl-y			+= owl-mux.o
- clk-owl-y			+= owl-divider.o
- clk-owl-y			+= owl-factor.o
- clk-owl-y			+= owl-composite.o
-+clk-owl-y			+= owl-pll.o
-diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
-new file mode 100644
-index 000000000000..058e06d7099f
---- /dev/null
-+++ b/drivers/clk/actions/owl-pll.c
-@@ -0,0 +1,194 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL pll clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Sun, Mar 18, 2018 at 12:28 AM, Paul Cercueil <paul@crapouillou.net> wrote:
+> This header provides clock numbers for the ingenic,tcu
+> DT binding.
+
+I have tested the whole series on my Creator CI20 with success, using:
+
++ tcu@10002000 {
++ compatible = "ingenic,jz4780-tcu";
++ reg = <0x10002000 0x140>;
 +
-+#include <linux/clk-provider.h>
-+#include <linux/slab.h>
-+#include <linux/io.h>
-+#include <linux/delay.h>
-+
-+#include "owl-pll.h"
-+
-+static u32 owl_pll_calculate_mul(struct owl_pll_hw *pll_hw, unsigned long rate)
-+{
-+	u32 mul;
-+
-+	mul = DIV_ROUND_CLOSEST(rate, pll_hw->bfreq);
-+	if (mul < pll_hw->min_mul)
-+		mul = pll_hw->min_mul;
-+	else if (mul > pll_hw->max_mul)
-+		mul = pll_hw->max_mul;
-+
-+	return mul &= mul_mask(pll_hw);
-+}
-+
-+static unsigned long _get_table_rate(const struct clk_pll_table *table,
-+		unsigned int val)
-+{
-+	const struct clk_pll_table *clkt;
-+
-+	for (clkt = table; clkt->rate; clkt++)
-+		if (clkt->val == val)
-+			return clkt->rate;
-+
-+	return 0;
-+}
-+
-+static const struct clk_pll_table *_get_pll_table(
-+		const struct clk_pll_table *table, unsigned long rate)
-+{
-+	const struct clk_pll_table *clkt;
-+
-+	for (clkt = table; clkt->rate; clkt++) {
-+		if (clkt->rate == rate) {
-+			table = clkt;
-+			break;
-+		} else if (clkt->rate < rate)
-+			table = clkt;
-+	}
-+
-+	return table;
-+}
-+
-+static long owl_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct clk_pll_table *clkt;
-+	u32 mul;
-+
-+	if (pll_hw->table) {
-+		clkt = _get_pll_table(pll_hw->table, rate);
-+		return clkt->rate;
-+	}
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return pll_hw->bfreq;
-+
-+	mul = owl_pll_calculate_mul(pll_hw, rate);
-+
-+	return pll_hw->bfreq * mul;
-+}
-+
-+static unsigned long owl_pll_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	u32 val;
-+
-+	if (pll_hw->table) {
-+		regmap_read(common->regmap, pll_hw->reg, &val);
-+
-+		val = val >> pll_hw->shift;
-+		val &= mul_mask(pll_hw);
-+
-+		return _get_table_rate(pll_hw->table, val);
-+	}
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return pll_hw->bfreq;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &val);
-+
-+	val = val >> pll_hw->shift;
-+	val &= mul_mask(pll_hw);
-+
-+	return pll_hw->bfreq * val;
-+}
-+
-+static int owl_pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	u32 reg;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	return !!(reg & BIT(pll_hw->bit_idx));
-+}
-+
-+static void owl_pll_set(const struct owl_clk_common *common,
-+		       const struct owl_pll_hw *pll_hw, bool enable)
-+{
-+	u32 reg;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	if (enable)
-+		reg |= BIT(pll_hw->bit_idx);
-+	else
-+		reg &= ~BIT(pll_hw->bit_idx);
-+
-+	regmap_write(common->regmap, pll_hw->reg, reg);
-+}
-+
-+static int owl_pll_enable(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	const struct owl_clk_common *common = &pll->common;
-+
-+	owl_pll_set(common, &pll->pll_hw, true);
-+
-+	return 0;
-+}
-+
-+static void owl_pll_disable(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	const struct owl_clk_common *common = &pll->common;
-+
-+	owl_pll_set(common, &pll->pll_hw, false);
-+}
-+
-+static int owl_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	const struct clk_pll_table *clkt;
-+	u32 val, reg;
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return 0;
-+
-+	if (pll_hw->table) {
-+		clkt = _get_pll_table(pll_hw->table, rate);
-+		val = clkt->val;
-+	} else {
-+		val = owl_pll_calculate_mul(pll_hw, rate);
-+	}
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	reg &= ~mul_mask(pll_hw);
-+	reg |= val << pll_hw->shift;
-+
-+	regmap_write(common->regmap, pll_hw->reg, reg);
-+
-+	udelay(PLL_STABILITY_WAIT_US);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops owl_pll_ops = {
-+	.enable = owl_pll_enable,
-+	.disable = owl_pll_disable,
-+	.is_enabled = owl_pll_is_enabled,
-+	.round_rate = owl_pll_round_rate,
-+	.recalc_rate = owl_pll_recalc_rate,
-+	.set_rate = owl_pll_set_rate,
-+};
-diff --git a/drivers/clk/actions/owl-pll.h b/drivers/clk/actions/owl-pll.h
-new file mode 100644
-index 000000000000..0aae30abd5dc
---- /dev/null
-+++ b/drivers/clk/actions/owl-pll.h
-@@ -0,0 +1,92 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL pll clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_PLL_H_
-+#define _OWL_PLL_H_
-+
-+#include "owl-common.h"
-+
-+/* last entry should have rate = 0 */
-+struct clk_pll_table {
-+	unsigned int		val;
-+	unsigned long		rate;
-+};
-+
-+struct owl_pll_hw {
-+	u32			reg;
-+	u32			bfreq;
-+	u8			bit_idx;
-+	u8			shift;
-+	u8			width;
-+	u8			min_mul;
-+	u8			max_mul;
-+	const struct clk_pll_table *table;
-+};
-+
-+struct owl_pll {
-+	struct owl_pll_hw	pll_hw;
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,			\
-+		   _width, _min_mul, _max_mul, _table)			\
-+	{								\
-+		.reg		= _reg,					\
-+		.bfreq		= _bfreq,				\
-+		.bit_idx	= _bit_idx,				\
-+		.shift		= _shift,				\
-+		.width		= _width,				\
-+		.min_mul	= _min_mul,				\
-+		.max_mul	= _max_mul,				\
-+		.table		= _table,				\
-+	}
-+
-+#define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,	\
-+		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
-+	struct owl_pll _struct = {					\
-+		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
-+				     _width, _min_mul,			\
-+				     _max_mul, _table),			\
-+		.common = {						\
-+			.regmap = NULL,					\
-+			.hw.init = CLK_HW_INIT(_name,			\
-+					       _parent,			\
-+					       &owl_pll_ops,		\
-+					       _flags),			\
-+		},							\
-+	}
-+
-+#define OWL_PLL_NO_PARENT(_struct, _name, _reg, _bfreq, _bit_idx,	\
-+		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
-+	struct owl_pll _struct = {					\
-+		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
-+				     _width, _min_mul,			\
-+				     _max_mul, _table),			\
-+		.common = {						\
-+			.regmap = NULL,					\
-+			.hw.init = CLK_HW_INIT_NO_PARENT(_name,		\
-+					       &owl_pll_ops,		\
-+					       _flags),			\
-+		},							\
-+	}
-+
-+#define mul_mask(m)		((1 << ((m)->width)) - 1)
-+#define PLL_STABILITY_WAIT_US	(50)
-+
-+static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
-+{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_pll, common);
-+}
-+
-+extern const struct clk_ops owl_pll_ops;
-+
-+#endif /* _OWL_PLL_H_ */
--- 
-2.14.1
++ interrupt-parent = <&intc>;
++ interrupts = <27 26 25>;
++ };
+
+
+So:
+
+Tested-by: Mathieu Malaterre <malat@debian.org>
+
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  include/dt-bindings/clock/ingenic,tcu.h | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
+>
+>  v2: Use SPDX identifier for the license
+>  v3: No change
+>  v4: No change
+>
+> diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
+> new file mode 100644
+> index 000000000000..179815d7b3bb
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/ingenic,tcu.h
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * This header provides clock numbers for the ingenic,tcu DT binding.
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
+> +#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
+> +
+> +#define JZ4740_CLK_TIMER0      0
+> +#define JZ4740_CLK_TIMER1      1
+> +#define JZ4740_CLK_TIMER2      2
+> +#define JZ4740_CLK_TIMER3      3
+> +#define JZ4740_CLK_TIMER4      4
+> +#define JZ4740_CLK_TIMER5      5
+> +#define JZ4740_CLK_TIMER6      6
+> +#define JZ4740_CLK_TIMER7      7
+> +#define JZ4740_CLK_WDT         8
+> +#define JZ4740_CLK_LAST                JZ4740_CLK_WDT
+> +
+> +#define JZ4770_CLK_OST         9
+> +#define JZ4770_CLK_LAST                JZ4770_CLK_OST
+> +
+
+When working on JZ4780 support, I always struggle to read those kind
+of #define. Since this is a new patch would you mind changing
+s/JZ4740/JZ47XX/ in your header ?
+
+Thanks for your work on JZ !
+
+> +#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
+> --
+> 2.11.0
+>
+>
