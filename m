@@ -1,76 +1,30 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sun, 18 Mar 2018 07:52:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v2] clk: Add driver for the si544 clock generator chip
-Message-ID: <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
-References: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
+To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521168778-27236-14-git-send-email-david@lechnology.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+ David Lechner <david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-14-git-send-email-david@lechnology.com>
+Message-ID: <152156544934.183971.2623488146205018094@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v8 13/42] clk: davinci: Add platform information for TI DM355 PSC
+Date: Tue, 20 Mar 2018 10:04:09 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 15, 2018 at 12:50:08PM +0100, Mike Looijmans wrote:
-> This patch adds the driver and devicetree documentation for the
-> Silicon Labs SI544 clock generator chip. This is an I2C controlled
-> oscillator capable of generating clock signals ranging from 200kHz
-> to 1500MHz.
-> 
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+Quoting David Lechner (2018-03-15 19:52:29)
+> This adds platform-specific declarations for the PSC clocks on TI
+> DM355 based systems.
+> =
+
+> Signed-off-by: David Lechner <david@lechnology.com>
 > ---
-> v2: Add u64 cast to ls_div_bits calculation loop
->     When ls_div_bits is non-zero, the hs_div must always be even
-> 
->  .../devicetree/bindings/clock/silabs,si544.txt     |  25 ++
->  drivers/clk/Kconfig                                |  10 +
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/clk-si544.c                            | 422 +++++++++++++++++++++
->  4 files changed, 458 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/silabs,si544.txt
->  create mode 100644 drivers/clk/clk-si544.c
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.txt b/Documentation/devicetree/bindings/clock/silabs,si544.txt
-> new file mode 100644
-> index 0000000..eec1787
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/silabs,si544.txt
-> @@ -0,0 +1,25 @@
-> +Binding for Silicon Labs 544 programmable I2C clock generator.
-> +
-> +Reference
-> +This binding uses the common clock binding[1]. Details about the device can be
-> +found in the datasheet[2].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +[2] Si544 datasheet
-> +    https://www.silabs.com/documents/public/data-sheets/si544-datasheet.pdf
-> +
-> +Required properties:
-> + - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c" according
-> +               to the speed grade of the chip.
-> + - reg: I2C device address.
-> + - #clock-cells: From common clock bindings: Shall be 0.
-> +
-> +Optional properties:
-> + - clock-output-names: From common clock bindings. Recommended to be "si544".
 
-What's the point if there is only 1 clock output?
-
-> +
-> +Example:
-> +	si544: clock-generator@55 {
-
-clock-controller@55 is the standard node name.
-
-> +		reg = <0x55>;
-> +		#clock-cells = <0>;
-> +		compatible = "silabs,si544b";
-> +	};
-
-Otherwise, for the binding:
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
