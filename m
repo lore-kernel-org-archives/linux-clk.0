@@ -1,55 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-bn3nam01on0052.outbound.protection.outlook.com ([104.47.33.52]:63724
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753256AbeCRDRV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 17 Mar 2018 23:17:21 -0400
-From: Anson Huang <Anson.Huang@nxp.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-        <fabio.estevam@nxp.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <shengjiu.wang@nxp.com>
-CC: <Linux-imx@nxp.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz clock source
-Date: Sun, 18 Mar 2018 11:14:13 +0800
-Message-ID: <1521342853-2941-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1521342853-2941-1-git-send-email-Anson.Huang@nxp.com>
-References: <1521342853-2941-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <nikita.yoush@cogentembedded.com>
+Return-Path: <nikita.yoush@cogentembedded.com>
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH] clk: cs2000: set pm_ops in hibernate-compatible way
+Date: Tue, 20 Mar 2018 11:33:23 +0300
+Message-Id: <20180320083323.23289-1-nikita.yoush@cogentembedded.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On i.MX6SX SabreAuto board, there is external 24MHz clock
-source for analog clock2, add this clock source to clock tree.
+Use SET_LATE_SYSTEM_SLEEP_PM_OPS() macro instead of direct assignment to
+.resume_early field.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+This fixes initialization of CS2000 in restore from hibernation in case
+of kernel used to load image did not initialize CS2000 while kernel
+being restored had CS2000 initialized.
+
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 ---
- arch/arm/boot/dts/imx6sx-sabreauto.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/clk-cs2000-cp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-index 72da5ac..83f7cac 100644
---- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-+++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-@@ -18,6 +18,14 @@
- 		reg = <0x80000000 0x80000000>;
- 	};
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index e8ea81c30f0c..c58019750b7e 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -549,7 +549,7 @@ static int cs2000_resume(struct device *dev)
+ }
  
-+	clocks {
-+		codec_osc: anaclk2 {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <24576000>;
-+		};
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
+ static const struct dev_pm_ops cs2000_pm_ops = {
+-	.resume_early	= cs2000_resume,
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(NULL, cs2000_resume)
+ };
+ 
+ static struct i2c_driver cs2000_driver = {
 -- 
-2.7.4
-
+2.11.0
