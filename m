@@ -1,52 +1,94 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 1 Mar 2018 15:13:13 -0600
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 09/42] dt-bindings: clock: New bindings for TI Davinci
- PSC
-Message-ID: <20180301211313.tahm4kjpma6jsywz@rob-hp-laptop>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <1519071723-31790-10-git-send-email-david@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:51102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751320AbeCTUB4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Mar 2018 16:01:56 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1519071723-31790-10-git-send-email-david@lechnology.com>
+To: ilialin@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <015201d3c056$658ff510$30afdf30$@codeaurora.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
+        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
+        nicolas.dechesne@linaro.org, celster@codeaurora.org
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-4-git-send-email-ilialin@codeaurora.org>
+ <152148100496.242365.3846617702949655708@swboyd.mtv.corp.google.com>
+ <015201d3c056$658ff510$30afdf30$@codeaurora.org>
+Message-ID: <152157611468.125118.11602572683762995667@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH v3 03/10] clk: qcom: Add CPU clock driver for msm8996
+Date: Tue, 20 Mar 2018 13:01:54 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 19, 2018 at 02:21:30PM -0600, David Lechner wrote:
-> This adds a new binding for the Power Sleep Controller (PSC) for the
-> mach-davinci family of processors.
+Quoting ilialin@codeaurora.org (2018-03-20 07:18:57)
+> > From: Stephen Boyd <sboyd@kernel.org>
+> > 
+> > > +       struct clk_regmap *clkr = to_clk_regmap(hw);
+> > > +       struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
+> > > +       unsigned int mask = GENMASK(cpuclk->width + cpuclk->shift - 1,
+> > > +                                   cpuclk->shift);
+> > > +
+> > > +       val = index;
+> > > +       val <<= cpuclk->shift;
+> > > +
+> > > +       return regmap_update_bits(clkr->regmap, cpuclk->reg, mask,
+> > > +val); }
+> > > +
+> > > +static int
+> > > +clk_cpu_8996_mux_determine_rate(struct clk_hw *hw, struct
+> > > +clk_rate_request *req) {
+> > > +       struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
+> > > +       struct clk_hw *parent = cpuclk->pll;
+> > > +
+> > > +       if (!cpuclk->pll)
+> > > +               return -EINVAL;
+> > 
+> > Does this happen?
 > 
-> Note: Although TI Keystone has a very similar PSC, we are not using the
-> existing bindings. Keystone is using a legacy one-node-per-clock binding
-> (actually two nodes if you count the separate reset binding for the same
-> IP block). Also, some davinci LPSCs have quirks that aren't handled by
-> the keystone bindings, so we would be adding one compatible string per
-> clock with quirks instead of just a new compatible string for each
-> controller.
+> On successful probe it shouldn't. May I omit pointer checks in this case? Future maintenance ma y change the flow.
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
-> 
-> v7 changes:
-> - Fixed clock-names property typo
-> - Added #power-domain-cells property
-> 
-> v6 changes:
-> - added clocks and clock-names properties
-> - expanded examples
-> 
-> 
->  .../devicetree/bindings/clock/ti/davinci/psc.txt   | 71 ++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/psc.txt
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Yes please omit useless checks.
+
+> > 
+> > > +
+> > > +       req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
+> > > +       req->best_parent_hw = parent;
+> > 
+> > Is the parent index always the same? Perhaps just call
+> > clk_hw_get_parent_by_index() then instead of adding a pointer to the
+> > clk_cpu_8996_mux.
+> > 
+> 
+> > 
+> > > +       },
+> > > +};
+> > > +
+> > > +static const struct regmap_config cpu_msm8996_regmap_config = {
+> > > +       .reg_bits               = 32,
+> > > +       .reg_stride             = 4,
+> > > +       .val_bits               = 32,
+> > > +       .max_register           = 0x80210,
+> > > +       .fast_io                = true,
+> > > +       .val_format_endian      = REGMAP_ENDIAN_LITTLE,
+> > > +};
+> > > +
+> > > +static const struct of_device_id match_table[] = {
+> > 
+> > Move this next to driver structure and give it a more specific name.
+> 
+> Will be changed in the next spin.
+> 
+> > 
+> > > +       { .compatible = "qcom-msm8996-apcc" },
+> > 
+> > Bad compatible? Should be qcom,msm8996-apcc?
+> 
+> The naming is per Rob Herring's requirement.
+> 
+
+Hmm, maybe Rob made a typo?
