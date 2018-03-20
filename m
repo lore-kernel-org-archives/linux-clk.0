@@ -1,119 +1,68 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:41794 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751771AbeCTGi6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Mar 2018 02:38:58 -0400
+Message-ID: <1521527932.21199.4.camel@mtkswgap22>
+Subject: Re: [PATCH v4 3/6] clk: mediatek: add audsys support for MT2701
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        "Garlic Tseng" <garlic.tseng@mediatek.com>
+Date: Tue, 20 Mar 2018 14:38:52 +0800
+In-Reply-To: <152149148431.242365.4625152577833480987@swboyd.mtv.corp.google.com>
+References: <cover.1520327262.git.ryder.lee@mediatek.com>
+         <f1445b95864af04f1f90d3be96d0a485d1bb4560.1520327262.git.ryder.lee@mediatek.com>
+         <152149148431.242365.4625152577833480987@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
- mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
- devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
- daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
- <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
-Message-ID: <152153016749.254778.17294370002590376536@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 12/12] clk: actions: Add S900 SoC clock support
-Date: Tue, 20 Mar 2018 00:16:07 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Manivannan Sadhasivam (2018-03-17 03:09:52)
-> diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s90=
-0.c
-> new file mode 100644
-> index 000000000000..5a9b1e3f3571
-> --- /dev/null
-> +++ b/drivers/clk/actions/owl-s900.c
-> @@ -0,0 +1,690 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// OWL S900 SoC clock driver
-> +//
-> +// Copyright (c) 2014 Actions Semi Inc.
-> +// Author: David Liu <liuwei@actions-semi.com>
-> +//
-> +// Copyright (c) 2018 Linaro Ltd.
-> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
+On Mon, 2018-03-19 at 13:31 -0700, Stephen Boyd wrote:
+> Quoting Ryder Lee (2018-03-06 01:09:28)
+> > +
+> > +static const struct of_device_id of_match_clk_mt2701_aud[] = {
+> > +       { .compatible = "mediatek,mt2701-audsys", },
+> > +       {}
+> > +};
+> > +
+> > +static int clk_mt2701_aud_probe(struct platform_device *pdev)
+> > +{
+> > +       struct clk_onecell_data *clk_data;
+> > +       struct device_node *node = pdev->dev.of_node;
+> > +       int r;
+> > +
+> > +       clk_data = mtk_alloc_clk_data(CLK_AUD_NR);
+> > +
+> > +       mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
+> > +                              clk_data);
+> > +
+> > +       r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+> > +       if (r) {
+> > +               dev_err(&pdev->dev,
+> > +                       "could not register clock provider: %s: %d\n",
+> > +                       pdev->name, r);
+> > +
+> > +               return r;
+> > +       }
+> 
+> This fails to remove the clk provider when devm_of_platform_populate()
+> returns an error.
+> 
+> > +
+> > +       return devm_of_platform_populate(&pdev->dev);
+> > +}
 
-Is this include used?
+I've sent a new one to fix it.
 
-> +
-> +#include "owl-common.h"
-> +#include "owl-composite.h"
-> +#include "owl-divider.h"
-> +#include "owl-factor.h"
-> +#include "owl-fixed-factor.h"
-> +#include "owl-gate.h"
-> +#include "owl-mux.h"
-> +#include "owl-pll.h"
-> +#include "owl-s900.h"
-> +
-> +#include <dt-bindings/clock/actions,s900-cmu.h>
-> +
-> +static struct clk_pll_table clk_audio_pll_table[] =3D {
-> +       {0, 45158400}, {1, 49152000},
-> +       {0, 0},
-> +};
-> +
-> +static struct clk_pll_table clk_edp_pll_table[] =3D {
-> +       {0, 810000000}, {1, 1350000000}, {2, 2700000000},
+Thanks
 
-Please put spaces around brackets.
-
-> +       {0, 0},
-> +};
-> +
-> +/* pll clocks */
-> +static OWL_PLL_NO_PARENT(core_pll_clk, "core_pll_clk", CMU_COREPLL, 2400=
-0000, 9, 0, 8, 5, 107, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(dev_pll_clk, "dev_pll_clk", CMU_DEVPLL, 6000000=
-, 8, 0, 8, 20, 180, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(ddr_pll_clk, "ddr_pll_clk", CMU_DDRPLL, 2400000=
-0, 8, 0, 8, 5, 45, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(nand_pll_clk, "nand_pll_clk", CMU_NANDPLL, 6000=
-000, 8, 0, 8, 4, 100, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(display_pll_clk, "display_pll_clk", CMU_DISPLAY=
-PLL, 6000000, 8, 0, 8, 20, 180, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(assist_pll_clk, "assist_pll_clk", CMU_ASSISTPLL=
-, 500000000, 0, 0, 0, 0, 0, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT(audio_pll_clk, "audio_pll_clk", CMU_AUDIOPLL, 0=
-, 4, 0, 1, 0, 0, clk_audio_pll_table, CLK_IGNORE_UNUSED);
-> +static OWL_PLL(edp_pll_clk, "edp_pll_clk", "edp24M_clk", CMU_EDPCLK, 0, =
-9, 0, 2, 0, 0, clk_edp_pll_table, CLK_IGNORE_UNUSED);
-> +
-> +static const char *cpu_clk_mux_p[] =3D { "losc", "hosc", "core_pll_clk",=
- };
-> +static const char *dev_clk_p[] =3D { "hosc", "dev_pll_clk", };
-> diff --git a/drivers/clk/actions/owl-s900.h b/drivers/clk/actions/owl-s90=
-0.h
-> new file mode 100644
-> index 000000000000..d0c10594e518
-> --- /dev/null
-> +++ b/drivers/clk/actions/owl-s900.h
-> @@ -0,0 +1,61 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// OWL S900 SoC clock driver
-> +//
-> +// Copyright (c) 2014 Actions Semi Inc.
-> +// Author: David Liu <liuwei@actions-semi.com>
-> +//
-> +// Copyright (c) 2018 Linaro Ltd.
-> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +
-> +#ifndef _OWL_S900_H_
-> +#define _OWL_S900_H_
-
-I'd prefer this file contents go inside the one C file that uses it so
-we can quickly reference the offsets without going to another file.
-
-> +
-> +#define CMU_COREPLL            (0x0000)
-> +#define CMU_DEVPLL             (0x0004)
-> +#define CMU_DDRPLL             (0x0008)
