@@ -1,112 +1,30 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Icenowy Zheng <icenowy@aosc.io>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH net-next 01/12] clk: sunxi-ng: r40: rewrite init code to a platform driver
-Date: Sat, 17 Mar 2018 17:28:46 +0800
-Message-Id: <20180317092857.4396-2-wens@csie.org>
-In-Reply-To: <20180317092857.4396-1-wens@csie.org>
-References: <20180317092857.4396-1-wens@csie.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521168778-27236-17-git-send-email-david@lechnology.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+ David Lechner <david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-17-git-send-email-david@lechnology.com>
+Message-ID: <152156545843.183971.17801508459755974309@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v8 16/42] clk: davinci: Add platform information for TI DM646x PSC
+Date: Tue, 20 Mar 2018 10:04:18 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.io>
+Quoting David Lechner (2018-03-15 19:52:32)
+> This adds platform-specific declarations for the PSC clocks on TI
+> DM646x based systems.
+> =
 
-As we need to register a regmap on the R40 CCU, there needs to be a
-device structure bound to the CCU device node.
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
 
-Rewrite the R40 CCU driver initial code to make it a proper platform
-driver, thus we will have a platform device bound to it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 39 ++++++++++++++++++++++++++----------
- 1 file changed, 28 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index 933f2e68f42a..c3aa839a453d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -12,7 +12,8 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
- 
- #include "ccu_common.h"
- #include "ccu_reset.h"
-@@ -1250,17 +1251,17 @@ static struct ccu_mux_nb sun8i_r40_cpu_nb = {
- 	.bypass_index	= 1, /* index of 24 MHz oscillator */
- };
- 
--static void __init sun8i_r40_ccu_setup(struct device_node *node)
-+static int sun8i_r40_ccu_probe(struct platform_device *pdev)
- {
-+	struct resource *res;
- 	void __iomem *reg;
- 	u32 val;
-+	int ret;
- 
--	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
--	if (IS_ERR(reg)) {
--		pr_err("%s: Could not map the clock registers\n",
--		       of_node_full_name(node));
--		return;
--	}
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	reg = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
- 
- 	/* Force the PLL-Audio-1x divider to 4 */
- 	val = readl(reg + SUN8I_R40_PLL_AUDIO_REG);
-@@ -1277,7 +1278,9 @@ static void __init sun8i_r40_ccu_setup(struct device_node *node)
- 	val &= ~GENMASK(25, 20);
- 	writel(val, reg + SUN8I_R40_USB_CLK_REG);
- 
--	sunxi_ccu_probe(node, reg, &sun8i_r40_ccu_desc);
-+	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_r40_ccu_desc);
-+	if (ret)
-+		return ret;
- 
- 	/* Gate then ungate PLL CPU after any rate changes */
- 	ccu_pll_notifier_register(&sun8i_r40_pll_cpu_nb);
-@@ -1285,6 +1288,20 @@ static void __init sun8i_r40_ccu_setup(struct device_node *node)
- 	/* Reparent CPU during PLL CPU rate changes */
- 	ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
- 				  &sun8i_r40_cpu_nb);
-+
-+	return 0;
- }
--CLK_OF_DECLARE(sun8i_r40_ccu, "allwinner,sun8i-r40-ccu",
--	       sun8i_r40_ccu_setup);
-+
-+static const struct of_device_id sun8i_r40_ccu_ids[] = {
-+	{ .compatible = "allwinner,sun8i-r40-ccu" },
-+	{ }
-+};
-+
-+static struct platform_driver sun8i_r40_ccu_driver = {
-+	.probe	= sun8i_r40_ccu_probe,
-+	.driver	= {
-+		.name	= "sun8i-r40-ccu",
-+		.of_match_table	= sun8i_r40_ccu_ids,
-+	},
-+};
-+builtin_platform_driver(sun8i_r40_ccu_driver);
--- 
-2.16.2
+Applied to clk-next
