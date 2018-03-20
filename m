@@ -1,92 +1,31 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 4/7] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-Date: Fri, 23 Mar 2018 22:38:13 +0800
-Message-ID: <20180323143816.200573-5-yixun.lan@amlogic.com>
-In-Reply-To: <20180323143816.200573-1-yixun.lan@amlogic.com>
-References: <20180323143816.200573-1-yixun.lan@amlogic.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521168778-27236-15-git-send-email-david@lechnology.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+ David Lechner <david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-15-git-send-email-david@lechnology.com>
+Message-ID: <152156545286.183971.16725352981158792164@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v8 14/42] clk: davinci: Add platform information for TI DM365 PSC
+Date: Tue, 20 Mar 2018 10:04:12 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Add dt-bindings headers for the Meson-AXG's AO clock and
-reset controller.
+Quoting David Lechner (2018-03-15 19:52:30)
+> This adds platform-specific declarations for the PSC clocks on TI
+> DM365 based systems.
+> =
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
- include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
- create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+> Signed-off-by: David Lechner <david@lechnology.com>
+> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+> ---
 
-diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
-new file mode 100644
-index 000000000000..61955016a55b
---- /dev/null
-+++ b/include/dt-bindings/clock/axg-aoclkc.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define CLKID_AO_REMOTE		0
-+#define CLKID_AO_I2C_MASTER	1
-+#define CLKID_AO_I2C_SLAVE	2
-+#define CLKID_AO_UART1		3
-+#define CLKID_AO_UART2		4
-+#define CLKID_AO_IR_BLASTER	5
-+#define CLKID_AO_SAR_ADC	6
-+#define CLKID_AO_CLK81		7
-+#define CLKID_AO_SAR_ADC_SEL	8
-+#define CLKID_AO_SAR_ADC_DIV	9
-+#define CLKID_AO_SAR_ADC_CLK	10
-+#define CLKID_AO_ALT_XTAL	11
-+
-+#endif
-diff --git a/include/dt-bindings/reset/axg-aoclkc.h b/include/dt-bindings/reset/axg-aoclkc.h
-new file mode 100644
-index 000000000000..d342c0b6b2a7
---- /dev/null
-+++ b/include/dt-bindings/reset/axg-aoclkc.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define RESET_AO_REMOTE		0
-+#define RESET_AO_I2C_MASTER	1
-+#define RESET_AO_I2C_SLAVE	2
-+#define RESET_AO_UART1		3
-+#define RESET_AO_UART2		4
-+#define RESET_AO_IR_BLASTER	5
-+
-+#endif
--- 
-2.15.1
+Applied to clk-next
