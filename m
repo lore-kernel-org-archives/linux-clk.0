@@ -1,77 +1,33 @@
-Return-Path: <richard.genoud@gmail.com>
-Return-Path: <richard.genoud@gmail.com>
-From: Richard Genoud <richard.genoud@gmail.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>,
-	Ralph Sennhauser <ralph.sennhauser@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Richard Genoud <richard.genoud@gmail.com>
-Subject: [PATCH] clk: mvebu: armada-38x: add support for missing clocks
-Date: Thu,  8 Mar 2018 10:03:00 +0100
-Message-Id: <20180308090300.23544-1-richard.genoud@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:55958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751022AbeCTHZV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Mar 2018 03:25:21 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <004f07aef08148321c320ea09f8169982f73dd2b.1521514928.git.ryder.lee@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Garlic Tseng <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+References: <004f07aef08148321c320ea09f8169982f73dd2b.1521514928.git.ryder.lee@mediatek.com>
+Message-ID: <152153072063.254778.14980520624689416670@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/2] clk: mediatek: add devm_of_platform_populate() for MT7622
+ audsys
+Date: Tue, 20 Mar 2018 00:25:20 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
-or 1333MHz (industrial).
+Quoting Ryder Lee (2018-03-19 20:16:51)
+> Add devm_of_platform_populate() to populate devices which are children
+> of the root node.
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
 
-They have also some dip-switches to select a different clock (666, 800,
-1066, 1200).
+Applied to clk-next
 
-The funny thing is that the recovery button is on the MPP34 fq selector.
-So, when booting an industrial board with this button down, the frequency
-666MHz is selected (and the kernel didn't boot).
-
-This patch add all the missing clocks.
-
-The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
-
-Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
----
- drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
-index 394aa6f03f01..9ff4ea63932d 100644
---- a/drivers/clk/mvebu/armada-38x.c
-+++ b/drivers/clk/mvebu/armada-38x.c
-@@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
- }
- 
- static const u32 armada_38x_cpu_frequencies[] __initconst = {
--	0, 0, 0, 0,
--	1066 * 1000 * 1000, 0, 0, 0,
-+	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
-+	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
- 	1332 * 1000 * 1000, 0, 0, 0,
- 	1600 * 1000 * 1000, 0, 0, 0,
--	1866 * 1000 * 1000,
-+	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
- };
- 
- static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
-@@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
- };
- 
- static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
--	{0, 1}, {0, 1}, {0, 1}, {0, 1},
--	{1, 2}, {0, 1}, {0, 1}, {0, 1},
--	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-+	{1, 2}, {0, 1}, {1, 2}, {0, 1},
-+	{1, 2}, {0, 1}, {1, 2}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-+	{1, 2}, {0, 1}, {0, 1}, {1, 2},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
-@@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
- 	{1, 2}, {0, 1}, {0, 1}, {0, 1},
--	{1, 2}, {0, 1}, {0, 1}, {0, 1},
-+	{1, 2}, {0, 1}, {0, 1}, {7, 15},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
- 	{0, 1}, {0, 1}, {0, 1}, {0, 1},
