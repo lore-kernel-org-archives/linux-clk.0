@@ -1,535 +1,268 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 18/42] clk: davinci: New driver for TI DA8XX CFGCHIP clocks
-Date: Thu, 15 Mar 2018 21:52:34 -0500
-Message-Id: <1521168778-27236-19-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
+To: Paul Cercueil <paul@crapouillou.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-doc@vger.kernel.org
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-5-paul@crapouillou.net>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Message-ID: <b853fabf-4812-cefc-dd8b-f9ab596e1a36@arm.com>
+Date: Tue, 20 Mar 2018 08:52:04 +0000
+MIME-Version: 1.0
+In-Reply-To: <20180317232901.14129-5-paul@crapouillou.net>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds a new driver for the gate and multiplexer clocks in the
-CFGCHIPn syscon registers on TI DA8XX-type SoCs.
+On 17/03/18 23:28, Paul Cercueil wrote:
+> Add documentation about how to properly use the Ingenic TCU
+> (Timer/Counter Unit) drivers from devicetree.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  .../bindings/clock/ingenic,tcu-clocks.txt          | 42 ++++++++++++++++
+>  .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 +++++++++++++++
+>  .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56 ++++++++++++++++++++++
+>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 ++++++++++++++++
+>  4 files changed, 178 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> 
+>  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+>  added content.
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+> new file mode 100644
+> index 000000000000..471d27078599
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+> @@ -0,0 +1,42 @@
+> +Ingenic SoC TCU binding
+> +
+> +The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It features 8
+> +channels, each one having its own clock, that can be started and stopped,
+> +reparented, and reclocked.
+> +
+> +Required properties:
+> +- compatible : One of:
+> +  * ingenic,jz4740-tcu-clocks,
+> +  * ingenic,jz4770-tcu-clocks,
+> +  * ingenic,jz4780-tcu-clocks.
+> +- clocks : List of phandle & clock specifiers for clocks external to the TCU.
+> +  The "pclk", "rtc" and "ext" clocks should be provided.
+> +- clock-names : List of name strings for the external clocks.
+> +- #clock-cells: Should be 1.
+> +  Clock consumers specify this argument to identify a clock. The valid values
+> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_clk: clocks@10 {
+> +			compatible = "ingenic,jz4740-tcu-clocks";
+> +			reg = <0x10 0xff0>;
+> +
+> +			clocks = <&ext>, <&rtc>, <&pclk>;
+> +			clock-names = "ext", "rtc", "pclk";
+> +
+> +			#clock-cells = <1>;
+> +		};
+> +	};
+> +};
+> +
+> +For information about the top-level "ingenic,tcu" compatible node and other
+> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..7f3af2da77cd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> @@ -0,0 +1,39 @@
+> +Ingenic SoCs Timer/Counter Unit Interrupt Controller
+> +
+> +Required properties:
+> +
+> +- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings are:
+> +  * ingenic,jz4740-tcu-intc
+> +  * ingenic,jz4770-tcu-intc
+> +  * ingenic,jz4780-tcu-intc
+> +- interrupt-controller : Identifies the node as an interrupt controller
+> +- #interrupt-cells : Specifies the number of cells needed to encode an
+> +  interrupt source. The value shall be 1.
+> +- interrupt-parent : phandle of the interrupt controller.
+> +- interrupts : Specifies the interrupt the controller is connected to.
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_irq: interrupt-controller@20 {
+> +			compatible = "ingenic,jz4740-tcu-intc";
+> +			reg = <0x20 0x20>;
+> +
+> +			interrupt-controller;
+> +			#interrupt-cells = <1>;
+> +
+> +			interrupt-parent = <&intc>;
+> +			interrupts = <15>;
+> +		};
+> +	};
+> +};
+> +
+> +For information about the top-level "ingenic,tcu" compatible node and other
+> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+> diff --git a/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..5742c3f21550
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+> @@ -0,0 +1,56 @@
+> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
+> +----------------------------------------------------------
+> +
+> +For a description of the TCU hardware and drivers, have a look at
+> +Documentation/mips/ingenic-tcu.txt.
+> +
+> +The TCU is implemented as a parent node, whose role is to create the
+> +regmap, and child nodes for the various drivers listed in the aforementioned
+> +document.
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+You're describing the Linux driver here. Please stick to a description
+of the HW.
 
-v8 changes:
-- register clkdev lookup for async1 and async3
+> +
+> +Required properties:
+> +
+> +- compatible: must be "ingenic,tcu", "simple-mfd", "syscon";
 
-v7 changes:
-- convert to platform device
+Without any provision for an SoC version? Seems bold...
 
-v6 changes:
-- added DIV4.5 and ASYNC1 clocks
-- refactored code to be more generic
-- added functions for registering clocks from board files (no longer device
-  tree only)
-- use pr_fmt macro
+> +- reg: Should be the offset/length value corresponding to the TCU registers
+> +- #address-cells: Should be <1>;
+> +- #size-cells: Should be <1>;
+> +- ranges: Should be one range for the full TCU registers area
+> +
+> +Accepted children nodes:
+> +- Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> +- Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+> +- Documentation/devicetree/bindings/timer/ingenic,tcu.txt
 
- drivers/clk/davinci/Makefile                    |   2 +
- drivers/clk/davinci/da8xx-cfgchip.c             | 439 ++++++++++++++++++++++++
- include/linux/platform_data/clk-da8xx-cfgchip.h |  21 ++
- 3 files changed, 462 insertions(+)
- create mode 100644 drivers/clk/davinci/da8xx-cfgchip.c
- create mode 100644 include/linux/platform_data/clk-da8xx-cfgchip.h
+It is slightly confusing that you have 3 files named ingenic,tcu.txt.
+How about ingenic,tcu-intc.txt and ingenic,tcu-timer.txt (amending the
+binding for the timer)?
 
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 6c388d4..11178b7 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- ifeq ($(CONFIG_COMMON_CLK), y)
-+obj-$(CONFIG_ARCH_DAVINCI_DA8XX)	+= da8xx-cfgchip.o
-+
- obj-y += pll.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
- obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
-diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-new file mode 100644
-index 0000000..f0bdfea
---- /dev/null
-+++ b/drivers/clk/davinci/da8xx-cfgchip.c
-@@ -0,0 +1,439 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Clock driver for DA8xx/AM17xx/AM18xx/OMAP-L13x CFGCHIP
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/init.h>
-+#include <linux/mfd/da8xx-cfgchip.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of_device.h>
-+#include <linux/of.h>
-+#include <linux/platform_data/clk-da8xx-cfgchip.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+/* --- Gate clocks --- */
-+
-+#define DA8XX_GATE_CLOCK_IS_DIV4P5	BIT(1)
-+
-+struct da8xx_cfgchip_gate_clk_info {
-+	const char *name;
-+	u32 cfgchip;
-+	u32 bit;
-+	u32 flags;
-+};
-+
-+struct da8xx_cfgchip_gate_clk {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u32 reg;
-+	u32 mask;
-+};
-+
-+#define to_da8xx_cfgchip_gate_clk(_hw) \
-+	container_of((_hw), struct da8xx_cfgchip_gate_clk, hw)
-+
-+static int da8xx_cfgchip_gate_clk_enable(struct clk_hw *hw)
-+{
-+	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
-+
-+	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, clk->mask);
-+}
-+
-+static void da8xx_cfgchip_gate_clk_disable(struct clk_hw *hw)
-+{
-+	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
-+
-+	regmap_write_bits(clk->regmap, clk->reg, clk->mask, 0);
-+}
-+
-+static int da8xx_cfgchip_gate_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct da8xx_cfgchip_gate_clk *clk = to_da8xx_cfgchip_gate_clk(hw);
-+	unsigned int val;
-+
-+	regmap_read(clk->regmap, clk->reg, &val);
-+
-+	return !!(val & clk->mask);
-+}
-+
-+static unsigned long da8xx_cfgchip_div4p5_recalc_rate(struct clk_hw *hw,
-+						      unsigned long parent_rate)
-+{
-+	/* this clock divides by 4.5 */
-+	return parent_rate * 2 / 9;
-+}
-+
-+static const struct clk_ops da8xx_cfgchip_gate_clk_ops = {
-+	.enable		= da8xx_cfgchip_gate_clk_enable,
-+	.disable	= da8xx_cfgchip_gate_clk_disable,
-+	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
-+};
-+
-+static const struct clk_ops da8xx_cfgchip_div4p5_clk_ops = {
-+	.enable		= da8xx_cfgchip_gate_clk_enable,
-+	.disable	= da8xx_cfgchip_gate_clk_disable,
-+	.is_enabled	= da8xx_cfgchip_gate_clk_is_enabled,
-+	.recalc_rate	= da8xx_cfgchip_div4p5_recalc_rate,
-+};
-+
-+static struct da8xx_cfgchip_gate_clk * __init
-+da8xx_cfgchip_gate_clk_register(struct device *dev,
-+				const struct da8xx_cfgchip_gate_clk_info *info,
-+				struct regmap *regmap)
-+{
-+	struct clk *parent;
-+	const char *parent_name;
-+	struct da8xx_cfgchip_gate_clk *gate;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	parent = devm_clk_get(dev, NULL);
-+	if (IS_ERR(parent))
-+		return ERR_CAST(parent);
-+
-+	parent_name = __clk_get_name(parent);
-+
-+	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = info->name;
-+	if (info->flags & DA8XX_GATE_CLOCK_IS_DIV4P5)
-+		init.ops = &da8xx_cfgchip_div4p5_clk_ops;
-+	else
-+		init.ops = &da8xx_cfgchip_gate_clk_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = 0;
-+
-+	gate->hw.init = &init;
-+	gate->regmap = regmap;
-+	gate->reg = info->cfgchip;
-+	gate->mask = info->bit;
-+
-+	ret = devm_clk_hw_register(dev, &gate->hw);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
-+	return gate;
-+}
-+
-+static const struct da8xx_cfgchip_gate_clk_info da8xx_tbclksync_info __initconst = {
-+	.name = "ehrpwm_tbclk",
-+	.cfgchip = CFGCHIP(1),
-+	.bit = CFGCHIP1_TBCLKSYNC,
-+};
-+
-+static int __init da8xx_cfgchip_register_tbclk(struct device *dev,
-+					       struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_gate_clk *gate;
-+
-+	gate = da8xx_cfgchip_gate_clk_register(dev, &da8xx_tbclksync_info,
-+					       regmap);
-+	if (IS_ERR(gate))
-+		return PTR_ERR(gate);
-+
-+	clk_hw_register_clkdev(&gate->hw, "tbclk", "ehrpwm.0");
-+	clk_hw_register_clkdev(&gate->hw, "tbclk", "ehrpwm.1");
-+
-+	return 0;
-+}
-+
-+static const struct da8xx_cfgchip_gate_clk_info da8xx_div4p5ena_info __initconst = {
-+	.name = "div4.5",
-+	.cfgchip = CFGCHIP(3),
-+	.bit = CFGCHIP3_DIV45PENA,
-+	.flags = DA8XX_GATE_CLOCK_IS_DIV4P5,
-+};
-+
-+static int __init da8xx_cfgchip_register_div4p5(struct device *dev,
-+						struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_gate_clk *gate;
-+
-+	gate = da8xx_cfgchip_gate_clk_register(dev, &da8xx_div4p5ena_info, regmap);
-+	if (IS_ERR(gate))
-+		return PTR_ERR(gate);
-+
-+	return 0;
-+}
-+
-+static int __init
-+of_da8xx_cfgchip_gate_clk_init(struct device *dev,
-+			       const struct da8xx_cfgchip_gate_clk_info *info,
-+			       struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_gate_clk *gate;
-+
-+	gate = da8xx_cfgchip_gate_clk_register(dev, info, regmap);
-+	if (IS_ERR(gate))
-+		return PTR_ERR(gate);
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, gate);
-+}
-+
-+static int __init of_da8xx_tbclksync_init(struct device *dev,
-+					  struct regmap *regmap)
-+{
-+	return of_da8xx_cfgchip_gate_clk_init(dev, &da8xx_tbclksync_info, regmap);
-+}
-+
-+static int __init of_da8xx_div4p5ena_init(struct device *dev,
-+					  struct regmap *regmap)
-+{
-+	return of_da8xx_cfgchip_gate_clk_init(dev, &da8xx_div4p5ena_info, regmap);
-+}
-+
-+/* --- MUX clocks --- */
-+
-+struct da8xx_cfgchip_mux_clk_info {
-+	const char *name;
-+	const char *parent0;
-+	const char *parent1;
-+	u32 cfgchip;
-+	u32 bit;
-+};
-+
-+struct da8xx_cfgchip_mux_clk {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u32 reg;
-+	u32 mask;
-+};
-+
-+#define to_da8xx_cfgchip_mux_clk(_hw) \
-+	container_of((_hw), struct da8xx_cfgchip_mux_clk, hw)
-+
-+static int da8xx_cfgchip_mux_clk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
-+	unsigned int val = index ? clk->mask : 0;
-+
-+	return regmap_write_bits(clk->regmap, clk->reg, clk->mask, val);
-+}
-+
-+static u8 da8xx_cfgchip_mux_clk_get_parent(struct clk_hw *hw)
-+{
-+	struct da8xx_cfgchip_mux_clk *clk = to_da8xx_cfgchip_mux_clk(hw);
-+	unsigned int val;
-+
-+	regmap_read(clk->regmap, clk->reg, &val);
-+
-+	return (val & clk->mask) ? 1 : 0;
-+}
-+
-+static const struct clk_ops da8xx_cfgchip_mux_clk_ops = {
-+	.set_parent	= da8xx_cfgchip_mux_clk_set_parent,
-+	.get_parent	= da8xx_cfgchip_mux_clk_get_parent,
-+};
-+
-+static struct da8xx_cfgchip_mux_clk * __init
-+da8xx_cfgchip_mux_clk_register(struct device *dev,
-+			       const struct da8xx_cfgchip_mux_clk_info *info,
-+			       struct regmap *regmap)
-+{
-+	const char * const parent_names[] = { info->parent0, info->parent1 };
-+	struct da8xx_cfgchip_mux_clk *mux;
-+	struct clk_init_data init;
-+	int ret;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = info->name;
-+	init.ops = &da8xx_cfgchip_mux_clk_ops;
-+	init.parent_names = parent_names;
-+	init.num_parents = 2;
-+	init.flags = 0;
-+
-+	mux->hw.init = &init;
-+	mux->regmap = regmap;
-+	mux->reg = info->cfgchip;
-+	mux->mask = info->bit;
-+
-+	ret = devm_clk_hw_register(dev, &mux->hw);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
-+	return mux;
-+}
-+
-+static const struct da8xx_cfgchip_mux_clk_info da850_async1_info __initconst = {
-+	.name = "async1",
-+	.parent0 = "pll0_sysclk3",
-+	.parent1 = "div4.5",
-+	.cfgchip = CFGCHIP(3),
-+	.bit = CFGCHIP3_EMA_CLKSRC,
-+};
-+
-+static int __init da8xx_cfgchip_register_async1(struct device *dev,
-+						struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_mux_clk *mux;
-+
-+	mux = da8xx_cfgchip_mux_clk_register(dev, &da850_async1_info, regmap);
-+	if (IS_ERR(mux))
-+		return PTR_ERR(mux);
-+
-+	clk_hw_register_clkdev(&mux->hw, "async1", "da850-psc0");
-+
-+	return 0;
-+}
-+
-+static const struct da8xx_cfgchip_mux_clk_info da850_async3_info __initconst = {
-+	.name = "async3",
-+	.parent0 = "pll0_sysclk2",
-+	.parent1 = "pll1_sysclk2",
-+	.cfgchip = CFGCHIP(3),
-+	.bit = CFGCHIP3_ASYNC3_CLKSRC,
-+};
-+
-+static int __init da850_cfgchip_register_async3(struct device *dev,
-+						struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_mux_clk *mux;
-+	struct clk_hw *parent;
-+
-+	mux = da8xx_cfgchip_mux_clk_register(dev, &da850_async3_info, regmap);
-+	if (IS_ERR(mux))
-+		return PTR_ERR(mux);
-+
-+	clk_hw_register_clkdev(&mux->hw, "async3", "da850-psc1");
-+
-+	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
-+	parent = clk_hw_get_parent_by_index(&mux->hw, 1);
-+	if (parent)
-+		clk_set_parent(mux->hw.clk, parent->clk);
-+	else
-+		dev_warn(dev, "Failed to find async3 parent clock\n");
-+
-+	return 0;
-+}
-+
-+static int __init
-+of_da8xx_cfgchip_init_mux_clock(struct device *dev,
-+				const struct da8xx_cfgchip_mux_clk_info *info,
-+				struct regmap *regmap)
-+{
-+	struct da8xx_cfgchip_mux_clk *mux;
-+
-+	mux = da8xx_cfgchip_mux_clk_register(dev, info, regmap);
-+	if (IS_ERR(mux))
-+		return PTR_ERR(mux);
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &mux->hw);
-+}
-+
-+static int __init of_da850_async1_init(struct device *dev, struct regmap *regmap)
-+{
-+	return of_da8xx_cfgchip_init_mux_clock(dev, &da850_async1_info, regmap);
-+}
-+
-+static int __init of_da850_async3_init(struct device *dev, struct regmap *regmap)
-+{
-+	return of_da8xx_cfgchip_init_mux_clock(dev, &da850_async3_info, regmap);
-+}
-+
-+/* --- platform device --- */
-+
-+static const struct of_device_id da8xx_cfgchip_of_match[] = {
-+	{
-+		.compatible = "ti,da830-tbclksync",
-+		.data = of_da8xx_tbclksync_init,
-+	},
-+	{
-+		.compatible = "ti,da830-div4p5ena",
-+		.data = of_da8xx_div4p5ena_init,
-+	},
-+	{
-+		.compatible = "ti,da850-async1-clksrc",
-+		.data = of_da850_async1_init,
-+	},
-+	{
-+		.compatible = "ti,da850-async3-clksrc",
-+		.data = of_da850_async3_init,
-+	},
-+	{ }
-+};
-+
-+static const struct platform_device_id da8xx_cfgchip_id_table[] = {
-+	{
-+		.name = "da830-tbclksync",
-+		.driver_data = (kernel_ulong_t)da8xx_cfgchip_register_tbclk,
-+	},
-+	{
-+		.name = "da830-div4p5ena",
-+		.driver_data = (kernel_ulong_t)da8xx_cfgchip_register_div4p5,
-+	},
-+	{
-+		.name = "da850-async1-clksrc",
-+		.driver_data = (kernel_ulong_t)da8xx_cfgchip_register_async1,
-+	},
-+	{
-+		.name = "da850-async3-clksrc",
-+		.driver_data = (kernel_ulong_t)da850_cfgchip_register_async3,
-+	},
-+	{ }
-+};
-+
-+typedef int (*da8xx_cfgchip_init)(struct device *dev, void __iomem *base);
-+
-+static int da8xx_cfgchip_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct da8xx_cfgchip_clk_platform_data *pdata = dev->platform_data;
-+	const struct of_device_id *of_id;
-+	da8xx_cfgchip_init clk_init = NULL;
-+	struct regmap *regmap = NULL;
-+
-+	of_id = of_match_device(da8xx_cfgchip_of_match, dev);
-+	if (of_id) {
-+		struct device_node *parent;
-+
-+		clk_init = of_id->data;
-+		parent = of_get_parent(dev->of_node);
-+		regmap = syscon_node_to_regmap(parent);
-+		of_node_put(parent);
-+	} else if (pdev->id_entry && pdata) {
-+		clk_init = (void *)pdev->id_entry->driver_data;
-+		regmap = pdata->cfgchip;
-+	}
-+
-+	if (!clk_init) {
-+		dev_err(dev, "unable to find driver data\n");
-+		return -EINVAL;
-+	}
-+
-+	if (IS_ERR_OR_NULL(regmap)) {
-+		dev_err(dev, "no regmap for CFGCHIP syscon\n");
-+		return regmap ? PTR_ERR(regmap) : -ENOENT;
-+	}
-+
-+	return clk_init(dev, regmap);
-+}
-+
-+static struct platform_driver da8xx_cfgchip_driver = {
-+	.probe		= da8xx_cfgchip_probe,
-+	.driver		= {
-+		.name		= "da8xx-cfgchip-clk",
-+		.of_match_table	= da8xx_cfgchip_of_match,
-+	},
-+	.id_table	= da8xx_cfgchip_id_table,
-+};
-+
-+static int __init da8xx_cfgchip_driver_init(void)
-+{
-+	return platform_driver_register(&da8xx_cfgchip_driver);
-+}
-+
-+/* has to be postcore_initcall because PSC devices depend on the async3 clock */
-+postcore_initcall(da8xx_cfgchip_driver_init);
-diff --git a/include/linux/platform_data/clk-da8xx-cfgchip.h b/include/linux/platform_data/clk-da8xx-cfgchip.h
-new file mode 100644
-index 0000000..de0f77d
---- /dev/null
-+++ b/include/linux/platform_data/clk-da8xx-cfgchip.h
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * clk-da8xx-cfgchip - TI DaVinci DA8xx CFGCHIP clock driver
-+ *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
-+ */
-+
-+#ifndef __LINUX_PLATFORM_DATA_CLK_DA8XX_CFGCHIP_H__
-+#define __LINUX_PLATFORM_DATA_CLK_DA8XX_CFGCHIP_H__
-+
-+#include <linux/regmap.h>
-+
-+/**
-+ * da8xx_cfgchip_clk_platform_data
-+ * @cfgchip: CFGCHIP syscon regmap
-+ */
-+struct da8xx_cfgchip_clk_platform_data {
-+	struct regmap *cfgchip;
-+};
-+
-+#endif /* __LINUX_PLATFORM_DATA_CLK_DA8XX_CFGCHIP_H__ */
+> +
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_irq: interrupt-controller@20 {
+> +			compatible = "ingenic,jz4740-tcu-intc";
+> +			reg = <0x20 0x20>;
+> +			...
+> +		};
+> +
+> +		tcu_clk: clocks@10 {
+> +			compatible = "ingenic,jz4740-tcu-clocks";
+> +			reg = <0x10 0xff0>;
+> +			...
+> +		};
+> +
+> +		tcu_timer: timer@10 {
+> +			compatible = "ingenic,jz4740-tcu";
+> +			reg = <0x10 0xff0>;
+> +			...
+> +		};
+> +	};
+> +};
+> +
+> +For more information about the children node, refer to the documents listed
+> +above in the "Accepted children nodes" section.
+> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..f910b7e96783
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> @@ -0,0 +1,41 @@
+> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
+> +---------------------------------------------
+> +
+> +Required properties:
+> +
+> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
+> +  * ingenic,jz4740-tcu
+> +  * ingenic,jz4770-tcu
+> +  * ingenic,jz4780-tcu
+> +- interrupt-parent : phandle of the TCU interrupt controller.
+> +- interrupts : Specifies the interrupts the controller is connected to.
+> +- clocks : List of phandle & clock specifiers for the TCU clocks.
+> +- clock-names : List of name strings for the TCU clocks.
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_timer: timer@10 {
+> +			compatible = "ingenic,jz4740-tcu";
+> +			reg = <0x10 0xff0>;
+> +
+> +			clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk 2>, <&tcu_clk 3>,
+> +					 <&tcu_clk 4>, <&tcu_clk 5>, <&tcu_clk 6>, <&tcu_clk 7>;
+> +			clock-names = "timer0", "timer1", "timer2", "timer3",
+> +						  "timer4", "timer5", "timer6", "timer7";
+> +
+> +			interrupt-parent = <&tcu_irq>;
+> +			interrupts = <0 1 2 3 4 5 6 7>;
+> +		};
+> +	};
+> +};
+> +
+> +For information about the top-level "ingenic,tcu" compatible node and other
+> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+> 
+
+Thanks,
+
+	M.
 -- 
-2.7.4
+Jazz is not dead. It just smells funny...
