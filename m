@@ -1,51 +1,62 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:11616 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751531AbeCTDRR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Mar 2018 23:17:17 -0400
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        "Garlic Tseng" <garlic.tseng@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH 1/2] clk: mediatek: add devm_of_platform_populate() for MT7622 audsys
+Date: Tue, 20 Mar 2018 11:16:51 +0800
+Message-ID: <004f07aef08148321c320ea09f8169982f73dd2b.1521514928.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-To: Chen-Yu Tsai <wens@csie.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180223113120.GA2659@wens.csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180223113120.GA2659@wens.csie.org>
-Message-ID: <152063796996.113003.6796575742282477127@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL] Allwinner clock fixes for 4.16
-Date: Fri, 09 Mar 2018 15:26:09 -0800
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Chen-Yu Tsai (2018-02-23 03:31:20)
-> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1=
-b2:
-> =
+Add devm_of_platform_populate() to populate devices which are children
+of the root node.
 
->   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-> =
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mt7622-aud.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-> are available in the Git repository at:
-> =
+diff --git a/drivers/clk/mediatek/clk-mt7622-aud.c b/drivers/clk/mediatek/clk-mt7622-aud.c
+index 13f752d..4f3d47b 100644
+--- a/drivers/clk/mediatek/clk-mt7622-aud.c
++++ b/drivers/clk/mediatek/clk-mt7622-aud.c
+@@ -150,11 +150,23 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
+ 			       clk_data);
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+-	if (r)
++	if (r) {
+ 		dev_err(&pdev->dev,
+ 			"could not register clock provider: %s: %d\n",
+ 			pdev->name, r);
+ 
++		goto err_clk_provider;
++	}
++
++	r = devm_of_platform_populate(&pdev->dev);
++	if (r)
++		goto err_plat_populate;
++
++	return 0;
++
++err_plat_populate:
++	of_clk_del_provider(node);
++err_clk_provider:
+ 	return r;
+ }
+ 
+-- 
+1.9.1
 
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-fixes-for-4.16
-> =
-
-> for you to fetch changes up to 5682e268350f9eccdbb04006605c1b7068a7b323:
-> =
-
->   clk: sunxi-ng: a31: Fix CLK_OUT_* clock ops (2018-02-19 08:59:50 +0100)
-> =
-
-> ----------------------------------------------------------------
-> Allwinner clock fixes for 4.16
-> =
-
-> A critical fix for the A31 sunxi-ng clock driver. The CLK_OUT clocks
-> had definitions paired with the incorrect type of clk ops. This results
-> in a serious oops starting with commit 946797aa3f08 ("clk: sunxi-ng:
-> Support fixed post-dividers on MP style clocks"), which exposed the
-> incorrect clk ops when it added a new field to the data structures,
-> which then nudged the underlying (compatible but incorrect) data
-> structures out of alignment.
-> =
-
-
-Thanks. Pulled.
