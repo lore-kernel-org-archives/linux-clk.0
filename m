@@ -1,68 +1,38 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH net-next 05/12] dt-bindings: net: dwmac-sun8i: Add binding for GMAC on Allwinner R40 SoC
-Date: Sat, 17 Mar 2018 17:28:50 +0800
-Message-Id: <20180317092857.4396-6-wens@csie.org>
-In-Reply-To: <20180317092857.4396-1-wens@csie.org>
-References: <20180317092857.4396-1-wens@csie.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:36148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751456AbeCTVqU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Mar 2018 17:46:20 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: ilialin@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <017c01d3c08a$cf903270$6eb09750$@codeaurora.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
+        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
+        nicolas.dechesne@linaro.org, celster@codeaurora.org
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-10-git-send-email-ilialin@codeaurora.org>
+ <152147812199.242365.11821734771337881765@swboyd.mtv.corp.google.com>
+ <013a01d3c051$d65a9160$830fb420$@codeaurora.org>
+ <152157637794.125118.12382168941652366593@swboyd.mtv.corp.google.com>
+ <017c01d3c08a$cf903270$6eb09750$@codeaurora.org>
+Message-ID: <152158237920.125118.18071859696919294995@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH v3 09/10] DT: QCOM: Add cpufreq-dt to msm8996
+Date: Tue, 20 Mar 2018 14:46:19 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner R40 SoC has the EMAC controller supported by dwmac-sun8i.
-It is named "GMAC", while EMAC refers to the 10/100 Mbps Ethernet
-controller supported by sun4i-emac. The controller is the same, but
-the R40 has the glue layer controls in the clock control unit (CCU),
-with a reduced RX delay chain, and no TX delay chain.
+Quoting ilialin@codeaurora.org (2018-03-20 13:34:04)
+> Understood, what you mean. I assumed that the cpufreq-dt is generic driver, and adding architecture specific code to it is no not correct from architectural point of view. Anyway, I'm considering adding a platform specific cpufreq driver, which will handle the efuse data as well.
+> 
+> Meanwhile this is the way to use the generic driver.
+> 
 
-This patch adds the R40 specific bits to the dwmac-sun8i binding.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-index 74b3ef79e57a..fe4a48a1eb50 100644
---- a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-+++ b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-@@ -7,6 +7,7 @@ Required properties:
- - compatible: must be one of the following string:
- 		"allwinner,sun8i-a83t-emac"
- 		"allwinner,sun8i-h3-emac"
-+		"allwinner,sun8i-r40-gmac"
- 		"allwinner,sun8i-v3s-emac"
- 		"allwinner,sun50i-a64-emac"
- - reg: address and length of the register for the device.
-@@ -24,14 +25,17 @@ Required properties:
-  compatible string:
-   - allwinner,sun8i-a83t-system-controller
-   - allwinner,sun8i-h3-system-controller
-+  - allwinner,sun8i-r40-ccu
-   - allwinner,sun8i-v3s-system-controller
-   - allwinner,sun50i-a64-system-controller
- 
- Optional properties:
- - allwinner,tx-delay-ps: TX clock delay chain value in ps.
- 			 Range is 0-700. Default is 0.
-+			 Unavailable for allwinner,sun8i-r40-gmac
- - allwinner,rx-delay-ps: RX clock delay chain value in ps.
- 			 Range is 0-3100. Default is 0.
-+			 Range is 0-700 for allwinner,sun8i-r40-gmac
- Both delay properties need to be a multiple of 100. They control the
- clock delay for external RGMII PHY. They are do apply to the internal
- PHY or external non-RGMII PHYs.
--- 
-2.16.2
+You'll need to Cc Viresh Kumar, who can comment further on cpufreq-dt.
+I wasn't recommending adding architecture specific code to cpufreq-dt,
+but at least updating how it handles CPU clk on/off state around hotplug
+would be good to do.
