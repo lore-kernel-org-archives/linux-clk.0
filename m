@@ -1,69 +1,51 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Message-ID: <1521210128.23017.17.camel@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] clk: Remove redundant selection of RATIONAL
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Date: Fri, 16 Mar 2018 16:22:08 +0200
-In-Reply-To: <1517240807.7000.1303.camel@linux.intel.com>
-References: <20180119174401.23051-1-andriy.shevchenko@linux.intel.com>
-	 <1517240807.7000.1303.camel@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521168778-27236-3-git-send-email-david@lechnology.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+ David Lechner <david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-3-git-send-email-david@lechnology.com>
+Message-ID: <152156501473.183971.10164660837276962553@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v8 02/42] clk: davinci: New driver for davinci PLL clocks
+Date: Tue, 20 Mar 2018 09:56:54 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-01-29 at 17:46 +0200, Andy Shevchenko wrote:
-> On Fri, 2018-01-19 at 19:44 +0200, Andy Shevchenko wrote:
-> > Since the commit
-> > 
-> >   0777591e715a ("clk: fractional-divider: switch to rational best
-> > approximation")
-> > 
-> > enables rational best approximation to all common based clocks,
-> > there
-> > is
-> > no need to repeat the selection in each of them.
-> > 
-> > No functional changes intended.
-> 
-> Any comment on this?
+Quoting David Lechner (2018-03-15 19:52:18)
+> +
+> +static int davinci_pll_debug_init(struct clk_hw *hw, struct dentry *dent=
+ry)
+> +{
+> +       struct davinci_pll_clk *pll =3D to_davinci_pll_clk(hw);
+> +       struct debugfs_regset32 *regset;
+> +       struct dentry *d;
+> +
+> +       regset =3D kzalloc(sizeof(regset), GFP_KERNEL);
 
-Do we have any active maintainer for clock related patches?
-Who is that right now?
-Can we somehow keep patches commented?
+Should be sizeof(*regset)?
 
-> 
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  drivers/clk/Kconfig | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > index 98ce9fc6e6c0..2e65cf731b00 100644
-> > --- a/drivers/clk/Kconfig
-> > +++ b/drivers/clk/Kconfig
-> > @@ -76,7 +76,6 @@ config COMMON_CLK_SI5351
-> >  	tristate "Clock driver for SiLabs 5351A/B/C"
-> >  	depends on I2C
-> >  	select REGMAP_I2C
-> > -	select RATIONAL
-> >  	---help---
-> >  	  This driver supports Silicon Labs 5351A/B/C programmable
-> > clock
-> >  	  generators.
-> > @@ -105,7 +104,6 @@ config COMMON_CLK_CDCE706
-> >  	tristate "Clock driver for TI CDCE706 clock synthesizer"
-> >  	depends on I2C
-> >  	select REGMAP_I2C
-> > -	select RATIONAL
-> >  	---help---
-> >  	  This driver supports TI CDCE706 programmable 3-PLL clock
-> > synthesizer.
-> >  
-> 
-> 
+I squashed this in:
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 588a48927436..89d30bf95102 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -882,7 +882,7 @@ static int davinci_pll_debug_init(struct clk_hw *hw, st=
+ruct dentry *dentry)
+ 	struct debugfs_regset32 *regset;
+ 	struct dentry *d;
+ =
+
+-	regset =3D kzalloc(sizeof(regset), GFP_KERNEL);
++	regset =3D kzalloc(sizeof(*regset), GFP_KERNEL);
+ 	if (!regset)
+ 		return -ENOMEM;
+=20
