@@ -1,59 +1,64 @@
-Return-Path: <sudeep.holla@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: scmi: use devm_of_clk_add_hw_provider() API and drop scmi_clocks_remove
-Date: Tue, 20 Mar 2018 12:11:07 +0000
-Message-Id: <1521547867-23808-1-git-send-email-sudeep.holla@arm.com>
-In-Reply-To: <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
-References: <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35596 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750807AbeCTCGi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Mar 2018 22:06:38 -0400
+Received: by mail-pf0-f193.google.com with SMTP id y186so46670pfb.2
+        for <linux-clk@vger.kernel.org>; Mon, 19 Mar 2018 19:06:38 -0700 (PDT)
+From: Lin Huang <hl@rock-chips.com>
+To: heiko@sntech.de
+Cc: dbasehore@chromium.org, shawn.lin@rock-chips.com,
+        briannorris@chromium.org, linux-rockchip@lists.infradead.org,
+        dianders@chromium.org, linux-clk@vger.kernel.org,
+        Lin Huang <hl@rock-chips.com>
+Subject: [PATCH v3 1/2] clk: rockchip: assign correct id for pclk_ddr and hclk_sd in rk3399
+Date: Tue, 20 Mar 2018 10:06:28 +0800
+Message-Id: <1521511589-17844-1-git-send-email-hl@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit aa795c41d9cd ("clk: Add devm_of_clk_add_hw_provider()/del_provider()
-APIs") adds devm_of_clk_add_hw_provider which takes care of deleting the
-clock provider when the clock providers device is removed.
+Since hclk_sd and pclk_ddr source clock from CPLL or GPLL,
+and these two PLL may change their frequency. If we do not
+assign right id to pclk_ddr and hclk_sd, they will alway use
+default cur register value, and may get the frequency
+exceed their signed off frequency. So assign correct Id
+for them, then we can assign frequency for them in dts.
 
-This patch makes use of devm_of_clk_add_hw_provider() instead of
-of_clk_add_hw_provider() so that we can eliminate the need of explicit
-scmi_clocks_remove for just doing of_clk_del_provider()
-
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Change-Id: I6c4d15d37ddabe4ed34e2351cf26e660672ae9ee
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
 ---
- drivers/clk/clk-scmi.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+Changes in v2:
+- add more detail in commit message
+Changes in v3:
+- None
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 26f1476d4a79..488c21376b55 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -172,15 +172,8 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
- 		}
- 	}
+ drivers/clk/rockchip/clk-rk3399.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
--}
--
--static void scmi_clocks_remove(struct scmi_device *sdev)
--{
--	struct device *dev = &sdev->dev;
--	struct device_node *np = dev->of_node;
--
--	of_clk_del_provider(np);
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   clk_data);
- }
-
- static const struct scmi_device_id scmi_id_table[] = {
-@@ -192,7 +185,6 @@ MODULE_DEVICE_TABLE(scmi, scmi_id_table);
- static struct scmi_driver scmi_clocks_driver = {
- 	.name = "scmi-clocks",
- 	.probe = scmi_clocks_probe,
--	.remove = scmi_clocks_remove,
- 	.id_table = scmi_id_table,
- };
- module_scmi_driver(scmi_clocks_driver);
---
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 3e57c6e..bca10d6 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -671,7 +671,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(9), 7, GFLAGS,
+ 			&rk3399_uart3_fracmux),
+ 
+-	COMPOSITE(0, "pclk_ddr", mux_pll_src_cpll_gpll_p, CLK_IGNORE_UNUSED,
++	COMPOSITE(PCLK_DDR, "pclk_ddr", mux_pll_src_cpll_gpll_p, CLK_IGNORE_UNUSED,
+ 			RK3399_CLKSEL_CON(6), 15, 1, MFLAGS, 8, 5, DFLAGS,
+ 			RK3399_CLKGATE_CON(3), 4, GFLAGS),
+ 
+@@ -887,7 +887,7 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+ 			RK3399_CLKGATE_CON(31), 8, GFLAGS),
+ 
+ 	/* sdio & sdmmc */
+-	COMPOSITE(0, "hclk_sd", mux_pll_src_cpll_gpll_p, 0,
++	COMPOSITE(HCLK_SD, "hclk_sd", mux_pll_src_cpll_gpll_p, 0,
+ 			RK3399_CLKSEL_CON(13), 15, 1, MFLAGS, 8, 5, DFLAGS,
+ 			RK3399_CLKGATE_CON(12), 13, GFLAGS),
+ 	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_sd", 0,
+-- 
 2.7.4
+
