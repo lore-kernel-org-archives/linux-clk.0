@@ -1,40 +1,55 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: scmi: use devm_of_clk_add_hw_provider() API and drop
- scmi_clocks_remove
-To: Stephen Boyd <sboyd@kernel.org>
-References: <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
- <1521547867-23808-1-git-send-email-sudeep.holla@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <1d9ca586-1284-8b12-31d8-80950f29837c@arm.com>
-Date: Tue, 20 Mar 2018 14:42:49 +0000
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:51260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751269AbeCTUE1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Mar 2018 16:04:27 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1521547867-23808-1-git-send-email-sudeep.holla@arm.com>
-Content-Type: text/plain; charset=utf-8
+To: ilialin@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <014101d3c054$52104460$f630cd20$@codeaurora.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
+        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
+        nicolas.dechesne@linaro.org, celster@codeaurora.org
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-9-git-send-email-ilialin@codeaurora.org>
+ <152147863176.242365.17292287330283256524@swboyd.mtv.corp.google.com>
+ <014101d3c054$52104460$f630cd20$@codeaurora.org>
+Message-ID: <152157626668.125118.4516232540705254181@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH v3 08/10] clk: qcom: Add ACD path to CPU clock driver for msm8996
+Date: Tue, 20 Mar 2018 13:04:26 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-On 20/03/18 12:11, Sudeep Holla wrote:
-> Commit aa795c41d9cd ("clk: Add devm_of_clk_add_hw_provider()/del_provider()
-> APIs") adds devm_of_clk_add_hw_provider which takes care of deleting the
-> clock provider when the clock providers device is removed.
+Quoting ilialin@codeaurora.org (2018-03-20 07:04:05)
+> > From: Stephen Boyd <sboyd@kernel.org>
+> > Quoting Ilia Lin (2018-02-14 05:59:50)
+> > 
+> > >
+> > >  static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
+> > >         [PLL_OFF_L_VAL] = 0x04,
+> > > @@ -399,10 +424,64 @@ struct clk_hw_clks {
+> > >         return ret;
+> > >  }
+> > >
+> > > +#define CPU_AFINITY_MASK 0xFFF
+> > > +#define PWRCL_CPU_REG_MASK 0x3
+> > > +#define PERFCL_CPU_REG_MASK 0x103
+> > > +
+> > > +/* ACD static settings (HMSS HPG 7.2.2) */ #define L2ACDCR_REG
+> > > +0x580ULL #define L2ACDTD_REG 0x581ULL #define L2ACDDVMRC_REG
+> > 0x584ULL
+> > > +#define L2ACDSSCR_REG 0x589ULL #define ACDTD_VAL 0x00006A11
+> > #define
+> > > +ACDCR_VAL 0x002C5FFD #define ACDSSCR_VAL 0x00000601 #define
+> > > +ACDDVMRC_VAL 0x000E0F0F
+> > 
+> > Please don't have #defines for random register settings. It just obfuscates
+> > what's going on at the place where the define is used.
 > 
-> This patch makes use of devm_of_clk_add_hw_provider() instead of
-> of_clk_add_hw_provider() so that we can eliminate the need of explicit
-> scmi_clocks_remove for just doing of_clk_del_provider()
-> 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->  drivers/clk/clk-scmi.c | 12 ++----------
->  1 file changed, 2 insertions(+), 10 deletions(-)
-> 
+> So should I just use the values directly?
 
-Sorry I forgot to mention before, if this looks fine, please
-provide ack so that I can take it via ARM Soc.
-
--- 
-Regards,
-Sudeep
+Yes.
