@@ -1,135 +1,226 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Ilia Lin <ilialin@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- sboyd@codeaurora.org
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1518616792-29028-2-git-send-email-ilialin@codeaurora.org>
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
- <1518616792-29028-2-git-send-email-ilialin@codeaurora.org>
-Message-ID: <152148150406.242365.14021083340615345047@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 01/10] soc: qcom: Separate kryo l2 accessors from PMU
- driver
-Date: Mon, 19 Mar 2018 10:45:04 -0700
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, rnayak@codeaurora.org,
- robh@kernel.org, will.deacon@arm.com, amit.kucheria@linaro.org,
- tfinkel@codeaurora.org, ilialin@codeaurora.org, nicolas.dechesne@linaro.org,
- celster@codeaurora.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <1520493495-3084-3-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Nischal <anischal@codeaurora.org>
+References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+ <1520493495-3084-3-git-send-email-anischal@codeaurora.org>
+Message-ID: <152150582284.254778.15552235408861080239@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 2/4] clk: qcom: Configure the RCGs to a safe source as needed
+Date: Mon, 19 Mar 2018 17:30:22 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ilia Lin (2018-02-14 05:59:43)
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index fbedbd8..78a103b 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -145,6 +145,13 @@ config ARCH_REALTEK
->           This enables support for the ARMv8 based Realtek chipsets,
->           like the RTD1295.
->  
-> +config ARCH_MSM8996
-> +    bool "Enable Support for Qualcomm Technologies, Inc. MSM8996"
-> +       depends on ARCH_QCOM
+Quoting Amit Nischal (2018-03-07 23:18:13)
+> For some root clock generators, there could be child branches which are
+> controlled by an entity other than application processor subsystem. For
+> such RCGs, as per application processor subsystem clock driver, all of its
+> downstream clocks are disabled and RCG is in disabled state but in actual
+> downstream clocks can be left enabled before.
 
-Is this really the proposed approach? Doesn't the PMU code use these
-accessors? I would think the accessors are compiled if ARCH_QCOM=y so
-that the PMU stuff keeps working. Drop this Kconfig addition?
+s/actual/reality?
 
-> +       help
-> +       This enables support for the MSM8996 chipset. If you do not
-> +       wish to build a kernel that runs on this chipset, say 'N' here.
-> +
->  config ARCH_ROCKCHIP
->         bool "Rockchip Platforms"
->         select ARCH_HAS_RESET_CONTROLLER
-> diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-> index 4fdc848..8cece9e 100644
-> --- a/drivers/perf/qcom_l2_pmu.c
-> +++ b/drivers/perf/qcom_l2_pmu.c
-> @@ -1,4 +1,4 @@
-> -/* Copyright (c) 2015-2017 The Linux Foundation. All rights reserved.
-> +/* Copyright (c) 2015-2018 The Linux Foundation. All rights reserved.
+> =
 
-Sorry, this makes little sense. First off, code is only being deleted
-and more than half the file isn't being modified so why update copyright
-dates?
+> So in this scenario, when RCG is disabled as per clock driver's point of
+> view and when rate scaling request comes before downstream clock enable
+> request, then RCG fails to update its configuration because in actual RCG
 
+s/actual/reality?
+
+> is on and it expects its new source to alredy in enable state  but in
+
+s/alredy/already be/
+
+> reality new source is in off state. In order to avoid letting the RCG to
+
+s/is in off state/is off/
+s/letting/having/
+
+> go into an invalid state, add support to just cache the rate of RCG during
+
+s/just//
+
+> set_rate(), defer actual RCG configuration update to be done during
+> clk_enable() as at this point of time, both its new parent and safe source
+> will be already enabled and RCG can safely switch to new parent.
+> =
+
+> During clk_disable() request, configure it to safe source as both
+> its parents, safe source and current parent will be enabled and RCG can
+> safely execute a switch. Also add support to have safe configuration
+> frequency table structure for each shared RCG.
+> =
+
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
+> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> index 2a7489a..205fa34 100644
+> --- a/drivers/clk/qcom/clk-rcg.h
+> +++ b/drivers/clk/qcom/clk-rcg.h
+> @@ -146,6 +146,9 @@ struct clk_dyn_rcg {
+>   * @hid_width: number of bits in half integer divider
+>   * @parent_map: map from software's parent index to hardware's src_sel f=
+ield
+>   * @freq_tbl: frequency table
+> + * @current_freq: last cached frequency when using branches with shared =
+RCGs
+> + * @safe_src_freq_tbl : frequency table of safe source when using branch=
+es
+> + *                     with shared RCGs
+>   * @clkr: regmap clock handle
 >   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License version 2 and
-> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-> index dcebf28..4e91e2a 100644
-> --- a/drivers/soc/qcom/Makefile
-> +++ b/drivers/soc/qcom/Makefile
-> @@ -12,3 +12,4 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
->  obj-$(CONFIG_QCOM_SMP2P)       += smp2p.o
->  obj-$(CONFIG_QCOM_SMSM)        += smsm.o
->  obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
-> +obj-$(CONFIG_ARCH_MSM8996) +=  kryo-l2-accessors.o
-> diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
-> new file mode 100644
-> index 0000000..6743848
-> --- /dev/null
-> +++ b/drivers/soc/qcom/kryo-l2-accessors.c
-> @@ -0,0 +1,64 @@
-> +/*
-> + * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
+>   */
+> @@ -155,6 +158,8 @@ struct clk_rcg2 {
+>         u8                      hid_width;
+>         const struct parent_map *parent_map;
+>         const struct freq_tbl   *freq_tbl;
+> +       unsigned long           current_freq;
+> +       const struct freq_tbl   *safe_src_freq_tbl;
 
-SPDX tags?
+Can we store safe_src index instead? And then construct the frequency
+table entry on the fly at the call site? I think it would greatly
+clarify that we don't really care about the rate of the clk at all.
+Instead, all we care about is making sure the mux is set to whatever
+source selection can provide an always on signal.
 
-> diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
-> new file mode 100644
-> index 0000000..e9a5eab
-> --- /dev/null
-> +++ b/include/soc/qcom/kryo-l2-accessors.h
-> @@ -0,0 +1,22 @@
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
+>         struct clk_regmap       clkr;
+>  };
+> =
+
+> @@ -167,5 +172,6 @@ struct clk_rcg2 {
+>  extern const struct clk_ops clk_byte2_ops;
+>  extern const struct clk_ops clk_pixel_ops;
+>  extern const struct clk_ops clk_gfx3d_ops;
+> +extern const struct clk_ops clk_rcg2_shared_ops;
+> =
+
+>  #endif
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index e63db10..a52de54 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -790,3 +790,158 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, un=
+signed long rate,
+>         .determine_rate =3D clk_gfx3d_determine_rate,
+>  };
 > +
-> +#ifndef __ASM_ARCH_MSM_MSM_KRYO_L2_ACCESSORS_H
-> +#define __ASM_ARCH_MSM_MSM_KRYO_L2_ACCESSORS_H
-
-Maybe change this tO __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-
+> +static unsigned long
+> +clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
 > +
-> +#ifdef CONFIG_ARCH_QCOM
-> +void set_l2_indirect_reg(u64 reg_addr, u64 val);
-> +u64 get_l2_indirect_reg(u64 reg_addr);
-> +#endif
+> +       if (!__clk_is_enabled(hw->clk)) {
+> +               if (!rcg->current_freq) {
+> +                       if (!clk_rcg2_get_parent(hw))
 
-This ifdef isn't doing much. Drop it? Or provide the inline nop
-alternatives.
+This is checking for 0 source selection of parent? So basically if
+source is XO selected then return what we know is the XO speed? We
+should be able to do that by returning parent_rate though?
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> +                               rcg->current_freq =3D
+> +                                       rcg->safe_src_freq_tbl->freq;
+> +                       else
+> +                               rcg->current_freq =3D
+> +                                       clk_rcg2_recalc_rate(hw, parent_r=
+ate);
+> +               }
+> +
+> +               return rcg->current_freq;
+> +       }
+> +
+> +       return rcg->current_freq =3D clk_rcg2_recalc_rate(hw, parent_rate=
+);
+
+I don't get this function.
+
+To simplify just return cached rate if it's set and clk is off,
+otherwise read the hardware?
+
+	if (!__clk_is_enabled(hw->clk) && rcg->current_freq)
+		return rcg->current_freq;
+
+	return clk_rcg2_recalc_rate(hw, parent_rate);
+
+I would also rename current_freq to something like cached_freq and then
+*only* assign it when someone calls clk_set_rate() (and save around the
+frequency table pointer instead of raw frequency). Out of boot, we will
+return the right frequency and clk_set_rate() called before enable will
+cache the rate to what we want.
+
+> +}
+> +
+> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +
+> +       if (rcg->current_freq =3D=3D rcg->safe_src_freq_tbl->freq) {
+> +               clk_rcg2_set_force_enable(hw);
+> +               clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
+> +               clk_rcg2_clear_force_enable(hw);
+> +
+> +               return 0;
+> +       }
+> +
+> +       /*
+> +        * Switch from safe source to the stashed mux selection. The curr=
+ent
+> +        * parent has already been prepared and enabled at this point, and
+> +        * the safe source is always on while application processor subsy=
+stem
+> +        * is online. Therefore, the RCG can safely switch its source.
+> +        */
+> +
+> +       return clk_rcg2_shared_force_enable_clear(hw, rcg->current_freq);
+
+Not much is different between clk_rcg2_shared_force_enable_clear() and
+the three lines above inside that if condition. The only difference is
+we don't search for a rate in the frequency table. Ugh, but we can't
+change the frequency table because of hw clk control stuff that relies
+on the table in software matching the table in hardware? Sad.
+
+Can we at least change the if condition above to be something like:
+
+	if (rcg->force_safe_src) {
+		clk_rcg2_set_force_enable(...
+
+And then set the force_safe_src bool when we want enable to skip normal
+rate restoration behavior? We should be able to use that flag in other
+places too, like where we check for the clk being enabled in software or
+not.
+
+> +}
+> +
+> +static void clk_rcg2_shared_disable(struct clk_hw *hw)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +
+> +       /*
+> +        * Park the RCG at a safe configuration - sourced off from safe s=
+ource.
+> +        * Force enable and disable the RCG while configuring it to safeg=
+uard
+> +        * against any update signal coming from the downstream clock.
+> +        * The current parent is still prepared and enabled at this point=
+, and
+> +        * the safe source is always on while application processor subsy=
+stem
+> +        * is online. Therefore, the RCG can safely switch its parent.
+> +        */
+> +       clk_rcg2_set_force_enable(hw);
+> +       clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
+> +       clk_rcg2_clear_force_enable(hw);
+> +}
+> +
+
+Yeah, all this stuff would get simpler if we stopped using frequencies.
+Hopefully I made sense!
