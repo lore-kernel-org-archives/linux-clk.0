@@ -1,38 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:46788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965901AbeCSRpy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Mar 2018 13:45:54 -0400
+Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Ilia Lin <ilialin@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org
+To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1518616792-29028-3-git-send-email-ilialin@codeaurora.org>
-Cc: devicetree@vger.kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
- <1518616792-29028-3-git-send-email-ilialin@codeaurora.org>
-Message-ID: <152148155340.242365.15501379032374522306@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 02/10] clk: qcom: Make clk_alpha_pll_configure available to
- modules
-Date: Mon, 19 Mar 2018 10:45:53 -0700
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1521168778-27236-10-git-send-email-david@lechnology.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, David Lechner <david@lechnology.com>,
+ Kevin Hilman <khilman@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>, Sekhar Nori <nsekhar@ti.com>,
+ linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, Adam Ford <aford173@gmail.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-10-git-send-email-david@lechnology.com>
+Message-ID: <152156543724.183971.9703906314447360197@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v8 09/42] dt-bindings: clock: New bindings for TI Davinci PSC
+Date: Tue, 20 Mar 2018 10:03:57 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ilia Lin (2018-02-14 05:59:44)
-> From: Rajendra Nayak <rnayak@codeaurora.org>
-> 
-> Allow clk_alpha_pll_configure to be called from loadable
-> kernel modules.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Quoting David Lechner (2018-03-15 19:52:25)
+> This adds a new binding for the Power Sleep Controller (PSC) for the
+> mach-davinci family of processors.
+> =
+
+> Note: Although TI Keystone has a very similar PSC, we are not using the
+> existing bindings. Keystone is using a legacy one-node-per-clock binding
+> (actually two nodes if you count the separate reset binding for the same
+> IP block). Also, some davinci LPSCs have quirks that aren't handled by
+> the keystone bindings, so we would be adding one compatible string per
+> clock with quirks instead of just a new compatible string for each
+> controller.
+> =
+
+> Signed-off-by: David Lechner <david@lechnology.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
 
 Applied to clk-next
-
