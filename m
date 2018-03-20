@@ -1,33 +1,54 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Lee Jones <lee@kernel.org>,
- Mike Turquette <mturquette@baylibre.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Stephen Boyd <sboyd@codeaurora.org>,
- Stephen Warren <swarren@wwwdotorg.org>,
- bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180208134338.24590-2-boris.brezillon@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, stable@vger.kernel.org
-References: <20180208134338.24590-1-boris.brezillon@bootlin.com>
- <20180208134338.24590-2-boris.brezillon@bootlin.com>
-Message-ID: <152147698429.242365.13201145820361051741@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/4] clk: bcm2835: Protect sections updating shared registers
-Date: Mon, 19 Mar 2018 09:29:44 -0700
+Return-Path: <Tali.Perry@nuvoton.com>
+From: tali.perry1@gmail.com
+To: brendanhiggins@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
+        raltherr@google.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
+Subject: [PATCH v11 0/2] clk: npcm750: Add NPCM7XX Clock driver and binding
+Date: Tue, 20 Mar 2018 15:40:47 +0200
+Message-Id: <1521553249-6971-1-git-send-email-tali.perry1@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Boris Brezillon (2018-02-08 05:43:36)
-> CM_PLLx and A2W_XOSC_CTRL registers are accessed by different clock
-> handlers and must be accessed with ->regs_lock held.
-> Update the sections where this protection is missing.
-> =
+From: Tali Perry <tali.perry1@gmail.com>
 
-> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio=
- domain clocks")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> ---
 
-Applied to clk-fixes
+Nuvoton NPCM7XX Clock Controller
+
+Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
+generates and supplies clocks to all modules within the BMC.
+
+---
+
+10 ==> 11
+update documentation. "eth" replaced with "ethernet" in use case eaxample.
+
+2 ==> 10
+update documentation. add external clocks as inputs to clk driver.
+fix SPDX comment.
+
+1 ==> 2
+This patch includes fix request described here:
+https://patchwork.kernel.org/patch/10200033/
+(move fixed clocks to DT)
+
+Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+
+Tali Perry (2):
+  clk: npcm750: Add binding for Nuvoton NPCM7XX clock Controller
+  clk: npcm7xx: Add Nuvoton NPCM7XX Clock Controller driver
+
+ .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-npcm7xx.c                          | 757 +++++++++++++++++++++
+ include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 ++
+ 4 files changed, 902 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+ create mode 100644 drivers/clk/clk-npcm7xx.c
+ create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+
+-- 
+2.14.1
