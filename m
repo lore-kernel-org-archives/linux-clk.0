@@ -1,30 +1,57 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:54093 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751269AbeCTSsM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Mar 2018 14:48:12 -0400
+Date: Tue, 20 Mar 2018 19:47:59 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 5/7] arm64: allwinner: a64: add DE2 CCU related device
+ tree nodes
+Message-ID: <20180320184759.nb2zwn5liqa2kpm4@flea>
+References: <20180316175354.21437-1-icenowy@aosc.io>
+ <20180316175354.21437-6-icenowy@aosc.io>
 MIME-Version: 1.0
-To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521168778-27236-17-git-send-email-david@lechnology.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
- David Lechner <david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-17-git-send-email-david@lechnology.com>
-Message-ID: <152156545843.183971.17801508459755974309@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v8 16/42] clk: davinci: Add platform information for TI DM646x PSC
-Date: Tue, 20 Mar 2018 10:04:18 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180316175354.21437-6-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting David Lechner (2018-03-15 19:52:32)
-> This adds platform-specific declarations for the PSC clocks on TI
-> DM646x based systems.
-> =
+On Sat, Mar 17, 2018 at 01:53:52AM +0800, Icenowy Zheng wrote:
+> +		sram-controller@1c00000 {
+> +			compatible = "allwinner,sun50i-a64-sram-controller";
+> +			reg = <0x01c00000 0x1000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +
+> +			sram_c: sram@18000 {
+> +				compatible = "mmio-sram";
+> +				reg = <0x00018000 0x28000>;
+> +				#address-cells = <1>;
+> +				#size-cells = <1>;
+> +				ranges = <0 0x00018000 0x28000>;
+> +
+> +				de2_sram: sram-section@0 {
+> +					compatible = "allwinner,sun50i-a64-sram-c";
+> +					reg = <0x0000 0x28000>;
+> +				};
+> +			};
+> +		};
+> +
+>  		syscon: syscon@1c00000 {
+>  			compatible = "allwinner,sun50i-a64-system-controller",
+>  				"syscon";
 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
+Isn't that the same device than the sram controller node you just added?
 
-Applied to clk-next
+Maxime
+
+-- 
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
