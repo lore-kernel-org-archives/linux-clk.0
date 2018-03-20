@@ -1,226 +1,180 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:56074 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966924AbeCSQWS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:22:18 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1516711841-25234-2-git-send-email-aisheng.dong@nxp.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-imx@nxp.com, aisheng.dong@codeaurora.org,
-        linux-fbdev@vger.kernel.org, yamada.masahiro@socionext.com,
-        sboyd@codeaurora.org, hdegoede@redhat.com,
-        b.zolnierkie@samsung.com, Dong Aisheng <aisheng.dong@nxp.com>
+Received: from mail-he1eur01on0089.outbound.protection.outlook.com ([104.47.0.89]:40989
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750991AbeCTDVW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Mar 2018 23:21:22 -0400
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "aisheng.dong@codeaurora.org" <aisheng.dong@codeaurora.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>
+Subject: RE: [RFC PATCH 1/2] clk: add new APIs to operate on all available
+ clocks
+Date: Tue, 20 Mar 2018 03:21:17 +0000
+Message-ID: <AM3PR04MB306226CE9E4AD6F1F2383F180AB0@AM3PR04MB306.eurprd04.prod.outlook.com>
 References: <1516711841-25234-1-git-send-email-aisheng.dong@nxp.com>
  <1516711841-25234-2-git-send-email-aisheng.dong@nxp.com>
-Message-ID: <152147653725.242365.16805388526685631797@swboyd.mtv.corp.google.com>
-Subject: Re: [RFC PATCH 1/2] clk: add new APIs to operate on all available clocks
-Date: Mon, 19 Mar 2018 09:22:17 -0700
+ <152147653725.242365.16805388526685631797@swboyd.mtv.corp.google.com>
+In-Reply-To: <152147653725.242365.16805388526685631797@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dong Aisheng (2018-01-23 04:50:40)
-> This patch introduces of_clk_bulk_get_all and clk_bulk_x_all APIs
-> to users who just want to handle all available clocks from device tree
-> without need to know the detailed clock information likes clock numbers
-> and names. This is useful in writing some generic drivers to handle clock
-> part.
-> 
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> 
-> ---
-> A few question may need discuss:
-> 1)  This patch is written based on of_clk_bulk_get.
-> [V4,1/1] clk: bulk: add of_clk_bulk_get()
-> https://patchwork.kernel.org/patch/9971527/
-> Stepen once said we may not need it, but i guess as we already
-> have clk_bulk_get, there may be guys who want of_clk_bulk_get as
-> well if they need specify the clock count information, becaues
-> of_clk_bulk_get_all will not check the count.
-> And of_clk_bulk_get is also helpful when implementing
-> of_clk_bulk_get_all.
-
-Hmm ok. It's ok to implement it on top of of_clk_bulk_get I suppose, but
-maybe that API can be kept private until someone can prove they need it
-because they don't have a struct device pointer. Can you pick that patch
-from the list and resend in the series?
-
-> 
-> 2) It only implements the DT type clk_get_all as i see
-> Stephen said we probably may not need to implement non-dt
-> type as there're still no users.
-
-Good.
-
-> 
-> If we do want to implement non-dt type as well, we could revise
-> the patch to add it too.
-> ---
->  drivers/clk/clk-bulk.c | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/clk.h    | 61 ++++++++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 124 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-> index 1c1a79d..bac2aae 100644
-> --- a/drivers/clk/clk-bulk.c
-> +++ b/drivers/clk/clk-bulk.c
-> @@ -17,9 +17,11 @@
->   */
->  
->  #include <linux/clk.h>
-> +#include <linux/clk-provider.h>
->  #include <linux/device.h>
->  #include <linux/export.h>
->  #include <linux/of.h>
-> +#include <linux/slab.h>
->  
->  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
->  int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-> @@ -50,6 +52,45 @@ int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
->         return ret;
->  }
->  EXPORT_SYMBOL(of_clk_bulk_get);
-> +
-> +struct clk_bulk __must_check *of_clk_bulk_get_all(struct device_node *np)
-> +{
-> +       struct clk_bulk *clk_bulk;
-> +       int num_clks;
-> +       int ret;
-> +
-> +       num_clks = of_clk_get_parent_count(np);
-> +       if (!num_clks)
-> +               return NULL;
-> +
-> +       clk_bulk = kzalloc(sizeof(*clk_bulk) +
-> +                          num_clks * sizeof(struct clk_bulk_data),
-> +                          GFP_KERNEL);
-> +       if (!clk_bulk)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       clk_bulk->num_clks = num_clks;
-> +       ret = of_clk_bulk_get(np, clk_bulk->num_clks, clk_bulk->clks);
-> +       if (ret) {
-> +               kfree(clk_bulk);
-> +               return ERR_PTR(ret);
-> +       }
-
-Has this been tested? clk_bulk->clks probably points to junk?
-
-> +
-> +       return clk_bulk;
-> +}
-> +EXPORT_SYMBOL(of_clk_bulk_get_all);
-> +
-> +void of_clk_bulk_put_all(struct clk_bulk *clk_bulk)
-> +{
-> +       if (IS_ERR_OR_NULL(clk_bulk))
-> +               return;
-> +
-> +       clk_bulk_put(clk_bulk->num_clks, clk_bulk->clks);
-> +
-> +       kfree(clk_bulk->clks);
-> +       kfree(clk_bulk);
-> +}
-> +EXPORT_SYMBOL(of_clk_bulk_put_all);
->  #endif
-
-My goal was to make device drivers pass in their struct device to
-clk_bulk_get_all() and then have that call into a private DT helper
-function like of_clk_bulk_get_all(). With your patch 2 that could still
-be done so let's go that direction?
-
->  
->  void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
-> @@ -107,6 +148,12 @@ void clk_bulk_unprepare(int num_clks, const struct clk_bulk_data *clks)
->  }
->  EXPORT_SYMBOL_GPL(clk_bulk_unprepare);
->  
-> +void inline clk_bulk_unprepare_all(const struct clk_bulk *clk_bulk)
-> +{
-> +       clk_bulk_unprepare(clk_bulk->num_clks, clk_bulk->clks);
-> +}
-> +EXPORT_SYMBOL_GPL(clk_bulk_unprepare_all);
-
-Do we really need these _all APIs though?
-
-> +
->  /**
->   * clk_bulk_prepare - prepare a set of clocks
->   * @num_clks: the number of clk_bulk_data
-> @@ -139,6 +186,11 @@ int __must_check clk_bulk_prepare(int num_clks,
->  }
->  EXPORT_SYMBOL_GPL(clk_bulk_prepare);
->  
-> +int inline __must_check clk_bulk_prepare_all(const struct clk_bulk *clk_bulk)
-
-inline won't help much here. Maybe these wrappers should go into the
-header file?
-
-> +{
-> +       return clk_bulk_prepare(clk_bulk->num_clks, clk_bulk->clks);
-> +}
-> +
->  #endif /* CONFIG_HAVE_CLK_PREPARE */
->  
->  /**
-> @@ -158,6 +210,12 @@ void clk_bulk_disable(int num_clks, const struct clk_bulk_data *clks)
->  }
->  EXPORT_SYMBOL_GPL(clk_bulk_disable);
->  
-> +void inline clk_bulk_disable_all(const struct clk_bulk *clk_bulk)
-
-ditto
-
-> +{
-> +       return clk_bulk_disable(clk_bulk->num_clks, clk_bulk->clks);
-> +}
-> +EXPORT_SYMBOL_GPL(clk_bulk_disable_all);
-> +
->  /**
->   * clk_bulk_enable - ungate a set of clocks
->   * @num_clks: the number of clk_bulk_data
-> @@ -188,3 +246,9 @@ int __must_check clk_bulk_enable(int num_clks, const struct clk_bulk_data *clks)
->         return  ret;
->  }
->  EXPORT_SYMBOL_GPL(clk_bulk_enable);
-> +
-> +int inline __must_check clk_bulk_enable_all(const struct clk_bulk *clk_bulk)
-
-again
-
-> +{
-> +       return clk_bulk_enable(clk_bulk->num_clks, clk_bulk->clks);
-> +}
-> +EXPORT_SYMBOL_GPL(clk_bulk_enable_all);
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 09ae760..ccafda1 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -92,6 +92,21 @@ struct clk_bulk_data {
->         struct clk              *clk;
->  };
->  
-> +/**
-> + * struct clk_bulk - bulk clk structure
-> + *
-> + * @num_clks: the number of avaliable clocks in this bulk
-> + * @clks: struct clk_bulk_data * to store the associated clock
-> + *
-> + * The CLK APIs provide a series of clk_bulk_x_all() API calls as
-> + * a convenience to consumers which require multiple clks.  This
-> + * structure is used to manage data for these calls.
-> + */
-> +struct clk_bulk {
-> +       int num_clks;
-> +       struct clk_bulk_data *clks;
-> +};
-
-This could go away, and we could return the number of clks from
-clk_bulk_get_all() as a positive number, 0 if there are none, and a
-negative number if something failed. Then we don't need the _all
-variants or a wrapper struct. It would be nice to avoid the extra
-variants just because we need to tell it the number of clks to handle.
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0
+bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiBUdWVzZGF5LCBNYXJjaCAyMCwgMjAxOCAxMjoy
+MiBBTQ0KPiBUbzogQS5zLiBEb25nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT47IGxpbnV4LWNsa0B2
+Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4
+LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgZGwtDQo+IGxpbnV4LWlteCA8bGludXgt
+aW14QG54cC5jb20+OyBhaXNoZW5nLmRvbmdAY29kZWF1cm9yYS5vcmc7IGxpbnV4LQ0KPiBmYmRl
+dkB2Z2VyLmtlcm5lbC5vcmc7IHlhbWFkYS5tYXNhaGlyb0Bzb2Npb25leHQuY29tOw0KPiBzYm95
+ZEBjb2RlYXVyb3JhLm9yZzsgaGRlZ29lZGVAcmVkaGF0LmNvbTsNCj4gYi56b2xuaWVya2llQHNh
+bXN1bmcuY29tOyBBLnMuIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiBTdWJqZWN0OiBS
+ZTogW1JGQyBQQVRDSCAxLzJdIGNsazogYWRkIG5ldyBBUElzIHRvIG9wZXJhdGUgb24gYWxsIGF2
+YWlsYWJsZQ0KPiBjbG9ja3MNCj4gDQo+IFF1b3RpbmcgRG9uZyBBaXNoZW5nICgyMDE4LTAxLTIz
+IDA0OjUwOjQwKQ0KPiA+IFRoaXMgcGF0Y2ggaW50cm9kdWNlcyBvZl9jbGtfYnVsa19nZXRfYWxs
+IGFuZCBjbGtfYnVsa194X2FsbCBBUElzIHRvDQo+ID4gdXNlcnMgd2hvIGp1c3Qgd2FudCB0byBo
+YW5kbGUgYWxsIGF2YWlsYWJsZSBjbG9ja3MgZnJvbSBkZXZpY2UgdHJlZQ0KPiA+IHdpdGhvdXQg
+bmVlZCB0byBrbm93IHRoZSBkZXRhaWxlZCBjbG9jayBpbmZvcm1hdGlvbiBsaWtlcyBjbG9jaw0K
+PiA+IG51bWJlcnMgYW5kIG5hbWVzLiBUaGlzIGlzIHVzZWZ1bCBpbiB3cml0aW5nIHNvbWUgZ2Vu
+ZXJpYyBkcml2ZXJzIHRvDQo+ID4gaGFuZGxlIGNsb2NrIHBhcnQuDQo+ID4NCj4gPiBDYzogU3Rl
+cGhlbiBCb3lkIDxzYm95ZEBjb2RlYXVyb3JhLm9yZz4NCj4gPiBDYzogTWFzYWhpcm8gWWFtYWRh
+IDx5YW1hZGEubWFzYWhpcm9Ac29jaW9uZXh0LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBEb25n
+IEFpc2hlbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiA+DQo+ID4gLS0tDQo+ID4gQSBmZXcg
+cXVlc3Rpb24gbWF5IG5lZWQgZGlzY3VzczoNCj4gPiAxKSAgVGhpcyBwYXRjaCBpcyB3cml0dGVu
+IGJhc2VkIG9uIG9mX2Nsa19idWxrX2dldC4NCj4gPiBbVjQsMS8xXSBjbGs6IGJ1bGs6IGFkZCBv
+Zl9jbGtfYnVsa19nZXQoKQ0KPiA+DQo+IGh0dHBzOi8vZW1lYTAxLnNhZmVsaW5rcy5wcm90ZWN0
+aW9uLm91dGxvb2suY29tLz91cmw9aHR0cHMlM0ElMkYlMkZwYXQNCj4gPg0KPiBjaHdvcmsua2Vy
+bmVsLm9yZyUyRnBhdGNoJTJGOTk3MTUyNyUyRiZkYXRhPTAyJTdDMDElN0NhaXNoZW5nLmRvbg0K
+PiBnJTQwbg0KPiA+DQo+IHhwLmNvbSU3QzQ0OTIwOWRkM2UxOTQ5MWFmYjk5MDhkNThkYjU5NjZk
+JTdDNjg2ZWExZDNiYzJiNGM2ZmE5MmMNCj4gZDk5YzVjDQo+ID4NCj4gMzAxNjM1JTdDMCU3QzAl
+N0M2MzY1NzA3MzM0MTE3NTQxMjcmc2RhdGE9NG01ZW1YT1IlMkJ1aTNNcXcNCj4gTWJBSlFEUXhK
+Y0UNCj4gPiAlMkJ4TGNCNTFoRWkycTNWMk84JTNEJnJlc2VydmVkPTAgU3RlcGVuIG9uY2Ugc2Fp
+ZCB3ZSBtYXkgbm90DQo+IG5lZWQgaXQsDQo+ID4gYnV0IGkgZ3Vlc3MgYXMgd2UgYWxyZWFkeSBo
+YXZlIGNsa19idWxrX2dldCwgdGhlcmUgbWF5IGJlIGd1eXMgd2hvDQo+ID4gd2FudCBvZl9jbGtf
+YnVsa19nZXQgYXMgd2VsbCBpZiB0aGV5IG5lZWQgc3BlY2lmeSB0aGUgY2xvY2sgY291bnQNCj4g
+PiBpbmZvcm1hdGlvbiwgYmVjYXVlcyBvZl9jbGtfYnVsa19nZXRfYWxsIHdpbGwgbm90IGNoZWNr
+IHRoZSBjb3VudC4NCj4gPiBBbmQgb2ZfY2xrX2J1bGtfZ2V0IGlzIGFsc28gaGVscGZ1bCB3aGVu
+IGltcGxlbWVudGluZw0KPiA+IG9mX2Nsa19idWxrX2dldF9hbGwuDQo+IA0KPiBIbW0gb2suIEl0
+J3Mgb2sgdG8gaW1wbGVtZW50IGl0IG9uIHRvcCBvZiBvZl9jbGtfYnVsa19nZXQgSSBzdXBwb3Nl
+LCBidXQNCj4gbWF5YmUgdGhhdCBBUEkgY2FuIGJlIGtlcHQgcHJpdmF0ZSB1bnRpbCBzb21lb25l
+IGNhbiBwcm92ZSB0aGV5IG5lZWQgaXQNCj4gYmVjYXVzZSB0aGV5IGRvbid0IGhhdmUgYSBzdHJ1
+Y3QgZGV2aWNlIHBvaW50ZXIuIENhbiB5b3UgcGljayB0aGF0IHBhdGNoIGZyb20NCj4gdGhlIGxp
+c3QgYW5kIHJlc2VuZCBpbiB0aGUgc2VyaWVzPw0KPiANCg0KT2YgY291cnNlLiBJIHdpbGwgZG8g
+dGhhdC4NCg0KPiA+DQo+ID4gMikgSXQgb25seSBpbXBsZW1lbnRzIHRoZSBEVCB0eXBlIGNsa19n
+ZXRfYWxsIGFzIGkgc2VlIFN0ZXBoZW4gc2FpZCB3ZQ0KPiA+IHByb2JhYmx5IG1heSBub3QgbmVl
+ZCB0byBpbXBsZW1lbnQgbm9uLWR0IHR5cGUgYXMgdGhlcmUncmUgc3RpbGwgbm8NCj4gPiB1c2Vy
+cy4NCj4gDQo+IEdvb2QuDQo+IA0KPiA+DQo+ID4gSWYgd2UgZG8gd2FudCB0byBpbXBsZW1lbnQg
+bm9uLWR0IHR5cGUgYXMgd2VsbCwgd2UgY291bGQgcmV2aXNlIHRoZQ0KPiA+IHBhdGNoIHRvIGFk
+ZCBpdCB0b28uDQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvY2xrL2Nsay1idWxrLmMgfCA2NA0KPiAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICBp
+bmNsdWRlL2xpbnV4L2Nsay5oICAgIHwgNjENCj4gKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKy0NCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAxMjQgaW5zZXJ0aW9u
+cygrKSwgMSBkZWxldGlvbigtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Ns
+ay1idWxrLmMgYi9kcml2ZXJzL2Nsay9jbGstYnVsay5jIGluZGV4DQo+ID4gMWMxYTc5ZC4uYmFj
+MmFhZSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Nsay9jbGstYnVsay5jDQo+ID4gKysrIGIv
+ZHJpdmVycy9jbGsvY2xrLWJ1bGsuYw0KPiA+IEBAIC0xNyw5ICsxNywxMSBAQA0KPiA+ICAgKi8N
+Cj4gPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvY2xrLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9j
+bGstcHJvdmlkZXIuaD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2RldmljZS5oPg0KPiA+ICAjaW5j
+bHVkZSA8bGludXgvZXhwb3J0Lmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9vZi5oPg0KPiA+ICsj
+aW5jbHVkZSA8bGludXgvc2xhYi5oPg0KPiA+DQo+ID4gICNpZiBkZWZpbmVkKENPTkZJR19PRikg
+JiYgZGVmaW5lZChDT05GSUdfQ09NTU9OX0NMSykgIGludA0KPiA+IF9fbXVzdF9jaGVjayBvZl9j
+bGtfYnVsa19nZXQoc3RydWN0IGRldmljZV9ub2RlICpucCwgaW50IG51bV9jbGtzLCBAQA0KPiA+
+IC01MCw2ICs1Miw0NSBAQCBpbnQgX19tdXN0X2NoZWNrIG9mX2Nsa19idWxrX2dldChzdHJ1Y3Qg
+ZGV2aWNlX25vZGUNCj4gKm5wLCBpbnQgbnVtX2Nsa3MsDQo+ID4gICAgICAgICByZXR1cm4gcmV0
+Ow0KPiA+ICB9DQo+ID4gIEVYUE9SVF9TWU1CT0wob2ZfY2xrX2J1bGtfZ2V0KTsNCj4gPiArDQo+
+ID4gK3N0cnVjdCBjbGtfYnVsayBfX211c3RfY2hlY2sgKm9mX2Nsa19idWxrX2dldF9hbGwoc3Ry
+dWN0IGRldmljZV9ub2RlDQo+ID4gKypucCkgew0KPiA+ICsgICAgICAgc3RydWN0IGNsa19idWxr
+ICpjbGtfYnVsazsNCj4gPiArICAgICAgIGludCBudW1fY2xrczsNCj4gPiArICAgICAgIGludCBy
+ZXQ7DQo+ID4gKw0KPiA+ICsgICAgICAgbnVtX2Nsa3MgPSBvZl9jbGtfZ2V0X3BhcmVudF9jb3Vu
+dChucCk7DQo+ID4gKyAgICAgICBpZiAoIW51bV9jbGtzKQ0KPiA+ICsgICAgICAgICAgICAgICBy
+ZXR1cm4gTlVMTDsNCj4gPiArDQo+ID4gKyAgICAgICBjbGtfYnVsayA9IGt6YWxsb2Moc2l6ZW9m
+KCpjbGtfYnVsaykgKw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgIG51bV9jbGtzICog
+c2l6ZW9mKHN0cnVjdCBjbGtfYnVsa19kYXRhKSwNCj4gPiArICAgICAgICAgICAgICAgICAgICAg
+ICAgICBHRlBfS0VSTkVMKTsNCj4gPiArICAgICAgIGlmICghY2xrX2J1bGspDQo+ID4gKyAgICAg
+ICAgICAgICAgIHJldHVybiBFUlJfUFRSKC1FTk9NRU0pOw0KPiA+ICsNCj4gPiArICAgICAgIGNs
+a19idWxrLT5udW1fY2xrcyA9IG51bV9jbGtzOw0KPiA+ICsgICAgICAgcmV0ID0gb2ZfY2xrX2J1
+bGtfZ2V0KG5wLCBjbGtfYnVsay0+bnVtX2Nsa3MsIGNsa19idWxrLT5jbGtzKTsNCj4gPiArICAg
+ICAgIGlmIChyZXQpIHsNCj4gPiArICAgICAgICAgICAgICAga2ZyZWUoY2xrX2J1bGspOw0KPiA+
+ICsgICAgICAgICAgICAgICByZXR1cm4gRVJSX1BUUihyZXQpOw0KPiA+ICsgICAgICAgfQ0KPiAN
+Cj4gSGFzIHRoaXMgYmVlbiB0ZXN0ZWQ/IGNsa19idWxrLT5jbGtzIHByb2JhYmx5IHBvaW50cyB0
+byBqdW5rPw0KPiANCg0KWW91J3JlIHJpZ2h0LiBXaWxsIGZpeCBpbiBhIGZvcm1hbCBwYXRjaC4N
+Cg0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiBjbGtfYnVsazsNCj4gPiArfQ0KPiA+ICtFWFBP
+UlRfU1lNQk9MKG9mX2Nsa19idWxrX2dldF9hbGwpOw0KPiA+ICsNCj4gPiArdm9pZCBvZl9jbGtf
+YnVsa19wdXRfYWxsKHN0cnVjdCBjbGtfYnVsayAqY2xrX2J1bGspIHsNCj4gPiArICAgICAgIGlm
+IChJU19FUlJfT1JfTlVMTChjbGtfYnVsaykpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybjsN
+Cj4gPiArDQo+ID4gKyAgICAgICBjbGtfYnVsa19wdXQoY2xrX2J1bGstPm51bV9jbGtzLCBjbGtf
+YnVsay0+Y2xrcyk7DQo+ID4gKw0KPiA+ICsgICAgICAga2ZyZWUoY2xrX2J1bGstPmNsa3MpOw0K
+PiA+ICsgICAgICAga2ZyZWUoY2xrX2J1bGspOw0KPiA+ICt9DQo+ID4gK0VYUE9SVF9TWU1CT0wo
+b2ZfY2xrX2J1bGtfcHV0X2FsbCk7DQo+ID4gICNlbmRpZg0KPiANCj4gTXkgZ29hbCB3YXMgdG8g
+bWFrZSBkZXZpY2UgZHJpdmVycyBwYXNzIGluIHRoZWlyIHN0cnVjdCBkZXZpY2UgdG8NCj4gY2xr
+X2J1bGtfZ2V0X2FsbCgpIGFuZCB0aGVuIGhhdmUgdGhhdCBjYWxsIGludG8gYSBwcml2YXRlIERU
+IGhlbHBlciBmdW5jdGlvbg0KPiBsaWtlIG9mX2Nsa19idWxrX2dldF9hbGwoKS4gV2l0aCB5b3Vy
+IHBhdGNoIDIgdGhhdCBjb3VsZCBzdGlsbCBiZSBkb25lIHNvIGxldCdzDQo+IGdvIHRoYXQgZGly
+ZWN0aW9uPw0KPiANCg0KU291bmRzIGdvb2QgdG8gbWUuDQoNCj4gPg0KPiA+ICB2b2lkIGNsa19i
+dWxrX3B1dChpbnQgbnVtX2Nsa3MsIHN0cnVjdCBjbGtfYnVsa19kYXRhICpjbGtzKSBAQCAtMTA3
+LDYNCj4gPiArMTQ4LDEyIEBAIHZvaWQgY2xrX2J1bGtfdW5wcmVwYXJlKGludCBudW1fY2xrcywg
+Y29uc3Qgc3RydWN0DQo+ID4gY2xrX2J1bGtfZGF0YSAqY2xrcykgIH0gIEVYUE9SVF9TWU1CT0xf
+R1BMKGNsa19idWxrX3VucHJlcGFyZSk7DQo+ID4NCj4gPiArdm9pZCBpbmxpbmUgY2xrX2J1bGtf
+dW5wcmVwYXJlX2FsbChjb25zdCBzdHJ1Y3QgY2xrX2J1bGsgKmNsa19idWxrKSB7DQo+ID4gKyAg
+ICAgICBjbGtfYnVsa191bnByZXBhcmUoY2xrX2J1bGstPm51bV9jbGtzLCBjbGtfYnVsay0+Y2xr
+cyk7IH0NCj4gPiArRVhQT1JUX1NZTUJPTF9HUEwoY2xrX2J1bGtfdW5wcmVwYXJlX2FsbCk7DQo+
+IA0KPiBEbyB3ZSByZWFsbHkgbmVlZCB0aGVzZSBfYWxsIEFQSXMgdGhvdWdoPw0KPiANCj4gPiAr
+DQo+ID4gIC8qKg0KPiA+ICAgKiBjbGtfYnVsa19wcmVwYXJlIC0gcHJlcGFyZSBhIHNldCBvZiBj
+bG9ja3MNCj4gPiAgICogQG51bV9jbGtzOiB0aGUgbnVtYmVyIG9mIGNsa19idWxrX2RhdGEgQEAg
+LTEzOSw2ICsxODYsMTEgQEAgaW50DQo+ID4gX19tdXN0X2NoZWNrIGNsa19idWxrX3ByZXBhcmUo
+aW50IG51bV9jbGtzLCAgfQ0KPiA+IEVYUE9SVF9TWU1CT0xfR1BMKGNsa19idWxrX3ByZXBhcmUp
+Ow0KPiA+DQo+ID4gK2ludCBpbmxpbmUgX19tdXN0X2NoZWNrIGNsa19idWxrX3ByZXBhcmVfYWxs
+KGNvbnN0IHN0cnVjdCBjbGtfYnVsaw0KPiA+ICsqY2xrX2J1bGspDQo+IA0KPiBpbmxpbmUgd29u
+J3QgaGVscCBtdWNoIGhlcmUuIE1heWJlIHRoZXNlIHdyYXBwZXJzIHNob3VsZCBnbyBpbnRvIHRo
+ZQ0KPiBoZWFkZXIgZmlsZT8NCj4gDQoNCldpbGwgdHJ5IHRoYXQuDQoNCj4gPiArew0KPiA+ICsg
+ICAgICAgcmV0dXJuIGNsa19idWxrX3ByZXBhcmUoY2xrX2J1bGstPm51bV9jbGtzLCBjbGtfYnVs
+ay0+Y2xrcyk7IH0NCj4gPiArDQo+ID4gICNlbmRpZiAvKiBDT05GSUdfSEFWRV9DTEtfUFJFUEFS
+RSAqLw0KPiA+DQo+ID4gIC8qKg0KPiA+IEBAIC0xNTgsNiArMjEwLDEyIEBAIHZvaWQgY2xrX2J1
+bGtfZGlzYWJsZShpbnQgbnVtX2Nsa3MsIGNvbnN0IHN0cnVjdA0KPiA+IGNsa19idWxrX2RhdGEg
+KmNsa3MpICB9ICBFWFBPUlRfU1lNQk9MX0dQTChjbGtfYnVsa19kaXNhYmxlKTsNCj4gPg0KPiA+
+ICt2b2lkIGlubGluZSBjbGtfYnVsa19kaXNhYmxlX2FsbChjb25zdCBzdHJ1Y3QgY2xrX2J1bGsg
+KmNsa19idWxrKQ0KPiANCj4gZGl0dG8NCj4gDQo+ID4gK3sNCj4gPiArICAgICAgIHJldHVybiBj
+bGtfYnVsa19kaXNhYmxlKGNsa19idWxrLT5udW1fY2xrcywgY2xrX2J1bGstPmNsa3MpOyB9DQo+
+ID4gK0VYUE9SVF9TWU1CT0xfR1BMKGNsa19idWxrX2Rpc2FibGVfYWxsKTsNCj4gPiArDQo+ID4g
+IC8qKg0KPiA+ICAgKiBjbGtfYnVsa19lbmFibGUgLSB1bmdhdGUgYSBzZXQgb2YgY2xvY2tzDQo+
+ID4gICAqIEBudW1fY2xrczogdGhlIG51bWJlciBvZiBjbGtfYnVsa19kYXRhIEBAIC0xODgsMyAr
+MjQ2LDkgQEAgaW50DQo+ID4gX19tdXN0X2NoZWNrIGNsa19idWxrX2VuYWJsZShpbnQgbnVtX2Ns
+a3MsIGNvbnN0IHN0cnVjdCBjbGtfYnVsa19kYXRhDQo+ICpjbGtzKQ0KPiA+ICAgICAgICAgcmV0
+dXJuICByZXQ7DQo+ID4gIH0NCj4gPiAgRVhQT1JUX1NZTUJPTF9HUEwoY2xrX2J1bGtfZW5hYmxl
+KTsNCj4gPiArDQo+ID4gK2ludCBpbmxpbmUgX19tdXN0X2NoZWNrIGNsa19idWxrX2VuYWJsZV9h
+bGwoY29uc3Qgc3RydWN0IGNsa19idWxrDQo+ID4gKypjbGtfYnVsaykNCj4gDQo+IGFnYWluDQo+
+IA0KPiA+ICt7DQo+ID4gKyAgICAgICByZXR1cm4gY2xrX2J1bGtfZW5hYmxlKGNsa19idWxrLT5u
+dW1fY2xrcywgY2xrX2J1bGstPmNsa3MpOyB9DQo+ID4gK0VYUE9SVF9TWU1CT0xfR1BMKGNsa19i
+dWxrX2VuYWJsZV9hbGwpOw0KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2Nsay5oIGIv
+aW5jbHVkZS9saW51eC9jbGsuaCBpbmRleA0KPiA+IDA5YWU3NjAuLmNjYWZkYTEgMTAwNjQ0DQo+
+ID4gLS0tIGEvaW5jbHVkZS9saW51eC9jbGsuaA0KPiA+ICsrKyBiL2luY2x1ZGUvbGludXgvY2xr
+LmgNCj4gPiBAQCAtOTIsNiArOTIsMjEgQEAgc3RydWN0IGNsa19idWxrX2RhdGEgew0KPiA+ICAg
+ICAgICAgc3RydWN0IGNsayAgICAgICAgICAgICAgKmNsazsNCj4gPiAgfTsNCj4gPg0KPiA+ICsv
+KioNCj4gPiArICogc3RydWN0IGNsa19idWxrIC0gYnVsayBjbGsgc3RydWN0dXJlDQo+ID4gKyAq
+DQo+ID4gKyAqIEBudW1fY2xrczogdGhlIG51bWJlciBvZiBhdmFsaWFibGUgY2xvY2tzIGluIHRo
+aXMgYnVsaw0KPiA+ICsgKiBAY2xrczogc3RydWN0IGNsa19idWxrX2RhdGEgKiB0byBzdG9yZSB0
+aGUgYXNzb2NpYXRlZCBjbG9jaw0KPiA+ICsgKg0KPiA+ICsgKiBUaGUgQ0xLIEFQSXMgcHJvdmlk
+ZSBhIHNlcmllcyBvZiBjbGtfYnVsa194X2FsbCgpIEFQSSBjYWxscyBhcw0KPiA+ICsgKiBhIGNv
+bnZlbmllbmNlIHRvIGNvbnN1bWVycyB3aGljaCByZXF1aXJlIG11bHRpcGxlIGNsa3MuICBUaGlz
+DQo+ID4gKyAqIHN0cnVjdHVyZSBpcyB1c2VkIHRvIG1hbmFnZSBkYXRhIGZvciB0aGVzZSBjYWxs
+cy4NCj4gPiArICovDQo+ID4gK3N0cnVjdCBjbGtfYnVsayB7DQo+ID4gKyAgICAgICBpbnQgbnVt
+X2Nsa3M7DQo+ID4gKyAgICAgICBzdHJ1Y3QgY2xrX2J1bGtfZGF0YSAqY2xrczsNCj4gPiArfTsN
+Cj4gDQo+IFRoaXMgY291bGQgZ28gYXdheSwgYW5kIHdlIGNvdWxkIHJldHVybiB0aGUgbnVtYmVy
+IG9mIGNsa3MgZnJvbQ0KPiBjbGtfYnVsa19nZXRfYWxsKCkgYXMgYSBwb3NpdGl2ZSBudW1iZXIs
+IDAgaWYgdGhlcmUgYXJlIG5vbmUsIGFuZCBhIG5lZ2F0aXZlDQo+IG51bWJlciBpZiBzb21ldGhp
+bmcgZmFpbGVkLiBUaGVuIHdlIGRvbid0IG5lZWQgdGhlIF9hbGwgdmFyaWFudHMgb3IgYQ0KPiB3
+cmFwcGVyIHN0cnVjdC4gSXQgd291bGQgYmUgbmljZSB0byBhdm9pZCB0aGUgZXh0cmEgdmFyaWFu
+dHMganVzdCBiZWNhdXNlIHdlDQo+IG5lZWQgdG8gdGVsbCBpdCB0aGUgbnVtYmVyIG9mIGNsa3Mg
+dG8gaGFuZGxlLg0KDQpUaGlzIGxvb2tzIGxpa2UgYSBnb29kIGlkZWEuDQpJIHdpbGwgdHJ5IGl0
+Lg0KDQpUaGFua3MgZm9yIHlvdXIgZ29vZCBzdWdnZXN0aW9ucy4NCg0KUmVnYXJkcw0KRG9uZyBB
+aXNoZW5nDQo=
