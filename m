@@ -1,89 +1,204 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Fri, 2 Mar 2018 09:12:36 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 06/16] drm/sun4i: Don't process LVDS if TCON doesn't
- support it
-Message-ID: <20180302081236.zlt52z6jjsglzk3i@flea.lan>
-References: <20180227222701.9716-1-jernej.skrabec@siol.net>
- <20180227222701.9716-7-jernej.skrabec@siol.net>
- <20180228073608.r2zd3qkiudm2uarm@flea>
- <5333678.QYsGi30oEL@jernej-laptop>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uk6tcwyktkcpl2dk"
-In-Reply-To: <5333678.QYsGi30oEL@jernej-laptop>
+Return-Path: <Tali.Perry@nuvoton.com>
+From: tali.perry1@gmail.com
+To: brendanhiggins@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
+        raltherr@google.com, mturquette@baylibre.com, sboyd@codeaurora.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
+Subject: [PATCH v11 1/2] dt-binding: clk: npcm750: Add binding for Nuvoton NPCM7XX Clock
+Date: Tue, 20 Mar 2018 15:40:48 +0200
+Message-Id: <1521553249-6971-2-git-send-email-tali.perry1@gmail.com>
+In-Reply-To: <1521553249-6971-1-git-send-email-tali.perry1@gmail.com>
+References: <1521553249-6971-1-git-send-email-tali.perry1@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Tali Perry <tali.perry1@gmail.com>
 
---uk6tcwyktkcpl2dk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Nuvoton NPCM7XX Clock Controller
 
-Hi,
+Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
+generates and supplies clocks to all modules within the BMC.
 
-On Wed, Feb 28, 2018 at 10:43:30PM +0100, Jernej =C5=A0krabec wrote:
-> Dne sreda, 28. februar 2018 ob 08:36:08 CET je Maxime Ripard napisal(a):
-> > On Tue, Feb 27, 2018 at 11:26:51PM +0100, Jernej Skrabec wrote:
-> > > TCON checks for LVDS properties even if it doesn't support it. Add a
-> > > check to skip that part of the code if TCON doesn't support channel 0.
-> > >=20
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> >=20
-> > I have already sent a similar patch here:
-> > https://lists.freedesktop.org/archives/dri-devel/2018-February/166665.h=
-tml
->=20
-> Right. However, check last chunk in my patch. There is no need to call=20
-> sun4i_rgb_init() if TCON doesn't support channel 0. It doesn't do anythin=
-g,=20
-> except producing warning. Will you add that this change to your patch and=
- then=20
-> I can remove this patch from next revision?
+---
 
-They are orthogonal to me though. Mine fixes the spurious LVDS error
-messages that you were mentionning in your commit log. Your point here
-is that we shouldn't need to even register the LVDS and RGB output
-when there's no channel 0. This is obviously true, but it should be in
-a separate patch.
+10 ==> 11
+update documentation. "eth" replaced with "ethernet" in use case eaxample.
 
-> BTW, your patch won't apply cleanly, since you didn't base it on latest c=
-ode=20
-> (every TCON variant has at least one entry now).
+2 ==> 10
+update documentation. add external clocks as inputs to clk driver.
+fix SPDX comment.
 
-I'll fix it when applying.
+1 ==> 2
+This patch includes fix request described here:
+https://patchwork.kernel.org/patch/10200033/
+(move fixed clocks to DT)
 
-Maxime
+Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
---uk6tcwyktkcpl2dk
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++++++++++++++++++++
+ include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 +++++++++
+ 2 files changed, 144 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+ create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
 
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqZB3MACgkQ0rTAlCFN
-r3SFIw/4kQEthkhFdmX9akYCDc7An/Zq+S8g+aYhZIsoYtWscv08rurozqbjA3MI
-5oSNf+mJTnpLTZX2U9BdqfVITwUqYFjNTryGvO2Tk1774Zh29dzYk4iYd4rF+ZSp
-5r+ZOwE4dnbJpIwCEdc+Ni1eSssv132Rhj1O5MD8Cn+/O2xuuCAjc6Pqhrw8ww0f
-SpWeCOEde/o+ZyZraUz435m2w39hXEEbDlS/tBk5K8w6fzlqaF8aBdtFYH4ADMTm
-on1Vstmrn70h4gIHlW3k+GlS9NZJVBIkmB8S9JN8GdNarRWR2M8jIm0RgQuY8zbI
-jiKmLcohP1gysLYwuhAP7PgEpSIOYBviRw9tcy2J6uGaoxfzZBR+kzf7Cd1o8bmb
-PSNtSUHS0ZssyEzZjNVDTIcqvSxsvmVEKbDU4OsWRlcI4fVAx6/J3jFnidKrfy7H
-hUGQrxc5Fh6nnTjKrRltzjaGIZnlJXbzqig+KX8i/bfFPcAXYOWNpRQF2YADomDO
-UwtPPRIodzqrlAwe2gLya9XHb/FVAbG+vQTA0XBmYq6Om7aaBAi7fsjpITQeTyIT
-Wr03i87WTuqC2R8SAg3JMXTDeyLakM5rKnhfrArHII3BACrzjrbUsyENabEqlb6e
-wpteJQMxBJKupkVp12mNSw4KLjynS9K8z7CbASKv/603p9bDuA==
-=YUqa
------END PGP SIGNATURE-----
-
---uk6tcwyktkcpl2dk--
+diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+new file mode 100644
+index 000000000000..f82064546d11
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+@@ -0,0 +1,100 @@
++* Nuvoton NPCM7XX Clock Controller
++
++Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
++generates and supplies clocks to all modules within the BMC.
++
++External clocks:
++
++There are six fixed clocks that are generated outside the BMC. All clocks are of
++a known fixed value that cannot be changed. clk_refclk, clk_mcbypck and
++clk_sysbypck are inputs to the clock controller.
++clk_rg1refck, clk_rg2refck and clk_xin are external clocks suppling the
++network. They are set on the device tree, but not used by the clock module. The
++network devices use them directly.
++Example can be found below.
++
++All available clocks are defined as preprocessor macros in:
++dt-bindings/clock/nuvoton,npcm7xx-clock.h
++and can be reused as DT sources.
++
++Required Properties of clock controller:
++
++	- compatible: "nuvoton,npcm750-clk" : for clock controller of Nuvoton
++		  Poleg BMC NPCM750
++
++	- reg: physical base address of the clock controller and length of
++		memory mapped region.
++
++	- #clock-cells: should be 1.
++
++Example: Clock controller node:
++
++	clk: clock-controller@f0801000 {
++		compatible = "nuvoton,npcm750-clk";
++		#clock-cells = <1>;
++		reg = <0xf0801000 0x1000>;
++		clock-names = "refclk", "sysbypck", "mcbypck";
++		clocks = <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
++	};
++
++Example: Required external clocks for network:
++
++	/* external reference clock */
++	clk_refclk: clk-refclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++		clock-output-names = "refclk";
++	};
++
++	/* external reference clock for cpu. float in normal operation */
++	clk_sysbypck: clk-sysbypck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <800000000>;
++		clock-output-names = "sysbypck";
++	};
++
++	/* external reference clock for MC. float in normal operation */
++	clk_mcbypck: clk-mcbypck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <800000000>;
++		clock-output-names = "mcbypck";
++	};
++
++	 /* external clock signal rg1refck, supplied by the phy */
++	clk_rg1refck: clk-rg1refck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++		clock-output-names = "clk_rg1refck";
++	};
++
++	 /* external clock signal rg2refck, supplied by the phy */
++	clk_rg2refck: clk-rg2refck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++		clock-output-names = "clk_rg2refck";
++	};
++
++	clk_xin: clk-xin {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <50000000>;
++		clock-output-names = "clk_xin";
++	};
++
++
++Example: GMAC controller node that consumes two clocks: a generated clk by the
++clock controller and a fixed clock from DT (clk_rg1refck).
++
++	ethernet0: ethernet@f0802000 {
++		compatible = "snps,dwmac";
++		reg = <0xf0802000 0x2000>;
++		interrupts = <0 14 4>;
++		interrupt-names = "macirq";
++		clocks	= <&clk_rg1refck>, <&clk NPCM7XX_CLK_AHB>;
++		clock-names = "stmmaceth", "clk_gmac";
++	};
+diff --git a/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+new file mode 100644
+index 000000000000..f21522605b94
+--- /dev/null
++++ b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Nuvoton NPCM7xx Clock Generator binding
++ * clock binding number for all clocks supportted by nuvoton,npcm7xx-clk
++ *
++ * Copyright (C) 2018 Nuvoton Technologies tali.perry@nuvoton.com
++ *
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_NPCM7XX_H
++#define __DT_BINDINGS_CLOCK_NPCM7XX_H
++
++
++#define NPCM7XX_CLK_CPU 0
++#define NPCM7XX_CLK_GFX_PIXEL 1
++#define NPCM7XX_CLK_MC 2
++#define NPCM7XX_CLK_ADC 3
++#define NPCM7XX_CLK_AHB 4
++#define NPCM7XX_CLK_TIMER 5
++#define NPCM7XX_CLK_UART 6
++#define NPCM7XX_CLK_MMC  7
++#define NPCM7XX_CLK_SPI3 8
++#define NPCM7XX_CLK_PCI  9
++#define NPCM7XX_CLK_AXI 10
++#define NPCM7XX_CLK_APB4 11
++#define NPCM7XX_CLK_APB3 12
++#define NPCM7XX_CLK_APB2 13
++#define NPCM7XX_CLK_APB1 14
++#define NPCM7XX_CLK_APB5 15
++#define NPCM7XX_CLK_CLKOUT 16
++#define NPCM7XX_CLK_GFX  17
++#define NPCM7XX_CLK_SU   18
++#define NPCM7XX_CLK_SU48 19
++#define NPCM7XX_CLK_SDHC 20
++#define NPCM7XX_CLK_SPI0 21
++#define NPCM7XX_CLK_SPIX 22
++
++#define NPCM7XX_CLK_REFCLK 23
++#define NPCM7XX_CLK_SYSBYPCK 24
++#define NPCM7XX_CLK_MCBYPCK 25
++
++#define NPCM7XX_NUM_CLOCKS	 (NPCM7XX_CLK_MCBYPCK+1)
++
++#endif
+-- 
+2.14.1
