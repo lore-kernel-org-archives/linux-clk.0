@@ -1,54 +1,59 @@
-Return-Path: <Tali.Perry@nuvoton.com>
-From: tali.perry1@gmail.com
-To: brendanhiggins@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, avifishman70@gmail.com, tmaimon77@gmail.com,
-        raltherr@google.com, mturquette@baylibre.com, sboyd@codeaurora.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
-        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
-Subject: [PATCH v11 0/2] clk: npcm750: Add NPCM7XX Clock driver and binding
-Date: Tue, 20 Mar 2018 15:40:47 +0200
-Message-Id: <1521553249-6971-1-git-send-email-tali.perry1@gmail.com>
+Return-Path: <sudeep.holla@arm.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: scmi: use devm_of_clk_add_hw_provider() API and drop scmi_clocks_remove
+Date: Tue, 20 Mar 2018 12:11:07 +0000
+Message-Id: <1521547867-23808-1-git-send-email-sudeep.holla@arm.com>
+In-Reply-To: <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
+References: <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Tali Perry <tali.perry1@gmail.com>
+Commit aa795c41d9cd ("clk: Add devm_of_clk_add_hw_provider()/del_provider()
+APIs") adds devm_of_clk_add_hw_provider which takes care of deleting the
+clock provider when the clock providers device is removed.
 
+This patch makes use of devm_of_clk_add_hw_provider() instead of
+of_clk_add_hw_provider() so that we can eliminate the need of explicit
+scmi_clocks_remove for just doing of_clk_del_provider()
 
-Nuvoton NPCM7XX Clock Controller
-
-Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
-generates and supplies clocks to all modules within the BMC.
-
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
+ drivers/clk/clk-scmi.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-10 ==> 11
-update documentation. "eth" replaced with "ethernet" in use case eaxample.
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index 26f1476d4a79..488c21376b55 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -172,15 +172,8 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 		}
+ 	}
 
-2 ==> 10
-update documentation. add external clocks as inputs to clk driver.
-fix SPDX comment.
+-	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
+-}
+-
+-static void scmi_clocks_remove(struct scmi_device *sdev)
+-{
+-	struct device *dev = &sdev->dev;
+-	struct device_node *np = dev->of_node;
+-
+-	of_clk_del_provider(np);
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					   clk_data);
+ }
 
-1 ==> 2
-This patch includes fix request described here:
-https://patchwork.kernel.org/patch/10200033/
-(move fixed clocks to DT)
-
-Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-
-Tali Perry (2):
-  clk: npcm750: Add binding for Nuvoton NPCM7XX clock Controller
-  clk: npcm7xx: Add Nuvoton NPCM7XX Clock Controller driver
-
- .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-npcm7xx.c                          | 757 +++++++++++++++++++++
- include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 ++
- 4 files changed, 902 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
- create mode 100644 drivers/clk/clk-npcm7xx.c
- create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
-
--- 
-2.14.1
+ static const struct scmi_device_id scmi_id_table[] = {
+@@ -192,7 +185,6 @@ MODULE_DEVICE_TABLE(scmi, scmi_id_table);
+ static struct scmi_driver scmi_clocks_driver = {
+ 	.name = "scmi-clocks",
+ 	.probe = scmi_clocks_probe,
+-	.remove = scmi_clocks_remove,
+ 	.id_table = scmi_id_table,
+ };
+ module_scmi_driver(scmi_clocks_driver);
+--
+2.7.4
