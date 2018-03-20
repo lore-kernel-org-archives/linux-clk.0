@@ -1,57 +1,53 @@
-Return-Path: <joel.stan@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: joel.stan@gmail.com
-In-Reply-To: <CAARXrtk6ZynSzm=xA1E1M8aSJNb=BZ7jxg4gvWa_QJ_=LaQeog@mail.gmail.com>
-References: <1520440570-25280-1-git-send-email-eajames@linux.vnet.ibm.com>
- <CACPK8Xe5rVtB6hUo4xW9qSz-T+kehvXSRv5g1_6KOO=BYr8Qwg@mail.gmail.com> <CAARXrtk6ZynSzm=xA1E1M8aSJNb=BZ7jxg4gvWa_QJ_=LaQeog@mail.gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-Date: Thu, 8 Mar 2018 16:13:28 +1030
-Message-ID: <CACPK8Xe55+_aOJD+dhpLrYfnw8_kjE-daXuRhu42p=O3K5Rztw@mail.gmail.com>
-Subject: Re: [PATCH] clk: aspeed: Prevent reset if clock is enabled
-To: Lei YU <mine260309@gmail.com>
-Cc: Eddie James <eajames@linux.vnet.ibm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Ryan Chen <ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
+ mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180317100952.28538-9-manivannan.sadhasivam@linaro.org>
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+ devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+ daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+ viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+ <20180317100952.28538-9-manivannan.sadhasivam@linaro.org>
+Message-ID: <152150829204.254778.2737344357539002182@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 08/12] clk: actions: Add factor clock support
+Date: Mon, 19 Mar 2018 18:11:32 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 8, 2018 at 4:08 PM, Lei YU <mine260309@gmail.com> wrote:
-> On Thu, Mar 8, 2018 at 11:42 AM, Joel Stanley <joel@jms.id.au> wrote:
->>> +       /* Only reset/enable/unreset if clock is stopped */
->>> +       regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
->>> +       if (!(reg & clk))
->>> +               return 0;
->>
->> This doesn't generalise to all of the clocks, as some clocks use set
->> to disable. Perhaps we could do something like this:
->>
->>        /* Only reset/enable/unreset if clock is stopped. The LPC clock
->> on ast2500 has issues otherwise */
->>        enval = (gate->flags & CLK_GATE_SET_TO_DISABLE) ? 0 : clk;
->>        regmap_read(gate->map, ASPEED_CLK_STOP_CTRL, &reg);
->>        if ((reg & clk) == enval) {
->>                spin_unlock_irqrestore(gate->lock, flags);
->>                return 0;
->>        }
->>
->> I think we should also do this operation under the lock.
->>
->> Please cc Ryan Chen <ryan_chen@aspeedtech.com> so he can confirm that
->> this workaround is valid, and credit Lei who spent a lot of time
->> investigating this issue. Perhaps "Root-caused-by".
->>
->
-> The code has aspeed_clk_is_enabled() already, why not just:
->
->     if (aspeed_clk_is_enabled(hw))
->         return 0;
+Quoting Manivannan Sadhasivam (2018-03-17 03:09:48)
+> +
+> +static int clk_val_best(struct clk_hw *hw, unsigned long rate,
+> +                       unsigned long *best_parent_rate)
+> +{
+[...]
+> +               }
+> +
+> +               parent_rate =3D clk_hw_round_rate(clk_hw_get_parent(hw),
+> +                               try_parent_rate);
+> +               cur_rate =3D DIV_ROUND_UP(parent_rate, clkt->div) * clkt-=
+>mul;
+> +               if (cur_rate <=3D rate && cur_rate > best) {
+> +                       bestval =3D clkt->val;
+> +                       best =3D cur_rate;
+> +                       *best_parent_rate =3D parent_rate;
+> +               }
+> +       }
+> +
+> +       if (!bestval) {
+> +               bestval =3D _get_table_maxval(clkt);
+> +               *best_parent_rate =3D clk_hw_round_rate(
+> +                               clk_hw_get_parent(hw), 1);
+> +       }
+> +
+> +       return bestval;
 
-Good suggestion.
+Also, if this is largely copy/paste from the factor clk code then
+perhaps those functions can be exported to here and reused instead of
+copy/paste.
 
-We should also fix up aspeed_clk_is_enabled() for clocks that have
-CLK_GATE_SET_TO_DISABLE set.
-
-Cheers,
-
-Joel
+> +}
