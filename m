@@ -1,30 +1,150 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
+ mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521168778-27236-9-git-send-email-david@lechnology.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
- David Lechner <david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-9-git-send-email-david@lechnology.com>
-Message-ID: <152156543339.183971.16387620982196959218@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v8 08/42] clk: davinci: Add platform information for TI DM646x PLL
-Date: Tue, 20 Mar 2018 10:03:53 -0700
+In-Reply-To: <20180317100952.28538-10-manivannan.sadhasivam@linaro.org>
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+ devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+ daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+ viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+ <20180317100952.28538-10-manivannan.sadhasivam@linaro.org>
+Message-ID: <152150820384.254778.6585368643028088392@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 09/12] clk: actions: Add fixed factor clock support
+Date: Mon, 19 Mar 2018 18:10:03 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting David Lechner (2018-03-15 19:52:24)
-> This adds platform-specific declarations for the PLL clocks on TI
-> DM646x based systems.
+Quoting Manivannan Sadhasivam (2018-03-17 03:09:49)
+> Add support for Actions Semi fixed factor clock together with
+> helper functions to be used in composite clock.
 > =
 
-> Signed-off-by: David Lechner <david@lechnology.com>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
+>  drivers/clk/actions/Makefile           |  1 +
+>  drivers/clk/actions/owl-fixed-factor.c | 81 ++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/actions/owl-fixed-factor.h | 62 ++++++++++++++++++++++++++
+>  3 files changed, 144 insertions(+)
+>  create mode 100644 drivers/clk/actions/owl-fixed-factor.c
+>  create mode 100644 drivers/clk/actions/owl-fixed-factor.h
+> =
 
-Applied to clk-next
+> diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+> index 994357fa560b..b618696ba54e 100644
+> --- a/drivers/clk/actions/Makefile
+> +++ b/drivers/clk/actions/Makefile
+> @@ -5,3 +5,4 @@ clk-owl-y                       +=3D owl-gate.o
+>  clk-owl-y                      +=3D owl-mux.o
+>  clk-owl-y                      +=3D owl-divider.o
+>  clk-owl-y                      +=3D owl-factor.o
+> +clk-owl-y                      +=3D owl-fixed-factor.o
+> diff --git a/drivers/clk/actions/owl-fixed-factor.c b/drivers/clk/actions=
+/owl-fixed-factor.c
+> new file mode 100644
+> index 000000000000..f1281565129c
+> --- /dev/null
+> +++ b/drivers/clk/actions/owl-fixed-factor.c
+> @@ -0,0 +1,81 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// OWL fixed factor clock driver
+> +//
+> +// Copyright (c) 2014 Actions Semi Inc.
+> +// Author: David Liu <liuwei@actions-semi.com>
+> +//
+> +// Copyright (c) 2018 Linaro Ltd.
+> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +
+> +#include "owl-fixed-factor.h"
+> +
+> +long owl_fix_fact_helper_round_rate(struct owl_clk_common *common,
+> +                               const struct owl_fix_fact_hw *fix_fact_hw,
+> +                               unsigned long rate,
+> +                               unsigned long *parent_rate)
+> +{
+> +       if (clk_hw_get_flags(&common->hw) & CLK_SET_RATE_PARENT) {
+> +               unsigned long best_parent;
+> +
+> +               best_parent =3D (rate / fix_fact_hw->mul) * fix_fact_hw->=
+div;
+> +               *parent_rate =3D clk_hw_round_rate(clk_hw_get_parent(&com=
+mon->hw),
+> +                                                       best_parent);
+> +       }
+> +
+> +       return (*parent_rate / fix_fact_hw->div) * fix_fact_hw->mul;
+> +}
+> +
+> +static long owl_fix_fact_round_rate(struct clk_hw *hw, unsigned long rat=
+e,
+> +                       unsigned long *parent_rate)
+> +{
+> +       struct owl_fix_fact *fix_fact =3D hw_to_owl_fix_fact(hw);
+> +       struct owl_fix_fact_hw *fix_fact_hw =3D &fix_fact->fix_fact_hw;
+> +
+> +       return owl_fix_fact_helper_round_rate(&fix_fact->common, fix_fact=
+_hw,
+> +                                                       rate, parent_rate=
+);
+> +}
+> +
+> +unsigned long owl_fix_fact_helper_recalc_rate(struct owl_clk_common *com=
+mon,
+> +                       const struct owl_fix_fact_hw *fix_fact_hw,
+> +                       unsigned long parent_rate)
+> +{
+> +       unsigned long long int rate;
+> +
+> +       rate =3D (unsigned long long int)parent_rate * fix_fact_hw->mul;
+> +       do_div(rate, fix_fact_hw->div);
+> +
+> +       return (unsigned long)rate;
+
+You can drop the cast.
+
+> +}
+> +
+> +static unsigned long owl_fix_fact_recalc_rate(struct clk_hw *hw,
+> +                       unsigned long parent_rate)
+> +{
+> +       struct owl_fix_fact *fix_fact =3D hw_to_owl_fix_fact(hw);
+> +       struct owl_fix_fact_hw *fix_fact_hw =3D &fix_fact->fix_fact_hw;
+> +
+> +       return owl_fix_fact_helper_recalc_rate(&fix_fact->common, fix_fac=
+t_hw,
+> +                                                       parent_rate);
+> +}
+> +
+> +static int owl_fix_fact_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                              unsigned long parent_rate)
+> +{
+> +       /*
+> +        * We must report success but we can do so unconditionally because
+> +        * clk_fix_fact_round_rate returns values that ensure this call i=
+s a
+
+What function is that?
+
+> +        * nop.
+> +        */
+> +
+> +       return 0;
+> +}
+> +
+> +const struct clk_ops owl_fix_fact_ops =3D {
+> +       .round_rate     =3D owl_fix_fact_round_rate,
+> +       .recalc_rate    =3D owl_fix_fact_recalc_rate,
+> +       .set_rate       =3D owl_fix_fact_set_rate,
+> +};
+
+Why can't you use the regular fixed factor clk code and ops?
