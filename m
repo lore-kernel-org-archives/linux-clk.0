@@ -1,150 +1,164 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:51944 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750979AbeC2Ow4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Mar 2018 10:52:56 -0400
-Date: Thu, 29 Mar 2018 16:52:29 +0200
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v4 7/8] clocksource: Add a new timer-ingenic driver
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-doc@vger.kernel.org
-Message-Id: <1522335149.1792.0@smtp.crapouillou.net>
-In-Reply-To: <af33e522-7f87-d62a-0a35-d56a403387b7@linaro.org>
-References: <20180110224838.16711-2-paul@crapouillou.net>
-        <20180317232901.14129-1-paul@crapouillou.net>
-        <20180317232901.14129-8-paul@crapouillou.net>
-        <a8d28b2b-4e40-83b9-d65e-beecbd36ad33@linaro.org>
-        <06976e4ae275c4cc0bddacc5e0c0c9a9@crapouillou.net>
-        <af33e522-7f87-d62a-0a35-d56a403387b7@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Tue, 20 Mar 2018 14:34:00 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: afaerber@suse.de, mark.rutland@arm.com, mturquette@baylibre.com,
+	robh+dt@kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com,
+	96boards@ucrobotics.com, devicetree@vger.kernel.org,
+	davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com, bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com
+Subject: Re: [PATCH v5 09/12] clk: actions: Add fixed factor clock support
+Message-ID: <20180320090400.6bgugy6fgze3ohsd@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+ <20180317100952.28538-10-manivannan.sadhasivam@linaro.org>
+ <152150820384.254778.6585368643028088392@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <152150820384.254778.6585368643028088392@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Stephen,
 
+On Mon, Mar 19, 2018 at 06:10:03PM -0700, Stephen Boyd wrote:
+> Quoting Manivannan Sadhasivam (2018-03-17 03:09:49)
+> > Add support for Actions Semi fixed factor clock together with
+> > helper functions to be used in composite clock.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/clk/actions/Makefile           |  1 +
+> >  drivers/clk/actions/owl-fixed-factor.c | 81 ++++++++++++++++++++++++++++++++++
+> >  drivers/clk/actions/owl-fixed-factor.h | 62 ++++++++++++++++++++++++++
+> >  3 files changed, 144 insertions(+)
+> >  create mode 100644 drivers/clk/actions/owl-fixed-factor.c
+> >  create mode 100644 drivers/clk/actions/owl-fixed-factor.h
+> > 
+> > diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+> > index 994357fa560b..b618696ba54e 100644
+> > --- a/drivers/clk/actions/Makefile
+> > +++ b/drivers/clk/actions/Makefile
+> > @@ -5,3 +5,4 @@ clk-owl-y                       += owl-gate.o
+> >  clk-owl-y                      += owl-mux.o
+> >  clk-owl-y                      += owl-divider.o
+> >  clk-owl-y                      += owl-factor.o
+> > +clk-owl-y                      += owl-fixed-factor.o
+> > diff --git a/drivers/clk/actions/owl-fixed-factor.c b/drivers/clk/actions/owl-fixed-factor.c
+> > new file mode 100644
+> > index 000000000000..f1281565129c
+> > --- /dev/null
+> > +++ b/drivers/clk/actions/owl-fixed-factor.c
+> > @@ -0,0 +1,81 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +//
+> > +// OWL fixed factor clock driver
+> > +//
+> > +// Copyright (c) 2014 Actions Semi Inc.
+> > +// Author: David Liu <liuwei@actions-semi.com>
+> > +//
+> > +// Copyright (c) 2018 Linaro Ltd.
+> > +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/slab.h>
+> > +
+> > +#include "owl-fixed-factor.h"
+> > +
+> > +long owl_fix_fact_helper_round_rate(struct owl_clk_common *common,
+> > +                               const struct owl_fix_fact_hw *fix_fact_hw,
+> > +                               unsigned long rate,
+> > +                               unsigned long *parent_rate)
+> > +{
+> > +       if (clk_hw_get_flags(&common->hw) & CLK_SET_RATE_PARENT) {
+> > +               unsigned long best_parent;
+> > +
+> > +               best_parent = (rate / fix_fact_hw->mul) * fix_fact_hw->div;
+> > +               *parent_rate = clk_hw_round_rate(clk_hw_get_parent(&common->hw),
+> > +                                                       best_parent);
+> > +       }
+> > +
+> > +       return (*parent_rate / fix_fact_hw->div) * fix_fact_hw->mul;
+> > +}
+> > +
+> > +static long owl_fix_fact_round_rate(struct clk_hw *hw, unsigned long rate,
+> > +                       unsigned long *parent_rate)
+> > +{
+> > +       struct owl_fix_fact *fix_fact = hw_to_owl_fix_fact(hw);
+> > +       struct owl_fix_fact_hw *fix_fact_hw = &fix_fact->fix_fact_hw;
+> > +
+> > +       return owl_fix_fact_helper_round_rate(&fix_fact->common, fix_fact_hw,
+> > +                                                       rate, parent_rate);
+> > +}
+> > +
+> > +unsigned long owl_fix_fact_helper_recalc_rate(struct owl_clk_common *common,
+> > +                       const struct owl_fix_fact_hw *fix_fact_hw,
+> > +                       unsigned long parent_rate)
+> > +{
+> > +       unsigned long long int rate;
+> > +
+> > +       rate = (unsigned long long int)parent_rate * fix_fact_hw->mul;
+> > +       do_div(rate, fix_fact_hw->div);
+> > +
+> > +       return (unsigned long)rate;
+> 
+> You can drop the cast.
+> 
 
-Le mer. 28 mars 2018 =C3=A0 18:25, Daniel Lezcano=20
-<daniel.lezcano@linaro.org> a =C3=A9crit :
-> On 28/03/2018 17:15, Paul Cercueil wrote:
->>  Le 2018-03-24 07:26, Daniel Lezcano a =C3=A9crit :
->>>  On 18/03/2018 00:29, Paul Cercueil wrote:
->>>>  This driver will use the TCU (Timer Counter Unit) present on the=20
->>>> Ingenic
->>>>  JZ47xx SoCs to provide the kernel with a clocksource and timers.
->>>=20
->>>  Please provide a more detailed description about the timer.
->>=20
->>  There's a doc file for that :)
->=20
-> Usually, when there is a new driver I ask for a description in the
-> changelog for reference.
->=20
->>>  Where is the clocksource ?
->>=20
->>  Right, there is no clocksource, just timers.
->>=20
->>>  I don't see the point of using channel idx and pwm checking here.
->>>=20
->>>  There is one clockevent, why create multiple channels ? Can't you=20
->>> stick
->>>  to the usual init routine for a timer.
->>=20
->>  So the idea is that we use all the TCU channels that won't be used=20
->> for PWM
->>  as timers. Hence the PWM checking. Why is this bad?
->=20
-> It is not bad but arguable. By checking the channels used by the pwm=20
-> in
-> the code, you introduce an adherence between two subsystems even if it
-> is just related to the DT parsing part.
->=20
-> As it is not needed to have more than one timer in the time framework
-> (at least with the same characteristics), the pwm channels check is
-> pointless. We can assume the author of the DT file is smart enough to
-> prevent conflicts and define a pwm and a timer properly instead of
-> adding more code complexity.
->=20
-> In addition, simplifying the code will allow you to use the timer-of
-> code and reduce very significantly the init function.
+Okay.
 
-That's what I had in my V1 and V2, my DT node for the timer-ingenic=20
-driver
-had a "timers" property (e.g. "timers =3D <4 5>;") to select the channels=20
-that
-should be used as timers. Then Rob told me I shouldn't do that, and=20
-instead
-detect the channels that will be used for PWM.
+> > +}
+> > +
+> > +static unsigned long owl_fix_fact_recalc_rate(struct clk_hw *hw,
+> > +                       unsigned long parent_rate)
+> > +{
+> > +       struct owl_fix_fact *fix_fact = hw_to_owl_fix_fact(hw);
+> > +       struct owl_fix_fact_hw *fix_fact_hw = &fix_fact->fix_fact_hw;
+> > +
+> > +       return owl_fix_fact_helper_recalc_rate(&fix_fact->common, fix_fact_hw,
+> > +                                                       parent_rate);
+> > +}
+> > +
+> > +static int owl_fix_fact_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +                              unsigned long parent_rate)
+> > +{
+> > +       /*
+> > +        * We must report success but we can do so unconditionally because
+> > +        * clk_fix_fact_round_rate returns values that ensure this call is a
+> 
+> What function is that?
+>
 
->>>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>>>  ---
->>>>   drivers/clocksource/Kconfig         |   8 ++
->>>>   drivers/clocksource/Makefile        |   1 +
->>>>   drivers/clocksource/timer-ingenic.c | 278
->>>>  ++++++++++++++++++++++++++++++++++++
->>>>   3 files changed, 287 insertions(+)
->>>>   create mode 100644 drivers/clocksource/timer-ingenic.c
->>>>=20
->>>>   v2: Use SPDX identifier for the license
->>>>   v3: - Move documentation to its own patch
->>>>       - Search the devicetree for PWM clients, and use all the TCU
->>>>         channels that won't be used for PWM
->>>>   v4: - Add documentation about why we search for PWM clients
->>>>       - Verify that the PWM clients are for the TCU PWM driver
->>>>=20
->>>>  diff --git a/drivers/clocksource/Kconfig=20
->>>> b/drivers/clocksource/Kconfig
->>>>  index d2e5382821a4..481422145fb4 100644
->>>>  --- a/drivers/clocksource/Kconfig
->>>>  +++ b/drivers/clocksource/Kconfig
->>>>  @@ -592,4 +592,12 @@ config CLKSRC_ST_LPC
->>>>         Enable this option to use the Low Power controller timer
->>>>         as clocksource.
->>>>=20
->>>>  +config INGENIC_TIMER
->>>>  +    bool "Clocksource/timer using the TCU in Ingenic JZ SoCs"
->>>>  +    depends on MACH_INGENIC || COMPILE_TEST
->>>=20
->>>  bool "Clocksource/timer using the TCU in Ingenic JZ SoCs" if=20
->>> COMPILE_TEST
->>>=20
->>>  Remove the depends MACH_INGENIC.
->>=20
->>  This driver is not useful on anything else than Ingenic SoCs, why=20
->> should I
->>  remove MACH_INGENIC then?
->=20
-> For COMPILE_TEST on x86.
+It should be owl_fix_fact_round_rate.
 
-Well that's a logical OR right here, so it will work...
+> > +        * nop.
+> > +        */
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +const struct clk_ops owl_fix_fact_ops = {
+> > +       .round_rate     = owl_fix_fact_round_rate,
+> > +       .recalc_rate    = owl_fix_fact_recalc_rate,
+> > +       .set_rate       = owl_fix_fact_set_rate,
+> > +};
+> 
+> Why can't you use the regular fixed factor clk code and ops?
+>
 
->>>>  +    select CLKSRC_OF
->>>>  +    default y
->>>=20
->>>  No default, Kconfig platform selects the timer.
->>=20
->>  Alright.
-> [ ... ]
->=20
-> --
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
-RM=20
-> SoCs
->=20
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->=20
-=
+That's going to be really messy. Since I'm having the clk_hw embedded inside
+owl_clk_common and using it for registering all the clocks, using generic
+fixed factor functions will be a different approach _only_ for this clock and
+it won't look good I guess. Also, it may become complicated with composite
+clocks.
 
+If you still want to use the generic fixed factor code, I can do that in
+next revision.
+
+Your views?
+
+Thanks,
+Mani
