@@ -1,47 +1,50 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v2 0/5] update Mediatek MT2712 clock and scpsys support
-To: Stephen Boyd <sboyd@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
- Weiyi Lu <weiyi.lu@mediatek.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Mike Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, srv_heupstream@mediatek.com
-References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
- <1521526068.13313.8.camel@mtksdaap41>
- <152153061465.254778.3061562183948751301@swboyd.mtv.corp.google.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <6c29df1f-f619-5e11-4160-b58e154f6592@gmail.com>
-Date: Wed, 21 Mar 2018 10:11:09 +0100
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v8 18/42] clk: davinci: New driver for TI DA8XX CFGCHIP
+ clocks
+To: Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-19-git-send-email-david@lechnology.com>
+ <152156485535.183971.1627687499726447092@swboyd.mtv.corp.google.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <b4ea5efb-3fa0-b2f3-cd5f-75343e841153@lechnology.com>
+Date: Tue, 20 Mar 2018 11:57:48 -0500
 MIME-Version: 1.0
-In-Reply-To: <152153061465.254778.3061562183948751301@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <152156485535.183971.1627687499726447092@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 03/20/2018 08:23 AM, Stephen Boyd wrote:
-> Quoting Weiyi Lu (2018-03-19 23:07:48)
->> On Mon, 2018-03-12 at 15:03 +0800, Weiyi Lu wrote:
->>> This series is based on v4.16-rc1 and composed of scpsys control (PATCH 1-2) and clock control (PATCH 3-5).
->>> Basically, all changes are for the ECO design change of MT2712.
->>>
->>> changes since v1:
->>> - Avoid renumbering clocks. Append new clocks at the bottom of each own subsystem.
->>>
->> Hi Matthias & Stephen,
->>
->> Sorry to bother. Just saw patch 1/2 are already pushed to v4.16-next-soc
->> and patch 3/5 are applied onto clk-next. What about the patch 4(arm64:
->> dts: add clock device nodes of MT2712). Does there any problem remain or
->> it cause some problems? Many thanks.
+On 03/20/2018 11:54 AM, Stephen Boyd wrote:
+> Quoting David Lechner (2018-03-15 19:52:34)
+>> +
+>> +typedef int (*da8xx_cfgchip_init)(struct device *dev, void __iomem *base);
 > 
-> Patch 4 can go via arm-soc? I'm not planning to apply that patch.
+> Should be struct regmap *regmap?
+
+Yes. It looks like this was copied and pasted from one of the other drivers.
+
+Thank you for fixing it.
+
 > 
-
-I can take it through my branch, no problem. But I think it is too late for this
-cycle. CCing Arnd to confirm.
-
-Regards,
-Matthias
+> I've squashed this in.
+> 
+> diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+> index 858d3786b27b..c971111d2601 100644
+> --- a/drivers/clk/davinci/da8xx-cfgchip.c
+> +++ b/drivers/clk/davinci/da8xx-cfgchip.c
+> @@ -736,7 +736,7 @@ static const struct platform_device_id da8xx_cfgchip_id_table[] = {
+>   	{ }
+>   };
+>   
+> -typedef int (*da8xx_cfgchip_init)(struct device *dev, void __iomem *base);
+> +typedef int (*da8xx_cfgchip_init)(struct device *dev, struct regmap *regmap);
+>   
+>   static int da8xx_cfgchip_probe(struct platform_device *pdev)
+>   {
+> 
