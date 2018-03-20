@@ -1,94 +1,74 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:51102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751320AbeCTUB4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Mar 2018 16:01:56 -0400
-Content-Type: text/plain; charset="utf-8"
+Received: from lucky1.263xmail.com ([211.157.147.134]:56668 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933740AbeCTAxS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Mar 2018 20:53:18 -0400
+Cc: shawn.lin@rock-chips.com, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] clk: rockchip: Don't restore invalid cached phase
+To: Heiko Stuebner <heiko@sntech.de>
+References: <1521450902-32142-1-git-send-email-shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <b8891a77-2c43-bf0b-f3a0-abc85ffafc37@rock-chips.com>
+Date: Tue, 20 Mar 2018 08:53:13 +0800
 MIME-Version: 1.0
-To: ilialin@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        sboyd@codeaurora.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <015201d3c056$658ff510$30afdf30$@codeaurora.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
-        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
-        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
-        nicolas.dechesne@linaro.org, celster@codeaurora.org
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
- <1518616792-29028-4-git-send-email-ilialin@codeaurora.org>
- <152148100496.242365.3846617702949655708@swboyd.mtv.corp.google.com>
- <015201d3c056$658ff510$30afdf30$@codeaurora.org>
-Message-ID: <152157611468.125118.11602572683762995667@swboyd.mtv.corp.google.com>
-Subject: RE: [PATCH v3 03/10] clk: qcom: Add CPU clock driver for msm8996
-Date: Tue, 20 Mar 2018 13:01:54 -0700
+In-Reply-To: <1521450902-32142-1-git-send-email-shawn.lin@rock-chips.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting ilialin@codeaurora.org (2018-03-20 07:18:57)
-> > From: Stephen Boyd <sboyd@kernel.org>
-> > 
-> > > +       struct clk_regmap *clkr = to_clk_regmap(hw);
-> > > +       struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-> > > +       unsigned int mask = GENMASK(cpuclk->width + cpuclk->shift - 1,
-> > > +                                   cpuclk->shift);
-> > > +
-> > > +       val = index;
-> > > +       val <<= cpuclk->shift;
-> > > +
-> > > +       return regmap_update_bits(clkr->regmap, cpuclk->reg, mask,
-> > > +val); }
-> > > +
-> > > +static int
-> > > +clk_cpu_8996_mux_determine_rate(struct clk_hw *hw, struct
-> > > +clk_rate_request *req) {
-> > > +       struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-> > > +       struct clk_hw *parent = cpuclk->pll;
-> > > +
-> > > +       if (!cpuclk->pll)
-> > > +               return -EINVAL;
-> > 
-> > Does this happen?
+Sorry, It turns out still some corner case need to address, please
+drop this.
+
+On 2018/3/19 17:15, Shawn Lin wrote:
+> We inevitably cache the invalid phase when the clock provider
+> be reparented from orphan to its real parent in the first place,
+> thus we may mess up the initialization of MMC cards since we
+> only set the default sample phase and drive phase later on.
+> So we should skip to restore the invalid phase. And this patch
+> also corrects the error path to return invalid pointer to clk if
+> clk_notifier_register failed introduced by the same offending
+> commit.
 > 
-> On successful probe it shouldn't. May I omit pointer checks in this case? Future maintenance ma y change the flow.
+> Fixes: 60cf09e45fbc ("clk: rockchip: Restore the clock phase after the rate was changed")
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> ---
+> 
+>   drivers/clk/rockchip/clk-mmc-phase.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+> index dc4c227..c8c6119 100644
+> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+> @@ -181,7 +181,8 @@ static int rockchip_mmc_clk_rate_notify(struct notifier_block *nb,
+>   	if (event == PRE_RATE_CHANGE)
+>   		mmc_clock->cached_phase =
+>   			rockchip_mmc_get_phase(&mmc_clock->hw);
+> -	else if (event == POST_RATE_CHANGE)
+> +	else if (mmc_clock->cached_phase != -EINVAL &&
+> +		 event == POST_RATE_CHANGE)
+>   		rockchip_mmc_set_phase(&mmc_clock->hw, mmc_clock->cached_phase);
+>   
+>   	return NOTIFY_DONE;
+> @@ -211,8 +212,10 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+>   	mmc_clock->shift = shift;
+>   
+>   	clk = clk_register(NULL, &mmc_clock->hw);
+> -	if (IS_ERR(clk))
+> +	if (IS_ERR(clk)) {
+> +		ret = PTR_ERR(clk);
+>   		goto err_register;
+> +	}
+>   
+>   	mmc_clock->clk_rate_change_nb.notifier_call =
+>   				&rockchip_mmc_clk_rate_notify;
+> @@ -225,5 +228,5 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+>   	clk_unregister(clk);
+>   err_register:
+>   	kfree(mmc_clock);
+> -	return clk;
+> +	return ERR_PTR(ret);
+>   }
 > 
 
-Yes please omit useless checks.
-
-> > 
-> > > +
-> > > +       req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
-> > > +       req->best_parent_hw = parent;
-> > 
-> > Is the parent index always the same? Perhaps just call
-> > clk_hw_get_parent_by_index() then instead of adding a pointer to the
-> > clk_cpu_8996_mux.
-> > 
-> 
-> > 
-> > > +       },
-> > > +};
-> > > +
-> > > +static const struct regmap_config cpu_msm8996_regmap_config = {
-> > > +       .reg_bits               = 32,
-> > > +       .reg_stride             = 4,
-> > > +       .val_bits               = 32,
-> > > +       .max_register           = 0x80210,
-> > > +       .fast_io                = true,
-> > > +       .val_format_endian      = REGMAP_ENDIAN_LITTLE,
-> > > +};
-> > > +
-> > > +static const struct of_device_id match_table[] = {
-> > 
-> > Move this next to driver structure and give it a more specific name.
-> 
-> Will be changed in the next spin.
-> 
-> > 
-> > > +       { .compatible = "qcom-msm8996-apcc" },
-> > 
-> > Bad compatible? Should be qcom,msm8996-apcc?
-> 
-> The naming is per Rob Herring's requirement.
-> 
-
-Hmm, maybe Rob made a typo?
