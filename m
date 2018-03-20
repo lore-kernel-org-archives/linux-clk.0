@@ -1,70 +1,30 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock updates for 4.17 round 1
-Date: Wed, 14 Mar 2018 18:22:47 +0100
-Message-ID: <1808510.rdFFBGyEiV@phil>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521168778-27236-19-git-send-email-david@lechnology.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+ David Lechner <david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-19-git-send-email-david@lechnology.com>
+Message-ID: <152156546648.183971.7479024904530808735@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v8 18/42] clk: davinci: New driver for TI DA8XX CFGCHIP clocks
+Date: Tue, 20 Mar 2018 10:04:26 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+Quoting David Lechner (2018-03-15 19:52:34)
+> This adds a new driver for the gate and multiplexer clocks in the
+> CFGCHIPn syscon registers on TI DA8XX-type SoCs.
+> =
 
-please find below Rockchip clock changes targetted at 4.17.
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
 
-As you can see in the tag, making the rk3328 ready for display output
-is the biggest part, otherwise there are some smaller things for the
-other parts. So please pull.
-
-Thanks
-Heiko
-
-
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.17-rockchip-clk-1
-
-for you to fetch changes up to 4ee3fd4abeca30d530fe67972f1964f7454259d6:
-
-  clk: rockchip: Add 1.6GHz PLL rate for rk3399 (2018-03-14 00:37:22 +0100)
-
-----------------------------------------------------------------
-The rk3328 got the most love this time, preparing it for supplying actual
-display output in the future and actually protecting all necessary clocks.
-The rk3399 simply got a special 1.6GHz rate that is going to be needed
-for a board and the core code got a fix to actually free allocated memory
-in error case as well as making sure the clock-phases don't return bad
-values and stay the same on rate changes.
-
-----------------------------------------------------------------
-Derek Basehore (1):
-      clk: rockchip: Add 1.6GHz PLL rate for rk3399
-
-Heiko Stuebner (6):
-      clk: rockchip: fix hclk_vio_niu on rk3328
-      clk: rockchip: remove HCLK_VIO from rk3328 dt header
-      clk: rockchip: export sclk_hdmi_sfc on rk3328
-      clk: rockchip: protect all remaining rk3328 interconnect clocks
-      clk: rockchip: remove ignore_unused flag from rk3328 vio_h2p clocks
-      clk: rockchip: document hdmi_phy external input for rk3328
-
-Shawn Lin (3):
-      clk: rockchip: Free the memory on the error path
-      clk: rockchip: Prevent calculating mmc phase if clock rate is zero
-      clk: rockchip: Restore the clock phase after the rate was changed
-
-Zheng Yang (1):
-      clk: rockchip: add flags for rk3328 dclk_lcdc
-
- .../bindings/clock/rockchip,rk3328-cru.txt         |  1 +
- drivers/clk/rockchip/clk-mmc-phase.c               | 62 +++++++++++++++++++-
- drivers/clk/rockchip/clk-rk3328.c                  | 67 ++++++++++++++--------
- drivers/clk/rockchip/clk-rk3399.c                  |  1 +
- drivers/clk/rockchip/clk.c                         | 22 +++++--
- include/dt-bindings/clock/rk3328-cru.h             |  1 -
- 6 files changed, 124 insertions(+), 30 deletions(-)
+Applied to clk-next
