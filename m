@@ -1,43 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:48384 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751609AbeCTHAt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Mar 2018 03:00:49 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: hl <hl@rock-chips.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, dbasehore@chromium.org,
-        briannorris@chromium.org, dianders@chromium.org,
-        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] arm64: dts: rockchip: assign clock rate for some cpll child clock
-Date: Tue, 20 Mar 2018 08:00:40 +0100
-Message-ID: <22053902.qFbnfPJqGC@diego>
-In-Reply-To: <d92aa74d-7a49-8fbd-5efc-b931210ef0b7@rock-chips.com>
-References: <1521511589-17844-1-git-send-email-hl@rock-chips.com> <13843114-3db5-b98c-a71d-c61911a8a42c@rock-chips.com> <d92aa74d-7a49-8fbd-5efc-b931210ef0b7@rock-chips.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Sender: linux-clk-owner@vger.kernel.org
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Weiyi Lu <weiyi.lu@mediatek.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521526068.13313.8.camel@mtksdaap41>
+Cc: Mike Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, srv_heupstream@mediatek.com
+References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
+ <1521526068.13313.8.camel@mtksdaap41>
+Message-ID: <152153061465.254778.3061562183948751301@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 0/5] update Mediatek MT2712 clock and scpsys support
+Date: Tue, 20 Mar 2018 00:23:34 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 20. März 2018, 03:23:41 CET schrieb hl:
-> On Tuesday, March 20, 2018 10:12 AM, Shawn Lin wrote:
-> > On 2018/3/20 10:06, Lin Huang wrote:
-> >> These clocks do not assign default clock frequency, and use the
-> >> default cru register value to get frequency, so if cpll increase
-> >> frequency, these clocks also increase their frequency, that may
-> >> exceed their signed off frequency. So assign default clock for
-> >> them to avoid it.
-> >> 
-> >> NOTE: on none of the boards currently in mainline do we expect
-> >> CPLL to be anything other than 800 MHz, but some future boards
-> >> might have it. It's still good to be explicit about the clock
-> >> rates to make diffing against future boards easier and also to
-> >> rely less on BIOS muxing.
-> >> 
-> >> Change-Id: If79368aeda5c51dbf2a3b6659f17052a2ae4a401
-> > 
-> > Should remove Change-Id for future patch(es), thought Heiko may help
-> > do it when applied.
-> 
-> Opp, sorry for that.
+Quoting Weiyi Lu (2018-03-19 23:07:48)
+> On Mon, 2018-03-12 at 15:03 +0800, Weiyi Lu wrote:
+> > This series is based on v4.16-rc1 and composed of scpsys control (PATCH=
+ 1-2) and clock control (PATCH 3-5).
+> > Basically, all changes are for the ECO design change of MT2712.
+> > =
 
-Yep, I can drop the changeId when applying
+> > changes since v1:
+> > - Avoid renumbering clocks. Append new clocks at the bottom of each own=
+ subsystem.
+> > =
+
+> Hi Matthias & Stephen,
+> =
+
+> Sorry to bother. Just saw patch 1/2 are already pushed to v4.16-next-soc
+> and patch 3/5 are applied onto clk-next. What about the patch 4(arm64:
+> dts: add clock device nodes of MT2712). Does there any problem remain or
+> it cause some problems? Many thanks.
+
+Patch 4 can go via arm-soc? I'm not planning to apply that patch.
