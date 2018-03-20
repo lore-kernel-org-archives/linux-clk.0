@@ -1,62 +1,30 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
-        Loic PALLARDY
-	<loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: [PATCH v2 00/12] Introduce STM32MP1 clock driver
-Date: Thu, 8 Mar 2018 17:53:53 +0100
-Message-ID: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
+ mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180317100952.28538-2-manivannan.sadhasivam@linaro.org>
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+ devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+ daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+ viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+ <20180317100952.28538-2-manivannan.sadhasivam@linaro.org>
+Message-ID: <152150759188.254778.1766919298343763795@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 01/12] dt-bindings: clock: Add Actions S900 clock bindings
+Date: Mon, 19 Mar 2018 17:59:51 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Quoting Manivannan Sadhasivam (2018-03-17 03:09:41)
+> Add Actions Semi S900 clock bindings.
+> =
 
-v2:
-  - Don't use MFD, use existing binding of STM32 RCC.
-  - Rework Peripheral and Kernel clocks
-  - cosmetic changes
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-This patch-set introduces clock driver for STM32MP157 based on Arm Cortex-A7.
-The driver patch is split in several patches (by kind of clock) to facilitate
-code reviewing.
-
-Gabriel Fernandez (12):
-  dt-bindings: Document STM32MP1 Reset Clock Controller (RCC) bindings
-  clk: stm32mp1: Introduce STM32MP1 clock driver
-  clk: stm32mp1: add MP1 gate for hse/hsi/csi oscillators
-  clk: stm32mp1: add Source Clocks for PLLs
-  clk: stm32mp1: add PLL clocks
-  clk: stm32mp1: add Post-dividers for PLL
-  clk: stm32mp1: add Sub System clocks
-  clk: stm32mp1: add Kernel timers
-  clk: stm32mp1: add Peripheral & Kernel Clocks
-  clk: stm32mp1: add RTC clock
-  clk: stm32mp1: add MCO clocks
-  clk: stm32mp1: add Debug clocks
-
- .../devicetree/bindings/clock/st,stm32mp1-rcc.txt  |   60 +
- drivers/clk/Kconfig                                |    6 +
- drivers/clk/Makefile                               |    1 +
- drivers/clk/clk-stm32mp1.c                         | 2117 ++++++++++++++++++++
- include/dt-bindings/clock/stm32mp1-clks.h          |  254 +++
- 5 files changed, 2438 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
- create mode 100644 drivers/clk/clk-stm32mp1.c
- create mode 100644 include/dt-bindings/clock/stm32mp1-clks.h
-
--- 
-1.9.1
+Applied to clk-next
