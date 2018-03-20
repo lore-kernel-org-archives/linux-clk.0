@@ -1,69 +1,119 @@
-Return-Path: <RAJANV@xilinx.com>
-From: Rajan Vaja <RAJANV@xilinx.com>
-To: 'Stephen Boyd' <sboyd@kernel.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jolly Shah
-	<JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>
-Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
- CLK_OF_DECLARE_DRIVER
-Date: Fri, 9 Mar 2018 19:27:40 +0000
-Message-ID: <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
-References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
- <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
-In-Reply-To: <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
+Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
+ mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+ devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+ daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+ viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
+ <20180317100952.28538-13-manivannan.sadhasivam@linaro.org>
+Message-ID: <152153016749.254778.17294370002590376536@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 12/12] clk: actions: Add S900 SoC clock support
+Date: Tue, 20 Mar 2018 00:16:07 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0aGUgcmV2aWV3Lg0KDQo+IC0tLS0tT3JpZ2luYWwg
-TWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtlcm5lbC5v
-cmddDQo+IFNlbnQ6IEZyaWRheSwgTWFyY2ggMDksIDIwMTggMTA6MjUgQU0NCj4gVG86IFJhamFu
-IFZhamEgPFJBSkFOVkB4aWxpbnguY29tPjsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb20NCj4gQ2M6
-IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
-IEpvbGx5IFNoYWgNCj4gPEpPTExZU0B4aWxpbnguY29tPjsgTWljaGFsIFNpbWVrIDxtaWNoYWxz
-QHhpbGlueC5jb20+OyBSYWphbiBWYWphDQo+IDxSQUpBTlZAeGlsaW54LmNvbT4NCj4gU3ViamVj
-dDogUmU6IFtQQVRDSF0gY2xrOiBjbGstZml4ZWQtZmFjdG9yOiBVc2UgbmV3IG1hY3JvDQo+IENM
-S19PRl9ERUNMQVJFX0RSSVZFUg0KPiANCj4gUXVvdGluZyBSYWphbiBWYWphICgyMDE4LTAzLTA4
-IDA2OjE1OjAwKQ0KPiA+IEZpeGVkIGZhY3RvciBjbG9jayBoYXMgdHdvIGluaXRpYWxpemF0aW9u
-IGF0IG9mX2Nsa19pbml0KCkgdGltZSBhbmQNCj4gPiBhbHNvIGR1cmluZyBwbGF0Zm9ybSBkcml2
-ZXIgcHJvYmUuIFNvIGRlY2xhcmUgdGhlIGZpeGVkIGZhY3RvciBjbG9jaw0KPiA+IHdpdGggQ0xL
-X09GX0RFQ0xBUkVfRFJJVkVSIGluc3RlYWQgb2YgQ0xLX09GX0RFQ0xBUkUuDQo+ID4NCj4gPiBT
-ZWUgYmVsb3cgY29tbWl0IGZvciByZWZlcmVuY2U6DQo+ID4gImNsazogc3VueGk6IGFwYjA6IFVz
-ZSBuZXcgbWFjcm8gQ0xLX09GX0RFQ0xBUkVfRFJJVkVSIg0KPiA+IChzaGExOiA5MTUxMjhiNjIx
-YTA1YzYzZmE1OGNhOWU0Y2JkZjM5NGJiZTU5MmYzKQ0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
-UmFqYW4gVmFqYSA8cmFqYW52QHhpbGlueC5jb20+DQo+ID4gU3VnZ2VzdGVkLWJ5OiBNaWNoYWwg
-U2ltZWsgPG1pY2hhbC5zaW1la0B4aWxpbnguY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2Ns
-ay9jbGstZml4ZWQtZmFjdG9yLmMgfCA1ICsrKy0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGlu
-c2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9jbGsvY2xrLWZpeGVkLWZhY3Rvci5jDQo+ID4gYi9kcml2ZXJzL2Nsay9jbGstZml4ZWQtZmFj
-dG9yLmMgaW5kZXggYTVkNDAyZC4uZDcyZWYyZCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Ns
-ay9jbGstZml4ZWQtZmFjdG9yLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9jbGstZml4ZWQtZmFj
-dG9yLmMNCj4gPiBAQCAtMTk2LDggKzE5Niw5IEBAIHZvaWQgX19pbml0IG9mX2ZpeGVkX2ZhY3Rv
-cl9jbGtfc2V0dXAoc3RydWN0DQo+ID4gZGV2aWNlX25vZGUgKm5vZGUpICB7DQo+ID4gICAgICAg
-ICBfb2ZfZml4ZWRfZmFjdG9yX2Nsa19zZXR1cChub2RlKTsgIH0NCj4gPiAtQ0xLX09GX0RFQ0xB
-UkUoZml4ZWRfZmFjdG9yX2NsaywgImZpeGVkLWZhY3Rvci1jbG9jayIsDQo+ID4gLSAgICAgICAg
-ICAgICAgIG9mX2ZpeGVkX2ZhY3Rvcl9jbGtfc2V0dXApOw0KPiA+ICsNCj4gPiArQ0xLX09GX0RF
-Q0xBUkVfRFJJVkVSKGZpeGVkX2ZhY3Rvcl9jbGssICJmaXhlZC1mYWN0b3ItY2xvY2siLA0KPiA+
-ICsgICAgICAgICAgICAgICAgICAgICBvZl9maXhlZF9mYWN0b3JfY2xrX3NldHVwKTsNCj4gPg0K
-PiANCj4gSXMgdGhlIGludGVudCB0byByZWdpc3RlciB0aGUgY2xrIHR3aWNlPyBJIGJlbGlldmUg
-dGhpbmdzIGFyZSB3b3JraW5nIGFzDQo+IGludGVuZGVkIHdpdGhvdXQgdGhpcyBwYXRjaCwgc28g
-bWF5YmUgeW91IGNhbiBleHBsYWluIGEgbGl0dGxlIG1vcmUgd2hhdA0KPiB5b3UncmUgdHJ5aW5n
-IHRvIGZpeC4NCltSYWphbl0gWWVzLiBEdXJpbmcgb2ZfY2xrX2luaXQoKSBpZiBzb21lIERUIGZp
-eGVkIGZhY3RvciBjbG9jayBoYXMgcGFyZW50IHdoaWNoIGlzIG5laXRoZXIgbWVudGlvbmVkIGlu
-IG91dHB1dC1jbG9jay1uYW1lcyBvZiBjbG9jayBjb250cm9sbGVyIG5vciByZWdpc3RlcmVkIGFz
-IGNsb2NrIHByb3ZpZGVyLCBvZl9jbGtfaW5pdCgpIHdpbGwgdHJ5IHRvIGZvcmNlZnVsbHkgcmVn
-aXN0ZXIgaW4gc2Vjb25kIGxvb3AuIA0KDQogICAgICAgICAgICAgICAgICAgICAgICBpZiAoZm9y
-Y2UgfHwgcGFyZW50X3JlYWR5KGNsa19wcm92aWRlci0+bnApKSB7DQoNCiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgLyogRG9uJ3QgcG9wdWxhdGUgcGxhdGZvcm0gZGV2aWNlcyAqLw0K
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvZl9ub2RlX3NldF9mbGFnKGNsa19wcm92
-aWRlci0+bnAsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgT0ZfUE9QVUxBVEVEKTsNCg0KU28gcmVnaXN0cmF0aW9uIG9mIHRoaXMgRFQgZml4ZWQtZmFj
-dG9yIGNsb2NrIHdvdWxkIGZhaWwgYXMgcGFyZW50IHdvdWxkIGJlIE5VTEwgYXMgYmVsb3cgKGNh
-bGxlZCBmcm9tIF9vZl9maXhlZF9mYWN0b3JfY2xrX3NldHVwKCkpOg0KcGFyZW50X25hbWUgPSBv
-Zl9jbGtfZ2V0X3BhcmVudF9uYW1lKG5vZGUsIDApOw0KDQpPbiB0aGUgb3RoZXIgaGFuZCwgZXZl
-biBpZiByZWdpc3RyYXRpb24gZmFpbGVkLCB0aGF0IG5vZGUgd2lsbCBiZSBtYXJrZWQgYXMgT0Zf
-UE9QVUxBVEVELCBzbyBwcm9iZSBvZiBjbGstZml4ZWQtZmFjdG9yLmMgd2lsbCBhbHNvIG5vdCBi
-ZSBjYWxsZWQgYW5kIHRoYXQgRFQgZml4ZWQtZmFjdG9yIGNsb2NrIHdvdWxkIG5ldmVyIGJlIHJl
-Z2lzdGVyZWQuIA0KDQpTYW1lIHRoaW5nIGlzIGRpc2N1c3NlZCBhdCAgaHR0cHM6Ly9sa21sLm9y
-Zy9sa21sLzIwMTcvNi81LzY4MSAuDQo=
+Quoting Manivannan Sadhasivam (2018-03-17 03:09:52)
+> diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s90=
+0.c
+> new file mode 100644
+> index 000000000000..5a9b1e3f3571
+> --- /dev/null
+> +++ b/drivers/clk/actions/owl-s900.c
+> @@ -0,0 +1,690 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// OWL S900 SoC clock driver
+> +//
+> +// Copyright (c) 2014 Actions Semi Inc.
+> +// Author: David Liu <liuwei@actions-semi.com>
+> +//
+> +// Copyright (c) 2018 Linaro Ltd.
+> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+
+Is this include used?
+
+> +
+> +#include "owl-common.h"
+> +#include "owl-composite.h"
+> +#include "owl-divider.h"
+> +#include "owl-factor.h"
+> +#include "owl-fixed-factor.h"
+> +#include "owl-gate.h"
+> +#include "owl-mux.h"
+> +#include "owl-pll.h"
+> +#include "owl-s900.h"
+> +
+> +#include <dt-bindings/clock/actions,s900-cmu.h>
+> +
+> +static struct clk_pll_table clk_audio_pll_table[] =3D {
+> +       {0, 45158400}, {1, 49152000},
+> +       {0, 0},
+> +};
+> +
+> +static struct clk_pll_table clk_edp_pll_table[] =3D {
+> +       {0, 810000000}, {1, 1350000000}, {2, 2700000000},
+
+Please put spaces around brackets.
+
+> +       {0, 0},
+> +};
+> +
+> +/* pll clocks */
+> +static OWL_PLL_NO_PARENT(core_pll_clk, "core_pll_clk", CMU_COREPLL, 2400=
+0000, 9, 0, 8, 5, 107, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(dev_pll_clk, "dev_pll_clk", CMU_DEVPLL, 6000000=
+, 8, 0, 8, 20, 180, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(ddr_pll_clk, "ddr_pll_clk", CMU_DDRPLL, 2400000=
+0, 8, 0, 8, 5, 45, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(nand_pll_clk, "nand_pll_clk", CMU_NANDPLL, 6000=
+000, 8, 0, 8, 4, 100, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(display_pll_clk, "display_pll_clk", CMU_DISPLAY=
+PLL, 6000000, 8, 0, 8, 20, 180, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(assist_pll_clk, "assist_pll_clk", CMU_ASSISTPLL=
+, 500000000, 0, 0, 0, 0, 0, NULL, CLK_IGNORE_UNUSED);
+> +static OWL_PLL_NO_PARENT(audio_pll_clk, "audio_pll_clk", CMU_AUDIOPLL, 0=
+, 4, 0, 1, 0, 0, clk_audio_pll_table, CLK_IGNORE_UNUSED);
+> +static OWL_PLL(edp_pll_clk, "edp_pll_clk", "edp24M_clk", CMU_EDPCLK, 0, =
+9, 0, 2, 0, 0, clk_edp_pll_table, CLK_IGNORE_UNUSED);
+> +
+> +static const char *cpu_clk_mux_p[] =3D { "losc", "hosc", "core_pll_clk",=
+ };
+> +static const char *dev_clk_p[] =3D { "hosc", "dev_pll_clk", };
+> diff --git a/drivers/clk/actions/owl-s900.h b/drivers/clk/actions/owl-s90=
+0.h
+> new file mode 100644
+> index 000000000000..d0c10594e518
+> --- /dev/null
+> +++ b/drivers/clk/actions/owl-s900.h
+> @@ -0,0 +1,61 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// OWL S900 SoC clock driver
+> +//
+> +// Copyright (c) 2014 Actions Semi Inc.
+> +// Author: David Liu <liuwei@actions-semi.com>
+> +//
+> +// Copyright (c) 2018 Linaro Ltd.
+> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +
+> +#ifndef _OWL_S900_H_
+> +#define _OWL_S900_H_
+
+I'd prefer this file contents go inside the one C file that uses it so
+we can quickly reference the offsets without going to another file.
+
+> +
+> +#define CMU_COREPLL            (0x0000)
+> +#define CMU_DEVPLL             (0x0004)
+> +#define CMU_DDRPLL             (0x0008)
