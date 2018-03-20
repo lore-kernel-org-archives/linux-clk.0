@@ -1,378 +1,266 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 38/42] ARM: davinci: da8xx: Remove legacy USB and SATA clock init
-Date: Thu, 15 Mar 2018 21:52:54 -0500
-Message-Id: <1521168778-27236-39-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: <ilialin@codeaurora.org>
+To: "'Stephen Boyd'" <sboyd@kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-9-git-send-email-ilialin@codeaurora.org>
+ <152147863176.242365.17292287330283256524@swboyd.mtv.corp.google.com>
+In-Reply-To: <152147863176.242365.17292287330283256524@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH v3 08/10] clk: qcom: Add ACD path to CPU clock driver for
+ msm8996
+Date: Tue, 20 Mar 2018 16:04:05 +0200
+Message-ID: <014101d3c054$52104460$f630cd20$@codeaurora.org>
+MIME-Version: 1.0
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, rnayak@codeaurora.org,
+ robh@kernel.org, will.deacon@arm.com, amit.kucheria@linaro.org,
+ tfinkel@codeaurora.org, nicolas.dechesne@linaro.org, celster@codeaurora.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy USB and SATA clock init code from
-arch/arm/mach-davinci/{devices,usb}-da8xx}.c.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
 
-v8 changes:
-- none
+> -----Original Message-----
+> From: Stephen Boyd <sboyd@kernel.org>
+> Sent: Monday, March 19, 2018 18:57
+> To: Ilia Lin <ilialin@codeaurora.org>; linux-arm-kernel@lists.infradead.org;
+> linux-arm-msm@vger.kernel.org; linux-clk@vger.kernel.org;
+> sboyd@codeaurora.org
+> Cc: mark.rutland@arm.com; devicetree@vger.kernel.org;
+> rnayak@codeaurora.org; robh@kernel.org; will.deacon@arm.com;
+> amit.kucheria@linaro.org; tfinkel@codeaurora.org; ilialin@codeaurora.org;
+> nicolas.dechesne@linaro.org; celster@codeaurora.org
+> Subject: Re: [PATCH v3 08/10] clk: qcom: Add ACD path to CPU clock driver
+> for msm8996
+> 
+> Quoting Ilia Lin (2018-02-14 05:59:50)
+> > diff --git a/drivers/clk/qcom/clk-cpu-8996.c
+> > b/drivers/clk/qcom/clk-cpu-8996.c index b0a3b73..1552791 100644
+> > --- a/drivers/clk/qcom/clk-cpu-8996.c
+> > +++ b/drivers/clk/qcom/clk-cpu-8996.c
+> > @@ -17,6 +17,7 @@
+> >  #include <linux/regmap.h>
+> >  #include <linux/clk-provider.h>
+> >  #include "clk-alpha-pll.h"
+> > +#include <soc/qcom/kryo-l2-accessors.h>
+> 
+> Put this above local includes please.
 
-v7 changes:
-- rebased
-- add davinci prefix to commit message
-- mention SATA and USB in commit message
+Will be changed in the next spin.
 
-v6 changes:
-- rebased
+> 
+> >
+> >  #define VCO(a, b, c) { \
+> >         .val = a,\
+> > @@ -29,6 +30,27 @@
+> >  #define ACD_INDEX              2
+> >  #define ALT_INDEX              3
+> >  #define DIV_2_THRESHOLD                600000000
+> > +#define PWRCL_REG_OFFSET 0x0
+> > +#define PERFCL_REG_OFFSET 0x80000
+> > +#define MUX_OFFSET     0x40
+> > +#define ALT_PLL_OFFSET 0x100
+> > +#define SSSCTL_OFFSET 0x160
+> > +/*
+> > +APCy_QLL_SSSCTL value:
+> > +SACDRCLEN=1
+> > +SSWEN=1
+> > +SSTRTEN=1
+> > +SSTPAPMSWEN=1
+> > +*/
+> 
+> Bad comment style and I have no idea what it means.
 
- arch/arm/mach-davinci/devices-da8xx.c      |  29 ----
- arch/arm/mach-davinci/include/mach/da8xx.h |   3 -
- arch/arm/mach-davinci/usb-da8xx.c          | 238 -----------------------------
- 3 files changed, 270 deletions(-)
+Will be changed in the next spin.
 
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 73de449..1fd3619 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -30,11 +30,6 @@
- #include "cpuidle.h"
- #include "sram.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include <mach/clock.h>
--#include "clock.h"
--#endif
--
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
- #define DA8XX_TPTC1_BASE		0x01c08400
-@@ -1045,29 +1040,6 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
- }
- 
- #ifdef CONFIG_ARCH_DAVINCI_DA850
--#ifndef CONFIG_COMMON_CLK
--static struct clk sata_refclk = {
--	.name		= "sata_refclk",
--	.set_rate	= davinci_simple_set_rate,
--};
--
--static struct clk_lookup sata_refclk_lookup =
--		CLK("ahci_da850", "refclk", &sata_refclk);
--
--int __init da850_register_sata_refclk(int rate)
--{
--	int ret;
--
--	sata_refclk.rate = rate;
--	ret = clk_register(&sata_refclk);
--	if (ret)
--		return ret;
--
--	clkdev_add(&sata_refclk_lookup);
--
--	return 0;
--}
--#else
- int __init da850_register_sata_refclk(int rate)
- {
- 	struct clk *clk;
-@@ -1078,7 +1050,6 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return clk_register_clkdev(clk, "refclk", "ahci_da850");
- }
--#endif
- 
- static struct resource da850_sata_resources[] = {
- 	{
-diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
-index 5d7b1de..ab4a57f 100644
---- a/arch/arm/mach-davinci/include/mach/da8xx.h
-+++ b/arch/arm/mach-davinci/include/mach/da8xx.h
-@@ -103,9 +103,6 @@ int da8xx_register_watchdog(void);
- int da8xx_register_usb_phy(void);
- int da8xx_register_usb20(unsigned mA, unsigned potpgt);
- int da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata);
--int da8xx_register_usb_refclkin(int rate);
--int da8xx_register_usb20_phy_clk(bool use_usb_refclkin);
--int da8xx_register_usb11_phy_clk(bool use_usb_refclkin);
- int da8xx_register_usb_phy_clocks(void);
- int da850_register_sata_refclk(int rate);
- int da8xx_register_emac(void);
-diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
-index d0ba725..b17253f 100644
---- a/arch/arm/mach-davinci/usb-da8xx.c
-+++ b/arch/arm/mach-davinci/usb-da8xx.c
-@@ -20,11 +20,6 @@
- #include <mach/da8xx.h>
- #include <mach/irqs.h>
- 
--#ifndef CONFIG_COMMON_CLK
--#include <mach/clock.h>
--#include "clock.h"
--#endif
--
- #define DA8XX_USB0_BASE		0x01e00000
- #define DA8XX_USB1_BASE		0x01e25000
- 
-@@ -89,11 +84,6 @@ static struct platform_device da8xx_usb20_dev = {
- 	.name		= "musb-da8xx",
- 	.id             = -1,
- 	.dev = {
--		/*
--		 * Setting init_name so that clock lookup will work in
--		 * usb20_phy_clk_enable() even if this device is not registered.
--		 */
--		.init_name		= "musb-da8xx",
- 		.platform_data		= &usb_data,
- 		.dma_mask		= &usb_dmamask,
- 		.coherent_dma_mask      = DMA_BIT_MASK(32),
-@@ -142,234 +132,6 @@ int __init da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata)
- 	return platform_device_register(&da8xx_usb11_device);
- }
- 
--#ifndef CONFIG_COMMON_CLK
--static struct clk usb_refclkin = {
--	.name		= "usb_refclkin",
--	.set_rate	= davinci_simple_set_rate,
--};
--
--static struct clk_lookup usb_refclkin_lookup =
--	CLK(NULL, "usb_refclkin", &usb_refclkin);
--
--/**
-- * da8xx_register_usb_refclkin - register USB_REFCLKIN clock
-- *
-- * @rate: The clock rate in Hz
-- *
-- * This clock is only needed if the board provides an external USB_REFCLKIN
-- * signal, in which case it will be used as the parent of usb20_phy_clk and/or
-- * usb11_phy_clk.
-- */
--int __init da8xx_register_usb_refclkin(int rate)
--{
--	int ret;
--
--	usb_refclkin.rate = rate;
--	ret = clk_register(&usb_refclkin);
--	if (ret)
--		return ret;
--
--	clkdev_add(&usb_refclkin_lookup);
--
--	return 0;
--}
--
--static void usb20_phy_clk_enable(struct clk *clk)
--{
--	u32 val;
--	u32 timeout = 500000; /* 500 msec */
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* The USB 2.O PLL requires that the USB 2.O PSC is enabled as well. */
--	davinci_clk_enable(usb20_clk);
--
--	/*
--	 * Turn on the USB 2.0 PHY, but just the PLL, and not OTG. The USB 1.1
--	 * host may use the PLL clock without USB 2.0 OTG being used.
--	 */
--	val &= ~(CFGCHIP2_RESET | CFGCHIP2_PHYPWRDN);
--	val |= CFGCHIP2_PHY_PLLON;
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	while (--timeout) {
--		val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--		if (val & CFGCHIP2_PHYCLKGD)
--			goto done;
--		udelay(1);
--	}
--
--	pr_err("Timeout waiting for USB 2.0 PHY clock good\n");
--done:
--	davinci_clk_disable(usb20_clk);
--}
--
--static void usb20_phy_clk_disable(struct clk *clk)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--	val |= CFGCHIP2_PHYPWRDN;
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--}
--
--static int usb20_phy_clk_set_parent(struct clk *clk, struct clk *parent)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* Set the mux depending on the parent clock. */
--	if (parent == &usb_refclkin) {
--		val &= ~CFGCHIP2_USB2PHYCLKMUX;
--	} else if (strcmp(parent->name, "pll0_aux_clk") == 0) {
--		val |= CFGCHIP2_USB2PHYCLKMUX;
--	} else {
--		pr_err("Bad parent on USB 2.0 PHY clock\n");
--		return -EINVAL;
--	}
--
--	/* reference frequency also comes from parent clock */
--	val &= ~CFGCHIP2_REFFREQ_MASK;
--	switch (clk_get_rate(parent)) {
--	case 12000000:
--		val |= CFGCHIP2_REFFREQ_12MHZ;
--		break;
--	case 13000000:
--		val |= CFGCHIP2_REFFREQ_13MHZ;
--		break;
--	case 19200000:
--		val |= CFGCHIP2_REFFREQ_19_2MHZ;
--		break;
--	case 20000000:
--		val |= CFGCHIP2_REFFREQ_20MHZ;
--		break;
--	case 24000000:
--		val |= CFGCHIP2_REFFREQ_24MHZ;
--		break;
--	case 26000000:
--		val |= CFGCHIP2_REFFREQ_26MHZ;
--		break;
--	case 38400000:
--		val |= CFGCHIP2_REFFREQ_38_4MHZ;
--		break;
--	case 40000000:
--		val |= CFGCHIP2_REFFREQ_40MHZ;
--		break;
--	case 48000000:
--		val |= CFGCHIP2_REFFREQ_48MHZ;
--		break;
--	default:
--		pr_err("Bad parent clock rate on USB 2.0 PHY clock\n");
--		return -EINVAL;
--	}
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	return 0;
--}
--
--static struct clk usb20_phy_clk = {
--	.name		= "usb0_clk48",
--	.clk_enable	= usb20_phy_clk_enable,
--	.clk_disable	= usb20_phy_clk_disable,
--	.set_parent	= usb20_phy_clk_set_parent,
--};
--
--static struct clk_lookup usb20_phy_clk_lookup =
--	CLK("da8xx-usb-phy", "usb0_clk48", &usb20_phy_clk);
--
--/**
-- * da8xx_register_usb20_phy_clk - register USB0PHYCLKMUX clock
-- *
-- * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
-- *	or "pll0_aux" if false.
-- */
--int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
--{
--	struct clk *parent;
--	int ret;
--
--	usb20_clk = clk_get(&da8xx_usb20_dev.dev, "usb20");
--	ret = PTR_ERR_OR_ZERO(usb20_clk);
--	if (ret)
--		return ret;
--
--	parent = clk_get(NULL, use_usb_refclkin ? "usb_refclkin" : "pll0_aux");
--	ret = PTR_ERR_OR_ZERO(parent);
--	if (ret) {
--		clk_put(usb20_clk);
--		return ret;
--	}
--
--	usb20_phy_clk.parent = parent;
--	ret = clk_register(&usb20_phy_clk);
--	if (!ret)
--		clkdev_add(&usb20_phy_clk_lookup);
--
--	clk_put(parent);
--
--	return ret;
--}
--
--static int usb11_phy_clk_set_parent(struct clk *clk, struct clk *parent)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* Set the USB 1.1 PHY clock mux based on the parent clock. */
--	if (parent == &usb20_phy_clk) {
--		val &= ~CFGCHIP2_USB1PHYCLKMUX;
--	} else if (parent == &usb_refclkin) {
--		val |= CFGCHIP2_USB1PHYCLKMUX;
--	} else {
--		pr_err("Bad parent on USB 1.1 PHY clock\n");
--		return -EINVAL;
--	}
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	return 0;
--}
--
--static struct clk usb11_phy_clk = {
--	.name		= "usb1_clk48",
--	.set_parent	= usb11_phy_clk_set_parent,
--};
--
--static struct clk_lookup usb11_phy_clk_lookup =
--	CLK("da8xx-usb-phy", "usb1_clk48", &usb11_phy_clk);
--
--/**
-- * da8xx_register_usb11_phy_clk - register USB1PHYCLKMUX clock
-- *
-- * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
-- *	or "usb0_clk48" if false.
-- */
--int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
--{
--	struct clk *parent;
--	int ret = 0;
--
--	if (use_usb_refclkin)
--		parent = clk_get(NULL, "usb_refclkin");
--	else
--		parent = clk_get(&da8xx_usb_phy.dev, "usb0_clk48");
--	if (IS_ERR(parent))
--		return PTR_ERR(parent);
--
--	usb11_phy_clk.parent = parent;
--	ret = clk_register(&usb11_phy_clk);
--	if (!ret)
--		clkdev_add(&usb11_phy_clk_lookup);
--
--	clk_put(parent);
--
--	return ret;
--}
--#endif
- static struct platform_device da8xx_usb_phy_clks_device = {
- 	.name		= "da830-usb-phy-clks",
- 	.id		= -1,
--- 
-2.7.4
+> 
+> > +#define SSSCTL_VAL 0xF
+> > +
+> > +enum {
+> > +       APC_BASE,
+> > +       EFUSE_BASE,
+> 
+> Is this used? efuse should go through nvmem APIs.
+
+Will be removed in the next spin.
+
+> 
+> > +       NUM_BASES
+> > +};
+> > +
+> > +static void __iomem *vbases[NUM_BASES];
+> 
+> Please just pass this to the function that uses it and drop EFUSE_BASE.
+
+Will be changed in the next spin.
+
+> 
+> >
+> >  static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
+> >         [PLL_OFF_L_VAL] = 0x04,
+> > @@ -399,10 +424,64 @@ struct clk_hw_clks {
+> >         return ret;
+> >  }
+> >
+> > +#define CPU_AFINITY_MASK 0xFFF
+> > +#define PWRCL_CPU_REG_MASK 0x3
+> > +#define PERFCL_CPU_REG_MASK 0x103
+> > +
+> > +/* ACD static settings (HMSS HPG 7.2.2) */ #define L2ACDCR_REG
+> > +0x580ULL #define L2ACDTD_REG 0x581ULL #define L2ACDDVMRC_REG
+> 0x584ULL
+> > +#define L2ACDSSCR_REG 0x589ULL #define ACDTD_VAL 0x00006A11
+> #define
+> > +ACDCR_VAL 0x002C5FFD #define ACDSSCR_VAL 0x00000601 #define
+> > +ACDDVMRC_VAL 0x000E0F0F
+> 
+> Please don't have #defines for random register settings. It just obfuscates
+> what's going on at the place where the define is used.
+
+So should I just use the values directly?
+
+> 
+> > +
+> > +static DEFINE_SPINLOCK(acd_lock);
+> > +
+> > +static void qcom_cpu_clk_msm8996_acd_init(void)
+> > +{
+> > +       u64 hwid;
+> > +       unsigned long flags;
+> > +
+> > +       spin_lock_irqsave(&acd_lock, flags);
+> > +
+> > +       hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
+> > +
+> > +       /* Program ACD Tunable-Length Delay (TLD) */
+> > +       set_l2_indirect_reg(L2ACDTD_REG, ACDTD_VAL);
+> > +       /* Initial ACD for *this* cluster */
+> > +       set_l2_indirect_reg(L2ACDDVMRC_REG, ACDDVMRC_VAL);
+> > +       /* Program ACD soft start control bits. */
+> > +       set_l2_indirect_reg(L2ACDSSCR_REG, ACDSSCR_VAL);
+> 
+> Please remove all useless comments, the code is obviously touching
+> registers.
+
+Will be changed in the next spin.
+
+> 
+> > +
+> > +       if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
+> > +               /* Enable Soft Stop/Start */
+> 
+> Sigh.
+> 
+> > +               if (vbases[APC_BASE])
+> 
+> When is this false?
+
+It is checked in the probe. You are right, I'll remove this check and pass the base as argument.
+
+> 
+> > +                       writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
+> > +                                       PWRCL_REG_OFFSET + SSSCTL_OFFSET);
+> > +               /* Ensure SSSCTL config goes through before enabling ACD. */
+> > +               mb();
+> 
+> Use writel instead.
+
+OK
+
+> 
+> > +               /* Program ACD control bits */
+> > +               set_l2_indirect_reg(L2ACDCR_REG, ACDCR_VAL);
+> > +       }
+> > +       if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) {
+> > + //else {
+> 
+> What is that '// else {' stuff?
+
+Missed leftover. Will be changed in the next spin.
+
+> 
+> > +               /* Program ACD control bits */
+> > +               set_l2_indirect_reg(L2ACDCR_REG, ACDCR_VAL);
+> > +               /* Enable Soft Stop/Start */
+> > +               if (vbases[APC_BASE])
+> > +                       writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
+> > +                                       PERFCL_REG_OFFSET + SSSCTL_OFFSET);
+> > +               /* Ensure SSSCTL config goes through before enabling ACD. */
+> > +               mb();
+> 
+> Again, use writel.
+
+OK
+
+> 
+> > +       }
+> > +
+> > +       spin_unlock_irqrestore(&acd_lock, flags); }
+> >  static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device
+> > *pdev)  {
+> >         int ret;
+> > -       void __iomem *base;
+> >         struct resource *res;
+> >         struct regmap *regmap_cpu;
+> >         struct clk_hw_clks *hws;
+> > @@ -415,17 +494,17 @@ static int
+> qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+> >         if (!data)
+> >                 return -ENOMEM;
+> >
+> > -       hws = devm_kzalloc(dev, sizeof(*hws) + 2 * sizeof(struct clk_hw *),
+> > +       hws = devm_kzalloc(dev, sizeof(*hws) + 4 * sizeof(struct
+> > + clk_hw *),
+> >                            GFP_KERNEL);
+> >         if (!hws)
+> >                 return -ENOMEM;
+> >
+> >         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > -       base = devm_ioremap_resource(dev, res);
+> > -       if (IS_ERR(base))
+> > -               return PTR_ERR(base);
+> > +       vbases[APC_BASE] = devm_ioremap_resource(dev, res);
+> > +       if (IS_ERR(vbases[APC_BASE]))
+> > +               return PTR_ERR(vbases[APC_BASE]);
+> >
+> > -       regmap_cpu = devm_regmap_init_mmio(dev, base,
+> > +       regmap_cpu = devm_regmap_init_mmio(dev, vbases[APC_BASE],
+> >                                            &cpu_msm8996_regmap_config);
+> >         if (IS_ERR(regmap_cpu))
+> >                 return PTR_ERR(regmap_cpu);
+> 
+> Cool, none of this diff is needed.
+
+Since the effuse code will not be implemented in the clock driver, you are right. Will be changed in the next spin.
+
+> 
+> > @@ -433,6 +512,7 @@ static int
+> qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+> >         ret = qcom_cpu_clk_msm8996_register_clks(dev, hws, regmap_cpu);
+> >         if (ret)
+> >                 return ret;
+> > +       qcom_cpu_clk_msm8996_acd_init();
+> 
+> Pass base here.
+
+Sure.
+
+> 
+> >
+> >         data->hws[0] = &pwrcl_pmux.clkr.hw;
+> >         data->hws[1] = &perfcl_pmux.clkr.hw;
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
