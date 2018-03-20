@@ -1,60 +1,39 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
-References: <20180323130455.11470-1-brgl@bgdev.pl> <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 23 Mar 2018 17:55:47 +0100
-Message-ID: <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, David Lechner <david@lechnology.com>,
-	Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Ohad Ben-Cohen <ohad@wizery.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Sekhar Nori <nsekhar@ti.com>,
-	devicetree <devicetree@vger.kernel.org>, linux-remoteproc@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-clk@vger.kernel.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521168778-27236-11-git-send-email-david@lechnology.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+ David Lechner <david@lechnology.com>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-11-git-send-email-david@lechnology.com>
+Message-ID: <152156543978.183971.1705082607591158848@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v8 10/42] clk: davinci: New driver for davinci PSC clocks
+Date: Tue, 20 Mar 2018 10:03:59 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
-> Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> This series converts the only user of the handcoded, mach-specific reset
->> routines in the davinci platform to using the reset framework.
->>
->> Patch 1 modifies the way lookup entries are registered with the reset
->> framework.
->>
->> Patches 2-4 add necessary lookups/DT-properties.
->>
->> Patches 5-7 convert the davinci-rproc driver to the reset framework.
->>
->> Patch 8 removes now dead code.
->>
->> Philipp: it turned out that it's indeed better to use the reset
->> controller's device name for the entry lookup.
->>
->> Tested both in DT and legacy modes by booting the examples from
->> ti-ipc-rtos recipe in meta-ti.
->>
->> This series applies on top of David Lechner's common-clk-v9 branch[1]
->> with Philipp Zabel's reset/next branch[2] pulled in.
->>
->> It can be found in my github tree as well[3].
->>
->
-> What's the merge strategy for the rest of the patches? I should apply
-> the clk ones after the next -rc1?
+Quoting David Lechner (2018-03-15 19:52:26)
+> This adds a new driver for mach-davinci PSC clocks. This is porting the
+> code from arch/arm/mach-davinci/psc.c to the common clock framework and
+> is converting it to use regmap to simplify the code. Additionally, it
+> adds device tree support for these clocks.
+> =
 
-Or maybe Philipp can provide us with an immutable branch with the reset patches?
+> Note: although there are similar clocks for TI Keystone we are not able
+> to share the code for a few reasons. The keystone clocks are device tree
+> only and use legacy one-node-per-clock bindings. Also the keystone
+> driver makes the assumption that there is only one PSC per SoC and uses
+> global variables, but here we have two controllers per SoC.
+> =
 
-The you could apply the driver patches and let Sekhar take all the
-platform code?
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
 
-Best regards,
-Bartosz Golaszewski
+Applied to clk-next
