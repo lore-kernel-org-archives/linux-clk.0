@@ -1,66 +1,33 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 5/8] remoteproc/davinci: prepare and unprepare the clock where needed
-Date: Tue, 27 Mar 2018 11:20:28 +0200
-Message-Id: <20180327092031.11251-6-brgl@bgdev.pl>
-In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
-References: <20180327092031.11251-1-brgl@bgdev.pl>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Sudeep Holla <sudeep.holla@arm.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521547867-23808-1-git-send-email-sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
+ <1521547867-23808-1-git-send-email-sudeep.holla@arm.com>
+Message-ID: <152156297081.254778.8373273607540232473@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: scmi: use devm_of_clk_add_hw_provider() API and drop
+ scmi_clocks_remove
+Date: Tue, 20 Mar 2018 09:22:50 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Quoting Sudeep Holla (2018-03-20 05:11:07)
+> Commit aa795c41d9cd ("clk: Add devm_of_clk_add_hw_provider()/del_provider=
+()
+> APIs") adds devm_of_clk_add_hw_provider which takes care of deleting the
+> clock provider when the clock providers device is removed.
+> =
 
-We're currently switching the platform to using the common clock
-framework. We need to explicitly prepare and unprepare the rproc
-clock.
+> This patch makes use of devm_of_clk_add_hw_provider() instead of
+> of_clk_add_hw_provider() so that we can eliminate the need of explicit
+> scmi_clocks_remove for just doing of_clk_del_provider()
+> =
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 2b24291337b7..f134192922e0 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	ret = clk_enable(dsp_clk);
-+	ret = clk_prepare_enable(dsp_clk);
- 	if (ret) {
--		dev_err(dev, "clk_enable() failed: %d\n", ret);
-+		dev_err(dev, "clk_prepare_enable() failed: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
- 	struct da8xx_rproc *drproc = rproc->priv;
- 
- 	davinci_clk_reset_assert(drproc->dsp_clk);
--	clk_disable(drproc->dsp_clk);
-+	clk_disable_unprepare(drproc->dsp_clk);
- 
- 	return 0;
- }
--- 
-2.16.1
+Acked-by: Stephen Boyd <sboyd@kernel.org>
