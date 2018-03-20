@@ -1,68 +1,72 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41794 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751771AbeCTGi6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Mar 2018 02:38:58 -0400
-Message-ID: <1521527932.21199.4.camel@mtkswgap22>
-Subject: Re: [PATCH v4 3/6] clk: mediatek: add audsys support for MT2701
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        "Garlic Tseng" <garlic.tseng@mediatek.com>
-Date: Tue, 20 Mar 2018 14:38:52 +0800
-In-Reply-To: <152149148431.242365.4625152577833480987@swboyd.mtv.corp.google.com>
-References: <cover.1520327262.git.ryder.lee@mediatek.com>
-         <f1445b95864af04f1f90d3be96d0a485d1bb4560.1520327262.git.ryder.lee@mediatek.com>
-         <152149148431.242365.4625152577833480987@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mail-he1eur01on0042.outbound.protection.outlook.com ([104.47.0.42]:37504
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751004AbeCTCVi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Mar 2018 22:21:38 -0400
+From: Bai Ping <ping.bai@nxp.com>
+To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
+        kernel@pengutronix.de
+Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+Subject: [PATCH v6 2/4] clk: imx: add new gate/gate2 wrapper funtion
+Date: Tue, 20 Mar 2018 10:24:02 +0800
+Message-Id: <1521512644-25265-2-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1521512644-25265-1-git-send-email-ping.bai@nxp.com>
+References: <1521512644-25265-1-git-send-email-ping.bai@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-03-19 at 13:31 -0700, Stephen Boyd wrote:
-> Quoting Ryder Lee (2018-03-06 01:09:28)
-> > +
-> > +static const struct of_device_id of_match_clk_mt2701_aud[] = {
-> > +       { .compatible = "mediatek,mt2701-audsys", },
-> > +       {}
-> > +};
-> > +
-> > +static int clk_mt2701_aud_probe(struct platform_device *pdev)
-> > +{
-> > +       struct clk_onecell_data *clk_data;
-> > +       struct device_node *node = pdev->dev.of_node;
-> > +       int r;
-> > +
-> > +       clk_data = mtk_alloc_clk_data(CLK_AUD_NR);
-> > +
-> > +       mtk_clk_register_gates(node, audio_clks, ARRAY_SIZE(audio_clks),
-> > +                              clk_data);
-> > +
-> > +       r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> > +       if (r) {
-> > +               dev_err(&pdev->dev,
-> > +                       "could not register clock provider: %s: %d\n",
-> > +                       pdev->name, r);
-> > +
-> > +               return r;
-> > +       }
-> 
-> This fails to remove the clk provider when devm_of_platform_populate()
-> returns an error.
-> 
-> > +
-> > +       return devm_of_platform_populate(&pdev->dev);
-> > +}
+Add new gate/gate2 wrapper function to register clocks with optional flags.
 
-I've sent a new one to fix it.
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ change from v3->v4:
+ - no
+ change from v4->5:
+ - optimize commit subject
+ change from v5->v6:
+ - no change
+---
+ drivers/clk/imx/clk.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Thanks
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index d69c4bb..8076ec0 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -123,6 +123,13 @@ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
+ 			shift, 0, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_gate_flags(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, unsigned long flags)
++{
++	return clk_register_gate(NULL, name, parent, flags | CLK_SET_RATE_PARENT, reg,
++			shift, 0, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift)
+ {
+@@ -137,6 +144,13 @@ static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
+ 			shift, 0x3, 0, &imx_ccm_lock, NULL);
+ }
+ 
++static inline struct clk *imx_clk_gate2_flags(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, unsigned long flags)
++{
++	return clk_register_gate2(NULL, name, parent, flags | CLK_SET_RATE_PARENT, reg,
++			shift, 0x3, 0, &imx_ccm_lock, NULL);
++}
++
+ static inline struct clk *imx_clk_gate2_shared(const char *name,
+ 		const char *parent, void __iomem *reg, u8 shift,
+ 		unsigned int *share_count)
+-- 
+1.9.1
 
