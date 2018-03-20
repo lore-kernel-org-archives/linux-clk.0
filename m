@@ -1,241 +1,54 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v9 02/15] clk: mux: Split out register accessors for reuse
-Date: Tue,  6 Mar 2018 20:08:55 +0530
-Message-Id: <1520347148-27852-3-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
-References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:51376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751343AbeCTUGT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Mar 2018 16:06:19 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: ilialin@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <013a01d3c051$d65a9160$830fb420$@codeaurora.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
+        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
+        nicolas.dechesne@linaro.org, celster@codeaurora.org
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-10-git-send-email-ilialin@codeaurora.org>
+ <152147812199.242365.11821734771337881765@swboyd.mtv.corp.google.com>
+ <013a01d3c051$d65a9160$830fb420$@codeaurora.org>
+Message-ID: <152157637794.125118.12382168941652366593@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH v3 09/10] DT: QCOM: Add cpufreq-dt to msm8996
+Date: Tue, 20 Mar 2018 13:06:17 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Quoting ilialin@codeaurora.org (2018-03-20 06:46:19)
+> > From: Stephen Boyd <sboyd@kernel.org>
+> > Quoting Ilia Lin (2018-02-14 05:59:51)
+> > > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c
+> > > b/drivers/cpufreq/cpufreq-dt-platdev.c
+> > > index 3b585e4..b6cd0ae 100644
+> > > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> > > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> > > @@ -95,6 +95,9 @@
+> > >         { .compatible = "xlnx,zynq-7000", },
+> > >         { .compatible = "xlnx,zynqmp", },
+> > >
+> > > +       { .compatible = "qcom,msm8996", },
+> > > +       { .compatible = "qcom,apq8096", },
+> > > +
+> > 
+> > Why can't we base it on the kryocc node being present?
+> This could be good idea, if I would writing a platform specific cpufreq driver, which may be a future option.
 
-We want to reuse the logic in clk-mux.c for other clock drivers
-that don't use readl as register accessors. Fortunately, there
-really isn't much to the mux code besides the table indirection
-and quirk flags if you assume any bit shifting and masking has
-been done already. Pull that logic out into reusable functions
-that operate on an optional table and some flags so that other
-drivers can use the same logic.
+Well maybe cpufreq-dt can also look at the cpus nodes for a cpu with a
+certain type (in this case kryo). Then we can add cpufreq dt based on
+that CPU node being there.
 
-[Sricharan: Rebased for mainline]
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/clk-mux.c         | 74 +++++++++++++++++++++++++++----------------
- drivers/clk/nxp/clk-lpc32xx.c | 21 +++---------
- include/linux/clk-provider.h  |  6 ++++
- 3 files changed, 57 insertions(+), 44 deletions(-)
+> > Or even populate
+> > the cpufreq-dt from the kryocc driver?
+> There is a problem that during the clock probe the OPP table still doesn't exist. 
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 39cabe1..28223fa 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -26,35 +26,25 @@
-  * parent - parent is adjustable through clk_set_parent
-  */
- 
--static u8 clk_mux_get_parent(struct clk_hw *hw)
-+unsigned int clk_mux_get_parent(struct clk_hw *hw, unsigned int val,
-+				unsigned int *table,
-+				unsigned long flags)
- {
--	struct clk_mux *mux = to_clk_mux(hw);
- 	int num_parents = clk_hw_get_num_parents(hw);
--	u32 val;
--
--	/*
--	 * FIXME need a mux-specific flag to determine if val is bitwise or numeric
--	 * e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges from 0x1
--	 * to 0x7 (index starts at one)
--	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
--	 * val = 0x4 really means "bit 2, index starts at bit 0"
--	 */
--	val = clk_readl(mux->reg) >> mux->shift;
--	val &= mux->mask;
- 
--	if (mux->table) {
-+	if (table) {
- 		int i;
- 
- 		for (i = 0; i < num_parents; i++)
--			if (mux->table[i] == val)
-+			if (table[i] == val)
- 				return i;
- 		return -EINVAL;
- 	}
- 
--	if (val && (mux->flags & CLK_MUX_INDEX_BIT))
-+	if (val && (flags & CLK_MUX_INDEX_BIT))
- 		val = ffs(val) - 1;
- 
--	if (val && (mux->flags & CLK_MUX_INDEX_ONE))
-+	if (val && (flags & CLK_MUX_INDEX_ONE))
- 		val--;
- 
- 	if (val >= num_parents)
-@@ -62,23 +52,53 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
- 
- 	return val;
- }
-+EXPORT_SYMBOL_GPL(clk_mux_get_parent);
- 
--static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+static u8 _clk_mux_get_parent(struct clk_hw *hw)
- {
- 	struct clk_mux *mux = to_clk_mux(hw);
- 	u32 val;
--	unsigned long flags = 0;
- 
--	if (mux->table) {
--		index = mux->table[index];
-+	/*
-+	 * FIXME need a mux-specific flag to determine if val is bitwise or
-+	 * numeric e.g. sys_clkin_ck's clksel field is 3 bits wide,
-+	 * but ranges from 0x1 to 0x7 (index starts at one)
-+	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
-+	 * val = 0x4 really means "bit 2, index starts at bit 0"
-+	 */
-+	val = clk_readl(mux->reg) >> mux->shift;
-+	val &= mux->mask;
-+
-+	return clk_mux_get_parent(hw, val, mux->table, mux->flags);
-+}
-+
-+unsigned int clk_mux_reindex(u8 index, unsigned int *table,
-+			     unsigned long flags)
-+{
-+	unsigned int val = index;
-+
-+	if (table) {
-+		val = table[val];
- 	} else {
--		if (mux->flags & CLK_MUX_INDEX_BIT)
--			index = 1 << index;
-+		if (flags & CLK_MUX_INDEX_BIT)
-+			val = 1 << index;
- 
--		if (mux->flags & CLK_MUX_INDEX_ONE)
--			index++;
-+		if (flags & CLK_MUX_INDEX_ONE)
-+			val++;
- 	}
- 
-+	return val;
-+}
-+EXPORT_SYMBOL_GPL(clk_mux_reindex);
-+
-+static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+	u32 val;
-+	unsigned long flags = 0;
-+
-+	index = clk_mux_reindex(index, mux->table, mux->flags);
-+
- 	if (mux->lock)
- 		spin_lock_irqsave(mux->lock, flags);
- 	else
-@@ -102,14 +122,14 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
- }
- 
- const struct clk_ops clk_mux_ops = {
--	.get_parent = clk_mux_get_parent,
-+	.get_parent = _clk_mux_get_parent,
- 	.set_parent = clk_mux_set_parent,
- 	.determine_rate = __clk_mux_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_mux_ops);
- 
- const struct clk_ops clk_mux_ro_ops = {
--	.get_parent = clk_mux_get_parent,
-+	.get_parent = _clk_mux_get_parent,
- };
- EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
- 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index f5d815f..9b34150 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -999,29 +999,16 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	.set_rate = clk_divider_set_rate,
- };
- 
--static u8 clk_mux_get_parent(struct clk_hw *hw)
-+static u8 _clk_mux_get_parent(struct clk_hw *hw)
- {
- 	struct lpc32xx_clk_mux *mux = to_lpc32xx_mux(hw);
--	u32 num_parents = clk_hw_get_num_parents(hw);
- 	u32 val;
- 
- 	regmap_read(clk_regmap, mux->reg, &val);
- 	val >>= mux->shift;
- 	val &= mux->mask;
- 
--	if (mux->table) {
--		u32 i;
--
--		for (i = 0; i < num_parents; i++)
--			if (mux->table[i] == val)
--				return i;
--		return -EINVAL;
--	}
--
--	if (val >= num_parents)
--		return -EINVAL;
--
--	return val;
-+	return clk_mux_get_parent(hw, val, mux->table, 0);
- }
- 
- static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
-@@ -1036,11 +1023,11 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
- }
- 
- static const struct clk_ops lpc32xx_clk_mux_ro_ops = {
--	.get_parent = clk_mux_get_parent,
-+	.get_parent = _clk_mux_get_parent,
- };
- 
- static const struct clk_ops lpc32xx_clk_mux_ops = {
--	.get_parent = clk_mux_get_parent,
-+	.get_parent = _clk_mux_get_parent,
- 	.set_parent = clk_mux_set_parent,
- 	.determine_rate = __clk_mux_determine_rate,
- };
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index f711be6..344ad92 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -488,6 +488,12 @@ struct clk_mux {
- extern const struct clk_ops clk_mux_ops;
- extern const struct clk_ops clk_mux_ro_ops;
- 
-+unsigned int clk_mux_get_parent(struct clk_hw *hw, unsigned int val,
-+				unsigned int *table,
-+				unsigned long flags);
-+unsigned int clk_mux_reindex(u8 index, unsigned int *table,
-+			     unsigned long flags);
-+
- struct clk *clk_register_mux(struct device *dev, const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags,
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+The OPP table is in DT? Why doesn't it exist?
