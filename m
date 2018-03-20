@@ -1,525 +1,216 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:35118 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753682AbeC1WYv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Mar 2018 18:24:51 -0400
-Received: by mail-pg0-f65.google.com with SMTP id j3so1731223pgf.2
-        for <linux-clk@vger.kernel.org>; Wed, 28 Mar 2018 15:24:51 -0700 (PDT)
-Date: Wed, 28 Mar 2018 15:24:47 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Jeremy McNicoll <jeremymc@redhat.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-clk@vger.kernel.org, andy.gross@linaro.org,
-        sboyd@codeaurora.org, robh@kernel.org, arnd@arndb.de,
-        riteshh@codeaurora.org, git@kchr.de, ulf.hansson@linaro.org,
-        jszhang@marvell.com
-Subject: Re: [PATCH V4 5/6] dts: arm64: Enable onboard SDHCI on msm8992
-Message-ID: <20180328222447.GC18510@minitux>
-References: <1485508205-1904-1-git-send-email-jeremymc@redhat.com>
- <1485508205-1904-6-git-send-email-jeremymc@redhat.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1485508205-1904-6-git-send-email-jeremymc@redhat.com>
-Sender: linux-clk-owner@vger.kernel.org
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1520493495-3084-5-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Nischal <anischal@codeaurora.org>
+References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+ <1520493495-3084-5-git-send-email-anischal@codeaurora.org>
+Message-ID: <152150657982.254778.14132033041219278756@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 4/4] clk: qcom: Add Global Clock controller (GCC) driver for
+ SDM845
+Date: Mon, 19 Mar 2018 17:42:59 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri 27 Jan 01:10 PST 2017, Jeremy McNicoll wrote:
+Quoting Amit Nischal (2018-03-07 23:18:15)
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index fbf4532..54d0545 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -218,6 +218,16 @@ config MSM_MMCC_8996
+>           Say Y if you want to support multimedia devices such as display,
+>           graphics, video encode/decode, camera, etc.
+>  =
 
-> This enables SDHCI on the Nexus 5X as well creates common smd_rpm node
-> which can be shared between both 5X and 6P as per HW design.
-> 
-> Given the lack of documentation, only downstream code was used as a reference
-> and it eludes to the fact that 8994-rpm-regulator is common between both msm8992
-> & msm8994.   [ see msm.git branch: msm-angler-3.10-marshmallow-mr1, msm8992.dtsi]
-> 
-> At this early stage of development it makes sense for the 8994-rpm-regulator
-> to be common until data / documentation suggests otherwise.
-> 
+> +config SDM_GCC_845
+> +       tristate "SDM845 Global Clock Controller"
+> +       depends on COMMON_CLK_QCOM
+> +       help
+> +         Support for the global clock controller on Qualcomm Technologie=
+s, Inc
+> +         sdm845 devices.
+> +         Say Y if you want to use peripheral devices such as UART, SPI,
+> +         i2c, USB, UFS, SD/eMMC, PCIe, etc.
+> +
+> +
 
-Saw this as I looked through patchworks, still applies and compiles
-cleanly.
+Drop the double newline here please.
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>  config SPMI_PMIC_CLKDIV
+>         tristate "SPMI PMIC clkdiv Support"
+>         depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
+> @@ -226,3 +236,4 @@ config SPMI_PMIC_CLKDIV
+>           Technologies, Inc. SPMI PMIC. It configures the frequency of
+>           clkdiv outputs of the PMIC. These clocks are typically wired
+>           through alternate functions on GPIO pins.
+> +
 
-Regards,
-Bjorn
+Noise?
 
-> Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
-> ---
->  .../boot/dts/qcom/msm8992-bullhead-rev-101.dts     |   2 +
->  arch/arm64/boot/dts/qcom/msm8992-pins.dtsi         |  60 +++++
->  arch/arm64/boot/dts/qcom/msm8992.dtsi              |  87 ++++++-
->  arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi      | 276 +++++++++++++++++++++
->  4 files changed, 424 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8992-bullhead-rev-101.dts b/arch/arm64/boot/dts/qcom/msm8992-bullhead-rev-101.dts
-> index 4542133..3fc9a33 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8992-bullhead-rev-101.dts
-> +++ b/arch/arm64/boot/dts/qcom/msm8992-bullhead-rev-101.dts
-> @@ -39,3 +39,5 @@
->  		};
->  	};
->  };
-> +
-> +#include "msm8994-smd-rpm.dtsi"
-> diff --git a/arch/arm64/boot/dts/qcom/msm8992-pins.dtsi b/arch/arm64/boot/dts/qcom/msm8992-pins.dtsi
-> index d2a26f0..31bc9d9 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8992-pins.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8992-pins.dtsi
-> @@ -35,4 +35,64 @@
->  			bias-pull-down;
->  		};
->  	};
-> +
-> +	/* 0-3 for sdc1 4-6 for sdc2 */
-> +	/* Order of pins */
-> +	/* SDC1: CLK -> 0, CMD -> 1, DATA -> 2, RCLK -> 3 */
-> +	/* SDC2: CLK -> 4, CMD -> 5, DATA -> 6 */
-> +	sdc1_clk_on: clk-on {
-> +		pinconf {
-> +			pins = "sdc1_clk";
-> +			bias-disable = <0>; /* No pull */
-> +			drive-strength = <16>; /* 16mA */
-> +		};
-> +	};
-> +
-> +	sdc1_clk_off: clk-off {
-> +		pinconf {
-> +			pins = "sdc1_clk";
-> +			bias-disable = <0>; /* No pull */
-> +			drive-strength = <2>; /* 2mA */
-> +		};
-> +	};
-> +
-> +	sdc1_cmd_on: cmd-on {
-> +		pinconf {
-> +			pins = "sdc1_cmd";
-> +			bias-pull-up;
-> +			drive-strength = <8>;
-> +		};
-> +	};
-> +
-> +	sdc1_cmd_off: cmd-off {
-> +		pinconf {
-> +			pins = "sdc1_cmd";
-> +			bias-pull-up = <0x3>; /* same as 3.10 ?? */
-> +			drive-strength = <2>; /* 2mA */
-> +		};
-> +	};
-> +
-> +	sdc1_data_on: data-on {
-> +		pinconf {
-> +			pins = "sdc1_data";
-> +			bias-pull-up;
-> +			drive-strength = <8>; /* 8mA */
-> +		};
-> +	};
-> +
-> +	sdc1_data_off: data-off {
-> +		pinconf {
-> +			pins = "sdc1_data";
-> +			bias-pull-up;
-> +			drive-strength = <2>;
-> +		};
-> +	};
-> +
-> +	sdc1_rclk_on: rclk-on {
-> +		bias-pull-down; /* pull down */
-> +	};
-> +
-> +	sdc1_rclk_off: rclk-off {
-> +		bias-pull-down; /* pull down */
-> +	};
->  };
-> diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-> index 2c05ec7..623c850 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-> @@ -189,6 +189,31 @@
->  			reg = <0xfc400000 0x2000>;
->  		};
->  
-> +		sdhci1: mmc@f9824900 {
-> +			compatible = "qcom,sdhci-msm-v4";
-> +			reg = <0xf9824900 0x1a0>, <0xf9824000 0x800>;
-> +			reg-names = "hc_mem", "core_mem";
-> +
-> +			interrupts = <GIC_SPI 123 IRQ_TYPE_NONE>,
-> +					<GIC_SPI 138 IRQ_TYPE_NONE>;
-> +			interrupt-names = "hc_irq", "pwr_irq";
-> +
-> +			clocks = <&clock_gcc GCC_SDCC1_APPS_CLK>,
-> +				<&clock_gcc GCC_SDCC1_AHB_CLK>;
-> +			clock-names = "core", "iface";
-> +
-> +			pinctrl-names = "default", "sleep";
-> +			pinctrl-0 = <&sdc1_clk_on &sdc1_cmd_on &sdc1_data_on
-> +					&sdc1_rclk_on>;
-> +			pinctrl-1 = <&sdc1_clk_off &sdc1_cmd_off &sdc1_data_off
-> +					&sdc1_rclk_off>;
-> +
-> +			regulator-always-on;
-> +			bus-width = <8>;
-> +			mmc-hs400-1_8v;
-> +			status = "okay";
-> +		};
-> +
->  		rpm_msg_ram: memory@fc428000 {
->  			compatible = "qcom,rpm-msg-ram";
->  			reg = <0xfc428000 0x4000>;
-> @@ -231,7 +256,67 @@
->  		};
->  	};
->  
-> +	smd_rpm: smd {
-> +		compatible = "qcom,smd";
-> +		rpm {
-> +			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
-> +			qcom,ipc = <&apcs 8 0>;
-> +			qcom,smd-edge = <15>;
-> +			qcom,local-pid = <0>;
-> +			qcom,remote-pid = <6>;
-> +
-> +			rpm-requests {
-> +				compatible = "qcom,rpm-msm8994";
-> +				qcom,smd-channels = "rpm_requests";
-> +
-> +				pm8994-regulators {
-> +					compatible = "qcom,rpm-pm8994-regulators";
-> +
-> +					pm8994_s1: s1 {};
-> +					pm8994_s2: s2 {};
-> +					pm8994_s3: s3 {};
-> +					pm8994_s4: s4 {};
-> +					pm8994_s5: s5 {};
-> +					pm8994_s6: s6 {};
-> +					pm8994_s7: s7 {};
-> +
-> +					pm8994_l1: l1 {};
-> +					pm8994_l2: l2 {};
-> +					pm8994_l3: l3 {};
-> +					pm8994_l4: l4 {};
-> +					pm8994_l6: l6 {};
-> +					pm8994_l8: l8 {};
-> +					pm8994_l9: l9 {};
-> +					pm8994_l10: l10 {};
-> +					pm8994_l11: l11 {};
-> +					pm8994_l12: l12 {};
-> +					pm8994_l13: l13 {};
-> +					pm8994_l14: l14 {};
-> +					pm8994_l15: l15 {};
-> +					pm8994_l16: l16 {};
-> +					pm8994_l17: l17 {};
-> +					pm8994_l18: l18 {};
-> +					pm8994_l19: l19 {};
-> +					pm8994_l20: l20 {};
-> +					pm8994_l21: l21 {};
-> +					pm8994_l22: l22 {};
-> +					pm8994_l23: l23 {};
-> +					pm8994_l24: l24 {};
-> +					pm8994_l25: l25 {};
-> +					pm8994_l26: l26 {};
-> +					pm8994_l27: l27 {};
-> +					pm8994_l28: l28 {};
-> +					pm8994_l29: l29 {};
-> +					pm8994_l30: l30 {};
-> +					pm8994_l31: l31 {};
-> +					pm8994_l32: l32 {};
-> +
-> +					pm8994_lvs1: lvs1 {};
-> +					pm8994_lvs2: lvs2 {};
-> +				};
-> +			};
-> +		};
-> +	};
->  };
->  
-> -
->  #include "msm8992-pins.dtsi"
-> diff --git a/arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi b/arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
 > new file mode 100644
-> index 0000000..47ebd16
+> index 0000000..3ffa098
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/msm8994-smd-rpm.dtsi
-> @@ -0,0 +1,276 @@
-> +/* Copyright (c) 2015, LGE Inc. All rights reserved.
-> + * Copyright (c) 2016, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -0,0 +1,3619 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
 > + */
 > +
-> +&smd_rpm {
-> +	rpm {
-> +		rpm_requests {
-> +			pm8994-regulators {
+> +#include <linux/kernel.h>
+> +#include <linux/bitops.h>
+> +#include <linux/err.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
 > +
-> +				vdd_l1-supply = <&pm8994_s1>;
-> +				vdd_l2_26_28-supply = <&pm8994_s3>;
-> +				vdd_l3_11-supply = <&pm8994_s3>;
-> +				vdd_l4_27_31-supply = <&pm8994_s3>;
-> +				vdd_l5_7-supply = <&pm8994_s3>;
-> +				vdd_l6_12_32-supply = <&pm8994_s5>;
-> +				vdd_l8_16_30-supply = <&vreg_vph_pwr>;
-> +				vdd_l9_10_18_22-supply = <&vreg_vph_pwr>;
-> +				vdd_l13_19_23_24-supply = <&vreg_vph_pwr>;
-> +				vdd_l14_15-supply = <&pm8994_s5>;
-> +				vdd_l17_29-supply = <&vreg_vph_pwr>;
-> +				vdd_l20_21-supply = <&vreg_vph_pwr>;
-> +				vdd_l25-supply = <&pm8994_s5>;
-> +				vdd_lvs1_2 = <&pm8994_s4>;
+> +#include <dt-bindings/clock/qcom,gcc-sdm845.h>
 > +
-> +				s1 {
-> +					regulator-min-microvolt = <800000>;
-> +					regulator-max-microvolt = <800000>;
-> +				};
+> +#include "common.h"
+> +#include "clk-regmap.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-branch.h"
+> +#include "clk-alpha-pll.h"
+> +#include "gdsc.h"
+> +#include "reset.h"
 > +
-> +				s2 {
-> +					/* TODO */
-> +				};
+> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
 > +
-> +				s3 {
-> +					regulator-min-microvolt = <1300000>;
-> +					regulator-max-microvolt = <1300000>;
-> +				};
-> +
-> +				s4 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-allow-set-load;
-> +					regulator-system-load = <325000>;
-> +				};
-> +
-> +				s5 {
-> +					regulator-min-microvolt = <2150000>;
-> +					regulator-max-microvolt = <2150000>;
-> +				};
-> +
-> +				s7 {
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1000000>;
-> +				};
-> +
-> +				l1 {
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1000000>;
-> +				};
-> +
-> +				l2 {
-> +					regulator-min-microvolt = <1250000>;
-> +					regulator-max-microvolt = <1250000>;
-> +				};
-> +
-> +				l3 {
-> +					regulator-min-microvolt = <1200000>;
-> +					regulator-max-microvolt = <1200000>;
-> +				};
-> +
-> +				l4 {
-> +					regulator-min-microvolt = <1225000>;
-> +					regulator-max-microvolt = <1225000>;
-> +				};
-> +
-> +				l5 {
-> +					/* TODO */
-> +				};
-> +
-> +				l6 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +				};
-> +
-> +				l7 {
-> +					/* TODO */
-> +				};
-> +
-> +				l8 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +				};
-> +
-> +				l9 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +				};
-> +
-> +				l10 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					qcom,init-voltage = <1800000>;
-> +				};
-> +
-> +				l11 {
-> +					regulator-min-microvolt = <1200000>;
-> +					regulator-max-microvolt = <1200000>;
-> +					qcom,init-voltage = <1200000>;
-> +				};
-> +
-> +				l12 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					qcom,init-voltage = <1800000>;
-> +					proxy-supply = <&pm8994_l12>;
-> +					qcom,proxy-consumer-enable;
-> +					qcom,proxy-consumer-current = <10000>;
-> +					status = "okay";
-> +				};
-> +
-> +				l13 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <2950000>;
-> +					qcom,init-voltage = <2950000>;
-> +					status = "okay";
-> +				};
-> +
-> +				l14 {
-> +					regulator-min-microvolt = <1200000>;
-> +					regulator-max-microvolt = <1200000>;
-> +					qcom,init-voltage = <1200000>;
-> +					proxy-supply = <&pm8994_l14>;
-> +					qcom,proxy-consumer-enable;
-> +					qcom,proxy-consumer-current = <10000>;
-> +					status = "okay";
-> +				};
-> +
-> +				l15 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					qcom,init-voltage = <1800000>;
-> +					status = "okay";
-> +				};
-> +
-> +				l16 {
-> +					regulator-min-microvolt = <2700000>;
-> +					regulator-max-microvolt = <2700000>;
-> +					qcom,init-voltage = <2700000>;
-> +					status = "okay";
-> +				};
-> +
-> +				l17 {
-> +					regulator-min-microvolt = <2700000>;
-> +					regulator-max-microvolt = <2700000>;
-> +					qcom,init-voltage = <2700000>;
-> +					status = "okay";
-> +				};
-> +
-> +				l18 {
-> +					regulator-min-microvolt = <3000000>;
-> +					regulator-max-microvolt = <3000000>;
-> +					regulator-always-on;
-> +					qcom,init-voltage = <3000000>;
-> +					qcom,init-ldo-mode = <1>;
-> +				};
-> +
-> +				l19 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					qcom,init-voltage = <1800000>;
-> +					status = "okay";
-> +				};
-> +
-> +				l20 {
-> +					regulator-min-microvolt = <2950000>;
-> +					regulator-max-microvolt = <2950000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +					regulator-allow-set-load;
-> +					regulator-system-load = <570000>;
-> +				};
-> +
-> +				l21 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +					qcom,init-voltage = <1800000>;
-> +				};
-> +
-> +				l22 {
-> +					regulator-min-microvolt = <3100000>;
-> +					regulator-max-microvolt = <3100000>;
-> +					qcom,init-voltage = <3100000>;
-> +				};
-> +
-> +				l23 {
-> +					regulator-min-microvolt = <2800000>;
-> +					regulator-max-microvolt = <2800000>;
-> +					qcom,init-voltage = <2800000>;
-> +				};
-> +
-> +				l24 {
-> +					regulator-min-microvolt = <3075000>;
-> +					regulator-max-microvolt = <3150000>;
-> +					qcom,init-voltage = <3075000>;
-> +				};
-> +
-> +				l25 {
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					qcom,init-voltage = <1800000>;
-> +				};
-> +
-> +				l26 {
-> +					/* TODO: value from downstream
-> +					regulator-min-microvolt = <987500>;
-> +					fails to apply */
-> +				};
-> +
-> +				l27 {
-> +					regulator-min-microvolt = <1050000>;
-> +					regulator-max-microvolt = <1050000>;
-> +					qcom,init-voltage = <1050000>;
-> +				};
-> +
-> +				l28 {
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1000000>;
-> +					qcom,init-voltage = <1000000>;
-> +					proxy-supply = <&pm8994_l28>;
-> +					qcom,proxy-consumer-enable;
-> +					qcom,proxy-consumer-current = <10000>;
-> +				};
-> +
-> +				l29 {
-> +					/* TODO: Unsupported voltage range.
-> +					regulator-min-microvolt = <2800000>;
-> +					regulator-max-microvolt = <2800000>;
-> +					qcom,init-voltage = <2800000>;
-> +					*/
-> +				};
-> +
-> +				l30 {
-> +					/* TODO: get this verified
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					qcom,init-voltage = <1800000>;
-> +					*/
-> +				};
-> +
-> +				l31 {
-> +					regulator-min-microvolt = <1262500>;
-> +					regulator-max-microvolt = <1262500>;
-> +					qcom,init-voltage = <1262500>;
-> +				};
-> +
-> +				l32 {
-> +					/* TODO: get this verified
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					qcom,init-voltage = <1800000>;
-> +					*/
-> +				};
-> +			};
-> +		};
-> +	};
+> +static struct freq_tbl cxo_safe_src_f =3D {
+> +       .pre_div =3D 1,
 > +};
-> -- 
-> 2.6.1
-> 
+
+Still hoping this goes away.
+
+> +
+> +enum {
+> +       P_BI_TCXO,
+> +       P_AUD_REF_CLK,
+> +       P_CORE_BI_PLL_TEST_SE,
+> +       P_GPLL0_OUT_EVEN,
+> +       P_GPLL0_OUT_MAIN,
+> +       P_GPLL4_OUT_MAIN,
+> +       P_SLEEP_CLK,
+> +};
+[...]
+> +       F(400000, P_BI_TCXO, 12, 1, 4),
+> +       F(9600000, P_BI_TCXO, 2, 0, 0),
+> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+> +       F(25000000, P_GPLL0_OUT_MAIN, 12, 1, 2),
+> +       F(50000000, P_GPLL0_OUT_MAIN, 12, 0, 0),
+> +       F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src =3D {
+> +       .cmd_rcgr =3D 0x1600c,
+> +       .mnd_width =3D 8,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D gcc_parent_map_0,
+> +       .freq_tbl =3D ftbl_gcc_sdcc4_apps_clk_src,
+> +       .safe_src_freq_tbl =3D &cxo_safe_src_f,
+
+Why does sdcc have safe src stuff? Is something turning on the sdcc clk
+outside of our control?
+
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "gcc_sdcc4_apps_clk_src",
+> +               .parent_names =3D gcc_parent_names_0,
+> +               .num_parents =3D 4,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_rcg2_shared_ops,
+> +       },
+> +};
+> +
+[...]
+> +
+> +static struct clk_branch gcc_video_xo_clk =3D {
+> +       .halt_reg =3D 0xb028,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0xb028,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_video_xo_clk",
+> +                       .flags =3D CLK_IS_CRITICAL,
+> +                       .ops =3D &clk_branch2_ops,
+> +
+
+These things have no parents and we mark them critical. Why are we
+even exposing them to the kernel? Are they not on by default? Are we
+going to change these to non-critical at some point in the future?
+
+> +static const struct regmap_config gcc_sdm845_regmap_config =3D {
+> +       .reg_bits       =3D 32,
+> +       .reg_stride     =3D 4,
+> +       .val_bits       =3D 32,
+> +       .max_register   =3D 0x182090,
+
+Huge! :P
+
+> +       .fast_io        =3D true,
+> +};
+> +
+> +static const struct qcom_cc_desc gcc_sdm845_desc =3D {
+> +       .config =3D &gcc_sdm845_regmap_config,
+> +       .clks =3D gcc_sdm845_clocks,
+> +       .num_clks =3D ARRAY_SIZE(gcc_sdm845_clocks),
+> +       .resets =3D gcc_sdm845_resets,
+> +       .num_resets =3D ARRAY_SIZE(gcc_sdm845_resets),
+> +       .gdscs =3D gcc_sdm845_gdscs,
+> +       .num_gdscs =3D ARRAY_SIZE(gcc_sdm845_gdscs),
+> +};
+> +
+> +static const struct of_device_id gcc_sdm845_match_table[] =3D {
+> +       { .compatible =3D "qcom,gcc-sdm845" },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
+> +
+> +static int gcc_sdm845_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct regmap *regmap;
+> +       int i, ret;
+> +
+> +       regmap =3D qcom_cc_map(pdev, &gcc_sdm845_desc);
+> +       if (IS_ERR(regmap))
+> +               return PTR_ERR(regmap);
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(gcc_sdm845_hws); i++) {
+> +               ret =3D devm_clk_hw_register(dev, gcc_sdm845_hws[i]);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       /* Get the rate for safe source */
+> +       cxo_safe_src_f.freq =3D clk_get_rate(bi_tcxo.hw.clk);
+
+Hopefully this can be dropped too.
+
+> +
+> +       /* Disable the GPLL0 active input to MMSS and GPU via MISC regist=
+ers */
+> +       regmap_update_bits(regmap, 0x09FFC, 0x3, 0x3);
+> +       regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+
+Lowercase hex please.
+
+> +
+> +       return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+> +}
