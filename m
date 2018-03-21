@@ -1,62 +1,76 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/8] clk: renesas: Always use readl()/writel()
-Date: Fri, 16 Mar 2018 14:40:14 +0100
-Message-Id: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/8] ARM: davinci: complete the conversion to using the reset framework
+Date: Wed, 21 Mar 2018 13:07:59 +0100
+Message-Id: <20180321120807.18032-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On arm32/arm64, there is no reason to use the (soon deprecated)
-clk_readl()/clk_writel(), and the generic readl()/writel() should be
-used in instead.
+This series converts the only user of the handcoded, mach-specific reset
+routines in the davinci platform to using the reset framework.
 
-Commit 30ad3cf00e94f4a7 ("clk: renesas: rcar-gen3-cpg: Always use
-readl()/writel()") already got rid of them in the R-Car Gen3 clock
-driver, but Stephen noticed that a few new users crept in recently.
+Patch 1 modifies the way lookup entries are registered with the reset
+framework.
 
-Hence this series fixes that, and replaces all other uses in the Renesas
-clock drivers as a bonus.
+Patches 2-4 add necessary lookups/DT-properties.
 
-I plan to queue these up in clk-renesas-for-v4.17.
+Patches 5-7 convert the davinci-rproc driver to the reset framework.
 
-Thanks!
+Patch 8 removes now dead code.
 
-Geert Uytterhoeven (8):
-  clk: renesas: div6: Always use readl()/writel()
-  clk: renesas: mstp: Always use readl()/writel()
-  clk: renesas: r8a73a4: Always use readl()/writel()
-  clk: renesas: r8a7740: Always use readl()/writel()
-  clk: renesas: rcar-gen2: Always use readl()/writel()
-  clk: renesas: rza1: Always use readl()/writel()
-  clk: renesas: sh73a0: Always use readl()/writel()
-  clk: renesas: rcar-gen3: Always use readl()/writel()
+Philipp: it turned out that it's indeed better to use the reset
+controller's device name for the entry lookup.
 
- drivers/clk/renesas/clk-div6.c      | 22 +++++++++++-----------
- drivers/clk/renesas/clk-mstp.c      |  4 ++--
- drivers/clk/renesas/clk-r8a73a4.c   | 11 +++++------
- drivers/clk/renesas/clk-r8a7740.c   |  8 ++++----
- drivers/clk/renesas/clk-rcar-gen2.c | 17 ++++++++---------
- drivers/clk/renesas/clk-rz.c        |  4 ++--
- drivers/clk/renesas/clk-sh73a0.c    | 14 +++++++-------
- drivers/clk/renesas/rcar-gen3-cpg.c | 14 +++++++-------
- 8 files changed, 46 insertions(+), 48 deletions(-)
+Tested both in DT and legacy modes by booting the examples from
+ti-ipc-rtos recipe in meta-ti.
+
+This series applies on top of David Lechner's common-clk-v9 branch[1]
+with Philipp Zabel's reset/next branch[2] pulled in.
+
+It can be found in my github tree as well[3].
+
+[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
+[2] git://git.pengutronix.de/git/pza/linux reset/next
+[3] git@github.com:brgl/linux.git topic/davinci-reset
+
+Bartosz Golaszewski (8):
+  reset: modify the way reset lookup works for board files
+  ARM: davinci: dts: make psc0 a reset provider
+  ARM: davinci: dts: add a reset control to the dsp node
+  clk: davinci: add a reset lookup table for psc0
+  remoteproc: da8xx: add the missing checke for clk_enable()
+  remoteproc: da8xx: prepare and unprepare the clock where needed
+  remoteproc: da8xx: use the reset framework
+  clk: davinci: kill davinci_clk_reset_assert/deassert()
+
+ arch/arm/boot/dts/da850.dtsi               |  2 ++
+ arch/arm/mach-davinci/include/mach/clock.h | 21 ----------------
+ drivers/clk/davinci/psc-da850.c            |  8 ++++++
+ drivers/clk/davinci/psc.c                  | 19 +-------------
+ drivers/remoteproc/da8xx_remoteproc.c      | 40 ++++++++++++++++++++++++------
+ drivers/reset/core.c                       | 33 +++++++++++++++++++++---
+ include/linux/reset-controller.h           |  8 +++---
+ 7 files changed, 78 insertions(+), 53 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
 
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+2.16.1
