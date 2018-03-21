@@ -1,77 +1,199 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1520503497.4264.12.camel@baylibre.com>
-Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Date: Thu, 08 Mar 2018 11:04:57 +0100
-In-Reply-To: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <dinguyen@kernel.org>
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: sboyd@kernel.org
+Cc: dinguyen@kernel.org,
+	mturquette@baylibre.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCHv7 2/3] arm64: dts: stratix10: use clock bindings for the Stratix10 platform
+Date: Wed, 21 Mar 2018 09:20:11 -0500
+Message-Id: <1521642012-9770-2-git-send-email-dinguyen@kernel.org>
+In-Reply-To: <1521642012-9770-1-git-send-email-dinguyen@kernel.org>
+References: <1521642012-9770-1-git-send-email-dinguyen@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-03-08 at 15:54 +0800, Shawn Lin wrote:
-> It's found that the clock phase output from clk_summary is
-> wrong compared to the actual phase reading from the register.
-> 
-> cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
-> sdio_sample     0        1        0 50000000          0 -22
-> 
-> It expose an issue that clk core, clk_core_get_phase, always
-> return the cached core->phase which should be either updated
-> by calling clk_set_phase or directly from the first place the
-> clk was registered. When registering the clk, the core->phase
-> geting from ->get_phase() may return negative value indicating
-> error. This is quite common since the clk's phase may be highly
-> related to its praent chain, but it was temporary orphan when
-> registered, since its parent chain hadn't be ready at that time,
-> so the clk drivers decide to return error in this case. However,
-> if no clk_set_phase is called, core->phase would never be updated.
-> This is wrong, and we should try to update it when all its parent
-> chain is settled down, like the way of updating clock rate for that.
-> It's not derserved to complicate the code but just update it if
-> seeing it's a nagative number when calling clk_core_get_phase, which
-> would be much simple and enough.
-> 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-> ---
-> 
->  drivers/clk/clk.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 0f686a9..b49e4c8 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2370,6 +2370,15 @@ static int clk_core_get_phase(struct clk_core *core)
->  	int ret;
->  
->  	clk_prepare_lock();
-> +	/*
-> +	 * clk_set_phase always set the phase in [0, 360],
-> +	 * so the only reason for core->phase to be nagative
-> +	 * number is it's a error number propagated back from
-> +	 * the clk drivers. So we should try to update it if
-> +	 * possible.
-> +	 */
-> +	if (core->phase < 0 && core->ops->get_phase)
+Use the clock bindings for the Stratix10 SoC. This includes changing the old
+binding of "intc,clk-s10-mgr" to "intel,stratix10-clkmgr". The reason that
+this can be done is that there are currently no clock driver for Stratix10,
+thus there are no consumers of the old binding. So changing the binding will
+not break any legacy code.
 
-Why bother with core->phase < 0 ?
-if core->ops->get_phase is available, why not call it anyway ?
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+v7:
+- move PLL out of clkmgr node and into DT root
+v6:
+- no changes
+v5:
+- no changes
+v4:
+- remove '_' in name of clock nodes
+- use clock-controller in SoCDK node in dts file
+v3:
+- use the correct vendor prefix
+- explain the binding change
+v2:
+- use a single clock binding for the clock controller
+---
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 47 +++++++++++++++++++++-
+ .../boot/dts/altera/socfpga_stratix10_socdk.dts    |  8 ++++
+ 2 files changed, 53 insertions(+), 2 deletions(-)
 
-The phase may have changed since it was cached.
-
-A typical example would be phases based on adding fixed delays:
-
-* Take a 200MHz clock and set phase to 180 => a 2.5ns delay is set
-* Clock rate change to 100MHz but delay is still 2.5ns
-  -> cached phase = 180
-  -> actual phase = 90
-
-> +		core->phase = core->ops->get_phase(core->hw);
->  	ret = core->phase;
->  	clk_prepare_unlock();
->  
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+index c89d0c30..0e267c8 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+@@ -17,6 +17,7 @@
+ /dts-v1/;
+ #include <dt-bindings/reset/altr,rst-mgr-s10.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/clock/stratix10-clock.h>
+ 
+ / {
+ 	compatible = "altr,socfpga-stratix10";
+@@ -92,9 +93,32 @@
+ 		interrupt-parent = <&intc>;
+ 		ranges = <0 0 0 0xffffffff>;
+ 
+-		clkmgr@ffd1000 {
+-			compatible = "altr,clk-mgr";
++		clkmgr: clock-controller@ffd10000 {
++			compatible = "intel,stratix10-clkmgr";
+ 			reg = <0xffd10000 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		clocks {
++			cb_intosc_hs_div2_clk: cb-intosc-hs-div2-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++			};
++
++			cb_intosc_ls_clk: cb-intosc-ls-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++			};
++
++			f2s_free_clk: f2s-free-clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++			};
++
++			osc1: osc1 {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++			};
+ 		};
+ 
+ 		gmac0: ethernet@ff800000 {
+@@ -105,6 +129,8 @@
+ 			mac-address = [00 00 00 00 00 00];
+ 			resets = <&rst EMAC0_RESET>;
+ 			reset-names = "stmmaceth";
++			clocks = <&clkmgr STRATIX10_EMAC0_CLK>;
++			clock-names = "stmmaceth";
+ 			status = "disabled";
+ 		};
+ 
+@@ -116,6 +142,8 @@
+ 			mac-address = [00 00 00 00 00 00];
+ 			resets = <&rst EMAC1_RESET>;
+ 			reset-names = "stmmaceth";
++			clocks = <&clkmgr STRATIX10_EMAC1_CLK>;
++			clock-names = "stmmaceth";
+ 			status = "disabled";
+ 		};
+ 
+@@ -127,6 +155,8 @@
+ 			mac-address = [00 00 00 00 00 00];
+ 			resets = <&rst EMAC2_RESET>;
+ 			reset-names = "stmmaceth";
++			clocks = <&clkmgr STRATIX10_EMAC2_CLK>;
++			clock-names = "stmmaceth";
+ 			status = "disabled";
+ 		};
+ 
+@@ -229,6 +259,9 @@
+ 			fifo-depth = <0x400>;
+ 			resets = <&rst SDMMC_RESET>;
+ 			reset-names = "reset";
++			clocks = <&clkmgr STRATIX10_L4_MP_CLK>,
++				 <&clkmgr STRATIX10_SDMMC_CLK>;
++			clock-names = "biu", "ciu";
+ 			status = "disabled";
+ 		};
+ 
+@@ -288,24 +321,32 @@
+ 			compatible = "snps,dw-apb-timer";
+ 			interrupts = <0 113 4>;
+ 			reg = <0xffc03000 0x100>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
++			clock-names = "timer";
+ 		};
+ 
+ 		timer1: timer1@ffc03100 {
+ 			compatible = "snps,dw-apb-timer";
+ 			interrupts = <0 114 4>;
+ 			reg = <0xffc03100 0x100>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
++			clock-names = "timer";
+ 		};
+ 
+ 		timer2: timer2@ffd00000 {
+ 			compatible = "snps,dw-apb-timer";
+ 			interrupts = <0 115 4>;
+ 			reg = <0xffd00000 0x100>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
++			clock-names = "timer";
+ 		};
+ 
+ 		timer3: timer3@ffd00100 {
+ 			compatible = "snps,dw-apb-timer";
+ 			interrupts = <0 116 4>;
+ 			reg = <0xffd00100 0x100>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
++			clock-names = "timer";
+ 		};
+ 
+ 		uart0: serial0@ffc02000 {
+@@ -315,6 +356,7 @@
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+ 			resets = <&rst UART0_RESET>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -325,6 +367,7 @@
+ 			reg-shift = <2>;
+ 			reg-io-width = <4>;
+ 			resets = <&rst UART1_RESET>;
++			clocks = <&clkmgr STRATIX10_L4_SP_CLK>;
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+index 0007564..8880190 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+@@ -50,6 +50,14 @@
+ 		/* We expect the bootloader to fill in the reg */
+ 		reg = <0 0 0 0>;
+ 	};
++
++	soc {
++		clocks {
++			osc1 {
++				clock-frequency = <25000000>;
++			};
++		};
++	};
+ };
+ 
+ &gpio1 {
+-- 
+2.7.4
