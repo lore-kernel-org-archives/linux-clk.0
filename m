@@ -1,47 +1,46 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
- <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
-Message-ID: <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com>
-Date: Thu, 1 Mar 2018 16:33:29 +0300
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:51892 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751456AbeCUCTI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Mar 2018 22:19:08 -0400
+Date: Wed, 21 Mar 2018 10:18:13 +0800
+In-Reply-To: <20180320184646.dynqv6qubzabroe4@flea>
+References: <20180316175354.21437-1-icenowy@aosc.io> <20180316175354.21437-3-icenowy@aosc.io> <20180320184646.dynqv6qubzabroe4@flea>
 MIME-Version: 1.0
-In-Reply-To: <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH 2/7] dt-bindings: add binding for the Allwinner A64 DE2 bus
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+CC: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15.01.2018 13:56, Dmitry Osipenko wrote:
-> On 10.01.2018 16:59, Dmitry Osipenko wrote:
->> Machine dies if HCLK, SCLK or EMC is disabled. Hence mark these clocks
->> as critical.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->> ---
->>
->> Change log:
->> v2:     Fixed accidentally missed marking EMC as critical on Tegra30 and
->>         Tegra124. Switched to a use of common EMC gate definition on Tegra20
->>         and Tegra30.
->>
->> v3:     Dropped marking PLL_P outputs as critical, because seems they are
->>         not so critical. Although, I still haven't got a definitive answer
->>         about what exact HW functions are affected by the fixed-clocks.
->>         Anyway it should be cleaner to correct the actual drivers.
-> 
-> Stephen / Michael, would it be possible to schedule these patches for 4.16? My
-> T20 and T30 devices aren't working without the 'critical clocks' patch. Things
-> happen to work with the opensource u-boot, but not with the proprietary
-> bootloader. It's probably not a big deal that out-of-tree devices are broken,
-> although would be nice to have one problem less.
 
-Guys, is there anything I could do to get these patches in linux-next?
+
+于 2018年3月21日 GMT+08:00 上午2:46:46, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
+>> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64 SoC
+>to
+>> be claimed, otherwise the whole DE2 space is inaccessible.
+>> 
+>> Add a device tree binding of the DE2 part as a sub-bus.
+>
+>Where did you get the info that it was a bus?
+
+There's no direct evidence, just some guess.
+
+The DE2 is a whole part that is just allocated a memory
+space at the user manual, and the SRAM controls the
+access to all modules in the DE2.
+
+So it might be a bus.
+
+Implement it as a bus is a clear representation on A64.
+
+>
+>Maxime
