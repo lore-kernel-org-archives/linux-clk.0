@@ -1,51 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:37245 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751464AbeCUJbd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Mar 2018 05:31:33 -0400
-Received: by mail-wr0-f174.google.com with SMTP id z12so4448546wrg.4
-        for <linux-clk@vger.kernel.org>; Wed, 21 Mar 2018 02:31:33 -0700 (PDT)
-Message-ID: <1521624690.3753.0.camel@baylibre.com>
-Subject: Re: [PATCH v2 1/1] clk: meson: meson8b: add support for the NAND
- clocks
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>, carlo@caione.org,
-        khilman@baylibre.com, linux-clk@vger.kernel.org
-Date: Wed, 21 Mar 2018 10:31:30 +0100
-In-Reply-To: <CAFBinCAVZcws9-r9EET8o7TXWnGJmcTA517WTn0srXAMHtMHWw@mail.gmail.com>
-References: <20180101210139.29808-1-martin.blumenstingl@googlemail.com>
-         <20180101210139.29808-2-martin.blumenstingl@googlemail.com>
-         <152121876042.70929.5606827507365233258@swboyd.mtv.corp.google.com>
-         <1521219591.6569.82.camel@baylibre.com>
-         <CAFBinCAVZcws9-r9EET8o7TXWnGJmcTA517WTn0srXAMHtMHWw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180321120807.18032-1-brgl@bgdev.pl>
+ <20180321120807.18032-5-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com>
+Date: Wed, 21 Mar 2018 11:01:54 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180321120807.18032-5-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 2018-03-18 at 23:54 +0100, Martin Blumenstingl wrote:
-> > Hi Stephen,
-> > 
-> > I guess we missed it after new year's day :(
-> > 
-> > The patch looks fine to me but, following the rework of meson clocks, we'll need
-> > to migrate the clocks inserted to our clk_regmap and change the IDs (96-98 are
-> > used now)
-> > 
-> > Martin, I can do this rebase if you want ? As you prefer
+On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Jerome, if you have time to rebase it then feel free
-> otherwise I'll do it once v4.17-rc1 is out (no need to hurry with
-> these clocks, they are unused until the mainline NAND driver is
-> finished - which will probably not happen anytime soon)
+> In order to be able to use the reset framework in legacy boot mode as
+> well, add the reset lookup table to the psc driver for da850 variant.
 > 
-
-Ok, no rush. Let's leave this for the next cycle
-Thanks Martin
-
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   drivers/clk/davinci/psc-da850.c | 8 ++++++++
+>   drivers/clk/davinci/psc.c       | 1 +
+>   2 files changed, 9 insertions(+)
 > 
-> Regards
-> Martin
+> diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
+> index ccc7eb17bf3a..395db4b2c0ee 100644
+> --- a/drivers/clk/davinci/psc-da850.c
+> +++ b/drivers/clk/davinci/psc-da850.c
+> @@ -6,6 +6,7 @@
+>    */
+>   
+>   #include <linux/clk-provider.h>
+> +#include <linux/reset-controller.h>
+>   #include <linux/clk.h>
+>   #include <linux/clkdev.h>
+>   #include <linux/init.h>
+> @@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
+>   				"fck",	"ecap.1",
+>   				"fck",	"ecap.2");
+>   
+> +static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
+> +	RESET_LOOKUP("davinci-rproc.0", NULL, 15),
+> +};
+> +
+>   static int da850_psc0_init(struct device *dev, void __iomem *base)
+>   {
+> +	reset_controller_add_lookup("da850-psc0",
+> +				    da850_psc0_reset_lookup_table,
+> +				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
 
+Could there be a race condition here since you are adding the lookup *before*
+you are adding the actual provider? It seems like reset_controller_add_lookup()
+should be after davinci_psc_register_clocks().
+
+>   	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
+>   }
+>   
+> diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+> index 3b0e59dfbdd7..063df62381ea 100644
+> --- a/drivers/clk/davinci/psc.c
+> +++ b/drivers/clk/davinci/psc.c
+> @@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
+>   
+>   	psc->rcdev.ops = &davinci_psc_reset_ops;
+>   	psc->rcdev.owner = THIS_MODULE;
+> +	psc->rcdev.dev = dev;
+>   	psc->rcdev.of_node = dev->of_node;
+>   	psc->rcdev.of_reset_n_cells = 1;
+>   	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
+> 
