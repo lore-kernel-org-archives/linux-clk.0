@@ -1,43 +1,68 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 5/6] clk: meson: drop CLK_SET_RATE_PARENT flag
-Date: Wed, 28 Mar 2018 10:50:49 +0800
-Message-ID: <20180328025050.221585-6-yixun.lan@amlogic.com>
-In-Reply-To: <20180328025050.221585-1-yixun.lan@amlogic.com>
-References: <20180328025050.221585-1-yixun.lan@amlogic.com>
+Return-Path: <dinguyen@kernel.org>
+Subject: Re: [PATCHv6 3/3] clk: socfpga: stratix10: add clock driver for
+ Stratix10 platform
+To: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ mturquette@baylibre.com, robh+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <1519656455-14629-1-git-send-email-dinguyen@kernel.org>
+ <1519656455-14629-3-git-send-email-dinguyen@kernel.org>
+ <152148346040.242365.18406406194344107023@swboyd.mtv.corp.google.com>
+From: Dinh Nguyen <dinguyen@kernel.org>
+Message-ID: <f0d3fc46-5fa1-4e77-ef73-284bf2ee0d61@kernel.org>
+Date: Tue, 20 Mar 2018 23:09:02 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+In-Reply-To: <152148346040.242365.18406406194344107023@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The clk81 is not expected to be changed, so drop this flag.
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/clk/meson/gxbb-aoclk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 5a922639a264..89b048aad239 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -70,7 +70,7 @@ static struct clk_regmap _name##_ao = {					\
- 		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
--		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-+		.flags = CLK_IGNORE_UNUSED,				\
- 	},								\
- }
- 
--- 
-2.15.1
+On 03/19/2018 01:17 PM, Stephen Boyd wrote:
+> Quoting Dinh Nguyen (2018-02-26 06:47:35)
+>> diff --git a/drivers/clk/socfpga/Makefile b/drivers/clk/socfpga/Makefile
+>> index 9146c20..87ef977 100644
+>> --- a/drivers/clk/socfpga/Makefile
+>> +++ b/drivers/clk/socfpga/Makefile
+>> @@ -1,6 +1,11 @@
+>>  # SPDX-License-Identifier: GPL-2.0
+>> +ifeq ($(CONFIG_ARCH_SOCFPGA),y)
+> 
+> Ugh, any chance to make this better if we get three?
+> 
+
+I'll try.
+
+...
+
+> 
+>> +{
+>> +       struct stratix10_clock_data *clk_data;
+>> +
+>> +       clk_data = __socfpga_s10_clk_init(node, STRATIX10_NUM_CLKS);
+>> +       if (!clk_data)
+>> +               return;
+>> +
+>> +       s10_clk_register_pll(s10_pll_clks, ARRAY_SIZE(s10_pll_clks), clk_data);
+>> +
+>> +       s10_clk_register_c_perip(s10_main_perip_c_clks,
+>> +                                ARRAY_SIZE(s10_main_perip_c_clks), clk_data);
+>> +
+>> +       s10_clk_register_cnt_perip(s10_main_perip_cnt_clks,
+>> +                                  ARRAY_SIZE(s10_main_perip_cnt_clks),
+>> +                                  clk_data);
+>> +
+>> +       s10_clk_register_gate(s10_gate_clks, ARRAY_SIZE(s10_gate_clks),
+>> +                             clk_data);
+>> +}
+>> +
+>> +CLK_OF_DECLARE(stratix10_clock, "intel,stratix10-clkmgr", socfpga_s10_init);
+> 
+> Can it be a platform device? We prefer those over the CLK_OF_DECLARE
+> style.
+> 
+
+Thanks for the review! I'll change it to a platform device and address
+your other comments in v7.
+
+Dinh
