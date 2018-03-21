@@ -1,23 +1,151 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: Free the memory on the error path
-Date: Fri, 02 Mar 2018 08:53:39 +0100
-Message-ID: <2045062.mzKBZkjcbQ@phil>
-In-Reply-To: <1519801008-124310-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1519801008-124310-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	hdegoede@redhat.com,
+	b.zolnierkie@samsung.com,
+	linux@armlinux.org.uk,
+	linux-fbdev@vger.kernel.org,
+	linux-imx@nxp.com,
+	sboyd@kernel.org,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH V2 4/4] video: simplefb: switch to use clk_bulk API to simplify clock operations
+Date: Wed, 21 Mar 2018 11:19:51 +0800
+Message-Id: <1521602391-30356-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Mittwoch, 28. Februar 2018, 07:56:48 CET schrieb Shawn Lin:
-> rockchip_clk_register_branch() and rockchip_clk_register_branch()
-> should free the memory internally when seeing any failure.
-> 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Switching to use clk_bulk API to simplify clock operations.
 
-applied for 4.17
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-fbdev@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+v1->v2:
+ * switch to clk_bulk_get_all from of_clk_bulk_get_all
+---
+ drivers/video/fbdev/simplefb.c | 69 ++++++++----------------------------------
+ 1 file changed, 13 insertions(+), 56 deletions(-)
 
-Thanks
-Heiko
+diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
+index a3c44ec..3c8124e 100644
+--- a/drivers/video/fbdev/simplefb.c
++++ b/drivers/video/fbdev/simplefb.c
+@@ -182,7 +182,7 @@ struct simplefb_par {
+ #if defined CONFIG_OF && defined CONFIG_COMMON_CLK
+ 	bool clks_enabled;
+ 	unsigned int clk_count;
+-	struct clk **clks;
++	struct clk_bulk_data *clks;
+ #endif
+ #if defined CONFIG_OF && defined CONFIG_REGULATOR
+ 	bool regulators_enabled;
+@@ -214,37 +214,13 @@ static int simplefb_clocks_get(struct simplefb_par *par,
+ 			       struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct clk *clock;
+-	int i;
+ 
+ 	if (dev_get_platdata(&pdev->dev) || !np)
+ 		return 0;
+ 
+-	par->clk_count = of_clk_get_parent_count(np);
+-	if (!par->clk_count)
+-		return 0;
+-
+-	par->clks = kcalloc(par->clk_count, sizeof(struct clk *), GFP_KERNEL);
+-	if (!par->clks)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < par->clk_count; i++) {
+-		clock = of_clk_get(np, i);
+-		if (IS_ERR(clock)) {
+-			if (PTR_ERR(clock) == -EPROBE_DEFER) {
+-				while (--i >= 0) {
+-					if (par->clks[i])
+-						clk_put(par->clks[i]);
+-				}
+-				kfree(par->clks);
+-				return -EPROBE_DEFER;
+-			}
+-			dev_err(&pdev->dev, "%s: clock %d not found: %ld\n",
+-				__func__, i, PTR_ERR(clock));
+-			continue;
+-		}
+-		par->clks[i] = clock;
+-	}
++	par->clk_count = clk_bulk_get_all(&pdev->dev, &par->clks);
++	if ((par->clk_count < 0) && (par->clk_count == -EPROBE_DEFER))
++		return -EPROBE_DEFER;
+ 
+ 	return 0;
+ }
+@@ -252,45 +228,26 @@ static int simplefb_clocks_get(struct simplefb_par *par,
+ static void simplefb_clocks_enable(struct simplefb_par *par,
+ 				   struct platform_device *pdev)
+ {
+-	int i, ret;
++	int ret;
++
++	ret = clk_bulk_prepare_enable(par->clk_count, par->clks);
++	if (ret)
++		dev_warn(&pdev->dev, "failed to enable clocks\n");
+ 
+-	for (i = 0; i < par->clk_count; i++) {
+-		if (par->clks[i]) {
+-			ret = clk_prepare_enable(par->clks[i]);
+-			if (ret) {
+-				dev_err(&pdev->dev,
+-					"%s: failed to enable clock %d: %d\n",
+-					__func__, i, ret);
+-				clk_put(par->clks[i]);
+-				par->clks[i] = NULL;
+-			}
+-		}
+-	}
+ 	par->clks_enabled = true;
+ }
+ 
+ static void simplefb_clocks_destroy(struct simplefb_par *par)
+ {
+-	int i;
+-
+-	if (!par->clks)
+-		return;
++	if (par->clks_enabled)
++		clk_bulk_disable_unprepare(par->clk_count, par->clks);
+ 
+-	for (i = 0; i < par->clk_count; i++) {
+-		if (par->clks[i]) {
+-			if (par->clks_enabled)
+-				clk_disable_unprepare(par->clks[i]);
+-			clk_put(par->clks[i]);
+-		}
+-	}
+-
+-	kfree(par->clks);
++	clk_bulk_put_all(par->clk_count, par->clks);
+ }
+ #else
+ static int simplefb_clocks_get(struct simplefb_par *par,
+ 	struct platform_device *pdev) { return 0; }
+-static void simplefb_clocks_enable(struct simplefb_par *par,
+-	struct platform_device *pdev) { }
++static int simplefb_clocks_enable(struct simplefb_par *par) { }
+ static void simplefb_clocks_destroy(struct simplefb_par *par) { }
+ #endif
+ 
+-- 
+2.7.4
