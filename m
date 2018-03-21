@@ -1,62 +1,160 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35408 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751505AbeCVCGC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 21 Mar 2018 22:06:02 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-clk@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] clk: davinci: Remove redundant dev_err calls
-Date: Thu, 22 Mar 2018 02:11:48 +0000
-Message-ID: <1521684708-79015-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [PATCH V2 4/4] video: simplefb: switch to use clk_bulk API to
+ simplify clock operations
+Date: Wed, 21 Mar 2018 10:54:54 +0800
+Message-ID: <1521600894-29919-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1521600894-29919-1-git-send-email-aisheng.dong@nxp.com>
+References: <1521600894-29919-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-fbdev@vger.kernel.org,
+ b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com,
+ Stephen Boyd <sboyd@codeaurora.org>, linux@armlinux.org.uk,
+ linux-kernel@vger.kernel.org, hdegoede@redhat.com,
+ Masahiro Yamada <yamada.masahiro@socionext.com>, linux-imx@nxp.com,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+Switching to use clk_bulk API to simplify clock operations.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-fbdev@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/davinci/psc.c | 4 +---
- drivers/clk/davinci/pll.c | 4 +---
- 2 file changed, 2 insertion(+), 6 deletions(-)
+v1->v2:
+ * switch to clk_bulk_get_all from of_clk_bulk_get_all
+---
+ drivers/video/fbdev/simplefb.c | 69 ++++++++----------------------------------
+ 1 file changed, 13 insertions(+), 56 deletions(-)
 
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 3b0e59d..ff6f4a0 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -521,10 +521,8 @@ static int davinci_psc_probe(struct platform_device *pdev)
+diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
+index a3c44ec..3c8124e 100644
+--- a/drivers/video/fbdev/simplefb.c
++++ b/drivers/video/fbdev/simplefb.c
+@@ -182,7 +182,7 @@ struct simplefb_par {
+ #if defined CONFIG_OF && defined CONFIG_COMMON_CLK
+ 	bool clks_enabled;
+ 	unsigned int clk_count;
+-	struct clk **clks;
++	struct clk_bulk_data *clks;
+ #endif
+ #if defined CONFIG_OF && defined CONFIG_REGULATOR
+ 	bool regulators_enabled;
+@@ -214,37 +214,13 @@ static int simplefb_clocks_get(struct simplefb_par *par,
+ 			       struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	struct clk *clock;
+-	int i;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(base)) {
--		dev_err(dev, "ioremap failed\n");
-+	if (IS_ERR(base))
- 		return PTR_ERR(base);
+ 	if (dev_get_platdata(&pdev->dev) || !np)
+ 		return 0;
+ 
+-	par->clk_count = of_clk_get_parent_count(np);
+-	if (!par->clk_count)
+-		return 0;
+-
+-	par->clks = kcalloc(par->clk_count, sizeof(struct clk *), GFP_KERNEL);
+-	if (!par->clks)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < par->clk_count; i++) {
+-		clock = of_clk_get(np, i);
+-		if (IS_ERR(clock)) {
+-			if (PTR_ERR(clock) == -EPROBE_DEFER) {
+-				while (--i >= 0) {
+-					if (par->clks[i])
+-						clk_put(par->clks[i]);
+-				}
+-				kfree(par->clks);
+-				return -EPROBE_DEFER;
+-			}
+-			dev_err(&pdev->dev, "%s: clock %d not found: %ld\n",
+-				__func__, i, PTR_ERR(clock));
+-			continue;
+-		}
+-		par->clks[i] = clock;
 -	}
++	par->clk_count = clk_bulk_get_all(&pdev->dev, &par->clks);
++	if ((par->clk_count < 0) && (par->clk_count == -EPROBE_DEFER))
++		return -EPROBE_DEFER;
  
- 	ret = devm_clk_bulk_get(dev, init_data->num_parent_clks,
- 				init_data->parent_clks);
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 89d30bf..23a24c9 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -814,10 +814,8 @@ static int davinci_pll_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(base)) {
--		dev_err(dev, "ioremap failed\n");
-+	if (IS_ERR(base))
- 		return PTR_ERR(base);
--	}
- 
- 	return pll_init(dev, base);
+ 	return 0;
  }
+@@ -252,45 +228,26 @@ static int simplefb_clocks_get(struct simplefb_par *par,
+ static void simplefb_clocks_enable(struct simplefb_par *par,
+ 				   struct platform_device *pdev)
+ {
+-	int i, ret;
++	int ret;
++
++	ret = clk_bulk_prepare_enable(par->clk_count, par->clks);
++	if (ret)
++		dev_warn(&pdev->dev, "failed to enable clocks\n");
+ 
+-	for (i = 0; i < par->clk_count; i++) {
+-		if (par->clks[i]) {
+-			ret = clk_prepare_enable(par->clks[i]);
+-			if (ret) {
+-				dev_err(&pdev->dev,
+-					"%s: failed to enable clock %d: %d\n",
+-					__func__, i, ret);
+-				clk_put(par->clks[i]);
+-				par->clks[i] = NULL;
+-			}
+-		}
+-	}
+ 	par->clks_enabled = true;
+ }
+ 
+ static void simplefb_clocks_destroy(struct simplefb_par *par)
+ {
+-	int i;
+-
+-	if (!par->clks)
+-		return;
++	if (par->clks_enabled)
++		clk_bulk_disable_unprepare(par->clk_count, par->clks);
+ 
+-	for (i = 0; i < par->clk_count; i++) {
+-		if (par->clks[i]) {
+-			if (par->clks_enabled)
+-				clk_disable_unprepare(par->clks[i]);
+-			clk_put(par->clks[i]);
+-		}
+-	}
+-
+-	kfree(par->clks);
++	clk_bulk_put_all(par->clk_count, par->clks);
+ }
+ #else
+ static int simplefb_clocks_get(struct simplefb_par *par,
+ 	struct platform_device *pdev) { return 0; }
+-static void simplefb_clocks_enable(struct simplefb_par *par,
+-	struct platform_device *pdev) { }
++static int simplefb_clocks_enable(struct simplefb_par *par) { }
+ static void simplefb_clocks_destroy(struct simplefb_par *par) { }
+ #endif
+ 
+-- 
+2.7.4
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
