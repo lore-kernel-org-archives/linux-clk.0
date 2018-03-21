@@ -1,103 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:50993 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751160AbeCZXbb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Mar 2018 19:31:31 -0400
-Date: Tue, 27 Mar 2018 07:31:18 +0800
-In-Reply-To: <20180326222258.uxpgj4bk4pg56b7o@rob-hp-laptop>
-References: <20180316175354.21437-1-icenowy@aosc.io> <20180320184646.dynqv6qubzabroe4@flea> <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io> <2866474.lRHIcLtROC@jernej-laptop> <9520BDDE-BFE3-4220-B48D-01A00CFA94DE@aosc.io> <20180326222258.uxpgj4bk4pg56b7o@rob-hp-laptop>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 21 Mar 2018 12:28:28 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: sunxi-ng: add missing hdmi-slow clock for H6 CCU
+Message-ID: <20180321112828.6i3qdbes3no5gypd@flea>
+References: <20180321024625.18516-1-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [linux-sunxi] Re: [PATCH 2/7] dt-bindings: add binding for the Allwinner A64 DE2 bus
-To: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>
-CC: devicetree@vger.kernel.org, jernej.skrabec@siol.net,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <9A6A8961-D45C-4033-962E-83CCE8F01651@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6lie35ayrltfz7mp"
+In-Reply-To: <20180321024625.18516-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--6lie35ayrltfz7mp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-于 2018年3月27日 GMT+08:00 上午6:22:58, Rob Herring <robh@kernel.org> 写到:
->On Thu, Mar 22, 2018 at 02:08:43PM +0800, Icenowy Zheng wrote:
->> 
->> 
->> 于 2018年3月22日 GMT+08:00 上午1:13:42, "Jernej Škrabec"
-><jernej.skrabec@siol.net> 写到:
->> >Hi all,
->> >
->> >Dne sreda, 21. marec 2018 ob 03:18:13 CET je Icenowy Zheng
->napisal(a):
->> >> 于 2018年3月21日 GMT+08:00 上午2:46:46, Maxime Ripard
->> ><maxime.ripard@bootlin.com> 
->> >写到:
->> >> >On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
->> >> >> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64
->> >SoC
->> >> >
->> >> >to
->> >> >
->> >> >> be claimed, otherwise the whole DE2 space is inaccessible.
->> >> >> 
->> >> >> Add a device tree binding of the DE2 part as a sub-bus.
->> >> >
->> >> >Where did you get the info that it was a bus?
->> >> 
->> >> There's no direct evidence, just some guess.
->> >> 
->> >> The DE2 is a whole part that is just allocated a memory
->> >> space at the user manual, and the SRAM controls the
->> >> access to all modules in the DE2.
->> >> 
->> >> So it might be a bus.
->> >> 
->> >> Implement it as a bus is a clear representation on A64.
->> >
->> >Since there is already syscon for same mmio region, we migh as well
->use
->> >it 
->> >when loading ccu-sun8i-de2 driver on A64.
->> >
->> >Other options, like SRAM driver or bus driver, might better
->represent
->> >HW, but 
->> 
->> I think the device tree should properly represent the HW,
->> it's a basic requirment.
->> 
->> >then we would have two DT nodes covering same mmio region, which I
->> >think is 
->> >not really acceptable.
->> 
->> It's acceptable, and DE2 is not the only user of SRAM controller so
->far.
->
->No, it's not acceptable. Don't create overlapping mmio regions in DT.
+On Wed, Mar 21, 2018 at 10:46:25AM +0800, Icenowy Zheng wrote:
+> The Allwinner H6 CCU has a "HDMI Slow Clock", which is currently missing
+> in the ccu-sun50i-h6 driver.
+>=20
+> Add this missing clock to the driver.
+>=20
+> Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Then should the SRAM controller driver be configured to take the syscon?
+Applied, thanks!
+Maxime
 
->
->> 
->> VE will also need a SRAM region to be claimed.
->> 
->> >
->> >Any suggestions?
->> >
->> >BTW, H6 has same design in this regard.
->> >
->> >Best regards,
->> >Jernej
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree"
->in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--6lie35ayrltfz7mp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqyQdsACgkQ0rTAlCFN
+r3QwFA//ba27IeqfOdQHt2UmZ89H+cWAFeYvXZpZLQ17kzXn6fUU3gVJynyCbBoc
+2sXo2CARtHyQCfbmtbyFnKNoe3sIzSnMcszgc0r/1anWMUevkvHPJK+R7IgykDre
+YdwZE3OZVop+qTJIx1XBD5odMUr1E/GvZfECYNLpjXRJOROS4asRmibpe5vg79sP
+djBMpH+B0PvE8/VQL5QnizJ9WSsVVd6lsMZNOv3LlE9BvatTuKzTou64FaPoX5qN
+P5WADP5F7xM+YgqbNBasA72+acHtWYPn5Vyd9n1DBv3/tLqtPftZLKpD56l3Jwqz
+Rajv4JOy4F0/V/z2NecNiuWZnJZo9ISiWgaTOE7EY/gVxpC9wVIsZJiBysOZfhWz
+6aAF84vwwqzLHMOSZuHxwsC9dyBlb5PgV3LJ7M0pDnfcGJRoiF+WYq6+DrBrqm3c
+coajlMvOEvLFqDq57MjWzwytKb2HNMKOYcxgISaMLy5wLuw0uk66Mt/PPwzVlpqa
+fUDRsEEfyvzT8X73XAgbrtGatEjbEFjvl2LAEs/d8BwI0EPmyFN5S+M9MWfTIryT
+CqT7HMFP4ePO0xoMZ6MG4nZEIHrPkK1T7y0lFGKt11NAmqhUAtc6hMXVYW4MYMCK
+X/8+Sl0oKxBt26Z60cW9veVwavBB8R27usXFvuxc/l8RBZa5Sos=
+=V0BF
+-----END PGP SIGNATURE-----
+
+--6lie35ayrltfz7mp--
