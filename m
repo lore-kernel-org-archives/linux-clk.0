@@ -1,54 +1,85 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org,
-	broonie@kernel.org
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>,
-	linux-rtc@vger.kernel.org,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	linux-rockchip@lists.infradead.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Lee Jones <lee.jones@linaro.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 0/4] Set name of regmap_config
-Date: Thu,  8 Mar 2018 18:21:50 +0800
-Message-Id: <20180308102154.25686-1-jeffy.chen@rock-chips.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	hdegoede@redhat.com,
+	b.zolnierkie@samsung.com,
+	linux@armlinux.org.uk,
+	linux-fbdev@vger.kernel.org,
+	linux-imx@nxp.com,
+	sboyd@kernel.org,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Russell King <linux@arm.linux.org.uk>
+Subject: [PATCH V2 1/4] clk: bulk: add of_clk_bulk_get()
+Date: Wed, 21 Mar 2018 11:19:48 +0800
+Message-Id: <1521602391-30356-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
+'clock-names' property is optional in DT, so of_clk_bulk_get() is
+introduced here to handle this for DT users without 'clock-names'
+specified. Later clk_bulk_get_all() will be implemented on top of
+it and this API will be kept private until someone proves they need
+it because they don't have a struct device pointer.
 
-After 9b947a13e7f6 ("regmap: use debugfs even when no device"), we are
-allowing regmap to create debugfs without a valid device. Some of them
-would end up using "dummy*" as debugfs name.
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Reported-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk-bulk.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-This series try to set names in some regmap_config to avoid that.
-
-
-Changes in v3:
-Modify commit message.
-
-Jeffy Chen (4):
-  mfd: syscon: Set name of regmap_config
-  rtc: at91sam9: Pass pdev->dev to regmap_init_mmio()
-  clk: lpc32xx: Set name of regmap_config
-  ARM: rockchip: Set name of regmap_config
-
- arch/arm/mach-rockchip/platsmp.c | 1 +
- drivers/clk/nxp/clk-lpc32xx.c    | 1 +
- drivers/mfd/syscon.c             | 1 +
- drivers/rtc/rtc-at91sam9.c       | 2 +-
- 4 files changed, 4 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index 4c10456..4b357b2 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -19,6 +19,38 @@
+ #include <linux/clk.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
++#include <linux/of.h>
++
++#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
++					struct clk_bulk_data *clks)
++{
++	int ret;
++	int i;
++
++	for (i = 0; i < num_clks; i++)
++		clks[i].clk = NULL;
++
++	for (i = 0; i < num_clks; i++) {
++		clks[i].clk = of_clk_get(np, i);
++		if (IS_ERR(clks[i].clk)) {
++			ret = PTR_ERR(clks[i].clk);
++			pr_err("%pOF: Failed to get clk index: %d ret: %d\n",
++			       np, i, ret);
++			clks[i].clk = NULL;
++			goto err;
++		}
++	}
++
++	return 0;
++
++err:
++	clk_bulk_put(i, clks);
++
++	return ret;
++}
++EXPORT_SYMBOL(of_clk_bulk_get);
++#endif
+ 
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+ {
 -- 
-2.11.0
+2.7.4
