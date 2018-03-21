@@ -1,92 +1,51 @@
-Return-Path: <jhogan@kernel.org>
-Date: Wed, 7 Mar 2018 15:10:25 +0000
-From: James Hogan <jhogan@kernel.org>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-	open list <linux-kernel@vger.kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Mathieu Malaterre <malat@debian.org>,
-	Dominik Peklo <dom.peklo@gmail.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-Message-ID: <20180307151025.GP4197@saruman>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-4-prasannatsmkumar@gmail.com>
- <20180306000832.GL4197@saruman>
- <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
- <20180307143541.GN4197@saruman>
- <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ffBYM5qgR8HH9Mta"
-In-Reply-To: <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:37245 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751464AbeCUJbd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Mar 2018 05:31:33 -0400
+Received: by mail-wr0-f174.google.com with SMTP id z12so4448546wrg.4
+        for <linux-clk@vger.kernel.org>; Wed, 21 Mar 2018 02:31:33 -0700 (PDT)
+Message-ID: <1521624690.3753.0.camel@baylibre.com>
+Subject: Re: [PATCH v2 1/1] clk: meson: meson8b: add support for the NAND
+ clocks
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>, carlo@caione.org,
+        khilman@baylibre.com, linux-clk@vger.kernel.org
+Date: Wed, 21 Mar 2018 10:31:30 +0100
+In-Reply-To: <CAFBinCAVZcws9-r9EET8o7TXWnGJmcTA517WTn0srXAMHtMHWw@mail.gmail.com>
+References: <20180101210139.29808-1-martin.blumenstingl@googlemail.com>
+         <20180101210139.29808-2-martin.blumenstingl@googlemail.com>
+         <152121876042.70929.5606827507365233258@swboyd.mtv.corp.google.com>
+         <1521219591.6569.82.camel@baylibre.com>
+         <CAFBinCAVZcws9-r9EET8o7TXWnGJmcTA517WTn0srXAMHtMHWw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Sun, 2018-03-18 at 23:54 +0100, Martin Blumenstingl wrote:
+> > Hi Stephen,
+> > 
+> > I guess we missed it after new year's day :(
+> > 
+> > The patch looks fine to me but, following the rework of meson clocks, we'll need
+> > to migrate the clocks inserted to our clk_regmap and change the IDs (96-98 are
+> > used now)
+> > 
+> > Martin, I can do this rebase if you want ? As you prefer
+> 
+> Jerome, if you have time to rebase it then feel free
+> otherwise I'll do it once v4.17-rc1 is out (no need to hurry with
+> these clocks, they are unused until the mainline NAND driver is
+> finished - which will probably not happen anytime soon)
+> 
 
---ffBYM5qgR8HH9Mta
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, no rush. Let's leave this for the next cycle
+Thanks Martin
 
-On Wed, Mar 07, 2018 at 08:35:00PM +0530, PrasannaKumar Muralidharan wrote:
-> On 7 March 2018 at 20:05, James Hogan <jhogan@kernel.org> wrote:
-> > On Wed, Mar 07, 2018 at 07:14:49PM +0530, PrasannaKumar Muralidharan wr=
-ote:
-> >> > Does X1000 use a different PRID, or is it basically just a JZ4780 co=
-re
-> >> > with different SoC peripherals?
-> >>
-> >> Yes X1000 does have a different PRID (PRID =3D 0x2ed1024f). X1000 has
-> >
-> > Right, so thats 0x2e000000 | PRID_COMP_INGENIC_D1 | PRID_IMP_JZRISC |
-> > 0x4f, which cpu-probe.c already handles (apparently the D1 company code
-> > is used for JZ4770 & JZ4775 too).
->=20
-> Okay. Does this mean I need not modify get_board_mach_type() and
-> get_system_type()?
+> 
+> Regards
+> Martin
 
-You still need to modify them, otherwise it won't understand
-"ingenic,x1000" compatible string, and will call it a JZ4740 in
-/proc/cpuinfo.
-
-> >> I used to get my code tested from Domink but I could not reach him for
-> >> quite some time. Before buying the development board myself I would
-> >> like to see if anyone can help me in testing. Do you have any contact
-> >> with Ingenic who can help in testing this?
-> >
-> > Not personally, but I'll ask around. Of course if nobody much cares
-> > about it in practice and nobody has the hardware, there may be little
-> > value in supporting it upstream.
->=20
-> Seems Jiaxun is interested in the board and is willing to help.
-
-Okay, cool.
-
-Cheers
-James
-
---ffBYM5qgR8HH9Mta
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqgAOEACgkQbAtpk944
-dnq2tA/9GgJebgZ1Sqh3YkkT5rAjetuUyvMwU+OMWBwMunIu+1ImhcSTWocj0RRT
-JjRAbBM4KhYJWb+IfmRytEQZ4zXzRN8vZhf7vxD9q6JNa7bhCDZq2AXU7AHpF4aS
-I72mOO7J6DlgdP6j6qS4T9t7o/TyzgH50w1tMIFKPYCVP74LwSjWtB1goNiAPD/H
-+m9QZt3vvWJM6dUM0PT4RYXxgBQbcx6UaDqjR7FTf+J5DWrAKmduC4v1Yoo0192q
-N2BbyiiLdSsRGJ3nMdtcSRuVnU2b5xhU1Kh1Fg29ufhaiHLkeQJrkVeRZlwHDVUj
-Sl8gmny2316B3JTJyRUQXDA043dCcs4aCVKnFUMLJdW3z/p8DtTFoR6QVJzvEwoy
-jNmCiOVz8S9cK4u0TVhmUQGwPmO0bibcwycSfHQWMk3sX/fU+bz6O4D4YqriELOs
-xqB8tM89hEZlbqsAHs6npFTMJl7bih1jyDyoo1GBlvvLNKbiw1qpmn4K5QP7oNtk
-IWwS7150My7k6PZsm8HmdtiblrIHV27uy3/b20YcBhBsDewdUUP51ukbkwzTPwi9
-Oq0pLUWo4uGkIacqISG37diUWrhqpyZjQOsi2jwimiPLjizih/3b7RIbfMez3Ur+
-L4gqLfw2U/3ajhm7VZgnvu+/SKpWmBkSU+INlKktfcpKqiWWqXo=
-=NHQN
------END PGP SIGNATURE-----
-
---ffBYM5qgR8HH9Mta--
