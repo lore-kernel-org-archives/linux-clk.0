@@ -1,53 +1,51 @@
-Return-Path: <patrice.chotard@st.com>
-From: <patrice.chotard@st.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Patrice Chotard
-	<patrice.chotard@st.com>
-Subject: [RESEND PATCH] clk: stm32: Add clk entry for SDMMC2 on stm32F769
-Date: Mon, 12 Mar 2018 10:04:07 +0100
-Message-ID: <1520845447-10279-1-git-send-email-patrice.chotard@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 2/8] ARM: davinci: dts: make psc0 a reset provider
+Date: Wed, 21 Mar 2018 13:08:01 +0100
+Message-Id: <20180321120807.18032-3-brgl@bgdev.pl>
+In-Reply-To: <20180321120807.18032-1-brgl@bgdev.pl>
+References: <20180321120807.18032-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Patrice Chotard <patrice.chotard@st.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-STM32F769 has 2 SDMMC port, add clock entry for the second one.
+The psc driver registers with the reset framework as a provider. Add
+the #reset-cells property to the psc0 node.
 
-Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/clk/clk-stm32f4.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index da44f8dc1d29..e7e3965c7aae 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -282,6 +282,7 @@ struct stm32f4_gate_data {
- 
- 	{ STM32F4_RCC_APB2ENR,  0,	"tim1",		"apb2_mul" },
- 	{ STM32F4_RCC_APB2ENR,  1,	"tim8",		"apb2_mul" },
-+	{ STM32F4_RCC_APB2ENR,  7,	"sdmmc2",	"sdmux"    },
- 	{ STM32F4_RCC_APB2ENR,  8,	"adc1",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR,  9,	"adc2",		"apb2_div" },
- 	{ STM32F4_RCC_APB2ENR, 10,	"adc3",		"apb2_div" },
-@@ -315,7 +316,7 @@ struct stm32f4_gate_data {
- 
- static const u64 stm32f746_gate_map[MAX_GATE_MAP] = { 0x000000f17ef417ffull,
- 						      0x0000000000000003ull,
--						      0x04f77f033e01c9ffull };
-+						      0x04f77f833e01c9ffull };
- 
- static const u64 *stm32f4_gate_map;
- 
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index a3b9a99b43ca..89af749c5b6f 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -109,6 +109,7 @@
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <28>;
+ 		clocks = <&psc0 15>;
++		resets = <&psc0 15>;
+ 		status = "disabled";
+ 	};
+ 	soc@1c00000 {
 -- 
-1.9.1
+2.16.1
