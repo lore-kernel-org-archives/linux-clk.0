@@ -1,172 +1,169 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:46138 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751269AbeCTSmj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Mar 2018 14:42:39 -0400
-From: <ilialin@codeaurora.org>
-To: "'Stephen Boyd'" <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>
-Cc: <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <rnayak@codeaurora.org>, <robh@kernel.org>, <will.deacon@arm.com>,
-        <amit.kucheria@linaro.org>, <tfinkel@codeaurora.org>,
-        <nicolas.dechesne@linaro.org>, <celster@codeaurora.org>
-References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org> <1518616792-29028-2-git-send-email-ilialin@codeaurora.org> <152148150406.242365.14021083340615345047@swboyd.mtv.corp.google.com>
-In-Reply-To: <152148150406.242365.14021083340615345047@swboyd.mtv.corp.google.com>
-Subject: RE: [PATCH v3 01/10] soc: qcom: Separate kryo l2 accessors from PMU driver
-Date: Tue, 20 Mar 2018 20:42:23 +0200
-Message-ID: <016d01d3c07b$34fa84e0$9eef8ea0$@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 1/8] reset: modify the way reset lookup works for board files
+Date: Wed, 21 Mar 2018 13:08:00 +0100
+Message-Id: <20180321120807.18032-2-brgl@bgdev.pl>
+In-Reply-To: <20180321120807.18032-1-brgl@bgdev.pl>
+References: <20180321120807.18032-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
+Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
+introduced reset control lookup mechanism for boards that still use
+board files.
 
-> -----Original Message-----
-> From: Stephen Boyd <sboyd@kernel.org>
-> Sent: Monday, March 19, 2018 19:45
-> To: Ilia Lin <ilialin@codeaurora.org>; =
-linux-arm-kernel@lists.infradead.org;
-> linux-arm-msm@vger.kernel.org; linux-clk@vger.kernel.org;
-> sboyd@codeaurora.org
-> Cc: mark.rutland@arm.com; devicetree@vger.kernel.org;
-> rnayak@codeaurora.org; robh@kernel.org; will.deacon@arm.com;
-> amit.kucheria@linaro.org; tfinkel@codeaurora.org; =
-ilialin@codeaurora.org;
-> nicolas.dechesne@linaro.org; celster@codeaurora.org
-> Subject: Re: [PATCH v3 01/10] soc: qcom: Separate kryo l2 accessors =
-from
-> PMU driver
->=20
-> Quoting Ilia Lin (2018-02-14 05:59:43)
-> > diff --git a/arch/arm64/Kconfig.platforms
-> > b/arch/arm64/Kconfig.platforms index fbedbd8..78a103b 100644
-> > --- a/arch/arm64/Kconfig.platforms
-> > +++ b/arch/arm64/Kconfig.platforms
-> > @@ -145,6 +145,13 @@ config ARCH_REALTEK
-> >           This enables support for the ARMv8 based Realtek chipsets,
-> >           like the RTD1295.
-> >
-> > +config ARCH_MSM8996
-> > +    bool "Enable Support for Qualcomm Technologies, Inc. MSM8996"
-> > +       depends on ARCH_QCOM
->=20
-> Is this really the proposed approach? Doesn't the PMU code use these
-> accessors? I would think the accessors are compiled if ARCH_QCOM=3Dy =
-so
-> that the PMU stuff keeps working. Drop this Kconfig addition?
+The routine used to register lookup entries takes the corresponding
+reset_controlled_dev structure as argument.
 
-I'll check whether the kryo-accessors code is SOC specific or not.
+It's been determined however that for the first user of this new
+interface - davinci psc driver - it will be easier to register the
+lookup entries using the reset controller device name.
 
->=20
-> > +       help
-> > +       This enables support for the MSM8996 chipset. If you do not
-> > +       wish to build a kernel that runs on this chipset, say 'N' =
-here.
-> > +
-> >  config ARCH_ROCKCHIP
-> >         bool "Rockchip Platforms"
-> >         select ARCH_HAS_RESET_CONTROLLER diff --git
-> > a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c index
-> > 4fdc848..8cece9e 100644
-> > --- a/drivers/perf/qcom_l2_pmu.c
-> > +++ b/drivers/perf/qcom_l2_pmu.c
-> > @@ -1,4 +1,4 @@
-> > -/* Copyright (c) 2015-2017 The Linux Foundation. All rights =
-reserved.
-> > +/* Copyright (c) 2015-2018 The Linux Foundation. All rights =
-reserved.
->=20
-> Sorry, this makes little sense. First off, code is only being deleted =
-and more
-> than half the file isn't being modified so why update copyright dates?
+This patch changes the way lookup entries are added.
 
-Agree. Will roll back.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/reset/core.c             | 33 +++++++++++++++++++++++++++++----
+ include/linux/reset-controller.h |  8 +++++---
+ 2 files changed, 34 insertions(+), 7 deletions(-)
 
->=20
-> >   *
-> >   * This program is free software; you can redistribute it and/or =
-modify
-> >   * it under the terms of the GNU General Public License version 2 =
-and
-> > diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-> > index dcebf28..4e91e2a 100644
-> > --- a/drivers/soc/qcom/Makefile
-> > +++ b/drivers/soc/qcom/Makefile
-> > @@ -12,3 +12,4 @@ obj-$(CONFIG_QCOM_SMEM_STATE) +=3D
-> smem_state.o
-> >  obj-$(CONFIG_QCOM_SMP2P)       +=3D smp2p.o
-> >  obj-$(CONFIG_QCOM_SMSM)        +=3D smsm.o
-> >  obj-$(CONFIG_QCOM_WCNSS_CTRL) +=3D wcnss_ctrl.o
-> > +obj-$(CONFIG_ARCH_MSM8996) +=3D  kryo-l2-accessors.o
-> > diff --git a/drivers/soc/qcom/kryo-l2-accessors.c
-> > b/drivers/soc/qcom/kryo-l2-accessors.c
-> > new file mode 100644
-> > index 0000000..6743848
-> > --- /dev/null
-> > +++ b/drivers/soc/qcom/kryo-l2-accessors.c
-> > @@ -0,0 +1,64 @@
-> > +/*
-> > + * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights =
-reserved.
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > +modify
-> > + * it under the terms of the GNU General Public License version 2 =
-and
-> > + * only version 2 as published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
->=20
-> SPDX tags?
-
-Will do.
-
->=20
-> > diff --git a/include/soc/qcom/kryo-l2-accessors.h
-> > b/include/soc/qcom/kryo-l2-accessors.h
-> > new file mode 100644
-> > index 0000000..e9a5eab
-> > --- /dev/null
-> > +++ b/include/soc/qcom/kryo-l2-accessors.h
-> > @@ -0,0 +1,22 @@
-> > +/*
-> > + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > +modify
-> > + * it under the terms of the GNU General Public License version 2 =
-and
-> > + * only version 2 as published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#ifndef __ASM_ARCH_MSM_MSM_KRYO_L2_ACCESSORS_H
-> > +#define __ASM_ARCH_MSM_MSM_KRYO_L2_ACCESSORS_H
->=20
-> Maybe change this tO __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-
-No problem. Will change.
-
->=20
-> > +
-> > +#ifdef CONFIG_ARCH_QCOM
-> > +void set_l2_indirect_reg(u64 reg_addr, u64 val);
-> > +u64 get_l2_indirect_reg(u64 reg_addr); #endif
->=20
-> This ifdef isn't doing much. Drop it? Or provide the inline nop =
-alternatives.
-
-Right. I'll drop it.
-
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 06fa4907afc4..f37048e55336 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -153,11 +153,11 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+ 
+ /**
+  * reset_controller_add_lookup - register a set of lookup entries
+- * @rcdev: initialized reset controller device owning the reset line
++ * @provider: name of the reset controller provider
+  * @lookup: array of reset lookup entries
+  * @num_entries: number of entries in the lookup array
+  */
+-void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
++void reset_controller_add_lookup(const char *provider,
+ 				 struct reset_control_lookup *lookup,
+ 				 unsigned int num_entries)
+ {
+@@ -174,7 +174,7 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+ 			continue;
+ 		}
+ 
+-		entry->rcdev = rcdev;
++		entry->provider = provider;
+ 		list_add_tail(&entry->list, &reset_lookup_list);
+ 	}
+ 	mutex_unlock(&reset_lookup_mutex);
+@@ -526,11 +526,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+ }
+ EXPORT_SYMBOL_GPL(__of_reset_control_get);
+ 
++static struct reset_controller_dev *
++__reset_controller_by_name(const char *name)
++{
++	struct reset_controller_dev *rcdev;
++
++	lockdep_assert_held(&reset_list_mutex);
++
++	list_for_each_entry(rcdev, &reset_controller_list, list) {
++		if (!rcdev->dev)
++			continue;
++
++		if (!strcmp(name, dev_name(rcdev->dev)))
++			return rcdev;
++	}
++
++	return NULL;
++}
++
+ static struct reset_control *
+ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+ 				bool shared, bool optional)
+ {
+ 	const struct reset_control_lookup *lookup;
++	struct reset_controller_dev *rcdev;
+ 	const char *dev_id = dev_name(dev);
+ 	struct reset_control *rstc = NULL;
+ 
+@@ -547,7 +566,13 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+ 		    ((con_id && lookup->con_id) &&
+ 		     !strcmp(con_id, lookup->con_id))) {
+ 			mutex_lock(&reset_list_mutex);
+-			rstc = __reset_control_get_internal(lookup->rcdev,
++			rcdev = __reset_controller_by_name(lookup->provider);
++			if (!rcdev) {
++				mutex_unlock(&reset_list_mutex);
++				continue;
++			}
++
++			rstc = __reset_control_get_internal(rcdev,
+ 							    lookup->index,
+ 							    shared);
+ 			mutex_unlock(&reset_list_mutex);
+diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
+index 25698f6c1fae..1a6c25d825d3 100644
+--- a/include/linux/reset-controller.h
++++ b/include/linux/reset-controller.h
+@@ -30,14 +30,14 @@ struct of_phandle_args;
+  * struct reset_control_lookup - represents a single lookup entry
+  *
+  * @list: internal list of all reset lookup entries
+- * @rcdev: reset controller device controlling this reset line
++ * @provider: name of the reset controller device controlling this reset line
+  * @index: ID of the reset controller in the reset controller device
+  * @dev_id: name of the device associated with this reset line
+  * @con_id name of the reset line (can be NULL)
+  */
+ struct reset_control_lookup {
+ 	struct list_head list;
+-	struct reset_controller_dev *rcdev;
++	const char *provider;
+ 	unsigned int index;
+ 	const char *dev_id;
+ 	const char *con_id;
+@@ -57,6 +57,7 @@ struct reset_control_lookup {
+  * @owner: kernel module of the reset controller driver
+  * @list: internal list of reset controller devices
+  * @reset_control_head: head of internal list of requested reset controls
++ * @dev: corresponding driver model device struct
+  * @of_node: corresponding device tree node as phandle target
+  * @of_reset_n_cells: number of cells in reset line specifiers
+  * @of_xlate: translation function to translate from specifier as found in the
+@@ -68,6 +69,7 @@ struct reset_controller_dev {
+ 	struct module *owner;
+ 	struct list_head list;
+ 	struct list_head reset_control_head;
++	struct device *dev;
+ 	struct device_node *of_node;
+ 	int of_reset_n_cells;
+ 	int (*of_xlate)(struct reset_controller_dev *rcdev,
+@@ -82,7 +84,7 @@ struct device;
+ int devm_reset_controller_register(struct device *dev,
+ 				   struct reset_controller_dev *rcdev);
+ 
+-void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
++void reset_controller_add_lookup(const char *provider,
+ 				 struct reset_control_lookup *lookup,
+ 				 unsigned int num_entries);
+ 
+-- 
+2.16.1
