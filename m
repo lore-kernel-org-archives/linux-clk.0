@@ -1,84 +1,204 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/8] clk: renesas: rcar-gen2: Always use readl()/writel()
-Date: Fri, 16 Mar 2018 14:40:19 +0100
-Message-Id: <1521207622-3311-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
-References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	hdegoede@redhat.com,
+	b.zolnierkie@samsung.com,
+	linux@armlinux.org.uk,
+	linux-fbdev@vger.kernel.org,
+	linux-imx@nxp.com,
+	sboyd@kernel.org,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH V2 2/4] clk: add new APIs to operate on all available clocks
+Date: Wed, 21 Mar 2018 11:19:49 +0800
+Message-Id: <1521602391-30356-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On arm32, there is no reason to use the (soon deprecated)
-clk_readl()/clk_writel().  Hence use the generic readl()/writel()
-instead.
+This patch introduces of_clk_bulk_get_all and clk_bulk_x_all APIs
+to users who just want to handle all available clocks from device tree
+without need to know the detailed clock information likes clock numbers
+and names. This is useful in writing some generic drivers to handle clock
+part.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/renesas/clk-rcar-gen2.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+v1->v2:
+ * make of_clk_bulk_get_all private
+ * add clk_bulk_get/put_all
+---
+ drivers/clk/clk-bulk.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h    | 42 ++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 98 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
-index d14cbe1ca29ac009..ee32a022e6da9548 100644
---- a/drivers/clk/renesas/clk-rcar-gen2.c
-+++ b/drivers/clk/renesas/clk-rcar-gen2.c
-@@ -62,8 +62,7 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
- 	unsigned int mult;
- 	unsigned int val;
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index 4b357b2..3293c6b 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -17,9 +17,11 @@
+  */
  
--	val = (clk_readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK)
--	    >> CPG_FRQCRC_ZFC_SHIFT;
-+	val = (readl(zclk->reg) & CPG_FRQCRC_ZFC_MASK) >> CPG_FRQCRC_ZFC_SHIFT;
- 	mult = 32 - val;
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
+ #include <linux/of.h>
++#include <linux/slab.h>
  
- 	return div_u64((u64)parent_rate * mult, 32);
-@@ -95,21 +94,21 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	mult = div_u64((u64)rate * 32, parent_rate);
- 	mult = clamp(mult, 1U, 32U);
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+@@ -50,6 +52,38 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+ 	return ret;
+ }
+ EXPORT_SYMBOL(of_clk_bulk_get);
++
++static int __must_check of_clk_bulk_get_all(struct device_node *np,
++					    struct clk_bulk_data **clks)
++{
++	struct clk_bulk_data *clk_bulk;
++	int num_clks;
++	int ret;
++
++	num_clks = of_clk_get_parent_count(np);
++	if (!num_clks)
++		return 0;
++
++	clk_bulk = kcalloc(num_clks, sizeof(*clk_bulk), GFP_KERNEL);
++	if (!clk_bulk)
++		return -ENOMEM;
++
++	ret = of_clk_bulk_get(np, num_clks, clk_bulk);
++	if (ret) {
++		kfree(clk_bulk);
++		return ret;
++	}
++
++	*clks = clk_bulk;
++
++	return num_clks;
++}
++#else
++static int __must_check of_clk_bulk_get_all(struct device_node *np,
++					    struct clk_bulk_data **clks)
++{
++	return -ENOENT;
++}
+ #endif
  
--	if (clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
-+	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
- 		return -EBUSY;
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+@@ -90,6 +124,29 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ }
+ EXPORT_SYMBOL(clk_bulk_get);
  
--	val = clk_readl(zclk->reg);
-+	val = readl(zclk->reg);
- 	val &= ~CPG_FRQCRC_ZFC_MASK;
- 	val |= (32 - mult) << CPG_FRQCRC_ZFC_SHIFT;
--	clk_writel(val, zclk->reg);
-+	writel(val, zclk->reg);
++void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks)
++{
++	if (IS_ERR_OR_NULL(clks))
++		return;
++
++	clk_bulk_put(num_clks, clks);
++
++	kfree(clks);
++}
++EXPORT_SYMBOL(clk_bulk_put_all);
++
++int __must_check clk_bulk_get_all(struct device *dev,
++				  struct clk_bulk_data **clks)
++{
++	struct device_node *np = dev_of_node(dev);
++
++	if (!np)
++		return 0;
++
++	return of_clk_bulk_get_all(np, clks);
++}
++EXPORT_SYMBOL(clk_bulk_get_all);
++
+ #ifdef CONFIG_HAVE_CLK_PREPARE
  
- 	/*
- 	 * Set KICK bit in FRQCRB to update hardware setting and wait for
- 	 * clock change completion.
- 	 */
--	kick = clk_readl(zclk->kick_reg);
-+	kick = readl(zclk->kick_reg);
- 	kick |= CPG_FRQCRB_KICK;
--	clk_writel(kick, zclk->kick_reg);
-+	writel(kick, zclk->kick_reg);
+ /**
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0dbd088..a76fdff 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -279,7 +279,26 @@ struct clk *clk_get(struct device *dev, const char *id);
+  */
+ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 			      struct clk_bulk_data *clks);
+-
++/**
++ * clk_bulk_get_all - lookup and obtain all available references to clock
++ *		      producer.
++ * @dev: device for clock "consumer"
++ * @clks: pointer to the clk_bulk_data table of consumer
++ *
++ * This helper function allows drivers to get all clk consumers in one
++ * operation. If any of the clk cannot be acquired then any clks
++ * that were obtained will be freed before returning to the caller.
++ *
++ * Returns a positive value for the number of clocks obtained while the
++ * clock references are stored in the clk_bulk_data table in @clks field.
++ * Returns 0 if there're none and a negative value if something failed.
++ *
++ * Drivers must assume that the clock source is not enabled.
++ *
++ * clk_bulk_get should not be called from within interrupt context.
++ */
++int __must_check clk_bulk_get_all(struct device *dev,
++				  struct clk_bulk_data **clks);
+ /**
+  * devm_clk_bulk_get - managed get multiple clk consumers
+  * @dev: device for clock "consumer"
+@@ -455,6 +474,19 @@ void clk_put(struct clk *clk);
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks);
  
- 	/*
- 	 * Note: There is no HW information about the worst case latency.
-@@ -121,7 +120,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	 * "super" safe value.
- 	 */
- 	for (i = 1000; i; i--) {
--		if (!(clk_readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
-+		if (!(readl(zclk->kick_reg) & CPG_FRQCRB_KICK))
- 			return 0;
+ /**
++ * clk_bulk_put_all - "free" all the clock source
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table of consumer
++ *
++ * Note: drivers must ensure that all clk_bulk_enable calls made on this
++ * clock source are balanced by clk_bulk_disable calls prior to calling
++ * this function.
++ *
++ * clk_bulk_put_all should not be called from within interrupt context.
++ */
++void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks);
++
++/**
+  * devm_clk_put	- "free" a managed clock source
+  * @dev: device used to acquire the clock
+  * @clk: clock source acquired with devm_clk_get()
+@@ -609,6 +641,12 @@ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 	return 0;
+ }
  
- 		cpu_relax();
-@@ -332,7 +331,7 @@ rcar_gen2_cpg_register_clock(struct device_node *np, struct rcar_gen2_cpg *cpg,
- 			mult = config->pll0_mult;
- 			div = 3;
- 		} else {
--			u32 value = clk_readl(cpg->reg + CPG_PLL0CR);
-+			u32 value = readl(cpg->reg + CPG_PLL0CR);
- 			mult = ((value >> 24) & ((1 << 7) - 1)) + 1;
- 		}
- 		parent_name = "main";
++static inline int __must_check clk_bulk_get_all(struct device *dev,
++					 struct clk_bulk_data **clks)
++{
++	return 0;
++}
++
+ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ {
+ 	return NULL;
+@@ -630,6 +668,8 @@ static inline void clk_put(struct clk *clk) {}
+ 
+ static inline void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) {}
+ 
++static inline void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks) {}
++
+ static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
+ 
+ 
 -- 
 2.7.4
