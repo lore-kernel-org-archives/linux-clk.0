@@ -1,53 +1,47 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AA097FA.5070704@samsung.com>
-Date: Thu, 08 Mar 2018 10:55:06 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	b.zolnierkie@samsung.com, m.szyprowski@samsung.com
-Subject: Re: [PATCH] clk: samsung: exynos5420: Add more entries to EPLL rate
- table
-In-reply-to: <20180307164656.12194-2-s.nawrocki@samsung.com>
-References: <20180307164656.12194-1-s.nawrocki@samsung.com>
-	<CGME20180307164733epcas1p3695c022315be8d2839ac9e88016e3a76@epcas1p3.samsung.com>
-	<20180307164656.12194-2-s.nawrocki@samsung.com>
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v2 0/5] update Mediatek MT2712 clock and scpsys support
+To: Stephen Boyd <sboyd@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Weiyi Lu <weiyi.lu@mediatek.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Mike Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, srv_heupstream@mediatek.com
+References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
+ <1521526068.13313.8.camel@mtksdaap41>
+ <152153061465.254778.3061562183948751301@swboyd.mtv.corp.google.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <6c29df1f-f619-5e11-4160-b58e154f6592@gmail.com>
+Date: Wed, 21 Mar 2018 10:11:09 +0100
+MIME-Version: 1.0
+In-Reply-To: <152153061465.254778.3061562183948751301@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018년 03월 08일 01:46, Sylwester Nawrocki wrote:
-> Adding these EPLL output frequency entries allows to support all required
-> audio sample rates on the CODEC and the HDMI interface on Peach-Pit
-> Chromebook.
+
+
+On 03/20/2018 08:23 AM, Stephen Boyd wrote:
+> Quoting Weiyi Lu (2018-03-19 23:07:48)
+>> On Mon, 2018-03-12 at 15:03 +0800, Weiyi Lu wrote:
+>>> This series is based on v4.16-rc1 and composed of scpsys control (PATCH 1-2) and clock control (PATCH 3-5).
+>>> Basically, all changes are for the ECO design change of MT2712.
+>>>
+>>> changes since v1:
+>>> - Avoid renumbering clocks. Append new clocks at the bottom of each own subsystem.
+>>>
+>> Hi Matthias & Stephen,
+>>
+>> Sorry to bother. Just saw patch 1/2 are already pushed to v4.16-next-soc
+>> and patch 3/5 are applied onto clk-next. What about the patch 4(arm64:
+>> dts: add clock device nodes of MT2712). Does there any problem remain or
+>> it cause some problems? Many thanks.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 1f204ba37f0f..f2607cb97a97 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -1360,8 +1360,11 @@ static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
->  	PLL_36XX_RATE(180633609U, 301, 5, 3, 3671),
->  	PLL_36XX_RATE(131072006U, 131, 3, 3, 4719),
->  	PLL_36XX_RATE(100000000U, 200, 3, 4, 0),
-> +	PLL_36XX_RATE( 73728000U, 98, 2, 4, 19923),
-> +	PLL_36XX_RATE( 67737602U, 90, 2, 4, 20762),
->  	PLL_36XX_RATE( 65536003U, 131, 3, 4, 4719),
->  	PLL_36XX_RATE( 49152000U, 197, 3, 5, -25690),
-> +	PLL_36XX_RATE( 45158401U, 90, 3, 4, 20762),
->  	PLL_36XX_RATE( 32768001U, 131, 3, 5, 4719),
->  };
->  
+> Patch 4 can go via arm-soc? I'm not planning to apply that patch.
 > 
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+I can take it through my branch, no problem. But I think it is too late for this
+cycle. CCing Arnd to confirm.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Regards,
+Matthias
