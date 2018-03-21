@@ -1,74 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:43983 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750982AbeCPODk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Mar 2018 10:03:40 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 0/9] Initial Allwinner H6 support
-Date: Fri, 16 Mar 2018 22:02:06 +0800
-Message-Id: <20180316140215.28663-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	hdegoede@redhat.com,
+	b.zolnierkie@samsung.com,
+	linux@armlinux.org.uk,
+	linux-fbdev@vger.kernel.org,
+	linux-imx@nxp.com,
+	sboyd@kernel.org,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V2 0/4] clk: new APIs to handle all available clocks
+Date: Wed, 21 Mar 2018 11:19:47 +0800
+Message-Id: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds initial support for the Allwinner H6 SoC.
+This patch series is a continue of discussion from here,
+https://patchwork.kernel.org/patch/9986293/
+that some users may want to handle all available clocks from device
+tree without need to know the detailed clock information likes clock
+numbers and names. This is useful in writing some generic drivers to
+handle clock part.
 
-It's quite different from earlier Allwinner SoCs. For example, the
-memory map is refactored, and the CCU is rearranged. It's also the first
-Allwinner SoC with PCI Express interface (although the implementation
-of the PCI Express controller is broken), and the second one with USB
-3.0 (the first one is A80).
+Note:
+This patch series is tested on MX6Q SDB cpufreq driver with a minor change
+to switch to use clk_bulk_get_all.
+But patch 4 only test compiling. Hopefully someone could help test
+the function.
 
-This patchset adds the most basical support for it, including the main pin
-controller, the main CCU and the basical device tree.
+v1->v2:
+ * add clk_bulk_{get|put}_all() which only supports DT platform currently
+ * remove _all variants and the wrapper struct clk_bulk
+ * make of_clk_bulk_get and of_clk_bulk_get_all private until someone
+   proves they need it because they don't have a struct device pointer.
 
-Icenowy Zheng (9):
-  pinctrl: sunxi: refactor irq related register function to have desc
-  pinctrl: sunxi: introduce IRQ bank conversion function
-  pinctrl: sunxi: change irq_bank_base to irq_bank_map
-  pinctrl: sunxi: add support for the Allwinner H6 main pin controller
-  clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
-  dt-bindings: add device tree binding for Allwinner H6 main CCU
-  clk: sunxi-ng: add support for the Allwinner H6 CCU
-  arm64: allwinner: h6: add the basical Allwinner H6 DTSI file
-  arm64: allwinner: h6: add support for Pine H64 board
+Dong Aisheng (4):
+  clk: bulk: add of_clk_bulk_get()
+  clk: add new APIs to operate on all available clocks
+  clk: add managed version of clk_bulk_get_all
+  video: simplefb: switch to use clk_bulk API to simplify clock
+    operations
 
- .../devicetree/bindings/clock/sunxi-ccu.txt        |    4 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |    1 +
- arch/arm64/boot/dts/allwinner/Makefile             |    1 +
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      |   29 +
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi       |  177 +++
- drivers/clk/sunxi-ng/Kconfig                       |    5 +
- drivers/clk/sunxi-ng/Makefile                      |    1 +
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c               | 1207 ++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-h6.h               |   56 +
- drivers/clk/sunxi-ng/ccu_nkmp.c                    |   20 +-
- drivers/clk/sunxi-ng/ccu_nkmp.h                    |    2 +
- drivers/pinctrl/sunxi/Kconfig                      |    4 +
- drivers/pinctrl/sunxi/Makefile                     |    1 +
- drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c          |  614 ++++++++++
- drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c          |    4 +-
- drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c          |    4 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c              |   22 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.h              |   40 +-
- include/dt-bindings/clock/sun50i-h6-ccu.h          |  124 ++
- include/dt-bindings/reset/sun50i-h6-ccu.h          |   73 ++
- 20 files changed, 2359 insertions(+), 30 deletions(-)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.h
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
- create mode 100644 include/dt-bindings/clock/sun50i-h6-ccu.h
- create mode 100644 include/dt-bindings/reset/sun50i-h6-ccu.h
+ drivers/clk/clk-bulk.c         | 89 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/clk-devres.c       | 24 ++++++++++++
+ drivers/video/fbdev/simplefb.c | 69 ++++++--------------------------
+ include/linux/clk.h            | 65 +++++++++++++++++++++++++++++-
+ 4 files changed, 190 insertions(+), 57 deletions(-)
 
 -- 
-2.15.1
-
+2.7.4
