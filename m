@@ -1,30 +1,92 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: <linux-clk@vger.kernel.org>
+Subject: [PATCH V2 1/4] clk: bulk: add of_clk_bulk_get()
+Date: Wed, 21 Mar 2018 10:54:51 +0800
+Message-ID: <1521600894-29919-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1521600894-29919-1-git-send-email-aisheng.dong@nxp.com>
+References: <1521600894-29919-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
- mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180317100952.28538-2-manivannan.sadhasivam@linaro.org>
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
- devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
- daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
- <20180317100952.28538-2-manivannan.sadhasivam@linaro.org>
-Message-ID: <152150759188.254778.1766919298343763795@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 01/12] dt-bindings: clock: Add Actions S900 clock bindings
-Date: Mon, 19 Mar 2018 17:59:51 -0700
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-fbdev@vger.kernel.org,
+ Russell King <linux@arm.linux.org.uk>, b.zolnierkie@samsung.com,
+ sboyd@kernel.org, mturquette@baylibre.com, Stephen Boyd <sboyd@codeaurora.org>,
+ linux@armlinux.org.uk, linux-kernel@vger.kernel.org, hdegoede@redhat.com,
+ linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Manivannan Sadhasivam (2018-03-17 03:09:41)
-> Add Actions Semi S900 clock bindings.
-> =
+'clock-names' property is optional in DT, so of_clk_bulk_get() is
+introduced here to handle this for DT users without 'clock-names'
+specified. Later clk_bulk_get_all() will be implemented on top of
+it and this API will be kept private until someone proves they need
+it because they don't have a struct device pointer.
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Reported-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/clk-bulk.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Applied to clk-next
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index 4c10456..4b357b2 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -19,6 +19,38 @@
+ #include <linux/clk.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
++#include <linux/of.h>
++
++#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
++static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
++					struct clk_bulk_data *clks)
++{
++	int ret;
++	int i;
++
++	for (i = 0; i < num_clks; i++)
++		clks[i].clk = NULL;
++
++	for (i = 0; i < num_clks; i++) {
++		clks[i].clk = of_clk_get(np, i);
++		if (IS_ERR(clks[i].clk)) {
++			ret = PTR_ERR(clks[i].clk);
++			pr_err("%pOF: Failed to get clk index: %d ret: %d\n",
++			       np, i, ret);
++			clks[i].clk = NULL;
++			goto err;
++		}
++	}
++
++	return 0;
++
++err:
++	clk_bulk_put(i, clks);
++
++	return ret;
++}
++EXPORT_SYMBOL(of_clk_bulk_get);
++#endif
+ 
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+ {
+-- 
+2.7.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
