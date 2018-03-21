@@ -1,51 +1,52 @@
 Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
+MIME-Version: 1.0
+In-Reply-To: <20180321120807.18032-4-brgl@bgdev.pl>
+References: <20180321120807.18032-1-brgl@bgdev.pl> <20180321120807.18032-4-brgl@bgdev.pl>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Date: Wed, 21 Mar 2018 15:04:58 +0100
+Message-ID: <CAMRc=MePv9GAApdzW9+i_xW9j6-ydBY_Wfb1Hmphsvzn9waGnQ@mail.gmail.com>
+Subject: Re: [PATCH 3/8] ARM: davinci: dts: add a reset control to the dsp node
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
 	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 6/8] remoteproc/davinci: use octal permissions for module_param()
-Date: Tue, 27 Mar 2018 11:20:29 +0200
-Message-Id: <20180327092031.11251-7-brgl@bgdev.pl>
-In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
-References: <20180327092031.11251-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+2018-03-21 13:08 GMT+01:00 Bartosz Golaszewski <brgl@bgdev.pl>:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> The davinci-rproc driver will soon use the reset framework. Add the
+> resets property to the dsp node in da850.dtsi.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  arch/arm/boot/dts/da850.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+> index 89af749c5b6f..5b485e44b83e 100644
+> --- a/arch/arm/boot/dts/da850.dtsi
+> +++ b/arch/arm/boot/dts/da850.dtsi
+> @@ -124,6 +124,7 @@
+>                         compatible = "ti,da850-psc0";
+>                         reg = <0x10000 0x1000>;
+>                         #clock-cells = <1>;
+> +                       #reset-cells = <1>;
+>                         #power-domain-cells = <1>;
+>                         clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+>                                  <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+> --
+> 2.16.1
+>
 
-Checkpatch recommends to use octal perms instead of S_IRUGO.
+I noticed I mixed up the descriptions in patches 2/8 and 3/8. It'll
+need a v2, but I'll wait for some reviews first.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index f134192922e0..b668e32996e2 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -25,7 +25,7 @@
- #include "remoteproc_internal.h"
- 
- static char *da8xx_fw_name;
--module_param(da8xx_fw_name, charp, S_IRUGO);
-+module_param(da8xx_fw_name, charp, 0444);
- MODULE_PARM_DESC(da8xx_fw_name,
- 		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
- 
--- 
-2.16.1
+Bart
