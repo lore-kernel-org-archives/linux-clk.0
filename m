@@ -1,87 +1,89 @@
-Return-Path: <prvs=0617642643=mike.looijmans@topicproducts.com>
-Subject: Re: [PATCH v2] clk: Add driver for the si544 clock generator chip
-To: Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
-	<mark.rutland@arm.com>
-References: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
- <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
- <ec813ab3-88db-f6e3-eca1-b6ea58936fcf@topic.nl>
- <152149373621.242365.4815290210815209160@swboyd.mtv.corp.google.com>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Message-ID: <f25eb71c-efd9-f842-1a98-76c86b03a34a@topic.nl>
-Date: Tue, 20 Mar 2018 08:15:36 +0100
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ arm-soc <linux-arm-kernel@lists.infradead.org>,
+ linux-devicetree <devicetree@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20180321120807.18032-1-brgl@bgdev.pl>
+ <20180321120807.18032-5-brgl@bgdev.pl>
+ <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com>
+ <CAMpxmJUELxNGv5fL1gdNM4nRxdJ9t39G2Nc29yjZRnS0fRyHYg@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <a4ca0ba3-5d31-2d8c-7fa6-f8e9ba9b4535@lechnology.com>
+Date: Wed, 21 Mar 2018 11:17:35 -0500
 MIME-Version: 1.0
-In-Reply-To: <152149373621.242365.4815290210815209160@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <CAMpxmJUELxNGv5fL1gdNM4nRxdJ9t39G2Nc29yjZRnS0fRyHYg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-=EF=BB=BFOn 19-03-18 22:08, Stephen Boyd wrote:
-> Quoting Mike Looijmans (2018-03-19 08:04:15)
->> On 18-03-18 13:52, Rob Herring wrote:
->>> On Thu, Mar 15, 2018 at 12:50:08PM +0100, Mike Looijmans wrote:
->>>> +Required properties:
->>>> + - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c=
-" according
->>>> +               to the speed grade of the chip.
->>>> + - reg: I2C device address.
->>>> + - #clock-cells: From common clock bindings: Shall be 0.
->>>> +
->>>> +Optional properties:
->>>> + - clock-output-names: From common clock bindings. Recommended to be =
-"si544".
+On 03/21/2018 11:08 AM, Bartosz Golaszewski wrote:
+> 2018-03-21 17:01 GMT+01:00 David Lechner <david@lechnology.com>:
+>> On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
 >>>
->>> What's the point if there is only 1 clock output?
->>
->> I have a board with 6 of these chips, and the clock registration fails i=
-f they
->> don't have unique names. Providing a clock-output-names property was the
->> easiest way around it.
->>
->> Should I just omit the line or change the wording to reflect the above o=
-r is
->> there a better solution (maybe I can use the DT node name as clock name =
-in the
->> driver, will look into that)
->=20
-> I would leave clock-output-names for now. One day we can get off of
-> strings in CCF. Soon perhaps.
->=20
->>
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >>>
->>>> +
->>>> +Example:
->>>> +    si544: clock-generator@55 {
+>>> In order to be able to use the reset framework in legacy boot mode as
+>>> well, add the reset lookup table to the psc driver for da850 variant.
 >>>
->>> clock-controller@55 is the standard node name.
+>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>> ---
+>>>    drivers/clk/davinci/psc-da850.c | 8 ++++++++
+>>>    drivers/clk/davinci/psc.c       | 1 +
+>>>    2 files changed, 9 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/davinci/psc-da850.c
+>>> b/drivers/clk/davinci/psc-da850.c
+>>> index ccc7eb17bf3a..395db4b2c0ee 100644
+>>> --- a/drivers/clk/davinci/psc-da850.c
+>>> +++ b/drivers/clk/davinci/psc-da850.c
+>>> @@ -6,6 +6,7 @@
+>>>     */
+>>>      #include <linux/clk-provider.h>
+>>> +#include <linux/reset-controller.h>
+>>>    #include <linux/clk.h>
+>>>    #include <linux/clkdev.h>
+>>>    #include <linux/init.h>
+>>> @@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,    "fck",  "ecap.0",
+>>>                                  "fck",  "ecap.1",
+>>>                                  "fck",  "ecap.2");
+>>>    +static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
+>>> +       RESET_LOOKUP("davinci-rproc.0", NULL, 15),
+>>> +};
+>>> +
+>>>    static int da850_psc0_init(struct device *dev, void __iomem *base)
+>>>    {
+>>> +       reset_controller_add_lookup("da850-psc0",
+>>> +                                   da850_psc0_reset_lookup_table,
+>>> +
+>>> ARRAY_SIZE(da850_psc0_reset_lookup_table));
 >>
->> I'll change and post patch v3
 >>
->=20
-> I made some comments on v1. Please fold those into v3.
+>> Could there be a race condition here since you are adding the lookup
+>> *before*
+>> you are adding the actual provider? It seems like
+>> reset_controller_add_lookup()
+>> should be after davinci_psc_register_clocks().
+>>
+> 
+> I don't think so, because reset_controller_add_lookup() only adds the
+> lookup structure to the list in reset/core.c. The actual reset
+> controller struct is only located and used when reset_control_get_*()
+> is called, so after probing the user. And it's all protected with
+> mutexes.
+> 
+> This made me think though - maybe if we can't locate the controller,
+> we should return -EPROBE_DEFER from probe in davinci-rproc?
+> 
+> Bart
+> 
 
-
-Thanks, found them on patchwork, somehow they didn't end up in my mailbox.
-
-Comments are clear, will incorporate them, I only have trouble with your=20
-remark on the DT documentation "Can this reference stuff go to the bottom o=
-f=20
-this document?". I copied the style from the other documents in the same=20
-directory, I'm slightly puzzled about where the reference part should go no=
-w.
-
-
-
-Kind regards,
-
-Mike Looijmans
-System Expert
-
-TOPIC Products
-Materiaalweg 4, NL-5681 RJ Best
-Postbus 440, NL-5680 AK Best
-Telefoon: +31 (0) 499 33 69 79
-E-mail: mike.looijmans@topicproducts.com
-Website: www.topicproducts.com
-
-Please consider the environment before printing this e-mail
+Yes, especially since we know that the PSC driver itself does get
+deferred already.
