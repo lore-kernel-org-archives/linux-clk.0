@@ -1,79 +1,79 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-To: Marcel Ziswiler <marcel@ziswiler.com>, <linux-tegra@vger.kernel.org>
-CC: Dmitry Osipenko <digetx@gmail.com>, Marcel Ziswiler
-	<marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>, <linux-kernel@vger.kernel.org>, "Prashant
- Gaikwad" <pgaikwad@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <2feb313b-ef9f-be2f-68a5-b8cc46ad75c3@nvidia.com>
-Date: Fri, 2 Mar 2018 08:56:46 +0000
+Return-Path: <bgolaszewski@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20180222230451.15515-1-marcel@ziswiler.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com>
+References: <20180321120807.18032-1-brgl@bgdev.pl> <20180321120807.18032-5-brgl@bgdev.pl>
+ <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Wed, 21 Mar 2018 17:08:04 +0100
+Message-ID: <CAMpxmJUELxNGv5fL1gdNM4nRxdJ9t39G2Nc29yjZRnS0fRyHYg@mail.gmail.com>
+Subject: Re: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
+To: David Lechner <david@lechnology.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	arm-soc <linux-arm-kernel@lists.infradead.org>,
+	linux-devicetree <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+2018-03-21 17:01 GMT+01:00 David Lechner <david@lechnology.com>:
+> On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
+>>
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> In order to be able to use the reset framework in legacy boot mode as
+>> well, add the reset lookup table to the psc driver for da850 variant.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>   drivers/clk/davinci/psc-da850.c | 8 ++++++++
+>>   drivers/clk/davinci/psc.c       | 1 +
+>>   2 files changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/clk/davinci/psc-da850.c
+>> b/drivers/clk/davinci/psc-da850.c
+>> index ccc7eb17bf3a..395db4b2c0ee 100644
+>> --- a/drivers/clk/davinci/psc-da850.c
+>> +++ b/drivers/clk/davinci/psc-da850.c
+>> @@ -6,6 +6,7 @@
+>>    */
+>>     #include <linux/clk-provider.h>
+>> +#include <linux/reset-controller.h>
+>>   #include <linux/clk.h>
+>>   #include <linux/clkdev.h>
+>>   #include <linux/init.h>
+>> @@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,    "fck",  "ecap.0",
+>>                                 "fck",  "ecap.1",
+>>                                 "fck",  "ecap.2");
+>>   +static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
+>> +       RESET_LOOKUP("davinci-rproc.0", NULL, 15),
+>> +};
+>> +
+>>   static int da850_psc0_init(struct device *dev, void __iomem *base)
+>>   {
+>> +       reset_controller_add_lookup("da850-psc0",
+>> +                                   da850_psc0_reset_lookup_table,
+>> +
+>> ARRAY_SIZE(da850_psc0_reset_lookup_table));
+>
+>
+> Could there be a race condition here since you are adding the lookup
+> *before*
+> you are adding the actual provider? It seems like
+> reset_controller_add_lookup()
+> should be after davinci_psc_register_clocks().
+>
 
-On 22/02/18 23:04, Marcel Ziswiler wrote:
-> Turns out latest upstream U-Boot does not configure/enable pllu which
-> leaves it at some default rate of 500 kHz:
-> 
-> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep pll_u
->        pll_u                  3        3        0      500000          0
-> 
-> Of course this won't quite work leading to the following messages:
-> 
-> [    6.559593] usb 2-1: new full-speed USB device number 2 using tegra-
-> ehci
-> [   11.759173] usb 2-1: device descriptor read/64, error -110
-> [   27.119453] usb 2-1: device descriptor read/64, error -110
-> [   27.389217] usb 2-1: new full-speed USB device number 3 using tegra-
-> ehci
-> [   32.559454] usb 2-1: device descriptor read/64, error -110
-> [   47.929777] usb 2-1: device descriptor read/64, error -110
-> [   48.049658] usb usb2-port1: attempt power cycle
-> [   48.759475] usb 2-1: new full-speed USB device number 4 using tegra-
-> ehci
-> [   59.349457] usb 2-1: device not accepting address 4, error -110
-> [   59.509449] usb 2-1: new full-speed USB device number 5 using tegra-
-> ehci
-> [   70.069457] usb 2-1: device not accepting address 5, error -110
-> [   70.079721] usb usb2-port1: unable to enumerate USB device
-> 
-> Fix this by actually allowing the rate also being set from within
-> the Linux kernel.
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> ---
-> 
->  drivers/clk/tegra/clk-pll.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 7c369e21c91c..830d1c87fa7c 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -1151,6 +1151,8 @@ static const struct clk_ops tegra_clk_pllu_ops = {
->  	.enable = clk_pllu_enable,
->  	.disable = clk_pll_disable,
->  	.recalc_rate = clk_pll_recalc_rate,
-> +	.round_rate = clk_pll_round_rate,
-> +	.set_rate = clk_pll_set_rate,
->  };
->  
->  static int _pll_fixed_mdiv(struct tegra_clk_pll_params *pll_params,
+I don't think so, because reset_controller_add_lookup() only adds the
+lookup structure to the list in reset/core.c. The actual reset
+controller struct is only located and used when reset_control_get_*()
+is called, so after probing the user. And it's all protected with
+mutexes.
 
-Thanks for the fix. I have tested this on Tegra30 cardhu and this
-resolves a problem booting this board with the upstream uboot bootloader.
+This made me think though - maybe if we can't locate the controller,
+we should return -EPROBE_DEFER from probe in davinci-rproc?
 
-We just need to align with Peter on the best way to fix.
-
-Cheers,
-Jon
-
--- 
-nvpublic
+Bart
