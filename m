@@ -1,177 +1,26 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 16/16] ARM64: dts: sun50i: h5: Enable HDMI output on H5 boards
-Date: Thu,  1 Mar 2018 22:34:42 +0100
-Message-Id: <20180301213442.16677-17-jernej.skrabec@siol.net>
-In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [GIT PULL] clk/samsung updates for 4.17
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc
+	<linux-samsung-soc@vger.kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <d875c043-e3b2-0144-6bd2-eec4e01ea1a3@samsung.com>
+Date: Wed, 21 Mar 2018 16:26:17 +0100
+MIME-version: 1.0
+In-reply-to: 
+	<152122345522.70929.15804290996122965031@swboyd.mtv.corp.google.com>
+Content-type: text/plain; charset="utf-8"
+References: <CGME20180315190219epcas1p364b2b0777c6f60c55a60119ea3d16480@epcas1p3.samsung.com>
+	<a64f8f5e-2d6b-a277-17cc-4c6102dc7aaa@samsung.com>
+	<152122345522.70929.15804290996122965031@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable HDMI output on all boards with HDMI connector.
+On 03/16/2018 07:04 PM, Stephen Boyd wrote:
+> Thanks. Pulled into clk-next. I also threw a patch on top to fix some
+> sparse warnings that came out when I compile tested stuff.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- .../boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 25 ++++++++++++++++++++++
- .../dts/allwinner/sun50i-h5-orangepi-prime.dts     | 25 ++++++++++++++++++++++
- .../allwinner/sun50i-h5-orangepi-zero-plus2.dts    | 25 ++++++++++++++++++++++
- 3 files changed, 75 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-index 58505fbc2667..98862c7c7258 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-@@ -67,6 +67,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -121,6 +132,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -153,6 +168,16 @@
- 	};
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
-index 803566608ed8..b75ca4d7d001 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
-@@ -62,6 +62,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -128,6 +139,10 @@
- 	status = "okay";
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -160,6 +175,16 @@
- 	};
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &ir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ir_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
-index eda24d813282..53c8c11620e0 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-zero-plus2.dts
-@@ -58,6 +58,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	reg_vcc3v3: vcc3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc3v3";
-@@ -73,6 +84,20 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mmc0 {
- 	vmmc-supply = <&reg_vcc3v3>;
- 	bus-width = <4>;
--- 
-2.16.2
+Thank you for fixing these issues. I have finally added building with sparse
+enabled for all related architectures to my release build script so I don't
+miss such things in future.
