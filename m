@@ -1,52 +1,44 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AA09F22.2070903@samsung.com>
-Date: Thu, 08 Mar 2018 11:25:38 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	b.zolnierkie@samsung.com, m.szyprowski@samsung.com
-Subject: Re: [PATCH] clk: samsung: exynos5420: Add CLK_SET_RATE_PARENT flag
- to mout_mau_epll_clk
-In-reply-to: <20180307164656.12194-1-s.nawrocki@samsung.com>
-References: <CGME20180307164708epcas1p27e6599e85617f559c5c4c8eb92a70a47@epcas1p2.samsung.com>
-	<20180307164656.12194-1-s.nawrocki@samsung.com>
+Return-Path: <fengguang.wu@intel.com>
+Date: Thu, 22 Mar 2018 15:42:18 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: kbuild-all@01.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [RFC PATCH] net: stmmac: dwmac-sun8i: sun8i_syscon_reg_field can be
+ static
+Message-ID: <20180322074217.GA7358@ivytown2.lkp.intel.com>
+References: <20180317092857.4396-7-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180317092857.4396-7-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sylwester,
 
-On 2018년 03월 08일 01:46, Sylwester Nawrocki wrote:
-> This allows changing the EPLL output frequency through the audio subsystem
-> clock tree leaf clocks. This change is needed to support audio on the HDMI
-> interface on Peach-Pi(t) Chromebook.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 8c050ff63536..1f204ba37f0f 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -621,7 +621,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
->  
->  	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
->  			mout_group5_5800_p, SRC_TOP7, 16, 2),
-> -	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2),
-> +	MUX_F(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2,
-> +	      CLK_SET_RATE_PARENT, 0),
->  
->  	MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
->  };
-> 
+Fixes: e3c10deef23c ("net: stmmac: dwmac-sun8i: Use regmap_field for syscon register access")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+---
+ dwmac-sun8i.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+index de93f0f..bbc0514 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -79,7 +79,7 @@ struct sunxi_priv_data {
+ };
+ 
+ /* EMAC clock register @ 0x30 in the "system control" address range */
+-const struct reg_field sun8i_syscon_reg_field = {
++static const struct reg_field sun8i_syscon_reg_field = {
+ 	.reg = 0x30,
+ 	.lsb = 0,
+ 	.msb = 31,
