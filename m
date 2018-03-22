@@ -1,32 +1,47 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 7 Mar 2018 13:36:25 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 04/16] clk: sunxi-ng: h3: h5: export CLK_PLL_VIDEO
-Message-ID: <20180307193625.twmxfo3fiy4sjeuk@rob-hp-laptop>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
- <20180301213442.16677-5-jernej.skrabec@siol.net>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180301213442.16677-5-jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180322160402.o2lon3bbncgss4sv@flea>
+Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20180322160402.o2lon3bbncgss4sv@flea>
+Message-ID: <152173721645.178046.16783083391543934111@swboyd.mtv.corp.google.com>
+Subject: Re: [GIT PULL] Allwinner clock changes for 4.17
+Date: Thu, 22 Mar 2018 09:46:56 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 01, 2018 at 10:34:30PM +0100, Jernej Skrabec wrote:
-> CLK_PLL_VIDEO needs to be referenced in HDMI DT entry as a possible
-> PHY clock parent.
-> 
-> Export it so it can be used later in DT.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun8i-h3.h      | 4 +++-
->  include/dt-bindings/clock/sun8i-h3-ccu.h | 2 ++
->  2 files changed, 5 insertions(+), 1 deletion(-)
+Quoting Maxime Ripard (2018-03-22 09:04:02)
+> Hi Mike, Stephen,
+> =
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> Here is our usual pull request for the next merge window.
+> =
+
+> Thanks!
+> Maxime
+> =
+
+> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1=
+b2:
+> =
+
+>   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+> =
+
+> are available in the Git repository at:
+> =
+
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
+nxi-clk-for-4.17
+> =
+
+> for you to fetch changes up to f422fa558aada511406432bc5974d3a5bf728227:
+> =
+
+>   clk: sunxi-ng: add missing hdmi-slow clock for H6 CCU (2018-03-21 12:27=
+:13 +0100)
+
+Thanks. Pulled into clk-next.
