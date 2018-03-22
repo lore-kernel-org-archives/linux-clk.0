@@ -1,42 +1,59 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Abel Vesa <abel.vesa@nxp.com>
+To: <shawnguo@kernel.org>, <kernel@pengutronix.de>, <fabio.estevam@nxp.com>,
+ <mturquette@baylibre.com>, <sboyd@kernel.org>
+Subject: [PATCH 3/4] arm: imx: Correct ahb clk parent select
+Date: Thu, 22 Mar 2018 11:55:28 +0200
+Message-ID: <1521712529-632-4-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1521712529-632-1-git-send-email-abel.vesa@nxp.com>
+References: <1521712529-632-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1521342853-2941-2-git-send-email-Anson.Huang@nxp.com>
-References: <1521342853-2941-1-git-send-email-Anson.Huang@nxp.com> <1521342853-2941-2-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sun, 18 Mar 2018 10:03:43 -0300
-Message-ID: <CAOMZO5CG6XuJ7N8W--zEwEVd9JHj887_7aNp+K8D-Xt1OnKh7A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz clock source
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"S.j. Wang" <shengjiu.wang@nxp.com>, NXP Linux Team <Linux-imx@nxp.com>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Abel Vesa <abel.vesa@nxp.com>, anson.huang@nxp.com,
+ linux-kernel@vger.kernel.org, linux-imx@nxp.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Mar 18, 2018 at 12:14 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
+From: Anson Huang <anson.huang@nxp.com>
 
-> diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> index 72da5ac..83f7cac 100644
-> --- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> +++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> @@ -18,6 +18,14 @@
->                 reg = <0x80000000 0x80000000>;
->         };
->
-> +       clocks {
-> +               codec_osc: anaclk2 {
-> +                       #clock-cells = <0>;
-> +                       compatible = "fixed-clock";
-> +                       clock-frequency = <24576000>;
-> +               };
-> +       };
+Design team change the ahb's clk parent options but did NOT update the DOC
+accordingly in time, so the AHB/IPG's clk rate in clk tree is incorrect, AHB is
+67.5MHz and IPG is 33.75MHz, but using scope to monitor them, they are actually
+135MHz and 67.5MHz, update the clk parent option to make clk tree info correct.
 
-The clocks container should be removed and the clock node could be put
-directly into the root node.
+Signed-off-by: Anson Huang <anson.huang@nxp.com>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also, I do not see 'codec_osc' being used in this dts.
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index d786f98..3553b68 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -74,7 +74,7 @@ static const char *nand_usdhc_bus_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
+ 
+ static const char *ahb_channel_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
+ 	"pll_dram_533m_clk", "pll_sys_pfd0_392m_clk",
+-	"pll_enet_125m_clk", "pll_usb_main_clk", "pll_audio_post_div",
++	"pll_enet_250m_clk", "pll_usb_main_clk", "pll_audio_post_div",
+ 	"pll_video_post_div", };
+ 
+ static const char *dram_phym_sel[] = { "pll_dram_main_clk",
+-- 
+2.7.4
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
