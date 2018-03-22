@@ -1,66 +1,53 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 4/8] remoteproc/davinci: add the missing retval check for clk_enable()
-Date: Tue, 27 Mar 2018 11:20:27 +0200
-Message-Id: <20180327092031.11251-5-brgl@bgdev.pl>
-In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
-References: <20180327092031.11251-1-brgl@bgdev.pl>
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stefan Wahren <stefan.wahren@i2se.com>, Lee Jones <lee@kernel.org>, linux-rpi-kernel@lists.infradead.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] clk: bcm2835: De-assert/assert PLL reset signal when appropriate
+In-Reply-To: <20180322091130.5997-1-boris.brezillon@bootlin.com>
+References: <20180322091130.5997-1-boris.brezillon@bootlin.com>
+Date: Thu, 22 Mar 2018 09:33:05 -0700
+Message-ID: <87zi30ul32.fsf@anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+--=-=-=
+Content-Type: text/plain
 
-The davinci platform is being switched to using the common clock
-framework, where clk_enable() can fail. Add the return value check.
+Boris Brezillon <boris.brezillon@bootlin.com> writes:
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+> In order to enable a PLL, not only the PLL has to be powered up and
+> locked, but you also have to de-assert the reset signal. The last part
+> was missing. Add it so PLLs that were not enabled by the FW/bootloader
+> can be enabled from Linux.
+>
+> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> ---
+> Changes in v2:
+> - simplify bcm2835_pll_off()
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index bf3b9034c319..2b24291337b7 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
-+	int ret;
- 
- 	/* hw requires the start (boot) address be on 1KB boundary */
- 	if (rproc->bootaddr & 0x3ff) {
-@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	clk_enable(dsp_clk);
-+	ret = clk_enable(dsp_clk);
-+	if (ret) {
-+		dev_err(dev, "clk_enable() failed: %d\n", ret);
-+		return ret;
-+	}
-+
- 	davinci_clk_reset_deassert(dsp_clk);
- 
- 	return 0;
--- 
-2.16.1
+Reviewed-by: Eric Anholt <eric@anholt.net>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlqz2sEACgkQtdYpNtH8
+nugPJg/+OaqR9ApJ1qFs0QmLLx4o1YkVVH8Z5pT+Uts6uQsiROdEcOTu0zSUgZ4p
+pGoBtAQijgfAWT7pvF0Xg8Jo48c3zUeYDWzj/vyqDEEOPix7wN+xU/FAje7DME5u
+RW18suLE0jh/kNHJkAKnhpDbWj4a6RE7Kc4fX0tcxN3w324ybskQFq7vgzFLQMrR
+hvoAc8e5IQ+L+VtiGeTOaRLC7Vh2Q9L7CNAnblaP0yMYp4rFKMnNyz6mZumbYtpO
+kOQg8NRY4Yd+HpHOhiJvkp0fI8KWpoSzN8JxfirL6cn4DtqMCv4RFFRevayxLsOG
+t+IZKIzNnoThSAFKljr4CYfD3sJNnFcaSJx4cHIkz+DzEP4O75Otp+SehgA9XFJV
+1V3eeBPhPDj7KS4Ty363VqiK5xiuIyOOe7O8sX3IkBRzxNeoUNlZQL+knmKsKA0u
+YL2H0sZMIouaOq3hnoA3aq2Ezy3Sc0ppdv3TNxTqmM0zmxT2yOwuIevSiaYSesJ8
+CU973oruiqlrtg0LjaOZMk/HEd3QLRtQnap07YSkwDXwUnf1qZiYglzLZWfDLLCH
+CB9binSMmGVjlYrZBP9+WXyK94OffH3QZn9xsOreNp3tCvmZbioyXgENpAlJlMQK
+2E5eL4Co7TxLtgEDqYH1k+ad0VR2MJFWaOTkU1NheWRrke+9QfA=
+=u0pB
+-----END PGP SIGNATURE-----
+--=-=-=--
