@@ -1,65 +1,40 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 5/8] remoteproc: da8xx: add the missing retval check for clk_enable()
-Date: Fri, 23 Mar 2018 14:04:52 +0100
-Message-Id: <20180323130455.11470-6-brgl@bgdev.pl>
-In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1521712529-632-3-git-send-email-abel.vesa@nxp.com>
+References: <1521712529-632-1-git-send-email-abel.vesa@nxp.com> <1521712529-632-3-git-send-email-abel.vesa@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 22 Mar 2018 09:31:03 -0300
+Message-ID: <CAOMZO5BVxp7pq44pUp444CqsYcJ5QQFqrgdRyFbaxRi0_d0ssg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] arm: imx: Correct dram pll type
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Yongcai Huang <anson.huang@nxp.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Abel,
 
-The davinci platform is being switched to using the common clock
-framework, where clk_enable() can fail. Add the return value check.
+On Thu, Mar 22, 2018 at 6:55 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
+> From: Anson Huang <anson.huang@nxp.com>
+>
+> DRAM PLL is a audio/video type PLL, need to correct it to get correct ops of
+> PLL.
+>
+> There is a test_div placed before DRAM PLL's gate, so add this test div clk.
+>
+> Signed-off-by: Anson Huang <anson.huang@nxp.com>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+This has already been applied in linux-next as commit:
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index bf3b9034c319..2b24291337b7 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
-+	int ret;
- 
- 	/* hw requires the start (boot) address be on 1KB boundary */
- 	if (rproc->bootaddr & 0x3ff) {
-@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	clk_enable(dsp_clk);
-+	ret = clk_enable(dsp_clk);
-+	if (ret) {
-+		dev_err(dev, "clk_enable() failed: %d\n", ret);
-+		return ret;
-+	}
-+
- 	davinci_clk_reset_deassert(dsp_clk);
- 
- 	return 0;
--- 
-2.16.1
+commit b716aad97eb5 ("clk: imx: imx7d: correct video pll clock tree)
+
+Nit: the prefix in the Subject lines of all these patches should not
+be "arm:imx".
+
+"clk: imx: imx7d" is better suited to reflect the subsystem that thes
+patches touch.
