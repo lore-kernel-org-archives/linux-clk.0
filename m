@@ -1,87 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 26 Mar 2018 17:22:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: jernej.skrabec@siol.net, linux-sunxi@googlegroups.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH 2/7] dt-bindings: add binding for the
- Allwinner A64 DE2 bus
-Message-ID: <20180326222258.uxpgj4bk4pg56b7o@rob-hp-laptop>
-References: <20180316175354.21437-1-icenowy@aosc.io>
- <20180320184646.dynqv6qubzabroe4@flea>
- <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io>
- <2866474.lRHIcLtROC@jernej-laptop>
- <9520BDDE-BFE3-4220-B48D-01A00CFA94DE@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <9520BDDE-BFE3-4220-B48D-01A00CFA94DE@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.17 (take two)
+Date: Thu, 22 Mar 2018 18:09:20 +0100
+Message-Id: <1521738560-14797-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 22, 2018 at 02:08:43PM +0800, Icenowy Zheng wrote:
-> 
-> 
-> 于 2018年3月22日 GMT+08:00 上午1:13:42, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
-> >Hi all,
-> >
-> >Dne sreda, 21. marec 2018 ob 03:18:13 CET je Icenowy Zheng napisal(a):
-> >> 于 2018年3月21日 GMT+08:00 上午2:46:46, Maxime Ripard
-> ><maxime.ripard@bootlin.com> 
-> >写到:
-> >> >On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
-> >> >> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64
-> >SoC
-> >> >
-> >> >to
-> >> >
-> >> >> be claimed, otherwise the whole DE2 space is inaccessible.
-> >> >> 
-> >> >> Add a device tree binding of the DE2 part as a sub-bus.
-> >> >
-> >> >Where did you get the info that it was a bus?
-> >> 
-> >> There's no direct evidence, just some guess.
-> >> 
-> >> The DE2 is a whole part that is just allocated a memory
-> >> space at the user manual, and the SRAM controls the
-> >> access to all modules in the DE2.
-> >> 
-> >> So it might be a bus.
-> >> 
-> >> Implement it as a bus is a clear representation on A64.
-> >
-> >Since there is already syscon for same mmio region, we migh as well use
-> >it 
-> >when loading ccu-sun8i-de2 driver on A64.
-> >
-> >Other options, like SRAM driver or bus driver, might better represent
-> >HW, but 
-> 
-> I think the device tree should properly represent the HW,
-> it's a basic requirment.
-> 
-> >then we would have two DT nodes covering same mmio region, which I
-> >think is 
-> >not really acceptable.
-> 
-> It's acceptable, and DE2 is not the only user of SRAM controller so far.
+	Hi Mike, Stephen,
 
-No, it's not acceptable. Don't create overlapping mmio regions in DT.
+The following changes since commit 7ce36da900c0a2ff4777d9ba51c4f1cb74205463:
 
-> 
-> VE will also need a SRAM region to be claimed.
-> 
-> >
-> >Any suggestions?
-> >
-> >BTW, H6 has same design in this regard.
-> >
-> >Best regards,
-> >Jernej
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+  clk: renesas: cpg-mssr: Add support for R-Car M3-N (2018-02-26 09:13:29 +0100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.17-tag2
+
+for you to fetch changes up to 472f5f391819b4b22ec040f227aea26f515b6ae2:
+
+  clk: renesas: cpg-mssr: Adjust r8a77980 ifdef (2018-03-21 17:35:02 +0100)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v4.17 (take two)
+
+  - Fix the incorrect display clock on R-Car M3-N,
+  - Always use readl()/writel(),
+  - Small fixes.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (8):
+      clk: renesas: div6: Always use readl()/writel()
+      clk: renesas: mstp: Always use readl()/writel()
+      clk: renesas: r8a73a4: Always use readl()/writel()
+      clk: renesas: r8a7740: Always use readl()/writel()
+      clk: renesas: rcar-gen2: Always use readl()/writel()
+      clk: renesas: rza1: Always use readl()/writel()
+      clk: renesas: sh73a0: Always use readl()/writel()
+      clk: renesas: rcar-gen3: Always use readl()/writel()
+
+Jacopo Mondi (1):
+      clk: renesas: r8a77965: Replace DU2 clock
+
+Magnus Damm (1):
+      clk: renesas: cpg-mssr: Adjust r8a77980 ifdef
+
+ drivers/clk/renesas/clk-div6.c          | 22 +++++++++++-----------
+ drivers/clk/renesas/clk-mstp.c          |  4 ++--
+ drivers/clk/renesas/clk-r8a73a4.c       | 11 +++++------
+ drivers/clk/renesas/clk-r8a7740.c       |  8 ++++----
+ drivers/clk/renesas/clk-rcar-gen2.c     | 17 ++++++++---------
+ drivers/clk/renesas/clk-rz.c            |  4 ++--
+ drivers/clk/renesas/clk-sh73a0.c        | 14 +++++++-------
+ drivers/clk/renesas/r8a77965-cpg-mssr.c |  2 +-
+ drivers/clk/renesas/rcar-gen3-cpg.c     | 14 +++++++-------
+ drivers/clk/renesas/renesas-cpg-mssr.c  |  2 +-
+ 10 files changed, 48 insertions(+), 50 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
