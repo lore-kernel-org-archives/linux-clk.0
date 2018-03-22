@@ -1,75 +1,114 @@
-Return-Path: <jhogan@kernel.org>
-Date: Wed, 7 Mar 2018 14:35:41 +0000
-From: James Hogan <jhogan@kernel.org>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux-MIPS <linux-mips@linux-mips.org>, linux-clk@vger.kernel.org,
-	open list <linux-kernel@vger.kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Mathieu Malaterre <malat@debian.org>,
-	Dominik Peklo <dom.peklo@gmail.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-Message-ID: <20180307143541.GN4197@saruman>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
- <20170927151527.25570-4-prasannatsmkumar@gmail.com>
- <20180306000832.GL4197@saruman>
- <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Thu, 22 Mar 2018 17:04:02 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner clock changes for 4.17
+Message-ID: <20180322160402.o2lon3bbncgss4sv@flea>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GIP5y49pbaVPin6k"
-In-Reply-To: <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
+	protocol="application/pgp-signature"; boundary="ltwm67ir4qod67ul"
 List-ID: <linux-clk.vger.kernel.org>
 
 
---GIP5y49pbaVPin6k
-Content-Type: text/plain; charset=utf-8
+--ltwm67ir4qod67ul
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 07, 2018 at 07:14:49PM +0530, PrasannaKumar Muralidharan wrote:
-> > Does X1000 use a different PRID, or is it basically just a JZ4780 core
-> > with different SoC peripherals?
->=20
-> Yes X1000 does have a different PRID (PRID =3D 0x2ed1024f). X1000 has
+Hi Mike, Stephen,
 
-Right, so thats 0x2e000000 | PRID_COMP_INGENIC_D1 | PRID_IMP_JZRISC |
-0x4f, which cpu-probe.c already handles (apparently the D1 company code
-is used for JZ4770 & JZ4775 too).
+Here is our usual pull request for the next merge window.
 
-> I used to get my code tested from Domink but I could not reach him for
-> quite some time. Before buying the development board myself I would
-> like to see if anyone can help me in testing. Do you have any contact
-> with Ingenic who can help in testing this?
+Thanks!
+Maxime
 
-Not personally, but I'll ask around. Of course if nobody much cares
-about it in practice and nobody has the hardware, there may be little
-value in supporting it upstream.
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-Cheers
-James
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
---GIP5y49pbaVPin6k
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
+i-clk-for-4.17
+
+for you to fetch changes up to f422fa558aada511406432bc5974d3a5bf728227:
+
+  clk: sunxi-ng: add missing hdmi-slow clock for H6 CCU (2018-03-21 12:27:1=
+3 +0100)
+
+----------------------------------------------------------------
+Allwinner clock changes for 4.17
+
+Our usual bunch of changes for the next merge window. The most significant
+addition is the support of the H6 clock unit. Other than that, there's a
+bunch of fixes for the video clocks on the H3 and H5, and some Kconfig
+cleanup.
+
+----------------------------------------------------------------
+Corentin Labbe (1):
+      clk: sunxi-ng: remove select on obsolete SUNXI_CCU_X kconfig name
+
+Icenowy Zheng (4):
+      clk: sunxi-ng: Support fixed post-dividers on NKMP style clocks
+      dt-bindings: add device tree binding for Allwinner H6 main CCU
+      clk: sunxi-ng: add support for the Allwinner H6 CCU
+      clk: sunxi-ng: add missing hdmi-slow clock for H6 CCU
+
+Jernej Skrabec (6):
+      clk: sunxi-ng: Mask nkmp factors when setting register
+      clk: sunxi-ng: Use u64 for calculation of nkmp rate
+      clk: sunxi-ng: Add check for minimal rate to NM PLLs
+      clk: sunxi-ng: h3: h5: Add minimal rate for video PLL
+      clk: sunxi-ng: h3: h5: Allow some clocks to set parent rate
+      clk: sunxi-ng: h3: h5: export CLK_PLL_VIDEO
+
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |    4 +
+ drivers/clk/sunxi-ng/Kconfig                       |   12 +-
+ drivers/clk/sunxi-ng/Makefile                      |    1 +
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c               | 1211 ++++++++++++++++=
+++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.h               |   56 +
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c                |   32 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.h                |    4 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.c                    |   56 +-
+ drivers/clk/sunxi-ng/ccu_nkmp.h                    |    2 +
+ drivers/clk/sunxi-ng/ccu_nm.c                      |    7 +
+ drivers/clk/sunxi-ng/ccu_nm.h                      |   27 +
+ include/dt-bindings/clock/sun50i-h6-ccu.h          |  125 ++
+ include/dt-bindings/clock/sun8i-h3-ccu.h           |    2 +
+ include/dt-bindings/reset/sun50i-h6-ccu.h          |   73 ++
+ 14 files changed, 1578 insertions(+), 34 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6.h
+ create mode 100644 include/dt-bindings/clock/sun50i-h6-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-h6-ccu.h
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ltwm67ir4qod67ul
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqf+L0ACgkQbAtpk944
-dnpxJg//YwmBGpZiKtWrr50Yl9djqsbIg8DK8NbUWmpkL00AEb33Km0FXtjJZJA2
-ui3yc67jcMiE6BdJ8+jJoEnYlkOq8/6Uk1U6dyOUfKitnQVVKq92TMdzQe5vmNSr
-kJY/F2YsknT/3Z6YGn+RlRM6NBhRiT/VnIrj1CIzK7hc/NB1/eKgP7jBwQDs77Gx
-0PmX+bXifRmYYPPaSf3Ki2vx07jKqBPdcnpluvZB57XwpGSwUScTqQcBTOcFZAAL
-92b2AGRvEAjoWBc3IXo5OgMPGEtkodwHgDjZVYQH0XLM4UaLuj2bI/fEQQ9z/fbV
-ONAi/Cqit7RcHBspNnpJuoYbcEqn0/Xy3k2xbTJja/4VybZgK/wFb3IPEIHEqOVQ
-PJTfj2UoADNnccEXSMJRyFVXjK9Na5sN5zjnnelRfObNZ4ssSO6bMry6RX/OcT8z
-LnbsM1DLcpk16ZGUDSx/d2S7mQK1oc2YBfw7KY2uuAJ6ARyaw4uftk2l9RDSqI9g
-/yqwKMCtmR6iYF4Wd7CVbF+QeGOykvg4KHV50E3r19AEDvHFbOS7poVW1yfWiV56
-QHyx3rMoM3YcX6OoZBkm+qFA+Yyfkzn2Ut7bHUG5JutuJ+ZuUIAkyj3pq4cEeoaw
-9LkVmgGulWlXSJDFaxHXSIyj61d626Hs7lfiwVzZLaz+T6+J5+o=
-=zbax
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqz0/EACgkQ0rTAlCFN
+r3ReKA//cSShFeUNkQonWsuvVyi+uM1VyhhLWDr12+p2CuASGUlbCF+/cWBjoFkE
+29WaCdvtmLYHuDYo5Q4+X6S9oeeHNH55Ar0cNWYSljGP8maSqxdxXnuJou07Ho8A
+tS912t3SnQ5zmqjs+c1DdFLNTgEK6Ujr4morirW8DkLWSmhe4fihtptxVek8lbaC
+94bQhtb1Wj+YuaGl4qdypj1aek/GK1bwjyt5Bx9PISupUEK7U3tY3NJLwk4kdgKk
+qrqWqpkhoaj4xo09zFAHhGhUUczbIKquwxFKL43CATY9OY6YVC9GtWgOE4NkqUBI
+Hc9zJEw4b9GkD+H4gBSUGfCOWi60i514wOqoOoxYMMeGmWq/qt7V8hUzx9HswYcE
+KY3vswSO477+HCfMm40WBRKN15GBJ6iWJnjnWhJUTUDoH9cl8bge8/h11Nni77Tm
+Jzv2rV9/jd1GsVwwKuUUda6tYsX+73spVFMeHCqUzsKENZXuIW5WMOxavOSlP4sw
+MsOcZBE7hid5tKjALf4U16muUYefbaNjSXZA01bteeQQnk8aL5XQ/jiv8QyoIwcE
+JrZAaNihpU8e2xOINpIuAOPifWwtAKrgLadt8Yr6OaFM38zA+bHN3CE8jvTelmZ1
+dGQFuWemR6mW6mG3cvSxPqZLvvOCfQZ6C02Wdx/aAfh5C6F/WEw=
+=Rb17
 -----END PGP SIGNATURE-----
 
---GIP5y49pbaVPin6k--
+--ltwm67ir4qod67ul--
