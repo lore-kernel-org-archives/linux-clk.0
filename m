@@ -1,80 +1,77 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:33602 "EHLO mail.kernel.org"
+Received: from foss.arm.com ([217.140.101.70]:42130 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966570AbeCSQuU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Mar 2018 12:50:20 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Ilia Lin <ilialin@codeaurora.org>,
+        id S1751732AbeCVS4r (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Mar 2018 14:56:47 -0400
+Subject: Re: [PATCH v3 08/10] clk: qcom: Add ACD path to CPU clock driver for
+ msm8996
+To: Stephen Boyd <sboyd@kernel.org>, Ilia Lin <ilialin@codeaurora.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         sboyd@codeaurora.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1518616792-29028-8-git-send-email-ilialin@codeaurora.org>
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
         rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
         amit.kucheria@linaro.org, tfinkel@codeaurora.org,
-        ilialin@codeaurora.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org
+        nicolas.dechesne@linaro.org, celster@codeaurora.org
 References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
- <1518616792-29028-8-git-send-email-ilialin@codeaurora.org>
-Message-ID: <152147821849.242365.7709382599118820578@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 07/10] clk: qcom: clk-cpu-8996: Prepare PLLs on probe
-Date: Mon, 19 Mar 2018 09:50:18 -0700
+ <1518616792-29028-9-git-send-email-ilialin@codeaurora.org>
+ <152147863176.242365.17292287330283256524@swboyd.mtv.corp.google.com>
+ <41f3b246-43f4-450d-5c6b-34cdad7b15dd@arm.com>
+ <152149448251.242365.16980775001987673274@swboyd.mtv.corp.google.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <d9e9e276-ba8c-7d8c-b110-da0a0b778e6d@arm.com>
+Date: Thu, 22 Mar 2018 18:56:42 +0000
+MIME-Version: 1.0
+In-Reply-To: <152149448251.242365.16980775001987673274@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ilia Lin (2018-02-14 05:59:49)
-> The PLLs must be prepared enabled during the probe to be
-> accessible by the OPPs. Otherwise an OPP may switch
-> to non-enabled clock.
-
-Sounds like an OPP problem.
-
+On 19/03/18 21:21, Stephen Boyd wrote:
+> Quoting Robin Murphy (2018-03-19 11:16:15)
+>> On 19/03/18 16:57, Stephen Boyd wrote:
+>> [...]
+>>>> +
+>>>
+>>>> +                       writel_relaxed(SSSCTL_VAL, vbases[APC_BASE] +
+>>>> +                                       PWRCL_REG_OFFSET + SSSCTL_OFFSET);
+>>>> +               /* Ensure SSSCTL config goes through before enabling ACD. */
+>>>> +               mb();
+>>>
+>>> Use writel instead.
+>>
+>> Note that writel() only gives an implicit wmb() *before* the store to
+>> ensure ordering against any previous writes. If this code really needs
+>> to ensure that the given write has definitely completed before any other
+>> accesses happen, then it still needs an explicit barrier *after* the
+>> write*(), unless perhaps the next access is always guaranteed to be a
+>> non-relaxed write (thus implicitly providing a suitable DSB).
+>>
 > 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  drivers/clk/qcom/clk-cpu-8996.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-> index 854f327..b0a3b73 100644
-> --- a/drivers/clk/qcom/clk-cpu-8996.c
-> +++ b/drivers/clk/qcom/clk-cpu-8996.c
-> @@ -15,7 +15,7 @@
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> -
-> +#include <linux/clk-provider.h>
+> Ah right. So this should be a wmb() too? I suspect it's to order with
+> the write to the l2 indirect registers, but reading that register before
+> the MMIO write is not a problem. The comment above the l2 accessors
+> could be slightly more specific here and it would help immensely.
 
-Please leave a newline between linux/* and local includes.
+It depends a bit on what exactly the hardware requires. If it's merely 
+that write(s) to register A (and perhaps others) arrive before any write 
+to register B, then the sensible thing to do would be to just make the 
+write to B non-relaxed, i.e.:
 
->  #include "clk-alpha-pll.h"
->  
->  #define VCO(a, b, c) { \
-> @@ -376,6 +376,18 @@ struct clk_hw_clks {
->         clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
->         clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
->  
-> +       /* Enable all PLLs and alt PLLs */
-> +       clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
-> +       clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
-> +       clk_prepare_enable(pwrcl_pll.clkr.hw.clk);
-> +       clk_prepare_enable(perfcl_pll.clkr.hw.clk);
+	writel_relaxed(x, base + A);
+	...
+	writel(y, base + B);
 
-And this can't be done by the cpufreq-dt driver?
+That still only guarantees that the previous write(s) have been pushed 
+all the way to the endpoint before the write to B is issued, though - 
+for many devices that's sufficient, but in some cases the only way to be 
+totally sure that the write has both been received *and* taken effect is 
+by reading back some suitable indicator before proceeding.
 
-> +
-> +       /* Set initial boot frequencies for power/perf PLLs */
-> +       clk_set_rate(pwrcl_alt_pll.clkr.hw.clk, 652800000);
-> +       clk_set_rate(perfcl_alt_pll.clkr.hw.clk, 652800000);
-> +       clk_set_rate(pwrcl_pll.clkr.hw.clk, 652800000);
-> +       clk_set_rate(perfcl_pll.clkr.hw.clk, 652800000);
+If we only care about making sure writes are pushed out, rather than 
+synchronising more complicated memory accesses between multiple agents, 
+then a full mb() is probably overkill (as ordering against outstanding 
+loads too only adds more overhead in the interconnect), and wmb() 
+(ideally implicit in a subsequent writel() as above) should be enough.
 
-We have assigned rates in DT for this.
-
-> +
->         ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
->         if (ret)
->                 return ret;
+Robin.
