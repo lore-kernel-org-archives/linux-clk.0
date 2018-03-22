@@ -1,46 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51892 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751456AbeCUCTI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Mar 2018 22:19:08 -0400
-Date: Wed, 21 Mar 2018 10:18:13 +0800
-In-Reply-To: <20180320184646.dynqv6qubzabroe4@flea>
-References: <20180316175354.21437-1-icenowy@aosc.io> <20180316175354.21437-3-icenowy@aosc.io> <20180320184646.dynqv6qubzabroe4@flea>
+Return-Path: <fengguang.wu@intel.com>
+Date: Thu, 22 Mar 2018 15:42:17 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: kbuild-all@01.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH net-next 06/12] net: stmmac: dwmac-sun8i: Use
+ regmap_field for syscon register access
+Message-ID: <201803221541.uip2NtFU%fengguang.wu@intel.com>
+References: <20180317092857.4396-7-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH 2/7] dt-bindings: add binding for the Allwinner A64 DE2 bus
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-CC: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180317092857.4396-7-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Chen-Yu,
+
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on next-20180309]
+[also build test WARNING on v4.16-rc6]
+[cannot apply to v4.16-rc4 v4.16-rc3 v4.16-rc2]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Chen-Yu-Tsai/ARM-sun8i-r40-Add-Ethernet-support/20180318-161723
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-于 2018年3月21日 GMT+08:00 上午2:46:46, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
->> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64 SoC
->to
->> be claimed, otherwise the whole DE2 space is inaccessible.
->> 
->> Add a device tree binding of the DE2 part as a sub-bus.
->
->Where did you get the info that it was a bus?
+sparse warnings: (new ones prefixed by >>)
 
-There's no direct evidence, just some guess.
+>> drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c:82:24: sparse: symbol 'sun8i_syscon_reg_field' was not declared. Should it be static?
 
-The DE2 is a whole part that is just allocated a memory
-space at the user manual, and the SRAM controls the
-access to all modules in the DE2.
+Please review and possibly fold the followup patch.
 
-So it might be a bus.
-
-Implement it as a bus is a clear representation on A64.
-
->
->Maxime
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
