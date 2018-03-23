@@ -1,75 +1,24 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Rob Herring <robh@kernel.org>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@codeaurora.org" <sboyd@codeaurora.org>, "michal.simek@xilinx.com"
-	<michal.simek@xilinx.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Shubhrajyoti Datta
-	<shubhraj@xilinx.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 2/3] dt-bindings: clock: Add bindings for ZynqMP clock
- driver
-Date: Tue, 13 Mar 2018 18:39:13 +0000
-Message-ID: <DM2PR0201MB0767FFBAECF3A0B30251DBB8B8D20@DM2PR0201MB0767.namprd02.prod.outlook.com>
-References: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
- <1519856861-31384-3-git-send-email-jollys@xilinx.com>
- <20180306014549.6t3ae5adzc3cpi5v@rob-hp-laptop>
- <DM2PR0201MB0767031248A9F773620722FDB8D80@DM2PR0201MB0767.namprd02.prod.outlook.com>
- <CAL_JsqKUC47xB5O2Y6c3efVCjJY=V+XO3xyLTU9rNia40bdZkg@mail.gmail.com>
-In-Reply-To: <CAL_JsqKUC47xB5O2Y6c3efVCjJY=V+XO3xyLTU9rNia40bdZkg@mail.gmail.com>
+Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Masahiro Yamada <yamada.masahiro@socionext.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521781901-20466-1-git-send-email-hayashi.kunihiko@socionext.com>
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1521781901-20466-1-git-send-email-hayashi.kunihiko@socionext.com>
+Message-ID: <152182319284.178046.4484554263976543451@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: uniphier: add ethernet clock control support for PXs3
+Date: Fri, 23 Mar 2018 09:39:52 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgUm9iLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFJvYiBIZXJy
-aW5nIFttYWlsdG86cm9iaEBrZXJuZWwub3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIE1hcmNoIDA3
-LCAyMDE4IDU6MjAgUE0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29tPg0KPiBD
-YzogbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNib3lkQGNvZGVhdXJvcmEub3JnOw0KPiBtaWNo
-YWwuc2ltZWtAeGlsaW54LmNvbTsgbWFyay5ydXRsYW5kQGFybS5jb207IGxpbnV4LWNsa0B2Z2Vy
-Lmtlcm5lbC5vcmc7DQo+IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBTaHViaHJhanlvdGkg
-RGF0dGEgPHNodWJocmFqQHhpbGlueC5jb20+OyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVs
-Lm9yZzsgUmFqYW4gVmFqYSA8UkFKQU5WQHhpbGlueC5jb20+OyBsaW51eC1hcm0tDQo+IGtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi8zXSBkdC1iaW5k
-aW5nczogY2xvY2s6IEFkZCBiaW5kaW5ncyBmb3IgWnlucU1QIGNsb2NrDQo+IGRyaXZlcg0KPiAN
-Cj4gT24gV2VkLCBNYXIgNywgMjAxOCBhdCA0OjQ3IFBNLCBKb2xseSBTaGFoIDxKT0xMWVNAeGls
-aW54LmNvbT4gd3JvdGU6DQo+ID4gSGkgUm9iLA0KPiA+DQo+ID4NCj4gPj4gLS0tLS1PcmlnaW5h
-bCBNZXNzYWdlLS0tLS0NCj4gPj4gRnJvbTogUm9iIEhlcnJpbmcgW21haWx0bzpyb2JoQGtlcm5l
-bC5vcmddDQo+ID4+IFNlbnQ6IE1vbmRheSwgTWFyY2ggMDUsIDIwMTggNTo0NiBQTQ0KPiA+PiBU
-bzogSm9sbHkgU2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+DQo+ID4+IENjOiBtdHVycXVldHRlQGJh
-eWxpYnJlLmNvbTsgc2JveWRAY29kZWF1cm9yYS5vcmc7DQo+ID4+IG1pY2hhbC5zaW1la0B4aWxp
-bnguY29tOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gPj4gbGludXgtY2xrQHZnZXIua2VybmVs
-Lm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IFNodWJocmFqeW90aQ0KPiA+PiBEYXR0
-YSA8c2h1YmhyYWpAeGlsaW54LmNvbT47IGxpbnV4LSBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBK
-b2xseQ0KPiA+PiBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT47IFJhamFuIFZhamEgPFJBSkFOVkB4
-aWxpbnguY29tPjsNCj4gPj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+
-ID4+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi8zXSBkdC1iaW5kaW5nczogY2xvY2s6IEFkZCBiaW5k
-aW5ncyBmb3IgWnlucU1QDQo+ID4+IGNsb2NrIGRyaXZlcg0KPiA+Pg0KPiA+PiBPbiBXZWQsIEZl
-YiAyOCwgMjAxOCBhdCAwMjoyNzo0MFBNIC0wODAwLCBKb2xseSBTaGFoIHdyb3RlOg0KPiA+PiA+
-IEFkZCBkb2N1bWVudGF0aW9uIHRvIGRlc2NyaWJlIFhpbGlueCBaeW5xTVAgY2xvY2sgZHJpdmVy
-IGJpbmRpbmdzLg0KPiA+PiA+DQo+ID4+ID4gU2lnbmVkLW9mZi1ieTogSm9sbHkgU2hhaCA8am9s
-bHlzQHhpbGlueC5jb20+DQo+ID4+ID4gU2lnbmVkLW9mZi1ieTogUmFqYW4gVmFqYSA8cmFqYW52
-QHhpbGlueC5jb20+DQo+ID4+ID4gU2lnbmVkLW9mZi1ieTogU2h1YmhyYWp5b3RpIERhdHRhIDxz
-aHViaHJhanlvdGkuZGF0dGFAeGlsaW54LmNvbT4NCj4gPj4gPiAtLS0NCj4gDQo+ID4+ID4gKzk1
-ICAgICAgICAgZHBsbF9wb3N0X3NyYw0KPiA+PiA+ICs5NiAgICAgICAgIHZwbGxfaW50DQo+ID4+
-ID4gKzk3ICAgICAgICAgdnBsbF9wcmVfc3JjDQo+ID4+ID4gKzk4ICAgICAgICAgdnBsbF9oYWxm
-DQo+ID4+ID4gKzk5ICAgICAgICAgdnBsbF9pbnRfbXV4DQo+ID4+ID4gKzEwMCAgICAgICAgICAg
-ICAgICB2cGxsX3Bvc3Rfc3JjDQo+ID4+ID4gKzEwMSAgICAgICAgICAgICAgICBjYW4wX21pbw0K
-PiA+PiA+ICsxMDIgICAgICAgICAgICAgICAgY2FuMV9taW8NCj4gPj4gPiArDQo+ID4+ID4gK0V4
-YW1wbGU6DQo+ID4+ID4gKw0KPiA+PiA+ICtjbGs6IGNsayB7DQo+ID4+ID4gKyAgICNjbG9jay1j
-ZWxscyA9IDwxPjsNCj4gPj4gPiArICAgY29tcGF0aWJsZSA9ICJ4bG54LHp5bnFtcC1jbGsiOw0K
-PiA+Pg0KPiA+PiBIb3cgZG8geW91IGNvbnRyb2wgdGhlIGNsb2Nrcz8NCj4gPg0KPiA+IENsb2Nr
-cyBhcmUgY29udHJvbGxlZCBieSBhIGRlZGljYXRlZCBwbGF0Zm9ybSBtYW5hZ2VtZW50IGNvbnRy
-b2xsZXIuIEFib3ZlDQo+IGNsb2NrIGlkcyBhcmUgdXNlZCB0byBpZGVudGlmeSBjbG9ja3MgYmV0
-d2VlbiBtYXN0ZXIgYW5kIFBNVS4NCj4gDQo+IFdoYXQgaXMgdGhlIGludGVyZmFjZSB0byB0aGUg
-InBsYXRmb3JtIG1hbmFnZW1lbnQgY29udHJvbGxlciI/IEJlY2F1c2UgeW91DQo+IGhhdmUgbm8g
-cmVnaXN0ZXJzLCBJJ20gZ3Vlc3NpbmcgYSBmaXJtd2FyZSBpbnRlcmZhY2U/IElmIHNvLCB0aGVu
-IGp1c3QgZGVmaW5lIHRoZQ0KPiBmaXJtd2FyZSBub2RlIGFzIGEgY2xvY2sgcHJvdmlkZXIuDQoN
-ClllcyBpdCBpcyBmaXJtd2FyZSBpbnRlcmZhY2UuIEFsb25nIHdpdGggY2xvY2tzLCBmaXJtd2Fy
-ZSBpbnRlcmZhY2UgYWxzbyBjb250cm9scyBwb3dlciBhbmQgcGluY3RybCBvcGVyYXRpb25zIGFz
-IG1ham9yLg0KSSBhbSBub3Qgc3VyZSBpZiBJIHVuZGVyc3RhbmQgeW91IGNvcnJlY3RseS4gRG8g
-eW91IHN1Z2dlc3QgdG8gcmVnaXN0ZXIgY2xvY2tzIHRocm91Z2ggRmlybXdhcmUgZHJpdmVyIG9y
-IGp1c3QgdXNlIGZpcm13YXJlIERUIG5vZGUgYXMgY2xvY2sgcHJvdmlkZXIgYW5kIGNsb2NrIGRy
-aXZlciBEVCBub2RlIGNhbiByZWZlcmVuY2UgY2xvY2tzIGZyb20gRlcgbm9kZSB0byByZWdpc3Rl
-ciBzYW1lPw0KIA0KPiANCj4gUm9iDQo=
+Quoting Kunihiko Hayashi (2018-03-22 22:11:41)
+> Add clock control for ethernet controller on PXs3 SoC.
+> =
+
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
+
+Applied to clk-next
