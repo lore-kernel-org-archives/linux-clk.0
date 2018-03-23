@@ -1,71 +1,139 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
- <85edea04-6aaf-3609-1da9-0d542ac98e7d@nvidia.com>
- <20180313095117.GX6190@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f50eaa7b-3ce3-c18f-ca8c-e035a4f6aa7d@nvidia.com>
-Date: Tue, 13 Mar 2018 10:20:52 +0000
-MIME-Version: 1.0
-In-Reply-To: <20180313095117.GX6190@tbergstrom-lnx.Nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 7/8] remoteproc: da8xx: use the reset framework
+Date: Fri, 23 Mar 2018 14:04:54 +0100
+Message-Id: <20180323130455.11470-8-brgl@bgdev.pl>
+In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On 13/03/18 09:51, Peter De Schrijver wrote:
-> On Mon, Mar 12, 2018 at 12:15:22PM +0000, Jon Hunter wrote:
->>
->> On 06/02/18 16:34, Peter De Schrijver wrote:
->>> Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
->>> support in this driver. Also allow for the case where the CPU voltage is
->>> controlled directly by the DFLL rather than by a separate regulator object.
->>>
->>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>> ---
->>>  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
->>>  1 file changed, 8 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
->>> index 4353025..f8e01a8 100644
->>> --- a/drivers/cpufreq/tegra124-cpufreq.c
->>> +++ b/drivers/cpufreq/tegra124-cpufreq.c
->>> @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
->>>  {
->>>  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
->>>  	clk_disable_unprepare(priv->dfll_clk);
->>> -	regulator_sync_voltage(priv->vdd_cpu_reg);
->>> +	if (priv->vdd_cpu_reg)
->>> +		regulator_sync_voltage(priv->vdd_cpu_reg);
->>>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
->>>  }
->>
->> OK, so this bit does not make sense to me. In the above we are switching
->> from the DFLL to the PLL (ie. disabling the DFLL) and so to ensure we
->> are operating at the correct voltage after disabling the DFLL we need to
->> sync the voltage. Seems we would need to do this for all devices, no?
->> How is the different between Tegra124 and Tegra210?
-> 
-> Yes. So in case of i2c the regulator framework will reapply the voltage it
-> knows which in our case is the boot voltage for VDD_CPU because noone else
-> from a regulator framework pov has ever changed the voltage. In case of PWM
-> putting the PWM output pad in tri state will cause the OVR regulator to output
-> a hardware defined voltage. This is done as part of the dfll_clk_disable()
-> function. To summarize:
+Switch to using the reset framework instead of handcoded reset routines
+we used so far.
 
-So this is the piece of information I was missing. Maybe add this to the
-changelog so it is clear why we do not need to handle the cpu rail in
-the case of PWM.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 32 +++++++++++++++++++++++++++-----
+ 1 file changed, 27 insertions(+), 5 deletions(-)
 
-Cheers
-Jon
-
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index f134192922e0..3689473f8b49 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/bitops.h>
+ #include <linux/clk.h>
++#include <linux/reset.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -20,8 +21,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
+ 
+-#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
+-
+ #include "remoteproc_internal.h"
+ 
+ static char *da8xx_fw_name;
+@@ -72,6 +71,7 @@ struct da8xx_rproc {
+ 	struct da8xx_rproc_mem *mem;
+ 	int num_mems;
+ 	struct clk *dsp_clk;
++	struct reset_control *dsp_reset;
+ 	void (*ack_fxn)(struct irq_data *data);
+ 	struct irq_data *irq_data;
+ 	void __iomem *chipsig;
+@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 	struct device *dev = rproc->dev.parent;
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
++	struct reset_control *dsp_reset = drproc->dsp_reset;
+ 	int ret;
+ 
+ 	/* hw requires the start (boot) address be on 1KB boundary */
+@@ -155,7 +156,11 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 		return ret;
+ 	}
+ 
+-	davinci_clk_reset_deassert(dsp_clk);
++	ret = reset_control_deassert(dsp_reset);
++	if (ret) {
++		dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
++		return ret;
++	}
+ 
+ 	return 0;
+ }
+@@ -163,8 +168,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ static int da8xx_rproc_stop(struct rproc *rproc)
+ {
+ 	struct da8xx_rproc *drproc = rproc->priv;
++	int ret;
++
++	ret = reset_control_assert(drproc->dsp_reset);
++	if (ret) {
++		dev_err(rproc->dev.parent,
++			"reset_control_assert() failed: %d\n", ret);
++		return ret;
++	}
+ 
+-	davinci_clk_reset_assert(drproc->dsp_clk);
+ 	clk_disable_unprepare(drproc->dsp_clk);
+ 
+ 	return 0;
+@@ -232,6 +244,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	struct resource *bootreg_res;
+ 	struct resource *chipsig_res;
+ 	struct clk *dsp_clk;
++	struct reset_control *dsp_reset;
+ 	void __iomem *chipsig;
+ 	void __iomem *bootreg;
+ 	int irq;
+@@ -268,6 +281,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dsp_clk);
+ 	}
+ 
++	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
++	if (IS_ERR(dsp_reset)) {
++		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
++			dev_err(dev, "unable to get reset control: %ld\n",
++				PTR_ERR(dsp_reset));
++
++		return PTR_ERR(dsp_reset);
++	}
++
+ 	if (dev->of_node) {
+ 		ret = of_reserved_mem_device_init(dev);
+ 		if (ret) {
+@@ -309,7 +331,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+ 	 * held in reset at the time it is called.
+ 	 */
+-	ret = davinci_clk_reset_assert(drproc->dsp_clk);
++	ret = reset_control_assert(dsp_reset);
+ 	if (ret)
+ 		goto free_rproc;
+ 
 -- 
-nvpublic
+2.16.1
