@@ -1,107 +1,169 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:42473 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750828AbeCTHPj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Mar 2018 03:15:39 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180317232901.14129-3-paul@crapouillou.net>
-References: <20180110224838.16711-2-paul@crapouillou.net> <20180317232901.14129-1-paul@crapouillou.net>
- <20180317232901.14129-3-paul@crapouillou.net>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 20 Mar 2018 08:15:17 +0100
-Message-ID: <CA+7wUsyAkW+Bgmp6MuWTce1jMG-ug1b-UqFVen_vVeKFiW5Fww@mail.gmail.com>
-Subject: Re: [PATCH v4 2/8] dt-bindings: ingenic: Add DT bindings for TCU clocks
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        linux-clk@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 1/8] reset: modify the way reset lookup works for board files
+Date: Fri, 23 Mar 2018 10:36:02 +0100
+Message-Id: <20180323093609.24576-2-brgl@bgdev.pl>
+In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
+References: <20180323093609.24576-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Paul,
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Two things:
+Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
+introduced reset control lookup mechanism for boards that still use
+board files.
 
-On Sun, Mar 18, 2018 at 12:28 AM, Paul Cercueil <paul@crapouillou.net> wrote:
-> This header provides clock numbers for the ingenic,tcu
-> DT binding.
+The routine used to register lookup entries takes the corresponding
+reset_controlled_dev structure as argument.
 
-I have tested the whole series on my Creator CI20 with success, using:
+It's been determined however that for the first user of this new
+interface - davinci psc driver - it will be easier to register the
+lookup entries using the reset controller device name.
 
-+ tcu@10002000 {
-+ compatible = "ingenic,jz4780-tcu";
-+ reg = <0x10002000 0x140>;
+This patch changes the way lookup entries are added.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/reset/core.c             | 33 +++++++++++++++++++++++++++++----
+ include/linux/reset-controller.h |  8 +++++---
+ 2 files changed, 34 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 06fa4907afc4..f37048e55336 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -153,11 +153,11 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+ 
+ /**
+  * reset_controller_add_lookup - register a set of lookup entries
+- * @rcdev: initialized reset controller device owning the reset line
++ * @provider: name of the reset controller provider
+  * @lookup: array of reset lookup entries
+  * @num_entries: number of entries in the lookup array
+  */
+-void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
++void reset_controller_add_lookup(const char *provider,
+ 				 struct reset_control_lookup *lookup,
+ 				 unsigned int num_entries)
+ {
+@@ -174,7 +174,7 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+ 			continue;
+ 		}
+ 
+-		entry->rcdev = rcdev;
++		entry->provider = provider;
+ 		list_add_tail(&entry->list, &reset_lookup_list);
+ 	}
+ 	mutex_unlock(&reset_lookup_mutex);
+@@ -526,11 +526,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+ }
+ EXPORT_SYMBOL_GPL(__of_reset_control_get);
+ 
++static struct reset_controller_dev *
++__reset_controller_by_name(const char *name)
++{
++	struct reset_controller_dev *rcdev;
 +
-+ interrupt-parent = <&intc>;
-+ interrupts = <27 26 25>;
-+ };
-
-
-So:
-
-Tested-by: Mathieu Malaterre <malat@debian.org>
-
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  include/dt-bindings/clock/ingenic,tcu.h | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->  create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
->
->  v2: Use SPDX identifier for the license
->  v3: No change
->  v4: No change
->
-> diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
-> new file mode 100644
-> index 000000000000..179815d7b3bb
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/ingenic,tcu.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * This header provides clock numbers for the ingenic,tcu DT binding.
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-> +#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-> +
-> +#define JZ4740_CLK_TIMER0      0
-> +#define JZ4740_CLK_TIMER1      1
-> +#define JZ4740_CLK_TIMER2      2
-> +#define JZ4740_CLK_TIMER3      3
-> +#define JZ4740_CLK_TIMER4      4
-> +#define JZ4740_CLK_TIMER5      5
-> +#define JZ4740_CLK_TIMER6      6
-> +#define JZ4740_CLK_TIMER7      7
-> +#define JZ4740_CLK_WDT         8
-> +#define JZ4740_CLK_LAST                JZ4740_CLK_WDT
-> +
-> +#define JZ4770_CLK_OST         9
-> +#define JZ4770_CLK_LAST                JZ4770_CLK_OST
-> +
-
-When working on JZ4780 support, I always struggle to read those kind
-of #define. Since this is a new patch would you mind changing
-s/JZ4740/JZ47XX/ in your header ?
-
-Thanks for your work on JZ !
-
-> +#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
-> --
-> 2.11.0
->
->
++	lockdep_assert_held(&reset_list_mutex);
++
++	list_for_each_entry(rcdev, &reset_controller_list, list) {
++		if (!rcdev->dev)
++			continue;
++
++		if (!strcmp(name, dev_name(rcdev->dev)))
++			return rcdev;
++	}
++
++	return NULL;
++}
++
+ static struct reset_control *
+ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+ 				bool shared, bool optional)
+ {
+ 	const struct reset_control_lookup *lookup;
++	struct reset_controller_dev *rcdev;
+ 	const char *dev_id = dev_name(dev);
+ 	struct reset_control *rstc = NULL;
+ 
+@@ -547,7 +566,13 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+ 		    ((con_id && lookup->con_id) &&
+ 		     !strcmp(con_id, lookup->con_id))) {
+ 			mutex_lock(&reset_list_mutex);
+-			rstc = __reset_control_get_internal(lookup->rcdev,
++			rcdev = __reset_controller_by_name(lookup->provider);
++			if (!rcdev) {
++				mutex_unlock(&reset_list_mutex);
++				continue;
++			}
++
++			rstc = __reset_control_get_internal(rcdev,
+ 							    lookup->index,
+ 							    shared);
+ 			mutex_unlock(&reset_list_mutex);
+diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
+index 25698f6c1fae..1a6c25d825d3 100644
+--- a/include/linux/reset-controller.h
++++ b/include/linux/reset-controller.h
+@@ -30,14 +30,14 @@ struct of_phandle_args;
+  * struct reset_control_lookup - represents a single lookup entry
+  *
+  * @list: internal list of all reset lookup entries
+- * @rcdev: reset controller device controlling this reset line
++ * @provider: name of the reset controller device controlling this reset line
+  * @index: ID of the reset controller in the reset controller device
+  * @dev_id: name of the device associated with this reset line
+  * @con_id name of the reset line (can be NULL)
+  */
+ struct reset_control_lookup {
+ 	struct list_head list;
+-	struct reset_controller_dev *rcdev;
++	const char *provider;
+ 	unsigned int index;
+ 	const char *dev_id;
+ 	const char *con_id;
+@@ -57,6 +57,7 @@ struct reset_control_lookup {
+  * @owner: kernel module of the reset controller driver
+  * @list: internal list of reset controller devices
+  * @reset_control_head: head of internal list of requested reset controls
++ * @dev: corresponding driver model device struct
+  * @of_node: corresponding device tree node as phandle target
+  * @of_reset_n_cells: number of cells in reset line specifiers
+  * @of_xlate: translation function to translate from specifier as found in the
+@@ -68,6 +69,7 @@ struct reset_controller_dev {
+ 	struct module *owner;
+ 	struct list_head list;
+ 	struct list_head reset_control_head;
++	struct device *dev;
+ 	struct device_node *of_node;
+ 	int of_reset_n_cells;
+ 	int (*of_xlate)(struct reset_controller_dev *rcdev,
+@@ -82,7 +84,7 @@ struct device;
+ int devm_reset_controller_register(struct device *dev,
+ 				   struct reset_controller_dev *rcdev);
+ 
+-void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
++void reset_controller_add_lookup(const char *provider,
+ 				 struct reset_control_lookup *lookup,
+ 				 unsigned int num_entries);
+ 
+-- 
+2.16.1
