@@ -1,69 +1,66 @@
-Return-Path: <suzuki.katsuhiro@socionext.com>
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-	Jassi Brar <jaswinder.singh@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH] clk: uniphier: add Pro4/Pro5/PXs2 audio system clock
-Date: Thu,  8 Mar 2018 17:23:32 +0900
-Message-Id: <20180308082332.31063-1-suzuki.katsuhiro@socionext.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: reset: Add AXG AO Clock and Reset
+ Bindings
+To: Philippe Ombredanne <pombredanne@nexb.com>
+References: <20180209070026.193879-1-yixun.lan@amlogic.com>
+ <20180209070026.193879-2-yixun.lan@amlogic.com>
+ <CAOFm3uFj-7kZNp6b3SerOzQ8Amfa5Usod+MxwvZJ1E1Z_V9VJA@mail.gmail.com>
+CC: <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Jerome
+ Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>, Carlo
+ Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+	<jian.hu@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, "moderated list:ARM/FREESCALE IMX / MXC ARM
+ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, LKML
+	<linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <dffeba58-1326-1dbd-38fc-c3b0f51d9c73@amlogic.com>
+Date: Fri, 23 Mar 2018 22:06:27 +0800
+MIME-Version: 1.0
+In-Reply-To: <CAOFm3uFj-7kZNp6b3SerOzQ8Amfa5Usod+MxwvZJ1E1Z_V9VJA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock for audio subsystem (AIO) on UniPhier
-Pro4/Pro5/PXs2 SoCs.
+Hi Philippe
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
----
- drivers/clk/uniphier/clk-uniphier-sys.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On 02/09/2018 07:07 PM, Philippe Ombredanne wrote:
+> On Fri, Feb 9, 2018 at 8:00 AM, Yixun Lan <yixun.lan@amlogic.com> wrote:
+>> Add dt-bindings headers for the Meson-AXG's AO clock and
+>> reset controller.
+>>
+>> CC: <devicetree@vger.kernel.org>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
+>>  include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
+>>  2 files changed, 46 insertions(+)
+>>  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+>>  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+>>
+>> diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
+>> new file mode 100644
+>> index 000000000000..78683abb4247
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/axg-aoclkc.h
+>> @@ -0,0 +1,26 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD) */
+> 
+> nit... BSD is not a valid license id as documented in LICENSES [1] :
+> please use one of these:
+> BSD-2-Clause or BSD-3-Clause
+> 
+> Thank you!
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/LICENSES/preferred
+> 
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-index d244e724e198..06c5269f63f5 100644
---- a/drivers/clk/uniphier/clk-uniphier-sys.c
-+++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-@@ -57,6 +57,14 @@
- #define UNIPHIER_PRO4_SYS_CLK_USB3(idx, ch)				\
- 	UNIPHIER_CLK_GATE("usb3" #ch, (idx), NULL, 0x2104, 16 + (ch))
- 
-+#define UNIPHIER_PRO4_SYS_CLK_AIO(idx)					\
-+	UNIPHIER_CLK_FACTOR("aio-io200m", -1, "spll", 1, 8),		\
-+	UNIPHIER_CLK_GATE("aio", (idx), "aio-io200m", 0x2104, 13)
-+
-+#define UNIPHIER_PRO5_SYS_CLK_AIO(idx)					\
-+	UNIPHIER_CLK_FACTOR("aio-io200m", -1, "spll", 1, 12),		\
-+	UNIPHIER_CLK_GATE("aio", (idx), "aio-io200m", 0x2104, 13)
-+
- #define UNIPHIER_LD11_SYS_CLK_AIO(idx)					\
- 	UNIPHIER_CLK_FACTOR("aio-io200m", -1, "spll", 1, 10),		\
- 	UNIPHIER_CLK_GATE("aio", (idx), "aio-io200m", 0x2108, 0)
-@@ -104,6 +112,7 @@ const struct uniphier_clk_data uniphier_pro4_sys_clk_data[] = {
- 	UNIPHIER_PRO4_SYS_CLK_GIO(12),			/* Ether, SATA, USB3 */
- 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
- 	UNIPHIER_PRO4_SYS_CLK_USB3(15, 1),
-+	UNIPHIER_PRO4_SYS_CLK_AIO(40),
- 	{ /* sentinel */ }
- };
- 
-@@ -132,6 +141,7 @@ const struct uniphier_clk_data uniphier_pro5_sys_clk_data[] = {
- 	UNIPHIER_PRO4_SYS_CLK_GIO(12),				/* PCIe, USB3 */
- 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
- 	UNIPHIER_PRO4_SYS_CLK_USB3(15, 1),
-+	UNIPHIER_PRO5_SYS_CLK_AIO(40),
- 	{ /* sentinel */ }
- };
- 
-@@ -149,6 +159,7 @@ const struct uniphier_clk_data uniphier_pxs2_sys_clk_data[] = {
- 	/* The document mentions 0x2104 bit 18, but not functional */
- 	UNIPHIER_CLK_GATE("usb30-phy", 16, NULL, 0x2104, 19),
- 	UNIPHIER_CLK_GATE("usb31-phy", 20, NULL, 0x2104, 20),
-+	UNIPHIER_PRO5_SYS_CLK_AIO(40),
- 	{ /* sentinel */ }
- };
- 
--- 
-2.16.1
+
+  Thanks for the hint
+
+  I'll update to BSD-3-Clause, since this license is just a copy from
+previous gxbb-aoclkc.h file.
+
+Yixun
