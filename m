@@ -1,168 +1,183 @@
-Return-Path: <monstr@monstr.eu>
-Return-Path: <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-Subject: Re: clk-fixed-rate clock driver usage with fpgas was: Re: Fpga
- manager help
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Alan Tull <atull@kernel.org>,
- Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>,
- linux-fpga@vger.kernel.org,
- Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
- Grant Likely <grant.likely@secretlab.ca>, linux-clk@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-References: <CAKfKVtH-HRa2Z5Ff_wss9oK2tN2taSLU6gAfgus=Z1KkhZwMBg@mail.gmail.com>
- <CANk1AXRm9ME1Yu3y2WRMxG1o9BZq+6pg9T8CWaqKy2v+LwK9RA@mail.gmail.com>
- <CAKfKVtFkYjwe0JH+f1Bdt7p+o2b_TsKYE0fD6HNs_syXn8D82Q@mail.gmail.com>
- <be42ac6b-0209-6f90-3802-8be6cd9baac9@monstr.eu>
- <CANk1AXSkryS-KxczSfen41VvoTVafZcuSLDUhcq-kuiqhYjknQ@mail.gmail.com>
- <295f64ae-a049-010a-fd68-3fcd46a5d8a1@monstr.eu>
- <20180309081219.yzsy2ktq75af2tjv@flea.lan>
- <74d66882-662c-59c5-59c5-d59d8eb14280@monstr.eu>
- <20180309150754.aa3pqgnpjzkpxpgy@flea>
-From: Michal Simek <monstr@monstr.eu>
-Message-ID: <bc813830-de0e-49fa-6c84-7c52024bcfbc@monstr.eu>
-Date: Mon, 12 Mar 2018 14:19:17 +0100
-MIME-Version: 1.0
-In-Reply-To: <20180309150754.aa3pqgnpjzkpxpgy@flea>
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="bSIjsUUso4l5rd84AxLTH1ULhRdvhbA83"
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1521803301.3406.4.camel@pengutronix.de>
+Subject: Re: [PATCH v2 1/8] reset: modify the way reset lookup works for
+ board files
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob
+ Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell
+ King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad
+ Ben-Cohen <ohad@wizery.com>,  Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>, devicetree
+ <devicetree@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, Bartosz Golaszewski
+ <bgolaszewski@baylibre.com>
+Date: Fri, 23 Mar 2018 12:08:21 +0100
+In-Reply-To: <CAMRc=Mcf18jmRAM6WFBnuuOen11+5uzy4yo3xwvLQzLBSSNvHQ@mail.gmail.com>
+References: <20180323093609.24576-1-brgl@bgdev.pl>
+	 <20180323093609.24576-2-brgl@bgdev.pl>
+	 <1521800670.3406.1.camel@pengutronix.de>
+	 <CAMRc=Mcf18jmRAM6WFBnuuOen11+5uzy4yo3xwvLQzLBSSNvHQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---bSIjsUUso4l5rd84AxLTH1ULhRdvhbA83
-Content-Type: multipart/mixed; boundary="XYV7F8YoG8sTbgHsuLTAhneJEZsV7sw99";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Alan Tull <atull@kernel.org>,
- Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>,
- linux-fpga@vger.kernel.org,
- Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
- Grant Likely <grant.likely@secretlab.ca>, linux-clk@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <bc813830-de0e-49fa-6c84-7c52024bcfbc@monstr.eu>
-Subject: Re: clk-fixed-rate clock driver usage with fpgas was: Re: Fpga
- manager help
-References: <CAKfKVtH-HRa2Z5Ff_wss9oK2tN2taSLU6gAfgus=Z1KkhZwMBg@mail.gmail.com>
- <CANk1AXRm9ME1Yu3y2WRMxG1o9BZq+6pg9T8CWaqKy2v+LwK9RA@mail.gmail.com>
- <CAKfKVtFkYjwe0JH+f1Bdt7p+o2b_TsKYE0fD6HNs_syXn8D82Q@mail.gmail.com>
- <be42ac6b-0209-6f90-3802-8be6cd9baac9@monstr.eu>
- <CANk1AXSkryS-KxczSfen41VvoTVafZcuSLDUhcq-kuiqhYjknQ@mail.gmail.com>
- <295f64ae-a049-010a-fd68-3fcd46a5d8a1@monstr.eu>
- <20180309081219.yzsy2ktq75af2tjv@flea.lan>
- <74d66882-662c-59c5-59c5-d59d8eb14280@monstr.eu>
- <20180309150754.aa3pqgnpjzkpxpgy@flea>
-In-Reply-To: <20180309150754.aa3pqgnpjzkpxpgy@flea>
+On Fri, 2018-03-23 at 11:46 +0100, Bartosz Golaszewski wrote:
+> 2018-03-23 11:24 GMT+01:00 Philipp Zabel <p.zabel@pengutronix.de>:
+> > Hi Bartosz,
+> > 
+> > On Fri, 2018-03-23 at 10:36 +0100, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > 
+> > > Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
+> > > introduced reset control lookup mechanism for boards that still use
+> > > board files.
+> > > 
+> > > The routine used to register lookup entries takes the corresponding
+> > > reset_controlled_dev structure as argument.
+> > > 
+> > > It's been determined however that for the first user of this new
+> > > interface - davinci psc driver - it will be easier to register the
+> > > lookup entries using the reset controller device name.
+> > 
+> > Thank you, this is what I expected in the first place.
+> > 
+> > > This patch changes the way lookup entries are added.
+> > > 
+> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > > ---
+> > >  drivers/reset/core.c             | 33 +++++++++++++++++++++++++++++----
+> > >  include/linux/reset-controller.h |  8 +++++---
+> > >  2 files changed, 34 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> > > index 06fa4907afc4..f37048e55336 100644
+> > > --- a/drivers/reset/core.c
+> > > +++ b/drivers/reset/core.c
+> > > @@ -153,11 +153,11 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+> > > 
+> > >  /**
+> > >   * reset_controller_add_lookup - register a set of lookup entries
+> > > - * @rcdev: initialized reset controller device owning the reset line
+> > > + * @provider: name of the reset controller provider
+> > >   * @lookup: array of reset lookup entries
+> > >   * @num_entries: number of entries in the lookup array
+> > >   */
+> > > -void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+> > > +void reset_controller_add_lookup(const char *provider,
+> > 
+> > Is there any reason not to drop the provider parameter completely?
+> > I'd just let the user add the provider device id to the lookup, see
+> > below.
+> > 
+> > >                                struct reset_control_lookup *lookup,
+> > >                                unsigned int num_entries)
+> > >  {
+> > > @@ -174,7 +174,7 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+> > >                       continue;
+> > >               }
+> > > 
+> > > -             entry->rcdev = rcdev;
+> > > +             entry->provider = provider;
+> > >               list_add_tail(&entry->list, &reset_lookup_list);
+> > >       }
+> > >       mutex_unlock(&reset_lookup_mutex);
+> > > @@ -526,11 +526,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(__of_reset_control_get);
+> > > 
+> > > +static struct reset_controller_dev *
+> > > +__reset_controller_by_name(const char *name)
+> > > +{
+> > > +     struct reset_controller_dev *rcdev;
+> > > +
+> > > +     lockdep_assert_held(&reset_list_mutex);
+> > > +
+> > > +     list_for_each_entry(rcdev, &reset_controller_list, list) {
+> > > +             if (!rcdev->dev)
+> > > +                     continue;
+> > > +
+> > > +             if (!strcmp(name, dev_name(rcdev->dev)))
+> > > +                     return rcdev;
+> > > +     }
+> > > +
+> > > +     return NULL;
+> > > +}
+> > > +
+> > >  static struct reset_control *
+> > >  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+> > >                               bool shared, bool optional)
+> > >  {
+> > >       const struct reset_control_lookup *lookup;
+> > > +     struct reset_controller_dev *rcdev;
+> > >       const char *dev_id = dev_name(dev);
+> > >       struct reset_control *rstc = NULL;
+> > > 
+> > > @@ -547,7 +566,13 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+> > >                   ((con_id && lookup->con_id) &&
+> > >                    !strcmp(con_id, lookup->con_id))) {
+> > >                       mutex_lock(&reset_list_mutex);
+> > > -                     rstc = __reset_control_get_internal(lookup->rcdev,
+> > > +                     rcdev = __reset_controller_by_name(lookup->provider);
+> > > +                     if (!rcdev) {
+> > > +                             mutex_unlock(&reset_list_mutex);
+> > > +                             continue;
+> > 
+> > What is the reason to continue here? If we've found a matching lookup
+> > that contains a rcdev dev_id for which there is no reset controller,
+> > shouldn't we just return an error?
+> > 
+> 
+> Indeed. This could be used to indicate to drivers that the reset
+> controller may not have yet been probed() or its probe() failed. How
+> about returning -EPROBE_DEFER here?
 
---XYV7F8YoG8sTbgHsuLTAhneJEZsV7sw99
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+That is a good point. The framework doesn't know whether the
+lookup->provider is bogus or whether it's correct and the corresponding
+driver just hasn't registered its reset controller yet. So we have to
+assume the latter and return -EPROBE_DEFER here.
 
-Hi Maxime,
+> Bart
+> 
+> > > +                     }
+> > > +
+> > > +                     rstc = __reset_control_get_internal(rcdev,
+> > >                                                           lookup->index,
+> > >                                                           shared);
+> > >                       mutex_unlock(&reset_list_mutex);
+> > > diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
+> > > index 25698f6c1fae..1a6c25d825d3 100644
+> > > --- a/include/linux/reset-controller.h
+> > > +++ b/include/linux/reset-controller.h
+> > > @@ -30,14 +30,14 @@ struct of_phandle_args;
+> > >   * struct reset_control_lookup - represents a single lookup entry
+> > >   *
+> > >   * @list: internal list of all reset lookup entries
+> > > - * @rcdev: reset controller device controlling this reset line
+> > > + * @provider: name of the reset controller device controlling this reset line
+> > >   * @index: ID of the reset controller in the reset controller device
+> > >   * @dev_id: name of the device associated with this reset line
+> > >   * @con_id name of the reset line (can be NULL)
+> > >   */
+> > >  struct reset_control_lookup {
+> > >       struct list_head list;
+> > > -     struct reset_controller_dev *rcdev;
+> > > +     const char *provider;
+> > 
+> > Looks good to me, but I'd also extend RESET_LOOKUP to set the provider
+> > instead of passing it to the reset_controller_add_lookup function,
+> > similarly to PWM_LOOKUP:
+> > 
+> > #define RESET_LOOKUP(_provider, _index, _dev_id, _con_id)
+> > 
+> 
+> I did it mostly for brevity - I don't mind changing it if you prefer
+> this version.
 
-On 9.3.2018 16:07, Maxime Ripard wrote:
-> Hi Michal,
->=20
-> On Fri, Mar 09, 2018 at 09:28:52AM +0100, Michal Simek wrote:
->> Hi Maxime,
->>
->>
->> On 9.3.2018 09:12, Maxime Ripard wrote:
->>> Hi,
->>>
->>> Sorry if I'm off-topic, I'm not sure I fully got the context
->>
->> let me explain below.
->>
->>>
->>> On Thu, Mar 08, 2018 at 03:04:50PM +0100, Michal Simek wrote:
->>>>       pl1: clock {
->>>> 		compatible =3D "fixed-factor-clock";
->>>> 		clocks =3D <&clk 71>;
->>>> 		#clock-cells =3D <0>;
->>>> 		clock-frequency =3D <25000000>; /* missing property */
->>>> 		clock-div =3D <1>;
->>>> 		clock-mult =3D <1>;
->>>> 		clock-output-names =3D "pl1"
->>>>       };
->>>
->>> In this case, I'm not sure why the clock-frequency property is needed=
+Yes, please. I like the consistency, and seeing provider and index right
+next to each other will make the lookups easier to read and understand.
 
->>> in the first place. If you have a divider and factor of 1, then your
->>> rate should be the one from your parent clock.
->>
->> Correct but this is DT overlay for FPGAs and every bitstream has
->> different need for setting up parent clock.
->>
->> Let me give you an example:
->> You have zynq board (arm32 in fixed part with bunch of hard IPs like
->> ethernet/usb/sd/qspi/nand) and you have fpga(programmable logic) next =
-to
->> it. And depends on your need you can load bitstream to fpga to do some=
-
->> work for you. One design is synthesized for max clock 200MHz and anoth=
-er
->> one on 10MHz because of whatever reason.
->> fpga manager/region and DT overlays are providing you and option to
->> change these two hw designs at run time based on your needs.
->> It means you need to describe input clock for both cases and you need =
-to
->> ask for setting up different clock parent rate.
->>
->> That's why we need to describe this rate somewhere and example above i=
-s
->> using clock-frequency properly with fixed-factor-clock in div=3D1/mult=
-=3D1
->> setting.
->>
->>>
->>> The clock-frequency is redundant with what you already have.
->>
->> But this is DT overlay and every bitstream has different need as above=
-=2E
->> It means different requirement for parent rate.
->=20
-> Ah, I see, so you want to change the clk 71 (in this case) to 25MHz in
-> the snippet above.
->=20
-> Have you looked at the assigned-clock-rates property? It should cover
-> it.
-
-I have seen this but never looked at it. Definitely thanks for pointer.
-We will look at it.
-
-Thanks,
-Michal
-
-
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
-
-
-
---XYV7F8YoG8sTbgHsuLTAhneJEZsV7sw99--
-
---bSIjsUUso4l5rd84AxLTH1ULhRdvhbA83
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAlqmflYACgkQykllyylKDCFXygCZAYRTkMjgBJJLrbTeor/4gHOv
-1TEAni8Tw1LXLaZ2vvKLTCRoai0u5tQw
-=WKw/
------END PGP SIGNATURE-----
-
---bSIjsUUso4l5rd84AxLTH1ULhRdvhbA83--
+regards
+Philipp
