@@ -1,116 +1,188 @@
-Return-Path: <prvs=06163c8545=mike.looijmans@topicproducts.com>
-Subject: Re: [PATCH v2] clk: Add driver for the si544 clock generator chip
-To: Rob Herring <robh@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <mark.rutland@arm.com>
-References: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
- <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Message-ID: <ec813ab3-88db-f6e3-eca1-b6ea58936fcf@topic.nl>
-Date: Mon, 19 Mar 2018 16:04:15 +0100
-MIME-Version: 1.0
-In-Reply-To: <20180318125219.ar7f2n4o73ljz6vg@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 1/8] reset: modify the way reset lookup works for board files
+Date: Fri, 23 Mar 2018 12:47:02 +0100
+Message-Id: <20180323114709.20330-2-brgl@bgdev.pl>
+In-Reply-To: <20180323114709.20330-1-brgl@bgdev.pl>
+References: <20180323114709.20330-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-=EF=BB=BFOn 18-03-18 13:52, Rob Herring wrote:
-> On Thu, Mar 15, 2018 at 12:50:08PM +0100, Mike Looijmans wrote:
->> This patch adds the driver and devicetree documentation for the
->> Silicon Labs SI544 clock generator chip. This is an I2C controlled
->> oscillator capable of generating clock signals ranging from 200kHz
->> to 1500MHz.
->>
->> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
->> ---
->> v2: Add u64 cast to ls_div_bits calculation loop
->>      When ls_div_bits is non-zero, the hs_div must always be even
->>
->>   .../devicetree/bindings/clock/silabs,si544.txt     |  25 ++
->>   drivers/clk/Kconfig                                |  10 +
->>   drivers/clk/Makefile                               |   1 +
->>   drivers/clk/clk-si544.c                            | 422 +++++++++++++=
-++++++++
->>   4 files changed, 458 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/silabs,si54=
-4.txt
->>   create mode 100644 drivers/clk/clk-si544.c
->>
->> diff --git a/Documentation/devicetree/bindings/clock/silabs,si544.txt b/=
-Documentation/devicetree/bindings/clock/silabs,si544.txt
->> new file mode 100644
->> index 0000000..eec1787
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/silabs,si544.txt
->> @@ -0,0 +1,25 @@
->> +Binding for Silicon Labs 544 programmable I2C clock generator.
->> +
->> +Reference
->> +This binding uses the common clock binding[1]. Details about the device=
- can be
->> +found in the datasheet[2].
->> +
->> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +[2] Si544 datasheet
->> +    https://www.silabs.com/documents/public/data-sheets/si544-datasheet=
-.pdf
->> +
->> +Required properties:
->> + - compatible: One of "silabs,si514a", "silabs,si514b" "silabs,si514c" =
-according
->> +               to the speed grade of the chip.
->> + - reg: I2C device address.
->> + - #clock-cells: From common clock bindings: Shall be 0.
->> +
->> +Optional properties:
->> + - clock-output-names: From common clock bindings. Recommended to be "s=
-i544".
->=20
-> What's the point if there is only 1 clock output?
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-I have a board with 6 of these chips, and the clock registration fails if t=
-hey=20
-don't have unique names. Providing a clock-output-names property was the=20
-easiest way around it.
+Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
+introduced reset control lookup mechanism for boards that still use
+board files.
 
-Should I just omit the line or change the wording to reflect the above or i=
-s=20
-there a better solution (maybe I can use the DT node name as clock name in =
-the=20
-driver, will look into that)
+The routine used to register lookup entries takes the corresponding
+reset_controlled_dev structure as argument.
 
->=20
->> +
->> +Example:
->> +	si544: clock-generator@55 {
->=20
-> clock-controller@55 is the standard node name.
+It's been determined however that for the first user of this new
+interface - davinci psc driver - it will be easier to register the
+lookup entries using the reset controller device name.
 
-I'll change and post patch v3
+This patch changes the way lookup entries are added.
 
->=20
->> +		reg =3D <0x55>;
->> +		#clock-cells =3D <0>;
->> +		compatible =3D "silabs,si544b";
->> +	};
->=20
-> Otherwise, for the binding:
->=20
-> Reviewed-by: Rob Herring <robh@kernel.org>
->=20
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/reset/core.c             | 38 +++++++++++++++++++++++++++++++-------
+ include/linux/reset-controller.h | 12 +++++++-----
+ 2 files changed, 38 insertions(+), 12 deletions(-)
 
-
-
-Kind regards,
-
-Mike Looijmans
-System Expert
-
-TOPIC Products
-Materiaalweg 4, NL-5681 RJ Best
-Postbus 440, NL-5680 AK Best
-Telefoon: +31 (0) 499 33 69 79
-E-mail: mike.looijmans@topicproducts.com
-Website: www.topicproducts.com
-
-Please consider the environment before printing this e-mail
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 06fa4907afc4..f4a29c046995 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -153,12 +153,10 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+ 
+ /**
+  * reset_controller_add_lookup - register a set of lookup entries
+- * @rcdev: initialized reset controller device owning the reset line
+  * @lookup: array of reset lookup entries
+  * @num_entries: number of entries in the lookup array
+  */
+-void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+-				 struct reset_control_lookup *lookup,
++void reset_controller_add_lookup(struct reset_control_lookup *lookup,
+ 				 unsigned int num_entries)
+ {
+ 	struct reset_control_lookup *entry;
+@@ -168,13 +166,12 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+ 	for (i = 0; i < num_entries; i++) {
+ 		entry = &lookup[i];
+ 
+-		if (!entry->dev_id) {
+-			pr_warn("%s(): reset lookup entry has no dev_id, skipping\n",
++		if (!entry->dev_id || !entry->provider) {
++			pr_warn("%s(): reset lookup entry badly specified, skipping\n",
+ 				__func__);
+ 			continue;
+ 		}
+ 
+-		entry->rcdev = rcdev;
+ 		list_add_tail(&entry->list, &reset_lookup_list);
+ 	}
+ 	mutex_unlock(&reset_lookup_mutex);
+@@ -526,11 +523,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+ }
+ EXPORT_SYMBOL_GPL(__of_reset_control_get);
+ 
++static struct reset_controller_dev *
++__reset_controller_by_name(const char *name)
++{
++	struct reset_controller_dev *rcdev;
++
++	lockdep_assert_held(&reset_list_mutex);
++
++	list_for_each_entry(rcdev, &reset_controller_list, list) {
++		if (!rcdev->dev)
++			continue;
++
++		if (!strcmp(name, dev_name(rcdev->dev)))
++			return rcdev;
++	}
++
++	return NULL;
++}
++
+ static struct reset_control *
+ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+ 				bool shared, bool optional)
+ {
+ 	const struct reset_control_lookup *lookup;
++	struct reset_controller_dev *rcdev;
+ 	const char *dev_id = dev_name(dev);
+ 	struct reset_control *rstc = NULL;
+ 
+@@ -547,7 +563,15 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+ 		    ((con_id && lookup->con_id) &&
+ 		     !strcmp(con_id, lookup->con_id))) {
+ 			mutex_lock(&reset_list_mutex);
+-			rstc = __reset_control_get_internal(lookup->rcdev,
++			rcdev = __reset_controller_by_name(lookup->provider);
++			if (!rcdev) {
++				mutex_unlock(&reset_list_mutex);
++				mutex_unlock(&reset_lookup_mutex);
++				/* Reset provider may not be ready yet. */
++				return -EPROBE_DEFER;
++			}
++
++			rstc = __reset_control_get_internal(rcdev,
+ 							    lookup->index,
+ 							    shared);
+ 			mutex_unlock(&reset_list_mutex);
+diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
+index 25698f6c1fae..c870acaa2e07 100644
+--- a/include/linux/reset-controller.h
++++ b/include/linux/reset-controller.h
+@@ -30,21 +30,22 @@ struct of_phandle_args;
+  * struct reset_control_lookup - represents a single lookup entry
+  *
+  * @list: internal list of all reset lookup entries
+- * @rcdev: reset controller device controlling this reset line
++ * @provider: name of the reset controller device controlling this reset line
+  * @index: ID of the reset controller in the reset controller device
+  * @dev_id: name of the device associated with this reset line
+  * @con_id name of the reset line (can be NULL)
+  */
+ struct reset_control_lookup {
+ 	struct list_head list;
+-	struct reset_controller_dev *rcdev;
++	const char *provider;
+ 	unsigned int index;
+ 	const char *dev_id;
+ 	const char *con_id;
+ };
+ 
+-#define RESET_LOOKUP(_dev_id, _con_id, _index)				\
++#define RESET_LOOKUP(_provider, _dev_id, _con_id, _index)		\
+ 	{								\
++		.provider = _provider,					\
+ 		.dev_id = _dev_id,					\
+ 		.con_id = _con_id,					\
+ 		.index = _index,					\
+@@ -57,6 +58,7 @@ struct reset_control_lookup {
+  * @owner: kernel module of the reset controller driver
+  * @list: internal list of reset controller devices
+  * @reset_control_head: head of internal list of requested reset controls
++ * @dev: corresponding driver model device struct
+  * @of_node: corresponding device tree node as phandle target
+  * @of_reset_n_cells: number of cells in reset line specifiers
+  * @of_xlate: translation function to translate from specifier as found in the
+@@ -68,6 +70,7 @@ struct reset_controller_dev {
+ 	struct module *owner;
+ 	struct list_head list;
+ 	struct list_head reset_control_head;
++	struct device *dev;
+ 	struct device_node *of_node;
+ 	int of_reset_n_cells;
+ 	int (*of_xlate)(struct reset_controller_dev *rcdev,
+@@ -82,8 +85,7 @@ struct device;
+ int devm_reset_controller_register(struct device *dev,
+ 				   struct reset_controller_dev *rcdev);
+ 
+-void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+-				 struct reset_control_lookup *lookup,
++void reset_controller_add_lookup(struct reset_control_lookup *lookup,
+ 				 unsigned int num_entries);
+ 
+ #endif
+-- 
+2.16.1
