@@ -1,43 +1,65 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521533741-8075-1-git-send-email-mike.looijmans@topic.nl>
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com,
- Mike Looijmans <mike.looijmans@topic.nl>
-References: <1521114608-21967-1-git-send-email-mike.looijmans@topic.nl>
- <1521533741-8075-1-git-send-email-mike.looijmans@topic.nl>
-Message-ID: <152182467481.178046.2010749144270859022@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3] clk: Add driver for the si544 clock generator chip
-Date: Fri, 23 Mar 2018 10:04:34 -0700
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 6/8] remoteproc: da8xx: prepare and unprepare the clock where needed
+Date: Fri, 23 Mar 2018 10:36:07 +0100
+Message-Id: <20180323093609.24576-7-brgl@bgdev.pl>
+In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
+References: <20180323093609.24576-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Mike Looijmans (2018-03-20 01:15:41)
-> +
-> +static bool is_valid_frequency(const struct clk_si544 *data,
-> +       unsigned long frequency)
-> +{
-> +       unsigned long max_freq;
-> +
-> +       if (frequency < SI544_MIN_FREQ)
-> +               return false;
-> +
-> +       switch (data->speed_grade) {
-> +       case si544a:
-> +               max_freq =3D 1500000000;
-> +               break;
-> +       case si544b:
-> +               max_freq =3D 800000000;
-> +               break;
-> +       case si544c:
-> +               max_freq =3D 350000000;
-> +               break;
-> +       }
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Sad. My compiler complains about max_freq being possibly unassigned
-here, even though that seems impossible I guess we need to put back the
-default case. I'll take care of it when applying and assign max_freq to
-0 by default.
+We're currently switching the platform to using the common clock
+framework. We need to explicitly prepare and unprepare the rproc
+clock.
 
-Otherwise, applied to clk-next.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 2b24291337b7..f134192922e0 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 
+ 	writel(rproc->bootaddr, drproc->bootreg);
+ 
+-	ret = clk_enable(dsp_clk);
++	ret = clk_prepare_enable(dsp_clk);
+ 	if (ret) {
+-		dev_err(dev, "clk_enable() failed: %d\n", ret);
++		dev_err(dev, "clk_prepare_enable() failed: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
+ 	struct da8xx_rproc *drproc = rproc->priv;
+ 
+ 	davinci_clk_reset_assert(drproc->dsp_clk);
+-	clk_disable(drproc->dsp_clk);
++	clk_disable_unprepare(drproc->dsp_clk);
+ 
+ 	return 0;
+ }
+-- 
+2.16.1
