@@ -1,44 +1,65 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v3 01/15] dt-bindings: clock: mediatek: add missing
- required #reset-cells
-To: Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-mediatek@lists.infradead.org, mark.rutland@arm.com,
- robh+dt@kernel.org, sean.wang@mediatek.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-References: <cover.1518895232.git.sean.wang@mediatek.com>
- <7365f2286ff2cebcfb590715cb4a15dedd089046.1518895232.git.sean.wang@mediatek.com>
- <152123261872.225550.10226809804986023416@swboyd.mtv.corp.google.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <836d5d6e-eafa-52b8-39dc-6422ebe32d82@gmail.com>
-Date: Sun, 18 Mar 2018 21:34:49 +0100
-MIME-Version: 1.0
-In-Reply-To: <152123261872.225550.10226809804986023416@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 5/8] remoteproc: da8xx: add the missing retval check for clk_enable()
+Date: Fri, 23 Mar 2018 12:47:06 +0100
+Message-Id: <20180323114709.20330-6-brgl@bgdev.pl>
+In-Reply-To: <20180323114709.20330-1-brgl@bgdev.pl>
+References: <20180323114709.20330-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
+The davinci platform is being switched to using the common clock
+framework, where clk_enable() can fail. Add the return value check.
 
-On 03/16/2018 09:36 PM, Stephen Boyd wrote:
-> Quoting sean.wang@mediatek.com (2018-02-17 11:54:36)
->> From: Sean Wang <sean.wang@mediatek.com>
->>
->> All ethsys, pciesys and ssusbsys internally include reset controller, so
->> explicitly add back these missing cell definitions to related bindings
->> and examples.
->>
->> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: linux-clk@vger.kernel.org
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> ---
-> 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> 
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-added to v4.16-next/dts64
-Thanks!
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index bf3b9034c319..2b24291337b7 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 	struct device *dev = rproc->dev.parent;
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
++	int ret;
+ 
+ 	/* hw requires the start (boot) address be on 1KB boundary */
+ 	if (rproc->bootaddr & 0x3ff) {
+@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 
+ 	writel(rproc->bootaddr, drproc->bootreg);
+ 
+-	clk_enable(dsp_clk);
++	ret = clk_enable(dsp_clk);
++	if (ret) {
++		dev_err(dev, "clk_enable() failed: %d\n", ret);
++		return ret;
++	}
++
+ 	davinci_clk_reset_deassert(dsp_clk);
+ 
+ 	return 0;
+-- 
+2.16.1
