@@ -1,39 +1,65 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 5 Mar 2018 16:19:36 -0600
-From: Rob Herring <robh@kernel.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: viresh.kumar@linaro.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
-	david.brown@linaro.org, rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux@arm.linux.org.uk
-Subject: Re: [PATCH v8 15/15] dt-bindings: cpufreq: Document
- operating-points-v2-krait-cpu
-Message-ID: <20180305221936.yu2mlcjodlcumedx@rob-hp-laptop>
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
- <1519740422-3835-16-git-send-email-sricharan@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1519740422-3835-16-git-send-email-sricharan@codeaurora.org>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 5/8] remoteproc: da8xx: add the missing retval check for clk_enable()
+Date: Fri, 23 Mar 2018 14:04:52 +0100
+Message-Id: <20180323130455.11470-6-brgl@bgdev.pl>
+In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Feb 27, 2018 at 07:37:02PM +0530, Sricharan R wrote:
-> In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
-> that has KRAIT processors the voltage/current value of each OPP
-> varies based on the silicon variant in use.
-> operating-points-v2-krait-cpu specifies the phandle to nvmem efuse cells
-> and the operating-points-v2 table for each opp. The qcom-cpufreq driver
-> reads the efuse value from the SoC to provide the required information
-> that is used to determine the voltage and current value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
-> 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> ---
->  .../devicetree/bindings/cpufreq/krait-cpufreq.txt  | 363 +++++++++++++++++++++
->  1 file changed, 363 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The davinci platform is being switched to using the common clock
+framework, where clk_enable() can fail. Add the return value check.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index bf3b9034c319..2b24291337b7 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 	struct device *dev = rproc->dev.parent;
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
++	int ret;
+ 
+ 	/* hw requires the start (boot) address be on 1KB boundary */
+ 	if (rproc->bootaddr & 0x3ff) {
+@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 
+ 	writel(rproc->bootaddr, drproc->bootreg);
+ 
+-	clk_enable(dsp_clk);
++	ret = clk_enable(dsp_clk);
++	if (ret) {
++		dev_err(dev, "clk_enable() failed: %d\n", ret);
++		return ret;
++	}
++
+ 	davinci_clk_reset_deassert(dsp_clk);
+ 
+ 	return 0;
+-- 
+2.16.1
