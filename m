@@ -1,72 +1,149 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <eb47a027-c678-7496-ef58-fc8e96be7dd9@cogentembedded.com>
-References: <20180317092857.4396-1-wens@csie.org> <20180317092857.4396-4-wens@csie.org>
- <eb47a027-c678-7496-ef58-fc8e96be7dd9@cogentembedded.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 30 Mar 2018 17:13:31 +0800
-Message-ID: <CAGb2v679OxYOFxz6pHa9W11EVa9ZYD6N3HfdjaTPpKkVe5qngg@mail.gmail.com>
-Subject: Re: [PATCH net-next 03/12] dt-bindings: net: dwmac-sun8i: Clean up
- clock delay chain descriptions
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	netdev <netdev@vger.kernel.org>, Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@kernel.org,
+	mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	stanimir.varbanov@linaro.org,
+	vivek.gautam@codeaurora.org,
+	srinivas.kandagatla@linaro.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 3/3] clk: qcom: mmcc-msm8996: leave all mmagic gdscs and clocks always enabled
+Date: Fri, 23 Mar 2018 13:56:16 +0530
+Message-Id: <20180323082616.10142-4-rnayak@codeaurora.org>
+In-Reply-To: <20180323082616.10142-1-rnayak@codeaurora.org>
+References: <20180323082616.10142-1-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Mar 18, 2018 at 5:21 PM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Hello!
->
->
-> On 3/17/2018 12:28 PM, Chen-Yu Tsai wrote:
->
->> The clock delay chains found in the glue layer for dwmac-sun8i are only
->> used with RGMII PHYs. They are not intended for non-RGMII PHYs, such as
->> MII external PHYs or the internal PHY. Also, a recent SoC has a smaller
->> range of possible values for the delay chain.
->>
->> This patch reformats the delay chain section of the device tree binding
->> to make it clear that the delay chains only apply to RGMII PHYs, and
->> make it easier to add the R40-specific bits later.
->>
->> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->>   Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 11 +++++++----
->>   1 file changed, 7 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
->> b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
->> index 3d6d5fa0c4d5..b8a3028d6c30 100644
->> --- a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
->> +++ b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
->> @@ -28,10 +28,13 @@ Required properties:
->>     - allwinner,sun8i-a83t-system-controller
->>     Optional properties:
->> -- allwinner,tx-delay-ps: TX clock delay chain value in ps. Range value is
->> 0-700. Default is 0)
->> -- allwinner,rx-delay-ps: RX clock delay chain value in ps. Range value is
->> 0-3100. Default is 0)
->> -Both delay properties need to be a multiple of 100. They control the
->> delay for
->> -external PHY.
->> +- allwinner,tx-delay-ps: TX clock delay chain value in ps.
->> +                        Range is 0-700. Default is 0.
->> +- allwinner,rx-delay-ps: RX clock delay chain value in ps.
->> +                        Range is 0-3100. Default is 0.
->> +Both delay properties need to be a multiple of 100. They control the
->> +clock delay for external RGMII PHY. They are do apply to the internal
->
->
->   s/are do/do not/?
+There's no bus infrastructure today to handle all the mmagic bus
+clocks and GDSCs needed by all the multimedia blocks in msm8996, like
+mdss, video, camera and gpu. Mark all these clocks with a CLK_IS_CRITICAL
+and GDSCs with a ALWAYS_ON flag for now so they are left always enabled.
+This patch should be reverted at some point when we do have a bus driver
+to manage these clocks and GDSCs.
 
-Fixed. Thanks!
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-msm8996.c  |  2 +-
+ drivers/clk/qcom/mmcc-msm8996.c | 22 +++++++++++-----------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-ChenYu
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 5d7451209206..a414ffe906ec 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -3105,7 +3105,7 @@ static struct gdsc aggre0_noc_gdsc = {
+ 		.name = "aggre0_noc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
+ };
+ 
+ static struct gdsc hlos1_vote_aggre0_noc_gdsc = {
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 66a2fa4ec93c..1a25ee4f3658 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -1245,7 +1245,7 @@ static struct clk_branch mmss_mmagic_ahb_clk = {
+ 			.name = "mmss_mmagic_ahb_clk",
+ 			.parent_names = (const char *[]){ "ahb_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1260,7 +1260,7 @@ static struct clk_branch mmss_mmagic_cfg_ahb_clk = {
+ 			.name = "mmss_mmagic_cfg_ahb_clk",
+ 			.parent_names = (const char *[]){ "ahb_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1319,7 +1319,7 @@ static struct clk_branch mmagic_camss_axi_clk = {
+ 			.name = "mmagic_camss_axi_clk",
+ 			.parent_names = (const char *[]){ "axi_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1334,7 +1334,7 @@ static struct clk_branch mmagic_camss_noc_cfg_ahb_clk = {
+ 			.name = "mmagic_camss_noc_cfg_ahb_clk",
+ 			.parent_names = (const char *[]){ "gcc_mmss_noc_cfg_ahb_clk" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1439,7 +1439,7 @@ static struct clk_branch mmagic_mdss_axi_clk = {
+ 			.name = "mmagic_mdss_axi_clk",
+ 			.parent_names = (const char *[]){ "axi_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1454,7 +1454,7 @@ static struct clk_branch mmagic_mdss_noc_cfg_ahb_clk = {
+ 			.name = "mmagic_mdss_noc_cfg_ahb_clk",
+ 			.parent_names = (const char *[]){ "gcc_mmss_noc_cfg_ahb_clk" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1529,7 +1529,7 @@ static struct clk_branch mmagic_video_axi_clk = {
+ 			.name = "mmagic_video_axi_clk",
+ 			.parent_names = (const char *[]){ "axi_clk_src" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -1544,7 +1544,7 @@ static struct clk_branch mmagic_video_noc_cfg_ahb_clk = {
+ 			.name = "mmagic_video_noc_cfg_ahb_clk",
+ 			.parent_names = (const char *[]){ "gcc_mmss_noc_cfg_ahb_clk" },
+ 			.num_parents = 1,
+-			.flags = CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -2919,7 +2919,7 @@ static struct gdsc mmagic_video_gdsc = {
+ 		.name = "mmagic_video",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
+ };
+ 
+ static struct gdsc mmagic_mdss_gdsc = {
+@@ -2929,7 +2929,7 @@ static struct gdsc mmagic_mdss_gdsc = {
+ 		.name = "mmagic_mdss",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
+ };
+ 
+ static struct gdsc mmagic_camss_gdsc = {
+@@ -2939,7 +2939,7 @@ static struct gdsc mmagic_camss_gdsc = {
+ 		.name = "mmagic_camss",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
+ };
+ 
+ static struct gdsc venus_gdsc = {
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
