@@ -1,30 +1,44 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/7] clk: meson: drop meson_aoclk_gate_regmap_ops
+Date: Fri, 23 Mar 2018 22:38:10 +0800
+Message-ID: <20180323143816.200573-2-yixun.lan@amlogic.com>
+In-Reply-To: <20180323143816.200573-1-yixun.lan@amlogic.com>
+References: <20180323143816.200573-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
- mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180317100952.28538-7-manivannan.sadhasivam@linaro.org>
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
- devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
- daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
- <20180317100952.28538-7-manivannan.sadhasivam@linaro.org>
-Message-ID: <152150794654.254778.7377854561384563424@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 06/12] clk: actions: Add mux clock support
-Date: Mon, 19 Mar 2018 18:05:46 -0700
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Manivannan Sadhasivam (2018-03-17 03:09:46)
-> Add support for Actions Semi mux clock together with helper
-> functions to be used in composite clock.
-> =
+let's remove the unused meson_aoclk_gate_regmap_ops
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+Fixes: 1f932d99710d ("clk: meson: remove superseded aoclk_gate_regmap")
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ drivers/clk/meson/gxbb-aoclk.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-Looks good. Please resend.
+diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
+index 0be78383f257..badc4c22b4ee 100644
+--- a/drivers/clk/meson/gxbb-aoclk.h
++++ b/drivers/clk/meson/gxbb-aoclk.h
+@@ -17,8 +17,6 @@
+ #define AO_RTC_ALT_CLK_CNTL0	0x94
+ #define AO_RTC_ALT_CLK_CNTL1	0x98
+ 
+-extern const struct clk_ops meson_aoclk_gate_regmap_ops;
+-
+ struct aoclk_cec_32k {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+-- 
+2.15.1
