@@ -1,43 +1,30 @@
-Return-Path: <jiaxun.yang@flygoat.com>
-Message-ID: <1520432391.3731.8.camel@flygoat.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, James Hogan
-	 <jhogan@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Ralf Baechle <ralf@linux-mips.org>, Michael Turquette
- <mturquette@baylibre.com>, sboyd@codeaurora.org,  "open list:OPEN FIRMWARE
- AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
- Linux-MIPS <linux-mips@linux-mips.org>,  linux-clk@vger.kernel.org, open
- list <linux-kernel@vger.kernel.org>, Paul Cercueil <paul@crapouillou.net>,
- Mathieu Malaterre <malat@debian.org>, Dominik Peklo <dom.peklo@gmail.com>
-Date: Wed, 07 Mar 2018 22:19:51 +0800
-In-Reply-To: <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
-	 <20170927151527.25570-4-prasannatsmkumar@gmail.com>
-	 <20180306000832.GL4197@saruman>
-	 <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:34862 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751668AbeCWJVw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Mar 2018 05:21:52 -0400
+Date: Fri, 23 Mar 2018 10:21:48 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] clk: renesas: r8a77965: Add MSIOF controller clocks
+Message-ID: <20180323092148.jji2x4mg2xmrlt5j@verge.net.au>
+References: <1521795895-24033-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1521795895-24033-1-git-send-email-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2018-03-07三的 19:14 +0530，PrasannaKumar Muralidharan写道：
+On Fri, Mar 23, 2018 at 10:04:54AM +0100, Geert Uytterhoeven wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
-> I used to get my code tested from Domink but I could not reach him
-> for
-> quite some time. Before buying the development board myself I would
-> like to see if anyone can help me in testing. Do you have any contact
-> with Ingenic who can help in testing this?
+> This patch adds MSIOF{0,1,2,3} clocks to the R8A77965 SoC.
 > 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hi PrasannaKumar
-
-I'm resently working on Ingenic chips too. Ingentic guys have sent me a
-X1000 development broad and it will arrive in about two weeks. I have a
-ejtag debugger also (but not very suit with X1000 because X1000 have
-different ejtag interface with standard MIPS cores, maybe we need some
-modification on openocd). So maybe I can help in testing this after I
-get my broad. Just ask if you need any help.
-Thanks
--- 
-Jiaxun Yang <jiaxun.yang@flygoat.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
