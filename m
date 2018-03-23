@@ -1,69 +1,42 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-Return-Path: <benjamin.gaignard@linaro.org>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v3] clk: stm32: add configuration flags for each of the stm32 drivers
-Date: Mon, 12 Mar 2018 10:32:48 +0100
-Message-Id: <20180312093248.27512-1-benjamin.gaignard@st.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a77965: Add MSIOF controller clocks
+Date: Fri, 23 Mar 2018 10:04:54 +0100
+Message-Id: <1521795895-24033-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add two configuration flags to be able to not compile all the time
-stm32f and stm32h7 drivers when ARCH_STM32 is set.
-That help to save some space on those small platforms.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-Acked-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+This patch adds MSIOF{0,1,2,3} clocks to the R8A77965 SoC.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-version 3:
-- rebase on clk-next where clk-stm32mp1 branch has been merged
+To be queued in clk-renesas-for-v4.18.
 
- drivers/clk/Kconfig  | 14 ++++++++++++++
- drivers/clk/Makefile |  4 ++--
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/r8a77965-cpg-mssr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index cbb9b0c05442..a26cde051158 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -244,6 +244,20 @@ config COMMON_CLK_STM32MP157
- 	---help---
- 	  Support for stm32mp157 SoC family clocks
- 
-+config COMMON_CLK_STM32F
-+	bool "Clock driver for stm32f4 and stm32f7 SoC families"
-+	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-+	help
-+	---help---
-+	  Support for stm32f4 and stm32f7 SoC families clocks
-+
-+config COMMON_CLK_STM32H7
-+	bool "Clock driver for stm32h7 SoC family"
-+	depends on MACH_STM32H743
-+	help
-+	---help---
-+	  Support for stm32h7 SoC family clocks
-+
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 8d812c701aa6..e0c106ed9407 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -45,8 +45,8 @@ obj-$(CONFIG_COMMON_CLK_SCPI)           += clk-scpi.o
- obj-$(CONFIG_COMMON_CLK_SI5351)		+= clk-si5351.o
- obj-$(CONFIG_COMMON_CLK_SI514)		+= clk-si514.o
- obj-$(CONFIG_COMMON_CLK_SI570)		+= clk-si570.o
--obj-$(CONFIG_ARCH_STM32)		+= clk-stm32f4.o
--obj-$(CONFIG_ARCH_STM32)		+= clk-stm32h7.o
-+obj-$(CONFIG_COMMON_CLK_STM32F)		+= clk-stm32f4.o
-+obj-$(CONFIG_COMMON_CLK_STM32H7)	+= clk-stm32h7.o
- obj-$(CONFIG_COMMON_CLK_STM32MP157)	+= clk-stm32mp1.o
- obj-$(CONFIG_ARCH_TANGO)		+= clk-tango4.o
- obj-$(CONFIG_CLK_TWL6040)		+= clk-twl6040.o
+diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+index b1acfb60351ca35b..8fae5e9c4a77242d 100644
+--- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+@@ -116,6 +116,10 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
+ 	DEF_MOD("scif3",		204,	R8A77965_CLK_S3D4),
+ 	DEF_MOD("scif1",		206,	R8A77965_CLK_S3D4),
+ 	DEF_MOD("scif0",		207,	R8A77965_CLK_S3D4),
++	DEF_MOD("msiof3",		208,	R8A77965_CLK_MSO),
++	DEF_MOD("msiof2",		209,	R8A77965_CLK_MSO),
++	DEF_MOD("msiof1",		210,	R8A77965_CLK_MSO),
++	DEF_MOD("msiof0",		211,	R8A77965_CLK_MSO),
+ 	DEF_MOD("sys-dmac2",		217,	R8A77965_CLK_S0D3),
+ 	DEF_MOD("sys-dmac1",		218,	R8A77965_CLK_S0D3),
+ 	DEF_MOD("sys-dmac0",		219,	R8A77965_CLK_S0D3),
 -- 
-2.15.0
+2.7.4
