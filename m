@@ -1,44 +1,51 @@
-Return-Path: <weiyi.lu@mediatek.com>
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>
-CC: James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <srv_heupstream@mediatek.com>, Weiyi Lu
-	<weiyi.lu@mediatek.com>
-Subject: [PATCH v2 1/5] dt-bindings: soc: update MT2712 power dt-bindings
-Date: Mon, 12 Mar 2018 15:03:38 +0800
-Message-ID: <20180312070342.4335-3-weiyi.lu@mediatek.com>
-In-Reply-To: <20180312070342.4335-1-weiyi.lu@mediatek.com>
-References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
-Return-Path: weiyi.lu@mediatek.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 3/8] ARM: davinci: dts: add a reset control to the dsp node
+Date: Fri, 23 Mar 2018 14:04:50 +0100
+Message-Id: <20180323130455.11470-4-brgl@bgdev.pl>
+In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add new power domains(MFG_SC1/MFG_SC2/MFG_SC3)
-for MT2712 according to ECO design change.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+The davinci-rproc driver will soon use the reset framework. Add the
+resets property to the dsp node in da850.dtsi.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- include/dt-bindings/power/mt2712-power.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/power/mt2712-power.h b/include/dt-bindings/power/mt2712-power.h
-index 92b46d772fae..2c147817efc2 100644
---- a/include/dt-bindings/power/mt2712-power.h
-+++ b/include/dt-bindings/power/mt2712-power.h
-@@ -22,5 +22,8 @@
- #define MT2712_POWER_DOMAIN_USB		5
- #define MT2712_POWER_DOMAIN_USB2	6
- #define MT2712_POWER_DOMAIN_MFG		7
-+#define MT2712_POWER_DOMAIN_MFG_SC1	8
-+#define MT2712_POWER_DOMAIN_MFG_SC2	9
-+#define MT2712_POWER_DOMAIN_MFG_SC3	10
- 
- #endif /* _DT_BINDINGS_POWER_MT2712_POWER_H */
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index dad64dbf1f23..5b485e44b83e 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -109,6 +109,7 @@
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <28>;
+ 		clocks = <&psc0 15>;
++		resets = <&psc0 15>;
+ 		status = "disabled";
+ 	};
+ 	soc@1c00000 {
 -- 
-2.12.5
+2.16.1
