@@ -1,69 +1,60 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v9 12/15] dt-bindings: clock: Document qcom,krait-cc
-Date: Tue,  6 Mar 2018 20:09:05 +0530
-Message-Id: <1520347148-27852-13-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
-References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <brgl@bgdev.pl>
+MIME-Version: 1.0
+In-Reply-To: <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
+References: <20180323130455.11470-1-brgl@bgdev.pl> <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 23 Mar 2018 17:55:47 +0100
+Message-ID: <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, David Lechner <david@lechnology.com>,
+	Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Ohad Ben-Cohen <ohad@wizery.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Sekhar Nori <nsekhar@ti.com>,
+	devicetree <devicetree@vger.kernel.org>, linux-remoteproc@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
+> Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> This series converts the only user of the handcoded, mach-specific reset
+>> routines in the davinci platform to using the reset framework.
+>>
+>> Patch 1 modifies the way lookup entries are registered with the reset
+>> framework.
+>>
+>> Patches 2-4 add necessary lookups/DT-properties.
+>>
+>> Patches 5-7 convert the davinci-rproc driver to the reset framework.
+>>
+>> Patch 8 removes now dead code.
+>>
+>> Philipp: it turned out that it's indeed better to use the reset
+>> controller's device name for the entry lookup.
+>>
+>> Tested both in DT and legacy modes by booting the examples from
+>> ti-ipc-rtos recipe in meta-ti.
+>>
+>> This series applies on top of David Lechner's common-clk-v9 branch[1]
+>> with Philipp Zabel's reset/next branch[2] pulled in.
+>>
+>> It can be found in my github tree as well[3].
+>>
+>
+> What's the merge strategy for the rest of the patches? I should apply
+> the clk ones after the next -rc1?
 
-The Krait clock controller controls the krait CPU and the L2 clocks
-consisting a primary mux and secondary mux. Add document for that.
+Or maybe Philipp can provide us with an immutable branch with the reset patches?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,krait-cc.txt    | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+The you could apply the driver patches and let Sekhar take all the
+platform code?
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-new file mode 100644
-index 0000000..874138f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-@@ -0,0 +1,22 @@
-+Krait Clock Controller
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+			"qcom,krait-cc-v1"
-+			"qcom,krait-cc-v2"
-+
-+- #clock-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: must be 1
-+
-+Example:
-+
-+	kraitcc: clock-controller {
-+		compatible = "qcom,krait-cc-v1";
-+		#clock-cells = <1>;
-+	};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Best regards,
+Bartosz Golaszewski
