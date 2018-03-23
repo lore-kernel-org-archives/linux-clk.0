@@ -1,55 +1,51 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 1 Mar 2018 15:19:50 -0600
-From: Rob Herring <robh@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 3/7] pinctrl: sunxi: add support for the Allwinner H6
- main pin controller
-Message-ID: <20180301211950.ust7g4jnlncrvwxp@rob-hp-laptop>
-References: <20180223122552.58049-1-icenowy@aosc.io>
- <20180223122552.58049-4-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180223122552.58049-4-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 3/8] ARM: davinci: dts: add a reset control to the dsp node
+Date: Fri, 23 Mar 2018 12:47:04 +0100
+Message-Id: <20180323114709.20330-4-brgl@bgdev.pl>
+In-Reply-To: <20180323114709.20330-1-brgl@bgdev.pl>
+References: <20180323114709.20330-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Feb 23, 2018 at 08:25:48PM +0800, Icenowy Zheng wrote:
-> The Allwinner H6 SoC has two pin controllers, one main controller
-> (called CPUX-PORT in user manual) and one controller in CPUs power
-> domain (called CPUS-PORT in user manual).
-> 
-> This commit introduces support for the main pin controller on H6.
-> 
-> The pin bank A and B are not wired out and hidden from the SoC's
-> documents, however it's shown that the "ATE" (an AC200 chip
-> co-packaged with the H6 die) is connected to the main SoC die via these
-> pin banks. The information about these banks is just copied from the BSP
-> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
-> format. The GPIO functions are dropped, as they're impossible to use --
-> except a GPIO&IRQ only pin (PB20) which might be the IRQ of ATE.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v3:
-> - SPDX license identifier fix.
-> - Dropped most GPIO functionality at PA/PB.
-> 
-> Changes in v2:
-> - Dropped without_bus_gate description.
-> - Switched to SPDX license identifier.
-> 
->  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Please add acks when posting new versions.
+The davinci-rproc driver will soon use the reset framework. Add the
+resets property to the dsp node in da850.dtsi.
 
->  drivers/pinctrl/sunxi/Kconfig                      |   4 +
->  drivers/pinctrl/sunxi/Makefile                     |   1 +
->  drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c          | 614 +++++++++++++++++++++
->  4 files changed, 620 insertions(+)
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index dad64dbf1f23..5b485e44b83e 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -109,6 +109,7 @@
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <28>;
+ 		clocks = <&psc0 15>;
++		resets = <&psc0 15>;
+ 		status = "disabled";
+ 	};
+ 	soc@1c00000 {
+-- 
+2.16.1
