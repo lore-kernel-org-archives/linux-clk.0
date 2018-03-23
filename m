@@ -1,68 +1,51 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: fix flag space conflict with clkctrl clocks
-From: Tero Kristo <t-kristo@ti.com>
-To: <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <tony@atomide.com>
-CC: <arnd@arndb.de>, <linux-arm-kernel@lists.infradead.org>
-References: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
-Message-ID: <0da17b8f-62af-1634-9dea-85445d28d587@ti.com>
-Date: Thu, 29 Mar 2018 21:25:07 +0300
-MIME-Version: 1.0
-In-Reply-To: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 2/8] ARM: davinci: dts: make psc0 a reset provider
+Date: Fri, 23 Mar 2018 12:47:03 +0100
+Message-Id: <20180323114709.20330-3-brgl@bgdev.pl>
+In-Reply-To: <20180323114709.20330-1-brgl@bgdev.pl>
+References: <20180323114709.20330-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 27/03/18 20:47, Tero Kristo wrote:
-> The introduction of support for CLK_SET_RATE_PARENT flag for clkctrl
-> clocks used a generic clock flag, which causes a conflict with the
-> rest of the clkctrl flags, namely the NO_IDLEST flag. This can cause
-> boot failures on certain platforms where this flag is introduced, by
-> omitting the wait for the clockctrl module to be fully enabled before
-> proceeding with rest of the code.
-> 
-> Fix this by moving all the clkctrl specific flags to their own bit-range.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Fixes: 49159a9dc3da ("clk: ti: add support for CLK_SET_RATE_PARENT flag")
-> Reported-by: Christophe Lyon <christophe.lyon@linaro.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Stephen, can you pick this up as a late fix?
+The psc driver registers with the reset framework as a provider. Add
+the #reset-cells property to the psc0 node.
 
--Tero
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ---
->   drivers/clk/ti/clock.h | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-> index 90b86aa..b582780 100644
-> --- a/drivers/clk/ti/clock.h
-> +++ b/drivers/clk/ti/clock.h
-> @@ -76,6 +76,11 @@ enum {
->   #define CLKF_CORE			(1 << 9)
->   #define CLKF_J_TYPE			(1 << 10)
->   
-> +/* CLKCTRL flags */
-> +#define CLKF_SW_SUP			BIT(5)
-> +#define CLKF_HW_SUP			BIT(6)
-> +#define CLKF_NO_IDLEST			BIT(7)
-> +
->   #define CLK(dev, con, ck)		\
->   	{				\
->   		.lk = {			\
-> @@ -185,10 +190,6 @@ struct omap_clkctrl_data {
->   extern const struct omap_clkctrl_data dm814_clkctrl_data[];
->   extern const struct omap_clkctrl_data dm816_clkctrl_data[];
->   
-> -#define CLKF_SW_SUP	BIT(0)
-> -#define CLKF_HW_SUP	BIT(1)
-> -#define CLKF_NO_IDLEST	BIT(2)
-> -
->   typedef void (*ti_of_clk_init_cb_t)(void *, struct device_node *);
->   
->   struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
-> 
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index a3b9a99b43ca..dad64dbf1f23 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -123,6 +123,7 @@
+ 			compatible = "ti,da850-psc0";
+ 			reg = <0x10000 0x1000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+ 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+-- 
+2.16.1
