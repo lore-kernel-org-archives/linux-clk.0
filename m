@@ -1,110 +1,285 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:34228 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933025AbeCPDCk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Mar 2018 23:02:40 -0400
-Received: by mail-pg0-f65.google.com with SMTP id m15so3579983pgc.1
-        for <linux-clk@vger.kernel.org>; Thu, 15 Mar 2018 20:02:40 -0700 (PDT)
-From: Lin Huang <hl@rock-chips.com>
-To: heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-        dbasehore@chromium.org, diander@chromium.org,
-        briannorris@chromium.org, shawn.lin@rock-chips.com,
-        Lin Huang <hl@rock-chips.com>
-Subject: [PATCH v2 2/2] arm64: dts: rockchip: assign clock rate for some cpll child clock
-Date: Fri, 16 Mar 2018 11:02:28 +0800
-Message-Id: <1521169348-8552-2-git-send-email-hl@rock-chips.com>
-In-Reply-To: <1521169348-8552-1-git-send-email-hl@rock-chips.com>
-References: <1521169348-8552-1-git-send-email-hl@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: avifishman70@gmail.com, brendanhiggins@google.com, linux@armlinux.org.uk,
+ mark.rutland@arm.com, mturquette@baylibre.com, raltherr@google.com,
+ robh+dt@kernel.org, sboyd@codeaurora.org, tali.perry1@gmail.com,
+ tmaimon77@gmail.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521553249-6971-3-git-send-email-tali.perry1@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+ linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
+References: <1521553249-6971-1-git-send-email-tali.perry1@gmail.com>
+ <1521553249-6971-3-git-send-email-tali.perry1@gmail.com>
+Message-ID: <152182793651.178046.13824776927497999970@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v11 2/2] clk: npcm7xx: Nuvoton NPCM7XX Clock Controller driver
+Date: Fri, 23 Mar 2018 10:58:56 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-These clocks do not assign default clock frequency, and use the
-default cru register value to get frequency, so if cpll increase
-frequency, these clocks also increase their frequency, that may
-exceed their signed off frequency. So assign default clock for
-them to avoid it.
+Quoting tali.perry1@gmail.com (2018-03-20 06:40:49)
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 71ec41e6364f..353e94f2c25a 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -21,6 +21,7 @@ endif
+>  obj-$(CONFIG_MACH_ASM9260)             +=3D clk-asm9260.o
+>  obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)    +=3D clk-axi-clkgen.o
+>  obj-$(CONFIG_ARCH_AXXIA)               +=3D clk-axm5516.o
+> +obj-$(CONFIG_ARCH_NPCM7XX)             +=3D clk-npcm7xx.o
 
-Change-Id: If79368aeda5c51dbf2a3b6659f17052a2ae4a401
-Signed-off-by: Lin Huang <hl@rock-chips.com>
----
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi |  8 +++++++-
- arch/arm64/boot/dts/rockchip/rk3399.dtsi     | 14 ++++++++++++--
- 2 files changed, 19 insertions(+), 3 deletions(-)
+Please sort this by filename, not config name.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-index 18f546f..84e367b 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-@@ -588,7 +588,10 @@
- 		<&cru ACLK_PERILP0>, <&cru HCLK_PERILP0>,
- 		<&cru PCLK_PERILP0>, <&cru ACLK_CCI>,
- 		<&cru HCLK_PERILP1>, <&cru PCLK_PERILP1>,
--		<&cru ACLK_VIO>;
-+		<&cru ACLK_VIO>,
-+		<&cru ACLK_GIC_PRE>,
-+		<&cru PCLK_DDR>,
-+		<&cru ACLK_HDCP>;
- 	assigned-clock-rates =
- 		<600000000>, <800000000>,
- 		<1000000000>,
-@@ -597,6 +600,9 @@
- 		<100000000>, <100000000>,
- 		<50000000>, <800000000>,
- 		<100000000>, <50000000>,
-+		<400000000>,
-+		<200000000>,
-+		<200000000>,
- 		<400000000>;
- };
- 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 4550c0f..b358533 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -315,6 +315,8 @@
- 		clocks = <&cru HCLK_SDMMC>, <&cru SCLK_SDMMC>,
- 			 <&cru SCLK_SDMMC_DRV>, <&cru SCLK_SDMMC_SAMPLE>;
- 		clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-+		assigned-clocks = <&cru HCLK_SD>;
-+		assigned-clock-rates = <200000000>;
- 		fifo-depth = <0x100>;
- 		power-domains = <&power RK3399_PD_SD>;
- 		resets = <&cru SRST_SDMMC>;
-@@ -466,8 +468,10 @@
- 		clocks = <&cru SCLK_DP_CORE>, <&cru PCLK_DP_CTRL>,
- 			 <&cru SCLK_SPDIF_REC_DPTX>, <&cru PCLK_VIO_GRF>;
- 		clock-names = "core-clk", "pclk", "spdif", "grf";
--		phys = <&tcphy0_dp>, <&tcphy1_dp>;
-+		assigned-clocks = <&cru SCLK_DP_CORE>, <&cru SCLK_SPDIF_REC_DPTX>;
-+		assigned-clock-rates = <100000000>, <200000000>;
- 		power-domains = <&power RK3399_PD_HDCP>;
-+		phys = <&tcphy0_dp>, <&tcphy1_dp>;
- 		resets = <&cru SRST_DPTX_SPDIF_REC>, <&cru SRST_P_UPHY0_DPTX>,
- 			 <&cru SRST_P_UPHY0_APB>, <&cru SRST_DP_CORE>;
- 		reset-names = "spdif", "dptx", "apb", "core";
-@@ -1323,7 +1327,10 @@
- 			<&cru ACLK_PERILP0>, <&cru HCLK_PERILP0>,
- 			<&cru PCLK_PERILP0>, <&cru ACLK_CCI>,
- 			<&cru HCLK_PERILP1>, <&cru PCLK_PERILP1>,
--			<&cru ACLK_VIO>;
-+			<&cru ACLK_VIO>,
-+			<&cru ACLK_GIC_PRE>,
-+			<&cru PCLK_DDR>,
-+			<&cru ACLK_HDCP>;
- 		assigned-clock-rates =
- 			 <594000000>,  <800000000>,
- 			<1000000000>,
-@@ -1332,6 +1339,9 @@
- 			 <100000000>,  <100000000>,
- 			  <50000000>, <600000000>,
- 			 <100000000>,   <50000000>,
-+			 <400000000>,
-+			 <200000000>,
-+			 <200000000>,
- 			 <400000000>;
- 	};
- 
--- 
-2.7.4
+>  obj-$(CONFIG_COMMON_CLK_CDCE706)       +=3D clk-cdce706.o
+>  obj-$(CONFIG_COMMON_CLK_CDCE925)       +=3D clk-cdce925.o
+>  obj-$(CONFIG_ARCH_CLPS711X)            +=3D clk-clps711x.o
+> diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+> new file mode 100644
+> index 000000000000..0d373f8f114b
+> --- /dev/null
+> +++ b/drivers/clk/clk-npcm7xx.c
+> @@ -0,0 +1,757 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Nuvoton NPCM7xx Clock Generator
+[..]
+> +
+> +
+> +static struct clk_hw_onecell_data *npcm7xx_clk_data;
+> +static void __iomem *clk_base;
 
+Please remove static singletons and allocate them during init.
+
+> +static DEFINE_SPINLOCK(lock);
+
+Please give 'lock' a better name so that lockdep reports are
+meaningful.
+
+> +
+> +
+> +static const struct of_device_id npcm7xx_clk_match_table[] =3D {
+> +                               { .compatible =3D "nuvoton,npcm750-clk"},
+> +                               {},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, npcm7xx_clk_match_table);
+
+Is this used?
+
+> +
+> +
+> +static void __init npcm7xx_clk_init(struct device_node *clk_np)
+> +{
+> +
+> +       struct resource res;
+> +       struct clk_hw *hw;
+> +       struct clk *clk;
+> +       int ret;
+> +       int i;
+> +
+> +       pr_debug("NPCM750: clock init: ");
+> +
+> +       clk_base =3D NULL;
+> +
+> +       ret =3D of_address_to_resource(clk_np, 0, &res);
+> +       if (ret) {
+> +               pr_err("\t%s: failed to get resource, ret %d\n", clk_np->=
+name,
+> +                       ret);
+> +               return;
+> +       }
+> +
+> +
+> +       clk_base =3D ioremap(res.start, resource_size(&res));
+> +       if (IS_ERR(clk_base)) {
+> +               pr_err("\tnpcm7xx_clk_init: resource error\n");
+> +               goto npcm7xx_init_error;
+> +       }
+> +
+> +
+> +       npcm7xx_clk_data =3D kzalloc(sizeof(*npcm7xx_clk_data->hws) *
+> +               NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL=
+);
+> +
+> +       npcm7xx_clk_data->num =3D 0;
+> +
+> +       if (!npcm7xx_clk_data->hws) {
+> +               pr_err("Can't alloc npcm7xx_clk_data\n");
+
+We don't need allocation error messages, kmalloc already prints a bunch
+of info.
+
+> +               goto npcm7xx_init_np_err;
+> +       }
+> +
+> +       npcm7xx_clk_data->num =3D NPCM7XX_NUM_CLOCKS;
+> +
+> +
+> +       /*
+> +        * This way all clock fetched before the platform device probes,
+
+What platform device?
+
+> +        * except those we assign here for early use, will be deferred.
+> +        */
+> +       pr_debug("\tclk init hws\n");
+> +       for (i =3D 0; i < NPCM7XX_NUM_CLOCKS; i++)
+> +               npcm7xx_clk_data->hws[i] =3D ERR_PTR(-EPROBE_DEFER);
+> +
+> +       /* Read fixed clocks. These 3 clocks must be defined in DT */
+> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_REFCLK);
+> +       if (!IS_ERR(clk)) {
+> +               pr_err("failed to find external REFCLK: %ld\n",
+> +                       PTR_ERR(clk));
+> +               clk_put(clk);
+> +       }
+> +
+> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_SYSBYPCK);
+> +       if (!IS_ERR(clk)) {
+> +               pr_err("failed to find external SYSBYPCK: %ld\n",
+> +                       PTR_ERR(clk));
+> +               clk_put(clk);
+> +       }
+> +
+> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_MCBYPCK);
+> +       if (!IS_ERR(clk)) {
+> +               pr_err("failed to find external MCBYPCK: %ld\n",
+> +                       PTR_ERR(clk));
+> +               clk_put(clk);
+> +       }
+> +
+> +       /* Register plls */
+> +       pr_debug("\tclk register pll\n");
+> +       for (i =3D 0; i < ARRAY_SIZE(npcm7xx_plls); i++) {
+> +               const struct npcm7xx_clk_pll_data *pll_data =3D &npcm7xx_=
+plls[i];
+> +
+> +               pr_debug("\tclk reg pll%d, reg=3D0x%x, name=3D%s, p=3D%s\=
+n", i,
+> +               (unsigned int)pll_data->reg, pll_data->name,
+> +               pll_data->parent_name);
+> +
+> +               hw =3D npcm7xx_clk_register_pll(clk_base + pll_data->reg,
+> +                       pll_data->name, pll_data->parent_name, pll_data->=
+flags);
+> +               if (IS_ERR(hw)) {
+> +                       pr_err("npcm7xx_clk: Can't register pll\n");
+> +                       goto npcm7xx_init_fail;
+> +               }
+> +
+> +               if (pll_data->onecell_idx >=3D 0)
+> +                       npcm7xx_clk_data->hws[pll_data->onecell_idx] =3D =
+hw;
+> +       }
+> +
+> +       /* Register fixed dividers */
+> +       pr_debug("\tclk register fixed divs\n");
+> +       clk =3D clk_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL1_DIV2,
+> +                       NPCM7XX_CLK_S_PLL1, 0, 1, 2);
+> +       if (IS_ERR(clk)) {
+> +               pr_err("npcm7xx_clk: Can't register fixed div\n");
+> +               goto npcm7xx_init_fail;
+> +       }
+> +
+> +
+> +       clk =3D clk_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL2_DIV2,
+> +                       NPCM7XX_CLK_S_PLL2, 0, 1, 2);
+> +
+> +       if (IS_ERR(clk)) {
+> +               pr_err("npcm7xx_clk: Can't register div2\n");
+> +               goto npcm7xx_init_fail;
+> +       }
+> +
+> +       /* Register muxes */
+> +       for (i =3D 0; i < ARRAY_SIZE(npcm7xx_muxes); i++) {
+> +               const struct npcm7xx_clk_mux_data *mux_data =3D &npcm7xx_=
+muxes[i];
+> +
+> +               pr_debug("\tadd mux%d reg=3D0x%x name=3D%s p=3D%s num_p=
+=3D%d\n",
+> +                   i, ((u32)clk_base + (u32)NPCM7XX_CLKSEL), mux_data->n=
+ame,
+> +                       mux_data->parent_names[0], mux_data->num_parents);
+> +
+> +               hw =3D clk_hw_register_mux_table(NULL,
+> +                       mux_data->name,
+> +                       mux_data->parent_names, mux_data->num_parents,
+> +                       mux_data->flags, clk_base + NPCM7XX_CLKSEL,
+> +                       mux_data->shift, mux_data->mask, 0,
+> +                       mux_data->table, &lock);
+> +
+> +               if (IS_ERR(hw)) {
+> +                       pr_err("npcm7xx_clk: Can't register mux\n");
+> +                       goto npcm7xx_init_fail;
+> +               }
+> +
+> +               if (mux_data->onecell_idx >=3D 0)
+> +                       npcm7xx_clk_data->hws[mux_data->onecell_idx] =3D =
+hw;
+> +       }
+> +
+> +       /* Register clock dividers specified in npcm7xx_divs. */
+> +       pr_debug("\tclk register divs\n");
+> +       for (i =3D 0; i < ARRAY_SIZE(npcm7xx_divs); i++) {
+> +               const struct npcm7xx_clk_div_data *div_data =3D &npcm7xx_=
+divs[i];
+> +
+> +               pr_debug("\tadd div%d reg=3D0x%x name=3D%s, parent=3D%s\n=
+",
+> +                               i, (unsigned int)div_data->reg,
+> +                               div_data->name, div_data->parent_name);
+
+Please remove all these debug prints.
+
+> +
+> +               hw =3D clk_hw_register_divider(NULL, div_data->name,
+> +                               div_data->parent_name,
+> +                               div_data->flags,
+> +                               clk_base + div_data->reg,
+> +                               div_data->shift, div_data->width,
+> +                               div_data->clk_divider_flags, &lock);
+> +               if (IS_ERR(hw)) {
+> +                       pr_err("npcm7xx_clk: Can't register div table\n");
+> +                       goto npcm7xx_init_fail;
+> +               }
+> +
+> +               if (div_data->onecell_idx >=3D 0)
+> +                       npcm7xx_clk_data->hws[div_data->onecell_idx] =3D =
+hw;
+> +       }
+> +
+> +       ret =3D of_clk_add_hw_provider(clk_np, of_clk_hw_onecell_get,
+> +                                       npcm7xx_clk_data);
+> +       if (ret)
+> +               pr_err("failed to add DT provider: %d\n", ret);
+> +
+> +       pr_info("npcm7xx clk: %d dividers, %d muxes and %d plls registere=
+d.\n",
+> +               ARRAY_SIZE(npcm7xx_divs), ARRAY_SIZE(npcm7xx_muxes),
+> +               ARRAY_SIZE(npcm7xx_plls));
+
+Please remove this "I'm alive!" message.
+
+> +
+> +       of_node_put(clk_np);
+> +
+> +       return;
+> +
+> +npcm7xx_init_fail:
+> +       pr_debug("\tclk setup fail\n");
+
+Please don't put tabs at the beginning of printks.
+
+> +       if (npcm7xx_clk_data->num)
+> +               kfree(npcm7xx_clk_data->hws);
+> +npcm7xx_init_np_err:
+> +       if (clk_base !=3D NULL)
+> +               iounmap(clk_base);
+> +npcm7xx_init_error:
+> +       of_node_put(clk_np);
+> +}
+> +
+> +CLK_OF_DECLARE(npcm7xx_clk_init, "nuvoton,npcm750-clk", npcm7xx_clk_init=
+);
+
+Any reason this can't be a platform driver?
