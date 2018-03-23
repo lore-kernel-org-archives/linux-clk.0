@@ -1,34 +1,37 @@
-Return-Path: <sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:44724 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751221AbeCWI0F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 23 Mar 2018 04:26:05 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Lin Huang <hl@rock-chips.com>
+Cc: dbasehore@chromium.org, shawn.lin@rock-chips.com,
+        briannorris@chromium.org, linux-rockchip@lists.infradead.org,
+        dianders@chromium.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] clk: rockchip: assign correct id for pclk_ddr and hclk_sd in rk3399
+Date: Fri, 23 Mar 2018 09:26:00 +0100
+Message-ID: <5398945.fsProPGqoW@phil>
+In-Reply-To: <1521511589-17844-1-git-send-email-hl@rock-chips.com>
+References: <1521511589-17844-1-git-send-email-hl@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Mon, 26 Mar 2018 15:17:46 +0530
-From: sricharan@codeaurora.org
-To: Craig Tatlor <ctatlor97@gmail.com>
-Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
- andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, linux@arm.linux.org.uk
-Subject: Re: [v9,04/15] clk: qcom: Add HFPLL driver
-In-Reply-To: <20180325193341.27845-1-ctatlor97@gmail.com>
-References: <520347148-27852-5-git-send-email-sricharan@codeaurora.org>
- <20180325193341.27845-1-ctatlor97@gmail.com>
-Message-ID: <0132a9e1371c7e690d174cb4d65bc951@codeaurora.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018-03-26 01:03, Craig Tatlor wrote:
-> This doesn't seem to work correctly with the higher clocks on 8974pro,
-> specifically 2150400000 hz or above, maybe its something to do with
-> being bigger than an unsigned long.
+Am Dienstag, 20. März 2018, 03:06:28 CET schrieb Lin Huang:
+> Since hclk_sd and pclk_ddr source clock from CPLL or GPLL,
+> and these two PLL may change their frequency. If we do not
+> assign right id to pclk_ddr and hclk_sd, they will alway use
+> default cur register value, and may get the frequency
+> exceed their signed off frequency. So assign correct Id
+> for them, then we can assign frequency for them in dts.
 > 
-> When i try to set any higher frequency it jumps down to 300mhz.
+> Change-Id: I6c4d15d37ddabe4ed34e2351cf26e660672ae9ee
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
 
+applied for 4.17 after dropping the Change-Id
 
-  Thanks for testing this series. Not sure i got dropped from the list.
-  So i will check on this and come back.
-
-Regards,
-  Sricharan
+Thanks
+Heiko
