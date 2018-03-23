@@ -1,91 +1,62 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr30062.outbound.protection.outlook.com ([40.107.3.62]:34176
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+Received: from mail-he1eur01on0076.outbound.protection.outlook.com ([104.47.0.76]:32359
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751824AbeCPG0p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Mar 2018 02:26:45 -0400
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Jacky Bai <ping.bai@nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-CC: Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        id S1751847AbeCWJtn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:49:43 -0400
+From: Abel Vesa <abel.vesa@nxp.com>
+To: "festevam@gmail.com" <festevam@gmail.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC: Anson Huang <anson.huang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Adriana Reus <adriana.reus@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "jacky.baip@gmail.com" <jacky.baip@gmail.com>
-Subject: RE: [PATCH v5 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy
- divider and busy mux
-Date: Fri, 16 Mar 2018 06:26:41 +0000
-Message-ID: <AM3PR04MB3060671D694BAE450C5FC4A80D70@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "abelvesa@linux.com" <abelvesa@linux.com>
+Subject: Return checks for clock calls
+Date: Fri, 23 Mar 2018 09:49:38 +0000
+Message-ID: <20180323094937.5wx5exah6tfyl43u@fsr-ub1664-175>
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Jacky Bai
-> Sent: Monday, March 12, 2018 5:29 PM
-> To: sboyd@kernel.org; robh+dt@kernel.org; shawnguo@kernel.org;
-> kernel@pengutronix.de
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>; linux-clk@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>;
-> A.s. Dong <aisheng.dong@nxp.com>; jacky.baip@gmail.com
-> Subject: [PATCH v5 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy divid=
-er
-> and busy mux
->=20
-> The busy divider and busy mux is actually used by the system critical clo=
-cks,
-> so add 'CLK_IS_CRITICAL' to clocks registered with these two type.
->=20
+Hi Shawn, Fabio,
 
-We probably could fine tune clk_init_on for other platforms later.
-So:
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+I'm trying to get the imx clks changes upstreamed. To that end, I reached t=
+his
+old commit that adds some wrappers over the generic clk API. Here is the co=
+mmit
+message:
 
-Regards
-Dong Aisheng
+	ARM: imx6: add return check for clock calls
 
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
-> ---
->  change from V3->v4:
->  - fix a typo in commit log
->  change from v4->v5:
->  - optimize the commit subject
-> ---
->  drivers/clk/imx/clk-busy.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c inde=
-x
-> 6df3389..9903652 100644
-> --- a/drivers/clk/imx/clk-busy.c
-> +++ b/drivers/clk/imx/clk-busy.c
-> @@ -101,7 +101,7 @@ struct clk *imx_clk_busy_divider(const char *name,
-> const char *parent_name,
->=20
->  	init.name =3D name;
->  	init.ops =3D &clk_busy_divider_ops;
-> -	init.flags =3D CLK_SET_RATE_PARENT;
-> +	init.flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL;
->  	init.parent_names =3D &parent_name;
->  	init.num_parents =3D 1;
->=20
-> @@ -175,7 +175,7 @@ struct clk *imx_clk_busy_mux(const char *name, void
-> __iomem *reg, u8 shift,
->=20
->  	init.name =3D name;
->  	init.ops =3D &clk_busy_mux_ops;
-> -	init.flags =3D 0;
-> +	init.flags =3D CLK_IS_CRITICAL;
->  	init.parent_names =3D parent_names;
->  	init.num_parents =3D num_parents;
->=20
-> --
-> 1.9.1
+	There are a bunch of clk_enable_prepare, clk_set_parent and clk_set_rate
+	calls in imx6 clock driver's initialization.  They are called without
+	retunr check.  If there is something going wrong with the calls, they
+	will just fail silently.
 
+	The patch creates a set of helper functions imx_clk_enable_prepare,
+	imx_clk_set_parent and imx_clk_set_rate, and use them instead from clock
+	initialization to check the return and print error message to tell
+	failures if any.
+
+	Signed-off-by: Shawn Guo <shawn.guo@freescale.com>
+
+And it adds the imx_clk_set_parent, imx_clk_prepare_enable and
+imx_clk_set_rate which basically just print an error message if the generic
+functions have failed.
+
+The only plus of these wrappers is that we at least see that the generic
+functions have failed, but the behaviour is not changed in any way.
+
+Question is, do we want this upstreamed considering that we need to replace=
+ the
+calls throughout all the older imx socs ?
+
+Abel=
