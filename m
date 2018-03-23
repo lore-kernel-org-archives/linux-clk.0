@@ -1,45 +1,97 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v1 3/5] dt-bindings: clock: add clocks for MT2712
-To: Weiyi Lu <weiyi.lu@mediatek.com>, Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
- Mike Turquette <mturquette@baylibre.com>,
- James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, srv_heupstream@mediatek.com
-References: <20180222054851.26096-1-weiyi.lu@mediatek.com>
- <20180222054851.26096-5-weiyi.lu@mediatek.com>
- <20180301224555.44pvl67l5oqibbkg@rob-hp-laptop>
- <1519957404.14513.5.camel@mtksdaap41>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <d1f7b0e7-fa9b-cc87-80df-3479db8b9281@gmail.com>
-Date: Sun, 11 Mar 2018 23:27:41 +0100
-MIME-Version: 1.0
-In-Reply-To: <1519957404.14513.5.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 8/8] clk: davinci: kill davinci_clk_reset_assert/deassert()
+Date: Fri, 23 Mar 2018 10:36:09 +0100
+Message-Id: <20180323093609.24576-9-brgl@bgdev.pl>
+In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
+References: <20180323093609.24576-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
+This code is no longer used. Remove it.
 
-On 03/02/2018 03:23 AM, Weiyi Lu wrote:
-> On Thu, 2018-03-01 at 16:45 -0600, Rob Herring wrote:
->> On Thu, Feb 22, 2018 at 01:48:49PM +0800, Weiyi Lu wrote:
->>> add new clocks according to ECO design change
->>>
->>> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
->>> ---
->>>  include/dt-bindings/clock/mt2712-clk.h | 294 +++++++++++++++++----------------
->>>  1 file changed, 151 insertions(+), 143 deletions(-)
->>
->> You can't just renumber your clocks. They are an ABI. Plus, for an ECO 
->> there can't have been that much change.
->>
-> Hi Rob,
-> Got it! Is it correct if I append those new added clocks at the bottom
-> of each own subsystem? If the answer is yes, I'll resend a new version.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------------
+ drivers/clk/davinci/psc.c                  | 18 ------------------
+ 2 files changed, 39 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
 
-Yes, that will work. Please do that and resubmit.
-
-Thanks,
-Matthias
+diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
+deleted file mode 100644
+index 42ed4f2f5ce4..000000000000
+--- a/arch/arm/mach-davinci/include/mach/clock.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/*
+- * arch/arm/mach-davinci/include/mach/clock.h
+- *
+- * Clock control driver for DaVinci - header file
+- *
+- * Authors: Vladimir Barinov <source@mvista.com>
+- *
+- * 2007 (c) MontaVista Software, Inc. This file is licensed under
+- * the terms of the GNU General Public License version 2. This program
+- * is licensed "as is" without any warranty of any kind, whether express
+- * or implied.
+- */
+-#ifndef __ASM_ARCH_DAVINCI_CLOCK_H
+-#define __ASM_ARCH_DAVINCI_CLOCK_H
+-
+-struct clk;
+-
+-int davinci_clk_reset_assert(struct clk *c);
+-int davinci_clk_reset_deassert(struct clk *c);
+-
+-#endif
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 063df62381ea..75c4bc6f23e3 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -295,24 +295,6 @@ static int davinci_lpsc_clk_reset(struct clk *clk, bool reset)
+ 	return 0;
+ }
+ 
+-/*
+- * REVISIT: These exported functions can be removed after a non-DT lookup is
+- * added to the reset controller framework and the davinci-rproc driver is
+- * updated to use the generic reset controller framework.
+- */
+-
+-int davinci_clk_reset_assert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, true);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_assert);
+-
+-int davinci_clk_reset_deassert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, false);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_deassert);
+-
+ static int davinci_psc_reset_assert(struct reset_controller_dev *rcdev,
+ 				    unsigned long id)
+ {
+-- 
+2.16.1
