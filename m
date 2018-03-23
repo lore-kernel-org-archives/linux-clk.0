@@ -1,164 +1,54 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v3 7/8] remoteproc/davinci: use the reset framework
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin
- Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner
-	<david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson
-	<bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>
-References: <20180327092031.11251-1-brgl@bgdev.pl>
- <20180327092031.11251-8-brgl@bgdev.pl>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <51e33d41-37b1-9e88-4a13-503bb39e2e40@ti.com>
-Date: Wed, 28 Mar 2018 17:30:27 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180327092031.11251-8-brgl@bgdev.pl>
+Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: avifishman70@gmail.com, brendanhiggins@google.com, linux@armlinux.org.uk,
+ mark.rutland@arm.com, mturquette@baylibre.com, raltherr@google.com,
+ robh+dt@kernel.org, sboyd@codeaurora.org, tali.perry1@gmail.com,
+ tmaimon77@gmail.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521553249-6971-2-git-send-email-tali.perry1@gmail.com>
+Cc: devicetree@vger.kernel.org, openbmc@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1521553249-6971-1-git-send-email-tali.perry1@gmail.com>
+ <1521553249-6971-2-git-send-email-tali.perry1@gmail.com>
+Message-ID: <152182506241.178046.9923016351698583201@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v11 1/2] dt-binding: clk: npcm750: Add binding for Nuvoton
+ NPCM7XX Clock
+Date: Fri, 23 Mar 2018 10:11:02 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bart,
+Quoting tali.perry1@gmail.com (2018-03-20 06:40:48)
+> From: Tali Perry <tali.perry1@gmail.com>
+> =
 
-On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Switch to using the reset framework instead of handcoded reset routines
-> we used so far.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> * Nuvoton NPCM7XX Clock Controller
+> =
+
+> Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
+> generates and supplies clocks to all modules within the BMC.
+> =
+
 > ---
->  drivers/remoteproc/da8xx_remoteproc.c | 33 ++++++++++++++++++++++++++++-----
->  1 file changed, 28 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-> index b668e32996e2..788f59809c02 100644
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -10,6 +10,7 @@
->  
->  #include <linux/bitops.h>
->  #include <linux/clk.h>
-> +#include <linux/reset.h>
->  #include <linux/err.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
-> @@ -20,8 +21,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/remoteproc.h>
->  
-> -#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
-> -
->  #include "remoteproc_internal.h"
->  
->  static char *da8xx_fw_name;
-> @@ -72,6 +71,7 @@ struct da8xx_rproc {
->  	struct da8xx_rproc_mem *mem;
->  	int num_mems;
->  	struct clk *dsp_clk;
-> +	struct reset_control *dsp_reset;
->  	void (*ack_fxn)(struct irq_data *data);
->  	struct irq_data *irq_data;
->  	void __iomem *chipsig;
-> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
->  	struct device *dev = rproc->dev.parent;
->  	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
->  	struct clk *dsp_clk = drproc->dsp_clk;
-> +	struct reset_control *dsp_reset = drproc->dsp_reset;
->  	int ret;
->  
->  	/* hw requires the start (boot) address be on 1KB boundary */
-> @@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
->  		return ret;
->  	}
->  
-> -	davinci_clk_reset_deassert(dsp_clk);
-> +	ret = reset_control_deassert(dsp_reset);
-> +	if (ret) {
-> +		dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
-> +		clk_disable_unprepare(dsp_clk);
-> +		return ret;
-> +	}
->  
->  	return 0;
->  }
-> @@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
->  static int da8xx_rproc_stop(struct rproc *rproc)
->  {
->  	struct da8xx_rproc *drproc = rproc->priv;
-> +	struct device *dev = rproc->dev.parent;
-> +	int ret;
-> +
-> +	ret = reset_control_assert(drproc->dsp_reset);
-> +	if (ret) {
-> +		dev_err(dev, "reset_control_assert() failed: %d\n", ret);
-> +		return ret;
-> +	}
->  
-> -	davinci_clk_reset_assert(drproc->dsp_clk);
->  	clk_disable_unprepare(drproc->dsp_clk);
->  
->  	return 0;
-> @@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  	struct resource *bootreg_res;
->  	struct resource *chipsig_res;
->  	struct clk *dsp_clk;
-> +	struct reset_control *dsp_reset;
->  	void __iomem *chipsig;
->  	void __iomem *bootreg;
->  	int irq;
-> @@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  		return PTR_ERR(dsp_clk);
->  	}
->  
-> +	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
-> +	if (IS_ERR(dsp_reset)) {
-> +		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
-> +			dev_err(dev, "unable to get reset control: %ld\n",
-> +				PTR_ERR(dsp_reset));
-> +
-> +		return PTR_ERR(dsp_reset);
-> +	}
-> +
->  	if (dev->of_node) {
->  		ret = of_reserved_mem_device_init(dev);
->  		if (ret) {
-> @@ -309,7 +332,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
->  	 * held in reset at the time it is called.
->  	 */
-> -	ret = davinci_clk_reset_assert(drproc->dsp_clk);
-> +	ret = reset_control_assert(dsp_reset);
->  	if (ret)
->  		goto free_rproc;
->  
+> =
 
-Tested your previous branch, need one more change in this patch to have
-the remoteproc boot be actually executing some code. The acquired
-dsp_reset is not stored in the drproc, so the start and stop were not
-effective. The issue was masked because reset_control_assert() and
-deassert() return 0 when a NULL pointer is passed in.
+> 10 =3D=3D> 11
+> update documentation. "eth" replaced with "ethernet" in use case eaxample.
+> =
 
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -311,6 +311,7 @@ static int da8xx_rproc_probe(struct platform_device
-*pdev)
-        drproc = rproc->priv;
-        drproc->rproc = rproc;
-        drproc->dsp_clk = dsp_clk;
-+       drproc->dsp_reset = dsp_reset;
-        rproc->has_iommu = false;
+> 2 =3D=3D> 10
+> update documentation. add external clocks as inputs to clk driver.
+> fix SPDX comment.
+> =
 
-regards
-Suman
+> 1 =3D=3D> 2
+> This patch includes fix request described here:
+> https://patchwork.kernel.org/patch/10200033/
+> (move fixed clocks to DT)
+> =
+
+> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+But this part goes before the triple dash. I'll apply it and fix it up
+on clk-next.
