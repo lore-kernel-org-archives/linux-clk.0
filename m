@@ -1,37 +1,51 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
- riku.voipio@linaro.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180312104945.3001-1-riku.voipio@linaro.org>
-Cc: arnd@linaro.org, linux-arm-kernel@lists.infradead.org,
- Riku Voipio <riku.voipio@linaro.org>, John Stultz <john.stultz@linaro.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Wei Xu <xuwei5@hisilicon.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-References: <20180312104945.3001-1-riku.voipio@linaro.org>
-Message-ID: <152149275385.242365.18026048344034278094@swboyd.mtv.corp.google.com>
-Subject: Re: [RESEND PATCH] clk: enable hi655x common clk automatically
-Date: Mon, 19 Mar 2018 13:52:33 -0700
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 2/8] ARM: davinci: dts: make psc0 a reset provider
+Date: Fri, 23 Mar 2018 10:36:03 +0100
+Message-Id: <20180323093609.24576-3-brgl@bgdev.pl>
+In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
+References: <20180323093609.24576-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting riku.voipio@linaro.org (2018-03-12 03:49:45)
-> From: Riku Voipio <riku.voipio@linaro.org>
-> =
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> Without COMMON_CLK_HI655X Wifi and bluetooth are non-functional on Hikey.
-> As suggested by Arnd, enable the driver automatically when the parent
-> driver is selected. With sensible defaults in place, we can leave other
-> choices for EXPERT.
-> =
+The psc driver registers with the reset framework as a provider. Add
+the #reset-cells property to the psc0 node.
 
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Wei Xu <xuwei5@hisilicon.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Suggested-by: Arnd Bergmann <arnd@linaro.org>
-> Signed-off-by: Riku Voipio <riku.voipio@linaro.org>
-> ---
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied to clk-next
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index a3b9a99b43ca..dad64dbf1f23 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -123,6 +123,7 @@
+ 			compatible = "ti,da850-psc0";
+ 			reg = <0x10000 0x1000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+ 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+-- 
+2.16.1
