@@ -1,152 +1,71 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v4 06/14] clk: qcom: cpu-8996: Add support to switch below 600Mhz
-Date: Fri, 30 Mar 2018 00:26:39 +0300
-Message-Id: <1522358807-10413-7-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <brgl@bgdev.pl>
+MIME-Version: 1.0
+In-Reply-To: <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
+References: <20180323130455.11470-1-brgl@bgdev.pl> <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
+ <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com> <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 23 Mar 2018 18:16:06 +0100
+Message-ID: <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>
+Cc: David Lechner <david@lechnology.com>, Kevin Hilman <khilman@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Sekhar Nori <nsekhar@ti.com>,
+	devicetree <devicetree@vger.kernel.org>, linux-remoteproc@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+2018-03-23 18:08 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
+> Quoting Bartosz Golaszewski (2018-03-23 09:55:47)
+>> 2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
+>> > Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
+>> >> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> >>
+>> >> This series converts the only user of the handcoded, mach-specific reset
+>> >> routines in the davinci platform to using the reset framework.
+>> >>
+>> >> Patch 1 modifies the way lookup entries are registered with the reset
+>> >> framework.
+>> >>
+>> >> Patches 2-4 add necessary lookups/DT-properties.
+>> >>
+>> >> Patches 5-7 convert the davinci-rproc driver to the reset framework.
+>> >>
+>> >> Patch 8 removes now dead code.
+>> >>
+>> >> Philipp: it turned out that it's indeed better to use the reset
+>> >> controller's device name for the entry lookup.
+>> >>
+>> >> Tested both in DT and legacy modes by booting the examples from
+>> >> ti-ipc-rtos recipe in meta-ti.
+>> >>
+>> >> This series applies on top of David Lechner's common-clk-v9 branch[1]
+>> >> with Philipp Zabel's reset/next branch[2] pulled in.
+>> >>
+>> >> It can be found in my github tree as well[3].
+>> >>
+>> >
+>> > What's the merge strategy for the rest of the patches? I should apply
+>> > the clk ones after the next -rc1?
+>>
+>> Or maybe Philipp can provide us with an immutable branch with the reset patches?
+>>
+>> The you could apply the driver patches and let Sekhar take all the
+>> platform code?
+>>
+>
+> Ok that could work too.
 
-The CPU clock controller's primary PLL operates on a single VCO range,
-between 600MHz and 3GHz. However the CPUs do support OPPs with
-frequencies between 300MHz and 600MHz. In order to support running the
-CPUs at those frequencies we end up having to lock the PLL at twice the
-rate and drive the CPU clk via the PLL/2 output and SMUX.
+Ohad, Bjorn can you ack the remoteproc patches? Are you OK with
+Stephen taking them through the clock tree? Otherwise it would get
+complicated since they depend on the first clk patch and the last clk
+patch depends on them.
 
-So for frequencies above 600MHz we follow the following path
- Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-and for frequencies between 300MHz and 600MHz we follow
- Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
-
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-
-Conflicts:
-	drivers/clk/qcom/clk-cpu-8996.c
----
- drivers/clk/qcom/clk-cpu-8996.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index 12585b1..064a3fe 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -78,6 +78,8 @@ enum _pmux_input {
- 	NUM_OF_PMUX_INPUTS
- };
- 
-+#define DIV_2_THRESHOLD		600000000
-+
- static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-        [PLL_OFF_L_VAL] = 0x04,
-        [PLL_OFF_ALPHA_VAL] = 0x08,
-@@ -105,10 +107,11 @@ enum _pmux_input {
- 
- static const struct alpha_pll_config hfpll_config = {
- 	.l = 60,
--	.config_ctl_val = 0x200d4828,
-+	.config_ctl_val = 0x200d4aa8,
- 	.config_ctl_hi_val = 0x006,
- 	.pre_div_mask = BIT(12),
- 	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -150,7 +153,7 @@ enum _pmux_input {
- 	.vco_mask = 0x3 << 20,
- 	.config_ctl_val = 0x4001051b,
- 	.post_div_mask = 0x3 << 8,
--	.post_div_val = 0x1,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -191,6 +194,7 @@ struct clk_cpu_8996_mux {
- 	u8	width;
- 	struct notifier_block nb;
- 	struct clk_hw	*pll;
-+	struct clk_hw	*pll_div_2;
- 	struct clk_regmap clkr;
- };
- 
-@@ -236,6 +240,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
- 	struct clk_hw *parent = cpuclk->pll;
- 
-+	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
-+		if (req->rate < (DIV_2_THRESHOLD / 2))
-+			return -EINVAL;
-+
-+		parent = cpuclk->pll_div_2;
-+	}
-+
- 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
- 	req->best_parent_hw = parent;
- 
-@@ -247,13 +258,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- {
- 	int ret;
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+	struct clk_notifier_data *cnd = data;
- 
- 	switch (event) {
- 	case PRE_RATE_CHANGE:
- 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
- 		break;
- 	case POST_RATE_CHANGE:
--		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		if (cnd->new_rate < DIV_2_THRESHOLD)
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  DIV_2_INDEX);
-+		else
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  PLL_INDEX);
- 		break;
- 	default:
- 		ret = 0;
-@@ -305,6 +322,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.pll_div_2 = &pwrcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
-@@ -325,6 +343,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.pll_div_2 = &perfcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
--- 
-1.9.1
+Thanks,
+Bart
