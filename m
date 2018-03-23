@@ -1,52 +1,97 @@
-Return-Path: <nsekhar@ti.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v8_00/42]_ARM:_davinci:_convert_to_common_cloc?=
- =?UTF-8?Q?k_framework=e2=80=8b?=
-To: Stephen Boyd <sboyd@kernel.org>, David Lechner <david@lechnology.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <152150722338.254778.4743967512266809482@swboyd.mtv.corp.google.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <4d6cc890-e948-6784-82bf-dac196804c07@ti.com>
-Date: Tue, 20 Mar 2018 19:22:08 +0530
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-In-Reply-To: <152150722338.254778.4743967512266809482@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <a4ca0ba3-5d31-2d8c-7fa6-f8e9ba9b4535@lechnology.com>
+References: <20180321120807.18032-1-brgl@bgdev.pl> <20180321120807.18032-5-brgl@bgdev.pl>
+ <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com> <CAMpxmJUELxNGv5fL1gdNM4nRxdJ9t39G2Nc29yjZRnS0fRyHYg@mail.gmail.com>
+ <a4ca0ba3-5d31-2d8c-7fa6-f8e9ba9b4535@lechnology.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 23 Mar 2018 10:07:30 +0100
+Message-ID: <CAMRc=Mf_nT3WDzPwMxhNcmk5=BUXBj2SobUcad809knqaWyGBQ@mail.gmail.com>
+Subject: Re: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
+To: David Lechner <david@lechnology.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, arm-soc <linux-arm-kernel@lists.infradead.org>,
+	linux-devicetree <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-On Tuesday 20 March 2018 06:23 AM, Stephen Boyd wrote:
-> Quoting David Lechner (2018-03-15 19:52:16)
->> This series converts mach-davinci to use the common clock framework.
+2018-03-21 17:17 GMT+01:00 David Lechner <david@lechnology.com>:
+> On 03/21/2018 11:08 AM, Bartosz Golaszewski wrote:
 >>
->> The series works like this, the first 19 patches create new clock drivers
->> using the common clock framework. There are basically 3 groups of clocks -
->> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each have
->> unique init data, which is the reason for so many patches.
-> 
-> Should I apply the first 19 patches to clk tree? Looking over them
-> nothing stands out except for your self comment about the bad
-> reviewed-by tag which I can remove.
+>> 2018-03-21 17:01 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>
+>>> On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
+>>>>
+>>>>
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> In order to be able to use the reset framework in legacy boot mode as
+>>>> well, add the reset lookup table to the psc driver for da850 variant.
+>>>>
+>>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>> ---
+>>>>    drivers/clk/davinci/psc-da850.c | 8 ++++++++
+>>>>    drivers/clk/davinci/psc.c       | 1 +
+>>>>    2 files changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/drivers/clk/davinci/psc-da850.c
+>>>> b/drivers/clk/davinci/psc-da850.c
+>>>> index ccc7eb17bf3a..395db4b2c0ee 100644
+>>>> --- a/drivers/clk/davinci/psc-da850.c
+>>>> +++ b/drivers/clk/davinci/psc-da850.c
+>>>> @@ -6,6 +6,7 @@
+>>>>     */
+>>>>      #include <linux/clk-provider.h>
+>>>> +#include <linux/reset-controller.h>
+>>>>    #include <linux/clk.h>
+>>>>    #include <linux/clkdev.h>
+>>>>    #include <linux/init.h>
+>>>> @@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,    "fck",  "ecap.0",
+>>>>                                  "fck",  "ecap.1",
+>>>>                                  "fck",  "ecap.2");
+>>>>    +static struct reset_control_lookup da850_psc0_reset_lookup_table[] =
+>>>> {
+>>>> +       RESET_LOOKUP("davinci-rproc.0", NULL, 15),
+>>>> +};
+>>>> +
+>>>>    static int da850_psc0_init(struct device *dev, void __iomem *base)
+>>>>    {
+>>>> +       reset_controller_add_lookup("da850-psc0",
+>>>> +                                   da850_psc0_reset_lookup_table,
+>>>> +
+>>>> ARRAY_SIZE(da850_psc0_reset_lookup_table));
+>>>
+>>>
+>>>
+>>> Could there be a race condition here since you are adding the lookup
+>>> *before*
+>>> you are adding the actual provider? It seems like
+>>> reset_controller_add_lookup()
+>>> should be after davinci_psc_register_clocks().
+>>>
+>>
+>> I don't think so, because reset_controller_add_lookup() only adds the
+>> lookup structure to the list in reset/core.c. The actual reset
+>> controller struct is only located and used when reset_control_get_*()
+>> is called, so after probing the user. And it's all protected with
+>> mutexes.
+>>
+>> This made me think though - maybe if we can't locate the controller,
+>> we should return -EPROBE_DEFER from probe in davinci-rproc?
+>>
+>> Bart
+>>
+>
+> Yes, especially since we know that the PSC driver itself does get
+> deferred already.
 
-I think it will be a good idea to go ahead merge the drivers/clk/ parts
-for v4.17.
+On the other hand if clk_get() succeeded, than the psc driver is
+already initialized and the subsequent call to reset_control_get()
+must succeed. But this is probably too machine-specific for a driver.
 
-I have been traveling, and have not been able to review this version.
-But I have closely reviewed previous versions. If there really are
-issues, I am sure we can get follow-on patches to fix those.
-
-But getting these into v4.17 will enable platform parts to come in
-easily into v4.18
-
-Thanks,
-Sekhar
+Bart
