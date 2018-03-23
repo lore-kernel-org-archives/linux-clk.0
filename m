@@ -1,92 +1,50 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v3 01/15] dt-bindings: clock: mediatek: add missing
- required #reset-cells
-To: sean.wang@mediatek.com, robh+dt@kernel.org, mark.rutland@arm.com,
- devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-References: <cover.1518895232.git.sean.wang@mediatek.com>
- <7365f2286ff2cebcfb590715cb4a15dedd089046.1518895232.git.sean.wang@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <6e155672-2544-3148-e664-72b830d1cdc2@gmail.com>
-Date: Sun, 11 Mar 2018 20:07:37 +0100
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 7/7] ARM64: dts: meson-axg: add an 32K alt aoclk
+Date: Fri, 23 Mar 2018 22:38:16 +0800
+Message-ID: <20180323143816.200573-8-yixun.lan@amlogic.com>
+In-Reply-To: <20180323143816.200573-1-yixun.lan@amlogic.com>
+References: <20180323143816.200573-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <7365f2286ff2cebcfb590715cb4a15dedd089046.1518895232.git.sean.wang@mediatek.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
+The ao_clk81 in AO domain have two clock source,
+one from a 32K alt crystal we name it as ao_alt_clk,
+another is the clk81 signal from EE domain.
 
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-On 02/17/2018 08:54 PM, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> All ethsys, pciesys and ssusbsys internally include reset controller, so
-> explicitly add back these missing cell definitions to related bindings
-> and examples.
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-clk@vger.kernel.org
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> ---
->  Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt   | 1 +
->  Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt  | 2 ++
->  Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt | 2 ++
->  3 files changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-> index 6cc7840..8f5335b 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
-> @@ -9,6 +9,7 @@ Required Properties:
->  	- "mediatek,mt2701-ethsys", "syscon"
->  	- "mediatek,mt7622-ethsys", "syscon"
->  - #clock-cells: Must be 1
-> +- #reset-cells: Must be 1
->  
->  The ethsys controller uses the common clk binding from
->  Documentation/devicetree/bindings/clock/clock-bindings.txt
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
-> index d5d5f12..7fe5dc6 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pciesys.txt
-> @@ -8,6 +8,7 @@ Required Properties:
->  - compatible: Should be:
->  	- "mediatek,mt7622-pciesys", "syscon"
->  - #clock-cells: Must be 1
-> +- #reset-cells: Must be 1
->  
->  The PCIESYS controller uses the common clk binding from
->  Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -19,4 +20,5 @@ pciesys: pciesys@1a100800 {
->  	compatible = "mediatek,mt7622-pciesys", "syscon";
->  	reg = <0 0x1a100800 0 0x1000>;
->  	#clock-cells = <1>;
-> +	#reset-cells = <1>;
->  };
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
-> index 00760019..b8184da 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ssusbsys.txt
-> @@ -8,6 +8,7 @@ Required Properties:
->  - compatible: Should be:
->  	- "mediatek,mt7622-ssusbsys", "syscon"
->  - #clock-cells: Must be 1
-> +- #reset-cells: Must be 1
->  
->  The SSUSBSYS controller uses the common clk binding from
->  Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -19,4 +20,5 @@ ssusbsys: ssusbsys@1a000000 {
->  	compatible = "mediatek,mt7622-ssusbsys", "syscon";
->  	reg = <0 0x1a000000 0 0x1000>;
->  	#clock-cells = <1>;
-> +	#reset-cells = <1>;
->  };
-> 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index b3d394f5d95a..48584d5a329b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -109,6 +109,13 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	ao_alt_xtal: ao_alt_xtal-clk {
++		compatible = "fixed-clock";
++		clock-frequency = <32000000>;
++		clock-output-names = "ao_alt_xtal";
++		#clock-cells = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+-- 
+2.15.1
