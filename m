@@ -1,54 +1,82 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Tero Kristo <t-kristo@ti.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <7b11c937-8738-9098-96d1-d6675e0efab2@ti.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
- "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
- "tony@atomide.com" <tony@atomide.com>
-References: <7b11c937-8738-9098-96d1-d6675e0efab2@ti.com>
-Message-ID: <152064142644.113003.4344681620872576950@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL] TI clock fixes for 4.16
-Date: Fri, 09 Mar 2018 16:23:46 -0800
+Return-Path: <rnayak@codeaurora.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+To: sboyd@kernel.org,
+	mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	stanimir.varbanov@linaro.org,
+	vivek.gautam@codeaurora.org,
+	srinivas.kandagatla@linaro.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v2 2/3] clk: qcom: Register the gdscs before the clocks
+Date: Fri, 23 Mar 2018 13:56:15 +0530
+Message-Id: <20180323082616.10142-3-rnayak@codeaurora.org>
+In-Reply-To: <20180323082616.10142-1-rnayak@codeaurora.org>
+References: <20180323082616.10142-1-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tero Kristo (2018-03-08 02:19:14)
-> Hi Stephen, Michael,
-> =
+We have atleast some instances of ALWAYS_ON gdscs, which need to
+be turned ON *before* some clocks within the gdsc domain marked
+with a CLK_IS_CRITICAL can be turned ON.
+To facilitate this sequence, register the GDCSs (and hence handle
+the ALWAYS_ON gdscs) before we register clocks (and handle the
+clocks marked as CLK_IS_CRITICAL)
 
-> Here are a couple of TI clock fixes against 4.16. These fix some display =
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+---
+ drivers/clk/qcom/common.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-> issues on am33xx devices.
-> =
-
-> -Tero
-> =
-
-> ---
-> =
-
-> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1=
-b2:
-> =
-
->    Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-> =
-
-> are available in the git repository at:
-> =
-
->    https://github.com/t-kristo/linux-pm.git tags/ti-clk-fixes-4.16
-> =
-
-> for you to fetch changes up to 762790b75210f5219c6896565f811271405a9632:
-> =
-
->    clk: ti: am43xx: add set-rate-parent support for display clkctrl =
-
-> clock (2018-03-08 12:14:44 +0200)
-> =
-
-
-Thanks. Pulled.
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index b8064a336d46..39ce64c2783b 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -228,22 +228,6 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 	if (!cc)
+ 		return -ENOMEM;
+ 
+-	cc->rclks = rclks;
+-	cc->num_rclks = num_clks;
+-
+-	for (i = 0; i < num_clks; i++) {
+-		if (!rclks[i])
+-			continue;
+-
+-		ret = devm_clk_register_regmap(dev, rclks[i]);
+-		if (ret)
+-			return ret;
+-	}
+-
+-	ret = devm_of_clk_add_hw_provider(dev, qcom_cc_clk_hw_get, cc);
+-	if (ret)
+-		return ret;
+-
+ 	reset = &cc->reset;
+ 	reset->rcdev.of_node = dev->of_node;
+ 	reset->rcdev.ops = &qcom_reset_ops;
+@@ -272,6 +256,22 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 			return ret;
+ 	}
+ 
++	cc->rclks = rclks;
++	cc->num_rclks = num_clks;
++
++	for (i = 0; i < num_clks; i++) {
++		if (!rclks[i])
++			continue;
++
++		ret = devm_clk_register_regmap(dev, rclks[i]);
++		if (ret)
++			return ret;
++	}
++
++	ret = devm_of_clk_add_hw_provider(dev, qcom_cc_clk_hw_get, cc);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
