@@ -1,58 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030696AbeCSUcA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Mar 2018 16:32:00 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Rob Herring <robh+dt@kernel.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <3a3c198707a69297abc05d2a7fef97857e7fab5a.1520327262.git.ryder.lee@mediatek.com>
-Cc: devicetree@vger.kernel.org, Ryder Lee <ryder.lee@mediatek.com>,
-        Garlic Tseng <garlic.tseng@mediatek.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <cover.1520327262.git.ryder.lee@mediatek.com>
- <3a3c198707a69297abc05d2a7fef97857e7fab5a.1520327262.git.ryder.lee@mediatek.com>
-Message-ID: <152149151947.242365.12823569223681242175@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 2/6] clk: mediatek: add devm_of_platform_populate() for MT7622
- audsys
-Date: Mon, 19 Mar 2018 13:31:59 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 4/8] clk: davinci: add a reset lookup table for psc0
+Date: Fri, 23 Mar 2018 14:04:51 +0100
+Message-Id: <20180323130455.11470-5-brgl@bgdev.pl>
+In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ryder Lee (2018-03-06 01:09:27)
-> @@ -150,12 +151,15 @@ static int clk_mt7622_audiosys_init(struct platform_device *pdev)
->                                clk_data);
->  
->         r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-> -       if (r)
-> +       if (r) {
->                 dev_err(&pdev->dev,
->                         "could not register clock provider: %s: %d\n",
->                         pdev->name, r);
->  
-> -       return r;
-> +               return r;
-> +       }
-> +
-> +       return devm_of_platform_populate(&pdev->dev);
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-And now we fail to remove the clk provider when this fails.
+In order to be able to use the reset framework in legacy boot mode as
+well, add the reset lookup table to the psc driver for da850 variant.
 
->  }
->  
->  static const struct of_device_id of_match_clk_mt7622_aud[] = {
-> -- 
-> 1.9.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/clk/davinci/psc-da850.c | 7 +++++++
+ drivers/clk/davinci/psc.c       | 1 +
+ 2 files changed, 8 insertions(+)
+
+diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
+index ccc7eb17bf3a..d196dcbed560 100644
+--- a/drivers/clk/davinci/psc-da850.c
++++ b/drivers/clk/davinci/psc-da850.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/reset-controller.h>
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
+ #include <linux/init.h>
+@@ -66,8 +67,14 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
+ 				"fck",	"ecap.1",
+ 				"fck",	"ecap.2");
+ 
++static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
++	RESET_LOOKUP("da850-psc0", 15, "davinci-rproc.0", NULL),
++};
++
+ static int da850_psc0_init(struct device *dev, void __iomem *base)
+ {
++	reset_controller_add_lookup(da850_psc0_reset_lookup_table,
++				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
+ 	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
+ }
+ 
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 3b0e59dfbdd7..063df62381ea 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
+ 
+ 	psc->rcdev.ops = &davinci_psc_reset_ops;
+ 	psc->rcdev.owner = THIS_MODULE;
++	psc->rcdev.dev = dev;
+ 	psc->rcdev.of_node = dev->of_node;
+ 	psc->rcdev.of_reset_n_cells = 1;
+ 	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
+-- 
+2.16.1
