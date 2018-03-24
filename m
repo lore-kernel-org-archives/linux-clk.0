@@ -1,50 +1,235 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v8 18/42] clk: davinci: New driver for TI DA8XX CFGCHIP
- clocks
-To: Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-19-git-send-email-david@lechnology.com>
- <152156485535.183971.1627687499726447092@swboyd.mtv.corp.google.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <b4ea5efb-3fa0-b2f3-cd5f-75343e841153@lechnology.com>
-Date: Tue, 20 Mar 2018 11:57:48 -0500
-MIME-Version: 1.0
-In-Reply-To: <152156485535.183971.1627687499726447092@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v6 06/11] clk: actions: Add divider clock support
+Date: Sat, 24 Mar 2018 19:01:54 +0530
+Message-Id: <20180324133159.4824-7-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/20/2018 11:54 AM, Stephen Boyd wrote:
-> Quoting David Lechner (2018-03-15 19:52:34)
->> +
->> +typedef int (*da8xx_cfgchip_init)(struct device *dev, void __iomem *base);
-> 
-> Should be struct regmap *regmap?
+Add support for Actions Semi divider clock together with
+helper functions to be used in composite clock.
 
-Yes. It looks like this was copied and pasted from one of the other drivers.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/Makefile      |  1 +
+ drivers/clk/actions/owl-divider.c | 94 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-divider.h | 75 +++++++++++++++++++++++++++++++
+ 3 files changed, 170 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-divider.c
+ create mode 100644 drivers/clk/actions/owl-divider.h
 
-Thank you for fixing it.
-
-> 
-> I've squashed this in.
-> 
-> diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-> index 858d3786b27b..c971111d2601 100644
-> --- a/drivers/clk/davinci/da8xx-cfgchip.c
-> +++ b/drivers/clk/davinci/da8xx-cfgchip.c
-> @@ -736,7 +736,7 @@ static const struct platform_device_id da8xx_cfgchip_id_table[] = {
->   	{ }
->   };
->   
-> -typedef int (*da8xx_cfgchip_init)(struct device *dev, void __iomem *base);
-> +typedef int (*da8xx_cfgchip_init)(struct device *dev, struct regmap *regmap);
->   
->   static int da8xx_cfgchip_probe(struct platform_device *pdev)
->   {
-> 
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 2d4aa8f35d90..5ce75df57e1a 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -3,3 +3,4 @@ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+ clk-owl-y			+= owl-common.o
+ clk-owl-y			+= owl-gate.o
+ clk-owl-y			+= owl-mux.o
++clk-owl-y			+= owl-divider.o
+diff --git a/drivers/clk/actions/owl-divider.c b/drivers/clk/actions/owl-divider.c
+new file mode 100644
+index 000000000000..cddac00fe324
+--- /dev/null
++++ b/drivers/clk/actions/owl-divider.c
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL divider clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include "owl-divider.h"
++
++long owl_divider_helper_round_rate(struct owl_clk_common *common,
++				const struct owl_divider_hw *div_hw,
++				unsigned long rate,
++				unsigned long *parent_rate)
++{
++	return divider_round_rate(&common->hw, rate, parent_rate,
++				  div_hw->table, div_hw->width,
++				  div_hw->div_flags);
++}
++
++static long owl_divider_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	struct owl_divider *div = hw_to_owl_divider(hw);
++
++	return owl_divider_helper_round_rate(&div->common, &div->div_hw,
++					     rate, parent_rate);
++}
++
++unsigned long owl_divider_helper_recalc_rate(struct owl_clk_common *common,
++					 const struct owl_divider_hw *div_hw,
++					 unsigned long parent_rate)
++{
++	unsigned long val;
++	unsigned int reg;
++
++	regmap_read(common->regmap, div_hw->reg, &reg);
++	val = reg >> div_hw->shift;
++	val &= (1 << div_hw->width) - 1;
++
++	return divider_recalc_rate(&common->hw, parent_rate,
++				   val, div_hw->table,
++				   div_hw->div_flags,
++				   div_hw->width);
++}
++
++static unsigned long owl_divider_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct owl_divider *div = hw_to_owl_divider(hw);
++
++	return owl_divider_helper_recalc_rate(&div->common,
++					      &div->div_hw, parent_rate);
++}
++
++int owl_divider_helper_set_rate(const struct owl_clk_common *common,
++				const struct owl_divider_hw *div_hw,
++				unsigned long rate,
++				unsigned long parent_rate)
++{
++	unsigned long val;
++	unsigned int reg;
++
++	val = divider_get_val(rate, parent_rate, div_hw->table,
++			      div_hw->width, 0);
++
++	regmap_read(common->regmap, div_hw->reg, &reg);
++	reg &= ~GENMASK(div_hw->width + div_hw->shift - 1, div_hw->shift);
++
++	regmap_write(common->regmap, div_hw->reg,
++			  reg | (val << div_hw->shift));
++
++	return 0;
++}
++
++static int owl_divider_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct owl_divider *div = hw_to_owl_divider(hw);
++
++	return owl_divider_helper_set_rate(&div->common, &div->div_hw,
++					rate, parent_rate);
++}
++
++const struct clk_ops owl_divider_ops = {
++	.recalc_rate = owl_divider_recalc_rate,
++	.round_rate = owl_divider_round_rate,
++	.set_rate = owl_divider_set_rate,
++};
+diff --git a/drivers/clk/actions/owl-divider.h b/drivers/clk/actions/owl-divider.h
+new file mode 100644
+index 000000000000..92d3e3d23967
+--- /dev/null
++++ b/drivers/clk/actions/owl-divider.h
+@@ -0,0 +1,75 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL divider clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_DIVIDER_H_
++#define _OWL_DIVIDER_H_
++
++#include "owl-common.h"
++
++struct owl_divider_hw {
++	u32			reg;
++	u8			shift;
++	u8			width;
++	u8			div_flags;
++	struct clk_div_table	*table;
++};
++
++struct owl_divider {
++	struct owl_divider_hw	div_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_DIVIDER_HW(_reg, _shift, _width, _div_flags, _table)	\
++	{								\
++		.reg		= _reg,					\
++		.shift		= _shift,				\
++		.width		= _width,				\
++		.div_flags	= _div_flags,				\
++		.table		= _table,				\
++	}
++
++#define OWL_DIVIDER(_struct, _name, _parent, _reg,			\
++		    _shift, _width, _table, _div_flags, _flags)		\
++	struct owl_divider _struct = {					\
++		.div_hw	= OWL_DIVIDER_HW(_reg, _shift, _width,		\
++					 _div_flags, _table),		\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &owl_divider_ops,	\
++						      _flags),		\
++		},							\
++	}
++
++static inline struct owl_divider *hw_to_owl_divider(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_divider, common);
++}
++
++long owl_divider_helper_round_rate(struct owl_clk_common *common,
++				const struct owl_divider_hw *div_hw,
++				unsigned long rate,
++				unsigned long *parent_rate);
++
++unsigned long owl_divider_helper_recalc_rate(struct owl_clk_common *common,
++					 const struct owl_divider_hw *div_hw,
++					 unsigned long parent_rate);
++
++int owl_divider_helper_set_rate(const struct owl_clk_common *common,
++				const struct owl_divider_hw *div_hw,
++				unsigned long rate,
++				unsigned long parent_rate);
++
++extern const struct clk_ops owl_divider_ops;
++
++#endif /* _OWL_DIVIDER_H_ */
+-- 
+2.14.1
