@@ -1,139 +1,187 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from botnar.kaiser.cx ([176.28.20.183]:56376 "EHLO botnar.kaiser.cx"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752132AbeCHQsQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Mar 2018 11:48:16 -0500
-Date: Thu, 8 Mar 2018 17:46:54 +0100
-From: Martin Kaiser <martin@kaiser.cx>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: imx25: set correct parents for ssi ipg clocks
-Message-ID: <20180308164654.GA31199@botnar.kaiser.cx>
-References: <1520373735-13699-1-git-send-email-martin@kaiser.cx>
- <CAOMZO5A7W4rbPbZB8ERs518obrg+6F6mDeojkwJaGComFAJB0A@mail.gmail.com>
- <20180308140851.GA25601@botnar.kaiser.cx>
- <CAOMZO5BdBWExt9FvPrfUG74Y62e4EUs6cqFyfVs5JuUtym00hQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAOMZO5BdBWExt9FvPrfUG74Y62e4EUs6cqFyfVs5JuUtym00hQ@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v6 05/11] clk: actions: Add mux clock support
+Date: Sat, 24 Mar 2018 19:01:53 +0530
+Message-Id: <20180324133159.4824-6-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Fabio,
+Add support for Actions Semi mux clock together with helper
+functions to be used in composite clock.
 
-thanks for the quick response.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/Makefile  |  1 +
+ drivers/clk/actions/owl-mux.c | 60 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-mux.h | 61 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
 
-Thus wrote Fabio Estevam (festevam@gmail.com):
-
-> Hi Martin,
-
-> On Thu, Mar 8, 2018 at 11:08 AM, Martin Kaiser <martin@kaiser.cx> wrote:
-> > Hi Fabio,
-
-> > Thus wrote Fabio Estevam (festevam@gmail.com):
-
-> >> I get audio working from SSI1, but I guess this is due to the fact
-> >> that the bootloader enables the SSI clock:
-
-> >> I have the following in U-Boot:
-
-> >> /* Enable the clocks */
-> >> DATA 4 0x53f8000c 0x1fffffff
-> >> DATA 4 0x53f80010 0xffffffff
-> >> DATA 4 0x53f80014 0xfdfff
-
-> > I'm using the same initial settings.
-
-> > Nevertheless, ssi1_ipg_per is disbled after loading the kernel.
-
-> > Digging into this a bit more, it turned out that without my patch,
-> > clk_disable_unused() recognizes ssi1_ipg_per as unused and disables it.
-
-> > If my patch is applied and ssi1_ipg_per is declared as parent of
-> > ssi1_ipg, clk_disable_unused() will not disable it and fsl_ssi_startup()
-> > will enable both ssi1_ipg_per and ssi1_ipg before playing sound.
-
-> I can get audio to work fine without your patch on a mx25pdk.
-
-this is surprising. How come the ssi1_ipg_per clock is not turned off by
-clk_disable_unused()? Where is it used? Do you have
-
-<&clks 55>
-
-anywhere in your DT?
-
-> In the other i.MX clock drivers we have this same pattern:
-
-> clks[IMX6SL_CLK_SSI1_IPG]     = imx_clk_gate2_shared("ssi1_ipg",     "ipg",
-
-It seems to the that imx25 uses a different clock hierarchy for ssi than other
-imx chips.
-
-Documentation/devicetree/bindings/clock/imx25-clock.txt: ssi1_ipg_per      55
-Documentation/devicetree/bindings/clock/imx25-clock.txt: ssi2_ipg_per      56
-Documentation/devicetree/bindings/clock/imx25-clock.txt: ssi1_ipg    117
-Documentation/devicetree/bindings/clock/imx25-clock.txt: ssi2_ipg    118
-Documentation/devicetree/bindings/clock/imx31-clock.txt: ssi1_gate            32
-Documentation/devicetree/bindings/clock/imx31-clock.txt: ssi2_gate            52
-Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi_sel        22
-Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi1_div_pre      23
-Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi1_div_post     24
-Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi2_div_pre      25
-Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi2_div_post     26
-Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi1_gate      68
-Documentation/devicetree/bindings/clock/imx35-clock.txt: ssi2_gate      69
-
-Others don't have ssiX_ipg_per.
-
-> It is not clear to me what is the real issue this patch is trying to fix.
-
-True. This needs clarification.
-
-I found that, in oder to get a tx clock out of the SSI, both ssi1_ipg_per and
-ssi1_ipg clocks must be active.
-
-The fsl_ssi driver only activates ssi1_ipg.
-
-If I activate ssi1_ipg_per in the bootloader, clk_disable_unused() deactivates it.
-
-(My codec chip does not use a dedicated clock line. It takes the bit clock that
-is the output of SSI. Are you maybe using ssi1_ipg_per for your codec and
-enable it there?)
-
-In my first mail, I was wondering about imx25 uart1, where we also have
-uart1_ipg and uart_ipg_per and the clock seeting is
-
-   clk[uart1_ipg] = imx_clk_gate("uart1_ipg", "ipg", ccm(CCM_CGCR2), 14);
-
-In this case, both uart1 and uart_ipg_per are listed in the device tree
-
-         uart1: serial@43f90000 {                                                                                                      
-...
-            clocks = <&clks 120>, <&clks 57>;                                                                                          
-            clock-names = "ipg", "per";                                                                                                
-         };                                                                                                                            
-
-Documentation/devicetree/bindings/clock/imx25-clock.txt
-   uart_ipg_per      57
-   uart1_ipg      120
-
-and the driver enables both clocks explicitly. So they are not unused.
-
-
-Doing something like this is not an option for ssi, this will not work with
-imx31, 35 etc.
-
-Therefore, I suggest setting ssi1_ipg_per as parent of ssi1_ipg.
-
-
-Best regards,
-
-   Martin
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 1f0917872c9d..2d4aa8f35d90 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -2,3 +2,4 @@ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+ 
+ clk-owl-y			+= owl-common.o
+ clk-owl-y			+= owl-gate.o
++clk-owl-y			+= owl-mux.o
+diff --git a/drivers/clk/actions/owl-mux.c b/drivers/clk/actions/owl-mux.c
+new file mode 100644
+index 000000000000..f9c6cf2540e4
+--- /dev/null
++++ b/drivers/clk/actions/owl-mux.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL mux clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include "owl-mux.h"
++
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw)
++{
++	u32 reg;
++	u8 parent;
++
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	parent = reg >> mux_hw->shift;
++	parent &= BIT(mux_hw->width) - 1;
++
++	return parent;
++}
++
++static u8 owl_mux_get_parent(struct clk_hw *hw)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
++
++	return owl_mux_helper_get_parent(&mux->common, &mux->mux_hw);
++}
++
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index)
++{
++	u32 reg;
++
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	reg &= ~GENMASK(mux_hw->width + mux_hw->shift - 1, mux_hw->shift);
++	regmap_write(common->regmap, mux_hw->reg,
++			reg | (index << mux_hw->shift));
++
++	return 0;
++}
++
++static int owl_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
++
++	return owl_mux_helper_set_parent(&mux->common, &mux->mux_hw, index);
++}
++
++const struct clk_ops owl_mux_ops = {
++	.get_parent = owl_mux_get_parent,
++	.set_parent = owl_mux_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
+diff --git a/drivers/clk/actions/owl-mux.h b/drivers/clk/actions/owl-mux.h
+new file mode 100644
+index 000000000000..834284c8c3ae
+--- /dev/null
++++ b/drivers/clk/actions/owl-mux.h
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL mux clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_MUX_H_
++#define _OWL_MUX_H_
++
++#include "owl-common.h"
++
++struct owl_mux_hw {
++	u32			reg;
++	u8			shift;
++	u8			width;
++};
++
++struct owl_mux {
++	struct owl_mux_hw	mux_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_MUX_HW(_reg, _shift, _width)		\
++	{						\
++		.reg	= _reg,				\
++		.shift	= _shift,			\
++		.width	= _width,			\
++	}
++
++#define OWL_MUX(_struct, _name, _parents, _reg,				\
++		_shift, _width, _flags)					\
++	struct owl_mux _struct = {					\
++		.mux_hw	= OWL_MUX_HW(_reg, _shift, _width),		\
++		.common = {						\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
++						       _parents,	\
++						       &owl_mux_ops,	\
++						       _flags),		\
++		},							\
++	}
++
++static inline struct owl_mux *hw_to_owl_mux(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_mux, common);
++}
++
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw);
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index);
++
++extern const struct clk_ops owl_mux_ops;
++
++#endif /* _OWL_MUX_H_ */
+-- 
+2.14.1
