@@ -1,150 +1,66 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f173.google.com ([74.125.82.173]:34169 "EHLO
+        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751806AbeCXA1Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Mar 2018 20:27:16 -0400
 MIME-Version: 1.0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
- mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180317100952.28538-10-manivannan.sadhasivam@linaro.org>
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
- devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
- daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180317100952.28538-1-manivannan.sadhasivam@linaro.org>
- <20180317100952.28538-10-manivannan.sadhasivam@linaro.org>
-Message-ID: <152150820384.254778.6585368643028088392@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 09/12] clk: actions: Add fixed factor clock support
-Date: Mon, 19 Mar 2018 18:10:03 -0700
+In-Reply-To: <20180323094937.5wx5exah6tfyl43u@fsr-ub1664-175>
+References: <20180323094937.5wx5exah6tfyl43u@fsr-ub1664-175>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 23 Mar 2018 21:27:14 -0300
+Message-ID: <CAOMZO5Da0GbkC1vjjbyNmG77gvd-KO8HC-2oBYxAffNHCtEDKw@mail.gmail.com>
+Subject: Re: Return checks for clock calls
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Adriana Reus <adriana.reus@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "abelvesa@linux.com" <abelvesa@linux.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Manivannan Sadhasivam (2018-03-17 03:09:49)
-> Add support for Actions Semi fixed factor clock together with
-> helper functions to be used in composite clock.
-> =
+Hi Abel,
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/clk/actions/Makefile           |  1 +
->  drivers/clk/actions/owl-fixed-factor.c | 81 ++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/actions/owl-fixed-factor.h | 62 ++++++++++++++++++++++++++
->  3 files changed, 144 insertions(+)
->  create mode 100644 drivers/clk/actions/owl-fixed-factor.c
->  create mode 100644 drivers/clk/actions/owl-fixed-factor.h
-> =
+On Fri, Mar 23, 2018 at 6:49 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
+> Hi Shawn, Fabio,
+>
+> I'm trying to get the imx clks changes upstreamed. To that end, I reached this
+> old commit that adds some wrappers over the generic clk API. Here is the commit
+> message:
+>
+>         ARM: imx6: add return check for clock calls
+>
+>         There are a bunch of clk_enable_prepare, clk_set_parent and clk_set_rate
+>         calls in imx6 clock driver's initialization.  They are called without
+>         retunr check.  If there is something going wrong with the calls, they
+>         will just fail silently.
+>
+>         The patch creates a set of helper functions imx_clk_enable_prepare,
+>         imx_clk_set_parent and imx_clk_set_rate, and use them instead from clock
+>         initialization to check the return and print error message to tell
+>         failures if any.
+>
+>         Signed-off-by: Shawn Guo <shawn.guo@freescale.com>
+>
+> And it adds the imx_clk_set_parent, imx_clk_prepare_enable and
+> imx_clk_set_rate which basically just print an error message if the generic
+> functions have failed.
+>
+> The only plus of these wrappers is that we at least see that the generic
+> functions have failed, but the behaviour is not changed in any way.
+>
+> Question is, do we want this upstreamed considering that we need to replace the
+> calls throughout all the older imx socs ?
 
-> diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-> index 994357fa560b..b618696ba54e 100644
-> --- a/drivers/clk/actions/Makefile
-> +++ b/drivers/clk/actions/Makefile
-> @@ -5,3 +5,4 @@ clk-owl-y                       +=3D owl-gate.o
->  clk-owl-y                      +=3D owl-mux.o
->  clk-owl-y                      +=3D owl-divider.o
->  clk-owl-y                      +=3D owl-factor.o
-> +clk-owl-y                      +=3D owl-fixed-factor.o
-> diff --git a/drivers/clk/actions/owl-fixed-factor.c b/drivers/clk/actions=
-/owl-fixed-factor.c
-> new file mode 100644
-> index 000000000000..f1281565129c
-> --- /dev/null
-> +++ b/drivers/clk/actions/owl-fixed-factor.c
-> @@ -0,0 +1,81 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// OWL fixed factor clock driver
-> +//
-> +// Copyright (c) 2014 Actions Semi Inc.
-> +// Author: David Liu <liuwei@actions-semi.com>
-> +//
-> +// Copyright (c) 2018 Linaro Ltd.
-> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +
-> +#include "owl-fixed-factor.h"
-> +
-> +long owl_fix_fact_helper_round_rate(struct owl_clk_common *common,
-> +                               const struct owl_fix_fact_hw *fix_fact_hw,
-> +                               unsigned long rate,
-> +                               unsigned long *parent_rate)
-> +{
-> +       if (clk_hw_get_flags(&common->hw) & CLK_SET_RATE_PARENT) {
-> +               unsigned long best_parent;
-> +
-> +               best_parent =3D (rate / fix_fact_hw->mul) * fix_fact_hw->=
-div;
-> +               *parent_rate =3D clk_hw_round_rate(clk_hw_get_parent(&com=
-mon->hw),
-> +                                                       best_parent);
-> +       }
-> +
-> +       return (*parent_rate / fix_fact_hw->div) * fix_fact_hw->mul;
-> +}
-> +
-> +static long owl_fix_fact_round_rate(struct clk_hw *hw, unsigned long rat=
-e,
-> +                       unsigned long *parent_rate)
-> +{
-> +       struct owl_fix_fact *fix_fact =3D hw_to_owl_fix_fact(hw);
-> +       struct owl_fix_fact_hw *fix_fact_hw =3D &fix_fact->fix_fact_hw;
-> +
-> +       return owl_fix_fact_helper_round_rate(&fix_fact->common, fix_fact=
-_hw,
-> +                                                       rate, parent_rate=
-);
-> +}
-> +
-> +unsigned long owl_fix_fact_helper_recalc_rate(struct owl_clk_common *com=
-mon,
-> +                       const struct owl_fix_fact_hw *fix_fact_hw,
-> +                       unsigned long parent_rate)
-> +{
-> +       unsigned long long int rate;
-> +
-> +       rate =3D (unsigned long long int)parent_rate * fix_fact_hw->mul;
-> +       do_div(rate, fix_fact_hw->div);
-> +
-> +       return (unsigned long)rate;
+IMHO we should not introduce these new helper functions.
 
-You can drop the cast.
-
-> +}
-> +
-> +static unsigned long owl_fix_fact_recalc_rate(struct clk_hw *hw,
-> +                       unsigned long parent_rate)
-> +{
-> +       struct owl_fix_fact *fix_fact =3D hw_to_owl_fix_fact(hw);
-> +       struct owl_fix_fact_hw *fix_fact_hw =3D &fix_fact->fix_fact_hw;
-> +
-> +       return owl_fix_fact_helper_recalc_rate(&fix_fact->common, fix_fac=
-t_hw,
-> +                                                       parent_rate);
-> +}
-> +
-> +static int owl_fix_fact_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                              unsigned long parent_rate)
-> +{
-> +       /*
-> +        * We must report success but we can do so unconditionally because
-> +        * clk_fix_fact_round_rate returns values that ensure this call i=
-s a
-
-What function is that?
-
-> +        * nop.
-> +        */
-> +
-> +       return 0;
-> +}
-> +
-> +const struct clk_ops owl_fix_fact_ops =3D {
-> +       .round_rate     =3D owl_fix_fact_round_rate,
-> +       .recalc_rate    =3D owl_fix_fact_recalc_rate,
-> +       .set_rate       =3D owl_fix_fact_set_rate,
-> +};
-
-Why can't you use the regular fixed factor clk code and ops?
+We can simply explicitly check for errors with the existing clock
+functions when needed.
