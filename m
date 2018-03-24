@@ -1,74 +1,216 @@
-Return-Path: <RAJANV@xilinx.com>
-From: Rajan Vaja <RAJANV@xilinx.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jolly Shah
-	<JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>
-Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
- CLK_OF_DECLARE_DRIVER
-Date: Fri, 16 Mar 2018 11:49:37 +0000
-Message-ID: <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
-References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
- <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
- <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
- <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
-In-Reply-To: <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v6 04/11] clk: actions: Add gate clock support
+Date: Sat, 24 Mar 2018 19:01:52 +0530
+Message-Id: <20180324133159.4824-5-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0aGUgY29tbWVudC4NCg0KPiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwu
-b3JnXQ0KPiBTZW50OiAxNiBNYXJjaCAyMDE4IDEyOjE3IEFNDQo+IFRvOiBSYWphbiBWYWphIDxS
-QUpBTlZAeGlsaW54LmNvbT4NCj4gQ2M6IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4
-LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEpvbGx5IFNoYWgNCj4gPEpPTExZU0B4aWxpbnguY29t
-PjsgTWljaGFsIFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+Ow0KPiBtdHVycXVldHRlQGJheWxp
-YnJlLmNvbQ0KPiBTdWJqZWN0OiBSRTogW1BBVENIXSBjbGs6IGNsay1maXhlZC1mYWN0b3I6IFVz
-ZSBuZXcgbWFjcm8NCj4gQ0xLX09GX0RFQ0xBUkVfRFJJVkVSDQo+IA0KPiBRdW90aW5nIFJhamFu
-IFZhamEgKDIwMTgtMDMtMDkgMTE6Mjc6NDApDQo+ID4gPiBGcm9tOiBTdGVwaGVuIEJveWQgW21h
-aWx0bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiA+ID4NCj4gPiA+IElzIHRoZSBpbnRlbnQgdG8gcmVn
-aXN0ZXIgdGhlIGNsayB0d2ljZT8gSSBiZWxpZXZlIHRoaW5ncyBhcmUgd29ya2luZyBhcw0KPiA+
-ID4gaW50ZW5kZWQgd2l0aG91dCB0aGlzIHBhdGNoLCBzbyBtYXliZSB5b3UgY2FuIGV4cGxhaW4g
-YSBsaXR0bGUgbW9yZSB3aGF0DQo+ID4gPiB5b3UncmUgdHJ5aW5nIHRvIGZpeC4NCj4gPiBbUmFq
-YW5dIFllcy4gRHVyaW5nIG9mX2Nsa19pbml0KCkgaWYgc29tZSBEVCBmaXhlZCBmYWN0b3IgY2xv
-Y2sgaGFzDQo+ID4gcGFyZW50IHdoaWNoIGlzIG5laXRoZXIgbWVudGlvbmVkIGluIG91dHB1dC1j
-bG9jay1uYW1lcyBvZiBjbG9jaw0KPiA+IGNvbnRyb2xsZXIgbm9yIHJlZ2lzdGVyZWQgYXMgY2xv
-Y2sgcHJvdmlkZXIsIG9mX2Nsa19pbml0KCkgd2lsbCB0cnkgdG8NCj4gPiBmb3JjZWZ1bGx5IHJl
-Z2lzdGVyIGluIHNlY29uZCBsb29wLg0KPiA+DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAg
-aWYgKGZvcmNlIHx8IHBhcmVudF9yZWFkeShjbGtfcHJvdmlkZXItPm5wKSkgew0KPiA+DQo+ID4g
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAvKiBEb24ndCBwb3B1bGF0ZSBwbGF0Zm9y
-bSBkZXZpY2VzICovDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvZl9ub2Rl
-X3NldF9mbGFnKGNsa19wcm92aWRlci0+bnAsDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIE9GX1BPUFVMQVRFRCk7DQo+ID4NCj4gPiBTbyByZWdp
-c3RyYXRpb24gb2YgdGhpcyBEVCBmaXhlZC1mYWN0b3IgY2xvY2sgd291bGQgZmFpbCBhcyBwYXJl
-bnQNCj4gPiB3b3VsZCBiZSBOVUxMIGFzIGJlbG93IChjYWxsZWQgZnJvbSBfb2ZfZml4ZWRfZmFj
-dG9yX2Nsa19zZXR1cCgpKToNCj4gPiBwYXJlbnRfbmFtZSA9IG9mX2Nsa19nZXRfcGFyZW50X25h
-bWUobm9kZSwgMCk7DQo+ID4NCj4gPiBPbiB0aGUgb3RoZXIgaGFuZCwgZXZlbiBpZiByZWdpc3Ry
-YXRpb24gZmFpbGVkLCB0aGF0IG5vZGUgd2lsbCBiZQ0KPiA+IG1hcmtlZCBhcyBPRl9QT1BVTEFU
-RUQsIHNvIHByb2JlIG9mIGNsay1maXhlZC1mYWN0b3IuYyB3aWxsIGFsc28gbm90DQo+ID4gYmUg
-Y2FsbGVkIGFuZCB0aGF0IERUIGZpeGVkLWZhY3RvciBjbG9jayB3b3VsZCBuZXZlciBiZSByZWdp
-c3RlcmVkLg0KPiA+DQo+ID4gU2FtZSB0aGluZyBpcyBkaXNjdXNzZWQgYXQgIGh0dHBzOi8vbGtt
-bC5vcmcvbGttbC8yMDE3LzYvNS82ODEgLg0KPiANCj4gT2suIEkgYmVsaWV2ZSB0aGUgYW5zd2Vy
-IGlzIHRvIGZpeCB0aGUgRFQgdG8gZGVzY3JpYmUgdGhlIHBhcmVudCBjaGFpbg0KPiBwcm9wZXJs
-eSB3aXRoIGNsb2NrLW91dHB1dC1uYW1lcy4gT3RoZXJ3aXNlLCB3ZSBoYXZlIG5vIGdvb2Qgd2F5
-IG9mDQo+IGZpZ3VyaW5nIG91dCB3aGF0IHRoZSBuYW1lIHNob3VsZCBiZS4NCltSYWphbl0gY2xv
-Y2sgRFQgYmluZGluZyBkb2Mgc2F5cyB0aGF0IGNsb2NrLW91dHB1dC1uYW1lcyBwcm9wZXJ0eQ0K
-aXMgb3B0aW9uYWwgYW5kIHNvbWV0aW1lcyBub3QgcmVjb21tZW5kZWQuIA0KSSB0aGluayB0aGlz
-IHBhdGNoIGZpeGVzIHRoZSBpc3N1ZSB3ZSBoYXZlIHdoaWNoIG1hbmRhdGVzIHRvIGFkZCBjbG9j
-ay1vdXRwdXQtbmFtZXMNCnByb3BlcnR5IChmb3IgdGhpcyBwYXJ0aWN1bGFyIGNhc2UpLiBBbHNv
-LCBJSVVDIHBsYXRmb3JtIGRyaXZlciBwcm9iZSBpbiBjbGstZml4ZWQtZmFjdG9yLmMNCndpbGwg
-bmV2ZXIgYmUgY2FsbGVkIHVubGVzcyB3ZSB1c2UgQ0xLX09GX0RFQ0xBUkVfRFJJVkVSLg0KSSBj
-b21wbGV0ZWx5IGFncmVlIHRoYXQgcHJvcGVyIHNvbHV0aW9uIHdvdWxkIGJlIHRvIHN0b3AgdXNp
-bmcgc3RyaW5ncyB0bw0KZGVzY3JpYmUgY2xvY2sgdG9wb2xvZ3kuDQoNCj4gDQo+IFRoZSBhbHRl
-cm5hdGl2ZSBpcyB0byBzdGFydCB3b3JraW5nIG9uIGEgc29sdXRpb24gZm9yIGhhdmluZyB0aGUg
-Y2xrDQo+IGZyYW1ld29yayBzdG9wIHVzaW5nIHN0cmluZ3MgdG8gZGVzY3JpYmUgY2xrIHRvcG9s
-b2d5LiBNeSBwbGFuIHRoZXJlIGlzDQo+IHRvIGFsbG93IGNsayByZWdpc3RyYXRpb24gdG8gaW5k
-aWNhdGUgdGhhdCBhbm90aGVyIHBhcmVudCBuYW1lcyBhcnJheQ0KPiBzaG91bGQgYmUgdXNlZCB3
-aXRoIGNsa19nZXQoKSBvZiB0aGUgZGV2aWNlIG9yIG5vZGUgcG9pbnRlciB0aGF0J3MNCj4gYXNz
-b2NpYXRlZCB3aXRoIHRoZSBjbGsgZHVyaW5nIHJlZ2lzdHJhdGlvbiB0byBmaW5kIHRoZSBwYXJl
-bnQgLiBJZiB3ZQ0KPiBoYWQgdGhhdCwgdGhlbiB3ZSBjb3VsZCBob29rIHVwIGNsa3MgaW50byB0
-aGUgdHJlZSBieSBjYWxsaW5nIGNsa19nZXQoKQ0KPiBpbiB0aGUgZnJhbWV3b3JrIGFuZCBtYXAg
-dGhyb3VnaCB0aGUgY2xvY2stbmFtZXMgcHJvcGVydHkuIFRoaXMgYWxzbw0KPiBnZXRzIHVzIHRv
-IGEgcG9pbnQgd2hlcmUgY2xrIG5hbWVzIGRvbid0IGhhdmUgdG8gYmUgZ2xvYmFsbHkgdW5pcXVl
-LA0KPiB3aGljaCB3b3VsZCBiZSBuaWNlLg0K
+Add support for Actions Semi gate clock together with helper
+functions to be used in composite clock.
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/Makefile   |  1 +
+ drivers/clk/actions/owl-gate.c | 77 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-gate.h | 73 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 151 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-gate.c
+ create mode 100644 drivers/clk/actions/owl-gate.h
+
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 64a50fc2d335..1f0917872c9d 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+ 
+ clk-owl-y			+= owl-common.o
++clk-owl-y			+= owl-gate.o
+diff --git a/drivers/clk/actions/owl-gate.c b/drivers/clk/actions/owl-gate.c
+new file mode 100644
+index 000000000000..b87b76e17472
+--- /dev/null
++++ b/drivers/clk/actions/owl-gate.c
+@@ -0,0 +1,77 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL gate clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include "owl-gate.h"
++
++void owl_gate_set(const struct owl_clk_common *common,
++		 const struct owl_gate_hw *gate_hw, bool enable)
++{
++	int set = gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
++	u32 reg;
++
++	set ^= enable;
++
++	regmap_read(common->regmap, gate_hw->reg, &reg);
++
++	if (set)
++		reg |= BIT(gate_hw->bit_idx);
++	else
++		reg &= ~BIT(gate_hw->bit_idx);
++
++	regmap_write(common->regmap, gate_hw->reg, reg);
++}
++
++static void owl_gate_disable(struct clk_hw *hw)
++{
++	struct owl_gate *gate = hw_to_owl_gate(hw);
++	struct owl_clk_common *common = &gate->common;
++
++	owl_gate_set(common, &gate->gate_hw, false);
++}
++
++static int owl_gate_enable(struct clk_hw *hw)
++{
++	struct owl_gate *gate = hw_to_owl_gate(hw);
++	struct owl_clk_common *common = &gate->common;
++
++	owl_gate_set(common, &gate->gate_hw, true);
++
++	return 0;
++}
++
++int owl_clk_is_enabled(const struct owl_clk_common *common,
++		   const struct owl_gate_hw *gate_hw)
++{
++	u32 reg;
++
++	regmap_read(common->regmap, gate_hw->reg, &reg);
++
++	if (gate_hw->gate_flags & CLK_GATE_SET_TO_DISABLE)
++		reg ^= BIT(gate_hw->bit_idx);
++
++	return !!(reg & BIT(gate_hw->bit_idx));
++}
++
++static int owl_gate_is_enabled(struct clk_hw *hw)
++{
++	struct owl_gate *gate = hw_to_owl_gate(hw);
++	struct owl_clk_common *common = &gate->common;
++
++	return owl_clk_is_enabled(common, &gate->gate_hw);
++}
++
++const struct clk_ops owl_gate_ops = {
++	.disable	= owl_gate_disable,
++	.enable		= owl_gate_enable,
++	.is_enabled	= owl_gate_is_enabled,
++};
+diff --git a/drivers/clk/actions/owl-gate.h b/drivers/clk/actions/owl-gate.h
+new file mode 100644
+index 000000000000..f37b33a1be6b
+--- /dev/null
++++ b/drivers/clk/actions/owl-gate.h
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL gate clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_GATE_H_
++#define _OWL_GATE_H_
++
++#include "owl-common.h"
++
++struct owl_gate_hw {
++	u32			reg;
++	u8			bit_idx;
++	u8			gate_flags;
++};
++
++struct owl_gate {
++	struct owl_gate_hw	gate_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_GATE_HW(_reg, _bit_idx, _gate_flags)	\
++	{						\
++		.reg		= _reg,			\
++		.bit_idx	= _bit_idx,		\
++		.gate_flags	= _gate_flags,		\
++	}
++
++#define OWL_GATE(_struct, _name, _parent, _reg,				\
++		_bit_idx, _gate_flags, _flags)				\
++	struct owl_gate _struct = {					\
++		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &owl_gate_ops,	\
++						      _flags),		\
++		}							\
++	}								\
++
++#define OWL_GATE_NO_PARENT(_struct, _name, _reg,			\
++		_bit_idx, _gate_flags, _flags)				\
++	struct owl_gate _struct = {					\
++		.gate_hw = OWL_GATE_HW(_reg, _bit_idx, _gate_flags),	\
++		.common = {						\
++			.regmap		= NULL,				\
++			.hw.init	= CLK_HW_INIT_NO_PARENT(_name,	\
++						      &owl_gate_ops,	\
++						      _flags),		\
++		},							\
++	}								\
++
++static inline struct owl_gate *hw_to_owl_gate(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_gate, common);
++}
++
++void owl_gate_set(const struct owl_clk_common *common,
++		 const struct owl_gate_hw *gate_hw, bool enable);
++int owl_gate_is_enabled(const struct owl_clk_common *common,
++		   const struct owl_gate_hw *gate_hw);
++
++extern const struct clk_ops owl_gate_ops;
++
++#endif /* _OWL_GATE_H_ */
+-- 
+2.14.1
