@@ -1,234 +1,400 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 25/42] ARM: davinci: dm644x: add new clock init using common clock framework
-Date: Thu, 15 Mar 2018 21:52:41 -0500
-Message-Id: <1521168778-27236-26-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33777 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750785AbeCXG03 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Mar 2018 02:26:29 -0400
+Received: by mail-wm0-f65.google.com with SMTP id i189so9541472wmf.0
+        for <linux-clk@vger.kernel.org>; Fri, 23 Mar 2018 23:26:29 -0700 (PDT)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v4 7/8] clocksource: Add a new timer-ingenic driver
+To: Paul Cercueil <paul@crapouillou.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-doc@vger.kernel.org
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-8-paul@crapouillou.net>
+Message-ID: <a8d28b2b-4e40-83b9-d65e-beecbd36ad33@linaro.org>
+Date: Sat, 24 Mar 2018 07:26:26 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180317232901.14129-8-paul@crapouillou.net>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specific clock init in mach-davinci/dm644x.c
-using the new common clock framework drivers.
+On 18/03/2018 00:29, Paul Cercueil wrote:
+> This driver will use the TCU (Timer Counter Unit) present on the Ingenic
+> JZ47xx SoCs to provide the kernel with a clocksource and timers.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+Please provide a more detailed description about the timer.
 
-Also clean up the #includes since we are adding some here.
+Where is the clocksource ?
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+I don't see the point of using channel idx and pwm checking here.
 
-v8 changes:
-- none
+There is one clockevent, why create multiple channels ? Can't you stick
+to the usual init routine for a timer.
 
-v7 changes:
-- add clock platform device declarations
-- register platform devices instead of registering clocks directly
-- add davinci prefix to commit description
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/clocksource/Kconfig         |   8 ++
+>  drivers/clocksource/Makefile        |   1 +
+>  drivers/clocksource/timer-ingenic.c | 278 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 287 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-ingenic.c
+> 
+>  v2: Use SPDX identifier for the license
+>  v3: - Move documentation to its own patch
+>      - Search the devicetree for PWM clients, and use all the TCU
+> 	   channels that won't be used for PWM
+>  v4: - Add documentation about why we search for PWM clients
+>      - Verify that the PWM clients are for the TCU PWM driver
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index d2e5382821a4..481422145fb4 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -592,4 +592,12 @@ config CLKSRC_ST_LPC
+>  	  Enable this option to use the Low Power controller timer
+>  	  as clocksource.
+>  
+> +config INGENIC_TIMER
+> +	bool "Clocksource/timer using the TCU in Ingenic JZ SoCs"
+> +	depends on MACH_INGENIC || COMPILE_TEST
 
-v6 changes:
-- add blank lines between function calls
+bool "Clocksource/timer using the TCU in Ingenic JZ SoCs" if COMPILE_TEST
 
- arch/arm/mach-davinci/board-dm644x-evm.c  |  2 +
- arch/arm/mach-davinci/board-neuros-osd2.c |  2 +
- arch/arm/mach-davinci/board-sffsdr.c      |  2 +
- arch/arm/mach-davinci/davinci.h           |  1 +
- arch/arm/mach-davinci/dm644x.c            | 83 +++++++++++++++++++++++++++----
- 5 files changed, 81 insertions(+), 9 deletions(-)
+Remove the depends MACH_INGENIC.
 
-diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-index 95b55aa..91c7525 100644
---- a/arch/arm/mach-davinci/board-dm644x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-@@ -768,6 +768,8 @@ static __init void davinci_evm_init(void)
- 	struct clk *aemif_clk;
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 
-+	dm644x_register_clocks();
-+
- 	ret = dm644x_gpio_register();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
-index f287577..ae17d3e 100644
---- a/arch/arm/mach-davinci/board-neuros-osd2.c
-+++ b/arch/arm/mach-davinci/board-neuros-osd2.c
-@@ -174,6 +174,8 @@ static __init void davinci_ntosd2_init(void)
- 	struct clk *aemif_clk;
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 
-+	dm644x_register_clocks();
-+
- 	ret = dm644x_gpio_register();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/board-sffsdr.c b/arch/arm/mach-davinci/board-sffsdr.c
-index 2922da9..933cc08 100644
---- a/arch/arm/mach-davinci/board-sffsdr.c
-+++ b/arch/arm/mach-davinci/board-sffsdr.c
-@@ -134,6 +134,8 @@ static __init void davinci_sffsdr_init(void)
- {
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 
-+	dm644x_register_clocks();
-+
- 	platform_add_devices(davinci_sffsdr_devices,
- 			     ARRAY_SIZE(davinci_sffsdr_devices));
- 	sffsdr_init_i2c();
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index c865226..2861a6f 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -107,6 +107,7 @@ int dm365_gpio_register(void);
- /* DM644x function declarations */
- void dm644x_init(void);
- void dm644x_init_time(void);
-+void dm644x_register_clocks(void);
- void dm644x_init_asp(void);
- int dm644x_init_video(struct vpfe_config *, struct vpbe_config *);
- int dm644x_gpio_register(void);
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index 71a16fc..64f5193 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -8,28 +8,31 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
--#include <linux/init.h>
--#include <linux/clk.h>
--#include <linux/serial_8250.h>
-+#include <linux/clk-provider.h>
- #include <linux/dmaengine.h>
--#include <linux/platform_device.h>
-+#include <linux/init.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
-+#include <linux/platform_device.h>
-+#include <linux/serial_8250.h>
- 
- #include <asm/mach/map.h>
- 
-+#include <mach/common.h>
- #include <mach/cputype.h>
- #include <mach/irqs.h>
--#include "psc.h"
- #include <mach/mux.h>
--#include <mach/time.h>
- #include <mach/serial.h>
--#include <mach/common.h>
-+#include <mach/time.h>
- 
-+#include "asp.h"
- #include "davinci.h"
--#include "clock.h"
- #include "mux.h"
--#include "asp.h"
-+
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
- 
- /*
-  * Device specific clocks
-@@ -43,6 +46,7 @@
- #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
- #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll1_data = {
- 	.num       = 1,
- 	.phys_base = DAVINCI_PLL1_BASE,
-@@ -326,6 +330,7 @@ static struct clk_lookup dm644x_clks[] = {
- 	CLK("davinci-wdt", NULL, &timer2_clk),
- 	CLK(NULL, NULL, NULL),
- };
-+#endif
- 
- static struct emac_platform_data dm644x_emac_pdata = {
- 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
-@@ -934,8 +939,68 @@ void __init dm644x_init(void)
- 
- void __init dm644x_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	struct clk *clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
-+
-+	davinci_timer_init(clk);
-+#else
- 	davinci_clk_init(dm644x_clks);
- 	davinci_timer_init(&timer0_clk);
-+#endif
-+}
-+
-+static struct resource dm644x_pll1_resources[] = {
-+	{
-+		.start	= DAVINCI_PLL1_BASE,
-+		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm644x_pll1_device = {
-+	.name		= "dm644x-pll1",
-+	.id		= -1,
-+	.resource	= dm644x_pll1_resources,
-+	.num_resources	= ARRAY_SIZE(dm644x_pll1_resources),
-+};
-+
-+static struct resource dm644x_pll2_resources[] = {
-+	{
-+		.start	= DAVINCI_PLL2_BASE,
-+		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm644x_pll2_device = {
-+	.name		= "dm644x-pll2",
-+	.id		= -1,
-+	.resource	= dm644x_pll2_resources,
-+	.num_resources	= ARRAY_SIZE(dm644x_pll2_resources),
-+};
-+
-+static struct resource dm644x_psc_resources[] = {
-+	{
-+		.start	= DAVINCI_PWR_SLEEP_CNTRL_BASE,
-+		.end	= DAVINCI_PWR_SLEEP_CNTRL_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm644x_psc_device = {
-+	.name		= "dm644x-psc",
-+	.id		= -1,
-+	.resource	= dm644x_psc_resources,
-+	.num_resources	= ARRAY_SIZE(dm644x_psc_resources),
-+};
-+
-+void __init dm644x_register_clocks(void)
-+{
-+	platform_device_register(&dm644x_pll1_device);
-+	platform_device_register(&dm644x_pll2_device);
-+	platform_device_register(&dm644x_psc_device);
- }
- 
- int __init dm644x_init_video(struct vpfe_config *vpfe_cfg,
+> +	select CLKSRC_OF
+> +	default y
+
+No default, Kconfig platform selects the timer.
+
+> +	help
+> +	  Support for the timer/counter unit of the Ingenic JZ SoCs.
+> +
+>  endmenu
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index d6dec4489d66..98691e8999fe 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -74,5 +74,6 @@ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
+>  obj-$(CONFIG_H8300_TMR8)		+= h8300_timer8.o
+>  obj-$(CONFIG_H8300_TMR16)		+= h8300_timer16.o
+>  obj-$(CONFIG_H8300_TPU)			+= h8300_tpu.o
+> +obj-$(CONFIG_INGENIC_TIMER)		+= timer-ingenic.o
+>  obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
+>  obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
+> diff --git a/drivers/clocksource/timer-ingenic.c b/drivers/clocksource/timer-ingenic.c
+> new file mode 100644
+> index 000000000000..8c777c0c0023
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-ingenic.c
+> @@ -0,0 +1,278 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Ingenic JZ47xx SoC TCU clocksource driver
+> + * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/clk.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/err.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/mfd/syscon/ingenic-tcu.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +
+> +#define NUM_CHANNELS	8
+> +
+> +struct ingenic_tcu;
+> +
+> +struct ingenic_tcu_channel {
+> +	unsigned int idx;
+> +	struct clk *clk;
+> +};
+> +
+> +struct ingenic_tcu {
+> +	struct ingenic_tcu_channel channels[NUM_CHANNELS];
+> +	unsigned long requested;
+> +	struct regmap *map;
+> +};
+> +
+> +struct ingenic_clock_event_device {
+> +	struct clock_event_device cevt;
+> +	struct ingenic_tcu_channel *channel;
+> +	char name[32];
+> +};
+> +
+> +#define ingenic_cevt(_evt) \
+> +	container_of(_evt, struct ingenic_clock_event_device, cevt)
+> +
+> +static inline struct ingenic_tcu *to_ingenic_tcu(struct ingenic_tcu_channel *ch)
+> +{
+> +	return container_of(ch, struct ingenic_tcu, channels[ch->idx]);
+> +}
+> +
+> +static int ingenic_tcu_cevt_set_state_shutdown(struct clock_event_device *evt)
+> +{
+> +	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(evt);
+> +	struct ingenic_tcu_channel *channel = jzcevt->channel;
+> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+> +	unsigned int idx = channel->idx;
+> +
+> +	regmap_write(tcu->map, TCU_REG_TECR, BIT(idx));
+> +	return 0;
+> +}
+> +
+> +static int ingenic_tcu_cevt_set_next(unsigned long next,
+> +		struct clock_event_device *evt)
+> +{
+> +	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(evt);
+> +	struct ingenic_tcu_channel *channel = jzcevt->channel;
+> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+> +	unsigned int idx = channel->idx;
+> +
+> +	if (next > 0xffff)
+> +		return -EINVAL;
+> +
+> +	regmap_write(tcu->map, TCU_REG_TDFRc(idx), (unsigned int) next);
+> +	regmap_write(tcu->map, TCU_REG_TCNTc(idx), 0);
+> +	regmap_write(tcu->map, TCU_REG_TESR, BIT(idx));
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t ingenic_tcu_cevt_cb(int irq, void *dev_id)
+> +{
+> +	struct clock_event_device *cevt = dev_id;
+> +	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(cevt);
+> +	struct ingenic_tcu_channel *channel = jzcevt->channel;
+> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+> +	unsigned int idx = channel->idx;
+> +
+> +	regmap_write(tcu->map, TCU_REG_TECR, BIT(idx));
+> +
+> +	if (cevt->event_handler)
+> +		cevt->event_handler(cevt);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int __init ingenic_tcu_req_channel(struct ingenic_tcu_channel *channel)
+> +{
+> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+> +	char buf[16];
+> +	int err;
+> +
+> +	if (test_and_set_bit(channel->idx, &tcu->requested))
+> +		return -EBUSY;
+> +
+> +	snprintf(buf, sizeof(buf), "timer%u", channel->idx);
+> +	channel->clk = clk_get(NULL, buf);
+> +	if (IS_ERR(channel->clk)) {
+> +		err = PTR_ERR(channel->clk);
+> +		goto out_release;
+> +	}
+> +
+> +	err = clk_prepare_enable(channel->clk);
+> +	if (err)
+> +		goto out_clk_put;
+> +
+> +	return 0;
+> +
+> +out_clk_put:
+> +	clk_put(channel->clk);
+> +out_release:
+> +	clear_bit(channel->idx, &tcu->requested);
+> +	return err;
+> +}
+> +
+> +static int __init ingenic_tcu_reset_channel(struct device_node *np,
+> +		struct ingenic_tcu_channel *channel)
+> +{
+> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+> +
+> +	return regmap_update_bits(tcu->map, TCU_REG_TCSRc(channel->idx),
+> +				0xffff & ~TCU_TCSR_RESERVED_BITS, 0);
+> +}
+> +
+> +static void __init ingenic_tcu_free_channel(struct ingenic_tcu_channel *channel)
+> +{
+> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+> +
+> +	clk_disable_unprepare(channel->clk);
+> +	clk_put(channel->clk);
+> +	clear_bit(channel->idx, &tcu->requested);
+> +}
+> +
+> +static const char * const ingenic_tcu_timer_names[] = {
+> +	"TCU0", "TCU1", "TCU2", "TCU3", "TCU4", "TCU5", "TCU6", "TCU7",
+> +};
+> +
+> +static int __init ingenic_tcu_setup_cevt(struct device_node *np,
+> +		struct ingenic_tcu *tcu, unsigned int idx)
+> +{
+> +	struct ingenic_tcu_channel *channel = &tcu->channels[idx];
+> +	struct ingenic_clock_event_device *jzcevt;
+> +	unsigned long rate;
+> +	int err, virq;
+> +
+> +	err = ingenic_tcu_req_channel(channel);
+> +	if (err)
+> +		return err;
+> +
+> +	err = ingenic_tcu_reset_channel(np, channel);
+> +	if (err)
+> +		goto err_out_free_channel;
+> +
+> +	rate = clk_get_rate(channel->clk);
+> +	if (!rate) {
+> +		err = -EINVAL;
+> +		goto err_out_free_channel;
+> +	}
+> +
+> +	jzcevt = kzalloc(sizeof(*jzcevt), GFP_KERNEL);
+> +	if (!jzcevt) {
+> +		err = -ENOMEM;
+> +		goto err_out_free_channel;
+> +	}
+> +
+> +	virq = irq_of_parse_and_map(np, idx);
+> +	if (!virq) {
+> +		err = -EINVAL;
+> +		goto err_out_kfree_jzcevt;
+> +	}
+> +
+> +	err = request_irq(virq, ingenic_tcu_cevt_cb, IRQF_TIMER,
+> +			ingenic_tcu_timer_names[idx], &jzcevt->cevt);
+> +	if (err)
+> +		goto err_out_irq_dispose_mapping;
+> +
+> +	jzcevt->channel = channel;
+> +	snprintf(jzcevt->name, sizeof(jzcevt->name), "ingenic-tcu-chan%u",
+> +		 channel->idx);
+> +
+> +	jzcevt->cevt.cpumask = cpumask_of(smp_processor_id());
+> +	jzcevt->cevt.features = CLOCK_EVT_FEAT_ONESHOT;
+> +	jzcevt->cevt.name = jzcevt->name;
+> +	jzcevt->cevt.rating = 200;
+> +	jzcevt->cevt.set_state_shutdown = ingenic_tcu_cevt_set_state_shutdown;
+> +	jzcevt->cevt.set_next_event = ingenic_tcu_cevt_set_next;
+> +
+> +	clockevents_config_and_register(&jzcevt->cevt, rate, 10, (1 << 16) - 1);
+> +
+> +	return 0;
+> +
+> +err_out_irq_dispose_mapping:
+> +	irq_dispose_mapping(virq);
+> +err_out_kfree_jzcevt:
+> +	kfree(jzcevt);
+> +err_out_free_channel:
+> +	ingenic_tcu_free_channel(channel);
+> +	return err;
+> +}
+> +
+> +static int __init ingenic_tcu_init(struct device_node *np)
+> +{
+> +	unsigned long available_channels = GENMASK(NUM_CHANNELS - 1, 0);
+> +	struct device_node *node, *pwm_driver_node;
+> +	struct ingenic_tcu *tcu;
+> +	unsigned int i, channel;
+> +	int err;
+> +	u32 val;
+> +
+> +	/* Parse the devicetree for clients of the TCU PWM driver;
+> +	 * every TCU channel not requested for PWM will be used as
+> +	 * a timer.
+> +	 */
+
+
+
+> +	for_each_node_with_property(node, "pwms") {
+> +		/* Get the PWM channel ID (field 1 of the "pwms" node) */
+> +		err = of_property_read_u32_index(node, "pwms", 1, &val);
+> +		if (!err && val >= NUM_CHANNELS)
+> +			err = -EINVAL;
+> +		if (err) {
+> +			pr_err("timer-ingenic: Unable to parse PWM nodes!");
+> +			break;
+> +		}
+> +
+> +		/* Get the PWM driver node (field 0 of the "pwms" node) */
+> +		pwm_driver_node = of_parse_phandle(node, "pwms", 0);
+> +		if (!pwm_driver_node) {
+> +			pr_err("timer-ingenic: Unable to find PWM driver node");
+> +			break;
+> +		}
+> +
+> +		/* Verify that the node we found is for the TCU PWM driver,
+> +		 * by checking that this driver and the PWM driver passed
+> +		 * as phandle share the same parent (the "ingenic,tcu"
+> +		 * compatible MFD/syscon node).
+> +		 */
+> +		if (pwm_driver_node->parent != np->parent)
+> +			continue;
+> +
+> +		pr_info("timer-ingenic: Reserving channel %u for PWM", val);
+> +		available_channels &= ~BIT(val);
+> +	}
+> +
+> +	tcu = kzalloc(sizeof(*tcu), GFP_KERNEL);
+> +	if (!tcu)
+> +		return -ENOMEM;
+> +
+> +	tcu->map = syscon_node_to_regmap(np->parent);
+> +	if (IS_ERR(tcu->map)) {
+> +		err = PTR_ERR(tcu->map);
+> +		kfree(tcu);
+> +		return err;
+> +	}
+> +
+> +	for (i = 0; i < NUM_CHANNELS; i++)
+> +		tcu->channels[i].idx = i;
+
+I'm pretty sure you can do better thaningenic_tcu_setup that :)
+
+> +	for_each_set_bit(channel, &available_channels, NUM_CHANNELS) {
+> +		err = _cevt(np, tcu, channel);
+> +		if (err) {
+> +			pr_warn("timer-ingenic: Unable to init TCU channel %u: %i",
+> +					channel, err);
+> +			continue;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/* We only probe via devicetree, no need for a platform driver */
+> +CLOCKSOURCE_OF_DECLARE(jz4740_tcu, "ingenic,jz4740-tcu", ingenic_tcu_init);
+> +CLOCKSOURCE_OF_DECLARE(jz4770_tcu, "ingenic,jz4770-tcu", ingenic_tcu_init);
+> +CLOCKSOURCE_OF_DECLARE(jz4780_tcu, "ingenic,jz4780-tcu", ingenic_tcu_init);
+
+s/CLOCKSOURCE_OF_DECLARE/TIMER_OF_DECLARE/
+
+> 
+
+
 -- 
-2.7.4
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
