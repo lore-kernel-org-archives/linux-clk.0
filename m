@@ -1,95 +1,55 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock updates for 4.17 round 2
+Date: Mon, 26 Mar 2018 00:11:36 +0200
+Message-ID: <2462810.3FAOKQrxCs@phil>
 MIME-Version: 1.0
-To: Jolly Shah <jolly.shah@xilinx.com>, linux-clk@vger.kernel.org,
- mark.rutland@arm.com, michal.simek@xilinx.com, mturquette@baylibre.com,
- robh+dt@kernel.org, sboyd@codeaurora.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1519856861-31384-2-git-send-email-jollys@xilinx.com>
-Cc: rajanv@xilinx.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Jolly Shah <jolly.shah@xilinx.com>, Jolly Shah <jollys@xilinx.com>,
- Tejas Patel <tejasp@xilinx.com>,
- Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-References: <1519856861-31384-1-git-send-email-jollys@xilinx.com>
- <1519856861-31384-2-git-send-email-jollys@xilinx.com>
-Message-ID: <152148371542.242365.18433130635050412528@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/3] drivers: clk: Add clk_get_children support
-Date: Mon, 19 Mar 2018 11:21:55 -0700
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jolly Shah (2018-02-28 14:27:39)
-> From: Jolly Shah <jolly.shah@xilinx.com>
-> =
+Hi Mike, Stephen,
 
-> This API helps to determine the users for any clock.
+it looks like the recent phase change triggered some more fixups and
+corrections and would be great on top of the first pull request.
+So please pull :-)
 
-Ok, but why do you need it?
 
-> =
+Thanks
+Heiko
 
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> Signed-off-by: Tejas Patel <tejasp@xilinx.com>
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
->  drivers/clk/clk.c            | 28 ++++++++++++++++++++++++++++
->  include/linux/clk-provider.h |  1 +
->  2 files changed, 29 insertions(+)
-> =
 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 0f686a9..947a18b 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -274,6 +274,34 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw=
- *hw)
->  }
->  EXPORT_SYMBOL_GPL(clk_hw_get_parent);
->  =
+The following changes since commit 4ee3fd4abeca30d530fe67972f1964f7454259d6:
 
-> +static unsigned int sibling;
+  clk: rockchip: Add 1.6GHz PLL rate for rk3399 (2018-03-14 00:37:22 +0100)
 
-Looks very thread unsafe!
+are available in the Git repository at:
 
-> +
-> +static void clk_show_subtree(struct clk_core *c,
-> +                            int level)
-> +{
-> +       struct clk_core *child;
-> +
-> +       if (!c)
-> +               return;
-> +
-> +       if (level =3D=3D 1)
-> +               sibling++;
-> +
-> +       hlist_for_each_entry(child, &c->children, child_node)
-> +               clk_show_subtree(child, level + 1);
-> +}
-> +
-> +unsigned int clk_get_children(char *name)
-> +{
-> +       struct clk_core *core;
-> +       struct clk *pclk =3D __clk_lookup(name);
-> +
-> +       sibling =3D 0;
-> +       core =3D pclk->core;
-> +       clk_show_subtree(core, 0);
-> +       return sibling;
-> +}
-> +
->  static struct clk_core *__clk_lookup_subtree(const char *name,
->                                              struct clk_core *core)
->  {
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index f711be6..e94dfb2 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -745,6 +745,7 @@ unsigned int __clk_get_enable_count(struct clk *clk);
->  unsigned long clk_hw_get_rate(const struct clk_hw *hw);
->  unsigned long __clk_get_flags(struct clk *clk);
->  unsigned long clk_hw_get_flags(const struct clk_hw *hw);
-> +unsigned int clk_get_children(char *name);
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.17-rockchip-clk-2
 
-And uses a string lookup instead of having the clk_hw pointer in hand.
-No thanks.
+for you to fetch changes up to 9dc486fdf6cc0d7f635954810ab119c5db2cbb60:
+
+  clk: rockchip: assign correct id for pclk_ddr and hclk_sd in rk3399 (2018-03-23 09:09:19 +0100)
+
+----------------------------------------------------------------
+Some more fixes for Rockchip clocks mainly resulting from the changes in
+phase-handling. Which revealed some parent issues on rk3228 and rk3328 as
+well as additional issue in how handle phase restoration.
+And to top it off two assignments of already existing clock ids for rk3399.
+
+----------------------------------------------------------------
+Lin Huang (1):
+      clk: rockchip: assign correct id for pclk_ddr and hclk_sd in rk3399
+
+Shawn Lin (4):
+      clk: rockchip: Fix wrong parent for SDMMC phase clock for rk3228
+      clk: rockchip: Fix wrong parents for MMC phase clock for rk3328
+      clk: rockchip: Correct the behaviour of restoring cached phase
+      clk: rockchip: Fix error return in phase clock registration
+
+ drivers/clk/rockchip/clk-mmc-phase.c | 22 ++++++++++++++++++----
+ drivers/clk/rockchip/clk-rk3228.c    |  2 +-
+ drivers/clk/rockchip/clk-rk3328.c    | 16 ++++++++--------
+ drivers/clk/rockchip/clk-rk3399.c    |  4 ++--
+ 4 files changed, 29 insertions(+), 15 deletions(-)
