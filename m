@@ -1,49 +1,76 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <fengguang.wu@intel.com>
+Date: Mon, 26 Mar 2018 00:29:40 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: kbuild-all@01.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com, hdegoede@redhat.com,
+	b.zolnierkie@samsung.com, linux@armlinux.org.uk,
+	linux-fbdev@vger.kernel.org, linux-imx@nxp.com, sboyd@kernel.org,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH V2 4/4] video: simplefb: switch to use clk_bulk API to
+ simplify clock operations
+Message-ID: <201803260023.gnm8GYCI%fengguang.wu@intel.com>
+References: <1521600894-29919-5-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Shawn Lin <shawn.lin@rock-chips.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1520987311-114705-1-git-send-email-shawn.lin@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
- Jerome Brunet <jbrunet@baylibre.com>, Shawn Lin <shawn.lin@rock-chips.com>
-References: <1520987311-114705-1-git-send-email-shawn.lin@rock-chips.com>
-Message-ID: <152149340796.242365.15153468447096242685@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3] clk: Don't show the incorrect clock phase
-Date: Mon, 19 Mar 2018 14:03:27 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1521600894-29919-5-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Shawn Lin (2018-03-13 17:28:31)
-> It's found that the clock phase output from clk_summary is
-> wrong compared to the actual phase reading from the register.
-> =
+Hi Dong,
 
-> cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
-> sdio_sample     0        1        0 50000000          0 -22
-> =
+Thank you for the patch! Perhaps something to improve:
 
-> It exposes an issue that clk core, clk_core_get_phase, always
-> returns the cached core->phase which should be either updated
-> by calling clk_set_phase or directly from the first place the
-> clk was registered.
-> =
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on v4.16-rc6 next-20180323]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> When registering the clk, the core->phase geting from ->get_phase()
-> may return negative value indicating error. This is quite common
-> since the clk's phase may be highly related to its parent chain,
-> but it was temporarily orphan when registered, since its parent
-> chains hadn't be ready at that time, so the clk drivers decide to
-> return error in this case. However, if no clk_set_phase is called or
-> maybe the ->set_phase() isn't even implemented, the core->phase would
-> never be updated. This is wrong, and we should try to update it when
-> all its parent chains are settled down, like the way of updating clock
-> rate for that. But it's not deserved to complicate the code now and
-> just update it anyway when calling clk_core_get_phase, which would be
-> much simple and enough.
-> =
+url:    https://github.com/0day-ci/linux/commits/Dong-Aisheng/clk-new-APIs-to-handle-all-available-clocks/20180323-185821
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
 
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
+smatch warnings:
+drivers/video/fbdev/simplefb.c:222 simplefb_clocks_get() warn: unsigned 'par->clk_count' is never less than zero.
 
-Applied to clk-next
+vim +222 drivers/video/fbdev/simplefb.c
+
+   193	
+   194	#if defined CONFIG_OF && defined CONFIG_COMMON_CLK
+   195	/*
+   196	 * Clock handling code.
+   197	 *
+   198	 * Here we handle the clocks property of our "simple-framebuffer" dt node.
+   199	 * This is necessary so that we can make sure that any clocks needed by
+   200	 * the display engine that the bootloader set up for us (and for which it
+   201	 * provided a simplefb dt node), stay up, for the life of the simplefb
+   202	 * driver.
+   203	 *
+   204	 * When the driver unloads, we cleanly disable, and then release the clocks.
+   205	 *
+   206	 * We only complain about errors here, no action is taken as the most likely
+   207	 * error can only happen due to a mismatch between the bootloader which set
+   208	 * up simplefb, and the clock definitions in the device tree. Chances are
+   209	 * that there are no adverse effects, and if there are, a clean teardown of
+   210	 * the fb probe will not help us much either. So just complain and carry on,
+   211	 * and hope that the user actually gets a working fb at the end of things.
+   212	 */
+   213	static int simplefb_clocks_get(struct simplefb_par *par,
+   214				       struct platform_device *pdev)
+   215	{
+   216		struct device_node *np = pdev->dev.of_node;
+   217	
+   218		if (dev_get_platdata(&pdev->dev) || !np)
+   219			return 0;
+   220	
+   221		par->clk_count = clk_bulk_get_all(&pdev->dev, &par->clks);
+ > 222		if ((par->clk_count < 0) && (par->clk_count == -EPROBE_DEFER))
+   223			return -EPROBE_DEFER;
+   224	
+   225		return 0;
+   226	}
+   227	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
