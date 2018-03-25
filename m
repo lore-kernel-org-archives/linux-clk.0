@@ -1,101 +1,144 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
- <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
- <1519686262.6374.3.camel@toradex.com>
- <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
- <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
- <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
- <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
- <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
- <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <028b0ba5-33b9-d12e-77ba-aebbfa91a5fb@gmail.com>
-Date: Thu, 1 Mar 2018 16:19:03 +0300
+Return-Path: <arndbergmann@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
+Sender: arndbergmann@gmail.com
+In-Reply-To: <CAKdteOZLZDkpZ0HMSOVQOc6eRxFzkHyLM=sHm7e0bMV-zeUdVQ@mail.gmail.com>
+References: <CAKdteOZLZDkpZ0HMSOVQOc6eRxFzkHyLM=sHm7e0bMV-zeUdVQ@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Sun, 25 Mar 2018 15:28:40 +0200
+Message-ID: <CAK8P3a2ud6LxxuPC1K_nf-Swdn86UThUL2676UFcM6X0JSpptg@mail.gmail.com>
+Subject: Re: Possible kernel bug in torvalds/linux/master
+To: Christophe Lyon <christophe.lyon@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+	Tero Kristo <t-kristo@ti.com>, Jyri Sarha <jsarha@ti.com>, Tony Lindgren <tony@atomide.com>,
+	Thorsten Leemhuis <regressions@leemhuis.info>, linux-omap <linux-omap@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 01.03.2018 10:41, Peter De Schrijver wrote:
-> On Wed, Feb 28, 2018 at 08:20:47PM +0300, Dmitry Osipenko wrote:
->> On 28.02.2018 17:14, Peter De Schrijver wrote:
->>> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
->>>> On 28.02.2018 12:36, Peter De Schrijver wrote:
->>>>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
->>>>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
->>>>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
->>>>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
->>>>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
->>>>>>>>> which
->>>>>>>>> leaves it at some default rate of 500 kHz:
->>>>>>>>>
->>>>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
->>>>>>>>> pll_u
->>>>>>>>>        pll_u                  3        3        0      500000      
->>>>>>>>>     0
->>>>>>>>>
->>>>>>>>> Of course this won't quite work leading to the following messages:
->>>>>>>>>
->>>>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
->>>>>>>>> tegra-
->>>>>>>>> ehci
->>>>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
->>>>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
->>>>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
->>>>>>>>> tegra-
->>>>>>>>> ehci
->>>>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
->>>>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
->>>>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
->>>>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
->>>>>>>>> tegra-
->>>>>>>>> ehci
->>>>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
->>>>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
->>>>>>>>> tegra-
->>>>>>>>> ehci
->>>>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
->>>>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
->>>>>>>>>
->>>>>>>>> Fix this by actually allowing the rate also being set from within
->>>>>>>>> the Linux kernel.
->>>>>
->>>>> I think the best solution to this problem would be to make pll_u a fixed
->>>>> clock and enable it and program the rate if it's not enabled at boot.
->>>>
->>>> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
->>>> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
->>>> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
->>>> there.
->>>>
->>>
->>> AFAIK we only use one rate ever?
->>
->> IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
->> setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
->>
-> 
-> Indeed. And given that it's hw controlled anyway, I don't see why we can't make
-> it a fixed clock and handle the init at kernel boot depending on what the
-> bootloader has done.
+On Sun, Mar 25, 2018 at 3:03 PM, Christophe Lyon
+<christophe.lyon@linaro.org> wrote:
+> Hi Arnd,
+>
+> We have a Jenkins jobs that builds the kernel from torvalds/linux
+> master branch mutli_v7 defconfig every day, using our last GCC release
+> (7.2-2017-11), and boots a beaglebone-black board.
+>
+> Last week it started to fail, I first suspected a Lava problem, but
+> the job now fails every time, and Remi Duraffort from the Lava team
+> thinks it's really a kernel problem.
+>
+> Is this something you are interested in investigating? Or should we
+> switch to another "less-edge" branch?
+>
+> The last successful run:
+> https://ci.linaro.org/job/tcwg-buildapp/app=3Dlinux+multi_v7,label=3Dtcwg=
+-x86_64-build,target=3Darm-linux-gnueabihf/75/
+> The next one failed:
+> https://ci.linaro.org/job/tcwg-buildapp/app=3Dlinux+multi_v7,label=3Dtcwg=
+-x86_64-build,target=3Darm-linux-gnueabihf/76
+>
+> Build 75 was with this kernel commit:
+> Merge branch 'for-4.16-fixes'
+> 1b5f3ba415fe4cf8b8b39c8d104ed44cde330658
+>
+> Build 76 was with:
+> Merge tag 'clk-fixes-for-linus'
+> 3215b9d57a2c75c4305a3956ca303d7004485200
 
-We can, I just don't think you can demand from Mark to do it. This patch is fine
-on its own, everything else could be done later.
+Hi Christophe,
 
-On the other hand, it's USB driver responsibility to do the right thing. Why
-just not to correct the driver? It would be kinda weird to mask one driver bug
-by adding workaround to another. So I'd even suggest to go other way round by
-implementing PLL lock polling and removing PLL_U enabling/disabling from the USB
-PHY driver (if it's really fully-controlled by HW).
+This branch is certainly the right one to test, thanks for the report!
+>From looking at the output above, it seems that the kernel no longer
+boots at all, and fails to even print any messages. Between the
+two runs, I see the following commits:
+
+3215b9d57a2c Merge tag 'clk-fixes-for-linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
+303851e14a8f Merge tag 'for-linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma
+76c0b6a36a12 Merge tag 'scsi-fixes' of
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi
+645102eac15e Merge tag 'nfsd-4.16-1' of git://linux-nfs.org/~bfields/linux
+32d43cd391ba kvm/x86: fix icebp instruction handling
+e8980d67d601 RDMA/ucma: Ensure that CM_ID exists prior to access it
+68ef3bc31664 nfsd: remove blocked locks on client teardown
+80cf79ae4f68 RDMA/verbs: Remove restrack entry from XRCD structure
+ed65a4dc2208 RDMA/ucma: Fix use-after-free access in ucma_close
+7997f3b2df75 clk: bcm2835: Protect sections updating shared registers
+49012d1bf5f7 clk: bcm2835: Fix ana->maskX definitions
+2975d5de6428 RDMA/ucma: Check AF family prior resolving address
+8a53fc511c5e clk: aspeed: Prevent reset if clock is enabled
+d90c76bb6112 clk: aspeed: Fix is_enabled for certain clocks
+bd8602ca42f6 infiniband: bnxt_re: use BIT_ULL() for 64-bit bit masks
+5388a508479d infiniband: qplib_fp: fix pointer cast
+42cea83f9524 IB/mlx5: Fix cleanup order on unload
+0c81ffc60d52 RDMA/ucma: Don't allow join attempts for unsupported AF family
+7688f2c3bbf5 RDMA/ucma: Fix access to non-initialized CM_ID object
+9dea9a2ff61c RDMA/core: Do not use invalid destination in determining port =
+reuse
+f3f134f5260a RDMA/mlx5: Fix crash while accessing garbage pointer and
+freed memory
+c2b37f76485f IB/mlx5: Fix integer overflows in mlx5_ib_create_srq
+2c292dbb398e IB/mlx5: Fix out-of-bounds read in create_raw_packet_qp_rq
+14bc1dff7427 scsi: qla2xxx: Remove FC_NO_LOOP_ID for FCP and FC-NVMe Discov=
+ery
+318aaf34f117 scsi: libsas: defer ata device eh commands to libata
+55c19eee3b47 clk: qcom: msm8916: Fix return value check in
+qcom_apcs_msm8916_clk_probe()
+9903e41ae1f5 clk: hisilicon: hi3660=EF=BC=9AFix potential NULL dereference =
+in
+hi3660_stub_clk_probe()
+56e1ee353943 Merge branch 'clk-helpers' (early part) into clk-fixes
+04bf9ab3359f clk: fix determine rate error with pass-through clock
+91584eb51b47 Merge branch 'clk-phase' into clk-fixes
+bd13c6cbd3c0 Merge tag 'ti-clk-fixes-4.16' of
+https://github.com/t-kristo/linux-pm into clk-fixes
+a88bb86d58ce Merge tag 'clk-imx-fixes-4.16' of
+git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into
+clk-fixes
+957a42e8599a Merge tag 'sunxi-clk-fixes-for-4.16' of
+https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into
+clk-fixes
+99652a469df1 clk: migrate the count of orphaned clocks at init
+7f95beea3608 clk: update cached phase to respect the fact when setting phas=
+e
+762790b75210 clk: ti: am43xx: add set-rate-parent support for display
+clkctrl clock
+c083dc5f3738 clk: ti: am33xx: add set-rate-parent support for display
+clkctrl clock
+49159a9dc3da clk: ti: clkctrl: add support for CLK_SET_RATE_PARENT flag
+a275b315334d clk: imx51-imx53: Fix UART4/5 registration on i.MX50 and i.MX5=
+3
+5682e268350f clk: sunxi-ng: a31: Fix CLK_OUT_* clock ops
+
+Out of these, All the interesting ones are clk related:
+
+56e1ee353943 Merge branch 'clk-helpers' (early part) into clk-fixes
+04bf9ab3359f clk: fix determine rate error with pass-through clock
+91584eb51b47 Merge branch 'clk-phase' into clk-fixes
+bd13c6cbd3c0 Merge tag 'ti-clk-fixes-4.16' of
+https://github.com/t-kristo/linux-pm into clk-fixes
+99652a469df1 clk: migrate the count of orphaned clocks at init
+7f95beea3608 clk: update cached phase to respect the fact when setting phas=
+e
+762790b75210 clk: ti: am43xx: add set-rate-parent support for display
+clkctrl clock
+c083dc5f3738 clk: ti: am33xx: add set-rate-parent support for display
+clkctrl clock
+49159a9dc3da clk: ti: clkctrl: add support for CLK_SET_RATE_PARENT flag
+
+I've added the involved parties to Cc. We also see the same thing on
+kernelci, where many OMAP based systems now fail to boot, with the
+problem starting at the same commit:
+
+https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.16-rc6-4=
+31-gbcfc1f455466/
+
+It's possible that this has already been debugged and a fix is being worked=
+ on,
+but I'm not aware of anything, since I have not followed my email
+while travelling.
+
+        Arnd
