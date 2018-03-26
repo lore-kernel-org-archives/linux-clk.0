@@ -1,30 +1,103 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:50993 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751160AbeCZXbb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Mar 2018 19:31:31 -0400
+Date: Tue, 27 Mar 2018 07:31:18 +0800
+In-Reply-To: <20180326222258.uxpgj4bk4pg56b7o@rob-hp-laptop>
+References: <20180316175354.21437-1-icenowy@aosc.io> <20180320184646.dynqv6qubzabroe4@flea> <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io> <2866474.lRHIcLtROC@jernej-laptop> <9520BDDE-BFE3-4220-B48D-01A00CFA94DE@aosc.io> <20180326222258.uxpgj4bk4pg56b7o@rob-hp-laptop>
 MIME-Version: 1.0
-To: Alexandre Torgue <alexandre.torgue@st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, patrice.chotard@st.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1520845447-10279-1-git-send-email-patrice.chotard@st.com>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Patrice Chotard <patrice.chotard@st.com>
-References: <1520845447-10279-1-git-send-email-patrice.chotard@st.com>
-Message-ID: <152149239740.242365.14969514277401903715@swboyd.mtv.corp.google.com>
-Subject: Re: [RESEND PATCH] clk: stm32: Add clk entry for SDMMC2 on stm32F769
-Date: Mon, 19 Mar 2018 13:46:37 -0700
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] Re: [PATCH 2/7] dt-bindings: add binding for the Allwinner A64 DE2 bus
+To: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>
+CC: devicetree@vger.kernel.org, jernej.skrabec@siol.net,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <9A6A8961-D45C-4033-962E-83CCE8F01651@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting patrice.chotard@st.com (2018-03-12 02:04:07)
-> From: Patrice Chotard <patrice.chotard@st.com>
-> =
 
-> STM32F769 has 2 SDMMC port, add clock entry for the second one.
-> =
 
-> Signed-off-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+于 2018年3月27日 GMT+08:00 上午6:22:58, Rob Herring <robh@kernel.org> 写到:
+>On Thu, Mar 22, 2018 at 02:08:43PM +0800, Icenowy Zheng wrote:
+>> 
+>> 
+>> 于 2018年3月22日 GMT+08:00 上午1:13:42, "Jernej Škrabec"
+><jernej.skrabec@siol.net> 写到:
+>> >Hi all,
+>> >
+>> >Dne sreda, 21. marec 2018 ob 03:18:13 CET je Icenowy Zheng
+>napisal(a):
+>> >> 于 2018年3月21日 GMT+08:00 上午2:46:46, Maxime Ripard
+>> ><maxime.ripard@bootlin.com> 
+>> >写到:
+>> >> >On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
+>> >> >> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64
+>> >SoC
+>> >> >
+>> >> >to
+>> >> >
+>> >> >> be claimed, otherwise the whole DE2 space is inaccessible.
+>> >> >> 
+>> >> >> Add a device tree binding of the DE2 part as a sub-bus.
+>> >> >
+>> >> >Where did you get the info that it was a bus?
+>> >> 
+>> >> There's no direct evidence, just some guess.
+>> >> 
+>> >> The DE2 is a whole part that is just allocated a memory
+>> >> space at the user manual, and the SRAM controls the
+>> >> access to all modules in the DE2.
+>> >> 
+>> >> So it might be a bus.
+>> >> 
+>> >> Implement it as a bus is a clear representation on A64.
+>> >
+>> >Since there is already syscon for same mmio region, we migh as well
+>use
+>> >it 
+>> >when loading ccu-sun8i-de2 driver on A64.
+>> >
+>> >Other options, like SRAM driver or bus driver, might better
+>represent
+>> >HW, but 
+>> 
+>> I think the device tree should properly represent the HW,
+>> it's a basic requirment.
+>> 
+>> >then we would have two DT nodes covering same mmio region, which I
+>> >think is 
+>> >not really acceptable.
+>> 
+>> It's acceptable, and DE2 is not the only user of SRAM controller so
+>far.
+>
+>No, it's not acceptable. Don't create overlapping mmio regions in DT.
 
-Applied to clk-next
+Then should the SRAM controller driver be configured to take the syscon?
+
+>
+>> 
+>> VE will also need a SRAM region to be claimed.
+>> 
+>> >
+>> >Any suggestions?
+>> >
+>> >BTW, H6 has same design in this regard.
+>> >
+>> >Best regards,
+>> >Jernej
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe devicetree"
+>in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>_______________________________________________
+>linux-arm-kernel mailing list
+>linux-arm-kernel@lists.infradead.org
+>http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
