@@ -1,62 +1,58 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Mon, 12 Mar 2018 11:10:36 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 07/11] dt-bindings: tegra: Update DFLL binding for PWM
- regulator
-Message-ID: <20180312091036.GR6190@tbergstrom-lnx.Nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-8-git-send-email-pdeschrijver@nvidia.com>
- <c747bc00-8c04-c297-e945-784e45655421@nvidia.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Qiufang Dai <qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH 2/3] clk: meson: drop CLK_IGNORE_UNUSED flag
+Date: Mon, 26 Mar 2018 16:18:08 +0800
+Message-ID: <20180326081809.49493-3-yixun.lan@amlogic.com>
+In-Reply-To: <20180326081809.49493-1-yixun.lan@amlogic.com>
+References: <20180326081809.49493-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <c747bc00-8c04-c297-e945-784e45655421@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 08, 2018 at 11:21:40PM +0000, Jon Hunter wrote:
-> 
-> On 06/02/18 16:34, Peter De Schrijver wrote:
-> > Add new properties to configure the DFLL PWM regulator support. Also
-> > add an example and make the I2C clock only required when I2C support is
-> > used.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  .../bindings/clock/nvidia,tegra124-dfll.txt        | 76 +++++++++++++++++++++-
-> >  1 file changed, 74 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> > index dff236f..a4903f7 100644
-> > --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> > +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-> > @@ -23,7 +23,8 @@ Required properties:
-> >  - clock-names: Must include the following entries:
-> >    - soc: Clock source for the DFLL control logic.
-> >    - ref: The closed loop reference clock
-> > -  - i2c: Clock source for the integrated I2C master.
-> > +  - i2c: Clock source for the integrated I2C master (only required when
-> > +	 using I2C mode).
-> >  - resets: Must contain an entry for each entry in reset-names.
-> >    See ../reset/reset.txt for details.
-> >  - reset-names: Must include the following entries:
-> > @@ -45,10 +46,28 @@ Required properties for the control loop parameters:
-> >  Optional properties for the control loop parameters:
-> >  - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
-> >  
-> > +Optional properties for mode selection:
-> > +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
-> > +
-> 
-> Do we need this property? Seems that we should be able to detect if it
-> is I2C or PWM based upon the other properties.
-> 
+Rely on drivers to request the clock explicitly.
 
-I guess we could look for nvidia,pwm-period and switch to PWM mode if this is
-found, but I think it's more clear to have explicit property.
+Previous the kernel will leave the clock on while
+bootloader adready initilized the clock, this wasn't
+optimal way, so fix it here.
 
-Peter.
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ drivers/clk/meson/axg-aoclk.c  | 1 -
+ drivers/clk/meson/gxbb-aoclk.c | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index 121ecb45264f..026b2fe56a29 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -27,7 +27,6 @@ static struct clk_regmap _name##_ao = {					\
+ 		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+-		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
+ 
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index e7bc04d3e24f..005d84ff590d 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -70,7 +70,6 @@ static struct clk_regmap _name##_ao = {					\
+ 		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+-		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
+ 
+-- 
+2.15.1
