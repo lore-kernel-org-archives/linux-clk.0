@@ -1,50 +1,76 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>,
- Markus Elfring <elfring@users.sourceforge.net>,
- Michael Turquette <mturquette@baylibre.com>,
- Shawn Guo <shawn.guo@linaro.org>, Wei Yongjun <weiyongjun1@huawei.com>,
- tianshuliang <tianshuliang@hisilicon.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521555574-29189-1-git-send-email-weiyongjun1@huawei.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-clk@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <1521555574-29189-1-git-send-email-weiyongjun1@huawei.com>
-Message-ID: <152156633511.183971.8534897713854322596@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH -next] clk: hisilicon: fix potential NULL dereference in
- hisi_clk_alloc()
-Date: Tue, 20 Mar 2018 10:18:55 -0700
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v7 08/11] clk: actions: Add fixed factor clock support
+Date: Mon, 26 Mar 2018 23:09:02 +0530
+Message-Id: <20180326173905.22313-9-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Wei Yongjun (2018-03-20 07:19:34)
-> platform_get_resource() may fail and return NULL, so we should
-> better check it's return value to avoid a NULL pointer dereference
-> a bit later in the code.
-> =
+Add support for Actions Semi fixed factor clock reusing the clk
+ops from common clock driver.
 
-> This is detected by Coccinelle semantic patch.
-> =
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/owl-fixed-factor.h | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-fixed-factor.h
 
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
-> =
-
-> res =3D platform_get_resource(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when !=3D res =3D=3D NULL
-> e =3D devm_ioremap(e1, res->start, e2);
-> =
-
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
-
-Please add Fixes: tags.
-
-This is an old one.
-
-Fixes: 322269163a36 ("clk: hisilicon: add hisi_clk_alloc function.")
-
-Applied to clk-next.
+diff --git a/drivers/clk/actions/owl-fixed-factor.h b/drivers/clk/actions/owl-fixed-factor.h
+new file mode 100644
+index 000000000000..cc9fe36c0964
+--- /dev/null
++++ b/drivers/clk/actions/owl-fixed-factor.h
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL fixed factor clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_FIXED_FACTOR_H_
++#define _OWL_FIXED_FACTOR_H_
++
++#include "owl-common.h"
++
++#define OWL_FIX_FACT(_struct, _name, _parent, _mul, _div, _flags)	\
++	struct clk_fixed_factor _struct = {				\
++		.mult		= _mul,					\
++		.div		= _div,					\
++		.hw.init	= CLK_HW_INIT(_name,			\
++					      _parent,			\
++					      &clk_fixed_factor_ops,	\
++					      _flags),			\
++	}
++
++extern const struct clk_ops clk_fixed_factor_ops;
++
++#endif /* _OWL_FIXED_FACTOR_H_ */
+-- 
+2.14.1
