@@ -1,77 +1,37 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Peter Chen <peter.chen@freescale.com>,
-	Irina Tirdea <irina.tirdea@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com,
-	Anson Huang <anson.huang@nxp.com>,
-	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
-	Abel Vesa <abelvesa@linux.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Dong Aisheng <b29396@freescale.com>,
-	Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] clk: imx7d: Move clks_init_on before any clock operations
-Date: Wed, 28 Mar 2018 09:46:36 +0300
-Message-Id: <1522219599-10831-3-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
-References: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 26 Mar 2018 17:23:20 -0500
+From: Rob Herring <robh@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
+	mark.rutland@arm.com, linux@armlinux.org.uk,
+	mturquette@baylibre.com, sboyd@kernel.org, shengjiu.wang@nxp.com,
+	Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] clk: imx6sx: add missing lvds2 clock to the clock
+ tree
+Message-ID: <20180326222320.kcbudvanuyvo42fa@rob-hp-laptop>
+References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dong Aisheng <b29396@freescale.com>
+On Mon, Mar 19, 2018 at 10:30:44AM +0800, Anson Huang wrote:
+> i.MX6SX has lvds2 (analog clock2), an I/O clock like lvds1.
+> And this lvds2, along with lvds1, can be used to provide
+> external clock source to the internal pll, such as pll4_audio
+> and pll5_video.
+> 
+> This patch mainly adds the lvds2 to the clock tree and fix its
+> relationship with pll accordingly.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx6sx.c             | 8 ++++++--
+>  include/dt-bindings/clock/imx6sx-clock.h | 6 +++++-
+>  2 files changed, 11 insertions(+), 3 deletions(-)
 
-For init on clocks we should move it at the first place in imx7d_clocks_init()
-before any clock operations, else the clock operation may fail in case the clock
-is still not on.
-
-Acked-by: Ranjani Vaidyanathan <Ranjani.Vaidyanathan@freescale.com>
-Signed-off-by: Dong Aisheng <b29396@freescale.com>
-Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 89bfa75..9b17805 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -433,13 +433,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_PLL_AUDIO_MAIN_BYPASS] = imx_clk_mux_flags("pll_audio_main_bypass", base + 0xf0, 16, 1, pll_audio_bypass_sel, ARRAY_SIZE(pll_audio_bypass_sel), CLK_SET_RATE_PARENT);
- 	clks[IMX7D_PLL_VIDEO_MAIN_BYPASS] = imx_clk_mux_flags("pll_video_main_bypass", base + 0x130, 16, 1, pll_video_bypass_sel, ARRAY_SIZE(pll_video_bypass_sel), CLK_SET_RATE_PARENT);
- 
--	clk_set_parent(clks[IMX7D_PLL_ARM_MAIN_BYPASS], clks[IMX7D_PLL_ARM_MAIN]);
--	clk_set_parent(clks[IMX7D_PLL_DRAM_MAIN_BYPASS], clks[IMX7D_PLL_DRAM_MAIN]);
--	clk_set_parent(clks[IMX7D_PLL_SYS_MAIN_BYPASS], clks[IMX7D_PLL_SYS_MAIN]);
--	clk_set_parent(clks[IMX7D_PLL_ENET_MAIN_BYPASS], clks[IMX7D_PLL_ENET_MAIN]);
--	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
--	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
--
- 	clks[IMX7D_PLL_ARM_MAIN_CLK] = imx_clk_gate("pll_arm_main_clk", "pll_arm_main_bypass", base + 0x60, 13);
- 	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_main_bypass", base + 0x70, 13);
- 	clks[IMX7D_PLL_SYS_MAIN_CLK] = imx_clk_gate("pll_sys_main_clk", "pll_sys_main_bypass", base + 0xb0, 13);
-@@ -886,6 +879,13 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
- 		clk_prepare_enable(clks[clks_init_on[i]]);
- 
-+	clk_set_parent(clks[IMX7D_PLL_ARM_MAIN_BYPASS], clks[IMX7D_PLL_ARM_MAIN]);
-+	clk_set_parent(clks[IMX7D_PLL_DRAM_MAIN_BYPASS], clks[IMX7D_PLL_DRAM_MAIN]);
-+	clk_set_parent(clks[IMX7D_PLL_SYS_MAIN_BYPASS], clks[IMX7D_PLL_SYS_MAIN]);
-+	clk_set_parent(clks[IMX7D_PLL_ENET_MAIN_BYPASS], clks[IMX7D_PLL_ENET_MAIN]);
-+	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
-+	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
-+
- 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
- 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
- 
--- 
-2.7.4
+Reviewed-by: Rob Herring <robh@kernel.org>
