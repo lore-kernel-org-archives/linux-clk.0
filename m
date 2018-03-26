@@ -1,31 +1,85 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521168778-27236-15-git-send-email-david@lechnology.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
- David Lechner <david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-15-git-send-email-david@lechnology.com>
-Message-ID: <152156545286.183971.16725352981158792164@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v8 14/42] clk: davinci: Add platform information for TI DM365 PSC
-Date: Tue, 20 Mar 2018 10:04:12 -0700
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v7 01/11] arm64: dts: actions: Add S900 clock management unit nodes
+Date: Mon, 26 Mar 2018 23:08:55 +0530
+Message-Id: <20180326173905.22313-2-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting David Lechner (2018-03-15 19:52:30)
-> This adds platform-specific declarations for the PSC clocks on TI
-> DM365 based systems.
-> =
+Add Actions Semi S900 Clock Management Unit (CMU) nodes
 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-> ---
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/actions/s900.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Applied to clk-next
+diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+index 11406f6d3a6d..fee0c9557656 100644
+--- a/arch/arm64/boot/dts/actions/s900.dtsi
++++ b/arch/arm64/boot/dts/actions/s900.dtsi
+@@ -4,6 +4,7 @@
+  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+  */
+ 
++#include <dt-bindings/clock/actions,s900-cmu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+ / {
+@@ -88,6 +89,18 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	losc: losc {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		#clock-cells = <0>;
++	};
++
++	diff24M: diff24M {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		#clock-cells = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+@@ -154,6 +167,13 @@
+ 			status = "disabled";
+ 		};
+ 
++		cmu: clock-controller@e0160000 {
++			compatible = "actions,s900-cmu";
++			reg = <0x0 0xe0160000 0x0 0x1000>;
++			clocks = <&hosc>, <&losc>;
++			#clock-cells = <1>;
++		};
++
+ 		timer: timer@e0228000 {
+ 			compatible = "actions,s900-timer";
+ 			reg = <0x0 0xe0228000 0x0 0x8000>;
+-- 
+2.14.1
