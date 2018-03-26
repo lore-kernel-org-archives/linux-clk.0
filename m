@@ -1,51 +1,76 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 3/8] ARM: davinci: dts: add a reset control to the dsp node
-Date: Fri, 23 Mar 2018 14:04:50 +0100
-Message-Id: <20180323130455.11470-4-brgl@bgdev.pl>
-In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
+Return-Path: <anischal@codeaurora.org>
+Subject: Re: [PATCH v2 1/4] clk: qcom: Clear hardware clock control bit of RCG
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+ <1520493495-3084-2-git-send-email-anischal@codeaurora.org>
+ <152150012178.254778.7302484360542115877@swboyd.mtv.corp.google.com>
+From: "Nischal, Amit" <anischal@codeaurora.org>
+Message-ID: <6d59cd6b-0075-3be7-d890-e6a330f2e781@codeaurora.org>
+Date: Mon, 26 Mar 2018 10:49:47 +0530
+MIME-Version: 1.0
+In-Reply-To: <152150012178.254778.7302484360542115877@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The davinci-rproc driver will soon use the reset framework. Add the
-resets property to the dsp node in da850.dtsi.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/boot/dts/da850.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+On 3/20/2018 4:25 AM, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-03-07 23:18:12)
+>> For upcoming targets like sdm845, POR value of the hardware clock control
+>> bit is set for most of root clocks which needs to be cleared for software
+>> to be able to control. For older targets like MSM8996, this bit is reserved
+>> bit and having POR value as 0 so this patch will work for the older targets
+>> too. So update the configuration mask to take care of the same to clear
+>> hardware clock control bit.
+>>
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> ---
+>>   drivers/clk/qcom/clk-rcg2.c | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+>> index bbeaf9c..e63db10 100644
+>> --- a/drivers/clk/qcom/clk-rcg2.c
+>> +++ b/drivers/clk/qcom/clk-rcg2.c
+>> @@ -1,5 +1,5 @@
+>>   /*
+>> - * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+>> + * Copyright (c) 2013, 2018, The Linux Foundation. All rights reserved.
+> It would be nice if lawyers over there could avoid forcing copyright
+> date updates when less than half the file changes.
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index dad64dbf1f23..5b485e44b83e 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -109,6 +109,7 @@
- 		interrupt-parent = <&intc>;
- 		interrupts = <28>;
- 		clocks = <&psc0 15>;
-+		resets = <&psc0 15>;
- 		status = "disabled";
- 	};
- 	soc@1c00000 {
--- 
-2.16.1
+Thanks for the review.
+I will address the above in the next patch series.
+
+>
+>>    *
+>>    * This software is licensed under the terms of the GNU General Public
+>>    * License version 2, as published by the Free Software Foundation, and
+>> @@ -42,6 +42,7 @@
+>>   #define CFG_MODE_SHIFT         12
+>>   #define CFG_MODE_MASK          (0x3 << CFG_MODE_SHIFT)
+>>   #define CFG_MODE_DUAL_EDGE     (0x2 << CFG_MODE_SHIFT)
+>> +#define CFG_HW_CLK_CTRL_MASK   BIT(20)
+>>
+>>   #define M_REG                  0x8
+>>   #define N_REG                  0xc
+>> @@ -276,7 +277,7 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+>>          }
+>>
+>>          mask = BIT(rcg->hid_width) - 1;
+>> -       mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK;
+>> +       mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+>>          cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
+>>          cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+>>          if (rcg->mnd_width && f->n && (f->m != f->n))
+> Is there going to be a future patch to update the RCGs to indicate they
+> support hardware control or not?
+
+As of now, there will not be any patch to update the RCGs to support HW control.
