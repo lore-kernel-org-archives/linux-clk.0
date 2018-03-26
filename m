@@ -1,76 +1,44 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com
-Cc: liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	davem@davemloft.net,
-	mchehab@kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	viresh.kumar@linaro.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	manivannanece23@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 08/11] clk: actions: Add fixed factor clock support
-Date: Mon, 26 Mar 2018 23:09:02 +0530
-Message-Id: <20180326173905.22313-9-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
-References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Date: Mon, 26 Mar 2018 17:22:56 -0500
+From: Rob Herring <robh@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH 1/7] dt-bindings: add compatible string for the A64 DE2 CCU
+Message-ID: <20180326222256.fhdcodfx7ff4zyij@rob-hp-laptop>
+References: <20180316175354.21437-1-icenowy@aosc.io>
+ <20180316175354.21437-2-icenowy@aosc.io>
+MIME-Version: 1.0
+In-Reply-To: <20180316175354.21437-2-icenowy@aosc.io>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+ linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for Actions Semi fixed factor clock reusing the clk
-ops from common clock driver.
+On Sat, Mar 17, 2018 at 01:53:48AM +0800, Icenowy Zheng wrote:
+> The Allwinner A64 SoC has a DE2 CCU like the one in the DE2 of Allwinner
+> H5 SoC.
+> 
+> Add a compatible string for it.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+>  Documentation/devicetree/bindings/clock/sun8i-de2.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/owl-fixed-factor.h | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 drivers/clk/actions/owl-fixed-factor.h
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/clk/actions/owl-fixed-factor.h b/drivers/clk/actions/owl-fixed-factor.h
-new file mode 100644
-index 000000000000..cc9fe36c0964
---- /dev/null
-+++ b/drivers/clk/actions/owl-fixed-factor.h
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL fixed factor clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_FIXED_FACTOR_H_
-+#define _OWL_FIXED_FACTOR_H_
-+
-+#include "owl-common.h"
-+
-+#define OWL_FIX_FACT(_struct, _name, _parent, _mul, _div, _flags)	\
-+	struct clk_fixed_factor _struct = {				\
-+		.mult		= _mul,					\
-+		.div		= _div,					\
-+		.hw.init	= CLK_HW_INIT(_name,			\
-+					      _parent,			\
-+					      &clk_fixed_factor_ops,	\
-+					      _flags),			\
-+	}
-+
-+extern const struct clk_ops clk_fixed_factor_ops;
-+
-+#endif /* _OWL_FIXED_FACTOR_H_ */
--- 
-2.14.1
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
