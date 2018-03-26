@@ -1,49 +1,34 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: <shawnguo@kernel.org>, <kernel@pengutronix.de>,
-        <fabio.estevam@nxp.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <shengjiu.wang@nxp.com>
-CC: <Linux-imx@nxp.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH V2 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz clock source
-Date: Mon, 19 Mar 2018 10:30:45 +0800
-Message-ID: <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
-References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <sricharan@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Mon, 26 Mar 2018 15:17:46 +0530
+From: sricharan@codeaurora.org
+To: Craig Tatlor <ctatlor97@gmail.com>
+Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+ andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+Subject: Re: [v9,04/15] clk: qcom: Add HFPLL driver
+In-Reply-To: <20180325193341.27845-1-ctatlor97@gmail.com>
+References: <520347148-27852-5-git-send-email-sricharan@codeaurora.org>
+ <20180325193341.27845-1-ctatlor97@gmail.com>
+Message-ID: <0132a9e1371c7e690d174cb4d65bc951@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On i.MX6SX SabreAuto board, there is external 24MHz clock
-source for analog clock2, add this clock source to clock tree.
+On 2018-03-26 01:03, Craig Tatlor wrote:
+> This doesn't seem to work correctly with the higher clocks on 8974pro,
+> specifically 2150400000 hz or above, maybe its something to do with
+> being bigger than an unsigned long.
+> 
+> When i try to set any higher frequency it jumps down to 300mhz.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-changes since V1:
-	remove unnecessary clocks container.
- arch/arm/boot/dts/imx6sx-sabreauto.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-index 72da5ac..a3b022b 100644
---- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-+++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-@@ -18,6 +18,12 @@
- 		reg = <0x80000000 0x80000000>;
- 	};
- 
-+	codec_osc: anaclk2 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <24576000>;
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
--- 
-2.7.4
+  Thanks for testing this series. Not sure i got dropped from the list.
+  So i will check on this and come back.
+
+Regards,
+  Sricharan
