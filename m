@@ -1,30 +1,39 @@
-Return-Path: <ctatlor97@gmail.com>
-Return-Path: <ctatlor97@gmail.com>
-From: Craig Tatlor <ctatlor97@gmail.com>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk
-Subject: Re: [v9,04/15] clk: qcom: Add HFPLL driver
-Date: Sun, 25 Mar 2018 20:33:41 +0100
-Message-Id: <20180325193341.27845-1-ctatlor97@gmail.com>
-In-Reply-To: <520347148-27852-5-git-send-email-sricharan@codeaurora.org>
-References: <520347148-27852-5-git-send-email-sricharan@codeaurora.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 26 Mar 2018 17:25:06 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Qiufang Dai <qiufang.dai@amlogic.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] dt-bindings: clock: reset: Add AXG AO Clock and
+ Reset Bindings
+Message-ID: <20180326222506.jkn5i7eyto3li3ws@rob-hp-laptop>
+References: <20180323143816.200573-1-yixun.lan@amlogic.com>
+ <20180323143816.200573-5-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180323143816.200573-5-yixun.lan@amlogic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This doesn't seem to work correctly with the higher clocks on 8974pro, specifically 2150400000 hz or above, maybe its something to do with being bigger than an unsigned long.
+On Fri, Mar 23, 2018 at 10:38:13PM +0800, Yixun Lan wrote:
+> Add dt-bindings headers for the Meson-AXG's AO clock and
+> reset controller.
+> 
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
+>  include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
+>  2 files changed, 46 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+>  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
 
-When i try to set any higher frequency it jumps down to 300mhz.
+Reviewed-by: Rob Herring <robh@kernel.org>
