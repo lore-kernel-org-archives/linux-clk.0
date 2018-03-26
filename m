@@ -1,55 +1,158 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v4 7/8] remoteproc: da8xx: use the reset framework
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin
+ Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner
+	<david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson
+	<bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Bartosz Golaszewski
+	<bgolaszewski@baylibre.com>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
+ <20180323130455.11470-8-brgl@bgdev.pl>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <c09d4838-4938-4744-7ce9-4de99080cbe3@ti.com>
+Date: Mon, 26 Mar 2018 16:28:41 -0500
 MIME-Version: 1.0
-To: Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@codeaurora.org>,
- mturquette@baylibre.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1808510.rdFFBGyEiV@phil>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <1808510.rdFFBGyEiV@phil>
-Message-ID: <152106723488.85099.12357592605280338935@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL] Rockchip clock updates for 4.17 round 1
-Date: Wed, 14 Mar 2018 15:40:34 -0700
+In-Reply-To: <20180323130455.11470-8-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Heiko Stuebner (2018-03-14 10:22:47)
-> Hi Mike, Stephen,
-> =
+Hi Bart,
 
-> please find below Rockchip clock changes targetted at 4.17.
-> =
+On 03/23/2018 08:04 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Switch to using the reset framework instead of handcoded reset routines
+> we used so far.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/remoteproc/da8xx_remoteproc.c | 32 +++++++++++++++++++++++++++-----
+>  1 file changed, 27 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+> index f134192922e0..3689473f8b49 100644
+> --- a/drivers/remoteproc/da8xx_remoteproc.c
+> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+> @@ -10,6 +10,7 @@
+>  
+>  #include <linux/bitops.h>
+>  #include <linux/clk.h>
+> +#include <linux/reset.h>
+>  #include <linux/err.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> @@ -20,8 +21,6 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/remoteproc.h>
+>  
+> -#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
+> -
+>  #include "remoteproc_internal.h"
+>  
+>  static char *da8xx_fw_name;
+> @@ -72,6 +71,7 @@ struct da8xx_rproc {
+>  	struct da8xx_rproc_mem *mem;
+>  	int num_mems;
+>  	struct clk *dsp_clk;
+> +	struct reset_control *dsp_reset;
+>  	void (*ack_fxn)(struct irq_data *data);
+>  	struct irq_data *irq_data;
+>  	void __iomem *chipsig;
+> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>  	struct device *dev = rproc->dev.parent;
+>  	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+>  	struct clk *dsp_clk = drproc->dsp_clk;
+> +	struct reset_control *dsp_reset = drproc->dsp_reset;
+>  	int ret;
+>  
+>  	/* hw requires the start (boot) address be on 1KB boundary */
+> @@ -155,7 +156,11 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>  		return ret;
+>  	}
+>  
+> -	davinci_clk_reset_deassert(dsp_clk);
+> +	ret = reset_control_deassert(dsp_reset);
+> +	if (ret) {
+> +		dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
+> +		return ret;
 
-> As you can see in the tag, making the rk3328 ready for display output
-> is the biggest part, otherwise there are some smaller things for the
-> other parts. So please pull.
-> =
+need to unwind the clk_prepare_enable() here.
 
-> Thanks
-> Heiko
-> =
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -163,8 +168,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>  static int da8xx_rproc_stop(struct rproc *rproc)
+>  {
+>  	struct da8xx_rproc *drproc = rproc->priv;
+> +	int ret;
+> +
+> +	ret = reset_control_assert(drproc->dsp_reset);
+> +	if (ret) {
+> +		dev_err(rproc->dev.parent,
+> +			"reset_control_assert() failed: %d\n", ret);
 
-> =
+prefer the trace statement to be on the same line as dev_err, you can
+just keep the ret on the next line. I am fine with defining a local dev
+variable as well (mirrors da8xx_rproc_start() to have the trace in a
+single line).
 
-> The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1=
-b2:
-> =
+> +		return ret;
+> +	}
+>  
+> -	davinci_clk_reset_assert(drproc->dsp_clk);
+>  	clk_disable_unprepare(drproc->dsp_clk);
+>  
+>  	return 0;
+> @@ -232,6 +244,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>  	struct resource *bootreg_res;
+>  	struct resource *chipsig_res;
+>  	struct clk *dsp_clk;
+> +	struct reset_control *dsp_reset;
+>  	void __iomem *chipsig;
+>  	void __iomem *bootreg;
+>  	int irq;
+> @@ -268,6 +281,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>  		return PTR_ERR(dsp_clk);
+>  	}
+>  
+> +	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
+> +	if (IS_ERR(dsp_reset)) {
+> +		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
+> +			dev_err(dev, "unable to get reset control: %ld\n",
+> +				PTR_ERR(dsp_reset));
+> +
+> +		return PTR_ERR(dsp_reset);
+> +	}
+> +
+>  	if (dev->of_node) {
+>  		ret = of_reserved_mem_device_init(dev);
+>  		if (ret) {
+> @@ -309,7 +331,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>  	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+>  	 * held in reset at the time it is called.
+>  	 */
+> -	ret = davinci_clk_reset_assert(drproc->dsp_clk);
+> +	ret = reset_control_assert(dsp_reset);
+>  	if (ret)
+>  		goto free_rproc;
+>  
 
->   Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-> =
+The reset API usage changes themselves look good otherwise.
 
-> are available in the Git repository at:
-> =
-
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
-tags/v4.17-rockchip-clk-1
-> =
-
-> for you to fetch changes up to 4ee3fd4abeca30d530fe67972f1964f7454259d6:
-> =
-
->   clk: rockchip: Add 1.6GHz PLL rate for rk3399 (2018-03-14 00:37:22 +010=
-0)
-> =
-
-
-Thanks. Pulled into clk-next.
+regards
+Suman
