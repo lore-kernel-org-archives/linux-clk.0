@@ -1,57 +1,97 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:52793 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752048AbeCPR4F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Mar 2018 13:56:05 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 4/7] clk: sunxi-ng: add A64 compatible string
-Date: Sat, 17 Mar 2018 01:53:51 +0800
-Message-Id: <20180316175354.21437-5-icenowy@aosc.io>
-In-Reply-To: <20180316175354.21437-1-icenowy@aosc.io>
-References: <20180316175354.21437-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Qiufang Dai <qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 3/3] ARM64: dts: meson: fix clock source of the pclk for UART_AO
+Date: Mon, 26 Mar 2018 16:18:09 +0800
+Message-ID: <20180326081809.49493-4-yixun.lan@amlogic.com>
+In-Reply-To: <20180326081809.49493-1-yixun.lan@amlogic.com>
+References: <20180326081809.49493-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-As claiming Allwinner A64 SRAM C is a prerequisite for all sub-blocks of
-the A64 DE2, not only the CCU sub-block, a bus driver is then written for
-enabling the access to the whole DE2 part by claiming the SRAM.
+>From the hardware perspective, the clk81 is the parent of
+the UART_AO clocks. So it make more sense to mark
+the CLKID_AO_UART1/2 as the pclk.
 
-In this situation, the A64 compatible string will be just added with no
-other requirments, as they're processed by the parent bus driver.
+Previous we had flag=CLK_IGNORE_UNUSED in AO clock driver.
+This will make kernel leave clock as it is while bootloader
+set the clock on.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 4 ++--
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++--
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 468d1abaf0ee..8df7cd93453e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -292,13 +292,10 @@ static const struct of_device_id sunxi_de2_clk_ids[] = {
- 		.compatible = "allwinner,sun50i-h5-de2-clk",
- 		.data = &sun50i_a64_de2_clk_desc,
- 	},
--	/*
--	 * The Allwinner A64 SoC needs some bit to be poke in syscon to make
--	 * DE2 really working.
--	 * So there's currently no A64 compatible here.
--	 * H5 shares the same reset line with A64, so here H5 is using the
--	 * clock description of A64.
--	 */
-+	{
-+		.compatible = "allwinner,sun50i-a64-de2-clk",
-+		.data = &sun50i_a64_de2_clk_desc,
-+	},
- 	{ }
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index 48584d5a329b..e538e2448bb5 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -533,7 +533,7 @@
+ 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+ 				reg = <0x0 0x3000 0x0 0x18>;
+ 				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
+-				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
+ 				clock-names = "xtal", "pclk", "baud";
+ 				status = "disabled";
+ 			};
+@@ -542,7 +542,7 @@
+ 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+ 				reg = <0x0 0x4000 0x0 0x18>;
+ 				interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
+-				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
+ 				clock-names = "xtal", "pclk", "baud";
+ 				status = "disabled";
+ 			};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 3290a4dc3522..a458ea50c2ef 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -783,12 +783,12 @@
+ };
+ 
+ &uart_AO {
+-	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
+ 	clock-names = "xtal", "pclk", "baud";
+ };
+ 
+ &uart_AO_B {
+-	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
+ 	clock-names = "xtal", "pclk", "baud";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index 4f355f17eed6..474f4f9630e4 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -733,12 +733,12 @@
+ };
+ 
+ &uart_AO {
+-	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
+ 	clock-names = "xtal", "pclk", "baud";
+ };
+ 
+ &uart_AO_B {
+-	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
+ 	clock-names = "xtal", "pclk", "baud";
  };
  
 -- 
 2.15.1
-
