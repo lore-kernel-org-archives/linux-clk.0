@@ -1,69 +1,65 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Fri, 9 Mar 2018 10:14:38 +0200
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 09/11] cpufreq: tegra124-cpufreq: extend to support
- Tegra210
-Message-ID: <20180309081438.GO6190@tbergstrom-lnx.Nvidia.com>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-10-git-send-email-pdeschrijver@nvidia.com>
- <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <b7a25613-44b4-5e63-e8c7-91ce2b7cb56e@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v7 02/11] arm64: dts: actions: Source CMU clock for UART5
+Date: Mon, 26 Mar 2018 23:08:56 +0530
+Message-Id: <20180326173905.22313-3-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 08, 2018 at 11:25:04PM +0000, Jon Hunter wrote:
-> 
-> On 06/02/18 16:34, Peter De Schrijver wrote:
-> > Tegra210 has a very similar CPU clocking scheme than Tegra124. So add
-> > support in this driver. Also allow for the case where the CPU voltage is
-> > controlled directly by the DFLL rather than by a separate regulator object.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  drivers/cpufreq/tegra124-cpufreq.c | 15 ++++++++-------
-> >  1 file changed, 8 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> > index 4353025..f8e01a8 100644
-> > --- a/drivers/cpufreq/tegra124-cpufreq.c
-> > +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> > @@ -64,7 +64,8 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
-> >  {
-> >  	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-> >  	clk_disable_unprepare(priv->dfll_clk);
-> > -	regulator_sync_voltage(priv->vdd_cpu_reg);
-> > +	if (priv->vdd_cpu_reg)
-> > +		regulator_sync_voltage(priv->vdd_cpu_reg);
-> >  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
-> >  }
-> >  
-> > @@ -89,10 +90,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
-> >  		return -ENODEV;
-> >  
-> >  	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
-> > -	if (IS_ERR(priv->vdd_cpu_reg)) {
-> > -		ret = PTR_ERR(priv->vdd_cpu_reg);
-> > -		goto out_put_np;
-> > -	}
-> > +	if (IS_ERR(priv->vdd_cpu_reg) != -EPROBE_DEFER)
-> > +		priv->vdd_cpu_reg = NULL;
-> > +	else
-> > +		return -EPROBE_DEFER;
-> 
-> I am still not sure that we should rely on the fact that the regulator
-> is not present in DT to imply that we do not need it. I think that we
-> should be checking if we are using I2C mode here.
-> 
+Remove fixed clock and source CMU (Clock Management Unit) clock for
+UART5 driver in Actions Semi S900 SoC.
 
-The cpufreq driver doesn't know this however. Also the current approach of
-setting the same voltage when switching to pll_x is incorrect. The CVB
-tables when using pll_x include more margin than when using the DFLL.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/actions/s900-bubblegum-96.dts | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-Peter.
+diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
+index 21ca80f9941c..ff043c961d75 100644
+--- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
++++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
+@@ -24,12 +24,6 @@
+ 		device_type = "memory";
+ 		reg = <0x0 0x0 0x0 0x80000000>;
+ 	};
+-
+-	uart5_clk: uart5-clk {
+-		compatible = "fixed-clock";
+-		clock-frequency = <921600>;
+-		#clock-cells = <0>;
+-	};
+ };
+ 
+ &timer {
+@@ -38,5 +32,5 @@
+ 
+ &uart5 {
+ 	status = "okay";
+-	clocks = <&uart5_clk>;
++	clocks = <&cmu CLK_UART5>;
+ };
+-- 
+2.14.1
