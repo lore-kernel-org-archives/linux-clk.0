@@ -1,281 +1,351 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
-        Loic PALLARDY
-	<loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: [PATCH v2 05/12] clk: stm32mp1: add PLL clocks
-Date: Thu, 8 Mar 2018 17:53:58 +0100
-Message-ID: <1520528045-18330-6-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
-References: <1520528045-18330-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	davem@davemloft.net,
+	mchehab@kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	manivannanece23@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v7 10/11] clk: actions: Add pll clock support
+Date: Mon, 26 Mar 2018 23:09:04 +0530
+Message-Id: <20180326173905.22313-11-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Add support for Actions Semi PLL clock.
 
-STMP32MP1 has 4 PLLs.
-PLL supports integer and fractional mode.
-Each PLL has 3 output dividers (p, q, r)
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/clk/clk-stm32mp1.c | 209 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 209 insertions(+)
+ drivers/clk/actions/Makefile  |   1 +
+ drivers/clk/actions/owl-pll.c | 194 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-pll.h |  92 ++++++++++++++++++++
+ 3 files changed, 287 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-pll.c
+ create mode 100644 drivers/clk/actions/owl-pll.h
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 47984f3..d62a3a9 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 53431aef6e9c..31b68eab9309 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -6,3 +6,4 @@ clk-owl-y			+= owl-mux.o
+ clk-owl-y			+= owl-divider.o
+ clk-owl-y			+= owl-factor.o
+ clk-owl-y			+= owl-composite.o
++clk-owl-y			+= owl-pll.o
+diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
+new file mode 100644
+index 000000000000..058e06d7099f
+--- /dev/null
++++ b/drivers/clk/actions/owl-pll.c
+@@ -0,0 +1,194 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL pll clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/clk-provider.h>
++#include <linux/slab.h>
++#include <linux/io.h>
 +#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/of.h>
-@@ -321,6 +322,196 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
- 	return hw;
- }
- 
-+/* STM32 PLL */
 +
-+struct stm32_pll_obj {
-+	/* lock pll enable/disable registers */
-+	spinlock_t *lock;
-+	void __iomem *reg;
-+	struct clk_hw hw;
-+};
++#include "owl-pll.h"
 +
-+#define to_pll(_hw) container_of(_hw, struct stm32_pll_obj, hw)
-+
-+#define PLL_ON		BIT(0)
-+#define PLL_RDY		BIT(1)
-+#define DIVN_MASK	0x1FF
-+#define DIVM_MASK	0x3F
-+#define DIVM_SHIFT	16
-+#define DIVN_SHIFT	0
-+#define FRAC_OFFSET	0xC
-+#define FRAC_MASK	0x1FFF
-+#define FRAC_SHIFT	3
-+#define FRACLE		BIT(16)
-+
-+static int __pll_is_enabled(struct clk_hw *hw)
++static u32 owl_pll_calculate_mul(struct owl_pll_hw *pll_hw, unsigned long rate)
 +{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
++	u32 mul;
 +
-+	return readl_relaxed(clk_elem->reg) & PLL_ON;
++	mul = DIV_ROUND_CLOSEST(rate, pll_hw->bfreq);
++	if (mul < pll_hw->min_mul)
++		mul = pll_hw->min_mul;
++	else if (mul > pll_hw->max_mul)
++		mul = pll_hw->max_mul;
++
++	return mul &= mul_mask(pll_hw);
 +}
 +
-+#define TIMEOUT 5
-+
-+static int pll_enable(struct clk_hw *hw)
++static unsigned long _get_table_rate(const struct clk_pll_table *table,
++		unsigned int val)
 +{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	u32 reg;
-+	unsigned long flags = 0;
-+	unsigned int timeout = TIMEOUT;
-+	int bit_status = 0;
++	const struct clk_pll_table *clkt;
 +
-+	spin_lock_irqsave(clk_elem->lock, flags);
++	for (clkt = table; clkt->rate; clkt++)
++		if (clkt->val == val)
++			return clkt->rate;
 +
-+	if (__pll_is_enabled(hw))
-+		goto unlock;
-+
-+	reg = readl_relaxed(clk_elem->reg);
-+	reg |= PLL_ON;
-+	writel_relaxed(reg, clk_elem->reg);
-+
-+	/* We can't use readl_poll_timeout() because we can be blocked if
-+	 * someone enables this clock before clocksource changes.
-+	 * Only jiffies counter is available. Jiffies are incremented by
-+	 * interruptions and enable op does not allow to be interrupted.
-+	 */
-+	do {
-+		bit_status = !(readl_relaxed(clk_elem->reg) & PLL_RDY);
-+
-+		if (bit_status)
-+			udelay(120);
-+
-+	} while (bit_status && --timeout);
-+
-+unlock:
-+	spin_unlock_irqrestore(clk_elem->lock, flags);
-+
-+	return bit_status;
++	return 0;
 +}
 +
-+static void pll_disable(struct clk_hw *hw)
++static const struct clk_pll_table *_get_pll_table(
++		const struct clk_pll_table *table, unsigned long rate)
 +{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	u32 reg;
-+	unsigned long flags = 0;
++	const struct clk_pll_table *clkt;
 +
-+	spin_lock_irqsave(clk_elem->lock, flags);
-+
-+	reg = readl_relaxed(clk_elem->reg);
-+	reg &= ~PLL_ON;
-+	writel_relaxed(reg, clk_elem->reg);
-+
-+	spin_unlock_irqrestore(clk_elem->lock, flags);
-+}
-+
-+static u32 pll_frac_val(struct clk_hw *hw)
-+{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	u32 reg, frac = 0;
-+
-+	reg = readl_relaxed(clk_elem->reg + FRAC_OFFSET);
-+	if (reg & FRACLE)
-+		frac = (reg >> FRAC_SHIFT) & FRAC_MASK;
-+
-+	return frac;
-+}
-+
-+static unsigned long pll_recalc_rate(struct clk_hw *hw,
-+				     unsigned long parent_rate)
-+{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	u32 reg;
-+	u32 frac, divm, divn;
-+	u64 rate, rate_frac = 0;
-+
-+	reg = readl_relaxed(clk_elem->reg + 4);
-+
-+	divm = ((reg >> DIVM_SHIFT) & DIVM_MASK) + 1;
-+	divn = ((reg >> DIVN_SHIFT) & DIVN_MASK) + 1;
-+	rate = (u64)parent_rate * divn;
-+
-+	do_div(rate, divm);
-+
-+	frac = pll_frac_val(hw);
-+	if (frac) {
-+		rate_frac = (u64)parent_rate * (u64)frac;
-+		do_div(rate_frac, (divm * 8192));
++	for (clkt = table; clkt->rate; clkt++) {
++		if (clkt->rate == rate) {
++			table = clkt;
++			break;
++		} else if (clkt->rate < rate)
++			table = clkt;
 +	}
 +
-+	return rate + rate_frac;
++	return table;
 +}
 +
-+static int pll_is_enabled(struct clk_hw *hw)
++static long owl_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long *parent_rate)
 +{
-+	struct stm32_pll_obj *clk_elem = to_pll(hw);
-+	unsigned long flags = 0;
-+	int ret;
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct clk_pll_table *clkt;
++	u32 mul;
 +
-+	spin_lock_irqsave(clk_elem->lock, flags);
-+	ret = __pll_is_enabled(hw);
-+	spin_unlock_irqrestore(clk_elem->lock, flags);
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops pll_ops = {
-+	.enable		= pll_enable,
-+	.disable	= pll_disable,
-+	.recalc_rate	= pll_recalc_rate,
-+	.is_enabled	= pll_is_enabled,
-+};
-+
-+static struct clk_hw *clk_register_pll(struct device *dev, const char *name,
-+				       const char *parent_name,
-+				       void __iomem *reg,
-+				       unsigned long flags,
-+				       spinlock_t *lock)
-+{
-+	struct stm32_pll_obj *element;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int err;
-+
-+	element = kzalloc(sizeof(*element), GFP_KERNEL);
-+	if (!element)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &pll_ops;
-+	init.flags = flags;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	element->hw.init = &init;
-+	element->reg = reg;
-+	element->lock = lock;
-+
-+	hw = &element->hw;
-+	err = clk_hw_register(dev, hw);
-+
-+	if (err) {
-+		kfree(element);
-+		return ERR_PTR(err);
++	if (pll_hw->table) {
++		clkt = _get_pll_table(pll_hw->table, rate);
++		return clkt->rate;
 +	}
 +
-+	return hw;
++	/* fixed frequency */
++	if (pll_hw->width == 0)
++		return pll_hw->bfreq;
++
++	mul = owl_pll_calculate_mul(pll_hw, rate);
++
++	return pll_hw->bfreq * mul;
 +}
 +
-+struct stm32_pll_cfg {
-+	u32 offset;
++static unsigned long owl_pll_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct owl_clk_common *common = &pll->common;
++	u32 val;
++
++	if (pll_hw->table) {
++		regmap_read(common->regmap, pll_hw->reg, &val);
++
++		val = val >> pll_hw->shift;
++		val &= mul_mask(pll_hw);
++
++		return _get_table_rate(pll_hw->table, val);
++	}
++
++	/* fixed frequency */
++	if (pll_hw->width == 0)
++		return pll_hw->bfreq;
++
++	regmap_read(common->regmap, pll_hw->reg, &val);
++
++	val = val >> pll_hw->shift;
++	val &= mul_mask(pll_hw);
++
++	return pll_hw->bfreq * val;
++}
++
++static int owl_pll_is_enabled(struct clk_hw *hw)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct owl_clk_common *common = &pll->common;
++	u32 reg;
++
++	regmap_read(common->regmap, pll_hw->reg, &reg);
++
++	return !!(reg & BIT(pll_hw->bit_idx));
++}
++
++static void owl_pll_set(const struct owl_clk_common *common,
++		       const struct owl_pll_hw *pll_hw, bool enable)
++{
++	u32 reg;
++
++	regmap_read(common->regmap, pll_hw->reg, &reg);
++
++	if (enable)
++		reg |= BIT(pll_hw->bit_idx);
++	else
++		reg &= ~BIT(pll_hw->bit_idx);
++
++	regmap_write(common->regmap, pll_hw->reg, reg);
++}
++
++static int owl_pll_enable(struct clk_hw *hw)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	const struct owl_clk_common *common = &pll->common;
++
++	owl_pll_set(common, &pll->pll_hw, true);
++
++	return 0;
++}
++
++static void owl_pll_disable(struct clk_hw *hw)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	const struct owl_clk_common *common = &pll->common;
++
++	owl_pll_set(common, &pll->pll_hw, false);
++}
++
++static int owl_pll_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct owl_pll *pll = hw_to_owl_pll(hw);
++	struct owl_pll_hw *pll_hw = &pll->pll_hw;
++	const struct owl_clk_common *common = &pll->common;
++	const struct clk_pll_table *clkt;
++	u32 val, reg;
++
++	/* fixed frequency */
++	if (pll_hw->width == 0)
++		return 0;
++
++	if (pll_hw->table) {
++		clkt = _get_pll_table(pll_hw->table, rate);
++		val = clkt->val;
++	} else {
++		val = owl_pll_calculate_mul(pll_hw, rate);
++	}
++
++	regmap_read(common->regmap, pll_hw->reg, &reg);
++
++	reg &= ~mul_mask(pll_hw);
++	reg |= val << pll_hw->shift;
++
++	regmap_write(common->regmap, pll_hw->reg, reg);
++
++	udelay(PLL_STABILITY_WAIT_US);
++
++	return 0;
++}
++
++const struct clk_ops owl_pll_ops = {
++	.enable = owl_pll_enable,
++	.disable = owl_pll_disable,
++	.is_enabled = owl_pll_is_enabled,
++	.round_rate = owl_pll_round_rate,
++	.recalc_rate = owl_pll_recalc_rate,
++	.set_rate = owl_pll_set_rate,
++};
+diff --git a/drivers/clk/actions/owl-pll.h b/drivers/clk/actions/owl-pll.h
+new file mode 100644
+index 000000000000..0aae30abd5dc
+--- /dev/null
++++ b/drivers/clk/actions/owl-pll.h
+@@ -0,0 +1,92 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL pll clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_PLL_H_
++#define _OWL_PLL_H_
++
++#include "owl-common.h"
++
++/* last entry should have rate = 0 */
++struct clk_pll_table {
++	unsigned int		val;
++	unsigned long		rate;
 +};
 +
-+struct clk_hw *_clk_register_pll(struct device *dev,
-+				 struct clk_hw_onecell_data *clk_data,
-+				 void __iomem *base, spinlock_t *lock,
-+				 const struct clock_config *cfg)
++struct owl_pll_hw {
++	u32			reg;
++	u32			bfreq;
++	u8			bit_idx;
++	u8			shift;
++	u8			width;
++	u8			min_mul;
++	u8			max_mul;
++	const struct clk_pll_table *table;
++};
++
++struct owl_pll {
++	struct owl_pll_hw	pll_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,			\
++		   _width, _min_mul, _max_mul, _table)			\
++	{								\
++		.reg		= _reg,					\
++		.bfreq		= _bfreq,				\
++		.bit_idx	= _bit_idx,				\
++		.shift		= _shift,				\
++		.width		= _width,				\
++		.min_mul	= _min_mul,				\
++		.max_mul	= _max_mul,				\
++		.table		= _table,				\
++	}
++
++#define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,	\
++		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
++	struct owl_pll _struct = {					\
++		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
++				     _width, _min_mul,			\
++				     _max_mul, _table),			\
++		.common = {						\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT(_name,			\
++					       _parent,			\
++					       &owl_pll_ops,		\
++					       _flags),			\
++		},							\
++	}
++
++#define OWL_PLL_NO_PARENT(_struct, _name, _reg, _bfreq, _bit_idx,	\
++		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
++	struct owl_pll _struct = {					\
++		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
++				     _width, _min_mul,			\
++				     _max_mul, _table),			\
++		.common = {						\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT_NO_PARENT(_name,		\
++					       &owl_pll_ops,		\
++					       _flags),			\
++		},							\
++	}
++
++#define mul_mask(m)		((1 << ((m)->width)) - 1)
++#define PLL_STABILITY_WAIT_US	(50)
++
++static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
 +{
-+	struct stm32_pll_cfg *stm_pll_cfg = cfg->cfg;
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
 +
-+	return clk_register_pll(dev, cfg->name, cfg->parent_name,
-+				base + stm_pll_cfg->offset, cfg->flags, lock);
++	return container_of(common, struct owl_pll, common);
 +}
 +
- static struct clk_hw *
- _clk_stm32_register_gate(struct device *dev,
- 			 struct clk_hw_onecell_data *clk_data,
-@@ -400,6 +591,18 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
- 	.func		= _clk_hw_register_mux,\
- }
- 
-+#define PLL(_id, _name, _parent, _flags, _offset)\
-+{\
-+	.id		= _id,\
-+	.name		= _name,\
-+	.parent_name	= _parent,\
-+	.flags		= _flags,\
-+	.cfg		=  &(struct stm32_pll_cfg) {\
-+		.offset = _offset,\
-+	},\
-+	.func		= _clk_register_pll,\
-+}
++extern const struct clk_ops owl_pll_ops;
 +
- /* STM32 GATE */
- #define STM32_GATE(_id, _name, _parent, _flags, _gate)\
- {\
-@@ -452,6 +655,12 @@ static void mp1_gate_clk_disable(struct clk_hw *hw)
- 
- 	MUX(NO_ID, "ref4", ref4_parents, CLK_OPS_PARENT_ENABLE, RCC_RCK4SELR,
- 	    0, 2, CLK_MUX_READ_ONLY),
-+
-+	/* PLLs */
-+	PLL(PLL1, "pll1", "ref1", CLK_IGNORE_UNUSED, RCC_PLL1CR),
-+	PLL(PLL2, "pll2", "ref1", CLK_IGNORE_UNUSED, RCC_PLL2CR),
-+	PLL(PLL3, "pll3", "ref3", CLK_IGNORE_UNUSED, RCC_PLL3CR),
-+	PLL(PLL4, "pll4", "ref4", CLK_IGNORE_UNUSED, RCC_PLL4CR),
- };
- 
- struct stm32_clock_match_data {
++#endif /* _OWL_PLL_H_ */
 -- 
-1.9.1
+2.14.1
