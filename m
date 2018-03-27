@@ -1,51 +1,61 @@
-Return-Path: <sricharan@codeaurora.org>
-Subject: Re: [PATCH v8 15/15] dt-bindings: cpufreq: Document
- operating-points-v2-krait-cpu
-To: Rob Herring <robh@kernel.org>
-Cc: viresh.kumar@linaro.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, linux@armlinux.org.uk, andy.gross@linaro.org,
- david.brown@linaro.org, rjw@rjwysocki.net,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, linux@arm.linux.org.uk
-References: <1519740422-3835-1-git-send-email-sricharan@codeaurora.org>
- <1519740422-3835-16-git-send-email-sricharan@codeaurora.org>
- <20180305221936.yu2mlcjodlcumedx@rob-hp-laptop>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <a8d40af2-8a9e-8868-93fa-dbdec20a437e@codeaurora.org>
-Date: Tue, 6 Mar 2018 10:45:04 +0530
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>
+CC: <arnd@arndb.de>, <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] clk: ti: fix flag space conflict with clkctrl clocks
+Date: Tue, 27 Mar 2018 20:47:04 +0300
+Message-ID: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180305221936.yu2mlcjodlcumedx@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+The introduction of support for CLK_SET_RATE_PARENT flag for clkctrl
+clocks used a generic clock flag, which causes a conflict with the
+rest of the clkctrl flags, namely the NO_IDLEST flag. This can cause
+boot failures on certain platforms where this flag is introduced, by
+omitting the wait for the clockctrl module to be fully enabled before
+proceeding with rest of the code.
 
+Fix this by moving all the clkctrl specific flags to their own bit-range.
 
-On 3/6/2018 3:49 AM, Rob Herring wrote:
-> On Tue, Feb 27, 2018 at 07:37:02PM +0530, Sricharan R wrote:
->> In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
->> that has KRAIT processors the voltage/current value of each OPP
->> varies based on the silicon variant in use.
->> operating-points-v2-krait-cpu specifies the phandle to nvmem efuse cells
->> and the operating-points-v2 table for each opp. The qcom-cpufreq driver
->> reads the efuse value from the SoC to provide the required information
->> that is used to determine the voltage and current value for each OPP of
->> operating-points-v2 table when it is parsed by the OPP framework.
->>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> ---
->>  .../devicetree/bindings/cpufreq/krait-cpufreq.txt  | 363 +++++++++++++++++++++
->>  1 file changed, 363 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/cpufreq/krait-cpufreq.txt
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Fixes: 49159a9dc3da ("clk: ti: add support for CLK_SET_RATE_PARENT flag")
+Reported-by: Christophe Lyon <christophe.lyon@linaro.org>
+---
+ drivers/clk/ti/clock.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Thanks Rob !!
-Will post with all tags and the Makefile corrected.
-
-Regards,
- Sricharan
-
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index 90b86aa..b582780 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -76,6 +76,11 @@ enum {
+ #define CLKF_CORE			(1 << 9)
+ #define CLKF_J_TYPE			(1 << 10)
+ 
++/* CLKCTRL flags */
++#define CLKF_SW_SUP			BIT(5)
++#define CLKF_HW_SUP			BIT(6)
++#define CLKF_NO_IDLEST			BIT(7)
++
+ #define CLK(dev, con, ck)		\
+ 	{				\
+ 		.lk = {			\
+@@ -185,10 +190,6 @@ struct omap_clkctrl_data {
+ extern const struct omap_clkctrl_data dm814_clkctrl_data[];
+ extern const struct omap_clkctrl_data dm816_clkctrl_data[];
+ 
+-#define CLKF_SW_SUP	BIT(0)
+-#define CLKF_HW_SUP	BIT(1)
+-#define CLKF_NO_IDLEST	BIT(2)
+-
+ typedef void (*ti_of_clk_init_cb_t)(void *, struct device_node *);
+ 
+ struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
