@@ -1,32 +1,47 @@
-Return-Path: <tony@atomide.com>
-Date: Tue, 27 Mar 2018 13:55:10 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: sboyd@kernel.org, mturquette@baylibre.com, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, arnd@arndb.de,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: ti: fix flag space conflict with clkctrl clocks
-Message-ID: <20180327205510.GJ5700@atomide.com>
-References: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
+In-Reply-To: <20180316140215.28663-1-icenowy@aosc.io>
+References: <20180316140215.28663-1-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 27 Mar 2018 15:12:20 +0200
+Message-ID: <CACRpkdYW4N-zuPGGz+=GHUX69xBTS3w=EYhiP7dDvr+DZNUJUw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/9] Initial Allwinner H6 support
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [180327 17:48]:
-> The introduction of support for CLK_SET_RATE_PARENT flag for clkctrl
-> clocks used a generic clock flag, which causes a conflict with the
-> rest of the clkctrl flags, namely the NO_IDLEST flag. This can cause
-> boot failures on certain platforms where this flag is introduced, by
-> omitting the wait for the clockctrl module to be fully enabled before
-> proceeding with rest of the code.
-> 
-> Fix this by moving all the clkctrl specific flags to their own bit-range.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Fixes: 49159a9dc3da ("clk: ti: add support for CLK_SET_RATE_PARENT flag")
-> Reported-by: Christophe Lyon <christophe.lyon@linaro.org>
+On Fri, Mar 16, 2018 at 3:02 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-I boot tested this on am437x-idk and bbb with multi_v7_defconfig, so:
+> This patchset adds initial support for the Allwinner H6 SoC.
+>
+> It's quite different from earlier Allwinner SoCs. For example, the
+> memory map is refactored, and the CCU is rearranged. It's also the first
+> Allwinner SoC with PCI Express interface (although the implementation
+> of the PCI Express controller is broken), and the second one with USB
+> 3.0 (the first one is A80).
+>
+> This patchset adds the most basical support for it, including the main pin
+> controller, the main CCU and the basical device tree.
+>
+> Icenowy Zheng (9):
+>   pinctrl: sunxi: refactor irq related register function to have desc
+>   pinctrl: sunxi: introduce IRQ bank conversion function
+>   pinctrl: sunxi: change irq_bank_base to irq_bank_map
+>   pinctrl: sunxi: add support for the Allwinner H6 main pin controller
 
-Tested-by: Tony Lindgren <tony@atomide.com>
+I applied these pinctrl patches for v4.17 so anything dependent on that
+can now be merged.
+
+Yours,
+Linus Walleij
