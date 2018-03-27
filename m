@@ -1,126 +1,45 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44793 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750902AbeCNCwq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Mar 2018 22:52:46 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 9-v6so964813ple.11
-        for <linux-clk@vger.kernel.org>; Tue, 13 Mar 2018 19:52:46 -0700 (PDT)
-Date: Tue, 13 Mar 2018 19:52:44 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Jeremy McNicoll <jeremymc@redhat.com>
-Cc: sboyd@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-clk@vger.kernel.org,
-        andy.gross@linaro.org, robh@kernel.org, arnd@arndb.de,
-        riteshh@codeaurora.org, git@kchr.de, ulf.hansson@linaro.org,
-        jszhang@marvell.com
-Subject: Re: [PATCH V4 4/6] arm64: dts: smem enablement for msm8992
-Message-ID: <20180314025244.GD11034@tuxbook-pro>
-References: <20170127195831.GH8801@codeaurora.org>
- <1485755073-6416-1-git-send-email-jeremymc@redhat.com>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:54478 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752446AbeC0NIk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Mar 2018 09:08:40 -0400
+Received: by mail-it0-f65.google.com with SMTP id h143-v6so7447070ita.4
+        for <linux-clk@vger.kernel.org>; Tue, 27 Mar 2018 06:08:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1485755073-6416-1-git-send-email-jeremymc@redhat.com>
+In-Reply-To: <20180316140215.28663-4-icenowy@aosc.io>
+References: <20180316140215.28663-1-icenowy@aosc.io> <20180316140215.28663-4-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 27 Mar 2018 15:08:39 +0200
+Message-ID: <CACRpkdaq6RYNdk5H4bFEJxfCErg0veqxY563uPr3W8d3cA9vZg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/9] pinctrl: sunxi: change irq_bank_base to irq_bank_map
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun 29 Jan 21:44 PST 2017, Jeremy McNicoll wrote:
+On Fri, Mar 16, 2018 at 3:02 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-> SMEM allows various subsystems/processors to share
-> memory/data (heap format) in order to enable various
-> peripherals.
-> 
-
-Fyi, the sfpb_mutex is actually called tcsr_mutex, but downstream kept
-the old name...
-
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> Signed-off-by: Jeremy McNicoll <jeremymc@redhat.com>
+> The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
+> GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5.
+>
+> Change the current code that uses IRQ bank base to a IRQ bank map, in
+> order to support the case that holes exist among IRQ banks.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
-> 
->  [ Moved sfpb_mutex and smem outside sock as they didn't have
->   'reg' entries.  Everything else is exactly the same. ]
-> 
->  arch/arm64/boot/dts/qcom/msm8992.dtsi | 42 +++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-> index 13fb6f7..1715787 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-> @@ -79,6 +79,19 @@
->  		regulator-always-on;
->  	};
->  
-> +	sfpb_mutex: hwmutex {
-> +		compatible = "qcom,sfpb-mutex";
-> +		syscon = <&sfpb_mutex_regs 0x0 0x100>;
-> +		#hwlock-cells = <1>;
-> +	};
-> +
-> +	smem {
-> +		compatible = "qcom,smem";
-> +		memory-region = <&smem_region>;
-> +		qcom,rpm-msg-ram = <&rpm_msg_ram>;
-> +		hwlocks = <&sfpb_mutex 3>;
-> +	};
-> +
->  	soc {
->  		#address-cells = <1>;
->  		#size-cells = <1>;
-> @@ -93,6 +106,11 @@
->  				<0xf9002000 0x1000>;
->  		};
->  
-> +		apcs: syscon@f900d000 {
-> +			compatible = "syscon";
-> +			reg = <0xf900d000 0x2000>;
-> +		};
-> +
->  		timer@f9020000 {
->  			#address-cells = <1>;
->  			#size-cells = <1>;
-> @@ -183,12 +201,36 @@
->  			#power-domain-cells = <1>;
->  			reg = <0xfc400000 0x2000>;
->  		};
-> +
-> +		rpm_msg_ram: memory@fc428000 {
-> +			compatible = "qcom,rpm-msg-ram";
-> +			reg = <0xfc428000 0x4000>;
-> +		};
-> +
-> +		sfpb_mutex_regs: syscon@fd484000 {
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			compatible = "syscon";
-> +			reg = <0xfd484000 0x400>;
-> +		};
->  	};
->  
->  	memory {
->  		device_type = "memory";
->  		reg = <0 0 0 0>; // bootloader will update
->  	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		smem_region: smem@6a00000 {
-> +			reg = <0x0 0x6a00000 0x0 0x200000>;
-> +			no-map;
-> +		};
-> +	};
-> +
->  };
->  
->  
-> -- 
-> 2.6.1
-> 
+> Extracted in v4.
+
+Patch applied with Maxime's ACK.
+
+Yours,
+Linus Walleij
