@@ -1,69 +1,127 @@
-Return-Path: <jeffy.chen@rock-chips.com>
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	alexandre.belloni@bootlin.com
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Joseph Lo <josephl@nvidia.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Brian Norris <briannorris@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	linux-rockchip@lists.infradead.org,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-input@vger.kernel.org,
-	Will Deacon <will.deacon@arm.com>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	devicetree@vger.kernel.org,
-	stephen lu <lumotuwe@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arvind Yadav <arvind.yadav.cs@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sylvain Lemieux <slemieux.tyco@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Gabriel Fernandez <gabriel.fernandez@st.com>,
-	linux-clk@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Vladimir Zapolskiy <vz@mleia.com>
-Subject: [RESEND PATCH v4 3/4] clk: lpc32xx: Set name of regmap_config
-Date: Fri,  9 Mar 2018 16:43:50 +0800
-Message-Id: <20180309084351.32009-4-jeffy.chen@rock-chips.com>
-In-Reply-To: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
-References: <20180309084351.32009-1-jeffy.chen@rock-chips.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1522142450.2632.41.camel@baylibre.com>
+Subject: Re: [PATCH 3/3] ARM64: dts: meson: fix clock source of the pclk for
+ UART_AO
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Qiufang
+ Dai <qiufang.dai@amlogic.com>,  linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
+Date: Tue, 27 Mar 2018 11:20:50 +0200
+In-Reply-To: <20180326081809.49493-4-yixun.lan@amlogic.com>
+References: <20180326081809.49493-1-yixun.lan@amlogic.com>
+	 <20180326081809.49493-4-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-We are now allowing to register debugfs without a valid device, and not
-having a valid name will end up using "dummy*" to create debugfs dir.
+On Mon, 2018-03-26 at 16:18 +0800, Yixun Lan wrote:
+> From the hardware perspective, the clk81 is the parent of
+> the UART_AO clocks. So it make more sense to mark
+> the CLKID_AO_UART1/2 as the pclk.
+> 
+> Previous we had flag=CLK_IGNORE_UNUSED in AO clock driver.
+> This will make kernel leave clock as it is while bootloader
+> set the clock on.
+> 
 
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
----
+Hi Yixun,
 
-Changes in v4: None
-Changes in v3: None
+I'm not sure I understand your description correctly so I'll phrase. Please tell
+me if I misunderstood something
 
- drivers/clk/nxp/clk-lpc32xx.c | 1 +
- 1 file changed, 1 insertion(+)
+The actual pclk of the AO uarts is the corresponding clkc_ao uart gate, not the
+main clock controller clk81. This was not problem so far, because the uart_gate
+had the CLK_IGNORE_UNUSED flag, which kept the gate open.
 
-diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
-index f5d815f577e0..a2a0a7f3bc57 100644
---- a/drivers/clk/nxp/clk-lpc32xx.c
-+++ b/drivers/clk/nxp/clk-lpc32xx.c
-@@ -67,6 +67,7 @@
- #define LPC32XX_USB_CLK_STS		0xF8
- 
- static struct regmap_config lpc32xx_scb_regmap_config = {
-+	.name = "lpc32xx-scb",
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
--- 
-2.11.0
+In another patch, you removed this flag, so you need to give the correct clock
+in DT to make things work again ? right ?
+
+If I got it correctly, please rephrase the description a bit.
+Also you need to be careful in which order patches get merged.
+
+1. You need the clkc_ao in place, exporting CLKID_AO_UARTx with
+CLK_IGNORE_UNUSED.
+
+2. This patch can be merged (still with CLK_IGNORE_UNUSED)
+
+3. Once the DT patch have reached mainline, you should a patch to remove to
+CLK_IGNORE_UNUSED flag
+
+This way, we avoid breaking bisect, with revision where CLKID_AO_UARTx would get
+disabled by the CCF clk_disable_unused() mechanism while the UART driver does
+not claim the appropriate clock.
+
+
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 4 ++--
+>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++--
+>  arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 4 ++--
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> index 48584d5a329b..e538e2448bb5 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> @@ -533,7 +533,7 @@
+>  				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+>  				reg = <0x0 0x3000 0x0 0x18>;
+>  				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
+> -				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
+> +				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
+>  				clock-names = "xtal", "pclk", "baud";
+>  				status = "disabled";
+>  			};
+> @@ -542,7 +542,7 @@
+>  				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+>  				reg = <0x0 0x4000 0x0 0x18>;
+>  				interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
+> -				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
+> +				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
+>  				clock-names = "xtal", "pclk", "baud";
+>  				status = "disabled";
+>  			};
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> index 3290a4dc3522..a458ea50c2ef 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> @@ -783,12 +783,12 @@
+>  };
+>  
+>  &uart_AO {
+> -	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
+> +	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
+>  	clock-names = "xtal", "pclk", "baud";
+>  };
+>  
+>  &uart_AO_B {
+> -	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
+> +	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
+>  	clock-names = "xtal", "pclk", "baud";
+>  };
+>  
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+> index 4f355f17eed6..474f4f9630e4 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+> @@ -733,12 +733,12 @@
+>  };
+>  
+>  &uart_AO {
+> -	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
+> +	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
+>  	clock-names = "xtal", "pclk", "baud";
+>  };
+>  
+>  &uart_AO_B {
+> -	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
+> +	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
+>  	clock-names = "xtal", "pclk", "baud";
+>  };
+>  
