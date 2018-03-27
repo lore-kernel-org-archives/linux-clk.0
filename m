@@ -1,38 +1,51 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
-Message-ID: <152121759057.209902.1121973322672096604@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 0/8] clk: renesas: Always use readl()/writel()
-Date: Fri, 16 Mar 2018 09:26:30 -0700
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 1/8] ARM: davinci: dts: make psc0 a reset provider
+Date: Tue, 27 Mar 2018 11:20:24 +0200
+Message-Id: <20180327092031.11251-2-brgl@bgdev.pl>
+In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
+References: <20180327092031.11251-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-03-16 06:40:14)
->         Hi Mike, Stephen,
-> =
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> On arm32/arm64, there is no reason to use the (soon deprecated)
-> clk_readl()/clk_writel(), and the generic readl()/writel() should be
-> used in instead.
-> =
+The psc driver registers with the reset framework as a provider. Add
+the #reset-cells property to the psc0 node.
 
-> Commit 30ad3cf00e94f4a7 ("clk: renesas: rcar-gen3-cpg: Always use
-> readl()/writel()") already got rid of them in the R-Car Gen3 clock
-> driver, but Stephen noticed that a few new users crept in recently.
-> =
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Hence this series fixes that, and replaces all other uses in the Renesas
-> clock drivers as a bonus.
-> =
-
-> I plan to queue these up in clk-renesas-for-v4.17.
-> =
-
-
-Ok. I'll wait for the PR. Thanks!
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index a3b9a99b43ca..dad64dbf1f23 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -123,6 +123,7 @@
+ 			compatible = "ti,da850-psc0";
+ 			reg = <0x10000 0x1000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+ 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+-- 
+2.16.1
