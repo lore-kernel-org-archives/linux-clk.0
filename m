@@ -1,61 +1,37 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH net-next 03/12] dt-bindings: net: dwmac-sun8i: Clean up clock delay chain descriptions
-Date: Sat, 17 Mar 2018 17:28:48 +0800
-Message-Id: <20180317092857.4396-4-wens@csie.org>
-In-Reply-To: <20180317092857.4396-1-wens@csie.org>
-References: <20180317092857.4396-1-wens@csie.org>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v3 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180327092031.11251-1-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <6166e140-b417-dd22-10cf-843db3958226@lechnology.com>
+Date: Tue, 27 Mar 2018 11:48:47 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock delay chains found in the glue layer for dwmac-sun8i are only
-used with RGMII PHYs. They are not intended for non-RGMII PHYs, such as
-MII external PHYs or the internal PHY. Also, a recent SoC has a smaller
-range of possible values for the delay chain.
+Wasn't there a v4 already? Is this really v5 instead of v3?
 
-This patch reformats the delay chain section of the device tree binding
-to make it clear that the delay chains only apply to RGMII PHYs, and
-make it easier to add the R40-specific bits later.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> This series converts the only user of the handcoded, mach-specific reset
+> routines in the davinci platform to using the reset framework.
+> 
+> Patches 1-3 add necessary lookups/DT-properties.
 
-diff --git a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-index 3d6d5fa0c4d5..b8a3028d6c30 100644
---- a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-+++ b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-@@ -28,10 +28,13 @@ Required properties:
-   - allwinner,sun8i-a83t-system-controller
- 
- Optional properties:
--- allwinner,tx-delay-ps: TX clock delay chain value in ps. Range value is 0-700. Default is 0)
--- allwinner,rx-delay-ps: RX clock delay chain value in ps. Range value is 0-3100. Default is 0)
--Both delay properties need to be a multiple of 100. They control the delay for
--external PHY.
-+- allwinner,tx-delay-ps: TX clock delay chain value in ps.
-+			 Range is 0-700. Default is 0.
-+- allwinner,rx-delay-ps: RX clock delay chain value in ps.
-+			 Range is 0-3100. Default is 0.
-+Both delay properties need to be a multiple of 100. They control the
-+clock delay for external RGMII PHY. They are do apply to the internal
-+PHY or external non-RGMII PHYs.
- 
- Optional properties for the following compatibles:
-   - "allwinner,sun8i-h3-emac",
--- 
-2.16.2
+Should I just squash the DT changes into my common-clock-v9 branch
+since those patches haven't been picked up yet anyway? That will be
+2 fewer patches to keep track of.
