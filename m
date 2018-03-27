@@ -1,157 +1,134 @@
-Return-Path: <m.szyprowski@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"; format="flowed"
-Subject: Re: [PATCH v2 4/8] clk: migrate the count of orphaned clocks at
- init
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd
-	<sboyd@codeaurora.org>, Shawn Guo <shawnguo@kernel.org>, Dong Aisheng
-	<aisheng.dong@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Message-id: <40e6c987-633c-b806-02e8-5299187bbcf0@samsung.com>
-Date: Mon, 05 Mar 2018 10:06:45 +0100
-In-reply-to: <7c9b0ac1-582c-9b25-4d62-844667e80507@samsung.com>
-References: <20180214134340.17242-1-jbrunet@baylibre.com>
-	<20180214134340.17242-5-jbrunet@baylibre.com>
-	<7c9b0ac1-582c-9b25-4d62-844667e80507@samsung.com>
-	<CGME20180305090647eucas1p14c01d34dd2eef3eaab8752bf90591c4c@eucas1p1.samsung.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:36666 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750970AbeC0ILd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Mar 2018 04:11:33 -0400
+Date: Tue, 27 Mar 2018 10:11:31 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        jernej.skrabec@siol.net, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH 2/7] dt-bindings: add binding for the
+ Allwinner A64 DE2 bus
+Message-ID: <20180327081131.hd652vkhohez2hcc@flea>
+References: <20180316175354.21437-1-icenowy@aosc.io>
+ <20180320184646.dynqv6qubzabroe4@flea>
+ <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io>
+ <2866474.lRHIcLtROC@jernej-laptop>
+ <9520BDDE-BFE3-4220-B48D-01A00CFA94DE@aosc.io>
+ <20180326222258.uxpgj4bk4pg56b7o@rob-hp-laptop>
+ <9A6A8961-D45C-4033-962E-83CCE8F01651@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="l7cgdzalfbw6gs6o"
+In-Reply-To: <9A6A8961-D45C-4033-962E-83CCE8F01651@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi All,
 
-On 2018-02-15 13:55, Marek Szyprowski wrote:
-> Hi Jerome,
->
-> On 2018-02-14 14:43, Jerome Brunet wrote:
->> The orphan clocks reparents should migrate any existing count from the
->> orphan clock to its new acestor clocks, otherwise we may have
->> inconsistent counts in the tree and end-up with gated critical clocks
->>
->> Assuming we have two clocks, A and B.
->> * Clock A has CLK_IS_CRITICAL flag set.
->> * Clock B is an ancestor of A which can gate. Clock B gate is left
->>    enabled by the bootloader.
->>
->> Step 1: Clock A is registered. Since it is a critical clock, it is
->> enabled. The clock being still an orphan, no parent are enabled.
->>
->> Step 2: Clock B is registered and reparented to clock A (potentially
->> through several other clocks). We are now in situation where the enable
->> count of clock A is 1 while the enable count of its ancestors is 0, 
->> which
->> is not good.
->>
->> Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
->> clock B being 0, clock B is gated and and critical clock A actually gets
->> disabled.
->>
->> This situation was found while adding fdiv_clk gates to the meson8b
->> platform.  These clocks parent clk81 critical clock, which is the mother
->> of all peripheral clocks in this system. Because of the issue described
->> here, the system is crashing when clk_disable_unused() is called.
->>
->> The situation is solved by reverting
->> commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting 
->> during registration").
->> To avoid breaking again the situation described in this commit
->> description, enabling critical clock should be done before walking the
->> orphan list. This way, a parent critical clock may not be accidentally
->> disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
->>
->> Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting 
->> during registration")
->> Cc: Stephen Boyd <sboyd@codeaurora.org>
->> Cc: Shawn Guo <shawnguo@kernel.org>
->> Cc: Dong Aisheng <aisheng.dong@nxp.com>
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> This patch fixes kernel oops on Exynos5422-based boards (Odroid XU3/XU4)
-> mentioned in the following threads:
-> https://patchwork.kernel.org/patch/10185357/
-> https://www.spinics.net/lists/linux-samsung-soc/msg61766.html
+--l7cgdzalfbw6gs6o
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stephen, Michael: v4.16-rc4 is out today and this regression (which got 
-merged
-on 22 Dec 2017) is still not fixed yet...
+On Tue, Mar 27, 2018 at 07:31:18AM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> =E4=BA=8E 2018=E5=B9=B43=E6=9C=8827=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=88=
+6:22:58, Rob Herring <robh@kernel.org> =E5=86=99=E5=88=B0:
+> >On Thu, Mar 22, 2018 at 02:08:43PM +0800, Icenowy Zheng wrote:
+> >>=20
+> >>=20
+> >> =E4=BA=8E 2018=E5=B9=B43=E6=9C=8822=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=8D=
+=881:13:42, "Jernej =C5=A0krabec"
+> ><jernej.skrabec@siol.net> =E5=86=99=E5=88=B0:
+> >> >Hi all,
+> >> >
+> >> >Dne sreda, 21. marec 2018 ob 03:18:13 CET je Icenowy Zheng
+> >napisal(a):
+> >> >> =E4=BA=8E 2018=E5=B9=B43=E6=9C=8821=E6=97=A5 GMT+08:00 =E4=B8=8A=E5=
+=8D=882:46:46, Maxime Ripard
+> >> ><maxime.ripard@bootlin.com>=20
+> >> >=E5=86=99=E5=88=B0:
+> >> >> >On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
+> >> >> >> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64
+> >> >SoC
+> >> >> >
+> >> >> >to
+> >> >> >
+> >> >> >> be claimed, otherwise the whole DE2 space is inaccessible.
+> >> >> >>=20
+> >> >> >> Add a device tree binding of the DE2 part as a sub-bus.
+> >> >> >
+> >> >> >Where did you get the info that it was a bus?
+> >> >>=20
+> >> >> There's no direct evidence, just some guess.
+> >> >>=20
+> >> >> The DE2 is a whole part that is just allocated a memory
+> >> >> space at the user manual, and the SRAM controls the
+> >> >> access to all modules in the DE2.
+> >> >>=20
+> >> >> So it might be a bus.
+> >> >>=20
+> >> >> Implement it as a bus is a clear representation on A64.
+> >> >
+> >> >Since there is already syscon for same mmio region, we migh as well
+> >use
+> >> >it=20
+> >> >when loading ccu-sun8i-de2 driver on A64.
+> >> >
+> >> >Other options, like SRAM driver or bus driver, might better
+> >represent
+> >> >HW, but=20
+> >>=20
+> >> I think the device tree should properly represent the HW,
+> >> it's a basic requirment.
+> >>=20
+> >> >then we would have two DT nodes covering same mmio region, which I
+> >> >think is=20
+> >> >not really acceptable.
+> >>=20
+> >> It's acceptable, and DE2 is not the only user of SRAM controller so
+> >far.
+> >
+> >No, it's not acceptable. Don't create overlapping mmio regions in DT.
+>=20
+> Then should the SRAM controller driver be configured to take the syscon?
 
-Is there a chance to get it into final v4.16 release?
+We could have a single DT node that would export a syscon yes, just
+like you did for the R40 ethernet case.
 
->> ---
->>   drivers/clk/clk.c | 37 +++++++++++++++++++++----------------
->>   1 file changed, 21 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index a4b4e4d6df5e..cca05ea2c058 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -2969,23 +2969,38 @@ static int __clk_core_init(struct clk_core 
->> *core)
->>           rate = 0;
->>       core->rate = core->req_rate = rate;
->>   +    /*
->> +     * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
->> +     * don't get accidentally disabled when walking the orphan tree and
->> +     * reparenting clocks
->> +     */
->> +    if (core->flags & CLK_IS_CRITICAL) {
->> +        unsigned long flags;
->> +
->> +        clk_core_prepare(core);
->> +
->> +        flags = clk_enable_lock();
->> +        clk_core_enable(core);
->> +        clk_enable_unlock(flags);
->> +    }
->> +
->>       /*
->>        * walk the list of orphan clocks and reparent any that newly 
->> finds a
->>        * parent.
->>        */
->>       hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, 
->> child_node) {
->>           struct clk_core *parent = __clk_init_parent(orphan);
->> -        unsigned long flags;
->>             /*
->> -         * we could call __clk_set_parent, but that would result in a
->> -         * redundant call to the .set_rate op, if it exists
->> +         * We need to use __clk_set_parent_before() and _after() to
->> +         * to properly migrate any prepare/enable count of the orphan
->> +         * clock. This is important for CLK_IS_CRITICAL clocks, which
->> +         * are enabled during init but might not have a parent yet.
->>            */
->>           if (parent) {
->>               /* update the clk tree topology */
->> -            flags = clk_enable_lock();
->> -            clk_reparent(orphan, parent);
->> -            clk_enable_unlock(flags);
->> +            __clk_set_parent_before(orphan, parent);
->> +            __clk_set_parent_after(orphan, parent, NULL);
->>               __clk_recalc_accuracies(orphan);
->>               __clk_recalc_rates(orphan, 0);
->>           }
->> @@ -3002,16 +3017,6 @@ static int __clk_core_init(struct clk_core *core)
->>       if (core->ops->init)
->>           core->ops->init(core->hw);
->>   -    if (core->flags & CLK_IS_CRITICAL) {
->> -        unsigned long flags;
->> -
->> -        clk_core_prepare(core);
->> -
->> -        flags = clk_enable_lock();
->> -        clk_core_enable(core);
->> -        clk_enable_unlock(flags);
->> -    }
->> -
->>       kref_init(&core->ref);
->>   out:
->>       clk_pm_runtime_put(core);
->
+I'm not sure the SRAM controller itself needs to take the syscon, it
+just can export its own.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--l7cgdzalfbw6gs6o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlq5/LIACgkQ0rTAlCFN
+r3Rqsg//bcROXUQWqCJ3N0cm6teljACF1FqkqeO/94ZIlcYMMP30HYKZ+jFU8j8n
+/mp/Mm6pE1X5YT0Jkf0WXeFP0ns9xlF0aNTITEVZ45w682EFqUgOIrxB0vsJTndv
+dYmPpIO9Rb9I5sA04umttMTh1undUL8g90Gy3uDBktcI12C81Bge7ebgbdfOM/Zt
+S08zg/Z5JD5OrF7ojggNKnJUg+hSDTAB/zB7URAIj8fuNlP5TMdEkZRV1LdHrZtd
+2Bz2uwprH8CdoeG/5Jm33cwtYximXvGtFPRkz2f2EAWICYPVTJuQA7QpZ8T8j0hB
+Kwkc+MruItlgPk/3CIGLOjYqR1181OU4N1FpwOhfGvXtNv+UhmReUwbhqJGCopBy
+leO8XTUq3G1w/X3xgLSTPCUe47akV2EAkAGMWBoOf4bopVkHE8Th4OV0mpo3ntjl
+KZJvWjGpPv3O61m3Rqw5ZEFxtO7t9xPiR/Ix4iif8lrZaWRMqVbuBQknwS7+oJbf
+ilm2+MJkZfN8rZ6RsjNYgpQVkJ5cScdf7n3iJ1ziGQX592OZfjzQORMMusvrJBhX
+Rusk68z8Ge8ZKrgZ92pB5k/PYFniUlSjBjzHMXUjKnJKDY5BR94c7k7n3G8qJS4p
+Zgl+H4c42Q2TIX4esUklJNcBCkzb1gXsVv5YGGVePlksP6FoiEg=
+=yP6i
+-----END PGP SIGNATURE-----
+
+--l7cgdzalfbw6gs6o--
