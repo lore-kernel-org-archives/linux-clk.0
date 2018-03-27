@@ -1,69 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr10051.outbound.protection.outlook.com ([40.107.1.51]:2657
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751911AbeCLJ0t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:26:49 -0400
-From: Bai Ping <ping.bai@nxp.com>
-To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
-        kernel@pengutronix.de
-Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        aisheng.dong@nxp.com, jacky.baip@gmail.com
-Subject: [PATCH v5 2/4] clk: imx: add new gate/gate2 wrapper funtion
-Date: Mon, 12 Mar 2018 17:29:15 +0800
-Message-Id: <1520846957-22348-2-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
-References: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
+Return-Path: <abel.vesa@nxp.com>
+From: Abel Vesa <abel.vesa@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Peter Chen <peter.chen@freescale.com>,
+	Irina Tirdea <irina.tirdea@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-imx@nxp.com,
+	Anson Huang <anson.huang@nxp.com>,
+	Anson Huang <b20788@freescale.com>,
+	Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: imx7d: Correct dram pll type
+Date: Tue, 27 Mar 2018 17:15:59 +0300
+Message-Id: <1522160159-25250-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: abel.vesa@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add new gate/gate2 wrapper function to register clocks with optional flags.
+From: Anson Huang <b20788@freescale.com>
 
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
----
- change from v3->v4:
- - no
- change from v4->5:
- - optimize commit subject
----
- drivers/clk/imx/clk.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+DRAM PLL is a audio/video type PLL, need to correct
+it to get correct ops of PLL.
 
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index d69c4bb..8076ec0 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -123,6 +123,13 @@ static inline struct clk *imx_clk_gate(const char *name, const char *parent,
- 			shift, 0, &imx_ccm_lock);
- }
+There is a test_div placed before DRAM PLL's gate, so
+add this test div clk.
+
+Signed-off-by: Anson Huang <b20788@freescale.com>
+Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 89bfa75..45c83b6 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -441,11 +441,13 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
  
-+static inline struct clk *imx_clk_gate_flags(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift, unsigned long flags)
-+{
-+	return clk_register_gate(NULL, name, parent, flags | CLK_SET_RATE_PARENT, reg,
-+			shift, 0, &imx_ccm_lock);
-+}
-+
- static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift)
- {
-@@ -137,6 +144,13 @@ static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
- 			shift, 0x3, 0, &imx_ccm_lock, NULL);
- }
+ 	clks[IMX7D_PLL_ARM_MAIN_CLK] = imx_clk_gate("pll_arm_main_clk", "pll_arm_main_bypass", base + 0x60, 13);
+-	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_main_bypass", base + 0x70, 13);
++	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_test_div", base + 0x70, 13);
+ 	clks[IMX7D_PLL_SYS_MAIN_CLK] = imx_clk_gate("pll_sys_main_clk", "pll_sys_main_bypass", base + 0xb0, 13);
+ 	clks[IMX7D_PLL_AUDIO_MAIN_CLK] = imx_clk_gate("pll_audio_main_clk", "pll_audio_main_bypass", base + 0xf0, 13);
+ 	clks[IMX7D_PLL_VIDEO_MAIN_CLK] = imx_clk_gate("pll_video_main_clk", "pll_video_main_bypass", base + 0x130, 13);
  
-+static inline struct clk *imx_clk_gate2_flags(const char *name, const char *parent,
-+		void __iomem *reg, u8 shift, unsigned long flags)
-+{
-+	return clk_register_gate2(NULL, name, parent, flags | CLK_SET_RATE_PARENT, reg,
-+			shift, 0x3, 0, &imx_ccm_lock, NULL);
-+}
-+
- static inline struct clk *imx_clk_gate2_shared(const char *name,
- 		const char *parent, void __iomem *reg, u8 shift,
- 		unsigned int *share_count)
++	clks[IMX7D_PLL_DRAM_TEST_DIV]  = clk_register_divider_table(NULL, "pll_dram_test_div", "pll_dram_main_bypass",
++				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x70, 21, 2, 0, test_div_table, &imx_ccm_lock);
+ 	clks[IMX7D_PLL_AUDIO_TEST_DIV]  = clk_register_divider_table(NULL, "pll_audio_test_div", "pll_audio_main_clk",
+ 				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 19, 2, 0, test_div_table, &imx_ccm_lock);
+ 	clks[IMX7D_PLL_AUDIO_POST_DIV] = clk_register_divider_table(NULL, "pll_audio_post_div", "pll_audio_test_div",
 -- 
-1.9.1
-
+2.7.4
