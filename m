@@ -1,188 +1,283 @@
-Return-Path: <aford173@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:36935 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751110AbeC0Oqd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Mar 2018 10:46:33 -0400
+Date: Tue, 27 Mar 2018 09:46:31 -0500
+From: Rob Herring <robh@kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
+Message-ID: <20180327144631.j2bugsjxulkv57ws@rob-hp-laptop>
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-5-paul@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <af89be8d-04dd-e845-1d5b-afdd7e55629f@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <CAMpxmJX-AxhpPpCnWoaSGYmNh3o8iRjdKacnmozsPWmhpcGdTg@mail.gmail.com> <af89be8d-04dd-e845-1d5b-afdd7e55629f@lechnology.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Mon, 19 Mar 2018 11:11:24 -0500
-Message-ID: <CAHCN7xKQ47DnVXiZTJ-0myoth2SJ3wnyvDb2i07uKZDgomhgwQ@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v8_00=2F42=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: David Lechner <david@lechnology.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-devicetree <devicetree@vger.kernel.org>, arm-soc <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180317232901.14129-5-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 10:59 AM, David Lechner <david@lechnology.com> wrote:
-> On 03/19/2018 08:17 AM, Bartosz Golaszewski wrote:
->>
->> 2018-03-16 3:52 GMT+01:00 David Lechner <david@lechnology.com>:
->>>
->>> This series converts mach-davinci to use the common clock framework.
->>>
->>> The series works like this, the first 19 patches create new clock drivers
->>> using the common clock framework. There are basically 3 groups of clocks
->>> -
->>> PLL, PSC and CFGCHIP (syscon). There are six different SoCs that each
->>> have
->>> unique init data, which is the reason for so many patches.
->>>
->>> Then, starting with "ARM: davinci: pass clock as parameter to
->>> davinci_timer_init()", we get the mach code ready for the switch by
->>> adding the
->>> code needed for the new clock drivers and adding #ifndef
->>> CONFIG_COMMON_CLK
->>> around the legacy clocks so that we can switch easily between the old and
->>> the
->>> new.
->>>
->>> "ARM: davinci: switch to common clock framework" actually flips the
->>> switch
->>> to start using the new clock drivers. Then the next 8 patches remove all
->>> of the old clock code.
->>>
->>> The final three patches add device tree clock support to the one SoC that
->>> supports it.
->>>
->>> This series has been tested on LEGO MINDSTORMS EV3 (device tree) and TI
->>> OMAP-L138 LCDK (both device tree and legacy board file).
->>>
->>
->> Hi David,
->>
->> thanks, with the u-boot fix everything seems to work fine. I tested
->> da850-lcdk and da850-evm boards in DT and board file modes.
->>
+On Sun, Mar 18, 2018 at 12:28:57AM +0100, Paul Cercueil wrote:
+> Add documentation about how to properly use the Ingenic TCU
+> (Timer/Counter Unit) drivers from devicetree.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  .../bindings/clock/ingenic,tcu-clocks.txt          | 42 ++++++++++++++++
+>  .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 +++++++++++++++
+>  .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56 ++++++++++++++++++++++
+>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 ++++++++++++++++
+>  4 files changed, 178 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>  create mode 100644 Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> 
+>  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+>  added content.
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+> new file mode 100644
+> index 000000000000..471d27078599
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+> @@ -0,0 +1,42 @@
+> +Ingenic SoC TCU binding
+> +
+> +The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It features 8
+> +channels, each one having its own clock, that can be started and stopped,
+> +reparented, and reclocked.
+> +
+> +Required properties:
+> +- compatible : One of:
+> +  * ingenic,jz4740-tcu-clocks,
+> +  * ingenic,jz4770-tcu-clocks,
+> +  * ingenic,jz4780-tcu-clocks.
+> +- clocks : List of phandle & clock specifiers for clocks external to the TCU.
+> +  The "pclk", "rtc" and "ext" clocks should be provided.
+> +- clock-names : List of name strings for the external clocks.
+> +- #clock-cells: Should be 1.
+> +  Clock consumers specify this argument to identify a clock. The valid values
+> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
+> +
+> +Example:
 
-I tested MMC and Ethernet.  Both appear to be operating normally, but
-I have having USB issues.
+Let's just put one complete example in instead of all these duplicated 
+and incomplete examples.
 
-Should I be testing cpufreq?  I noticed that when changing the
-frequencies, the USB appears to stop recognizing connections and
-disconnections.
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_clk: clocks@10 {
+> +			compatible = "ingenic,jz4740-tcu-clocks";
+> +			reg = <0x10 0xff0>;
+> +
+> +			clocks = <&ext>, <&rtc>, <&pclk>;
+> +			clock-names = "ext", "rtc", "pclk";
+> +
+> +			#clock-cells = <1>;
+> +		};
+> +	};
+> +};
+> +
+> +For information about the top-level "ingenic,tcu" compatible node and other
+> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..7f3af2da77cd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> @@ -0,0 +1,39 @@
+> +Ingenic SoCs Timer/Counter Unit Interrupt Controller
+> +
+> +Required properties:
+> +
+> +- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings are:
+> +  * ingenic,jz4740-tcu-intc
+> +  * ingenic,jz4770-tcu-intc
+> +  * ingenic,jz4780-tcu-intc
+> +- interrupt-controller : Identifies the node as an interrupt controller
+> +- #interrupt-cells : Specifies the number of cells needed to encode an
+> +  interrupt source. The value shall be 1.
+> +- interrupt-parent : phandle of the interrupt controller.
+> +- interrupts : Specifies the interrupt the controller is connected to.
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_irq: interrupt-controller@20 {
+> +			compatible = "ingenic,jz4740-tcu-intc";
+> +			reg = <0x20 0x20>;
+> +
+> +			interrupt-controller;
+> +			#interrupt-cells = <1>;
+> +
+> +			interrupt-parent = <&intc>;
+> +			interrupts = <15>;
 
-I did some testing on the DA850-EVM with USB from your repo, and I'm
-getting some crashing on MUSB unplug that do not appear in the
-4.16-RC6 from linux-stable:
+The interrupt controller doesn't require any clocks?
 
+> +		};
+> +	};
+> +};
+> +
+> +For information about the top-level "ingenic,tcu" compatible node and other
+> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+> diff --git a/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..5742c3f21550
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+> @@ -0,0 +1,56 @@
+> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
+> +----------------------------------------------------------
+> +
+> +For a description of the TCU hardware and drivers, have a look at
+> +Documentation/mips/ingenic-tcu.txt.
+> +
+> +The TCU is implemented as a parent node, whose role is to create the
+> +regmap, and child nodes for the various drivers listed in the aforementioned
+> +document.
+> +
+> +Required properties:
+> +
+> +- compatible: must be "ingenic,tcu", "simple-mfd", "syscon";
+> +- reg: Should be the offset/length value corresponding to the TCU registers
+> +- #address-cells: Should be <1>;
+> +- #size-cells: Should be <1>;
+> +- ranges: Should be one range for the full TCU registers area
+> +
+> +Accepted children nodes:
+> +- Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+> +- Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+> +- Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> +
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_irq: interrupt-controller@20 {
+> +			compatible = "ingenic,jz4740-tcu-intc";
+> +			reg = <0x20 0x20>;
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 13 at drivers/dma/cppi41.c:694
-cppi41_stop_chan+0x1f4/0x378 [cppi41]
-Modules linked in: evbug evdev mousedev hid_generic usbhid hid
-usb_f_ss_lb g_zero libcomposite configfs ofpart cmdlinepart m25p80
-spi_nor cppi41 adv7343 tvp514x vpif_display vpif_capture
-videobuf2_dma_con
-tig videobuf2_memops videobuf2_v4l2 videobuf2_common v4l2_fwnode
-v4l2_common snd_soc_simple_card tilcdc spi_davinci
-snd_soc_simple_card_utils videodev pwm_tiecap spi_bitbang da8xx
-drm_kms_helper phy_gener
-ic syscopyarea ohci_da8xx musb_hdrc sysfillrect sysimgblt fb_sys_fops
-ohci_hcd udc_core drm usbcore drm_panel_orientation_quirks usb_common
-snd_soc_tlv320aic3x vpif snd_soc_davinci_mcasp snd_soc_edma snd_
-soc_core snd_pcm_dmaengine snd_pcm rtc_omap snd_timer snd soundcore
-phy_da8xx_usb davinci_nand nand nand_ecc mtd pwm_bl backlight
-cpufreq_dt ti_aemif
-CPU: 0 PID: 13 Comm: kworker/0:1 Not tainted 4.16.0-rc5-g291ba8b-dirty #3
-Hardware name: Generic DA850/OMAP-L138/AM18x
-Workqueue: usb_hub_wq hub_event [usbcore]
-Backtrace:
-[<c000df94>] (dump_backtrace) from [<c000e264>] (show_stack+0x18/0x1c)
- r7:00000009 r6:00000000 r5:bf339ad0 r4:00000000
-[<c000e24c>] (show_stack) from [<c04864c0>] (dump_stack+0x20/0x28)
-[<c04864a0>] (dump_stack) from [<c001ac38>] (__warn+0xd4/0xfc)
-[<c001ab64>] (__warn) from [<c001ad7c>] (warn_slowpath_null+0x44/0x50)
- r8:c6c43080 r7:c05f1008 r6:bf338744 r5:000002b6 r4:bf339ad0
-[<c001ad38>] (warn_slowpath_null) from [<bf338744>]
-(cppi41_stop_chan+0x1f4/0x378 [cppi41])
- r6:c5e59410 r5:c5e59420 r4:c5feca50
-[<bf338550>] (cppi41_stop_chan [cppi41]) from [<bf213dac>]
-(cppi41_dma_channel_abort+0xe0/0x2a8 [musb_hdrc])
- r8:c6929180 r7:00000000 r6:c5c67290 r5:bf2175a0 r4:00000008
-[<bf213ccc>] (cppi41_dma_channel_abort [musb_hdrc]) from [<bf20c4bc>]
-(musb_cleanup_urb+0x60/0x210 [musb_hdrc])
- r10:00000001 r9:c5fca010 r8:c5c67290 r7:a0000093 r6:00000080 r5:c55b5100
- r4:c5fca5a8
-[<bf20c45c>] (musb_cleanup_urb [musb_hdrc]) from [<bf20ca8c>]
-(musb_urb_dequeue+0xfc/0x164 [musb_hdrc])
- r10:00000001 r9:40408280 r8:c5fca010 r7:a0000093 r6:00000000 r5:c55b5380
- r4:c55b5100
-[<bf20c990>] (musb_urb_dequeue [musb_hdrc]) from [<bf10fd7c>]
-(unlink1+0x34/0x13c [usbcore])
- r10:00000100 r9:c5cb2a00 r8:c55b5100 r7:ffffff94 r6:c5c6c000 r5:c5dd2380
- r4:c55b5100 r3:bf20c990
-[<bf10fd48>] (unlink1 [usbcore]) from [<bf112424>]
-(usb_hcd_flush_endpoint+0x164/0x1a4 [usbcore])
- r9:c5cb2a00 r8:c55b5100 r7:c5c6c000 r6:c5dd2398 r5:c5dd2380 r4:ffffe000
-[<bf1122c0>] (usb_hcd_flush_endpoint [usbcore]) from [<bf11563c>]
-(usb_disable_endpoint+0x50/0x94 [usbcore])
- r9:c5cb2a00 r8:bf39e898 r7:00000000 r6:c5c43000 r5:c5c43000 r4:c5dd2380
-[<bf1155ec>] (usb_disable_endpoint [usbcore]) from [<bf1156c4>]
-(usb_disable_interface+0x44/0x58 [usbcore])
- r5:c5dd2348 r4:00000000
-[<bf115680>] (usb_disable_interface [usbcore]) from [<bf118044>]
-(usb_unbind_interface+0x1c0/0x268 [usbcore])
- r7:c5cb2c00 r6:bf39e898 r5:c5cb2c20 r4:c5cb2c20
-[<bf117e84>] (usb_unbind_interface [usbcore]) from [<c02ce180>]
-(device_release_driver_internal+0x160/0x208)
- r10:00000100 r9:c5cb2a00 r8:00000034 r7:00000000 r6:bf39e898 r5:c5cb2c54
- r4:c5cb2c20
-[<c02ce020>] (device_release_driver_internal) from [<c02ce240>]
-(device_release_driver+0x18/0x1c)
- r9:c5cb2a00 r8:c05f1008 r7:c5c43070 r6:bf12895c r5:c5cb2c20 r4:c5dc91ac
-[<c02ce228>] (device_release_driver) from [<c02ccf70>]
-(bus_remove_device+0xd0/0x100)
-[<c02ccea0>] (bus_remove_device) from [<c02c9c60>] (device_del+0x120/0x378)
- r7:c5c43070 r6:c5cb2c28 r5:00000000 r4:c5cb2c20
-[<c02c9b40>] (device_del) from [<bf11576c>]
-(usb_disable_device+0x94/0x1d8 [usbcore])
- r10:00000100 r9:c5cb2a00 r8:c5cb2c00 r7:c5c6c000 r6:00000001 r5:00000000
- r4:c5c43000
-[<bf1156d8>] (usb_disable_device [usbcore]) from [<bf10bccc>]
-(usb_disconnect+0xb4/0x244 [usbcore])
- r9:c5cb2a00 r8:c5c2d600 r7:c5c430a4 r6:c5c43070 r5:c5c43000 r4:00000000
-[<bf10bc18>] (usb_disconnect [usbcore]) from [<bf10d788>]
-(hub_event+0x678/0x11dc [usbcore])
- r10:00000100 r9:c05f1008 r8:c5c2dcf8 r7:c68fc400 r6:00000001 r5:40000000
- r4:00000000
-[<bf10d110>] (hub_event [usbcore]) from [<c0031db0>]
-(process_one_work+0x1d8/0x41c)
- r10:00000008 r9:00000000 r8:c060b1d0 r7:00000000 r6:c7ede200 r5:c6882480
- r4:c5c2dcf8
-[<c0031bd8>] (process_one_work) from [<c0032030>] (worker_thread+0x3c/0x670)
- r10:00000008 r9:c060b1e4 r8:c061ab60 r7:c6882498 r6:ffffe000 r5:c060b1d0
- r4:c6882480
-[<c0031ff4>] (worker_thread) from [<c0038270>] (kthread+0x134/0x14c)
- r10:c683fe90 r9:c0031ff4 r8:c6882480 r7:c6896000 r6:00000000 r5:c687bd80
- r4:c6803e80
-[<c003813c>] (kthread) from [<c00090e0>] (ret_from_fork+0x14/0x34)
-Exception stack(0xc6897fb0 to 0xc6897ff8)
-7fa0:                                     00000000 00000000 00000000 00000000
-7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-7fe0: 00000000 00000000 00000000 00000000 00000013 00000000
- r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c003813c
- r4:c687bd80
----[ end trace cb9c7f93aaa3ed36 ]---
-------------[ cut here ]------------
+I think you should drop this node and make the parent node the interrupt 
+controller. That is the normal pattern where the parent node handles 
+all the common functions. Otherwise, there is no need to have the parent 
+node. You should then also drop simple-mfd as then you can control 
+initialization order by initializing interrupt controller before 
+its clients.
 
+> +			...
+> +		};
+> +
+> +		tcu_clk: clocks@10 {
+> +			compatible = "ingenic,jz4740-tcu-clocks";
+> +			reg = <0x10 0xff0>;
+> +			...
+> +		};
+> +
+> +		tcu_timer: timer@10 {
+> +			compatible = "ingenic,jz4740-tcu";
+> +			reg = <0x10 0xff0>;
 
-adam
+Is this copy-n-paste or you really have 2 nodes at the same address? The 
+latter is not valid.
 
+> +			...
+> +		};
+> +	};
+> +};
+> +
+> +For more information about the children node, refer to the documents listed
+> +above in the "Accepted children nodes" section.
+> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> new file mode 100644
+> index 000000000000..f910b7e96783
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+> @@ -0,0 +1,41 @@
+> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
+> +---------------------------------------------
+> +
+> +Required properties:
+> +
+> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
+> +  * ingenic,jz4740-tcu
+> +  * ingenic,jz4770-tcu
+> +  * ingenic,jz4780-tcu
+> +- interrupt-parent : phandle of the TCU interrupt controller.
+> +- interrupts : Specifies the interrupts the controller is connected to.
+> +- clocks : List of phandle & clock specifiers for the TCU clocks.
+> +- clock-names : List of name strings for the TCU clocks.
+> +
+> +Example:
+> +
+> +/ {
+> +	tcu: mfd@10002000 {
+> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+> +		reg = <0x10002000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0x0 0x10002000 0x1000>;
+> +
+> +		tcu_timer: timer@10 {
+> +			compatible = "ingenic,jz4740-tcu";
+> +			reg = <0x10 0xff0>;
+> +
+> +			clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk 2>, <&tcu_clk 3>,
+> +					 <&tcu_clk 4>, <&tcu_clk 5>, <&tcu_clk 6>, <&tcu_clk 7>;
+> +			clock-names = "timer0", "timer1", "timer2", "timer3",
+> +						  "timer4", "timer5", "timer6", "timer7";
+> +
+> +			interrupt-parent = <&tcu_irq>;
+> +			interrupts = <0 1 2 3 4 5 6 7>;
 
->> I'll be working with this series in the following days and will do
->> some thorough testing and rebase my aemif series on top of it. I'll
->> also use the recently merged reset support for board files to get rid
->> of the exported reset functions.
->>
->> Thanks for your work!
->>
->> Best regards,
->> Bartosz Golaszewski
->>
->
-> Sounds like a good plan to me. FYI, I've started a common-clk-v9 branch
-> on my GitHub already with a few minor fixes.
+Thinking about this some more... You simply have 8 timers (and no other 
+functions?) with some internal clock and irq controls for each timer. I 
+don't think it really makes sense to create separate clock and irq 
+drivers in that case. That would be like creating clock drivers for 
+every clock divider in timers, pwms, uarts, etc. Unless the clocks get 
+exposed to other parts of the system, then there is no point.
+
+> +		};
+> +	};
+> +};
+> +
+> +For information about the top-level "ingenic,tcu" compatible node and other
+> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+> -- 
+> 2.11.0
+> 
