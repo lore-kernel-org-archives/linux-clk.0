@@ -1,54 +1,99 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-To: Rajan Vaja <rajan.vaja@xilinx.com>, mturquette@baylibre.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, JOLLYS@xilinx.com,
- michals@xilinx.com, Rajan Vaja <rajanv@xilinx.com>
-References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
-Message-ID: <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: clk-fixed-factor: Use new macro CLK_OF_DECLARE_DRIVER
-Date: Fri, 09 Mar 2018 10:24:51 -0800
+In-Reply-To: <6c55e081-57ba-6c39-8494-cda5022aa927@ti.com>
+References: <20180323130455.11470-1-brgl@bgdev.pl> <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
+ <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
+ <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
+ <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com> <6c55e081-57ba-6c39-8494-cda5022aa927@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 27 Mar 2018 11:29:53 +0200
+Message-ID: <CAMRc=MdkfrEvMrFtf_TUDcMVHNC2O9zw8Mn0pQnyFw3iMqVmmg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>, David Lechner <david@lechnology.com>,
+	Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	devicetree <devicetree@vger.kernel.org>, linux-remoteproc@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rajan Vaja (2018-03-08 06:15:00)
-> Fixed factor clock has two initialization at of_clk_init()
-> time and also during platform driver probe. So declare the
-> fixed factor clock with CLK_OF_DECLARE_DRIVER instead of
-> CLK_OF_DECLARE.
-> =
+2018-03-27 8:09 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+> Hi Bart,
+>
+> On Friday 23 March 2018 10:46 PM, Bartosz Golaszewski wrote:
+>> 2018-03-23 18:08 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
+>>> Quoting Bartosz Golaszewski (2018-03-23 09:55:47)
+>>>> 2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
+>>>>> Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
+>>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>>
+>>>>>> This series converts the only user of the handcoded, mach-specific reset
+>>>>>> routines in the davinci platform to using the reset framework.
+>>>>>>
+>>>>>> Patch 1 modifies the way lookup entries are registered with the reset
+>>>>>> framework.
+>>>>>>
+>>>>>> Patches 2-4 add necessary lookups/DT-properties.
+>>>>>>
+>>>>>> Patches 5-7 convert the davinci-rproc driver to the reset framework.
+>>>>>>
+>>>>>> Patch 8 removes now dead code.
+>>>>>>
+>>>>>> Philipp: it turned out that it's indeed better to use the reset
+>>>>>> controller's device name for the entry lookup.
+>>>>>>
+>>>>>> Tested both in DT and legacy modes by booting the examples from
+>>>>>> ti-ipc-rtos recipe in meta-ti.
+>>>>>>
+>>>>>> This series applies on top of David Lechner's common-clk-v9 branch[1]
+>>>>>> with Philipp Zabel's reset/next branch[2] pulled in.
+>>>>>>
+>>>>>> It can be found in my github tree as well[3].
+>>>>>>
+>>>>>
+>>>>> What's the merge strategy for the rest of the patches? I should apply
+>>>>> the clk ones after the next -rc1?
+>>>>
+>>>> Or maybe Philipp can provide us with an immutable branch with the reset patches?
+>>>>
+>>>> The you could apply the driver patches and let Sekhar take all the
+>>>> platform code?
+>>>>
+>>>
+>>> Ok that could work too.
+>>
+>> Ohad, Bjorn can you ack the remoteproc patches? Are you OK with
+>> Stephen taking them through the clock tree? Otherwise it would get
+>> complicated since they depend on the first clk patch and the last clk
+>> patch depends on them.
+>
+> I will not be queuing the DTS patches for v4.17. They depend on clock
+> framework DTS patches which itself I plan to queue for v4.18. Given
+> this, I think the best bet is:
+>
+> Ohad/Bjorn queue remoteproc patches already acked by Suman and having no
+> dependencies. That is, 5/8 and 6/8.
+>
+> If Philipp can provide an immutable branch with reset changes, it will
+> be great and Stephen can queue 4/8. If not, its best to resend that
+> patch to Stephen once v4.17-rc1 is out.
+>
+> The remaining patches need to wait till v4.18 (or even v4.19 if
+> dependencies don't pan out well).
+>
+> Thanks,
+> Sekhar
 
-> See below commit for reference:
-> "clk: sunxi: apb0: Use new macro CLK_OF_DECLARE_DRIVER"
-> (sha1: 915128b621a05c63fa58ca9e4cbdf394bbe592f3)
-> =
+Very good, thanks.
 
-> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-> Suggested-by: Michal Simek <michal.simek@xilinx.com>
-> ---
->  drivers/clk/clk-fixed-factor.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> =
+I've just sent out a v3 with three non-reset remoteproc patches that
+can already be applied by Suman.
 
-> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-facto=
-r.c
-> index a5d402d..d72ef2d 100644
-> --- a/drivers/clk/clk-fixed-factor.c
-> +++ b/drivers/clk/clk-fixed-factor.c
-> @@ -196,8 +196,9 @@ void __init of_fixed_factor_clk_setup(struct device_n=
-ode *node)
->  {
->         _of_fixed_factor_clk_setup(node);
->  }
-> -CLK_OF_DECLARE(fixed_factor_clk, "fixed-factor-clock",
-> -               of_fixed_factor_clk_setup);
-> +
-> +CLK_OF_DECLARE_DRIVER(fixed_factor_clk, "fixed-factor-clock",
-> +                     of_fixed_factor_clk_setup);
-> =
-
-
-Is the intent to register the clk twice? I believe things are working as
-intended without this patch, so maybe you can explain a little more what
-you're trying to fix.
+Thanks,
+Bartosz
