@@ -1,79 +1,66 @@
-Return-Path: <bgolaszewski@baylibre.com>
-MIME-Version: 1.0
-In-Reply-To: <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com>
-References: <20180321120807.18032-1-brgl@bgdev.pl> <20180321120807.18032-5-brgl@bgdev.pl>
- <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Wed, 21 Mar 2018 17:08:04 +0100
-Message-ID: <CAMpxmJUELxNGv5fL1gdNM4nRxdJ9t39G2Nc29yjZRnS0fRyHYg@mail.gmail.com>
-Subject: Re: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
-To: David Lechner <david@lechnology.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	arm-soc <linux-arm-kernel@lists.infradead.org>,
-	linux-devicetree <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 5/8] remoteproc/davinci: prepare and unprepare the clock where needed
+Date: Tue, 27 Mar 2018 11:20:28 +0200
+Message-Id: <20180327092031.11251-6-brgl@bgdev.pl>
+In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
+References: <20180327092031.11251-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-21 17:01 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
->>
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> In order to be able to use the reset framework in legacy boot mode as
->> well, add the reset lookup table to the psc driver for da850 variant.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->>   drivers/clk/davinci/psc-da850.c | 8 ++++++++
->>   drivers/clk/davinci/psc.c       | 1 +
->>   2 files changed, 9 insertions(+)
->>
->> diff --git a/drivers/clk/davinci/psc-da850.c
->> b/drivers/clk/davinci/psc-da850.c
->> index ccc7eb17bf3a..395db4b2c0ee 100644
->> --- a/drivers/clk/davinci/psc-da850.c
->> +++ b/drivers/clk/davinci/psc-da850.c
->> @@ -6,6 +6,7 @@
->>    */
->>     #include <linux/clk-provider.h>
->> +#include <linux/reset-controller.h>
->>   #include <linux/clk.h>
->>   #include <linux/clkdev.h>
->>   #include <linux/init.h>
->> @@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,    "fck",  "ecap.0",
->>                                 "fck",  "ecap.1",
->>                                 "fck",  "ecap.2");
->>   +static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
->> +       RESET_LOOKUP("davinci-rproc.0", NULL, 15),
->> +};
->> +
->>   static int da850_psc0_init(struct device *dev, void __iomem *base)
->>   {
->> +       reset_controller_add_lookup("da850-psc0",
->> +                                   da850_psc0_reset_lookup_table,
->> +
->> ARRAY_SIZE(da850_psc0_reset_lookup_table));
->
->
-> Could there be a race condition here since you are adding the lookup
-> *before*
-> you are adding the actual provider? It seems like
-> reset_controller_add_lookup()
-> should be after davinci_psc_register_clocks().
->
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-I don't think so, because reset_controller_add_lookup() only adds the
-lookup structure to the list in reset/core.c. The actual reset
-controller struct is only located and used when reset_control_get_*()
-is called, so after probing the user. And it's all protected with
-mutexes.
+We're currently switching the platform to using the common clock
+framework. We need to explicitly prepare and unprepare the rproc
+clock.
 
-This made me think though - maybe if we can't locate the controller,
-we should return -EPROBE_DEFER from probe in davinci-rproc?
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Acked-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Bart
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 2b24291337b7..f134192922e0 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 
+ 	writel(rproc->bootaddr, drproc->bootreg);
+ 
+-	ret = clk_enable(dsp_clk);
++	ret = clk_prepare_enable(dsp_clk);
+ 	if (ret) {
+-		dev_err(dev, "clk_enable() failed: %d\n", ret);
++		dev_err(dev, "clk_prepare_enable() failed: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
+ 	struct da8xx_rproc *drproc = rproc->priv;
+ 
+ 	davinci_clk_reset_assert(drproc->dsp_clk);
+-	clk_disable(drproc->dsp_clk);
++	clk_disable_unprepare(drproc->dsp_clk);
+ 
+ 	return 0;
+ }
+-- 
+2.16.1
