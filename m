@@ -1,48 +1,71 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v8 42/42] ARM: dts: da850: Add clocks
-To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-43-git-send-email-david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <cf0c4153-b65d-da57-cd0f-0a16cb186377@lechnology.com>
-Date: Fri, 16 Mar 2018 12:20:02 -0500
+Return-Path: <abel.vesa@nxp.com>
+From: Abel Vesa <abel.vesa@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Peter Chen <peter.chen@freescale.com>,
+	Irina Tirdea <irina.tirdea@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-imx@nxp.com,
+	Anson Huang <anson.huang@nxp.com>,
+	Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: imx7d: Add USB clock information
+Date: Tue, 27 Mar 2018 17:11:20 +0300
+Message-Id: <1522159880-16694-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1521168778-27236-43-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
+Return-Path: abel.vesa@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/15/2018 09:52 PM, David Lechner wrote:
-> This adds clock provider nodes for da850 and wires them up to all of the
-> devices.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
+From: Peter Chen <peter.chen@freescale.com>
 
-...
+Add USB clock information, the pll_usb_main_clk is USB_PLL at CCM
+which is the output of USBOTG2 PHY.
 
-This is the mcasp0: mcasp@100000 node...
+Signed-off-by: Peter Chen <peter.chen@freescale.com>
+Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-> @@ -560,6 +720,7 @@
->   			dmas = <&edma0 1 1>,
->   				<&edma0 0 1>;
->   			dma-names = "tx", "rx";
-> +			clocks = <&psc1 7>;
-
-After some testing, it looks like it needs to be:
-
-+			power-domains = <&psc1 7>;
-
-instead of
-
-+			clocks = <&psc1 7>;
-
->   		};
->   
->   		lcdc: display@213000 {
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 89bfa75..39d110b 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -801,7 +801,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
+ 	clks[IMX7D_SNVS_CLK] = imx_clk_gate4("snvs_clk", "ipg_root_clk", base + 0x4250, 0);
+ 	clks[IMX7D_CAAM_CLK] = imx_clk_gate4("caam_clk", "ipg_root_clk", base + 0x4240, 0);
+-	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
++	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4690, 0);
+ 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
+ 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
+ 	clks[IMX7D_PCIE_PHY_ROOT_CLK] = imx_clk_gate4("pcie_phy_root_clk", "pcie_phy_post_div", base + 0x4600, 0);
+@@ -867,6 +867,9 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_CSI_MCLK_ROOT_CLK] = imx_clk_gate4("csi_mclk_root_clk", "csi_mclk_post_div", base + 0x4490, 0);
+ 	clks[IMX7D_AUDIO_MCLK_ROOT_CLK] = imx_clk_gate4("audio_mclk_root_clk", "audio_mclk_post_div", base + 0x4790, 0);
+ 	clks[IMX7D_WRCLK_ROOT_CLK] = imx_clk_gate4("wrclk_root_clk", "wrclk_post_div", base + 0x47a0, 0);
++	clks[IMX7D_USB_CTRL_CLK] = imx_clk_gate4("usb_ctrl_clk", "ahb_root_clk", base + 0x4680, 0);
++	clks[IMX7D_USB_PHY1_CLK] = imx_clk_gate4("usb_phy1_clk", "pll_usb1_main_clk", base + 0x46a0, 0);
++	clks[IMX7D_USB_PHY2_CLK] = imx_clk_gate4("usb_phy2_clk", "pll_usb_main_clk", base + 0x46b0, 0);
+ 	clks[IMX7D_ADC_ROOT_CLK] = imx_clk_gate4("adc_root_clk", "ipg_root_clk", base + 0x4200, 0);
+ 
+ 	clks[IMX7D_GPT_3M_CLK] = imx_clk_fixed_factor("gpt_3m", "osc", 1, 8);
+@@ -892,6 +895,10 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	/* set uart module clock's parent clock source that must be great then 80MHz */
+ 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+ 
++	/* Set clock rate for USBPHY, the USB_PLL at CCM is from USBOTG2 */
++	clks[IMX7D_USB1_MAIN_480M_CLK] = imx_clk_fixed_factor("pll_usb1_main_clk", "osc", 20, 1);
++	clks[IMX7D_USB_MAIN_480M_CLK] = imx_clk_fixed_factor("pll_usb_main_clk", "osc", 20, 1);
++
+ 	imx_register_uart_clocks(uart_clks);
+ 
+ }
+-- 
+2.7.4
