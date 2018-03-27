@@ -1,61 +1,140 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Fri, 2 Mar 2018 10:38:46 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, airlied@linux.ie, robh+dt@kernel.org,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/16] Implement H3/H5 HDMI driver
-Message-ID: <20180302093846.blpdniawybhu5ank@flea.lan>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qcw2lpw65bzxxh3p"
-In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 7/8] remoteproc/davinci: use the reset framework
+Date: Tue, 27 Mar 2018 11:20:30 +0200
+Message-Id: <20180327092031.11251-8-brgl@bgdev.pl>
+In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
+References: <20180327092031.11251-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
---qcw2lpw65bzxxh3p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Switch to using the reset framework instead of handcoded reset routines
+we used so far.
 
-On Thu, Mar 01, 2018 at 10:34:26PM +0100, Jernej Skrabec wrote:
-> This series implements H3/H5 HDMI driver. It was tested on OrangePi 2 (H3=
-),
-> OrangePi Plus2e (H3) and OrangePi PC2 (H5) with many resolutions and it
-> works well.
->=20
-> Code is based on linux-next, next-20180228 tag.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 33 ++++++++++++++++++++++++++++-----
+ 1 file changed, 28 insertions(+), 5 deletions(-)
 
-Applied everything, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---qcw2lpw65bzxxh3p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqZG6UACgkQ0rTAlCFN
-r3Re9g/5AQjjrcTZxuLO+1CQ3T/NgCvDja/mNVg+iZTRJHNVWlITF9bpC0svC0rd
-vOIYMIGBccHimVMSssOxtJiTVBlv2TwZfqDv3+u3M4HMa7n+fz2CFS4n+TuWF3uq
-FmqUvj7TU9VIM0M2XRz4JPwa+b9RrAr6hDiILgyneuw1zK8ZWgVpfarN1s3SZweK
-FAHHgS2ZKWTZ9shyhp3xqq/qEUyqSsNWlvrVVQEJxR9a+cTFTNyzAji4FPNfh/N4
-i0qF5LKl9WH9T+PpAXpW6r0OEEqgGuxGuhXHusnmkctiM+XwmbueNwAs0zTQ2a90
-Vv8gzVV/YIkSRIQXFhj/dTcGhSl5F+gpzApZK85X8uA/ASMsYwqjOfVpIohcai6R
-Tp5JKWb/nj20m3+8IqYK+Ouaoi1g/taRwrUZxXqqaKn93JZ/N7t397SLP2nVAEsJ
-SL6lNhEMW+lbk/k8kLsMTUc7EL03yOj38pf8p+Drunb4bSLz2ckEGu+6ae+rS8NO
-8fT7fvo+lVsm1f68bAbe8iQSwfG214e4qh9agr5v7N/QeXhXnlwerT3vl7qV2xKG
-UkVvIWn0ayk48m7yn9V7oIJh97lnNZrzQGdUzu45z2cqDJmN1DHIIO4acbs9E3X/
-nf5nxrON8nQu/VRMgUolz806Z6F1ZCItlweeDTEj+U2tZET7ssE=
-=2g5K
------END PGP SIGNATURE-----
-
---qcw2lpw65bzxxh3p--
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index b668e32996e2..788f59809c02 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/bitops.h>
+ #include <linux/clk.h>
++#include <linux/reset.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -20,8 +21,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
+ 
+-#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
+-
+ #include "remoteproc_internal.h"
+ 
+ static char *da8xx_fw_name;
+@@ -72,6 +71,7 @@ struct da8xx_rproc {
+ 	struct da8xx_rproc_mem *mem;
+ 	int num_mems;
+ 	struct clk *dsp_clk;
++	struct reset_control *dsp_reset;
+ 	void (*ack_fxn)(struct irq_data *data);
+ 	struct irq_data *irq_data;
+ 	void __iomem *chipsig;
+@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 	struct device *dev = rproc->dev.parent;
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
++	struct reset_control *dsp_reset = drproc->dsp_reset;
+ 	int ret;
+ 
+ 	/* hw requires the start (boot) address be on 1KB boundary */
+@@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 		return ret;
+ 	}
+ 
+-	davinci_clk_reset_deassert(dsp_clk);
++	ret = reset_control_deassert(dsp_reset);
++	if (ret) {
++		dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
++		clk_disable_unprepare(dsp_clk);
++		return ret;
++	}
+ 
+ 	return 0;
+ }
+@@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ static int da8xx_rproc_stop(struct rproc *rproc)
+ {
+ 	struct da8xx_rproc *drproc = rproc->priv;
++	struct device *dev = rproc->dev.parent;
++	int ret;
++
++	ret = reset_control_assert(drproc->dsp_reset);
++	if (ret) {
++		dev_err(dev, "reset_control_assert() failed: %d\n", ret);
++		return ret;
++	}
+ 
+-	davinci_clk_reset_assert(drproc->dsp_clk);
+ 	clk_disable_unprepare(drproc->dsp_clk);
+ 
+ 	return 0;
+@@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	struct resource *bootreg_res;
+ 	struct resource *chipsig_res;
+ 	struct clk *dsp_clk;
++	struct reset_control *dsp_reset;
+ 	void __iomem *chipsig;
+ 	void __iomem *bootreg;
+ 	int irq;
+@@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dsp_clk);
+ 	}
+ 
++	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
++	if (IS_ERR(dsp_reset)) {
++		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
++			dev_err(dev, "unable to get reset control: %ld\n",
++				PTR_ERR(dsp_reset));
++
++		return PTR_ERR(dsp_reset);
++	}
++
+ 	if (dev->of_node) {
+ 		ret = of_reserved_mem_device_init(dev);
+ 		if (ret) {
+@@ -309,7 +332,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+ 	 * held in reset at the time it is called.
+ 	 */
+-	ret = davinci_clk_reset_assert(drproc->dsp_clk);
++	ret = reset_control_assert(dsp_reset);
+ 	if (ret)
+ 		goto free_rproc;
+ 
+-- 
+2.16.1
