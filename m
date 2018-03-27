@@ -1,76 +1,32 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@free-electrons.com,
-	wens@csie.org,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: jernej.skrabec@siol.net,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH v3 09/16] drm/sun4i: Fix polarity configuration for DW HDMI PHY
-Date: Thu,  1 Mar 2018 22:34:35 +0100
-Message-Id: <20180301213442.16677-10-jernej.skrabec@siol.net>
-In-Reply-To: <20180301213442.16677-1-jernej.skrabec@siol.net>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net>
+Return-Path: <tony@atomide.com>
+Date: Tue, 27 Mar 2018 13:55:10 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org, arnd@arndb.de,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: ti: fix flag space conflict with clkctrl clocks
+Message-ID: <20180327205510.GJ5700@atomide.com>
+References: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Current polarity configuration code is cleary wrong since it compares
-same flag two times. However, even if flag name is fixed, it won't work
-well for resolutions which have one polarity positive and another
-negative.
+* Tero Kristo <t-kristo@ti.com> [180327 17:48]:
+> The introduction of support for CLK_SET_RATE_PARENT flag for clkctrl
+> clocks used a generic clock flag, which causes a conflict with the
+> rest of the clkctrl flags, namely the NO_IDLEST flag. This can cause
+> boot failures on certain platforms where this flag is introduced, by
+> omitting the wait for the clockctrl module to be fully enabled before
+> proceeding with rest of the code.
+> 
+> Fix this by moving all the clkctrl specific flags to their own bit-range.
+> 
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Fixes: 49159a9dc3da ("clk: ti: add support for CLK_SET_RATE_PARENT flag")
+> Reported-by: Christophe Lyon <christophe.lyon@linaro.org>
 
-Fix that by properly set each bit according to each polarity. Since
-those two bits are not described in any documentation, relationships
-were obtained by experimentation.
+I boot tested this on am437x-idk and bbb with multi_v7_defconfig, so:
 
-Fixes: b7c7436a5ff0 ("drm/sun4i: Implement A83T HDMI driver")
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index e5bfcdd43ec9..9d2f11ca3538 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -10,7 +10,8 @@
- #define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
- #define SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK		BIT(0)
- #define SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK	GENMASK(15, 8)
--#define SUN8I_HDMI_PHY_DBG_CTRL_POL(val)	(val << 8)
-+#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC	BIT(8)
-+#define SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC	BIT(9)
- #define SUN8I_HDMI_PHY_DBG_CTRL_ADDR_MASK	GENMASK(23, 16)
- #define SUN8I_HDMI_PHY_DBG_CTRL_ADDR(addr)	(addr << 16)
- 
-@@ -35,14 +36,14 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
- 	struct sun8i_hdmi_phy *phy = (struct sun8i_hdmi_phy *)data;
- 	u32 val = 0;
- 
--	if ((mode->flags & DRM_MODE_FLAG_NHSYNC) &&
--	    (mode->flags & DRM_MODE_FLAG_NHSYNC)) {
--		val = 0x03;
--	}
-+	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
-+		val |= SUN8I_HDMI_PHY_DBG_CTRL_POL_NHSYNC;
-+
-+	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
-+		val |= SUN8I_HDMI_PHY_DBG_CTRL_POL_NVSYNC;
- 
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
--			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK,
--			   SUN8I_HDMI_PHY_DBG_CTRL_POL(val));
-+			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK, val);
- 
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
- 			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
--- 
-2.16.2
+Tested-by: Tony Lindgren <tony@atomide.com>
