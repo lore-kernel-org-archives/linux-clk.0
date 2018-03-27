@@ -1,72 +1,53 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-db5eur01on0041.outbound.protection.outlook.com ([104.47.2.41]:41040
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750937AbeCIFB2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 9 Mar 2018 00:01:28 -0500
-From: Jacky Bai <ping.bai@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>
-CC: "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        "jacky.baip@gmail.com" <jacky.baip@gmail.com>
-Subject: RE: [PATCH v4 4/4] driver: clk: imx: add clock driver for imx6sll
-Date: Fri, 9 Mar 2018 05:01:23 +0000
-Message-ID: <HE1PR04MB3113EF8891AECF0E0922E6C687DE0@HE1PR04MB3113.eurprd04.prod.outlook.com>
-References: <1520502445-22576-1-git-send-email-ping.bai@nxp.com>
- <1520502445-22576-4-git-send-email-ping.bai@nxp.com>
- <20180309024513.GE3217@dragon>
-In-Reply-To: <20180309024513.GE3217@dragon>
-Content-Type: text/plain; charset="us-ascii"
+Received: from mail-io0-f195.google.com ([209.85.223.195]:39564 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752431AbeC0NLK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Mar 2018 09:11:10 -0400
+Received: by mail-io0-f195.google.com with SMTP id v13so27499854iob.6
+        for <linux-clk@vger.kernel.org>; Tue, 27 Mar 2018 06:11:10 -0700 (PDT)
 MIME-Version: 1.0
+In-Reply-To: <20180316140215.28663-5-icenowy@aosc.io>
+References: <20180316140215.28663-1-icenowy@aosc.io> <20180316140215.28663-5-icenowy@aosc.io>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 27 Mar 2018 15:11:09 +0200
+Message-ID: <CACRpkdafFgRvFXwJ=5s5a_VmvUfJGC3na0zUdU95Dg5451X_0A@mail.gmail.com>
+Subject: Re: [PATCH v4 4/9] pinctrl: sunxi: add support for the Allwinner H6
+ main pin controller
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> Subject: Re: [PATCH v4 4/4] driver: clk: imx: add clock driver for imx6sl=
-l
->=20
-> On Thu, Mar 08, 2018 at 05:47:25PM +0800, Bai Ping wrote:
-> > diff --git a/drivers/clk/imx/clk-imx6sll.c
-> > b/drivers/clk/imx/clk-imx6sll.c new file mode 100644 index
-> > 0000000..e938db5
-> > --- /dev/null
-> > +++ b/drivers/clk/imx/clk-imx6sll.c
-> > @@ -0,0 +1,344 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> > + * Copyright 2017-2018 NXP.
-> > + */
-> > +
-> > +#include <dt-bindings/clock/imx6sll-clock.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/clkdev.h>
-> > +#include <linux/err.h>
-> > +#include <linux/init.h>
-> > +#include <linux/io.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/of_irq.h>
-> > +#include <linux/types.h>
-> > +
-> > +#include "clk.h"
-> > +
-> > +#define CCM_ANALOG_PLL_BYPASS		(0x1 << 16)
-> > +#define BM_CCM_CCDR_MMDC_CH0_MASK	(0x2 << 16)
-> > +#define CCDR				0x4
->=20
-> We agreed to remove this define, right?
+On Fri, Mar 16, 2018 at 3:02 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
 
-Sorry, this is missed, will correct it.
-Jacky
+> The Allwinner H6 SoC has two pin controllers, one main controller
+> (called CPUX-PORT in user manual) and one controller in CPUs power
+> domain (called CPUS-PORT in user manual).
+>
+> This commit introduces support for the main pin controller on H6.
+>
+> The pin bank A and B are not wired out and hidden from the SoC's
+> documents, however it's shown that the "ATE" (an AC200 chip
+> co-packaged with the H6 die) is connected to the main SoC die via these
+> pin banks. The information about these banks is just copied from the BSP
+> pinctrl driver, but re-formatted to fit the mainline pinctrl driver
+> format. The GPIO functions are dropped, as they're impossible to use --
+> except a GPIO&IRQ only pin (PB20) which might be the IRQ of ATE.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Acked-by: Rob Herring <robh@kernel.org>
 
->=20
-> Shawn
->=20
-> > +#define xPLL_CLR(offset)		(offset + 0x8)
+Patch applied with all the ACKs.
+
+Yours,
+Linus Walleij
