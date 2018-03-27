@@ -1,56 +1,48 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 1 Mar 2018 15:41:27 -0600
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 01/42] dt-bindings: clock: Add new bindings for TI
- Davinci PLL clocks
-Message-ID: <20180301214127.7fk3p66w6ikfj6kk@rob-hp-laptop>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <1519071723-31790-2-git-send-email-david@lechnology.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1519071723-31790-2-git-send-email-david@lechnology.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1522142509.2632.42.camel@baylibre.com>
+Subject: Re: [PATCH 0/3] clk: meson: drop unnecessary AO clock flags
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Qiufang
+ Dai <qiufang.dai@amlogic.com>,  linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
+Date: Tue, 27 Mar 2018 11:21:49 +0200
+In-Reply-To: <20180326081809.49493-1-yixun.lan@amlogic.com>
+References: <20180326081809.49493-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 19, 2018 at 02:21:22PM -0600, David Lechner wrote:
-> This adds a new binding for the PLL IP blocks in the mach-davinci
-> family of processors. Currently, only da850 has device tree support
-> but these bindings can also work for other SoCs in this family just
-> by adding new compatible strings.
+On Mon, 2018-03-26 at 16:18 +0800, Yixun Lan wrote:
+>   This first two patches will drop unnecessary flags for
+> the AO clock driver.
+>   The third DTS patch is a follow-up fix for the second patch,
+> and I've tested them on P200, P212, Q200, S400 boards.
 > 
-> Note: Although these PLL controllers are very similar to the TI Keystone
-> SoCs, we are not re-using those bindings. The Keystone bindings use a
-> legacy one-node-per-clock binding. Furthermore, the mach-davinici SoCs
-> have a slightly different PLL register layout and a number of quirks
-> that can't be handled by the existing bindings, so the keystone bindings
-> could not be used as-is anyway.
+>  Note: this patch series was made on top of patch [0]
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
+> [0] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
 > 
-> v7 changes:
-> - None (there was some debate about having child nodes, but the consensus was
->   that this is "good enough" as it is)
-> 
-> v6 changes:
-> - Added clock-names property
-> - Added ti,clkmode-square-wave property
-> - Added pllout child node
-> - Added obsclk child node
-> - Expanded examples
-> 
-> 
->  .../devicetree/bindings/clock/ti/davinci/pll.txt   | 96 ++++++++++++++++++++++
->  1 file changed, 96 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti/davinci/pll.txt
+> Yixun Lan (3):
+>   clk: meson: drop CLK_SET_RATE_PARENT flag
+>   clk: meson: drop CLK_IGNORE_UNUSED flag
+>   ARM64: dts: meson: fix clock source of the pclk for UART_AO
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Please add patch 1 and 2 to the next version of your clkc_ao series
+
+Patch 3 should sent independently to Kevin, with note warning about the
+different dependencies (see comment in patch 3)
+
+> 
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 4 ++--
+>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++--
+>  arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 4 ++--
+>  drivers/clk/meson/axg-aoclk.c               | 1 -
+>  drivers/clk/meson/gxbb-aoclk.c              | 1 -
+>  5 files changed, 6 insertions(+), 8 deletions(-)
+> 
