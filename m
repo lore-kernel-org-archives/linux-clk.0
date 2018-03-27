@@ -1,65 +1,59 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 5/8] remoteproc: da8xx: add the missing checke for clk_enable()
-Date: Wed, 21 Mar 2018 13:08:04 +0100
-Message-Id: <20180321120807.18032-6-brgl@bgdev.pl>
-In-Reply-To: <20180321120807.18032-1-brgl@bgdev.pl>
-References: <20180321120807.18032-1-brgl@bgdev.pl>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1522141249.2632.25.camel@baylibre.com>
+Subject: Re: [PATCH v2 7/7] ARM64: dts: meson-axg: add an 32K alt aoclk
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
+ linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Date: Tue, 27 Mar 2018 11:00:49 +0200
+In-Reply-To: <20180323143816.200573-8-yixun.lan@amlogic.com>
+References: <20180323143816.200573-1-yixun.lan@amlogic.com>
+	 <20180323143816.200573-8-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, 2018-03-23 at 22:38 +0800, Yixun Lan wrote:
+> The ao_clk81 in AO domain have two clock source,
+> one from a 32K alt crystal we name it as ao_alt_clk,
+> another is the clk81 signal from EE domain.
+> 
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> index b3d394f5d95a..48584d5a329b 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+> @@ -109,6 +109,13 @@
+>  		#clock-cells = <0>;
+>  	};
+>  
+> +	ao_alt_xtal: ao_alt_xtal-clk {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <32000000>;
+> +		clock-output-names = "ao_alt_xtal";
+> +		#clock-cells = <0>;
+> +	};
 
-The davinci platform is being switched to using the common clock
-framework, where clk_enable() can fail. Add the return value check.
+In DT, we seem to be using 'ao' and 'AO' to designate the Always On domain.
+Maybe we should be try be consistent about this.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Anyway, this patch looks good but does not need to be part of the clkc_ao
+series, it could go in independently.
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index bf3b9034c319..592bf0fc52e8 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
-+	int rv;
- 
- 	/* hw requires the start (boot) address be on 1KB boundary */
- 	if (rproc->bootaddr & 0x3ff) {
-@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	clk_enable(dsp_clk);
-+	rv = clk_enable(dsp_clk);
-+	if (rv) {
-+		dev_err(dev, "clk_enable() failed: %d\n", rv);
-+		return rv;
-+	}
-+
- 	davinci_clk_reset_deassert(dsp_clk);
- 
- 	return 0;
--- 
-2.16.1
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+
+> +
+>  	soc {
+>  		compatible = "simple-bus";
+>  		#address-cells = <2>;
