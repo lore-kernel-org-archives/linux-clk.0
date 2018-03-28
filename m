@@ -1,66 +1,59 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 00/11] clk: meson: second round of updates
-To: Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Carlo Caione
- <carlo@caione.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180219112146.21746-1-jbrunet@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <670fffce-220b-b65e-d855-80603f1972b5@baylibre.com>
-Date: Mon, 12 Mar 2018 11:22:44 +0100
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 6/6] clk: meson: drop CLK_IGNORE_UNUSED flag
+Date: Wed, 28 Mar 2018 10:50:50 +0800
+Message-ID: <20180328025050.221585-7-yixun.lan@amlogic.com>
+In-Reply-To: <20180328025050.221585-1-yixun.lan@amlogic.com>
+References: <20180328025050.221585-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <20180219112146.21746-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19/02/2018 12:21, Jerome Brunet wrote:
-> This changeset applies on top of the previous updates series
-> available here [0].
-> 
-> Most of the changes proposed here are related to the plls of meson
-> SoCs. Details can be found in each patches but, in nutshell, there
-> is :
-> * a bit of clean-up,
-> * improved pll capabilities using the frac parameter,
-> * several clocks added to model the tree more accurately.
-> 
-> Beware: patch #10 depends on this core clock framework fix: [1]
-> As explained in the description on the patch, if the gates are
-> added w/o this fix, the system will crash when
-> clk_disable_unused() is called.
-> 
-> [0]: https://lkml.kernel.org/r/20180212145846.19380-1-jbrunet@baylibre.com
-> [1]: https://lkml.kernel.org/r/20180214134340.17242-5-jbrunet@baylibre.com
-> 
-> Jerome Brunet (11):
->   clk: meson: add fractional part of meson8b fixed_pll
->   clk: meson: poke pll CNTL last
->   clk: meson: remove special gp0 lock loop
->   clk: meson: improve pll driver results with frac
->   clk: meson: add gp0 frac parameter for axg and gxl
->   clk: meson: add ROUND_CLOSEST to the pll driver
->   clk: meson: axg: add hifi clock bindings
->   clk: meson: axg: add hifi pll clock
->   clk: meson: add mpll pre-divider
->   clk: meson: add fdiv clock gates
->   clk: meson: clean-up clk81 clocks
-> 
->  drivers/clk/meson/axg.c              | 184 +++++++++++++++++++++++++++++++----
->  drivers/clk/meson/axg.h              |   8 +-
->  drivers/clk/meson/clk-pll.c          | 154 ++++++++++++++++++-----------
->  drivers/clk/meson/clkc.h             |  15 +--
->  drivers/clk/meson/gxbb.c             | 141 +++++++++++++++++++++++----
->  drivers/clk/meson/gxbb.h             |  10 +-
->  drivers/clk/meson/meson8b.c          | 128 ++++++++++++++++++++----
->  drivers/clk/meson/meson8b.h          |   8 +-
->  include/dt-bindings/clock/axg-clkc.h |   1 +
->  9 files changed, 521 insertions(+), 128 deletions(-)
-> 
+Rely on drivers to request the clock explicitly.
 
-Tested on Odroid-C2 & LibreTech-CC,
+Previous the kernel will leave the clock on while
+bootloader adready initilized the clock, this wasn't
+optimal way, so fix it here.
 
-Applied to meson's next/drivers tree.
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ drivers/clk/meson/axg-aoclk.c  | 1 -
+ drivers/clk/meson/gxbb-aoclk.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-Neil
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index b11cc4450570..89f894f41eac 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -27,7 +27,6 @@ static struct clk_regmap _name##_ao = {					\
+ 		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+-		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
+ 
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 89b048aad239..f646d7527c27 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -70,7 +70,6 @@ static struct clk_regmap _name##_ao = {					\
+ 		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+-		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
+ 
+-- 
+2.15.1
