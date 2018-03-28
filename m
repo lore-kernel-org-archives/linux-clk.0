@@ -1,133 +1,153 @@
-Return-Path: <bgolaszewski@baylibre.com>
+Return-Path: <biju.das@bp.renesas.com>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk <linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED
+ DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	"Chris Paterson" <Chris.Paterson2@renesas.com>, Fabrizio Castro
+	<fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH 06/12] clk: renesas: cpg-mssr: Add r8a77470 support
+Date: Wed, 28 Mar 2018 18:41:31 +0000
+Message-ID: <OSBPR01MB2103B62C23A4D6F70825D1CFB8A30@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1522161443-54428-1-git-send-email-biju.das@bp.renesas.com>
+ <1522161443-54428-7-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdU42sZzUoiWCUUhWAUqDKHY_WT8wHNz34bN0YZLqUjOhQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdU42sZzUoiWCUUhWAUqDKHY_WT8wHNz34bN0YZLqUjOhQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1521812598.3406.8.camel@pengutronix.de>
-References: <20180323130455.11470-1-brgl@bgdev.pl> <20180323130455.11470-2-brgl@bgdev.pl>
- <1521812598.3406.8.camel@pengutronix.de>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Fri, 23 Mar 2018 14:46:18 +0100
-Message-ID: <CAMpxmJUOUvBH6bArXDn1TkS0ZXttD2CCk-cMw0TH52FoRNRdmA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/8] reset: modify the way reset lookup works for board files
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>,
-	arm-soc <linux-arm-kernel@lists.infradead.org>,
-	linux-devicetree <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-23 14:43 GMT+01:00 Philipp Zabel <p.zabel@pengutronix.de>:
-> On Fri, 2018-03-23 at 14:04 +0100, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
->> introduced reset control lookup mechanism for boards that still use
->> board files.
->>
->> The routine used to register lookup entries takes the corresponding
->> reset_controlled_dev structure as argument.
->>
->> It's been determined however that for the first user of this new
->> interface - davinci psc driver - it will be easier to register the
->> lookup entries using the reset controller device name.
->>
->> This patch changes the way lookup entries are added.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->>  drivers/reset/core.c             | 38 +++++++++++++++++++++++++++++++-------
->>  include/linux/reset-controller.h | 14 ++++++++------
->>  2 files changed, 39 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
->> index 06fa4907afc4..f4a29c046995 100644
->> --- a/drivers/reset/core.c
->> +++ b/drivers/reset/core.c
->> @@ -153,12 +153,10 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
->>
->>  /**
->>   * reset_controller_add_lookup - register a set of lookup entries
->> - * @rcdev: initialized reset controller device owning the reset line
->>   * @lookup: array of reset lookup entries
->>   * @num_entries: number of entries in the lookup array
->>   */
->> -void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
->> -                              struct reset_control_lookup *lookup,
->> +void reset_controller_add_lookup(struct reset_control_lookup *lookup,
->>                                unsigned int num_entries)
->>  {
->>       struct reset_control_lookup *entry;
->> @@ -168,13 +166,12 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
->>       for (i = 0; i < num_entries; i++) {
->>               entry = &lookup[i];
->>
->> -             if (!entry->dev_id) {
->> -                     pr_warn("%s(): reset lookup entry has no dev_id, skipping\n",
->> +             if (!entry->dev_id || !entry->provider) {
->> +                     pr_warn("%s(): reset lookup entry badly specified, skipping\n",
->>                               __func__);
->>                       continue;
->>               }
->>
->> -             entry->rcdev = rcdev;
->>               list_add_tail(&entry->list, &reset_lookup_list);
->>       }
->>       mutex_unlock(&reset_lookup_mutex);
->> @@ -526,11 +523,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
->>  }
->>  EXPORT_SYMBOL_GPL(__of_reset_control_get);
->>
->> +static struct reset_controller_dev *
->> +__reset_controller_by_name(const char *name)
->> +{
->> +     struct reset_controller_dev *rcdev;
->> +
->> +     lockdep_assert_held(&reset_list_mutex);
->> +
->> +     list_for_each_entry(rcdev, &reset_controller_list, list) {
->> +             if (!rcdev->dev)
->> +                     continue;
->> +
->> +             if (!strcmp(name, dev_name(rcdev->dev)))
->> +                     return rcdev;
->> +     }
->> +
->> +     return NULL;
->> +}
->> +
->>  static struct reset_control *
->>  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
->>                               bool shared, bool optional)
->>  {
->>       const struct reset_control_lookup *lookup;
->> +     struct reset_controller_dev *rcdev;
->>       const char *dev_id = dev_name(dev);
->>       struct reset_control *rstc = NULL;
->>
->> @@ -547,7 +563,15 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
->>                   ((con_id && lookup->con_id) &&
->>                    !strcmp(con_id, lookup->con_id))) {
->>                       mutex_lock(&reset_list_mutex);
->> -                     rstc = __reset_control_get_internal(lookup->rcdev,
->> +                     rcdev = __reset_controller_by_name(lookup->provider);
->> +                     if (!rcdev) {
->> +                             mutex_unlock(&reset_list_mutex);
->> +                             mutex_unlock(&reset_lookup_mutex);
->> +                             /* Reset provider may not be ready yet. */
->> +                             return -EPROBE_DEFER;
->
-> Thanks, I've applied this patch to reset/next with the following change:
->
-> -                               return -EPROBE_DEFER;
-> +                               return ERR_PTR(-EPROBE_DEFER);
->
-> regards
-> Philipp
-
-Oops, thanks for spotting that.
-
-Thanks,
-Bart
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIHJldmlldy4NCg0KPiBIaSBCaWp1LA0KPg0KPiBP
+biBUdWUsIE1hciAyNywgMjAxOCBhdCA0OjM3IFBNLCBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVu
+ZXNhcy5jb20+IHdyb3RlOg0KPiA+IEFkZCBSWi9HMUMgKFI4QTc3NDcwKSBDbG9jayBQdWxzZSBH
+ZW5lcmF0b3IgLyBNb2R1bGUgU3RhbmRieSBhbmQNCj4gPiBTb2Z0d2FyZSBSZXNldCBzdXBwb3J0
+Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMu
+Y29tPg0KPiA+IFJldmlld2VkLWJ5OiBGYWJyaXppbyBDYXN0cm8gPGZhYnJpemlvLmNhc3Ryb0Bi
+cC5yZW5lc2FzLmNvbT4NCj4NCj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPg0KPiA+IC0tLSAv
+ZGV2L251bGwNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9yZW5lc2FzL3I4YTc3NDd4LWNwZy1tc3Ny
+LmMNCj4NCj4gRm9yIGNvbnNpc3RlbmN5LCBJJ2QgY2FsbCB0aGlzIHI4YTc3NDcwLWNwZy1tc3Ny
+LmMuDQo+DQo+ID4gQEAgLTAsMCArMSwyMjkgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50
+aWZpZXI6IEdQTC0yLjANCj4gPiArLyoNCj4gPiArICogcjhhNzc0NyBDbG9jayBQdWxzZSBHZW5l
+cmF0b3IgLyBNb2R1bGUgU3RhbmRieSBhbmQgU29mdHdhcmUgUmVzZXQNCj4NCj4gcjhhNzc0NzAN
+Cg0KV2lsbCBkbw0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGNwZ19jb3JlX2NsayByOGE3NzQ3
+MF9jb3JlX2Nsa3NbXSBfX2luaXRjb25zdCA9IHsNCj4gPiArICAgICAgIC8qIEV4dGVybmFsIENs
+b2NrIElucHV0cyAqLw0KPiA+ICsgICAgICAgREVGX0lOUFVUKCJleHRhbCIsICAgICAgQ0xLX0VY
+VEFMKSwNCj4gPiArICAgICAgIERFRl9JTlBVVCgidXNiX2V4dGFsIiwgIENMS19VU0JfRVhUQUwp
+LA0KPiA+ICsNCj4gPiArICAgICAgIC8qIEludGVybmFsIENvcmUgQ2xvY2tzICovDQo+ID4gKyAg
+ICAgICBERUZfQkFTRSgiLm1haW4iLCAgICAgICBDTEtfTUFJTiwgQ0xLX1RZUEVfR0VOMl9NQUlO
+LCBDTEtfRVhUQUwpLA0KPiA+ICsgICAgICAgREVGX0JBU0UoIi5wbGwwIiwgICAgICAgQ0xLX1BM
+TDAsIENMS19UWVBFX0dFTjJfUExMMCwgQ0xLX01BSU4pLA0KPiA+ICsgICAgICAgREVGX0JBU0Uo
+Ii5wbGwxIiwgICAgICAgQ0xLX1BMTDEsIENMS19UWVBFX0dFTjJfUExMMSwgQ0xLX01BSU4pLA0K
+PiA+ICsgICAgICAgREVGX0JBU0UoIi5wbGwzIiwgICAgICAgQ0xLX1BMTDMsIENMS19UWVBFX0dF
+TjJfUExMMywgQ0xLX01BSU4pLA0KPiA+ICsNCj4gPiArICAgICAgIERFRl9GSVhFRCgiLnBsbDFf
+ZGl2MiIsIENMS19QTEwxX0RJVjIsIENMS19QTEwxLCAyLCAxKSwNCj4gPiArDQo+ID4gKyAgICAg
+ICAvKiBDb3JlIENsb2NrIE91dHB1dHMgKi8NCj4gPiArICAgICAgIERFRl9CQVNFKCJsYiIsICAg
+UjhBNzc0NzBfQ0xLX0xCLCAgIENMS19UWVBFX0dFTjJfTEIsICAgQ0xLX1BMTDEpLA0KPg0KPiBE
+RUZfRklYRUQoImxiIiwgUjhBNzc0NzBfQ0xLX0xCLCBDTEtfUExMMSwgMjQsIDEpIGFuZCBtb3Zl
+IGl0IGRvd24NCj4gYmV0d2VlbiAiYiIgYW5kICJwIi4NCg0KV2lsbCBkby4NCg0KPiBOb3RlOiBh
+cHBhcmVudGx5IHRoZSBkZXBlbmRlbmN5IG9uIE1EMTggaXMgdHJ1ZSBmb3IgUi1DYXIgSDIgb25s
+eSwgc28gSSB3aWxsIGZpeA0KPiB0aGlzIGluIHRoZSBvdGhlciBjbG9jayBkcml2ZXJzLg0KPg0K
+PiA+ICsvKg0KPiA+ICsgKiBDUEcgQ2xvY2sgRGF0YQ0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKy8q
+DQo+ID4gKyAqICAgIE1EICAgICAgIEVYVEFMICAgICAgICAgICBQTEwwICAgIFBMTDEgICAgUExM
+Mw0KPiA+ICsgKiAxNCAxMyAgICAgICAoTUh6KSAgICAgICAgICAgKjEgICAgICAqMg0KPiA+ICsg
+Ki0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+
+ICsgKiAwICAwICAgICAgICAgICAgICAgIDIwICAgICAgICAgICAgICB4ODAvMiAgIHg3OCAgICAg
+eDUwDQo+ID4gKyAqIDAgIDEgICAgICAgICAgICAgICAgMjYgICAgICAgICAgICAgIHg2MC8yICAg
+eDYwICAgICB4NTYNCj4gPiArICogMSAgMCAgICAgICAgICAgICAgICBQcm9oaWJpdHRlZCBzZXR0
+aW5nDQo+ID4gKyAqIDEgIDEgICAgICAgICAgICAgICAgMzAgICAgICAgICAgICAgIHg1Mi8yICAg
+eDUyICAgICB4NTANCj4NCj4gSXQgbG9va3MgbGlrZSBhbGwgUExMMC9QTEwxL1BMTDMgdmFsdWVz
+IGFyZSBhbHJlYWR5IHRoZSBwcmVkaXZpZGVkIHZhbHVlcywgdW5saWtlDQo+IGluIG90aGVyIGNs
+b2NrIGRyaXZlcnM/IC4uLg0KDQpZZXMsIHlvdSBhcmUgY29ycmVjdC4gd2lsbCBjb3JyZWN0IHRo
+aXMgdGFibGUuDQoNCj4gPiArICoNCj4gPiArICogKjEgOiAgICAgICAgVGFibGUgNy40IGluZGlj
+YXRlcyBWQ08gb3V0cHV0IChQTEwwID0gVkNPLzIpDQo+ID4gKyAqICoyIDogICAgICAgIFRhYmxl
+IDcuNCBpbmRpY2F0ZXMgVkNPIG91dHB1dCAoUExMMSA9IFZDTykNCj4gPiArICovDQo+ID4gKyNk
+ZWZpbmUgQ1BHX1BMTF9DT05GSUdfSU5ERVgobWQpICAgICAgICgoKChtZCkgJiBCSVQoMTQpKSA+
+PiAxMykgfCBcDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAo
+KChtZCkgJiBCSVQoMTMpKSA+PiAxMykpDQo+ID4gKw0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0
+IHJjYXJfZ2VuMl9jcGdfcGxsX2NvbmZpZyBjcGdfcGxsX2NvbmZpZ3NbOF0NCj4gPiArX19pbml0
+Y29uc3QgPSB7DQo+DQo+IGNwZ19wbGxfY29uZmlnc1s0XQ0KPg0KPiA+ICsgICAgICAgLyogRVhU
+QUwgZGl2ICAgIFBMTDEgbXVsdCAgICAgICBQTEwzIG11bHQgKi8NCj4gPiArICAgICAgIHsgMSwg
+ICAgICAgICAgICA3OCwgICAgICAgICAgICAgNTAsICAgICB9LA0KPiA+ICsgICAgICAgeyAxLCAg
+ICAgICAgICAgIDYwLCAgICAgICAgICAgICA1NiwgICAgIH0sDQo+ID4gKyAgICAgICB7IC8qIElu
+dmFsaWQqLyAgICAgICAgICAgICAgICAgICAgICAgICAgfSwNCj4gPiArICAgICAgIHsgMSwgICAg
+ICAgICAgICA1MiwgICAgICAgICAgICAgNTAsICAgICB9LA0KPg0KPiAuLi4gc28gSSB0aGluayB0
+aGVzZSBzaG91bGQgYmUgbXVsdGlwbGllZCBieSB0aGUgcHJlZGl2aWRlciwgd2hpY2ggd2lsbCBh
+bGxvdyB0bw0KPiBkcm9wIHRoZSBjb3JyZXNwb25kaW5nIHRlc3QgZm9yIFJaL0cxQyBpbiByY2Fy
+X2dlbjJfY3BnX2Nsa19yZWdpc3Rlci4NCg0KV2lsbCBjb3JyZWN0IHRoaXMuDQoNCj4gPiArfTsN
+Cj4gPiArDQo+ID4gK3N0YXRpYyBpbnQgX19pbml0IHI4YTc3NDd4X2NwZ19tc3NyX2luaXQoc3Ry
+dWN0IGRldmljZSAqZGV2KQ0KPg0KPiByOGE3NzQ3MF9jcGdfbXNzcl9pbml0DQoNCldpbGwgY29y
+cmVjdCB0aGlzDQoNCj4gPiAtLS0gYS9kcml2ZXJzL2Nsay9yZW5lc2FzL3JjYXItZ2VuMi1jcGcu
+Yw0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL3JlbmVzYXMvcmNhci1nZW4yLWNwZy5jDQo+ID4gQEAg
+LTE2LDYgKzE2LDcgQEANCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2luaXQuaD4NCj4gPiAgI2luY2x1
+ZGUgPGxpbnV4L2lvLmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+DQo+ID4gKyNpbmNs
+dWRlIDxsaW51eC9zeXNfc29jLmg+DQo+ID4NCj4gPiAgI2luY2x1ZGUgInJlbmVzYXMtY3BnLW1z
+c3IuaCINCj4gPiAgI2luY2x1ZGUgInJjYXItZ2VuMi1jcGcuaCINCj4gPiBAQCAtMjU3LDEwICsy
+NTgsMjEgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBjbGtfZGl2X3RhYmxlDQo+IGNwZ19zZDAxX2Rp
+dl90YWJsZVtdID0gew0KPiA+ICAgICAgICAgeyAgMCwgIDAgfSwNCj4gPiAgfTsNCj4gPg0KPiA+
+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGNsa19kaXZfdGFibGUgcnpfZzFjX2NwZ19zZDAxX2Rpdl90
+YWJsZVtdID0gew0KPiA+ICsgICAgICAgeyAgNSwgMTIgfSwgeyAgNiwgMTYgfSwgeyAgNywgMTgg
+fSwgeyAgOCwgMjQgfSwNCj4gPiArICAgICAgIHsgMTAsIDM2IH0sIHsgMTEsIDQ4IH0sIHsgMTIs
+IDEwIH0sIHsgIDAsICAwIH0sIH07DQo+DQo+IFRoaXMgdGFibGUgaXMgaWRlbnRpY2FsIHRvIGNw
+Z19zZDAxX2Rpdl90YWJsZVtdLCBleGNlcHQgZm9yIHRoZSBtaXNzaW5nIGZpcnN0IGVudHJ5Lg0K
+PiBTbyBwZXJoYXBzIHlvdSBjb3VsZCBqdXN0IHVzZSAmY3BnX3NkMDFfZGl2X3RhYmxlWzFdIGlu
+c3RlYWQ/DQoNCldpbGwgdGFrZSBvdXQgdGhpcyB0YWJsZS4NCg0KPiA+ICsNCj4gPiArDQo+ID4g
+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgcmNhcl9nZW4yX2NwZ19wbGxfY29uZmlnICpjcGdfcGxsX2Nv
+bmZpZw0KPiA+IF9faW5pdGRhdGE7ICBzdGF0aWMgdW5zaWduZWQgaW50IGNwZ19wbGwwX2RpdiBf
+X2luaXRkYXRhOyAgc3RhdGljIHUzMg0KPiA+IGNwZ19tb2RlIF9faW5pdGRhdGE7DQo+ID4NCj4g
+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBzb2NfZGV2aWNlX2F0dHJpYnV0ZSByOGE3NzQ3eGVzW10g
+PSB7DQo+ID4gKyAgICAgICB7IC5zb2NfaWQgPSAicjhhNzc0NzAiLCAucmV2aXNpb24gPSAiRVMy
+LioiIH0sDQo+DQo+IFNvIHRoaXMgZG9lcyBub3QgYXBwbHkgdG8gRVMzLjAgYW5kIGxhdGVyPw0K
+PiBXaGF0IGFib3V0IEVTMS4qPw0KDQpXaWxsIHRha2Ugb3V0IHRoZSByZXZpc2lvbiBmaWVsZC4g
+Q3VycmVudGx5IHdlIGdvdCBvbmx5IEVTMi4wIHZlcnNpb24sDQpBcyBwZXIgbXkga25vd2xlZGdl
+LCB0aGVyZSBpcyBubyBFUzEuMCB2ZXJzaW9uLkl0IGlzIGJhc2ljYWxseSBkZXJpdmVkIGZyb20g
+Ui1DYXIgRTJYLg0KDQo+ID4gKyAgICAgICB7IC8qIHNlbnRpbmVsICovIH0NCj4gPiArfTsNCj4N
+Cj4gPiBAQCAtMzAzLDcgKzMxNSwxMCBAQCBzdHJ1Y3QgY2xrICogX19pbml0DQo+IHJjYXJfZ2Vu
+Ml9jcGdfY2xrX3JlZ2lzdGVyKHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAg
+ICAgYnJlYWs7DQo+ID4NCj4gPiAgICAgICAgIGNhc2UgQ0xLX1RZUEVfR0VOMl9QTEwxOg0KPiA+
+IC0gICAgICAgICAgICAgICBtdWx0ID0gY3BnX3BsbF9jb25maWctPnBsbDFfbXVsdCAvIDI7DQo+
+ID4gKyAgICAgICAgICAgICAgIGlmIChzb2NfZGV2aWNlX21hdGNoKHI4YTc3NDd4ZXMpKQ0KPiA+
+ICsgICAgICAgICAgICAgICAgICAgICAgIG11bHQgPSBjcGdfcGxsX2NvbmZpZy0+cGxsMV9tdWx0
+Ow0KPiA+ICsgICAgICAgICAgICAgICBlbHNlDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
+bXVsdCA9IGNwZ19wbGxfY29uZmlnLT5wbGwxX211bHQgLyAyOw0KPg0KPiBJZiB0aGluayB0aGlz
+IGNhbiBiZSBkcm9wcGVkIGlmIHRoZSB2YWx1ZXMgaW4gY3BnX3BsbF9jb25maWdzW10gYXJlIG11
+bHRpcGxpZWQgYnkgMi4NCg0KV2lsbCBkbw0KDQo+ID4gQEAgLTMxNCw3ICszMjksMTAgQEAgc3Ry
+dWN0IGNsayAqIF9faW5pdA0KPiByY2FyX2dlbjJfY3BnX2Nsa19yZWdpc3RlcihzdHJ1Y3QgZGV2
+aWNlICpkZXYsDQo+ID4gICAgICAgICAgICAgICAgIHJldHVybiBjcGdfel9jbGtfcmVnaXN0ZXIo
+Y29yZS0+bmFtZSwgcGFyZW50X25hbWUsDQo+ID4gYmFzZSk7DQo+ID4NCj4gPiAgICAgICAgIGNh
+c2UgQ0xLX1RZUEVfR0VOMl9MQjoNCj4gPiAtICAgICAgICAgICAgICAgZGl2ID0gY3BnX21vZGUg
+JiBCSVQoMTgpID8gMzYgOiAyNDsNCj4gPiArICAgICAgICAgICAgICAgaWYgKHNvY19kZXZpY2Vf
+bWF0Y2gocjhhNzc0N3hlcykpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgZGl2ID0gMjQ7
+DQo+ID4gKyAgICAgICAgICAgICAgIGVsc2UNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBk
+aXYgPSBjcGdfbW9kZSAmIEJJVCgxOCkgPyAzNiA6IDI0Ow0KPg0KPiBDYW4gYmUgZHJvcHBlZCBp
+ZiBMQiBpcyBtb2RlbGVkIGFzIGEgZml4ZWQgY2xvY2sgaW5zdGVhZC4NCg0KV2lsbCBkby4NCj4g
+PiAgICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4NCj4gPiAgICAgICAgIGNhc2UgQ0xLX1RZUEVf
+R0VOMl9BRFNQOg0KPiA+IEBAIC0zMjYsMTIgKzM0NCwyMCBAQCBzdHJ1Y3QgY2xrICogX19pbml0
+DQo+IHJjYXJfZ2VuMl9jcGdfY2xrX3JlZ2lzdGVyKHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gPiAg
+ICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4NCj4gPiAgICAgICAgIGNhc2UgQ0xLX1RZUEVfR0VO
+Ml9TRDA6DQo+ID4gLSAgICAgICAgICAgICAgIHRhYmxlID0gY3BnX3NkMDFfZGl2X3RhYmxlOw0K
+PiA+ICsgICAgICAgICAgICAgICBpZiAoc29jX2RldmljZV9tYXRjaChyOGE3NzQ3eGVzKSkNCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICB0YWJsZSA9IHJ6X2cxY19jcGdfc2QwMV9kaXZfdGFi
+bGU7DQo+ID4gKyAgICAgICAgICAgICAgIGVsc2UNCj4gPiArICAgICAgICAgICAgICAgICAgICAg
+ICB0YWJsZSA9IGNwZ19zZDAxX2Rpdl90YWJsZTsNCj4NCj4gdGFibGUgPSBjcGdfc2QwMV9kaXZf
+dGFibGU7DQo+IGlmIChzb2NfZGV2aWNlX21hdGNoKHI4YTc3NDd4ZXMpKQ0KPiAgICAgICAgIHRh
+YmxlKys7DQpXaWxsIGRvDQo+ID4gKw0KPiA+ICAgICAgICAgICAgICAgICBzaGlmdCA9IDQ7DQo+
+ID4gICAgICAgICAgICAgICAgIGJyZWFrOw0KPiA+DQo+ID4gICAgICAgICBjYXNlIENMS19UWVBF
+X0dFTjJfU0QxOg0KPiA+IC0gICAgICAgICAgICAgICB0YWJsZSA9IGNwZ19zZDAxX2Rpdl90YWJs
+ZTsNCj4gPiArICAgICAgICAgICAgICAgaWYgKHNvY19kZXZpY2VfbWF0Y2gocjhhNzc0N3hlcykp
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgdGFibGUgPSByel9nMWNfY3BnX3NkMDFfZGl2
+X3RhYmxlOw0KPiA+ICsgICAgICAgICAgICAgICBlbHNlDQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgdGFibGUgPSBjcGdfc2QwMV9kaXZfdGFibGU7DQo+DQo+IExpa2V3aXNlLg0KPg0KPiA+
+ICsNCj4gPiAgICAgICAgICAgICAgICAgc2hpZnQgPSAwOw0KPiA+ICAgICAgICAgICAgICAgICBi
+cmVhazsNCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAgICAgICAgICAg
+ICAgIEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMg
+b2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtDQo+IG02OGsub3JnDQo+DQo+IElu
+IHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlz
+ZWxmIGEgaGFja2VyLiBCdXQgd2hlbg0KPiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1
+c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQoNCg0KDQpSZW5lc2FzIEVs
+ZWN0cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJu
+ZSBFbmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFu
+ZCAmIFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
