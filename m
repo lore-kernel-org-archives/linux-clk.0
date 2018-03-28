@@ -1,322 +1,344 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ve1eur01on0087.outbound.protection.outlook.com ([104.47.1.87]:44279
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750847AbeCPGxt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Mar 2018 02:53:49 -0400
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Jacky Bai <ping.bai@nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-CC: Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "jacky.baip@gmail.com" <jacky.baip@gmail.com>
-Subject: RE: [PATCH v5 3/4] dt-bindings: imx: update clock doc for imx6sll
-Date: Fri, 16 Mar 2018 06:53:46 +0000
-Message-ID: <AM3PR04MB30617ED3282B5DBC9E75A2A80D70@AM3PR04MB306.eurprd04.prod.outlook.com>
-References: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
- <1520846957-22348-3-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1520846957-22348-3-git-send-email-ping.bai@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
+Received: from outils.crapouillou.net ([89.234.176.41]:47446 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753529AbeC1Pdd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Mar 2018 11:33:33 -0400
+To: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Wed, 28 Mar 2018 17:33:30 +0200
+From: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-doc@vger.kernel.org
+Subject: 
+In-Reply-To: <20180327144631.j2bugsjxulkv57ws@rob-hp-laptop>
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-5-paul@crapouillou.net>
+ <20180327144631.j2bugsjxulkv57ws@rob-hp-laptop>
+Message-ID: <3765e5a86b80b2a1888cabee623e5d0c@crapouillou.net>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Jacky Bai
-> Sent: Monday, March 12, 2018 5:29 PM
-> To: sboyd@kernel.org; robh+dt@kernel.org; shawnguo@kernel.org;
-> kernel@pengutronix.de
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>; linux-clk@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>;
-> A.s. Dong <aisheng.dong@nxp.com>; jacky.baip@gmail.com
-> Subject: [PATCH v5 3/4] dt-bindings: imx: update clock doc for imx6sll
->=20
-> Add clock binding doc update for imx6sll.
->=20
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+Le 2018-03-27 16:46, Rob Herring a écrit :
+> On Sun, Mar 18, 2018 at 12:28:57AM +0100, Paul Cercueil wrote:
+>> Add documentation about how to properly use the Ingenic TCU
+>> (Timer/Counter Unit) drivers from devicetree.
+>> 
+>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>> ---
+>>  .../bindings/clock/ingenic,tcu-clocks.txt          | 42 
+>> ++++++++++++++++
+>>  .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 
+>> +++++++++++++++
+>>  .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56 
+>> ++++++++++++++++++++++
+>>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 
+>> ++++++++++++++++
+>>  4 files changed, 178 insertions(+)
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> 
+>>  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+>>  added content.
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt 
+>> b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>> new file mode 100644
+>> index 000000000000..471d27078599
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>> @@ -0,0 +1,42 @@
+>> +Ingenic SoC TCU binding
+>> +
+>> +The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It 
+>> features 8
+>> +channels, each one having its own clock, that can be started and 
+>> stopped,
+>> +reparented, and reclocked.
+>> +
+>> +Required properties:
+>> +- compatible : One of:
+>> +  * ingenic,jz4740-tcu-clocks,
+>> +  * ingenic,jz4770-tcu-clocks,
+>> +  * ingenic,jz4780-tcu-clocks.
+>> +- clocks : List of phandle & clock specifiers for clocks external to 
+>> the TCU.
+>> +  The "pclk", "rtc" and "ext" clocks should be provided.
+>> +- clock-names : List of name strings for the external clocks.
+>> +- #clock-cells: Should be 1.
+>> +  Clock consumers specify this argument to identify a clock. The 
+>> valid values
+>> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
+>> +
+>> +Example:
+> 
+> Let's just put one complete example in instead of all these duplicated
+> and incomplete examples.
 
-Looks good to me.
-Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+Alright.
 
-Regards
-Dong Aisheng
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_clk: clocks@10 {
+>> +			compatible = "ingenic,jz4740-tcu-clocks";
+>> +			reg = <0x10 0xff0>;
+>> +
+>> +			clocks = <&ext>, <&rtc>, <&pclk>;
+>> +			clock-names = "ext", "rtc", "pclk";
+>> +
+>> +			#clock-cells = <1>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For information about the top-level "ingenic,tcu" compatible node and 
+>> other
+>> +children nodes, see 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+>> diff --git 
+>> a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt 
+>> b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>> new file mode 100644
+>> index 000000000000..7f3af2da77cd
+>> --- /dev/null
+>> +++ 
+>> b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>> @@ -0,0 +1,39 @@
+>> +Ingenic SoCs Timer/Counter Unit Interrupt Controller
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings 
+>> are:
+>> +  * ingenic,jz4740-tcu-intc
+>> +  * ingenic,jz4770-tcu-intc
+>> +  * ingenic,jz4780-tcu-intc
+>> +- interrupt-controller : Identifies the node as an interrupt 
+>> controller
+>> +- #interrupt-cells : Specifies the number of cells needed to encode 
+>> an
+>> +  interrupt source. The value shall be 1.
+>> +- interrupt-parent : phandle of the interrupt controller.
+>> +- interrupts : Specifies the interrupt the controller is connected 
+>> to.
+>> +
+>> +Example:
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_irq: interrupt-controller@20 {
+>> +			compatible = "ingenic,jz4740-tcu-intc";
+>> +			reg = <0x20 0x20>;
+>> +
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <1>;
+>> +
+>> +			interrupt-parent = <&intc>;
+>> +			interrupts = <15>;
+> 
+> The interrupt controller doesn't require any clocks?
 
-> ---
->  change from v3-> v4:
->  - use SPDX license identifier
->  - correct the binding doc format
->  change from v4-> v5:
->  - optimize the commit subject
-> ---
->  .../devicetree/bindings/clock/imx6sll-clock.txt    |  36 ++++
->  include/dt-bindings/clock/imx6sll-clock.h          | 202
-> +++++++++++++++++++++
->  2 files changed, 238 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx6sll-
-> clock.txt
->  create mode 100644 include/dt-bindings/clock/imx6sll-clock.h
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> new file mode 100644
-> index 0000000..fee849d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.txt
-> @@ -0,0 +1,36 @@
-> +* Clock bindings for Freescale i.MX6 SLL
-> +
-> +Required properties:
-> +- compatible: Should be "fsl,imx6sll-ccm"
-> +- reg: Address and length of the register set
-> +- #clock-cells: Should be <1>
-> +- clocks: list of clock specifiers, must contain an entry for each
-> +required
-> +  entry in clock-names
-> +- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_=
-di1"
-> +
-> +The clock consumer should specify the desired clock by having the clock
-> +ID in its "clocks" phandle cell.  See
-> +include/dt-bindings/clock/imx6sll-clock.h
-> +for the full list of i.MX6 SLL clock IDs.
-> +
-> +Examples:
-> +
-> +#include <dt-bindings/clock/imx6sll-clock.h>
-> +
-> +clks: clock-controller@20c4000 {
-> +		compatible =3D "fsl,imx6sll-ccm";
-> +		reg =3D <0x020c4000 0x4000>;
-> +		interrupts =3D <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-> +		#clock-cells =3D <1>;
-> +		clocks =3D <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
-> +		clock-names =3D "ckil", "osc", "ipp_di0", "ipp_di1"; };
-> +
-> +uart1: serial@2020000 {
-> +		compatible =3D "fsl,imx6sl-uart", "fsl,imx6q-uart", "fsl,imx21-
-> uart";
-> +		reg =3D <0x02020000 0x4000>;
-> +		interrupts =3D <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks =3D <&clks IMX6SLL_CLK_UART1_IPG>,
-> +			 <&clks IMX6SLL_CLK_UART1_SERIAL>;
-> +		clock-names =3D "ipg", "per";
-> +};
-> diff --git a/include/dt-bindings/clock/imx6sll-clock.h b/include/dt-
-> bindings/clock/imx6sll-clock.h
-> new file mode 100644
-> index 0000000..151111e
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/imx6sll-clock.h
-> @@ -0,0 +1,202 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> + * Copyright 2017-2018 NXP.
-> + *
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CLOCK_IMX6SLL_H
-> +#define __DT_BINDINGS_CLOCK_IMX6SLL_H
-> +
-> +#define IMX6SLL_CLK_DUMMY		0
-> +#define IMX6SLL_CLK_CKIL		1
-> +#define IMX6SLL_CLK_OSC			2
-> +#define IMX6SLL_PLL1_BYPASS_SRC		3
-> +#define IMX6SLL_PLL2_BYPASS_SRC		4
-> +#define IMX6SLL_PLL3_BYPASS_SRC		5
-> +#define IMX6SLL_PLL4_BYPASS_SRC		6
-> +#define IMX6SLL_PLL5_BYPASS_SRC		7
-> +#define IMX6SLL_PLL6_BYPASS_SRC		8
-> +#define IMX6SLL_PLL7_BYPASS_SRC		9
-> +#define IMX6SLL_CLK_PLL1		10
-> +#define IMX6SLL_CLK_PLL2		11
-> +#define IMX6SLL_CLK_PLL3		12
-> +#define IMX6SLL_CLK_PLL4		13
-> +#define IMX6SLL_CLK_PLL5		14
-> +#define IMX6SLL_CLK_PLL6		15
-> +#define IMX6SLL_CLK_PLL7		16
-> +#define IMX6SLL_PLL1_BYPASS		17
-> +#define IMX6SLL_PLL2_BYPASS		18
-> +#define IMX6SLL_PLL3_BYPASS		19
-> +#define IMX6SLL_PLL4_BYPASS		20
-> +#define IMX6SLL_PLL5_BYPASS		21
-> +#define IMX6SLL_PLL6_BYPASS		22
-> +#define IMX6SLL_PLL7_BYPASS		23
-> +#define IMX6SLL_CLK_PLL1_SYS		24
-> +#define IMX6SLL_CLK_PLL2_BUS		25
-> +#define IMX6SLL_CLK_PLL3_USB_OTG	26
-> +#define IMX6SLL_CLK_PLL4_AUDIO		27
-> +#define IMX6SLL_CLK_PLL5_VIDEO		28
-> +#define IMX6SLL_CLK_PLL6_ENET		29
-> +#define IMX6SLL_CLK_PLL7_USB_HOST	30
-> +#define IMX6SLL_CLK_USBPHY1		31
-> +#define IMX6SLL_CLK_USBPHY2		32
-> +#define IMX6SLL_CLK_USBPHY1_GATE	33
-> +#define IMX6SLL_CLK_USBPHY2_GATE	34
-> +#define IMX6SLL_CLK_PLL2_PFD0		35
-> +#define IMX6SLL_CLK_PLL2_PFD1		36
-> +#define IMX6SLL_CLK_PLL2_PFD2		37
-> +#define IMX6SLL_CLK_PLL2_PFD3		38
-> +#define IMX6SLL_CLK_PLL3_PFD0		39
-> +#define IMX6SLL_CLK_PLL3_PFD1		40
-> +#define IMX6SLL_CLK_PLL3_PFD2		41
-> +#define IMX6SLL_CLK_PLL3_PFD3		42
-> +#define IMX6SLL_CLK_PLL4_POST_DIV	43
-> +#define IMX6SLL_CLK_PLL4_AUDIO_DIV	44
-> +#define IMX6SLL_CLK_PLL5_POST_DIV	45
-> +#define IMX6SLL_CLK_PLL5_VIDEO_DIV	46
-> +#define IMX6SLL_CLK_PLL2_198M		47
-> +#define IMX6SLL_CLK_PLL3_120M		48
-> +#define IMX6SLL_CLK_PLL3_80M		49
-> +#define IMX6SLL_CLK_PLL3_60M		50
-> +#define IMX6SLL_CLK_STEP		51
-> +#define IMX6SLL_CLK_PLL1_SW		52
-> +#define IMX6SLL_CLK_AXI_ALT_SEL		53
-> +#define IMX6SLL_CLK_AXI_SEL		54
-> +#define IMX6SLL_CLK_PERIPH_PRE		55
-> +#define IMX6SLL_CLK_PERIPH2_PRE		56
-> +#define IMX6SLL_CLK_PERIPH_CLK2_SEL	57
-> +#define IMX6SLL_CLK_PERIPH2_CLK2_SEL	58
-> +#define IMX6SLL_CLK_PERCLK_SEL		59
-> +#define IMX6SLL_CLK_USDHC1_SEL		60
-> +#define IMX6SLL_CLK_USDHC2_SEL		61
-> +#define IMX6SLL_CLK_USDHC3_SEL		62
-> +#define IMX6SLL_CLK_SSI1_SEL		63
-> +#define IMX6SLL_CLK_SSI2_SEL		64
-> +#define IMX6SLL_CLK_SSI3_SEL		65
-> +#define IMX6SLL_CLK_PXP_SEL		66
-> +#define IMX6SLL_CLK_LCDIF_PRE_SEL	67
-> +#define IMX6SLL_CLK_LCDIF_SEL		68
-> +#define IMX6SLL_CLK_EPDC_PRE_SEL	69
-> +#define IMX6SLL_CLK_SPDIF_SEL		70
-> +#define IMX6SLL_CLK_ECSPI_SEL		71
-> +#define IMX6SLL_CLK_UART_SEL		72
-> +#define IMX6SLL_CLK_ARM			73
-> +#define IMX6SLL_CLK_PERIPH		74
-> +#define IMX6SLL_CLK_PERIPH2		75
-> +#define IMX6SLL_CLK_PERIPH2_CLK2	76
-> +#define IMX6SLL_CLK_PERIPH_CLK2		77
-> +#define IMX6SLL_CLK_MMDC_PODF		78
-> +#define IMX6SLL_CLK_AXI_PODF		79
-> +#define IMX6SLL_CLK_AHB			80
-> +#define IMX6SLL_CLK_IPG			81
-> +#define IMX6SLL_CLK_PERCLK		82
-> +#define IMX6SLL_CLK_USDHC1_PODF		83
-> +#define IMX6SLL_CLK_USDHC2_PODF		84
-> +#define IMX6SLL_CLK_USDHC3_PODF		85
-> +#define IMX6SLL_CLK_SSI1_PRED		86
-> +#define IMX6SLL_CLK_SSI2_PRED		87
-> +#define IMX6SLL_CLK_SSI3_PRED		88
-> +#define IMX6SLL_CLK_SSI1_PODF		89
-> +#define IMX6SLL_CLK_SSI2_PODF		90
-> +#define IMX6SLL_CLK_SSI3_PODF		91
-> +#define IMX6SLL_CLK_PXP_PODF		92
-> +#define IMX6SLL_CLK_LCDIF_PRED		93
-> +#define IMX6SLL_CLK_LCDIF_PODF		94
-> +#define IMX6SLL_CLK_EPDC_SEL		95
-> +#define IMX6SLL_CLK_EPDC_PODF		96
-> +#define IMX6SLL_CLK_SPDIF_PRED		97
-> +#define IMX6SLL_CLK_SPDIF_PODF		98
-> +#define IMX6SLL_CLK_ECSPI_PODF		99
-> +#define IMX6SLL_CLK_UART_PODF		100
-> +
-> +/* CCGR 0 */
-> +#define IMX6SLL_CLK_AIPSTZ1		101
-> +#define IMX6SLL_CLK_AIPSTZ2		102
-> +#define IMX6SLL_CLK_DCP			103
-> +#define IMX6SLL_CLK_UART2_IPG		104
-> +#define IMX6SLL_CLK_UART2_SERIAL	105
-> +
-> +/* CCGR 1 */
-> +#define IMX6SLL_CLK_ECSPI1		106
-> +#define IMX6SLL_CLK_ECSPI2		107
-> +#define IMX6SLL_CLK_ECSPI3		108
-> +#define IMX6SLL_CLK_ECSPI4		109
-> +#define IMX6SLL_CLK_UART3_IPG		110
-> +#define IMX6SLL_CLK_UART3_SERIAL	111
-> +#define IMX6SLL_CLK_UART4_IPG		112
-> +#define IMX6SLL_CLK_UART4_SERIAL	113
-> +#define IMX6SLL_CLK_EPIT1		114
-> +#define IMX6SLL_CLK_EPIT2		115
-> +#define IMX6SLL_CLK_GPT_BUS		116
-> +#define IMX6SLL_CLK_GPT_SERIAL		117
-> +
-> +/* CCGR2 */
-> +#define IMX6SLL_CLK_CSI			118
-> +#define IMX6SLL_CLK_I2C1		119
-> +#define IMX6SLL_CLK_I2C2		120
-> +#define IMX6SLL_CLK_I2C3		121
-> +#define IMX6SLL_CLK_OCOTP		122
-> +#define IMX6SLL_CLK_LCDIF_APB		123
-> +#define IMX6SLL_CLK_PXP			124
-> +
-> +/* CCGR3 */
-> +#define IMX6SLL_CLK_UART5_IPG		125
-> +#define IMX6SLL_CLK_UART5_SERIAL	126
-> +#define IMX6SLL_CLK_EPDC_AXI		127
-> +#define IMX6SLL_CLK_EPDC_PIX		128
-> +#define IMX6SLL_CLK_LCDIF_PIX		129
-> +#define IMX6SLL_CLK_WDOG1		130
-> +#define IMX6SLL_CLK_MMDC_P0_FAST	131
-> +#define IMX6SLL_CLK_MMDC_P0_IPG		132
-> +#define IMX6SLL_CLK_OCRAM		133
-> +
-> +/* CCGR4 */
-> +#define IMX6SLL_CLK_PWM1		134
-> +#define IMX6SLL_CLK_PWM2		135
-> +#define IMX6SLL_CLK_PWM3		136
-> +#define IMX6SLL_CLK_PWM4		137
-> +
-> +/* CCGR 5 */
-> +#define IMX6SLL_CLK_ROM			138
-> +#define IMX6SLL_CLK_SDMA		139
-> +#define IMX6SLL_CLK_KPP			140
-> +#define IMX6SLL_CLK_WDOG2		141
-> +#define IMX6SLL_CLK_SPBA		142
-> +#define IMX6SLL_CLK_SPDIF		143
-> +#define IMX6SLL_CLK_SPDIF_GCLK		144
-> +#define IMX6SLL_CLK_SSI1		145
-> +#define IMX6SLL_CLK_SSI1_IPG		146
-> +#define IMX6SLL_CLK_SSI2		147
-> +#define IMX6SLL_CLK_SSI2_IPG		148
-> +#define IMX6SLL_CLK_SSI3		149
-> +#define IMX6SLL_CLK_SSI3_IPG		150
-> +#define IMX6SLL_CLK_UART1_IPG		151
-> +#define IMX6SLL_CLK_UART1_SERIAL	152
-> +
-> +/* CCGR 6 */
-> +#define IMX6SLL_CLK_USBOH3		153
-> +#define IMX6SLL_CLK_USDHC1		154
-> +#define IMX6SLL_CLK_USDHC2		155
-> +#define IMX6SLL_CLK_USDHC3		156
-> +
-> +#define IMX6SLL_CLK_IPP_DI0		157
-> +#define IMX6SLL_CLK_IPP_DI1		158
-> +#define IMX6SLL_CLK_LDB_DI0_SEL		159
-> +#define IMX6SLL_CLK_LDB_DI0_DIV_3_5	160
-> +#define IMX6SLL_CLK_LDB_DI0_DIV_7	161
-> +#define IMX6SLL_CLK_LDB_DI0_DIV_SEL	162
-> +#define IMX6SLL_CLK_LDB_DI0		163
-> +#define IMX6SLL_CLK_LDB_DI1_SEL		164
-> +#define IMX6SLL_CLK_LDB_DI1_DIV_3_5	165
-> +#define IMX6SLL_CLK_LDB_DI1_DIV_7	166
-> +#define IMX6SLL_CLK_LDB_DI1_DIV_SEL	167
-> +#define IMX6SLL_CLK_LDB_DI1		168
-> +#define IMX6SLL_CLK_EXTERN_AUDIO_SEL    169
-> +#define IMX6SLL_CLK_EXTERN_AUDIO_PRED   170
-> +#define IMX6SLL_CLK_EXTERN_AUDIO_PODF   171
-> +#define IMX6SLL_CLK_EXTERN_AUDIO        172
-> +
-> +#define IMX6SLL_CLK_END			173
-> +
-> +#endif /* __DT_BINDINGS_CLOCK_IMX6SLL_H */
-> --
-> 1.9.1
+It doesn't. The TCU registers not related to TCU channels are always 
+active.
+
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For information about the top-level "ingenic,tcu" compatible node and 
+>> other
+>> +children nodes, see 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+>> diff --git a/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt 
+>> b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>> new file mode 100644
+>> index 000000000000..5742c3f21550
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
+>> @@ -0,0 +1,56 @@
+>> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
+>> +----------------------------------------------------------
+>> +
+>> +For a description of the TCU hardware and drivers, have a look at
+>> +Documentation/mips/ingenic-tcu.txt.
+>> +
+>> +The TCU is implemented as a parent node, whose role is to create the
+>> +regmap, and child nodes for the various drivers listed in the 
+>> aforementioned
+>> +document.
+>> +
+>> +Required properties:
+>> +
+>> +- compatible: must be "ingenic,tcu", "simple-mfd", "syscon";
+>> +- reg: Should be the offset/length value corresponding to the TCU 
+>> registers
+>> +- #address-cells: Should be <1>;
+>> +- #size-cells: Should be <1>;
+>> +- ranges: Should be one range for the full TCU registers area
+>> +
+>> +Accepted children nodes:
+>> +- 
+>> Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
+>> +- Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
+>> +- Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> +
+>> +
+>> +Example:
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_irq: interrupt-controller@20 {
+>> +			compatible = "ingenic,jz4740-tcu-intc";
+>> +			reg = <0x20 0x20>;
+> 
+> I think you should drop this node and make the parent node the 
+> interrupt
+> controller. That is the normal pattern where the parent node handles
+> all the common functions. Otherwise, there is no need to have the 
+> parent
+> node. You should then also drop simple-mfd as then you can control
+> initialization order by initializing interrupt controller before
+> its clients.
+
+Alright, good idea.
+
+>> +			...
+>> +		};
+>> +
+>> +		tcu_clk: clocks@10 {
+>> +			compatible = "ingenic,jz4740-tcu-clocks";
+>> +			reg = <0x10 0xff0>;
+>> +			...
+>> +		};
+>> +
+>> +		tcu_timer: timer@10 {
+>> +			compatible = "ingenic,jz4740-tcu";
+>> +			reg = <0x10 0xff0>;
+> 
+> Is this copy-n-paste or you really have 2 nodes at the same address? 
+> The
+> latter is not valid.
+
+I do have 2 nodes at the same address...
+
+>> +			...
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For more information about the children node, refer to the documents 
+>> listed
+>> +above in the "Accepted children nodes" section.
+>> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt 
+>> b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> new file mode 100644
+>> index 000000000000..f910b7e96783
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>> @@ -0,0 +1,41 @@
+>> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
+>> +---------------------------------------------
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
+>> +  * ingenic,jz4740-tcu
+>> +  * ingenic,jz4770-tcu
+>> +  * ingenic,jz4780-tcu
+>> +- interrupt-parent : phandle of the TCU interrupt controller.
+>> +- interrupts : Specifies the interrupts the controller is connected 
+>> to.
+>> +- clocks : List of phandle & clock specifiers for the TCU clocks.
+>> +- clock-names : List of name strings for the TCU clocks.
+>> +
+>> +Example:
+>> +
+>> +/ {
+>> +	tcu: mfd@10002000 {
+>> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
+>> +		reg = <0x10002000 0x1000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x0 0x10002000 0x1000>;
+>> +
+>> +		tcu_timer: timer@10 {
+>> +			compatible = "ingenic,jz4740-tcu";
+>> +			reg = <0x10 0xff0>;
+>> +
+>> +			clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk 2>, <&tcu_clk 3>,
+>> +					 <&tcu_clk 4>, <&tcu_clk 5>, <&tcu_clk 6>, <&tcu_clk 7>;
+>> +			clock-names = "timer0", "timer1", "timer2", "timer3",
+>> +						  "timer4", "timer5", "timer6", "timer7";
+>> +
+>> +			interrupt-parent = <&tcu_irq>;
+>> +			interrupts = <0 1 2 3 4 5 6 7>;
+> 
+> Thinking about this some more... You simply have 8 timers (and no other
+> functions?) with some internal clock and irq controls for each timer. I
+> don't think it really makes sense to create separate clock and irq
+> drivers in that case. That would be like creating clock drivers for
+> every clock divider in timers, pwms, uarts, etc. Unless the clocks get
+> exposed to other parts of the system, then there is no point.
+
+I have 8 timers with some internal clock and IRQ controls, that can be 
+used
+as PWM. But the TCU also controls the IRQ of the OS Timer (which is 
+separate),
+as well as masking of the clocks for the OS timer and the watchdog.
+
+I thought having clean drivers for different frameworks working on the 
+same
+regmap was cleaner than having one big-ass driver handling everything.
+
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For information about the top-level "ingenic,tcu" compatible node and 
+>> other
+>> +children nodes, see 
+>> Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+>> --
+>> 2.11.0
+>> 
 
