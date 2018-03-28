@@ -1,53 +1,43 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 13 Mar 2018 09:39:06 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de, linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] i.MX new clock additions for 4.17
-Message-ID: <20180313013905.GF26859@dragon>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 5/6] clk: meson: drop CLK_SET_RATE_PARENT flag
+Date: Wed, 28 Mar 2018 10:50:49 +0800
+Message-ID: <20180328025050.221585-6-yixun.lan@amlogic.com>
+In-Reply-To: <20180328025050.221585-1-yixun.lan@amlogic.com>
+References: <20180328025050.221585-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen, Mike,
+The clk81 is not expected to be changed, so drop this flag.
 
-This pull request includes a few new clock additions for i.MX7D clock
-driver.  Please consider to pull it for 4.17.  As I have a DT branch
-built on top of this pull request to resolve the dependency on these new
-clock IDs, please keep the tag stable.  Thanks.
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ drivers/clk/meson/gxbb-aoclk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Shawn
-
-
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
-
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/clk-imx-4.17-newid
-
-for you to fetch changes up to 1691cc375a39d13a70829cabdd87ca9116a16907:
-
-  clk: imx: imx7d: add the Keypad Port module clock (2018-02-28 14:43:00 +0800)
-
-----------------------------------------------------------------
-i.MX new clock additions for 4.17:
- - New clocks for i.MX7D SNVS, CAAM and Keypad.
-
-----------------------------------------------------------------
-Anson Huang (1):
-      clk: imx: imx7d: add the snvs clock
-
-Rui Miguel Silva (1):
-      clk: imx7d: add CAAM clock
-
-Stefan Agner (1):
-      clk: imx: imx7d: add the Keypad Port module clock
-
- drivers/clk/imx/clk-imx7d.c             | 3 +++
- include/dt-bindings/clock/imx7d-clock.h | 5 ++++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 5a922639a264..89b048aad239 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -70,7 +70,7 @@ static struct clk_regmap _name##_ao = {					\
+ 		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+-		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
++		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
+ 
+-- 
+2.15.1
