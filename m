@@ -1,57 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6252 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750968AbeCTON4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Mar 2018 10:13:56 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Markus Elfring <elfring@users.sourceforge.net>,
-        "Jiancheng Xue" <xuejiancheng@hisilicon.com>,
-        tianshuliang <tianshuliang@hisilicon.com>,
-        Shawn Guo <shawn.guo@linaro.org>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <linux-clk@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] clk: hisilicon: fix potential NULL dereference in hisi_clk_alloc()
-Date: Tue, 20 Mar 2018 14:19:34 +0000
-Message-ID: <1521555574-29189-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v3 6/8] remoteproc/davinci: use octal permissions for
+ module_param()
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin
+ Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner
+	<david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson
+	<bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Bartosz Golaszewski
+	<bgolaszewski@baylibre.com>
+References: <20180327092031.11251-1-brgl@bgdev.pl>
+ <20180327092031.11251-7-brgl@bgdev.pl>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <13fa1d05-a3e3-64b5-9be1-5d08d1a708e3@ti.com>
+Date: Wed, 28 Mar 2018 17:20:50 -0500
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180327092031.11251-7-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-platform_get_resource() may fail and return NULL, so we should
-better check it's return value to avoid a NULL pointer dereference
-a bit later in the code.
+On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Checkpatch recommends to use octal perms instead of S_IRUGO.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This is detected by Coccinelle semantic patch.
+Acked-by: Suman Anna <s-anna@ti.com>
 
-@@
-expression pdev, res, n, t, e, e1, e2;
-@@
-
-res = platform_get_resource(pdev, t, n);
-+ if (!res)
-+   return -EINVAL;
-... when != res == NULL
-e = devm_ioremap(e1, res->start, e2);
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/clk/hisilicon/clk.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/hisilicon/clk.c b/drivers/clk/hisilicon/clk.c
-index 29046b8..a65beac 100644
---- a/drivers/clk/hisilicon/clk.c
-+++ b/drivers/clk/hisilicon/clk.c
-@@ -49,6 +49,8 @@ struct hisi_clock_data *hisi_clk_alloc(struct platform_device *pdev,
- 		return NULL;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -EINVAL;
- 	clk_data->base = devm_ioremap(&pdev->dev,
- 				res->start, resource_size(res));
- 	if (!clk_data->base)
-
+> ---
+>  drivers/remoteproc/da8xx_remoteproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+> index f134192922e0..b668e32996e2 100644
+> --- a/drivers/remoteproc/da8xx_remoteproc.c
+> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+> @@ -25,7 +25,7 @@
+>  #include "remoteproc_internal.h"
+>  
+>  static char *da8xx_fw_name;
+> -module_param(da8xx_fw_name, charp, S_IRUGO);
+> +module_param(da8xx_fw_name, charp, 0444);
+>  MODULE_PARM_DESC(da8xx_fw_name,
+>  		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
+>  
+> 
