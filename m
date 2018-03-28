@@ -1,59 +1,77 @@
-Return-Path: <bgolaszewski@baylibre.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+To: Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Stephen
+ Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad
+ Ben-Cohen <ohad@wizery.com>
+CC: David Lechner <david@lechnology.com>, Kevin Hilman <khilman@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob
+ Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree <devicetree@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski
+	<bgolaszewski@baylibre.com>,
+        <linux-clk@vger.kernel.org>,
+        Linux ARM
+	<linux-arm-kernel@lists.infradead.org>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
+ <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
+ <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
+ <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
+ <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
+ <c78817f9-02fd-0ded-609e-5014efdd4a77@ti.com>
+ <0683b11c-fefa-5fc7-793e-1a662a5f0480@ti.com>
+ <44218403-5e7f-dd12-6d01-a52987fc4cc8@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <5576cb08-6a95-53fb-e905-96371c3b8465@ti.com>
+Date: Wed, 28 Mar 2018 17:44:10 -0500
 MIME-Version: 1.0
-In-Reply-To: <93696fc8-bb93-aa20-3506-3d7216c17cd2@lechnology.com>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <1519071723-31790-11-git-send-email-david@lechnology.com> <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
- <93696fc8-bb93-aa20-3506-3d7216c17cd2@lechnology.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Thu, 1 Mar 2018 09:36:14 +0100
-Message-ID: <CAMpxmJVpMgikNfB4HgNCs+ep+EOHqH5bthiW82LsnDqzLfE5mg@mail.gmail.com>
-Subject: Re: [PATCH v7 10/42] clk: davinci: New driver for davinci PSC clocks
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
-	arm-soc <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <44218403-5e7f-dd12-6d01-a52987fc4cc8@ti.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-02-28 22:40 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 02/28/2018 06:38 AM, Bartosz Golaszewski wrote:
+On 03/27/2018 12:24 AM, Sekhar Nori wrote:
+> Hi Suman,
+> 
+> On Tuesday 27 March 2018 06:12 AM, Suman Anna wrote:
+>> I tried booting your tree [3] on the OMAPL138-LCDK board. I am using
+>> NFS, and I am unable to get to the console. I don't have any issues
+>> booting latest -next branch (next-20180326) which only has the reset and
+>> clock driver related changes.
 >>
->>
->> I think I found the reason for the strange crashes we were
->> experiencing (emac core->name being NULL) thanks to Sekhar who pointed
->> me in the right direction.
->>
->> The mdio driver fails to probe with v7 due to the supplied clock rate
->> being wrong. Before failing we register the emac clock with
->> pm_clk_add_clk(). When clock_ops puts the clock, it decreases the
->> reference count of the clock, but we never actually increased it in
->> the first place in the line above. The core clock code then destroys
->> the associated clk_core structure. When the next user comes around (in
->> our case the clk debug functions) the system crashes.
->>
->> I believe there to be two issues: one is with v7 - we need to increase
->> the clock reference count in davinci_psc_genpd_attach_dev().
->>
->> Second is the error path in the clock framework - we should remove the
->> destroyed clk_core from the debug list, which is not being done now.
->>
->> Why we even need to track the refcount of clk_core is a mistery for me
->> though. Stephen, Mike?
->>
->> Best regards,
->> Bartosz Golaszewski
->
->
-> Great find. I figured it had to be something like this, but I wasn't
-> able to reproduce the problem yet.
->
-> I suppose it is time to spin up a v8 with some fixes.
+>> Here's the log towards the end of the boot..
+>> ---
+>> pinctrl-single 1c14120.pinmux: 160 pins, size 80
+>> Serial: 8250/16550 driver, 3 ports, IRQ sharing disabled
+>> console [ttyS2] disabled
+>> 1d0d000.serial: ttyS2 at MMIO 0x1d0d000 (irq = 61, base_baud = 8250000)
+>> is a TI DA8xx/66AK2x
+>> console [ttyS2] enabled
+>> brd: module loaded
+>> libphy: Fixed MDIO Bus: probed
+>> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
+>> davinci_mdio 1e24000.mdio: no live phy, scanning all
+>> davinci_mdio: probe of 1e24000.mdio failed with error -5
+>> i2c /dev entries driver
+>> <nothing after this>
+> 
+> This is because of a bug in bootloader PLL configuration which got
+> uncovered only with CCF conversion. The bootloader that comes
+> pre-flashed with the board or the latest U-Boot master should work fine.
+> 
+> Here is the log with latest U-Boot master:
+> https://pastebin.ubuntu.com/p/HkwY9g4YDc/
 
-I still don't know why the mdio clock rate is much lower than in
-mainline though. Any ideas?
+Thanks Sekhar, able to boot and test after using the latest u-boot.
 
-Thanks,
-Bart
+regards
+Suman
