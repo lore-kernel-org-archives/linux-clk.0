@@ -1,102 +1,136 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: fix pllu rate configuration
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Dmitry Osipenko
-	<digetx@gmail.com>
-CC: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "pgaikwad@nvidia.com"
-	<pgaikwad@nvidia.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20180222230451.15515-1-marcel@ziswiler.com>
- <31f039e8-9afc-22d1-d478-a7f41db0dace@gmail.com>
- <1519686262.6374.3.camel@toradex.com>
- <d6564dd4-de2c-5b28-81d2-6be7bd4319b2@gmail.com>
- <20180228093620.GC6190@tbergstrom-lnx.Nvidia.com>
- <cd836479-7c30-cfbe-715b-31387679c444@gmail.com>
- <20180228141448.GD6190@tbergstrom-lnx.Nvidia.com>
- <7d8d77ca-e18d-6e37-1aca-6dd7c6e1964d@gmail.com>
- <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <7914774e-e88f-7914-2434-790a67f3aa4e@nvidia.com>
-Date: Fri, 2 Mar 2018 09:02:07 +0000
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:33233 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752606AbeC1SgL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Mar 2018 14:36:11 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180301074129.GG6190@tbergstrom-lnx.Nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <c02d2ae665890e7214bcfa6c42a49c69@crapouillou.net>
+References: <20180110224838.16711-2-paul@crapouillou.net> <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-3-paul@crapouillou.net> <CA+7wUsyAkW+Bgmp6MuWTce1jMG-ug1b-UqFVen_vVeKFiW5Fww@mail.gmail.com>
+ <c02d2ae665890e7214bcfa6c42a49c69@crapouillou.net>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Wed, 28 Mar 2018 20:35:50 +0200
+Message-ID: <CA+7wUswkTy=1BJwk0Ys=HFZ4Sk9pFr4jsE0LvDM1x41YRBCg4g@mail.gmail.com>
+Subject: Re: [PATCH v4 2/8] dt-bindings: ingenic: Add DT bindings for TCU clocks
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 01/03/18 07:41, Peter De Schrijver wrote:
-> On Wed, Feb 28, 2018 at 08:20:47PM +0300, Dmitry Osipenko wrote:
->> On 28.02.2018 17:14, Peter De Schrijver wrote:
->>> On Wed, Feb 28, 2018 at 03:00:23PM +0300, Dmitry Osipenko wrote:
->>>> On 28.02.2018 12:36, Peter De Schrijver wrote:
->>>>> On Tue, Feb 27, 2018 at 02:59:11PM +0300, Dmitry Osipenko wrote:
->>>>>> On 27.02.2018 02:04, Marcel Ziswiler wrote:
->>>>>>> On Mon, 2018-02-26 at 15:42 +0300, Dmitry Osipenko wrote:
->>>>>>>> On 23.02.2018 02:04, Marcel Ziswiler wrote:
->>>>>>>>> Turns out latest upstream U-Boot does not configure/enable pllu
->>>>>>>>> which
->>>>>>>>> leaves it at some default rate of 500 kHz:
->>>>>>>>>
->>>>>>>>> root@apalis-t30:~# cat /sys/kernel/debug/clk/clk_summary | grep
->>>>>>>>> pll_u
->>>>>>>>>        pll_u                  3        3        0      500000      
->>>>>>>>>     0
->>>>>>>>>
->>>>>>>>> Of course this won't quite work leading to the following messages:
->>>>>>>>>
->>>>>>>>> [    6.559593] usb 2-1: new full-speed USB device number 2 using
->>>>>>>>> tegra-
->>>>>>>>> ehci
->>>>>>>>> [   11.759173] usb 2-1: device descriptor read/64, error -110
->>>>>>>>> [   27.119453] usb 2-1: device descriptor read/64, error -110
->>>>>>>>> [   27.389217] usb 2-1: new full-speed USB device number 3 using
->>>>>>>>> tegra-
->>>>>>>>> ehci
->>>>>>>>> [   32.559454] usb 2-1: device descriptor read/64, error -110
->>>>>>>>> [   47.929777] usb 2-1: device descriptor read/64, error -110
->>>>>>>>> [   48.049658] usb usb2-port1: attempt power cycle
->>>>>>>>> [   48.759475] usb 2-1: new full-speed USB device number 4 using
->>>>>>>>> tegra-
->>>>>>>>> ehci
->>>>>>>>> [   59.349457] usb 2-1: device not accepting address 4, error -110
->>>>>>>>> [   59.509449] usb 2-1: new full-speed USB device number 5 using
->>>>>>>>> tegra-
->>>>>>>>> ehci
->>>>>>>>> [   70.069457] usb 2-1: device not accepting address 5, error -110
->>>>>>>>> [   70.079721] usb usb2-port1: unable to enumerate USB device
->>>>>>>>>
->>>>>>>>> Fix this by actually allowing the rate also being set from within
->>>>>>>>> the Linux kernel.
->>>>>
->>>>> I think the best solution to this problem would be to make pll_u a fixed
->>>>> clock and enable it and program the rate if it's not enabled at boot.
->>>>
->>>> Oh, right. PLL_U rate is actually configurable, somehow I missed it in TRM
->>>> yesterday.. So set/round_rate() for PLL_U are actually needed and the patch is
->>>> correct. Seems only T20 misses PLL_U in the init table, probably worth to add it
->>>> there.
->>>>
+On Wed, Mar 28, 2018 at 5:04 PM, Paul Cercueil <paul@crapouillou.net> wrote=
+:
+> Le 2018-03-20 08:15, Mathieu Malaterre a =C3=A9crit :
+>>
+>> Hi Paul,
+>>
+>> Two things:
+>>
+>> On Sun, Mar 18, 2018 at 12:28 AM, Paul Cercueil <paul@crapouillou.net>
+>> wrote:
 >>>
->>> AFAIK we only use one rate ever?
+>>> This header provides clock numbers for the ingenic,tcu
+>>> DT binding.
 >>
->> IIUC, PLL_U has 3 outputs and output dividers are fixed in HW. So yes, we are
->> setting PLL_U to one rate - 480MHz to get out1-480MHz, out2-60MHz and out3-12MHz.
 >>
-> 
-> Indeed. And given that it's hw controlled anyway, I don't see why we can't make
-> it a fixed clock and handle the init at kernel boot depending on what the
-> bootloader has done.
+>> I have tested the whole series on my Creator CI20 with success, using:
+>>
+>> + tcu@10002000 {
+>> + compatible =3D "ingenic,jz4780-tcu";
+>> + reg =3D <0x10002000 0x140>;
+>> +
+>> + interrupt-parent =3D <&intc>;
+>> + interrupts =3D <27 26 25>;
+>> + };
+>>
+>>
+>> So:
+>>
+>> Tested-by: Mathieu Malaterre <malat@debian.org>
+>
+>
+> Great! Is that for the whole patchset or just this one patch?
 
-Peter, are you suggesting we implement the equivalent to
-tegra210_init_pllu()? This does look a bit more involved that what this
-change is doing. Is there a simple way to do what you are suggesting?
+The sentence just above was "whole series"  :) so yes that was for the
+whole series. Technically I only tested it on JZ4780, I hope this is
+acceptable for the tag.
 
-Cheers
-Jon
 
--- 
-nvpublic
+
+>
+>>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>> ---
+>>>  include/dt-bindings/clock/ingenic,tcu.h | 23 +++++++++++++++++++++++
+>>>  1 file changed, 23 insertions(+)
+>>>  create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
+>>>
+>>>  v2: Use SPDX identifier for the license
+>>>  v3: No change
+>>>  v4: No change
+>>>
+>>> diff --git a/include/dt-bindings/clock/ingenic,tcu.h
+>>> b/include/dt-bindings/clock/ingenic,tcu.h
+>>> new file mode 100644
+>>> index 000000000000..179815d7b3bb
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/clock/ingenic,tcu.h
+>>> @@ -0,0 +1,23 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/*
+>>> + * This header provides clock numbers for the ingenic,tcu DT binding.
+>>> + */
+>>> +
+>>> +#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
+>>> +#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
+>>> +
+>>> +#define JZ4740_CLK_TIMER0      0
+>>> +#define JZ4740_CLK_TIMER1      1
+>>> +#define JZ4740_CLK_TIMER2      2
+>>> +#define JZ4740_CLK_TIMER3      3
+>>> +#define JZ4740_CLK_TIMER4      4
+>>> +#define JZ4740_CLK_TIMER5      5
+>>> +#define JZ4740_CLK_TIMER6      6
+>>> +#define JZ4740_CLK_TIMER7      7
+>>> +#define JZ4740_CLK_WDT         8
+>>> +#define JZ4740_CLK_LAST                JZ4740_CLK_WDT
+>>> +
+>>> +#define JZ4770_CLK_OST         9
+>>> +#define JZ4770_CLK_LAST                JZ4770_CLK_OST
+>>> +
+>>
+>>
+>> When working on JZ4780 support, I always struggle to read those kind
+>> of #define. Since this is a new patch would you mind changing
+>> s/JZ4740/JZ47XX/ in your header ?
+>
+>
+> Well the idea was that these defines are for JZ4740 and newer.
+> But that means all Ingenic SoCs, so I guess I can change it.
+>
+>> Thanks for your work on JZ !
+>
+>
+> Sure, thank you for testing!
+>
+>
+>>> +#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
+>>> --
+>>> 2.11.0
+>>>
+>>>
+>
