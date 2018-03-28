@@ -1,58 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr00072.outbound.protection.outlook.com ([40.107.0.72]:8160
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751229AbeCLJ0i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 12 Mar 2018 05:26:38 -0400
-From: Bai Ping <ping.bai@nxp.com>
-To: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
-        kernel@pengutronix.de
-Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        aisheng.dong@nxp.com, jacky.baip@gmail.com
-Subject: [PATCH v5 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy divider and busy mux
-Date: Mon, 12 Mar 2018 17:29:14 +0800
-Message-Id: <1520846957-22348-1-git-send-email-ping.bai@nxp.com>
+Return-Path: <abel.vesa@nxp.com>
+From: Abel Vesa <abel.vesa@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Peter Chen <peter.chen@freescale.com>,
+	Irina Tirdea <irina.tirdea@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-imx@nxp.com,
+	Anson Huang <anson.huang@nxp.com>,
+	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
+	Abel Vesa <abelvesa@linux.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Dong Aisheng <b29396@freescale.com>,
+	Abel Vesa <abel.vesa@nxp.com>
+Subject: [RESEND 4/4] clk: imx7d: Move clks_init_on before any clock operations
+Date: Wed, 28 Mar 2018 09:46:39 +0300
+Message-Id: <1522219599-10831-6-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
+References: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: abel.vesa@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The busy divider and busy mux is actually used by the system critical clocks,
-so add 'CLK_IS_CRITICAL' to clocks registered with these two type.
+From: Dong Aisheng <b29396@freescale.com>
 
-Signed-off-by: Bai Ping <ping.bai@nxp.com>
----
- change from V3->v4:
- - fix a typo in commit log
- change from v4->v5:
- - optimize the commit subject
----
- drivers/clk/imx/clk-busy.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+For init on clocks we should move it at the first place in imx7d_clocks_init()
+before any clock operations, else the clock operation may fail in case the clock
+is still not on.
 
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 6df3389..9903652 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -101,7 +101,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+Acked-by: Ranjani Vaidyanathan <Ranjani.Vaidyanathan@freescale.com>
+Signed-off-by: Dong Aisheng <b29396@freescale.com>
+Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 50da4cb..975a20d 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -433,13 +433,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_PLL_AUDIO_MAIN_BYPASS] = imx_clk_mux_flags("pll_audio_main_bypass", base + 0xf0, 16, 1, pll_audio_bypass_sel, ARRAY_SIZE(pll_audio_bypass_sel), CLK_SET_RATE_PARENT);
+ 	clks[IMX7D_PLL_VIDEO_MAIN_BYPASS] = imx_clk_mux_flags("pll_video_main_bypass", base + 0x130, 16, 1, pll_video_bypass_sel, ARRAY_SIZE(pll_video_bypass_sel), CLK_SET_RATE_PARENT);
  
- 	init.name = name;
- 	init.ops = &clk_busy_divider_ops;
--	init.flags = CLK_SET_RATE_PARENT;
-+	init.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL;
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
+-	clk_set_parent(clks[IMX7D_PLL_ARM_MAIN_BYPASS], clks[IMX7D_PLL_ARM_MAIN]);
+-	clk_set_parent(clks[IMX7D_PLL_DRAM_MAIN_BYPASS], clks[IMX7D_PLL_DRAM_MAIN]);
+-	clk_set_parent(clks[IMX7D_PLL_SYS_MAIN_BYPASS], clks[IMX7D_PLL_SYS_MAIN]);
+-	clk_set_parent(clks[IMX7D_PLL_ENET_MAIN_BYPASS], clks[IMX7D_PLL_ENET_MAIN]);
+-	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
+-	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
+-
+ 	clks[IMX7D_PLL_ARM_MAIN_CLK] = imx_clk_gate("pll_arm_main_clk", "pll_arm_main_bypass", base + 0x60, 13);
+ 	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_test_div", base + 0x70, 13);
+ 	clks[IMX7D_PLL_SYS_MAIN_CLK] = imx_clk_gate("pll_sys_main_clk", "pll_sys_main_bypass", base + 0xb0, 13);
+@@ -891,6 +884,13 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
+ 		clk_prepare_enable(clks[clks_init_on[i]]);
  
-@@ -175,7 +175,7 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 
- 	init.name = name;
- 	init.ops = &clk_busy_mux_ops;
--	init.flags = 0;
-+	init.flags = CLK_IS_CRITICAL;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
++	clk_set_parent(clks[IMX7D_PLL_ARM_MAIN_BYPASS], clks[IMX7D_PLL_ARM_MAIN]);
++	clk_set_parent(clks[IMX7D_PLL_DRAM_MAIN_BYPASS], clks[IMX7D_PLL_DRAM_MAIN]);
++	clk_set_parent(clks[IMX7D_PLL_SYS_MAIN_BYPASS], clks[IMX7D_PLL_SYS_MAIN]);
++	clk_set_parent(clks[IMX7D_PLL_ENET_MAIN_BYPASS], clks[IMX7D_PLL_ENET_MAIN]);
++	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
++	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
++
+ 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
+ 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
  
 -- 
-1.9.1
-
+2.7.4
