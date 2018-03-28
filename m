@@ -1,501 +1,426 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v3 04/11] clk: tegra: add CVB tables for Tegra210 CPU DFLL
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@codeaurora.org>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <devicetree@vger.kernel.org>, <lgirdwood@gmail.com>,
-	<broonie@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1517934852-23255-1-git-send-email-pdeschrijver@nvidia.com>
- <1517934852-23255-5-git-send-email-pdeschrijver@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c1caff79-bb2f-aefd-a4a7-671160e99933@nvidia.com>
-Date: Thu, 8 Mar 2018 22:28:50 +0000
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:43736 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754038AbeC1PQA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Mar 2018 11:16:00 -0400
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v4 7/8] clocksource: Add a new timer-ingenic driver
 MIME-Version: 1.0
-In-Reply-To: <1517934852-23255-5-git-send-email-pdeschrijver@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Wed, 28 Mar 2018 17:15:56 +0200
+From: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-doc@vger.kernel.org
+Subject: 
+In-Reply-To: <a8d28b2b-4e40-83b9-d65e-beecbd36ad33@linaro.org>
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-8-paul@crapouillou.net>
+ <a8d28b2b-4e40-83b9-d65e-beecbd36ad33@linaro.org>
+Message-ID: <06976e4ae275c4cc0bddacc5e0c0c9a9@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-On 06/02/18 16:34, Peter De Schrijver wrote:
-
-I think that you should have some description here.
-
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 426 +++++++++++++++++++++++++++++
->  drivers/clk/tegra/cvb.h                    |   1 +
->  2 files changed, 427 insertions(+)
+Le 2018-03-24 07:26, Daniel Lezcano a écrit :
+> On 18/03/2018 00:29, Paul Cercueil wrote:
+>> This driver will use the TCU (Timer Counter Unit) present on the 
+>> Ingenic
+>> JZ47xx SoCs to provide the kernel with a clocksource and timers.
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> index 6486ad9..78dddab 100644
-> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> @@ -88,6 +88,421 @@ struct dfll_fcpu_data {
->  	},
->  };
->  
-> +static const unsigned long tegra210_cpu_max_freq_table[] = {
-> +	[0] = 1912500000UL,
-> +	[1] = 1912500000UL,
-> +	[2] = 2218500000UL,
-> +	[3] = 1785000000UL,
-> +	[4] = 1632000000UL,
-> +	[5] = 1912500000UL,
-> +	[6] = 2014500000UL,
-> +	[7] = 1734000000UL,
-> +	[8] = 1683000000UL,
-> +	[9] = 1555500000UL,
-> +	[10] = 1504500000UL,
-> +};
-> +
-> +#define CPU_CVB_TABLE \
-> +	.speedo_scale = 100,	\
-> +	.voltage_scale = 1000,	\
-> +	.entries = {		\
-> +		{204000000UL,	{1007452, -23865, 370} }, \
-> +		{306000000UL,	{1052709, -24875, 370} }, \
-> +		{408000000UL,	{1099069, -25895, 370} }, \
-> +		{510000000UL,	{1146534, -26905, 370} }, \
-> +		{612000000UL,	{1195102, -27915, 370} }, \
-> +		{714000000UL,	{1244773, -28925, 370} }, \
-> +		{816000000UL,	{1295549, -29935, 370} }, \
-> +		{918000000UL,	{1347428, -30955, 370} }, \
-> +		{1020000000UL,	{1400411, -31965, 370} }, \
-> +		{1122000000UL,	{1454497, -32975, 370} }, \
-> +		{1224000000UL,	{1509687, -33985, 370} }, \
-> +		{1326000000UL,	{1565981, -35005, 370} }, \
-> +		{1428000000UL,	{1623379, -36015, 370} }, \
-> +		{1530000000UL,	{1681880, -37025, 370} }, \
-> +		{1632000000UL,	{1741485, -38035, 370} }, \
-> +		{1734000000UL,	{1802194, -39055, 370} }, \
-> +		{1836000000UL,	{1864006, -40065, 370} }, \
-> +		{1912500000UL,	{1910780, -40815, 370} }, \
-> +		{2014500000UL,	{1227000,      0,   0} }, \
-> +		{2218500000UL,	{1227000,      0,   0} }, \
-> +		{0,		{      0,      0,   0} }, \
-> +	}
-> +
-> +#define CPU_CVB_TABLE_XA \
-> +	.speedo_scale = 100,	\
-> +	.voltage_scale = 1000,	\
-> +	.entries = {		\
-> +		{204000000UL,	{1250024, -39785, 565} }, \
-> +		{306000000UL,	{1297556, -41145, 565} }, \
-> +		{408000000UL,	{1346718, -42505, 565} }, \
-> +		{510000000UL,	{1397511, -43855, 565} }, \
-> +		{612000000UL,	{1449933, -45215, 565} }, \
-> +		{714000000UL,	{1503986, -46575, 565} }, \
-> +		{816000000UL,	{1559669, -47935, 565} }, \
-> +		{918000000UL,	{1616982, -49295, 565} }, \
-> +		{1020000000UL,	{1675926, -50645, 565} }, \
-> +		{1122000000UL,	{1736500, -52005, 565} }, \
-> +		{1224000000UL,	{1798704, -53365, 565} }, \
-> +		{1326000000UL,	{1862538, -54725, 565} }, \
-> +		{1428000000UL,	{1928003, -56085, 565} }, \
-> +		{1530000000UL,	{1995097, -57435, 565} }, \
-> +		{1606500000UL,	{2046149, -58445, 565} }, \
-> +		{1632000000UL,	{2063822, -58795, 565} }, \
-> +		{0,		{      0,      0,   0} }, \
-> +	}
-> +
-> +#define CPU_CVB_TABLE_EUCM1 \
-> +	.speedo_scale = 100,	\
-> +	.voltage_scale = 1000,	\
-> +	.entries = {		\
-> +		{204000000UL,	{734429, 0, 0} }, \
-> +		{306000000UL,	{768191, 0, 0} }, \
-> +		{408000000UL,	{801953, 0, 0} }, \
-> +		{510000000UL,	{835715, 0, 0} }, \
-> +		{612000000UL,	{869477, 0, 0} }, \
-> +		{714000000UL,	{903239, 0, 0} }, \
-> +		{816000000UL,	{937001, 0, 0} }, \
-> +		{918000000UL,	{970763, 0, 0} }, \
-> +		{1020000000UL,	{1004525, 0, 0} }, \
-> +		{1122000000UL,	{1038287, 0, 0} }, \
-> +		{1224000000UL,	{1072049, 0, 0} }, \
-> +		{1326000000UL,	{1105811, 0, 0} }, \
-> +		{1428000000UL,	{1130000, 0, 0} }, \
-> +		{1555500000UL,	{1130000, 0, 0} }, \
-> +		{1632000000UL,	{1170000, 0, 0} }, \
-> +		{1734000000UL,	{1227500, 0, 0} }, \
-> +		{0,		{      0, 0, 0} }, \
-> +	}
-> +
-> +#define CPU_CVB_TABLE_EUCM2 \
-> +	.speedo_scale = 100,	\
-> +	.voltage_scale = 1000,	\
-> +	.entries = {		\
-> +		{204000000UL,	{742283, 0, 0} }, \
-> +		{306000000UL,	{776249, 0, 0} }, \
-> +		{408000000UL,	{810215, 0, 0} }, \
-> +		{510000000UL,	{844181, 0, 0} }, \
-> +		{612000000UL,	{878147, 0, 0} }, \
-> +		{714000000UL,	{912113, 0, 0} }, \
-> +		{816000000UL,	{946079, 0, 0} }, \
-> +		{918000000UL,	{980045, 0, 0} }, \
-> +		{1020000000UL,	{1014011, 0, 0} }, \
-> +		{1122000000UL,	{1047977, 0, 0} }, \
-> +		{1224000000UL,	{1081943, 0, 0} }, \
-> +		{1326000000UL,	{1090000, 0, 0} }, \
-> +		{1479000000UL,	{1090000, 0, 0} }, \
-> +		{1555500000UL,	{1162000, 0, 0} }, \
-> +		{1683000000UL,	{1195000, 0, 0} }, \
-> +		{0,		{      0, 0, 0} }, \
-> +	}
-> +
-> +#define CPU_CVB_TABLE_EUCM2_JOINT_RAIL \
-> +	.speedo_scale = 100,	\
-> +	.voltage_scale = 1000,	\
-> +	.entries = {		\
-> +		{204000000UL,	{742283, 0, 0} }, \
-> +		{306000000UL,	{776249, 0, 0} }, \
-> +		{408000000UL,	{810215, 0, 0} }, \
-> +		{510000000UL,	{844181, 0, 0} }, \
-> +		{612000000UL,	{878147, 0, 0} }, \
-> +		{714000000UL,	{912113, 0, 0} }, \
-> +		{816000000UL,	{946079, 0, 0} }, \
-> +		{918000000UL,	{980045, 0, 0} }, \
-> +		{1020000000UL,	{1014011, 0, 0} }, \
-> +		{1122000000UL,	{1047977, 0, 0} }, \
-> +		{1224000000UL,	{1081943, 0, 0} }, \
-> +		{1326000000UL,	{1090000, 0, 0} }, \
-> +		{1479000000UL,	{1090000, 0, 0} }, \
-> +		{1504500000UL,	{1120000, 0, 0} }, \
-> +		{0,		{      0, 0, 0} }, \
-> +	}
-> +
-> +#define CPU_CVB_TABLE_ODN \
-> +	.speedo_scale = 100,	\
-> +	.voltage_scale = 1000,	\
-> +	.entries = {		\
-> +		{204000000UL,	{721094, 0, 0} }, \
-> +		{306000000UL,	{754040, 0, 0} }, \
-> +		{408000000UL,	{786986, 0, 0} }, \
-> +		{510000000UL,	{819932, 0, 0} }, \
-> +		{612000000UL,	{852878, 0, 0} }, \
-> +		{714000000UL,	{885824, 0, 0} }, \
-> +		{816000000UL,	{918770, 0, 0} }, \
-> +		{918000000UL,	{915716, 0, 0} }, \
-> +		{1020000000UL,	{984662, 0, 0} }, \
-> +		{1122000000UL,	{1017608, 0, 0} }, \
-> +		{1224000000UL,	{1050554, 0, 0} }, \
-> +		{1326000000UL,	{1083500, 0, 0} }, \
-> +		{1428000000UL,	{1116446, 0, 0} }, \
-> +		{1581000000UL,	{1130000, 0, 0} }, \
-> +		{1683000000UL,	{1168000, 0, 0} }, \
-> +		{1785000000UL,	{1227500, 0, 0} }, \
-> +		{0,		{      0, 0, 0} }, \
-> +	}
-> +
-> +struct cvb_table tegra210_cpu_cvb_tables[] = {
-> +	{
-> +		.speedo_id = 10,
-> +		.process_id = 0,
-> +		.min_millivolts = 840,
-> +		.max_millivolts = 1120,
-> +		CPU_CVB_TABLE_EUCM2_JOINT_RAIL,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 10,
-> +		.process_id = 1,
-> +		.min_millivolts = 840,
-> +		.max_millivolts = 1120,
-> +		CPU_CVB_TABLE_EUCM2_JOINT_RAIL,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 9,
-> +		.process_id = 0,
-> +		.min_millivolts = 900,
-> +		.max_millivolts = 1162,
-> +		CPU_CVB_TABLE_EUCM2,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 9,
-> +		.process_id = 1,
-> +		.min_millivolts = 900,
-> +		.max_millivolts = 1162,
-> +		CPU_CVB_TABLE_EUCM2,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 8,
-> +		.process_id = 0,
-> +		.min_millivolts = 900,
-> +		.max_millivolts = 1195,
-> +		CPU_CVB_TABLE_EUCM2,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 8,
-> +		.process_id = 1,
-> +		.min_millivolts = 900,
-> +		.max_millivolts = 1195,
-> +		CPU_CVB_TABLE_EUCM2,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 7,
-> +		.process_id = 0,
-> +		.min_millivolts = 841,
-> +		.max_millivolts = 1227,
-> +		CPU_CVB_TABLE_EUCM1,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 7,
-> +		.process_id = 1,
-> +		.min_millivolts = 841,
-> +		.max_millivolts = 1227,
-> +		CPU_CVB_TABLE_EUCM1,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 6,
-> +		.process_id = 0,
-> +		.min_millivolts = 870,
-> +		.max_millivolts = 1150,
-> +		CPU_CVB_TABLE,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 6,
-> +		.process_id = 1,
-> +		.min_millivolts = 870,
-> +		.max_millivolts = 1150,
-> +		CPU_CVB_TABLE,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune1 = 0x25501d0,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 5,
-> +		.process_id = 0,
-> +		.min_millivolts = 818,
-> +		.max_millivolts = 1227,
-> +		CPU_CVB_TABLE,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 5,
-> +		.process_id = 1,
-> +		.min_millivolts = 818,
-> +		.max_millivolts = 1227,
-> +		CPU_CVB_TABLE,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x25501d0,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 4,
-> +		.process_id = -1,
-> +		.min_millivolts = 918,
-> +		.max_millivolts = 1113,
-> +		CPU_CVB_TABLE_XA,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune1 = 0x17711BD,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 3,
-> +		.process_id = 0,
-> +		.min_millivolts = 825,
-> +		.max_millivolts = 1227,
-> +		CPU_CVB_TABLE_ODN,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 3,
-> +		.process_id = 1,
-> +		.min_millivolts = 825,
-> +		.max_millivolts = 1227,
-> +		CPU_CVB_TABLE_ODN,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x25501d0,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 2,
-> +		.process_id = 0,
-> +		.min_millivolts = 870,
-> +		.max_millivolts = 1227,
-> +		CPU_CVB_TABLE,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 2,
-> +		.process_id = 1,
-> +		.min_millivolts = 870,
-> +		.max_millivolts = 1227,
-> +		CPU_CVB_TABLE,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune1 = 0x25501d0,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 1,
-> +		.process_id = 0,
-> +		.min_millivolts = 837,
-> +		.max_millivolts = 1227,
-> +		CPU_CVB_TABLE,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 1,
-> +		.process_id = 1,
-> +		.min_millivolts = 837,
-> +		.max_millivolts = 1227,
-> +		CPU_CVB_TABLE,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x25501d0,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 0,
-> +		.process_id = 0,
-> +		.min_millivolts = 850,
-> +		.max_millivolts = 1170,
-> +		CPU_CVB_TABLE,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x20091d9,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +	{
-> +		.speedo_id = 0,
-> +		.process_id = 1,
-> +		.min_millivolts = 850,
-> +		.max_millivolts = 1170,
-> +		CPU_CVB_TABLE,
-> +		.cpu_dfll_data = {
-> +			.tune0_low = 0xffead0ff,
-> +			.tune0_high = 0xffead0ff,
-> +			.tune1 = 0x25501d0,
-> +			.tune_high_min_millivolts = 864,
-> +		}
-> +	},
-> +};
-> +
->  static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
->  	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
->  	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
-> @@ -95,11 +510,22 @@ struct dfll_fcpu_data {
->  	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
->  };
->  
-> +static const struct dfll_fcpu_data tegra210_dfll_fcpu_data = {
-> +	.cpu_max_freq_table = tegra210_cpu_max_freq_table,
-> +	.cpu_max_freq_table_size = ARRAY_SIZE(tegra210_cpu_max_freq_table),
-> +	.cpu_cvb_tables = tegra210_cpu_cvb_tables,
-> +	.cpu_cvb_tables_size = ARRAY_SIZE(tegra210_cpu_cvb_tables),
-> +};
-> +
->  static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
->  	{
->  		.compatible = "nvidia,tegra124-dfll",
->  		.data = &tegra124_dfll_fcpu_data,
->  	},
-> +	{
-> +		.compatible = "nvidia,tegra210-dfll",
-> +		.data = &tegra210_dfll_fcpu_data
-> +	},
->  	{ },
->  };
->  
-> diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-> index bcf15a0..91a1941 100644
-> --- a/drivers/clk/tegra/cvb.h
-> +++ b/drivers/clk/tegra/cvb.h
-> @@ -41,6 +41,7 @@ struct cvb_cpu_dfll_data {
->  	u32 tune0_low;
->  	u32 tune0_high;
->  	u32 tune1;
-> +	unsigned int tune_high_min_millivolts;
->  };
->  
->  struct cvb_table {
+> Please provide a more detailed description about the timer.
+
+There's a doc file for that :)
+
+> Where is the clocksource ?
+
+Right, there is no clocksource, just timers.
+
+> I don't see the point of using channel idx and pwm checking here.
 > 
+> There is one clockevent, why create multiple channels ? Can't you stick
+> to the usual init routine for a timer.
 
-Otherwise ...
+So the idea is that we use all the TCU channels that won't be used for 
+PWM
+as timers. Hence the PWM checking. Why is this bad?
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>> ---
+>>  drivers/clocksource/Kconfig         |   8 ++
+>>  drivers/clocksource/Makefile        |   1 +
+>>  drivers/clocksource/timer-ingenic.c | 278 
+>> ++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 287 insertions(+)
+>>  create mode 100644 drivers/clocksource/timer-ingenic.c
+>> 
+>>  v2: Use SPDX identifier for the license
+>>  v3: - Move documentation to its own patch
+>>      - Search the devicetree for PWM clients, and use all the TCU
+>> 	   channels that won't be used for PWM
+>>  v4: - Add documentation about why we search for PWM clients
+>>      - Verify that the PWM clients are for the TCU PWM driver
+>> 
+>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+>> index d2e5382821a4..481422145fb4 100644
+>> --- a/drivers/clocksource/Kconfig
+>> +++ b/drivers/clocksource/Kconfig
+>> @@ -592,4 +592,12 @@ config CLKSRC_ST_LPC
+>>  	  Enable this option to use the Low Power controller timer
+>>  	  as clocksource.
+>> 
+>> +config INGENIC_TIMER
+>> +	bool "Clocksource/timer using the TCU in Ingenic JZ SoCs"
+>> +	depends on MACH_INGENIC || COMPILE_TEST
+> 
+> bool "Clocksource/timer using the TCU in Ingenic JZ SoCs" if 
+> COMPILE_TEST
+> 
+> Remove the depends MACH_INGENIC.
 
-Cheers
-Jon
+This driver is not useful on anything else than Ingenic SoCs, why should 
+I
+remove MACH_INGENIC then?
 
--- 
-nvpublic
+>> +	select CLKSRC_OF
+>> +	default y
+> 
+> No default, Kconfig platform selects the timer.
+
+Alright.
+
+>> +	help
+>> +	  Support for the timer/counter unit of the Ingenic JZ SoCs.
+>> +
+>>  endmenu
+>> diff --git a/drivers/clocksource/Makefile 
+>> b/drivers/clocksource/Makefile
+>> index d6dec4489d66..98691e8999fe 100644
+>> --- a/drivers/clocksource/Makefile
+>> +++ b/drivers/clocksource/Makefile
+>> @@ -74,5 +74,6 @@ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
+>>  obj-$(CONFIG_H8300_TMR8)		+= h8300_timer8.o
+>>  obj-$(CONFIG_H8300_TMR16)		+= h8300_timer16.o
+>>  obj-$(CONFIG_H8300_TPU)			+= h8300_tpu.o
+>> +obj-$(CONFIG_INGENIC_TIMER)		+= timer-ingenic.o
+>>  obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
+>>  obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
+>> diff --git a/drivers/clocksource/timer-ingenic.c 
+>> b/drivers/clocksource/timer-ingenic.c
+>> new file mode 100644
+>> index 000000000000..8c777c0c0023
+>> --- /dev/null
+>> +++ b/drivers/clocksource/timer-ingenic.c
+>> @@ -0,0 +1,278 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Ingenic JZ47xx SoC TCU clocksource driver
+>> + * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
+>> + */
+>> +
+>> +#include <linux/bitops.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/clockchips.h>
+>> +#include <linux/err.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/mfd/syscon/ingenic-tcu.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_irq.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#define NUM_CHANNELS	8
+>> +
+>> +struct ingenic_tcu;
+>> +
+>> +struct ingenic_tcu_channel {
+>> +	unsigned int idx;
+>> +	struct clk *clk;
+>> +};
+>> +
+>> +struct ingenic_tcu {
+>> +	struct ingenic_tcu_channel channels[NUM_CHANNELS];
+>> +	unsigned long requested;
+>> +	struct regmap *map;
+>> +};
+>> +
+>> +struct ingenic_clock_event_device {
+>> +	struct clock_event_device cevt;
+>> +	struct ingenic_tcu_channel *channel;
+>> +	char name[32];
+>> +};
+>> +
+>> +#define ingenic_cevt(_evt) \
+>> +	container_of(_evt, struct ingenic_clock_event_device, cevt)
+>> +
+>> +static inline struct ingenic_tcu *to_ingenic_tcu(struct 
+>> ingenic_tcu_channel *ch)
+>> +{
+>> +	return container_of(ch, struct ingenic_tcu, channels[ch->idx]);
+>> +}
+>> +
+>> +static int ingenic_tcu_cevt_set_state_shutdown(struct 
+>> clock_event_device *evt)
+>> +{
+>> +	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(evt);
+>> +	struct ingenic_tcu_channel *channel = jzcevt->channel;
+>> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+>> +	unsigned int idx = channel->idx;
+>> +
+>> +	regmap_write(tcu->map, TCU_REG_TECR, BIT(idx));
+>> +	return 0;
+>> +}
+>> +
+>> +static int ingenic_tcu_cevt_set_next(unsigned long next,
+>> +		struct clock_event_device *evt)
+>> +{
+>> +	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(evt);
+>> +	struct ingenic_tcu_channel *channel = jzcevt->channel;
+>> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+>> +	unsigned int idx = channel->idx;
+>> +
+>> +	if (next > 0xffff)
+>> +		return -EINVAL;
+>> +
+>> +	regmap_write(tcu->map, TCU_REG_TDFRc(idx), (unsigned int) next);
+>> +	regmap_write(tcu->map, TCU_REG_TCNTc(idx), 0);
+>> +	regmap_write(tcu->map, TCU_REG_TESR, BIT(idx));
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static irqreturn_t ingenic_tcu_cevt_cb(int irq, void *dev_id)
+>> +{
+>> +	struct clock_event_device *cevt = dev_id;
+>> +	struct ingenic_clock_event_device *jzcevt = ingenic_cevt(cevt);
+>> +	struct ingenic_tcu_channel *channel = jzcevt->channel;
+>> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+>> +	unsigned int idx = channel->idx;
+>> +
+>> +	regmap_write(tcu->map, TCU_REG_TECR, BIT(idx));
+>> +
+>> +	if (cevt->event_handler)
+>> +		cevt->event_handler(cevt);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int __init ingenic_tcu_req_channel(struct ingenic_tcu_channel 
+>> *channel)
+>> +{
+>> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+>> +	char buf[16];
+>> +	int err;
+>> +
+>> +	if (test_and_set_bit(channel->idx, &tcu->requested))
+>> +		return -EBUSY;
+>> +
+>> +	snprintf(buf, sizeof(buf), "timer%u", channel->idx);
+>> +	channel->clk = clk_get(NULL, buf);
+>> +	if (IS_ERR(channel->clk)) {
+>> +		err = PTR_ERR(channel->clk);
+>> +		goto out_release;
+>> +	}
+>> +
+>> +	err = clk_prepare_enable(channel->clk);
+>> +	if (err)
+>> +		goto out_clk_put;
+>> +
+>> +	return 0;
+>> +
+>> +out_clk_put:
+>> +	clk_put(channel->clk);
+>> +out_release:
+>> +	clear_bit(channel->idx, &tcu->requested);
+>> +	return err;
+>> +}
+>> +
+>> +static int __init ingenic_tcu_reset_channel(struct device_node *np,
+>> +		struct ingenic_tcu_channel *channel)
+>> +{
+>> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+>> +
+>> +	return regmap_update_bits(tcu->map, TCU_REG_TCSRc(channel->idx),
+>> +				0xffff & ~TCU_TCSR_RESERVED_BITS, 0);
+>> +}
+>> +
+>> +static void __init ingenic_tcu_free_channel(struct 
+>> ingenic_tcu_channel *channel)
+>> +{
+>> +	struct ingenic_tcu *tcu = to_ingenic_tcu(channel);
+>> +
+>> +	clk_disable_unprepare(channel->clk);
+>> +	clk_put(channel->clk);
+>> +	clear_bit(channel->idx, &tcu->requested);
+>> +}
+>> +
+>> +static const char * const ingenic_tcu_timer_names[] = {
+>> +	"TCU0", "TCU1", "TCU2", "TCU3", "TCU4", "TCU5", "TCU6", "TCU7",
+>> +};
+>> +
+>> +static int __init ingenic_tcu_setup_cevt(struct device_node *np,
+>> +		struct ingenic_tcu *tcu, unsigned int idx)
+>> +{
+>> +	struct ingenic_tcu_channel *channel = &tcu->channels[idx];
+>> +	struct ingenic_clock_event_device *jzcevt;
+>> +	unsigned long rate;
+>> +	int err, virq;
+>> +
+>> +	err = ingenic_tcu_req_channel(channel);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	err = ingenic_tcu_reset_channel(np, channel);
+>> +	if (err)
+>> +		goto err_out_free_channel;
+>> +
+>> +	rate = clk_get_rate(channel->clk);
+>> +	if (!rate) {
+>> +		err = -EINVAL;
+>> +		goto err_out_free_channel;
+>> +	}
+>> +
+>> +	jzcevt = kzalloc(sizeof(*jzcevt), GFP_KERNEL);
+>> +	if (!jzcevt) {
+>> +		err = -ENOMEM;
+>> +		goto err_out_free_channel;
+>> +	}
+>> +
+>> +	virq = irq_of_parse_and_map(np, idx);
+>> +	if (!virq) {
+>> +		err = -EINVAL;
+>> +		goto err_out_kfree_jzcevt;
+>> +	}
+>> +
+>> +	err = request_irq(virq, ingenic_tcu_cevt_cb, IRQF_TIMER,
+>> +			ingenic_tcu_timer_names[idx], &jzcevt->cevt);
+>> +	if (err)
+>> +		goto err_out_irq_dispose_mapping;
+>> +
+>> +	jzcevt->channel = channel;
+>> +	snprintf(jzcevt->name, sizeof(jzcevt->name), "ingenic-tcu-chan%u",
+>> +		 channel->idx);
+>> +
+>> +	jzcevt->cevt.cpumask = cpumask_of(smp_processor_id());
+>> +	jzcevt->cevt.features = CLOCK_EVT_FEAT_ONESHOT;
+>> +	jzcevt->cevt.name = jzcevt->name;
+>> +	jzcevt->cevt.rating = 200;
+>> +	jzcevt->cevt.set_state_shutdown = 
+>> ingenic_tcu_cevt_set_state_shutdown;
+>> +	jzcevt->cevt.set_next_event = ingenic_tcu_cevt_set_next;
+>> +
+>> +	clockevents_config_and_register(&jzcevt->cevt, rate, 10, (1 << 16) - 
+>> 1);
+>> +
+>> +	return 0;
+>> +
+>> +err_out_irq_dispose_mapping:
+>> +	irq_dispose_mapping(virq);
+>> +err_out_kfree_jzcevt:
+>> +	kfree(jzcevt);
+>> +err_out_free_channel:
+>> +	ingenic_tcu_free_channel(channel);
+>> +	return err;
+>> +}
+>> +
+>> +static int __init ingenic_tcu_init(struct device_node *np)
+>> +{
+>> +	unsigned long available_channels = GENMASK(NUM_CHANNELS - 1, 0);
+>> +	struct device_node *node, *pwm_driver_node;
+>> +	struct ingenic_tcu *tcu;
+>> +	unsigned int i, channel;
+>> +	int err;
+>> +	u32 val;
+>> +
+>> +	/* Parse the devicetree for clients of the TCU PWM driver;
+>> +	 * every TCU channel not requested for PWM will be used as
+>> +	 * a timer.
+>> +	 */
+> 
+> 
+> 
+>> +	for_each_node_with_property(node, "pwms") {
+>> +		/* Get the PWM channel ID (field 1 of the "pwms" node) */
+>> +		err = of_property_read_u32_index(node, "pwms", 1, &val);
+>> +		if (!err && val >= NUM_CHANNELS)
+>> +			err = -EINVAL;
+>> +		if (err) {
+>> +			pr_err("timer-ingenic: Unable to parse PWM nodes!");
+>> +			break;
+>> +		}
+>> +
+>> +		/* Get the PWM driver node (field 0 of the "pwms" node) */
+>> +		pwm_driver_node = of_parse_phandle(node, "pwms", 0);
+>> +		if (!pwm_driver_node) {
+>> +			pr_err("timer-ingenic: Unable to find PWM driver node");
+>> +			break;
+>> +		}
+>> +
+>> +		/* Verify that the node we found is for the TCU PWM driver,
+>> +		 * by checking that this driver and the PWM driver passed
+>> +		 * as phandle share the same parent (the "ingenic,tcu"
+>> +		 * compatible MFD/syscon node).
+>> +		 */
+>> +		if (pwm_driver_node->parent != np->parent)
+>> +			continue;
+>> +
+>> +		pr_info("timer-ingenic: Reserving channel %u for PWM", val);
+>> +		available_channels &= ~BIT(val);
+>> +	}
+>> +
+>> +	tcu = kzalloc(sizeof(*tcu), GFP_KERNEL);
+>> +	if (!tcu)
+>> +		return -ENOMEM;
+>> +
+>> +	tcu->map = syscon_node_to_regmap(np->parent);
+>> +	if (IS_ERR(tcu->map)) {
+>> +		err = PTR_ERR(tcu->map);
+>> +		kfree(tcu);
+>> +		return err;
+>> +	}
+>> +
+>> +	for (i = 0; i < NUM_CHANNELS; i++)
+>> +		tcu->channels[i].idx = i;
+> 
+> I'm pretty sure you can do better thaningenic_tcu_setup that :)
+
+I didn't think this would be a problem. I guess I can try.
+
+>> +	for_each_set_bit(channel, &available_channels, NUM_CHANNELS) {
+>> +		err = _cevt(np, tcu, channel);
+>> +		if (err) {
+>> +			pr_warn("timer-ingenic: Unable to init TCU channel %u: %i",
+>> +					channel, err);
+>> +			continue;
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/* We only probe via devicetree, no need for a platform driver */
+>> +CLOCKSOURCE_OF_DECLARE(jz4740_tcu, "ingenic,jz4740-tcu", 
+>> ingenic_tcu_init);
+>> +CLOCKSOURCE_OF_DECLARE(jz4770_tcu, "ingenic,jz4770-tcu", 
+>> ingenic_tcu_init);
+>> +CLOCKSOURCE_OF_DECLARE(jz4780_tcu, "ingenic,jz4780-tcu", 
+>> ingenic_tcu_init);
+> 
+> s/CLOCKSOURCE_OF_DECLARE/TIMER_OF_DECLARE/
+
+Sure, OK.
+
+Thanks!
+-Paul
