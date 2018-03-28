@@ -1,268 +1,65 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v4 4/8] dt-bindings: Add doc for the Ingenic TCU drivers
-To: Paul Cercueil <paul@crapouillou.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: James Hogan <jhogan@kernel.org>,
-        Maarten ter Huurne <maarten@treewalker.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-doc@vger.kernel.org
-References: <20180110224838.16711-2-paul@crapouillou.net>
- <20180317232901.14129-1-paul@crapouillou.net>
- <20180317232901.14129-5-paul@crapouillou.net>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <b853fabf-4812-cefc-dd8b-f9ab596e1a36@arm.com>
-Date: Tue, 20 Mar 2018 08:52:04 +0000
+Return-Path: <abel.vesa@nxp.com>
+From: Abel Vesa <abel.vesa@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Peter Chen <peter.chen@freescale.com>,
+	Irina Tirdea <irina.tirdea@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-imx@nxp.com,
+	Anson Huang <anson.huang@nxp.com>,
+	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
+	Abel Vesa <abelvesa@linux.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Anson Huang <b20788@freescale.com>,
+	Abel Vesa <abel.vesa@nxp.com>
+Subject: [RESEND 2/4] clk: imx7d: Correct dram pll type
+Date: Wed, 28 Mar 2018 09:46:37 +0300
+Message-Id: <1522219599-10831-4-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
+References: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20180317232901.14129-5-paul@crapouillou.net>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: abel.vesa@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17/03/18 23:28, Paul Cercueil wrote:
-> Add documentation about how to properly use the Ingenic TCU
-> (Timer/Counter Unit) drivers from devicetree.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  .../bindings/clock/ingenic,tcu-clocks.txt          | 42 ++++++++++++++++
->  .../bindings/interrupt-controller/ingenic,tcu.txt  | 39 +++++++++++++++
->  .../devicetree/bindings/mfd/ingenic,tcu.txt        | 56 ++++++++++++++++++++++
->  .../devicetree/bindings/timer/ingenic,tcu.txt      | 41 ++++++++++++++++
->  4 files changed, 178 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
->  create mode 100644 Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
->  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> 
->  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
->  added content.
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
-> new file mode 100644
-> index 000000000000..471d27078599
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
-> @@ -0,0 +1,42 @@
-> +Ingenic SoC TCU binding
-> +
-> +The TCU is the Timer/Counter Unit present in all Ingenic SoCs. It features 8
-> +channels, each one having its own clock, that can be started and stopped,
-> +reparented, and reclocked.
-> +
-> +Required properties:
-> +- compatible : One of:
-> +  * ingenic,jz4740-tcu-clocks,
-> +  * ingenic,jz4770-tcu-clocks,
-> +  * ingenic,jz4780-tcu-clocks.
-> +- clocks : List of phandle & clock specifiers for clocks external to the TCU.
-> +  The "pclk", "rtc" and "ext" clocks should be provided.
-> +- clock-names : List of name strings for the external clocks.
-> +- #clock-cells: Should be 1.
-> +  Clock consumers specify this argument to identify a clock. The valid values
-> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
-> +
-> +Example:
-> +
-> +/ {
-> +	tcu: mfd@10002000 {
-> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-> +		reg = <0x10002000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x10002000 0x1000>;
-> +
-> +		tcu_clk: clocks@10 {
-> +			compatible = "ingenic,jz4740-tcu-clocks";
-> +			reg = <0x10 0xff0>;
-> +
-> +			clocks = <&ext>, <&rtc>, <&pclk>;
-> +			clock-names = "ext", "rtc", "pclk";
-> +
-> +			#clock-cells = <1>;
-> +		};
-> +	};
-> +};
-> +
-> +For information about the top-level "ingenic,tcu" compatible node and other
-> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
-> new file mode 100644
-> index 000000000000..7f3af2da77cd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
-> @@ -0,0 +1,39 @@
-> +Ingenic SoCs Timer/Counter Unit Interrupt Controller
-> +
-> +Required properties:
-> +
-> +- compatible : should be "ingenic,<socname>-tcu-intc". Valid strings are:
-> +  * ingenic,jz4740-tcu-intc
-> +  * ingenic,jz4770-tcu-intc
-> +  * ingenic,jz4780-tcu-intc
-> +- interrupt-controller : Identifies the node as an interrupt controller
-> +- #interrupt-cells : Specifies the number of cells needed to encode an
-> +  interrupt source. The value shall be 1.
-> +- interrupt-parent : phandle of the interrupt controller.
-> +- interrupts : Specifies the interrupt the controller is connected to.
-> +
-> +Example:
-> +
-> +/ {
-> +	tcu: mfd@10002000 {
-> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-> +		reg = <0x10002000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x10002000 0x1000>;
-> +
-> +		tcu_irq: interrupt-controller@20 {
-> +			compatible = "ingenic,jz4740-tcu-intc";
-> +			reg = <0x20 0x20>;
-> +
-> +			interrupt-controller;
-> +			#interrupt-cells = <1>;
-> +
-> +			interrupt-parent = <&intc>;
-> +			interrupts = <15>;
-> +		};
-> +	};
-> +};
-> +
-> +For information about the top-level "ingenic,tcu" compatible node and other
-> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
-> diff --git a/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
-> new file mode 100644
-> index 000000000000..5742c3f21550
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/ingenic,tcu.txt
-> @@ -0,0 +1,56 @@
-> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
-> +----------------------------------------------------------
-> +
-> +For a description of the TCU hardware and drivers, have a look at
-> +Documentation/mips/ingenic-tcu.txt.
-> +
-> +The TCU is implemented as a parent node, whose role is to create the
-> +regmap, and child nodes for the various drivers listed in the aforementioned
-> +document.
+From: Anson Huang <b20788@freescale.com>
 
-You're describing the Linux driver here. Please stick to a description
-of the HW.
+DRAM PLL is a audio/video type PLL, need to correct
+it to get correct ops of PLL.
 
-> +
-> +Required properties:
-> +
-> +- compatible: must be "ingenic,tcu", "simple-mfd", "syscon";
+There is a test_div placed before DRAM PLL's gate, so
+add this test div clk.
 
-Without any provision for an SoC version? Seems bold...
+Signed-off-by: Anson Huang <b20788@freescale.com>
+Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> +- reg: Should be the offset/length value corresponding to the TCU registers
-> +- #address-cells: Should be <1>;
-> +- #size-cells: Should be <1>;
-> +- ranges: Should be one range for the full TCU registers area
-> +
-> +Accepted children nodes:
-> +- Documentation/devicetree/bindings/interrupt-controller/ingenic,tcu.txt
-> +- Documentation/devicetree/bindings/clock/ingenic,tcu-clocks.txt
-> +- Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-
-It is slightly confusing that you have 3 files named ingenic,tcu.txt.
-How about ingenic,tcu-intc.txt and ingenic,tcu-timer.txt (amending the
-binding for the timer)?
-
-> +
-> +
-> +Example:
-> +
-> +/ {
-> +	tcu: mfd@10002000 {
-> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-> +		reg = <0x10002000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x10002000 0x1000>;
-> +
-> +		tcu_irq: interrupt-controller@20 {
-> +			compatible = "ingenic,jz4740-tcu-intc";
-> +			reg = <0x20 0x20>;
-> +			...
-> +		};
-> +
-> +		tcu_clk: clocks@10 {
-> +			compatible = "ingenic,jz4740-tcu-clocks";
-> +			reg = <0x10 0xff0>;
-> +			...
-> +		};
-> +
-> +		tcu_timer: timer@10 {
-> +			compatible = "ingenic,jz4740-tcu";
-> +			reg = <0x10 0xff0>;
-> +			...
-> +		};
-> +	};
-> +};
-> +
-> +For more information about the children node, refer to the documents listed
-> +above in the "Accepted children nodes" section.
-> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> new file mode 100644
-> index 000000000000..f910b7e96783
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> @@ -0,0 +1,41 @@
-> +Ingenic JZ47xx SoCs Timer/Counter Unit driver
-> +---------------------------------------------
-> +
-> +Required properties:
-> +
-> +- compatible : should be "ingenic,<socname>-tcu". Valid strings are:
-> +  * ingenic,jz4740-tcu
-> +  * ingenic,jz4770-tcu
-> +  * ingenic,jz4780-tcu
-> +- interrupt-parent : phandle of the TCU interrupt controller.
-> +- interrupts : Specifies the interrupts the controller is connected to.
-> +- clocks : List of phandle & clock specifiers for the TCU clocks.
-> +- clock-names : List of name strings for the TCU clocks.
-> +
-> +Example:
-> +
-> +/ {
-> +	tcu: mfd@10002000 {
-> +		compatible = "ingenic,tcu", "simple-mfd", "syscon";
-> +		reg = <0x10002000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x10002000 0x1000>;
-> +
-> +		tcu_timer: timer@10 {
-> +			compatible = "ingenic,jz4740-tcu";
-> +			reg = <0x10 0xff0>;
-> +
-> +			clocks = <&tcu_clk 0>, <&tcu_clk 1>, <&tcu_clk 2>, <&tcu_clk 3>,
-> +					 <&tcu_clk 4>, <&tcu_clk 5>, <&tcu_clk 6>, <&tcu_clk 7>;
-> +			clock-names = "timer0", "timer1", "timer2", "timer3",
-> +						  "timer4", "timer5", "timer6", "timer7";
-> +
-> +			interrupt-parent = <&tcu_irq>;
-> +			interrupts = <0 1 2 3 4 5 6 7>;
-> +		};
-> +	};
-> +};
-> +
-> +For information about the top-level "ingenic,tcu" compatible node and other
-> +children nodes, see Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
-> 
-
-Thanks,
-
-	M.
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 39d110b..1cc485f 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -441,11 +441,13 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
+ 
+ 	clks[IMX7D_PLL_ARM_MAIN_CLK] = imx_clk_gate("pll_arm_main_clk", "pll_arm_main_bypass", base + 0x60, 13);
+-	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_main_bypass", base + 0x70, 13);
++	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_test_div", base + 0x70, 13);
+ 	clks[IMX7D_PLL_SYS_MAIN_CLK] = imx_clk_gate("pll_sys_main_clk", "pll_sys_main_bypass", base + 0xb0, 13);
+ 	clks[IMX7D_PLL_AUDIO_MAIN_CLK] = imx_clk_gate("pll_audio_main_clk", "pll_audio_main_bypass", base + 0xf0, 13);
+ 	clks[IMX7D_PLL_VIDEO_MAIN_CLK] = imx_clk_gate("pll_video_main_clk", "pll_video_main_bypass", base + 0x130, 13);
+ 
++	clks[IMX7D_PLL_DRAM_TEST_DIV]  = clk_register_divider_table(NULL, "pll_dram_test_div", "pll_dram_main_bypass",
++				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x70, 21, 2, 0, test_div_table, &imx_ccm_lock);
+ 	clks[IMX7D_PLL_AUDIO_TEST_DIV]  = clk_register_divider_table(NULL, "pll_audio_test_div", "pll_audio_main_clk",
+ 				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 19, 2, 0, test_div_table, &imx_ccm_lock);
+ 	clks[IMX7D_PLL_AUDIO_POST_DIV] = clk_register_divider_table(NULL, "pll_audio_post_div", "pll_audio_test_div",
 -- 
-Jazz is not dead. It just smells funny...
+2.7.4
