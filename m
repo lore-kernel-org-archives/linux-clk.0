@@ -1,77 +1,35 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Peter Chen <peter.chen@freescale.com>,
-	Irina Tirdea <irina.tirdea@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com,
-	Anson Huang <anson.huang@nxp.com>,
-	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
-	Abel Vesa <abelvesa@linux.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Dong Aisheng <b29396@freescale.com>,
-	Abel Vesa <abel.vesa@nxp.com>
-Subject: [RESEND 4/4] clk: imx7d: Move clks_init_on before any clock operations
-Date: Wed, 28 Mar 2018 09:46:39 +0300
-Message-Id: <1522219599-10831-6-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
-References: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+In-Reply-To: <1522160607-7104-1-git-send-email-abel.vesa@nxp.com>
+References: <1522160607-7104-1-git-send-email-abel.vesa@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 28 Mar 2018 09:14:55 -0300
+Message-ID: <CAOMZO5A=Wg3KtESLchqQcjN6c-CBWF5Ca0nHpwSZfy4Fbd2f1w@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx7d: Move clks_init_on before any clock operations
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Peter Chen <peter.chen@freescale.com>,
+	Irina Tirdea <irina.tirdea@nxp.com>, Anson Huang <anson.huang@nxp.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>, NXP Linux Team <linux-imx@nxp.com>,
+	Dong Aisheng <b29396@freescale.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Dong Aisheng <b29396@freescale.com>
+Hi Abel,
 
-For init on clocks we should move it at the first place in imx7d_clocks_init()
-before any clock operations, else the clock operation may fail in case the clock
-is still not on.
+On Tue, Mar 27, 2018 at 11:23 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
+> From: Dong Aisheng <b29396@freescale.com>
+>
+> For init on clocks we should move it at the first place in imx7d_clocks_init()
+> before any clock operations, else the clock operation may fail in case the clock
+> is still not on.
 
-Acked-by: Ranjani Vaidyanathan <Ranjani.Vaidyanathan@freescale.com>
-Signed-off-by: Dong Aisheng <b29396@freescale.com>
-Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+The patch and the commit log does not match.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 50da4cb..975a20d 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -433,13 +433,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_PLL_AUDIO_MAIN_BYPASS] = imx_clk_mux_flags("pll_audio_main_bypass", base + 0xf0, 16, 1, pll_audio_bypass_sel, ARRAY_SIZE(pll_audio_bypass_sel), CLK_SET_RATE_PARENT);
- 	clks[IMX7D_PLL_VIDEO_MAIN_BYPASS] = imx_clk_mux_flags("pll_video_main_bypass", base + 0x130, 16, 1, pll_video_bypass_sel, ARRAY_SIZE(pll_video_bypass_sel), CLK_SET_RATE_PARENT);
- 
--	clk_set_parent(clks[IMX7D_PLL_ARM_MAIN_BYPASS], clks[IMX7D_PLL_ARM_MAIN]);
--	clk_set_parent(clks[IMX7D_PLL_DRAM_MAIN_BYPASS], clks[IMX7D_PLL_DRAM_MAIN]);
--	clk_set_parent(clks[IMX7D_PLL_SYS_MAIN_BYPASS], clks[IMX7D_PLL_SYS_MAIN]);
--	clk_set_parent(clks[IMX7D_PLL_ENET_MAIN_BYPASS], clks[IMX7D_PLL_ENET_MAIN]);
--	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
--	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
--
- 	clks[IMX7D_PLL_ARM_MAIN_CLK] = imx_clk_gate("pll_arm_main_clk", "pll_arm_main_bypass", base + 0x60, 13);
- 	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_test_div", base + 0x70, 13);
- 	clks[IMX7D_PLL_SYS_MAIN_CLK] = imx_clk_gate("pll_sys_main_clk", "pll_sys_main_bypass", base + 0xb0, 13);
-@@ -891,6 +884,13 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
- 		clk_prepare_enable(clks[clks_init_on[i]]);
- 
-+	clk_set_parent(clks[IMX7D_PLL_ARM_MAIN_BYPASS], clks[IMX7D_PLL_ARM_MAIN]);
-+	clk_set_parent(clks[IMX7D_PLL_DRAM_MAIN_BYPASS], clks[IMX7D_PLL_DRAM_MAIN]);
-+	clk_set_parent(clks[IMX7D_PLL_SYS_MAIN_BYPASS], clks[IMX7D_PLL_SYS_MAIN]);
-+	clk_set_parent(clks[IMX7D_PLL_ENET_MAIN_BYPASS], clks[IMX7D_PLL_ENET_MAIN]);
-+	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
-+	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
-+
- 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
- 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
- 
--- 
-2.7.4
+You are not moving the code block to the "first place" inside
+imx7d_clocks_init(), so this is confusing.
+
+Also, why does this need to be done only in the imx7d clock driver?
