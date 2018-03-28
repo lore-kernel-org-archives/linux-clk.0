@@ -1,212 +1,123 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: <linux-clk@vger.kernel.org>
-Subject: [PATCH V2 2/4] clk: add new APIs to operate on all available clocks
-Date: Wed, 21 Mar 2018 10:54:52 +0800
-Message-ID: <1521600894-29919-3-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1521600894-29919-1-git-send-email-aisheng.dong@nxp.com>
-References: <1521600894-29919-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:41020 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753022AbeC1PEy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Mar 2018 11:04:54 -0400
+To: Mathieu Malaterre <malat@debian.org>
+Subject: Re: [PATCH v4 2/8] dt-bindings: ingenic: Add DT bindings for TCU  clocks
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, linux-fbdev@vger.kernel.org,
- b.zolnierkie@samsung.com, sboyd@kernel.org, mturquette@baylibre.com,
- Stephen Boyd <sboyd@codeaurora.org>, linux@armlinux.org.uk,
- linux-kernel@vger.kernel.org, hdegoede@redhat.com,
- Masahiro Yamada <yamada.masahiro@socionext.com>, linux-imx@nxp.com,
- linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Wed, 28 Mar 2018 17:04:51 +0200
+From: Paul Cercueil <paul@crapouillou.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Hogan <jhogan@kernel.org>,
+        Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        linux-doc@vger.kernel.org, mathieu.malaterre@gmail.com
+Subject: 
+In-Reply-To: <CA+7wUsyAkW+Bgmp6MuWTce1jMG-ug1b-UqFVen_vVeKFiW5Fww@mail.gmail.com>
+References: <20180110224838.16711-2-paul@crapouillou.net>
+ <20180317232901.14129-1-paul@crapouillou.net>
+ <20180317232901.14129-3-paul@crapouillou.net>
+ <CA+7wUsyAkW+Bgmp6MuWTce1jMG-ug1b-UqFVen_vVeKFiW5Fww@mail.gmail.com>
+Message-ID: <c02d2ae665890e7214bcfa6c42a49c69@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch introduces of_clk_bulk_get_all and clk_bulk_x_all APIs
-to users who just want to handle all available clocks from device tree
-without need to know the detailed clock information likes clock numbers
-and names. This is useful in writing some generic drivers to handle clock
-part.
+Le 2018-03-20 08:15, Mathieu Malaterre a écrit :
+> Hi Paul,
+> 
+> Two things:
+> 
+> On Sun, Mar 18, 2018 at 12:28 AM, Paul Cercueil <paul@crapouillou.net> 
+> wrote:
+>> This header provides clock numbers for the ingenic,tcu
+>> DT binding.
+> 
+> I have tested the whole series on my Creator CI20 with success, using:
+> 
+> + tcu@10002000 {
+> + compatible = "ingenic,jz4780-tcu";
+> + reg = <0x10002000 0x140>;
+> +
+> + interrupt-parent = <&intc>;
+> + interrupts = <27 26 25>;
+> + };
+> 
+> 
+> So:
+> 
+> Tested-by: Mathieu Malaterre <malat@debian.org>
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-v1->v2:
- * make of_clk_bulk_get_all private
- * add clk_bulk_get/put_all
----
- drivers/clk/clk-bulk.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h    | 42 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 98 insertions(+), 1 deletion(-)
+Great! Is that for the whole patchset or just this one patch?
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 4b357b2..3293c6b 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -17,9 +17,11 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/export.h>
- #include <linux/of.h>
-+#include <linux/slab.h>
- 
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
- static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-@@ -50,6 +52,38 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
- 	return ret;
- }
- EXPORT_SYMBOL(of_clk_bulk_get);
-+
-+static int __must_check of_clk_bulk_get_all(struct device_node *np,
-+					    struct clk_bulk_data **clks)
-+{
-+	struct clk_bulk_data *clk_bulk;
-+	int num_clks;
-+	int ret;
-+
-+	num_clks = of_clk_get_parent_count(np);
-+	if (!num_clks)
-+		return 0;
-+
-+	clk_bulk = kcalloc(num_clks, sizeof(*clk_bulk), GFP_KERNEL);
-+	if (!clk_bulk)
-+		return -ENOMEM;
-+
-+	ret = of_clk_bulk_get(np, num_clks, clk_bulk);
-+	if (ret) {
-+		kfree(clk_bulk);
-+		return ret;
-+	}
-+
-+	*clks = clk_bulk;
-+
-+	return num_clks;
-+}
-+#else
-+static int __must_check of_clk_bulk_get_all(struct device_node *np,
-+					    struct clk_bulk_data **clks)
-+{
-+	return -ENOENT;
-+}
- #endif
- 
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
-@@ -90,6 +124,29 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
- }
- EXPORT_SYMBOL(clk_bulk_get);
- 
-+void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks)
-+{
-+	if (IS_ERR_OR_NULL(clks))
-+		return;
-+
-+	clk_bulk_put(num_clks, clks);
-+
-+	kfree(clks);
-+}
-+EXPORT_SYMBOL(clk_bulk_put_all);
-+
-+int __must_check clk_bulk_get_all(struct device *dev,
-+				  struct clk_bulk_data **clks)
-+{
-+	struct device_node *np = dev_of_node(dev);
-+
-+	if (!np)
-+		return 0;
-+
-+	return of_clk_bulk_get_all(np, clks);
-+}
-+EXPORT_SYMBOL(clk_bulk_get_all);
-+
- #ifdef CONFIG_HAVE_CLK_PREPARE
- 
- /**
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 0dbd088..a76fdff 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -279,7 +279,26 @@ struct clk *clk_get(struct device *dev, const char *id);
-  */
- int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 			      struct clk_bulk_data *clks);
--
-+/**
-+ * clk_bulk_get_all - lookup and obtain all available references to clock
-+ *		      producer.
-+ * @dev: device for clock "consumer"
-+ * @clks: pointer to the clk_bulk_data table of consumer
-+ *
-+ * This helper function allows drivers to get all clk consumers in one
-+ * operation. If any of the clk cannot be acquired then any clks
-+ * that were obtained will be freed before returning to the caller.
-+ *
-+ * Returns a positive value for the number of clocks obtained while the
-+ * clock references are stored in the clk_bulk_data table in @clks field.
-+ * Returns 0 if there're none and a negative value if something failed.
-+ *
-+ * Drivers must assume that the clock source is not enabled.
-+ *
-+ * clk_bulk_get should not be called from within interrupt context.
-+ */
-+int __must_check clk_bulk_get_all(struct device *dev,
-+				  struct clk_bulk_data **clks);
- /**
-  * devm_clk_bulk_get - managed get multiple clk consumers
-  * @dev: device for clock "consumer"
-@@ -455,6 +474,19 @@ void clk_put(struct clk *clk);
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks);
- 
- /**
-+ * clk_bulk_put_all - "free" all the clock source
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table of consumer
-+ *
-+ * Note: drivers must ensure that all clk_bulk_enable calls made on this
-+ * clock source are balanced by clk_bulk_disable calls prior to calling
-+ * this function.
-+ *
-+ * clk_bulk_put_all should not be called from within interrupt context.
-+ */
-+void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks);
-+
-+/**
-  * devm_clk_put	- "free" a managed clock source
-  * @dev: device used to acquire the clock
-  * @clk: clock source acquired with devm_clk_get()
-@@ -609,6 +641,12 @@ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 	return 0;
- }
- 
-+static inline int __must_check clk_bulk_get_all(struct device *dev,
-+					 struct clk_bulk_data **clks)
-+{
-+	return 0;
-+}
-+
- static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- {
- 	return NULL;
-@@ -630,6 +668,8 @@ static inline void clk_put(struct clk *clk) {}
- 
- static inline void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) {}
- 
-+static inline void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks) {}
-+
- static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
- 
- 
--- 
-2.7.4
+>> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
+>>  include/dt-bindings/clock/ingenic,tcu.h | 23 +++++++++++++++++++++++
+>>  1 file changed, 23 insertions(+)
+>>  create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
+>> 
+>>  v2: Use SPDX identifier for the license
+>>  v3: No change
+>>  v4: No change
+>> 
+>> diff --git a/include/dt-bindings/clock/ingenic,tcu.h 
+>> b/include/dt-bindings/clock/ingenic,tcu.h
+>> new file mode 100644
+>> index 000000000000..179815d7b3bb
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/ingenic,tcu.h
+>> @@ -0,0 +1,23 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * This header provides clock numbers for the ingenic,tcu DT binding.
+>> + */
+>> +
+>> +#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
+>> +#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
+>> +
+>> +#define JZ4740_CLK_TIMER0      0
+>> +#define JZ4740_CLK_TIMER1      1
+>> +#define JZ4740_CLK_TIMER2      2
+>> +#define JZ4740_CLK_TIMER3      3
+>> +#define JZ4740_CLK_TIMER4      4
+>> +#define JZ4740_CLK_TIMER5      5
+>> +#define JZ4740_CLK_TIMER6      6
+>> +#define JZ4740_CLK_TIMER7      7
+>> +#define JZ4740_CLK_WDT         8
+>> +#define JZ4740_CLK_LAST                JZ4740_CLK_WDT
+>> +
+>> +#define JZ4770_CLK_OST         9
+>> +#define JZ4770_CLK_LAST                JZ4770_CLK_OST
+>> +
+> 
+> When working on JZ4780 support, I always struggle to read those kind
+> of #define. Since this is a new patch would you mind changing
+> s/JZ4740/JZ47XX/ in your header ?
 
+Well the idea was that these defines are for JZ4740 and newer.
+But that means all Ingenic SoCs, so I guess I can change it.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Thanks for your work on JZ !
+
+Sure, thank you for testing!
+
+>> +#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
+>> --
+>> 2.11.0
+>> 
+>> 
+
