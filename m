@@ -1,154 +1,591 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: =?utf-8?B?T25kxZllag==?= Jirman <megi@xff.cz>
-Cc: maxime.ripard@free-electrons.com, wens@csie.org, airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 06/16] drm/sun4i: Release exclusive clock lock when disabling TCON
-Date: Thu, 08 Mar 2018 23:57:40 +0100
-Message-ID: <3764594.86uYqsI6mN@jernej-laptop>
-In-Reply-To: <20180308224717.a6ieadihwh7u5rbu@core.my.home>
-References: <20180301213442.16677-1-jernej.skrabec@siol.net> <20180301213442.16677-7-jernej.skrabec@siol.net> <20180308224717.a6ieadihwh7u5rbu@core.my.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v4 14/14] dt: qcom: Add qcom-cpufreq-kryo driver configuration
+Date: Fri, 30 Mar 2018 00:26:47 +0300
+Message-Id: <1522358807-10413-15-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi       | 310 +++++++++++++++++++++++++++-
+ 2 files changed, 309 insertions(+), 3 deletions(-)
 
-Dne =C4=8Detrtek, 08. marec 2018 ob 23:47:17 CET je Ond=C5=99ej Jirman napi=
-sal(a):
-> Hi,
->=20
-> On Thu, Mar 01, 2018 at 10:34:32PM +0100, Jernej Skrabec wrote:
-> > Currently exclusive TCON clock lock is never released, which, for
-> > example, prevents changing resolution on HDMI.
-> >=20
-> > In order to fix that, release clock when disabling TCON. TCON is always
-> > disabled first before new mode is set.
-> >=20
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> >=20
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 1d714c06ec9d..7f6c4125c89f
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > @@ -102,10 +102,12 @@ static void sun4i_tcon_channel_set_status(struct
-> > sun4i_tcon *tcon, int channel,>=20
-> >  		return;
-> >  =09
-> >  	}
-> >=20
-> > -	if (enabled)
-> > +	if (enabled) {
-> >=20
-> >  		clk_prepare_enable(clk);
-> >=20
-> > -	else
-> > +	} else {
-> > +		clk_rate_exclusive_put(clk);
-> >=20
-> >  		clk_disable_unprepare(clk);
-> >=20
-> > +	}
-> >=20
-> >  }
->=20
-> At least in the linux-next/master I can't see clk_rate_exclusive_get call:
->=20
-
-It is in drm-misc/drm-misc-fixes:
-https://cgit.freedesktop.org/drm/drm-misc/commit/?h=3Ddrm-misc-fixes&id=3D7=
-9d103a565d16b1893d990b2ee5e0fe71767759f
-
-My patch is also applied in same branch, so there should be no issues while=
-=20
-merging all those branches.
-
-linux-next doesn't have either patches currently: https://git.kernel.org/pu=
-b/
-scm/linux/kernel/git/next/linux-next.git/log/drivers/gpu/drm/sun4i
-
-This is issue only if you manually apply one patch without the other.
-
-Best regards,
-Jernej
-
-> $ git grep 'exclusive' linux-next/master -- drivers/gpu/drm/sun4i
->=20
-> linux-next/master:sun4i_hdmi.h:    * On sun5i the threshold is exclusive,
-> i.e. does not include, linux-next/master:sun4i_tcon.c:         =20
-> clk_rate_exclusive_put(clk); linux-next/master:sun4i_tcon.c: =20
-> clk_set_rate_exclusive(tcon->dclk, mode->crtc_clock * 1000);
-> linux-next/master:sun4i_tcon.c:   clk_set_rate_exclusive(tcon->sclk1,
-> mode->crtc_clock * 1000);
->=20
-> and the kernel complains too:
->=20
-> [  841.915161] ------------[ cut here ]------------
-> [  841.915187] WARNING: CPU: 0 PID: 273 at
-> /workspace/megous.com/orangepi-pc/linux-4.16/drivers/clk/clk.c:608
-> clk_rate_exclusive_put+0x48/0x4c [  841.915194] CPU: 0 PID: 273 Comm: Xorg
-> Not tainted 4.16.0-rc4-00268-gbac2ecf73ed0 #13 [  841.915196] Hardware
-> name: Allwinner sun8i Family
-> [  841.915217] [<c0228440>] (unwind_backtrace) from [<c0225b90>]
-> (show_stack+0x10/0x14) [  841.915228] [<c0225b90>] (show_stack) from
-> [<c0b094bc>] (dump_stack+0x88/0x9c) [  841.915237] [<c0b094bc>]
-> (dump_stack) from [<c0240294>] (__warn+0xd4/0xf0) [  841.915244]
-> [<c0240294>] (__warn) from [<c0240380>] (warn_slowpath_null+0x40/0x48) [=
-=20
-> 841.915250] [<c0240380>] (warn_slowpath_null) from [<c0619b6c>]
-> (clk_rate_exclusive_put+0x48/0x4c) [  841.915261] [<c0619b6c>]
-> (clk_rate_exclusive_put) from [<c0694624>]
-> (sun4i_tcon_set_status+0x178/0x2f0) [  841.915269] [<c0694624>]
-> (sun4i_tcon_set_status) from [<c06930c0>]
-> (sun4i_crtc_atomic_disable+0x7c/0xe4) [  841.915279] [<c06930c0>]
-> (sun4i_crtc_atomic_disable) from [<c06637fc>]
-> (drm_atomic_helper_commit_modeset_disables+0x390/0x46c) [  841.915288]
-> [<c06637fc>] (drm_atomic_helper_commit_modeset_disables) from [<c0664df4>]
-> (drm_atomic_helper_commit_tail_rpm+0x18/0x64) [  841.915295] [<c0664df4>]
-> (drm_atomic_helper_commit_tail_rpm) from [<c0664da8>]
-> (commit_tail+0x40/0x6c) [  841.915302] [<c0664da8>] (commit_tail) from
-> [<c06652b0>] (drm_atomic_helper_commit+0xbc/0x128) [  841.915311]
-> [<c06652b0>] (drm_atomic_helper_commit) from [<c0668d40>]
-> (restore_fbdev_mode_atomic+0x100/0x1fc) [  841.915319] [<c0668d40>]
-> (restore_fbdev_mode_atomic) from [<c0668f1c>]
-> (drm_fb_helper_dpms+0x50/0x130) [  841.915328] [<c0668f1c>]
-> (drm_fb_helper_dpms) from [<c0669e9c>] (drm_fb_helper_blank+0x54/0x90) [=
-=20
-> 841.915337] [<c0669e9c>] (drm_fb_helper_blank) from [<c06088cc>]
-> (fb_blank+0x54/0xa8) [  841.915343] [<c06088cc>] (fb_blank) from
-> [<c0608c80>] (do_fb_ioctl+0x360/0x62c) [  841.915351] [<c0608c80>]
-> (do_fb_ioctl) from [<c0362648>] (do_vfs_ioctl+0x9c/0x774) [  841.915358]
-> [<c0362648>] (do_vfs_ioctl) from [<c0362d54>] (SyS_ioctl+0x34/0x58) [=20
-> 841.915364] [<c0362d54>] (SyS_ioctl) from [<c0201120>]
-> (ret_fast_syscall+0x0/0x4c) [  841.915368] Exception stack(0xe5fc5fa8 to
-> 0xe5fc5ff0)
-> [  841.915373] 5fa0:                   00674f10 00675460 0000000b 00004611
-> 00000001 00000000 [  841.915379] 5fc0: 00674f10 00675460 00000001 00000036
-> 00650474 00000000 006504a4 00675df8 [  841.915382] 5fe0: b61a502c be8acb2c
-> b6192c38 b6b152ec
-> [  841.915386] ---[ end trace fa81b956197707f8 ]---
->=20
-> It looks like clk_rate_exclusive_put inside sun4i_tcon_channel_set_status=
- is
-> called without first calling some function that would call
-> clk_set_rate_exclusive, leading to unbalanced get/put calls.
->=20
-> regards,
->   o.
->=20
-> >  static void sun4i_tcon_lvds_set_status(struct sun4i_tcon *tcon,
-> >=20
-> > --
-> > 2.16.2
-> >=20
-> > --
-> > You received this message because you are subscribed to the Google Grou=
-ps
-> > "linux-sunxi" group. To unsubscribe from this group and stop receiving
-> > emails from it, send an email to
-> > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
-> > https://groups.google.com/d/optout.
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+index 230e9c8..da23bda 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+@@ -17,5 +17,5 @@
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. DB820c";
+-	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc";
++	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc", "qcom,apq8096";
+ };
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 993f0a3..594a183 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -183,218 +183,519 @@
+ 	};
+ 
+ 	cluster0_opp: opp_table0 {
+-		compatible = "operating-points-v2";
++		compatible = "operating-points-v2-kryo-cpu";
++		nvmem-cells = <&speedbin_efuse>;
+ 		opp-shared;
+ 
+ 		opp-307200000 {
+ 			opp-hz = /bits/ 64 <  307200000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-384000000 {
++			opp-hz = /bits/ 64 <  384000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-422400000 {
+ 			opp-hz = /bits/ 64 <  422400000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-460800000 {
++			opp-hz = /bits/ 64 <  460800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <  480000000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-537600000 {
++			opp-hz = /bits/ 64 <  537600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <  556800000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-614400000 {
++			opp-hz = /bits/ 64 <  614400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <  652800000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-691200000 {
++			opp-hz = /bits/ 64 <  691200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <  729600000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-768000000 {
++			opp-hz = /bits/ 64 <  768000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-844800000 {
+ 			opp-hz = /bits/ 64 <  844800000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-902400000 {
++			opp-hz = /bits/ 64 <  902400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-960000000 {
+ 			opp-hz = /bits/ 64 <  960000000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-979200000 {
++			opp-hz = /bits/ 64 <  979200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 < 1036800000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1056000000 {
++			opp-hz = /bits/ 64 < 1056000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 < 1113600000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1132800000 {
++			opp-hz = /bits/ 64 < 1132800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 < 1190400000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1209600000 {
++			opp-hz = /bits/ 64 < 1209600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1228800000 {
+ 			opp-hz = /bits/ 64 < 1228800000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1286400000 {
++			opp-hz = /bits/ 64 < 1286400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 < 1324800000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x5>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1363200000 {
++			opp-hz = /bits/ 64 < 1363200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x72>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 < 1401600000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x5>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1440000000 {
++			opp-hz = /bits/ 64 < 1440000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 < 1478400000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1497600000 {
++			opp-hz = /bits/ 64 < 1497600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x4>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1516800000 {
++			opp-hz = /bits/ 64 < 1516800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1593600000 {
+ 			opp-hz = /bits/ 64 < 1593600000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x71>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 < 1996800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x20>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2188800000 {
++			opp-hz = /bits/ 64 < 2188800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x10>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 	};
+ 
+ 	cluster1_opp: opp_table1 {
+-		compatible = "operating-points-v2";
++		compatible = "operating-points-v2-kryo-cpu";
++		nvmem-cells = <&speedbin_efuse>;
+ 		opp-shared;
+ 
+ 		opp-307200000 {
+ 			opp-hz = /bits/ 64 <  307200000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-384000000 {
++			opp-hz = /bits/ 64 <  384000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-403200000 {
+ 			opp-hz = /bits/ 64 <  403200000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-460800000 {
++			opp-hz = /bits/ 64 <  460800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <  480000000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-537600000 {
++			opp-hz = /bits/ 64 <  537600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <  556800000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-614400000 {
++			opp-hz = /bits/ 64 <  614400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <  652800000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-691200000 {
++			opp-hz = /bits/ 64 <  691200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <  729600000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-748800000 {
++			opp-hz = /bits/ 64 <  748800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-806400000 {
+ 			opp-hz = /bits/ 64 <  806400000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-825600000 {
++			opp-hz = /bits/ 64 <  825600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-883200000 {
+ 			opp-hz = /bits/ 64 <  883200000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-902400000 {
++			opp-hz = /bits/ 64 <  902400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-940800000 {
+ 			opp-hz = /bits/ 64 <  940800000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-979200000 {
++			opp-hz = /bits/ 64 <  979200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 < 1036800000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1056000000 {
++			opp-hz = /bits/ 64 < 1056000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 < 1113600000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1132800000 {
++			opp-hz = /bits/ 64 < 1132800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 < 1190400000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1209600000 {
++			opp-hz = /bits/ 64 < 1209600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1248000000 {
+ 			opp-hz = /bits/ 64 < 1248000000 >;
+ 			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1286400000 {
++			opp-hz = /bits/ 64 < 1286400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 < 1324800000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1363200000 {
++			opp-hz = /bits/ 64 < 1363200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 < 1401600000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1440000000 {
++			opp-hz = /bits/ 64 < 1440000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 < 1478400000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1516800000 {
++			opp-hz = /bits/ 64 < 1516800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1555200000 {
+ 			opp-hz = /bits/ 64 < 1555200000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 < 1593600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1632000000 {
+ 			opp-hz = /bits/ 64 < 1632000000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1670400000 {
++			opp-hz = /bits/ 64 < 1670400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1708800000 {
+ 			opp-hz = /bits/ 64 < 1708800000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1747200000 {
++			opp-hz = /bits/ 64 < 1747200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1785600000 {
+ 			opp-hz = /bits/ 64 < 1785600000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1804800000 {
++			opp-hz = /bits/ 64 < 1804800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x6>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1824000000 {
+ 			opp-hz = /bits/ 64 < 1824000000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x71>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1900800000 {
++			opp-hz = /bits/ 64 < 1900800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x74>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1920000000 {
+ 			opp-hz = /bits/ 64 < 1920000000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1977600000 {
++			opp-hz = /bits/ 64 < 1977600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x30>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1996800000 {
+ 			opp-hz = /bits/ 64 < 1996800000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2054400000 {
++			opp-hz = /bits/ 64 < 2054400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x30>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-2073600000 {
+ 			opp-hz = /bits/ 64 < 2073600000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-2150400000 {
+ 			opp-hz = /bits/ 64 < 2150400000 >;
+ 			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x31>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2246400000 {
++			opp-hz = /bits/ 64 < 2246400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x10>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2342400000 {
++			opp-hz = /bits/ 64 < 2342400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x10>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 	};
+@@ -992,6 +1293,11 @@
+ 				reg = <0x24f 0x1>;
+ 				bits = <1 4>;
+ 			};
++
++			speedbin_efuse: speedbin@133 {
++				reg = <0x133 0x1>;
++				bits = <5 3>;
++			};
+ 		};
+ 
+ 		phy@34000 {
+-- 
+1.9.1
