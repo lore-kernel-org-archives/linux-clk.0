@@ -1,31 +1,65 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Sun, 18 Mar 2018 07:48:41 -0500
-From: Rob Herring <robh@kernel.org>
-To: Weiyi Lu <weiyi.lu@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	James Liao <jamesjj.liao@mediatek.com>,
-	Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-	srv_heupstream@mediatek.com
-Subject: Re: [PATCH v2 3/5] dt-bindings: clock: add clocks for MT2712
-Message-ID: <20180318124841.ap6benlquyomteuq@rob-hp-laptop>
-References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
- <20180312070342.4335-5-weiyi.lu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180312070342.4335-5-weiyi.lu@mediatek.com>
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v4 04/14] clk: qcom: Add DT bindings for CPU clock driver for msm8996
+Date: Fri, 30 Mar 2018 00:26:37 +0300
+Message-Id: <1522358807-10413-5-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 12, 2018 at 03:03:40PM +0800, Weiyi Lu wrote:
-> add new clocks according to ECO design change
-> 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> ---
->  include/dt-bindings/clock/mt2712-clk.h | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+new file mode 100644
+index 0000000..8458783
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+@@ -0,0 +1,17 @@
++Qualcomm CPUSS clock controller for Kryo CPUs
++----------------------------------------------------
++
++Required properties :
++- compatible : shall contain only one of the following:
++
++			"qcom,msm8996-apcc"
++
++- reg : shall contain base register location and length
++- #clock-cells : shall contain 1
++
++Example:
++	kryocc: clock-controller@6400000 {
++		compatible = "qcom,msm8996-apcc";
++		reg = <0x6400000 0x90000>;
++		#clock-cells = <1>;
++	};
+-- 
+1.9.1
