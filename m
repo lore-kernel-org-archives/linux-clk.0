@@ -1,41 +1,79 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-To: sboyd@kernel.org,
-	mturquette@baylibre.com
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	stanimir.varbanov@linaro.org,
+Return-Path: <mgautam@codeaurora.org>
+From: Manu Gautam <mgautam@codeaurora.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+	robh@kernel.org,
+	sboyd@codeaurora.org
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
 	vivek.gautam@codeaurora.org,
-	srinivas.kandagatla@linaro.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2 0/3] clk: qcom: msm8996: handle mmagic gdscs and clocks
-Date: Fri, 23 Mar 2018 13:56:13 +0530
-Message-Id: <20180323082616.10142-1-rnayak@codeaurora.org>
+	evgreen@chromium.org,
+	dianders@chromium.org,
+	linux-arm-msm@vger.kernel.org,
+	Manu Gautam <mgautam@codeaurora.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-soc@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH v4 1/7] clk: msm8996-gcc: change halt check for USB/PCIE pipe_clk
+Date: Thu, 29 Mar 2018 16:34:20 +0530
+Message-Id: <1522321466-21755-2-git-send-email-mgautam@codeaurora.org>
+In-Reply-To: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
+References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a respin of v1 with minor updates since this series is still
-needed for most multimedia usescases to work on msm8996.
+The USB and PCIE pipe clocks are sourced from external clocks
+inside the QMP USB/PCIE PHYs. Enabling or disabling of PIPE RCG
+clocks is dependent on PHY initialization sequence hence
+update halt_check to BRANCH_HALT_DELAY for these clocks so
+that clock status bit is not polled when enabling or disabling
+the clocks. It allows to simplify PHY client driver code which
+is both user and source of the pipe_clk and avoid error logging
+related status check on clk_disable/enable.
 
-With no bus driver to handle the mmagic bus clocks and gdscs on msm8996,
-its best to just turn them all ON at gdsc/clk driver probe and leave
-them ON thereafter. This should unblock a lot of multimedia support on
-msm8996 which rely on these to be ON and have no way to control them at
-this point. Once we do have better noc/bus management drivers in place
-we can avoid leaving these ON always and turn them ON/OFF as needed.
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-msm8996.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Rajendra Nayak (3):
-  clk: qcom: gdsc: Add support for ALWAYS_ON gdscs
-  clk: qcom: Register the gdscs before the clocks
-  clk: qcom: mmcc-msm8996: leave all mmagic gdscs and clocks always
-    enabled
-
- drivers/clk/qcom/common.c       | 32 ++++++++++++++++----------------
- drivers/clk/qcom/gcc-msm8996.c  |  2 +-
- drivers/clk/qcom/gdsc.c         |  8 ++++++++
- drivers/clk/qcom/gdsc.h         |  1 +
- drivers/clk/qcom/mmcc-msm8996.c | 22 +++++++++++-----------
- 5 files changed, 37 insertions(+), 28 deletions(-)
-
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 5d74512..336d12d 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -1418,6 +1418,7 @@ enum {
+ 
+ static struct clk_branch gcc_usb3_phy_pipe_clk = {
+ 	.halt_reg = 0x50004,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x50004,
+ 		.enable_mask = BIT(0),
+@@ -2472,6 +2473,7 @@ enum {
+ 
+ static struct clk_branch gcc_pcie_0_pipe_clk = {
+ 	.halt_reg = 0x6b018,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x6b018,
+ 		.enable_mask = BIT(0),
+@@ -2547,6 +2549,7 @@ enum {
+ 
+ static struct clk_branch gcc_pcie_1_pipe_clk = {
+ 	.halt_reg = 0x6d018,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x6d018,
+ 		.enable_mask = BIT(0),
+@@ -2622,6 +2625,7 @@ enum {
+ 
+ static struct clk_branch gcc_pcie_2_pipe_clk = {
+ 	.halt_reg = 0x6e018,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x6e018,
+ 		.enable_mask = BIT(0),
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
