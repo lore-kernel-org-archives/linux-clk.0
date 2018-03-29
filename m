@@ -1,63 +1,44 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:57864 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752163AbeCMJjZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Mar 2018 05:39:25 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5250: Add missing clocks for FIMC LITE
- SYSMMU devices
-Date: Tue, 13 Mar 2018 10:39:08 +0100
-Message-id: <20180313093908.25389-1-m.szyprowski@samsung.com>
-References: <CGME20180313093920eucas1p206d31e1de5f30a8ad1b624527d4ccab5@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1522265176-33226-5-git-send-email-biju.das@bp.renesas.com>
+References: <1522265176-33226-1-git-send-email-biju.das@bp.renesas.com> <1522265176-33226-5-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Mar 2018 11:11:55 +0200
+Message-ID: <CAMuHMdU6Mv2AL5qRJ4RrkEWGrVpU-c5J7-uNAeLviDo0g+m8Xw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] clk: renesas: cpg-mssr: Add r8a77470 support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-FIMC LITE SYSMMU device are defined in exynos5250.dtsi, but clocks for
-them are not instantiated by Exynos5250 clock provider driver. Add
-needed definitions for those clocks to fix IOMMU probe failure:
+Hi Biju,
 
-ERROR: could not get clock /soc/sysmmu@13c40000:sysmmu(0)
-exynos-sysmmu 13c40000.sysmmu: Failed to get device clock(s)!
-exynos-sysmmu: probe of 13c40000.sysmmu failed with error -38
-ERROR: could not get clock /soc/sysmmu@13c50000:sysmmu(0)
-exynos-sysmmu 13c50000.sysmmu: Failed to get device clock(s)!
-exynos-sysmmu: probe of 13c50000.sysmmu failed with error -38
+On Wed, Mar 28, 2018 at 9:26 PM, Biju Das <biju.das@bp.renesas.com> wrote:
+> Add RZ/G1C (R8A77470) Clock Pulse Generator / Module Standby and Software
+> Reset support.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
+> V1->V2:
+> * incorporated geert's review comment
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5250.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thanks for the update, will queue in clk-renesas-for v4.18.
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 06e5ddcb30db..347fd80c351b 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -561,6 +561,8 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 		0),
- 	GATE(CLK_GSCL3, "gscl3", "mout_aclk266_gscl_sub", GATE_IP_GSCL, 3, 0,
- 		0),
-+	GATE(CLK_CAMIF_TOP, "camif_top", "mout_aclk266_gscl_sub",
-+			GATE_IP_GSCL, 4, 0, 0),
- 	GATE(CLK_GSCL_WA, "gscl_wa", "div_gscl_wa", GATE_IP_GSCL, 5, 0, 0),
- 	GATE(CLK_GSCL_WB, "gscl_wb", "div_gscl_wb", GATE_IP_GSCL, 6, 0, 0),
- 	GATE(CLK_SMMU_GSCL0, "smmu_gscl0", "mout_aclk266_gscl_sub",
-@@ -571,6 +573,10 @@ static const struct samsung_gate_clock exynos5250_gate_clks[] __initconst = {
- 			GATE_IP_GSCL, 9, 0, 0),
- 	GATE(CLK_SMMU_GSCL3, "smmu_gscl3", "mout_aclk266_gscl_sub",
- 			GATE_IP_GSCL, 10, 0, 0),
-+	GATE(CLK_SMMU_FIMC_LITE0, "smmu_fimc_lite0", "mout_aclk266_gscl_sub",
-+			GATE_IP_GSCL, 11, 0, 0),
-+	GATE(CLK_SMMU_FIMC_LITE1, "smmu_fimc_lite1", "mout_aclk266_gscl_sub",
-+			GATE_IP_GSCL, 12, 0, 0),
- 
- 
- 	GATE(CLK_MFC, "mfc", "mout_aclk333_sub", GATE_IP_MFC, 0, 0, 0),
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.15.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
