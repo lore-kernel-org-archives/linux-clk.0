@@ -1,66 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f173.google.com ([74.125.82.173]:34169 "EHLO
-        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751806AbeCXA1Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Mar 2018 20:27:16 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180323094937.5wx5exah6tfyl43u@fsr-ub1664-175>
-References: <20180323094937.5wx5exah6tfyl43u@fsr-ub1664-175>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 23 Mar 2018 21:27:14 -0300
-Message-ID: <CAOMZO5Da0GbkC1vjjbyNmG77gvd-KO8HC-2oBYxAffNHCtEDKw@mail.gmail.com>
-Subject: Re: Return checks for clock calls
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Adriana Reus <adriana.reus@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "abelvesa@linux.com" <abelvesa@linux.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/5] clk: renesas: r8a7792: Fix LB clock divider
+Date: Thu, 29 Mar 2018 19:33:09 +0200
+Message-Id: <1522344790-20061-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Abel,
+The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+the LB clock divider depends on the value of the MD18 pin.
 
-On Fri, Mar 23, 2018 at 6:49 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
-> Hi Shawn, Fabio,
->
-> I'm trying to get the imx clks changes upstreamed. To that end, I reached this
-> old commit that adds some wrappers over the generic clk API. Here is the commit
-> message:
->
->         ARM: imx6: add return check for clock calls
->
->         There are a bunch of clk_enable_prepare, clk_set_parent and clk_set_rate
->         calls in imx6 clock driver's initialization.  They are called without
->         retunr check.  If there is something going wrong with the calls, they
->         will just fail silently.
->
->         The patch creates a set of helper functions imx_clk_enable_prepare,
->         imx_clk_set_parent and imx_clk_set_rate, and use them instead from clock
->         initialization to check the return and print error message to tell
->         failures if any.
->
->         Signed-off-by: Shawn Guo <shawn.guo@freescale.com>
->
-> And it adds the imx_clk_set_parent, imx_clk_prepare_enable and
-> imx_clk_set_rate which basically just print an error message if the generic
-> functions have failed.
->
-> The only plus of these wrappers is that we at least see that the generic
-> functions have failed, but the behaviour is not changed in any way.
->
-> Question is, do we want this upstreamed considering that we need to replace the
-> calls throughout all the older imx socs ?
+On R-Car V2H, the LB clock divider is fixed to 24.  Hence model the
+clock as a fixed factor clock instead.
 
-IMHO we should not introduce these new helper functions.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a7792-cpg-mssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-We can simply explicitly check for errors with the existing clock
-functions when needed.
+diff --git a/drivers/clk/renesas/r8a7792-cpg-mssr.c b/drivers/clk/renesas/r8a7792-cpg-mssr.c
+index 609a540804965c40..8b66e6f4b4584de1 100644
+--- a/drivers/clk/renesas/r8a7792-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7792-cpg-mssr.c
+@@ -53,7 +53,6 @@ static const struct cpg_core_clk r8a7792_core_clks[] __initconst = {
+ 	DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
+ 
+ 	/* Core Clock Outputs */
+-	DEF_BASE("lb",   R8A7792_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
+ 	DEF_BASE("qspi", R8A7792_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
+ 
+ 	DEF_FIXED("z",      R8A7792_CLK_Z,     CLK_PLL0,          1, 1),
+@@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7792_core_clks[] __initconst = {
+ 	DEF_FIXED("hp",     R8A7792_CLK_HP,    CLK_PLL1,         12, 1),
+ 	DEF_FIXED("i",      R8A7792_CLK_I,     CLK_PLL1,          3, 1),
+ 	DEF_FIXED("b",      R8A7792_CLK_B,     CLK_PLL1,         12, 1),
++	DEF_FIXED("lb",     R8A7792_CLK_B,     CLK_PLL1,         24, 1),
+ 	DEF_FIXED("p",      R8A7792_CLK_P,     CLK_PLL1,         24, 1),
+ 	DEF_FIXED("cl",     R8A7792_CLK_CL,    CLK_PLL1,         48, 1),
+ 	DEF_FIXED("m2",     R8A7792_CLK_M2,    CLK_PLL1,          8, 1),
+-- 
+2.7.4
