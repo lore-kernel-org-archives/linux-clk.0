@@ -1,111 +1,68 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v4 10/14] dt-bindings: Add support for SAW documentation
-Date: Fri, 30 Mar 2018 00:26:43 +0300
-Message-Id: <1522358807-10413-11-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] clk: ti: fix flag space conflict with clkctrl clocks
+From: Tero Kristo <t-kristo@ti.com>
+To: <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <tony@atomide.com>
+CC: <arnd@arndb.de>, <linux-arm-kernel@lists.infradead.org>
+References: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
+Message-ID: <0da17b8f-62af-1634-9dea-85445d28d587@ti.com>
+Date: Thu, 29 Mar 2018 21:25:07 +0300
+MIME-Version: 1.0
+In-Reply-To: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for SAW controlled regulators in 8x96.
-Document it.
+On 27/03/18 20:47, Tero Kristo wrote:
+> The introduction of support for CLK_SET_RATE_PARENT flag for clkctrl
+> clocks used a generic clock flag, which causes a conflict with the
+> rest of the clkctrl flags, namely the NO_IDLEST flag. This can cause
+> boot failures on certain platforms where this flag is introduced, by
+> omitting the wait for the clockctrl module to be fully enabled before
+> proceeding with rest of the code.
+> 
+> Fix this by moving all the clkctrl specific flags to their own bit-range.
+> 
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Fixes: 49159a9dc3da ("clk: ti: add support for CLK_SET_RATE_PARENT flag")
+> Reported-by: Christophe Lyon <christophe.lyon@linaro.org>
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+Stephen, can you pick this up as a late fix?
 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-index 57d2c65..406f2e5 100644
---- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-@@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
- 	Definition: Reference to regulator supplying the input pin, as
- 		    described in the data sheet.
- 
-+- qcom,saw-reg:
-+	Usage: optional
-+	Value type: <phandle>
-+	Description: Reference to syscon node defining the SAW registers.
-+
- 
- The regulator node houses sub-nodes for each regulator within the device. Each
- sub-node is identified using the node's name, with valid values listed for each
-@@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
- 			2 = 0.55 uA
- 			3 = 0.75 uA
- 
-+- qcom,saw-slave:
-+	Usage: optional
-+	Value type: <boo>
-+	Description: SAW controlled gang slave. Will not be configured.
-+
-+- qcom,saw-leader:
-+	Usage: optional
-+	Value type: <boo>
-+	Description: SAW controlled gang leader. Will be configured as
-+		     SAW regulator.
-+
- Example:
- 
- 	regulators {
-@@ -221,3 +237,32 @@ Example:
- 
- 		....
- 	};
-+
-+Example 2:
-+
-+	saw3: syscon@9A10000 {
-+		compatible = "syscon";
-+		reg = <0x9A10000 0x1000>;
-+	};
-+
-+	...
-+
-+	spm-regulators {
-+		compatible = "qcom,pm8994-regulators";
-+		qcom,saw-reg = <&saw3>;
-+		s8 {
-+			qcom,saw-slave;
-+		};
-+		s9 {
-+			qcom,saw-slave;
-+		};
-+		s10 {
-+			qcom,saw-slave;
-+		};
-+		pm8994_s11_saw: s11 {
-+			qcom,saw-leader;
-+			regulator-always-on;
-+			regulator-min-microvolt = <900000>;
-+			regulator-max-microvolt = <1140000>;
-+		};
-+	};
--- 
-1.9.1
+-Tero
+
+> ---
+>   drivers/clk/ti/clock.h | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+> index 90b86aa..b582780 100644
+> --- a/drivers/clk/ti/clock.h
+> +++ b/drivers/clk/ti/clock.h
+> @@ -76,6 +76,11 @@ enum {
+>   #define CLKF_CORE			(1 << 9)
+>   #define CLKF_J_TYPE			(1 << 10)
+>   
+> +/* CLKCTRL flags */
+> +#define CLKF_SW_SUP			BIT(5)
+> +#define CLKF_HW_SUP			BIT(6)
+> +#define CLKF_NO_IDLEST			BIT(7)
+> +
+>   #define CLK(dev, con, ck)		\
+>   	{				\
+>   		.lk = {			\
+> @@ -185,10 +190,6 @@ struct omap_clkctrl_data {
+>   extern const struct omap_clkctrl_data dm814_clkctrl_data[];
+>   extern const struct omap_clkctrl_data dm816_clkctrl_data[];
+>   
+> -#define CLKF_SW_SUP	BIT(0)
+> -#define CLKF_HW_SUP	BIT(1)
+> -#define CLKF_NO_IDLEST	BIT(2)
+> -
+>   typedef void (*ti_of_clk_init_cb_t)(void *, struct device_node *);
+>   
+>   struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
+> 
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
