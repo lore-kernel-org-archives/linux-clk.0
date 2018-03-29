@@ -1,188 +1,133 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1521800670.3406.1.camel@pengutronix.de>
-Subject: Re: [PATCH v2 1/8] reset: modify the way reset lookup works for
- board files
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>, Kevin
- Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>,  Russell King <linux@armlinux.org.uk>, David
- Lechner <david@lechnology.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen
- <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, Bartosz Golaszewski
- <bgolaszewski@baylibre.com>
-Date: Fri, 23 Mar 2018 11:24:30 +0100
-In-Reply-To: <20180323093609.24576-2-brgl@bgdev.pl>
-References: <20180323093609.24576-1-brgl@bgdev.pl>
-	 <20180323093609.24576-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v4 05/14] clk: qcom: cpu-8996: Add support to switch to alternate PLL
+Date: Fri, 30 Mar 2018 00:26:38 +0300
+Message-Id: <1522358807-10413-6-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bartosz,
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-On Fri, 2018-03-23 at 10:36 +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
-> introduced reset control lookup mechanism for boards that still use
-> board files.
-> 
-> The routine used to register lookup entries takes the corresponding
-> reset_controlled_dev structure as argument.
-> 
-> It's been determined however that for the first user of this new
-> interface - davinci psc driver - it will be easier to register the
-> lookup entries using the reset controller device name.
+Each of the CPU clusters on msm8996 are powered via a primary
+PLL and a secondary PLL. The primary PLL is what drives the
+CPU clk, except for times when we are reprogramming the PLL
+itself, when we temporarily switch to an alternate PLL.
+Use clock rate change notifiers to support this.
 
-Thank you, this is what I expected in the first place.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-> This patch changes the way lookup entries are added.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/reset/core.c             | 33 +++++++++++++++++++++++++++++----
->  include/linux/reset-controller.h |  8 +++++---
->  2 files changed, 34 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 06fa4907afc4..f37048e55336 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -153,11 +153,11 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
->  
->  /**
->   * reset_controller_add_lookup - register a set of lookup entries
-> - * @rcdev: initialized reset controller device owning the reset line
-> + * @provider: name of the reset controller provider
->   * @lookup: array of reset lookup entries
->   * @num_entries: number of entries in the lookup array
->   */
-> -void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-> +void reset_controller_add_lookup(const char *provider,
-
-Is there any reason not to drop the provider parameter completely?
-I'd just let the user add the provider device id to the lookup, see
-below.
-
->  				 struct reset_control_lookup *lookup,
->  				 unsigned int num_entries)
->  {
-> @@ -174,7 +174,7 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
->  			continue;
->  		}
->  
-> -		entry->rcdev = rcdev;
-> +		entry->provider = provider;
->  		list_add_tail(&entry->list, &reset_lookup_list);
->  	}
->  	mutex_unlock(&reset_lookup_mutex);
-> @@ -526,11 +526,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
->  }
->  EXPORT_SYMBOL_GPL(__of_reset_control_get);
->  
-> +static struct reset_controller_dev *
-> +__reset_controller_by_name(const char *name)
-> +{
-> +	struct reset_controller_dev *rcdev;
-> +
-> +	lockdep_assert_held(&reset_list_mutex);
-> +
-> +	list_for_each_entry(rcdev, &reset_controller_list, list) {
-> +		if (!rcdev->dev)
-> +			continue;
-> +
-> +		if (!strcmp(name, dev_name(rcdev->dev)))
-> +			return rcdev;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  static struct reset_control *
->  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
->  				bool shared, bool optional)
->  {
->  	const struct reset_control_lookup *lookup;
-> +	struct reset_controller_dev *rcdev;
->  	const char *dev_id = dev_name(dev);
->  	struct reset_control *rstc = NULL;
->  
-> @@ -547,7 +566,13 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
->  		    ((con_id && lookup->con_id) &&
->  		     !strcmp(con_id, lookup->con_id))) {
->  			mutex_lock(&reset_list_mutex);
-> -			rstc = __reset_control_get_internal(lookup->rcdev,
-> +			rcdev = __reset_controller_by_name(lookup->provider);
-> +			if (!rcdev) {
-> +				mutex_unlock(&reset_list_mutex);
-> +				continue;
-
-What is the reason to continue here? If we've found a matching lookup
-that contains a rcdev dev_id for which there is no reset controller,
-shouldn't we just return an error?
-
-> +			}
-> +
-> +			rstc = __reset_control_get_internal(rcdev,
->  							    lookup->index,
->  							    shared);
->  			mutex_unlock(&reset_list_mutex);
-> diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
-> index 25698f6c1fae..1a6c25d825d3 100644
-> --- a/include/linux/reset-controller.h
-> +++ b/include/linux/reset-controller.h
-> @@ -30,14 +30,14 @@ struct of_phandle_args;
->   * struct reset_control_lookup - represents a single lookup entry
->   *
->   * @list: internal list of all reset lookup entries
-> - * @rcdev: reset controller device controlling this reset line
-> + * @provider: name of the reset controller device controlling this reset line
->   * @index: ID of the reset controller in the reset controller device
->   * @dev_id: name of the device associated with this reset line
->   * @con_id name of the reset line (can be NULL)
->   */
->  struct reset_control_lookup {
->  	struct list_head list;
-> -	struct reset_controller_dev *rcdev;
-> +	const char *provider;
-
-Looks good to me, but I'd also extend RESET_LOOKUP to set the provider
-instead of passing it to the reset_controller_add_lookup function,
-similarly to PWM_LOOKUP:
-
-#define RESET_LOOKUP(_provider, _index, _dev_id, _con_id)
-
->  	unsigned int index;
->  	const char *dev_id;
->  	const char *con_id;
-> @@ -57,6 +57,7 @@ struct reset_control_lookup {
->   * @owner: kernel module of the reset controller driver
->   * @list: internal list of reset controller devices
->   * @reset_control_head: head of internal list of requested reset controls
-> + * @dev: corresponding driver model device struct
->   * @of_node: corresponding device tree node as phandle target
->   * @of_reset_n_cells: number of cells in reset line specifiers
->   * @of_xlate: translation function to translate from specifier as found in the
-> @@ -68,6 +69,7 @@ struct reset_controller_dev {
->  	struct module *owner;
->  	struct list_head list;
->  	struct list_head reset_control_head;
-> +	struct device *dev;
->  	struct device_node *of_node;
->  	int of_reset_n_cells;
->  	int (*of_xlate)(struct reset_controller_dev *rcdev,
-> @@ -82,7 +84,7 @@ struct device;
->  int devm_reset_controller_register(struct device *dev,
->  				   struct reset_controller_dev *rcdev);
->  
-> -void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-> +void reset_controller_add_lookup(const char *provider,
->  				 struct reset_control_lookup *lookup,
->  				 unsigned int num_entries);
->  
-
-regards
-Philipp
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index f096410..12585b1 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -62,6 +62,7 @@
+  * detect voltage droops. We do not add support for ACD as yet.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+@@ -188,10 +189,14 @@ struct clk_cpu_8996_mux {
+ 	u32	reg;
+ 	u8	shift;
+ 	u8	width;
++	struct notifier_block nb;
+ 	struct clk_hw	*pll;
+ 	struct clk_regmap clkr;
+ };
+ 
++#define to_clk_cpu_8996_mux_nb(_nb) \
++	container_of(_nb, struct clk_cpu_8996_mux, nb)
++
+ static inline
+ struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
+ {
+@@ -237,6 +242,26 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	return 0;
+ }
+ 
++int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
++			void *data)
++{
++	int ret;
++	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		break;
++	case POST_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		break;
++	default:
++		ret = 0;
++		break;
++	}
++
++	return notifier_from_errno(ret);
++};
+ const struct clk_ops clk_cpu_8996_mux_ops = {
+ 	.set_parent = clk_cpu_8996_mux_set_parent,
+ 	.get_parent = clk_cpu_8996_mux_get_parent,
+@@ -280,6 +305,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -299,6 +325,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -357,6 +384,12 @@ struct clk_regmap *clks[] = {
+ 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+ 
++	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
++	if (ret)
++		return ret;
++
++	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
++
+ 	return ret;
+ }
+ 
+-- 
+1.9.1
