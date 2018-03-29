@@ -1,36 +1,65 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Thierry Reding <thierry.reding@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180312070430.GA23060@ulmo>
-Cc: Dmitry Osipenko <digetx@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <699ce67980d71fd315085ea9785ee6213e0772cb.1515589507.git.digetx@gmail.com>
- <cbf3e9ff-f7e1-32c2-546d-85fd198c2a3b@gmail.com>
- <1487f4a9-d924-3366-c86a-f1bd33ebb1bf@gmail.com> <20180308144437.GJ3529@ulmo>
- <152061678678.13890.15810434310624804730@swboyd.mtv.corp.google.com>
- <20180312070430.GA23060@ulmo>
-Message-ID: <152089530498.147033.16290802622553476545@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 1/3] clk: tegra: Mark HCLK, SCLK and EMC as critical
-Date: Mon, 12 Mar 2018 15:55:04 -0700
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 2/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
+Date: Thu, 29 Mar 2018 11:47:53 +0530
+Message-Id: <1522304274-18989-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
+References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Thierry Reding (2018-03-12 00:04:30)
-> On Fri, Mar 09, 2018 at 09:33:06AM -0800, Stephen Boyd wrote:
-> > =
+From: Amit Nischal <anischal@codeaurora.org>
 
-> > Are you going to send us a PR at some point?
-> =
+Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
+devices would be used for communicating resource state requests to control
+the clocks managed by RPMh.
 
-> Yes, I was going to let the patches cook a little in linux-next and send
-> a PR by the end of the week. Does that sound okay?
-> =
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,rpmh.txt        | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh.txt
 
-
-Perfect! Thanks.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
+new file mode 100644
+index 0000000..8222c88
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
+@@ -0,0 +1,22 @@
++Qualcomm Technologies, Inc. RPMh Clocks
++-------------------------------------------------------
++
++Resource Power Manager Hardened (RPMh) manages shared resources on
++some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
++other hardware subsystems via RSC to control clocks.
++
++Required properties :
++- compatible : shall contain "qcom,rpmh-clk-sdm845"
++
++- #clock-cells : must contain 1
++
++Example :
++
++#include <dt-bindings/clock/qcom,rpmh.h>
++
++	&apps_rsc {
++		clock_rpmh: qcom,rpmhclk {
++		compatible = "qcom,rpmh-clk-sdm845";
++		#clock-cells = <1>;
++		};
++	};
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
