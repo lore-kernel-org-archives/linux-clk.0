@@ -1,49 +1,59 @@
-Return-Path: <jiaxun.yang@flygoat.com>
-Message-ID: <1520437971.3731.22.camel@flygoat.com>
-Subject: Re: [RFC 3/4] MIPS: Ingenic: Initial X1000 SoC support
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-To: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>, James Hogan
-	 <jhogan@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Ralf Baechle <ralf@linux-mips.org>, Michael Turquette
- <mturquette@baylibre.com>, sboyd@codeaurora.org,  "open list:OPEN FIRMWARE
- AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
- Linux-MIPS <linux-mips@linux-mips.org>,  linux-clk@vger.kernel.org, open
- list <linux-kernel@vger.kernel.org>, Paul Cercueil <paul@crapouillou.net>,
- Mathieu Malaterre <malat@debian.org>, Dominik Peklo <dom.peklo@gmail.com>
-Date: Wed, 07 Mar 2018 23:52:51 +0800
-In-Reply-To: <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
-References: <20170927151527.25570-1-prasannatsmkumar@gmail.com>
-	 <20170927151527.25570-4-prasannatsmkumar@gmail.com>
-	 <20180306000832.GL4197@saruman>
-	 <CANc+2y5_R5xYQuLbW7NAjO4mcW5RNn3Da77tAhYU5zj=0rkBDQ@mail.gmail.com>
-	 <20180307143541.GN4197@saruman>
-	 <CANc+2y5wsvGWszu3pePYhs2wb1_AgPdjG+ugfOCzbZVfVHDMvw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v4 02/14] clk: qcom: Make clk_alpha_pll_configure available to modules
+Date: Fri, 30 Mar 2018 00:26:35 +0300
+Message-Id: <1522358807-10413-3-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2018-03-07三的 20:35 +0530，PrasannaKumar Muralidharan写道：
-> Hi James,
-> 
-> Seems Jiaxun is interested in the board and is willing to help.
-> 
-> I have been told that Ingenic is focusing on IoT market and X1000 is
-> intended for IoT segment. I think that they would be selling several
-> 100Ks of chip over the coming years. But I feel Ingenic spends time
-> only on maintaining their Linux port which is usually based on very
-> old kernel version.
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Ingenic is going to release their XBrust2 core with it's products such
-as X2000 a few days later. Witch is a pure MIPS64r5 with MXU2(A
-superset of MIPS's MSA SIMD instruction set). The newest kernel port of
-X1000 maintain by Ingenic is based on Linux-4.4 [1]. After communicated
-with Ingenic, they said they are forcusing on China domestic market.
-But they're looking for partners to enter foriegn market. 
+Allow clk_alpha_pll_configure to be called from loadable
+kernel modules.
 
-[1] https://pan.baidu.com/s/1o8MeYts (Well you can download from this
-Chinese website, ingenic have a gerrit but I don't have access to it.
-As my experience, it's hard to develop on Chinese-made chips wihout
-reading Chinese documents.)  
-> 
-> > 
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 6d04cd9..5c962af 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -208,6 +208,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	if (pll->flags & SUPPORTS_FSM_MODE)
+ 		qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
+ }
++EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
+ 
+ static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+ {
+-- 
+1.9.1
