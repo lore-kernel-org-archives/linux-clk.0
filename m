@@ -1,314 +1,256 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 04/42] clk: davinci: Add platform information for TI DA850 PLL
-Date: Thu, 15 Mar 2018 21:52:20 -0500
-Message-Id: <1521168778-27236-5-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v4 12/14] cpufreq: Add Kryo CPU scaling driver
+Date: Fri, 30 Mar 2018 00:26:45 +0300
+Message-Id: <1522358807-10413-13-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds platform-specific declarations for the PLL clocks on TI DA850/
-OMAP-L138/AM18XX SoCs.
+In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+the CPU ferequencies subset and voltage value of each OPP varies
+based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+defines the voltage and frequency value based on the msm-id in SMEM
+and speedbin blown in the efuse combination.
+The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+to provide the OPP framework with required information.
+This is used to determine the voltage and frequency value for each OPP of
+operating-points-v2 table when it is parsed by the OPP framework.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
+ drivers/cpufreq/Kconfig.arm          |  11 +++
+ drivers/cpufreq/Makefile             |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+ drivers/cpufreq/qcom-cpufreq-kryo.c  | 147 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 162 insertions(+)
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
 
-v8 changes:
-- drop __init and __initconst attributes
-- add a clkdev lookup for each SYSCLK
-
-v7 changes:
-- include clkdev lookup registration here instead of in mach-davinci
-- split registration functions for each PLL
-- Add platform_device_id lookup
-
-v6 changes:
-- Added da850_pll{0,1}_info with controller-specific information
-- Added OBSCLK data
-- Add empty lines between function calls
-
-
- drivers/clk/davinci/Makefile    |   1 +
- drivers/clk/davinci/pll-da850.c | 212 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/davinci/pll.c       |   4 +
- drivers/clk/davinci/pll.h       |   5 +
- 4 files changed, 222 insertions(+)
- create mode 100644 drivers/clk/davinci/pll-da850.c
-
-diff --git a/drivers/clk/davinci/Makefile b/drivers/clk/davinci/Makefile
-index 9061e19..13049d4 100644
---- a/drivers/clk/davinci/Makefile
-+++ b/drivers/clk/davinci/Makefile
-@@ -3,4 +3,5 @@
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-y += pll.o
- obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= pll-da830.o
-+obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pll-da850.o
- endif
-diff --git a/drivers/clk/davinci/pll-da850.c b/drivers/clk/davinci/pll-da850.c
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 7f56fe5..71350e2 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -134,6 +134,17 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 	depends on ARCH_OMAP2PLUS
+ 	default ARCH_OMAP2PLUS
+ 
++config ARM_QCOM_CPUFREQ_KRYO
++	tristate "Qualcomm Technologies, Inc. Kryo based"
++	depends on QCOM_QFPROM
++	depends on QCOM_SMEM
++	select PM_OPP
++	help
++	  This adds the CPUFreq driver for
++	  Qualcomm Technologies, Inc. Kryo SoC based boards.
++
++	  If in doubt, say N.
++
+ config ARM_S3C_CPUFREQ
+ 	bool
+ 	help
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 8d24ade..fb4a2ec 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 3b585e4..88e8a6e 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -127,6 +127,9 @@
+ 	{ .compatible = "ti,am43", },
+ 	{ .compatible = "ti,dra7", },
+ 
++	{ .compatible = "qcom,msm8996", },
++	{ .compatible = "qcom,apq8096", },
++
+ 	{ }
+ };
+ 
+diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
 new file mode 100644
-index 0000000..2a038b7
+index 0000000..3cb51f8
 --- /dev/null
-+++ b/drivers/clk/davinci/pll-da850.c
-@@ -0,0 +1,212 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PLL clock descriptions for TI DA850/OMAP-L138/AM18XX
++++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+@@ -0,0 +1,147 @@
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved.
 + *
-+ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * SPDX-License-Identifier: GPL-2.0
 + */
 +
-+#include <linux/bitops.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
++#include <linux/cpu.h>
++#include <linux/err.h>
 +#include <linux/init.h>
++#include <linux/io.h>
 +#include <linux/kernel.h>
-+#include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/module.h>
++#include <linux/nvmem-consumer.h>
 +#include <linux/of.h>
-+#include <linux/types.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/slab.h>
++#include <linux/soc/qcom/smem.h>
 +
-+#include "pll.h"
++#define MSM_ID_SMEM	137
++#define SILVER_LEAD	0
++#define GOLD_LEAD	2
 +
-+#define OCSEL_OCSRC_OSCIN		0x14
-+#define OCSEL_OCSRC_PLL0_SYSCLK(n)	(0x16 + (n))
-+#define OCSEL_OCSRC_PLL1_OBSCLK		0x1e
-+#define OCSEL_OCSRC_PLL1_SYSCLK(n)	(0x16 + (n))
-+
-+static const struct davinci_pll_clk_info da850_pll0_info = {
-+	.name = "pll0",
-+	.unlock_reg = CFGCHIP(0),
-+	.unlock_mask = CFGCHIP0_PLL_MASTER_LOCK,
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 4,
-+	.pllm_max = 32,
-+	.pllout_min_rate = 300000000,
-+	.pllout_max_rate = 600000000,
-+	.flags = PLL_HAS_CLKMODE | PLL_HAS_PREDIV | PLL_HAS_POSTDIV |
-+		 PLL_HAS_EXTCLKSRC,
++enum _msm_id {
++	MSM8996V3 = 0xF6ul,
++	APQ8096V3 = 0x123ul,
++	MSM8996SG = 0x131ul,
++	APQ8096SG = 0x138ul,
 +};
 +
-+/*
-+ * NB: Technically, the clocks flagged as SYSCLK_FIXED_DIV are "fixed ratio",
-+ * meaning that we could change the divider as long as we keep the correct
-+ * ratio between all of the clocks, but we don't support that because there is
-+ * currently not a need for it.
-+ */
-+
-+SYSCLK(1, pll0_sysclk1, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(2, pll0_sysclk2, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(3, pll0_sysclk3, pll0_pllen, 5, 0);
-+SYSCLK(4, pll0_sysclk4, pll0_pllen, 5, SYSCLK_FIXED_DIV);
-+SYSCLK(5, pll0_sysclk5, pll0_pllen, 5, 0);
-+SYSCLK(6, pll0_sysclk6, pll0_pllen, 5, SYSCLK_ARM_RATE | SYSCLK_FIXED_DIV);
-+SYSCLK(7, pll0_sysclk7, pll0_pllen, 5, 0);
-+
-+static const char * const da850_pll0_obsclk_parent_names[] = {
-+	"oscin",
-+	"pll0_sysclk1",
-+	"pll0_sysclk2",
-+	"pll0_sysclk3",
-+	"pll0_sysclk4",
-+	"pll0_sysclk5",
-+	"pll0_sysclk6",
-+	"pll0_sysclk7",
-+	"pll1_obsclk",
++enum _msm8996_version {
++	MSM8996_V3,
++	MSM8996_SG,
++	NUM_OF_MSM8996_VERSIONS,
 +};
 +
-+static u32 da850_pll0_obsclk_table[] = {
-+	OCSEL_OCSRC_OSCIN,
-+	OCSEL_OCSRC_PLL0_SYSCLK(1),
-+	OCSEL_OCSRC_PLL0_SYSCLK(2),
-+	OCSEL_OCSRC_PLL0_SYSCLK(3),
-+	OCSEL_OCSRC_PLL0_SYSCLK(4),
-+	OCSEL_OCSRC_PLL0_SYSCLK(5),
-+	OCSEL_OCSRC_PLL0_SYSCLK(6),
-+	OCSEL_OCSRC_PLL0_SYSCLK(7),
-+	OCSEL_OCSRC_PLL1_OBSCLK,
-+};
-+
-+static const struct davinci_pll_obsclk_info da850_pll0_obsclk_info = {
-+	.name = "pll0_obsclk",
-+	.parent_names = da850_pll0_obsclk_parent_names,
-+	.num_parents = ARRAY_SIZE(da850_pll0_obsclk_parent_names),
-+	.table = da850_pll0_obsclk_table,
-+	.ocsrc_mask = GENMASK(4, 0),
-+};
-+
-+int da850_pll0_init(struct device *dev, void __iomem *base)
++static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
 +{
-+	struct clk *clk;
++	size_t len;
++	u32 *msm_id;
++	enum _msm8996_version version;
 +
-+	davinci_pll_clk_register(dev, &da850_pll0_info, "ref_clk", base);
++	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
++	/* The first 4 bytes are format, next to them is the actual msm-id */
++	msm_id++;
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk1, base);
-+	clk_register_clkdev(clk, "pll0_sysclk1", "da850-psc0");
++	switch ((enum _msm_id)*msm_id) {
++	case MSM8996V3:
++	case APQ8096V3:
++		version = MSM8996_V3;
++		break;
++	case MSM8996SG:
++	case APQ8096SG:
++		version = MSM8996_SG;
++		break;
++	default:
++		version = NUM_OF_MSM8996_VERSIONS;
++	}
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk2, base);
-+	clk_register_clkdev(clk, "pll0_sysclk2", "da850-psc0");
-+	clk_register_clkdev(clk, "pll0_sysclk2", "da850-psc1");
-+	clk_register_clkdev(clk, "pll0_sysclk2", "da850-async3-clksrc");
++	return version;
++}
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk3, base);
-+	clk_register_clkdev(clk, "pll0_sysclk3", "da850-async1-clksrc");
++static int __init qcom_cpufreq_kryo_driver_init(void)
++{
++	struct platform_device *pdev;
++	struct device *cpu_dev;
++	struct device_node *np;
++	struct nvmem_cell *speedbin_nvmem;
++	enum _msm8996_version msm8996_version;
++	u8 *speedbin;
++	size_t len;
++	int ret;
++	u32 versions;
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk4, base);
-+	clk_register_clkdev(clk, "pll0_sysclk4", "da850-psc0");
-+	clk_register_clkdev(clk, "pll0_sysclk4", "da850-psc1");
++	cpu_dev = get_cpu_device(SILVER_LEAD);
++	if (IS_ERR_OR_NULL(cpu_dev))
++		return PTR_ERR(cpu_dev);
 +
-+	davinci_pll_sysclk_register(dev, &pll0_sysclk5, base);
++	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
++	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
++		dev_err(cpu_dev, "Not Snapdragon 820/821!");
++		return -ENODEV;
++        }
 +
-+	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk6, base);
-+	clk_register_clkdev(clk, "pll0_sysclk6", "da850-psc0");
++	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
++	if (IS_ERR_OR_NULL(np))
++		return PTR_ERR(np);
 +
-+	davinci_pll_sysclk_register(dev, &pll0_sysclk7, base);
++	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
++		ret = -ENOENT;
++		goto free_np;
++	}
 +
-+	davinci_pll_auxclk_register(dev, "pll0_auxclk", base);
++	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
++	if (IS_ERR(speedbin_nvmem)) {
++		ret = PTR_ERR(speedbin_nvmem);
++		dev_err(cpu_dev, "Could not get nvmem cell: %d\n", ret);
++		goto free_np;
++	}
 +
-+	clk = clk_register_fixed_factor(dev, "async2", "pll0_auxclk",
-+					CLK_IS_CRITICAL, 1, 1);
++	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
 +
-+	clk_register_clkdev(clk, NULL, "i2c_davinci.1");
-+	clk_register_clkdev(clk, "timer0", NULL);
-+	clk_register_clkdev(clk, NULL, "davinci-wdt");
++	switch (msm8996_version) {
++	case MSM8996_V3:
++		versions = 1 << (unsigned int)(*speedbin);
++		break;
++	case MSM8996_SG:
++		versions = 1 << ((unsigned int)(*speedbin) + 4);
++		break;
++	default:
++		BUG();
++		break;
++	}
 +
-+	davinci_pll_obsclk_register(dev, &da850_pll0_obsclk_info, base);
++	ret = PTR_ERR_OR_ZERO(dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
++	if (0 > ret)
++		goto free_np;
++
++	cpu_dev = get_cpu_device(GOLD_LEAD);
++	ret = PTR_ERR_OR_ZERO(dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
++
++	of_node_put(np);
++
++	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
++	if (IS_ERR(pdev)) {
++		return PTR_ERR(pdev);
++	}
 +
 +	return 0;
++
++free_np:
++	of_node_put(np);
++
++	return ret;
 +}
++late_initcall(qcom_cpufreq_kryo_driver_init);
 +
-+static const struct davinci_pll_sysclk_info *da850_pll0_sysclk_info[] = {
-+	&pll0_sysclk1,
-+	&pll0_sysclk2,
-+	&pll0_sysclk3,
-+	&pll0_sysclk4,
-+	&pll0_sysclk5,
-+	&pll0_sysclk6,
-+	&pll0_sysclk7,
-+	NULL
-+};
-+
-+int of_da850_pll0_init(struct device *dev, void __iomem *base)
-+{
-+	return of_davinci_pll_init(dev, &da850_pll0_info,
-+				   &da850_pll0_obsclk_info,
-+				   da850_pll0_sysclk_info, 7, base);
-+}
-+
-+static const struct davinci_pll_clk_info da850_pll1_info = {
-+	.name = "pll1",
-+	.unlock_reg = CFGCHIP(3),
-+	.unlock_mask = CFGCHIP3_PLL1_MASTER_LOCK,
-+	.pllm_mask = GENMASK(4, 0),
-+	.pllm_min = 4,
-+	.pllm_max = 32,
-+	.pllout_min_rate = 300000000,
-+	.pllout_max_rate = 600000000,
-+	.flags = PLL_HAS_POSTDIV,
-+};
-+
-+SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, 0);
-+SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, 0);
-+
-+static const char * const da850_pll1_obsclk_parent_names[] = {
-+	"oscin",
-+	"pll1_sysclk1",
-+	"pll1_sysclk2",
-+	"pll1_sysclk3",
-+};
-+
-+static u32 da850_pll1_obsclk_table[] = {
-+	OCSEL_OCSRC_OSCIN,
-+	OCSEL_OCSRC_PLL1_SYSCLK(1),
-+	OCSEL_OCSRC_PLL1_SYSCLK(2),
-+	OCSEL_OCSRC_PLL1_SYSCLK(3),
-+};
-+
-+static const struct davinci_pll_obsclk_info da850_pll1_obsclk_info = {
-+	.name = "pll1_obsclk",
-+	.parent_names = da850_pll1_obsclk_parent_names,
-+	.num_parents = ARRAY_SIZE(da850_pll1_obsclk_parent_names),
-+	.table = da850_pll1_obsclk_table,
-+	.ocsrc_mask = GENMASK(4, 0),
-+};
-+
-+int da850_pll1_init(struct device *dev, void __iomem *base)
-+{
-+	struct clk *clk;
-+
-+	davinci_pll_clk_register(dev, &da850_pll1_info, "oscin", base);
-+
-+	davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
-+
-+	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk2, base);
-+	clk_register_clkdev(clk, "pll1_sysclk2", "da850-async3-clksrc");
-+
-+	davinci_pll_sysclk_register(dev, &pll1_sysclk3, base);
-+
-+	davinci_pll_obsclk_register(dev, &da850_pll1_obsclk_info, base);
-+
-+	return 0;
-+}
-+
-+static const struct davinci_pll_sysclk_info *da850_pll1_sysclk_info[] = {
-+	&pll1_sysclk1,
-+	&pll1_sysclk2,
-+	&pll1_sysclk3,
-+	NULL
-+};
-+
-+int of_da850_pll1_init(struct device *dev, void __iomem *base)
-+{
-+	return of_davinci_pll_init(dev, &da850_pll1_info,
-+				   &da850_pll1_obsclk_info,
-+				   da850_pll1_sysclk_info, 3, base);
-+}
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index eaf8049..535f725 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -771,11 +771,15 @@ int of_davinci_pll_init(struct device *dev,
- }
- 
- static const struct of_device_id davinci_pll_of_match[] = {
-+	{ .compatible = "ti,da850-pll0", .data = of_da850_pll0_init },
-+	{ .compatible = "ti,da850-pll1", .data = of_da850_pll1_init },
- 	{ }
- };
- 
- static const struct platform_device_id davinci_pll_id_table[] = {
- 	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
-+	{ .name = "da850-pll0",  .driver_data = (kernel_ulong_t)da850_pll0_init  },
-+	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
- 	{ }
- };
- 
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index 0de2c61..53b8d51 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -121,4 +121,9 @@ int of_davinci_pll_init(struct device *dev,
- 
- int da830_pll_init(struct device *dev, void __iomem *base);
- 
-+int da850_pll0_init(struct device *dev, void __iomem *base);
-+int da850_pll1_init(struct device *dev, void __iomem *base);
-+int of_da850_pll0_init(struct device *dev, void __iomem *base);
-+int of_da850_pll1_init(struct device *dev, void __iomem *base);
-+
- #endif /* __CLK_DAVINCI_PLL_H___ */
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.7.4
+1.9.1
