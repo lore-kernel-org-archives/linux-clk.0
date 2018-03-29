@@ -1,102 +1,346 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1520495643-164458-1-git-send-email-shawn.lin@rock-chips.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 Mar 2018 10:40:26 +0100
-Message-ID: <CAMuHMdWVxtP4T8jVYLmmhNvQQqCUkHSF2vuoEX847pnE+Yyz_Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: Don't show the incorrect clock phase
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v4 11/14] dt: qcom: Add SAW regulator for 8x96 CPUs
+Date: Fri, 30 Mar 2018 00:26:44 +0300
+Message-Id: <1522358807-10413-12-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Mar 8, 2018 at 8:54 AM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
-> It's found that the clock phase output from clk_summary is
-> wrong compared to the actual phase reading from the register.
->
-> cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
-> sdio_sample     0        1        0 50000000          0 -22
->
-> It expose an issue that clk core, clk_core_get_phase, always
+1. Add syscon node for the SAW CPU registers
+2. Add SAW regulators gang definition for s8-s11
+3. Add voltages to the OPP tables
+4. Add the s11 SAW regulator as CPU regulator
 
-exposes
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 77 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-> return the cached core->phase which should be either updated
-> by calling clk_set_phase or directly from the first place the
-> clk was registered. When registering the clk, the core->phase
-> geting from ->get_phase() may return negative value indicating
-> error. This is quite common since the clk's phase may be highly
-> related to its praent chain, but it was temporary orphan when
-
-parent
-
-> registered, since its parent chain hadn't be ready at that time,
-> so the clk drivers decide to return error in this case. However,
-> if no clk_set_phase is called, core->phase would never be updated.
-> This is wrong, and we should try to update it when all its parent
-> chain is settled down, like the way of updating clock rate for that.
-
-chains are settled
-
-> It's not derserved to complicate the code but just update it if
-
-deserved
-
-> seeing it's a nagative number when calling clk_core_get_phase, which
-
-negative
-
-> would be much simple and enough.
->
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-> ---
->
->  drivers/clk/clk.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 0f686a9..b49e4c8 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2370,6 +2370,15 @@ static int clk_core_get_phase(struct clk_core *core)
->         int ret;
->
->         clk_prepare_lock();
-> +       /*
-> +        * clk_set_phase always set the phase in [0, 360],
-> +        * so the only reason for core->phase to be nagative
-
-a negative
-
-> +        * number is it's a error number propagated back from
-
-an error
-
-> +        * the clk drivers. So we should try to update it if
-> +        * possible.
-> +        */
-> +       if (core->phase < 0 && core->ops->get_phase)
-> +               core->phase = core->ops->get_phase(core->hw);
-
-Can this happen if core->ops->get_phase does not exist?
-If yes, we're stuck with a negative number forever?
-
->         ret = core->phase;
->         clk_prepare_unlock();
->
-> --
-> 1.9.1
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index a0792bd..993f0a3 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -15,6 +15,8 @@
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/thermal/thermal.h>
++#include <dt-bindings/spmi/spmi.h>
++
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. MSM8996";
+@@ -99,6 +101,7 @@
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 0>;
++			cpu-supply = <&pm8994_s11_saw>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			cooling-min-level = <0>;
+ 			cooling-max-level = <15>;
+@@ -116,6 +119,7 @@
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 0>;
++			cpu-supply = <&pm8994_s11_saw>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			cooling-min-level = <0>;
+ 			cooling-max-level = <15>;
+@@ -129,6 +133,7 @@
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 1>;
++			cpu-supply = <&pm8994_s11_saw>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			cooling-min-level = <0>;
+ 			cooling-max-level = <15>;
+@@ -146,6 +151,7 @@
+ 			reg = <0x0 0x101>;
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 1>;
++			cpu-supply = <&pm8994_s11_saw>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			cooling-min-level = <0>;
+ 			cooling-max-level = <15>;
+@@ -182,66 +188,82 @@
+ 
+ 		opp-307200000 {
+ 			opp-hz = /bits/ 64 <  307200000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-422400000 {
+ 			opp-hz = /bits/ 64 <  422400000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <  480000000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <  556800000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <  652800000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <  729600000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-844800000 {
+ 			opp-hz = /bits/ 64 <  844800000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-960000000 {
+ 			opp-hz = /bits/ 64 <  960000000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 < 1036800000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 < 1113600000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 < 1190400000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1228800000 {
+ 			opp-hz = /bits/ 64 < 1228800000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 < 1324800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 < 1401600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 < 1478400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1593600000 {
+ 			opp-hz = /bits/ 64 < 1593600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 	};
+@@ -252,102 +274,127 @@
+ 
+ 		opp-307200000 {
+ 			opp-hz = /bits/ 64 <  307200000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-403200000 {
+ 			opp-hz = /bits/ 64 <  403200000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <  480000000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <  556800000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <  652800000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <  729600000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-806400000 {
+ 			opp-hz = /bits/ 64 <  806400000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-883200000 {
+ 			opp-hz = /bits/ 64 <  883200000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-940800000 {
+ 			opp-hz = /bits/ 64 <  940800000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 < 1036800000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 < 1113600000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 < 1190400000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1248000000 {
+ 			opp-hz = /bits/ 64 < 1248000000 >;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 < 1324800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 < 1401600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 < 1478400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1555200000 {
+ 			opp-hz = /bits/ 64 < 1555200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1632000000 {
+ 			opp-hz = /bits/ 64 < 1632000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1708800000 {
+ 			opp-hz = /bits/ 64 < 1708800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1785600000 {
+ 			opp-hz = /bits/ 64 < 1785600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1824000000 {
+ 			opp-hz = /bits/ 64 < 1824000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1920000000 {
+ 			opp-hz = /bits/ 64 < 1920000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1996800000 {
+ 			opp-hz = /bits/ 64 < 1996800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-2073600000 {
+ 			opp-hz = /bits/ 64 < 2073600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-2150400000 {
+ 			opp-hz = /bits/ 64 < 2150400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 	};
+@@ -664,6 +711,11 @@
+ 			#mbox-cells = <1>;
+ 		};
+ 
++		saw3: syscon@9A10000 {
++			compatible = "syscon";
++			reg = <0x9A10000 0x1000>;
++		};
++
+ 		gcc: clock-controller@300000 {
+ 			compatible = "qcom,gcc-msm8996";
+ 			#clock-cells = <1>;
+@@ -880,6 +932,31 @@
+ 			#size-cells = <0>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <4>;
++			pmic@1 {
++				compatible = "qcom,pm8994", "qcom,spmi-pmic";
++				reg = <0x1 SPMI_USID>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				spm-regulators {
++					compatible = "qcom,pm8994-regulators";
++					qcom,saw-reg = <&saw3>;
++					s8 {
++						qcom,saw-slave;
++					};
++					s9 {
++						qcom,saw-slave;
++					};
++					s10 {
++						qcom,saw-slave;
++					};
++					pm8994_s11_saw: s11 {
++						qcom,saw-leader;
++						regulator-always-on;
++						regulator-min-microvolt = <905000>;
++						regulator-max-microvolt = <1140000>;
++					};
++				};
++			};
+ 		};
+ 
+ 		mmcc: clock-controller@8c0000 {
+-- 
+1.9.1
