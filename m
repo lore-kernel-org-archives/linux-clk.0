@@ -1,98 +1,166 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 3/9] pinctrl: sunxi: change irq_bank_base to irq_bank_map
-Date: Fri, 16 Mar 2018 22:02:09 +0800
-Message-Id: <20180316140215.28663-4-icenowy@aosc.io>
-In-Reply-To: <20180316140215.28663-1-icenowy@aosc.io>
-References: <20180316140215.28663-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+MIME-Version: 1.0
+In-Reply-To: <51e33d41-37b1-9e88-4a13-503bb39e2e40@ti.com>
+References: <20180327092031.11251-1-brgl@bgdev.pl> <20180327092031.11251-8-brgl@bgdev.pl>
+ <51e33d41-37b1-9e88-4a13-503bb39e2e40@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 29 Mar 2018 09:16:33 +0200
+Message-ID: <CAMRc=Me6giXHneuuRTPSwfw8HxwbDVCTgReZ_6HBv90ushf+-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] remoteproc/davinci: use the reset framework
+To: Suman Anna <s-anna@ti.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner H6 SoC have its pin controllers with the first IRQ-capable
-GPIO bank at IRQ bank 1 and the second bank at IRQ bank 5.
+2018-03-29 0:30 GMT+02:00 Suman Anna <s-anna@ti.com>:
+> Hi Bart,
+>
+> On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> Switch to using the reset framework instead of handcoded reset routines
+>> we used so far.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>  drivers/remoteproc/da8xx_remoteproc.c | 33 ++++++++++++++++++++++++++++-----
+>>  1 file changed, 28 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+>> index b668e32996e2..788f59809c02 100644
+>> --- a/drivers/remoteproc/da8xx_remoteproc.c
+>> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+>> @@ -10,6 +10,7 @@
+>>
+>>  #include <linux/bitops.h>
+>>  #include <linux/clk.h>
+>> +#include <linux/reset.h>
+>>  #include <linux/err.h>
+>>  #include <linux/interrupt.h>
+>>  #include <linux/io.h>
+>> @@ -20,8 +21,6 @@
+>>  #include <linux/platform_device.h>
+>>  #include <linux/remoteproc.h>
+>>
+>> -#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
+>> -
+>>  #include "remoteproc_internal.h"
+>>
+>>  static char *da8xx_fw_name;
+>> @@ -72,6 +71,7 @@ struct da8xx_rproc {
+>>       struct da8xx_rproc_mem *mem;
+>>       int num_mems;
+>>       struct clk *dsp_clk;
+>> +     struct reset_control *dsp_reset;
+>>       void (*ack_fxn)(struct irq_data *data);
+>>       struct irq_data *irq_data;
+>>       void __iomem *chipsig;
+>> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>>       struct device *dev = rproc->dev.parent;
+>>       struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+>>       struct clk *dsp_clk = drproc->dsp_clk;
+>> +     struct reset_control *dsp_reset = drproc->dsp_reset;
+>>       int ret;
+>>
+>>       /* hw requires the start (boot) address be on 1KB boundary */
+>> @@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>>               return ret;
+>>       }
+>>
+>> -     davinci_clk_reset_deassert(dsp_clk);
+>> +     ret = reset_control_deassert(dsp_reset);
+>> +     if (ret) {
+>> +             dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
+>> +             clk_disable_unprepare(dsp_clk);
+>> +             return ret;
+>> +     }
+>>
+>>       return 0;
+>>  }
+>> @@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>>  static int da8xx_rproc_stop(struct rproc *rproc)
+>>  {
+>>       struct da8xx_rproc *drproc = rproc->priv;
+>> +     struct device *dev = rproc->dev.parent;
+>> +     int ret;
+>> +
+>> +     ret = reset_control_assert(drproc->dsp_reset);
+>> +     if (ret) {
+>> +             dev_err(dev, "reset_control_assert() failed: %d\n", ret);
+>> +             return ret;
+>> +     }
+>>
+>> -     davinci_clk_reset_assert(drproc->dsp_clk);
+>>       clk_disable_unprepare(drproc->dsp_clk);
+>>
+>>       return 0;
+>> @@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>       struct resource *bootreg_res;
+>>       struct resource *chipsig_res;
+>>       struct clk *dsp_clk;
+>> +     struct reset_control *dsp_reset;
+>>       void __iomem *chipsig;
+>>       void __iomem *bootreg;
+>>       int irq;
+>> @@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>               return PTR_ERR(dsp_clk);
+>>       }
+>>
+>> +     dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
+>> +     if (IS_ERR(dsp_reset)) {
+>> +             if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
+>> +                     dev_err(dev, "unable to get reset control: %ld\n",
+>> +                             PTR_ERR(dsp_reset));
+>> +
+>> +             return PTR_ERR(dsp_reset);
+>> +     }
+>> +
+>>       if (dev->of_node) {
+>>               ret = of_reserved_mem_device_init(dev);
+>>               if (ret) {
+>> @@ -309,7 +332,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>        * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+>>        * held in reset at the time it is called.
+>>        */
+>> -     ret = davinci_clk_reset_assert(drproc->dsp_clk);
+>> +     ret = reset_control_assert(dsp_reset);
+>>       if (ret)
+>>               goto free_rproc;
+>>
+>
+> Tested your previous branch, need one more change in this patch to have
+> the remoteproc boot be actually executing some code. The acquired
+> dsp_reset is not stored in the drproc, so the start and stop were not
+> effective. The issue was masked because reset_control_assert() and
+> deassert() return 0 when a NULL pointer is passed in.
+>
+> --- a/drivers/remoteproc/da8xx_remoteproc.c
+> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+> @@ -311,6 +311,7 @@ static int da8xx_rproc_probe(struct platform_device
+> *pdev)
+>         drproc = rproc->priv;
+>         drproc->rproc = rproc;
+>         drproc->dsp_clk = dsp_clk;
+> +       drproc->dsp_reset = dsp_reset;
+>         rproc->has_iommu = false;
+>
+> regards
+> Suman
+>
 
-Change the current code that uses IRQ bank base to a IRQ bank map, in
-order to support the case that holes exist among IRQ banks.
+Oh snap, thanks for spotting it.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Extracted in v4.
+I'll just resend last two patches, since the previous six will be
+picked up at different places.
 
- drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c | 4 +++-
- drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c | 4 +++-
- drivers/pinctrl/sunxi/pinctrl-sunxi.h     | 7 +++++--
- 3 files changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-index da387211a75e..f043afa1aac5 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a33.c
-@@ -481,11 +481,13 @@ static const struct sunxi_desc_pin sun8i_a33_pins[] = {
- 		  SUNXI_FUNCTION(0x3, "uart3")),	/* CTS */
- };
- 
-+static const unsigned int sun8i_a33_pinctrl_irq_bank_map[] = { 1, 2 };
-+
- static const struct sunxi_pinctrl_desc sun8i_a33_pinctrl_data = {
- 	.pins = sun8i_a33_pins,
- 	.npins = ARRAY_SIZE(sun8i_a33_pins),
- 	.irq_banks = 2,
--	.irq_bank_base = 1,
-+	.irq_bank_map = sun8i_a33_pinctrl_irq_bank_map,
- 	.disable_strict_mode = true,
- };
- 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-index 496ba34e1f5f..6704ce8e5e3d 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-v3s.c
-@@ -293,11 +293,13 @@ static const struct sunxi_desc_pin sun8i_v3s_pins[] = {
- 		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 5)),	/* PG_EINT5 */
- };
- 
-+static const unsigned int sun8i_v3s_pinctrl_irq_bank_map[] = { 1, 2 };
-+
- static const struct sunxi_pinctrl_desc sun8i_v3s_pinctrl_data = {
- 	.pins = sun8i_v3s_pins,
- 	.npins = ARRAY_SIZE(sun8i_v3s_pins),
- 	.irq_banks = 2,
--	.irq_bank_base = 1,
-+	.irq_bank_map = sun8i_v3s_pinctrl_irq_bank_map,
- 	.irq_read_needs_mux = true
- };
- 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index 466840d886f6..4a892e7dde66 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -110,7 +110,7 @@ struct sunxi_pinctrl_desc {
- 	int				npins;
- 	unsigned			pin_base;
- 	unsigned			irq_banks;
--	unsigned			irq_bank_base;
-+	const unsigned int		*irq_bank_map;
- 	bool				irq_read_needs_mux;
- 	bool				disable_strict_mode;
- };
-@@ -265,7 +265,10 @@ static inline u32 sunxi_pull_offset(u16 pin)
- 
- static inline u32 sunxi_irq_hw_bank_num(const struct sunxi_pinctrl_desc *desc, u8 bank)
- {
--	return desc->irq_bank_base + bank;
-+	if (!desc->irq_bank_map)
-+		return bank;
-+	else
-+		return desc->irq_bank_map[bank];
- }
- 
- static inline u32 sunxi_irq_cfg_reg(const struct sunxi_pinctrl_desc *desc,
--- 
-2.15.1
+Thanks,
+Bartosz
