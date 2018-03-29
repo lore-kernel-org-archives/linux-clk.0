@@ -1,49 +1,152 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: ALKML <linux-arm-kernel@lists.infradead.org>,
- DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Sudeep Holla <sudeep.holla@arm.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Alexey Klimov <klimov.linux@gmail.com>, Sudeep Holla <sudeep.holla@arm.com>,
- linux-clk@vger.kernel.org
-References: <1519403030-21189-1-git-send-email-sudeep.holla@arm.com>
- <1519403030-21189-17-git-send-email-sudeep.holla@arm.com>
-Message-ID: <152124137391.242365.17144416413429914606@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v6 16/20] clk: add support for clocks provided by SCMI
-Date: Fri, 16 Mar 2018 16:02:53 -0700
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v4 06/14] clk: qcom: cpu-8996: Add support to switch below 600Mhz
+Date: Fri, 30 Mar 2018 00:26:39 +0300
+Message-Id: <1522358807-10413-7-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sudeep Holla (2018-02-23 08:23:46)
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> new file mode 100644
-> index 000000000000..1e4d7a57779b
-> --- /dev/null
-> +++ b/drivers/clk/clk-scmi.c
-> +                       hws[idx] =3D &sclk->hw;
-> +               }
-> +       }
-> +
-> +       return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data=
-);
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-devm_of_clk_add_hw_provider?
+The CPU clock controller's primary PLL operates on a single VCO range,
+between 600MHz and 3GHz. However the CPUs do support OPPs with
+frequencies between 300MHz and 600MHz. In order to support running the
+CPUs at those frequencies we end up having to lock the PLL at twice the
+rate and drive the CPU clk via the PLL/2 output and SMUX.
 
-> +}
-> +
-> +static void scmi_clocks_remove(struct scmi_device *sdev)
-> +{
-> +       struct device *dev =3D &sdev->dev;
-> +       struct device_node *np =3D dev->of_node;
-> +
-> +       of_clk_del_provider(np);
-> +}
-> +
+So for frequencies above 600MHz we follow the following path
+ Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
+and for frequencies between 300MHz and 600MHz we follow
+ Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
 
-Drop?
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 
-You can keep my acked-by otherwise.
+Conflicts:
+	drivers/clk/qcom/clk-cpu-8996.c
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 12585b1..064a3fe 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -78,6 +78,8 @@ enum _pmux_input {
+ 	NUM_OF_PMUX_INPUTS
+ };
+ 
++#define DIV_2_THRESHOLD		600000000
++
+ static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
+        [PLL_OFF_L_VAL] = 0x04,
+        [PLL_OFF_ALPHA_VAL] = 0x08,
+@@ -105,10 +107,11 @@ enum _pmux_input {
+ 
+ static const struct alpha_pll_config hfpll_config = {
+ 	.l = 60,
+-	.config_ctl_val = 0x200d4828,
++	.config_ctl_val = 0x200d4aa8,
+ 	.config_ctl_hi_val = 0x006,
+ 	.pre_div_mask = BIT(12),
+ 	.post_div_mask = 0x3 << 8,
++	.post_div_val = 0x1 << 8,
+ 	.main_output_mask = BIT(0),
+ 	.early_output_mask = BIT(3),
+ };
+@@ -150,7 +153,7 @@ enum _pmux_input {
+ 	.vco_mask = 0x3 << 20,
+ 	.config_ctl_val = 0x4001051b,
+ 	.post_div_mask = 0x3 << 8,
+-	.post_div_val = 0x1,
++	.post_div_val = 0x1 << 8,
+ 	.main_output_mask = BIT(0),
+ 	.early_output_mask = BIT(3),
+ };
+@@ -191,6 +194,7 @@ struct clk_cpu_8996_mux {
+ 	u8	width;
+ 	struct notifier_block nb;
+ 	struct clk_hw	*pll;
++	struct clk_hw	*pll_div_2;
+ 	struct clk_regmap clkr;
+ };
+ 
+@@ -236,6 +240,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
+ 	struct clk_hw *parent = cpuclk->pll;
+ 
++	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
++		if (req->rate < (DIV_2_THRESHOLD / 2))
++			return -EINVAL;
++
++		parent = cpuclk->pll_div_2;
++	}
++
+ 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
+ 	req->best_parent_hw = parent;
+ 
+@@ -247,13 +258,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ {
+ 	int ret;
+ 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++	struct clk_notifier_data *cnd = data;
+ 
+ 	switch (event) {
+ 	case PRE_RATE_CHANGE:
+ 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
+ 		break;
+ 	case POST_RATE_CHANGE:
+-		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		if (cnd->new_rate < DIV_2_THRESHOLD)
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  DIV_2_INDEX);
++		else
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  PLL_INDEX);
+ 		break;
+ 	default:
+ 		ret = 0;
+@@ -305,6 +322,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.pll_div_2 = &pwrcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+@@ -325,6 +343,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.pll_div_2 = &perfcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
+-- 
+1.9.1
