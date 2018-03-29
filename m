@@ -1,30 +1,111 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: David Lechner <david@lechnology.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521168778-27236-14-git-send-email-david@lechnology.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
- David Lechner <david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-14-git-send-email-david@lechnology.com>
-Message-ID: <152156544934.183971.2623488146205018094@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v8 13/42] clk: davinci: Add platform information for TI DM355 PSC
-Date: Tue, 20 Mar 2018 10:04:09 -0700
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v4 10/14] dt-bindings: Add support for SAW documentation
+Date: Fri, 30 Mar 2018 00:26:43 +0300
+Message-Id: <1522358807-10413-11-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting David Lechner (2018-03-15 19:52:29)
-> This adds platform-specific declarations for the PSC clocks on TI
-> DM355 based systems.
-> =
+Add support for SAW controlled regulators in 8x96.
+Document it.
 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-Applied to clk-next
+diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+index 57d2c65..406f2e5 100644
+--- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+@@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
+ 	Definition: Reference to regulator supplying the input pin, as
+ 		    described in the data sheet.
+ 
++- qcom,saw-reg:
++	Usage: optional
++	Value type: <phandle>
++	Description: Reference to syscon node defining the SAW registers.
++
+ 
+ The regulator node houses sub-nodes for each regulator within the device. Each
+ sub-node is identified using the node's name, with valid values listed for each
+@@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
+ 			2 = 0.55 uA
+ 			3 = 0.75 uA
+ 
++- qcom,saw-slave:
++	Usage: optional
++	Value type: <boo>
++	Description: SAW controlled gang slave. Will not be configured.
++
++- qcom,saw-leader:
++	Usage: optional
++	Value type: <boo>
++	Description: SAW controlled gang leader. Will be configured as
++		     SAW regulator.
++
+ Example:
+ 
+ 	regulators {
+@@ -221,3 +237,32 @@ Example:
+ 
+ 		....
+ 	};
++
++Example 2:
++
++	saw3: syscon@9A10000 {
++		compatible = "syscon";
++		reg = <0x9A10000 0x1000>;
++	};
++
++	...
++
++	spm-regulators {
++		compatible = "qcom,pm8994-regulators";
++		qcom,saw-reg = <&saw3>;
++		s8 {
++			qcom,saw-slave;
++		};
++		s9 {
++			qcom,saw-slave;
++		};
++		s10 {
++			qcom,saw-slave;
++		};
++		pm8994_s11_saw: s11 {
++			qcom,saw-leader;
++			regulator-always-on;
++			regulator-min-microvolt = <900000>;
++			regulator-max-microvolt = <1140000>;
++		};
++	};
+-- 
+1.9.1
