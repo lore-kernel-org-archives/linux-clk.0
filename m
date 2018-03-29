@@ -1,143 +1,436 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH 3/3] ARM64: dts: meson: fix clock source of the pclk for
- UART_AO
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-References: <20180326081809.49493-1-yixun.lan@amlogic.com>
- <20180326081809.49493-4-yixun.lan@amlogic.com>
- <1522142450.2632.41.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <23c2d3bd-9c3e-2a3f-eb1f-2657c6920738@amlogic.com>
-Date: Tue, 27 Mar 2018 20:35:56 +0800
-MIME-Version: 1.0
-In-Reply-To: <1522142450.2632.41.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v4 08/14] dt: qcom: Add opp and thermal to the msm8996
+Date: Fri, 30 Mar 2018 00:26:41 +0300
+Message-Id: <1522358807-10413-9-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/27/2018 05:20 PM, Jerome Brunet wrote:
-> On Mon, 2018-03-26 at 16:18 +0800, Yixun Lan wrote:
->> From the hardware perspective, the clk81 is the parent of
->> the UART_AO clocks. So it make more sense to mark
->> the CLKID_AO_UART1/2 as the pclk.
->>
->> Previous we had flag=CLK_IGNORE_UNUSED in AO clock driver.
->> This will make kernel leave clock as it is while bootloader
->> set the clock on.
->>
-> 
-> Hi Yixun,
-> 
-> I'm not sure I understand your description correctly so I'll phrase. Please tell
-> me if I misunderstood something
-> 
-> The actual pclk of the AO uarts is the corresponding clkc_ao uart gate, not the
-> main clock controller clk81. This was not problem so far, because the uart_gate
-> had the CLK_IGNORE_UNUSED flag, which kept the gate open.
-> 
-Yes, exactly
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 275 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 267 insertions(+), 8 deletions(-)
 
-> In another patch, you removed this flag, so you need to give the correct clock
-> in DT to make things work again ? right ?
-> 
-Yes, right.
-
-
-> If I got it correctly, please rephrase the description a bit.
-> Also you need to be careful in which order patches get merged.
-> 
-> 1. You need the clkc_ao in place, exporting CLKID_AO_UARTx with
-> CLK_IGNORE_UNUSED.
-> 
-> 2. This patch can be merged (still with CLK_IGNORE_UNUSED)
-> 
-> 3. Once the DT patch have reached mainline, you should a patch to remove to
-> CLK_IGNORE_UNUSED flag
-> 
-> This way, we avoid breaking bisect, with revision where CLKID_AO_UARTx would get
-> disabled by the CCF clk_disable_unused() mechanism while the UART driver does
-> not claim the appropriate clock.
-> 
-I wasn't sure about what's the best approach
-I just gave a warning about that patch 2 (removing CLK_IGNORE_UNUSED)
-and patch 3 (fix the DTS) should be merged together
-
-and your suggestion sounds good, I will adjust
-
-> 
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 4 ++--
->>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++--
->>  arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 4 ++--
->>  3 files changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> index 48584d5a329b..e538e2448bb5 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> @@ -533,7 +533,7 @@
->>  				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
->>  				reg = <0x0 0x3000 0x0 0x18>;
->>  				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
->> -				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
->> +				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
->>  				clock-names = "xtal", "pclk", "baud";
->>  				status = "disabled";
->>  			};
->> @@ -542,7 +542,7 @@
->>  				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
->>  				reg = <0x0 0x4000 0x0 0x18>;
->>  				interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
->> -				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
->> +				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
->>  				clock-names = "xtal", "pclk", "baud";
->>  				status = "disabled";
->>  			};
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
->> index 3290a4dc3522..a458ea50c2ef 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
->> @@ -783,12 +783,12 @@
->>  };
->>  
->>  &uart_AO {
->> -	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
->> +	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
->>  	clock-names = "xtal", "pclk", "baud";
->>  };
->>  
->>  &uart_AO_B {
->> -	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
->> +	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
->>  	clock-names = "xtal", "pclk", "baud";
->>  };
->>  
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
->> index 4f355f17eed6..474f4f9630e4 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
->> @@ -733,12 +733,12 @@
->>  };
->>  
->>  &uart_AO {
->> -	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
->> +	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
->>  	clock-names = "xtal", "pclk", "baud";
->>  };
->>  
->>  &uart_AO_B {
->> -	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
->> +	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
->>  	clock-names = "xtal", "pclk", "baud";
->>  };
->>  
-> 
-> .
-> 
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 410ae78..a0792bd 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -14,6 +14,7 @@
+ #include <dt-bindings/clock/qcom,gcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. MSM8996";
+@@ -97,6 +98,11 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 			L2_0: l2-cache {
+ 			      compatible = "cache";
+@@ -109,6 +115,11 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 		};
+ 
+@@ -117,6 +128,11 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 			L2_1: l2-cache {
+ 			      compatible = "cache";
+@@ -129,6 +145,11 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x101>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 		};
+ 
+@@ -155,6 +176,182 @@
+ 		};
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-422400000 {
++			opp-hz = /bits/ 64 <  422400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-844800000 {
++			opp-hz = /bits/ 64 <  844800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-960000000 {
++			opp-hz = /bits/ 64 <  960000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1228800000 {
++			opp-hz = /bits/ 64 < 1228800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 < 1593600000 >;
++			clock-latency-ns = <200000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-403200000 {
++			opp-hz = /bits/ 64 <  403200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-806400000 {
++			opp-hz = /bits/ 64 <  806400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-883200000 {
++			opp-hz = /bits/ 64 <  883200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-940800000 {
++			opp-hz = /bits/ 64 <  940800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1248000000 {
++			opp-hz = /bits/ 64 < 1248000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1555200000 {
++			opp-hz = /bits/ 64 < 1555200000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1632000000 {
++			opp-hz = /bits/ 64 < 1632000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1708800000 {
++			opp-hz = /bits/ 64 < 1708800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1785600000 {
++			opp-hz = /bits/ 64 < 1785600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1824000000 {
++			opp-hz = /bits/ 64 < 1824000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1920000000 {
++			opp-hz = /bits/ 64 < 1920000000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 < 1996800000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-2073600000 {
++			opp-hz = /bits/ 64 < 2073600000 >;
++			clock-latency-ns = <200000>;
++		};
++		opp-2150400000 {
++			opp-hz = /bits/ 64 < 2150400000 >;
++			clock-latency-ns = <200000>;
++		};
++	};
++
+ 	thermal-zones {
+ 		cpu-thermal0 {
+ 			polling-delay-passive = <250>;
+@@ -163,18 +360,34 @@
+ 			thermal-sensors = <&tsens0 3>;
+ 
+ 			trips {
+-				cpu_alert0: trip0 {
++				cpu_alert0: cpu_alert0 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn0: cpu_warn0 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit0: trip1 {
++				cpu_crit0: cpu_crit0 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn0>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal1 {
+@@ -184,18 +397,34 @@
+ 			thermal-sensors = <&tsens0 5>;
+ 
+ 			trips {
+-				cpu_alert1: trip0 {
++				cpu_alert1: cpu_alert1 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn1: cpu_warn1 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit1: trip1 {
++				cpu_crit1: cpu_crit1 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert1>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn1>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal2 {
+@@ -205,18 +434,33 @@
+ 			thermal-sensors = <&tsens0 8>;
+ 
+ 			trips {
+-				cpu_alert2: trip0 {
++				cpu_alert2: cpu_alert2 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn2: cpu_warn2 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit2: trip1 {
++				cpu_crit2: cpu_crit2 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert2>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn2>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal3 {
+@@ -226,9 +470,14 @@
+ 			thermal-sensors = <&tsens0 10>;
+ 
+ 			trips {
+-				cpu_alert3: trip0 {
++				cpu_alert3: cpu_alert3 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn3: cpu_warn3 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+@@ -238,6 +487,16 @@
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert3>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn3>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 	};
+ 
+@@ -414,7 +673,7 @@
+ 		};
+ 
+ 		kryocc: clock-controller@6400000 {
+-			compatible = "qcom,apcc-msm8996";
++			compatible = "qcom,msm8996-apcc";
+ 			reg = <0x6400000 0x90000>;
+ 			#clock-cells = <1>;
+ 		};
+-- 
+1.9.1
