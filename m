@@ -1,172 +1,755 @@
-Return-Path: <eric@anholt.net>
-From: Eric Anholt <eric@anholt.net>
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, Stefan Wahren <stefan.wahren@i2se.com>, Lee Jones <lee@kernel.org>, linux-rpi-kernel@lists.infradead.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4/4] clk: bcm2835: Make sure the PLL is gated before changing its rate
-In-Reply-To: <20180322101334.6705ab22@bbrezillon>
-References: <20180208134338.24590-1-boris.brezillon@bootlin.com> <20180208134338.24590-4-boris.brezillon@bootlin.com> <87mv0j5wzz.fsf@anholt.net> <20180208185619.667a4daf@bbrezillon> <87vaf6v77r.fsf@anholt.net> <20180212102752.21e22328@bbrezillon> <152088968272.205167.14856461616755294568@swboyd.mtv.corp.google.com> <20180322101334.6705ab22@bbrezillon>
-Date: Thu, 22 Mar 2018 09:38:43 -0700
-Message-ID: <87woy4ukto.fsf@anholt.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v4 13/14] dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
+Date: Fri, 30 Mar 2018 00:26:46 +0300
+Message-Id: <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+that have KRYO processors, the CPU ferequencies subset and voltage value
+of each OPP varies based on the silicon variant in use.
+Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+defines the voltage and frequency value based on the msm-id in SMEM
+and speedbin blown in the efuse combination.
+The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+to provide the OPP framework with required information.
+This is used to determine the voltage and frequency value for each OPP of
+operating-points-v2 table when it is parsed by the OPP framework.
 
-Boris Brezillon <boris.brezillon@bootlin.com> writes:
+This change adds documentation.
 
-> Hi Stephen,
->
-> On Mon, 12 Mar 2018 14:21:22 -0700
-> Stephen Boyd <sboyd@kernel.org> wrote:
->
->> Quoting Boris Brezillon (2018-02-12 01:27:52)
->> > -Stephen Warren
->> > +Stefan Wahren
->> >=20
->> > On Fri, 09 Feb 2018 09:32:40 +0000
->> > Eric Anholt <eric@anholt.net> wrote:
->> >=20=20=20
->> > > Boris Brezillon <boris.brezillon@bootlin.com> writes:
->> > >=20=20=20
->> > > > On Thu, 08 Feb 2018 15:20:16 +0000
->> > > > Eric Anholt <eric@anholt.net> wrote:
->> > > >=20=20=20=20
->> > > >> Boris Brezillon <boris.brezillon@bootlin.com> writes:
->> > > >>=20=20=20=20=20
->> > > >> > All bcm2835 PLLs should be gated before their rate can be chang=
-ed.
->> > > >> > Setting CLK_SET_RATE_GATE will let the core enforce that, but t=
-his is
->> > > >> > not enough to make the code work in all situations. Indeed, the
->> > > >> > CLK_SET_RATE_GATE flag prevents a user from changing the rate w=
-hile
->> > > >> > the clock is enabled, but this check only guarantees there's no=
- Linux
->> > > >> > users. In our case, the clock might have been enabled by the
->> > > >> > bootloader/FW, and, because we have CLK_IGNORE_UNUSED set, Linu=
-x never
->> > > >> > disables the PLL. So we have to make sure the PLL is actually d=
-isabled
->> > > >> > before changing the rate.
->> > > >> >
->> > > >> > Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming=
- the audio domain clocks")
->> > > >> > Cc: <stable@vger.kernel.org>
->> > > >> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
->> > > >> > ---
->> > > >> >  drivers/clk/bcm/clk-bcm2835.c | 14 +++++++++++++-
->> > > >> >  1 file changed, 13 insertions(+), 1 deletion(-)
->> > > >> >
->> > > >> > diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/cl=
-k-bcm2835.c
->> > > >> > index 6c5d4a8e426c..051ce769c109 100644
->> > > >> > --- a/drivers/clk/bcm/clk-bcm2835.c
->> > > >> > +++ b/drivers/clk/bcm/clk-bcm2835.c
->> > > >> > @@ -678,6 +678,18 @@ static int bcm2835_pll_set_rate(struct clk=
-_hw *hw,
->> > > >> >          u32 ana[4];
->> > > >> >          int i;
->> > > >> >=20=20
->> > > >> > +        /*
->> > > >> > +         * Normally, the CLK_SET_RATE_GATE flag prevents a use=
-r from changing
->> > > >> > +         * the rate while the clock is enabled, but this check=
- only makes sure
->> > > >> > +         * there's no Linux users.
->> > > >> > +         * In our case, the clock might have been enabled by t=
-he bootloader/FW,
->> > > >> > +         * and, since CLK_IGNORE_UNUSED flag is set, Linux nev=
-er disables it.
->> > > >> > +         * So we have to make sure the clk is actually disable=
-d before changing
->> > > >> > +         * the rate.
->> > > >> > +         */
->> > > >> > +        if (bcm2835_pll_is_on(hw))
->> > > >> > +                bcm2835_pll_off(hw);
->> > > >> > +=20=20=20=20=20=20
->> > > >>=20
->> > > >> I'm not sure this improves the situation.  If the PLL was on, then
->> > > >> presumably there's a divider using it and a CM clock using that, =
-so
->> > > >> we'll probably end up driving some glitches on them.=20=20=20=20
->> > > >
->> > > > Hm, yes, but if someone is trying to change the rate of the PLL, a=
-nd the
->> > > > core doesn't know other clks depend on this PLL (which is the case=
- if
->> > > > we reach this point), we're already in big trouble.
->> > > >=20=20=20=20
->> > > >>=20
->> > > >> Does the common clk framework have a way to disable unused clocks=
- from
->> > > >> the leaf clocks up to this root, before the general
->> > > >> disable-unused-clocks path happens late in the boot process?=20=
-=20=20=20
->> > > >
->> > > > Not that I know of. What do you have in mind?=20=20=20=20=20
->> > >=20
->> > > I was hoping that Stephen Boyd or Mike might have an answer for this
->> > > problem.=20=20
->> >=20
->> > Having a generic solution for this sort of issue is definitely the
->> > way to go, but I think this temporary hack is needed to make HDMI/SDTV
->> > work properly. If we don't have it and the FW configures and enables
->> > PLLH with a rate that is different from the one the HDMI or SDTV
->> > encoder tries to set, we're screwed, because I doubt the CPRMAN block
->> > allows you to change the rate of the PLL when it's not gated. Which
->> > means the new rate is not applied and the clk user has no way of
->> > knowing that, which in turn means the display output is likely to not
->> > work properly the first time it's enabled.
->> >=20
->> > Of course, this all goes away the second time the HDMI/SDTV encoder is
->> > enabled, because then clk_disable_unprepare() is called which has the
->> > effect of disabling the PLL.
->> >=20=20=20
->>=20
->> There isn't any sort of API to disable unused clks from a leaf up to a
->> particular point in the tree. Actually, the disabling of unused clks
->> during late init makes the framework harder to maintain so expanding on
->> it is not high on the list of things to do.
->>=20
->> What exactly is going on here? It sounds like the framework isn't aware
->> of the 'on/off' boot state of certain clks (a known problem) and that's
->> causing some sort of problem when changing rates? This usually happens
->> with PLLs that are enabled at boot time and can't support their rate
->> changing when they're enabled. We really should start reading on/off
->> state and "hand off" that enabled state to something in the framework so
->> we at least know if a clk is enabled or not out of boot.
+Change-Id: I1953f652a48249fb516d175f0e965a9510cd4209
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ .../devicetree/bindings/cpufreq/kryo-cpufreq.txt   | 693 +++++++++++++++++++++
+ 1 file changed, 693 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
 
-> everyone. You may have setups where some clks initialized/enabled by
-> the FW/bootloader may rely on the PLL and its pre-configured rate and
-> you don't want another clk user from messing up with the PLL.
-
-FWIW, we are effectively doing this with how the PLLH dividers have
-CLK_SET_RATE_PARENT set but, for example, PLLD_DSI* don't -- we don't
-want the DSI clock to end up tweaking the clocks of all the devices
-hanging off of PLLD.  The hardware is no different, we've just baked
-this policy into the code.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlqz3BMACgkQtdYpNtH8
-nujcqg/+NqztOdfQ8tOvFH/eMKqlu2VDnYk52d4Ja5LfkBIdMwLt1CRLsKIzYMZ6
-MZJImkJBHzkdUbZW/vuGrzhBu+VSO7UVGbYVt0sjK/OTWipWWtdwR8yB2vPat5Hc
-fpBpVDG4ylVGieqfd1a5xYTqnKiVkW4kz2Z0jI0nQVcTEFL6XSCy4k/yvIJY7fS7
-wSKaEZf/Ozc+MqJ5wZhAwJGBI4Bq0KrZ60nl7Icf0fsMU3DXiD+nf2aDJ2P7kz3z
-ssb7GQpjd/ydSU+e+YBfo+J2VPx0QfXrmSptABceu1O++dnrWyF5PgtYxZ/AAoR5
-Z6O2J21FFuV40P5Z+FxwMdoBNwz8IvmYJyMD/QBSsuO5x+U1FguXjdBR2e4Ao0JX
-lzweQmyjDuoJ0aua6XZ3iWI0DN5L0TKTg0BaYvXDFp/wNEDJFu2wrbghZ6jqjRUv
-pxFoAqxEAxEHYQYgLeHqCCQvKUeNvBYkjlZen0tixZfoOZPnA/jTcLhq0qyYuHut
-xrrvgRMsOeYskgBkn7zF5wuyFwsk9YSCzPAfa2Z9GJlQPf7XQmk991BnyrfKsH76
-xsehkV9e7xXc3A2G5mDWxyUz4KKZb65BQWQKrfd8T00bjuZlCT1Kee2/g63G3Y5i
-/NfcMT9w7PARBhiGlST6HXyzoaHmjePkiUwmFBhNjvxnh7vrzn0=
-=xpkH
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+new file mode 100644
+index 0000000..20cef9d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+@@ -0,0 +1,693 @@
++Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
++===================================
++
++In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
++that have KRYO processors, the CPU ferequencies subset and voltage value
++of each OPP varies based on the silicon variant in use.
++Qualcomm Technologies, Inc. Process Voltage Scaling Tables
++defines the voltage and frequency value based on the msm-id in SMEM
++and speedbin blown in the efuse combination.
++The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
++to provide the OPP framework with required information (existing HW bitmap).
++This is used to determine the voltage and frequency value for each OPP of
++operating-points-v2 table when it is parsed by the OPP framework.
++
++Required properties:
++--------------------
++In 'cpus' nodes:
++- operating-points-v2: Phandle to the operating-points-v2 table to use.
++
++In 'operating-points-v2' table:
++- compatible: Should be
++	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
++- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
++		efuse registers that has information about the
++		speedbin that is used to select the right frequency/voltage
++		value pair.
++		Please refer the for nvmem-cells
++		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
++		and also examples below.
++
++In every OPP node:
++- opp-supported-hw: A single 32 bit bitmap value, representing compatible HW.
++		    Bitmap:
++			0:	MSM8996 V3, speedbin 0
++			1:	MSM8996 V3, speedbin 1
++			2:	MSM8996 V3, speedbin 2
++			3:	unused
++			4:	MSM8996 SG, speedbin 0
++			5:	MSM8996 SG, speedbin 1
++			6:	MSM8996 SG, speedbin 2
++			7-31:	unused
++
++Example 1:
++---------
++
++	cpus {
++		#address-cells = <2>;
++		#size-cells = <0>;
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "qcom,kryo";
++			reg = <0x0 0x0>;
++			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			cpu-supply = <&pm8994_s11_saw>;
++			operating-points-v2 = <&cluster0_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
++			next-level-cache = <&L2_0>;
++			L2_0: l2-cache {
++			      compatible = "cache";
++			      cache-level = <2>;
++			};
++		};
++
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "qcom,kryo";
++			reg = <0x0 0x1>;
++			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			cpu-supply = <&pm8994_s11_saw>;
++			operating-points-v2 = <&cluster0_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
++			next-level-cache = <&L2_0>;
++		};
++
++		CPU2: cpu@100 {
++			device_type = "cpu";
++			compatible = "qcom,kryo";
++			reg = <0x0 0x100>;
++			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			cpu-supply = <&pm8994_s11_saw>;
++			operating-points-v2 = <&cluster1_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
++			next-level-cache = <&L2_1>;
++			L2_1: l2-cache {
++			      compatible = "cache";
++			      cache-level = <2>;
++			};
++		};
++
++		CPU3: cpu@101 {
++			device_type = "cpu";
++			compatible = "qcom,kryo";
++			reg = <0x0 0x101>;
++			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			cpu-supply = <&pm8994_s11_saw>;
++			operating-points-v2 = <&cluster1_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
++			next-level-cache = <&L2_1>;
++		};
++
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&CPU0>;
++				};
++
++				core1 {
++					cpu = <&CPU1>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&CPU2>;
++				};
++
++				core1 {
++					cpu = <&CPU3>;
++				};
++			};
++		};
++	};
++
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2-kryo-cpu";
++		nvmem-cells = <&speedbin_efuse>;
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-384000000 {
++			opp-hz = /bits/ 64 <  384000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-422400000 {
++			opp-hz = /bits/ 64 <  422400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-460800000 {
++			opp-hz = /bits/ 64 <  460800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-537600000 {
++			opp-hz = /bits/ 64 <  537600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-614400000 {
++			opp-hz = /bits/ 64 <  614400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-691200000 {
++			opp-hz = /bits/ 64 <  691200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-768000000 {
++			opp-hz = /bits/ 64 <  768000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-844800000 {
++			opp-hz = /bits/ 64 <  844800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-902400000 {
++			opp-hz = /bits/ 64 <  902400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-960000000 {
++			opp-hz = /bits/ 64 <  960000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-979200000 {
++			opp-hz = /bits/ 64 <  979200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1056000000 {
++			opp-hz = /bits/ 64 < 1056000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1132800000 {
++			opp-hz = /bits/ 64 < 1132800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1209600000 {
++			opp-hz = /bits/ 64 < 1209600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1228800000 {
++			opp-hz = /bits/ 64 < 1228800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1286400000 {
++			opp-hz = /bits/ 64 < 1286400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x5>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1363200000 {
++			opp-hz = /bits/ 64 < 1363200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x72>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x5>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1440000000 {
++			opp-hz = /bits/ 64 < 1440000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1497600000 {
++			opp-hz = /bits/ 64 < 1497600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x4>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1516800000 {
++			opp-hz = /bits/ 64 < 1516800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 < 1593600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x71>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 < 1996800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x20>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2188800000 {
++			opp-hz = /bits/ 64 < 2188800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x10>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2-kryo-cpu";
++		nvmem-cells = <&speedbin_efuse>;
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-384000000 {
++			opp-hz = /bits/ 64 <  384000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-403200000 {
++			opp-hz = /bits/ 64 <  403200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-460800000 {
++			opp-hz = /bits/ 64 <  460800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-537600000 {
++			opp-hz = /bits/ 64 <  537600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-614400000 {
++			opp-hz = /bits/ 64 <  614400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-691200000 {
++			opp-hz = /bits/ 64 <  691200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-748800000 {
++			opp-hz = /bits/ 64 <  748800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-806400000 {
++			opp-hz = /bits/ 64 <  806400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-825600000 {
++			opp-hz = /bits/ 64 <  825600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-883200000 {
++			opp-hz = /bits/ 64 <  883200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-902400000 {
++			opp-hz = /bits/ 64 <  902400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-940800000 {
++			opp-hz = /bits/ 64 <  940800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-979200000 {
++			opp-hz = /bits/ 64 <  979200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1056000000 {
++			opp-hz = /bits/ 64 < 1056000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1132800000 {
++			opp-hz = /bits/ 64 < 1132800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1209600000 {
++			opp-hz = /bits/ 64 < 1209600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1248000000 {
++			opp-hz = /bits/ 64 < 1248000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1286400000 {
++			opp-hz = /bits/ 64 < 1286400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1363200000 {
++			opp-hz = /bits/ 64 < 1363200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1440000000 {
++			opp-hz = /bits/ 64 < 1440000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1516800000 {
++			opp-hz = /bits/ 64 < 1516800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1555200000 {
++			opp-hz = /bits/ 64 < 1555200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 < 1593600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1632000000 {
++			opp-hz = /bits/ 64 < 1632000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1670400000 {
++			opp-hz = /bits/ 64 < 1670400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1708800000 {
++			opp-hz = /bits/ 64 < 1708800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1747200000 {
++			opp-hz = /bits/ 64 < 1747200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1785600000 {
++			opp-hz = /bits/ 64 < 1785600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1804800000 {
++			opp-hz = /bits/ 64 < 1804800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x6>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1824000000 {
++			opp-hz = /bits/ 64 < 1824000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x71>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1900800000 {
++			opp-hz = /bits/ 64 < 1900800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x74>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1920000000 {
++			opp-hz = /bits/ 64 < 1920000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1977600000 {
++			opp-hz = /bits/ 64 < 1977600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x30>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 < 1996800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2054400000 {
++			opp-hz = /bits/ 64 < 2054400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x30>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2073600000 {
++			opp-hz = /bits/ 64 < 2073600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2150400000 {
++			opp-hz = /bits/ 64 < 2150400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x31>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2246400000 {
++			opp-hz = /bits/ 64 < 2246400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x10>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2342400000 {
++			opp-hz = /bits/ 64 < 2342400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x10>;
++			clock-latency-ns = <200000>;
++		};
++
++	};
++
++....
++
++reserved-memory {
++	#address-cells = <2>;
++	#size-cells = <2>;
++	ranges;
++....
++	smem_mem: smem-mem@86000000 {
++		reg = <0x0 0x86000000 0x0 0x200000>;
++		no-map;
++	};
++....
++};
++
++smem {
++	compatible = "qcom,smem";
++	memory-region = <&smem_mem>;
++	hwlocks = <&tcsr_mutex 3>;
++};
++
++soc {
++....
++	qfprom: qfprom@74000 {
++		compatible = "qcom,qfprom";
++		reg = <0x00074000 0x8ff>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		....
++		speedbin_efuse: speedbin@133 {
++			reg = <0x133 0x1>;
++			bits = <5 3>;
++		};
++	};
++};
+-- 
+1.9.1
