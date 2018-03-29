@@ -1,68 +1,52 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1520502097.4264.3.camel@baylibre.com>
-Subject: Re: [PATCH] clk: update cached phase to respect the fact when
- setting phase
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, Stable <stable@vger.kernel.org>
-Date: Thu, 08 Mar 2018 10:41:37 +0100
-In-Reply-To: <1520491781-132529-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1520491781-132529-1-git-send-email-shawn.lin@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 0/2] Add QCOM RPMh Clock driver
+Date: Thu, 29 Mar 2018 11:47:51 +0530
+Message-Id: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-03-08 at 14:49 +0800, Shawn Lin wrote:
-> It's found that the final phase set by driver doesn't match that of
-> the output from clk_summary:
-> 
-> dwmmc_rockchip fe310000.dwmmc: Successfully tuned phase to 346
-> mmc0: new ultra high speed SDR104 SDIO card at address 0001
-> 
-> cat /sys/kernel/debug/clk/clk_summary | grep sdio_sample
-> sdio_sample	0        1        0    50000000 0 0
-> 
-> It seems the cached core->phase isn't updated after the clk was
-> registered. So fix this issue by updating the core->phase if setting
-> phase successfully.
-> 
-> Fixes: 9e4d04adeb1a ("clk: add clk_core_set_phase_nolock function")
-> Cc: Stable <stable@vger.kernel.org>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Hello,
 
-Good catch Shawn.
-Actually, I have had already sent a fix for this issue
+This patch series adds a driver and device tree documentation binding
+for the clock control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
+would send requests for the RPMh managed clock resources.
 
-https://patchwork.kernel.org/patch/10220811/
+The RPMh clock driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.
 
-But I think yours is better as it updates the phase only if the phase has
-actually been set
+Thanks,
+Taniya
 
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-Tested-by: Jerome Brunet <jbrunet@baylibre.com>
+[1]: https://lkml.org/lkml/2018/3/9/979
+[2]: https://lkml.org/lkml/2018/3/14/787
 
-> ---
-> 
->  drivers/clk/clk.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 0f686a9..617e562 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2309,8 +2309,11 @@ static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
->  
->  	trace_clk_set_phase(core, degrees);
->  
-> -	if (core->ops->set_phase)
-> +	if (core->ops->set_phase) {
->  		ret = core->ops->set_phase(core->hw, degrees);
-> +		if (!ret)
-> +			core->phase = degrees;
-> +	}
->  
->  	trace_clk_set_phase_complete(core, degrees);
->  
+Amit Nischal (2):
+  clk: qcom: clk-rpmh: Add QCOM clock RPMh driver
+  dt-bindings: clock: Introduce QCOM RPMh clock bindings
+
+ .../devicetree/bindings/clock/qcom,rpmh.txt    |  22 ++
+ drivers/clk/qcom/Kconfig                       |   9 +
+ drivers/clk/qcom/Makefile                      |   1 +
+ drivers/clk/qcom/clk-rpmh.c                    | 397 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h          |  25 ++
+ 5 files changed, 454 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh.txt
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
+ create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
