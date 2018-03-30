@@ -1,29 +1,97 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1522140044.2632.19.camel@baylibre.com>
-Subject: Re: [PATCH v2 1/7] clk: meson: drop meson_aoclk_gate_regmap_ops
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>
-Cc: Rob Herring <robh@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
- linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Date: Tue, 27 Mar 2018 10:40:44 +0200
-In-Reply-To: <20180323143816.200573-2-yixun.lan@amlogic.com>
-References: <20180323143816.200573-1-yixun.lan@amlogic.com>
-	 <20180323143816.200573-2-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v5 8/8] clk: davinci: kill davinci_clk_reset_assert/deassert()
+Date: Fri, 30 Mar 2018 17:28:56 +0200
+Message-Id: <20180330152856.12297-9-brgl@bgdev.pl>
+In-Reply-To: <20180330152856.12297-1-brgl@bgdev.pl>
+References: <20180330152856.12297-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-03-23 at 22:38 +0800, Yixun Lan wrote:
-> let's remove the unused meson_aoclk_gate_regmap_ops
-> 
-> Fixes: 1f932d99710d ("clk: meson: remove superseded aoclk_gate_regmap")
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Applied, Thx
+This code is no longer used. Remove it.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------------
+ drivers/clk/davinci/psc.c                  | 18 ------------------
+ 2 files changed, 39 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+
+diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
+deleted file mode 100644
+index 42ed4f2f5ce4..000000000000
+--- a/arch/arm/mach-davinci/include/mach/clock.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/*
+- * arch/arm/mach-davinci/include/mach/clock.h
+- *
+- * Clock control driver for DaVinci - header file
+- *
+- * Authors: Vladimir Barinov <source@mvista.com>
+- *
+- * 2007 (c) MontaVista Software, Inc. This file is licensed under
+- * the terms of the GNU General Public License version 2. This program
+- * is licensed "as is" without any warranty of any kind, whether express
+- * or implied.
+- */
+-#ifndef __ASM_ARCH_DAVINCI_CLOCK_H
+-#define __ASM_ARCH_DAVINCI_CLOCK_H
+-
+-struct clk;
+-
+-int davinci_clk_reset_assert(struct clk *c);
+-int davinci_clk_reset_deassert(struct clk *c);
+-
+-#endif
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 063df62381ea..75c4bc6f23e3 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -295,24 +295,6 @@ static int davinci_lpsc_clk_reset(struct clk *clk, bool reset)
+ 	return 0;
+ }
+ 
+-/*
+- * REVISIT: These exported functions can be removed after a non-DT lookup is
+- * added to the reset controller framework and the davinci-rproc driver is
+- * updated to use the generic reset controller framework.
+- */
+-
+-int davinci_clk_reset_assert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, true);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_assert);
+-
+-int davinci_clk_reset_deassert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, false);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_deassert);
+-
+ static int davinci_psc_reset_assert(struct reset_controller_dev *rcdev,
+ 				    unsigned long id)
+ {
+-- 
+2.16.3
