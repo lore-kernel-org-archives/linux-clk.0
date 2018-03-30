@@ -1,45 +1,35 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/8] clk: renesas: mstp: Always use readl()/writel()
-Date: Fri, 16 Mar 2018 14:40:16 +0100
-Message-Id: <1521207622-3311-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
-References: <1521207622-3311-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 3/8] clk: davinci: add a reset lookup table for psc0
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180330152856.12297-1-brgl@bgdev.pl>
+ <20180330152856.12297-4-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <a96712b7-2f2d-5a6d-a37a-a43063fb801b@lechnology.com>
+Date: Fri, 30 Mar 2018 12:12:30 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180330152856.12297-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On arm32, there is no reason to use the (soon deprecated)
-clk_readl()/clk_writel().  Hence use the generic readl()/writel()
-instead.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/clk-mstp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index d6a57dc23679711b..2b7e3eb651e3d375 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -64,13 +64,13 @@ struct mstp_clock {
- static inline u32 cpg_mstp_read(struct mstp_clock_group *group,
- 				u32 __iomem *reg)
- {
--	return group->width_8bit ? readb(reg) : clk_readl(reg);
-+	return group->width_8bit ? readb(reg) : readl(reg);
- }
- 
- static inline void cpg_mstp_write(struct mstp_clock_group *group, u32 val,
- 				  u32 __iomem *reg)
- {
--	group->width_8bit ? writeb(val, reg) : clk_writel(val, reg);
-+	group->width_8bit ? writeb(val, reg) : writel(val, reg);
- }
- 
- static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
--- 
-2.7.4
+On 3/30/18 10:28 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> In order to be able to use the reset framework in legacy boot mode as
+> well, add the reset lookup table to the psc driver for da850 variant.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+
+Reviewed-by: David Lechner <david@lechnology.com>
