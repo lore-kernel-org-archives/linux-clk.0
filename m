@@ -1,40 +1,57 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <1521712529-632-3-git-send-email-abel.vesa@nxp.com>
-References: <1521712529-632-1-git-send-email-abel.vesa@nxp.com> <1521712529-632-3-git-send-email-abel.vesa@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 22 Mar 2018 09:31:03 -0300
-Message-ID: <CAOMZO5BVxp7pq44pUp444CqsYcJ5QQFqrgdRyFbaxRi0_d0ssg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm: imx: Correct dram pll type
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Yongcai Huang <anson.huang@nxp.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <hayashi.kunihiko@socionext.com>
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH 2/3] clk: uniphier: add SATA clock control support
+Date: Fri, 30 Mar 2018 18:44:13 +0900
+Message-Id: <1522403054-18691-3-git-send-email-hayashi.kunihiko@socionext.com>
+In-Reply-To: <1522403054-18691-1-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1522403054-18691-1-git-send-email-hayashi.kunihiko@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Abel,
+Add clock control for SATA controller on UniPhier SoCs. This adds
+support for PXs2, LD20 and PXs3.
 
-On Thu, Mar 22, 2018 at 6:55 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
-> From: Anson Huang <anson.huang@nxp.com>
->
-> DRAM PLL is a audio/video type PLL, need to correct it to get correct ops of
-> PLL.
->
-> There is a test_div placed before DRAM PLL's gate, so add this test div clk.
->
-> Signed-off-by: Anson Huang <anson.huang@nxp.com>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+---
+ drivers/clk/uniphier/clk-uniphier-sys.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-This has already been applied in linux-next as commit:
-
-commit b716aad97eb5 ("clk: imx: imx7d: correct video pll clock tree)
-
-Nit: the prefix in the Subject lines of all these patches should not
-be "arm:imx".
-
-"clk: imx: imx7d" is better suited to reflect the subsystem that thes
-patches touch.
+diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+index d539c82..7d66dfb 100644
+--- a/drivers/clk/uniphier/clk-uniphier-sys.c
++++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+@@ -112,6 +112,8 @@ const struct uniphier_clk_data uniphier_pro4_sys_clk_data[] = {
+ 	UNIPHIER_PRO4_SYS_CLK_GIO(12),			/* Ether, SATA, USB3 */
+ 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
+ 	UNIPHIER_PRO4_SYS_CLK_USB3(15, 1),
++	UNIPHIER_CLK_GATE("sata0", 28, NULL, 0x2104, 18),
++	UNIPHIER_CLK_GATE("sata1", 29, NULL, 0x2104, 19),
+ 	UNIPHIER_PRO4_SYS_CLK_AIO(40),
+ 	{ /* sentinel */ }
+ };
+@@ -160,6 +162,7 @@ const struct uniphier_clk_data uniphier_pxs2_sys_clk_data[] = {
+ 	/* The document mentions 0x2104 bit 18, but not functional */
+ 	UNIPHIER_CLK_GATE("usb30-phy", 16, NULL, 0x2104, 19),
+ 	UNIPHIER_CLK_GATE("usb31-phy", 20, NULL, 0x2104, 20),
++	UNIPHIER_CLK_GATE("sata0", 28, NULL, 0x2104, 22),
+ 	UNIPHIER_PRO5_SYS_CLK_AIO(40),
+ 	{ /* sentinel */ }
+ };
+@@ -257,6 +260,9 @@ const struct uniphier_clk_data uniphier_pxs3_sys_clk_data[] = {
+ 	UNIPHIER_CLK_GATE("usb31-phy0", 20, NULL, 0x210c, 17),
+ 	UNIPHIER_CLK_GATE("usb31-phy1", 21, NULL, 0x210c, 19),
+ 	UNIPHIER_CLK_GATE("pcie", 24, NULL, 0x210c, 3),
++	UNIPHIER_CLK_GATE("sata0", 28, NULL, 0x210c, 7),
++	UNIPHIER_CLK_GATE("sata1", 29, NULL, 0x210c, 8),
++	UNIPHIER_CLK_GATE("sata-phy", 30, NULL, 0x210c, 21),
+ 	/* CPU gears */
+ 	UNIPHIER_CLK_DIV4("cpll", 2, 3, 4, 8),
+ 	UNIPHIER_CLK_DIV4("spll", 2, 3, 4, 8),
+-- 
+2.7.4
