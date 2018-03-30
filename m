@@ -1,84 +1,31 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v7 10/42] clk: davinci: New driver for davinci PSC clocks
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
- arm-soc <linux-arm-kernel@lists.infradead.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
- LKML <linux-kernel@vger.kernel.org>
-References: <1519071723-31790-1-git-send-email-david@lechnology.com>
- <1519071723-31790-11-git-send-email-david@lechnology.com>
- <CAMpxmJVxfGtO=kh63KF-5Uqew3yy97DsK4FSd14CyyRQTOhrTA@mail.gmail.com>
- <93696fc8-bb93-aa20-3506-3d7216c17cd2@lechnology.com>
- <CAMpxmJVpMgikNfB4HgNCs+ep+EOHqH5bthiW82LsnDqzLfE5mg@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <6bbe9bf3-24c1-acd9-200d-513520d34558@lechnology.com>
-Date: Thu, 1 Mar 2018 10:44:29 -0600
+Return-Path: <horms@verge.net.au>
+Date: Fri, 30 Mar 2018 09:41:37 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/5] clk: renesas: r-car gen2: Fix LB clock divider
+Message-ID: <20180330074136.sirwfohz3tnraf5r@verge.net.au>
+References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <CAMpxmJVpMgikNfB4HgNCs+ep+EOHqH5bthiW82LsnDqzLfE5mg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03/01/2018 02:36 AM, Bartosz Golaszewski wrote:
-> 2018-02-28 22:40 GMT+01:00 David Lechner <david@lechnology.com>:
->> On 02/28/2018 06:38 AM, Bartosz Golaszewski wrote:
->>>
->>>
->>> I think I found the reason for the strange crashes we were
->>> experiencing (emac core->name being NULL) thanks to Sekhar who pointed
->>> me in the right direction.
->>>
->>> The mdio driver fails to probe with v7 due to the supplied clock rate
->>> being wrong. Before failing we register the emac clock with
->>> pm_clk_add_clk(). When clock_ops puts the clock, it decreases the
->>> reference count of the clock, but we never actually increased it in
->>> the first place in the line above. The core clock code then destroys
->>> the associated clk_core structure. When the next user comes around (in
->>> our case the clk debug functions) the system crashes.
->>>
->>> I believe there to be two issues: one is with v7 - we need to increase
->>> the clock reference count in davinci_psc_genpd_attach_dev().
->>>
->>> Second is the error path in the clock framework - we should remove the
->>> destroyed clk_core from the debug list, which is not being done now.
->>>
->>> Why we even need to track the refcount of clk_core is a mistery for me
->>> though. Stephen, Mike?
->>>
->>> Best regards,
->>> Bartosz Golaszewski
->>
->>
->> Great find. I figured it had to be something like this, but I wasn't
->> able to reproduce the problem yet.
->>
->> I suppose it is time to spin up a v8 with some fixes.
+On Thu, Mar 29, 2018 at 07:33:05PM +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> I still don't know why the mdio clock rate is much lower than in
-> mainline though. Any ideas?
+> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+> the LB clock divider depends on the value of the MD18 pin.
 > 
-> Thanks,
-> Bart
+> However, on most RZ/G1 and R-Car Gen2 SoCs, the LB clock divider is
+> fixed to 24.  Hence this series corrects the LB clock on affected SoCs
+> by modelling it as a fixed factor clock instead.
 > 
+> This doesn't have much impact, as no kernel code relies on the rate of
+> the LB clock.
+> 
+> To be queued in clk-renesas-for-v4.18.
 
-Now that you have fixed the crash, can you answer the questions I have
-asked earlier?
-
-> Can you post the output of this command so that I can see how your
-clocks are setup:
-
-cat /sys/kernel/debug/clk/clk_summary
-
-> Using your workaround, can you run:
-
-cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-
-If you see:
-   1e27000.clock-controller: emac  off-0
-
-then genpd is not working like it is supposed to. You should see something
-like this for device that are working:
-           1e27000.clock-controller: uart2  on
-     /devices/platform/soc@1c00000/1d0d000.serial        active
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
