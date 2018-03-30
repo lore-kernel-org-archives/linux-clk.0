@@ -1,39 +1,48 @@
-Return-Path: <s.nawrocki@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	b.zolnierkie@samsung.com, m.szyprowski@samsung.com, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5420: Add CLK_SET_RATE_PARENT flag to
- mout_mau_epll_clk
-Date: Wed, 07 Mar 2018 17:46:55 +0100
-Message-id: <20180307164656.12194-1-s.nawrocki@samsung.com>
-References: <CGME20180307164708epcas1p27e6599e85617f559c5c4c8eb92a70a47@epcas1p2.samsung.com>
+Return-Path: <brgl@bgdev.pl>
+MIME-Version: 1.0
+In-Reply-To: <6166e140-b417-dd22-10cf-843db3958226@lechnology.com>
+References: <20180327092031.11251-1-brgl@bgdev.pl> <6166e140-b417-dd22-10cf-843db3958226@lechnology.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 30 Mar 2018 13:07:14 +0200
+Message-ID: <CAMRc=Me-+oDi7R-=sSbKU45EFDv04X2rswksLD2N1rnbYrZo2A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+To: David Lechner <david@lechnology.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This allows changing the EPLL output frequency through the audio subsystem
-clock tree leaf clocks. This change is needed to support audio on the HDMI
-interface on Peach-Pi(t) Chromebook.
+2018-03-27 18:48 GMT+02:00 David Lechner <david@lechnology.com>:
+> Wasn't there a v4 already? Is this really v5 instead of v3?
+>
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Yes there was and Philipp applied the v4 alright.
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 8c050ff63536..1f204ba37f0f 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -621,7 +621,8 @@ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
- 
- 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
- 			mout_group5_5800_p, SRC_TOP7, 16, 2),
--	MUX(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2),
-+	MUX_F(0, "mout_mau_epll_clk", mout_mau_epll_clk_p, SRC_TOP7, 20, 2,
-+	      CLK_SET_RATE_PARENT, 0),
- 
- 	MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
- };
--- 
-2.14.2
+>
+> On 03/27/2018 04:20 AM, Bartosz Golaszewski wrote:
+>>
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> This series converts the only user of the handcoded, mach-specific reset
+>> routines in the davinci platform to using the reset framework.
+>>
+>> Patches 1-3 add necessary lookups/DT-properties.
+>
+>
+> Should I just squash the DT changes into my common-clock-v9 branch
+> since those patches haven't been picked up yet anyway? That will be
+> 2 fewer patches to keep track of.
+
+I would personally prefer to keep the changesets thematically
+separate. The clock series is big anyway already.
+
+Thanks,
+Bartosz
