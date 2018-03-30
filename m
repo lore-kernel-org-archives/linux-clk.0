@@ -1,61 +1,51 @@
-Return-Path: <tony@atomide.com>
-Date: Thu, 1 Mar 2018 07:26:00 -0800
-From: Tony Lindgren <tony@atomide.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-	linux-omap@vger.kernel.org, jsarha@ti.com
-Subject: Re: [PATCH 0/3] clk: ti: add CLK_SET_RATE_PARENT support for clkctrl
-Message-ID: <20180301152600.GF62820@atomide.com>
-References: <1519657812-15605-1-git-send-email-t-kristo@ti.com>
- <20180226220520.GI16043@atomide.com>
- <e036e793-37f5-a6ee-4347-72d27579e278@ti.com>
- <20180227164142.GA5448@atomide.com>
- <20180227164813.GB5448@atomide.com>
- <98bf01ee-f6e0-67e4-f8cc-cec4e5d37f31@ti.com>
- <20180228215850.GH5448@atomide.com>
- <7df04a6b-9ddd-7061-9a29-8620da4f61c2@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <7df04a6b-9ddd-7061-9a29-8620da4f61c2@ti.com>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v5 1/8] ARM: davinci: dts: make psc0 a reset provider
+Date: Fri, 30 Mar 2018 17:28:49 +0200
+Message-Id: <20180330152856.12297-2-brgl@bgdev.pl>
+In-Reply-To: <20180330152856.12297-1-brgl@bgdev.pl>
+References: <20180330152856.12297-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Tero Kristo <t-kristo@ti.com> [180301 07:05]:
-> On 28/02/18 23:58, Tony Lindgren wrote:
-> > Then omap_dm_timer_init_one() can configure the source clock
-> > which is bit 24. My guess is that 138f7ca78f is really a
-> > workaround for set_parent() not working properly for clkctrl
-> > clock :)
-> 
-> set_parent() can't work for clkctrl clock, as it only has one parent. The
-> mux is a separate component, so you need to fetch the parent of the clkctrl
-> part and set the parent for that one; unless we want to implement some sort
-> of composite clock support for it.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Hmm OK probably good idea to avoid any composite clocks here :)
+The psc driver registers with the reset framework as a provider. Add
+the #reset-cells property to the psc0 node.
 
-I guess in timer1 example, clkctrl bit 0 is gate for both GPT1_FCLK
-and WKUP_L4_ICLK2? And then bit 24 sets the parent of WKUP_L4_ICLK2.
-Or am I still confused?
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-So what should we call clkctrl bit 24 then? It seems we can have
-up to 8 opt clocks and also "parent" clocks for the fck.
-
-> I'd say it is more like a transitional patch to support both legacy and
-> clkctrl way of handling clocks. The patch can most likely be dropped once
-> the transition is done, but this was the only way I could see how to get it
-> fixed in short term.
-
-OK
-
-> > Then a board can specify it's desired source clock for system
-> > timer(s) by configure "assigned-lcok-parents" and set it to
-> > 32KiHz clock or SYS_CLK.
-> 
-> Yeah, that will definitely work.
-
-We can have those aliases for the timer driver, I guess we just
-need a suitable name for the clkctrl parent bit(s).
-
-Anyways, no objections to this series of fixes, just wondering:
-
-Acked-by: Tony Lindgren <tony@atomide.com>
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index a3b9a99b43ca..dad64dbf1f23 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -123,6 +123,7 @@
+ 			compatible = "ti,da850-psc0";
+ 			reg = <0x10000 0x1000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+ 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+-- 
+2.16.3
