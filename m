@@ -1,119 +1,48 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
+Return-Path: <hayashi.kunihiko@socionext.com>
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v8 28/42] ARM: davinci: da8xx: add new sata_refclk init using common clock framework
-Date: Thu, 15 Mar 2018 21:52:44 -0500
-Message-Id: <1521168778-27236-29-git-send-email-david@lechnology.com>
-In-Reply-To: <1521168778-27236-1-git-send-email-david@lechnology.com>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH 3/3] clk: uniphier: add additional ethernet clock lines for Pro4
+Date: Fri, 30 Mar 2018 18:44:14 +0900
+Message-Id: <1522403054-18691-4-git-send-email-hayashi.kunihiko@socionext.com>
+In-Reply-To: <1522403054-18691-1-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1522403054-18691-1-git-send-email-hayashi.kunihiko@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
-using the new common clock framework drivers.
+Pro4 SoC has clock lines for Giga-bit feature and ethernet phy,
+and these are mandatory to activate the ethernet controller. This adds
+support for the clock lines.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
-
-Also, the #includes are sorted since we are adding some here.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 ---
+ drivers/clk/uniphier/clk-uniphier-sys.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-v8 changes:
-- none
-
-v7 changes:
-- none
-
-v6 changes:
-- none
-
- arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 78390c6..73de449 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -10,25 +10,30 @@
-  * the Free Software Foundation; either version 2 of the License, or
-  * (at your option) any later version.
-  */
--#include <linux/init.h>
--#include <linux/platform_device.h>
--#include <linux/dma-contiguous.h>
--#include <linux/serial_8250.h>
- #include <linux/ahci_platform.h>
-+#include <linux/clk-provider.h>
- #include <linux/clk.h>
--#include <linux/reboot.h>
-+#include <linux/clkdev.h>
-+#include <linux/dma-contiguous.h>
- #include <linux/dmaengine.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+#include <linux/serial_8250.h>
- 
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
--#include <mach/clock.h>
-+#include <mach/time.h>
-+
-+#include "asp.h"
- #include "cpuidle.h"
- #include "sram.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include <mach/clock.h>
- #include "clock.h"
--#include "asp.h"
-+#endif
- 
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
-@@ -1040,6 +1045,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
- }
- 
- #ifdef CONFIG_ARCH_DAVINCI_DA850
-+#ifndef CONFIG_COMMON_CLK
- static struct clk sata_refclk = {
- 	.name		= "sata_refclk",
- 	.set_rate	= davinci_simple_set_rate,
-@@ -1061,6 +1067,18 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return 0;
- }
-+#else
-+int __init da850_register_sata_refclk(int rate)
-+{
-+	struct clk *clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	return clk_register_clkdev(clk, "refclk", "ahci_da850");
-+}
-+#endif
- 
- static struct resource da850_sata_resources[] = {
- 	{
+diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+index 7d66dfb..ebc78ab2 100644
+--- a/drivers/clk/uniphier/clk-uniphier-sys.c
++++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+@@ -102,13 +102,16 @@ const struct uniphier_clk_data uniphier_pro4_sys_clk_data[] = {
+ 	UNIPHIER_CLK_FACTOR("upll", -1, "ref", 288, 25),	/* 288 MHz */
+ 	UNIPHIER_CLK_FACTOR("a2pll", -1, "upll", 256, 125),	/* 589.824 MHz */
+ 	UNIPHIER_CLK_FACTOR("vpll27a", -1, "ref", 270, 25),	/* 270 MHz */
++	UNIPHIER_CLK_FACTOR("gpll", -1, "ref", 10, 1),		/* 250 MHz */
+ 	UNIPHIER_CLK_FACTOR("uart", 0, "a2pll", 1, 8),
+ 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 32),
+ 	UNIPHIER_LD4_SYS_CLK_NAND(2),
+ 	UNIPHIER_LD4_SYS_CLK_SD,
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "upll", 1, 12),
+ 	UNIPHIER_PRO4_SYS_CLK_ETHER(6),
++	UNIPHIER_CLK_GATE("ether-gb", 7, "gpll", 0x2104, 5),
+ 	UNIPHIER_LD4_SYS_CLK_STDMAC(8),			/* HSC, MIO, RLE */
++	UNIPHIER_CLK_GATE("ether-phy", 10, "ref", 0x2260, 0),
+ 	UNIPHIER_PRO4_SYS_CLK_GIO(12),			/* Ether, SATA, USB3 */
+ 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
+ 	UNIPHIER_PRO4_SYS_CLK_USB3(15, 1),
 -- 
 2.7.4
