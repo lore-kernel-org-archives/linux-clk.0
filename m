@@ -1,132 +1,51 @@
-Return-Path: <richard.genoud@gmail.com>
-Return-Path: <richard.genoud@gmail.com>
-Subject: Re: [PATCH] clk: mvebu: armada-38x: add support for missing clocks
-To: Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Gregory CLEMENT <gregory.clement@free-electrons.com>,
- Ralph Sennhauser <ralph.sennhauser@gmail.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180308090300.23544-1-richard.genoud@gmail.com>
- <87h8pq4s92.fsf@bootlin.com> <877eqm4s68.fsf@bootlin.com>
-From: Richard Genoud <richard.genoud@gmail.com>
-Message-ID: <ce834e07-5151-bb5a-b880-244e44e2ef08@gmail.com>
-Date: Tue, 13 Mar 2018 11:20:35 +0100
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 1/8] ARM: davinci: dts: make psc0 a reset provider
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180330152856.12297-1-brgl@bgdev.pl>
+ <20180330152856.12297-2-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <7a069665-966e-9277-2b4c-a0505804e94a@lechnology.com>
+Date: Fri, 30 Mar 2018 12:10:20 -0500
 MIME-Version: 1.0
-In-Reply-To: <877eqm4s68.fsf@bootlin.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180330152856.12297-2-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 08/03/2018 14:23, Gregory CLEMENT wrote:
-> Hi,
->  
->  On jeu., mars 08 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
-> 
->> Hi Richard,
->>  
->>  On jeu., mars 08 2018, Richard Genoud <richard.genoud@gmail.com> wrote:
->>
->>> Clearfog boards can come with a CPU clocked at 1600MHz (commercial)
->>> or 1333MHz (industrial).
->>>
->>> They have also some dip-switches to select a different clock (666, 800,
->>> 1066, 1200).
->>
->> The patch looks goo and it will also be usefull for any other board
->> using these frequencies, thanks for this. I have only one small comment,
->> see below.
-> 
-> 
-> I forgot to mention that you can add my
-> 
-> Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-> 
-> Thanks,
-> 
-> Gregory
-> 
->>
->>
->>>
->>> The funny thing is that the recovery button is on the MPP34 fq selector.
->>> So, when booting an industrial board with this button down, the frequency
->>> 666MHz is selected (and the kernel didn't boot).
->>>
->>> This patch add all the missing clocks.
->>>
->>> The only mode I didn't test is 2GHz (uboot found 4294MHz instead :/ ).
->>>
->>> Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
->>> ---
->>>  drivers/clk/mvebu/armada-38x.c | 14 +++++++-------
->>>  1 file changed, 7 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
->>> index 394aa6f03f01..9ff4ea63932d 100644
->>> --- a/drivers/clk/mvebu/armada-38x.c
->>> +++ b/drivers/clk/mvebu/armada-38x.c
->>> @@ -46,11 +46,11 @@ static u32 __init armada_38x_get_tclk_freq(void __iomem *sar)
->>>  }
->>>  
->>>  static const u32 armada_38x_cpu_frequencies[] __initconst = {
->>> -	0, 0, 0, 0,
->>> -	1066 * 1000 * 1000, 0, 0, 0,
->>> +	666 * 1000 * 1000,  0, 800 * 1000 * 1000, 0,
->>> +	1066 * 1000 * 1000, 0, 1200 * 1000 * 1000, 0,
->>>  	1332 * 1000 * 1000, 0, 0, 0,
->>>  	1600 * 1000 * 1000, 0, 0, 0,
->>> -	1866 * 1000 * 1000,
->>> +	1866 * 1000 * 1000, 0, 0, 2000 * 1000 * 1000,
->>
->> Maybe you could add a comment here to say that the 2GHz mode didn't have
->> been tested.
-Well, if I add a comment there saying "2GHz mode hasn't been tested",
-I'm afraid it will stay there forever, even after being tested.
-(if it's working, nobody will look at it, and if it's not, it's in the commit message anyway).
-
-I was also thinking that this could go in -stable since it fixes a hang.
-In this case, commit 9593f4f56cf5 ("clk: mvebu: armada-38x: add support for 1866MHz variants")
-should also go with it.
 
 
-
-Thanks !
-
->>
->> Thanks,
->> Gregory
->>
->>
->>>  };
->>>  
->>>  static u32 __init armada_38x_get_cpu_freq(void __iomem *sar)
->>> @@ -76,11 +76,11 @@ static const struct coreclk_ratio armada_38x_coreclk_ratios[] __initconst = {
->>>  };
->>>  
->>>  static const int armada_38x_cpu_l2_ratios[32][2] __initconst = {
->>> -	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
->>> +	{1, 2}, {0, 1}, {1, 2}, {0, 1},
->>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>> +	{1, 2}, {0, 1}, {0, 1}, {1, 2},
->>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>> @@ -91,7 +91,7 @@ static const int armada_38x_cpu_ddr_ratios[32][2] __initconst = {
->>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>>  	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>> -	{1, 2}, {0, 1}, {0, 1}, {0, 1},
->>> +	{1, 2}, {0, 1}, {0, 1}, {7, 15},
->>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>>  	{0, 1}, {0, 1}, {0, 1}, {0, 1},
->>
->> -- 
->> Gregory Clement, Bootlin (formerly Free Electrons)
->> Embedded Linux and Kernel engineering
->> http://bootlin.com
+On 3/30/18 10:28 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
+> The psc driver registers with the reset framework as a provider. Add
+> the #reset-cells property to the psc0 node.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   arch/arm/boot/dts/da850.dtsi | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+> index a3b9a99b43ca..dad64dbf1f23 100644
+> --- a/arch/arm/boot/dts/da850.dtsi
+> +++ b/arch/arm/boot/dts/da850.dtsi
+> @@ -123,6 +123,7 @@
+>   			compatible = "ti,da850-psc0";
+>   			reg = <0x10000 0x1000>;
+>   			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+>   			#power-domain-cells = <1>;
+>   			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+>   				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+> 
+
+Reviewed-by: David Lechner <david@lechnology.com>
