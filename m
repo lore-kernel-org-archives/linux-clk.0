@@ -1,79 +1,52 @@
-Return-Path: <mgautam@codeaurora.org>
-From: Manu Gautam <mgautam@codeaurora.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-	robh@kernel.org,
-	sboyd@codeaurora.org
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	vivek.gautam@codeaurora.org,
-	evgreen@chromium.org,
-	dianders@chromium.org,
-	linux-arm-msm@vger.kernel.org,
-	Manu Gautam <mgautam@codeaurora.org>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-soc@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v4 1/7] clk: msm8996-gcc: change halt check for USB/PCIE pipe_clk
-Date: Thu, 29 Mar 2018 16:34:20 +0530
-Message-Id: <1522321466-21755-2-git-send-email-mgautam@codeaurora.org>
-In-Reply-To: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v5 2/8] ARM: davinci: dts: add a reset control to the dsp
+ node
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180330152856.12297-1-brgl@bgdev.pl>
+ <20180330152856.12297-3-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <72775f3d-8b89-9aae-833c-1d6779b94b5e@lechnology.com>
+Date: Fri, 30 Mar 2018 12:10:56 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180330152856.12297-3-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The USB and PCIE pipe clocks are sourced from external clocks
-inside the QMP USB/PCIE PHYs. Enabling or disabling of PIPE RCG
-clocks is dependent on PHY initialization sequence hence
-update halt_check to BRANCH_HALT_DELAY for these clocks so
-that clock status bit is not polled when enabling or disabling
-the clocks. It allows to simplify PHY client driver code which
-is both user and source of the pipe_clk and avoid error logging
-related status check on clk_disable/enable.
 
-Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
----
- drivers/clk/qcom/gcc-msm8996.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 5d74512..336d12d 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -1418,6 +1418,7 @@ enum {
- 
- static struct clk_branch gcc_usb3_phy_pipe_clk = {
- 	.halt_reg = 0x50004,
-+	.halt_check = BRANCH_HALT_DELAY,
- 	.clkr = {
- 		.enable_reg = 0x50004,
- 		.enable_mask = BIT(0),
-@@ -2472,6 +2473,7 @@ enum {
- 
- static struct clk_branch gcc_pcie_0_pipe_clk = {
- 	.halt_reg = 0x6b018,
-+	.halt_check = BRANCH_HALT_DELAY,
- 	.clkr = {
- 		.enable_reg = 0x6b018,
- 		.enable_mask = BIT(0),
-@@ -2547,6 +2549,7 @@ enum {
- 
- static struct clk_branch gcc_pcie_1_pipe_clk = {
- 	.halt_reg = 0x6d018,
-+	.halt_check = BRANCH_HALT_DELAY,
- 	.clkr = {
- 		.enable_reg = 0x6d018,
- 		.enable_mask = BIT(0),
-@@ -2622,6 +2625,7 @@ enum {
- 
- static struct clk_branch gcc_pcie_2_pipe_clk = {
- 	.halt_reg = 0x6e018,
-+	.halt_check = BRANCH_HALT_DELAY,
- 	.clkr = {
- 		.enable_reg = 0x6e018,
- 		.enable_mask = BIT(0),
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 3/30/18 10:28 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The davinci-rproc driver will soon use the reset framework. Add the
+> resets property to the dsp node in da850.dtsi.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   arch/arm/boot/dts/da850.dtsi | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+> index dad64dbf1f23..5b485e44b83e 100644
+> --- a/arch/arm/boot/dts/da850.dtsi
+> +++ b/arch/arm/boot/dts/da850.dtsi
+> @@ -109,6 +109,7 @@
+>   		interrupt-parent = <&intc>;
+>   		interrupts = <28>;
+>   		clocks = <&psc0 15>;
+> +		resets = <&psc0 15>;
+>   		status = "disabled";
+>   	};
+>   	soc@1c00000 {
+> 
+
+Reviewed-by: David Lechner <david@lechnology.com>
