@@ -1,59 +1,96 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Wed, 25 Apr 2018 08:18:24 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [RFC 03/10] cpufreq: exynos: Remove support for Exynos5440
-Message-ID: <20180425024824.7ej2sz5jlbiuqeqh@vireshk-i7>
-References: <20180424203239.21885-1-krzk@kernel.org>
- <20180424203239.21885-4-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180424203239.21885-4-krzk@kernel.org>
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 2/3] clk: qcom: gdsc: Add support to poll for higher timeout value
+Date: Mon,  2 Apr 2018 16:15:44 +0530
+Message-Id: <1522665945-28147-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
+References: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 24-04-18, 22:32, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../bindings/cpufreq/cpufreq-exynos5440.txt        |  28 --
->  drivers/cpufreq/Kconfig.arm                        |  14 -
->  drivers/cpufreq/Makefile                           |   1 -
->  drivers/cpufreq/exynos5440-cpufreq.c               | 452 ---------------------
->  4 files changed, 495 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
->  delete mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
+From: Amit Nischal <anischal@codeaurora.org>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+For some gdscs, it might take longer time up to 500us for
+updating their status. So add support for the same by
+defining a new flag 'GDS_TIMEOUT' to mark such gdsc in
+order to poll their status for longer timeout value.
 
--- 
-viresh
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gdsc.c | 9 +++++++--
+ drivers/clk/qcom/gdsc.h | 1 +
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 266fefa..e89584e 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -42,6 +42,7 @@
+ #define RETAIN_PERIPH		BIT(13)
+
+ #define TIMEOUT_US		100
++#define TIMEOUT_US_GDS		500
+
+ #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
+
+@@ -67,12 +68,14 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
+ static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
+ {
+ 	ktime_t start;
++	ktime_t timeout =
++		(sc->flags & GDS_TIMEOUT) ? TIMEOUT_US_GDS : TIMEOUT_US;
+
+ 	start = ktime_get();
+ 	do {
+ 		if (gdsc_is_enabled(sc, reg) == en)
+ 			return 0;
+-	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
++	} while (ktime_us_delta(ktime_get(), start) < timeout);
+
+ 	if (gdsc_is_enabled(sc, reg) == en)
+ 		return 0;
+@@ -85,6 +88,8 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 	int ret;
+ 	u32 val = en ? 0 : SW_COLLAPSE_MASK;
+ 	unsigned int status_reg = sc->gdscr;
++	ktime_t timeout =
++		(sc->flags & GDS_TIMEOUT) ? TIMEOUT_US_GDS : TIMEOUT_US;
+
+ 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+ 	if (ret)
+@@ -97,7 +102,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 		 * right after it was disabled does not put it in an
+ 		 * unknown state
+ 		 */
+-		udelay(TIMEOUT_US);
++		udelay(timeout);
+ 		return 0;
+ 	}
+
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 9279278..2e3abbf 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -55,6 +55,7 @@ struct gdsc {
+ #define HW_CTRL		BIT(2)
+ #define SW_RESET	BIT(3)
+ #define AON_RESET	BIT(4)
++#define GDS_TIMEOUT	BIT(5)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
