@@ -1,93 +1,58 @@
-Return-Path: <matthias.bgg@kernel.org>
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 06/10] mfd: mtk-mmsys: Add mt8173 nodes
-Date: Mon, 23 Apr 2018 18:13:55 +0200
-Message-Id: <ce7c173efe9929712af11ea38be7f3a4d515879b.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v8 42/42] ARM: dts: da850: Add clocks
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-43-git-send-email-david@lechnology.com>
+ <cf0c4153-b65d-da57-cd0f-0a16cb186377@lechnology.com>
+ <510309d2-2df0-a915-a6f6-082b41c6b28b@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <5502d0ee-b5dc-e90a-a041-882350c7d339@lechnology.com>
+Date: Mon, 2 Apr 2018 11:15:09 -0500
+MIME-Version: 1.0
+In-Reply-To: <510309d2-2df0-a915-a6f6-082b41c6b28b@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+On 04/02/2018 06:12 AM, Sekhar Nori wrote:
+> On Friday 16 March 2018 10:50 PM, David Lechner wrote:
+>> On 03/15/2018 09:52 PM, David Lechner wrote:
+>>> This adds clock provider nodes for da850 and wires them up to all of the
+>>> devices.
+>>>
+>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>> ---
+>>
+>> ...
+>>
+>> This is the mcasp0: mcasp@100000 node...
+>>
+>>> @@ -560,6 +720,7 @@
+>>>                dmas = <&edma0 1 1>,
+>>>                    <&edma0 0 1>;
+>>>                dma-names = "tx", "rx";
+>>> +            clocks = <&psc1 7>;
+>>
+>> After some testing, it looks like it needs to be:
+>>
+>> +            power-domains = <&psc1 7>;
+>>
+>> instead of
+>>
+>> +            clocks = <&psc1 7>;
+> 
+> We should probably have both clocks and power-domains properties for all
+> PSC clocks. This way, the driver can change without a corresponding DT
+> update dependency.
+> 
+> Thanks,
+> Sekhar
+> 
 
-Add devices for the mt8173 SoC.
-
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/mfd/mtk-mmsys.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
-index c802343fb1c6..5585a561a02f 100644
---- a/drivers/mfd/mtk-mmsys.c
-+++ b/drivers/mfd/mtk-mmsys.c
-@@ -19,6 +19,7 @@
- 
- enum {
- 	MMSYS_MT2701 = 1,
-+	MMSYS_MT8173,
- };
- 
- static const struct mfd_cell mmsys_mt2701_devs[] = {
-@@ -26,6 +27,12 @@ static const struct mfd_cell mmsys_mt2701_devs[] = {
- 	{ .name = "drm-mt2701-mm", },
- };
- 
-+static const struct mfd_cell mmsys_mt8173_devs[] = {
-+	{ .name = "clk-mt8173-mm", },
-+	{ .name = "drm-mt8173-mm", },
-+};
-+
-+
- static int mmsys_probe(struct platform_device *pdev)
- {
- 	const struct mfd_cell *mmsys_cells;
-@@ -44,6 +51,10 @@ static int mmsys_probe(struct platform_device *pdev)
- 		mmsys_cells = mmsys_mt2701_devs;
- 		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
- 		break;
-+	case MMSYS_MT8173:
-+		mmsys_cells = mmsys_mt8173_devs;
-+		nr_cells = ARRAY_SIZE(mmsys_mt8173_devs);
-+		break;
- 	default:
- 		return -ENODEV;
- 	}
-@@ -62,6 +73,9 @@ static const struct of_device_id of_match_mmsys[] = {
- 	{ .compatible = "mediatek,mt2701-mmsys",
- 	  .data = (void *) MMSYS_MT2701,
- 	},
-+	{ .compatible = "mediatek,mt8173-mmsys",
-+	  .data = (void *) MMSYS_MT8173,
-+	},
- 	{ /* sentinel */ },
- };
- 
--- 
-2.16.3
+That's fine with me. I just didn't know how people felt about using properties
+that are not documented.
