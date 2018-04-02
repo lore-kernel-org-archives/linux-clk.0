@@ -1,102 +1,69 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shengjiu.wang@nxp.com
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH V3 1/2] clk: imx6sx: add missing lvds2 clock to the clock tree
-Date: Fri, 20 Apr 2018 15:38:10 +0800
-Message-Id: <1524209891-14146-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 2 Apr 2018 14:46:17 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v4 08/14] dt: qcom: Add opp and thermal to the msm8996
+Message-ID: <20180402091617.GA3572@vireshk-i7>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-9-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1522358807-10413-9-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6SX has lvds2 (analog clock2), an I/O clock like lvds1.
-And this lvds2, along with lvds1, can be used to provide
-external clock source to the internal pll, such as pll4_audio
-and pll5_video.
+On 30-03-18, 00:26, Ilia Lin wrote:
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 275 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 267 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 410ae78..a0792bd 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -14,6 +14,7 @@
+>  #include <dt-bindings/clock/qcom,gcc-msm8996.h>
+>  #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+>  #include <dt-bindings/clock/qcom,rpmcc.h>
+> +#include <dt-bindings/thermal/thermal.h>
+>  
+>  / {
+>  	model = "Qualcomm Technologies, Inc. MSM8996";
+> @@ -97,6 +98,11 @@
+>  			compatible = "qcom,kryo";
+>  			reg = <0x0 0x0>;
+>  			enable-method = "psci";
+> +			clocks = <&kryocc 0>;
+> +			operating-points-v2 = <&cluster0_opp>;
+> +			cooling-min-level = <0>;
+> +			cooling-max-level = <15>;
 
-This patch mainly adds the lvds2 to the clock tree and fix its
-relationship with pll accordingly.
+The min/max properties are removed from DT documentation now. You don't need to
+add them anymore.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-changes since V2:
-	use of_clk_get_by_name instead of imx_obtain_fixed_clock for anaclkX node.
- drivers/clk/imx/clk-imx6sx.c             | 10 +++++++---
- include/dt-bindings/clock/imx6sx-clock.h |  6 +++++-
- 2 files changed, 12 insertions(+), 4 deletions(-)
+> +	cluster0_opp: opp_table0 {
+> +		compatible = "operating-points-v2";
+> +		opp-shared;
 
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index bc3f9eb..0178ee2 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -80,7 +80,7 @@ static const char *lvds_sels[]	= {
- 	"arm", "pll1_sys", "dummy", "dummy", "dummy", "dummy", "dummy", "pll5_video_div",
- 	"dummy", "dummy", "pcie_ref_125m", "dummy", "usbphy1", "usbphy2",
- };
--static const char *pll_bypass_src_sels[] = { "osc", "lvds1_in", };
-+static const char *pll_bypass_src_sels[] = { "osc", "lvds1_in", "lvds2_in", "dummy", };
- static const char *pll1_bypass_sels[] = { "pll1", "pll1_bypass_src", };
- static const char *pll2_bypass_sels[] = { "pll2", "pll2_bypass_src", };
- static const char *pll3_bypass_sels[] = { "pll3", "pll3_bypass_src", };
-@@ -158,8 +158,9 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SX_CLK_IPP_DI0] = of_clk_get_by_name(ccm_node, "ipp_di0");
- 	clks[IMX6SX_CLK_IPP_DI1] = of_clk_get_by_name(ccm_node, "ipp_di1");
- 
--	/* Clock source from external clock via CLK1 PAD */
--	clks[IMX6SX_CLK_ANACLK1] = imx_obtain_fixed_clock("anaclk1", 0);
-+	/* Clock source from external clock via CLK1/2 PAD */
-+	clks[IMX6SX_CLK_ANACLK1] = of_clk_get_by_name(ccm_node, "anaclk1");
-+	clks[IMX6SX_CLK_ANACLK2] = of_clk_get_by_name(ccm_node, "anaclk2");
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6sx-anatop");
- 	base = of_iomap(np, 0);
-@@ -228,7 +229,9 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SX_CLK_PCIE_REF_125M] = imx_clk_gate("pcie_ref_125m", "pcie_ref", base + 0xe0, 19);
- 
- 	clks[IMX6SX_CLK_LVDS1_OUT] = imx_clk_gate_exclusive("lvds1_out", "lvds1_sel", base + 0x160, 10, BIT(12));
-+	clks[IMX6SX_CLK_LVDS2_OUT] = imx_clk_gate_exclusive("lvds2_out", "lvds2_sel", base + 0x160, 11, BIT(13));
- 	clks[IMX6SX_CLK_LVDS1_IN]  = imx_clk_gate_exclusive("lvds1_in",  "anaclk1",   base + 0x160, 12, BIT(10));
-+	clks[IMX6SX_CLK_LVDS2_IN]  = imx_clk_gate_exclusive("lvds2_in",  "anaclk2",   base + 0x160, 13, BIT(11));
- 
- 	clks[IMX6SX_CLK_ENET_REF] = clk_register_divider_table(NULL, "enet_ref", "pll6_enet", 0,
- 			base + 0xe0, 0, 2, 0, clk_enet_ref_table,
-@@ -270,6 +273,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 
- 	/*                                                name                reg           shift   width   parent_names       num_parents */
- 	clks[IMX6SX_CLK_LVDS1_SEL]          = imx_clk_mux("lvds1_sel",        base + 0x160, 0,      5,      lvds_sels,         ARRAY_SIZE(lvds_sels));
-+	clks[IMX6SX_CLK_LVDS2_SEL]          = imx_clk_mux("lvds2_sel",        base + 0x160, 5,      5,      lvds_sels,         ARRAY_SIZE(lvds_sels));
- 
- 	np = ccm_node;
- 	base = of_iomap(np, 0);
-diff --git a/include/dt-bindings/clock/imx6sx-clock.h b/include/dt-bindings/clock/imx6sx-clock.h
-index 36f0324..cd2d6c5 100644
---- a/include/dt-bindings/clock/imx6sx-clock.h
-+++ b/include/dt-bindings/clock/imx6sx-clock.h
-@@ -275,6 +275,10 @@
- #define IMX6SX_PLL6_BYPASS		262
- #define IMX6SX_PLL7_BYPASS		263
- #define IMX6SX_CLK_SPDIF_GCLK		264
--#define IMX6SX_CLK_CLK_END		265
-+#define IMX6SX_CLK_LVDS2_SEL		265
-+#define IMX6SX_CLK_LVDS2_OUT		266
-+#define IMX6SX_CLK_LVDS2_IN		267
-+#define IMX6SX_CLK_ANACLK2		268
-+#define IMX6SX_CLK_CLK_END		269
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX6SX_H */
+Is Kryo like krait where CPUs do DVFS independently ? If yes, then opp-shared
+thing should be dropped.
+
+> +
+> +		opp-307200000 {
+> +			opp-hz = /bits/ 64 <  307200000 >;
+
+Why have you added spaces after < and before > here ?
+
 -- 
-2.7.4
+viresh
