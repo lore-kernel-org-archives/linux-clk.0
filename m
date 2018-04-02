@@ -1,50 +1,104 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 11/21] bindings: display: Add compatible for A64 Mixer1
-Date: Mon, 30 Apr 2018 17:10:48 +0530
-Message-Id: <20180430114058.5061-12-jagan@amarulasolutions.com>
-In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v4 13/14] dt-bindings: cpufreq: Document
+ operating-points-v2-kryo-cpu
+To: Viresh Kumar <viresh.kumar@linaro.org>, Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
+ broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+ catalin.marinas@arm.com, will.deacon@arm.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ rnayak@codeaurora.org, amit.kucheria@linaro.org,
+ nicolas.dechesne@linaro.org, celster@codeaurora.org, tfinkel@codeaurora.org
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
+ <20180402093018.GC3572@vireshk-i7>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <7ca35b7a-6078-620b-4772-091e53ef6790@codeaurora.org>
+Date: Mon, 2 Apr 2018 20:37:54 +0530
+MIME-Version: 1.0
+In-Reply-To: <20180402093018.GC3572@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Mixer1 on Allwinner A64 has similar behavior like Allwinner A83T.
+Hi Viresh,
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
- 1 file changed, 1 insertion(+)
+On 4/2/2018 3:00 PM, Viresh Kumar wrote:
+> +Sricharan,
+> 
+> On 30-03-18, 00:26, Ilia Lin wrote:
+>> In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+>> that have KRYO processors, the CPU ferequencies subset and voltage value
+>> of each OPP varies based on the silicon variant in use.
+>> Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+>> defines the voltage and frequency value based on the msm-id in SMEM
+>> and speedbin blown in the efuse combination.
+>> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+>> to provide the OPP framework with required information.
+>> This is used to determine the voltage and frequency value for each OPP of
+>> operating-points-v2 table when it is parsed by the OPP framework.
+>>
+>> This change adds documentation.
+>>
+>> Change-Id: I1953f652a48249fb516d175f0e965a9510cd4209
+>> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+>> ---
+>>  .../devicetree/bindings/cpufreq/kryo-cpufreq.txt   | 693 +++++++++++++++++++++
+>>  1 file changed, 693 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+> 
+> This should really go in opp directory.
+> 
+>> new file mode 100644
+>> index 0000000..20cef9d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+>> @@ -0,0 +1,693 @@
+>> +Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
+>> +===================================
+>> +
+>> +In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+>> +that have KRYO processors, the CPU ferequencies subset and voltage value
+>> +of each OPP varies based on the silicon variant in use.
+>> +Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+>> +defines the voltage and frequency value based on the msm-id in SMEM
+>> +and speedbin blown in the efuse combination.
+>> +The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+>> +to provide the OPP framework with required information (existing HW bitmap).
+>> +This is used to determine the voltage and frequency value for each OPP of
+>> +operating-points-v2 table when it is parsed by the OPP framework.
+>> +
+>> +Required properties:
+>> +--------------------
+>> +In 'cpus' nodes:
+>> +- operating-points-v2: Phandle to the operating-points-v2 table to use.
+>> +
+>> +In 'operating-points-v2' table:
+>> +- compatible: Should be
+>> +	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
+>> +- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
+>> +		efuse registers that has information about the
+>> +		speedbin that is used to select the right frequency/voltage
+>> +		value pair.
+>> +		Please refer the for nvmem-cells
+>> +		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
+>> +		and also examples below.
+> 
+> Sricharan is also working on adding these, just make sure you guys do the same
+> thing..
+> 
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 7dcd1d64dfe4..5d448ef2132f 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -313,6 +313,7 @@ Required properties:
-     * allwinner,sun8i-a83t-de2-mixer-1
-     * allwinner,sun8i-h3-de2-mixer-0
-     * allwinner,sun8i-v3s-de2-mixer
-+    * allwinner,sun50i-a64-de2-mixer-1
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
-     * bus: the mixer interface clock
+ Right, i was adding a similar one for krait cores [1]. There is code common in the
+ init sequence across both (little). Do you intent to make them common ?
+
+Regards,
+ Sricharan
+
+ [1] https://patchwork.kernel.org/patch/10261873/
+
+
 -- 
-2.14.3
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
