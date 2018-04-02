@@ -1,218 +1,207 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	fabio.estevam@nxp.com,
-	linux-imx@nxp.com,
-	kernel@pengutronix.de,
-	Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH 03/12] clk: imx: scu: add scu clock divider
-Date: Sat, 28 Apr 2018 02:56:34 +0800
-Message-Id: <1524855403-15301-4-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
-References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 2 Apr 2018 14:56:50 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v4 12/14] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180402092650.GB3572@vireshk-i7>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-13-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1522358807-10413-13-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add scu based clock divider.
+On 30-03-18, 00:26, Ilia Lin wrote:
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index 3b585e4..88e8a6e 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -127,6 +127,9 @@
+>  	{ .compatible = "ti,am43", },
+>  	{ .compatible = "ti,dra7", },
+>  
+> +	{ .compatible = "qcom,msm8996", },
+> +	{ .compatible = "qcom,apq8096", },
+> +
 
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/scu/Makefile          |   3 +-
- drivers/clk/imx/scu/clk-divider-scu.c | 129 ++++++++++++++++++++++++++++++++++
- drivers/clk/imx/scu/clk-scu.h         |  18 +++++
- 3 files changed, 149 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/scu/clk-divider-scu.c
+This should be sorted in alphabetical order.
 
-diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
-index 7dead13..7e360e2 100644
---- a/drivers/clk/imx/scu/Makefile
-+++ b/drivers/clk/imx/scu/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- obj-$(CONFIG_MXC_CLK_SCU) += \
--	clk-scu.o
-+	clk-scu.o \
-+	clk-divider-scu.o
-diff --git a/drivers/clk/imx/scu/clk-divider-scu.c b/drivers/clk/imx/scu/clk-divider-scu.c
-new file mode 100644
-index 0000000..c1afd32
---- /dev/null
-+++ b/drivers/clk/imx/scu/clk-divider-scu.c
-@@ -0,0 +1,129 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017~2018 NXP
-+ *	Dong Aisheng <aisheng.dong@nxp.com>
-+ *
-+ */
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/jiffies.h>
-+#include <linux/slab.h>
-+#include <soc/imx/sc/sci.h>
-+
-+#include "clk-scu.h"
-+
-+struct clk_divider_scu {
-+	struct clk_hw	hw;
-+	sc_rsrc_t	rsrc_id;
-+	sc_pm_clk_t	clk_type;
-+};
-+
-+static inline struct clk_divider_scu *to_clk_divider_scu(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct clk_divider_scu, hw);
-+}
-+
-+/*
-+ * clk_divider_scu_recalc_rate - Get clock rate for a SCU clock
-+ * @hw: clock to get rate for
-+ * @parent_rate: parent rate provided by common clock framework, not used
-+ *
-+ * Gets the current clock rate of a SCU clock. Returns the current
-+ * clock rate, or zero in failure.
-+ */
-+static unsigned long clk_divider_scu_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct clk_divider_scu *div = to_clk_divider_scu(hw);
-+	sc_pm_clock_rate_t rate = 0;
-+	sc_err_t sci_err;
-+
-+	sci_err = sc_pm_get_clock_rate(ccm_ipc_handle, div->rsrc_id,
-+				       div->clk_type, &rate);
-+
-+	return sci_err ? 0 : rate;
-+}
-+
-+/*
-+ * clk_divider_scu_round_rate - Round clock rate for a SCU clock
-+ * @hw: clock to round rate for
-+ * @rate: rate to round
-+ * @parent_rate: parent rate provided by common clock framework, not used
-+ *
-+ * Gets the current clock rate of a SCU clock. Returns the current
-+ * clock rate, or zero in failure.
-+ */
-+static long clk_divider_scu_round_rate(struct clk_hw *hw, unsigned long rate,
-+				       unsigned long *parent_rate)
-+{
-+	/*
-+	 * Assume we support all the requested rate and let the SCU firmware
-+	 * to handle the left work
-+	 */
-+	return rate;
-+}
-+
-+/*
-+ * clk_divider_scu_set_rate - Set rate for a SCU clock
-+ * @hw: clock to change rate for
-+ * @rate: target rate for the clock
-+ * @parent_rate: rate of the clock parent, not used for SCU clocks
-+ *
-+ * Sets a clock frequency for a SCU clock. Returns the SCU
-+ * protocol status.
-+ */
-+static int clk_divider_scu_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct clk_divider_scu *div = to_clk_divider_scu(hw);
-+	sc_err_t sci_err;
-+
-+	sci_err = sc_pm_set_clock_rate(ccm_ipc_handle, div->rsrc_id,
-+				       div->clk_type,
-+				       (sc_pm_clock_rate_t *)&rate);
-+
-+	return sci_err ? -EINVAL : 0;
-+}
-+
-+static const struct clk_ops clk_divider_scu_ops = {
-+	.recalc_rate = clk_divider_scu_recalc_rate,
-+	.round_rate = clk_divider_scu_round_rate,
-+	.set_rate = clk_divider_scu_set_rate,
-+};
-+
-+struct clk_hw *imx_clk_register_divider_scu(const char *name,
-+					    const char *parent_name,
-+					    sc_rsrc_t rsrc_id,
-+					    sc_pm_clk_t clk_type)
-+{
-+	struct clk_divider_scu *div;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	div = kzalloc(sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		return ERR_PTR(-ENOMEM);
-+
-+	div->rsrc_id = rsrc_id;
-+	div->clk_type = clk_type;
-+
-+	init.name = name;
-+	init.ops = &clk_divider_scu_ops;
-+	init.flags = CLK_GET_RATE_NOCACHE;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+	div->hw.init = &init;
-+
-+	hw = &div->hw;
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(div);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
-index 6b39e4a..ee197f9 100644
---- a/drivers/clk/imx/scu/clk-scu.h
-+++ b/drivers/clk/imx/scu/clk-scu.h
-@@ -7,6 +7,7 @@
- #ifndef __IMX_CLK_SCU_H
- #define __IMX_CLK_SCU_H
- 
-+#include <linux/clk-provider.h>
- #include <linux/spinlock.h>
- #include <soc/imx/sc/sci.h>
- 
-@@ -15,4 +16,21 @@ extern sc_ipc_t ccm_ipc_handle;
- 
- int imx_clk_scu_init(void);
- 
-+struct clk_hw *imx_clk_register_divider_scu(const char *name,
-+				const char *parent_name, sc_rsrc_t rsrc_id,
-+				sc_pm_clk_t clk_type);
-+
-+static inline struct clk_hw *imx_clk_divider_scu(const char *name,
-+				sc_rsrc_t rsrc_id, sc_pm_clk_t clk_type)
-+{
-+	return imx_clk_register_divider_scu(name, NULL, rsrc_id, clk_type);
-+}
-+
-+static inline struct clk_hw *imx_clk_divider2_scu(const char *name,
-+				const char *parent_name,
-+				sc_rsrc_t rsrc_id, sc_pm_clk_t clk_type)
-+{
-+	return imx_clk_register_divider_scu(name, parent_name, rsrc_id, clk_type);
-+}
-+
- #endif
+>  	{ }
+>  };
+>  
+> diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> new file mode 100644
+> index 0000000..3cb51f8
+> --- /dev/null
+> +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> @@ -0,0 +1,147 @@
+> +/* Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
+> + */
+
+The format of putting SPDX licence identifier isn't this. Please check and fix
+it.
+
+> +
+> +#include <linux/cpu.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/nvmem-consumer.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/slab.h>
+> +#include <linux/soc/qcom/smem.h>
+> +
+> +#define MSM_ID_SMEM	137
+> +#define SILVER_LEAD	0
+> +#define GOLD_LEAD	2
+> +
+> +enum _msm_id {
+> +	MSM8996V3 = 0xF6ul,
+> +	APQ8096V3 = 0x123ul,
+> +	MSM8996SG = 0x131ul,
+> +	APQ8096SG = 0x138ul,
+> +};
+> +
+> +enum _msm8996_version {
+> +	MSM8996_V3,
+> +	MSM8996_SG,
+> +	NUM_OF_MSM8996_VERSIONS,
+> +};
+> +
+> +static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
+> +{
+> +	size_t len;
+> +	u32 *msm_id;
+> +	enum _msm8996_version version;
+> +
+> +	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
+> +	/* The first 4 bytes are format, next to them is the actual msm-id */
+> +	msm_id++;
+> +
+> +	switch ((enum _msm_id)*msm_id) {
+> +	case MSM8996V3:
+> +	case APQ8096V3:
+> +		version = MSM8996_V3;
+> +		break;
+> +	case MSM8996SG:
+> +	case APQ8096SG:
+> +		version = MSM8996_SG;
+> +		break;
+> +	default:
+> +		version = NUM_OF_MSM8996_VERSIONS;
+> +	}
+> +
+> +	return version;
+> +}
+> +
+> +static int __init qcom_cpufreq_kryo_driver_init(void)
+> +{
+> +	struct platform_device *pdev;
+> +	struct device *cpu_dev;
+> +	struct device_node *np;
+> +	struct nvmem_cell *speedbin_nvmem;
+> +	enum _msm8996_version msm8996_version;
+> +	u8 *speedbin;
+> +	size_t len;
+> +	int ret;
+> +	u32 versions;
+> +
+> +	cpu_dev = get_cpu_device(SILVER_LEAD);
+> +	if (IS_ERR_OR_NULL(cpu_dev))
+> +		return PTR_ERR(cpu_dev);
+> +
+> +	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+> +	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+> +		dev_err(cpu_dev, "Not Snapdragon 820/821!");
+> +		return -ENODEV;
+> +        }
+> +
+> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+> +	if (IS_ERR_OR_NULL(np))
+> +		return PTR_ERR(np);
+> +
+> +	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
+> +		ret = -ENOENT;
+> +		goto free_np;
+> +	}
+> +
+> +	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
+> +	if (IS_ERR(speedbin_nvmem)) {
+> +		ret = PTR_ERR(speedbin_nvmem);
+> +		dev_err(cpu_dev, "Could not get nvmem cell: %d\n", ret);
+> +		goto free_np;
+> +	}
+> +
+> +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
+> +
+> +	switch (msm8996_version) {
+> +	case MSM8996_V3:
+> +		versions = 1 << (unsigned int)(*speedbin);
+> +		break;
+> +	case MSM8996_SG:
+> +		versions = 1 << ((unsigned int)(*speedbin) + 4);
+> +		break;
+> +	default:
+> +		BUG();
+> +		break;
+> +	}
+> +
+> +	ret = PTR_ERR_OR_ZERO(dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+> +	if (0 > ret)
+> +		goto free_np;
+> +
+> +	cpu_dev = get_cpu_device(GOLD_LEAD);
+> +	ret = PTR_ERR_OR_ZERO(dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+
+What about undoing previous call on error here ?
+
+> +
+> +	of_node_put(np);
+> +
+> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+> +	if (IS_ERR(pdev)) {
+> +		return PTR_ERR(pdev);
+> +	}
+> +
+> +	return 0;
+> +
+> +free_np:
+> +	of_node_put(np);
+> +
+> +	return ret;
+> +}
+> +late_initcall(qcom_cpufreq_kryo_driver_init);
+> +
+> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 1.9.1
+
 -- 
-2.7.4
+viresh
