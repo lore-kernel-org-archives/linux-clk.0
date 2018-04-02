@@ -1,44 +1,137 @@
-Return-Path: <sean.wang@mediatek.com>
-Message-ID: <1524584602.12322.16.camel@mtkswgap22>
-Subject: Re: [PATCH v1 3/4] clk: mediatek: add g3dsys support for MT2701 and
- MT7623
-From: Sean Wang <sean.wang@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: <mturquette@baylibre.com>, <sboyd@kernel.org>, <airlied@linux.ie>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
-	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Tue, 24 Apr 2018 23:43:22 +0800
-In-Reply-To: <20180424144009.b66sxo3okjvsr4yc@rob-hp-laptop>
-References: <cover.1524044917.git.sean.wang@mediatek.com>
-	 <96dc02879c10388c2efa08b1cf33b77f938908ee.1524044917.git.sean.wang@mediatek.com>
-	 <20180424144009.b66sxo3okjvsr4yc@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: sean.wang@mediatek.com
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 3/3] clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
+Date: Mon,  2 Apr 2018 16:15:45 +0530
+Message-Id: <1522665945-28147-4-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
+References: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-04-24 at 09:40 -0500, Rob Herring wrote:
-> On Wed, Apr 18, 2018 at 06:24:55PM +0800, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > Add clock driver support for g3dsys on MT2701 and MT7623, which is
-> > providing essential clock gate and reset controller to Mali-450.
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/Kconfig              |  6 ++
-> >  drivers/clk/mediatek/Makefile             |  1 +
-> >  drivers/clk/mediatek/clk-mt2701-g3d.c     | 95 +++++++++++++++++++++++++++++++
-> 
-> >  include/dt-bindings/clock/mt2701-clk.h    |  4 ++
-> >  include/dt-bindings/reset/mt2701-resets.h |  3 +
-> 
-> These below in the binding patch.
-> 
+From: Amit Nischal <anischal@codeaurora.org>
 
-Thanks, I will split them out in the next version.
+The default behavior of the GDSC enable/disable sequence is to
+poll the status bits of either the actual GDSCR or the
+corresponding HW_CTRL registers.
 
-> >  5 files changed, 109 insertions(+)
-> >  create mode 100644 drivers/clk/mediatek/clk-mt2701-g3d.c
+On targets which have support for a CFG_GDSCR register, the
+status bits might not show the correct state of the GDSC,
+especially in the disable sequence, where the status bit
+will be cleared even before the core is completely power
+collapsed. On targets with this issue, poll the power on/off
+bits in the CFG_GDSCR register instead to correctly determine
+the GDSC state.
+
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gdsc.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/qcom/gdsc.h |  1 +
+ 2 files changed, 47 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index e89584e..e0c83ba 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -33,6 +33,11 @@
+ #define GMEM_CLAMP_IO_MASK	BIT(0)
+ #define GMEM_RESET_MASK		BIT(4)
+
++/* CFG_GDSCR */
++#define GDSC_POWER_UP_COMPLETE		BIT(16)
++#define GDSC_POWER_DOWN_COMPLETE	BIT(15)
++#define CFG_GDSCR_OFFSET		0x4
++
+ /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
+ #define EN_REST_WAIT_VAL	(0x2 << 20)
+ #define EN_FEW_WAIT_VAL		(0x8 << 16)
+@@ -83,6 +88,38 @@ static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
+ 	return -ETIMEDOUT;
+ }
+
++static int gdsc_is_enabled_by_poll_cfg_reg(struct gdsc *sc, bool en)
++{
++	u32 val;
++	int ret;
++
++	ret = regmap_read(sc->regmap, sc->gdscr + CFG_GDSCR_OFFSET, &val);
++	if (ret)
++		return ret;
++
++	if (en)
++		return !!(val & GDSC_POWER_UP_COMPLETE);
++	else
++		return !(val & GDSC_POWER_DOWN_COMPLETE);
++}
++
++static int gdsc_poll_cfg_status(struct gdsc *sc, bool en)
++{
++	ktime_t start = ktime_get();
++	ktime_t timeout =
++		(sc->flags & GDS_TIMEOUT) ? TIMEOUT_US_GDS : TIMEOUT_US;
++
++	do {
++		if (gdsc_is_enabled_by_poll_cfg_reg(sc, en) == en)
++			return 0;
++	} while (ktime_us_delta(ktime_get(), start) < timeout);
++
++	if (gdsc_is_enabled_by_poll_cfg_reg(sc, en) == en)
++		return 0;
++
++	return -ETIMEDOUT;
++}
++
+ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ {
+ 	int ret;
+@@ -106,6 +143,9 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 		return 0;
+ 	}
+
++	if (sc->flags & POLL_CFG_GDSCR)
++		return gdsc_poll_cfg_status(sc, en);
++
+ 	if (sc->gds_hw_ctrl) {
+ 		status_reg = sc->gds_hw_ctrl;
+ 		/*
+@@ -258,8 +298,12 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 		 */
+ 		udelay(1);
+
+-		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+-		ret = gdsc_poll_status(sc, reg, true);
++		if (sc->flags & POLL_CFG_GDSCR) {
++			ret = gdsc_poll_cfg_status(sc, true);
++		} else {
++			reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
++			ret = gdsc_poll_status(sc, reg, true);
++		}
+ 		if (ret)
+ 			return ret;
+ 	}
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 2e3abbf..a74f715 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -56,6 +56,7 @@ struct gdsc {
+ #define SW_RESET	BIT(3)
+ #define AON_RESET	BIT(4)
+ #define GDS_TIMEOUT	BIT(5)
++#define POLL_CFG_GDSCR  BIT(6)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
