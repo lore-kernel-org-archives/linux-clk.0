@@ -1,381 +1,408 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v9 22/27] ARM: davinci: da8xx: Remove legacy USB and SATA clock init
-Date: Thu, 26 Apr 2018 19:17:40 -0500
-Message-Id: <20180427001745.4116-23-david@lechnology.com>
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH 1/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+To: Evan Green <evgreen@chromium.org>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com,
+ Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>, okukatla@codeaurora.org,
+ anischal@codeaurora.org, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, collinsd@codeaurora.org
+References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
+ <1522304274-18989-2-git-send-email-tdas@codeaurora.org>
+ <CAE=gft6-FggNjP0nj6XrLN1rQqnep_PHHWg2fiRUrM8ZBf36Sg@mail.gmail.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <65abfb98-802a-d7aa-5213-9fcd531b18d9@codeaurora.org>
+Date: Mon, 2 Apr 2018 16:03:26 +0530
+MIME-Version: 1.0
+In-Reply-To: <CAE=gft6-FggNjP0nj6XrLN1rQqnep_PHHWg2fiRUrM8ZBf36Sg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy USB and SATA clock init code from
-arch/arm/mach-davinci/{devices,usb}-da8xx}.c.
+Hello Evan,
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
+Thanks for the review comments.
 
-v9 changes:
-- none
+On 3/30/2018 3:19 AM, Evan Green wrote:
+> Hi Taniya,
+> 
+> On Wed, Mar 28, 2018 at 11:19 PM Taniya Das <tdas@codeaurora.org> wrote:
+> 
+>> From: Amit Nischal <anischal@codeaurora.org>
+> 
+>> Add the RPMh clock driver to control the RPMh managed clock resources on
+>> some of the Qualcomm Technologies, Inc. SoCs.
+> 
+>> Signed-off-by: David Collins <collinsd@codeaurora.org>
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>    drivers/clk/qcom/Kconfig              |   9 +
+>>    drivers/clk/qcom/Makefile             |   1 +
+>>    drivers/clk/qcom/clk-rpmh.c           | 397
+> ++++++++++++++++++++++++++++++++++
+>>    include/dt-bindings/clock/qcom,rpmh.h |  25 +++
+>>    4 files changed, 432 insertions(+)
+>>    create mode 100644 drivers/clk/qcom/clk-rpmh.c
+>>    create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+> 
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> ...
+>> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+>> new file mode 100644
+>> index 0000000..536d102
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/clk-rpmh.c
+>> @@ -0,0 +1,397 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#define pr_fmt(fmt) "%s: " fmt, __func__
+> 
+> Stanimir recently commented on a different patch asking for using dev_*
+> instead of this. Seems like an applicable comment here, too.
+> 
 
-v8 changes:
-- none
+I will drop this to see how I could accomodate dev_xxx.
 
-v7 changes:
-- rebased
-- add davinci prefix to commit message
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/err.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/regmap.h>
+>> +#include <soc/qcom/cmd-db.h>
+>> +#include <soc/qcom/rpmh.h>
+>> +#include <dt-bindings/clock/qcom,rpmh.h>
+> 
+> Alphabetize includes?
 
-v6 changes:
-- rebased
+I will take care of them in the next patch series.
 
+> 
+>> +
+>> +#include "common.h"
+>> +#include "clk-regmap.h"
+>> +
+>> +#define CLK_RPMH_ARC_EN_OFFSET 0
+>> +#define CLK_RPMH_VRM_EN_OFFSET 4
+>> +#define CLK_RPMH_VRM_OFF_VAL 0
+>> +#define CLK_RPMH_VRM_ON_VAL 1
+>> +#define CLK_RPMH_APPS_RSC_AO_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
+>> +                                        BIT(RPMH_ACTIVE_ONLY_STATE))
+>> +#define CLK_RPMH_APPS_RSC_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
+>> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) | \
+>> +                                     BIT(RPMH_SLEEP_STATE))
+>> +struct clk_rpmh {
+>> +       const char *res_name;
+>> +       u32 res_addr;
+>> +       u32 res_en_offset;
+>> +       u32 res_on_val;
+>> +       u32 res_off_val;
+>> +       u32 state;
+>> +       u32 aggr_state;
+>> +       u32 last_sent_aggr_state;
+>> +       u32 valid_state_mask;
+>> +       struct rpmh_client *rpmh_client;
+>> +       unsigned long rate;
+>> +       struct clk_rpmh *peer;
+>> +       struct clk_hw hw;
+> 
+> I believe this member should go at the beginning of the structure. At least
+> that's what everyone else seems to do, and that's what the clk.txt
+> documentation seems to ask for.
+>
 
- arch/arm/mach-davinci/devices-da8xx.c      |  29 ---
- arch/arm/mach-davinci/include/mach/da8xx.h |   3 -
- arch/arm/mach-davinci/usb-da8xx.c          | 238 ---------------------
- 3 files changed, 270 deletions(-)
+Yes I missed that, would update it in the next patch series.
 
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 73de449bbc68..1fd3619f6a09 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -30,11 +30,6 @@
- #include "cpuidle.h"
- #include "sram.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include <mach/clock.h>
--#include "clock.h"
--#endif
--
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
- #define DA8XX_TPTC1_BASE		0x01c08400
-@@ -1045,29 +1040,6 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
- }
- 
- #ifdef CONFIG_ARCH_DAVINCI_DA850
--#ifndef CONFIG_COMMON_CLK
--static struct clk sata_refclk = {
--	.name		= "sata_refclk",
--	.set_rate	= davinci_simple_set_rate,
--};
--
--static struct clk_lookup sata_refclk_lookup =
--		CLK("ahci_da850", "refclk", &sata_refclk);
--
--int __init da850_register_sata_refclk(int rate)
--{
--	int ret;
--
--	sata_refclk.rate = rate;
--	ret = clk_register(&sata_refclk);
--	if (ret)
--		return ret;
--
--	clkdev_add(&sata_refclk_lookup);
--
--	return 0;
--}
--#else
- int __init da850_register_sata_refclk(int rate)
- {
- 	struct clk *clk;
-@@ -1078,7 +1050,6 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return clk_register_clkdev(clk, "refclk", "ahci_da850");
- }
--#endif
- 
- static struct resource da850_sata_resources[] = {
- 	{
-diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
-index 5d7b1de9aa7e..ab4a57f433f4 100644
---- a/arch/arm/mach-davinci/include/mach/da8xx.h
-+++ b/arch/arm/mach-davinci/include/mach/da8xx.h
-@@ -103,9 +103,6 @@ int da8xx_register_watchdog(void);
- int da8xx_register_usb_phy(void);
- int da8xx_register_usb20(unsigned mA, unsigned potpgt);
- int da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata);
--int da8xx_register_usb_refclkin(int rate);
--int da8xx_register_usb20_phy_clk(bool use_usb_refclkin);
--int da8xx_register_usb11_phy_clk(bool use_usb_refclkin);
- int da8xx_register_usb_phy_clocks(void);
- int da850_register_sata_refclk(int rate);
- int da8xx_register_emac(void);
-diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
-index c8d2f3075e69..c17ce66a3d95 100644
---- a/arch/arm/mach-davinci/usb-da8xx.c
-+++ b/arch/arm/mach-davinci/usb-da8xx.c
-@@ -20,11 +20,6 @@
- #include <mach/da8xx.h>
- #include <mach/irqs.h>
- 
--#ifndef CONFIG_COMMON_CLK
--#include <mach/clock.h>
--#include "clock.h"
--#endif
--
- #define DA8XX_USB0_BASE		0x01e00000
- #define DA8XX_USB1_BASE		0x01e25000
- 
-@@ -87,11 +82,6 @@ static struct platform_device da8xx_usb20_dev = {
- 	.name		= "musb-da8xx",
- 	.id             = -1,
- 	.dev = {
--		/*
--		 * Setting init_name so that clock lookup will work in
--		 * usb20_phy_clk_enable() even if this device is not registered.
--		 */
--		.init_name		= "musb-da8xx",
- 		.platform_data		= &usb_data,
- 		.dma_mask		= &usb_dmamask,
- 		.coherent_dma_mask      = DMA_BIT_MASK(32),
-@@ -140,234 +130,6 @@ int __init da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata)
- 	return platform_device_register(&da8xx_usb11_device);
- }
- 
--#ifndef CONFIG_COMMON_CLK
--static struct clk usb_refclkin = {
--	.name		= "usb_refclkin",
--	.set_rate	= davinci_simple_set_rate,
--};
--
--static struct clk_lookup usb_refclkin_lookup =
--	CLK(NULL, "usb_refclkin", &usb_refclkin);
--
--/**
-- * da8xx_register_usb_refclkin - register USB_REFCLKIN clock
-- *
-- * @rate: The clock rate in Hz
-- *
-- * This clock is only needed if the board provides an external USB_REFCLKIN
-- * signal, in which case it will be used as the parent of usb20_phy_clk and/or
-- * usb11_phy_clk.
-- */
--int __init da8xx_register_usb_refclkin(int rate)
--{
--	int ret;
--
--	usb_refclkin.rate = rate;
--	ret = clk_register(&usb_refclkin);
--	if (ret)
--		return ret;
--
--	clkdev_add(&usb_refclkin_lookup);
--
--	return 0;
--}
--
--static void usb20_phy_clk_enable(struct clk *clk)
--{
--	u32 val;
--	u32 timeout = 500000; /* 500 msec */
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* The USB 2.O PLL requires that the USB 2.O PSC is enabled as well. */
--	davinci_clk_enable(usb20_clk);
--
--	/*
--	 * Turn on the USB 2.0 PHY, but just the PLL, and not OTG. The USB 1.1
--	 * host may use the PLL clock without USB 2.0 OTG being used.
--	 */
--	val &= ~(CFGCHIP2_RESET | CFGCHIP2_PHYPWRDN);
--	val |= CFGCHIP2_PHY_PLLON;
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	while (--timeout) {
--		val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--		if (val & CFGCHIP2_PHYCLKGD)
--			goto done;
--		udelay(1);
--	}
--
--	pr_err("Timeout waiting for USB 2.0 PHY clock good\n");
--done:
--	davinci_clk_disable(usb20_clk);
--}
--
--static void usb20_phy_clk_disable(struct clk *clk)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--	val |= CFGCHIP2_PHYPWRDN;
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--}
--
--static int usb20_phy_clk_set_parent(struct clk *clk, struct clk *parent)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* Set the mux depending on the parent clock. */
--	if (parent == &usb_refclkin) {
--		val &= ~CFGCHIP2_USB2PHYCLKMUX;
--	} else if (strcmp(parent->name, "pll0_aux_clk") == 0) {
--		val |= CFGCHIP2_USB2PHYCLKMUX;
--	} else {
--		pr_err("Bad parent on USB 2.0 PHY clock\n");
--		return -EINVAL;
--	}
--
--	/* reference frequency also comes from parent clock */
--	val &= ~CFGCHIP2_REFFREQ_MASK;
--	switch (clk_get_rate(parent)) {
--	case 12000000:
--		val |= CFGCHIP2_REFFREQ_12MHZ;
--		break;
--	case 13000000:
--		val |= CFGCHIP2_REFFREQ_13MHZ;
--		break;
--	case 19200000:
--		val |= CFGCHIP2_REFFREQ_19_2MHZ;
--		break;
--	case 20000000:
--		val |= CFGCHIP2_REFFREQ_20MHZ;
--		break;
--	case 24000000:
--		val |= CFGCHIP2_REFFREQ_24MHZ;
--		break;
--	case 26000000:
--		val |= CFGCHIP2_REFFREQ_26MHZ;
--		break;
--	case 38400000:
--		val |= CFGCHIP2_REFFREQ_38_4MHZ;
--		break;
--	case 40000000:
--		val |= CFGCHIP2_REFFREQ_40MHZ;
--		break;
--	case 48000000:
--		val |= CFGCHIP2_REFFREQ_48MHZ;
--		break;
--	default:
--		pr_err("Bad parent clock rate on USB 2.0 PHY clock\n");
--		return -EINVAL;
--	}
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	return 0;
--}
--
--static struct clk usb20_phy_clk = {
--	.name		= "usb0_clk48",
--	.clk_enable	= usb20_phy_clk_enable,
--	.clk_disable	= usb20_phy_clk_disable,
--	.set_parent	= usb20_phy_clk_set_parent,
--};
--
--static struct clk_lookup usb20_phy_clk_lookup =
--	CLK("da8xx-usb-phy", "usb0_clk48", &usb20_phy_clk);
--
--/**
-- * da8xx_register_usb20_phy_clk - register USB0PHYCLKMUX clock
-- *
-- * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
-- *	or "pll0_aux" if false.
-- */
--int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
--{
--	struct clk *parent;
--	int ret;
--
--	usb20_clk = clk_get(&da8xx_usb20_dev.dev, "usb20");
--	ret = PTR_ERR_OR_ZERO(usb20_clk);
--	if (ret)
--		return ret;
--
--	parent = clk_get(NULL, use_usb_refclkin ? "usb_refclkin" : "pll0_aux");
--	ret = PTR_ERR_OR_ZERO(parent);
--	if (ret) {
--		clk_put(usb20_clk);
--		return ret;
--	}
--
--	usb20_phy_clk.parent = parent;
--	ret = clk_register(&usb20_phy_clk);
--	if (!ret)
--		clkdev_add(&usb20_phy_clk_lookup);
--
--	clk_put(parent);
--
--	return ret;
--}
--
--static int usb11_phy_clk_set_parent(struct clk *clk, struct clk *parent)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* Set the USB 1.1 PHY clock mux based on the parent clock. */
--	if (parent == &usb20_phy_clk) {
--		val &= ~CFGCHIP2_USB1PHYCLKMUX;
--	} else if (parent == &usb_refclkin) {
--		val |= CFGCHIP2_USB1PHYCLKMUX;
--	} else {
--		pr_err("Bad parent on USB 1.1 PHY clock\n");
--		return -EINVAL;
--	}
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	return 0;
--}
--
--static struct clk usb11_phy_clk = {
--	.name		= "usb1_clk48",
--	.set_parent	= usb11_phy_clk_set_parent,
--};
--
--static struct clk_lookup usb11_phy_clk_lookup =
--	CLK("da8xx-usb-phy", "usb1_clk48", &usb11_phy_clk);
--
--/**
-- * da8xx_register_usb11_phy_clk - register USB1PHYCLKMUX clock
-- *
-- * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
-- *	or "usb0_clk48" if false.
-- */
--int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
--{
--	struct clk *parent;
--	int ret = 0;
--
--	if (use_usb_refclkin)
--		parent = clk_get(NULL, "usb_refclkin");
--	else
--		parent = clk_get(&da8xx_usb_phy.dev, "usb0_clk48");
--	if (IS_ERR(parent))
--		return PTR_ERR(parent);
--
--	usb11_phy_clk.parent = parent;
--	ret = clk_register(&usb11_phy_clk);
--	if (!ret)
--		clkdev_add(&usb11_phy_clk_lookup);
--
--	clk_put(parent);
--
--	return ret;
--}
--#endif
- static struct platform_device da8xx_usb_phy_clks_device = {
- 	.name		= "da830-usb-phy-clks",
- 	.id		= -1,
+>> +};
+>> +
+>> +struct rpmh_cc {
+>> +       struct clk_onecell_data data;
+>> +       struct clk *clks[];
+>> +};
+>> +
+>> +struct clk_rpmh_desc {
+>> +       struct clk_hw **clks;
+>> +       size_t num_clks;
+>> +};
+>> +
+>> +static DEFINE_MUTEX(rpmh_clk_lock);
+>> +
+>> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name, \
+>> +                         _res_en_offset, _res_on, _res_off, _rate, \
+>> +                         _state_mask, _state_on_mask)
+>        \
+>> +       static struct clk_rpmh _platform##_##_name_active;
+>        \
+>> +       static struct clk_rpmh _platform##_##_name = {
+>        \
+>> +               .res_name = _res_name,
+>        \
+>> +               .res_en_offset = _res_en_offset,
+>        \
+>> +               .res_on_val = _res_on,
+>        \
+>> +               .res_off_val = _res_off,
+>        \
+>> +               .rate = _rate,
+>        \
+>> +               .peer = &_platform##_##_name_active,
+>        \
+>> +               .valid_state_mask = _state_mask,
+>        \
+>> +               .hw.init = &(struct clk_init_data){
+>       \
+>> +                       .ops = &clk_rpmh_ops,
+>       \
+>> +                       .name = #_name,
+>       \
+>> +               },
+>        \
+>> +       };
+>        \
+>> +       static struct clk_rpmh _platform##_##_name_active = {
+>       \
+>> +               .res_name = _res_name,
+>        \
+>> +               .res_en_offset = _res_en_offset,
+>        \
+>> +               .res_on_val = _res_on,
+>        \
+>> +               .res_off_val = _res_off,
+>        \
+>> +               .rate = _rate,
+>        \
+>> +               .peer = &_platform##_##_name,
+>       \
+>> +               .valid_state_mask = _state_on_mask,
+>       \
+>> +               .hw.init = &(struct clk_init_data){
+>       \
+>> +                       .ops = &clk_rpmh_ops,
+>       \
+>> +                       .name = #_name_active,
+>        \
+>> +               },
+>        \
+>> +       }
+>> +
+>> +#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name, \
+>> +                           _res_on, _res_off, _rate, _state_mask, \
+>> +                           _state_on_mask)                             \
+>> +       __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
+>> +                         CLK_RPMH_ARC_EN_OFFSET, _res_on, _res_off, \
+>> +                         _rate, _state_mask, _state_on_mask)
+>> +
+>> +#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name, \
+>> +                           _rate, _state_mask, _state_on_mask) \
+>> +       __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
+>> +                         CLK_RPMH_VRM_EN_OFFSET, CLK_RPMH_VRM_ON_VAL,  \
+>> +                         CLK_RPMH_VRM_OFF_VAL, _rate, _state_mask, \
+>> +                         _state_on_mask)
+>> +
+>> +static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
+>> +{
+>> +       return container_of(_hw, struct clk_rpmh, hw);
+>> +}
+>> +
+>> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
+>> +{
+>> +       return ((c->last_sent_aggr_state & BIT(state))
+>> +               != (c->aggr_state & BIT(state)));
+>> +}
+>> +
+>> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
+>> +{
+>> +       struct tcs_cmd cmd = { 0 };
+>> +       int ret = 0;
+>> +
+>> +       cmd.addr = c->res_addr + c->res_en_offset;
+>> +
+>> +       if (has_state_changed(c, RPMH_SLEEP_STATE)) {
+>> +               cmd.data = (c->aggr_state >> RPMH_SLEEP_STATE) & 1
+>> +                       ? c->res_on_val : c->res_off_val;
+> 
+> I found it quite confusing that you're shifting in the opposite direction
+> than in has_state_changed. How about this:
+> 
+> cmd.data = (c->aggr_state & BIT(RPMH_SLEEP_STATE)) ? c->res_on_val :
+> c->res_off_val;
+> 
+
+It is kept keeping in mind the consistency of the command data for all 
+the different states.
+
+Would it be better if I define a new macro ?
+
+#define RPMH_CMD_DATA(aggr_state, rpmh_state) \
+         ((aggr_state >> rpmh_state) & 1)
+
+If you agree, I could use the new macro in the next series.
+
+>> +               ret = rpmh_write_async(c->rpmh_client, RPMH_SLEEP_STATE,
+>> +                                      &cmd, 1);
+>> +               if (ret) {
+>> +                       pr_err("rpmh_write_async(%s, state=%d) failed
+> (%d)\n",
+>> +                              c->res_name, RPMH_SLEEP_STATE, ret);
+>> +                       return ret;
+>> +               }
+>> +       }
+>> +
+>> +       if (has_state_changed(c, RPMH_WAKE_ONLY_STATE)) {
+>> +               cmd.data = (c->aggr_state >> RPMH_WAKE_ONLY_STATE) & 1
+>> +                       ? c->res_on_val : c->res_off_val;
+>> +               ret = rpmh_write_async(c->rpmh_client,
+>> +                                      RPMH_WAKE_ONLY_STATE, &cmd, 1);
+>> +               if (ret) {
+>> +                       pr_err("rpmh_write_async(%s, state=%d) failed
+> (%d)\n",
+>> +                              c->res_name, RPMH_WAKE_ONLY_STATE, ret);
+>> +                       return ret;
+>> +               }
+>> +       }
+>> +
+>> +       if (has_state_changed(c, RPMH_ACTIVE_ONLY_STATE)) {
+>> +               cmd.data = (c->aggr_state >> RPMH_ACTIVE_ONLY_STATE) & 1
+>> +                       ? c->res_on_val : c->res_off_val;
+>> +               ret = rpmh_write(c->rpmh_client, RPMH_ACTIVE_ONLY_STATE,
+>> +                                &cmd, 1);
+>> +               if (ret) {
+>> +                       pr_err("rpmh_write(%s, state=%d) failed (%d)\n",
+>> +                              c->res_name, RPMH_ACTIVE_ONLY_STATE, ret);
+>> +                       return ret;
+>> +               }
+>> +       }
+>> +
+>> +       c->last_sent_aggr_state = c->aggr_state;
+>> +       c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static void clk_rpmh_aggregate_state(struct clk_rpmh *c, bool enable)
+>> +{
+>> +       /* Update state and aggregate state values based on enable value.
+> */
+>> +       c->state = enable ? c->valid_state_mask : 0;
+>> +       c->aggr_state = c->state | c->peer->state;
+>> +       c->peer->aggr_state = c->aggr_state;
+>> +}
+>> +
+>> +static int clk_rpmh_prepare(struct clk_hw *hw)
+>> +{
+>> +       struct clk_rpmh *c = to_clk_rpmh(hw);
+>> +       int ret = 0;
+>> +
+>> +       mutex_lock(&rpmh_clk_lock);
+>> +
+>> +       if (c->state)
+>> +               goto out;
+>> +
+>> +       clk_rpmh_aggregate_state(c, true);
+>> +
+>> +       ret = clk_rpmh_send_aggregate_command(c);
+>> +
+>> +       if (ret)
+>> +               c->state = 0;
+>> +
+>> +out:
+>> +       mutex_unlock(&rpmh_clk_lock);
+>> +       return ret;
+>> +};
+>> +
+>> +static void clk_rpmh_unprepare(struct clk_hw *hw)
+>> +{
+>> +       struct clk_rpmh *c = to_clk_rpmh(hw);
+>> +       int ret = 0;
+>> +
+>> +       mutex_lock(&rpmh_clk_lock);
+>> +
+>> +       if (!c->state)
+>> +               goto out;
+>> +
+>> +       clk_rpmh_aggregate_state(c, false);
+>> +
+>> +       ret = clk_rpmh_send_aggregate_command(c);
+>> +
+>> +       if (ret) {
+>> +               c->state = c->valid_state_mask;
+>> +               WARN(1, "clk: %s failed to disable\n", c->res_name);
+>> +       }
+>> +
+>> +out:
+>> +       mutex_unlock(&rpmh_clk_lock);
+>> +       return;
+>> +};
+> 
+> The guts of these two functions (clk_rpmh_{un,}prepare) look like they
+> would collapse pretty well into a single helper function that takes an
+> extra enable parameter. The if would change to !!c->state == enable,
+> clk_rpmh_aggregate_state would take the enable parameter, and the failure
+> case could restore a previously saved value. And you could just ditch the
+> WARN entirely (probably should do that anyway). Not critical though, up to
+> you.
+> 
+> ...
+> 
+
+I would have a new helper function, would update in the next series.
+
+>> +
+>> +static int clk_rpmh_probe(struct platform_device *pdev)
+>> +{
+>> +       struct clk **clks;
+>> +       struct clk *clk;
+>> +       struct rpmh_cc *rcc;
+>> +       struct clk_onecell_data *data;
+>> +       int ret;
+>> +       size_t num_clks, i;
+>> +       struct clk_hw **hw_clks;
+>> +       struct clk_rpmh *rpmh_clk;
+>> +       const struct clk_rpmh_desc *desc;
+>> +       struct property *prop;
+> 
+> Remove this unused variable. It generates a warning (or an error for some
+> of us).
+> ...
+
+Would clean the unused variables.
+
+>> diff --git a/include/dt-bindings/clock/qcom,rpmh.h
+> b/include/dt-bindings/clock/qcom,rpmh.h
+>> new file mode 100644
+>> index 0000000..34fbf3c
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,rpmh.h
+>> @@ -0,0 +1,25 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_MSM_RPMH_H
+>> +#define _DT_BINDINGS_CLK_MSM_RPMH_H
+> 
+> Maybe _DT_BINDINGS_CLK_QCOM_RPMH_H instead?
+> 
+
+Kept inline with the other target header files.
+
+> -Evan
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
 -- 
-2.17.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
