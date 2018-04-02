@@ -1,156 +1,93 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	fabio.estevam@nxp.com,
-	linux-imx@nxp.com,
-	kernel@pengutronix.de,
-	Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH 01/12] clk: imx: add configuration option for mmio clks
-Date: Sat, 28 Apr 2018 02:56:32 +0800
-Message-Id: <1524855403-15301-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
-References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 2 Apr 2018 15:00:18 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org,
+	sricharan@codeaurora.org
+Subject: Re: [PATCH v4 13/14] dt-bindings: cpufreq: Document
+ operating-points-v2-kryo-cpu
+Message-ID: <20180402093018.GC3572@vireshk-i7>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The patch introduces CONFIG_MXC_CLK option for legacy MMIO clocks,
-this is required to compile legacy MMIO clock conditionally when adding
-SCU based clocks for MX8 platforms later.
++Sricharan,
 
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- arch/arm/mach-imx/Kconfig | 10 ++++++++++
- drivers/clk/Kconfig       |  1 +
- drivers/clk/imx/Kconfig   |  5 +++++
- drivers/clk/imx/Makefile  |  2 +-
- 4 files changed, 17 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/Kconfig
+On 30-03-18, 00:26, Ilia Lin wrote:
+> In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+> that have KRYO processors, the CPU ferequencies subset and voltage value
+> of each OPP varies based on the silicon variant in use.
+> Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+> defines the voltage and frequency value based on the msm-id in SMEM
+> and speedbin blown in the efuse combination.
+> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> to provide the OPP framework with required information.
+> This is used to determine the voltage and frequency value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
+> 
+> This change adds documentation.
+> 
+> Change-Id: I1953f652a48249fb516d175f0e965a9510cd4209
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  .../devicetree/bindings/cpufreq/kryo-cpufreq.txt   | 693 +++++++++++++++++++++
+>  1 file changed, 693 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
 
-diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-index e47fa13..45f2a08 100644
---- a/arch/arm/mach-imx/Kconfig
-+++ b/arch/arm/mach-imx/Kconfig
-@@ -57,23 +57,27 @@ config SOC_IMX21
- 	select CPU_ARM926T
- 	select IMX_HAVE_IOMUX_V1
- 	select MXC_AVIC
-+	select MXC_CLK
- 
- config SOC_IMX27
- 	bool
- 	select CPU_ARM926T
- 	select IMX_HAVE_IOMUX_V1
- 	select MXC_AVIC
-+	select MXC_CLK
- 	select PINCTRL_IMX27
- 
- config SOC_IMX31
- 	bool
- 	select CPU_V6
- 	select MXC_AVIC
-+	select MXC_CLK
- 
- config SOC_IMX35
- 	bool
- 	select ARCH_MXC_IOMUX_V3
- 	select MXC_AVIC
-+	select MXC_CLK
- 	select PINCTRL_IMX35
- 
- if ARCH_MULTI_V5
-@@ -417,6 +421,7 @@ config SOC_IMX1
- 	bool "i.MX1 support"
- 	select CPU_ARM920T
- 	select MXC_AVIC
-+	select MXC_CLK
- 	select PINCTRL_IMX1
- 	help
- 	  This enables support for Freescale i.MX1 processor
-@@ -430,6 +435,7 @@ config SOC_IMX25
- 	select ARCH_MXC_IOMUX_V3
- 	select CPU_ARM926T
- 	select MXC_AVIC
-+	select MXC_CLK
- 	select PINCTRL_IMX25
- 	help
- 	  This enables support for Freescale i.MX25 processor
-@@ -442,6 +448,7 @@ comment "Cortex-A platforms"
- config SOC_IMX5
- 	bool
- 	select HAVE_IMX_SRC
-+	select MXC_CLK
- 	select MXC_TZIC
- 
- config	SOC_IMX50
-@@ -478,6 +485,7 @@ config SOC_IMX6
- 	select HAVE_IMX_MMDC
- 	select HAVE_IMX_SRC
- 	select MFD_SYSCON
-+	select MXC_CLK
- 	select PL310_ERRATA_769419 if CACHE_L2X0
- 
- config SOC_IMX6Q
-@@ -531,6 +539,7 @@ config SOC_IMX7D
- 	select HAVE_IMX_MMDC
- 	select HAVE_IMX_SRC
- 	select IMX_GPCV2
-+	select MXC_CLK
- 	help
- 		This enables support for Freescale i.MX7 Dual processor.
- 
-@@ -551,6 +560,7 @@ if ARCH_MULTI_V7 || ARM_SINGLE_ARMV7M
- config SOC_VF610
- 	bool "Vybrid Family VF610 support"
- 	select ARM_GIC if ARCH_MULTI_V7
-+	select MXC_CLK
- 	select PINCTRL_VF610
- 
- 	help
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 41492e9..5b2e74f 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -282,6 +282,7 @@ config COMMON_CLK_STM32H7
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-+source "drivers/clk/imx/Kconfig"
- source "drivers/clk/keystone/Kconfig"
- source "drivers/clk/mediatek/Kconfig"
- source "drivers/clk/meson/Kconfig"
-diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-new file mode 100644
-index 0000000..43a3ecc
---- /dev/null
-+++ b/drivers/clk/imx/Kconfig
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# common clock support for NXP i.MX SoC family.
-+config MXC_CLK
-+	bool
-+	depends on ARCH_MXC
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 8c3baa7..d447f8c 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-y += \
-+obj-$(CONFIG_MXC_CLK) += \
- 	clk.o \
- 	clk-busy.o \
- 	clk-cpu.o \
+This should really go in opp directory.
+
+> new file mode 100644
+> index 0000000..20cef9d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+> @@ -0,0 +1,693 @@
+> +Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
+> +===================================
+> +
+> +In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+> +that have KRYO processors, the CPU ferequencies subset and voltage value
+> +of each OPP varies based on the silicon variant in use.
+> +Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+> +defines the voltage and frequency value based on the msm-id in SMEM
+> +and speedbin blown in the efuse combination.
+> +The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> +to provide the OPP framework with required information (existing HW bitmap).
+> +This is used to determine the voltage and frequency value for each OPP of
+> +operating-points-v2 table when it is parsed by the OPP framework.
+> +
+> +Required properties:
+> +--------------------
+> +In 'cpus' nodes:
+> +- operating-points-v2: Phandle to the operating-points-v2 table to use.
+> +
+> +In 'operating-points-v2' table:
+> +- compatible: Should be
+> +	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
+> +- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
+> +		efuse registers that has information about the
+> +		speedbin that is used to select the right frequency/voltage
+> +		value pair.
+> +		Please refer the for nvmem-cells
+> +		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
+> +		and also examples below.
+
+Sricharan is also working on adding these, just make sure you guys do the same
+thing..
+
 -- 
-2.7.4
+viresh
