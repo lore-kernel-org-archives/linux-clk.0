@@ -1,78 +1,71 @@
-Return-Path: <sean.wang@mediatek.com>
-Message-ID: <1524584738.12322.17.camel@mtkswgap22>
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
-From: Sean Wang <sean.wang@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: <mturquette@baylibre.com>, <sboyd@kernel.org>, <airlied@linux.ie>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
-	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Tue, 24 Apr 2018 23:45:38 +0800
-In-Reply-To: <20180424143907.eewrpzdmkhhux3lb@rob-hp-laptop>
-References: <cover.1524044917.git.sean.wang@mediatek.com>
-	 <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
-	 <20180424143907.eewrpzdmkhhux3lb@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: sean.wang@mediatek.com
+Return-Path: <biju.das@bp.renesas.com>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+	Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Borislav Petkov <bp@suse.de>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: [PATCH v3 0/3] Add r8a77470/iW-RainboW-G23S single board computer support
+Date: Tue,  3 Apr 2018 12:19:36 +0100
+Message-Id: <1522754379-64116-1-git-send-email-biju.das@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-04-24 at 09:39 -0500, Rob Herring wrote:
-> On Wed, Apr 18, 2018 at 06:24:54PM +0800, sean.wang@mediatek.com wrote:
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > Add bindings to g3dsys providing necessary clock and reset control to
-> > Mali-450.
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > ---
-> >  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
-> >  1 file changed, 30 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> > new file mode 100644
-> > index 0000000..ff2d70c
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> > @@ -0,0 +1,30 @@
-> > +MediaTek g3dsys controller
-> > +============================
-> > +
-> > +The MediaTek g3dsys controller provides various clocks and reset controller to
-> > +the GPU.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: Should be:
-> > +	- "mediatek,mt2701-g3dsys", "syscon":
-> > +		for MT2701 SoC
-> > +	- "mediatek,mt7623-ethsys", "mediatek,mt2701-g3dsys", "syscon":
-> > +		for MT7623 SoC
-> 
-> ethsys?
-> 
+Hello, 
 
-thanks! I'll also fix it up in the next version.
+This series adds support for Rensas RZ/G1C (r8a77470) SoC and
+RZ/G1C based iW-RainboW-G23S single board computer.
 
-> > +- #clock-cells: Must be 1
-> > +- #reset-cells: Must be 1
-> > +
-> > +The ethsys controller uses the common clk binding from
-> > +Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-> > +
-> > +Example:
-> > +
-> > +g3dsys: clock-controller@13000000 {
-> > +	compatible = "mediatek,mt7623-g3dsys",
-> > +		     "mediatek,mt2701-g3dsys",
-> > +		     "syscon";
-> > +	reg = <0 0x13000000 0 0x200>;
-> > +	#clock-cells = <1>;
-> > +	#reset-cells = <1>;
-> > +};
-> > -- 
-> > 2.7.4
-> > 
+The series introduces a cpg-mssr clock/power gating module, a power/reset
+controller for the SoC.
+
+power areas for RZ/G1C are similar to RZ/G1E.
+
+Few functionalities have currently been enabled in DTS and tested: serial
+boot console.
+
+This patch series tested against renesas-dev branch 
+tag "renesas-dev-20180328-v4.16-rc7
+
+V1-->V2
+	Incorporated geert's review comments.
+V2-->V3
+        Incorporated simon and geert's review comments.
+
+Biju Das (3):
+  serial: sh-sci: Document r8a77470 bindings
+  ARM: dts: r8a77470: Initial SoC device tree
+  ARM: dts: iwg23s-sbc: Add support for iWave G23S-SBC based on RZ/G1C
+
+ .../bindings/serial/renesas,sci-serial.txt         |   2 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |  35 +++++
+ arch/arm/boot/dts/r8a77470.dtsi                    | 154 +++++++++++++++++++++
+ 4 files changed, 192 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+ create mode 100644 arch/arm/boot/dts/r8a77470.dtsi
+
+-- 
+2.7.4
