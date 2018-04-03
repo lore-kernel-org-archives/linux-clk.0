@@ -1,93 +1,151 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 2 Apr 2018 15:00:18 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org,
-	sricharan@codeaurora.org
-Subject: Re: [PATCH v4 13/14] dt-bindings: cpufreq: Document
- operating-points-v2-kryo-cpu
-Message-ID: <20180402093018.GC3572@vireshk-i7>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
- <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
+Return-Path: <o.rempel@pengutronix.de>
+Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
+ external PMIC
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <54c5cb44-b2d9-3dab-59d5-a6a73a957e8c@pengutronix.de>
+Date: Tue, 3 Apr 2018 07:59:31 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <20180305102524.5905-1-o.rempel@pengutronix.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="gt8JCkXlQCcv9Am5QWMEiuJd727VldRPt"
 List-ID: <linux-clk.vger.kernel.org>
 
-+Sricharan,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--gt8JCkXlQCcv9Am5QWMEiuJd727VldRPt
+Content-Type: multipart/mixed; boundary="sN4iAMyDrtBdajReBDrS7us8r321BujXm";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>
+Message-ID: <54c5cb44-b2d9-3dab-59d5-a6a73a957e8c@pengutronix.de>
+Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
+ external PMIC
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+In-Reply-To: <20180305102524.5905-1-o.rempel@pengutronix.de>
 
-On 30-03-18, 00:26, Ilia Lin wrote:
-> In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
-> that have KRYO processors, the CPU ferequencies subset and voltage value
-> of each OPP varies based on the silicon variant in use.
-> Qualcomm Technologies, Inc. Process Voltage Scaling Tables
-> defines the voltage and frequency value based on the msm-id in SMEM
-> and speedbin blown in the efuse combination.
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
-> 
-> This change adds documentation.
-> 
-> Change-Id: I1953f652a48249fb516d175f0e965a9510cd4209
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  .../devicetree/bindings/cpufreq/kryo-cpufreq.txt   | 693 +++++++++++++++++++++
->  1 file changed, 693 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+--sN4iAMyDrtBdajReBDrS7us8r321BujXm
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-This should really go in opp directory.
+ping,
 
-> new file mode 100644
-> index 0000000..20cef9d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
-> @@ -0,0 +1,693 @@
-> +Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
-> +===================================
-> +
-> +In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
-> +that have KRYO processors, the CPU ferequencies subset and voltage value
-> +of each OPP varies based on the silicon variant in use.
-> +Qualcomm Technologies, Inc. Process Voltage Scaling Tables
-> +defines the voltage and frequency value based on the msm-id in SMEM
-> +and speedbin blown in the efuse combination.
-> +The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> +to provide the OPP framework with required information (existing HW bitmap).
-> +This is used to determine the voltage and frequency value for each OPP of
-> +operating-points-v2 table when it is parsed by the OPP framework.
-> +
-> +Required properties:
-> +--------------------
-> +In 'cpus' nodes:
-> +- operating-points-v2: Phandle to the operating-points-v2 table to use.
-> +
-> +In 'operating-points-v2' table:
-> +- compatible: Should be
-> +	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
-> +- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
-> +		efuse registers that has information about the
-> +		speedbin that is used to select the right frequency/voltage
-> +		value pair.
-> +		Please refer the for nvmem-cells
-> +		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
-> +		and also examples below.
+this week is a merge window. Any chance to get it in to 4.17?
 
-Sricharan is also working on adding these, just make sure you guys do the same
-thing..
+On 05.03.2018 11:25, Oleksij Rempel wrote:
+> This patch series is providing power off support for Freescale/NXP iMX6=
+ based
+> boards with external power management integrated circuit (PMIC).
+> As a first step the PMIC is configured to turn off the system if the
+> standby pin is asserted. On second step we assert the standby pin.
+> For this reason we need to use pm_power_off_prepare.
+>=20
+> Usage of stnadby pin for power off is described in official iMX6
+> documentation.
+>=20
+> 2018.03.05:
+> As this patch set touches multiple subsystems I think it would make
+> sense for Shawn Guo to take the all patch set.
+> The only part which didn't receive an ACK is regulator stuff. So I woul=
+d
+> hope that Mark Brown can ACK it.
+>=20
+> Kind regards,
+> Oleksij Rempel
+>=20
+> 2017.12.06:
+> Adding Linus. Probably there is no maintainer for this patch set.
+> No changes are made, tested on v4.15-rc1.
+>=20
+> 2017.10.27:
+> Last version of this patch set was send at 20 Jun 2017, this is a rebas=
+e against
+> kernel v4.14-rc6. Probably this set got lost. If I forgot to address so=
+me comments,
+> please point me.
+>=20
+> changes:
+> v6:
+>  - rename imx6_pm_poweroff to imx6_pm_stby_poweroff
+>  - fix "MPIC_STBY_REQ" typo in the comment.
+>=20
+> v5:
+>  - remove useless includes from pm-imx6.c patch
+>  - add Acked-by to "regulator: pfuze100: add fsl,pmic-stby-poweroff pro=
+perty"
+>    patch
+>=20
+> v4:
+>  - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff .=
+=2E."
+>    patch
+>  - add Acked-by to "ARM: imx6q: provide documentation for new ..."
+>    patch
+>=20
+> v3:
+>  - set pm_power_off_prepare =3D NULL on .remove.
+>  - documentation and spelling fixes.
+>  - use %pf instead of lookup_symbol_name.
+>=20
+>=20
+> Oleksij Rempel (6):
+>   ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
+>     property
+>   ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
+>     is set
+>   kernel/reboot.c: export pm_power_off_prepare
+>   regulator: pfuze100: add fsl,pmic-stby-poweroff property
+>   regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+>   ARM: dts: imx6: RIoTboard provide standby on power off option
+>=20
+>  .../devicetree/bindings/clock/imx6q-clock.txt      |  8 ++
+>  .../devicetree/bindings/regulator/pfuze100.txt     |  7 ++
+>  arch/arm/boot/dts/imx6dl-riotboard.dts             |  5 ++
+>  arch/arm/mach-imx/pm-imx6.c                        | 25 ++++++
+>  drivers/regulator/pfuze100-regulator.c             | 92 ++++++++++++++=
+++++++++
+>  kernel/reboot.c                                    |  1 +
+>  6 files changed, 138 insertions(+)
+>=20
 
--- 
-viresh
+
+--sN4iAMyDrtBdajReBDrS7us8r321BujXm--
+
+--gt8JCkXlQCcv9Am5QWMEiuJd727VldRPt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlrDGEcACgkQdQOiSHVI
+77TNVwf/QUzX/Y60TqqIZfA+LLoW0eRrMgQ/WiPyuW4crhKFDnXqg8sO6iKFX+H3
+J4u0S6B+k4kyokXSfZr2Q7bBqegDKNmIrCTMg3uX3EwBDj2Fc5kOrzXykClGz3II
+Io9jBhwYrS/DDCNHjTgVoEzYbrQdwsWRBRotqvFC/NKb92jMA4PyaFghOWA2+uJA
+05r3d5+AWLs1c+H88m0K43GWHclNSddBRe+AVkPzNTm0UNRFnUZbo79KHxgTPViG
+D/2Zk9lq6U8tTwh9rILD1+B76S28OzuaV0jJSFpOZmPQSEIxE8ss7fn8PFdSb3u4
+IMUQ2Wgb3U9HGxXhuBykRO2AJZ6uYQ==
+=3YBR
+-----END PGP SIGNATURE-----
+
+--gt8JCkXlQCcv9Am5QWMEiuJd727VldRPt--
