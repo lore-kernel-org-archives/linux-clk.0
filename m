@@ -1,255 +1,101 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Qiufang Dai <qiufang.dai@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>,
-	Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 5/7] clk: meson-axg: Add AO Clock and Reset controller driver
-Date: Sun, 8 Apr 2018 11:19:36 +0800
-Message-ID: <20180408031938.153474-6-yixun.lan@amlogic.com>
-In-Reply-To: <20180408031938.153474-1-yixun.lan@amlogic.com>
-References: <20180408031938.153474-1-yixun.lan@amlogic.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:47516 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754764AbeDCJzA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Apr 2018 05:55:00 -0400
+Date: Tue, 03 Apr 2018 17:54:19 +0800
+In-Reply-To: <CAGb2v67NO0hbATReq11Y_-2M_yF4hbj_sOtK3D_8yUQb1xi2ww@mail.gmail.com>
+References: <20180317092857.4396-1-wens@csie.org> <20180317092857.4396-3-wens@csie.org> <20180318213129.ucwslzvwq6khxrcd@flea> <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com> <20180403094845.le2hfuxktlv66lre@flea> <20180403095005.skflxb7m2qzbhjix@flea> <CAGb2v67NO0hbATReq11Y_-2M_yF4hbj_sOtK3D_8yUQb1xi2ww@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to access the GMAC register
+To: Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <9982975F-0911-48F2-BEEB-CE93AB561A55@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Qiufang Dai <qiufang.dai@amlogic.com>
 
-Adds a Clock and Reset controller driver for the Always-On part
-of the Amlogic Meson-AXG SoC.
 
-Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/clk/meson/Makefile    |   2 +-
- drivers/clk/meson/axg-aoclk.c | 164 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/axg-aoclk.h |  31 ++++++++
- 3 files changed, 196 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/axg-aoclk.c
- create mode 100644 drivers/clk/meson/axg-aoclk.h
+于 2018年4月3日 GMT+08:00 下午5:53:08, Chen-Yu Tsai <wens@csie.org> 写到:
+>On Tue, Apr 3, 2018 at 5:50 PM, Maxime Ripard
+><maxime.ripard@bootlin.com> wrote:
+>> On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
+>>> On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
+>>> > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
+>>> > <maxime.ripard@bootlin.com> wrote:
+>>> > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
+>>> > >> From: Icenowy Zheng <icenowy@aosc.io>
+>>> > >>
+>>> > >> There's a GMAC configuration register, which exists on
+>A64/A83T/H3/H5 in
+>>> > >> the syscon part, in the CCU of R40 SoC.
+>>> > >>
+>>> > >> Export a regmap of the CCU.
+>>> > >>
+>>> > >> Read access is not restricted to all registers, but only the
+>GMAC
+>>> > >> register is allowed to be written.
+>>> > >>
+>>> > >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> > >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>>> > >
+>>> > > Gah, this is crazy. I'm really starting to regret letting that
+>syscon
+>>> > > in in the first place...
+>>> >
+>>> > IMHO syscon is really a better fit. It's part of the glue layer
+>and
+>>> > most other dwmac user platforms treat it as such and use a syscon.
+>>> > Plus the controls encompass delays (phase), inverters (polarity),
+>>> > and even signal routing. It's not really just a group of clock
+>controls,
+>>> > like what we poorly modeled for A20/A31. I think that was really a
+>>> > mistake.
+>>> >
+>>> > As I mentioned in the cover letter, a slightly saner approach
+>would
+>>> > be to let drivers add custom syscon entries, which would then
+>require
+>>> > less custom plumbing.
+>>>
+>>> A syscon is convenient, sure, but it also bypasses any abstraction
+>>> layer we have everywhere else, which means that we'll have to
+>maintain
+>>> the register layout in each and every driver that uses it.
+>>>
+>>> So far, it's only be the GMAC, but it can also be others (the SRAM
+>>> controller comes to my mind), and then, if there's any difference in
+>>> the design in a future SoC, we'll have to maintain that in the GMAC
+>>> driver as well.
+>>
+>> I guess I forgot to say something, I'm fine with using a syscon we
+>> already have.
+>>
+>> I'm just questionning if merging any other driver using one is the
+>> right move.
+>
+>Right. So in this case, we are not actually going through the syscon
+>API. Rather we are exporting a regmap whose properties we actually
+>define. If it makes you more acceptable to it, we could map just
+>the GMAC register in the new regmap, and also have it named. This
+>is all plumbing within the kernel so the device tree stays the same.
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 555ab9c6ab64..fa6d1e36cef6 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -5,5 +5,5 @@
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o meson-aoclk.o gxbb-aoclk.o gxbb-aoclk-32k.o
--obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-+obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o meson-aoclk.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-new file mode 100644
-index 000000000000..cb56d809d3df
---- /dev/null
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Amlogic Meson-AXG Clock Controller Driver
-+ *
-+ * Copyright (c) 2016 Baylibre SAS.
-+ * Author: Michael Turquette <mturquette@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/init.h>
-+#include "clkc.h"
-+#include "axg-aoclk.h"
-+
-+#define AXG_AO_GATE(_name, _bit)					\
-+static struct clk_regmap _name##_ao = {					\
-+	.data = &(struct clk_regmap_gate_data) {			\
-+		.offset = (AO_RTI_GEN_CNTL_REG0),			\
-+		.bit_idx = (_bit),					\
-+	},								\
-+	.hw.init = &(struct clk_init_data) {				\
-+		.name = #_name "_ao",					\
-+		.ops = &clk_regmap_gate_ops,				\
-+		.parent_names = (const char *[]){ "clk81" },		\
-+		.num_parents = 1,					\
-+		.flags = CLK_IGNORE_UNUSED,				\
-+	},								\
-+}
-+
-+AXG_AO_GATE(remote, 0);
-+AXG_AO_GATE(i2c_master, 1);
-+AXG_AO_GATE(i2c_slave, 2);
-+AXG_AO_GATE(uart1, 3);
-+AXG_AO_GATE(uart2, 5);
-+AXG_AO_GATE(ir_blaster, 6);
-+AXG_AO_GATE(saradc, 7);
-+
-+static struct clk_regmap ao_clk81 = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_RTI_PWR_CNTL_REG0,
-+		.mask = 0x1,
-+		.shift = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_clk81",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ "clk81", "ao_alt_xtal"},
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_mux = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_SAR_CLK,
-+		.mask = 0x3,
-+		.shift = 9,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_mux",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_names = (const char *[]){ "xtal", "ao_clk81" },
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = AO_SAR_CLK,
-+		.shift = 0,
-+		.width = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "axg_saradc_mux" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_gate = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = AO_SAR_CLK,
-+		.bit_idx = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_gate",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_names = (const char *[]){ "axg_saradc_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const unsigned int axg_aoclk_reset[] = {
-+	[RESET_AO_REMOTE] = 16,
-+	[RESET_AO_I2C_MASTER] = 18,
-+	[RESET_AO_I2C_SLAVE] = 19,
-+	[RESET_AO_UART1] = 17,
-+	[RESET_AO_UART2] = 22,
-+	[RESET_AO_IR_BLASTER] = 23,
-+};
-+
-+static struct clk_regmap *axg_aoclk_regmap[] = {
-+	[CLKID_AO_REMOTE]	= &remote_ao,
-+	[CLKID_AO_I2C_MASTER]	= &i2c_master_ao,
-+	[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao,
-+	[CLKID_AO_UART1]	= &uart1_ao,
-+	[CLKID_AO_UART2]	= &uart2_ao,
-+	[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao,
-+	[CLKID_AO_SAR_ADC]	= &saradc_ao,
-+	[CLKID_AO_CLK81]	= &ao_clk81,
-+	[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux,
-+	[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div,
-+	[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate,
-+};
-+
-+static const struct clk_hw_onecell_data axg_aoclk_onecell_data = {
-+	.hws = {
-+		[CLKID_AO_REMOTE]	= &remote_ao.hw,
-+		[CLKID_AO_I2C_MASTER]	= &i2c_master_ao.hw,
-+		[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao.hw,
-+		[CLKID_AO_UART1]	= &uart1_ao.hw,
-+		[CLKID_AO_UART2]	= &uart2_ao.hw,
-+		[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao.hw,
-+		[CLKID_AO_SAR_ADC]	= &saradc_ao.hw,
-+		[CLKID_AO_CLK81]	= &ao_clk81.hw,
-+		[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux.hw,
-+		[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div.hw,
-+		[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate.hw,
-+	},
-+	.num = NR_CLKS,
-+};
-+
-+static const struct meson_aoclk_data axg_aoclkc_data = {
-+	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
-+	.num_reset	= ARRAY_SIZE(axg_aoclk_reset),
-+	.reset		= axg_aoclk_reset,
-+	.num_clks	= ARRAY_SIZE(axg_aoclk_regmap),
-+	.clks		= axg_aoclk_regmap,
-+	.hw_data	= &axg_aoclk_onecell_data,
-+};
-+
-+static const struct of_device_id axg_aoclkc_match_table[] = {
-+	{
-+		.compatible	= "amlogic,meson-axg-aoclkc",
-+		.data		= &axg_aoclkc_data,
-+	},
-+	{ }
-+};
-+
-+static struct platform_driver axg_aoclkc_driver = {
-+	.probe		= meson_aoclkc_probe,
-+	.driver		= {
-+		.name	= "axg-aoclkc",
-+		.of_match_table = axg_aoclkc_match_table,
-+	},
-+};
-+
-+builtin_platform_driver(axg_aoclkc_driver);
-diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
-new file mode 100644
-index 000000000000..396cd3023064
---- /dev/null
-+++ b/drivers/clk/meson/axg-aoclk.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2017 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef __AXG_AOCLKC_H
-+#define __AXG_AOCLKC_H
-+
-+#include "meson-aoclk.h"
-+
-+#define NR_CLKS	11
-+/* AO Configuration Clock registers offsets
-+ * Register offsets from the data sheet must be multiplied by 4.
-+ */
-+#define AO_RTI_PWR_CNTL_REG1	0x0C
-+#define AO_RTI_PWR_CNTL_REG0	0x10
-+#define AO_RTI_GEN_CNTL_REG0	0x40
-+#define AO_OSCIN_CNTL		0x58
-+#define AO_CRT_CLK_CNTL1	0x68
-+#define AO_SAR_CLK		0x90
-+#define AO_RTC_ALT_CLK_CNTL0	0x94
-+#define AO_RTC_ALT_CLK_CNTL1	0x98
-+
-+#include <dt-bindings/clock/axg-aoclkc.h>
-+#include <dt-bindings/reset/axg-aoclkc.h>
-+
-+#endif /* __AXG_AOCLKC_H */
--- 
-2.15.1
+I think my driver has already restricted the write permission
+only to GMAC register.
+
+>
+>ChenYu
