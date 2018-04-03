@@ -1,93 +1,70 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v5 4/7] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-Date: Mon, 9 Apr 2018 22:37:46 +0800
-Message-ID: <20180409143749.71197-5-yixun.lan@amlogic.com>
-In-Reply-To: <20180409143749.71197-1-yixun.lan@amlogic.com>
-References: <20180409143749.71197-1-yixun.lan@amlogic.com>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Biju Das
+	<biju.das@bp.renesas.com>, Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH 4/5] clk: renesas: r8a7792: Fix LB clock divider
+Date: Tue, 3 Apr 2018 10:17:19 +0000
+Message-ID: <TY1PR01MB1770B77B715CF949AC551EE9C0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+ <1522344790-20061-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1522344790-20061-5-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add dt-bindings headers for the Meson-AXG's AO clock and
-reset controller.
+Hello Geert
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
- include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
- create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+> Subject: [PATCH 4/5] clk: renesas: r8a7792: Fix LB clock divider
+>
+> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+> the LB clock divider depends on the value of the MD18 pin.
+>
+> On R-Car V2H, the LB clock divider is fixed to 24.  Hence model the
+> clock as a fixed factor clock instead.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/clk/renesas/r8a7792-cpg-mssr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/renesas/r8a7792-cpg-mssr.c b/drivers/clk/renesas=
+/r8a7792-cpg-mssr.c
+> index 609a540804965c40..8b66e6f4b4584de1 100644
+> --- a/drivers/clk/renesas/r8a7792-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7792-cpg-mssr.c
+> @@ -53,7 +53,6 @@ static const struct cpg_core_clk r8a7792_core_clks[] __=
+initconst =3D {
+>  DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
+>
+>  /* Core Clock Outputs */
+> -DEF_BASE("lb",   R8A7792_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
+>  DEF_BASE("qspi", R8A7792_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
+>
+>  DEF_FIXED("z",      R8A7792_CLK_Z,     CLK_PLL0,          1, 1),
+> @@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7792_core_clks[] __=
+initconst =3D {
+>  DEF_FIXED("hp",     R8A7792_CLK_HP,    CLK_PLL1,         12, 1),
+>  DEF_FIXED("i",      R8A7792_CLK_I,     CLK_PLL1,          3, 1),
+>  DEF_FIXED("b",      R8A7792_CLK_B,     CLK_PLL1,         12, 1),
+> +DEF_FIXED("lb",     R8A7792_CLK_B,     CLK_PLL1,         24, 1),
 
-diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
-new file mode 100644
-index 000000000000..61955016a55b
---- /dev/null
-+++ b/include/dt-bindings/clock/axg-aoclkc.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define CLKID_AO_REMOTE		0
-+#define CLKID_AO_I2C_MASTER	1
-+#define CLKID_AO_I2C_SLAVE	2
-+#define CLKID_AO_UART1		3
-+#define CLKID_AO_UART2		4
-+#define CLKID_AO_IR_BLASTER	5
-+#define CLKID_AO_SAR_ADC	6
-+#define CLKID_AO_CLK81		7
-+#define CLKID_AO_SAR_ADC_SEL	8
-+#define CLKID_AO_SAR_ADC_DIV	9
-+#define CLKID_AO_SAR_ADC_CLK	10
-+#define CLKID_AO_ALT_XTAL	11
-+
-+#endif
-diff --git a/include/dt-bindings/reset/axg-aoclkc.h b/include/dt-bindings/reset/axg-aoclkc.h
-new file mode 100644
-index 000000000000..d342c0b6b2a7
---- /dev/null
-+++ b/include/dt-bindings/reset/axg-aoclkc.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define RESET_AO_REMOTE		0
-+#define RESET_AO_I2C_MASTER	1
-+#define RESET_AO_I2C_SLAVE	2
-+#define RESET_AO_UART1		3
-+#define RESET_AO_UART2		4
-+#define RESET_AO_IR_BLASTER	5
-+
-+#endif
--- 
-2.15.1
+s/ R8A7792_CLK_B/ R8A7792_CLK_LB/
+
+With that fixed:
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+
+>  DEF_FIXED("p",      R8A7792_CLK_P,     CLK_PLL1,         24, 1),
+>  DEF_FIXED("cl",     R8A7792_CLK_CL,    CLK_PLL1,         48, 1),
+>  DEF_FIXED("m2",     R8A7792_CLK_M2,    CLK_PLL1,          8, 1),
+> --
+> 2.7.4
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
