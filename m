@@ -1,68 +1,77 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/5] soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
-Date: Tue, 10 Apr 2018 14:51:40 +0200
-Message-Id: <1523364701-15383-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
-References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20180403095005.skflxb7m2qzbhjix@flea>
+References: <20180317092857.4396-1-wens@csie.org> <20180317092857.4396-3-wens@csie.org>
+ <20180318213129.ucwslzvwq6khxrcd@flea> <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com>
+ <20180403094845.le2hfuxktlv66lre@flea> <20180403095005.skflxb7m2qzbhjix@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 3 Apr 2018 17:53:08 +0800
+Message-ID: <CAGb2v67NO0hbATReq11Y_-2M_yF4hbj_sOtK3D_8yUQb1xi2ww@mail.gmail.com>
+Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to
+ access the GMAC register
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
+	Icenowy Zheng <icenowy@aosc.io>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	netdev <netdev@vger.kernel.org>, Corentin Labbe <clabbe.montjoie@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-As of_clk_get_parent_count() returns zero on failure, while
-of_count_phandle_with_args() might return a negative error code, this
-also fixes the issue of possibly using a very big number in the
-allocation below.
+On Tue, Apr 3, 2018 at 5:50 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
+>> On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
+>> > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
+>> > <maxime.ripard@bootlin.com> wrote:
+>> > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
+>> > >> From: Icenowy Zheng <icenowy@aosc.io>
+>> > >>
+>> > >> There's a GMAC configuration register, which exists on A64/A83T/H3/H5 in
+>> > >> the syscon part, in the CCU of R40 SoC.
+>> > >>
+>> > >> Export a regmap of the CCU.
+>> > >>
+>> > >> Read access is not restricted to all registers, but only the GMAC
+>> > >> register is allowed to be written.
+>> > >>
+>> > >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> > >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> > >
+>> > > Gah, this is crazy. I'm really starting to regret letting that syscon
+>> > > in in the first place...
+>> >
+>> > IMHO syscon is really a better fit. It's part of the glue layer and
+>> > most other dwmac user platforms treat it as such and use a syscon.
+>> > Plus the controls encompass delays (phase), inverters (polarity),
+>> > and even signal routing. It's not really just a group of clock controls,
+>> > like what we poorly modeled for A20/A31. I think that was really a
+>> > mistake.
+>> >
+>> > As I mentioned in the cover letter, a slightly saner approach would
+>> > be to let drivers add custom syscon entries, which would then require
+>> > less custom plumbing.
+>>
+>> A syscon is convenient, sure, but it also bypasses any abstraction
+>> layer we have everywhere else, which means that we'll have to maintain
+>> the register layout in each and every driver that uses it.
+>>
+>> So far, it's only be the GMAC, but it can also be others (the SRAM
+>> controller comes to my mind), and then, if there's any difference in
+>> the design in a future SoC, we'll have to maintain that in the GMAC
+>> driver as well.
+>
+> I guess I forgot to say something, I'm fine with using a syscon we
+> already have.
+>
+> I'm just questionning if merging any other driver using one is the
+> right move.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
-<linux/of_clk.h>".
+Right. So in this case, we are not actually going through the syscon
+API. Rather we are exporting a regmap whose properties we actually
+define. If it makes you more acceptable to it, we could map just
+the GMAC register in the new regmap, and also have it named. This
+is all plumbing within the kernel so the device tree stays the same.
 
-v2:
-  - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
----
- drivers/soc/tegra/pmc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index d9fcdb592b3966a5..d8cb48a4b8eb1b78 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -31,6 +31,7 @@
- #include <linux/iopoll.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_clk.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
-@@ -725,7 +726,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
- 	unsigned int i, count;
- 	int err;
- 
--	count = of_count_phandle_with_args(np, "clocks", "#clock-cells");
-+	count = of_clk_get_parent_count(np);
- 	if (count == 0)
- 		return -ENODEV;
- 
--- 
-2.7.4
+ChenYu
