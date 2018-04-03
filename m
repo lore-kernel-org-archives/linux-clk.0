@@ -1,78 +1,84 @@
-Return-Path: <boris.brezillon@bootlin.com>
-Date: Tue, 10 Apr 2018 10:32:12 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Marcin Ziemianowicz <marcin@ziemianowicz.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Alan Stern <stern@rowland.harvard.edu>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clk: at91: Fix for PLL set_rate changes not
- being actually written to PLL peripheral bits
-Message-ID: <20180410103212.7bb1d48c@bbrezillon>
-In-Reply-To: <20180410001649.GA62245@hak8or>
-References: <20180410001649.GA62245@hak8or>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v3 0/3] Misc patches to support clocks for SDM845
+Date: Tue,  3 Apr 2018 18:52:38 +0530
+Message-Id: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marcin,
+Changes in v3:
+1. Adressed review comments given for v2 series.
+2. The GCC clock driver(patch 3) depends upon the below patches related
+   to GDSC operation and are under review.
 
-On Mon, 9 Apr 2018 20:16:49 -0400
-Marcin Ziemianowicz <marcin@ziemianowicz.com> wrote:
+   https://lkml.org/lkml/2018/4/2/142
 
-> When a USB device is connected to the USB host port on the SAM9N12 then
-> you get "-62" error which seems to indicate USB replies from the device
-> are timing out. Looking around, I saw the USB bus was running at half
-> speed. Going further, it seems that in ..._set_rate() the PLL wasn't
-> actually being adjusted. Writing the multiplier and divider values to
-> the peripheral fixes the bus running at half speed.
-> 
-> Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
-> ---
->  drivers/clk/at91/clk-pll.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
-> index 534961766ae5..db7155fe9346 100644
-> --- a/drivers/clk/at91/clk-pll.c
-> +++ b/drivers/clk/at91/clk-pll.c
-> @@ -288,6 +288,14 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  	pll->div = div;
->  	pll->mul = mul;
->  
-> +	// Set the PLL as per above div and mil values.
-					    ^ mul
+Changes in v2:
+Fixup for recalc_rate ops for clk_rcg2_shared_ops:
+There could be few scenarios where shared clocks are configured
+at rate other than CXO by boot. In those cases there would be a
+mismatch between the rate calculated by the recalc shared ops
+and the actual HW register configuration. Fix the same by adding
+an additional check to read current src from CFG register and
+make a decision based on that.
 
-Please do not use C++-style comments, use /* comment */ instead.
+Changes in v1:
+https://lkml.org/lkml/2018/1/31/209
 
-> +	regmap_update_bits(pll->regmap, AT91_CKGR_PLLBR,
+This patch series does the miscellaneous changes to support
+clock nodes for SDM845. Below are the major changes for
+which the existing code does not have support.
 
-You hardcode the PLL ID here. What if this function if called for PLLA?
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
+3. Add support for controlling Fabia PLL for which the support
+   is not available in existing alpha PLL code.
+4. Add Global Clock controller (GCC) driver for SDM845. This
+   should allow most non-multimedia device drivers to probe
+   and control their clocks.
 
-> +		AT91_PMC_DIV | AT91_PMC_MUL,
+[v1] : https://lkml.org/lkml/2018/1/31/209
+[v2] : https://lkml.org/lkml/2018/3/8/495
 
-You should use PLL_MUL_MASK(layout) and PLL_DIV_MASK to do that.
+Amit Nischal (2):
+  clk: qcom: Clear hardware clock control bit of RCG
+  clk: qcom: Configure the RCGs to a safe source as needed
 
-> +		(div << 0) | (mul << 16));
+Taniya Das (1):
+  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
 
-This is wrong. The clk has the CLK_SET_RATE_GATE set, which means the
-rate cannot be updated if the PLL is not gated, and if you look at
-clk_pll_prepare(), you'll see that div and mul fields are updated
-there. Now, maybe there's a bug in clk_pll_prepare(), but
-clk_pll_set_rate() is definitely not the place where we want ->div and
-->mul to be written to the register.
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-rcg.h                         |    7 +-
+ drivers/clk/qcom/clk-rcg2.c                        |  176 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 3546 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  242 ++
+ 7 files changed, 3979 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
 
-> +
-> +	pr_debug("clk-pll: setting new rate, (%lu hz / %u) * %u = %lu hz\n",
-> +		parent_rate, div, mul, rate);
-> +
->  	return 0;
->  }
->  
-
-Regards,
-
-Boris
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
