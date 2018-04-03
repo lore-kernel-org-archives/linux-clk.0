@@ -1,165 +1,64 @@
-Return-Path: <marcin@ziemianowicz.com>
-Date: Mon, 9 Apr 2018 20:16:21 -0400
-From: Marcin Ziemianowicz <marcin@ziemianowicz.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH v2 1/2] clk: at91: Added more information logging.
-Message-ID: <20180410001621.GA62230@hak8or>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 2/5] clk: renesas: r8a7745: Fix LB clock divider
+Date: Tue, 3 Apr 2018 10:15:13 +0000
+Message-ID: <TY1PR01MB1770E87BB9DC7DCB54A26C9BC0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+ <1522344790-20061-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1522344790-20061-3-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-I noticed that when debugging some USB clocking issue that there weren't
-many ways to tell what the state of the USB clocking system was. This
-adds a few logging statements to see what the relevant code is trying to
-do.
+> Subject: [PATCH 2/5] clk: renesas: r8a7745: Fix LB clock divider
+>
+> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+> the LB clock divider depends on the value of the MD18 pin.
+>
+> On RZ/G1E, the LB clock divider is fixed to 24.  Hence model the clock
+> as a fixed factor clock instead.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
----
- drivers/clk/at91/clk-pll.c   |  6 +++++-
- drivers/clk/at91/clk-usb.c   | 10 ++++++++--
- drivers/usb/host/ohci-at91.c | 16 ++++++++++------
- 3 files changed, 23 insertions(+), 9 deletions(-)
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
-index 7d3223fc7161..534961766ae5 100644
---- a/drivers/clk/at91/clk-pll.c
-+++ b/drivers/clk/at91/clk-pll.c
-@@ -133,6 +133,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- {
- 	struct clk_pll *pll = to_clk_pll(hw);
- 	unsigned int pllr;
-+	unsigned long recalcedrate;
- 	u16 mul;
- 	u8 div;
- 
-@@ -144,7 +145,10 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 	if (!div || !mul)
- 		return 0;
- 
--	return (parent_rate / div) * (mul + 1);
-+	recalcedrate = (parent_rate / div) * (mul + 1);
-+	pr_debug("clk-pll: calculating new rate, (%lu hz / %u) * %u = %lu hz\n",
-+		parent_rate, div, mul, recalcedrate);
-+	return recalcedrate;
- }
- 
- static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,
-diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
-index 791770a563fc..2fa877e99bac 100644
---- a/drivers/clk/at91/clk-usb.c
-+++ b/drivers/clk/at91/clk-usb.c
-@@ -48,11 +48,15 @@ static unsigned long at91sam9x5_clk_usb_recalc_rate(struct clk_hw *hw,
- 	struct at91sam9x5_clk_usb *usb = to_at91sam9x5_clk_usb(hw);
- 	unsigned int usbr;
- 	u8 usbdiv;
-+	unsigned int calcdclock;
- 
- 	regmap_read(usb->regmap, AT91_PMC_USB, &usbr);
- 	usbdiv = (usbr & AT91_PMC_OHCIUSBDIV) >> SAM9X5_USB_DIV_SHIFT;
- 
--	return DIV_ROUND_CLOSEST(parent_rate, (usbdiv + 1));
-+	calcdclock = DIV_ROUND_CLOSEST(parent_rate, (usbdiv + 1));
-+	pr_debug("clk-usb: calculating new rate, %lu hz / %u = %u hz\n",
-+		parent_rate, usbdiv + 1, calcdclock);
-+	return calcdclock;
- }
- 
- static int at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
-@@ -98,7 +102,6 @@ static int at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
- 		if (!best_diff)
- 			break;
- 	}
--
- 	if (best_rate < 0)
- 		return best_rate;
- 
-@@ -142,6 +145,9 @@ static int at91sam9x5_clk_usb_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (div > SAM9X5_USB_MAX_DIV + 1 || !div)
- 		return -EINVAL;
- 
-+	pr_debug("clk-usb: setting USB clock divider to %lu hz / %lu = %lu hz\n",
-+		parent_rate, div, rate);
-+
- 	regmap_update_bits(usb->regmap, AT91_PMC_USB, AT91_PMC_OHCIUSBDIV,
- 			   (div - 1) << SAM9X5_USB_DIV_SHIFT);
- 
-diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
-index 5ad9e9bdc8ee..c57a239918f9 100644
---- a/drivers/usb/host/ohci-at91.c
-+++ b/drivers/usb/host/ohci-at91.c
-@@ -70,11 +70,13 @@ static const struct ohci_driver_overrides ohci_at91_drv_overrides __initconst =
- 
- /*-------------------------------------------------------------------------*/
- 
--static void at91_start_clock(struct ohci_at91_priv *ohci_at91)
-+static void at91_start_clock(struct ohci_at91_priv *ohci_at91,
-+				struct device *dev)
- {
- 	if (ohci_at91->clocked)
- 		return;
- 
-+	dev_dbg(dev, "Enabling hclk, iclk, and setting fclk to 48 Mhz\n");
- 	clk_set_rate(ohci_at91->fclk, 48000000);
- 	clk_prepare_enable(ohci_at91->hclk);
- 	clk_prepare_enable(ohci_at91->iclk);
-@@ -82,11 +84,13 @@ static void at91_start_clock(struct ohci_at91_priv *ohci_at91)
- 	ohci_at91->clocked = true;
- }
- 
--static void at91_stop_clock(struct ohci_at91_priv *ohci_at91)
-+static void at91_stop_clock(struct ohci_at91_priv *ohci_at91,
-+				struct device *dev)
- {
- 	if (!ohci_at91->clocked)
- 		return;
- 
-+	dev_dbg(dev, "Disabling hclk, iclk, and fclk\n");
- 	clk_disable_unprepare(ohci_at91->fclk);
- 	clk_disable_unprepare(ohci_at91->iclk);
- 	clk_disable_unprepare(ohci_at91->hclk);
-@@ -104,7 +108,7 @@ static void at91_start_hc(struct platform_device *pdev)
- 	/*
- 	 * Start the USB clocks.
- 	 */
--	at91_start_clock(ohci_at91);
-+	at91_start_clock(ohci_at91, &pdev->dev);
- 
- 	/*
- 	 * The USB host controller must remain in reset.
-@@ -128,7 +132,7 @@ static void at91_stop_hc(struct platform_device *pdev)
- 	/*
- 	 * Stop the USB clocks.
- 	 */
--	at91_stop_clock(ohci_at91);
-+	at91_stop_clock(ohci_at91, &pdev->dev);
- }
- 
- 
-@@ -623,7 +627,7 @@ ohci_hcd_at91_drv_suspend(struct device *dev)
- 
- 		/* flush the writes */
- 		(void) ohci_readl (ohci, &ohci->regs->control);
--		at91_stop_clock(ohci_at91);
-+		at91_stop_clock(ohci_at91, dev);
- 	}
- 
- 	return ret;
-@@ -638,7 +642,7 @@ ohci_hcd_at91_drv_resume(struct device *dev)
- 	if (ohci_at91->wakeup)
- 		disable_irq_wake(hcd->irq);
- 
--	at91_start_clock(ohci_at91);
-+	at91_start_clock(ohci_at91, dev);
- 
- 	ohci_resume(hcd, false);
- 
--- 
-2.17.0
+> ---
+>  drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas=
+/r8a7745-cpg-mssr.c
+> index 87f5a3619e4f9d60..4b0a9243b7481176 100644
+> --- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+> @@ -51,7 +51,6 @@ static const struct cpg_core_clk r8a7745_core_clks[] __=
+initconst =3D {
+>  DEF_FIXED(".pll1_div2",CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
+>
+>  /* Core Clock Outputs */
+> -DEF_BASE("lb",   R8A7745_CLK_LB,   CLK_TYPE_GEN2_LB,CLK_PLL1),
+>  DEF_BASE("sdh",  R8A7745_CLK_SDH,  CLK_TYPE_GEN2_SDH,CLK_PLL1),
+>  DEF_BASE("sd0",  R8A7745_CLK_SD0,  CLK_TYPE_GEN2_SD0,CLK_PLL1),
+>  DEF_BASE("qspi", R8A7745_CLK_QSPI, CLK_TYPE_GEN2_QSPI,CLK_PLL1_DIV2),
+> @@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7745_core_clks[] __=
+initconst =3D {
+>  DEF_FIXED("zs",    R8A7745_CLK_ZS,CLK_PLL1,    6, 1),
+>  DEF_FIXED("hp",    R8A7745_CLK_HP,CLK_PLL1,   12, 1),
+>  DEF_FIXED("b",     R8A7745_CLK_B,CLK_PLL1,   12, 1),
+> +DEF_FIXED("lb",    R8A7745_CLK_LB,CLK_PLL1,   24, 1),
+>  DEF_FIXED("p",     R8A7745_CLK_P,CLK_PLL1,   24, 1),
+>  DEF_FIXED("cl",    R8A7745_CLK_CL,CLK_PLL1,   48, 1),
+>  DEF_FIXED("cp",    R8A7745_CLK_CP,CLK_PLL1,   48, 1),
+> --
+> 2.7.4
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
