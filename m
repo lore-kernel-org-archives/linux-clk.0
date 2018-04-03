@@ -1,221 +1,286 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v9 09/27] ARM: davinci: dm644x: add new clock init using common clock framework
-Date: Thu, 26 Apr 2018 19:17:27 -0500
-Message-Id: <20180427001745.4116-10-david@lechnology.com>
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
+Return-Path: <anischal@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Tue, 03 Apr 2018 14:22:47 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown
+ <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Odelu
+ Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] clk: qcom: Configure the RCGs to a safe source as
+ needed
+In-Reply-To: <152150582284.254778.15552235408861080239@swboyd.mtv.corp.google.com>
+References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+ <1520493495-3084-3-git-send-email-anischal@codeaurora.org>
+ <152150582284.254778.15552235408861080239@swboyd.mtv.corp.google.com>
+Message-ID: <07dbf890975c1178bc4cc2360c25526a@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specific clock init in mach-davinci/dm644x.c
-using the new common clock framework drivers.
+On 2018-03-20 06:00, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-03-07 23:18:13)
+>> For some root clock generators, there could be child branches which 
+>> are
+>> controlled by an entity other than application processor subsystem. 
+>> For
+>> such RCGs, as per application processor subsystem clock driver, all of 
+>> its
+>> downstream clocks are disabled and RCG is in disabled state but in 
+>> actual
+>> downstream clocks can be left enabled before.
+> 
+> s/actual/reality?
+Thanks for the review. I will address this in next patch series.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+> 
+>> 
+>> So in this scenario, when RCG is disabled as per clock driver's point 
+>> of
+>> view and when rate scaling request comes before downstream clock 
+>> enable
+>> request, then RCG fails to update its configuration because in actual 
+>> RCG
+> 
+> s/actual/reality?
+> 
+I will address this in next patch series.
 
-Also clean up the #includes since we are adding some here.
+>> is on and it expects its new source to alredy in enable state  but in
+> 
+> s/alredy/already be/
+I will address this in next patch series.
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+> 
+>> reality new source is in off state. In order to avoid letting the RCG 
+>> to
+> 
+> s/is in off state/is off/
+> s/letting/having/
+I will address this in next patch series.
 
-v9 changes:
-- register PLL1 and PSC in dm644x_init_time() instead of as platform device so
-  that we get the correct timer0 clock for davinci_timer_init()
-- Fixed size of PLL memory block
+> 
+>> go into an invalid state, add support to just cache the rate of RCG 
+>> during
+> 
+> s/just//
+I will address this in next patch series.
 
-v8 changes:
-- none
+> 
+>> set_rate(), defer actual RCG configuration update to be done during
+>> clk_enable() as at this point of time, both its new parent and safe 
+>> source
+>> will be already enabled and RCG can safely switch to new parent.
+>> 
+>> During clk_disable() request, configure it to safe source as both
+>> its parents, safe source and current parent will be enabled and RCG 
+>> can
+>> safely execute a switch. Also add support to have safe configuration
+>> frequency table structure for each shared RCG.
+>> 
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> ---
+>> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+>> index 2a7489a..205fa34 100644
+>> --- a/drivers/clk/qcom/clk-rcg.h
+>> +++ b/drivers/clk/qcom/clk-rcg.h
+>> @@ -146,6 +146,9 @@ struct clk_dyn_rcg {
+>>   * @hid_width: number of bits in half integer divider
+>>   * @parent_map: map from software's parent index to hardware's 
+>> src_sel field
+>>   * @freq_tbl: frequency table
+>> + * @current_freq: last cached frequency when using branches with 
+>> shared RCGs
+>> + * @safe_src_freq_tbl : frequency table of safe source when using 
+>> branches
+>> + *                     with shared RCGs
+>>   * @clkr: regmap clock handle
+>>   *
+>>   */
+>> @@ -155,6 +158,8 @@ struct clk_rcg2 {
+>>         u8                      hid_width;
+>>         const struct parent_map *parent_map;
+>>         const struct freq_tbl   *freq_tbl;
+>> +       unsigned long           current_freq;
+>> +       const struct freq_tbl   *safe_src_freq_tbl;
+> 
+> Can we store safe_src index instead? And then construct the frequency
+> table entry on the fly at the call site? I think it would greatly
+> clarify that we don't really care about the rate of the clk at all.
+> Instead, all we care about is making sure the mux is set to whatever
+> source selection can provide an always on signal.
+> 
+We will address the above in the V3 series of the patch set. We will be
+generating the safe frequency table on the fly taking the safe source
+frequency index input from the RCG clock.
 
-v7 changes:
-- add clock platform device declarations
-- register platform devices instead of registering clocks directly
-- add davinci prefix to commit description
+>>         struct clk_regmap       clkr;
+>>  };
+>> 
+>> @@ -167,5 +172,6 @@ struct clk_rcg2 {
+>>  extern const struct clk_ops clk_byte2_ops;
+>>  extern const struct clk_ops clk_pixel_ops;
+>>  extern const struct clk_ops clk_gfx3d_ops;
+>> +extern const struct clk_ops clk_rcg2_shared_ops;
+>> 
+>>  #endif
+>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+>> index e63db10..a52de54 100644
+>> --- a/drivers/clk/qcom/clk-rcg2.c
+>> +++ b/drivers/clk/qcom/clk-rcg2.c
+>> @@ -790,3 +790,158 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, 
+>> unsigned long rate,
+>>         .determine_rate = clk_gfx3d_determine_rate,
+>>  };
+>> +
+>> +static unsigned long
+>> +clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long 
+>> parent_rate)
+>> +{
+>> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> +
+>> +       if (!__clk_is_enabled(hw->clk)) {
+>> +               if (!rcg->current_freq) {
+>> +                       if (!clk_rcg2_get_parent(hw))
+> 
+> This is checking for 0 source selection of parent? So basically if
+> source is XO selected then return what we know is the XO speed? We
+> should be able to do that by returning parent_rate though?
+> 
+>> +                               rcg->current_freq =
+>> +                                       rcg->safe_src_freq_tbl->freq;
+>> +                       else
+>> +                               rcg->current_freq =
+>> +                                       clk_rcg2_recalc_rate(hw, 
+>> parent_rate);
+>> +               }
+>> +
+>> +               return rcg->current_freq;
+>> +       }
+>> +
+>> +       return rcg->current_freq = clk_rcg2_recalc_rate(hw, 
+>> parent_rate);
+> 
+> I don't get this function.
+> 
+> To simplify just return cached rate if it's set and clk is off,
+> otherwise read the hardware?
+> 
+> 	if (!__clk_is_enabled(hw->clk) && rcg->current_freq)
+> 		return rcg->current_freq;
+> 
+> 	return clk_rcg2_recalc_rate(hw, parent_rate);
+> 
+> I would also rename current_freq to something like cached_freq and then
+> *only* assign it when someone calls clk_set_rate() (and save around the
+> frequency table pointer instead of raw frequency). Out of boot, we will
+> return the right frequency and clk_set_rate() called before enable will
+> cache the rate to what we want.
 
-v6 changes:
-- add blank lines between function calls
+Thanks for your valuable suggestion. We will fix this in the next patch
+series. But we would like to have one modification i.e. to update the
+current_freq value with the clk_rcg2_recalc_rate(). Reason for the same
+is given below. So the final logic would be:
 
+static unsigned long
+clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long 
+parent_rate)
+{
+    ...
+    if (!__clk_is_enabled(hw->clk) && rcg->current_freq)
+       return rcg->current_freq;
 
- arch/arm/mach-davinci/board-dm644x-evm.c  |  2 +
- arch/arm/mach-davinci/board-neuros-osd2.c |  2 +
- arch/arm/mach-davinci/board-sffsdr.c      |  2 +
- arch/arm/mach-davinci/davinci.h           |  1 +
- arch/arm/mach-davinci/dm644x.c            | 64 +++++++++++++++++++----
- 5 files changed, 62 insertions(+), 9 deletions(-)
+    return rcg->current_freq = clk_rcg2_recalc_rate(hw, parent_rate);
+}
 
-diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-index 5bf024784738..190a28cc91bd 100644
---- a/arch/arm/mach-davinci/board-dm644x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-@@ -768,6 +768,8 @@ static __init void davinci_evm_init(void)
- 	struct clk *aemif_clk;
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 
-+	dm644x_register_clocks();
-+
- 	dm644x_init_devices();
- 
- 	ret = dm644x_gpio_register();
-diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
-index 0b13237e63f2..06e7f592b62b 100644
---- a/arch/arm/mach-davinci/board-neuros-osd2.c
-+++ b/arch/arm/mach-davinci/board-neuros-osd2.c
-@@ -174,6 +174,8 @@ static __init void davinci_ntosd2_init(void)
- 	struct clk *aemif_clk;
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 
-+	dm644x_register_clocks();
-+
- 	dm644x_init_devices();
- 
- 	ret = dm644x_gpio_register();
-diff --git a/arch/arm/mach-davinci/board-sffsdr.c b/arch/arm/mach-davinci/board-sffsdr.c
-index e7c1728b0833..792bb84d5011 100644
---- a/arch/arm/mach-davinci/board-sffsdr.c
-+++ b/arch/arm/mach-davinci/board-sffsdr.c
-@@ -134,6 +134,8 @@ static __init void davinci_sffsdr_init(void)
- {
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 
-+	dm644x_register_clocks();
-+
- 	dm644x_init_devices();
- 
- 	platform_add_devices(davinci_sffsdr_devices,
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index a799b5266d4b..16aca5853ab2 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -108,6 +108,7 @@ int dm365_gpio_register(void);
- void dm644x_init(void);
- void dm644x_init_devices(void);
- void dm644x_init_time(void);
-+void dm644x_register_clocks(void);
- void dm644x_init_asp(void);
- int dm644x_init_video(struct vpfe_config *, struct vpbe_config *);
- int dm644x_gpio_register(void);
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index 708df0ed8554..b359f9a68134 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -8,28 +8,34 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
--#include <linux/init.h>
--#include <linux/clk.h>
--#include <linux/serial_8250.h>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
-+#include <linux/clkdev.h>
- #include <linux/dmaengine.h>
--#include <linux/platform_device.h>
-+#include <linux/init.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
-+#include <linux/platform_device.h>
-+#include <linux/serial_8250.h>
- 
- #include <asm/mach/map.h>
- 
-+#include <mach/common.h>
- #include <mach/cputype.h>
- #include <mach/irqs.h>
--#include "psc.h"
- #include <mach/mux.h>
--#include <mach/time.h>
- #include <mach/serial.h>
--#include <mach/common.h>
-+#include <mach/time.h>
- 
-+#include "asp.h"
- #include "davinci.h"
--#include "clock.h"
- #include "mux.h"
--#include "asp.h"
-+
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
- 
- /*
-  * Device specific clocks
-@@ -43,6 +49,7 @@
- #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
- #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll1_data = {
- 	.num       = 1,
- 	.phys_base = DAVINCI_PLL1_BASE,
-@@ -326,6 +333,7 @@ static struct clk_lookup dm644x_clks[] = {
- 	CLK("davinci-wdt", NULL, &timer2_clk),
- 	CLK(NULL, NULL, NULL),
- };
-+#endif
- 
- static struct emac_platform_data dm644x_emac_pdata = {
- 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
-@@ -934,8 +942,46 @@ void __init dm644x_init(void)
- 
- void __init dm644x_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll1, *psc;
-+	struct clk *clk;
-+
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
-+
-+	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
-+	dm355_pll1_init(NULL, pll1, NULL);
-+
-+	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-+	dm355_psc_init(NULL, psc);
-+
-+	clk = clk_get(NULL, "timer0");
-+
-+	davinci_timer_init(clk);
-+#else
- 	davinci_clk_init(dm644x_clks);
- 	davinci_timer_init(&timer0_clk);
-+#endif
-+}
-+
-+static struct resource dm644x_pll2_resources[] = {
-+	{
-+		.start	= DAVINCI_PLL2_BASE,
-+		.end	= DAVINCI_PLL2_BASE + SZ_1K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm644x_pll2_device = {
-+	.name		= "dm644x-pll2",
-+	.id		= -1,
-+	.resource	= dm644x_pll2_resources,
-+	.num_resources	= ARRAY_SIZE(dm644x_pll2_resources),
-+};
-+
-+void __init dm644x_register_clocks(void)
-+{
-+	/* PLL1 and PSC are registered in dm644x_init_time() */
-+	platform_device_register(&dm644x_pll2_device);
- }
- 
- int __init dm644x_init_video(struct vpfe_config *vpfe_cfg,
--- 
-2.17.0
+Updation of current_freq is required in recalc_rate() because in a
+case where clk_enable() is called before the set_rate()[which actually
+updates the current_freq] then inside the clk_rcg2_shared_enable(),
+current_freq value will be 0 and clk_rcg2_shared_force_enable_clear()
+will configure the RCG with the first frequency entry in the frequency
+table and RCG will get enable at rate which BOOT has not configured.
+
+> 
+>> +}
+>> +
+>> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
+>> +{
+>> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> +
+>> +       if (rcg->current_freq == rcg->safe_src_freq_tbl->freq) {
+>> +               clk_rcg2_set_force_enable(hw);
+>> +               clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
+>> +               clk_rcg2_clear_force_enable(hw);
+>> +
+>> +               return 0;
+>> +       }
+>> +
+>> +       /*
+>> +        * Switch from safe source to the stashed mux selection. The 
+>> current
+>> +        * parent has already been prepared and enabled at this point, 
+>> and
+>> +        * the safe source is always on while application processor 
+>> subsystem
+>> +        * is online. Therefore, the RCG can safely switch its source.
+>> +        */
+>> +
+>> +       return clk_rcg2_shared_force_enable_clear(hw, 
+>> rcg->current_freq);
+> 
+> Not much is different between clk_rcg2_shared_force_enable_clear() and
+> the three lines above inside that if condition. The only difference is
+> we don't search for a rate in the frequency table. Ugh, but we can't
+> change the frequency table because of hw clk control stuff that relies
+> on the table in software matching the table in hardware? Sad.
+> 
+> Can we at least change the if condition above to be something like:
+> 
+> 	if (rcg->force_safe_src) {
+> 		clk_rcg2_set_force_enable(...
+> 
+> And then set the force_safe_src bool when we want enable to skip normal
+> rate restoration behavior? We should be able to use that flag in other
+> places too, like where we check for the clk being enabled in software 
+> or
+> not.
+
+As per the new implementation in V3 series, we think there is no need to
+have one new flag.
+
+> 
+>> +}
+>> +
+>> +static void clk_rcg2_shared_disable(struct clk_hw *hw)
+>> +{
+>> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> +
+>> +       /*
+>> +        * Park the RCG at a safe configuration - sourced off from 
+>> safe source.
+>> +        * Force enable and disable the RCG while configuring it to 
+>> safeguard
+>> +        * against any update signal coming from the downstream clock.
+>> +        * The current parent is still prepared and enabled at this 
+>> point, and
+>> +        * the safe source is always on while application processor 
+>> subsystem
+>> +        * is online. Therefore, the RCG can safely switch its parent.
+>> +        */
+>> +       clk_rcg2_set_force_enable(hw);
+>> +       clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
+>> +       clk_rcg2_clear_force_enable(hw);
+>> +}
+>> +
+> 
+> Yeah, all this stuff would get simpler if we stopped using frequencies.
+> Hopefully I made sense!
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
