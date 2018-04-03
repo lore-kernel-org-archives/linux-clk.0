@@ -1,46 +1,82 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v8 25/42] ARM: davinci: dm644x: add new clock init using
+ common clock framework
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-26-git-send-email-david@lechnology.com>
+ <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <43c266b8-c023-a1b4-c751-bd46c2fb910d@lechnology.com>
+Date: Tue, 3 Apr 2018 11:30:45 -0500
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
-Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
- Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
-Message-ID: <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
-Date: Thu, 19 Apr 2018 15:25:24 -0700
+In-Reply-To: <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
-> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
-> limited to clock providers.
-> =
+On 04/03/2018 05:26 AM, Sekhar Nori wrote:
+> On Friday 16 March 2018 08:22 AM, David Lechner wrote:
+>> +static struct resource dm644x_pll1_resources[] = {
+>> +	{
+>> +		.start	= DAVINCI_PLL1_BASE,
+>> +		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
+> 
+> The .end should be DAVINCI_PLL1_BASE + SZ_1K - 1, otherwise it prevents
+> PLL2 from getting registered.
+> 
+>> +		.flags	= IORESOURCE_MEM,
+>> +	},
+>> +};
+>> +
+>> +static struct platform_device dm644x_pll1_device = {
+>> +	.name		= "dm644x-pll1",
+>> +	.id		= -1,
+>> +	.resource	= dm644x_pll1_resources,
+>> +	.num_resources	= ARRAY_SIZE(dm644x_pll1_resources),
+>> +};
+>> +
+>> +static struct resource dm644x_pll2_resources[] = {
+>> +	{
+>> +		.start	= DAVINCI_PLL2_BASE,
+>> +		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
+> 
+> And this too should be fixed, else it prevents the PSC from getting
+> registered.
+> 
+>> +		.flags	= IORESOURCE_MEM,
+>> +	},
+>> +};
+> 
+> With these fixed, I still had to enable 'clk_ignore_unused' on DM644x
+> EVM to get to NFS boot. I think root of the problem is that pm_runtime()
+> APIs are not working in the legacy boot mode.
+> 
+> This can be seen even on the DA850 LCDK in legacy boot. pm_genpd_summary
+> in debugfs shows all domains are off and there are no devices registered
+> under the "da850-psc1: emac" domain. NFS mounting still works on the
+> DA850 LCDK because clk_summary shows enable and prepare count of 4 for
+> emac. Not sure how that's happening. But on DM644x EVM, the emac clock
+> enable count is 0.
+> 
+> Still looking at whats going wrong here. I am testing your v8 branch
+> with clk-davinci branch from clk-next merged to get the fixes Stephen made.
+> 
 
-> Hence move these helpers into their own header file, so callers that are
-> not clock providers no longer have to include <linux/clk-provider.h>.
-> =
+In legacy mode, genpd is not being used. I didn't see any mechanism for
+genpd lookup without device tree. So, we are still relying on the
+matching in arch/arm/mach-davinci/pm_domain.c.
 
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> v3:
->   - Add Reviewed-by,
->   - Add SPDX-License-Identifier,
->   - Add to clock section in MAINTAINERS (note that Rob is still listed
->     as a maintainer, too, due to the include/linux/of*.h catch-all
->     rule),
+I suspect we need to fix the clock lookups in
+drivers/clk/davinci/psc-dm644x.c.
 
-Can you X: out this file so Rob is happy? Or that doesn't work?
+LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
+					"fck",		"davinci_mdio.0");
+
+NULL might need to be changed to "fck" to be picked up by pm matching
+and "davinci_emac.1" should be verified that it matches the actual EMAC
+device name.
