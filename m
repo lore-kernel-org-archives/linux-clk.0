@@ -1,145 +1,70 @@
-Return-Path: <michael@amarulasolutions.com>
-Return-Path: <michael@amarulasolutions.com>
-From: Michael Trimarchi <michael@amarulasolutions.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <kernel@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Matteo Lisi <matteo.lisi@engicam.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH V2] clk: imx: Add new clo01 and clo2 controlled by CCOSR
-Date: Fri, 20 Apr 2018 23:00:04 +0200
-Message-Id: <1524258004-28717-1-git-send-email-michael@amarulasolutions.com>
+Return-Path: <fabrizio.castro@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Biju Das
+	<biju.das@bp.renesas.com>, Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH 5/5] clk: renesas: r8a7794: Fix LB clock divider
+Date: Tue, 3 Apr 2018 10:20:59 +0000
+Message-ID: <TY1PR01MB177024C408EE1AE2AFCE6D16C0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
+ <1522344790-20061-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1522344790-20061-6-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-osc->cko2_sel->cko2_podf->clk_cko2->clk_cko
+Hello Geert,
 
-Example of usage to provide clock to the sgtl5000
+> Subject: [PATCH 5/5] clk: renesas: r8a7794: Fix LB clock divider
+>
+> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
+> the LB clock divider depends on the value of the MD18 pin.
+>
+> On R-Car E2, the LB clock divider is fixed to 24.  Hence model the clock
+> as a fixed factor clock instead.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/clk/renesas/r8a7794-cpg-mssr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/renesas/r8a7794-cpg-mssr.c b/drivers/clk/renesas=
+/r8a7794-cpg-mssr.c
+> index 2a40bbeaeeafc2a4..3ce74f063fa86b19 100644
+> --- a/drivers/clk/renesas/r8a7794-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7794-cpg-mssr.c
+> @@ -55,7 +55,6 @@ static const struct cpg_core_clk r8a7794_core_clks[] __=
+initconst =3D {
+>  DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
+>
+>  /* Core Clock Outputs */
+> -DEF_BASE("lb",   R8A7794_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
+>  DEF_BASE("adsp", R8A7794_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
+>  DEF_BASE("sdh",  R8A7794_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
+>  DEF_BASE("sd0",  R8A7794_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
+> @@ -69,6 +68,7 @@ static const struct cpg_core_clk r8a7794_core_clks[] __=
+initconst =3D {
+>  DEF_FIXED("hp",     R8A7794_CLK_HP,    CLK_PLL1,         12, 1),
+>  DEF_FIXED("i",      R8A7794_CLK_I,     CLK_PLL1,          2, 1),
+>  DEF_FIXED("b",      R8A7794_CLK_B,     CLK_PLL1,         12, 1),
+> +DEF_FIXED("lb",     R8A7794_CLK_B,     CLK_PLL1,         24, 1),
 
-codec: sgtl5000@0a {
-	compatible = "fsl,sgtl5000";
-	reg = <0x0a>;
-	clocks = <&clks IMX6UL_CLK_OSC>;
-	#sound-dai-cells = <0>;
-	clocks = <&clks IMX6UL_CLK_CKO>;
-	assigned-clocks = <&clks IMX6UL_CLK_CKO2_SEL>,
-			  <&clks IMX6UL_CLK_CKO2_PODF>,
-			  <&clks IMX6UL_CLK_CKO2>,
-			  <&clks IMX6UL_CLK_CKO>;
-	assigned-clock-parents = <&clks IMX6UL_CLK_OSC>,
-				 <&clks IMX6UL_CLK_CKO2_SEL>,
-				 <&clks IMX6UL_CLK_CKO2_PODF>,
-				 <&clks IMX6UL_CLK_CKO2>;
-	clock-names = "mclk";
-	wlf,shared-lrclk;
+s/R8A7794_CLK_B/R8A7794_CLK_LB/
 
-Signed-off-by: Matteo Lisi <matteo.lisi@engicam.com>
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Tested-by: Michael Trimarchi <michael@amarulasolutions.com>
----
-v1->v2
-	Forget Matteo Lisi from where I get original code
-	on freescale kernel
----
- drivers/clk/imx/clk-imx6ul.c             | 18 +++++++++++++++++
- include/dt-bindings/clock/imx6ul-clock.h | 33 +++++++++++++++++++-------------
- 2 files changed, 38 insertions(+), 13 deletions(-)
+With that fixed:
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 114ecbb..9bfef1a 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -68,6 +68,13 @@ static const char *sim_sels[] = { "sim_podf", "ipp_di0", "ipp_di1", "ldb_di0", "
- static const char *epdc_pre_sels[] = { "pll2_bus", "pll3_usb_otg", "pll5_video_div", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll3_pfd2_508m", };
- static const char *esai_sels[] = { "pll4_audio_div", "pll3_pfd2_508m", "pll5_video_div", "pll3_usb_otg", };
- static const char *epdc_sels[] = { "epdc_podf", "ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
-+static const char *cko1_sels[] = { "dummy", "dummy", "dummy", "dummy", "dummy", "axi", "enfc", "dummy", "dummy",
-+				   "dummy", "lcdif_pix", "ahb", "ipg", "ipg_per", "ckil", "pll4_audio_div", };
-+static const char *cko2_sels[] = { "dummy", "dummy", "dummy", "usdhc1", "dummy", "dummy", "ecspi_root", "dummy",
-+				   "dummy", "dummy", "dummy", "dummy", "dummy", "dummy", "osc", "dummy",
-+				   "dummy", "usdhc2", "sai1", "sai2", "sai3", "dummy", "dummy", "can_root",
-+				   "dummy", "dummy", "dummy", "dummy", "uart_serial", "spdif", "dummy", "dummy", };
-+static const char *cko_sels[] = { "cko1", "cko2", };
- 
- static struct clk *clks[IMX6UL_CLK_END];
- static struct clk_onecell_data clk_data;
-@@ -273,6 +280,10 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_LDB_DI0_DIV_SEL]  = imx_clk_mux("ldb_di0", base + 0x20, 10, 1, ldb_di0_div_sels, ARRAY_SIZE(ldb_di0_div_sels));
- 	clks[IMX6UL_CLK_LDB_DI1_DIV_SEL]  = imx_clk_mux("ldb_di1", base + 0x20, 11, 1, ldb_di1_div_sels, ARRAY_SIZE(ldb_di1_div_sels));
- 
-+	clks[IMX6UL_CLK_CKO1_SEL]	  = imx_clk_mux("cko1_sel", base + 0x60, 0,  4, cko1_sels, ARRAY_SIZE(cko1_sels));
-+	clks[IMX6UL_CLK_CKO2_SEL]	  = imx_clk_mux("cko2_sel", base + 0x60, 16, 5, cko2_sels, ARRAY_SIZE(cko2_sels));
-+	clks[IMX6UL_CLK_CKO]		  = imx_clk_mux("cko", base + 0x60, 8, 1, cko_sels, ARRAY_SIZE(cko_sels));
-+
- 	clks[IMX6UL_CLK_LDB_DI0_DIV_3_5] = imx_clk_fixed_factor("ldb_di0_div_3_5", "ldb_di0_sel", 2, 7);
- 	clks[IMX6UL_CLK_LDB_DI0_DIV_7]	 = imx_clk_fixed_factor("ldb_di0_div_7",   "ldb_di0_sel", 1, 7);
- 	clks[IMX6UL_CLK_LDB_DI1_DIV_3_5] = imx_clk_fixed_factor("ldb_di1_div_3_5", "qspi1_sel", 2, 7);
-@@ -316,6 +327,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_LCDIF_PRED]	= imx_clk_divider("lcdif_pred",	   "lcdif_pre_sel",	base + 0x38, 12, 3);
- 	clks[IMX6UL_CLK_CSI_PODF]       = imx_clk_divider("csi_podf",      "csi_sel",           base + 0x3c, 11, 3);
- 
-+	clks[IMX6UL_CLK_CKO1_PODF]	= imx_clk_divider("cko1_podf",     "cko1_sel",          base + 0x60, 4,  3);
-+	clks[IMX6UL_CLK_CKO2_PODF]	= imx_clk_divider("cko2_podf",     "cko2_sel",          base + 0x60, 21, 3);
-+
- 	clks[IMX6UL_CLK_ARM]		= imx_clk_busy_divider("arm",	    "pll1_sw",	base +	0x10, 0,  3,  base + 0x48, 16);
- 	clks[IMX6UL_CLK_MMDC_PODF]	= imx_clk_busy_divider("mmdc_podf", "periph2",	base +  0x14, 3,  3,  base + 0x48, 2);
- 	clks[IMX6UL_CLK_AXI_PODF]	= imx_clk_busy_divider("axi_podf",  "axi_sel",	base +  0x14, 16, 3,  base + 0x48, 0);
-@@ -445,6 +459,10 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_PWM6]		= imx_clk_gate2("pwm6",		"perclk",	 base +	0x80,	28);
- 	clks[IMX6UL_CLK_PWM7]		= imx_clk_gate2("pwm7",		"perclk",	 base + 0x80,	30);
- 
-+	/* CCOSR */
-+	clks[IMX6UL_CLK_CKO1]		= imx_clk_gate("cko1",		"cko1_podf",	 base + 0x60,	7);
-+	clks[IMX6UL_CLK_CKO2]		= imx_clk_gate("cko2",		"cko2_podf",	 base + 0x60,	24);
-+
- 	/* mask handshake of mmdc */
- 	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
- 
-diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
-index ee9f1a5..9564597 100644
---- a/include/dt-bindings/clock/imx6ul-clock.h
-+++ b/include/dt-bindings/clock/imx6ul-clock.h
-@@ -235,20 +235,27 @@
- #define IMX6UL_CLK_CSI_PODF		222
- #define IMX6UL_CLK_PLL3_120M		223
- #define IMX6UL_CLK_KPP			224
-+#define IMX6UL_CLK_CKO1_SEL		225
-+#define IMX6UL_CLK_CKO1_PODF		226
-+#define IMX6UL_CLK_CKO1			227
-+#define IMX6UL_CLK_CKO2_SEL		228
-+#define IMX6UL_CLK_CKO2_PODF		229
-+#define IMX6UL_CLK_CKO2			230
-+#define IMX6UL_CLK_CKO			231
- 
- /* For i.MX6ULL */
--#define IMX6ULL_CLK_ESAI_PRED		225
--#define IMX6ULL_CLK_ESAI_PODF		226
--#define IMX6ULL_CLK_ESAI_EXTAL		227
--#define IMX6ULL_CLK_ESAI_MEM		228
--#define IMX6ULL_CLK_ESAI_IPG		229
--#define IMX6ULL_CLK_DCP_CLK		230
--#define IMX6ULL_CLK_EPDC_PRE_SEL	231
--#define IMX6ULL_CLK_EPDC_SEL		232
--#define IMX6ULL_CLK_EPDC_PODF		233
--#define IMX6ULL_CLK_EPDC_ACLK		234
--#define IMX6ULL_CLK_EPDC_PIX		235
--#define IMX6ULL_CLK_ESAI_SEL		236
--#define IMX6UL_CLK_END			237
-+#define IMX6ULL_CLK_ESAI_PRED		232
-+#define IMX6ULL_CLK_ESAI_PODF		233
-+#define IMX6ULL_CLK_ESAI_EXTAL		234
-+#define IMX6ULL_CLK_ESAI_MEM		235
-+#define IMX6ULL_CLK_ESAI_IPG		236
-+#define IMX6ULL_CLK_DCP_CLK		237
-+#define IMX6ULL_CLK_EPDC_PRE_SEL	238
-+#define IMX6ULL_CLK_EPDC_SEL		239
-+#define IMX6ULL_CLK_EPDC_PODF		240
-+#define IMX6ULL_CLK_EPDC_ACLK		241
-+#define IMX6ULL_CLK_EPDC_PIX		242
-+#define IMX6ULL_CLK_ESAI_SEL		243
-+#define IMX6UL_CLK_END			244
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
--- 
-2.7.4
+>  DEF_FIXED("p",      R8A7794_CLK_P,     CLK_PLL1,         24, 1),
+>  DEF_FIXED("cl",     R8A7794_CLK_CL,    CLK_PLL1,         48, 1),
+>  DEF_FIXED("cp",     R8A7794_CLK_CP,    CLK_PLL1,         48, 1),
+> --
+> 2.7.4
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
