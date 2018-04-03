@@ -1,215 +1,77 @@
-Return-Path: <matthias.bgg@kernel.org>
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 resend 02/10] drm/mediatek: Use regmap for register access
-Date: Tue, 24 Apr 2018 11:46:59 +0200
-Message-Id: <7e20139c8dcc9fe80aa9e401c7bd84a3b9464ff2.1524563001.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
-References: <cover.1524563001.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
-References: <cover.1524563001.git.mbrugger@suse.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v8 42/42] ARM: dts: da850: Add clocks
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-43-git-send-email-david@lechnology.com>
+ <cf0c4153-b65d-da57-cd0f-0a16cb186377@lechnology.com>
+ <510309d2-2df0-a915-a6f6-082b41c6b28b@ti.com>
+ <5502d0ee-b5dc-e90a-a041-882350c7d339@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <82917652-8be2-75f5-f3fc-814ee7c3f51d@ti.com>
+Date: Tue, 3 Apr 2018 11:13:07 +0530
+MIME-Version: 1.0
+In-Reply-To: <5502d0ee-b5dc-e90a-a041-882350c7d339@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+On Monday 02 April 2018 09:45 PM, David Lechner wrote:
+> On 04/02/2018 06:12 AM, Sekhar Nori wrote:
+>> On Friday 16 March 2018 10:50 PM, David Lechner wrote:
+>>> On 03/15/2018 09:52 PM, David Lechner wrote:
+>>>> This adds clock provider nodes for da850 and wires them up to all of
+>>>> the
+>>>> devices.
+>>>>
+>>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>>> ---
+>>>
+>>> ...
+>>>
+>>> This is the mcasp0: mcasp@100000 node...
+>>>
+>>>> @@ -560,6 +720,7 @@
+>>>>                dmas = <&edma0 1 1>,
+>>>>                    <&edma0 0 1>;
+>>>>                dma-names = "tx", "rx";
+>>>> +            clocks = <&psc1 7>;
+>>>
+>>> After some testing, it looks like it needs to be:
+>>>
+>>> +            power-domains = <&psc1 7>;
+>>>
+>>> instead of
+>>>
+>>> +            clocks = <&psc1 7>;
+>>
+>> We should probably have both clocks and power-domains properties for all
+>> PSC clocks. This way, the driver can change without a corresponding DT
+>> update dependency.
+>>
+>> Thanks,
+>> Sekhar
+>>
+> 
+> That's fine with me. I just didn't know how people felt about using
+> properties
+> that are not documented.
 
-The mmsys memory space is shared between the drm and the
-clk driver. Use regmap to access it.
+Good point. How to ease documentation for generic properties like these
+was discussed in the past, but there is no guidance in
+Documentation/devicetree/bindings that I can see.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 ++--
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 38 +++++++++++++--------------------
- drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 ++--
- drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++++-------
- drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
- 5 files changed, 24 insertions(+), 37 deletions(-)
+So, in the interest of reduced controversy, its probably better to do
+what you already have and only populate properties already documented in
+the bindings.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-index 658b8dd45b83..4c65873b4867 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-@@ -33,7 +33,7 @@
-  * @enabled: records whether crtc_enable succeeded
-  * @planes: array of 4 drm_plane structures, one for each overlay plane
-  * @pending_planes: whether any plane has pending changes to be applied
-- * @config_regs: memory mapped mmsys configuration register space
-+ * @config_regs: regmap mapped mmsys configuration register space
-  * @mutex: handle to one of the ten disp_mutex streams
-  * @ddp_comp_nr: number of components in ddp_comp
-  * @ddp_comp: array of pointers the mtk_ddp_comp structures used by this crtc
-@@ -48,7 +48,7 @@ struct mtk_drm_crtc {
- 	struct drm_plane		planes[OVL_LAYER_NR];
- 	bool				pending_planes;
- 
--	void __iomem			*config_regs;
-+	struct regmap			*config_regs;
- 	struct mtk_disp_mutex		*mutex;
- 	unsigned int			ddp_comp_nr;
- 	struct mtk_ddp_comp		**ddp_comp;
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 8130f3dab661..bafc5c77c4fb 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -185,53 +185,45 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
- 	return value;
- }
- 
--static void mtk_ddp_sout_sel(void __iomem *config_regs,
-+static void mtk_ddp_sout_sel(struct regmap *config_regs,
- 			     enum mtk_ddp_comp_id cur,
- 			     enum mtk_ddp_comp_id next)
- {
- 	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
--		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
--			       config_regs + DISP_REG_CONFIG_OUT_SEL);
-+		regmap_write(config_regs, DISP_REG_CONFIG_OUT_SEL,
-+				BLS_TO_DSI_RDMA1_TO_DPI1);
- }
- 
--void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
-+void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
- 			      enum mtk_ddp_comp_id cur,
- 			      enum mtk_ddp_comp_id next)
- {
--	unsigned int addr, value, reg;
-+	unsigned int addr, value;
- 
- 	value = mtk_ddp_mout_en(cur, next, &addr);
--	if (value) {
--		reg = readl_relaxed(config_regs + addr) | value;
--		writel_relaxed(reg, config_regs + addr);
--	}
-+	if (value)
-+		regmap_update_bits(config_regs, addr, value, value);
- 
- 	mtk_ddp_sout_sel(config_regs, cur, next);
- 
- 	value = mtk_ddp_sel_in(cur, next, &addr);
--	if (value) {
--		reg = readl_relaxed(config_regs + addr) | value;
--		writel_relaxed(reg, config_regs + addr);
--	}
-+	if (value)
-+		regmap_update_bits(config_regs, addr, value, value);
- }
- 
--void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
-+void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
- 				   enum mtk_ddp_comp_id cur,
- 				   enum mtk_ddp_comp_id next)
- {
--	unsigned int addr, value, reg;
-+	unsigned int addr, value;
- 
- 	value = mtk_ddp_mout_en(cur, next, &addr);
--	if (value) {
--		reg = readl_relaxed(config_regs + addr) & ~value;
--		writel_relaxed(reg, config_regs + addr);
--	}
-+	if (value)
-+		regmap_update_bits(config_regs, addr, value, 0);
- 
- 	value = mtk_ddp_sel_in(cur, next, &addr);
--	if (value) {
--		reg = readl_relaxed(config_regs + addr) & ~value;
--		writel_relaxed(reg, config_regs + addr);
--	}
-+	if (value)
-+		regmap_update_bits(config_regs, addr, value, 0);
- }
- 
- struct mtk_disp_mutex *mtk_disp_mutex_get(struct device *dev, unsigned int id)
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
-index f9a799168077..32e12f33b76a 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
-@@ -20,10 +20,10 @@ struct regmap;
- struct device;
- struct mtk_disp_mutex;
- 
--void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
-+void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
- 			      enum mtk_ddp_comp_id cur,
- 			      enum mtk_ddp_comp_id next);
--void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
-+void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
- 				   enum mtk_ddp_comp_id cur,
- 				   enum mtk_ddp_comp_id next);
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index a2ca90fc403c..a48e28adad09 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -21,6 +21,7 @@
- #include <drm/drm_of.h>
- #include <linux/component.h>
- #include <linux/iommu.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/pm_runtime.h>
-@@ -385,7 +386,6 @@ static int mtk_drm_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct mtk_drm_private *private;
--	struct resource *mem;
- 	struct device_node *node;
- 	struct component_match *match = NULL;
- 	int ret;
-@@ -399,14 +399,9 @@ static int mtk_drm_probe(struct platform_device *pdev)
- 	INIT_WORK(&private->commit.work, mtk_atomic_work);
- 	private->data = of_device_get_match_data(dev);
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	private->config_regs = devm_ioremap_resource(dev, mem);
--	if (IS_ERR(private->config_regs)) {
--		ret = PTR_ERR(private->config_regs);
--		dev_err(dev, "Failed to ioremap mmsys-config resource: %d\n",
--			ret);
--		return ret;
--	}
-+	private->config_regs = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(private->config_regs))
-+		return PTR_ERR(private->config_regs);
- 
- 	/* Iterate over sibling DISP function blocks */
- 	for_each_child_of_node(dev->of_node->parent, node) {
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-index c3378c452c0a..c6fa0ad458e8 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-@@ -44,7 +44,7 @@ struct mtk_drm_private {
- 
- 	struct device_node *mutex_node;
- 	struct device *mutex_dev;
--	void __iomem *config_regs;
-+	struct regmap *config_regs;
- 	struct device_node *comp_node[DDP_COMPONENT_ID_MAX];
- 	struct mtk_ddp_comp *ddp_comp[DDP_COMPONENT_ID_MAX];
- 	const struct mtk_mmsys_driver_data *data;
--- 
-2.16.3
+Thanks,
+Sekhar
