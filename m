@@ -1,175 +1,149 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Tue, 3 Apr 2018 13:36:16 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v9 26/27] ARM: davinci: da8xx-dt: switch to device tree clocks
-Date: Thu, 26 Apr 2018 19:17:44 -0500
-Message-Id: <20180427001745.4116-27-david@lechnology.com>
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	netdev <netdev@vger.kernel.org>,
+	Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to
+ access the GMAC register
+Message-ID: <20180403113616.7nam6rfq44bwcatk@flea>
+References: <20180317092857.4396-1-wens@csie.org>
+ <20180317092857.4396-3-wens@csie.org>
+ <20180318213129.ucwslzvwq6khxrcd@flea>
+ <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com>
+ <20180403094845.le2hfuxktlv66lre@flea>
+ <20180403095005.skflxb7m2qzbhjix@flea>
+ <CAGb2v67NO0hbATReq11Y_-2M_yF4hbj_sOtK3D_8yUQb1xi2ww@mail.gmail.com>
+ <9982975F-0911-48F2-BEEB-CE93AB561A55@aosc.io>
+ <CAGb2v65c0wFKecrNtLhJvP71iMPxio4xJ835hD91GdwtFZKXBQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mfrovaslg44gaost"
+In-Reply-To: <CAGb2v65c0wFKecrNtLhJvP71iMPxio4xJ835hD91GdwtFZKXBQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes all of the clock init code from da8xx-dt.c. This includes
-all of the OF_DEV_AUXDATA that was just used for looking up clocks.
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+--mfrovaslg44gaost
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v9 changes:
-- changes to arch/arm/mach-davinci/time.c accidentally got squashed into this
-  commit. will drop this later.
+On Tue, Apr 03, 2018 at 05:58:05PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Apr 3, 2018 at 5:54 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> >
+> >
+> > =E4=BA=8E 2018=E5=B9=B44=E6=9C=883=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=
+=885:53:08, Chen-Yu Tsai <wens@csie.org> =E5=86=99=E5=88=B0:
+> >>On Tue, Apr 3, 2018 at 5:50 PM, Maxime Ripard
+> >><maxime.ripard@bootlin.com> wrote:
+> >>> On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
+> >>>> On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
+> >>>> > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
+> >>>> > <maxime.ripard@bootlin.com> wrote:
+> >>>> > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
+> >>>> > >> From: Icenowy Zheng <icenowy@aosc.io>
+> >>>> > >>
+> >>>> > >> There's a GMAC configuration register, which exists on
+> >>A64/A83T/H3/H5 in
+> >>>> > >> the syscon part, in the CCU of R40 SoC.
+> >>>> > >>
+> >>>> > >> Export a regmap of the CCU.
+> >>>> > >>
+> >>>> > >> Read access is not restricted to all registers, but only the
+> >>GMAC
+> >>>> > >> register is allowed to be written.
+> >>>> > >>
+> >>>> > >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >>>> > >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >>>> > >
+> >>>> > > Gah, this is crazy. I'm really starting to regret letting that
+> >>syscon
+> >>>> > > in in the first place...
+> >>>> >
+> >>>> > IMHO syscon is really a better fit. It's part of the glue layer
+> >>and
+> >>>> > most other dwmac user platforms treat it as such and use a syscon.
+> >>>> > Plus the controls encompass delays (phase), inverters (polarity),
+> >>>> > and even signal routing. It's not really just a group of clock
+> >>controls,
+> >>>> > like what we poorly modeled for A20/A31. I think that was really a
+> >>>> > mistake.
+> >>>> >
+> >>>> > As I mentioned in the cover letter, a slightly saner approach
+> >>would
+> >>>> > be to let drivers add custom syscon entries, which would then
+> >>require
+> >>>> > less custom plumbing.
+> >>>>
+> >>>> A syscon is convenient, sure, but it also bypasses any abstraction
+> >>>> layer we have everywhere else, which means that we'll have to
+> >>maintain
+> >>>> the register layout in each and every driver that uses it.
+> >>>>
+> >>>> So far, it's only be the GMAC, but it can also be others (the SRAM
+> >>>> controller comes to my mind), and then, if there's any difference in
+> >>>> the design in a future SoC, we'll have to maintain that in the GMAC
+> >>>> driver as well.
+> >>>
+> >>> I guess I forgot to say something, I'm fine with using a syscon we
+> >>> already have.
+> >>>
+> >>> I'm just questionning if merging any other driver using one is the
+> >>> right move.
+> >>
+> >>Right. So in this case, we are not actually going through the syscon
+> >>API. Rather we are exporting a regmap whose properties we actually
+> >>define. If it makes you more acceptable to it, we could map just
+> >>the GMAC register in the new regmap, and also have it named. This
+> >>is all plumbing within the kernel so the device tree stays the same.
+> >
+> > I think my driver has already restricted the write permission
+> > only to GMAC register.
+>=20
+> Correct, but it still maps the entire region out, which means the
+> consumer needs to know which offset to use. Maxime is saying this
+> is something that is troublesome to maintain. So my proposal was
+> to create a regmap with a base at the GMAC register offset. That
+> way, the consumer doesn't need to use an offset to access it.
 
-v8 changes:
-- none
+I guess this is something we can keep in mind if it gets out of
+control yse.
 
-v7 changes:
-- rebased
-- drop of_platform_default_populate(NULL, NULL, NULL)
-- add change in pm_domain.c
+Maxime
 
-v6 changes:
-- removed misleading statement from commit message
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--mfrovaslg44gaost
+Content-Type: application/pgp-signature; name="signature.asc"
 
- arch/arm/mach-davinci/da8xx-dt.c  | 58 -------------------------------
- arch/arm/mach-davinci/pm_domain.c |  5 +++
- arch/arm/mach-davinci/time.c      |  9 ++---
- 3 files changed, 10 insertions(+), 62 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
-index 088bc5c0318b..23ac4108f812 100644
---- a/arch/arm/mach-davinci/da8xx-dt.c
-+++ b/arch/arm/mach-davinci/da8xx-dt.c
-@@ -19,67 +19,10 @@
- #include "cp_intc.h"
- #include <mach/da8xx.h>
- 
--static struct of_dev_auxdata da850_aemif_auxdata_lookup[] = {
--	OF_DEV_AUXDATA("ti,davinci-nand", 0x62000000, "davinci-nand.0", NULL),
--	{}
--};
--
--static struct aemif_platform_data aemif_data = {
--	.dev_lookup = da850_aemif_auxdata_lookup,
--};
--
--static struct of_dev_auxdata da850_auxdata_lookup[] __initdata = {
--	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01c22000, "i2c_davinci.1", NULL),
--	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01e28000, "i2c_davinci.2", NULL),
--	OF_DEV_AUXDATA("ti,davinci-wdt", 0x01c21000, "davinci-wdt", NULL),
--	OF_DEV_AUXDATA("ti,da830-mmc", 0x01c40000, "da830-mmc.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f00000, "ehrpwm.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f02000, "ehrpwm.1", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f06000, "ecap.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f07000, "ecap.1", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f08000, "ecap.2", NULL),
--	OF_DEV_AUXDATA("ti,da830-spi", 0x01c41000, "spi_davinci.0", NULL),
--	OF_DEV_AUXDATA("ti,da830-spi", 0x01f0e000, "spi_davinci.1", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01c42000, "serial8250.0", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01d0c000, "serial8250.1", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01d0d000, "serial8250.2", NULL),
--	OF_DEV_AUXDATA("ti,davinci_mdio", 0x01e24000, "davinci_mdio.0", NULL),
--	OF_DEV_AUXDATA("ti,davinci-dm6467-emac", 0x01e20000, "davinci_emac.1",
--		       NULL),
--	OF_DEV_AUXDATA("ti,da830-mcasp-audio", 0x01d00000, "davinci-mcasp.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-aemif", 0x68000000, "ti-aemif", &aemif_data),
--	OF_DEV_AUXDATA("ti,da850-tilcdc", 0x01e13000, "da8xx_lcdc.0", NULL),
--	OF_DEV_AUXDATA("ti,da830-ohci", 0x01e25000, "ohci-da8xx", NULL),
--	OF_DEV_AUXDATA("ti,da830-musb", 0x01e00000, "musb-da8xx", NULL),
--	OF_DEV_AUXDATA("ti,da830-usb-phy", 0x01c1417c, "da8xx-usb-phy", NULL),
--	OF_DEV_AUXDATA("ti,da850-ahci", 0x01e18000, "ahci_da850", NULL),
--	OF_DEV_AUXDATA("ti,da850-vpif", 0x01e17000, "vpif", NULL),
--	OF_DEV_AUXDATA("ti,da850-dsp", 0x11800000, "davinci-rproc.0", NULL),
--	{}
--};
--
- #ifdef CONFIG_ARCH_DAVINCI_DA850
- 
- static void __init da850_init_machine(void)
- {
--	/* All existing boards use 100MHz SATA refclkpn */
--	static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
--
--	int ret;
--
--	da850_register_clocks();
--
--	ret = da8xx_register_usb_phy_clocks();
--	if (ret)
--		pr_warn("%s: USB PHY CLK registration failed: %d\n",
--			__func__, ret);
--
--	ret = da850_register_sata_refclk(sata_refclkpn);
--	if (ret)
--		pr_warn("%s: registering SATA REFCLK failed: %d",
--			__func__, ret);
--
--	of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
- 	davinci_pm_init();
- 	pdata_quirks_init();
- }
-@@ -94,7 +37,6 @@ static const char *const da850_boards_compat[] __initconst = {
- 
- DT_MACHINE_START(DA850_DT, "Generic DA850/OMAP-L138/AM18x")
- 	.map_io		= da850_init,
--	.init_time	= da850_init_time,
- 	.init_machine	= da850_init_machine,
- 	.dt_compat	= da850_boards_compat,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/pm_domain.c b/arch/arm/mach-davinci/pm_domain.c
-index 78eac2c0c146..e251fd593bfd 100644
---- a/arch/arm/mach-davinci/pm_domain.c
-+++ b/arch/arm/mach-davinci/pm_domain.c
-@@ -13,6 +13,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/pm_clock.h>
- #include <linux/platform_device.h>
-+#include <linux/of.h>
- 
- static struct dev_pm_domain davinci_pm_domain = {
- 	.ops = {
-@@ -28,6 +29,10 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
- 
- static int __init davinci_pm_runtime_init(void)
- {
-+	if (of_have_populated_dt())
-+		return 0;
-+
-+	/* Use pm_clk as fallback if we're not using genpd. */
- 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
- 
- 	return 0;
-diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
-index 7a8c6fada644..77ad95913dfa 100644
---- a/arch/arm/mach-davinci/time.c
-+++ b/arch/arm/mach-davinci/time.c
-@@ -409,11 +409,12 @@ static int __init of_davinci_timer_init(struct device_node *np)
- 
- 		/*
- 		 * Fall back to using ref_clk if the actual clock is not
--		 * available. This currently always happens because platform
--		 * clocks (i.e PLLs and PSCs) are registered as platform
--		 * devices and therefore are not available at this point in
--		 * the boot process.
-+		 * available. There will be problems later if the real clock
-+		 * source is disabled.
- 		 */
-+
-+		pr_warn("%s: falling back to ref_clk\n", __func__);
-+
- 		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
- 		if (IS_ERR(clkspec.np)) {
- 			pr_err("%s: No clock available for timer!\n", __func__);
--- 
-2.17.0
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrDZy8ACgkQ0rTAlCFN
+r3Tlpw//f97WljFgQ7jLm0NGX4ufRm41R5kFdn7x9yqs9wzq55yW8qomG0eSly/L
+rUCntb/A5ASotDhKH5SfgymgpCRpUBXNrcw/OcNt1XcNL7oLRhTYVFeIe3kJnUmO
+x8oBslcDc4K6fXqKeC53QB4rhUEMFrLVXCh6Ly+9/kFcp0FtUzy18fKK6Zg/3Hzm
+XZCARrpsLj9m5V9JyoP5Wwe0W30LxAXAeJSYqmgi9VQW/2N9bx8I0ecytj8vkT35
+jsiR4z895BERnRGacM8eukaYpG70tDwNXgkwvonJKsb+uk5dnFZWTFJGEh2nrQNa
+8Z3/miHoA5noj/42gSHyWpVwvtjhNXxVg/VdvVq3l88PUsy36I/akWSmmBnehlhw
+8eDE0OnBnGA/NW8vywu/mCrLV2QXI2kvvKxVC6QeP4HMtsQD0gso3Sq1iwmXVvre
+RSvy8DqTsSeSLxtcnWMSW+xPUMz7BpBG2eaN45c4flYr+ZmIsGVMnRzIqiVkxnke
+kvBCevfgnBPVueauT7TZJSh0MZqYuI80QV1sVkufjifR2pa5NPNGNyzabG820TQT
+XtWa4q4ZcWBTiCE3uN8lkVh9/sDEMsKdmfU9LhLxue9E4cmZ7Gg+FNtBXPIUBQwH
+rUD81+Q+RZFu0Sj1j5rl1uU7Beiq06EEuRTckkUTcVWgMuS42Xs=
+=oxIM
+-----END PGP SIGNATURE-----
+
+--mfrovaslg44gaost--
