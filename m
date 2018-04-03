@@ -1,94 +1,250 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [v2 00/10] arm/arm64: mediatek: Fix mmsys device probing
-To: Lee Jones <lee.jones@linaro.org>, matthias.bgg@kernel.org
-Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
- ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
- robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, davem@davemloft.net, gregkh@linuxfoundation.org,
- mchehab@kernel.org, rdunlap@infradead.org, pi-cheng.chen@linaro.org,
- sean.wang@mediatek.com, linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Matthias Brugger <mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
- <20180424054854.bpd6h3imazhqnuy3@dell>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <723392d5-ee51-d49b-050b-db4f9709e6bf@gmail.com>
-Date: Tue, 24 Apr 2018 11:46:13 +0200
+Return-Path: <anischal@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180424054854.bpd6h3imazhqnuy3@dell>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Tue, 03 Apr 2018 17:54:41 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown
+ <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Odelu
+ Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] clk: qcom: Add Global Clock controller (GCC)
+ driver for SDM845
+In-Reply-To: <152150657982.254778.14132033041219278756@swboyd.mtv.corp.google.com>
+References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+ <1520493495-3084-5-git-send-email-anischal@codeaurora.org>
+ <152150657982.254778.14132033041219278756@swboyd.mtv.corp.google.com>
+Message-ID: <624665d7af39686d331c863ba7b9af4d@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Lee,
+On 2018-03-20 06:12, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-03-07 23:18:15)
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index fbf4532..54d0545 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -218,6 +218,16 @@ config MSM_MMCC_8996
+>>           Say Y if you want to support multimedia devices such as 
+>> display,
+>>           graphics, video encode/decode, camera, etc.
+>> 
+>> +config SDM_GCC_845
+>> +       tristate "SDM845 Global Clock Controller"
+>> +       depends on COMMON_CLK_QCOM
+>> +       help
+>> +         Support for the global clock controller on Qualcomm 
+>> Technologies, Inc
+>> +         sdm845 devices.
+>> +         Say Y if you want to use peripheral devices such as UART, 
+>> SPI,
+>> +         i2c, USB, UFS, SD/eMMC, PCIe, etc.
+>> +
+>> +
+> 
+> Drop the double newline here please.
 
-On 04/24/2018 07:48 AM, Lee Jones wrote:
-> On Mon, 23 Apr 2018, matthias.bgg@kernel.org wrote:
-> 
->> From: Matthias Brugger <mbrugger@suse.com>
->>
->> Changes since v1:
->> - add binding documentation
->> - ddp: use regmap_update_bits
->> - ddp: ignore EPROBE_DEFER on clock probing
->> - mfd: delete mmsys_private
->> - add Reviewed-by and Acked-by tags
-> 
-> I'm confused by the double submission.
-> 
-> Please can you send it again completely detached from the first and
-> the second submissions please?
-> 
+Thanks for the review. We will fix this in next patch series.
 
-I had some problems with my mailclient. I'll resend as 'v2 resend'.
-
-Sorry for that.
-Matthias
-
->> ---
->>
->> MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
->> used in the clk driver) and some registers to set the routing and enable
->> the differnet blocks of the display subsystem.
->>
->> Up to now both drivers, clock and drm are probed with the same device tree
->> compatible. But only the first driver get probed, which in effect breaks
->> graphics on mt8173 and mt2701.
->>
->> This patch set introduces a new mfd device, which binds against the mmsys
->> compatible and takes care of probing the needed devices. It was tested on the
->> bananapi-r2 and the Acer R13 Chromebook.
->>
->>
->> Matthias Brugger (10):
->>   dt-bindings: mediatek: mmsys: Add support for mfd
->>   drm/mediatek: Use regmap for register access
->>   mfd: mtk-mmsys: Add mmsys driver
->>   drm/mediatek: mt2701: switch to mfd probing.
->>   clk: mediatek: mt2701-mm: switch to mfd device
->>   mfd: mtk-mmsys: Add mt8173 nodes
->>   drm/mediatek: Add mfd support for mt8173
->>   clk: mediatek: mt8173-mm: switch to mfd device
->>   drm: mediatek: Omit warning on probe defers
->>   MAINTAINERS: update Mediatek Soc entry
->>
->>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 -
->>  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
->>  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 +++++++
->>  MAINTAINERS                                        |  2 +
->>  drivers/clk/mediatek/clk-mt2701-mm.c               | 10 +--
->>  drivers/clk/mediatek/clk-mt8173.c                  | 17 +++-
->>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |  4 +-
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 41 ++++------
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h             |  4 +-
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 33 ++++----
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.h             |  2 +-
->>  drivers/mfd/Kconfig                                |  9 +++
->>  drivers/mfd/Makefile                               |  2 +
->>  drivers/mfd/mtk-mmsys.c                            | 93 ++++++++++++++++++++++
->>  14 files changed, 189 insertions(+), 59 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
->>  create mode 100644 drivers/mfd/mtk-mmsys.c
->>
 > 
+>>  config SPMI_PMIC_CLKDIV
+>>         tristate "SPMI PMIC clkdiv Support"
+>>         depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
+>> @@ -226,3 +236,4 @@ config SPMI_PMIC_CLKDIV
+>>           Technologies, Inc. SPMI PMIC. It configures the frequency of
+>>           clkdiv outputs of the PMIC. These clocks are typically wired
+>>           through alternate functions on GPIO pins.
+>> +
+> 
+> Noise?
+
+We will fix this in next patch series.
+
+> 
+>> diff --git a/drivers/clk/qcom/gcc-sdm845.c 
+>> b/drivers/clk/qcom/gcc-sdm845.c
+>> new file mode 100644
+>> index 0000000..3ffa098
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/gcc-sdm845.c
+>> @@ -0,0 +1,3619 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/bitops.h>
+>> +#include <linux/err.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/reset-controller.h>
+>> +
+>> +#include <dt-bindings/clock/qcom,gcc-sdm845.h>
+>> +
+>> +#include "common.h"
+>> +#include "clk-regmap.h"
+>> +#include "clk-pll.h"
+>> +#include "clk-rcg.h"
+>> +#include "clk-branch.h"
+>> +#include "clk-alpha-pll.h"
+>> +#include "gdsc.h"
+>> +#include "reset.h"
+>> +
+>> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+>> +
+>> +static struct freq_tbl cxo_safe_src_f = {
+>> +       .pre_div = 1,
+>> +};
+> 
+> Still hoping this goes away.
+
+With new implementation of rcg2 shared ops, there is no need to
+pass safe source frequency table from the driver so we will address
+this in V3 patch series.
+
+> 
+>> +
+>> +enum {
+>> +       P_BI_TCXO,
+>> +       P_AUD_REF_CLK,
+>> +       P_CORE_BI_PLL_TEST_SE,
+>> +       P_GPLL0_OUT_EVEN,
+>> +       P_GPLL0_OUT_MAIN,
+>> +       P_GPLL4_OUT_MAIN,
+>> +       P_SLEEP_CLK,
+>> +};
+> [...]
+>> +       F(400000, P_BI_TCXO, 12, 1, 4),
+>> +       F(9600000, P_BI_TCXO, 2, 0, 0),
+>> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+>> +       F(25000000, P_GPLL0_OUT_MAIN, 12, 1, 2),
+>> +       F(50000000, P_GPLL0_OUT_MAIN, 12, 0, 0),
+>> +       F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
+>> +       { }
+>> +};
+>> +
+>> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+>> +       .cmd_rcgr = 0x1600c,
+>> +       .mnd_width = 8,
+>> +       .hid_width = 5,
+>> +       .parent_map = gcc_parent_map_0,
+>> +       .freq_tbl = ftbl_gcc_sdcc4_apps_clk_src,
+>> +       .safe_src_freq_tbl = &cxo_safe_src_f,
+> 
+> Why does sdcc have safe src stuff? Is something turning on the sdcc clk
+> outside of our control?
+
+I will get more details on this and will get back.
+
+> 
+>> +       .clkr.hw.init = &(struct clk_init_data){
+>> +               .name = "gcc_sdcc4_apps_clk_src",
+>> +               .parent_names = gcc_parent_names_0,
+>> +               .num_parents = 4,
+>> +               .flags = CLK_SET_RATE_PARENT,
+>> +               .ops = &clk_rcg2_shared_ops,
+>> +       },
+>> +};
+>> +
+> [...]
+>> +
+>> +static struct clk_branch gcc_video_xo_clk = {
+>> +       .halt_reg = 0xb028,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .clkr = {
+>> +               .enable_reg = 0xb028,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_video_xo_clk",
+>> +                       .flags = CLK_IS_CRITICAL,
+>> +                       .ops = &clk_branch2_ops,
+>> +
+> 
+> These things have no parents and we mark them critical. Why are we
+> even exposing them to the kernel? Are they not on by default? Are we
+> going to change these to non-critical at some point in the future?
+
+These clocks are not enabled by default and going to video or other
+multimedia cores so we are marking them as critical and need to expose
+to the kernel. As of now, there is no plan to change these to 
+non-critical.
+
+> 
+>> +static const struct regmap_config gcc_sdm845_regmap_config = {
+>> +       .reg_bits       = 32,
+>> +       .reg_stride     = 4,
+>> +       .val_bits       = 32,
+>> +       .max_register   = 0x182090,
+> 
+> Huge! :P
+> 
+>> +       .fast_io        = true,
+>> +};
+>> +
+>> +static const struct qcom_cc_desc gcc_sdm845_desc = {
+>> +       .config = &gcc_sdm845_regmap_config,
+>> +       .clks = gcc_sdm845_clocks,
+>> +       .num_clks = ARRAY_SIZE(gcc_sdm845_clocks),
+>> +       .resets = gcc_sdm845_resets,
+>> +       .num_resets = ARRAY_SIZE(gcc_sdm845_resets),
+>> +       .gdscs = gcc_sdm845_gdscs,
+>> +       .num_gdscs = ARRAY_SIZE(gcc_sdm845_gdscs),
+>> +};
+>> +
+>> +static const struct of_device_id gcc_sdm845_match_table[] = {
+>> +       { .compatible = "qcom,gcc-sdm845" },
+>> +       { }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
+>> +
+>> +static int gcc_sdm845_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       struct regmap *regmap;
+>> +       int i, ret;
+>> +
+>> +       regmap = qcom_cc_map(pdev, &gcc_sdm845_desc);
+>> +       if (IS_ERR(regmap))
+>> +               return PTR_ERR(regmap);
+>> +
+>> +       for (i = 0; i < ARRAY_SIZE(gcc_sdm845_hws); i++) {
+>> +               ret = devm_clk_hw_register(dev, gcc_sdm845_hws[i]);
+>> +               if (ret)
+>> +                       return ret;
+>> +       }
+>> +
+>> +       /* Get the rate for safe source */
+>> +       cxo_safe_src_f.freq = clk_get_rate(bi_tcxo.hw.clk);
+> 
+> Hopefully this can be dropped too.
+
+Yes, we will fix this in next patch series.
+
+> 
+>> +
+>> +       /* Disable the GPLL0 active input to MMSS and GPU via MISC 
+>> registers */
+>> +       regmap_update_bits(regmap, 0x09FFC, 0x3, 0x3);
+>> +       regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+> 
+> Lowercase hex please.
+
+We will fix this in next patch series.
+
+> 
+>> +
+>> +       return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+>> +}
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
