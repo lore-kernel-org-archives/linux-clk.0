@@ -1,87 +1,106 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: Sekhar Nori <nsekhar@ti.com>, Stephen Boyd <sboyd@kernel.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- devicetree <devicetree@vger.kernel.org>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com>
- <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
- <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
- <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
- <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
- <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
- <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
- <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
- <152303318048.143116.2883441215887455211@swboyd.mtv.corp.google.com>
- <48c8531f-8cd9-a9f8-9c38-cbc4c921c4c9@lechnology.com>
- <aa1c2e6f-793c-1d9e-366a-3496f500f946@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <d32a4cd5-4344-6e20-fdca-1ed830a52466@lechnology.com>
-Date: Tue, 24 Apr 2018 11:11:12 -0500
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v4 13/14] dt-bindings: cpufreq: Document
+ operating-points-v2-kryo-cpu
+From: Sricharan R <sricharan@codeaurora.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>, Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
+ broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+ catalin.marinas@arm.com, will.deacon@arm.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ rnayak@codeaurora.org, amit.kucheria@linaro.org,
+ nicolas.dechesne@linaro.org, celster@codeaurora.org, tfinkel@codeaurora.org
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
+ <20180402093018.GC3572@vireshk-i7>
+ <7ca35b7a-6078-620b-4772-091e53ef6790@codeaurora.org>
+Message-ID: <06308b25-14ea-8d8b-6f95-f05c101a617b@codeaurora.org>
+Date: Tue, 3 Apr 2018 08:11:50 +0530
 MIME-Version: 1.0
-In-Reply-To: <aa1c2e6f-793c-1d9e-366a-3496f500f946@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <7ca35b7a-6078-620b-4772-091e53ef6790@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/24/2018 03:28 AM, Sekhar Nori wrote:
-> On Monday 23 April 2018 08:29 PM, David Lechner wrote:
->> On 04/06/2018 11:46 AM, Stephen Boyd wrote:
->>> Quoting Sekhar Nori (2018-04-06 02:37:03)
->>>>
->>>> Can you please check that and confirm there is no issue with genpd and
->>>> using CLK_OF_DECLARE() to initialize clocks?
->>>>
->>>> Unless you report an issue back, or Mike and Stephen have ideas about
->>>> how to handle the dependency between PSC/PLL derived timer clock
->>>> initialization and and timer_probe(), I think we need to move back to
->>>> using CLK_OF_DECLARE().
->>>
->>> In such a case, please use the hybrid approach where the clks required
->>> for the clockevent and/or clocksource are registered in the early
->>> CLK_OF_DECLARE path but the rest of the clks get registered with a
->>> proper platform device and driver. There are examples of this approach
->>> on other platforms already.
->>>
+Hi Viresh,
+
+On 4/2/2018 8:37 PM, Sricharan R wrote:
+> Hi Viresh,
+> 
+> On 4/2/2018 3:00 PM, Viresh Kumar wrote:
+>> +Sricharan,
 >>
->> I looked at this a bit last week, but I didn't come up with any approach
->> that I was happy with. It seems like it would be nice to just register
->> the absolute minimum clocks needed. On DA8XX, that would just be the PLL0
->> AUXCLK. On most of the other SoCs, it would be the PLL AUXCLK plus one
->> LPSC clock. The AUXCLKs are easy because they are just a simple gate
->> from the oscillator. The LPSC clocks are a bit more tricky because they
->> have a complex sequence for turning on. Furthermore, on DM646X, we need
->> the whole PLL up to SYSCLK3 plus one LPSC clock, so things get a bit
->> messy there.
-> 
-> Things might change in the context of work being done here by Bartosz
-> for converting clocks to early platform devices.
-> 
-> But, keeping that development aside for a moment: I think this means the
-> PLLs and PSCs need to be CLK_OF_DECLARE(). What we can have as platform
-> devices are clocks that are not in the path to get timer clock working
-> (like CFGCHIP clocks).
+>> On 30-03-18, 00:26, Ilia Lin wrote:
+>>> In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+>>> that have KRYO processors, the CPU ferequencies subset and voltage value
+>>> of each OPP varies based on the silicon variant in use.
+>>> Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+>>> defines the voltage and frequency value based on the msm-id in SMEM
+>>> and speedbin blown in the efuse combination.
+>>> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+>>> to provide the OPP framework with required information.
+>>> This is used to determine the voltage and frequency value for each OPP of
+>>> operating-points-v2 table when it is parsed by the OPP framework.
+>>>
+>>> This change adds documentation.
+>>>
+>>> Change-Id: I1953f652a48249fb516d175f0e965a9510cd4209
+>>> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+>>> ---
+>>>  .../devicetree/bindings/cpufreq/kryo-cpufreq.txt   | 693 +++++++++++++++++++++
+>>>  1 file changed, 693 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+>>
+>> This should really go in opp directory.
+>>
+>>> new file mode 100644
+>>> index 0000000..20cef9d
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
+>>> @@ -0,0 +1,693 @@
+>>> +Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
+>>> +===================================
+>>> +
+>>> +In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+>>> +that have KRYO processors, the CPU ferequencies subset and voltage value
+>>> +of each OPP varies based on the silicon variant in use.
+>>> +Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+>>> +defines the voltage and frequency value based on the msm-id in SMEM
+>>> +and speedbin blown in the efuse combination.
+>>> +The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+>>> +to provide the OPP framework with required information (existing HW bitmap).
+>>> +This is used to determine the voltage and frequency value for each OPP of
+>>> +operating-points-v2 table when it is parsed by the OPP framework.
+>>> +
+>>> +Required properties:
+>>> +--------------------
+>>> +In 'cpus' nodes:
+>>> +- operating-points-v2: Phandle to the operating-points-v2 table to use.
+>>> +
+>>> +In 'operating-points-v2' table:
+>>> +- compatible: Should be
+>>> +	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
+>>> +- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
+>>> +		efuse registers that has information about the
+>>> +		speedbin that is used to select the right frequency/voltage
+>>> +		value pair.
+>>> +		Please refer the for nvmem-cells
+>>> +		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
+>>> +		and also examples below.
+>>
+>> Sricharan is also working on adding these, just make sure you guys do the same
+>> thing..
+>>
+ Right, i was adding a similar one for krait cores [1]. There is code common in the
+ init sequence across both (little). Do you suggest to make them common ?
 
-CLK_OF_DECLARE() only matters on DA850. None of the other SoCs use device
-tree. And on DA850, the timer0 clock is just the PLL0 AUXCLK, so PSCs can
-still be platform devices there. And in fact, one of the PSC clocks on
-DA850 depends on async3, which is a CFGCHIP clock, so if we made the PSCs
-CLK_OF_DECLARE(), then we also have to make at least the async3 CFGCHIP
-clock CLK_OF_DECLARE(). But, like I said, I think that can be avoided by
-leaving the PSC clocks as a platform device on DA850 (and DA830).
+Regards,
+ Sricharan
 
-For everything else, we need the legacy board file equivalent of
-CLK_OF_DECLARE(), which is basically what I had here in v5 of the
-series.
+ [1] https://patchwork.kernel.org/patch/10261873/
 
-So, if we want this to keep moving before the if/when of Bartosz's
-early platform device stuff, I'm thinking that I will make the PLL
-and PSC drivers loadable with or without a platform device and let
-each SoC pick which one it should use.
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
