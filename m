@@ -1,104 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:9955 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752806AbeDPCcS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Apr 2018 22:32:18 -0400
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>,
-        chunhui dai <chunhui.dai@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH] clk: mediatek: correct the clocks for MT2701 HDMI PHY module
-Date: Mon, 16 Apr 2018 10:31:58 +0800
-Message-ID: <f3248cc94349000b2587d9c6102d56323acba9e0.1523844642.git.ryder.lee@mediatek.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v8 25/42] ARM: davinci: dm644x: add new clock init using
+ common clock framework
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-26-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
+Date: Tue, 3 Apr 2018 15:56:32 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1521168778-27236-26-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The hdmitx_dig_cts clock signal is not a child of clk26m,
-and the actual output of the PLL block is derived from
-the tvdpll via a configurable PLL post-divider.
+On Friday 16 March 2018 08:22 AM, David Lechner wrote:
+> +static struct resource dm644x_pll1_resources[] = {
+> +	{
+> +		.start	= DAVINCI_PLL1_BASE,
+> +		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
 
-It is used as the PLL reference input to the HDMI PHY module.
+The .end should be DAVINCI_PLL1_BASE + SZ_1K - 1, otherwise it prevents
+PLL2 from getting registered.
 
-Signed-off-by: Chunhui Dai <chunhui.dai@mediatek.com>
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/clk/mediatek/clk-mt2701.c      |  8 ++++++--
- include/dt-bindings/clock/mt2701-clk.h | 16 ++++++++--------
- 2 files changed, 14 insertions(+), 10 deletions(-)
+> +		.flags	= IORESOURCE_MEM,
+> +	},
+> +};
+> +
+> +static struct platform_device dm644x_pll1_device = {
+> +	.name		= "dm644x-pll1",
+> +	.id		= -1,
+> +	.resource	= dm644x_pll1_resources,
+> +	.num_resources	= ARRAY_SIZE(dm644x_pll1_resources),
+> +};
+> +
+> +static struct resource dm644x_pll2_resources[] = {
+> +	{
+> +		.start	= DAVINCI_PLL2_BASE,
+> +		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
 
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index deca752..4dda898 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -46,8 +46,6 @@
- 		340 * MHZ),
- 	FIXED_CLK(CLK_TOP_HDMI_0_PLL340M, "hdmi_0_pll340m", "clk26m",
- 		340 * MHZ),
--	FIXED_CLK(CLK_TOP_HDMITX_CLKDIG_CTS, "hdmitx_dig_cts", "clk26m",
--		300 * MHZ),
- 	FIXED_CLK(CLK_TOP_HADDS2_FB, "hadds2_fbclk", "clk26m",
- 		27 * MHZ),
- 	FIXED_CLK(CLK_TOP_WBG_DIG_416M, "wbg_dig_ck_416m", "clk26m",
-@@ -977,6 +975,10 @@ static int mtk_pericfg_init(struct platform_device *pdev)
- 				21, 0x2d0, 4, 0x0, 0x2d4, 0),
- };
- 
-+static const struct mtk_fixed_factor apmixed_fixed_divs[] = {
-+	FACTOR(CLK_APMIXED_HDMI_REF, "hdmi_ref", "tvdpll", 1, 1),
-+};
-+
- static int mtk_apmixedsys_init(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
-@@ -988,6 +990,8 @@ static int mtk_apmixedsys_init(struct platform_device *pdev)
- 
- 	mtk_clk_register_plls(node, apmixed_plls, ARRAY_SIZE(apmixed_plls),
- 								clk_data);
-+	mtk_clk_register_factors(apmixed_fixed_divs, ARRAY_SIZE(apmixed_fixed_divs),
-+								clk_data);
- 
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- }
-diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings/clock/mt2701-clk.h
-index 24e93df..1956ebb 100644
---- a/include/dt-bindings/clock/mt2701-clk.h
-+++ b/include/dt-bindings/clock/mt2701-clk.h
-@@ -171,13 +171,12 @@
- #define CLK_TOP_8BDAC				151
- #define CLK_TOP_WBG_DIG_416M			152
- #define CLK_TOP_DPI				153
--#define CLK_TOP_HDMITX_CLKDIG_CTS		154
--#define CLK_TOP_DSI0_LNTC_DSI			155
--#define CLK_TOP_AUD_EXT1			156
--#define CLK_TOP_AUD_EXT2			157
--#define CLK_TOP_NFI1X_PAD			158
--#define CLK_TOP_AXISEL_D4			159
--#define CLK_TOP_NR				160
-+#define CLK_TOP_DSI0_LNTC_DSI			154
-+#define CLK_TOP_AUD_EXT1			155
-+#define CLK_TOP_AUD_EXT2			156
-+#define CLK_TOP_NFI1X_PAD			157
-+#define CLK_TOP_AXISEL_D4			158
-+#define CLK_TOP_NR				159
- 
- /* APMIXEDSYS */
- 
-@@ -194,7 +193,8 @@
- #define CLK_APMIXED_HADDS2PLL			11
- #define CLK_APMIXED_AUD2PLL			12
- #define CLK_APMIXED_TVD2PLL			13
--#define CLK_APMIXED_NR				14
-+#define CLK_APMIXED_HDMI_REF			14
-+#define CLK_APMIXED_NR				15
- 
- /* DDRPHY */
- 
--- 
-1.9.1
+And this too should be fixed, else it prevents the PSC from getting
+registered.
 
+> +		.flags	= IORESOURCE_MEM,
+> +	},
+> +};
+
+With these fixed, I still had to enable 'clk_ignore_unused' on DM644x
+EVM to get to NFS boot. I think root of the problem is that pm_runtime()
+APIs are not working in the legacy boot mode.
+
+This can be seen even on the DA850 LCDK in legacy boot. pm_genpd_summary
+in debugfs shows all domains are off and there are no devices registered
+under the "da850-psc1: emac" domain. NFS mounting still works on the
+DA850 LCDK because clk_summary shows enable and prepare count of 4 for
+emac. Not sure how that's happening. But on DM644x EVM, the emac clock
+enable count is 0.
+
+Still looking at whats going wrong here. I am testing your v8 branch
+with clk-davinci branch from clk-next merged to get the fixes Stephen made.
+
+Thanks,
+Sekhar
