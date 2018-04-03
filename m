@@ -1,106 +1,117 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:42158 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754762AbeDCJuR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Apr 2018 05:50:17 -0400
+Date: Tue, 3 Apr 2018 11:50:05 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v9 25/27] ARM: davinci: add device tree support to timer
-Date: Thu, 26 Apr 2018 19:17:43 -0500
-Message-Id: <20180427001745.4116-26-david@lechnology.com>
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to
+ access the GMAC register
+Message-ID: <20180403095005.skflxb7m2qzbhjix@flea>
+References: <20180317092857.4396-1-wens@csie.org>
+ <20180317092857.4396-3-wens@csie.org>
+ <20180318213129.ucwslzvwq6khxrcd@flea>
+ <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com>
+ <20180403094845.le2hfuxktlv66lre@flea>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="av7qcas4z2r6im7c"
+In-Reply-To: <20180403094845.le2hfuxktlv66lre@flea>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds device tree support to the davinci timer so that when clocks
-are moved to device tree, the timer will still work.
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+--av7qcas4z2r6im7c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-v9 changes:
-- none (there were supposed to be changed, but apparently they got squashed
-  into the next commit - will fix on the next round)
+On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
+> On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
+> > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
+> > <maxime.ripard@bootlin.com> wrote:
+> > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
+> > >> From: Icenowy Zheng <icenowy@aosc.io>
+> > >>
+> > >> There's a GMAC configuration register, which exists on A64/A83T/H3/H=
+5 in
+> > >> the syscon part, in the CCU of R40 SoC.
+> > >>
+> > >> Export a regmap of the CCU.
+> > >>
+> > >> Read access is not restricted to all registers, but only the GMAC
+> > >> register is allowed to be written.
+> > >>
+> > >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > >
+> > > Gah, this is crazy. I'm really starting to regret letting that syscon
+> > > in in the first place...
+> >=20
+> > IMHO syscon is really a better fit. It's part of the glue layer and
+> > most other dwmac user platforms treat it as such and use a syscon.
+> > Plus the controls encompass delays (phase), inverters (polarity),
+> > and even signal routing. It's not really just a group of clock controls,
+> > like what we poorly modeled for A20/A31. I think that was really a
+> > mistake.
+> >=20
+> > As I mentioned in the cover letter, a slightly saner approach would
+> > be to let drivers add custom syscon entries, which would then require
+> > less custom plumbing.
+>=20
+> A syscon is convenient, sure, but it also bypasses any abstraction
+> layer we have everywhere else, which means that we'll have to maintain
+> the register layout in each and every driver that uses it.
+>=20
+> So far, it's only be the GMAC, but it can also be others (the SRAM
+> controller comes to my mind), and then, if there's any difference in
+> the design in a future SoC, we'll have to maintain that in the GMAC
+> driver as well.
 
-v8 changes:
-- none
+I guess I forgot to say something, I'm fine with using a syscon we
+already have.
 
-v7 changes:
-- rebased
-- add davinci prefix to commit message
+I'm just questionning if merging any other driver using one is the
+right move.
 
-v6 changes:
-- rebased
+Maxime
 
- arch/arm/mach-davinci/Kconfig |  1 +
- arch/arm/mach-davinci/time.c  | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 32 insertions(+)
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-index ba9912b4dfab..da8a039d65f9 100644
---- a/arch/arm/mach-davinci/Kconfig
-+++ b/arch/arm/mach-davinci/Kconfig
-@@ -59,6 +59,7 @@ config MACH_DA8XX_DT
- 	default y
- 	depends on ARCH_DAVINCI_DA850
- 	select PINCTRL
-+	select TIMER_OF
- 	help
- 	  Say y here to include support for TI DaVinci DA850 based using
- 	  Flattened Device Tree. More information at Documentation/devicetree
-diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
-index 7ea3db0ff062..7a8c6fada644 100644
---- a/arch/arm/mach-davinci/time.c
-+++ b/arch/arm/mach-davinci/time.c
-@@ -17,6 +17,7 @@
- #include <linux/io.h>
- #include <linux/clk.h>
- #include <linux/err.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/sched_clock.h>
- 
-@@ -397,3 +398,33 @@ void __init davinci_timer_init(struct clk *timer_clk)
- 	for (i=0; i< ARRAY_SIZE(timers); i++)
- 		timer32_config(&timers[i]);
- }
-+
-+static int __init of_davinci_timer_init(struct device_node *np)
-+{
-+	struct clk *clk;
-+
-+	clk = of_clk_get(np, 0);
-+	if (IS_ERR(clk)) {
-+		struct of_phandle_args clkspec;
-+
-+		/*
-+		 * Fall back to using ref_clk if the actual clock is not
-+		 * available. This currently always happens because platform
-+		 * clocks (i.e PLLs and PSCs) are registered as platform
-+		 * devices and therefore are not available at this point in
-+		 * the boot process.
-+		 */
-+		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
-+		if (IS_ERR(clkspec.np)) {
-+			pr_err("%s: No clock available for timer!\n", __func__);
-+			return PTR_ERR(clkspec.np);
-+		}
-+		clk = of_clk_get_from_provider(&clkspec);
-+		of_node_put(clkspec.np);
-+	}
-+
-+	davinci_timer_init(clk);
-+
-+	return 0;
-+}
-+TIMER_OF_DECLARE(davinci_timer, "ti,davinci-timer", of_davinci_timer_init);
--- 
-2.17.0
+--av7qcas4z2r6im7c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrDTkwACgkQ0rTAlCFN
+r3Q56g/9Ee1TKCQ+KPVFqvRo1KfWNGGP/TDfEKeo8w0hl/uzCiF1PZC/r1eTkGR3
+c1AEDs93JrzUOOw4F6PemVr3kJQuLJN3w0CEoJEWaI+optdab8qxR9JIBpQPhU3y
+UMu6Up1Nx+HA98sMpm+zam3f9ht+ZB6O3KPSLG/3KlQjb4t98g7SwwOKtsOGvir1
+IhMjN5HMoPgnvWlg10t1yR0ri0DjSEQVpA4k2ewL4Xz+3ClaVm8Xg7Mf0XrWmsh2
+HjZO0uKu3GMLs6fTcW5wPIxubp1+pZKnIVMqsrt6p4ndjZeaBWIt3wXegMKv6Kgz
+3pZBtCSFnAQS9b6rFQOrhUh7OQTqVVwbsvJ9lfB/HIUNetw1oHHm3DJlICj0x6q7
+lQtOLuBaXZWU13q5rfFYvy83fYIxpfvQ4y6P2W4ZkxC+oNKagHX9p8dkFqSHoq2o
+tbrUIU/kiU1T20LUxxWLJuwbNi7gY6tdCSDcf3634eJny3sJUBVrOsC53w8gPan8
+xGewEwXtEMmJ7f7r80tCuewOczrngPJRIQfBvNAcj6+vWD2gV48YiIuCzRAVVLnj
+BwEn5W/1RFCueYgqcCFL92ItvUS3UM9iEjg6WbncSpDobm+qAJlSqAwLLTY2mqF1
+MbTKRElgxP0lG4O3ujfuaEhzcHJy1GkMrMDGIRfnQ+7/IFfFEbc=
+=5jlp
+-----END PGP SIGNATURE-----
+
+--av7qcas4z2r6im7c--
