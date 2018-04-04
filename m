@@ -1,28 +1,113 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1523365565-17124-1-git-send-email-geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1523365565-17124-1-git-send-email-geert+renesas@glider.be>
-Message-ID: <152458361660.46528.16887219181368039617@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: Remove clk_init_cb typedef
-Date: Tue, 24 Apr 2018 08:26:56 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:51605 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750714AbeDDGrE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 4 Apr 2018 02:47:04 -0400
+Message-ID: <1522824302.2049.7.camel@aosc.io>
+Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to
+ access the GMAC register
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Date: Wed, 04 Apr 2018 14:45:02 +0800
+In-Reply-To: <20180403095005.skflxb7m2qzbhjix@flea>
+References: <20180317092857.4396-1-wens@csie.org>
+         <20180317092857.4396-3-wens@csie.org>
+         <20180318213129.ucwslzvwq6khxrcd@flea>
+         <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com>
+         <20180403094845.le2hfuxktlv66lre@flea>
+         <20180403095005.skflxb7m2qzbhjix@flea>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-04-10 06:06:05)
-> Since commit c08ee14cc6634457 ("clk: ti: change clock init to use
-> generic of_clk_init"), there is only a single (private) user left of the
-> (public) clk_init_cb typedef.
-> =
+在 2018-04-03二的 11:50 +0200，Maxime Ripard写道：
+> On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
+> > On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
+> > > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
+> > > <maxime.ripard@bootlin.com> wrote:
+> > > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
+> > > > > From: Icenowy Zheng <icenowy@aosc.io>
+> > > > > 
+> > > > > There's a GMAC configuration register, which exists on
+> > > > > A64/A83T/H3/H5 in
+> > > > > the syscon part, in the CCU of R40 SoC.
+> > > > > 
+> > > > > Export a regmap of the CCU.
+> > > > > 
+> > > > > Read access is not restricted to all registers, but only the
+> > > > > GMAC
+> > > > > register is allowed to be written.
+> > > > > 
+> > > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > > > 
+> > > > Gah, this is crazy. I'm really starting to regret letting that
+> > > > syscon
+> > > > in in the first place...
+> > > 
+> > > IMHO syscon is really a better fit. It's part of the glue layer
+> > > and
+> > > most other dwmac user platforms treat it as such and use a
+> > > syscon.
+> > > Plus the controls encompass delays (phase), inverters (polarity),
+> > > and even signal routing. It's not really just a group of clock
+> > > controls,
+> > > like what we poorly modeled for A20/A31. I think that was really
+> > > a
+> > > mistake.
+> > > 
+> > > As I mentioned in the cover letter, a slightly saner approach
+> > > would
+> > > be to let drivers add custom syscon entries, which would then
+> > > require
+> > > less custom plumbing.
+> > 
+> > A syscon is convenient, sure, but it also bypasses any abstraction
+> > layer we have everywhere else, which means that we'll have to
+> > maintain
+> > the register layout in each and every driver that uses it.
+> > 
+> > So far, it's only be the GMAC, but it can also be others (the SRAM
+> > controller comes to my mind), and then, if there's any difference
+> > in
+> > the design in a future SoC, we'll have to maintain that in the GMAC
+> > driver as well.
+> 
+> I guess I forgot to say something, I'm fine with using a syscon we
+> already have.
 
-> Hence expand its single user in the core clock code, and remove the
-> typedef.
-> =
+As we finally need the SRAM controller on these new SoCs (for VE on all
+SoCs targeted by dwmac-sun8i, and for DE on A64), should we deprecate
+the syscon and all switch to device regmap (and let sunxi-dram driver
+to export a regmap)? (As in the A64 DE2 thread discussed, two device
+nodes shouldn't cover the same MMIO region.)
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+In addition, there might be multiple registers in the syscon/sram zone
+that are needed (for example, if a version driver is written, it will
+need the "0x24 Version Register"; and GMAC needs "0x30 EMAC Clock
+Register"). How to deal with this if we export the syscon/sram zone as
+a generic device regmap?
 
-Looks like Mike "Applied to clk-next".
+> 
+> I'm just questionning if merging any other driver using one is the
+> right move.
+> 
+> Maxime
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
