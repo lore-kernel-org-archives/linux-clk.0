@@ -1,148 +1,110 @@
-Return-Path: <andrew@aj.id.au>
-Message-Id: <1524110851.2427206.1343190576.35A8A2AA@webmail.messagingengine.com>
-From: Andrew Jeffery <andrew@aj.id.au>
-To: Joel Stanley <joel@jms.id.au>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- Ryan Chen <ryan_chen@aspeedtech.com>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Date: Thu, 19 Apr 2018 13:37:31 +0930
-Subject: Re: [PATCH] clk: aspeed: Support second reset register
-References: <20180419025240.10101-1-joel@jms.id.au>
-In-Reply-To: <20180419025240.10101-1-joel@jms.id.au>
+In-Reply-To: <1522824302.2049.7.camel@aosc.io>
+References: <20180317092857.4396-1-wens@csie.org> <20180317092857.4396-3-wens@csie.org>
+ <20180318213129.ucwslzvwq6khxrcd@flea> <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com>
+ <20180403094845.le2hfuxktlv66lre@flea> <20180403095005.skflxb7m2qzbhjix@flea> <1522824302.2049.7.camel@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 4 Apr 2018 15:00:48 +0800
+Message-ID: <CAGb2v64eD7H2BB3u_Gvk0EfUB8NwTJjDi6b4+Z3-k+1ok4vNcw@mail.gmail.com>
+Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to
+ access the GMAC register
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>,
+	devicetree <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	netdev <netdev@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 19 Apr 2018, at 12:22, Joel Stanley wrote:
-> The ast2500 has an additional reset register that contains resets not
-> present in the ast2400. This enables support for this register, and adds
-> the one reset line that is controlled by it.
-> 
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+On Wed, Apr 4, 2018 at 2:45 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> =E5=9C=A8 2018-04-03=E4=BA=8C=E7=9A=84 11:50 +0200=EF=BC=8CMaxime Ripard=
+=E5=86=99=E9=81=93=EF=BC=9A
+>> On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
+>> > On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
+>> > > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
+>> > > <maxime.ripard@bootlin.com> wrote:
+>> > > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
+>> > > > > From: Icenowy Zheng <icenowy@aosc.io>
+>> > > > >
+>> > > > > There's a GMAC configuration register, which exists on
+>> > > > > A64/A83T/H3/H5 in
+>> > > > > the syscon part, in the CCU of R40 SoC.
+>> > > > >
+>> > > > > Export a regmap of the CCU.
+>> > > > >
+>> > > > > Read access is not restricted to all registers, but only the
+>> > > > > GMAC
+>> > > > > register is allowed to be written.
+>> > > > >
+>> > > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> > > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> > > >
+>> > > > Gah, this is crazy. I'm really starting to regret letting that
+>> > > > syscon
+>> > > > in in the first place...
+>> > >
+>> > > IMHO syscon is really a better fit. It's part of the glue layer
+>> > > and
+>> > > most other dwmac user platforms treat it as such and use a
+>> > > syscon.
+>> > > Plus the controls encompass delays (phase), inverters (polarity),
+>> > > and even signal routing. It's not really just a group of clock
+>> > > controls,
+>> > > like what we poorly modeled for A20/A31. I think that was really
+>> > > a
+>> > > mistake.
+>> > >
+>> > > As I mentioned in the cover letter, a slightly saner approach
+>> > > would
+>> > > be to let drivers add custom syscon entries, which would then
+>> > > require
+>> > > less custom plumbing.
+>> >
+>> > A syscon is convenient, sure, but it also bypasses any abstraction
+>> > layer we have everywhere else, which means that we'll have to
+>> > maintain
+>> > the register layout in each and every driver that uses it.
+>> >
+>> > So far, it's only be the GMAC, but it can also be others (the SRAM
+>> > controller comes to my mind), and then, if there's any difference
+>> > in
+>> > the design in a future SoC, we'll have to maintain that in the GMAC
+>> > driver as well.
+>>
+>> I guess I forgot to say something, I'm fine with using a syscon we
+>> already have.
+>
+> As we finally need the SRAM controller on these new SoCs (for VE on all
+> SoCs targeted by dwmac-sun8i, and for DE on A64), should we deprecate
+> the syscon and all switch to device regmap (and let sunxi-dram driver
+> to export a regmap)? (As in the A64 DE2 thread discussed, two device
+> nodes shouldn't cover the same MMIO region.)
 
-The duplication is a bit unfortunate, but all the same:
+Sounds like a plan.
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+> In addition, there might be multiple registers in the syscon/sram zone
+> that are needed (for example, if a version driver is written, it will
+> need the "0x24 Version Register"; and GMAC needs "0x30 EMAC Clock
+> Register"). How to deal with this if we export the syscon/sram zone as
+> a generic device regmap?
 
-> ---
->  drivers/clk/clk-aspeed.c                 | 44 +++++++++++++++++++-----
->  include/dt-bindings/clock/aspeed-clock.h |  1 +
->  2 files changed, 37 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index 5eb50c31e455..93d1dae96624 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -16,6 +16,8 @@
->  
->  #define ASPEED_NUM_CLKS		35
->  
-> +#define ASPEED_RESET2_OFFSET	32
-> +
->  #define ASPEED_RESET_CTRL	0x04
->  #define ASPEED_CLK_SELECTION	0x08
->  #define ASPEED_CLK_STOP_CTRL	0x0c
-> @@ -30,6 +32,7 @@
->  #define  CLKIN_25MHZ_EN		BIT(23)
->  #define  AST2400_CLK_SOURCE_SEL	BIT(18)
->  #define ASPEED_CLK_SELECTION_2	0xd8
-> +#define ASPEED_RESET_CTRL2	0xd4
->  
->  /* Globally visible clocks */
->  static DEFINE_SPINLOCK(aspeed_clk_lock);
-> @@ -291,6 +294,7 @@ struct aspeed_reset {
->  #define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
->  
->  static const u8 aspeed_resets[] = {
-> +	/* SCU04 resets */
->  	[ASPEED_RESET_XDMA]	= 25,
->  	[ASPEED_RESET_MCTP]	= 24,
->  	[ASPEED_RESET_ADC]	= 23,
-> @@ -300,38 +304,62 @@ static const u8 aspeed_resets[] = {
->  	[ASPEED_RESET_PCIVGA]	=  8,
->  	[ASPEED_RESET_I2C]	=  2,
->  	[ASPEED_RESET_AHB]	=  1,
-> +
-> +	/*
-> +	 * SCUD4 resets start at an offset to separate them from
-> +	 * the SCU04 resets.
-> +	 */
-> +	[ASPEED_RESET_CRT1]	= ASPEED_RESET2_OFFSET + 5,
->  };
->  
->  static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
->  				 unsigned long id)
->  {
->  	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-> -	u32 rst = BIT(aspeed_resets[id]);
-> +	u32 reg = ASPEED_RESET_CTRL;
-> +	u32 bit = aspeed_resets[id];
-> +
-> +	if (bit >= ASPEED_RESET2_OFFSET) {
-> +		bit -= ASPEED_RESET2_OFFSET;
-> +		reg = ASPEED_RESET_CTRL2;
-> +	}
->  
-> -	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
-> +	return regmap_update_bits(ar->map, reg, BIT(bit), 0);
->  }
->  
->  static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
->  			       unsigned long id)
->  {
->  	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-> -	u32 rst = BIT(aspeed_resets[id]);
-> +	u32 reg = ASPEED_RESET_CTRL;
-> +	u32 bit = aspeed_resets[id];
->  
-> -	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
-> +	if (bit >= ASPEED_RESET_CTRL2) {
-> +		bit -= ASPEED_RESET2_OFFSET;
-> +		reg = ASPEED_RESET_CTRL2;
-> +	}
-> +
-> +	return regmap_update_bits(ar->map, reg, BIT(bit), BIT(bit));
->  }
->  
->  static int aspeed_reset_status(struct reset_controller_dev *rcdev,
->  			       unsigned long id)
->  {
->  	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
-> -	u32 val, rst = BIT(aspeed_resets[id]);
-> -	int ret;
-> +	u32 reg = ASPEED_RESET_CTRL;
-> +	u32 bit = aspeed_resets[id];
-> +	int ret, val;
-> +
-> +	if (bit >= ASPEED_RESET2_OFFSET) {
-> +		bit -= ASPEED_RESET2_OFFSET;
-> +		reg = ASPEED_RESET_CTRL2;
-> +	}
->  
-> -	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
-> +	ret = regmap_read(ar->map, reg, &val);
->  	if (ret)
->  		return ret;
->  
-> -	return !!(val & rst);
-> +	return !!(val & BIT(bit));
->  }
->  
->  static const struct reset_control_ops aspeed_reset_ops = {
-> diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-
-> bindings/clock/aspeed-clock.h
-> index d3558d897a4d..513c1b4af7a8 100644
-> --- a/include/dt-bindings/clock/aspeed-clock.h
-> +++ b/include/dt-bindings/clock/aspeed-clock.h
-> @@ -48,5 +48,6 @@
->  #define ASPEED_RESET_PCIVGA		6
->  #define ASPEED_RESET_I2C		7
->  #define ASPEED_RESET_AHB		8
-> +#define ASPEED_RESET_CRT1		9
->  
->  #endif
-> -- 
-> 2.17.0
-> 
+You can have multiple regmaps for a device. And the API allows you to
+request them up by name.
+
+ChenYu
+
+>>
+>> I'm just questionning if merging any other driver using one is the
+>> right move.
+>>
+>> Maxime
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
