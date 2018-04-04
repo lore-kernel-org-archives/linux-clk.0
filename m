@@ -1,32 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:59080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751413AbeCPWxz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Mar 2018 18:53:55 -0400
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <gustavo@embeddedor.com>
+Date: Tue, 3 Apr 2018 20:09:31 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] clk: samsung: s3c: Mark expected switch fall-through
+Message-ID: <20180404010931.GA30291@embeddedor.com>
 MIME-Version: 1.0
-To: Chunyan Zhang <zhang.lyra@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1518169691-14870-1-git-send-email-zhang.lyra@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chunyan Zhang <zhang.lyra@gmail.com>
-References: <1518169691-14870-1-git-send-email-zhang.lyra@gmail.com>
-Message-ID: <152124083452.242365.3231918073179861035@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clocks: add APB RTC gate for SC9860
-Date: Fri, 16 Mar 2018 15:53:54 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Chunyan Zhang (2018-02-09 01:48:10)
-> From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> 
-> Added index of RTC gate clocks which are used by some devices on aon
-> area of SC9860, for example the Watchdog timer.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
-> ---
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-Applied to clk-next
+Notice that in this particular case I replaced the comma wiht a dash,
+which is what GCC is expecting to find when there are other comments
+in the same line in which "fall through" appears.
 
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+This code was compiled with GCC 7.3.0
+
+ drivers/clk/samsung/clk-s3c2443.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+index c46e6d5..7ebb87f 100644
+--- a/drivers/clk/samsung/clk-s3c2443.c
++++ b/drivers/clk/samsung/clk-s3c2443.c
+@@ -429,7 +429,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
+ 				ARRAY_SIZE(s3c2450_gates));
+ 		samsung_clk_register_alias(ctx, s3c2450_aliases,
+ 				ARRAY_SIZE(s3c2450_aliases));
+-		/* fall through, as s3c2450 extends the s3c2416 clocks */
++		/* fall through - as s3c2450 extends the s3c2416 clocks */
+ 	case S3C2416:
+ 		samsung_clk_register_div(ctx, s3c2416_dividers,
+ 				ARRAY_SIZE(s3c2416_dividers));
+-- 
+2.7.4
