@@ -1,34 +1,52 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v8 25/42] ARM: davinci: dm644x: add new clock init using
+ common clock framework
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-26-git-send-email-david@lechnology.com>
+ <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <b44de0a4-776d-153c-54e3-ce6ddc4f074f@lechnology.com>
+Date: Wed, 4 Apr 2018 11:21:02 -0500
 MIME-Version: 1.0
-To: Alexandre Torgue <alexandre.torgue@st.com>,
- Gabriel Fernandez <gabriel.fernandez@st.com>,
- Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1522996773-24129-2-git-send-email-gabriel.fernandez@st.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- gabriel.fernandez.st@gmail.com, olivier.bideau@st.com,
- Loic PALLARDY <loic.pallardy@st.com>,
- benjamin GAIGNARD <benjamin.gaignard@st.com>
-References: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
- <1522996773-24129-2-git-send-email-gabriel.fernandez@st.com>
-Message-ID: <152304747115.94378.14106353541958461583@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/6] clk: stm32mp1: add missing static
-Date: Fri, 06 Apr 2018 13:44:31 -0700
+In-Reply-To: <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting gabriel.fernandez@st.com (2018-04-05 23:39:28)
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> =
+On 04/03/2018 05:26 AM, Sekhar Nori wrote:
+> On Friday 16 March 2018 08:22 AM, David Lechner wrote:
+>> +static struct resource dm644x_pll1_resources[] = {
+>> +	{
+>> +		.start	= DAVINCI_PLL1_BASE,
+>> +		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
+> 
+> The .end should be DAVINCI_PLL1_BASE + SZ_1K - 1, otherwise it prevents
+> PLL2 from getting registered.
+> 
+>> +		.flags	= IORESOURCE_MEM,
+>> +	},
+>> +};
+>> +
+>> +static struct platform_device dm644x_pll1_device = {
+>> +	.name		= "dm644x-pll1",
+>> +	.id		= -1,
+>> +	.resource	= dm644x_pll1_resources,
+>> +	.num_resources	= ARRAY_SIZE(dm644x_pll1_resources),
+>> +};
+>> +
+>> +static struct resource dm644x_pll2_resources[] = {
+>> +	{
+>> +		.start	= DAVINCI_PLL2_BASE,
+>> +		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
+> 
+> And this too should be fixed, else it prevents the PSC from getting
+> registered.
 
-> Add missing static for const parent names and clock ops.
-> =
-
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
-
-Applied to clk-next
+Thanks. I've checked and this needs to be fixed for dm646x, dm355 and
+dm365 as well.
