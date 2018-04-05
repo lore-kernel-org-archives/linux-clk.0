@@ -1,45 +1,60 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 2/7] clk: meson: migrate to devm_of_clk_add_hw_provider API
-Date: Sun, 8 Apr 2018 11:19:33 +0800
-Message-ID: <20180408031938.153474-3-yixun.lan@amlogic.com>
-In-Reply-To: <20180408031938.153474-1-yixun.lan@amlogic.com>
-References: <20180408031938.153474-1-yixun.lan@amlogic.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1522304274-18989-3-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
+ <1522304274-18989-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <152297042791.143116.12493897848354753009@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
+Date: Thu, 05 Apr 2018 16:20:27 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-There is a protential memory leak, as of_clk_del_provider is
-never called if of_clk_add_hw_provider has been executed.
-Fix this by using devm variant API.
+Quoting Taniya Das (2018-03-28 23:17:53)
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh.txt b/Docu=
+mentation/devicetree/bindings/clock/qcom,rpmh.txt
+> new file mode 100644
+> index 0000000..8222c88
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/clk/meson/meson-aoclk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can the file name be qcom,rpmh-clk?
 
-diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-index 14862c22e20d..14a1e46a4de6 100644
---- a/drivers/clk/meson/meson-aoclk.c
-+++ b/drivers/clk/meson/meson-aoclk.c
-@@ -78,6 +78,6 @@ int meson_aoclkc_probe(struct platform_device *pdev)
- 			return ret;
- 	}
- 
--	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
- 		(void *) data->hw_data);
- }
--- 
-2.15.1
+> @@ -0,0 +1,22 @@
+> +Qualcomm Technologies, Inc. RPMh Clocks
+> +-------------------------------------------------------
+> +
+> +Resource Power Manager Hardened (RPMh) manages shared resources on
+> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
+> +other hardware subsystems via RSC to control clocks.
+> +
+> +Required properties :
+> +- compatible : shall contain "qcom,rpmh-clk-sdm845"
+> +
+> +- #clock-cells : must contain 1
+> +
+> +Example :
+> +
+> +#include <dt-bindings/clock/qcom,rpmh.h>
+> +
+> +       &apps_rsc {
+
+> +               clock_rpmh: qcom,rpmhclk {
+
+Should say clock-controller for node name.
+
+> +               compatible =3D "qcom,rpmh-clk-sdm845";
+> +               #clock-cells =3D <1>;
+
+Is this tabbed out correctly?
+
+> +               };
+> +       };
