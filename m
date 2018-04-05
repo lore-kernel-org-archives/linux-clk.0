@@ -1,43 +1,68 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: cs2000: mark resume function as __maybe_unused
-Date: Mon,  9 Apr 2018 12:54:34 +0200
-Message-Id: <20180409105438.2402477-1-arnd@arndb.de>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v8 40/42] ARM: davinci: add device tree support to timer
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-41-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <205cae72-4e91-aca2-e3b2-829a12066dc8@ti.com>
+Date: Thu, 5 Apr 2018 17:00:01 +0530
+MIME-Version: 1.0
+In-Reply-To: <1521168778-27236-41-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-When power management is disabled, we get a harmless warning:
+On Friday 16 March 2018 08:22 AM, David Lechner wrote:
+> +static int __init of_davinci_timer_init(struct device_node *np)
+> +{
+> +	struct clk *clk;
+> +
+> +	clk = of_clk_get(np, 0);
+> +	if (IS_ERR(clk)) {
+> +		struct of_phandle_args clkspec;
+> +
+> +		/*
+> +		 * Fall back to using ref_clk if the actual clock is not
+> +		 * available. This currently always happens because platform
+> +		 * clocks (i.e PLLs and PSCs) are registered as platform
+> +		 * devices and therefore are not available at this point in
+> +		 * the boot process.
 
-drivers/clk/clk-cs2000-cp.c:544:12: error: 'cs2000_resume' defined but not used [-Werror=unused-function]
+It seems to me that this is not going to be a temporary problem (or at
+least will be around for quite a while). So, I think we can as well just
+look for ref_clk directly.
 
-Marking the function as __maybe_unused lets the compiler silently
-drop it instead.
+> +		 */
+> +		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
+> +		if (IS_ERR(clkspec.np)) {
+> +			pr_err("%s: No clock available for timer!\n", __func__);
+> +			return PTR_ERR(clkspec.np);
+> +		}
+> +		clk = of_clk_get_from_provider(&clkspec);
+> +		of_node_put(clkspec.np);
+> +	}
+> +
+> +	davinci_timer_init(clk);
+> +
+> +	return 0;
+> +}
+> +TIMER_OF_DECLARE(davinci_timer, "ti,davinci-timer", of_davinci_timer_init);
 
-Fixes: eade4ccdb087 ("clk: cs2000: set pm_ops in hibernate-compatible way")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/clk-cs2000-cp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Here, I think we should use "ti,da850-timer" so we can change the fixed
+clock we are looking for based on the SoC. At a minimum, we should have
+"ti,da850-timer" in the DT along with "ti,davinci-timer".
 
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index c58019750b7e..a2f8c42e527a 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -541,7 +541,7 @@ static int cs2000_probe(struct i2c_client *client,
- 	return ret;
- }
- 
--static int cs2000_resume(struct device *dev)
-+static int __maybe_unused cs2000_resume(struct device *dev)
- {
- 	struct cs2000_priv *priv = dev_get_drvdata(dev);
- 
--- 
-2.9.0
+BTW, I noticed that "ti,davinci-timer" is not documented. I think we
+need to add a binding documentation too.
+
+Thanks,
+Sekhar
