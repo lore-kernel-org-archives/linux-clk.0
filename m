@@ -1,43 +1,44 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 0/3] Update reset and poll logic for GDSCs
-Date: Mon,  9 Apr 2018 14:07:07 +0530
-Message-Id: <1523263030-26884-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Kukjin Kim <kgene@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180404010931.GA30291@embeddedor.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+References: <20180404010931.GA30291@embeddedor.com>
+Message-ID: <152295987121.91052.16578276622043986934@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: samsung: s3c: Mark expected switch fall-through
+Date: Thu, 05 Apr 2018 13:24:31 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
- [v2]
-  * Addressed review comments given in v1 series
+Quoting Gustavo A. R. Silva (2018-04-03 18:09:31)
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+> =
 
-This series implements the below logic for the GDSCs
+> Notice that in this particular case I replaced the comma wiht a dash,
 
- 1. logic to reset the AON logic before or assert/deassert the block
-   control reset removing the clamp io for few GDSCs on SDM845 SoC.
- 2. It also introduces the requirement to poll for higher timeout values
-   for few of the GDSCs.
- 3. There is a new poll register for the GDSCs on SDM845 SoCs which needs
-   to be polled for the correct hardware status of the GDSCs.
+s/wiht/with/
 
-Amit Nischal (3):
-  clk: qcom: gdsc: Add support to reset AON and block reset logic
-  clk: qcom: gdsc: Add support to poll for higher timeout value
-  clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
+> which is what GCC is expecting to find when there are other comments
+> in the same line in which "fall through" appears.
+> =
 
- drivers/clk/qcom/gdsc.c | 63 +++++++++++++++++++++++++++++++++++++++++++------
- drivers/clk/qcom/gdsc.h |  5 +++-
- 2 files changed, 60 insertions(+), 8 deletions(-)
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+> This code was compiled with GCC 7.3.0
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+What's the GCC warning? Please include in the commit text.
+
+Also what's the implicit-fallthrough level you're using? 3? Can you file
+a bug so GCC can update their regex to accept a comma in addition to
+whitespace characters?
+
+And maybe we can change the level to 2 or 1 in the kernel's makefile so
+we don't need to patch comments for this.
