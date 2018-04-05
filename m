@@ -1,98 +1,27 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Abel Vesa <abelvesa@linux.com>,
-	linux-imx@nxp.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v2] clk: imx: Set CLK_SET_RATE_GATE for gate and divider clocks
-Date: Wed, 11 Apr 2018 17:03:29 +0300
-Message-Id: <1523455409-7771-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1521812006-6173-1-git-send-email-abel.vesa@nxp.com>
-References: <1521812006-6173-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Masahiro Yamada <yamada.masahiro@socionext.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1522403054-18691-4-git-send-email-hayashi.kunihiko@socionext.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+References: <1522403054-18691-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <1522403054-18691-4-git-send-email-hayashi.kunihiko@socionext.com>
+Message-ID: <152296592172.91052.3862230596995737594@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 3/3] clk: uniphier: add additional ethernet clock lines for Pro4
+Date: Thu, 05 Apr 2018 15:05:21 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Shawn Guo <shawnguo@kernel.org>
+Quoting Kunihiko Hayashi (2018-03-30 02:44:14)
+> Pro4 SoC has clock lines for Giga-bit feature and ethernet phy,
+> and these are mandatory to activate the ethernet controller. This adds
+> support for the clock lines.
+> =
 
-Add flag CLK_SET_RATE_GATE for i.MX gate and divider clocks on which the
-client drivers usually make clk_set_rate() call, so that the call will fail
-when clock is still on instead of standing the risk of running into glitch
-issue. Rate cannot be changed when the clock is enabled due to the glitchy
-multiplexers.
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
 
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-[initial patch from imx internal repo]
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-[carried over from 3.14 and also applied the flag to newer functions]
----
-
-Changes since v1:
- - changed ownership as per initial patch
-
- drivers/clk/imx/clk.h | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 8076ec0..753ebc4 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -96,7 +96,8 @@ static inline struct clk *imx_clk_fixed_factor(const char *name,
- static inline struct clk *imx_clk_divider(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift, u8 width)
- {
--	return clk_register_divider(NULL, name, parent, CLK_SET_RATE_PARENT,
-+	return clk_register_divider(NULL, name, parent,
-+			CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 			reg, shift, width, 0, &imx_ccm_lock);
- }
- 
-@@ -140,7 +141,8 @@ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
- static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift)
- {
--	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
-+	return clk_register_gate2(NULL, name, parent,
-+			CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, reg,
- 			shift, 0x3, 0, &imx_ccm_lock, NULL);
- }
- 
-@@ -155,7 +157,8 @@ static inline struct clk *imx_clk_gate2_shared(const char *name,
- 		const char *parent, void __iomem *reg, u8 shift,
- 		unsigned int *share_count)
- {
--	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
-+	return clk_register_gate2(NULL, name, parent,
-+			CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, reg,
- 			shift, 0x3, 0, &imx_ccm_lock, share_count);
- }
- 
-@@ -164,8 +167,8 @@ static inline struct clk *imx_clk_gate2_shared2(const char *name,
- 		unsigned int *share_count)
- {
- 	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT |
--				  CLK_OPS_PARENT_ENABLE, reg, shift, 0x3, 0,
--				  &imx_ccm_lock, share_count);
-+			CLK_SET_RATE_GATE | CLK_OPS_PARENT_ENABLE,
-+			reg, shift, 0x3, 0, &imx_ccm_lock, share_count);
- }
- 
- static inline struct clk *imx_clk_gate2_cgr(const char *name,
-@@ -187,7 +190,7 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
- 		void __iomem *reg, u8 shift)
- {
- 	return clk_register_gate2(NULL, name, parent,
--			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
-+		CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE | CLK_OPS_PARENT_ENABLE,
- 			reg, shift, 0x3, 0, &imx_ccm_lock, NULL);
- }
- 
--- 
-2.7.4
+Applied to clk-next
