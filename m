@@ -1,42 +1,64 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 5 Apr 2018 08:18:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+	rjw@rjwysocki.net, viresh.kumar@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v4 04/14] clk: qcom: Add DT bindings for CPU clock driver
+ for msm8996
+Message-ID: <20180405131844.sfhta7qjdsmxpa4d@rob-hp-laptop>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-5-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-To: Abel Vesa <abel.vesa@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
- Irina Tirdea <irina.tirdea@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Peter Chen <peter.chen@freescale.com>, Sascha Hauer <kernel@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1522219599-10831-5-git-send-email-abel.vesa@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-imx@nxp.com,
- Anson Huang <anson.huang@nxp.com>,
- Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
- Abel Vesa <abelvesa@linux.com>, Daniel Baluta <daniel.baluta@nxp.com>,
- Anson Huang <b20788@freescale.com>, Abel Vesa <abel.vesa@nxp.com>
-References: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
- <1522219599-10831-5-git-send-email-abel.vesa@nxp.com>
-Message-ID: <152303883696.143116.13663538916966228102@swboyd.mtv.corp.google.com>
-Subject: Re: [RESEND 3/4] clk: imx7d: Correct ahb clk parent select
-Date: Fri, 06 Apr 2018 11:20:36 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1522358807-10413-5-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Abel Vesa (2018-03-27 23:46:38)
-> From: Anson Huang <b20788@freescale.com>
-> =
+On Fri, Mar 30, 2018 at 12:26:37AM +0300, Ilia Lin wrote:
 
-> Design team change the ahb's clk parent options but
-> did NOT update the DOC accordingly in time, so the
-> AHB/IPG's clk rate in clk tree is incorrect, AHB is
-> 67.5MHz and IPG is 33.75MHz, but using scope to
-> monitor them, they are actually 135MHz and 67.5MHz,
-> update the clk parent option to make clk tree info
-> correct.
-> =
+Needs a commit message.
 
-> Signed-off-by: Anson Huang <b20788@freescale.com>
-> Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+
+Add acks/reviewed-bys when posting new versions.
+
 > ---
-
-Applied to clk-next
+>  Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+> new file mode 100644
+> index 0000000..8458783
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+> @@ -0,0 +1,17 @@
+> +Qualcomm CPUSS clock controller for Kryo CPUs
+> +----------------------------------------------------
+> +
+> +Required properties :
+> +- compatible : shall contain only one of the following:
+> +
+> +			"qcom,msm8996-apcc"
+> +
+> +- reg : shall contain base register location and length
+> +- #clock-cells : shall contain 1
+> +
+> +Example:
+> +	kryocc: clock-controller@6400000 {
+> +		compatible = "qcom,msm8996-apcc";
+> +		reg = <0x6400000 0x90000>;
+> +		#clock-cells = <1>;
+> +	};
+> -- 
+> 1.9.1
+> 
