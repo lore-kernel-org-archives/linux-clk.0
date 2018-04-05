@@ -1,80 +1,27 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Introduce QCOM RPMh clock
- bindings
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
- <1522304274-18989-3-git-send-email-tdas@codeaurora.org>
- <152297042791.143116.12493897848354753009@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <98232fda-7952-b19f-7dcd-b22c45e5041a@codeaurora.org>
-Date: Sun, 8 Apr 2018 15:41:33 +0530
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <152297042791.143116.12493897848354753009@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: Heiko Stuebner <heiko@sntech.de>, Stephen Boyd <sboyd@codeaurora.org>,
+ mturquette@baylibre.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <2462810.3FAOKQrxCs@phil>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <2462810.3FAOKQrxCs@phil>
+Message-ID: <152296025460.91052.8670791973534257868@swboyd.mtv.corp.google.com>
+Subject: Re: [GIT PULL] Rockchip clock updates for 4.17 round 2
+Date: Thu, 05 Apr 2018 13:30:54 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Thanks Stephen for the review.
+Quoting Heiko Stuebner (2018-03-25 15:11:36)
+> Hi Mike, Stephen,
+> =
 
-On 4/6/2018 4:50 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-03-28 23:17:53)
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
->> new file mode 100644
->> index 0000000..8222c88
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
-> 
-> Can the file name be qcom,rpmh-clk?
-> 
+> it looks like the recent phase change triggered some more fixups and
+> corrections and would be great on top of the first pull request.
+> So please pull :-)
+> =
 
-Sure will update the file name.
+> =
 
->> @@ -0,0 +1,22 @@
->> +Qualcomm Technologies, Inc. RPMh Clocks
->> +-------------------------------------------------------
->> +
->> +Resource Power Manager Hardened (RPMh) manages shared resources on
->> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
->> +other hardware subsystems via RSC to control clocks.
->> +
->> +Required properties :
->> +- compatible : shall contain "qcom,rpmh-clk-sdm845"
->> +
->> +- #clock-cells : must contain 1
->> +
->> +Example :
->> +
->> +#include <dt-bindings/clock/qcom,rpmh.h>
->> +
->> +       &apps_rsc {
-> 
->> +               clock_rpmh: qcom,rpmhclk {
-> 
-> Should say clock-controller for node name.
->
 
-Would fix it in the next patch.
-
->> +               compatible = "qcom,rpmh-clk-sdm845";
->> +               #clock-cells = <1>;
-> 
-> Is this tabbed out correctly?
-> 
-
-Will fix the tabs in the next patch.
-
->> +               };
->> +       };
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Thanks. Pulled into clk-next.
