@@ -1,91 +1,53 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH 1/2] dt-bindings: clock: Introduce QCOM Video clock bindings
-Date: Tue, 24 Apr 2018 19:02:50 +0530
-Message-Id: <1524576771-31096-2-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
-References: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Doug Anderson <dianders@chromium.org>, Manu Gautam <mgautam@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAD=FV=UXvf+_rvbFGrHAQ1N0kbrMR_c2=LBVD=AMuL6DAjWO+Q@mail.gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>,
+ devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ Vivek Gautam <vivek.gautam@codeaurora.org>,
+ Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
+ Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
+ <1522321466-21755-2-git-send-email-mgautam@codeaurora.org>
+ <CAD=FV=UXvf+_rvbFGrHAQ1N0kbrMR_c2=LBVD=AMuL6DAjWO+Q@mail.gmail.com>
+Message-ID: <152295883900.91052.4792431636170417291@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 1/7] clk: msm8996-gcc: change halt check for USB/PCIE pipe_clk
+Date: Thu, 05 Apr 2018 13:07:19 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings for video clock controller for Qualcomm
-Technology Inc's SoCs.
+Quoting Doug Anderson (2018-03-29 13:55:55)
+> Hi,
+> =
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,videocc.txt     | 18 ++++++++++++++++
- include/dt-bindings/clock/qcom,videocc-sdm845.h    | 25 ++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.txt
- create mode 100644 include/dt-bindings/clock/qcom,videocc-sdm845.h
+> On Thu, Mar 29, 2018 at 4:04 AM, Manu Gautam <mgautam@codeaurora.org> wro=
+te:
+> > The USB and PCIE pipe clocks are sourced from external clocks
+> > inside the QMP USB/PCIE PHYs. Enabling or disabling of PIPE RCG
+> > clocks is dependent on PHY initialization sequence hence
+> > update halt_check to BRANCH_HALT_DELAY for these clocks so
+> > that clock status bit is not polled when enabling or disabling
+> > the clocks. It allows to simplify PHY client driver code which
+> > is both user and source of the pipe_clk and avoid error logging
+> > related status check on clk_disable/enable.
+> >
+> > Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+> > ---
+> >  drivers/clk/qcom/gcc-msm8996.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> =
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.txt b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
-new file mode 100644
-index 0000000..1c23b41
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
-@@ -0,0 +1,18 @@
-+Qualcomm Video Clock & Reset Controller Binding
-+-----------------------------------------------
-+
-+Required properties :
-+- compatible : shall contain "qcom,videocc-sdm845"
-+- reg : shall contain base register location and length
-+- #clock-cells : shall contain 1
-+- #reset-cells : shall contain 1
-+- #power-domain-cells : shall contain 1
-+
-+Example:
-+	videocc: qcom,videocc@ab00000 {
-+		compatible = "qcom,videocc-sdm845";
-+		reg = <0xab00000 0x10000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+		#power-domain-cells = <1>;
-+	};
-diff --git a/include/dt-bindings/clock/qcom,videocc-sdm845.h b/include/dt-bindings/clock/qcom,videocc-sdm845.h
-new file mode 100644
-index 0000000..f5f7599
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,videocc-sdm845.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
-+
-+#ifndef _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
-+#define _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
-+
-+#define VIDEO_CC_APB_CLK			0
-+#define VIDEO_CC_AT_CLK				1
-+#define VIDEO_CC_QDSS_TRIG_CLK			2
-+#define VIDEO_CC_QDSS_TSCTR_DIV8_CLK		3
-+#define VIDEO_CC_VCODEC0_AXI_CLK		4
-+#define VIDEO_CC_VCODEC0_CORE_CLK		5
-+#define VIDEO_CC_VCODEC1_AXI_CLK		6
-+#define VIDEO_CC_VCODEC1_CORE_CLK		7
-+#define VIDEO_CC_VENUS_AHB_CLK			8
-+#define VIDEO_CC_VENUS_CLK_SRC			9
-+#define VIDEO_CC_VENUS_CTL_AXI_CLK		10
-+#define VIDEO_CC_VENUS_CTL_CORE_CLK		11
-+#define VIDEO_PLL0				12
-+
-+#define VENUS_GDSC				0
-+#define VCODEC0_GDSC				1
-+#define VCODEC1_GDSC				2
-+
-+#endif
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> As per my feedback on <https://patchwork.kernel.org/patch/10314937/>,
+> I'm not a fan of this.  Hopefully we can adjust the PHY driver so it's
+> not needed.
+> =
+
+
+Agreed. We should be able to enable the clks at the right time and halt
+bits should work. From what I can recall we had that working before on
+db820c, so has something changed?
