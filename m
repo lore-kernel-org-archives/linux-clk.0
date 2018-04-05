@@ -1,167 +1,78 @@
-Return-Path: <mbrugger@localhost>
-From: Matthias Brugger <mbrugger@suse.com>
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 03/10] mfd: mtk-mmsys: Add mmsys driver
-Date: Mon, 23 Apr 2018 17:32:02 +0200
-Message-Id: <99bef17c57ad60eff6104da780cf59b785bd3e42.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
+Return-Path: <shawn.lin@rock-chips.com>
+Cc: shawn.lin@rock-chips.com, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-rockchip@lists.infradead.org,
+ linux-clk@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
+ Finley Xiao <finley.xiao@rock-chips.com>, Andy Yan
+ <andy.yan@rock-chips.com>, Xing Zheng <xing.zheng@rock-chips.com>,
+ Elaine Zhang <zhangqing@rock-chips.com>, Ziyuan Xu <xzy.xu@rock-chips.com>
+Subject: Re: [PATCH 1/2] clk: divider: Add CLK_DIVIDER_EVEN flag support
+To: Heiko Stuebner <heiko@sntech.de>
+References: <1522906699-127765-1-git-send-email-shawn.lin@rock-chips.com>
+ <3456608.qSAPWuSAs9@phil>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <1a1b583f-6ffb-a9a3-3798-98f1f282cc26@rock-chips.com>
+Date: Thu, 5 Apr 2018 22:47:41 +0800
+MIME-Version: 1.0
+In-Reply-To: <3456608.qSAPWuSAs9@phil>
+Content-Type: text/plain; charset=gbk; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The MMSYS subsystem includes clocks and drm components.
-This patch adds a MFD device to probe both drivers from the same
-device tree compatible.
+Hi Heiko,
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/mfd/Kconfig     |  9 ++++++
- drivers/mfd/Makefile    |  2 ++
- drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 90 insertions(+)
- create mode 100644 drivers/mfd/mtk-mmsys.c
+On 2018/4/5 21:30, Heiko Stuebner wrote:
+> Hi Shawn,
+> 
+> Am Donnerstag, 5. April 2018, 07:38:18 CEST schrieb Shawn Lin:
+>> CLK_DIVIDER_EVEN is used for clock divders that should only
+>> use even number in the div field.
+>>
+>> Two clock divder should consider to use this flag
+>> (1) The divder is physically only support even div number to
+>> generate 50% duty cycle clock rate.
+>> (2) The divder's clock consumer request it to use even div number
+>> to generate the most closest requested rate for whatever reason.
+>>
+>> In some platforms, for instance Rockchip, the eMMC/SDIO/SDMMC should
+>> request divder to use even number when working at a high throughput
+>> speed mode reliably. However, that wasn't guaranteed by clock framework.
+>> So the previous tricky is to carefully assign magic clock rate to their
+>> parents as well as consumer's clock rate when requesting. That works
+>> bad in practice if folks change the parents clock rate or the clock
+>> hierarchy randomly. That also work bad if the consumer's clock rate
+>> came from the DT, which is changed so fraquent for different boards.
+>>
+>> To make it's less prone to make mistake and to make it really respect
+>> the fact that the divder should use even number to the div field, we
+>> need the clock framework's help. Now we have CLK_DIVIDER_POWER_OF_TWO,
+>> which could guarantee the div field is even number, however, obviously
+>> it skips the even numbers which is the power of 2, but maybe which is
+>> the best div to generate closest clock rate for consumer.
+> 
+> I think there is a slight misunderstanding here, CLK_DIVIDER_POWER_OF_TWO
+> means "2 raised to the value read from the hardware register", so describes
+> a hardware property, while your CLK_DIVIDER_EVEN describes needed special
+> handling due to some hardware necessity >
+> That is not meant to nack your change, but just to point out that you can
+> also have CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_EVEN, which is
+> relevant for the uneven 2^0 = 1 case and should be taken in to account.
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index b860eb5aa194..a2c928e26026 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -378,6 +378,15 @@ config MFD_MC13XXX_I2C
- 	help
- 	  Select this if your MC13xxx is connected via an I2C bus.
- 
-+config MFD_MEDIATEK_MMSYS
-+	tristate "Mediatek MMSYS interface"
-+	select MDF_CORE
-+	select REGMAP_MMIO
-+	help
-+	  Select this if you have a MMSYS subsystem in your SoC. The
-+	  MMSYS subsystem has at least a clock driver part and some
-+	  DRM components.
-+
- config MFD_MXS_LRADC
- 	tristate "Freescale i.MX23/i.MX28 LRADC"
- 	depends on ARCH_MXS || COMPILE_TEST
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index d9d2cf0d32ef..b96118bd68d9 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -98,6 +98,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
- obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
- obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
- 
-+obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
-+
- obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
- 
- obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
-diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
-new file mode 100644
-index 000000000000..c802343fb1c6
---- /dev/null
-+++ b/drivers/mfd/mtk-mmsys.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+/*
-+ * mtk-mmsys.c -- Mediatek MMSYS multi-function driver
-+ *
-+ * Copyright (c) 2018 Matthias Brugger <matthias.bgg@gmail.com>
-+ *
-+ * Author: Matthias Brugger <matthias.bgg@gmail.com>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/mfd/core.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+enum {
-+	MMSYS_MT2701 = 1,
-+};
-+
-+static const struct mfd_cell mmsys_mt2701_devs[] = {
-+	{ .name = "clk-mt2701-mm", },
-+	{ .name = "drm-mt2701-mm", },
-+};
-+
-+static int mmsys_probe(struct platform_device *pdev)
-+{
-+	const struct mfd_cell *mmsys_cells;
-+	int nr_cells;
-+	long id;
-+	int ret;
-+
-+	id = (long) of_device_get_match_data(&pdev->dev);
-+	if (!id) {
-+		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
-+		return -EINVAL;
-+	}
-+
-+	switch (id) {
-+	case MMSYS_MT2701:
-+		mmsys_cells = mmsys_mt2701_devs;
-+		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
-+		break;
-+	default:
-+		return -ENODEV;
-+	}
-+
-+	ret = devm_mfd_add_devices(&pdev->dev, 0, mmsys_cells, nr_cells,
-+					NULL, 0, NULL);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+};
-+
-+static const struct of_device_id of_match_mmsys[] = {
-+	{ .compatible = "mediatek,mt2701-mmsys",
-+	  .data = (void *) MMSYS_MT2701,
-+	},
-+	{ /* sentinel */ },
-+};
-+
-+static struct platform_driver mmsys_drv = {
-+	.probe = mmsys_probe,
-+	.driver = {
-+		.name = "mediatek-mmysys",
-+		.of_match_table = of_match_ptr(of_match_mmsys),
-+	},
-+};
-+
-+builtin_platform_driver(mmsys_drv);
-+
-+MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
-+MODULE_LICENSE("GPL");
+Ahh, really good catch, and I always forgot 1 is the power of 2.
+
+More or less, it's a hardware property for Rockchip as these divders
+only hardwired to specific controllers which always request even div
+field, even if the div field could be odd number physcially. But yes,
+the common case wouldn't be that, and another combination would be
+CLK_DIVIDER_EVEN | CLK_DIVIDER_ONE_BASED?
+
+> 
+> 
+> Heiko
+> 
+> 
+> 
+> 
+
+
 -- 
-2.16.3
+Best Regards
+Shawn Lin
