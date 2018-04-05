@@ -1,159 +1,41 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	fabio.estevam@nxp.com,
-	linux-imx@nxp.com,
-	kernel@pengutronix.de,
-	Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH 06/12] clk: imx: scu: add scu clock gpr gate
-Date: Sat, 28 Apr 2018 02:56:37 +0800
-Message-Id: <1524855403-15301-7-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
-References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+To: Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+ linux-omap@vger.kernel.org, mturquette@baylibre.com, tony@atomide.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <0da17b8f-62af-1634-9dea-85445d28d587@ti.com>
+Cc: arnd@arndb.de, linux-arm-kernel@lists.infradead.org
+References: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
+ <0da17b8f-62af-1634-9dea-85445d28d587@ti.com>
+Message-ID: <152295875421.91052.344369730121423981@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: ti: fix flag space conflict with clkctrl clocks
+Date: Thu, 05 Apr 2018 13:05:54 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Add scu based clock gpr gate. Unlike the normal scu gate, such
-gates are controlled by GPR bits through SCU sc_misc_set_control
-API.
+Quoting Tero Kristo (2018-03-29 11:25:07)
+> On 27/03/18 20:47, Tero Kristo wrote:
+> > The introduction of support for CLK_SET_RATE_PARENT flag for clkctrl
+> > clocks used a generic clock flag, which causes a conflict with the
+> > rest of the clkctrl flags, namely the NO_IDLEST flag. This can cause
+> > boot failures on certain platforms where this flag is introduced, by
+> > omitting the wait for the clockctrl module to be fully enabled before
+> > proceeding with rest of the code.
+> > =
 
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/scu/Makefile           |  3 +-
- drivers/clk/imx/scu/clk-gate-gpr-scu.c | 84 ++++++++++++++++++++++++++++++++++
- drivers/clk/imx/scu/clk-scu.h          |  9 ++++
- 3 files changed, 95 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/scu/clk-gate-gpr-scu.c
+> > Fix this by moving all the clkctrl specific flags to their own bit-rang=
+e.
+> > =
 
-diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
-index 2abed17..25d3511 100644
---- a/drivers/clk/imx/scu/Makefile
-+++ b/drivers/clk/imx/scu/Makefile
-@@ -4,4 +4,5 @@ obj-$(CONFIG_MXC_CLK_SCU) += \
- 	clk-scu.o \
- 	clk-divider-scu.o \
- 	clk-divider-gpr-scu.o \
--	clk-gate-scu.o
-+	clk-gate-scu.o \
-+	clk-gate-gpr-scu.o
-diff --git a/drivers/clk/imx/scu/clk-gate-gpr-scu.c b/drivers/clk/imx/scu/clk-gate-gpr-scu.c
-new file mode 100644
-index 0000000..b55b857
---- /dev/null
-+++ b/drivers/clk/imx/scu/clk-gate-gpr-scu.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017~2018 NXP
-+ *	Dong Aisheng <aisheng.dong@nxp.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+#include <soc/imx/sc/sci.h>
-+
-+#include "clk-scu.h"
-+
-+struct clk_gate_gpr_scu {
-+	struct clk_hw hw;
-+	sc_rsrc_t	rsrc_id;
-+	sc_ctrl_t	gpr_id;
-+
-+	/* default: enable 1 disable 0 */
-+	bool	invert;
-+};
-+
-+#define to_clk_gate_gpr_scu(_hw) container_of(_hw, struct clk_gate_gpr_scu, hw)
-+
-+static int clk_gate_gpr_scu_enable(struct clk_hw *hw)
-+{
-+	struct clk_gate_gpr_scu *gate = to_clk_gate_gpr_scu(hw);
-+
-+	return sc_misc_set_control(ccm_ipc_handle, gate->rsrc_id,
-+				   gate->gpr_id, !gate->invert);
-+}
-+
-+static void clk_gate_gpr_scu_disable(struct clk_hw *hw)
-+{
-+	struct clk_gate_gpr_scu *gate = to_clk_gate_gpr_scu(hw);
-+	sc_err_t sci_err;
-+
-+	sci_err = sc_misc_set_control(ccm_ipc_handle, gate->rsrc_id,
-+				      gate->gpr_id, gate->invert);
-+	if (sci_err)
-+		pr_warn("%s: %s: clk disable failed %d\n",
-+			__func__, clk_hw_get_name(hw), sci_err);
-+}
-+
-+static const struct clk_ops clk_gate_gpr_scu_ops = {
-+	.enable = clk_gate_gpr_scu_enable,
-+	.disable = clk_gate_gpr_scu_disable,
-+};
-+
-+struct clk_hw *clk_register_gate_gpr_scu(const char *name, const char *parent_name,
-+					 sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id,
-+					 bool invert_flag)
-+{
-+	struct clk_gate_gpr_scu *gate;
-+	struct clk_init_data init;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	gate->rsrc_id = rsrc_id;
-+	gate->gpr_id = gpr_id;
-+	gate->invert = invert_flag;
-+
-+	init.name = name;
-+	init.ops = &clk_gate_gpr_scu_ops;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	init.num_parents = parent_name ? 1 : 0;
-+
-+	gate->hw.init = &init;
-+
-+	hw = &gate->hw;
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(gate);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
-index c08dca1..e419035 100644
---- a/drivers/clk/imx/scu/clk-scu.h
-+++ b/drivers/clk/imx/scu/clk-scu.h
-@@ -59,4 +59,13 @@ static inline struct clk_hw *imx_clk_gate2_scu(const char *name, const char *par
- 	return clk_register_gate2_scu(name, parent, 0, reg, bit_idx, hw_gate);
- }
- 
-+struct clk_hw *clk_register_gate_gpr_scu(const char *name, const char *parent_name,
-+				sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id, bool invert_flag);
-+
-+static inline struct clk_hw *imx_clk_gate_gpr_scu(const char *name, const char *parent,
-+				sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id, bool invert_flag)
-+{
-+	return clk_register_gate_gpr_scu(name, parent, rsrc_id, gpr_id, invert_flag);
-+}
-+
- #endif
--- 
-2.7.4
+> > Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> > Fixes: 49159a9dc3da ("clk: ti: add support for CLK_SET_RATE_PARENT flag=
+")
+> > Reported-by: Christophe Lyon <christophe.lyon@linaro.org>
+> =
+
+> Stephen, can you pick this up as a late fix?
+> =
+
+
+Sorry I was traveling for a week. I'll pick this up for this merge
+window and then stable can get it.
