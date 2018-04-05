@@ -1,43 +1,87 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:43594 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751187AbeDQP3p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Apr 2018 11:29:45 -0400
-Date: Tue, 17 Apr 2018 17:29:41 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v3 6/6] ARM: dts: exynos: Remove obsolete clock
- properties from power domains
-Message-ID: <20180417152941.j5viiq36n4xoibjm@kozik-lap>
-References: <20180306143312.21035-1-m.szyprowski@samsung.com>
- <CGME20180306143325eucas1p2f0fe850a9d23dd467fb1814581159539@eucas1p2.samsung.com>
- <20180306143312.21035-7-m.szyprowski@samsung.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v8 20/42] ARM: davinci: pass clock as parameter to
+ davinci_timer_init()
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1521168778-27236-1-git-send-email-david@lechnology.com>
+ <1521168778-27236-21-git-send-email-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <43434ed4-162c-cb39-70ef-a458e3999f8b@ti.com>
+Date: Thu, 5 Apr 2018 17:42:51 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180306143312.21035-7-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1521168778-27236-21-git-send-email-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Mar 06, 2018 at 03:33:12PM +0100, Marek Szyprowski wrote:
-> Handling of special clock operations on power domain on/off sequences has
-> been moved to respective Exynos clock controller drivers and clock properties
-> have been marked as deprecated. Remove all clock properties from existing
-> Exynos power domain nodes, as they are no longer used.
+On Friday 16 March 2018 08:22 AM, David Lechner wrote:
+> This changes davinci_timer_init() so that we pass the clock as a
+> parameter instead of using clk_get(). This is done in preparation
+> for converting to the common clock framework.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |  4 ----
->  arch/arm/boot/dts/exynos5420.dtsi | 14 --------------
->  2 files changed, 18 deletions(-)
+> It removes the requirement that we have to have a clock with con_id
+> of "timer0", which will be good for DT bindings since clock-names =
+> "timer0" doesn't really make sense.
 > 
+> Additionally, when we convert to the common clock framework, most of
+> the clocks will be platform devices, which will not be available at
+> this point during the boot process, so we will need to pass a clock
+> that is available (i.e. ref_clk) instead of the "timer0" clock.
+> 
+> NB: The comment added in time.c is not entirely true when this patch
+> is applied, but it will be correct once the conversion to the common
+> clock framework is complete in subsequent patches.
 
-Thanks, applied.
+I think its better to add the comment when its actually applicable, even
+if it needs to be a separate patch.
 
-Best regards,
-Krzysztof
+> 
+> Also, drop use of extern in header file since we are touching the
+> definition.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
+> -
+> -void __init davinci_timer_init(void)
+> +void __init davinci_timer_init(struct clk *timer_clk)
+>  {
+> -	struct clk *timer_clk;
+>  	struct davinci_soc_info *soc_info = &davinci_soc_info;
+>  	unsigned int clockevent_id;
+>  	unsigned int clocksource_id;
+> @@ -373,7 +371,14 @@ void __init davinci_timer_init(void)
+>  		}
+>  	}
+>  
+> -	timer_clk = clk_get(NULL, "timer0");
+> +	/*
+> +	 * REVISIT: Currently, timer_clk will be "ref_clk". However, the actual
+> +	 * clock for this device comes from a PLL AUXCLK or a PSC clock
+> +	 * (depending on the SoC). The PLL and PSC clocks are not registered
+> +	 * until later in boot because they are platform devices. We should try
+> +	 * again later to get the real clock so that the real clock is not
+> +	 * turned off when disabling unused clocks, which would stop the timer.
+
+This disabling later should not happen because you have the timer clocks
+marked as LPSC_ALWAYS_ENABLED which translates to CLK_IS_CRITICAL and
+that should make sure they are never disabled.
+
+The issue should be documented is that we depend on bootloader leaving
+the timer0 enabled on DM355, DM365, DM644x and DM646x. Of these, I have
+tested only DM644x so far. I will check others and see the status of
+timer0 there.
+
+Its not really a great situation here, but I don't have a good
+alternative to suggest as well if having genpd support in PSC means we
+cannot be using CLK_OF_DECLARE().
+
+Thanks,
+Sekhar
