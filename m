@@ -1,89 +1,74 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 21/21] arm64: dts: allwinner: a64: sopine: Enable HDMI output
-Date: Mon, 30 Apr 2018 17:10:58 +0530
-Message-Id: <20180430114058.5061-22-jagan@amarulasolutions.com>
-In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH] clk: samsung: s3c: Mark expected switch fall-through
+To: Stephen Boyd <sboyd@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180404010931.GA30291@embeddedor.com>
+ <152295987121.91052.16578276622043986934@swboyd.mtv.corp.google.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <4d52473e-019a-58da-c475-49bcd16c2ed4@embeddedor.com>
+Date: Thu, 5 Apr 2018 18:11:25 -0500
+MIME-Version: 1.0
+In-Reply-To: <152295987121.91052.16578276622043986934@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable HDMI output on sopine board.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- .../dts/allwinner/sun50i-a64-sopine-baseboard.dts  | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-index abe179de35d7..72f29b78117c 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	reg_vcc1v8: vcc1v8 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc1v8";
-@@ -69,6 +80,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -86,6 +101,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
--- 
-2.14.3
+On 04/05/2018 03:24 PM, Stephen Boyd wrote:
+> Quoting Gustavo A. R. Silva (2018-04-03 18:09:31)
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Notice that in this particular case I replaced the comma wiht a dash,
+> 
+> s/wiht/with/
+> 
+
+Thanks for this.
+
+>> which is what GCC is expecting to find when there are other comments
+>> in the same line in which "fall through" appears.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>> This code was compiled with GCC 7.3.0
+> 
+> What's the GCC warning? Please include in the commit text.
+> 
+
+drivers/clk/samsung/clk-s3c2443.c:430:3: warning: this statement may 
+fall through [-Wimplicit-fallthrough=]
+    samsung_clk_register_alias(ctx, s3c2450_aliases,
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      ARRAY_SIZE(s3c2450_aliases));
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/clk/samsung/clk-s3c2443.c:433:2: note: here
+   case S3C2416:
+   ^~~~
+
+
+> Also what's the implicit-fallthrough level you're using? 3? Can you file
+> a bug so GCC can update their regex to accept a comma in addition to
+> whitespace characters?
+> 
+
+Yeah, I can talk to the GCC guys about that.
+
+> And maybe we can change the level to 2 or 1 in the kernel's makefile so
+> we don't need to patch comments for this.
+> 
+
+Yeah, with level 2 I don't get that warning.
+
+Thanks
+--
+Gustavo
