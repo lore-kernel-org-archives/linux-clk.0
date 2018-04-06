@@ -1,39 +1,34 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-clk@vger.kernel.org,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH 2/2] clk: clk-conf: Convert to use clk_set_rate_safe()
-Date: Sat, 28 Apr 2018 17:16:58 +0800
-Message-Id: <1524907018-195819-2-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1524907018-195819-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1524907018-195819-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+ Gabriel Fernandez <gabriel.fernandez@st.com>,
+ Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1522996773-24129-3-git-send-email-gabriel.fernandez@st.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ gabriel.fernandez.st@gmail.com, olivier.bideau@st.com,
+ Loic PALLARDY <loic.pallardy@st.com>,
+ benjamin GAIGNARD <benjamin.gaignard@st.com>
+References: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
+ <1522996773-24129-3-git-send-email-gabriel.fernandez@st.com>
+Message-ID: <152304747392.94378.14006865924710563496@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/6] clk: stm32mp1: remove unused dfsdm_src[] const
+Date: Fri, 06 Apr 2018 13:44:33 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-If assigning clock rate from firmware, make sure any assignment
-is safety for the its children.
+Quoting gabriel.fernandez@st.com (2018-04-05 23:39:29)
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> =
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
+> This patch remove unused constant.
+> =
 
- drivers/clk/clk-conf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
 
-diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-index 49819b5..2dd0305 100644
---- a/drivers/clk/clk-conf.c
-+++ b/drivers/clk/clk-conf.c
-@@ -107,7 +107,7 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
- 				return PTR_ERR(clk);
- 			}
- 
--			rc = clk_set_rate(clk, rate);
-+			rc = clk_set_rate_safe(clk, rate);
- 			if (rc < 0)
- 				pr_err("clk: couldn't set %s clk rate to %u (%d), current rate: %lu\n",
- 				       __clk_get_name(clk), rate, rc,
--- 
-1.9.1
+Applied to clk-next
