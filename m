@@ -1,182 +1,55 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from sender-of-o52.zoho.com ([135.84.80.217]:21453 "EHLO
-        sender-of-o52.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751402AbeDHJn4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Apr 2018 05:43:56 -0400
-Date: Sun, 8 Apr 2018 05:43:30 -0400
-From: Marcin <marcin@ziemianowicz.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH 1/2] clk: at91: Added more information logging.
-Message-ID: <20180408094330.GA51669@hak8or>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Sender: linux-clk-owner@vger.kernel.org
+To: Carlo Caione <carlo@caione.org>, Jerome Brunet <jbrunet@baylibre.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Neil Armstrong <narmstrong@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180328025050.221585-5-yixun.lan@amlogic.com>
+Cc: Qiufang Dai <qiufang.dai@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>,
+ Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180328025050.221585-1-yixun.lan@amlogic.com>
+ <20180328025050.221585-5-yixun.lan@amlogic.com>
+Message-ID: <152304527293.94378.2019634000949753214@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 4/6] clk: meson-axg: Add AO Clock and Reset controller driver
+Date: Fri, 06 Apr 2018 13:07:52 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-I noticed that when debugging some USB clocking issue that there weren't
-many ways to tell what the state of the USB clocking system was. This
-adds a few logging statements to see what the relevant code is trying to
-do.
+Quoting Yixun Lan (2018-03-27 19:50:48)
+> +       [CLKID_AO_SAR_ADC_CLK]  =3D &axg_saradc_gate,
+> +};
+> +
+> +static struct clk_hw_onecell_data axg_aoclk_onecell_data =3D {
 
-Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
----
- drivers/clk/at91/clk-pll.c   |  6 +++++-
- drivers/clk/at91/clk-usb.c   | 10 ++++++++--
- drivers/usb/host/ohci-at91.c | 21 +++++++++++++++------
- 3 files changed, 28 insertions(+), 9 deletions(-)
+const?
 
-diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
-index 7d3223fc7161..534961766ae5 100644
---- a/drivers/clk/at91/clk-pll.c
-+++ b/drivers/clk/at91/clk-pll.c
-@@ -133,6 +133,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- {
- 	struct clk_pll *pll = to_clk_pll(hw);
- 	unsigned int pllr;
-+	unsigned long recalcedrate;
- 	u16 mul;
- 	u8 div;
- 
-@@ -144,7 +145,10 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
- 	if (!div || !mul)
- 		return 0;
- 
--	return (parent_rate / div) * (mul + 1);
-+	recalcedrate = (parent_rate / div) * (mul + 1);
-+	pr_debug("clk-pll: calculating new rate, (%lu hz / %u) * %u = %lu hz\n",
-+		parent_rate, div, mul, recalcedrate);
-+	return recalcedrate;
- }
- 
- static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,
-diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
-index 791770a563fc..2fa877e99bac 100644
---- a/drivers/clk/at91/clk-usb.c
-+++ b/drivers/clk/at91/clk-usb.c
-@@ -48,11 +48,15 @@ static unsigned long at91sam9x5_clk_usb_recalc_rate(struct clk_hw *hw,
- 	struct at91sam9x5_clk_usb *usb = to_at91sam9x5_clk_usb(hw);
- 	unsigned int usbr;
- 	u8 usbdiv;
-+	unsigned int calcdclock;
- 
- 	regmap_read(usb->regmap, AT91_PMC_USB, &usbr);
- 	usbdiv = (usbr & AT91_PMC_OHCIUSBDIV) >> SAM9X5_USB_DIV_SHIFT;
- 
--	return DIV_ROUND_CLOSEST(parent_rate, (usbdiv + 1));
-+	calcdclock = DIV_ROUND_CLOSEST(parent_rate, (usbdiv + 1));
-+	pr_debug("clk-usb: calculating new rate, %lu hz / %u = %u hz\n",
-+		parent_rate, usbdiv + 1, calcdclock);
-+	return calcdclock;
- }
- 
- static int at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
-@@ -98,7 +102,6 @@ static int at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
- 		if (!best_diff)
- 			break;
- 	}
--
- 	if (best_rate < 0)
- 		return best_rate;
- 
-@@ -142,6 +145,9 @@ static int at91sam9x5_clk_usb_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (div > SAM9X5_USB_MAX_DIV + 1 || !div)
- 		return -EINVAL;
- 
-+	pr_debug("clk-usb: setting USB clock divider to %lu hz / %lu = %lu hz\n",
-+		parent_rate, div, rate);
-+
- 	regmap_update_bits(usb->regmap, AT91_PMC_USB, AT91_PMC_OHCIUSBDIV,
- 			   (div - 1) << SAM9X5_USB_DIV_SHIFT);
- 
-diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
-index 5ad9e9bdc8ee..5dfc4e464cfe 100644
---- a/drivers/usb/host/ohci-at91.c
-+++ b/drivers/usb/host/ohci-at91.c
-@@ -70,11 +70,12 @@ static const struct ohci_driver_overrides ohci_at91_drv_overrides __initconst =
- 
- /*-------------------------------------------------------------------------*/
- 
--static void at91_start_clock(struct ohci_at91_priv *ohci_at91)
-+static void at91_start_clock(struct ohci_at91_priv *ohci_at91, struct device *dev)
- {
- 	if (ohci_at91->clocked)
- 		return;
- 
-+	dev_dbg(dev, "Enabling hclk, iclk, and setting fclk to 48 Mhz\n");
- 	clk_set_rate(ohci_at91->fclk, 48000000);
- 	clk_prepare_enable(ohci_at91->hclk);
- 	clk_prepare_enable(ohci_at91->iclk);
-@@ -82,11 +83,12 @@ static void at91_start_clock(struct ohci_at91_priv *ohci_at91)
- 	ohci_at91->clocked = true;
- }
- 
--static void at91_stop_clock(struct ohci_at91_priv *ohci_at91)
-+static void at91_stop_clock(struct ohci_at91_priv *ohci_at91, struct device *dev)
- {
- 	if (!ohci_at91->clocked)
- 		return;
- 
-+	dev_dbg(dev, "Disabling hclk, iclk, and fclk\n");
- 	clk_disable_unprepare(ohci_at91->fclk);
- 	clk_disable_unprepare(ohci_at91->iclk);
- 	clk_disable_unprepare(ohci_at91->hclk);
-@@ -104,12 +106,19 @@ static void at91_start_hc(struct platform_device *pdev)
- 	/*
- 	 * Start the USB clocks.
- 	 */
--	at91_start_clock(ohci_at91);
-+	at91_start_clock(ohci_at91, &pdev->dev);
- 
- 	/*
- 	 * The USB host controller must remain in reset.
- 	 */
- 	writel(0, &regs->control);
-+
-+	/*
-+	 * Say what the clocks are set to.
-+	 */
-+	dev_dbg(&pdev->dev, "hclk set to: %lu hz\n", clk_get_rate(ohci_at91->hclk));
-+	dev_dbg(&pdev->dev, "iclk set to: %lu hz\n", clk_get_rate(ohci_at91->iclk));
-+	dev_dbg(&pdev->dev, "fclk set to: %lu hz\n", clk_get_rate(ohci_at91->fclk));
- }
- 
- static void at91_stop_hc(struct platform_device *pdev)
-@@ -128,7 +137,7 @@ static void at91_stop_hc(struct platform_device *pdev)
- 	/*
- 	 * Stop the USB clocks.
- 	 */
--	at91_stop_clock(ohci_at91);
-+	at91_stop_clock(ohci_at91, &pdev->dev);
- }
- 
- 
-@@ -623,7 +632,7 @@ ohci_hcd_at91_drv_suspend(struct device *dev)
- 
- 		/* flush the writes */
- 		(void) ohci_readl (ohci, &ohci->regs->control);
--		at91_stop_clock(ohci_at91);
-+		at91_stop_clock(ohci_at91, dev);
- 	}
- 
- 	return ret;
-@@ -638,7 +647,7 @@ ohci_hcd_at91_drv_resume(struct device *dev)
- 	if (ohci_at91->wakeup)
- 		disable_irq_wake(hcd->irq);
- 
--	at91_start_clock(ohci_at91);
-+	at91_start_clock(ohci_at91, dev);
- 
- 	ohci_resume(hcd, false);
- 
--- 
-2.16.3
+> +       .hws =3D {
+> +               [CLKID_AO_REMOTE]       =3D &remote_ao.hw,
+> +               [CLKID_AO_I2C_MASTER]   =3D &i2c_master_ao.hw,
+> +               [CLKID_AO_I2C_SLAVE]    =3D &i2c_slave_ao.hw,
+> +               [CLKID_AO_UART1]        =3D &uart1_ao.hw,
+> +               [CLKID_AO_UART2]        =3D &uart2_ao.hw,
+> +               [CLKID_AO_IR_BLASTER]   =3D &ir_blaster_ao.hw,
+> +               [CLKID_AO_SAR_ADC]      =3D &saradc_ao.hw,
+> +               [CLKID_AO_CLK81]        =3D &ao_clk81.hw,
+> +               [CLKID_AO_SAR_ADC_SEL]  =3D &axg_saradc_mux.hw,
+> +               [CLKID_AO_SAR_ADC_DIV]  =3D &axg_saradc_div.hw,
+> +               [CLKID_AO_SAR_ADC_CLK]  =3D &axg_saradc_gate.hw,
+> +       },
+> +       .num =3D NR_CLKS,
+> +};
+> +
+> +static struct meson_aoclk_data axg_aoclkc_data =3D {
 
+const?
 
+> +       .reset_reg      =3D AO_RTI_GEN_CNTL_REG0,
+> +       .num_reset      =3D ARRAY_SIZE(axg_aoclk_reset),
+> +       .reset          =3D axg_aoclk_reset,
+> +       .num_clks       =3D ARRAY_SIZE(axg_aoclk_regmap),
+> +       .clks           =3D axg_aoclk_regmap,
+> +       .hw_data        =3D &axg_aoclk_onecell_data,
+> +};
