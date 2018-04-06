@@ -1,45 +1,32 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [RFC 08/10] spi: s3c64xx: samsung: Remove support for
- Exynos5440
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
-	Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Tomasz Figa
-	<tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
-	<viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin
-	<edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede
-	<hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti
-	<andi@etezian.org>, Mark Brown <broonie@kernel.org>, Bartlomiej
-	Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern
-	<stern@rowland.harvard.edu>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson
-	<olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <066e917b-7207-9c10-4d6c-07273c6f49d9@samsung.com>
-Date: Wed, 25 Apr 2018 14:49:41 +0200
-MIME-version: 1.0
-In-reply-to: <20180424203239.21885-9-krzk@kernel.org>
-Content-type: text/plain; charset="utf-8"
-References: <20180424203239.21885-1-krzk@kernel.org>
-	<CGME20180424203409epcas2p45f55e5a5d211e78d4cadc3c4ffa5a9c0@epcas2p4.samsung.com>
-	<20180424203239.21885-9-krzk@kernel.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Dinh Nguyen <dinguyen@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521642012-9770-2-git-send-email-dinguyen@kernel.org>
+Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mturquette@baylibre.com,
+ will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1521642012-9770-1-git-send-email-dinguyen@kernel.org>
+ <1521642012-9770-2-git-send-email-dinguyen@kernel.org>
+Message-ID: <152303467206.143116.7701915429594440149@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCHv7 2/3] arm64: dts: stratix10: use clock bindings for the
+ Stratix10 platform
+Date: Fri, 06 Apr 2018 10:11:12 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/24/2018 10:32 PM, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Quoting Dinh Nguyen (2018-03-21 07:20:11)
+> Use the clock bindings for the Stratix10 SoC. This includes changing the =
+old
+> binding of "intc,clk-s10-mgr" to "intel,stratix10-clkmgr". The reason that
+> this can be done is that there are currently no clock driver for Stratix1=
+0,
+> thus there are no consumers of the old binding. So changing the binding w=
+ill
+> not break any legacy code.
+> =
 
-It's good you didn't remove S3C64XX_SPI_QUIRK_POLL entirely as it will
-be needed for Exynos5433 ISP SPI controllers.
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+This should go via arm-soc so I won't be apply this one.
