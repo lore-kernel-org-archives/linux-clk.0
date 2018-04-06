@@ -1,47 +1,30 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 1/7] clk: meson: migrate to devm_of_clk_add_hw_provider API
-Date: Mon, 9 Apr 2018 22:37:43 +0800
-Message-ID: <20180409143749.71197-2-yixun.lan@amlogic.com>
-In-Reply-To: <20180409143749.71197-1-yixun.lan@amlogic.com>
-References: <20180409143749.71197-1-yixun.lan@amlogic.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
+ mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180326173905.22313-6-manivannan.sadhasivam@linaro.org>
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+ devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+ daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+ viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+ <20180326173905.22313-6-manivannan.sadhasivam@linaro.org>
+Message-ID: <152305050727.94378.17986614283166307021@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v7 05/11] clk: actions: Add mux clock support
+Date: Fri, 06 Apr 2018 14:35:07 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-There is a protential memory leak, as of_clk_del_provider is
-never called if of_clk_add_hw_provider has been executed.
-Fix this by using devm variant API.
+Quoting Manivannan Sadhasivam (2018-03-26 10:38:59)
+> Add support for Actions Semi mux clock together with helper
+> functions to be used in composite clock.
+> =
 
-Fixes: f8c11f79912d ("clk: meson: Add GXBB AO Clock and Reset controller driver")
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/clk/meson/gxbb-aoclk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
 
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 9ec23ae9a219..eebb580b9e0f 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -191,7 +191,7 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
- 			&gxbb_aoclk_onecell_data);
- }
- 
--- 
-2.15.1
+Applied to clk-next
