@@ -1,60 +1,31 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AE125C2.70105@samsung.com>
-Date: Thu, 26 Apr 2018 10:05:06 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun
-	Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz
-	Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>, Russell King
-	<linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij
-	<linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown
-	<broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann
-	<arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Jaehoon Chung
-	<jh80.chung@samsung.com>
-Subject: Re: [RFC 03/10] cpufreq: exynos: Remove support for Exynos5440
-In-reply-to: <20180424203239.21885-4-krzk@kernel.org>
-References: <20180424203239.21885-1-krzk@kernel.org>
-	<CGME20180424203335epcas5p3bfd2172f68574b67818c1d2bc74041bb@epcas5p3.samsung.com>
-	<20180424203239.21885-4-krzk@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:40480 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750807AbeDFSSi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:18:38 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: ilialin@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <024f01d3c1cb$304eaa60$90ebff20$@codeaurora.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org, robh@kernel.org, will.deacon@arm.com,
+        amit.kucheria@linaro.org, tfinkel@codeaurora.org,
+        nicolas.dechesne@linaro.org, celster@codeaurora.org
+References: <1518616792-29028-1-git-send-email-ilialin@codeaurora.org>
+ <1518616792-29028-4-git-send-email-ilialin@codeaurora.org>
+ <152148100496.242365.3846617702949655708@swboyd.mtv.corp.google.com>
+ <024f01d3c1cb$304eaa60$90ebff20$@codeaurora.org>
+Message-ID: <152303871765.143116.6979602150972963768@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH v3 03/10] clk: qcom: Add CPU clock driver for msm8996
+Date: Fri, 06 Apr 2018 11:18:37 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
-
-On 2018년 04월 25일 05:32, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
+Quoting ilialin@codeaurora.org (2018-03-22 03:47:30)
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../bindings/cpufreq/cpufreq-exynos5440.txt        |  28 --
->  drivers/cpufreq/Kconfig.arm                        |  14 -
->  drivers/cpufreq/Makefile                           |   1 -
->  drivers/cpufreq/exynos5440-cpufreq.c               | 452 ---------------------
->  4 files changed, 495 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
->  delete mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
-> 
+> I will have to change the clk_hw_unregister_fixed_rate() as well then, right? This will be an API change.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-[snip]
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+You won't need to unregister anything? devm will take care of it.
