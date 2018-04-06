@@ -1,18 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f45.google.com ([209.85.214.45]:38731 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751516AbeD3LjE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Apr 2018 07:39:04 -0400
-Received: by mail-it0-f45.google.com with SMTP id q4-v6so1211729ite.3
-        for <linux-clk@vger.kernel.org>; Mon, 30 Apr 2018 04:39:03 -0700 (PDT)
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Mon, 30 Apr 2018 17:09:02 +0530
-Message-ID: <CAMty3ZC6SZp4HqyTXX1b17u-9JAYSZFP=+H5jGMwYgEmP+CbQw@mail.gmail.com>
-Subject: 
-To: linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+ Gabriel Fernandez <gabriel.fernandez@st.com>,
+ Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1522996773-24129-7-git-send-email-gabriel.fernandez@st.com>
+Cc: devicetree@vger.kernel.org, benjamin GAIGNARD <benjamin.gaignard@st.com>,
+ Loic PALLARDY <loic.pallardy@st.com>, olivier.bideau@st.com,
+ linux-kernel@vger.kernel.org, gabriel.fernandez.st@gmail.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
+ <1522996773-24129-7-git-send-email-gabriel.fernandez@st.com>
+Message-ID: <152304748362.94378.13779011954440917162@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 6/6] clk: stm32mp1: remove ck_apb_dbg clock
+Date: Fri, 06 Apr 2018 13:44:43 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-subscribe linux-clk
+Quoting gabriel.fernandez@st.com (2018-04-05 23:39:33)
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> =
+
+> It's recommended to use only clk_sys_dbg clock instead to activate
+> debug IP.
+> =
+
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
+
+Applied to clk-next
