@@ -1,93 +1,139 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:41818 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753939AbeDYOcM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Apr 2018 10:32:12 -0400
-Subject: Re: [PATCH v6 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-References: <20180419135426.155794-1-yixun.lan@amlogic.com>
- <1524661512.4026.67.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <2a307212-ea12-e7a1-cf6a-9fd7d9e9bb40@amlogic.com>
-Date: Wed, 25 Apr 2018 22:32:08 +0800
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
+ DA850 PSC
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        David Lechner
+	<david@lechnology.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree
+	<devicetree@vger.kernel.org>,
+        Linux ARM
+	<linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin
+ Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
+        Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-13-git-send-email-david@lechnology.com>
+ <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
+ <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
+ <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
+ <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
+ <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
+ <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
+Date: Fri, 6 Apr 2018 15:07:03 +0530
 MIME-Version: 1.0
-In-Reply-To: <1524661512.4026.67.camel@baylibre.com>
+In-Reply-To: <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome:
+Hi Bart,
 
-On 04/25/2018 09:05 PM, Jerome Brunet wrote:
-> On Thu, 2018-04-19 at 21:54 +0800, Yixun Lan wrote:
->>   This patch try to add AO clock and Reset driver for Amlogic's
->> Meson-AXG SoC.
->>   Please note that patch 7 need to wait for the DTS changes[3] merged
->> into mainline first, otherwise it will break the serial console.
+On Thursday 05 April 2018 09:21 PM, Bartosz Golaszewski wrote:
+> 2018-04-05 16:36 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+>> On Thursday 05 April 2018 07:14 PM, Bartosz Golaszewski wrote:
+>>> 2018-04-05 15:09 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+>>>> Hi Bartosz,
+>>>>
+>>>> On Friday 09 February 2018 10:18 PM, Michael Turquette wrote:
+>>>>> On Fri, Feb 9, 2018 at 8:22 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>>>>> 2018-01-08 3:17 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>>
+>>>>>> Hi David,
+>>>>>>
+>>>>>> I've been working on moving the genpd code from its own driver to the
+>>>>>> psc one. I couldn't get the system to boot though and problems
+>>>>>> happened very early in the boot sequence. I struggled to figure out
+>>>>>> what's happening, but eventually I noticed that psc uses
+>>>>>> CLK_OF_DECLARE() to initialize clocks. The functions registered this
+>>>>>> way are called very early in the boot sequence, way before
+>>>>>> late_initcall() in which the genpd framework is initialized. This of
+>>>>
+>>>> late_initcall() is too late for genpd to be initialized. As you may have
+>>>> seen with the latest set of patches, we have problems with timer
+>>>> initialization. After converting to platform devices, PSC and PLL clocks
+>>>> get initialized post time_init(). We are working that around using
+>>>> fixed-clocks, which hopefully will work (I still need to test many of
+>>>> the affected platforms).
+>>>>
+>>>> Can you please reply with the exact issue you faced with genpd framework
+>>>> initialization so we do have that on record.
+>>>>
+>>>
+>>> The exact issue manifested itself in a NULL-pointer dereference panic
+>>> when I tried moving the genpd code I had initially implemented as a
+>>> separate platform driver to what I believe was v6 or v7 of David's
+>>> series (before the psc driver became a platform driver, when it was
+>>> still using CLK_OF_DECLARE()). When I had tested a simple conversion
+>>> of that version to a platform_driver, genpd worked fine.
+>>>
+>>> I don't have the stack traces from these panics, but I recall some
+>>> debugfs functions being involved and the genpd late_initcalls are
+>>> related to debugfs. Looking at it now I don't see how exactly it could
+>>> fail though.
 >>
->>  patch 2: factor the common code into a dedicated file
->>  patch 3-5: add the aoclk driver for AXG SoC
->>  patch 6-7: drop unnecessary clock flags
+>> Do you have the code where you faced the problem stashed somewhere? I am
+>> not (yet) advocating going back to CLK_OF_DECLARE(). But there is a
+>> definite issue with timer being ready when not using CLK_OF_DECLARE().
+>> So, I want to make sure there the reason why we are going down the
+>> platform device path is a amply clear.
 >>
->> changes since v5 at [6]: 
->>  - drop unnecessary header files
->>  - add 'axg_aoclk' prefix to clk driver, make them more consistent
->>  - add missing end new line..
->>
->> changes since v4 at [5]: 
->>  - fix return err
->>  - introduce CONFIG_COMMON_CLK_MESON_AO
->>  - format/style minor fix
->>
->> changes since v3 at [4]: 
->>  - add 'const' contraint to the read-only data
->>  - switch to devm_of_clk_add_hw_provider API
->>  - check return value of devm_reset_controller_register
->>
->> changes since v2 at [2]: 
->>  - rework meson_aoclkc_probe() which leverage the of_match_data
->>  - merge patch 5-6 into this series
->>  - seperate DTS patch, will send to Kevin Hilman independently
->>  
->> changes since v1 at [0]: 
->>  - rebase to clk-meson's branch 'next/drivers' [1]
->>  - fix license, update to BSD-3-Clause
->>  - drop un-used include header file
->>
->> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
->> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
->> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
->> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
->> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
->> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
->> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
+>> Thanks,
+>> Sekhar
 > 
-> Yixun
+> Yes, you can still find it on my github[1].
 > 
-> Please :
->  - Fix checkpatch error in patch 5 
->  - Collect Philip's Ack on patch 4
-I've fixed above two
-
->  - Remove the extra new lines at EOF in patch 2 (maybe others, I did not check
-> them all) - 1 new line at the end of each file, not 2.
+> Bart
 > 
+> [1] github.com:brgl/linux.git  topic/davinci-genpd-final-v2
 
-but, I just go back and check the patch, couldn't find any file which
-end with 2 new lines at EOF, could you point me out?
+The panic issue in your branch is not related to genpd. Its because you 
+are accessing platform bus before it is initialized. The attached[1] 
+patch on top of your branch made it boot again.
 
+With your branch booting, I can see genpd related debugfs entries 
+getting created. I don't see devices being attached to the domains you 
+have though. I did not debug that. I suspect some matching issue.
 
-Yixun
+Can you please check that and confirm there is no issue with genpd and 
+using CLK_OF_DECLARE() to initialize clocks?
 
+Unless you report an issue back, or Mike and Stephen have ideas about 
+how to handle the dependency between PSC/PLL derived timer clock 
+initialization and and timer_probe(), I think we need to move back to 
+using CLK_OF_DECLARE(). 
 
+Thanks,
+Sekhar
+
+---8<---
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 9d9f94eee544..7e3d114efdac 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -281,12 +281,18 @@ int __davinci_psc_register_clocks(const struct davinci_psc_clk_info *info,
+ 		}
+ 	}
+ 
+-	DO_ONCE(pm_clk_add_notifier,
+-		&platform_bus_type, &platform_bus_notifier);
+-
+ 	return 0;
+ }
+ 
++static int __init davinci_pm_runtime_init(void)
++{
++       pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
++
++       return 0;
++}
++core_initcall(davinci_pm_runtime_init);
++
+ int davinci_psc_register_clocks(const struct davinci_psc_clk_info *info,
+ 				void __iomem *base)
+ {
