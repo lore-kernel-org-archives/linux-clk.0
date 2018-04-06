@@ -1,50 +1,31 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 08/21] bindings: display: Add compatible for A64 HDMI PHY
-Date: Mon, 30 Apr 2018 17:10:45 +0530
-Message-Id: <20180430114058.5061-9-jagan@amarulasolutions.com>
-In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:42072 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751387AbeDFSdM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:33:12 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Bai Ping <ping.bai@nxp.com>, kernel@pengutronix.de,
+        robh+dt@kernel.org, shawnguo@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521512644-25265-2-git-send-email-ping.bai@nxp.com>
+Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+References: <1521512644-25265-1-git-send-email-ping.bai@nxp.com>
+ <1521512644-25265-2-git-send-email-ping.bai@nxp.com>
+Message-ID: <152303959125.94378.14504188512693216896@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v6 2/4] clk: imx: add new gate/gate2 wrapper funtion
+Date: Fri, 06 Apr 2018 11:33:11 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-HDMI PHY on Allwinner A64 has similar like H3/H5.
+Quoting Bai Ping (2018-03-19 19:24:02)
+> Add new gate/gate2 wrapper function to register clocks with optional flags.
+> 
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
- 1 file changed, 1 insertion(+)
+Applied to clk-next
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 9ea4353caadd..7dcd1d64dfe4 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -104,6 +104,7 @@ Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-a83t-hdmi-phy
-     * allwinner,sun8i-h3-hdmi-phy
-+    * allwinner,sun50i-a64-hdmi-phy
-   - reg: base address and size of memory-mapped region
-   - clocks: phandles to the clocks feeding the HDMI PHY
-     * bus: the HDMI PHY interface clock
--- 
-2.14.3
