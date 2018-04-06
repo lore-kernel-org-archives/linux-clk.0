@@ -1,56 +1,38 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/4] clk: tegra20: Set correct parents for CDEV1/2 clocks
-Date: Fri, 27 Apr 2018 02:58:17 +0300
-Message-Id: <20180426235818.10018-4-digetx@gmail.com>
-In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>,
+ David Lechner <david@lechnology.com>, Kevin Hilman <khilman@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Ohad Ben-Cohen <ohad@wizery.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Sekhar Nori <nsekhar@ti.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180330152856.12297-9-brgl@bgdev.pl>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180330152856.12297-1-brgl@bgdev.pl> <20180330152856.12297-9-brgl@bgdev.pl>
+Message-ID: <152304721717.94378.15508132666893079542@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 8/8] clk: davinci: kill davinci_clk_reset_assert/deassert()
+Date: Fri, 06 Apr 2018 13:40:17 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Parents of CDEV1/2 clocks are determined by muxing of the corresponding
-pins. Pinctrl driver now provides the CDEV1/2 clock muxes and hence
-CDEV1/2 clocks could have correct parents. Set CDEV1/2 parents to the
-corresponding muxes to fix the parents.
+Quoting Bartosz Golaszewski (2018-03-30 08:28:56)
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> =
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra20.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> This code is no longer used. Remove it.
+> =
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 16cf4108f2ff..7e8b6de86d89 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -844,14 +844,12 @@ static void __init tegra20_periph_clk_init(void)
- 			     CLK_DIVIDER_POWER_OF_TWO, NULL);
- 
- 	/* cdev1 */
--	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
--	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
-+	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_mux", 0,
- 				    clk_base, 0, 94, periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_CDEV1] = clk;
- 
- 	/* cdev2 */
--	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, 0, 26000000);
--	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_fixed", 0,
-+	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_mux", 0,
- 				    clk_base, 0, 93, periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_CDEV2] = clk;
- 
--- 
-2.17.0
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Reviewed-by: David Lechner <david@lechnology.com>
+> ---
+
+I'll try to remember, but please send this again if we need to apply it
+to the clk tree for 4.18.
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
