@@ -1,41 +1,37 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 24 Apr 2018 09:31:52 -0500
-From: Rob Herring <robh@kernel.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-	Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Add some missing gcc clks for msm8996
-Message-ID: <20180424143152.kwnxzt7jyvga5hbi@rob-hp-laptop>
-References: <20180418000926.4998-1-bjorn.andersson@linaro.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180418000926.4998-1-bjorn.andersson@linaro.org>
+To: Abel Vesa <abel.vesa@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Irina Tirdea <irina.tirdea@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter Chen <peter.chen@freescale.com>, Sascha Hauer <kernel@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1522219599-10831-2-git-send-email-abel.vesa@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+ Anson Huang <anson.huang@nxp.com>,
+ Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>,
+ Abel Vesa <abelvesa@linux.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+ Abel Vesa <abel.vesa@nxp.com>
+References: <1522219599-10831-1-git-send-email-abel.vesa@nxp.com>
+ <1522219599-10831-2-git-send-email-abel.vesa@nxp.com>
+Message-ID: <152303880853.143116.713341287544981271@swboyd.mtv.corp.google.com>
+Subject: Re: [RESEND 1/4] clk: imx7d: Add USB clock information
+Date: Fri, 06 Apr 2018 11:20:08 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 05:09:26PM -0700, Bjorn Andersson wrote:
-> From: Rajendra Nayak <rnayak@codeaurora.org>
-> 
-> Add a few missing gcc clks for msm8996
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> [bjorn: omit aggre0_noc_qosgen_extref_clk]
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> 
-> This patch was accompanied by one that allows the udelay to be defined per
-> branch clock, used by the aggre0_noc_qosgen_extref_clk. I dropped this clock
-> and the accompanying path in hope that we can get these clock in place.
-> 
-> Several of these clocks are needed by the MSS remoteproc driver.
-> 
->  drivers/clk/qcom/gcc-msm8996.c               | 186 +++++++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-msm8996.h |   9 ++
->  2 files changed, 195 insertions(+)
+Quoting Abel Vesa (2018-03-27 23:46:35)
+> From: Peter Chen <peter.chen@freescale.com>
+> =
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> Add USB clock information, the pll_usb_main_clk is USB_PLL at CCM
+> which is the output of USBOTG2 PHY.
+> =
+
+> Signed-off-by: Peter Chen <peter.chen@freescale.com>
+> Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+
+Applied to clk-next
