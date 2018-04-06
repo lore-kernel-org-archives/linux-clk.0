@@ -1,59 +1,50 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 7/7] clk: meson: drop CLK_IGNORE_UNUSED flag
-Date: Sun, 8 Apr 2018 11:19:38 +0800
-Message-ID: <20180408031938.153474-8-yixun.lan@amlogic.com>
-In-Reply-To: <20180408031938.153474-1-yixun.lan@amlogic.com>
-References: <20180408031938.153474-1-yixun.lan@amlogic.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ David Lechner <david@lechnology.com>, linux-clk <linux-clk@vger.kernel.org>,
+ devicetree <devicetree@vger.kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Adam Ford <aford173@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-13-git-send-email-david@lechnology.com>
+ <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
+ <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
+ <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
+ <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
+ <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
+ <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
+ <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
+Message-ID: <152303318048.143116.2883441215887455211@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI DA850 PSC
+Date: Fri, 06 Apr 2018 09:46:20 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Rely on drivers to request the clock explicitly.
+Quoting Sekhar Nori (2018-04-06 02:37:03)
+> =
 
-Previous the kernel will leave the clock on while
-bootloader adready initilized the clock, this wasn't
-optimal way, so fix it here.
+> Can you please check that and confirm there is no issue with genpd and =
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/clk/meson/axg-aoclk.c  | 1 -
- drivers/clk/meson/gxbb-aoclk.c | 1 -
- 2 files changed, 2 deletions(-)
+> using CLK_OF_DECLARE() to initialize clocks?
+> =
 
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-index cb56d809d3df..8457b64b9b7c 100644
---- a/drivers/clk/meson/axg-aoclk.c
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -27,7 +27,6 @@ static struct clk_regmap _name##_ao = {					\
- 		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
--		.flags = CLK_IGNORE_UNUSED,				\
- 	},								\
- }
- 
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 0a2641d6fd33..aa655044011a 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -70,7 +70,6 @@ static struct clk_regmap _name##_ao = {					\
- 		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
--		.flags = CLK_IGNORE_UNUSED,				\
- 	},								\
- }
- 
--- 
-2.15.1
+> Unless you report an issue back, or Mike and Stephen have ideas about =
+
+> how to handle the dependency between PSC/PLL derived timer clock =
+
+> initialization and and timer_probe(), I think we need to move back to =
+
+> using CLK_OF_DECLARE(). =
+
+
+In such a case, please use the hybrid approach where the clks required
+for the clockevent and/or clocksource are registered in the early
+CLK_OF_DECLARE path but the rest of the clks get registered with a
+proper platform device and driver. There are examples of this approach
+on other platforms already.
