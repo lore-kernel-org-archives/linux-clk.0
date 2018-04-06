@@ -1,93 +1,147 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/7] clk: meson: axg: document bindings for the audio clock controller
-Date: Wed, 25 Apr 2018 18:33:03 +0200
-Message-Id: <20180425163304.10852-7-jbrunet@baylibre.com>
-In-Reply-To: <20180425163304.10852-1-jbrunet@baylibre.com>
-References: <20180425163304.10852-1-jbrunet@baylibre.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Dinh Nguyen <dinguyen@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521642012-9770-3-git-send-email-dinguyen@kernel.org>
+Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mturquette@baylibre.com,
+ will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1521642012-9770-1-git-send-email-dinguyen@kernel.org>
+ <1521642012-9770-3-git-send-email-dinguyen@kernel.org>
+Message-ID: <152303474801.143116.12893988829541761898@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCHv7 3/3] clk: socfpga: stratix10: add clock driver for Stratix10
+ platform
+Date: Fri, 06 Apr 2018 10:12:28 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Add documentation for the device tree bindings of the audio clock
-controller of the A113 based SoCs
+Quoting Dinh Nguyen (2018-03-21 07:20:12)
+> Add a clock driver for the Stratix10 SoC. The driver is similar to the
+> Cyclone5/Arria10 platforms, with the exception that this driver only uses
+> one single clock binding.
+> =
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- .../bindings/clock/amlogic,axg-audio-clkc.txt      | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-new file mode 100644
-index 000000000000..1b989ceda567
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-@@ -0,0 +1,56 @@
-+* Amlogic AXG Audio Clock Controllers
-+
-+The Amlogic AXG audio clock controller generates and supplies clock to the
-+other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
-+devices.
-+
-+Required Properties:
-+
-+- compatible	: should be "amlogic,axg-audio-clkc" for the A113X and A113D
-+- reg		: physical base address of the clock controller and length of
-+		  memory mapped region.
-+- clocks	: a list of phandle + clock-specifier pairs for the clocks listed
-+		  in clock-names.
-+- clock-names	: must contain the following:
-+		  * "pclk" - Main peripheral bus clock
-+		  may contain the following:
-+		  * "mst_in[0-7]" - 8 input plls to generate clock signals
-+		  * "slv_sclk[0-9]" - 10 slave bit clocks provided by external
-+				      components.
-+		  * "slv_lrclk[0-9]" - 10 slave sample clocks provided by external
-+				       components.
-+- reset		: phandle of the internal reset line
-+- #clock-cells	: should be 1.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/axg-audio-clkc.h header and can be
-+used in device tree sources.
-+
-+Example:
-+
-+clkc_audio: clock-controller {
-+	compatible = "amlogic,axg-audio-clkc";
-+	reg = <0x0 0x0 0x0 0xb4>;
-+	#clock-cells = <1>;
-+
-+	clocks = <&clkc CLKID_AUDIO>,
-+		 <&clkc CLKID_MPLL0>,
-+		 <&clkc CLKID_MPLL1>,
-+		 <&clkc CLKID_MPLL2>,
-+		 <&clkc CLKID_MPLL3>,
-+		 <&clkc CLKID_HIFI_PLL>,
-+		 <&clkc CLKID_FCLK_DIV3>,
-+		 <&clkc CLKID_FCLK_DIV4>,
-+		 <&clkc CLKID_GP0_PLL>;
-+	clock-names = "pclk",
-+		      "mst_in0",
-+		      "mst_in1",
-+		      "mst_in2",
-+		      "mst_in3",
-+		      "mst_in4",
-+		      "mst_in5",
-+		      "mst_in6",
-+		      "mst_in7";
-+	resets = <&reset RESET_AUDIO>;
-+};
--- 
-2.14.3
+Applied to clk-next but I made some fixes. Also, it would be nice if you
+could follow up with using the platform driver APIs to map memory and
+also make sure to implement a driver remove path or block it with the
+suppress attribute.
+
+diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk-g=
+ate-s10.c
+index 71ca3c045a42..eee2d48ab656 100644
+--- a/drivers/clk/socfpga/clk-gate-s10.c
++++ b/drivers/clk/socfpga/clk-gate-s10.c
+@@ -4,6 +4,7 @@
+  */
+ #include <linux/clk-provider.h>
+ #include <linux/slab.h>
++#include "stratix10-clk.h"
+ #include "clk.h"
+ =
+
+ #define SOCFPGA_CS_PDBG_CLK	"cs_pdbg_clk"
+@@ -63,7 +64,7 @@ static const struct clk_ops dbgclk_ops =3D {
+ 	.get_parent =3D socfpga_gate_get_parent,
+ };
+ =
+
+-struct clk *s10_register_gate(char *name, const char *parent_name,
++struct clk *s10_register_gate(const char *name, const char *parent_name,
+ 			      const char * const *parent_names,
+ 			      u8 num_parents, unsigned long flags,
+ 			      void __iomem *regbase, unsigned long gate_reg,
+diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk=
+-periph-s10.c
+index 6021ac1b0667..568f59b58ddf 100644
+--- a/drivers/clk/socfpga/clk-periph-s10.c
++++ b/drivers/clk/socfpga/clk-periph-s10.c
+@@ -5,6 +5,7 @@
+ #include <linux/slab.h>
+ #include <linux/clk-provider.h>
+ =
+
++#include "stratix10-clk.h"
+ #include "clk.h"
+ =
+
+ #define CLK_MGR_FREE_SHIFT		16
+@@ -71,7 +72,7 @@ static const struct clk_ops peri_cnt_clk_ops =3D {
+ 	.get_parent =3D clk_periclk_get_parent,
+ };
+ =
+
+-struct clk *s10_register_periph(char *name, const char *parent_name,
++struct clk *s10_register_periph(const char *name, const char *parent_name,
+ 				const char * const *parent_names,
+ 				u8 num_parents, unsigned long flags,
+ 				void __iomem *reg, unsigned long offset)
+@@ -103,7 +104,7 @@ struct clk *s10_register_periph(char *name, const char =
+*parent_name,
+ 	return clk;
+ }
+ =
+
+-struct clk *s10_register_cnt_periph(char *name, const char *parent_name,
++struct clk *s10_register_cnt_periph(const char *name, const char *parent_n=
+ame,
+ 				    const char * const *parent_names,
+ 				    u8 num_parents, unsigned long flags,
+ 				    void __iomem *regbase, unsigned long offset,
+diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pl=
+l-s10.c
+index ef24ca7a0cc4..2d5d8b43727e 100644
+--- a/drivers/clk/socfpga/clk-pll-s10.c
++++ b/drivers/clk/socfpga/clk-pll-s10.c
+@@ -5,6 +5,7 @@
+ #include <linux/slab.h>
+ #include <linux/clk-provider.h>
+ =
+
++#include "stratix10-clk.h"
+ #include "clk.h"
+ =
+
+ /* Clock Manager offsets */
+diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+index 27a08b3b30e6..3a11c382a663 100644
+--- a/drivers/clk/socfpga/clk-s10.c
++++ b/drivers/clk/socfpga/clk-s10.c
+@@ -48,11 +48,11 @@ static const struct stratix10_pll_clock s10_pll_clks[] =
+=3D {
+ };
+ =
+
+ static const struct stratix10_perip_c_clock s10_main_perip_c_clks[] =3D {
+-	{ STRATIX10_MAIN_MPU_BASE_CLK, "main_mpu_base_clk", "main_pll", 0, 1, 0, =
+0x84},
+-	{ STRATIX10_MAIN_NOC_BASE_CLK, "main_noc_base_clk", "main_pll", 0, 1, 0, =
+0x88},
+-	{ STRATIX10_PERI_MPU_BASE_CLK, "peri_mpu_base_clk", "periph_pll", 0, 1, 0,
++	{ STRATIX10_MAIN_MPU_BASE_CLK, "main_mpu_base_clk", "main_pll", NULL, 1, =
+0, 0x84},
++	{ STRATIX10_MAIN_NOC_BASE_CLK, "main_noc_base_clk", "main_pll", NULL, 1, =
+0, 0x88},
++	{ STRATIX10_PERI_MPU_BASE_CLK, "peri_mpu_base_clk", "periph_pll", NULL, 1=
+, 0,
+ 	  0xF4},
+-	{ STRATIX10_PERI_NOC_BASE_CLK, "peri_noc_base_clk", "periph_pll", 0, 1, 0,
++	{ STRATIX10_PERI_NOC_BASE_CLK, "peri_noc_base_clk", "periph_pll", NULL, 1=
+, 0,
+ 	  0xF8},
+ };
+ =
+
+diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stra=
+tix10-clk.h
+index f6c9291ed315..e8e121907952 100644
+--- a/drivers/clk/socfpga/stratix10-clk.h
++++ b/drivers/clk/socfpga/stratix10-clk.h
+@@ -76,5 +76,5 @@ struct clk *s10_register_gate(const char *, const char *,
+ 			      unsigned long, void __iomem *,
+ 			      unsigned long, unsigned long,
+ 			      unsigned long, unsigned long, u8,
+-			      unsigned long, unsigned long, u8);
++			      unsigned long, u8, u8);
