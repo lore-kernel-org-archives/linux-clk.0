@@ -1,115 +1,30 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 30 Apr 2018 11:30:29 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: matthias.bgg@kernel.org
-Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
-	robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, davem@davemloft.net,
-	gregkh@linuxfoundation.org, mchehab@kernel.org,
-	rdunlap@infradead.org, sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-	matthias.bgg@gmail.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [v3 01/10] dt-bindings: mediatek: mmsys: Add support for mfd
-Message-ID: <20180430103029.GD5147@dell>
-References: <cover.1524820923.git.mbrugger@suse.com>
- <64ca273429d92f581568a48f3efe6035af65f579.1524820923.git.mbrugger@suse.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <64ca273429d92f581568a48f3efe6035af65f579.1524820923.git.mbrugger@suse.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
+ mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180326173905.22313-10-manivannan.sadhasivam@linaro.org>
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+ devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+ daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+ viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+ <20180326173905.22313-10-manivannan.sadhasivam@linaro.org>
+Message-ID: <152305051675.94378.12446595449196994336@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v7 09/11] clk: actions: Add composite clock support
+Date: Fri, 06 Apr 2018 14:35:16 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
+Quoting Manivannan Sadhasivam (2018-03-26 10:39:03)
+> Add support for Actions Semi composite clock. This clock
+> consists of gate, mux, divider, factor and fixed factor clocks.
+> =
 
-> From: Matthias Brugger <mbrugger@suse.com>
-> 
-> Add binding description for the mmsys mfd for some Mediatek
-> devices. mmsys has some registers to control clock gates (which is
-> used in the clk driver) and some registers to set the routing and enable
-> the differnet blocks of the display subsystem.
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 --
->  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
->  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 ++++++++++++++++++++++
->  3 files changed, 28 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> index 4eb8bbe15c01..4468345f8b1a 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> @@ -6,10 +6,8 @@ The Mediatek mmsys controller provides various clocks to the system.
->  Required Properties:
->  
->  - compatible: Should be one of:
-> -	- "mediatek,mt2701-mmsys", "syscon"
->  	- "mediatek,mt2712-mmsys", "syscon"
->  	- "mediatek,mt6797-mmsys", "syscon"
-> -	- "mediatek,mt8173-mmsys", "syscon"
->  - #clock-cells: Must be 1
->  
->  The mmsys controller uses the common clk binding from
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> index 383183a89164..85a3b4ec06cd 100644
-> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> @@ -9,7 +9,7 @@ function block.
->  
->  All DISP device tree nodes must be siblings to the central MMSYS_CONFIG node.
->  For a description of the MMSYS_CONFIG binding, see
-> -Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt.
-> +Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
->  
->  DISP function blocks
->  ====================
-> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-> new file mode 100644
-> index 000000000000..2331ae16917e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-> @@ -0,0 +1,27 @@
-> +MediaTek MMSYS Multifunction Device Driver
 
-What is "MMSYS"?
-
-"Multi-Function Driver"s are specific to Linux.
-
-What actually is the device?
-
-> +MMSYS is a multifunction device with the following sub modules:
-> +- clocks for the multi-media subsystem
-> +- central node for the DRM subsystem.
-> +
-> +This document describes the binding for MFD device. The MFD takes care to initailize
-> +the clock driver and the DRM driver. More info see
-> +Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> +
-> +Required properties:
-> +- compatible: Should be one of:
-> +	- "mediatek,mt2701-mmsys", "syscon"
-> +	- "mediatek,mt8173-mmsys", "syscon"
-> +- #clock-cells: Must be 1
-> +
-> +Optional properties:
-> +- power-domains: list of powerdomains needed for the subsystem to work
-> +
-> +Example:
-> +
-> +mmsys: clock-controller@14000000 {
-> +	compatible = "mediatek,mt8173-mmsys", "syscon";
-> +	reg = <0 0x14000000 0 0x1000>;
-> +	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
-> +	#clock-cells = <1>;
-> +};
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Applied to clk-next
