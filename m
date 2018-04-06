@@ -1,48 +1,32 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 2/3] clk: qcom: gdsc: Add support to poll for higher timeout value
-Date: Mon,  9 Apr 2018 14:11:45 +0530
-Message-Id: <1523263306-28665-3-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1523263306-28665-1-git-send-email-tdas@codeaurora.org>
-References: <1523263306-28665-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Quentin Schulz <quentin.schulz@bootlin.com>, mark.rutland@arm.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, shiraz.linux.kernel@gmail.com,
+ vireshk@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <c7240072ab53d5d34a9756389729343243028eb3.1523000725.git-series.quentin.schulz@bootlin.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Quentin Schulz <quentin.schulz@bootlin.com>
+References: <0635969b6ef0fe528a27a8b6493cc3df770e1f60.1523000725.git-series.quentin.schulz@bootlin.com>
+ <c7240072ab53d5d34a9756389729343243028eb3.1523000725.git-series.quentin.schulz@bootlin.com>
+Message-ID: <152304765337.94378.9011588137332248203@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/2] clk: spear: fix WDT clock definition on SPEAr600
+Date: Fri, 06 Apr 2018 13:47:33 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Amit Nischal <anischal@codeaurora.org>
+Quoting Quentin Schulz (2018-04-06 00:50:45)
+> There is no SPEAr600 device named "wdt". Instead, the description of the
+> WDT (watchdog) was recently added to the Device Tree, and the device
+> name is "fc880000.wdt", so we should associate the WDT fixed rate clock
+> to this device name.
+> =
 
-For some gdscs, it might take longer time up to 500us for updating their
-status. Update the timeout value for all GDSC polling status.
+> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> ---
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/gdsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to clk-next
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 266fefa..cb61c15 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -41,7 +41,7 @@
- #define RETAIN_MEM		BIT(14)
- #define RETAIN_PERIPH		BIT(13)
-
--#define TIMEOUT_US		100
-+#define TIMEOUT_US		500
-
- #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+I take it there are other problems though, e.g. clcd. Why not use DT
+lookups instead of clkdev ones?
