@@ -1,41 +1,31 @@
-Return-Path: <sboyd@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:42146 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751387AbeDFSdS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Apr 2018 14:33:18 -0400
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
- linux-omap@vger.kernel.org, mturquette@baylibre.com, tony@atomide.com
+To: Bai Ping <ping.bai@nxp.com>, kernel@pengutronix.de,
+        robh+dt@kernel.org, shawnguo@kernel.org
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <0da17b8f-62af-1634-9dea-85445d28d587@ti.com>
-Cc: arnd@arndb.de, linux-arm-kernel@lists.infradead.org
-References: <1522172824-14094-1-git-send-email-t-kristo@ti.com>
- <0da17b8f-62af-1634-9dea-85445d28d587@ti.com>
-Message-ID: <152295875421.91052.344369730121423981@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: ti: fix flag space conflict with clkctrl clocks
-Date: Thu, 05 Apr 2018 13:05:54 -0700
+In-Reply-To: <1521512644-25265-4-git-send-email-ping.bai@nxp.com>
+Cc: fabio.estevam@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, jacky.baip@gmail.com
+References: <1521512644-25265-1-git-send-email-ping.bai@nxp.com>
+ <1521512644-25265-4-git-send-email-ping.bai@nxp.com>
+Message-ID: <152303959738.94378.12246273197414049832@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v6 4/4] clk: imx: add clock driver for imx6sll
+Date: Fri, 06 Apr 2018 11:33:17 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Tero Kristo (2018-03-29 11:25:07)
-> On 27/03/18 20:47, Tero Kristo wrote:
-> > The introduction of support for CLK_SET_RATE_PARENT flag for clkctrl
-> > clocks used a generic clock flag, which causes a conflict with the
-> > rest of the clkctrl flags, namely the NO_IDLEST flag. This can cause
-> > boot failures on certain platforms where this flag is introduced, by
-> > omitting the wait for the clockctrl module to be fully enabled before
-> > proceeding with rest of the code.
-> > =
+Quoting Bai Ping (2018-03-19 19:24:04)
+> Add clk driver support for imx6sll.
+> 
+> Signed-off-by: Bai Ping <ping.bai@nxp.com>
+> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
 
-> > Fix this by moving all the clkctrl specific flags to their own bit-rang=
-e.
-> > =
+Applied to clk-next
 
-> > Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> > Fixes: 49159a9dc3da ("clk: ti: add support for CLK_SET_RATE_PARENT flag=
-")
-> > Reported-by: Christophe Lyon <christophe.lyon@linaro.org>
-> =
-
-> Stephen, can you pick this up as a late fix?
-> =
-
-
-Sorry I was traveling for a week. I'll pick this up for this merge
-window and then stable can get it.
