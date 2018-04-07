@@ -1,84 +1,87 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Biju Das <biju.das@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: rcar-gen2: Centralize quirks handling
-Date: Tue, 10 Apr 2018 15:04:58 +0200
-Message-Id: <1523365498-16789-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Sat, 7 Apr 2018 10:10:36 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: afaerber@suse.de
+Cc: sboyd@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	robh+dt@kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com,
+	96boards@ucrobotics.com, devicetree@vger.kernel.org,
+	davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, viresh.kumar@linaro.org,
+	hzhang@ucrobotics.com, bdong@ucrobotics.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com
+Subject: Re: [PATCH v7 01/11] arm64: dts: actions: Add S900 clock management
+ unit nodes
+Message-ID: <20180407044036.k3gi5ocnmpoll5gx@linaro.org>
+References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
+ <20180326173905.22313-2-manivannan.sadhasivam@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180326173905.22313-2-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce centralized quirks handling like on R-Car Gen3, and convert
-the RZ/G1C SD clock table handling over to it.
+Hi Andreas,
 
-This makes it easier to add more quirks later, if/when needed.
+Since the clk driver got applied, can you please take the dts changes
+through linux-actions tree?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in clk-renesas-for-v4.18.
+Thanks,
+Mani
 
- drivers/clk/renesas/rcar-gen2-cpg.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/renesas/rcar-gen2-cpg.c b/drivers/clk/renesas/rcar-gen2-cpg.c
-index 0c49f59d5074b1c4..daf88bc2cdae177b 100644
---- a/drivers/clk/renesas/rcar-gen2-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen2-cpg.c
-@@ -261,9 +261,15 @@ static const struct clk_div_table cpg_sd01_div_table[] = {
- static const struct rcar_gen2_cpg_pll_config *cpg_pll_config __initdata;
- static unsigned int cpg_pll0_div __initdata;
- static u32 cpg_mode __initdata;
-+static u32 cpg_quirks __initdata;
- 
--static const struct soc_device_attribute soc_r8a77470[] = {
--	{ .soc_id = "r8a77470" },
-+#define SD_SKIP_FIRST	BIT(0)		/* Skip first clock in SD table */
-+
-+static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
-+	{
-+		.soc_id = "r8a77470",
-+		.data = (void *)SD_SKIP_FIRST,
-+	},
- 	{ /* sentinel */ }
- };
- 
-@@ -333,7 +339,7 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
- 
- 	case CLK_TYPE_GEN2_SD0:
- 		table = cpg_sd01_div_table;
--		if (soc_device_match(soc_r8a77470))
-+		if (cpg_quirks & SD_SKIP_FIRST)
- 			table++;
- 
- 		shift = 4;
-@@ -341,7 +347,7 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
- 
- 	case CLK_TYPE_GEN2_SD1:
- 		table = cpg_sd01_div_table;
--		if (soc_device_match(soc_r8a77470))
-+		if (cpg_quirks & SD_SKIP_FIRST)
- 			table++;
- 
- 		shift = 0;
-@@ -372,9 +378,15 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
- int __init rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config,
- 			      unsigned int pll0_div, u32 mode)
- {
-+	const struct soc_device_attribute *attr;
-+
- 	cpg_pll_config = config;
- 	cpg_pll0_div = pll0_div;
- 	cpg_mode = mode;
-+	attr = soc_device_match(cpg_quirks_match);
-+	if (attr)
-+		cpg_quirks = (uintptr_t)attr->data;
-+	pr_debug("%s: mode = 0x%x quirks = 0x%x\n", __func__, mode, cpg_quirks);
- 
- 	spin_lock_init(&cpg_lock);
- 
--- 
-2.7.4
+On Mon, Mar 26, 2018 at 11:08:55PM +0530, Manivannan Sadhasivam wrote:
+> Add Actions Semi S900 Clock Management Unit (CMU) nodes
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  arch/arm64/boot/dts/actions/s900.dtsi | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+> index 11406f6d3a6d..fee0c9557656 100644
+> --- a/arch/arm64/boot/dts/actions/s900.dtsi
+> +++ b/arch/arm64/boot/dts/actions/s900.dtsi
+> @@ -4,6 +4,7 @@
+>   * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>   */
+>  
+> +#include <dt-bindings/clock/actions,s900-cmu.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+>  / {
+> @@ -88,6 +89,18 @@
+>  		#clock-cells = <0>;
+>  	};
+>  
+> +	losc: losc {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <32768>;
+> +		#clock-cells = <0>;
+> +	};
+> +
+> +	diff24M: diff24M {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <24000000>;
+> +		#clock-cells = <0>;
+> +	};
+> +
+>  	soc {
+>  		compatible = "simple-bus";
+>  		#address-cells = <2>;
+> @@ -154,6 +167,13 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		cmu: clock-controller@e0160000 {
+> +			compatible = "actions,s900-cmu";
+> +			reg = <0x0 0xe0160000 0x0 0x1000>;
+> +			clocks = <&hosc>, <&losc>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+>  		timer: timer@e0228000 {
+>  			compatible = "actions,s900-timer";
+>  			reg = <0x0 0xe0228000 0x0 0x8000>;
+> -- 
+> 2.14.1
+> 
