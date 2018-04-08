@@ -1,84 +1,59 @@
-Return-Path: <marcel@ziswiler.com>
-Message-ID: <1524832404.6979.9.camel@ziswiler.com>
-Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-From: Marcel Ziswiler <marcel@ziswiler.com>
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter
- De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
- <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc
- Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 27 Apr 2018 14:33:24 +0200
-In-Reply-To: <20180426235818.10018-2-digetx@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
-	 <20180426235818.10018-2-digetx@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 7/7] clk: meson: drop CLK_IGNORE_UNUSED flag
+Date: Sun, 8 Apr 2018 11:19:38 +0800
+Message-ID: <20180408031938.153474-8-yixun.lan@amlogic.com>
+In-Reply-To: <20180408031938.153474-1-yixun.lan@amlogic.com>
+References: <20180408031938.153474-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dmitry
+Rely on drivers to request the clock explicitly.
 
-Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around e.g.
-DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
+Previous the kernel will leave the clock on while
+bootloader adready initilized the clock, this wasn't
+optimal way, so fix it here.
 
-On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
-> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider
-> as
-> a parent. Add these dividers in order to be able to provide that
-> parent
-> option.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-
-> tegra20.c
-> index 0ee56dd04cec..16cf4108f2ff 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -26,6 +26,8 @@
->  #include "clk.h"
->  #include "clk-id.h"
->  
-> +#define MISC_CLK_ENB 0x48
-> +
->  #define OSC_CTRL 0x50
->  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
->  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
-> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
->  				    periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_PEX] = clk;
->  
-> +	/* cdev1 OSC divider */
-> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
-> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ drivers/clk/meson/axg-aoclk.c  | 1 -
+ drivers/clk/meson/gxbb-aoclk.c | 1 -
+ 2 files changed, 2 deletions(-)
 
-So it would be:
-
-+			     0, clk_base + MISC_CLK_ENB, 22, 2,
-
-> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +
-> +	/* cdev2 OSC divider */
-> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
-> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-
-And:
-
-+			     0, clk_base + MISC_CLK_ENB, 20, 2,
-
-> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +
->  	/* cdev1 */
->  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0,
-> 26000000);
->  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed",
-> 0,
-
-Cheers
-
-Marcel
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index cb56d809d3df..8457b64b9b7c 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -27,7 +27,6 @@ static struct clk_regmap _name##_ao = {					\
+ 		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+-		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
+ 
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 0a2641d6fd33..aa655044011a 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -70,7 +70,6 @@ static struct clk_regmap _name##_ao = {					\
+ 		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+-		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
+ 
+-- 
+2.15.1
