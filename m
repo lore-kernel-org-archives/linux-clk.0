@@ -1,95 +1,183 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1523439447-1084-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1523439447-1084-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Apr 2018 12:36:46 +0200
-Message-ID: <CAMuHMdXViS-HoHWaO55FW3vepMt-KOmo-EpF1C-6N=Kq_WgV1Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: cpg-mssr: Add support for R-Car E3
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.130]:50224 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751697AbeDHHfw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Apr 2018 03:35:52 -0400
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Xing Zheng <xing.zheng@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Xiao Yao <xiaoyao@rock-chips.com>,
+        Ziyuan Xu <xzy.xu@rock-chips.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH v3 1/2] clk: divider: Add CLK_DIVIDER_EVEN flag support
+Date: Sun,  8 Apr 2018 15:28:17 +0800
+Message-Id: <1523172498-74798-1-git-send-email-shawn.lin@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shimoda-san,
+CLK_DIVIDER_EVEN is used for clock divders that should only
+use even number in the div field.
 
-On Wed, Apr 11, 2018 at 11:37 AM, Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Initial support for R-Car E3 (r8a77990), including core and module
-> clocks.
->
-> Based on the Table 8.2g of "R-Car Series, 3rd Generation User's Manual:
-> Hardware ((Rev. 0.80, Oct 31, 2017) with Manual Errata on Feb. 28, 2018".
->
-> Inspried by patches by Takeshi Kihara in the BSP.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Two clock divder should consider to use this flag
+(1) The divder is physically only support even div number to
+generate 50% duty cycle clock rate.
+(2) The divder's clock consumer request it to use even div number
+to generate the most closest requested rate for whatever reason.
 
-Thanks for your patch!
+In some platforms, for instance Rockchip, the eMMC/SDIO/SDMMC should
+request divder to use even number when working at a high throughput
+speed mode reliably. However, that wasn't guaranteed by clock framework.
+So the previous tricky is to carefully assign magic clock rate to their
+parents as well as consumer's clock rate when requesting. That works
+bad in practice if folks change the parents clock rate or the clock
+hierarchy randomly. That also work bad if the consumer's clock rate
+came from the DT, which is changed so fraquent for different boards.
 
-> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-> @@ -26,6 +26,7 @@ Required Properties:
->        - "renesas,r8a77965-cpg-mssr" for the r8a77965 SoC (R-Car M3-N)
->        - "renesas,r8a77970-cpg-mssr" for the r8a77970 SoC (R-Car V3M)
->        - "renesas,r8a77980-cpg-mssr" for the r8a77980 SoC (R-Car V3H)
-> +      - "renesas,r8a77990-cpg-mssr" for the r8a77995 SoC (R-Car E3)
+To make it's less prone to make mistake and to make it really respect
+the fact that the divder should use even number to the div field, we
+need the clock framework's help. Now we have CLK_DIVIDER_POWER_OF_TWO,
+which could guarantee the div field is even number, however, obviously
+it skips the even numbers which isn't the power of 2, but maybe which is
+the best div to generate closest clock rate for consumer.
 
-r8a77990 SoC
+Look at the examples here when doing some random test on Rockchip's
+platforms, by changing the requested clock rate from DT, namely
+assigning different max-frquency for MMC node,
 
->        - "renesas,r8a77995-cpg-mssr" for the r8a77995 SoC (R-Car D3)
+when the mmc host driver requests 80MHz with CLK_DIVIDER_POWER_OF_TWO
+flag for the clock divder, it shows the final clock rate is 61.44Mhz
 
-> --- /dev/null
-> +++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> @@ -0,0 +1,291 @@
+pll_vpll0		1		1 983039999     0   0
+   vpll0		4		4 983039999     0   0
+     clk_emmc_div       1		1 122880000     0   0
+	clk_emmc	1		1 122880000     0   0
+	  emmc_sample	0		0  61440000	0 155
+	  emmc_drv	0		0  61440000	0 180
 
-> +static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
+With this patch and add CLK_DIVIDER_EVEN flag for clk_emmc_div, we get
+the final clock rate, 67.7376MHz.
 
-> +       /* Core Clock Outputs */
+pll_vpll1               1		1 812851199	0   0
+   vpll1                2		2 812851199     0   0
+     clk_emmc_div       1		1 135475200     0   0
+	clk_emmc	1		1 135475200     0   0
+	  emmc_sample   0		0  67737600     0 113
+	  emmc_drv	0		0  67737600	0 180
 
-> +       DEF_GEN3_PE("s0d6c",   R8A77990_CLK_S0D6C, CLK_S0, 6, CLK_PE, 6),
+Apprently 67737600 is better than 61440000 when requesting 80MHz.
+Of course, we could have more case that worsen the gap between
+the desired rate and the actual rate if using CLK_DIVIDER_POWER_OF_TWO.
 
-... CLK_PE, 2),
+Alternatively, clk_div_table could be resorted to handle different kinds
+of div limilation, and it seems to be applied to irregular div calculation
+in practice by current clock provider drivers, but even number for div
+field is a rather common, regular and symmetrical requirement. So it is
+worth to introduces CLK_DIVIDER_EVEN flag for clock framework to make
+the best in this process.
 
-> +       DEF_GEN3_PE("s3d1c",   R8A77990_CLK_S3D1C, CLK_S3, 1, CLK_PE, 1),
-> +       DEF_GEN3_PE("s3d2c",   R8A77990_CLK_S3D2C, CLK_S3, 2, CLK_PE, 2),
-> +       DEF_GEN3_PE("s3d4c",   R8A77990_CLK_S3D4C, CLK_S3, 4, CLK_PE, 4),
-> +
-> +       DEF_DIV6P1("canfd",    R8A77990_CLK_CANFD, CLK_PLL0D6, 0x244),
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-I cannot confirm the parent, as Section 8.2.18 ("CAN-FD Clock Frequency
-Control Register (CANFDCKCR)") does not specify the source clock frequency
-for R-Car E3 (unlike for D3). But 800 MHz sounds sane.
+---
 
-> +       DEF_DIV6P1("csi0",     R8A77990_CLK_CSI0,  CLK_PLL1D2, 0x00c),
+Changes in v3:
+- Fix a wrong if condition check
 
-I cannot confirm the parent clock, as CSI0 is not documented.
-But given PLL1 runs at 1.6 GHz, PLL1/2 is consistent with PLL1/4 on other
-R-Car Gen3 SoCs with a faster PLL1 (3.2 GHz).
+Changes in v2:
+- Avoid to use div 1 if (CLK_DIVIDER_EVEN | CLK_DIVIDER_POWER_OF_TWO)
+  suggested by Heiko. And seems actually no other flags should be bothered
+  by this newly added CLK_DIVIDER_EVEN.
 
-> +static const struct mssr_mod_clk r8a77990_mod_clks[] __initconst = {
+ drivers/clk/clk-divider.c    | 26 ++++++++++++++++++++++++--
+ include/linux/clk-provider.h |  3 +++
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
-> +       DEF_MOD("vin7",                  804,   R8A77990_CLK_S1D2),
-> +       DEF_MOD("vin6",                  805,   R8A77990_CLK_S1D2),
-
-Vin6/7 have been removed in the Feb. errata.
-
-With the above fixed/confirmed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index b6234a5..8f305f1 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -159,8 +159,17 @@ static bool _is_valid_table_div(const struct clk_div_table *table,
+ static bool _is_valid_div(const struct clk_div_table *table, unsigned int div,
+ 			  unsigned long flags)
+ {
+-	if (flags & CLK_DIVIDER_POWER_OF_TWO)
+-		return is_power_of_2(div);
++	bool is_valid;
++
++	if (flags & CLK_DIVIDER_POWER_OF_TWO) {
++		is_valid = is_power_of_2(div);
++		if (flags & CLK_DIVIDER_EVEN)
++			return is_valid && (div != 1);
++		return is_valid;
++	}
++
++	if (flags & CLK_DIVIDER_EVEN)
++		return !(div % 2);
+ 	if (table)
+ 		return _is_valid_table_div(table, div);
+ 	return true;
+@@ -208,6 +217,12 @@ static int _div_round_up(const struct clk_div_table *table,
+ {
+ 	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+ 
++	/*
++	 * Check even before power of two to avoid div 1 if combination
++	 * happens, which applies to all the following similarities.
++	 */
++	if (flags & CLK_DIVIDER_EVEN)
++		div = !(div % 2) ? div : (div + 1);
+ 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
+ 		div = __roundup_pow_of_two(div);
+ 	if (table)
+@@ -226,6 +241,11 @@ static int _div_round_closest(const struct clk_div_table *table,
+ 	up = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+ 	down = parent_rate / rate;
+ 
++	if (flags & CLK_DIVIDER_EVEN) {
++		up = !(up % 2) ? up : (up + 1);
++		down = !(down % 2) ? down : (down - 1);
++	}
++
+ 	if (flags & CLK_DIVIDER_POWER_OF_TWO) {
+ 		up = __roundup_pow_of_two(up);
+ 		down = __rounddown_pow_of_two(down);
+@@ -264,6 +284,8 @@ static int _next_div(const struct clk_div_table *table, int div,
+ {
+ 	div++;
+ 
++	if (flags & CLK_DIVIDER_EVEN)
++		div = !(div % 2) ? div : (div + 1);
+ 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
+ 		return __roundup_pow_of_two(div);
+ 	if (table)
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 210a890..7c59611 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -388,6 +388,8 @@ struct clk_div_table {
+  * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
+  *	except when the value read from the register is zero, the divisor is
+  *	2^width of the field.
++ * CLK_DIVIDER_EVEN - For the dividers which could only use even number in the
++ *	div field.
+  */
+ struct clk_divider {
+ 	struct clk_hw	hw;
+@@ -409,6 +411,7 @@ struct clk_divider {
+ #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
+ #define CLK_DIVIDER_READ_ONLY		BIT(5)
+ #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
++#define CLK_DIVIDER_EVEN		BIT(7)
+ 
+ extern const struct clk_ops clk_divider_ops;
+ extern const struct clk_ops clk_divider_ro_ops;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+1.9.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
