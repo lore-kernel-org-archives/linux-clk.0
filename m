@@ -1,62 +1,80 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 17 Apr 2018 22:22:05 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
-	mark.rutland@arm.com, linux@armlinux.org.uk,
-	mturquette@baylibre.com, sboyd@kernel.org, shengjiu.wang@nxp.com,
-	Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz
- clock source
-Message-ID: <20180417142203.GM25429@dragon>
-References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
- <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Introduce QCOM RPMh clock
+ bindings
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
+ <1522304274-18989-3-git-send-email-tdas@codeaurora.org>
+ <152297042791.143116.12493897848354753009@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <98232fda-7952-b19f-7dcd-b22c45e5041a@codeaurora.org>
+Date: Sun, 8 Apr 2018 15:41:33 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <152297042791.143116.12493897848354753009@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 10:30:45AM +0800, Anson Huang wrote:
-> On i.MX6SX SabreAuto board, there is external 24MHz clock
-> source for analog clock2, add this clock source to clock tree.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> changes since V1:
-> 	remove unnecessary clocks container.
+Thanks Stephen for the review.
 
-I understand this is suggested by Fabio, but I'm afraid that it's not
-going to work with imx_obtain_fixed_clock() call, which is coded to
-look for clocks under /clocks node.
-
-Shawn
-
->  arch/arm/boot/dts/imx6sx-sabreauto.dts | 6 ++++++
->  1 file changed, 6 insertions(+)
+On 4/6/2018 4:50 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-03-28 23:17:53)
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
+>> new file mode 100644
+>> index 0000000..8222c88
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
 > 
-> diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> index 72da5ac..a3b022b 100644
-> --- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> +++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> @@ -18,6 +18,12 @@
->  		reg = <0x80000000 0x80000000>;
->  	};
->  
-> +	codec_osc: anaclk2 {
-> +		#clock-cells = <0>;
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <24576000>;
-> +	};
-> +
->  	regulators {
->  		compatible = "simple-bus";
->  		#address-cells = <1>;
-> -- 
-> 2.7.4
+> Can the file name be qcom,rpmh-clk?
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Sure will update the file name.
+
+>> @@ -0,0 +1,22 @@
+>> +Qualcomm Technologies, Inc. RPMh Clocks
+>> +-------------------------------------------------------
+>> +
+>> +Resource Power Manager Hardened (RPMh) manages shared resources on
+>> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
+>> +other hardware subsystems via RSC to control clocks.
+>> +
+>> +Required properties :
+>> +- compatible : shall contain "qcom,rpmh-clk-sdm845"
+>> +
+>> +- #clock-cells : must contain 1
+>> +
+>> +Example :
+>> +
+>> +#include <dt-bindings/clock/qcom,rpmh.h>
+>> +
+>> +       &apps_rsc {
+> 
+>> +               clock_rpmh: qcom,rpmhclk {
+> 
+> Should say clock-controller for node name.
+>
+
+Would fix it in the next patch.
+
+>> +               compatible = "qcom,rpmh-clk-sdm845";
+>> +               #clock-cells = <1>;
+> 
+> Is this tabbed out correctly?
+> 
+
+Will fix the tabs in the next patch.
+
+>> +               };
+>> +       };
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
