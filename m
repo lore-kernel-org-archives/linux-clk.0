@@ -1,50 +1,55 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 06/21] arm64: defconfig: Enable CONFIG_DRM_SUN4I
-Date: Mon, 30 Apr 2018 17:10:43 +0530
-Message-Id: <20180430114058.5061-7-jagan@amarulasolutions.com>
-In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+	devicetree@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2 0/2] Add QCOM RPMh Clock driver
+Date: Sun,  8 Apr 2018 16:02:11 +0530
+Message-Id: <1523183533-23171-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable DRM Support for Allwinner Display Engine, built as a module.
+ [v2]
+  * Addressed comments from Stephen
+  * Addressed comments from Evan
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+This patch series adds a driver and device tree documentation binding
+for the clock control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
+would send requests for the RPMh managed clock resources.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 8ac1feafe563..723e6a5121fa 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -410,6 +410,7 @@ CONFIG_DRM_EXYNOS_DSI=y
- CONFIG_DRM_EXYNOS_HDMI=y
- CONFIG_DRM_EXYNOS_MIC=y
- CONFIG_DRM_ROCKCHIP=m
-+CONFIG_DRM_SUN4I=m
- CONFIG_ROCKCHIP_ANALOGIX_DP=y
- CONFIG_ROCKCHIP_CDN_DP=y
- CONFIG_ROCKCHIP_DW_HDMI=y
--- 
-2.14.3
+The RPMh clock driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.
+
+Thanks,
+Taniya
+
+[1]: https://lkml.org/lkml/2018/3/9/979
+[2]: https://lkml.org/lkml/2018/3/14/787
+
+Amit Nischal (2):
+  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+  dt-bindings: clock: Introduce QCOM RPMh clock bindings
+
+ .../devicetree/bindings/clock/qcom,rpmh-clk.txt |  22 ++
+ drivers/clk/qcom/Kconfig                        |   9 +
+ drivers/clk/qcom/Makefile                       |   1 +
+ drivers/clk/qcom/clk-rpmh.c                     | 394 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h           |  25 ++
+ 5 files changed, 451 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
+ create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
