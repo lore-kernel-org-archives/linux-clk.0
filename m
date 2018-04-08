@@ -1,45 +1,81 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Mon, 9 Apr 2018 19:37:45 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
- external PMIC
-Message-ID: <20180409113744.GA14582@dragon>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v4 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+Date: Sun, 8 Apr 2018 11:19:31 +0800
+Message-ID: <20180408031938.153474-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180305102524.5905-1-o.rempel@pengutronix.de>
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 05, 2018 at 11:25:17AM +0100, Oleksij Rempel wrote:
-> This patch series is providing power off support for Freescale/NXP iMX6 based
-> boards with external power management integrated circuit (PMIC).
-> As a first step the PMIC is configured to turn off the system if the
-> standby pin is asserted. On second step we assert the standby pin.
-> For this reason we need to use pm_power_off_prepare.
-> 
-> Usage of stnadby pin for power off is described in official iMX6
-> documentation.
-> 
-> 2018.03.05:
-> As this patch set touches multiple subsystems I think it would make
-> sense for Shawn Guo to take the all patch set.
-> The only part which didn't receive an ACK is regulator stuff. So I would
-> hope that Mark Brown can ACK it.
+  This patch try to add AO clock and Reset driver for Amlogic's
+Meson-AXG SoC.
+  Please note that patch 7 need to wait for the DTS changes[3] merged
+into mainline first, otherwise it will break the serial console.
 
-Besides regulator changes, I did not see an ACK on kernel/reboot.c
-either.
+ patch 1: factor the common code into a dedicated file
+ patch 3-5: add the aoclk driver for AXG SoC
+ patch 6-7: drop unnecessary clock flags
 
-Shawn
+changes since v3 at [4]: 
+ - add 'const' contraint to the read-only data
+ - switch to devm_of_clk_add_hw_provider API
+ - check return value of devm_reset_controller_register
+
+changes since v2 at [2]: 
+ - rework meson_aoclkc_probe() which leverage the of_match_data
+ - merge patch 5-6 into this series
+ - seperate DTS patch, will send to Kevin Hilman independently
+ 
+changes since v1 at [0]: 
+ - rebase to clk-meson's branch 'next/drivers' [1]
+ - fix license, update to BSD-3-Clause
+ - drop un-used include header file
+
+[0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
+[1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
+[2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+[3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
+[4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
+
+
+Qiufang Dai (1):
+  clk: meson-axg: Add AO Clock and Reset controller driver
+
+Yixun Lan (6):
+  clk: meson: aoclk: refactor common code into dedicated file
+  clk: meson: migrate to devm_of_clk_add_hw_provider API
+  dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+  dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+  clk: meson: drop CLK_SET_RATE_PARENT flag
+  clk: meson: drop CLK_IGNORE_UNUSED flag
+
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         |   1 +
+ drivers/clk/meson/Makefile                         |   4 +-
+ drivers/clk/meson/axg-aoclk.c                      | 163 +++++++++++++++++++++
+ drivers/clk/meson/axg-aoclk.h                      |  31 ++++
+ drivers/clk/meson/gxbb-aoclk.c                     |  92 ++++--------
+ drivers/clk/meson/gxbb-aoclk.h                     |   7 +
+ drivers/clk/meson/meson-aoclk.c                    |  83 +++++++++++
+ drivers/clk/meson/meson-aoclk.h                    |  35 +++++
+ include/dt-bindings/clock/axg-aoclkc.h             |  26 ++++
+ include/dt-bindings/reset/axg-aoclkc.h             |  20 +++
+ 10 files changed, 399 insertions(+), 63 deletions(-)
+ create mode 100644 drivers/clk/meson/axg-aoclk.c
+ create mode 100644 drivers/clk/meson/axg-aoclk.h
+ create mode 100644 drivers/clk/meson/meson-aoclk.c
+ create mode 100644 drivers/clk/meson/meson-aoclk.h
+ create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+
+-- 
+2.15.1
