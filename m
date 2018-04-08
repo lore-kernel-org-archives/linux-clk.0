@@ -1,154 +1,44 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 14/21] arm64: dts: allwinner: a64: Add HDMI pipeline
-Date: Mon, 30 Apr 2018 17:10:51 +0530
-Message-Id: <20180430114058.5061-15-jagan@amarulasolutions.com>
-In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v4 3/7] dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+Date: Sun, 8 Apr 2018 11:19:34 +0800
+Message-ID: <20180408031938.153474-4-yixun.lan@amlogic.com>
+In-Reply-To: <20180408031938.153474-1-yixun.lan@amlogic.com>
+References: <20180408031938.153474-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-HDMI pipeline on A64 has similar behavior like A83T where
-tcon1 is connected to HDMI. So reuse similar dts nodes for A64.
+Update the dt-binding documentation to support new compatible string
+for the Amlogic's Meson-AXG SoC.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 83 +++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index da9128ae836d..f017baa4f5db 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -107,6 +107,12 @@
- 		};
- 	};
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+index 786dc39ca904..3a880528030e 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ 	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
+ 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
+ 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
++	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
+ 	followed by the common "amlogic,meson-gx-aoclkc"
  
-+	de: display-engine {
-+		compatible = "allwinner,sun50i-a64-display-engine";
-+		allwinner,pipelines = <&mixer1>;
-+		status = "disabled";
-+	};
-+
- 	osc24M: osc24M_clk {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
-@@ -183,6 +189,31 @@
- 			#reset-cells = <1>;
- 		};
- 
-+		mixer1: mixer@1200000 {
-+			compatible = "allwinner,sun50i-a64-de2-mixer-1",
-+				     "allwinner,sun8i-a83t-de2-mixer-1";
-+			reg = <0x01200000 0x100000>;
-+			clocks = <&display_clocks CLK_BUS_MIXER1>,
-+				 <&display_clocks CLK_MIXER1>;
-+			clock-names = "bus",
-+				      "mod";
-+			resets = <&display_clocks RST_WB>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				mixer1_out: port@1 {
-+					reg = <1>;
-+
-+					mixer1_out_tcon1: endpoint {
-+						remote-endpoint = <&tcon1_in_mixer1>;
-+					};
-+				};
-+			};
-+		};
-+
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun50i-a64-system-controller",
- 				"syscon";
-@@ -200,6 +231,41 @@
- 			#dma-cells = <1>;
- 		};
- 
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun50i-a64-tcon-tv",
-+				     "allwinner,sun8i-a83t-tcon-tv";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
-+			clock-names = "ahb", "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					reg = <0>;
-+
-+					tcon1_in_mixer1: endpoint {
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun50i-a64-mmc";
- 			reg = <0x01c0f000 0x1000>;
-@@ -658,6 +724,23 @@
- 			phys = <&hdmi_phy>;
- 			phy-names = "hdmi-phy";
- 			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					reg = <0>;
-+
-+					hdmi_in_tcon1: endpoint {
-+						remote-endpoint = <&tcon1_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					reg = <1>;
-+				};
-+			};
- 		};
- 
- 		hdmi_phy: hdmi-phy@1ef0000 {
+ - #clock-cells: should be 1.
 -- 
-2.14.3
+2.15.1
