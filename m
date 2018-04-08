@@ -1,434 +1,275 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <shawn.lin@rock-chips.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH 2/2] clk: qcom: Add video clock controller driver for SDM845
-Date: Tue, 24 Apr 2018 19:02:51 +0530
-Message-Id: <1524576771-31096-3-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
-References: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Finley Xiao <finley.xiao@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Xing Zheng <xing.zheng@rock-chips.com>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	Xiao Yao <xiaoyao@rock-chips.com>,
+	Ziyuan Xu <xzy.xu@rock-chips.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH v2 2/2] clk: rockchip: Add CLK_DIVIDER_EVEN for all mmc clock consumers
+Date: Sun,  8 Apr 2018 09:58:16 +0800
+Message-Id: <1523152696-27492-2-git-send-email-shawn.lin@rock-chips.com>
+In-Reply-To: <1523152696-27492-1-git-send-email-shawn.lin@rock-chips.com>
+References: <1523152696-27492-1-git-send-email-shawn.lin@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the video clock controller found on SDM845
-based devices. This would allow video drivers to probe and
-control their clocks.
+For conventional Rockchip platforms, mmc hosts, except RK3399's
+eMMC controller, should ask their clock parents to provider the
+closest clock rate with a even div number. That wasn't done
+explicitly by the clock framework. but now we have CLK_DIVIDER_EVEN
+flag to help.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 ---
- drivers/clk/qcom/Kconfig          |  11 ++
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/videocc-sdm845.c | 359 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 371 insertions(+)
- create mode 100644 drivers/clk/qcom/videocc-sdm845.c
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index fb03d99..0464477 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -236,6 +236,17 @@ config SDM_GCC_845
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
- 	  I2C, USB, UFS, SDDC, PCIe, etc.
+Changes in v2: None
 
-+config SDM_VIDEOCC_845
-+	tristate "SDM845 Video Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	select SDM_GCC_845
-+	select QCOM_GDSC
-+	help
-+	  Support for the video clock controller on Qualcomm Technologies, Inc
-+	  SDM845 devices.
-+	  Say Y if you want to support video devices and functionality such as
-+	  video encode and decode.
-+
- config SPMI_PMIC_CLKDIV
- 	tristate "SPMI PMIC clkdiv Support"
- 	depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 23bf50c..7738f50 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -39,4 +39,5 @@ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
-+obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
-new file mode 100644
-index 0000000..726275a
---- /dev/null
-+++ b/drivers/clk/qcom/videocc-sdm845.c
-@@ -0,0 +1,359 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,videocc-sdm845.h>
-+
-+#include "common.h"
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "clk-pll.h"
-+#include "gdsc.h"
-+#include "reset.h"
-+
-+#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-+
-+enum {
-+	P_BI_TCXO,
-+	P_CORE_BI_PLL_TEST_SE,
-+	P_VIDEO_PLL0_OUT_EVEN,
-+	P_VIDEO_PLL0_OUT_MAIN,
-+	P_VIDEO_PLL0_OUT_ODD,
-+};
-+
-+static const struct parent_map video_cc_parent_map_0[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_VIDEO_PLL0_OUT_MAIN, 1 },
-+	{ P_VIDEO_PLL0_OUT_EVEN, 2 },
-+	{ P_VIDEO_PLL0_OUT_ODD, 3 },
-+	{ P_CORE_BI_PLL_TEST_SE, 4 },
-+};
-+
-+static const char * const video_cc_parent_names_0[] = {
-+	"bi_tcxo",
-+	"video_pll0",
-+	"video_pll0_out_even",
-+	"video_pll0_out_odd",
-+	"core_bi_pll_test_se",
-+};
-+
-+static const struct alpha_pll_config video_pll0_config = {
-+	.l = 0x10,
-+	.alpha = 0xaaab,
-+};
-+
-+static struct clk_alpha_pll video_pll0 = {
-+	.offset = 0x42c,
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_pll0",
-+			.parent_names = (const char *[]){ "bi_tcxo" },
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fabia_ops,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_venus_clk_src[] = {
-+	F(100000000, P_VIDEO_PLL0_OUT_MAIN, 4, 0, 0),
-+	F(200000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	F(330000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(404000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(444000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(533000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_venus_clk_src = {
-+	.cmd_rcgr = 0x7f0,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_0,
-+	.freq_tbl = ftbl_video_cc_venus_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "video_cc_venus_clk_src",
-+		.parent_names = video_cc_parent_names_0,
-+		.num_parents = 5,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_branch video_cc_apb_clk = {
-+	.halt_reg = 0x990,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x990,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_apb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_at_clk = {
-+	.halt_reg = 0x9f0,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9f0,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_at_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_qdss_trig_clk = {
-+	.halt_reg = 0x970,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x970,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_qdss_trig_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_qdss_tsctr_div8_clk = {
-+	.halt_reg = 0x9d0,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9d0,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_qdss_tsctr_div8_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec0_axi_clk = {
-+	.halt_reg = 0x930,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x930,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec0_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec0_core_clk = {
-+	.halt_reg = 0x890,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x890,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec0_core_clk",
-+			.parent_names = (const char *[]){
-+				"video_cc_venus_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec1_axi_clk = {
-+	.halt_reg = 0x950,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x950,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec1_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec1_core_clk = {
-+	.halt_reg = 0x8d0,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x8d0,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec1_core_clk",
-+			.parent_names = (const char *[]){
-+				"video_cc_venus_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ahb_clk = {
-+	.halt_reg = 0x9b0,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9b0,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ctl_axi_clk = {
-+	.halt_reg = 0x910,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x910,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ctl_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ctl_core_clk = {
-+	.halt_reg = 0x850,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x850,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ctl_core_clk",
-+			.parent_names = (const char *[]){
-+				"video_cc_venus_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc venus_gdsc = {
-+	.gdscr = 0x814,
-+	.pd = {
-+		.name = "venus_gdsc",
-+	},
-+	.cxcs = (unsigned int []){ 0x850, 0x910 },
-+	.cxc_count = 2,
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = POLL_CFG_GDSCR,
-+};
-+
-+static struct gdsc vcodec0_gdsc = {
-+	.gdscr = 0x874,
-+	.pd = {
-+		.name = "vcodec0_gdsc",
-+	},
-+	.cxcs = (unsigned int []){ 0x890, 0x930 },
-+	.cxc_count = 2,
-+	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc vcodec1_gdsc = {
-+	.gdscr = 0x8b4,
-+	.pd = {
-+		.name = "vcodec1_gdsc",
-+	},
-+	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
-+	.cxc_count = 2,
-+	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct clk_regmap *video_cc_sdm845_clocks[] = {
-+	[VIDEO_CC_APB_CLK] = &video_cc_apb_clk.clkr,
-+	[VIDEO_CC_AT_CLK] = &video_cc_at_clk.clkr,
-+	[VIDEO_CC_QDSS_TRIG_CLK] = &video_cc_qdss_trig_clk.clkr,
-+	[VIDEO_CC_QDSS_TSCTR_DIV8_CLK] = &video_cc_qdss_tsctr_div8_clk.clkr,
-+	[VIDEO_CC_VCODEC0_AXI_CLK] = &video_cc_vcodec0_axi_clk.clkr,
-+	[VIDEO_CC_VCODEC0_CORE_CLK] = &video_cc_vcodec0_core_clk.clkr,
-+	[VIDEO_CC_VCODEC1_AXI_CLK] = &video_cc_vcodec1_axi_clk.clkr,
-+	[VIDEO_CC_VCODEC1_CORE_CLK] = &video_cc_vcodec1_core_clk.clkr,
-+	[VIDEO_CC_VENUS_AHB_CLK] = &video_cc_venus_ahb_clk.clkr,
-+	[VIDEO_CC_VENUS_CLK_SRC] = &video_cc_venus_clk_src.clkr,
-+	[VIDEO_CC_VENUS_CTL_AXI_CLK] = &video_cc_venus_ctl_axi_clk.clkr,
-+	[VIDEO_CC_VENUS_CTL_CORE_CLK] = &video_cc_venus_ctl_core_clk.clkr,
-+	[VIDEO_PLL0] = &video_pll0.clkr,
-+};
-+
-+static struct gdsc *video_cc_sdm845_gdscs[] = {
-+	[VENUS_GDSC] = &venus_gdsc,
-+	[VCODEC0_GDSC] = &vcodec0_gdsc,
-+	[VCODEC1_GDSC] = &vcodec1_gdsc,
-+};
-+
-+static const struct regmap_config video_cc_sdm845_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0xb90,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_cc_desc video_cc_sdm845_desc = {
-+	.config = &video_cc_sdm845_regmap_config,
-+	.clks = video_cc_sdm845_clocks,
-+	.num_clks = ARRAY_SIZE(video_cc_sdm845_clocks),
-+	.gdscs = video_cc_sdm845_gdscs,
-+	.num_gdscs = ARRAY_SIZE(video_cc_sdm845_gdscs),
-+};
-+
-+static const struct of_device_id video_cc_sdm845_match_table[] = {
-+	{ .compatible = "qcom,videocc-sdm845" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, video_cc_sdm845_match_table);
-+
-+static int video_cc_sdm845_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+
-+	regmap = qcom_cc_map(pdev, &video_cc_sdm845_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_config);
-+
-+	return qcom_cc_really_probe(pdev, &video_cc_sdm845_desc, regmap);
-+}
-+
-+static struct platform_driver video_cc_sdm845_driver = {
-+	.probe		= video_cc_sdm845_probe,
-+	.driver		= {
-+		.name	= "videocc-sdm845",
-+		.of_match_table = video_cc_sdm845_match_table,
-+	},
-+};
-+
-+static int __init video_cc_sdm845_init(void)
-+{
-+	return platform_driver_register(&video_cc_sdm845_driver);
-+}
-+subsys_initcall(video_cc_sdm845_init);
-+
-+static void __exit video_cc_sdm845_exit(void)
-+{
-+	platform_driver_unregister(&video_cc_sdm845_driver);
-+}
-+module_exit(video_cc_sdm845_exit);
-+
-+MODULE_LICENSE("GPL v2");
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+ drivers/clk/rockchip/clk-rk3036.c |  7 ++++---
+ drivers/clk/rockchip/clk-rk3128.c |  9 ++++++---
+ drivers/clk/rockchip/clk-rk3188.c |  6 +++---
+ drivers/clk/rockchip/clk-rk3228.c |  7 ++++---
+ drivers/clk/rockchip/clk-rk3288.c | 12 ++++++++----
+ drivers/clk/rockchip/clk-rk3328.c |  9 ++++++---
+ drivers/clk/rockchip/clk-rk3368.c |  9 ++++++---
+ drivers/clk/rockchip/clk-rk3399.c |  6 ++++--
+ drivers/clk/rockchip/clk-rv1108.c |  7 ++++---
+ 9 files changed, 45 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
+index c300198..155fd4f 100644
+--- a/drivers/clk/rockchip/clk-rk3036.c
++++ b/drivers/clk/rockchip/clk-rk3036.c
+@@ -290,16 +290,17 @@ enum rk3036_plls {
+ 			RK2928_CLKSEL_CON(12), 8, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
+ 	DIV(SCLK_SDMMC, "sclk_sdmmc", "sclk_sdmmc_src", 0,
+-			RK2928_CLKSEL_CON(11), 0, 7, DFLAGS),
++			RK2928_CLKSEL_CON(11), 0, 7, DFLAGS | CLK_DIVIDER_EVEN),
+ 
+ 	COMPOSITE_NODIV(0, "sclk_sdio_src", mux_mmc_src_p, 0,
+ 			RK2928_CLKSEL_CON(12), 10, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
+ 	DIV(SCLK_SDIO, "sclk_sdio", "sclk_sdio_src", 0,
+-			RK2928_CLKSEL_CON(11), 8, 7, DFLAGS),
++			RK2928_CLKSEL_CON(11), 8, 7, DFLAGS | CLK_DIVIDER_EVEN),
+ 
+ 	COMPOSITE(SCLK_EMMC, "sclk_emmc", mux_mmc_src_p, 0,
+-			RK2928_CLKSEL_CON(12), 12, 2, MFLAGS, 0, 7, DFLAGS,
++			RK2928_CLKSEL_CON(12), 12, 2, MFLAGS, 0, 7,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK2928_CLKGATE_CON(2), 14, GFLAGS),
+ 
+ 	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RK3036_SDMMC_CON0, 1),
+diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
+index 5970a50..7c6e30a 100644
+--- a/drivers/clk/rockchip/clk-rk3128.c
++++ b/drivers/clk/rockchip/clk-rk3128.c
+@@ -324,15 +324,18 @@ enum rk3128_plls {
+ 			RK2928_CLKGATE_CON(2), 15, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc0", mux_mmc_src_p, 0,
+-			RK2928_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 6, DFLAGS,
++			RK2928_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 6,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_SDIO, "sclk_sdio", mux_mmc_src_p, 0,
+-			RK2928_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 6, DFLAGS,
++			RK2928_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 6,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_EMMC, "sclk_emmc", mux_mmc_src_p, 0,
+-			RK2928_CLKSEL_CON(12), 14, 2, MFLAGS, 8, 6, DFLAGS,
++			RK2928_CLKSEL_CON(12), 14, 2, MFLAGS, 8, 6,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK2928_CLKGATE_CON(2), 14, GFLAGS),
+ 
+ 	DIV(SCLK_PVTM, "clk_pvtm", "clk_pvtm_func", 0,
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index 67e73fd..32f199d 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -402,13 +402,13 @@ enum rk3188_plls {
+ 			RK2928_CLKGATE_CON(2), 10, GFLAGS),
+ 
+ 	COMPOSITE_NOMUX(SCLK_SDMMC, "sclk_sdmmc", "hclk_peri", 0,
+-			RK2928_CLKSEL_CON(11), 0, 6, DFLAGS,
++			RK2928_CLKSEL_CON(11), 0, 6, DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
+ 	COMPOSITE_NOMUX(SCLK_SDIO, "sclk_sdio", "hclk_peri", 0,
+-			RK2928_CLKSEL_CON(12), 0, 6, DFLAGS,
++			RK2928_CLKSEL_CON(12), 0, 6, DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
+ 	COMPOSITE_NOMUX(SCLK_EMMC, "sclk_emmc", "hclk_peri", 0,
+-			RK2928_CLKSEL_CON(12), 8, 6, DFLAGS,
++			RK2928_CLKSEL_CON(12), 8, 6, DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK2928_CLKGATE_CON(2), 14, GFLAGS),
+ 
+ 	MUX(0, "uart_src", mux_pll_src_gpll_cpll_p, 0,
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index 7af4818..15da16a 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -388,20 +388,21 @@ enum rk3228_plls {
+ 			RK2928_CLKGATE_CON(2), 15, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
+-			RK2928_CLKSEL_CON(11), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RK2928_CLKSEL_CON(11), 8, 2, MFLAGS, 0, 8,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
+ 
+ 	COMPOSITE_NODIV(SCLK_SDIO_SRC, "sclk_sdio_src", mux_mmc_src_p, 0,
+ 			RK2928_CLKSEL_CON(11), 10, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
+ 	DIV(SCLK_SDIO, "sclk_sdio", "sclk_sdio_src", 0,
+-			RK2928_CLKSEL_CON(12), 0, 8, DFLAGS),
++			RK2928_CLKSEL_CON(12), 0, 8, DFLAGS | CLK_DIVIDER_EVEN),
+ 
+ 	COMPOSITE_NODIV(0, "sclk_emmc_src", mux_mmc_src_p, 0,
+ 			RK2928_CLKSEL_CON(11), 12, 2, MFLAGS,
+ 			RK2928_CLKGATE_CON(2), 14, GFLAGS),
+ 	DIV(SCLK_EMMC, "sclk_emmc", "sclk_emmc_src", 0,
+-			RK2928_CLKSEL_CON(12), 8, 8, DFLAGS),
++			RK2928_CLKSEL_CON(12), 8, 8, DFLAGS | CLK_DIVIDER_EVEN),
+ 
+ 	/*
+ 	 * Clock-Architecture Diagram 2
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 450de24..2a6f231 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -508,16 +508,20 @@ enum rk3288_plls {
+ 			RK3288_CLKGATE_CON(2), 11, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
+-			RK3288_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 6, DFLAGS,
++			RK3288_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 6,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3288_CLKGATE_CON(13), 0, GFLAGS),
+ 	COMPOSITE(SCLK_SDIO0, "sclk_sdio0", mux_mmc_src_p, 0,
+-			RK3288_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 6, DFLAGS,
++			RK3288_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 6,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3288_CLKGATE_CON(13), 1, GFLAGS),
+ 	COMPOSITE(SCLK_SDIO1, "sclk_sdio1", mux_mmc_src_p, 0,
+-			RK3288_CLKSEL_CON(34), 14, 2, MFLAGS, 8, 6, DFLAGS,
++			RK3288_CLKSEL_CON(34), 14, 2, MFLAGS, 8, 6,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3288_CLKGATE_CON(13), 2, GFLAGS),
+ 	COMPOSITE(SCLK_EMMC, "sclk_emmc", mux_mmc_src_p, 0,
+-			RK3288_CLKSEL_CON(12), 14, 2, MFLAGS, 8, 6, DFLAGS,
++			RK3288_CLKSEL_CON(12), 14, 2, MFLAGS, 8, 6,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3288_CLKGATE_CON(13), 3, GFLAGS),
+ 
+ 	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RK3288_SDMMC_CON0, 1),
+diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+index 252366a..f81acf8 100644
+--- a/drivers/clk/rockchip/clk-rk3328.c
++++ b/drivers/clk/rockchip/clk-rk3328.c
+@@ -632,15 +632,18 @@ enum rk3328_plls {
+ 			RK3328_CLKGATE_CON(4), 3, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_SDIO, "clk_sdio", mux_2plls_24m_u480m_p, 0,
+-			RK3328_CLKSEL_CON(31), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RK3328_CLKSEL_CON(31), 8, 2, MFLAGS, 0, 8,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3328_CLKGATE_CON(4), 4, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_EMMC, "clk_emmc", mux_2plls_24m_u480m_p, 0,
+-			RK3328_CLKSEL_CON(32), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RK3328_CLKSEL_CON(32), 8, 2, MFLAGS, 0, 8,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3328_CLKGATE_CON(4), 5, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_SDMMC_EXT, "clk_sdmmc_ext", mux_2plls_24m_u480m_p, 0,
+-			RK3328_CLKSEL_CON(43), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RK3328_CLKSEL_CON(43), 8, 2, MFLAGS, 0, 8,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3328_CLKGATE_CON(4), 10, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_REF_USB3OTG_SRC, "clk_ref_usb3otg_src", mux_2plls_p, 0,
+diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
+index 7c4d242..17a6293 100644
+--- a/drivers/clk/rockchip/clk-rk3368.c
++++ b/drivers/clk/rockchip/clk-rk3368.c
+@@ -550,13 +550,16 @@ enum rk3368_plls {
+ 
+ 
+ 	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
+-			RK3368_CLKSEL_CON(50), 8, 2, MFLAGS, 0, 7, DFLAGS,
++			RK3368_CLKSEL_CON(50), 8, 2, MFLAGS, 0, 7,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3368_CLKGATE_CON(7), 12, GFLAGS),
+ 	COMPOSITE(SCLK_SDIO0, "sclk_sdio0", mux_mmc_src_p, 0,
+-			RK3368_CLKSEL_CON(48), 8, 2, MFLAGS, 0, 7, DFLAGS,
++			RK3368_CLKSEL_CON(48), 8, 2, MFLAGS, 0, 7,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3368_CLKGATE_CON(7), 13, GFLAGS),
+ 	COMPOSITE(SCLK_EMMC, "sclk_emmc", mux_mmc_src_p, 0,
+-			RK3368_CLKSEL_CON(51), 8, 2, MFLAGS, 0, 7, DFLAGS,
++			RK3368_CLKSEL_CON(51), 8, 2, MFLAGS, 0, 7,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3368_CLKGATE_CON(7), 15, GFLAGS),
+ 
+ 	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RK3368_SDMMC_CON0, 1),
+diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+index 118759d..aedb3d0 100644
+--- a/drivers/clk/rockchip/clk-rk3399.c
++++ b/drivers/clk/rockchip/clk-rk3399.c
+@@ -896,11 +896,13 @@ enum rk3399_pmu_plls {
+ 			RK3399_CLKGATE_CON(33), 9, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_SDIO, "clk_sdio", mux_pll_src_cpll_gpll_npll_ppll_upll_24m_p, 0,
+-			RK3399_CLKSEL_CON(15), 8, 3, MFLAGS, 0, 7, DFLAGS,
++			RK3399_CLKSEL_CON(15), 8, 3, MFLAGS, 0, 7,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3399_CLKGATE_CON(6), 0, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_SDMMC, "clk_sdmmc", mux_pll_src_cpll_gpll_npll_ppll_upll_24m_p, 0,
+-			RK3399_CLKSEL_CON(16), 8, 3, MFLAGS, 0, 7, DFLAGS,
++			RK3399_CLKSEL_CON(16), 8, 3, MFLAGS, 0, 7,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RK3399_CLKGATE_CON(6), 1, GFLAGS),
+ 
+ 	MMC(SCLK_SDMMC_DRV,     "sdmmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
+diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
+index 089cb17..b63af26 100644
+--- a/drivers/clk/rockchip/clk-rv1108.c
++++ b/drivers/clk/rockchip/clk-rv1108.c
+@@ -721,20 +721,21 @@ enum rv1108_plls {
+ 			RV1108_CLKGATE_CON(15), 11, GFLAGS),
+ 
+ 	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
+-			RV1108_CLKSEL_CON(25), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RV1108_CLKSEL_CON(25), 8, 2, MFLAGS, 0, 8,
++			DFLAGS | CLK_DIVIDER_EVEN,
+ 			RV1108_CLKGATE_CON(5), 0, GFLAGS),
+ 
+ 	COMPOSITE_NODIV(0, "sclk_sdio_src", mux_mmc_src_p, 0,
+ 			RV1108_CLKSEL_CON(25), 10, 2, MFLAGS,
+ 			RV1108_CLKGATE_CON(5), 2, GFLAGS),
+ 	DIV(SCLK_SDIO, "sclk_sdio", "sclk_sdio_src", 0,
+-			RV1108_CLKSEL_CON(26), 0, 8, DFLAGS),
++			RV1108_CLKSEL_CON(26), 0, 8, DFLAGS | CLK_DIVIDER_EVEN),
+ 
+ 	COMPOSITE_NODIV(0, "sclk_emmc_src", mux_mmc_src_p, 0,
+ 			RV1108_CLKSEL_CON(25), 12, 2, MFLAGS,
+ 			RV1108_CLKGATE_CON(5), 1, GFLAGS),
+ 	DIV(SCLK_EMMC, "sclk_emmc", "sclk_emmc_src", 0,
+-			RK2928_CLKSEL_CON(26), 8, 8, DFLAGS),
++			RK2928_CLKSEL_CON(26), 8, 8, DFLAGS | CLK_DIVIDER_EVEN),
+ 	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_periph", 0, RV1108_CLKGATE_CON(15), 0, GFLAGS),
+ 	GATE(HCLK_SDIO, "hclk_sdio", "hclk_periph", 0, RV1108_CLKGATE_CON(15), 1, GFLAGS),
+ 	GATE(HCLK_EMMC, "hclk_emmc", "hclk_periph", 0, RV1108_CLKGATE_CON(15), 2, GFLAGS),
+-- 
+1.9.1
