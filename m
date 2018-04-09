@@ -1,108 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:9580 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752580AbeDQMar (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Apr 2018 08:30:47 -0400
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>,
-        chunhui dai <chunhui.dai@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v1] clk: mediatek: correct the clocks for MT2701 HDMI PHY module
-Date: Tue, 17 Apr 2018 20:30:27 +0800
-Message-ID: <dc75b5b289d1f6e4914e60543c2611f387f0c164.1523944160.git.ryder.lee@mediatek.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v5 4/7] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+Date: Mon, 9 Apr 2018 22:37:46 +0800
+Message-ID: <20180409143749.71197-5-yixun.lan@amlogic.com>
+In-Reply-To: <20180409143749.71197-1-yixun.lan@amlogic.com>
+References: <20180409143749.71197-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The hdmitx_dig_cts clock signal is not a child of clk26m,
-and the actual output of the PLL block is derived from
-the tvdpll via a configurable PLL post-divider.
+Add dt-bindings headers for the Meson-AXG's AO clock and
+reset controller.
 
-It is used as the PLL reference input to the HDMI PHY module.
-
-Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
-Signed-off-by: Chunhui Dai <chunhui.dai@mediatek.com>
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
-changes since v1:
- - add the "Fixes:" tag.
----
- drivers/clk/mediatek/clk-mt2701.c      |  8 ++++++--
- include/dt-bindings/clock/mt2701-clk.h | 16 ++++++++--------
- 2 files changed, 14 insertions(+), 10 deletions(-)
+ include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
+ include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
 
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index deca752..4dda898 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -46,8 +46,6 @@
- 		340 * MHZ),
- 	FIXED_CLK(CLK_TOP_HDMI_0_PLL340M, "hdmi_0_pll340m", "clk26m",
- 		340 * MHZ),
--	FIXED_CLK(CLK_TOP_HDMITX_CLKDIG_CTS, "hdmitx_dig_cts", "clk26m",
--		300 * MHZ),
- 	FIXED_CLK(CLK_TOP_HADDS2_FB, "hadds2_fbclk", "clk26m",
- 		27 * MHZ),
- 	FIXED_CLK(CLK_TOP_WBG_DIG_416M, "wbg_dig_ck_416m", "clk26m",
-@@ -977,6 +975,10 @@ static int mtk_pericfg_init(struct platform_device *pdev)
- 				21, 0x2d0, 4, 0x0, 0x2d4, 0),
- };
- 
-+static const struct mtk_fixed_factor apmixed_fixed_divs[] = {
-+	FACTOR(CLK_APMIXED_HDMI_REF, "hdmi_ref", "tvdpll", 1, 1),
-+};
+diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
+new file mode 100644
+index 000000000000..61955016a55b
+--- /dev/null
++++ b/include/dt-bindings/clock/axg-aoclkc.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
++/*
++ * Copyright (c) 2016 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
++ */
 +
- static int mtk_apmixedsys_init(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
-@@ -988,6 +990,8 @@ static int mtk_apmixedsys_init(struct platform_device *pdev)
- 
- 	mtk_clk_register_plls(node, apmixed_plls, ARRAY_SIZE(apmixed_plls),
- 								clk_data);
-+	mtk_clk_register_factors(apmixed_fixed_divs, ARRAY_SIZE(apmixed_fixed_divs),
-+								clk_data);
- 
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- }
-diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings/clock/mt2701-clk.h
-index 24e93df..1956ebb 100644
---- a/include/dt-bindings/clock/mt2701-clk.h
-+++ b/include/dt-bindings/clock/mt2701-clk.h
-@@ -171,13 +171,12 @@
- #define CLK_TOP_8BDAC				151
- #define CLK_TOP_WBG_DIG_416M			152
- #define CLK_TOP_DPI				153
--#define CLK_TOP_HDMITX_CLKDIG_CTS		154
--#define CLK_TOP_DSI0_LNTC_DSI			155
--#define CLK_TOP_AUD_EXT1			156
--#define CLK_TOP_AUD_EXT2			157
--#define CLK_TOP_NFI1X_PAD			158
--#define CLK_TOP_AXISEL_D4			159
--#define CLK_TOP_NR				160
-+#define CLK_TOP_DSI0_LNTC_DSI			154
-+#define CLK_TOP_AUD_EXT1			155
-+#define CLK_TOP_AUD_EXT2			156
-+#define CLK_TOP_NFI1X_PAD			157
-+#define CLK_TOP_AXISEL_D4			158
-+#define CLK_TOP_NR				159
- 
- /* APMIXEDSYS */
- 
-@@ -194,7 +193,8 @@
- #define CLK_APMIXED_HADDS2PLL			11
- #define CLK_APMIXED_AUD2PLL			12
- #define CLK_APMIXED_TVD2PLL			13
--#define CLK_APMIXED_NR				14
-+#define CLK_APMIXED_HDMI_REF			14
-+#define CLK_APMIXED_NR				15
- 
- /* DDRPHY */
- 
++#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
++#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
++
++#define CLKID_AO_REMOTE		0
++#define CLKID_AO_I2C_MASTER	1
++#define CLKID_AO_I2C_SLAVE	2
++#define CLKID_AO_UART1		3
++#define CLKID_AO_UART2		4
++#define CLKID_AO_IR_BLASTER	5
++#define CLKID_AO_SAR_ADC	6
++#define CLKID_AO_CLK81		7
++#define CLKID_AO_SAR_ADC_SEL	8
++#define CLKID_AO_SAR_ADC_DIV	9
++#define CLKID_AO_SAR_ADC_CLK	10
++#define CLKID_AO_ALT_XTAL	11
++
++#endif
+diff --git a/include/dt-bindings/reset/axg-aoclkc.h b/include/dt-bindings/reset/axg-aoclkc.h
+new file mode 100644
+index 000000000000..d342c0b6b2a7
+--- /dev/null
++++ b/include/dt-bindings/reset/axg-aoclkc.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
++/*
++ * Copyright (c) 2016 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
++ */
++
++#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
++#define DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
++
++#define RESET_AO_REMOTE		0
++#define RESET_AO_I2C_MASTER	1
++#define RESET_AO_I2C_SLAVE	2
++#define RESET_AO_UART1		3
++#define RESET_AO_UART2		4
++#define RESET_AO_IR_BLASTER	5
++
++#endif
 -- 
-1.9.1
-
+2.15.1
