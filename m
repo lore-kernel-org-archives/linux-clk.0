@@ -1,92 +1,53 @@
 Return-Path: <tdas@codeaurora.org>
-Subject: Re: [[PATCH v2] 2/2] dt-bindings: clock: Introduce QCOM RPMh clock
- bindings
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
+Subject: Re: [PATCH 2/3] clk: qcom: gdsc: Add support to poll for higher
+ timeout value
+To: Stephen Boyd <sboyd@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>,
- Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
  Rajendra Nayak <rnayak@codeaurora.org>,
  Odelu Kukatla <okukatla@codeaurora.org>,
  Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
  linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1523183533-23171-1-git-send-email-tdas@codeaurora.org>
- <1523183533-23171-3-git-send-email-tdas@codeaurora.org>
- <20180409225853.GM453@tuxbook-pro>
+ linux-kernel@vger.kernel.org
+References: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
+ <1522665945-28147-3-git-send-email-tdas@codeaurora.org>
+ <152297065260.143116.4250583205921081457@swboyd.mtv.corp.google.com>
 From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <63dbb808-ba93-e5ae-329d-de34184019b5@codeaurora.org>
-Date: Sat, 14 Apr 2018 07:33:14 +0530
+Message-ID: <aa305cce-1244-45cb-267d-565f1f95b0e8@codeaurora.org>
+Date: Mon, 9 Apr 2018 14:10:06 +0530
 MIME-Version: 1.0
-In-Reply-To: <20180409225853.GM453@tuxbook-pro>
+In-Reply-To: <152297065260.143116.4250583205921081457@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Bjorn,
+Hello Stephen,
 
-Thanks for your review comments.
+Thanks for the review comments.
 
-On 4/10/2018 4:28 AM, Bjorn Andersson wrote:
-> On Sun 08 Apr 03:32 PDT 2018, Taniya Das wrote:
-> 
+On 4/6/2018 4:54 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-04-02 03:45:44)
 >> From: Amit Nischal <anischal@codeaurora.org>
 >>
->> Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
->> devices would be used for communicating resource state requests to control
->> the clocks managed by RPMh.
+>> For some gdscs, it might take longer time up to 500us for
+>> updating their status. So add support for the same by
+>> defining a new flag 'GDS_TIMEOUT' to mark such gdsc in
+>> order to poll their status for longer timeout value.
 >>
 >> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 >> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 >> ---
->>   .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 22 ++++++++++++++++++++++
->>   1 file changed, 22 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
->> new file mode 100644
->> index 0000000..4ade82b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
->> @@ -0,0 +1,22 @@
->> +Qualcomm Technologies, Inc. RPMh Clocks
->> +-------------------------------------------------------
->> +
->> +Resource Power Manager Hardened (RPMh) manages shared resources on
->> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
->> +other hardware subsystems via RSC to control clocks.
->> +
->> +Required properties :
->> +- compatible : shall contain "qcom,rpmh-clk-sdm845"
 > 
-> We have a chance to fix this to Rob's liking, so please make this
-> "qcom,sdm845-rpmh-clock" (or maybe "qcom,sdm845-rpmhcc"?)
+> Let's just increase the timeout to 500 if it's required? This is a
+> timeout, so we're not really expecting to hit it anyway so optimizing
+> the uncommon case is not useful.
+> --
 
-I would fix  it to "qcom,sdm845-rpmh-clk".
+Will fix this in the next series.
 
-> 
->> +
->> +- #clock-cells : must contain 1
->> +
->> +Example :
->> +
->> +#include <dt-bindings/clock/qcom,rpmh.h>
->> +
->> +	&apps_rsc {
->> +		rpmh: clock-controller {
-> 
-> I believe the clock-controller, the power-domain and the bus-scaler are
-> equal contenders of the label "rpmh", so please make it more specific.
-> How about "rpmhcc" to mimic previous platforms?
-> 
-
-Would update it "rpmhcc".
-
->> +			compatible = "qcom,rpmh-clk-sdm845";
->> +			#clock-cells = <1>;
->> +		};
->> +	};
-> 
-> Regards,
-> Bjorn
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
 
 -- 
