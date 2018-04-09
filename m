@@ -1,60 +1,121 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1522304274-18989-3-git-send-email-tdas@codeaurora.org>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH 3/3] clk: qcom: gdsc: Add support to poll CFG register to
+ check GDSC state
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
 Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
  Rajendra Nayak <rnayak@codeaurora.org>,
  Odelu Kukatla <okukatla@codeaurora.org>,
  Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
  linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
- <1522304274-18989-3-git-send-email-tdas@codeaurora.org>
-Message-ID: <152297042791.143116.12493897848354753009@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
-Date: Thu, 05 Apr 2018 16:20:27 -0700
+ linux-kernel@vger.kernel.org
+References: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
+ <1522665945-28147-4-git-send-email-tdas@codeaurora.org>
+ <152303280515.143116.7021012753371503067@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <530d64eb-a161-1f68-7725-1a52ab1dd999@codeaurora.org>
+Date: Mon, 9 Apr 2018 14:11:42 +0530
+MIME-Version: 1.0
+In-Reply-To: <152303280515.143116.7021012753371503067@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-03-28 23:17:53)
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh.txt b/Docu=
-mentation/devicetree/bindings/clock/qcom,rpmh.txt
-> new file mode 100644
-> index 0000000..8222c88
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh.txt
+Hello Stephen,
 
-Can the file name be qcom,rpmh-clk?
+Thanks for the review comments.
 
-> @@ -0,0 +1,22 @@
-> +Qualcomm Technologies, Inc. RPMh Clocks
-> +-------------------------------------------------------
-> +
-> +Resource Power Manager Hardened (RPMh) manages shared resources on
-> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
-> +other hardware subsystems via RSC to control clocks.
-> +
-> +Required properties :
-> +- compatible : shall contain "qcom,rpmh-clk-sdm845"
-> +
-> +- #clock-cells : must contain 1
-> +
-> +Example :
-> +
-> +#include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +       &apps_rsc {
+On 4/6/2018 10:10 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-04-02 03:45:45)
+>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+>> index e89584e..e0c83ba 100644
+>> --- a/drivers/clk/qcom/gdsc.c
+>> +++ b/drivers/clk/qcom/gdsc.c
+>> @@ -83,6 +88,38 @@ static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
+>>          return -ETIMEDOUT;
+>>   }
+>>
+>> +static int gdsc_is_enabled_by_poll_cfg_reg(struct gdsc *sc, bool en)
+>> +{
+>> +       u32 val;
+>> +       int ret;
+>> +
+>> +       ret = regmap_read(sc->regmap, sc->gdscr + CFG_GDSCR_OFFSET, &val);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       if (en)
+>> +               return !!(val & GDSC_POWER_UP_COMPLETE);
+>> +       else
+>> +               return !(val & GDSC_POWER_DOWN_COMPLETE);
+> 
+> Make this into
+> 
+> 	if (en)
+> 		return ...
+> 
+> 	return ...
+> 
 
-> +               clock_rpmh: qcom,rpmhclk {
+Will fix this in the next series.
 
-Should say clock-controller for node name.
+>> +}
+>> +
+>> +static int gdsc_poll_cfg_status(struct gdsc *sc, bool en)
+>> +{
+>> +       ktime_t start = ktime_get();
+>> +       ktime_t timeout =
+>> +               (sc->flags & GDS_TIMEOUT) ? TIMEOUT_US_GDS : TIMEOUT_US;
+>> +
+>> +       do {
+>> +               if (gdsc_is_enabled_by_poll_cfg_reg(sc, en) == en)
+>> +                       return 0;
+>> +       } while (ktime_us_delta(ktime_get(), start) < timeout);
+>> +
+>> +       if (gdsc_is_enabled_by_poll_cfg_reg(sc, en) == en)
+>> +               return 0;
+>> +
+>> +       return -ETIMEDOUT;
+>> +}
+>> +
+>>   static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+>>   {
+>>          int ret;
+>> @@ -106,6 +143,9 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+>>                  return 0;
+>>          }
+>>
+>> +       if (sc->flags & POLL_CFG_GDSCR)
+>> +               return gdsc_poll_cfg_status(sc, en);
+>> +
+>>          if (sc->gds_hw_ctrl) {
+>>                  status_reg = sc->gds_hw_ctrl;
+>>                  /*
+>> @@ -258,8 +298,12 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>>                   */
+>>                  udelay(1);
+>>
+>> -               reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+>> -               ret = gdsc_poll_status(sc, reg, true);
+>> +               if (sc->flags & POLL_CFG_GDSCR) {
+>> +                       ret = gdsc_poll_cfg_status(sc, true);
+>> +               } else {
+>> +                       reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+>> +                       ret = gdsc_poll_status(sc, reg, true);
+>> +               }
+> 
+> Maybe this can be pushed into the gdsc_poll_status() function so that
+> we can keep the "how do we poll status bit" logic in one place.
+> 
 
-> +               compatible =3D "qcom,rpmh-clk-sdm845";
-> +               #clock-cells =3D <1>;
+Yes, I will push the logic in the gdsc_poll_status() in the next series.
 
-Is this tabbed out correctly?
+>>                  if (ret)
+>>                          return ret;
+>>          }
 
-> +               };
-> +       };
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
