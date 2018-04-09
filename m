@@ -1,31 +1,44 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
-Date: Tue, 10 Apr 2018 15:17:56 +0200
-Message-ID: <7442109.yKeQIlf4qX@phil>
-In-Reply-To: <1523364701-15383-4-git-send-email-geert+renesas@glider.be>
-References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be> <1523364701-15383-4-git-send-email-geert+renesas@glider.be>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v5 3/7] dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+Date: Mon, 9 Apr 2018 22:37:45 +0800
+Message-ID: <20180409143749.71197-4-yixun.lan@amlogic.com>
+In-Reply-To: <20180409143749.71197-1-yixun.lan@amlogic.com>
+References: <20180409143749.71197-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Dienstag, 10. April 2018, 14:51:39 CEST schrieb Geert Uytterhoeven:
-> As of_clk_get_parent_count() returns zero on failure, while
-> of_count_phandle_with_args() might return a negative error code, this
-> also fixes the issue of possibly using a negative number in the
-> allocation below.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Update the dt-binding documentation to support new compatible string
+for the Amlogic's Meson-AXG SoC.
 
-Depending on how we plan on merging this series, I could either pick
-this patch for 4.19, after patch1 makes it into 4.18 or otherwise
-someone could pick the whole series together with my
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-for this patch.
-
-
-Heiko
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+index 786dc39ca904..3a880528030e 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ 	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
+ 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
+ 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
++	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
+ 	followed by the common "amlogic,meson-gx-aoclkc"
+ 
+ - #clock-cells: should be 1.
+-- 
+2.15.1
