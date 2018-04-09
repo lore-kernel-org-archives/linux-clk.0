@@ -1,42 +1,25 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:30463 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752974AbeDQMfN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Apr 2018 08:35:13 -0400
-Message-ID: <1523968505.23886.2.camel@mtkswgap22>
-Subject: Re: [PATCH] clk: mediatek: correct the clocks for MT2701 HDMI PHY
- module
-From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>,
-        chunhui dai <chunhui.dai@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date: Tue, 17 Apr 2018 20:35:05 +0800
-In-Reply-To: <152389649546.51482.15378110712126175925@swboyd.mtv.corp.google.com>
-References: <f3248cc94349000b2587d9c6102d56323acba9e0.1523844642.git.ryder.lee@mediatek.com>
-         <152389649546.51482.15378110712126175925@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <horms@verge.net.au>
+Date: Mon, 9 Apr 2018 14:55:51 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a77980: Correct parent clock of PCIEC0
+Message-ID: <20180409125549.5iwnenyhzil66lyn@verge.net.au>
+References: <1523276962-5465-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1523276962-5465-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-04-16 at 09:34 -0700, Stephen Boyd wrote:
-> Quoting Ryder Lee (2018-04-15 19:31:58)
-> > The hdmitx_dig_cts clock signal is not a child of clk26m,
-> > and the actual output of the PLL block is derived from
-> > the tvdpll via a configurable PLL post-divider.
-> > 
-> > It is used as the PLL reference input to the HDMI PHY module.
-> > 
-> > Signed-off-by: Chunhui Dai <chunhui.dai@mediatek.com>
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+On Mon, Apr 09, 2018 at 02:29:22PM +0200, Geert Uytterhoeven wrote:
+> According to the R-Car Gen3 Hardware Manual Errata for Rev 0.80 of
+> December 22, 2017, the parent clock of the PCIe module clock on R-Car
+> V3H is S2D2.
 > 
-> Any sort of Fixes: tag here?
-> 
+> Fixes: ce15783c510a9905 ("clk: renesas: cpg-mssr: add R8A77980 support")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yes, I've already sent a new one.
-
-Thanks
-
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
