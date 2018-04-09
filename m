@@ -1,57 +1,104 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Date: Mon, 30 Apr 2018 15:44:20 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] soc/tegra: pmc: Use of_clk_get_parent_count()
- instead of open coding
-Message-ID: <20180430134420.GE11457@mai>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-5-git-send-email-geert+renesas@glider.be>
+Return-Path: <anischal@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1524063005-1716-5-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Mon, 09 Apr 2018 10:55:38 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown
+ <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Odelu
+ Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] clk: qcom: Add Global Clock controller (GCC)
+ driver for SDM845
+In-Reply-To: <152296902025.143116.550838977705296456@swboyd.mtv.corp.google.com>
+References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+ <1520493495-3084-5-git-send-email-anischal@codeaurora.org>
+ <152150657982.254778.14132033041219278756@swboyd.mtv.corp.google.com>
+ <624665d7af39686d331c863ba7b9af4d@codeaurora.org>
+ <152296902025.143116.550838977705296456@swboyd.mtv.corp.google.com>
+Message-ID: <f6aaef343c3e6b4904e82b5693a0d135@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 18, 2018 at 04:50:04PM +0200, Geert Uytterhoeven wrote:
-> As of_clk_get_parent_count() returns zero on failure, while
-> of_count_phandle_with_args() might return a negative error code, this
-> also fixes the issue of possibly using a very big number in the
-> allocation below.
+On 2018-04-06 04:27, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-04-03 05:24:41)
+>> On 2018-03-20 06:12, Stephen Boyd wrote:
+>> > Quoting Amit Nischal (2018-03-07 23:18:15)
+>> >> +};
+>> >> +
+>> >> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+>> >> +       .cmd_rcgr = 0x1600c,
+>> >> +       .mnd_width = 8,
+>> >> +       .hid_width = 5,
+>> >> +       .parent_map = gcc_parent_map_0,
+>> >> +       .freq_tbl = ftbl_gcc_sdcc4_apps_clk_src,
+>> >> +       .safe_src_freq_tbl = &cxo_safe_src_f,
+>> >
+>> > Why does sdcc have safe src stuff? Is something turning on the sdcc clk
+>> > outside of our control?
+>> 
+>> I will get more details on this and will get back.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
-> <linux/of_clk.h>".
+> Any news?
 > 
-> v3:
->   - Add Acked-by,
+
+I am removing the safe src for SDCC, but I am trying to get details from
+teams as to why this was added, if it would be required I will add back
+the safe src index again and submit the patch.
+
+>> 
+>> >
+>> >> +       .clkr.hw.init = &(struct clk_init_data){
+>> >> +               .name = "gcc_sdcc4_apps_clk_src",
+>> >> +               .parent_names = gcc_parent_names_0,
+>> >> +               .num_parents = 4,
+>> >> +               .flags = CLK_SET_RATE_PARENT,
+>> >> +               .ops = &clk_rcg2_shared_ops,
+>> >> +       },
+>> >> +};
+>> >> +
+>> > [...]
+>> >> +
+>> >> +static struct clk_branch gcc_video_xo_clk = {
+>> >> +       .halt_reg = 0xb028,
+>> >> +       .halt_check = BRANCH_HALT,
+>> >> +       .clkr = {
+>> >> +               .enable_reg = 0xb028,
+>> >> +               .enable_mask = BIT(0),
+>> >> +               .hw.init = &(struct clk_init_data){
+>> >> +                       .name = "gcc_video_xo_clk",
+>> >> +                       .flags = CLK_IS_CRITICAL,
+>> >> +                       .ops = &clk_branch2_ops,
+>> >> +
+>> >
+>> > These things have no parents and we mark them critical. Why are we
+>> > even exposing them to the kernel? Are they not on by default? Are we
+>> > going to change these to non-critical at some point in the future?
+>> 
+>> These clocks are not enabled by default and going to video or other
+>> multimedia cores so we are marking them as critical and need to expose
+>> to the kernel. As of now, there is no plan to change these to
+>> non-critical.
 > 
-> v2:
->   - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
-> ---
+> Ok. Can we open code enabling these branches in the driver probe then?
+> Still seems wasteful if nobody uses these.
+> 
+> Put another way, either a driver (or other clk controller) should be
+> toggling these gates at runtime or we should enable them once and leave
+> them out of the framework. If the driver approach is taken, then the
+> drivers should be able to turn the clks on and off to save some power.
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+As of now, no client driver is taking care of toggling these gates at
+runtime. We want these clocks to be always on and that's why marked
+them as CRITICAL so that if any user tries to unprepare/disable then
+it won't happen and framework generates the warning.
+Once the client drivers will take care of above, then we will submit
+a cleanup patch.
 
-
-
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
