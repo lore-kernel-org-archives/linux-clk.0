@@ -1,48 +1,43 @@
-Return-Path: <yoshihiro.shimoda.uh@renesas.com>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk <linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED
- DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>, TAKESHI KIHARA
-	<takeshi.kihara.df@renesas.com>
-Subject: RE: [PATCH 1/2] clk: renesas: Add r8a77990 CPG Core Clock Definitions
-Date: Fri, 13 Apr 2018 02:16:06 +0000
-Message-ID: <TY1PR06MB09927E1CE7136B0690A31B7AD8B30@TY1PR06MB0992.apcprd06.prod.outlook.com>
-References: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1523439447-1084-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdXata291k6ViN-eHrw6OLN49p2CJT6yZHqQukL2Yf2Lag@mail.gmail.com>
-In-Reply-To: <CAMuHMdXata291k6ViN-eHrw6OLN49p2CJT6yZHqQukL2Yf2Lag@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+	Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: cs2000: mark resume function as __maybe_unused
+Date: Mon,  9 Apr 2018 12:54:34 +0200
+Message-Id: <20180409105438.2402477-1-arnd@arndb.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQtc2FuLA0KDQpUaGFuayB5b3UgZm9yIHRoZSByZXZpZXchDQoNCj4gRnJvbTogR2Vl
-cnQgVXl0dGVyaG9ldmVuLCBTZW50OiBUaHVyc2RheSwgQXByaWwgMTIsIDIwMTggOToyMyBQTQ0K
-PiANCj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBPbiBXZWQsIEFwciAxMSwgMjAxOCBhdCAxMToz
-NyBBTSwgWW9zaGloaXJvIFNoaW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMu
-Y29tPiB3cm90ZToNCjxzbmlwPg0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9pbmNsdWRl
-L2R0LWJpbmRpbmdzL2Nsb2NrL3I4YTc3OTkwLWNwZy1tc3NyLmgNCj4gPiBAQCAtMCwwICsxLDYz
-IEBADQo+ID4gKy8qIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wICovDQo+ID4gKy8q
-DQo+ID4gKyAqIENvcHlyaWdodCAoQykgMjAxOCBSZW5lc2FzIEVsZWN0cm9uaWNzIENvcnAuDQo+
-ID4gKyAqLw0KPiA+ICsjaWZuZGVmIF9fRFRfQklORElOR1NfQ0xPQ0tfUjhBNzc5OTBfQ1BHX01T
-U1JfSF9fDQo+ID4gKyNkZWZpbmUgX19EVF9CSU5ESU5HU19DTE9DS19SOEE3Nzk5MF9DUEdfTVNT
-Ul9IX18NCj4gPiArDQo+ID4gKyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9jbG9jay9yZW5lc2FzLWNw
-Zy1tc3NyLmg+DQo+ID4gKw0KPiA+ICsvKiByOGE3Nzk5MCBDUEcgQ29yZSBDbG9ja3MgKi8NCj4g
-DQo+IFsuLi5dDQo+IA0KPiA+ICsjZGVmaW5lIFI4QTc3OTkwX0NMS19DU0kwICAgICAgICAgICAg
-ICA0Nw0KPiANCj4gTm90ZSB0aGF0IENTSTAgaXMgbm90IGxpc3RlZCBpbiBUYWJsZSA4LjJnICgi
-Ui1DYXIgRTMiKS4NCj4gUHJvYmFibHkgaXQgZG9lcyBleGlzdCwgZ2l2ZW46DQo+ICAgLSBUYWJs
-ZSA4LjExICgiUmVnaXN0ZXIgQ29uZmlndXJhdGlvbiIpIHNheXMgQ1NJMENLQ1IgZXhpc3RzIG9u
-IFItQ2FyIEUzLA0KPiAgIC0gRmlndXJlIDI1LjYgKCJDU0kyIEJsb2NrIERpYWdyYW0gKFItQ2Fy
-IEUzKSIpIHNob3dzIENTSTAuDQoNCkkgdGhpbmsgc28uIEknbSBhc2tpbmcgSFcgdGVhbSBhYm91
-dCBtaXNzaW5nIENTSTAgaW4gVGFibGUgOC4yZyBub3cuDQoNCj4gPiArI2RlZmluZSBSOEE3Nzk5
-MF9DTEtfUE9TVDMgICAgICAgICAgICAgNDgNCj4gDQo+IEkgbm90aWNlZCB0aGVzZSBQT1NUeCBj
-bG9ja3MgaGF2ZSBiZWVuIGFkZGVkIHRvIGFsbCBSLUNhciBHZW4zIGNsb2NrIHRhYmxlcy4NCj4g
-SXQgZG9lc24ndCBsb29rIGxpa2Ugd2Ugd2lsbCBldmVyIG5lZWQgdG8gcmVmZXIgdGhlbSBmcm9t
-IERULCBzbyBJIHRoaW5rIHdlDQo+IGNhbiB0cmVhdCB0aGVtIGFzIGludGVybmFsIGNsb2Nrcywg
-YW5kIG9taXQgdGhlbSBmcm9tIHRoZSBEVCBiaW5kaW5ncy4NCj4gDQo+IFdoYXQgZG8geW91IHRo
-aW5rPw0KDQpJIGFncmVlIHdpdGggeW91LiBTbywgSSB3aWxsIG9taXQgUE9TVHggY2xvY2tzIGZy
-b20gdGhlIERUIGJpbmRpbmdzIGluIHYyIHBhdGNoLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhp
-cm8gU2hpbW9kYQ0KDQo=
+When power management is disabled, we get a harmless warning:
+
+drivers/clk/clk-cs2000-cp.c:544:12: error: 'cs2000_resume' defined but not used [-Werror=unused-function]
+
+Marking the function as __maybe_unused lets the compiler silently
+drop it instead.
+
+Fixes: eade4ccdb087 ("clk: cs2000: set pm_ops in hibernate-compatible way")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/clk-cs2000-cp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index c58019750b7e..a2f8c42e527a 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -541,7 +541,7 @@ static int cs2000_probe(struct i2c_client *client,
+ 	return ret;
+ }
+ 
+-static int cs2000_resume(struct device *dev)
++static int __maybe_unused cs2000_resume(struct device *dev)
+ {
+ 	struct cs2000_priv *priv = dev_get_drvdata(dev);
+ 
+-- 
+2.9.0
