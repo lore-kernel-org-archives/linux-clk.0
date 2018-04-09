@@ -1,115 +1,93 @@
-Return-Path: <matthias.bgg@kernel.org>
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	sean.wang@mediatek.com,
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [v3 04/10] drm/mediatek: mt2701: switch to mfd probing.
-Date: Fri, 27 Apr 2018 11:23:56 +0200
-Message-Id: <b50d32fb140dcf25ac467f0b5e7a84353c8d31d3.1524820923.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
-References: <cover.1524820923.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
-References: <cover.1524820923.git.mbrugger@suse.com>
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v4 0/3] Misc patches to support clocks for SDM845
+Date: Mon,  9 Apr 2018 11:44:50 +0530
+Message-Id: <1523254493-5313-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+Changes in v4:
+1. Adressed review comments for v2 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/9/55.
+2. The GCC clock driver(patch 3) depends upon the below patches
+   related to GDSC operation and are under review.
 
-With the mtk-mmsys MFD device in place, we switch the probing for
-mt2701 from device-tree to mfd.
+   https://lkml.org/lkml/2018/4/2/142
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+Changes in v3:
+1. Adressed review comments given for v2 series.
+2. The GCC clock driver(patch 3) depends upon the below patches related
+   to GDSC operation and are under review.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index a48e28adad09..88ee35907744 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -386,7 +386,7 @@ static int mtk_drm_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct mtk_drm_private *private;
--	struct device_node *node;
-+	struct device_node *node, *parent_node, *mmsys_node;
- 	struct component_match *match = NULL;
- 	int ret;
- 	int i;
-@@ -399,12 +399,23 @@ static int mtk_drm_probe(struct platform_device *pdev)
- 	INIT_WORK(&private->commit.work, mtk_atomic_work);
- 	private->data = of_device_get_match_data(dev);
- 
--	private->config_regs = syscon_node_to_regmap(dev->of_node);
--	if (IS_ERR(private->config_regs))
--		return PTR_ERR(private->config_regs);
-+	/* Check if called from mfd */
-+	if (!dev->of_node) {
-+		mmsys_node = pdev->dev.parent->of_node;
-+		private->data = (struct mtk_mmsys_driver_data *)
-+				platform_get_device_id(pdev)->driver_data;
-+		private->config_regs =
-+			syscon_node_to_regmap(mmsys_node);
-+		parent_node = mmsys_node->parent;
-+	} else {
-+		private->config_regs = syscon_node_to_regmap(dev->of_node);
-+		if (IS_ERR(private->config_regs))
-+			return PTR_ERR(private->config_regs);
-+		parent_node = dev->of_node->parent;
-+	}
- 
- 	/* Iterate over sibling DISP function blocks */
--	for_each_child_of_node(dev->of_node->parent, node) {
-+	for_each_child_of_node(parent_node, node) {
- 		const struct of_device_id *of_id;
- 		enum mtk_ddp_comp_type comp_type;
- 		int comp_id;
-@@ -545,13 +556,17 @@ static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
- 			 mtk_drm_sys_resume);
- 
- static const struct of_device_id mtk_drm_of_ids[] = {
--	{ .compatible = "mediatek,mt2701-mmsys",
--	  .data = &mt2701_mmsys_driver_data},
- 	{ .compatible = "mediatek,mt8173-mmsys",
- 	  .data = &mt8173_mmsys_driver_data},
- 	{ }
- };
- 
-+static const struct platform_device_id mtk_drm_ids[] = {
-+	{ "drm-mt2701-mm", (kernel_ulong_t)&mt2701_mmsys_driver_data },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(platform, mtk_drm_ids);
-+
- static struct platform_driver mtk_drm_platform_driver = {
- 	.probe	= mtk_drm_probe,
- 	.remove	= mtk_drm_remove,
-@@ -560,6 +575,7 @@ static struct platform_driver mtk_drm_platform_driver = {
- 		.of_match_table = mtk_drm_of_ids,
- 		.pm     = &mtk_drm_pm_ops,
- 	},
-+	.id_table = mtk_drm_ids,
- };
- 
- static struct platform_driver * const mtk_drm_drivers[] = {
--- 
-2.16.3
+   https://lkml.org/lkml/2018/4/2/142
+
+Changes in v2:
+Fixup for recalc_rate ops for clk_rcg2_shared_ops:
+There could be few scenarios where shared clocks are configured
+at rate other than CXO by boot. In those cases there would be a
+mismatch between the rate calculated by the recalc shared ops
+and the actual HW register configuration. Fix the same by adding
+an additional check to read current src from CFG register and
+make a decision based on that.
+
+Changes in v1:
+https://lkml.org/lkml/2018/1/31/209
+
+This patch series does the miscellaneous changes to support
+clock nodes for SDM845. Below are the major changes for
+which the existing code does not have support.
+
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
+3. Add support for controlling Fabia PLL for which the support
+   is not available in existing alpha PLL code.
+4. Add Global Clock controller (GCC) driver for SDM845. This
+   should allow most non-multimedia device drivers to probe
+   and control their clocks.
+
+[v1] : https://lkml.org/lkml/2018/1/31/209
+[v2] : https://lkml.org/lkml/2018/3/8/495
+[v3] : https://www.spinics.net/lists/linux-arm-msm/msg35009.html
+
+Amit Nischal (2):
+  clk: qcom: Clear hardware clock control bit of RCG
+  clk: qcom: Configure the RCGs to a safe source as needed
+
+Taniya Das (1):
+  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-rcg.h                         |    7 +-
+ drivers/clk/qcom/clk-rcg2.c                        |  176 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 3546 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  242 ++
+ 7 files changed, 3979 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
