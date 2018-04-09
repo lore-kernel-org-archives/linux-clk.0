@@ -1,102 +1,57 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1523872752.2601.26.camel@baylibre.com>
-Subject: Re: [PATCH v5 4/7] dt-bindings: clock: reset: Add AXG AO Clock and
- Reset Bindings
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,  Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
- Qiufang Dai <qiufang.dai@amlogic.com>,  linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
-Date: Mon, 16 Apr 2018 11:59:12 +0200
-In-Reply-To: <20180409143749.71197-5-yixun.lan@amlogic.com>
-References: <20180409143749.71197-1-yixun.lan@amlogic.com>
-	 <20180409143749.71197-5-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v4 1/3] clk: qcom: Clear hardware clock control bit of RCG
+Date: Mon,  9 Apr 2018 11:44:51 +0530
+Message-Id: <1523254493-5313-2-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1523254493-5313-1-git-send-email-anischal@codeaurora.org>
+References: <1523254493-5313-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-04-09 at 22:37 +0800, Yixun Lan wrote:
-> Add dt-bindings headers for the Meson-AXG's AO clock and
-> reset controller.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
->  include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
->  2 files changed, 46 insertions(+)
->  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
->  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+For upcoming targets like sdm845, POR value of the hardware clock control
+bit is set for most of root clocks which needs to be cleared for software
+to be able to control. For older targets like MSM8996, this bit is reserved
+bit and having POR value as 0 so this patch will work for the older targets
+too. So update the configuration mask to take care of the same to clear
+hardware clock control bit.
 
-Hi Philipp,
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Is OK if we take this through clock tree ?
-The related reset controller is actually part of a clock controller driver.
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index bbeaf9c..984de9c 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -42,6 +42,7 @@
+ #define CFG_MODE_SHIFT		12
+ #define CFG_MODE_MASK		(0x3 << CFG_MODE_SHIFT)
+ #define CFG_MODE_DUAL_EDGE	(0x2 << CFG_MODE_SHIFT)
++#define CFG_HW_CLK_CTRL_MASK	BIT(20)
 
-Best Regards
-Jerome
+ #define M_REG			0x8
+ #define N_REG			0xc
+@@ -276,7 +277,7 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	}
 
-> 
-> diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
-> new file mode 100644
-> index 000000000000..61955016a55b
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/axg-aoclkc.h
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-> +/*
-> + * Copyright (c) 2016 BayLibre, SAS
-> + * Author: Neil Armstrong <narmstrong@baylibre.com>
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-> + */
-> +
-> +#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-> +#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-> +
-> +#define CLKID_AO_REMOTE		0
-> +#define CLKID_AO_I2C_MASTER	1
-> +#define CLKID_AO_I2C_SLAVE	2
-> +#define CLKID_AO_UART1		3
-> +#define CLKID_AO_UART2		4
-> +#define CLKID_AO_IR_BLASTER	5
-> +#define CLKID_AO_SAR_ADC	6
-> +#define CLKID_AO_CLK81		7
-> +#define CLKID_AO_SAR_ADC_SEL	8
-> +#define CLKID_AO_SAR_ADC_DIV	9
-> +#define CLKID_AO_SAR_ADC_CLK	10
-> +#define CLKID_AO_ALT_XTAL	11
-> +
-> +#endif
-> diff --git a/include/dt-bindings/reset/axg-aoclkc.h b/include/dt-bindings/reset/axg-aoclkc.h
-> new file mode 100644
-> index 000000000000..d342c0b6b2a7
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/axg-aoclkc.h
-> @@ -0,0 +1,20 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-> +/*
-> + * Copyright (c) 2016 BayLibre, SAS
-> + * Author: Neil Armstrong <narmstrong@baylibre.com>
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-> + */
-> +
-> +#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-> +#define DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-> +
-> +#define RESET_AO_REMOTE		0
-> +#define RESET_AO_I2C_MASTER	1
-> +#define RESET_AO_I2C_SLAVE	2
-> +#define RESET_AO_UART1		3
-> +#define RESET_AO_UART2		4
-> +#define RESET_AO_IR_BLASTER	5
-> +
-> +#endif
+ 	mask = BIT(rcg->hid_width) - 1;
+-	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK;
++	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+ 	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
+ 	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
