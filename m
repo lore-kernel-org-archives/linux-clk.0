@@ -1,105 +1,71 @@
-Return-Path: <marcel@ziswiler.com>
-Message-ID: <1524834018.6979.13.camel@ziswiler.com>
-Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-From: Marcel Ziswiler <marcel@ziswiler.com>
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter
- De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
- <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc
- Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 27 Apr 2018 15:00:18 +0200
-In-Reply-To: <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
-	 <20180426235818.10018-2-digetx@gmail.com>
-	 <1524832404.6979.9.camel@ziswiler.com>
-	 <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 9 Apr 2018 15:21:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+	rjw@rjwysocki.net, viresh.kumar@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v4 10/14] dt-bindings: Add support for SAW documentation
+Message-ID: <20180409202144.76gjmc6kcn2msffl@rob-hp-laptop>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-11-git-send-email-ilialin@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1522358807-10413-11-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-04-27 at 15:54 +0300, Dmitry Osipenko wrote:
-> Hi Marcel,
+On Fri, Mar 30, 2018 at 12:26:43AM +0300, Ilia Lin wrote:
+> Add support for SAW controlled regulators in 8x96.
+> Document it.
+
+Perhaps some clue in the subject what subsystem and/or device this 
+applies to.
+
 > 
-> On 27.04.2018 15:33,  Ziswiler wrote:
-> > Hi Dmitry
-> > 
-> > Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around
-> > e.g.
-> > DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
-> > 
-> > On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
-> > > CDEV1/CDEV2 clocks could have corresponding oscillator clock
-> > > divider
-> > > as
-> > > a parent. Add these dividers in order to be able to provide that
-> > > parent
-> > > option.
-> > > 
-> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > > ---
-> > >  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
-> > >  1 file changed, 12 insertions(+)
-> > > 
-> > > diff --git a/drivers/clk/tegra/clk-tegra20.c
-> > > b/drivers/clk/tegra/clk-
-> > > tegra20.c
-> > > index 0ee56dd04cec..16cf4108f2ff 100644
-> > > --- a/drivers/clk/tegra/clk-tegra20.c
-> > > +++ b/drivers/clk/tegra/clk-tegra20.c
-> > > @@ -26,6 +26,8 @@
-> > >  #include "clk.h"
-> > >  #include "clk-id.h"
-> > >  
-> > > +#define MISC_CLK_ENB 0x48
-> > > +
-> > >  #define OSC_CTRL 0x50
-> > >  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
-> > >  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
-> > > @@ -831,6 +833,16 @@ static void __init
-> > > tegra20_periph_clk_init(void)
-> > >  				    periph_clk_enb_refcnt);
-> > >  	clks[TEGRA20_CLK_PEX] = clk;
-> > >  
-> > > +	/* cdev1 OSC divider */
-> > > +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
-> > > +			     0, clk_base + MISC_CLK_ENB, 20, 2,
-> > 
-> > So it would be:
-> > 
-> > +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-> > 
-> > > +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> > > +
-> > > +	/* cdev2 OSC divider */
-> > > +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
-> > > +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-> > 
-> > And:
-> > 
-> > +			     0, clk_base + MISC_CLK_ENB, 20, 2,
-> > 
-> > > +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> > > +
-> > >  	/* cdev1 */
-> > >  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL,
-> > > 0,
-> > > 26000000);
-> > >  	clk = tegra_clk_register_periph_gate("cdev1",
-> > > "cdev1_fixed",
-> > > 0,
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
 > 
-> Indeed, good catch! I'll wait for more comments and then re-spin
-> patchset with
-> the fix. Thank you.
+> diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> index 57d2c65..406f2e5 100644
+> --- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> +++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> @@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
+>  	Definition: Reference to regulator supplying the input pin, as
+>  		    described in the data sheet.
+>  
+> +- qcom,saw-reg:
+> +	Usage: optional
+> +	Value type: <phandle>
+> +	Description: Reference to syscon node defining the SAW registers.
+> +
+>  
+>  The regulator node houses sub-nodes for each regulator within the device. Each
+>  sub-node is identified using the node's name, with valid values listed for each
+> @@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
+>  			2 = 0.55 uA
+>  			3 = 0.75 uA
+>  
+> +- qcom,saw-slave:
+> +	Usage: optional
+> +	Value type: <boo>
+> +	Description: SAW controlled gang slave. Will not be configured.
+> +
+> +- qcom,saw-leader:
+> +	Usage: optional
+> +	Value type: <boo>
+> +	Description: SAW controlled gang leader. Will be configured as
+> +		     SAW regulator.
 
-You are very welcome. Thank you!
+Would the coupled regulator binding work in this case?
 
-Other than that it all looks proper and works fine at least in the
-configuration we use on Colibri T20. So you may add my reviewed and
-tested bys to the whole series:
-
-Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
-Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+Rob
