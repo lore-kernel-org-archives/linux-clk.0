@@ -1,76 +1,45 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <shawnguo@kernel.org>
+Date: Mon, 9 Apr 2018 19:37:45 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
+ external PMIC
+Message-ID: <20180409113744.GA14582@dragon>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180419134221.ufsc462fw7j7so6q@flea>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-clk@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <stephen.boyd@linaro.org>, Nicholas Piggin <npiggin@gmail.com>,
- linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
- linux-arm-kernel@lists.infradead.org
-References: <1524052351-14103-1-git-send-email-yamada.masahiro@socionext.com>
- <152409404578.51482.16644171573677016161@swboyd.mtv.corp.google.com>
- <20180419134221.ufsc462fw7j7so6q@flea>
-Message-ID: <152417665547.46528.9856369258447999254@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: sunxi-ng: replace lib-y with obj-y
-Date: Thu, 19 Apr 2018 15:24:15 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180305102524.5905-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2018-04-19 06:42:21)
-> On Wed, Apr 18, 2018 at 04:27:25PM -0700, Stephen Boyd wrote:
-> > Quoting Masahiro Yamada (2018-04-18 04:52:31)
-> > > We had commit 06e226c7fb23 ("clk: sunxi-ng: Move all clock types to a
-> > > library") and commit 799c43415442 ("kbuild: thin archives make default
-> > > for all archs") in the same development cycle, from different trees.
-> > > =
+On Mon, Mar 05, 2018 at 11:25:17AM +0100, Oleksij Rempel wrote:
+> This patch series is providing power off support for Freescale/NXP iMX6 based
+> boards with external power management integrated circuit (PMIC).
+> As a first step the PMIC is configured to turn off the system if the
+> standby pin is asserted. On second step we assert the standby pin.
+> For this reason we need to use pm_power_off_prepare.
+> 
+> Usage of stnadby pin for power off is described in official iMX6
+> documentation.
+> 
+> 2018.03.05:
+> As this patch set touches multiple subsystems I think it would make
+> sense for Shawn Guo to take the all patch set.
+> The only part which didn't receive an ACK is regulator stuff. So I would
+> hope that Mark Brown can ACK it.
 
-> > > With migration to the thin archive, the entire drivers/clk/sunxi-ng/l=
-ib.a
-> > > is linked to the vmlinux.  This does not break build, but we do not g=
-et
-> > > any size saving.
-> > > =
+Besides regulator changes, I did not see an ACK on kernel/reboot.c
+either.
 
-> > > However, we do not need to go back to the individual Kconfig options.
-> > > The default configuration pulls in all (or most) of the CCU parts any=
-way.
-> > > Also, once we enable CONFIG_LD_DEAD_CODE_DATA_ELIMINATION, we can sim=
-ply
-> > > list all files with obj-y, and the linker will drop all unused functi=
-ons
-> > > by itself.
-> > > =
-
-> > > After the long discussion [1], people there agreed to fix this, but
-> > > nobody sent a patch after all.  I am doing it now.
-> > > =
-
-> > > I lifted up CONFIG_SUNXI_CCU to drivers/clk/Makefile because everythi=
-ng
-> > > in drivers/clk/sunxi-ng/ depends on SUNXI_CCU.
-> > > =
-
-> > > [1] https://patchwork.kernel.org/patch/9796521/
-> > > =
-
-> > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > > ---
-> > =
-
-> > Thanks for remembering to take care of this. I forgot about it all.
-> > =
-
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > =
-
-> > Or I can pick this up directly. Let me know.
-> =
-
-> We'll probably have our usual round of patches that might generate
-> some conflicts on the Makefile. I've picked it up with your A-b, and
-> will send you a PR with it, as usual.
-> =
-
-
-Perfect. Thanks!
+Shawn
