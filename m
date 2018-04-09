@@ -1,57 +1,43 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-Date: Mon, 30 Apr 2018 15:46:30 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] pinctrl: sunxi: Use of_clk_get_parent_count()
- instead of open coding
-Message-ID: <20180430134630.GF11457@mai>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-6-git-send-email-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <1524063005-1716-6-git-send-email-geert+renesas@glider.be>
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2 0/3] Update reset and poll logic for GDSCs
+Date: Mon,  9 Apr 2018 14:11:43 +0530
+Message-Id: <1523263306-28665-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 18, 2018 at 04:50:05PM +0200, Geert Uytterhoeven wrote:
-> A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
-> Use of_clk_get_parent_count() instead of open coding"), replace it.
-> 
-> of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
-> instead of <linux/clk-provider.h>.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
-> This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
-> <linux/of_clk.h>".
-> 
-> v3:
->   - Add Acked-by,
-> 
-> v2:
->   - New.
-> ---
+ [v2]
+  * Addressed review comments given in v1 series
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+This series implements the below logic for the GDSCs
 
--- 
+ 1. logic to reset the AON logic before or assert/deassert the block
+   control reset removing the clamp io for few GDSCs on SDM845 SoC.
+ 2. It also introduces the requirement to poll for higher timeout values
+   for few of the GDSCs.
+ 3. There is a new poll register for the GDSCs on SDM845 SoCs which needs
+   to be polled for the correct hardware status of the GDSCs.
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Amit Nischal (3):
+  clk: qcom: gdsc: Add support to reset AON and block reset logic
+  clk: qcom: gdsc: Add support to poll for higher timeout value
+  clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+ drivers/clk/qcom/gdsc.c | 63 +++++++++++++++++++++++++++++++++++++++++++------
+ drivers/clk/qcom/gdsc.h |  5 +++-
+ 2 files changed, 60 insertions(+), 8 deletions(-)
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
