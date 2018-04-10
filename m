@@ -1,64 +1,107 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH 2/5] clk: renesas: r8a7745: Fix LB clock divider
-Date: Tue, 3 Apr 2018 10:15:13 +0000
-Message-ID: <TY1PR01MB1770E87BB9DC7DCB54A26C9BC0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
- <1522344790-20061-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-3-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v6 09/11] firmware: xilinx: Add debugfs for clock control APIs
+Date: Tue, 10 Apr 2018 12:38:45 -0700
+Message-ID: <1523389127-14243-10-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-> Subject: [PATCH 2/5] clk: renesas: r8a7745: Fix LB clock divider
->
-> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-> the LB clock divider depends on the value of the MD18 pin.
->
-> On RZ/G1E, the LB clock divider is fixed to 24.  Hence model the clock
-> as a fixed factor clock instead.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Rajan Vaja <rajanv@xilinx.com>
 
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Add debugfs file to control clocks using firmware APIs
+through debugfs interface.
 
-> ---
->  drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c b/drivers/clk/renesas=
-/r8a7745-cpg-mssr.c
-> index 87f5a3619e4f9d60..4b0a9243b7481176 100644
-> --- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
-> @@ -51,7 +51,6 @@ static const struct cpg_core_clk r8a7745_core_clks[] __=
-initconst =3D {
->  DEF_FIXED(".pll1_div2",CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
->
->  /* Core Clock Outputs */
-> -DEF_BASE("lb",   R8A7745_CLK_LB,   CLK_TYPE_GEN2_LB,CLK_PLL1),
->  DEF_BASE("sdh",  R8A7745_CLK_SDH,  CLK_TYPE_GEN2_SDH,CLK_PLL1),
->  DEF_BASE("sd0",  R8A7745_CLK_SD0,  CLK_TYPE_GEN2_SD0,CLK_PLL1),
->  DEF_BASE("qspi", R8A7745_CLK_QSPI, CLK_TYPE_GEN2_QSPI,CLK_PLL1_DIV2),
-> @@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7745_core_clks[] __=
-initconst =3D {
->  DEF_FIXED("zs",    R8A7745_CLK_ZS,CLK_PLL1,    6, 1),
->  DEF_FIXED("hp",    R8A7745_CLK_HP,CLK_PLL1,   12, 1),
->  DEF_FIXED("b",     R8A7745_CLK_B,CLK_PLL1,   12, 1),
-> +DEF_FIXED("lb",    R8A7745_CLK_LB,CLK_PLL1,   24, 1),
->  DEF_FIXED("p",     R8A7745_CLK_P,CLK_PLL1,   24, 1),
->  DEF_FIXED("cl",    R8A7745_CLK_CL,CLK_PLL1,   48, 1),
->  DEF_FIXED("cp",    R8A7745_CLK_CP,CLK_PLL1,   48, 1),
-> --
-> 2.7.4
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp-debug.c | 48 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
+index 1cb69f7..837fcd1 100644
+--- a/drivers/firmware/xilinx/zynqmp-debug.c
++++ b/drivers/firmware/xilinx/zynqmp-debug.c
+@@ -34,6 +34,15 @@ static struct pm_api_info pm_api_list[] = {
+ 	PM_API(PM_GET_API_VERSION),
+ 	PM_API(PM_IOCTL),
+ 	PM_API(PM_QUERY_DATA),
++	PM_API(PM_CLOCK_ENABLE),
++	PM_API(PM_CLOCK_DISABLE),
++	PM_API(PM_CLOCK_GETSTATE),
++	PM_API(PM_CLOCK_SETDIVIDER),
++	PM_API(PM_CLOCK_GETDIVIDER),
++	PM_API(PM_CLOCK_SETRATE),
++	PM_API(PM_CLOCK_GETRATE),
++	PM_API(PM_CLOCK_SETPARENT),
++	PM_API(PM_CLOCK_GETPARENT),
+ };
+ 
+ /**
+@@ -87,6 +96,7 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
+ 	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
+ 	u32 pm_api_version;
+ 	int ret;
++	u64 rate;
+ 
+ 	if (!eemi_ops)
+ 		return -ENXIO;
+@@ -132,6 +142,44 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
+ 				pm_api_ret[2], pm_api_ret[3]);
+ 		break;
+ 	}
++	case PM_CLOCK_ENABLE:
++		ret = eemi_ops->clock_enable(pm_api_arg[0]);
++		break;
++	case PM_CLOCK_DISABLE:
++		ret = eemi_ops->clock_disable(pm_api_arg[0]);
++		break;
++	case PM_CLOCK_GETSTATE:
++		ret = eemi_ops->clock_getstate(pm_api_arg[0], &pm_api_ret[0]);
++		if (!ret)
++			sprintf(debugfs_buf, "Clock state: %u\n",
++				pm_api_ret[0]);
++		break;
++	case PM_CLOCK_SETDIVIDER:
++		ret = eemi_ops->clock_setdivider(pm_api_arg[0], pm_api_arg[1]);
++		break;
++	case PM_CLOCK_GETDIVIDER:
++		ret = eemi_ops->clock_getdivider(pm_api_arg[0], &pm_api_ret[0]);
++		if (!ret)
++			sprintf(debugfs_buf, "Divider Value: %d\n",
++				pm_api_ret[0]);
++		break;
++	case PM_CLOCK_SETRATE:
++		ret = eemi_ops->clock_setrate(pm_api_arg[0], pm_api_arg[1]);
++		break;
++	case PM_CLOCK_GETRATE:
++		ret = eemi_ops->clock_getrate(pm_api_arg[0], &rate);
++		if (!ret)
++			sprintf(debugfs_buf, "Clock rate :%llu\n", rate);
++		break;
++	case PM_CLOCK_SETPARENT:
++		ret = eemi_ops->clock_setparent(pm_api_arg[0], pm_api_arg[1]);
++		break;
++	case PM_CLOCK_GETPARENT:
++		ret = eemi_ops->clock_getparent(pm_api_arg[0], &pm_api_ret[0]);
++		if (!ret)
++			sprintf(debugfs_buf,
++				"Clock parent Index: %u\n", pm_api_ret[0]);
++		break;
+ 	default:
+ 		sprintf(debugfs_buf, "Unsupported PM-API request\n");
+ 		ret = -EINVAL;
+-- 
+2.7.4
