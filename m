@@ -1,92 +1,78 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 24 Apr 2018 06:48:54 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: matthias.bgg@kernel.org
-Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
-	robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, davem@davemloft.net,
-	gregkh@linuxfoundation.org, mchehab@kernel.org,
-	rdunlap@infradead.org, pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com, linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk, matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [v2 00/10] arm/arm64: mediatek: Fix mmsys device probing
-Message-ID: <20180424054854.bpd6h3imazhqnuy3@dell>
-References: <cover.1524497268.git.mbrugger@suse.com>
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Tue, 10 Apr 2018 10:32:12 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Alan Stern <stern@rowland.harvard.edu>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: at91: Fix for PLL set_rate changes not
+ being actually written to PLL peripheral bits
+Message-ID: <20180410103212.7bb1d48c@bbrezillon>
+In-Reply-To: <20180410001649.GA62245@hak8or>
+References: <20180410001649.GA62245@hak8or>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 23 Apr 2018, matthias.bgg@kernel.org wrote:
+Hi Marcin,
 
-> From: Matthias Brugger <mbrugger@suse.com>
+On Mon, 9 Apr 2018 20:16:49 -0400
+Marcin Ziemianowicz <marcin@ziemianowicz.com> wrote:
+
+> When a USB device is connected to the USB host port on the SAM9N12 then
+> you get "-62" error which seems to indicate USB replies from the device
+> are timing out. Looking around, I saw the USB bus was running at half
+> speed. Going further, it seems that in ..._set_rate() the PLL wasn't
+> actually being adjusted. Writing the multiplier and divider values to
+> the peripheral fixes the bus running at half speed.
 > 
-> Changes since v1:
-> - add binding documentation
-> - ddp: use regmap_update_bits
-> - ddp: ignore EPROBE_DEFER on clock probing
-> - mfd: delete mmsys_private
-> - add Reviewed-by and Acked-by tags
-
-I'm confused by the double submission.
-
-Please can you send it again completely detached from the first and
-the second submissions please?
-
+> Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
 > ---
+>  drivers/clk/at91/clk-pll.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
-> used in the clk driver) and some registers to set the routing and enable
-> the differnet blocks of the display subsystem.
-> 
-> Up to now both drivers, clock and drm are probed with the same device tree
-> compatible. But only the first driver get probed, which in effect breaks
-> graphics on mt8173 and mt2701.
-> 
-> This patch set introduces a new mfd device, which binds against the mmsys
-> compatible and takes care of probing the needed devices. It was tested on the
-> bananapi-r2 and the Acer R13 Chromebook.
-> 
-> 
-> Matthias Brugger (10):
->   dt-bindings: mediatek: mmsys: Add support for mfd
->   drm/mediatek: Use regmap for register access
->   mfd: mtk-mmsys: Add mmsys driver
->   drm/mediatek: mt2701: switch to mfd probing.
->   clk: mediatek: mt2701-mm: switch to mfd device
->   mfd: mtk-mmsys: Add mt8173 nodes
->   drm/mediatek: Add mfd support for mt8173
->   clk: mediatek: mt8173-mm: switch to mfd device
->   drm: mediatek: Omit warning on probe defers
->   MAINTAINERS: update Mediatek Soc entry
-> 
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 -
->  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
->  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 +++++++
->  MAINTAINERS                                        |  2 +
->  drivers/clk/mediatek/clk-mt2701-mm.c               | 10 +--
->  drivers/clk/mediatek/clk-mt8173.c                  | 17 +++-
->  drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |  4 +-
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 41 ++++------
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.h             |  4 +-
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 33 ++++----
->  drivers/gpu/drm/mediatek/mtk_drm_drv.h             |  2 +-
->  drivers/mfd/Kconfig                                |  9 +++
->  drivers/mfd/Makefile                               |  2 +
->  drivers/mfd/mtk-mmsys.c                            | 93 ++++++++++++++++++++++
->  14 files changed, 189 insertions(+), 59 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
->  create mode 100644 drivers/mfd/mtk-mmsys.c
-> 
+> diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
+> index 534961766ae5..db7155fe9346 100644
+> --- a/drivers/clk/at91/clk-pll.c
+> +++ b/drivers/clk/at91/clk-pll.c
+> @@ -288,6 +288,14 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	pll->div = div;
+>  	pll->mul = mul;
+>  
+> +	// Set the PLL as per above div and mil values.
+					    ^ mul
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Please do not use C++-style comments, use /* comment */ instead.
+
+> +	regmap_update_bits(pll->regmap, AT91_CKGR_PLLBR,
+
+You hardcode the PLL ID here. What if this function if called for PLLA?
+
+> +		AT91_PMC_DIV | AT91_PMC_MUL,
+
+You should use PLL_MUL_MASK(layout) and PLL_DIV_MASK to do that.
+
+> +		(div << 0) | (mul << 16));
+
+This is wrong. The clk has the CLK_SET_RATE_GATE set, which means the
+rate cannot be updated if the PLL is not gated, and if you look at
+clk_pll_prepare(), you'll see that div and mul fields are updated
+there. Now, maybe there's a bug in clk_pll_prepare(), but
+clk_pll_set_rate() is definitely not the place where we want ->div and
+->mul to be written to the register.
+
+> +
+> +	pr_debug("clk-pll: setting new rate, (%lu hz / %u) * %u = %lu hz\n",
+> +		parent_rate, div, mul, rate);
+> +
+>  	return 0;
+>  }
+>  
+
+Regards,
+
+Boris
