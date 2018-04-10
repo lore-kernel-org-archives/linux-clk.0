@@ -1,67 +1,79 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<airlied@linux.ie>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
-	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
-CC: <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Sean
- Wang <sean.wang@mediatek.com>
-Subject: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
-Date: Wed, 18 Apr 2018 18:24:54 +0800
-Message-ID: <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
-In-Reply-To: <cover.1524044917.git.sean.wang@mediatek.com>
-References: <cover.1524044917.git.sean.wang@mediatek.com>
-Return-Path: sean.wang@mediatek.com
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v6 08/11] firmware: xilinx: Add debugfs for query data API
+Date: Tue, 10 Apr 2018 12:38:44 -0700
+Message-ID: <1523389127-14243-9-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+From: Rajan Vaja <rajanv@xilinx.com>
 
-Add bindings to g3dsys providing necessary clock and reset control to
-Mali-450.
+Add debugfs file to query platform specific data from firmware
+using debugfs interface.
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
 ---
- .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+ drivers/firmware/xilinx/zynqmp-debug.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-new file mode 100644
-index 0000000..ff2d70c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-@@ -0,0 +1,30 @@
-+MediaTek g3dsys controller
-+============================
+diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
+index 148dbff..1cb69f7 100644
+--- a/drivers/firmware/xilinx/zynqmp-debug.c
++++ b/drivers/firmware/xilinx/zynqmp-debug.c
+@@ -33,6 +33,7 @@ static char debugfs_buf[PAGE_SIZE];
+ static struct pm_api_info pm_api_list[] = {
+ 	PM_API(PM_GET_API_VERSION),
+ 	PM_API(PM_IOCTL),
++	PM_API(PM_QUERY_DATA),
+ };
+ 
+ /**
+@@ -105,6 +106,32 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
+ 			sprintf(debugfs_buf, "IOCTL return value: %u\n",
+ 				pm_api_ret[1]);
+ 		break;
++	case PM_QUERY_DATA:
++	{
++		struct zynqmp_pm_query_data qdata = {0};
 +
-+The MediaTek g3dsys controller provides various clocks and reset controller to
-+the GPU.
++		qdata.qid = pm_api_arg[0];
++		qdata.arg1 = pm_api_arg[1];
++		qdata.arg2 = pm_api_arg[2];
++		qdata.arg3 = pm_api_arg[3];
 +
-+Required Properties:
++		ret = eemi_ops->query_data(qdata, pm_api_ret);
++		if (ret)
++			break;
 +
-+- compatible: Should be:
-+	- "mediatek,mt2701-g3dsys", "syscon":
-+		for MT2701 SoC
-+	- "mediatek,mt7623-ethsys", "mediatek,mt2701-g3dsys", "syscon":
-+		for MT7623 SoC
-+- #clock-cells: Must be 1
-+- #reset-cells: Must be 1
-+
-+The ethsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+g3dsys: clock-controller@13000000 {
-+	compatible = "mediatek,mt7623-g3dsys",
-+		     "mediatek,mt2701-g3dsys",
-+		     "syscon";
-+	reg = <0 0x13000000 0 0x200>;
-+	#clock-cells = <1>;
-+	#reset-cells = <1>;
-+};
++		if (qdata.qid == PM_QID_CLOCK_GET_NAME)
++			sprintf(debugfs_buf, "Clock name = %s\n",
++				(char *)pm_api_ret);
++		else if (qdata.qid == PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS)
++			sprintf(debugfs_buf, "Multiplier = %d, Divider = %d\n",
++				pm_api_ret[1], pm_api_ret[2]);
++		else
++			sprintf(debugfs_buf,
++				"data[0] = 0x%08x\ndata[1] = 0x%08x\n data[2] = 0x%08x\ndata[3] = 0x%08x\n",
++				pm_api_ret[0], pm_api_ret[1],
++				pm_api_ret[2], pm_api_ret[3]);
++		break;
++	}
+ 	default:
+ 		sprintf(debugfs_buf, "Unsupported PM-API request\n");
+ 		ret = -EINVAL;
 -- 
 2.7.4
