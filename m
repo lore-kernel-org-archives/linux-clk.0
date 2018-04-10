@@ -1,52 +1,68 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1524649974.4026.51.camel@baylibre.com>
-Subject: [GIT PULL] Amlogic clock fixes for v4.17-rc
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>, "open list:ARM/Amlogic Meson..."
- <linux-amlogic@lists.infradead.org>, Neil Armstrong
- <narmstrong@baylibre.com>
-Date: Wed, 25 Apr 2018 11:52:54 +0200
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Ripard <maxime.ripard@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/5] soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
+Date: Tue, 10 Apr 2018 14:51:40 +0200
+Message-Id: <1523364701-15383-5-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear clock maintainers,
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a very big number in the
+allocation below.
 
-Below is a request to pull amlogic clock fixes for v4.17.
-These changes fixes a few simple mistakes I did while reworking meson clock
-providers in the last cycle.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
+<linux/of_clk.h>".
 
-Cheers
+v2:
+  - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
+---
+ drivers/soc/tegra/pmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the Git repository at:
-
-  git://github.com/BayLibre/clk-meson.git tags/meson-clk-fixes-4.17-1
-
-for you to fetch changes up to 5b33139b1a08eabcba7b39d8a4babd7fc2d3b534:
-
-  clk: meson: meson8b: fix meson8b_cpu_clk parent clock name (2018-04-25
-10:23:19 +0200)
-
-----------------------------------------------------------------
-First round of fixes for meson clocks targeted for v4.17
- - fix typos in two meson8 clock names
- - remove unused clock ops declaration
-
-----------------------------------------------------------------
-Martin Blumenstingl (2):
-      clk: meson: meson8b: fix meson8b_fclk_div3_div clock name
-      clk: meson: meson8b: fix meson8b_cpu_clk parent clock name
-
-Yixun Lan (1):
-      clk: meson: drop meson_aoclk_gate_regmap_ops
-
- drivers/clk/meson/gxbb-aoclk.h | 2 --
- drivers/clk/meson/meson8b.c    | 5 +++--
- 2 files changed, 3 insertions(+), 4 deletions(-)
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index d9fcdb592b3966a5..d8cb48a4b8eb1b78 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -31,6 +31,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_clk.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+@@ -725,7 +726,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+ 	unsigned int i, count;
+ 	int err;
+ 
+-	count = of_count_phandle_with_args(np, "clocks", "#clock-cells");
++	count = of_clk_get_parent_count(np);
+ 	if (count == 0)
+ 		return -ENODEV;
+ 
+-- 
+2.7.4
