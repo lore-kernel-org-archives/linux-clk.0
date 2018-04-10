@@ -1,56 +1,191 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37962 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751528AbeDYMCs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Apr 2018 08:02:48 -0400
-Received: by mail-wr0-f195.google.com with SMTP id h3-v6so53093035wrh.5
-        for <linux-clk@vger.kernel.org>; Wed, 25 Apr 2018 05:02:47 -0700 (PDT)
-Message-ID: <1524657764.4026.62.camel@baylibre.com>
-Subject: Re: [PATCH v4 2/2] clk: meson: meson8b: add support for the NAND
- clocks
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        narmstrong@baylibre.com, linux-amlogic@lists.infradead.org
-Cc: carlo@caione.org, khilman@baylibre.com, linux-clk@vger.kernel.org
-Date: Wed, 25 Apr 2018 14:02:44 +0200
-In-Reply-To: <20180423193509.30584-3-martin.blumenstingl@googlemail.com>
-References: <20180423193509.30584-1-martin.blumenstingl@googlemail.com>
-         <20180423193509.30584-3-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail.bootlin.com ([62.4.15.54]:43034 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751849AbeDJJyv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:54:51 -0400
+Date: Tue, 10 Apr 2018 11:54:39 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: at91: Added more information logging.
+Message-ID: <20180410095439.GA2745@piout.net>
+References: <20180410001621.GA62230@hak8or>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180410001621.GA62230@hak8or>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-04-23 at 21:35 +0200, Martin Blumenstingl wrote:
-> This adds the NAND clocks (from the HHI_NAND_CLK_CNTL register) to the
-> Meson8b clock driver. There are three NAND clocks: a gate which enables
-> or disables the NAND clock, a mux and a divider (which divides the mux
-> output).
-> Unfortunately the public S805 datasheet does not document the mux
-> parents. However, the vendor kernel has a few hints for us which allows
-> us to make an educated guess about the clock parents. To do this we need
-> to have a look at set_nand_core_clk() from the vendor's NAND driver (see
-> [0]):
-> - XTAL = (4<<9) | (1<<8) | 0
-> - 160MHz = (0<<9) | (1<<8) | 3)
-> - 182MHz = (3<<9) | (1<<8) | 1)
-> - 212MHz = (1<<9) | (1<<8) | 3)
-> - 255MHz = (2<<9) | (1<<8) | 1)
-> 
-> While there is a comment for the XTAL parent (which indicates that it
-> should only be used for debugging) we have to do a bit of math for the
-> other parents: target_freq * divider = rate of parent clock
-> Bit 8 above is the enable bit, so we can ignore it here. Bits 11:9 are
-> the mux index and bits 6:0 are the 0-based divider (so we need to add
-> 1). This gives us:
-> - mux 0 (160MHz * 4) = fclk_div4 (actual rate = 637.5MHz, off by 2.5MHz)
-> - mux 1 (212MHz * 4) = fclk_div3 (actual rate = 850MHz, off by 2MHz)
-> - mux 2 (255MHz * 2) = fclk_div5 (matches exactly 510MHz)
-> - mux 3 (182MHz * 2) = fclk_div7 (actual rate = 346.3MHz, off by 0.3MHz)
-> 
-> [0] https://github.com/khadas/linux/blob/9587681285cb/drivers/amlogic/amlnf/dev/amlnf_ctrl.c#L314
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Hi,
 
-applied to next/drivers
-Thx
+On 09/04/2018 20:16:21-0400, Marcin Ziemianowicz wrote:
+> I noticed that when debugging some USB clocking issue that there weren't
+> many ways to tell what the state of the USB clocking system was. This
+> adds a few logging statements to see what the relevant code is trying to
+> do.
+> 
+> Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+> ---
+>  drivers/clk/at91/clk-pll.c   |  6 +++++-
+>  drivers/clk/at91/clk-usb.c   | 10 ++++++++--
+>  drivers/usb/host/ohci-at91.c | 16 ++++++++++------
+>  3 files changed, 23 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
+> index 7d3223fc7161..534961766ae5 100644
+> --- a/drivers/clk/at91/clk-pll.c
+> +++ b/drivers/clk/at91/clk-pll.c
+> @@ -133,6 +133,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+>  {
+>  	struct clk_pll *pll = to_clk_pll(hw);
+>  	unsigned int pllr;
+> +	unsigned long recalcedrate;
+>  	u16 mul;
+>  	u8 div;
+>  
+> @@ -144,7 +145,10 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+>  	if (!div || !mul)
+>  		return 0;
+>  
+> -	return (parent_rate / div) * (mul + 1);
+> +	recalcedrate = (parent_rate / div) * (mul + 1);
+> +	pr_debug("clk-pll: calculating new rate, (%lu hz / %u) * %u = %lu hz\n",
+> +		parent_rate, div, mul, recalcedrate);
+This is not properly aligned. Also, I'm not a huge fan of adding that
+kind of debug messages. Isn't the rate already present in debugfs ?
+
+> +	return recalcedrate;
+>  }
+>  
+>  static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,
+> diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
+> index 791770a563fc..2fa877e99bac 100644
+> --- a/drivers/clk/at91/clk-usb.c
+> +++ b/drivers/clk/at91/clk-usb.c
+> @@ -48,11 +48,15 @@ static unsigned long at91sam9x5_clk_usb_recalc_rate(struct clk_hw *hw,
+>  	struct at91sam9x5_clk_usb *usb = to_at91sam9x5_clk_usb(hw);
+>  	unsigned int usbr;
+>  	u8 usbdiv;
+> +	unsigned int calcdclock;
+>  
+>  	regmap_read(usb->regmap, AT91_PMC_USB, &usbr);
+>  	usbdiv = (usbr & AT91_PMC_OHCIUSBDIV) >> SAM9X5_USB_DIV_SHIFT;
+>  
+> -	return DIV_ROUND_CLOSEST(parent_rate, (usbdiv + 1));
+> +	calcdclock = DIV_ROUND_CLOSEST(parent_rate, (usbdiv + 1));
+> +	pr_debug("clk-usb: calculating new rate, %lu hz / %u = %u hz\n",
+> +		parent_rate, usbdiv + 1, calcdclock);
+> +	return calcdclock;
+>  }
+>  
+>  static int at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
+> @@ -98,7 +102,6 @@ static int at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
+>  		if (!best_diff)
+>  			break;
+>  	}
+> -
+
+Unrelated change
+
+>  	if (best_rate < 0)
+>  		return best_rate;
+>  
+> @@ -142,6 +145,9 @@ static int at91sam9x5_clk_usb_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	if (div > SAM9X5_USB_MAX_DIV + 1 || !div)
+>  		return -EINVAL;
+>  
+> +	pr_debug("clk-usb: setting USB clock divider to %lu hz / %lu = %lu hz\n",
+> +		parent_rate, div, rate);
+> +
+>  	regmap_update_bits(usb->regmap, AT91_PMC_USB, AT91_PMC_OHCIUSBDIV,
+>  			   (div - 1) << SAM9X5_USB_DIV_SHIFT);
+>  
+> diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
+> index 5ad9e9bdc8ee..c57a239918f9 100644
+> --- a/drivers/usb/host/ohci-at91.c
+> +++ b/drivers/usb/host/ohci-at91.c
+> @@ -70,11 +70,13 @@ static const struct ohci_driver_overrides ohci_at91_drv_overrides __initconst =
+>  
+>  /*-------------------------------------------------------------------------*/
+>  
+> -static void at91_start_clock(struct ohci_at91_priv *ohci_at91)
+> +static void at91_start_clock(struct ohci_at91_priv *ohci_at91,
+> +				struct device *dev)
+
+This is not properly aligned either
+
+>  {
+>  	if (ohci_at91->clocked)
+>  		return;
+>  
+> +	dev_dbg(dev, "Enabling hclk, iclk, and setting fclk to 48 Mhz\n");
+>  	clk_set_rate(ohci_at91->fclk, 48000000);
+>  	clk_prepare_enable(ohci_at91->hclk);
+>  	clk_prepare_enable(ohci_at91->iclk);
+> @@ -82,11 +84,13 @@ static void at91_start_clock(struct ohci_at91_priv *ohci_at91)
+>  	ohci_at91->clocked = true;
+>  }
+>  
+> -static void at91_stop_clock(struct ohci_at91_priv *ohci_at91)
+> +static void at91_stop_clock(struct ohci_at91_priv *ohci_at91,
+> +				struct device *dev)
+>  {
+>  	if (!ohci_at91->clocked)
+>  		return;
+>  
+> +	dev_dbg(dev, "Disabling hclk, iclk, and fclk\n");
+>  	clk_disable_unprepare(ohci_at91->fclk);
+>  	clk_disable_unprepare(ohci_at91->iclk);
+>  	clk_disable_unprepare(ohci_at91->hclk);
+> @@ -104,7 +108,7 @@ static void at91_start_hc(struct platform_device *pdev)
+>  	/*
+>  	 * Start the USB clocks.
+>  	 */
+> -	at91_start_clock(ohci_at91);
+> +	at91_start_clock(ohci_at91, &pdev->dev);
+>  
+>  	/*
+>  	 * The USB host controller must remain in reset.
+> @@ -128,7 +132,7 @@ static void at91_stop_hc(struct platform_device *pdev)
+>  	/*
+>  	 * Stop the USB clocks.
+>  	 */
+> -	at91_stop_clock(ohci_at91);
+> +	at91_stop_clock(ohci_at91, &pdev->dev);
+>  }
+>  
+>  
+> @@ -623,7 +627,7 @@ ohci_hcd_at91_drv_suspend(struct device *dev)
+>  
+>  		/* flush the writes */
+>  		(void) ohci_readl (ohci, &ohci->regs->control);
+> -		at91_stop_clock(ohci_at91);
+> +		at91_stop_clock(ohci_at91, dev);
+>  	}
+>  
+>  	return ret;
+> @@ -638,7 +642,7 @@ ohci_hcd_at91_drv_resume(struct device *dev)
+>  	if (ohci_at91->wakeup)
+>  		disable_irq_wake(hcd->irq);
+>  
+> -	at91_start_clock(ohci_at91);
+> +	at91_start_clock(ohci_at91, dev);
+>  
+>  	ohci_resume(hcd, false);
+>  
+> -- 
+> 2.17.0
+> 
+> 
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
