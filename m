@@ -1,116 +1,75 @@
-Return-Path: <ezequiel@vanguardiasur.com.ar>
-MIME-Version: 1.0
-In-Reply-To: <20180409135921.5617-2-jbrunet@baylibre.com>
-References: <20180409135921.5617-1-jbrunet@baylibre.com> <20180409135921.5617-2-jbrunet@baylibre.com>
-From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Date: Tue, 24 Apr 2018 11:04:25 -0300
-Message-ID: <CAAEAJfDgGYu9WR5+qA-trQUTkb--bam=LLbhH+1N2OdrtBGLzA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: honor CLK_MUX_ROUND_CLOSEST in generic clk mux
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Ripard <maxime.ripard@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 5/5] pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
+Date: Tue, 10 Apr 2018 14:51:41 +0200
+Message-Id: <1523364701-15383-6-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 9 April 2018 at 10:59, Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> CLK_MUX_ROUND_CLOSEST is part of the clk_mux documentation but clk_mux
-> directly calls __clk_mux_determine_rate(), which overrides the flag.
-> As result, if clk_mux is instantiated with CLK_MUX_ROUND_CLOSEST, the
-> flag will be ignored and the clock rounded down.
->
-> To solve this, this patch expose clk_mux_determine_rate_flags() in the
-> clk-provider API and uses it in the determine_rate() callback of clk_mux.
->
-> Fixes: 15a02c1f6dd7 ("clk: Add __clk_mux_determine_rate_closest")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/clk-mux.c        | 10 +++++++++-
->  drivers/clk/clk.c            |  7 ++++---
->  include/linux/clk-provider.h |  3 +++
->  3 files changed, 16 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-> index ac4a042f8658..1628b93655ed 100644
-> --- a/drivers/clk/clk-mux.c
-> +++ b/drivers/clk/clk-mux.c
-> @@ -112,10 +112,18 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8=
- index)
->         return 0;
->  }
->
-> +static int clk_mux_determine_rate(struct clk_hw *hw,
-> +                                 struct clk_rate_request *req)
-> +{
-> +       struct clk_mux *mux =3D to_clk_mux(hw);
-> +
-> +       return clk_mux_determine_rate_flags(hw, req, mux->flags);
-> +}
-> +
->  const struct clk_ops clk_mux_ops =3D {
->         .get_parent =3D clk_mux_get_parent,
->         .set_parent =3D clk_mux_set_parent,
-> -       .determine_rate =3D __clk_mux_determine_rate,
-> +       .determine_rate =3D clk_mux_determine_rate,
->  };
->  EXPORT_SYMBOL_GPL(clk_mux_ops);
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index ea67ac81c6f9..7af555f0e60c 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -426,9 +426,9 @@ static bool mux_is_better_rate(unsigned long rate, un=
-signed long now,
->         return now <=3D rate && now > best;
->  }
->
-> -static int
-> -clk_mux_determine_rate_flags(struct clk_hw *hw, struct clk_rate_request =
-*req,
-> -                            unsigned long flags)
-> +int clk_mux_determine_rate_flags(struct clk_hw *hw,
-> +                                struct clk_rate_request *req,
-> +                                unsigned long flags)
->  {
->         struct clk_core *core =3D hw->core, *parent, *best_parent =3D NUL=
-L;
->         int i, num_parents, ret;
-> @@ -488,6 +488,7 @@ clk_mux_determine_rate_flags(struct clk_hw *hw, struc=
-t clk_rate_request *req,
->
->         return 0;
->  }
-> +EXPORT_SYMBOL_GPL(clk_mux_determine_rate_flags);
->
+A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
+Use of_clk_get_parent_count() instead of open coding"), replace it.
 
-Why do we need to export this?
+of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
+instead of <linux/clk-provider.h>.
 
->  struct clk *__clk_lookup(const char *name)
->  {
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 210a890008f9..1d25e149c1c5 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -765,6 +765,9 @@ int __clk_mux_determine_rate(struct clk_hw *hw,
->  int __clk_determine_rate(struct clk_hw *core, struct clk_rate_request *r=
-eq);
->  int __clk_mux_determine_rate_closest(struct clk_hw *hw,
->                                      struct clk_rate_request *req);
-> +int clk_mux_determine_rate_flags(struct clk_hw *hw,
-> +                                struct clk_rate_request *req,
-> +                                unsigned long flags);
->  void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
->  void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
->                            unsigned long max_rate);
-> --
-> 2.14.3
->
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
+<linux/of_clk.h>".
 
-Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
+v2:
+  - New.
+---
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks!
---=20
-Ezequiel Garc=C3=ADa, VanguardiaSur
-www.vanguardiasur.com.ar
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 020d6d84639ca002..25e80a5370ca02f6 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -12,12 +12,12 @@
+ 
+ #include <linux/io.h>
+ #include <linux/clk.h>
+-#include <linux/clk-provider.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/export.h>
+ #include <linux/of.h>
++#include <linux/of_clk.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/of_irq.h>
+@@ -1361,7 +1361,7 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
+ 			goto gpiochip_error;
+ 	}
+ 
+-	ret = of_count_phandle_with_args(node, "clocks", "#clock-cells");
++	ret = of_clk_get_parent_count(node);
+ 	clk = devm_clk_get(&pdev->dev, ret == 1 ? NULL : "apb");
+ 	if (IS_ERR(clk)) {
+ 		ret = PTR_ERR(clk);
+-- 
+2.7.4
