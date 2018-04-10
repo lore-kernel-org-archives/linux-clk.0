@@ -1,68 +1,72 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,  Neil Armstrong <narmstrong@baylibre.com>,  Carlo Caione <carlo@caione.org>,  Rob Herring <robh@kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Philipp Zabel <p.zabel@pengutronix.de>,  Qiufang Dai <qiufang.dai@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <linux-clk@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,  <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-References: <20180426084437.192394-1-yixun.lan@amlogic.com>
-	<1524820841.4026.112.camel@baylibre.com>
-	<fbd24a73-6793-76be-3ca5-04cbac5db198@amlogic.com>
-	<1524823154.4026.123.camel@baylibre.com>
-	<ab754711-f727-133c-7bc3-a9f3243c2278@amlogic.com>
-Date: Fri, 27 Apr 2018 11:49:35 -0700
-In-Reply-To: <ab754711-f727-133c-7bc3-a9f3243c2278@amlogic.com> (Yixun Lan's
-	message of "Fri, 27 Apr 2018 20:33:42 +0800")
-Message-ID: <7hsh7g1o3k.fsf@baylibre.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Tue, 10 Apr 2018 15:01:52 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Chen-Yu Tsai <wens@csie.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] pinctrl: sunxi: Use of_clk_get_parent_count()
+ instead of open coding
+Message-ID: <20180410130152.cccquujj7j6asv5b@flea>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+ <1523364701-15383-6-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="o3guqvonumlxhijw"
+In-Reply-To: <1523364701-15383-6-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Yixun,
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
+--o3guqvonumlxhijw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 04/27/2018 05:59 PM, Jerome Brunet wrote:
+On Tue, Apr 10, 2018 at 02:51:41PM +0200, Geert Uytterhoeven wrote:
+> A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
+> Use of_clk_get_parent_count() instead of open coding"), replace it.
+>=20
+> of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
+> instead of <linux/clk-provider.h>.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[...]
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
->> 
->> Looks to be the problem indeed. But it is still an issue with how your patchset
->> in organized.
->> 
->> I can't merge this until Kevin merges the patch above, which he can't merge
->> until there is the clkc_ao support in axg, which is given by this series.
->> 
->> 1# You should remove the axg part of the patch above. Kevin will be able to
->> merge it w/o any dependencies. (BTW, the patch is broken for axg because 1) you
->> did not include the dt-binding header for the clkc_ao in axg and 2) the clkc_ao
->> does not exist at this stage)
->> 2# I can then safely merge this series - w/o breaking gxbb and gxl.
->> 3# Finally you'll have to make a DT change for the axg, enabling the clkc_ao and
->> changes the uart clocks at the same time.
->> 
->
->   I didn't make myself clear in previous email
->
->   I mean, could you merge patch 1-6, just exclude the patch 7
-> then kevin can merge the DT part (there are three patches) [1]
-> after the DT patches merged, then you can take this patch 7
-> This way, it won't break gxl or any other SoCs
->
->   I'm sending patch 7 along with this series, it would be better if I
-> give a warning about it.
+Maxime
 
-Your proposal requires extra work from a couple different maintainers to
-track all the dependencies, and is very error prone.  Sometimes
-maintainers may do this for you if they have time and are feeling
-generous, but you will have much more success if you can ease the
-process.
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Jerome has provided lots of guidance throughout this series and just
-above has provided you with a very good proposal above which minimizes
-the dependencies, and provides the changes in the right order.
+--o3guqvonumlxhijw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Please follow Jerome's suggestion,
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrMtb8ACgkQ0rTAlCFN
+r3S8Mg//ZpBQHXcvZIXgRQTDxBsbN/raSOmakCV8l1JmXYXKrQ6vSrHuQdQgA5jz
+PJRAZaYRlR6ZVI3sTnqR17oxAxa2b1C+Jusz9Qfl3kuirfXipu2lRKtlUnZfzR/D
+cL1XBODMO7/MgcI+ip1TZe3D9zzyRsa2ZzJ6AQOfsZg44O6LkvlXDVRljhpR7fmH
+7k9PvEJCLkgldXTFSe/FsQvGLFP2eDNrc6v3CFthfdX/gzTugGL83PyRJwRj8Agj
+0eB2GIeTpKmLGRq2ESWmVIls/w/Q1trxVyfHNp3pg3n+m6K/1qixYD8aECPW2/88
+0ITTZYfZ955Kgr9RY3ieqVIAg9SfrRu+eaEBFlrceo5AZTEIrslpBWbaGJcHG9sW
+Z6R019Tb46ufXXdaEUEMdFN7d/hlXu1bfz0uxtSe7Dcv8UaQyEUH4h+N5bpt8FfV
+DjD2m1zDGiznCDLVZECfbT6mjXeGkwrIAwP2Kz4lU8v6rilGiCIsYv2ecnyTMNUB
+B5Z0pJt2j1czGlQO2jpovt2QAXg9lmuHlg0ny/xXwlpG8YbBUz1ZOPYT+a/g09FE
+7BEkNXYe0FDJlkIuVjBjF/qFgtK0jylsi4hUsOMai6SG4vQMXe8QzX9lECcx/cB7
+iqMASBwI5iyTRX+A8UVzCymbw8Zk10me91tXaTtk0Tji3qKxuUY=
+=tkZm
+-----END PGP SIGNATURE-----
 
-Kevin
+--o3guqvonumlxhijw--
