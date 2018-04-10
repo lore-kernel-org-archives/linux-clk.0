@@ -1,104 +1,52 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v6 04/11] firmware: xilinx: Add query data API
-Date: Tue, 10 Apr 2018 12:38:40 -0700
-Message-ID: <1523389127-14243-5-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
-References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+Return-Path: <marcin@ziemianowicz.com>
+Date: Mon, 9 Apr 2018 20:16:49 -0400
+From: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH v2 2/2] clk: at91: Fix for PLL set_rate changes not being
+ actually written to PLL peripheral bits
+Message-ID: <20180410001649.GA62245@hak8or>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+When a USB device is connected to the USB host port on the SAM9N12 then
+you get "-62" error which seems to indicate USB replies from the device
+are timing out. Looking around, I saw the USB bus was running at half
+speed. Going further, it seems that in ..._set_rate() the PLL wasn't
+actually being adjusted. Writing the multiplier and divider values to
+the peripheral fixes the bus running at half speed.
 
-Add ZynqMP firmware query data API to query platform
-specific information(clocks, pins) from firmware.
-
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
 ---
- drivers/firmware/xilinx/zynqmp.c     | 14 ++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h | 20 ++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+ drivers/clk/at91/clk-pll.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 44b43fa..ef09c44 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -258,9 +258,23 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
- 				   arg1, arg2, out);
+diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
+index 534961766ae5..db7155fe9346 100644
+--- a/drivers/clk/at91/clk-pll.c
++++ b/drivers/clk/at91/clk-pll.c
+@@ -288,6 +288,14 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	pll->div = div;
+ 	pll->mul = mul;
+ 
++	// Set the PLL as per above div and mil values.
++	regmap_update_bits(pll->regmap, AT91_CKGR_PLLBR,
++		AT91_PMC_DIV | AT91_PMC_MUL,
++		(div << 0) | (mul << 16));
++
++	pr_debug("clk-pll: setting new rate, (%lu hz / %u) * %u = %lu hz\n",
++		parent_rate, div, mul, rate);
++
+ 	return 0;
  }
  
-+/**
-+ * zynqmp_pm_query_data() - Get query data from firmware
-+ * @qdata:	Variable to the zynqmp_pm_query_data structure
-+ * @out:	Returned output value
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
-+{
-+	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
-+				   qdata.arg2, qdata.arg3, out);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
- 	.ioctl = zynqmp_pm_ioctl,
-+	.query_data = zynqmp_pm_query_data,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 2eec6e7..6f05f07 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -35,6 +35,7 @@
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
- 	PM_IOCTL = 34,
-+	PM_QUERY_DATA,
- };
- 
- /* PMU-FW return status codes */
-@@ -48,9 +49,28 @@ enum pm_ret_status {
- 	XST_PM_ABORT_SUSPEND,
- };
- 
-+enum pm_query_id {
-+	PM_QID_INVALID,
-+};
-+
-+/**
-+ * zynqmp_pm_query_data - PM query data structure
-+ * @qid:	query ID
-+ * @arg1:	Argument 1 of query data
-+ * @arg2:	Argument 2 of query data
-+ * @arg3:	Argument 3 of query data
-+ */
-+struct zynqmp_pm_query_data {
-+	u32 qid;
-+	u32 arg1;
-+	u32 arg2;
-+	u32 arg3;
-+};
-+
- struct zynqmp_eemi_ops {
- 	int (*get_api_version)(u32 *version);
- 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
-+	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
 -- 
-2.7.4
+2.17.0
