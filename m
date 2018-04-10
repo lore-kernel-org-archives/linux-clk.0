@@ -1,103 +1,88 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v5 0/2] Misc patches to support clocks for SDM845
-Date: Wed, 18 Apr 2018 19:04:31 +0530
-Message-Id: <1524058473-15860-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v6 03/11] firmware: xilinx: Add zynqmp IOCTL API for device control
+Date: Tue, 10 Apr 2018 12:38:39 -0700
+Message-ID: <1523389127-14243-4-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes in v5:
-1. Adressed review comments for v3 and v4 version of GCC driver for SDM845
-   https://lkml.org/lkml/2018/4/16/1129
-2. Removed bi_tcxo clock being modelled from the GCC driver, as RPMH clock
-   driver would provide the same. https://lkml.org/lkml/2018/4/13/685
-3. The GCC clock driver(patch 2) depends upon the below patches related to
-   GDSC operation and RPMh clock driver, which are under review.
-   https://lkml.org/lkml/2018/4/2/143
-   https://lkml.org/lkml/2018/4/13/685
+From: Rajan Vaja <rajanv@xilinx.com>
 
-Changes in v4:
-1. Adressed review comments for v2 version of GCC driver for SDM845
-   https://lkml.org/lkml/2018/4/9/55.
-2. The GCC clock driver(patch 3) depends upon the below patches
-   related to GDSC operation and are under review.
+Add ZynqMP firmware IOCTL API to control and configure
+devices like PLLs, SD, Gem, etc.
 
-   https://lkml.org/lkml/2018/4/2/142
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp.c     | 20 ++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h |  2 ++
+ 2 files changed, 22 insertions(+)
 
-Changes in v3:
-1. Adressed review comments given for v2 series.
-2. The GCC clock driver(patch 3) depends upon the below patches related
-   to GDSC operation and are under review.
-
-   https://lkml.org/lkml/2018/4/2/142
-
-Changes in v2:
-Fixup for recalc_rate ops for clk_rcg2_shared_ops:
-There could be few scenarios where shared clocks are configured
-at rate other than CXO by boot. In those cases there would be a
-mismatch between the rate calculated by the recalc shared ops
-and the actual HW register configuration. Fix the same by adding
-an additional check to read current src from CFG register and
-make a decision based on that.
-
-Changes in v1:
-https://lkml.org/lkml/2018/1/31/209
-
-This patch series does the miscellaneous changes to support
-clock nodes for SDM845. Below are the major changes for
-which the existing code does not have support.
-
-1. Clear hardware clock control bit of RCGs where HW clock
-   control bit is set by default so that software can control
-   those root clocks.
-2. Introduces clk_rcg2_shared_ops to support clock controller
-   drivers for SDM845. With new shared ops, RCGs with shared
-   branches will be configured to a safe source in disable
-   path and actual RCG update configuration will be done in
-   enable path instead of doing config update in set_rate.
-   In set_rate(), just cache the rate instead of doing actual
-   configuration update. Also each RCG in clock controller
-   driver will have their own safe configuration frequency
-   table to switch to safe frequency.
-3. Add support for controlling Fabia PLL for which the support
-   is not available in existing alpha PLL code.
-4. Add Global Clock controller (GCC) driver for SDM845. This
-   should allow most non-multimedia device drivers to probe
-   and control their clocks.
-
-[v1] : https://lkml.org/lkml/2018/1/31/209
-[v2] : https://lkml.org/lkml/2018/3/8/495
-[v3] : https://www.spinics.net/lists/linux-arm-msm/msg35009.html
-[v4] : https://lkml.org/lkml/2018/4/9/79
-
-Amit Nischal (1):
-  clk: qcom: Configure the RCGs to a safe source as needed
-
-Taniya Das (1):
-  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
-
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- drivers/clk/qcom/Kconfig                           |    9 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/clk-rcg.h                         |    7 +-
- drivers/clk/qcom/clk-rcg2.c                        |  173 +-
- drivers/clk/qcom/gcc-sdm845.c                      | 3456 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h        |  237 ++
- 7 files changed, 3882 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/qcom/gcc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
-
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 490561a..44b43fa 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -239,8 +239,28 @@ static int get_set_conduit_method(struct device_node *np)
+ 	return 0;
+ }
+ 
++/**
++ * zynqmp_pm_ioctl() - PM IOCTL API for device control and configs
++ * @node_id:	Node ID of the device
++ * @ioctl_id:	ID of the requested IOCTL
++ * @arg1:	Argument 1 to requested IOCTL call
++ * @arg2:	Argument 2 to requested IOCTL call
++ * @out:	Returned output value
++ *
++ * This function calls IOCTL to firmware for device control and configuration.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
++			   u32 *out)
++{
++	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id, ioctl_id,
++				   arg1, arg2, out);
++}
++
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
++	.ioctl = zynqmp_pm_ioctl,
+ };
+ 
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index cb63bed..2eec6e7 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -34,6 +34,7 @@
+ 
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
++	PM_IOCTL = 34,
+ };
+ 
+ /* PMU-FW return status codes */
+@@ -49,6 +50,7 @@ enum pm_ret_status {
+ 
+ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
++	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
+ };
+ 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
+-- 
+2.7.4
