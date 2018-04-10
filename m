@@ -1,185 +1,84 @@
-Return-Path: <bgolaszewski@baylibre.com>
-MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-27-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com> <20180427001745.4116-27-david@lechnology.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Fri, 27 Apr 2018 11:53:47 +0200
-Message-ID: <CAMpxmJXNSagsNMgftQPQ8Fyt2mbsq3xTHU9u30ggoorgEQD1iw@mail.gmail.com>
-Subject: Re: [PATCH v9 26/27] ARM: davinci: da8xx-dt: switch to device tree clocks
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
-	arm-soc <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Biju Das <biju.das@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: rcar-gen2: Centralize quirks handling
+Date: Tue, 10 Apr 2018 15:04:58 +0200
+Message-Id: <1523365498-16789-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-04-27 2:17 GMT+02:00 David Lechner <david@lechnology.com>:
-> This removes all of the clock init code from da8xx-dt.c. This includes
-> all of the OF_DEV_AUXDATA that was just used for looking up clocks.
->
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->
-> v9 changes:
-> - changes to arch/arm/mach-davinci/time.c accidentally got squashed into this
->   commit. will drop this later.
->
-> v8 changes:
-> - none
->
-> v7 changes:
-> - rebased
-> - drop of_platform_default_populate(NULL, NULL, NULL)
-> - add change in pm_domain.c
->
-> v6 changes:
-> - removed misleading statement from commit message
->
->
->  arch/arm/mach-davinci/da8xx-dt.c  | 58 -------------------------------
->  arch/arm/mach-davinci/pm_domain.c |  5 +++
->  arch/arm/mach-davinci/time.c      |  9 ++---
->  3 files changed, 10 insertions(+), 62 deletions(-)
->
-> diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
-> index 088bc5c0318b..23ac4108f812 100644
-> --- a/arch/arm/mach-davinci/da8xx-dt.c
-> +++ b/arch/arm/mach-davinci/da8xx-dt.c
-> @@ -19,67 +19,10 @@
->  #include "cp_intc.h"
->  #include <mach/da8xx.h>
->
-> -static struct of_dev_auxdata da850_aemif_auxdata_lookup[] = {
-> -       OF_DEV_AUXDATA("ti,davinci-nand", 0x62000000, "davinci-nand.0", NULL),
-> -       {}
-> -};
-> -
-> -static struct aemif_platform_data aemif_data = {
-> -       .dev_lookup = da850_aemif_auxdata_lookup,
-> -};
-> -
-> -static struct of_dev_auxdata da850_auxdata_lookup[] __initdata = {
-> -       OF_DEV_AUXDATA("ti,davinci-i2c", 0x01c22000, "i2c_davinci.1", NULL),
-> -       OF_DEV_AUXDATA("ti,davinci-i2c", 0x01e28000, "i2c_davinci.2", NULL),
-> -       OF_DEV_AUXDATA("ti,davinci-wdt", 0x01c21000, "davinci-wdt", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-mmc", 0x01c40000, "da830-mmc.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f00000, "ehrpwm.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f02000, "ehrpwm.1", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ecap", 0x01f06000, "ecap.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ecap", 0x01f07000, "ecap.1", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ecap", 0x01f08000, "ecap.2", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-spi", 0x01c41000, "spi_davinci.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-spi", 0x01f0e000, "spi_davinci.1", NULL),
-> -       OF_DEV_AUXDATA("ns16550a", 0x01c42000, "serial8250.0", NULL),
-> -       OF_DEV_AUXDATA("ns16550a", 0x01d0c000, "serial8250.1", NULL),
-> -       OF_DEV_AUXDATA("ns16550a", 0x01d0d000, "serial8250.2", NULL),
-> -       OF_DEV_AUXDATA("ti,davinci_mdio", 0x01e24000, "davinci_mdio.0", NULL),
-> -       OF_DEV_AUXDATA("ti,davinci-dm6467-emac", 0x01e20000, "davinci_emac.1",
-> -                      NULL),
-> -       OF_DEV_AUXDATA("ti,da830-mcasp-audio", 0x01d00000, "davinci-mcasp.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-aemif", 0x68000000, "ti-aemif", &aemif_data),
-> -       OF_DEV_AUXDATA("ti,da850-tilcdc", 0x01e13000, "da8xx_lcdc.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-ohci", 0x01e25000, "ohci-da8xx", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-musb", 0x01e00000, "musb-da8xx", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-usb-phy", 0x01c1417c, "da8xx-usb-phy", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ahci", 0x01e18000, "ahci_da850", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-vpif", 0x01e17000, "vpif", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-dsp", 0x11800000, "davinci-rproc.0", NULL),
-> -       {}
-> -};
-> -
->  #ifdef CONFIG_ARCH_DAVINCI_DA850
->
->  static void __init da850_init_machine(void)
->  {
-> -       /* All existing boards use 100MHz SATA refclkpn */
-> -       static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
-> -
-> -       int ret;
-> -
-> -       da850_register_clocks();
-> -
-> -       ret = da8xx_register_usb_phy_clocks();
-> -       if (ret)
-> -               pr_warn("%s: USB PHY CLK registration failed: %d\n",
-> -                       __func__, ret);
-> -
-> -       ret = da850_register_sata_refclk(sata_refclkpn);
-> -       if (ret)
-> -               pr_warn("%s: registering SATA REFCLK failed: %d",
-> -                       __func__, ret);
-> -
-> -       of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
->         davinci_pm_init();
->         pdata_quirks_init();
->  }
-> @@ -94,7 +37,6 @@ static const char *const da850_boards_compat[] __initconst = {
->
->  DT_MACHINE_START(DA850_DT, "Generic DA850/OMAP-L138/AM18x")
->         .map_io         = da850_init,
-> -       .init_time      = da850_init_time,
->         .init_machine   = da850_init_machine,
->         .dt_compat      = da850_boards_compat,
->         .init_late      = davinci_init_late,
-> diff --git a/arch/arm/mach-davinci/pm_domain.c b/arch/arm/mach-davinci/pm_domain.c
-> index 78eac2c0c146..e251fd593bfd 100644
-> --- a/arch/arm/mach-davinci/pm_domain.c
-> +++ b/arch/arm/mach-davinci/pm_domain.c
-> @@ -13,6 +13,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/pm_clock.h>
->  #include <linux/platform_device.h>
-> +#include <linux/of.h>
->
->  static struct dev_pm_domain davinci_pm_domain = {
->         .ops = {
-> @@ -28,6 +29,10 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
->
->  static int __init davinci_pm_runtime_init(void)
->  {
-> +       if (of_have_populated_dt())
-> +               return 0;
-> +
-> +       /* Use pm_clk as fallback if we're not using genpd. */
->         pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
->
->         return 0;
-> diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
-> index 7a8c6fada644..77ad95913dfa 100644
-> --- a/arch/arm/mach-davinci/time.c
-> +++ b/arch/arm/mach-davinci/time.c
-> @@ -409,11 +409,12 @@ static int __init of_davinci_timer_init(struct device_node *np)
->
->                 /*
->                  * Fall back to using ref_clk if the actual clock is not
-> -                * available. This currently always happens because platform
-> -                * clocks (i.e PLLs and PSCs) are registered as platform
-> -                * devices and therefore are not available at this point in
-> -                * the boot process.
-> +                * available. There will be problems later if the real clock
-> +                * source is disabled.
->                  */
-> +
-> +               pr_warn("%s: falling back to ref_clk\n", __func__);
-> +
->                 clkspec.np = of_find_node_by_name(NULL, "ref_clk");
->                 if (IS_ERR(clkspec.np)) {
->                         pr_err("%s: No clock available for timer!\n", __func__);
-> --
-> 2.17.0
->
+Introduce centralized quirks handling like on R-Car Gen3, and convert
+the RZ/G1C SD clock table handling over to it.
 
-The following headers can be removed:
+This makes it easier to add more quirks later, if/when needed.
 
--#include <linux/io.h>
--#include <linux/of_irq.h>
--#include <linux/of_platform.h>
--#include <linux/irqdomain.h>
--#include <linux/platform_data/ti-aemif.h>
--#include "cp_intc.h"
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v4.18.
 
-Thanks,
-Bart
+ drivers/clk/renesas/rcar-gen2-cpg.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen2-cpg.c b/drivers/clk/renesas/rcar-gen2-cpg.c
+index 0c49f59d5074b1c4..daf88bc2cdae177b 100644
+--- a/drivers/clk/renesas/rcar-gen2-cpg.c
++++ b/drivers/clk/renesas/rcar-gen2-cpg.c
+@@ -261,9 +261,15 @@ static const struct clk_div_table cpg_sd01_div_table[] = {
+ static const struct rcar_gen2_cpg_pll_config *cpg_pll_config __initdata;
+ static unsigned int cpg_pll0_div __initdata;
+ static u32 cpg_mode __initdata;
++static u32 cpg_quirks __initdata;
+ 
+-static const struct soc_device_attribute soc_r8a77470[] = {
+-	{ .soc_id = "r8a77470" },
++#define SD_SKIP_FIRST	BIT(0)		/* Skip first clock in SD table */
++
++static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
++	{
++		.soc_id = "r8a77470",
++		.data = (void *)SD_SKIP_FIRST,
++	},
+ 	{ /* sentinel */ }
+ };
+ 
+@@ -333,7 +339,7 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+ 
+ 	case CLK_TYPE_GEN2_SD0:
+ 		table = cpg_sd01_div_table;
+-		if (soc_device_match(soc_r8a77470))
++		if (cpg_quirks & SD_SKIP_FIRST)
+ 			table++;
+ 
+ 		shift = 4;
+@@ -341,7 +347,7 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+ 
+ 	case CLK_TYPE_GEN2_SD1:
+ 		table = cpg_sd01_div_table;
+-		if (soc_device_match(soc_r8a77470))
++		if (cpg_quirks & SD_SKIP_FIRST)
+ 			table++;
+ 
+ 		shift = 0;
+@@ -372,9 +378,15 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct device *dev,
+ int __init rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config,
+ 			      unsigned int pll0_div, u32 mode)
+ {
++	const struct soc_device_attribute *attr;
++
+ 	cpg_pll_config = config;
+ 	cpg_pll0_div = pll0_div;
+ 	cpg_mode = mode;
++	attr = soc_device_match(cpg_quirks_match);
++	if (attr)
++		cpg_quirks = (uintptr_t)attr->data;
++	pr_debug("%s: mode = 0x%x quirks = 0x%x\n", __func__, mode, cpg_quirks);
+ 
+ 	spin_lock_init(&cpg_lock);
+ 
+-- 
+2.7.4
