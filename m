@@ -1,97 +1,117 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [v4 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
-Date: Tue, 24 Apr 2018 17:53:18 +0530
-Message-Id: <1524572599-5425-2-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1524572599-5425-1-git-send-email-tdas@codeaurora.org>
-References: <1524572599-5425-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <biju.das@bp.renesas.com>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] clk: renesas: rcar-gen2: Centralize quirks handling
+Date: Tue, 10 Apr 2018 13:33:55 +0000
+Message-ID: <OSBPR01MB210330E35EB1211C84756A96B8BE0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1523365498-16789-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1523365498-16789-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
-devices would be used for communicating resource state requests to control
-the clocks managed by RPMh.
+Hi Geert,
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 22 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmh.h              | 24 ++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
- create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+Thanks for the patch.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-new file mode 100644
-index 0000000..3c00765
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-@@ -0,0 +1,22 @@
-+Qualcomm Technologies, Inc. RPMh Clocks
-+-------------------------------------------------------
-+
-+Resource Power Manager Hardened (RPMh) manages shared resources on
-+some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
-+other hardware subsystems via RSC to control clocks.
-+
-+Required properties :
-+- compatible : shall contain "qcom,sdm845-rpmh-clk"
-+
-+- #clock-cells : must contain 1
-+
-+Example :
-+
-+#include <dt-bindings/clock/qcom,rpmh.h>
-+
-+	&apps_rsc {
-+		rpmhcc: clock-controller {
-+			compatible = "qcom,sdm845-rpmh-clk";
-+			#clock-cells = <1>;
-+		};
-+	};
-diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
-new file mode 100644
-index 0000000..36caab2
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,rpmh.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
-+
-+
-+#ifndef _DT_BINDINGS_CLK_MSM_RPMH_H
-+#define _DT_BINDINGS_CLK_MSM_RPMH_H
-+
-+/* RPMh controlled clocks */
-+#define RPMH_CXO_CLK				0
-+#define RPMH_CXO_CLK_A				1
-+#define RPMH_LN_BB_CLK2				2
-+#define RPMH_LN_BB_CLK2_A			3
-+#define RPMH_LN_BB_CLK3				4
-+#define RPMH_LN_BB_CLK3_A			5
-+#define RPMH_RF_CLK1				6
-+#define RPMH_RF_CLK1_A				7
-+#define RPMH_RF_CLK2				8
-+#define RPMH_RF_CLK2_A				9
-+#define RPMH_RF_CLK3				10
-+#define RPMH_RF_CLK3_A				11
-+#define RPMH_RF_CLK4				12
-+#define RPMH_RF_CLK4_A				13
-+
-+#endif
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+> -----Original Message-----
+> From: Geert Uytterhoeven [mailto:geert+renesas@glider.be]
+> Sent: 10 April 2018 14:05
+> To: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> <sboyd@kernel.org>; Biju Das <biju.das@bp.renesas.com>
+> Cc: linux-renesas-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Geert Uytterhoeven <geert+renesas@glider.be>
+> Subject: [PATCH] clk: renesas: rcar-gen2: Centralize quirks handling
+>
+> Introduce centralized quirks handling like on R-Car Gen3, and convert the
+> RZ/G1C SD clock table handling over to it.
+>
+> This makes it easier to add more quirks later, if/when needed.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+
+> ---
+> To be queued in clk-renesas-for-v4.18.
+>
+>  drivers/clk/renesas/rcar-gen2-cpg.c | 20 ++++++++++++++++----
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/clk/renesas/rcar-gen2-cpg.c b/drivers/clk/renesas/rc=
+ar-
+> gen2-cpg.c
+> index 0c49f59d5074b1c4..daf88bc2cdae177b 100644
+> --- a/drivers/clk/renesas/rcar-gen2-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen2-cpg.c
+> @@ -261,9 +261,15 @@ static const struct clk_div_table
+> cpg_sd01_div_table[] =3D {  static const struct rcar_gen2_cpg_pll_config
+> *cpg_pll_config __initdata;  static unsigned int cpg_pll0_div __initdata;=
+  static
+> u32 cpg_mode __initdata;
+> +static u32 cpg_quirks __initdata;
+>
+> -static const struct soc_device_attribute soc_r8a77470[] =3D {
+> -{ .soc_id =3D "r8a77470" },
+> +#define SD_SKIP_FIRSTBIT(0)/* Skip first clock in SD table
+> */
+> +
+> +static const struct soc_device_attribute cpg_quirks_match[] __initconst =
+=3D {
+> +{
+> +.soc_id =3D "r8a77470",
+> +.data =3D (void *)SD_SKIP_FIRST,
+> +},
+>  { /* sentinel */ }
+>  };
+>
+> @@ -333,7 +339,7 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct
+> device *dev,
+>
+>  case CLK_TYPE_GEN2_SD0:
+>  table =3D cpg_sd01_div_table;
+> -if (soc_device_match(soc_r8a77470))
+> +if (cpg_quirks & SD_SKIP_FIRST)
+>  table++;
+>
+>  shift =3D 4;
+> @@ -341,7 +347,7 @@ struct clk * __init rcar_gen2_cpg_clk_register(struct
+> device *dev,
+>
+>  case CLK_TYPE_GEN2_SD1:
+>  table =3D cpg_sd01_div_table;
+> -if (soc_device_match(soc_r8a77470))
+> +if (cpg_quirks & SD_SKIP_FIRST)
+>  table++;
+>
+>  shift =3D 0;
+> @@ -372,9 +378,15 @@ struct clk * __init
+> rcar_gen2_cpg_clk_register(struct device *dev,  int __init
+> rcar_gen2_cpg_init(const struct rcar_gen2_cpg_pll_config *config,
+>        unsigned int pll0_div, u32 mode)  {
+> +const struct soc_device_attribute *attr;
+> +
+>  cpg_pll_config =3D config;
+>  cpg_pll0_div =3D pll0_div;
+>  cpg_mode =3D mode;
+> +attr =3D soc_device_match(cpg_quirks_match);
+> +if (attr)
+> +cpg_quirks =3D (uintptr_t)attr->data;
+> +pr_debug("%s: mode =3D 0x%x quirks =3D 0x%x\n", __func__, mode,
+> +cpg_quirks);
+>
+>  spin_lock_init(&cpg_lock);
+>
+> --
+> 2.7.4
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
