@@ -1,45 +1,69 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <p.zabel@pengutronix.de>
-CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 3/6] dt-bindings: clock: mediatek: add entry for Mali-450 node to refer
-Date: Fri, 27 Apr 2018 16:14:44 +0800
-Message-ID: <082c3040e2be27d30e0642943f6df35ff4de5666.1524816502.git.sean.wang@mediatek.com>
-In-Reply-To: <cover.1524816502.git.sean.wang@mediatek.com>
-References: <cover.1524816502.git.sean.wang@mediatek.com>
-Return-Path: sean.wang@mediatek.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Ripard <maxime.ripard@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/5] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
+Date: Tue, 10 Apr 2018 14:51:39 +0200
+Message-Id: <1523364701-15383-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a negative number in the
+allocation below.
 
-Just add binding for a required clock referenced by Mali-450 on MT7623
-or MT2701 SoC.
-
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/dt-bindings/clock/mt2701-clk.h | 4 ++++
- 1 file changed, 4 insertions(+)
+This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
+<linux/of_clk.h>".
 
-diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings/clock/mt2701-clk.h
-index 24e93df..2ac62a6 100644
---- a/include/dt-bindings/clock/mt2701-clk.h
-+++ b/include/dt-bindings/clock/mt2701-clk.h
-@@ -431,6 +431,10 @@
- #define CLK_ETHSYS_CRYPTO			8
- #define CLK_ETHSYS_NR				9
+v2:
+  - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
+---
+ drivers/soc/rockchip/pm_domains.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+index 53efc386b1ada8cf..13913d40c8213e36 100644
+--- a/drivers/soc/rockchip/pm_domains.c
++++ b/drivers/soc/rockchip/pm_domains.c
+@@ -14,6 +14,7 @@
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
+ #include <linux/of_address.h>
++#include <linux/of_clk.h>
+ #include <linux/of_platform.h>
+ #include <linux/clk.h>
+ #include <linux/regmap.h>
+@@ -400,8 +401,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+ 	pd->info = pd_info;
+ 	pd->pmu = pmu;
  
-+/* G3DSYS */
-+#define CLK_G3DSYS_CORE				1
-+#define CLK_G3DSYS_NR				2
-+
- /* BDP */
- 
- #define CLK_BDP_BRG_BA				1
+-	pd->num_clks = of_count_phandle_with_args(node, "clocks",
+-						  "#clock-cells");
++	pd->num_clks = of_clk_get_parent_count(node);
+ 	if (pd->num_clks > 0) {
+ 		pd->clks = devm_kcalloc(pmu->dev, pd->num_clks,
+ 					sizeof(*pd->clks), GFP_KERNEL);
 -- 
 2.7.4
