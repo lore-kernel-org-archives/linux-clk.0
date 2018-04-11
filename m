@@ -1,40 +1,98 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <abel.vesa@nxp.com>
+From: Abel Vesa <abel.vesa@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 0/3] Update reset and poll logic for GDSCs
-Date: Mon,  2 Apr 2018 16:15:42 +0530
-Message-Id: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
+	Abel Vesa <abelvesa@linux.com>,
+	linux-imx@nxp.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v2] clk: imx: Set CLK_SET_RATE_GATE for gate and divider clocks
+Date: Wed, 11 Apr 2018 17:03:29 +0300
+Message-Id: <1523455409-7771-1-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1521812006-6173-1-git-send-email-abel.vesa@nxp.com>
+References: <1521812006-6173-1-git-send-email-abel.vesa@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: abel.vesa@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This series implements the below logic for the GDSCs
+From: Shawn Guo <shawnguo@kernel.org>
 
-1. logic to reset the AON logic before or assert/deassert the block
-   control reset removing the clamp io for few GDSCs on SDM845 SoC.
-2. It also introduces the requirement to poll for higher timeout values
-   for few of the GDSCs.
-3. There is a new poll register for the GDSCs on SDM845 SoCs which needs
-   to be polled for the correct hardware status of the GDSCs.
+Add flag CLK_SET_RATE_GATE for i.MX gate and divider clocks on which the
+client drivers usually make clk_set_rate() call, so that the call will fail
+when clock is still on instead of standing the risk of running into glitch
+issue. Rate cannot be changed when the clock is enabled due to the glitchy
+multiplexers.
 
-Amit Nischal (3):
-  clk: qcom: gdsc: Add support to reset AON and block reset logic
-  clk: qcom: gdsc: Add support to poll for higher timeout value
-  clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+[initial patch from imx internal repo]
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+[carried over from 3.14 and also applied the flag to newer functions]
+---
 
- drivers/clk/qcom/gdsc.c | 77 +++++++++++++++++++++++++++++++++++++++++++++----
- drivers/clk/qcom/gdsc.h |  6 +++-
- 2 files changed, 76 insertions(+), 7 deletions(-)
+Changes since v1:
+ - changed ownership as per initial patch
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+ drivers/clk/imx/clk.h | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 8076ec0..753ebc4 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -96,7 +96,8 @@ static inline struct clk *imx_clk_fixed_factor(const char *name,
+ static inline struct clk *imx_clk_divider(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift, u8 width)
+ {
+-	return clk_register_divider(NULL, name, parent, CLK_SET_RATE_PARENT,
++	return clk_register_divider(NULL, name, parent,
++			CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+ 			reg, shift, width, 0, &imx_ccm_lock);
+ }
+ 
+@@ -140,7 +141,8 @@ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift)
+ {
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++	return clk_register_gate2(NULL, name, parent,
++			CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, reg,
+ 			shift, 0x3, 0, &imx_ccm_lock, NULL);
+ }
+ 
+@@ -155,7 +157,8 @@ static inline struct clk *imx_clk_gate2_shared(const char *name,
+ 		const char *parent, void __iomem *reg, u8 shift,
+ 		unsigned int *share_count)
+ {
+-	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT, reg,
++	return clk_register_gate2(NULL, name, parent,
++			CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, reg,
+ 			shift, 0x3, 0, &imx_ccm_lock, share_count);
+ }
+ 
+@@ -164,8 +167,8 @@ static inline struct clk *imx_clk_gate2_shared2(const char *name,
+ 		unsigned int *share_count)
+ {
+ 	return clk_register_gate2(NULL, name, parent, CLK_SET_RATE_PARENT |
+-				  CLK_OPS_PARENT_ENABLE, reg, shift, 0x3, 0,
+-				  &imx_ccm_lock, share_count);
++			CLK_SET_RATE_GATE | CLK_OPS_PARENT_ENABLE,
++			reg, shift, 0x3, 0, &imx_ccm_lock, share_count);
+ }
+ 
+ static inline struct clk *imx_clk_gate2_cgr(const char *name,
+@@ -187,7 +190,7 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift)
+ {
+ 	return clk_register_gate2(NULL, name, parent,
+-			CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
++		CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE | CLK_OPS_PARENT_ENABLE,
+ 			reg, shift, 0x3, 0, &imx_ccm_lock, NULL);
+ }
+ 
+-- 
+2.7.4
