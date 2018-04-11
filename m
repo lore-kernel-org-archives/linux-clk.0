@@ -1,94 +1,40 @@
-Return-Path: <matthias.bgg@kernel.org>
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
+Return-Path: <>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
 	robh+dt@kernel.org,
 	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
+	geert+renesas@glider.be,
 	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 08/10] clk: mediatek: mt8173-mm: switch to mfd device
-Date: Mon, 23 Apr 2018 18:13:57 +0200
-Message-Id: <74bf4058534cf187e10ef041da1706878914aa45.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
+	devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] clk: renesas: Add support for R-Car E3
+Date: Wed, 11 Apr 2018 18:37:25 +0900
+Message-Id: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+This patch is based on the renesas-drivers-2018-04-03-v4.16 tag of
+renesas-drivers.git.
 
-As the new mfd device is in place, switch probing
-for the MMSYS to support invocation from the mfd device.
+Takeshi Kihara (1):
+  clk: renesas: Add r8a77990 CPG Core Clock Definitions
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/mediatek/clk-mt8173.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+Yoshihiro Shimoda (1):
+  clk: renesas: cpg-mssr: Add support for R-Car E3
 
-diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-index 96c292c3e440..abd2592078d4 100644
---- a/drivers/clk/mediatek/clk-mt8173.c
-+++ b/drivers/clk/mediatek/clk-mt8173.c
-@@ -15,6 +15,7 @@
- #include <linux/clk.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/platform_device.h>
- 
- #include "clk-mtk.h"
- #include "clk-gate.h"
-@@ -1152,10 +1153,13 @@ static void __init mtk_imgsys_init(struct device_node *node)
- }
- CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt8173-imgsys", mtk_imgsys_init);
- 
--static void __init mtk_mmsys_init(struct device_node *node)
-+static int mtk_mmsys_probe(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
- 	int r;
-+	struct device_node *node;
-+
-+	node = pdev->dev.parent->of_node;
- 
- 	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
- 
-@@ -1166,8 +1170,17 @@ static void __init mtk_mmsys_init(struct device_node *node)
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	return r;
- }
--CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt8173-mmsys", mtk_mmsys_init);
-+
-+static struct platform_driver clk_mt8173_mm_drv = {
-+	.probe = mtk_mmsys_probe,
-+	.driver = {
-+		.name = "clk-mt8173-mm",
-+	},
-+};
-+builtin_platform_driver(clk_mt8173_mm_drv);
- 
- static void __init mtk_vdecsys_init(struct device_node *node)
- {
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   3 +-
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a77990-cpg-mssr.c            | 291 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ include/dt-bindings/clock/r8a77990-cpg-mssr.h      |  63 +++++
+ 7 files changed, 369 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/renesas/r8a77990-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a77990-cpg-mssr.h
+
 -- 
-2.16.3
+1.9.1
