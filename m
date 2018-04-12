@@ -1,49 +1,80 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [RFC 04/10] clk: samsung: Remove support for Exynos5440
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
-	Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Tomasz Figa
-	<tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
-	<viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin
-	<edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede
-	<hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti
-	<andi@etezian.org>, Mark Brown <broonie@kernel.org>, Bartlomiej
-	Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern
-	<stern@rowland.harvard.edu>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson
-	<olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, Jingoo Han
-	<jingoohan1@gmail.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <8e4e4712-4b21-83f8-fa06-142e9557a251@samsung.com>
-Date: Wed, 25 Apr 2018 14:49:24 +0200
-MIME-version: 1.0
-In-reply-to: <20180424203239.21885-5-krzk@kernel.org>
-Content-type: text/plain; charset="utf-8"
-References: <20180424203239.21885-1-krzk@kernel.org>
-	<CGME20180424203341epcas5p3a6db7d58b0ce8940d03711823fbf6e41@epcas5p3.samsung.com>
-	<20180424203239.21885-5-krzk@kernel.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1523439447-1084-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1523439447-1084-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Apr 2018 14:23:17 +0200
+Message-ID: <CAMuHMdXata291k6ViN-eHrw6OLN49p2CJT6yZHqQukL2Yf2Lag@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: renesas: Add r8a77990 CPG Core Clock Definitions
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Cc: Jingoo Han
+Hi Shimoda-san,
 
-On 04/24/2018 10:32 PM, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Wed, Apr 11, 2018 at 11:37 AM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds all R-Car E3 Clock Pulse Generator Core Clock Outputs.
+>
+> Note that internal CPG clocks (S0, S1, S2, S3, SDSRC) are not included,
+> as they are used as internal clock sources only, and never referenced
+> from DT.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [shimoda: add SPDX-License-Identifier]
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Thanks Krzysztof, patch applied, assuming there is no issues with applying 
-patches from this series individually through the subsystem trees.
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r8a77990-cpg-mssr.h
+> @@ -0,0 +1,63 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2018 Renesas Electronics Corp.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a77990 CPG Core Clocks */
+
+[...]
+
+> +#define R8A77990_CLK_CSI0              47
+
+Note that CSI0 is not listed in Table 8.2g ("R-Car E3").
+Probably it does exist, given:
+  - Table 8.11 ("Register Configuration") says CSI0CKCR exists on R-Car E3,
+  - Figure 25.6 ("CSI2 Block Diagram (R-Car E3)") shows CSI0.
+
+> +#define R8A77990_CLK_POST3             48
+
+I noticed these POSTx clocks have been added to all R-Car Gen3 clock tables.
+It doesn't look like we will ever need to refer them from DT, so I think we
+can treat them as internal clocks, and omit them from the DT bindings.
+
+What do you think?
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
-Sylwester
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
