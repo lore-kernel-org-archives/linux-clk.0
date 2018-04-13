@@ -1,55 +1,59 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 0/2] Add QCOM RPMh Clock driver
-Date: Sun,  8 Apr 2018 16:02:11 +0530
-Message-Id: <1523183533-23171-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 13 Apr 2018 16:16:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Ripard <maxime.ripard@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
+Message-ID: <20180413211644.wd7lrl4phqtshpzp@rob-hp-laptop>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+ <1523364701-15383-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1523364701-15383-2-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
- [v2]
-  * Addressed comments from Stephen
-  * Addressed comments from Evan
+On Tue, Apr 10, 2018 at 02:51:37PM +0200, Geert Uytterhoeven wrote:
+> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
+> limited to clock providers.
+> 
+> Hence move these helpers into their own header file, so callers that are
+> not clock providers no longer have to include <linux/clk-provider.h>.
+> 
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - New.
+> 
+> I have't added an SPDX-License-Identifier line, as
+> <linux/clk-provider.h> also doesn't have one yet.
 
-This patch series adds a driver and device tree documentation binding
-for the clock control via Resource Power Manager-hardened (RPMh) on some
-Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
-would send requests for the RPMh managed clock resources.
+Should that matter?
 
-The RPMh clock driver depends upon the RPMh driver [1] and command DB
-driver [2] which are both still undergoing review.
+> 
+> Other candidates to be moved here later?
+>   - of_clk_get(),
+>   - of_clk_get_by_name(),
+>   - of_clk_get_from_provider().
+> ---
+>  include/linux/clk-provider.h | 14 +-------------
+>  include/linux/of_clk.h       | 29 +++++++++++++++++++++++++++++
 
-Thanks,
-Taniya
+Please update MAINTAINERS so I am not the maintainer. :)
 
-[1]: https://lkml.org/lkml/2018/3/9/979
-[2]: https://lkml.org/lkml/2018/3/14/787
-
-Amit Nischal (2):
-  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-  dt-bindings: clock: Introduce QCOM RPMh clock bindings
-
- .../devicetree/bindings/clock/qcom,rpmh-clk.txt |  22 ++
- drivers/clk/qcom/Kconfig                        |   9 +
- drivers/clk/qcom/Makefile                       |   1 +
- drivers/clk/qcom/clk-rpmh.c                     | 394 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmh.h           |  25 ++
- 5 files changed, 451 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
- create mode 100644 drivers/clk/qcom/clk-rpmh.c
- create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+>  2 files changed, 30 insertions(+), 13 deletions(-)
+>  create mode 100644 include/linux/of_clk.h
