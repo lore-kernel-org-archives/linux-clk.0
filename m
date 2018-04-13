@@ -1,51 +1,48 @@
-Return-Path: <collinsd@codeaurora.org>
-Subject: Re: [PATCH v3 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
- <1523673401-21611-3-git-send-email-tdas@codeaurora.org>
- <152390031768.51482.12790579493617671456@swboyd.mtv.corp.google.com>
-From: David Collins <collinsd@codeaurora.org>
-Message-ID: <5af35710-b521-e22e-055b-798cbe343dc6@codeaurora.org>
-Date: Mon, 16 Apr 2018 14:47:42 -0700
+Return-Path: <yoshihiro.shimoda.uh@renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk <linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED
+ DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, TAKESHI KIHARA
+	<takeshi.kihara.df@renesas.com>
+Subject: RE: [PATCH 1/2] clk: renesas: Add r8a77990 CPG Core Clock Definitions
+Date: Fri, 13 Apr 2018 02:16:06 +0000
+Message-ID: <TY1PR06MB09927E1CE7136B0690A31B7AD8B30@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1523439447-1084-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdXata291k6ViN-eHrw6OLN49p2CJT6yZHqQukL2Yf2Lag@mail.gmail.com>
+In-Reply-To: <CAMuHMdXata291k6ViN-eHrw6OLN49p2CJT6yZHqQukL2Yf2Lag@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <152390031768.51482.12790579493617671456@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Taniya,
-
-On 04/16/2018 10:38 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-04-13 19:36:41)
->> Add the RPMh clock driver to control the RPMh managed clock resources on
->> some of the Qualcomm Technologies, Inc. SoCs.
->>
->> Signed-off-by: David Collins <collinsd@codeaurora.org>
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> 
-> Your signoff chain is very confused. The first signoff should match the
-> "From:" header but that doesn't seem to be the case here. And the sender
-> should be the last in the chain.
-
-It looks like the provenance of this driver go muddled during downstream
-propagation between branches.  The original downstream version of the
-clk-rpmh driver was written by Osvaldo Banuelos [1].  I think that the
-best course of action here would be to remove my Signed-off-by, add
-Osvaldo's, and add yours.
-
-Thanks,
-David
-
-[1]:
-https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?id=11d3623c37afb945ce36755501812a44efeb6cd9
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+SGkgR2VlcnQtc2FuLA0KDQpUaGFuayB5b3UgZm9yIHRoZSByZXZpZXchDQoNCj4gRnJvbTogR2Vl
+cnQgVXl0dGVyaG9ldmVuLCBTZW50OiBUaHVyc2RheSwgQXByaWwgMTIsIDIwMTggOToyMyBQTQ0K
+PiANCj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBPbiBXZWQsIEFwciAxMSwgMjAxOCBhdCAxMToz
+NyBBTSwgWW9zaGloaXJvIFNoaW1vZGENCj4gPHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMu
+Y29tPiB3cm90ZToNCjxzbmlwPg0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9pbmNsdWRl
+L2R0LWJpbmRpbmdzL2Nsb2NrL3I4YTc3OTkwLWNwZy1tc3NyLmgNCj4gPiBAQCAtMCwwICsxLDYz
+IEBADQo+ID4gKy8qIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wICovDQo+ID4gKy8q
+DQo+ID4gKyAqIENvcHlyaWdodCAoQykgMjAxOCBSZW5lc2FzIEVsZWN0cm9uaWNzIENvcnAuDQo+
+ID4gKyAqLw0KPiA+ICsjaWZuZGVmIF9fRFRfQklORElOR1NfQ0xPQ0tfUjhBNzc5OTBfQ1BHX01T
+U1JfSF9fDQo+ID4gKyNkZWZpbmUgX19EVF9CSU5ESU5HU19DTE9DS19SOEE3Nzk5MF9DUEdfTVNT
+Ul9IX18NCj4gPiArDQo+ID4gKyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9jbG9jay9yZW5lc2FzLWNw
+Zy1tc3NyLmg+DQo+ID4gKw0KPiA+ICsvKiByOGE3Nzk5MCBDUEcgQ29yZSBDbG9ja3MgKi8NCj4g
+DQo+IFsuLi5dDQo+IA0KPiA+ICsjZGVmaW5lIFI4QTc3OTkwX0NMS19DU0kwICAgICAgICAgICAg
+ICA0Nw0KPiANCj4gTm90ZSB0aGF0IENTSTAgaXMgbm90IGxpc3RlZCBpbiBUYWJsZSA4LjJnICgi
+Ui1DYXIgRTMiKS4NCj4gUHJvYmFibHkgaXQgZG9lcyBleGlzdCwgZ2l2ZW46DQo+ICAgLSBUYWJs
+ZSA4LjExICgiUmVnaXN0ZXIgQ29uZmlndXJhdGlvbiIpIHNheXMgQ1NJMENLQ1IgZXhpc3RzIG9u
+IFItQ2FyIEUzLA0KPiAgIC0gRmlndXJlIDI1LjYgKCJDU0kyIEJsb2NrIERpYWdyYW0gKFItQ2Fy
+IEUzKSIpIHNob3dzIENTSTAuDQoNCkkgdGhpbmsgc28uIEknbSBhc2tpbmcgSFcgdGVhbSBhYm91
+dCBtaXNzaW5nIENTSTAgaW4gVGFibGUgOC4yZyBub3cuDQoNCj4gPiArI2RlZmluZSBSOEE3Nzk5
+MF9DTEtfUE9TVDMgICAgICAgICAgICAgNDgNCj4gDQo+IEkgbm90aWNlZCB0aGVzZSBQT1NUeCBj
+bG9ja3MgaGF2ZSBiZWVuIGFkZGVkIHRvIGFsbCBSLUNhciBHZW4zIGNsb2NrIHRhYmxlcy4NCj4g
+SXQgZG9lc24ndCBsb29rIGxpa2Ugd2Ugd2lsbCBldmVyIG5lZWQgdG8gcmVmZXIgdGhlbSBmcm9t
+IERULCBzbyBJIHRoaW5rIHdlDQo+IGNhbiB0cmVhdCB0aGVtIGFzIGludGVybmFsIGNsb2Nrcywg
+YW5kIG9taXQgdGhlbSBmcm9tIHRoZSBEVCBiaW5kaW5ncy4NCj4gDQo+IFdoYXQgZG8geW91IHRo
+aW5rPw0KDQpJIGFncmVlIHdpdGggeW91LiBTbywgSSB3aWxsIG9taXQgUE9TVHggY2xvY2tzIGZy
+b20gdGhlIERUIGJpbmRpbmdzIGluIHYyIHBhdGNoLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhp
+cm8gU2hpbW9kYQ0KDQo=
