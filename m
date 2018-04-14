@@ -1,187 +1,442 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v9 08/27] ARM: davinci: dm365: add new clock init using common clock framework
-Date: Thu, 26 Apr 2018 19:17:26 -0500
-Message-Id: <20180427001745.4116-9-david@lechnology.com>
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
+	devicetree@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>,
+	David Collins <collinsd@codeaurora.org>
+Subject: [PATCH v3 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Sat, 14 Apr 2018 08:06:41 +0530
+Message-Id: <1523673401-21611-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
+References: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specific clock init in mach-davinci/dm365.c
-using the new common clock framework drivers.
+Add the RPMh clock driver to control the RPMh managed clock resources on
+some of the Qualcomm Technologies, Inc. SoCs.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
-
-Also clean up the #includes since we are adding some here.
-
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: David Collins <collinsd@codeaurora.org>
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 ---
+ drivers/clk/qcom/Kconfig    |   9 ++
+ drivers/clk/qcom/Makefile   |   1 +
+ drivers/clk/qcom/clk-rpmh.c | 367 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 377 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
 
-v9 changes:
-- register PLL1 and PSC in dm365_init_time() instead of as platform device so
-  that we get the correct timer0 clock for davinci_timer_init()
-- Fixed size of PLL memory block
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index fbf4532..63c3372 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -112,6 +112,15 @@ config IPQ_GCC_8074
+ 	  i2c, USB, SD/eMMC, etc. Select this for the root clock
+ 	  of ipq8074.
 
-v8 changes:
-- none
-
-v7 changes:
-- add clock platform device declarations
-- register platform devices instead of registering clocks directly
-- add davinci prefix to commit description
-
-v6 changes:
-- add blank lines between function calls
-
-
- arch/arm/mach-davinci/board-dm365-evm.c |  2 +
- arch/arm/mach-davinci/davinci.h         |  1 +
- arch/arm/mach-davinci/dm365.c           | 56 +++++++++++++++++++------
- 3 files changed, 47 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-index 0ac085b58a2b..36b69a131cfa 100644
---- a/arch/arm/mach-davinci/board-dm365-evm.c
-+++ b/arch/arm/mach-davinci/board-dm365-evm.c
-@@ -741,6 +741,8 @@ static __init void dm365_evm_init(void)
- {
- 	int ret;
- 
-+	dm365_register_clocks();
++config QCOM_CLK_RPMH
++	tristate "RPMh Clock Driver"
++	depends on COMMON_CLK_QCOM && QCOM_RPMH
++	help
++	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
++	 SoCs. It accepts requests from other hardware subsystems via RSC.
++	 Say Y if you want to support the clocks exposed by RPMh on
++	 platforms such as sdm845.
 +
- 	ret = dm365_gpio_register();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index c2c634b6578e..a799b5266d4b 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -94,6 +94,7 @@ int dm355_gpio_register(void);
- /* DM365 function declarations */
- void dm365_init(void);
- void dm365_init_time(void);
-+void dm365_register_clocks(void);
- void dm365_init_asp(void);
- void dm365_init_vc(void);
- void dm365_init_ks(struct davinci_ks_platform_data *pdata);
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 871372a59da8..76de426a0e41 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -12,32 +12,38 @@
-  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  */
--#include <linux/init.h>
--#include <linux/clk.h>
--#include <linux/serial_8250.h>
--#include <linux/platform_device.h>
+ config MSM_GCC_8660
+ 	tristate "MSM8660 Global Clock Controller"
+ 	depends on COMMON_CLK_QCOM
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 230332c..b2b5babf 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -36,5 +36,6 @@ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+ obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
++obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+new file mode 100644
+index 0000000..fa61284
+--- /dev/null
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -0,0 +1,367 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
 +
++#include <linux/clk.h>
 +#include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
-+#include <linux/clkdev.h>
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
--#include <linux/spi/spi.h>
-+#include <linux/init.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_data/keyscan-davinci.h>
- #include <linux/platform_data/spi-davinci.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
 +#include <linux/platform_device.h>
-+#include <linux/serial_8250.h>
-+#include <linux/spi/spi.h>
- 
- #include <asm/mach/map.h>
- 
-+#include <mach/common.h>
- #include <mach/cputype.h>
--#include "psc.h"
--#include <mach/mux.h>
- #include <mach/irqs.h>
--#include <mach/time.h>
-+#include <mach/mux.h>
- #include <mach/serial.h>
--#include <mach/common.h>
-+#include <mach/time.h>
- 
-+#include "asp.h"
- #include "davinci.h"
--#include "clock.h"
- #include "mux.h"
--#include "asp.h"
++#include <soc/qcom/cmd-db.h>
++#include <soc/qcom/rpmh.h>
 +
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
- 
- #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
- #define DM365_RTC_BASE			0x01c69000
-@@ -54,6 +60,7 @@
- #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
- #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll1_data = {
- 	.num		= 1,
- 	.phys_base	= DAVINCI_PLL1_BASE,
-@@ -485,7 +492,7 @@ static struct clk_lookup dm365_clks[] = {
- 	CLK(NULL, "mjcp", &mjcp_clk),
- 	CLK(NULL, NULL, NULL),
- };
--
-+#endif
- /*----------------------------------------------------------------------*/
- 
- #define INTMUX		0x18
-@@ -1171,8 +1178,33 @@ void __init dm365_init(void)
- 
- void __init dm365_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll1, *pll2, *psc;
-+	struct clk *clk;
++#include <dt-bindings/clock/qcom,rpmh.h>
 +
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM365_REF_FREQ);
++#define CLK_RPMH_ARC_EN_OFFSET	0
++#define CLK_RPMH_VRM_EN_OFFSET	4
++#define CLK_RPMH_APPS_RSC_AO_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
++					 BIT(RPMH_ACTIVE_ONLY_STATE))
++#define CLK_RPMH_APPS_RSC_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
++				      BIT(RPMH_ACTIVE_ONLY_STATE) | \
++				      BIT(RPMH_SLEEP_STATE))
++struct clk_rpmh {
++	struct clk_hw hw;
++	const char *res_name;
++	u32 res_addr;
++	u32 res_en_offset;
++	u32 res_on_val;
++	u32 res_off_val;
++	u32 state;
++	u32 aggr_state;
++	u32 last_sent_aggr_state;
++	u32 valid_state_mask;
++	struct rpmh_client *rpmh_client;
++	struct device *dev;
++	struct clk_rpmh *peer;
++	unsigned long rate;
++};
 +
-+	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
-+	dm365_pll1_init(NULL, pll1, NULL);
++struct rpmh_cc {
++	struct clk_onecell_data data;
++	struct clk *clks[];
++};
 +
-+	pll2 = ioremap(DAVINCI_PLL2_BASE, SZ_1K);
-+	dm365_pll2_init(NULL, pll2, NULL);
++struct clk_rpmh_desc {
++	struct clk_hw **clks;
++	size_t num_clks;
++};
 +
-+	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-+	dm365_psc_init(NULL, psc);
++static DEFINE_MUTEX(rpmh_clk_lock);
 +
-+	clk = clk_get(NULL, "timer0");
++#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  _res_en_offset, _res_on, _res_off, _rate)	\
++	static struct clk_rpmh _platform##_##_name_active;		      \
++	static struct clk_rpmh _platform##_##_name = {			      \
++		.res_name = _res_name,					      \
++		.res_en_offset = _res_en_offset,			      \
++		.res_on_val = _res_on,					      \
++		.res_off_val = _res_off,				      \
++		.rate = _rate,						      \
++		.peer = &_platform##_##_name_active,			      \
++		.valid_state_mask = CLK_RPMH_APPS_RSC_STATE_MASK,	      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_rpmh_ops,			              \
++			.name = #_name,					      \
++		},							      \
++	};								      \
++	static struct clk_rpmh _platform##_##_name_active = {		      \
++		.res_name = _res_name,					      \
++		.res_en_offset = _res_en_offset,			      \
++		.res_on_val = _res_on,					      \
++		.res_off_val = _res_off,				      \
++		.rate = _rate,						      \
++		.peer = &_platform##_##_name,				      \
++		.valid_state_mask = CLK_RPMH_APPS_RSC_AO_STATE_MASK,	      \
++		.hw.init = &(struct clk_init_data){			      \
++			.ops = &clk_rpmh_ops,				      \
++			.name = #_name_active,				      \
++		},							      \
++	}
 +
-+	davinci_timer_init(clk);
-+#else
- 	davinci_clk_init(dm365_clks);
- 	davinci_timer_init(&timer0_clk);
-+#endif
++#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name, \
++			    _res_on, _res_off, _rate) \
++	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  CLK_RPMH_ARC_EN_OFFSET, _res_on, _res_off, _rate)
++
++#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name,	\
++			    _rate)					 \
++	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,     \
++			  CLK_RPMH_VRM_EN_OFFSET, true, false, _rate)
++
++static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
++{
++	return container_of(_hw, struct clk_rpmh, hw);
 +}
 +
-+void __init dm365_register_clocks(void)
++static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
 +{
-+	/* all clocks are currently registered in dm365_init_time() */
- }
- 
- static struct resource dm365_vpss_resources[] = {
--- 
-2.17.0
++	return ((c->last_sent_aggr_state & BIT(state))
++		!= (c->aggr_state & BIT(state)));
++}
++
++static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
++{
++	struct tcs_cmd cmd = { 0 };
++	u32 cmd_state, on_val;
++	enum rpmh_state state = RPMH_SLEEP_STATE;
++	int ret = 0;
++
++	cmd.addr = c->res_addr + c->res_en_offset;
++	cmd_state = c->aggr_state;
++	on_val = c->res_on_val;
++
++	for (; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
++		if (has_state_changed(c, state)) {
++			cmd.data = (cmd_state & BIT(state)) ? on_val : 0;
++			ret = rpmh_write_async(c->rpmh_client, state,
++						&cmd, 1);
++			if (ret) {
++				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
++					(!state) ? "sleep" :
++					(state == RPMH_WAKE_ONLY_STATE)	?
++					"wake" : "active", c->res_name, ret);
++				return ret;
++			}
++		}
++	}
++
++	c->last_sent_aggr_state = c->aggr_state;
++	c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
++
++	return 0;
++}
++
++static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
++						bool enable)
++{
++	int ret;
++
++	/* Update state and aggregate state values based on enable value. */
++	c->state = enable ? c->valid_state_mask : 0;
++	c->aggr_state = c->state | c->peer->state;
++	c->peer->aggr_state = c->aggr_state;
++
++	ret = clk_rpmh_send_aggregate_command(c);
++	if (ret && enable) {
++		c->state = 0;
++	} else if (ret) {
++		c->state = c->valid_state_mask;
++		WARN(1, "clk: %s failed to disable\n", c->res_name);
++	}
++
++	return ret;
++}
++
++static int clk_rpmh_prepare(struct clk_hw *hw)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++	int ret = 0;
++
++	mutex_lock(&rpmh_clk_lock);
++
++	if (c->state)
++		goto out;
++
++	ret = clk_rpmh_aggregate_state_send_command(c, true);
++out:
++	mutex_unlock(&rpmh_clk_lock);
++	return ret;
++};
++
++static void clk_rpmh_unprepare(struct clk_hw *hw)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++
++	mutex_lock(&rpmh_clk_lock);
++
++	if (!c->state)
++		goto out;
++
++	clk_rpmh_aggregate_state_send_command(c, false);
++out:
++	mutex_unlock(&rpmh_clk_lock);
++	return;
++};
++
++static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
++					  unsigned long parent_rate)
++{
++	struct clk_rpmh *r = to_clk_rpmh(hw);
++
++	/*
++	 * RPMh clocks have a fixed rate. Return static rate set
++	 * at init time.
++	 */
++	return r->rate;
++}
++
++static const struct clk_ops clk_rpmh_ops = {
++	.prepare	= clk_rpmh_prepare,
++	.unprepare	= clk_rpmh_unprepare,
++	.recalc_rate	= clk_rpmh_recalc_rate,
++};
++
++/* Resource name must match resource id present in cmd-db. */
++DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 0x0, 19200000);
++DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 19200000);
++DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 19200000);
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 38400000);
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 38400000);
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 38400000);
++
++static struct clk_hw *sdm845_rpmh_clocks[] = {
++	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
++	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
++	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
++	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
++	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
++	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
++	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
++	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
++	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
++	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
++	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
++	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
++};
++
++static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
++	.clks = sdm845_rpmh_clocks,
++	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
++};
++
++static int clk_rpmh_probe(struct platform_device *pdev)
++{
++	struct clk **clks;
++	struct clk *clk;
++	struct rpmh_cc *rcc;
++	struct clk_onecell_data *data;
++	struct clk_hw **hw_clks;
++	struct clk_rpmh *rpmh_clk;
++	const struct clk_rpmh_desc *desc;
++	struct rpmh_client *rpmh_client;
++	struct device *dev;
++	size_t num_clks, i;
++	int ret;
++
++	dev = &pdev->dev;
++
++	ret = cmd_db_ready();
++	if (ret) {
++		if (ret != -EPROBE_DEFER) {
++			dev_err(dev, "Command DB not available (%d)\n",	ret);
++			goto fail;
++		}
++		return ret;
++	}
++
++	rpmh_client = rpmh_get_client(pdev);
++	if (IS_ERR(rpmh_client)) {
++		ret = PTR_ERR(rpmh_client);
++		dev_err(dev, "Failed to request RPMh client, ret=%d\n",	ret);
++		return ret;
++	}
++
++	desc = of_device_get_match_data(&pdev->dev);
++	hw_clks = desc->clks;
++	num_clks = desc->num_clks;
++
++	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*clks) * num_clks,
++			   GFP_KERNEL);
++	if (!rcc) {
++		ret = -ENOMEM;
++		goto err;
++	}
++
++	clks = rcc->clks;
++	data = &rcc->data;
++	data->clks = clks;
++	data->clk_num = num_clks;
++
++	for (i = 0; i < num_clks; i++) {
++		rpmh_clk = to_clk_rpmh(hw_clks[i]);
++		rpmh_clk->res_addr = cmd_db_read_addr(rpmh_clk->res_name);
++		if (!rpmh_clk->res_addr) {
++			dev_err(dev, "missing RPMh resource address for %s\n",
++					rpmh_clk->res_name);
++			ret = -ENODEV;
++			goto err;
++		}
++
++		rpmh_clk->rpmh_client = rpmh_client;
++
++		clk = devm_clk_register(&pdev->dev, hw_clks[i]);
++		if (IS_ERR(clk)) {
++			ret = PTR_ERR(clk);
++			dev_err(dev, "failed to register %s\n",
++					hw_clks[i]->init->name);
++			goto err;
++		}
++
++		clks[i] = clk;
++		rpmh_clk->dev = &pdev->dev;
++	}
++
++	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
++				  data);
++	if (ret) {
++		dev_err(dev, "Failed to add clock provider\n");
++		goto err;
++	}
++
++	dev_dbg(dev, "Registered RPMh clocks\n");
++
++	return 0;
++err:
++	if (rpmh_client)
++		rpmh_release(rpmh_client);
++fail:
++	dev_err(dev, "Error registering RPMh Clock driver (%d)\n", ret);
++	return ret;
++}
++
++static int clk_rpmh_remove(struct platform_device *pdev)
++{
++	const struct clk_rpmh_desc *desc =
++			of_device_get_match_data(&pdev->dev);
++	struct clk_hw **hw_clks = desc->clks;
++	struct clk_rpmh *rpmh_clk = to_clk_rpmh(hw_clks[0]);
++
++	rpmh_release(rpmh_clk->rpmh_client);
++	of_clk_del_provider(pdev->dev.of_node);
++
++	return 0;
++}
++
++static const struct of_device_id clk_rpmh_match_table[] = {
++	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
++
++static struct platform_driver clk_rpmh_driver = {
++	.probe		= clk_rpmh_probe,
++	.remove		= clk_rpmh_remove,
++	.driver		= {
++		.name	= "clk-rpmh",
++		.of_match_table = clk_rpmh_match_table,
++	},
++};
++
++static int __init clk_rpmh_init(void)
++{
++	return platform_driver_register(&clk_rpmh_driver);
++}
++subsys_initcall(clk_rpmh_init);
++
++static void __exit clk_rpmh_exit(void)
++{
++	platform_driver_unregister(&clk_rpmh_driver);
++}
++module_exit(clk_rpmh_exit);
++
++MODULE_DESCRIPTION("QCOM RPMh Clock Driver");
++MODULE_LICENSE("GPL v2");
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
