@@ -1,78 +1,58 @@
-Return-Path: <krzk@kernel.org>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [[PATCH v2] 1/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+To: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ David Collins <collinsd@codeaurora.org>
+References: <1523183533-23171-1-git-send-email-tdas@codeaurora.org>
+ <1523183533-23171-2-git-send-email-tdas@codeaurora.org>
+ <20180413163705.io4xbukerjkzjmri@rob-hp-laptop>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <cba2a99f-fa6f-42d8-9063-8a642bea6f2c@codeaurora.org>
+Date: Sat, 14 Apr 2018 07:32:59 +0530
 MIME-Version: 1.0
-In-Reply-To: <5AE12E4A.90907@samsung.com>
-References: <20180424203239.21885-1-krzk@kernel.org> <CGME20180424203603epcas5p4cdd2039eabe7039e4daf286ed4c1ecc0@epcas5p4.samsung.com>
- <20180424203239.21885-7-krzk@kernel.org> <5AE12E4A.90907@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 26 Apr 2018 09:59:15 +0200
-Message-ID: <CAJKOXPc4oDAFThxVszOrCr+yEaK85W3AeYTcLFyGm0-6TLyZyw@mail.gmail.com>
-Subject: Re: [RFC 06/10] thermal: samsung: Remove support for Exynos5440
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>,
-	Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180413163705.io4xbukerjkzjmri@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 3:41 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote=
-:
-> Hi Krzysztof,
->
-> On 2018=EB=85=84 04=EC=9B=94 25=EC=9D=BC 05:32, Krzysztof Kozlowski wrote=
-:
->> The Exynos5440 is not actively developed, there are no development
->> boards available and probably there are no real products with it.
->> Remove wide-tree support for Exynos5440.
+Hello Rob,
+
+Thank you for the review comments.
+
+On 4/13/2018 10:07 PM, Rob Herring wrote:
+> On Sun, Apr 08, 2018 at 04:02:12PM +0530, Taniya Das wrote:
+>> From: Amit Nischal <anischal@codeaurora.org>
 >>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> Add the RPMh clock driver to control the RPMh managed clock resources on
+>> some of the Qualcomm Technologies, Inc. SoCs.
+>>
+>> Signed-off-by: David Collins <collinsd@codeaurora.org>
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 >> ---
->>  .../devicetree/bindings/thermal/exynos-thermal.txt |  14 +-
->>  drivers/thermal/samsung/exynos_tmu.c               | 155 +-------------=
--------
->>  drivers/thermal/samsung/exynos_tmu.h               |   1 -
->>  3 files changed, 4 insertions(+), 166 deletions(-)
->
->
-> After applied this patch, I tested the build and found out
-> 'exynos5440' keyword. There is one comment including 'exynos5440' as foll=
-owing:
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
-ng/exynos_tmu.c
-> index f92f470bce21..cb525228cfe1 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -943,7 +943,7 @@ static void exynos4210_tmu_clear_irqs(struct exynos_t=
-mu_data *data)
->          * Exynos3250, Exynos4412, Exynos5250 and Exynos5260 incorrectly
->          * states that INTCLEAR register has a different placing of bits
->          * responsible for FALL IRQs than INTSTAT register.  Exynos5420
-> -        * and Exynos5440 documentation is correct (Exynos4210 doesn't
-> +        * documentation is correct (Exynos4210 doesn't
->          * support FALL IRQs at all).
->          */
->         writel(val_irq, data->base + tmu_intclear);
->
-> After removing it, looks good to me.
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>   drivers/clk/qcom/Kconfig              |   9 +
+>>   drivers/clk/qcom/Makefile             |   1 +
+>>   drivers/clk/qcom/clk-rpmh.c           | 394 ++++++++++++++++++++++++++++++++++
+> 
+>>   include/dt-bindings/clock/qcom,rpmh.h |  25 +++
+> 
+> This goes with the binding patch which should come first in the series.
+> 
 
-Thanks, I left this comment intentionally as it has some meaning even
-when Exynos5440 is not supported.
+I would make the change in the next patch series.
 
-Best regards,
-Krzysztof
+>>   4 files changed, 429 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/clk-rpmh.c
+>>   create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
