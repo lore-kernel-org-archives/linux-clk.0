@@ -1,51 +1,46 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 4/4] ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
-Date: Fri, 27 Apr 2018 02:58:18 +0300
-Message-Id: <20180426235818.10018-5-digetx@gmail.com>
-In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42710 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbeDNKZJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Apr 2018 06:25:09 -0400
+Received: by mail-io0-f194.google.com with SMTP id d5so12891847iob.9
+        for <linux-clk@vger.kernel.org>; Sat, 14 Apr 2018 03:25:09 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <20180316175354.21437-4-icenowy@aosc.io>
+References: <20180316175354.21437-1-icenowy@aosc.io> <20180316175354.21437-4-icenowy@aosc.io>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Sat, 14 Apr 2018 15:55:08 +0530
+Message-ID: <CAMty3ZBOSXu=+jQpsdnykioDGsp=VphSnzQdDDs_hh3Y1FPKyg@mail.gmail.com>
+Subject: Re: [PATCH 3/7] bus: add bus driver for accessing Allwinner A64 DE2
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit 4c9a27a6c66d ("ARM: tegra: Fix ULPI regression on Tegra20") changed
-"ulpi-link" clock from CDEV2 to PLL_P_OUT4. Turned out that PLL_P_OUT4 is
-the parent of CDEV2 clock and original clock setup of "ulpi-link" was
-correct. The reverted patch was fixing USB for one board and broke the
-other, now Tegra's clk driver correctly sets parent for the CDEV2 clock
-and hence patch could be reverted safely, restoring USB for all of the
-boards.
+On Fri, Mar 16, 2018 at 11:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> The "Display Engine 2.0" (usually called DE2) on the Allwinner A64 SoC
+> is different from the ones on other Allwinner SoCs. It requires a SRAM
+> region to be claimed, otherwise all DE2 subblocks won't be accessible.
+>
+> Add a bus driver for the Allwinner A64 DE2 part which claims the SRAM
+> region when probing.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Along with this bus driver, we also need
+drivers/gpu/drm/sun4i/sun4i_drv.c which can usually drive the
+pipelines like mixer0 and 1 are the cases for A64?
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 0a7136462a1a..983dd5c14794 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -741,7 +741,7 @@
- 		phy_type = "ulpi";
- 		clocks = <&tegra_car TEGRA20_CLK_USB2>,
- 			 <&tegra_car TEGRA20_CLK_PLL_U>,
--			 <&tegra_car TEGRA20_CLK_PLL_P_OUT4>;
-+			 <&tegra_car TEGRA20_CLK_CDEV2>;
- 		clock-names = "reg", "pll_u", "ulpi-link";
- 		resets = <&tegra_car 58>, <&tegra_car 22>;
- 		reset-names = "usb", "utmi-pads";
+Jagan.
+
 -- 
-2.17.0
+Jagan Teki
+Senior Linux Kernel Engineer | Amarula Solutions
+U-Boot, Linux | Upstream Maintainer
+Hyderabad, India.
