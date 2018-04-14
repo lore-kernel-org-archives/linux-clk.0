@@ -1,65 +1,96 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Biju Das
-	<biju.das@bp.renesas.com>, Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 3/5] clk: renesas: r8a7791/r8a7793: Fix LB clock divider
-Date: Tue, 3 Apr 2018 10:18:55 +0000
-Message-ID: <TY1PR01MB177020A5C1391AF629FA66BDC0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
- <1522344790-20061-4-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-4-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [[PATCH v2] 2/2] dt-bindings: clock: Introduce QCOM RPMh clock
+ bindings
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1523183533-23171-1-git-send-email-tdas@codeaurora.org>
+ <1523183533-23171-3-git-send-email-tdas@codeaurora.org>
+ <20180409225853.GM453@tuxbook-pro>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <63dbb808-ba93-e5ae-329d-de34184019b5@codeaurora.org>
+Date: Sat, 14 Apr 2018 07:33:14 +0530
 MIME-Version: 1.0
+In-Reply-To: <20180409225853.GM453@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-> Subject: [PATCH 3/5] clk: renesas: r8a7791/r8a7793: Fix LB clock divider
->
-> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-> the LB clock divider depends on the value of the MD18 pin.
->
-> On R-Car M2-W and M2-N, the LB clock divider is fixed to 24.  Hence
-> model the clock as a fixed factor clock instead.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hello Bjorn,
 
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Thanks for your review comments.
 
-> ---
->  drivers/clk/renesas/r8a7791-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/r8a7791-cpg-mssr.c b/drivers/clk/renesas=
-/r8a7791-cpg-mssr.c
-> index 820b220b09cc6bdb..1b91f03b75980766 100644
-> --- a/drivers/clk/renesas/r8a7791-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7791-cpg-mssr.c
-> @@ -57,7 +57,6 @@ static struct cpg_core_clk r8a7791_core_clks[] __initda=
-ta =3D {
->
->  /* Core Clock Outputs */
->  DEF_BASE("z",    R8A7791_CLK_Z,    CLK_TYPE_GEN2_Z,    CLK_PLL0),
-> -DEF_BASE("lb",   R8A7791_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
->  DEF_BASE("adsp", R8A7791_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
->  DEF_BASE("sdh",  R8A7791_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
->  DEF_BASE("sd0",  R8A7791_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
-> @@ -70,6 +69,7 @@ static struct cpg_core_clk r8a7791_core_clks[] __initda=
-ta =3D {
->  DEF_FIXED("hp",     R8A7791_CLK_HP,    CLK_PLL1,         12, 1),
->  DEF_FIXED("i",      R8A7791_CLK_I,     CLK_PLL1,          2, 1),
->  DEF_FIXED("b",      R8A7791_CLK_B,     CLK_PLL1,         12, 1),
-> +DEF_FIXED("lb",     R8A7791_CLK_LB,    CLK_PLL1,         24, 1),
->  DEF_FIXED("p",      R8A7791_CLK_P,     CLK_PLL1,         24, 1),
->  DEF_FIXED("cl",     R8A7791_CLK_CL,    CLK_PLL1,         48, 1),
->  DEF_FIXED("m2",     R8A7791_CLK_M2,    CLK_PLL1,          8, 1),
-> --
-> 2.7.4
+On 4/10/2018 4:28 AM, Bjorn Andersson wrote:
+> On Sun 08 Apr 03:32 PDT 2018, Taniya Das wrote:
+> 
+>> From: Amit Nischal <anischal@codeaurora.org>
+>>
+>> Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
+>> devices would be used for communicating resource state requests to control
+>> the clocks managed by RPMh.
+>>
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 22 ++++++++++++++++++++++
+>>   1 file changed, 22 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+>> new file mode 100644
+>> index 0000000..4ade82b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+>> @@ -0,0 +1,22 @@
+>> +Qualcomm Technologies, Inc. RPMh Clocks
+>> +-------------------------------------------------------
+>> +
+>> +Resource Power Manager Hardened (RPMh) manages shared resources on
+>> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
+>> +other hardware subsystems via RSC to control clocks.
+>> +
+>> +Required properties :
+>> +- compatible : shall contain "qcom,rpmh-clk-sdm845"
+> 
+> We have a chance to fix this to Rob's liking, so please make this
+> "qcom,sdm845-rpmh-clock" (or maybe "qcom,sdm845-rpmhcc"?)
 
+I would fix  it to "qcom,sdm845-rpmh-clk".
 
+> 
+>> +
+>> +- #clock-cells : must contain 1
+>> +
+>> +Example :
+>> +
+>> +#include <dt-bindings/clock/qcom,rpmh.h>
+>> +
+>> +	&apps_rsc {
+>> +		rpmh: clock-controller {
+> 
+> I believe the clock-controller, the power-domain and the bus-scaler are
+> equal contenders of the label "rpmh", so please make it more specific.
+> How about "rpmhcc" to mimic previous platforms?
+> 
 
+Would update it "rpmhcc".
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+>> +			compatible = "qcom,rpmh-clk-sdm845";
+>> +			#clock-cells = <1>;
+>> +		};
+>> +	};
+> 
+> Regards,
+> Bjorn
+> 
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
