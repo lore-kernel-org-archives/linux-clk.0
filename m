@@ -1,93 +1,96 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v7 4/7] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-Date: Thu, 26 Apr 2018 16:44:34 +0800
-Message-ID: <20180426084437.192394-5-yixun.lan@amlogic.com>
-In-Reply-To: <20180426084437.192394-1-yixun.lan@amlogic.com>
-References: <20180426084437.192394-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
+Date: Sat, 14 Apr 2018 08:06:40 +0530
+Message-Id: <1523673401-21611-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
+References: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add dt-bindings headers for the Meson-AXG's AO clock and
-reset controller.
+Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
+devices would be used for communicating resource state requests to control
+the clocks managed by RPMh.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
- include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
+ .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 22 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h              | 24 ++++++++++++++++++++++
  2 files changed, 46 insertions(+)
- create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
- create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+ create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
 
-diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
 new file mode 100644
-index 000000000000..61955016a55b
+index 0000000..3c00765
 --- /dev/null
-+++ b/include/dt-bindings/clock/axg-aoclkc.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+@@ -0,0 +1,22 @@
++Qualcomm Technologies, Inc. RPMh Clocks
++-------------------------------------------------------
 +
-+#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
++Resource Power Manager Hardened (RPMh) manages shared resources on
++some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
++other hardware subsystems via RSC to control clocks.
 +
-+#define CLKID_AO_REMOTE		0
-+#define CLKID_AO_I2C_MASTER	1
-+#define CLKID_AO_I2C_SLAVE	2
-+#define CLKID_AO_UART1		3
-+#define CLKID_AO_UART2		4
-+#define CLKID_AO_IR_BLASTER	5
-+#define CLKID_AO_SAR_ADC	6
-+#define CLKID_AO_CLK81		7
-+#define CLKID_AO_SAR_ADC_SEL	8
-+#define CLKID_AO_SAR_ADC_DIV	9
-+#define CLKID_AO_SAR_ADC_CLK	10
-+#define CLKID_AO_ALT_XTAL	11
++Required properties :
++- compatible : shall contain "qcom,sdm845-rpmh-clk"
++
++- #clock-cells : must contain 1
++
++Example :
++
++#include <dt-bindings/clock/qcom,rpmh.h>
++
++	&apps_rsc {
++		rpmhcc: clock-controller {
++			compatible = "qcom,sdm845-rpmh-clk";
++			#clock-cells = <1>;
++		};
++	};
+diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
+new file mode 100644
+index 0000000..36caab2
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,rpmh.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
++
++
++#ifndef _DT_BINDINGS_CLK_MSM_RPMH_H
++#define _DT_BINDINGS_CLK_MSM_RPMH_H
++
++/* RPMh controlled clocks */
++#define RPMH_CXO_CLK				0
++#define RPMH_CXO_CLK_A				1
++#define RPMH_LN_BB_CLK2				2
++#define RPMH_LN_BB_CLK2_A			3
++#define RPMH_LN_BB_CLK3				4
++#define RPMH_LN_BB_CLK3_A			5
++#define RPMH_RF_CLK1				6
++#define RPMH_RF_CLK1_A				7
++#define RPMH_RF_CLK2				8
++#define RPMH_RF_CLK2_A				9
++#define RPMH_RF_CLK3				10
++#define RPMH_RF_CLK3_A				11
++#define RPMH_RF_CLK4				12
++#define RPMH_RF_CLK4_A				13
 +
 +#endif
-diff --git a/include/dt-bindings/reset/axg-aoclkc.h b/include/dt-bindings/reset/axg-aoclkc.h
-new file mode 100644
-index 000000000000..d342c0b6b2a7
---- /dev/null
-+++ b/include/dt-bindings/reset/axg-aoclkc.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define RESET_AO_REMOTE		0
-+#define RESET_AO_I2C_MASTER	1
-+#define RESET_AO_I2C_SLAVE	2
-+#define RESET_AO_UART1		3
-+#define RESET_AO_UART2		4
-+#define RESET_AO_IR_BLASTER	5
-+
-+#endif
--- 
-2.17.0
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
