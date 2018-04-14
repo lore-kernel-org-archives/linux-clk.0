@@ -1,32 +1,42 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 27 Apr 2018 15:10:54 -0500
-From: Rob Herring <robh@kernel.org>
-To: sean.wang@mediatek.com
-Cc: sboyd@codeaurora.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
-	mark.rutland@arm.com, p.zabel@pengutronix.de,
-	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] dt-bindings: clock: mediatek: add g3dsys bindings
-Message-ID: <20180427201054.fghwgp4l4yvfs6n6@rob-hp-laptop>
-References: <cover.1524816502.git.sean.wang@mediatek.com>
- <665c38d5803573aa9a01471253f406301b1123a1.1524816502.git.sean.wang@mediatek.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:32794 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750917AbeDNKax (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Apr 2018 06:30:53 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <665c38d5803573aa9a01471253f406301b1123a1.1524816502.git.sean.wang@mediatek.com>
+In-Reply-To: <CAMty3ZBOSXu=+jQpsdnykioDGsp=VphSnzQdDDs_hh3Y1FPKyg@mail.gmail.com>
+References: <20180316175354.21437-1-icenowy@aosc.io> <20180316175354.21437-4-icenowy@aosc.io>
+ <CAMty3ZBOSXu=+jQpsdnykioDGsp=VphSnzQdDDs_hh3Y1FPKyg@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 14 Apr 2018 18:30:30 +0800
+Message-ID: <CAGb2v64-sWsFfHThVrcE5ivrf6kZSZa_tkB_GtC=Z+1TLpWV_Q@mail.gmail.com>
+Subject: Re: [PATCH 3/7] bus: add bus driver for accessing Allwinner A64 DE2
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 04:14:43PM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Add bindings to g3dsys providing necessary clock and reset control to
-> Mali-450.
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+On Sat, Apr 14, 2018 at 6:25 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> On Fri, Mar 16, 2018 at 11:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> The "Display Engine 2.0" (usually called DE2) on the Allwinner A64 SoC
+>> is different from the ones on other Allwinner SoCs. It requires a SRAM
+>> region to be claimed, otherwise all DE2 subblocks won't be accessible.
+>>
+>> Add a bus driver for the Allwinner A64 DE2 part which claims the SRAM
+>> region when probing.
+>
+> Along with this bus driver, we also need
+> drivers/gpu/drm/sun4i/sun4i_drv.c which can usually drive the
+> pipelines like mixer0 and 1 are the cases for A64?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I imagine that's the next part to be sent out, after the hardware
+representation in the device tree has been decided on.
+
+ChenYu
