@@ -1,82 +1,40 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v8 25/42] ARM: davinci: dm644x: add new clock init using
- common clock framework
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-26-git-send-email-david@lechnology.com>
- <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <43c266b8-c023-a1b4-c751-bd46c2fb910d@lechnology.com>
-Date: Tue, 3 Apr 2018 11:30:45 -0500
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 16 Apr 2018 15:45:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: Taniya Das <tdas@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Introduce QCOM RPMh clock
+ bindings
+Message-ID: <20180416204523.onak3fxtfsqskspc@rob-hp-laptop>
+References: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
+ <1523673401-21611-2-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1523673401-21611-2-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/03/2018 05:26 AM, Sekhar Nori wrote:
-> On Friday 16 March 2018 08:22 AM, David Lechner wrote:
->> +static struct resource dm644x_pll1_resources[] = {
->> +	{
->> +		.start	= DAVINCI_PLL1_BASE,
->> +		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
+On Sat, Apr 14, 2018 at 08:06:40AM +0530, Taniya Das wrote:
+> Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
+> devices would be used for communicating resource state requests to control
+> the clocks managed by RPMh.
 > 
-> The .end should be DAVINCI_PLL1_BASE + SZ_1K - 1, otherwise it prevents
-> PLL2 from getting registered.
-> 
->> +		.flags	= IORESOURCE_MEM,
->> +	},
->> +};
->> +
->> +static struct platform_device dm644x_pll1_device = {
->> +	.name		= "dm644x-pll1",
->> +	.id		= -1,
->> +	.resource	= dm644x_pll1_resources,
->> +	.num_resources	= ARRAY_SIZE(dm644x_pll1_resources),
->> +};
->> +
->> +static struct resource dm644x_pll2_resources[] = {
->> +	{
->> +		.start	= DAVINCI_PLL2_BASE,
->> +		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
-> 
-> And this too should be fixed, else it prevents the PSC from getting
-> registered.
-> 
->> +		.flags	= IORESOURCE_MEM,
->> +	},
->> +};
-> 
-> With these fixed, I still had to enable 'clk_ignore_unused' on DM644x
-> EVM to get to NFS boot. I think root of the problem is that pm_runtime()
-> APIs are not working in the legacy boot mode.
-> 
-> This can be seen even on the DA850 LCDK in legacy boot. pm_genpd_summary
-> in debugfs shows all domains are off and there are no devices registered
-> under the "da850-psc1: emac" domain. NFS mounting still works on the
-> DA850 LCDK because clk_summary shows enable and prepare count of 4 for
-> emac. Not sure how that's happening. But on DM644x EVM, the emac clock
-> enable count is 0.
-> 
-> Still looking at whats going wrong here. I am testing your v8 branch
-> with clk-davinci branch from clk-next merged to get the fixes Stephen made.
-> 
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 22 ++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,rpmh.h              | 24 ++++++++++++++++++++++
+>  2 files changed, 46 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+>  create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
 
-In legacy mode, genpd is not being used. I didn't see any mechanism for
-genpd lookup without device tree. So, we are still relying on the
-matching in arch/arm/mach-davinci/pm_domain.c.
-
-I suspect we need to fix the clock lookups in
-drivers/clk/davinci/psc-dm644x.c.
-
-LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
-					"fck",		"davinci_mdio.0");
-
-NULL might need to be changed to "fck" to be picked up by pm matching
-and "davinci_emac.1" should be verified that it matches the actual EMAC
-device name.
+Reviewed-by: Rob Herring <robh@kernel.org>
