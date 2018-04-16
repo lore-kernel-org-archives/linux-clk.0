@@ -1,140 +1,51 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 2/7] clk: meson: add clk-phase clock driver
-To: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Kevin Hilman <khilman@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180425163304.10852-1-jbrunet@baylibre.com>
- <20180425163304.10852-3-jbrunet@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <86b8e8f5-fb69-3249-fc1e-b4f2213284db@baylibre.com>
-Date: Thu, 26 Apr 2018 10:46:12 +0200
+Return-Path: <collinsd@codeaurora.org>
+Subject: Re: [PATCH v3 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
+ <1523673401-21611-3-git-send-email-tdas@codeaurora.org>
+ <152390031768.51482.12790579493617671456@swboyd.mtv.corp.google.com>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <5af35710-b521-e22e-055b-798cbe343dc6@codeaurora.org>
+Date: Mon, 16 Apr 2018 14:47:42 -0700
 MIME-Version: 1.0
-In-Reply-To: <20180425163304.10852-3-jbrunet@baylibre.com>
+In-Reply-To: <152390031768.51482.12790579493617671456@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/04/2018 18:32, Jerome Brunet wrote:
-> Add a driver based meson clk-regmap to control clock phase on
-> amlogic SoCs
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/Makefile    |  1 +
->  drivers/clk/meson/clk-phase.c | 63 +++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/meson/clkc.h      |  8 ++++++
->  3 files changed, 72 insertions(+)
->  create mode 100644 drivers/clk/meson/clk-phase.c
-> 
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index ffee82e60b7a..352fb848c406 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -3,6 +3,7 @@
->  #
->  
->  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
-> +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
->  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
->  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-> diff --git a/drivers/clk/meson/clk-phase.c b/drivers/clk/meson/clk-phase.c
-> new file mode 100644
-> index 000000000000..96e70497ef1b
-> --- /dev/null
-> +++ b/drivers/clk/meson/clk-phase.c
-> @@ -0,0 +1,63 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2018 BayLibre, SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include "clkc.h"
-> +
-> +#define phase_step(_width) (360 / (1 << (_width)))
-> +
-> +static inline struct meson_clk_phase_data *
-> +meson_clk_phase_data(struct clk_regmap *clk)
-> +{
-> +	return (struct meson_clk_phase_data *)clk->data;
-> +}
-> +
-> +int meson_clk_degrees_from_val(unsigned int val, unsigned int width)
-> +{
-> +	return phase_step(width) * val;
-> +}
-> +EXPORT_SYMBOL_GPL(meson_clk_degrees_from_val);
-> +
-> +unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width)
-> +{
-> +	unsigned int val = DIV_ROUND_CLOSEST(degrees, phase_step(width));
-> +
-> +	/*
-> +	 * This last calculation is here for cases when degrees is rounded
-> +	 * to 360, in which case val == (1 << width).
-> +	 */
-> +	return val % (1 << width);
-> +}
-> +EXPORT_SYMBOL_GPL(meson_clk_degrees_to_val);
-> +
-> +static int meson_clk_phase_get_phase(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_phase_data *phase = meson_clk_phase_data(clk);
-> +	unsigned int val;
-> +
-> +	val = meson_parm_read(clk->map, &phase->ph);
-> +
-> +	return meson_clk_degrees_from_val(val, phase->ph.width);
-> +}
-> +
-> +static int meson_clk_phase_set_phase(struct clk_hw *hw, int degrees)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_phase_data *phase = meson_clk_phase_data(clk);
-> +	unsigned int val;
-> +
-> +	val = meson_clk_degrees_to_val(degrees, phase->ph.width);
-> +	meson_parm_write(clk->map, &phase->ph, val);
-> +
-> +	return 0;
-> +}
-> +
-> +const struct clk_ops meson_clk_phase_ops = {
-> +	.get_phase	= meson_clk_phase_get_phase,
-> +	.set_phase	= meson_clk_phase_set_phase,
-> +};
-> +EXPORT_SYMBOL_GPL(meson_clk_phase_ops);
-> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> index 8fe73c4edca8..9a17d6705e0a 100644
-> --- a/drivers/clk/meson/clkc.h
-> +++ b/drivers/clk/meson/clkc.h
-> @@ -104,6 +104,13 @@ struct meson_clk_audio_div_data {
->  	u8 flags;
->  };
->  
-> +struct meson_clk_phase_data {
-> +	struct parm ph;
-> +};
-> +
-> +int meson_clk_degrees_from_val(unsigned int val, unsigned int width);
-> +unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width);
-> +
->  #define MESON_GATE(_name, _reg, _bit)					\
->  struct clk_regmap _name = {						\
->  	.data = &(struct clk_regmap_gate_data){				\
-> @@ -127,5 +134,6 @@ extern const struct clk_ops meson_clk_mpll_ro_ops;
->  extern const struct clk_ops meson_clk_mpll_ops;
->  extern const struct clk_ops meson_clk_audio_divider_ro_ops;
->  extern const struct clk_ops meson_clk_audio_divider_ops;
-> +extern const struct clk_ops meson_clk_phase_ops;
->  
->  #endif /* __CLKC_H */
-> 
+Hello Taniya,
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+On 04/16/2018 10:38 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-04-13 19:36:41)
+>> Add the RPMh clock driver to control the RPMh managed clock resources on
+>> some of the Qualcomm Technologies, Inc. SoCs.
+>>
+>> Signed-off-by: David Collins <collinsd@codeaurora.org>
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> 
+> Your signoff chain is very confused. The first signoff should match the
+> "From:" header but that doesn't seem to be the case here. And the sender
+> should be the last in the chain.
+
+It looks like the provenance of this driver go muddled during downstream
+propagation between branches.  The original downstream version of the
+clk-rpmh driver was written by Osvaldo Banuelos [1].  I think that the
+best course of action here would be to remove my Signed-off-by, add
+Osvaldo's, and add yours.
+
+Thanks,
+David
+
+[1]:
+https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?id=11d3623c37afb945ce36755501812a44efeb6cd9
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
