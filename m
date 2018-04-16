@@ -1,45 +1,35 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 4/8] clk: mediatek: mt2701-mm: switch to mfd device
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
- ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
- robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- lee.jones@linaro.org, davem@davemloft.net, gregkh@linuxfoundation.org,
- mchehab@kernel.org, rdunlap@infradead.org, pi-cheng.chen@linaro.org,
- sean.wang@mediatek.com, linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Matthias Brugger <mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
- <20171114214114.15793-5-mbrugger@suse.com>
- <20171115001705.GJ11955@codeaurora.org>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <e41d07ff-5870-1ec5-18fc-d89538529a8f@gmail.com>
-Date: Fri, 20 Apr 2018 15:00:39 +0200
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20171115001705.GJ11955@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+To: Arnd Bergmann <arnd@arndb.de>, Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180409105438.2402477-1-arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+ Gaku Inami <gaku.inami.xw@bp.renesas.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180409105438.2402477-1-arnd@arndb.de>
+Message-ID: <152389486496.51482.1409018821443408273@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: cs2000: mark resume function as __maybe_unused
+Date: Mon, 16 Apr 2018 09:07:44 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Quoting Arnd Bergmann (2018-04-09 03:54:34)
+> When power management is disabled, we get a harmless warning:
+> =
 
-On 11/15/2017 01:17 AM, Stephen Boyd wrote:
-> On 11/14, Matthias Brugger wrote:
->> As the new mfd device is in place, switch probing
->> for the MMSYS to support invocation from the mfd device.
->>
->> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
->> ---
-> 
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
-> 
+> drivers/clk/clk-cs2000-cp.c:544:12: error: 'cs2000_resume' defined but no=
+t used [-Werror=3Dunused-function]
+> =
 
-I did a minor change to this patch and patch 7/8 to get rid of mmsys_private
-variable. Nevertheless I kept your Acked-by, as it only changes how we get the
-device tree node.
+> Marking the function as __maybe_unused lets the compiler silently
+> drop it instead.
+> =
 
-Hope that's OK with you.
+> Fixes: eade4ccdb087 ("clk: cs2000: set pm_ops in hibernate-compatible way=
+")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Regards,
-Matthias
+Applied to clk-fixes
