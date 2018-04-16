@@ -1,33 +1,32 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH 0/2] clk: honor CLK_MUX_ROUND_CLOSEST in mux
-Date: Mon,  9 Apr 2018 15:59:19 +0200
-Message-Id: <20180409135921.5617-1-jbrunet@baylibre.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1523673401-21611-2-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Taniya Das <tdas@codeaurora.org>
+References: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
+ <1523673401-21611-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <152390035549.51482.14663987553632487490@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
+Date: Mon, 16 Apr 2018 10:39:15 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-CLK_MUX_ROUND_CLOSEST is part of clk_mux and meson's clk_regmap
-documentation, so it should be honored by the determine_rate() callback.
+Quoting Taniya Das (2018-04-13 19:36:40)
+> Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
+> devices would be used for communicating resource state requests to control
+> the clocks managed by RPMh.
+> =
 
-It is note the case ATM. The series fixes this problem.
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 
-Jerome Brunet (2):
-  clk: honor CLK_MUX_ROUND_CLOSEST in generic clk mux
-  clk: meson: honor CLK_MUX_ROUND_CLOSEST in clk_regmap
+Is Amit the author? Needs a "From: Amit .." then.
 
- drivers/clk/clk-mux.c          | 10 +++++++++-
- drivers/clk/clk.c              |  7 ++++---
- drivers/clk/meson/clk-regmap.c | 11 ++++++++++-
- include/linux/clk-provider.h   |  3 +++
- 4 files changed, 26 insertions(+), 5 deletions(-)
-
--- 
-2.14.3
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
