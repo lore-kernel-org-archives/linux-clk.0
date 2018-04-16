@@ -1,52 +1,47 @@
-Return-Path: <marcin@ziemianowicz.com>
-Date: Mon, 9 Apr 2018 20:16:49 -0400
-From: Marcin Ziemianowicz <marcin@ziemianowicz.com>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: at91: Fix for PLL set_rate changes not being
- actually written to PLL peripheral bits
-Message-ID: <20180410001649.GA62245@hak8or>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+	Russell King <linux@armlinux.org.uk>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] clk: mux: add duty cycle passthrough ops
+Date: Mon, 16 Apr 2018 19:57:43 +0200
+Message-Id: <20180416175743.20826-4-jbrunet@baylibre.com>
+In-Reply-To: <20180416175743.20826-1-jbrunet@baylibre.com>
+References: <20180416175743.20826-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When a USB device is connected to the USB host port on the SAM9N12 then
-you get "-62" error which seems to indicate USB replies from the device
-are timing out. Looking around, I saw the USB bus was running at half
-speed. Going further, it seems that in ..._set_rate() the PLL wasn't
-actually being adjusted. Writing the multiplier and divider values to
-the peripheral fixes the bus running at half speed.
+A clock mux does not resample the clock signal, it give the same
+signal as the selected parent, so it can use the duty cycle
+passthrough operations.
 
-Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/at91/clk-pll.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/clk/clk-mux.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
-index 534961766ae5..db7155fe9346 100644
---- a/drivers/clk/at91/clk-pll.c
-+++ b/drivers/clk/at91/clk-pll.c
-@@ -288,6 +288,14 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	pll->div = div;
- 	pll->mul = mul;
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 1628b93655ed..f7c597779928 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -124,11 +124,15 @@ const struct clk_ops clk_mux_ops = {
+ 	.get_parent = clk_mux_get_parent,
+ 	.set_parent = clk_mux_set_parent,
+ 	.determine_rate = clk_mux_determine_rate,
++	.set_duty_cycle = __clk_set_duty_cycle_passthrough,
++	.get_duty_cycle = __clk_get_duty_cycle_passthrough,
+ };
+ EXPORT_SYMBOL_GPL(clk_mux_ops);
  
-+	// Set the PLL as per above div and mil values.
-+	regmap_update_bits(pll->regmap, AT91_CKGR_PLLBR,
-+		AT91_PMC_DIV | AT91_PMC_MUL,
-+		(div << 0) | (mul << 16));
-+
-+	pr_debug("clk-pll: setting new rate, (%lu hz / %u) * %u = %lu hz\n",
-+		parent_rate, div, mul, rate);
-+
- 	return 0;
- }
+ const struct clk_ops clk_mux_ro_ops = {
+ 	.get_parent = clk_mux_get_parent,
++	.set_duty_cycle = __clk_set_duty_cycle_passthrough,
++	.get_duty_cycle = __clk_get_duty_cycle_passthrough,
+ };
+ EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
  
 -- 
-2.17.0
+2.14.3
