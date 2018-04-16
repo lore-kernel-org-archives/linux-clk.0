@@ -1,79 +1,67 @@
-Return-Path: <brgl@bgdev.pl>
-MIME-Version: 1.0
-In-Reply-To: <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com> <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
- <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
- <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com> <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
- <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 5 Apr 2018 17:51:32 +0200
-Message-ID: <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, David Lechner <david@lechnology.com>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] clk: add duty cycle support
+Date: Mon, 16 Apr 2018 19:57:40 +0200
+Message-Id: <20180416175743.20826-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-04-05 16:36 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
-> On Thursday 05 April 2018 07:14 PM, Bartosz Golaszewski wrote:
->> 2018-04-05 15:09 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
->>> Hi Bartosz,
->>>
->>> On Friday 09 February 2018 10:18 PM, Michael Turquette wrote:
->>>> On Fri, Feb 9, 2018 at 8:22 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>>> 2018-01-08 3:17 GMT+01:00 David Lechner <david@lechnology.com>:
->>>
->>>>> Hi David,
->>>>>
->>>>> I've been working on moving the genpd code from its own driver to the
->>>>> psc one. I couldn't get the system to boot though and problems
->>>>> happened very early in the boot sequence. I struggled to figure out
->>>>> what's happening, but eventually I noticed that psc uses
->>>>> CLK_OF_DECLARE() to initialize clocks. The functions registered this
->>>>> way are called very early in the boot sequence, way before
->>>>> late_initcall() in which the genpd framework is initialized. This of
->>>
->>> late_initcall() is too late for genpd to be initialized. As you may have
->>> seen with the latest set of patches, we have problems with timer
->>> initialization. After converting to platform devices, PSC and PLL clocks
->>> get initialized post time_init(). We are working that around using
->>> fixed-clocks, which hopefully will work (I still need to test many of
->>> the affected platforms).
->>>
->>> Can you please reply with the exact issue you faced with genpd framework
->>> initialization so we do have that on record.
->>>
->>
->> The exact issue manifested itself in a NULL-pointer dereference panic
->> when I tried moving the genpd code I had initially implemented as a
->> separate platform driver to what I believe was v6 or v7 of David's
->> series (before the psc driver became a platform driver, when it was
->> still using CLK_OF_DECLARE()). When I had tested a simple conversion
->> of that version to a platform_driver, genpd worked fine.
->>
->> I don't have the stack traces from these panics, but I recall some
->> debugfs functions being involved and the genpd late_initcalls are
->> related to debugfs. Looking at it now I don't see how exactly it could
->> fail though.
->
-> Do you have the code where you faced the problem stashed somewhere? I am
-> not (yet) advocating going back to CLK_OF_DECLARE(). But there is a
-> definite issue with timer being ready when not using CLK_OF_DECLARE().
-> So, I want to make sure there the reason why we are going down the
-> platform device path is a amply clear.
->
-> Thanks,
-> Sekhar
+This patchset adds the possibility to control the duty cycle ratio of a
+clock within the clock framework.
 
-Yes, you can still find it on my github[1].
+This useful when the duty cycle ratio depends on another parameter
+controlled by the clock framework. For example, the duty cycle ratio may
+depends on the value of a divider (ratio = N / div).
 
-Bart
+This is also useful if the related clock is part of large tree. In this
+case, using CCF to control the clock tree and the PWM framework for the
+duty cycle would be a nightmare for the provider and the consumer.
 
-[1] github.com:brgl/linux.git  topic/davinci-genpd-final-v2
+A clock provider is not required to implement the operation to set and get
+the duty cycle. If it does not implement .get_duty_cycle(), the ratio is
+assumed to be 50%.
+
+This series also provides pass-through operations ready to be used for
+clock which don't resample the clock signal (such as gates and muxes).
+This is provided to make things easier for consumers. Clocks are usually
+made of several elements, like a composite clocks with a mux, a divider,
+and a gate. With the pass-through ops set on the gate, the consumer does
+not need to be aware that the duty cycle is actually controlled by the
+divider, it can continue to use the clock through the gate, as usual.  The
+simple propagation will stop at the first clock which resample the signal
+(such as a divider).
+
+Patch 2 and 3 add the pass-through ops to the generic gate and mux ops.  In
+this first version, it is unconditional, but maybe we should provide a flag
+to let people decide what is best for them ?
+
+The series has been developed to handled the sample clocks provided by
+audio clock controller of amlogic's A113 SoC. To support i2s modes, this
+clock need to have a 50% duty cycle ratio, while it should be just one
+pulse of the parent clock in dsp modes.
+
+PS: Checkpatch complains heavily about the white space in the trace header
+file. I believe I have respected the style already used in this
+file. Please let me know if it should be done differently.
+
+Jerome Brunet (3):
+  clk: add duty cycle support
+  clk: gate: add duty cycle passthrough ops
+  clk: mux: add duty cycle passthrough ops
+
+ drivers/clk/clk-gate.c       |   2 +
+ drivers/clk/clk-mux.c        |   4 +
+ drivers/clk/clk.c            | 196 +++++++++++++++++++++++++++++++++++++++++--
+ include/linux/clk-provider.h |  17 ++++
+ include/linux/clk.h          |  32 +++++++
+ include/trace/events/clk.h   |  36 ++++++++
+ 6 files changed, 282 insertions(+), 5 deletions(-)
+
+-- 
+2.14.3
