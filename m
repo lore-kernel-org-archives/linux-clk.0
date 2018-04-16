@@ -1,54 +1,34 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
-        Loic PALLARDY
-	<loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: [PATCH 3/6] clk: stm32mp1: fix SAI3 & SAI4 clocks
-Date: Fri, 6 Apr 2018 08:39:30 +0200
-Message-ID: <1522996773-24129-4-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
-References: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Anson Huang <Anson.Huang@nxp.com>, fabio.estevam@nxp.com,
+ kernel@pengutronix.de, linux@armlinux.org.uk, mark.rutland@arm.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, shawnguo@kernel.org,
+ shengjiu.wang@nxp.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
+Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <152390354456.51482.5320966315016822540@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH V2 1/2] clk: imx6sx: add missing lvds2 clock to the clock tree
+Date: Mon, 16 Apr 2018 11:32:24 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Quoting Anson Huang (2018-03-18 19:30:44)
+> i.MX6SX has lvds2 (analog clock2), an I/O clock like lvds1.
+> And this lvds2, along with lvds1, can be used to provide
+> external clock source to the internal pll, such as pll4_audio
+> and pll5_video.
+> =
 
-fix bad copy / paste.
-SAI3 & SAI4 used gate of SAI2 instead SAI3 & SAI4
+> This patch mainly adds the lvds2 to the clock tree and fix its
+> relationship with pll accordingly.
+> =
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- drivers/clk/clk-stm32mp1.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 9a67b1c..eefed49 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -1942,8 +1942,8 @@ enum {
- 	KCLK(FDCAN_K, "fdcan_k", fdcan_src, 0, G_FDCAN, M_FDCAN),
- 	KCLK(SAI1_K, "sai1_k", sai_src, 0, G_SAI1, M_SAI1),
- 	KCLK(SAI2_K, "sai2_k", sai2_src, 0, G_SAI2, M_SAI2),
--	KCLK(SAI3_K, "sai3_k", sai_src, 0, G_SAI2, M_SAI3),
--	KCLK(SAI4_K, "sai4_k", sai_src, 0, G_SAI2, M_SAI4),
-+	KCLK(SAI3_K, "sai3_k", sai_src, 0, G_SAI3, M_SAI3),
-+	KCLK(SAI4_K, "sai4_k", sai_src, 0, G_SAI4, M_SAI4),
- 	KCLK(ADC12_K, "adc12_k", adc12_src, 0, G_ADC12, M_ADC12),
- 	KCLK(DSI_K, "dsi_k", dsi_src, 0, G_DSI, M_DSI),
- 	KCLK(ADFSDM_K, "adfsdm_k", sai_src, 0, G_ADFSDM, M_SAI1),
--- 
-1.9.1
+Applied to clk-next
