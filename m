@@ -1,394 +1,452 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v9 20/27] ARM: davinci: dm644x: Remove legacy clock init
-Date: Thu, 26 Apr 2018 19:17:38 -0500
-Message-Id: <20180427001745.4116-21-david@lechnology.com>
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1523673401-21611-3-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Taniya Das <tdas@codeaurora.org>, David Collins <collinsd@codeaurora.org>
+References: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
+ <1523673401-21611-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <152390031768.51482.12790579493617671456@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Mon, 16 Apr 2018 10:38:37 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy clock init code from
-arch/arm/mach-davinci/dm644x.c.
+Quoting Taniya Das (2018-04-13 19:36:41)
+> Add the RPMh clock driver to control the RPMh managed clock resources on
+> some of the Qualcomm Technologies, Inc. SoCs.
+> =
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
+> Signed-off-by: David Collins <collinsd@codeaurora.org>
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 
-v9 changes:
-- rebased
+Your signoff chain is very confused. The first signoff should match the
+"From:" header but that doesn't seem to be the case here. And the sender
+should be the last in the chain.
 
-v8 changes:
-- none
+> ---
+>  drivers/clk/qcom/Kconfig    |   9 ++
+>  drivers/clk/qcom/Makefile   |   1 +
+>  drivers/clk/qcom/clk-rpmh.c | 367 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 377 insertions(+)
+>  create mode 100644 drivers/clk/qcom/clk-rpmh.c
+> =
 
-v7 changes:
-- rebased
-- add davinci prefix to commit message
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index fbf4532..63c3372 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -112,6 +112,15 @@ config IPQ_GCC_8074
+>           i2c, USB, SD/eMMC, etc. Select this for the root clock
+>           of ipq8074.
+> =
 
-v6 changes:
-- rebased
+> +config QCOM_CLK_RPMH
+> +       tristate "RPMh Clock Driver"
+> +       depends on COMMON_CLK_QCOM && QCOM_RPMH
+> +       help
+> +        RPMh manages shared resources on some Qualcomm Technologies, Inc.
+> +        SoCs. It accepts requests from other hardware subsystems via RSC.
+> +        Say Y if you want to support the clocks exposed by RPMh on
+> +        platforms such as sdm845.
 
+Capitalize sdm?
 
- arch/arm/mach-davinci/dm644x.c | 300 ---------------------------------
- 1 file changed, 300 deletions(-)
+> +
 
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index b359f9a68134..cf7b9b80816d 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -32,11 +32,6 @@
- #include "davinci.h"
- #include "mux.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include "clock.h"
--#include "psc.h"
--#endif
--
- /*
-  * Device specific clocks
-  */
-@@ -49,292 +44,6 @@
- #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
- #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
- 
--#ifndef CONFIG_COMMON_CLK
--static struct pll_data pll1_data = {
--	.num       = 1,
--	.phys_base = DAVINCI_PLL1_BASE,
--};
--
--static struct pll_data pll2_data = {
--	.num       = 2,
--	.phys_base = DAVINCI_PLL2_BASE,
--};
--
--static struct clk ref_clk = {
--	.name = "ref_clk",
--	.rate = DM644X_REF_FREQ,
--};
--
--static struct clk pll1_clk = {
--	.name = "pll1",
--	.parent = &ref_clk,
--	.pll_data = &pll1_data,
--	.flags = CLK_PLL,
--};
--
--static struct clk pll1_sysclk1 = {
--	.name = "pll1_sysclk1",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV1,
--};
--
--static struct clk pll1_sysclk2 = {
--	.name = "pll1_sysclk2",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV2,
--};
--
--static struct clk pll1_sysclk3 = {
--	.name = "pll1_sysclk3",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV3,
--};
--
--static struct clk pll1_sysclk5 = {
--	.name = "pll1_sysclk5",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV5,
--};
--
--static struct clk pll1_aux_clk = {
--	.name = "pll1_aux_clk",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll1_sysclkbp = {
--	.name = "pll1_sysclkbp",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL | PRE_PLL,
--	.div_reg = BPDIV
--};
--
--static struct clk pll2_clk = {
--	.name = "pll2",
--	.parent = &ref_clk,
--	.pll_data = &pll2_data,
--	.flags = CLK_PLL,
--};
--
--static struct clk pll2_sysclk1 = {
--	.name = "pll2_sysclk1",
--	.parent = &pll2_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV1,
--};
--
--static struct clk pll2_sysclk2 = {
--	.name = "pll2_sysclk2",
--	.parent = &pll2_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV2,
--};
--
--static struct clk pll2_sysclkbp = {
--	.name = "pll2_sysclkbp",
--	.parent = &pll2_clk,
--	.flags = CLK_PLL | PRE_PLL,
--	.div_reg = BPDIV
--};
--
--static struct clk dsp_clk = {
--	.name = "dsp",
--	.parent = &pll1_sysclk1,
--	.lpsc = DAVINCI_LPSC_GEM,
--	.domain = DAVINCI_GPSC_DSPDOMAIN,
--	.usecount = 1,			/* REVISIT how to disable? */
--};
--
--static struct clk arm_clk = {
--	.name = "arm",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_ARM,
--	.flags = ALWAYS_ENABLED,
--};
--
--static struct clk vicp_clk = {
--	.name = "vicp",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_IMCOP,
--	.domain = DAVINCI_GPSC_DSPDOMAIN,
--	.usecount = 1,			/* REVISIT how to disable? */
--};
--
--static struct clk vpss_master_clk = {
--	.name = "vpss_master",
--	.parent = &pll1_sysclk3,
--	.lpsc = DAVINCI_LPSC_VPSSMSTR,
--	.flags = CLK_PSC,
--};
--
--static struct clk vpss_slave_clk = {
--	.name = "vpss_slave",
--	.parent = &pll1_sysclk3,
--	.lpsc = DAVINCI_LPSC_VPSSSLV,
--};
--
--static struct clk uart0_clk = {
--	.name = "uart0",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_UART0,
--};
--
--static struct clk uart1_clk = {
--	.name = "uart1",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_UART1,
--};
--
--static struct clk uart2_clk = {
--	.name = "uart2",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_UART2,
--};
--
--static struct clk emac_clk = {
--	.name = "emac",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_EMAC_WRAPPER,
--};
--
--static struct clk i2c_clk = {
--	.name = "i2c",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_I2C,
--};
--
--static struct clk ide_clk = {
--	.name = "ide",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_ATA,
--};
--
--static struct clk asp_clk = {
--	.name = "asp0",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_McBSP,
--};
--
--static struct clk mmcsd_clk = {
--	.name = "mmcsd",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_MMC_SD,
--};
--
--static struct clk spi_clk = {
--	.name = "spi",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_SPI,
--};
--
--static struct clk gpio_clk = {
--	.name = "gpio",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_GPIO,
--};
--
--static struct clk usb_clk = {
--	.name = "usb",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_USB,
--};
--
--static struct clk vlynq_clk = {
--	.name = "vlynq",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_VLYNQ,
--};
--
--static struct clk aemif_clk = {
--	.name = "aemif",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_AEMIF,
--};
--
--static struct clk pwm0_clk = {
--	.name = "pwm0",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_PWM0,
--};
--
--static struct clk pwm1_clk = {
--	.name = "pwm1",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_PWM1,
--};
--
--static struct clk pwm2_clk = {
--	.name = "pwm2",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_PWM2,
--};
--
--static struct clk timer0_clk = {
--	.name = "timer0",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_TIMER0,
--};
--
--static struct clk timer1_clk = {
--	.name = "timer1",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_TIMER1,
--};
--
--static struct clk timer2_clk = {
--	.name = "timer2",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_TIMER2,
--	.usecount = 1,              /* REVISIT: why can't this be disabled? */
--};
--
--static struct clk_lookup dm644x_clks[] = {
--	CLK(NULL, "ref", &ref_clk),
--	CLK(NULL, "pll1", &pll1_clk),
--	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
--	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
--	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
--	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
--	CLK(NULL, "pll1_aux", &pll1_aux_clk),
--	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
--	CLK(NULL, "pll2", &pll2_clk),
--	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
--	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
--	CLK(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
--	CLK(NULL, "dsp", &dsp_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK(NULL, "vicp", &vicp_clk),
--	CLK("vpss", "master", &vpss_master_clk),
--	CLK("vpss", "slave", &vpss_slave_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK("serial8250.0", NULL, &uart0_clk),
--	CLK("serial8250.1", NULL, &uart1_clk),
--	CLK("serial8250.2", NULL, &uart2_clk),
--	CLK("davinci_emac.1", NULL, &emac_clk),
--	CLK("davinci_mdio.0", "fck", &emac_clk),
--	CLK("i2c_davinci.1", NULL, &i2c_clk),
--	CLK("palm_bk3710", NULL, &ide_clk),
--	CLK("davinci-mcbsp", NULL, &asp_clk),
--	CLK("dm6441-mmc.0", NULL, &mmcsd_clk),
--	CLK(NULL, "spi", &spi_clk),
--	CLK(NULL, "gpio", &gpio_clk),
--	CLK(NULL, "usb", &usb_clk),
--	CLK(NULL, "vlynq", &vlynq_clk),
--	CLK(NULL, "aemif", &aemif_clk),
--	CLK(NULL, "pwm0", &pwm0_clk),
--	CLK(NULL, "pwm1", &pwm1_clk),
--	CLK(NULL, "pwm2", &pwm2_clk),
--	CLK(NULL, "timer0", &timer0_clk),
--	CLK(NULL, "timer1", &timer1_clk),
--	CLK("davinci-wdt", NULL, &timer2_clk),
--	CLK(NULL, NULL, NULL),
--};
--#endif
--
- static struct emac_platform_data dm644x_emac_pdata = {
- 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
- 	.ctrl_mod_reg_offset	= DM644X_EMAC_CNTRL_MOD_OFFSET,
-@@ -827,8 +536,6 @@ static struct davinci_id dm644x_ids[] = {
- 	},
- };
- 
--static u32 dm644x_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
--
- /*
-  * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
-  * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
-@@ -913,8 +620,6 @@ static const struct davinci_soc_info davinci_soc_info_dm644x = {
- 	.jtag_id_reg		= 0x01c40028,
- 	.ids			= dm644x_ids,
- 	.ids_num		= ARRAY_SIZE(dm644x_ids),
--	.psc_bases		= dm644x_psc_bases,
--	.psc_bases_num		= ARRAY_SIZE(dm644x_psc_bases),
- 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
- 	.pinmux_pins		= dm644x_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(dm644x_pins),
-@@ -942,7 +647,6 @@ void __init dm644x_init(void)
- 
- void __init dm644x_init_time(void)
- {
--#ifdef CONFIG_COMMON_CLK
- 	void __iomem *pll1, *psc;
- 	struct clk *clk;
- 
-@@ -957,10 +661,6 @@ void __init dm644x_init_time(void)
- 	clk = clk_get(NULL, "timer0");
- 
- 	davinci_timer_init(clk);
--#else
--	davinci_clk_init(dm644x_clks);
--	davinci_timer_init(&timer0_clk);
--#endif
- }
- 
- static struct resource dm644x_pll2_resources[] = {
--- 
-2.17.0
+Can this Kconfig be put into alphabetical order in this file?
+
+>  config MSM_GCC_8660
+>         tristate "MSM8660 Global Clock Controller"
+>         depends on COMMON_CLK_QCOM
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 230332c..b2b5babf 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -36,5 +36,6 @@ obj-$(CONFIG_MSM_MMCC_8996) +=3D mmcc-msm8996.o
+>  obj-$(CONFIG_QCOM_A53PLL) +=3D a53-pll.o
+>  obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) +=3D apcs-msm8916.o
+>  obj-$(CONFIG_QCOM_CLK_RPM) +=3D clk-rpm.o
+> +obj-$(CONFIG_QCOM_CLK_RPMH) +=3D clk-rpmh.o
+>  obj-$(CONFIG_QCOM_CLK_SMD_RPM) +=3D clk-smd-rpm.o
+>  obj-$(CONFIG_SPMI_PMIC_CLKDIV) +=3D clk-spmi-pmic-div.o
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> new file mode 100644
+> index 0000000..fa61284
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -0,0 +1,367 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/clk.h>
+
+Is this include used?
+
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <soc/qcom/cmd-db.h>
+> +#include <soc/qcom/rpmh.h>
+> +
+> +#include <dt-bindings/clock/qcom,rpmh.h>
+> +
+> +#define CLK_RPMH_ARC_EN_OFFSET 0
+> +#define CLK_RPMH_VRM_EN_OFFSET 4
+> +#define CLK_RPMH_APPS_RSC_AO_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
+> +                                        BIT(RPMH_ACTIVE_ONLY_STATE))
+> +#define CLK_RPMH_APPS_RSC_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
+> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) | \
+> +                                     BIT(RPMH_SLEEP_STATE))
+
+Is there a reason these aren't inlined into the one place they're used?
+
+> +struct clk_rpmh {
+> +       struct clk_hw hw;
+> +       const char *res_name;
+> +       u32 res_addr;
+> +       u32 res_en_offset;
+
+Why do we store both res_addr and res_en_offset? Can't we just store
+res_en_offset and then use that all the time? I don't see a user of
+res_addr anywhere.
+
+> +       u32 res_on_val;
+> +       u32 res_off_val;
+
+Is this used?
+
+> +       u32 state;
+> +       u32 aggr_state;
+> +       u32 last_sent_aggr_state;
+> +       u32 valid_state_mask;
+> +       struct rpmh_client *rpmh_client;
+> +       struct device *dev;
+> +       struct clk_rpmh *peer;
+> +       unsigned long rate;
+> +};
+
+Can you add some kernel-doc on these structure members?
+
+> +
+> +struct rpmh_cc {
+> +       struct clk_onecell_data data;
+> +       struct clk *clks[];
+> +};
+
+Hopefully this structure isn't needed.
+
+> +
+> +struct clk_rpmh_desc {
+> +       struct clk_hw **clks;
+> +       size_t num_clks;
+> +};
+> +
+[...]
+> +
+> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
+> +{
+> +       return ((c->last_sent_aggr_state & BIT(state))
+> +               !=3D (c->aggr_state & BIT(state)));
+
+Too many parenthesis here.
+
+> +}
+> +
+> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
+> +{
+> +       struct tcs_cmd cmd =3D { 0 };
+> +       u32 cmd_state, on_val;
+> +       enum rpmh_state state =3D RPMH_SLEEP_STATE;
+> +       int ret =3D 0;
+> +
+> +       cmd.addr =3D c->res_addr + c->res_en_offset;
+> +       cmd_state =3D c->aggr_state;
+> +       on_val =3D c->res_on_val;
+> +
+> +       for (; state <=3D RPMH_ACTIVE_ONLY_STATE; state++) {
+> +               if (has_state_changed(c, state)) {
+> +                       cmd.data =3D (cmd_state & BIT(state)) ? on_val : =
+0;
+> +                       ret =3D rpmh_write_async(c->rpmh_client, state,
+> +                                               &cmd, 1);
+> +                       if (ret) {
+> +                               dev_err(c->dev, "set %s state of %s faile=
+d: (%d)\n",
+> +                                       (!state) ? "sleep" :
+> +                                       (state =3D=3D RPMH_WAKE_ONLY_STAT=
+E) ?
+> +                                       "wake" : "active", c->res_name, r=
+et);
+> +                               return ret;
+> +                       }
+> +               }
+> +       }
+> +
+> +       c->last_sent_aggr_state =3D c->aggr_state;
+> +       c->peer->last_sent_aggr_state =3D  c->last_sent_aggr_state;
+> +
+> +       return 0;
+> +}
+> +
+> +static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
+> +                                               bool enable)
+> +{
+> +       int ret;
+> +
+> +       /* Update state and aggregate state values based on enable value.=
+ */
+
+Maybe this comment can go above the function itself.
+
+> +       c->state =3D enable ? c->valid_state_mask : 0;
+> +       c->aggr_state =3D c->state | c->peer->state;
+> +       c->peer->aggr_state =3D c->aggr_state;
+> +
+> +       ret =3D clk_rpmh_send_aggregate_command(c);
+> +       if (ret && enable) {
+> +               c->state =3D 0;
+> +       } else if (ret) {
+> +               c->state =3D c->valid_state_mask;
+> +               WARN(1, "clk: %s failed to disable\n", c->res_name);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int clk_rpmh_prepare(struct clk_hw *hw)
+> +{
+> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
+> +       int ret =3D 0;
+> +
+> +       mutex_lock(&rpmh_clk_lock);
+> +
+> +       if (c->state)
+> +               goto out;
+> +
+> +       ret =3D clk_rpmh_aggregate_state_send_command(c, true);
+
+Rewrite this as:
+
+	if (!c->state)
+		ret =3D clk_rpmh_aggregate_state_send_command(c, true);
+	=
+
+and drop the goto.
+
+> +out:
+> +       mutex_unlock(&rpmh_clk_lock);
+> +       return ret;
+> +};
+> +
+> +static void clk_rpmh_unprepare(struct clk_hw *hw)
+> +{
+> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
+> +
+> +       mutex_lock(&rpmh_clk_lock);
+> +
+> +       if (!c->state)
+> +               goto out;
+> +
+> +       clk_rpmh_aggregate_state_send_command(c, false);
+> +out:
+
+Same comment.
+
+> +       mutex_unlock(&rpmh_clk_lock);
+> +       return;
+> +};
+> +
+> +static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
+> +                                         unsigned long parent_rate)
+> +{
+> +       struct clk_rpmh *r =3D to_clk_rpmh(hw);
+> +
+> +       /*
+> +        * RPMh clocks have a fixed rate. Return static rate set
+> +        * at init time.
+> +        */
+> +       return r->rate;
+
+The rate should come from the parent. In the case of tcxo it would be
+board_xo clk rate (or maybe some fixed div-2 on the board XO that's also
+defined in DT because the board_xo seems to be two times 19.2 MHz?).
+
+> +}
+> +
+> +static const struct clk_ops clk_rpmh_ops =3D {
+> +       .prepare        =3D clk_rpmh_prepare,
+> +       .unprepare      =3D clk_rpmh_unprepare,
+> +       .recalc_rate    =3D clk_rpmh_recalc_rate,
+> +};
+> +
+> +/* Resource name must match resource id present in cmd-db. */
+> +DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 0x0, 192=
+00000);
+> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 19200=
+000);
+> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 19200=
+000);
+> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 38400000);
+> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 38400000);
+> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 38400000);
+> +
+> +static struct clk_hw *sdm845_rpmh_clocks[] =3D {
+> +       [RPMH_CXO_CLK]          =3D &sdm845_bi_tcxo.hw,
+> +       [RPMH_CXO_CLK_A]        =3D &sdm845_bi_tcxo_ao.hw,
+> +       [RPMH_LN_BB_CLK2]       =3D &sdm845_ln_bb_clk2.hw,
+> +       [RPMH_LN_BB_CLK2_A]     =3D &sdm845_ln_bb_clk2_ao.hw,
+> +       [RPMH_LN_BB_CLK3]       =3D &sdm845_ln_bb_clk3.hw,
+> +       [RPMH_LN_BB_CLK3_A]     =3D &sdm845_ln_bb_clk3_ao.hw,
+> +       [RPMH_RF_CLK1]          =3D &sdm845_rf_clk1.hw,
+> +       [RPMH_RF_CLK1_A]        =3D &sdm845_rf_clk1_ao.hw,
+> +       [RPMH_RF_CLK2]          =3D &sdm845_rf_clk2.hw,
+> +       [RPMH_RF_CLK2_A]        =3D &sdm845_rf_clk2_ao.hw,
+> +       [RPMH_RF_CLK3]          =3D &sdm845_rf_clk3.hw,
+> +       [RPMH_RF_CLK3_A]        =3D &sdm845_rf_clk3_ao.hw,
+> +};
+> +
+> +static const struct clk_rpmh_desc clk_rpmh_sdm845 =3D {
+> +       .clks =3D sdm845_rpmh_clocks,
+> +       .num_clks =3D ARRAY_SIZE(sdm845_rpmh_clocks),
+> +};
+> +
+> +static int clk_rpmh_probe(struct platform_device *pdev)
+> +{
+> +       struct clk **clks;
+> +       struct clk *clk;
+> +       struct rpmh_cc *rcc;
+> +       struct clk_onecell_data *data;
+> +       struct clk_hw **hw_clks;
+> +       struct clk_rpmh *rpmh_clk;
+> +       const struct clk_rpmh_desc *desc;
+> +       struct rpmh_client *rpmh_client;
+> +       struct device *dev;
+> +       size_t num_clks, i;
+> +       int ret;
+> +
+> +       dev =3D &pdev->dev;
+> +
+> +       ret =3D cmd_db_ready();
+> +       if (ret) {
+> +               if (ret !=3D -EPROBE_DEFER) {
+> +                       dev_err(dev, "Command DB not available (%d)\n", r=
+et);
+> +                       goto fail;
+
+Please just return error here instead of goto.
+
+> +               }
+> +               return ret;
+> +       }
+> +
+> +       rpmh_client =3D rpmh_get_client(pdev);
+> +       if (IS_ERR(rpmh_client)) {
+> +               ret =3D PTR_ERR(rpmh_client);
+> +               dev_err(dev, "Failed to request RPMh client, ret=3D%d\n",=
+ ret);
+> +               return ret;
+> +       }
+
+I hope we get rid of rpmh_get_client() still.
+
+> +
+> +       desc =3D of_device_get_match_data(&pdev->dev);
+> +       hw_clks =3D desc->clks;
+> +       num_clks =3D desc->num_clks;
+> +
+> +       rcc =3D devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*clks) * n=
+um_clks,
+> +                          GFP_KERNEL);
+> +       if (!rcc) {
+> +               ret =3D -ENOMEM;
+> +               goto err;
+> +       }
+> +
+> +       clks =3D rcc->clks;
+> +       data =3D &rcc->data;
+> +       data->clks =3D clks;
+> +       data->clk_num =3D num_clks;
+> +
+> +       for (i =3D 0; i < num_clks; i++) {
+> +               rpmh_clk =3D to_clk_rpmh(hw_clks[i]);
+> +               rpmh_clk->res_addr =3D cmd_db_read_addr(rpmh_clk->res_nam=
+e);
+> +               if (!rpmh_clk->res_addr) {
+> +                       dev_err(dev, "missing RPMh resource address for %=
+s\n",
+> +                                       rpmh_clk->res_name);
+> +                       ret =3D -ENODEV;
+> +                       goto err;
+> +               }
+> +
+> +               rpmh_clk->rpmh_client =3D rpmh_client;
+> +
+> +               clk =3D devm_clk_register(&pdev->dev, hw_clks[i]);
+> +               if (IS_ERR(clk)) {
+> +                       ret =3D PTR_ERR(clk);
+> +                       dev_err(dev, "failed to register %s\n",
+> +                                       hw_clks[i]->init->name);
+
+This isn't a useful error message either.
+
+> +                       goto err;
+> +               }
+> +
+> +               clks[i] =3D clk;
+> +               rpmh_clk->dev =3D &pdev->dev;
+> +       }
+> +
+> +       ret =3D of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell=
+_get,
+
+Use devm please and register clk_hw pointers instead of clk pointers.
+
+> +                                 data);
+> +       if (ret) {
+> +               dev_err(dev, "Failed to add clock provider\n");
+> +               goto err;
+> +       }
+> +
+> +       dev_dbg(dev, "Registered RPMh clocks\n");
+> +
+> +       return 0;
+> +err:
+> +       if (rpmh_client)
+> +               rpmh_release(rpmh_client);
+> +fail:
+> +       dev_err(dev, "Error registering RPMh Clock driver (%d)\n", ret);
+
+Please remove this error message.
+
+> +       return ret;
+> +}
+> +
+> +static int clk_rpmh_remove(struct platform_device *pdev)
+> +{
+> +       const struct clk_rpmh_desc *desc =3D
+> +                       of_device_get_match_data(&pdev->dev);
+> +       struct clk_hw **hw_clks =3D desc->clks;
+> +       struct clk_rpmh *rpmh_clk =3D to_clk_rpmh(hw_clks[0]);
+> +
+> +       rpmh_release(rpmh_clk->rpmh_client);
+> +       of_clk_del_provider(pdev->dev.of_node);
+> +
+> +       return 0;
+> +}
+
+Hopefully this whole remove function goes away.
