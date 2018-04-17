@@ -1,111 +1,68 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1524820841.4026.112.camel@baylibre.com>
-Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>
-Cc: Rob Herring <robh@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
- linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Date: Fri, 27 Apr 2018 11:20:41 +0200
-In-Reply-To: <20180426084437.192394-1-yixun.lan@amlogic.com>
-References: <20180426084437.192394-1-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Suman Anna <s-anna@ti.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v6 4/7] remoteproc/davinci: prepare and unprepare the clock where needed
+Date: Tue, 17 Apr 2018 19:30:35 +0200
+Message-Id: <20180417173038.25510-5-brgl@bgdev.pl>
+In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
+References: <20180417173038.25510-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-04-26 at 16:44 +0800, Yixun Lan wrote:
->   This patch try to add AO clock and Reset driver for Amlogic's
-> Meson-AXG SoC.
->   Please note that patch 7 need to wait for the DTS changes[3] merged
-> into mainline first, otherwise it will break the serial console.
-> 
->  patch 2: factor the common code into a dedicated file
->  patch 3-5: add the aoclk driver for AXG SoC
->  patch 6-7: drop unnecessary clock flags
-> 
-> changes since v6 at [7]: 
->  - fix over 80 chars chechpatch error
->  - add Philip's Ack on patch 5
->  - drop extra end of newline
-> 
-> changes since v5 at [6]: 
->  - drop unnecessary header files
->  - add 'axg_aoclk' prefix to clk driver, make them more consistent
->  - add missing end new line..
-> 
-> changes since v4 at [5]: 
->  - fix return err
->  - introduce CONFIG_COMMON_CLK_MESON_AO
->  - format/style minor fix
-> 
-> changes since v3 at [4]: 
->  - add 'const' contraint to the read-only data
->  - switch to devm_of_clk_add_hw_provider API
->  - check return value of devm_reset_controller_register
-> 
-> changes since v2 at [2]: 
->  - rework meson_aoclkc_probe() which leverage the of_match_data
->  - merge patch 5-6 into this series
->  - seperate DTS patch, will send to Kevin Hilman independently
->  
-> changes since v1 at [0]: 
->  - rebase to clk-meson's branch 'next/drivers' [1]
->  - fix license, update to BSD-3-Clause
->  - drop un-used include header file
-> 
-> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
-> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
-> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
-> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
-> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
-> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
-> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
-> [7] https://lkml.kernel.org/r/20180419135426.155794-1-yixun.lan@amlogic.com
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Yixun,
+We're currently switching the platform to using the common clock
+framework. We need to explicitly prepare and unprepare the rproc
+clock.
 
-Your series looks mostly Ok to me, apart from the problem reported by Philipp.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Acked-by: Suman Anna <s-anna@ti.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-However, once applied, if the clkc ao controller is enabled, both gxl and axg
-fail to complete the boot. Could you please explain how this was tested ??
-
-Not merging it until we get to the bottom of this.
-
-> 
-> 
-> Qiufang Dai (1):
->   clk: meson-axg: Add AO Clock and Reset controller driver
-> 
-> Yixun Lan (6):
->   clk: meson: migrate to devm_of_clk_add_hw_provider API
->   clk: meson: aoclk: refactor common code into dedicated file
->   dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
->   dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
->   clk: meson: drop CLK_SET_RATE_PARENT flag
->   clk: meson: drop CLK_IGNORE_UNUSED flag
-> 
->  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
->  drivers/clk/meson/Kconfig                     |   8 +
->  drivers/clk/meson/Makefile                    |   3 +-
->  drivers/clk/meson/axg-aoclk.c                 | 163 ++++++++++++++++++
->  drivers/clk/meson/axg-aoclk.h                 |  29 ++++
->  drivers/clk/meson/gxbb-aoclk.c                |  95 ++++------
->  drivers/clk/meson/gxbb-aoclk.h                |   5 +
->  drivers/clk/meson/meson-aoclk.c               |  81 +++++++++
->  drivers/clk/meson/meson-aoclk.h               |  34 ++++
->  include/dt-bindings/clock/axg-aoclkc.h        |  26 +++
->  include/dt-bindings/reset/axg-aoclkc.h        |  20 +++
->  11 files changed, 401 insertions(+), 64 deletions(-)
->  create mode 100644 drivers/clk/meson/axg-aoclk.c
->  create mode 100644 drivers/clk/meson/axg-aoclk.h
->  create mode 100644 drivers/clk/meson/meson-aoclk.c
->  create mode 100644 drivers/clk/meson/meson-aoclk.h
->  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
->  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
-> 
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 2b24291337b7..f134192922e0 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 
+ 	writel(rproc->bootaddr, drproc->bootreg);
+ 
+-	ret = clk_enable(dsp_clk);
++	ret = clk_prepare_enable(dsp_clk);
+ 	if (ret) {
+-		dev_err(dev, "clk_enable() failed: %d\n", ret);
++		dev_err(dev, "clk_prepare_enable() failed: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
+ 	struct da8xx_rproc *drproc = rproc->priv;
+ 
+ 	davinci_clk_reset_assert(drproc->dsp_clk);
+-	clk_disable(drproc->dsp_clk);
++	clk_disable_unprepare(drproc->dsp_clk);
+ 
+ 	return 0;
+ }
+-- 
+2.17.0
