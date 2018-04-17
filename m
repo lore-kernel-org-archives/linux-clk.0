@@ -1,104 +1,228 @@
-Return-Path: <anischal@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Mon, 09 Apr 2018 10:55:38 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown
- <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Odelu
- Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1522761761-15262-4-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
  linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] clk: qcom: Add Global Clock controller (GCC)
- driver for SDM845
-In-Reply-To: <152296902025.143116.550838977705296456@swboyd.mtv.corp.google.com>
-References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
- <1520493495-3084-5-git-send-email-anischal@codeaurora.org>
- <152150657982.254778.14132033041219278756@swboyd.mtv.corp.google.com>
- <624665d7af39686d331c863ba7b9af4d@codeaurora.org>
- <152296902025.143116.550838977705296456@swboyd.mtv.corp.google.com>
-Message-ID: <f6aaef343c3e6b4904e82b5693a0d135@codeaurora.org>
+ Amit Nischal <anischal@codeaurora.org>
+References: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
+ <1522761761-15262-4-git-send-email-anischal@codeaurora.org>
+Message-ID: <152393708031.51482.15076025836699678476@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC) driver for
+ SDM845
+Date: Mon, 16 Apr 2018 20:51:20 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018-04-06 04:27, Stephen Boyd wrote:
-> Quoting Amit Nischal (2018-04-03 05:24:41)
->> On 2018-03-20 06:12, Stephen Boyd wrote:
->> > Quoting Amit Nischal (2018-03-07 23:18:15)
->> >> +};
->> >> +
->> >> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
->> >> +       .cmd_rcgr = 0x1600c,
->> >> +       .mnd_width = 8,
->> >> +       .hid_width = 5,
->> >> +       .parent_map = gcc_parent_map_0,
->> >> +       .freq_tbl = ftbl_gcc_sdcc4_apps_clk_src,
->> >> +       .safe_src_freq_tbl = &cxo_safe_src_f,
->> >
->> > Why does sdcc have safe src stuff? Is something turning on the sdcc clk
->> > outside of our control?
->> 
->> I will get more details on this and will get back.
-> 
-> Any news?
-> 
+Quoting Amit Nischal (2018-04-03 06:22:41)
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index fbf4532..c961e89 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -218,6 +218,15 @@ config MSM_MMCC_8996
+>           Say Y if you want to support multimedia devices such as display,
+>           graphics, video encode/decode, camera, etc.
+> =
 
-I am removing the safe src for SDCC, but I am trying to get details from
-teams as to why this was added, if it would be required I will add back
-the safe src index again and submit the patch.
+> +config SDM_GCC_845
+> +       tristate "SDM845 Global Clock Controller"
+> +       depends on COMMON_CLK_QCOM
+> +       help
+> +         Support for the global clock controller on Qualcomm Technologie=
+s, Inc
+> +         sdm845 devices.
+> +         Say Y if you want to use peripheral devices such as UART, SPI,
+> +         i2c, USB, UFS, SD/eMMC, PCIe, etc.
 
->> 
->> >
->> >> +       .clkr.hw.init = &(struct clk_init_data){
->> >> +               .name = "gcc_sdcc4_apps_clk_src",
->> >> +               .parent_names = gcc_parent_names_0,
->> >> +               .num_parents = 4,
->> >> +               .flags = CLK_SET_RATE_PARENT,
->> >> +               .ops = &clk_rcg2_shared_ops,
->> >> +       },
->> >> +};
->> >> +
->> > [...]
->> >> +
->> >> +static struct clk_branch gcc_video_xo_clk = {
->> >> +       .halt_reg = 0xb028,
->> >> +       .halt_check = BRANCH_HALT,
->> >> +       .clkr = {
->> >> +               .enable_reg = 0xb028,
->> >> +               .enable_mask = BIT(0),
->> >> +               .hw.init = &(struct clk_init_data){
->> >> +                       .name = "gcc_video_xo_clk",
->> >> +                       .flags = CLK_IS_CRITICAL,
->> >> +                       .ops = &clk_branch2_ops,
->> >> +
->> >
->> > These things have no parents and we mark them critical. Why are we
->> > even exposing them to the kernel? Are they not on by default? Are we
->> > going to change these to non-critical at some point in the future?
->> 
->> These clocks are not enabled by default and going to video or other
->> multimedia cores so we are marking them as critical and need to expose
->> to the kernel. As of now, there is no plan to change these to
->> non-critical.
-> 
-> Ok. Can we open code enabling these branches in the driver probe then?
-> Still seems wasteful if nobody uses these.
-> 
-> Put another way, either a driver (or other clk controller) should be
-> toggling these gates at runtime or we should enable them once and leave
-> them out of the framework. If the driver approach is taken, then the
-> drivers should be able to turn the clks on and off to save some power.
+Is there eMMC?
 
-As of now, no client driver is taking care of toggling these gates at
-runtime. We want these clocks to be always on and that's why marked
-them as CRITICAL so that if any user tries to unprepare/disable then
-it won't happen and framework generates the warning.
-Once the client drivers will take care of above, then we will submit
-a cleanup patch.
+> +
+>  config SPMI_PMIC_CLKDIV
+>         tristate "SPMI PMIC clkdiv Support"
+>         depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> new file mode 100644
+> index 0000000..b1b7a1e
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -0,0 +1,3546 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/bitops.h>
+> +#include <linux/err.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/clk.h>
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Is this include used?
+
+> +#include <linux/clk-provider.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +
+[...]
+> +
+> +static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src =3D {
+> +       .cmd_rcgr =3D 0xf030,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D gcc_parent_map_0,
+> +       .freq_tbl =3D ftbl_gcc_usb30_prim_mock_utmi_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "gcc_usb30_prim_mock_utmi_clk_src",
+> +               .parent_names =3D gcc_parent_names_0,
+> +               .num_parents =3D 4,
+> +               .ops =3D &clk_rcg2_shared_ops,
+
+Still shared? Why?
+
+> +
+> +static struct clk_branch gcc_video_ahb_clk =3D {
+> +       .halt_reg =3D 0xb004,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .hwcg_reg =3D 0xb004,
+> +       .hwcg_bit =3D 1,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0xb004,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_video_ahb_clk",
+> +                       .flags =3D CLK_IS_CRITICAL,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +
+
+Weird double space here.
+
+> +static struct clk_branch gcc_video_xo_clk =3D {
+> +       .halt_reg =3D 0xb028,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0xb028,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_video_xo_clk",
+> +                       .flags =3D CLK_IS_CRITICAL,
+
+For these "critical" clks that don't have parents can you just throw the
+enable part in the gcc driver probe and remove these clks from being
+exposed? They don't seem to provide any value to expose them as clks
+when they don't hook into the final clk tree.
+
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch gcc_vs_ctrl_ahb_clk =3D {
+> +       .halt_reg =3D 0x7a014,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .hwcg_reg =3D 0x7a014,
+> +       .hwcg_bit =3D 1,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x7a014,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_vs_ctrl_ahb_clk",
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch gcc_vs_ctrl_clk =3D {
+> +       .halt_reg =3D 0x7a010,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x7a010,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_vs_ctrl_clk",
+> +                       .parent_names =3D (const char *[]){
+> +                               "gcc_vs_ctrl_clk_src",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +
+> +static int gcc_sdm845_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct regmap *regmap;
+> +       int i, ret;
+> +
+> +       regmap =3D qcom_cc_map(pdev, &gcc_sdm845_desc);
+> +       if (IS_ERR(regmap))
+> +               return PTR_ERR(regmap);
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(gcc_sdm845_hws); i++) {
+> +               ret =3D devm_clk_hw_register(dev, gcc_sdm845_hws[i]);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       /* Disable the GPLL0 active input to MMSS and GPU via MISC regist=
+ers */
+> +       regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
+> +       regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+
+I think we'll have to throw in the pipe clk branch stuff in here too?
+And then drop the pipe clks from the driver?
+
+> +
+> +       return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+> +}
+> +
+> diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bin=
+dings/clock/qcom,gcc-sdm845.h
+> new file mode 100644
+> index 0000000..e27d8e2
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+> @@ -0,0 +1,242 @@
+[...]
+> +#define GCC_VDDA_VS_CLK                                                1=
+80
+> +#define GCC_VDDCX_VS_CLK                                       181
+> +#define GCC_VDDMX_VS_CLK                                       182
+> +#define GCC_VS_CTRL_AHB_CLK                                    183
+> +#define GCC_VS_CTRL_CLK                                                1=
+84
+> +#define GCC_VS_CTRL_CLK_SRC                                    185
+> +#define GCC_VSENSOR_CLK_SRC                                    186
+> +#define GPLL4                                                  187
+
+Do you have the define for the quad spi clks? And the implementation for
+it?
+
+> +
+> +/* GCC reset clocks */
+
+They're just resets, not reset clks.
+
+> +#define GCC_MMSS_BCR                                           0
+> +#define GCC_PCIE_0_BCR                                         1
+> +#define GCC_PCIE_1_BCR                                         2
+> +#define GCC_PCIE_PHY_BCR                                       3
+> +#define GCC_PDM_BCR                                            4
+> +#define GCC_PRNG_BCR                                           5
+> +#define GCC_QUPV3_WRAPPER_0_BCR                                        6
+> +#define GCC_QUPV3_WRAPPER_1_BCR                                        7
