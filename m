@@ -1,43 +1,42 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 19 Apr 2018 22:02:37 +0800
-From: Shawn Guo <shawnguo@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:30463 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752974AbeDQMfN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Apr 2018 08:35:13 -0400
+Message-ID: <1523968505.23886.2.camel@mtkswgap22>
+Subject: Re: [PATCH] clk: mediatek: correct the clocks for MT2701 HDMI PHY
+ module
+From: Ryder Lee <ryder.lee@mediatek.com>
 To: Stephen Boyd <sboyd@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org, robh+dt@kernel.org, Linux-imx@nxp.com,
-	kernel@pengutronix.de, fabio.estevam@nxp.com, shengjiu.wang@nxp.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz
- clock source
-Message-ID: <20180419140236.GU25429@dragon>
-References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
- <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
- <20180417142203.GM25429@dragon>
- <152410785516.46528.12432838242068784117@swboyd.mtv.corp.google.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date: Tue, 17 Apr 2018 20:35:05 +0800
+In-Reply-To: <152389649546.51482.15378110712126175925@swboyd.mtv.corp.google.com>
+References: <f3248cc94349000b2587d9c6102d56323acba9e0.1523844642.git.ryder.lee@mediatek.com>
+         <152389649546.51482.15378110712126175925@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <152410785516.46528.12432838242068784117@swboyd.mtv.corp.google.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 18, 2018 at 08:17:35PM -0700, Stephen Boyd wrote:
-> Quoting Shawn Guo (2018-04-17 07:22:05)
-> > On Mon, Mar 19, 2018 at 10:30:45AM +0800, Anson Huang wrote:
-> > > On i.MX6SX SabreAuto board, there is external 24MHz clock
-> > > source for analog clock2, add this clock source to clock tree.
-> > > 
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > ---
-> > > changes since V1:
-> > >       remove unnecessary clocks container.
+On Mon, 2018-04-16 at 09:34 -0700, Stephen Boyd wrote:
+> Quoting Ryder Lee (2018-04-15 19:31:58)
+> > The hdmitx_dig_cts clock signal is not a child of clk26m,
+> > and the actual output of the PLL block is derived from
+> > the tvdpll via a configurable PLL post-divider.
 > > 
-> > I understand this is suggested by Fabio, but I'm afraid that it's not
-> > going to work with imx_obtain_fixed_clock() call, which is coded to
-> > look for clocks under /clocks node.
+> > It is used as the PLL reference input to the HDMI PHY module.
 > > 
+> > Signed-off-by: Chunhui Dai <chunhui.dai@mediatek.com>
+> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 > 
-> Should patch #1 be dropped from clk tree?
+> Any sort of Fixes: tag here?
+> 
 
-No.  Patch #1 is good.
+Yes, I've already sent a new one.
 
-Shawn
+Thanks
+
