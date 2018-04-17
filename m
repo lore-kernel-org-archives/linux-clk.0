@@ -1,88 +1,99 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-To: Marcel Ziswiler <marcel@ziswiler.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180426235818.10018-2-digetx@gmail.com>
- <1524832404.6979.9.camel@ziswiler.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
-Date: Fri, 27 Apr 2018 15:54:44 +0300
-MIME-Version: 1.0
-In-Reply-To: <1524832404.6979.9.camel@ziswiler.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Suman Anna <s-anna@ti.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v6 7/7] clk: davinci: kill davinci_clk_reset_assert/deassert()
+Date: Tue, 17 Apr 2018 19:30:38 +0200
+Message-Id: <20180417173038.25510-8-brgl@bgdev.pl>
+In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
+References: <20180417173038.25510-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marcel,
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On 27.04.2018 15:33,  Ziswiler wrote:
-> Hi Dmitry
-> 
-> Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around e.g.
-> DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
-> 
-> On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
->> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider
->> as
->> a parent. Add these dividers in order to be able to provide that
->> parent
->> option.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-
->> tegra20.c
->> index 0ee56dd04cec..16cf4108f2ff 100644
->> --- a/drivers/clk/tegra/clk-tegra20.c
->> +++ b/drivers/clk/tegra/clk-tegra20.c
->> @@ -26,6 +26,8 @@
->>  #include "clk.h"
->>  #include "clk-id.h"
->>  
->> +#define MISC_CLK_ENB 0x48
->> +
->>  #define OSC_CTRL 0x50
->>  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
->>  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
->> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
->>  				    periph_clk_enb_refcnt);
->>  	clks[TEGRA20_CLK_PEX] = clk;
->>  
->> +	/* cdev1 OSC divider */
->> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
->> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
-> 
-> So it would be:
-> 
-> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-> 
->> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
->> +
->> +	/* cdev2 OSC divider */
->> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
->> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-> 
-> And:
-> 
-> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
-> 
->> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
->> +
->>  	/* cdev1 */
->>  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0,
->> 26000000);
->>  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed",
->> 0,
-Indeed, good catch! I'll wait for more comments and then re-spin patchset with
-the fix. Thank you.
+This code is no longer used. Remove it.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------------
+ drivers/clk/davinci/psc.c                  | 18 ------------------
+ 2 files changed, 39 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+
+diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
+deleted file mode 100644
+index 42ed4f2f5ce4..000000000000
+--- a/arch/arm/mach-davinci/include/mach/clock.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/*
+- * arch/arm/mach-davinci/include/mach/clock.h
+- *
+- * Clock control driver for DaVinci - header file
+- *
+- * Authors: Vladimir Barinov <source@mvista.com>
+- *
+- * 2007 (c) MontaVista Software, Inc. This file is licensed under
+- * the terms of the GNU General Public License version 2. This program
+- * is licensed "as is" without any warranty of any kind, whether express
+- * or implied.
+- */
+-#ifndef __ASM_ARCH_DAVINCI_CLOCK_H
+-#define __ASM_ARCH_DAVINCI_CLOCK_H
+-
+-struct clk;
+-
+-int davinci_clk_reset_assert(struct clk *c);
+-int davinci_clk_reset_deassert(struct clk *c);
+-
+-#endif
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index ce170e600f09..c822fdfd0897 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -295,24 +295,6 @@ static int davinci_lpsc_clk_reset(struct clk *clk, bool reset)
+ 	return 0;
+ }
+ 
+-/*
+- * REVISIT: These exported functions can be removed after a non-DT lookup is
+- * added to the reset controller framework and the davinci-rproc driver is
+- * updated to use the generic reset controller framework.
+- */
+-
+-int davinci_clk_reset_assert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, true);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_assert);
+-
+-int davinci_clk_reset_deassert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, false);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_deassert);
+-
+ static int davinci_psc_reset_assert(struct reset_controller_dev *rcdev,
+ 				    unsigned long id)
+ {
+-- 
+2.17.0
