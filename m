@@ -1,87 +1,94 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Suman Anna <s-anna@ti.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andi Shyti <andi@etezian.org>,
-	Mark Brown <broonie@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [RFC 08/10] spi: s3c64xx: samsung: Remove support for Exynos5440
-Date: Tue, 24 Apr 2018 22:32:37 +0200
-Message-Id: <20180424203239.21885-9-krzk@kernel.org>
-In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
-References: <20180424203239.21885-1-krzk@kernel.org>
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v6 0/7] ARM: davinci: complete the conversion to using the reset framework
+Date: Tue, 17 Apr 2018 19:30:31 +0200
+Message-Id: <20180417173038.25510-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Exynos5440 is not actively developed, there are no development
-boards available and probably there are no real products with it.
-Remove wide-tree support for Exynos5440.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/spi/spi-s3c64xx.c | 12 ------------
- 1 file changed, 12 deletions(-)
+This series converts the only user of the handcoded, mach-specific reset
+routines in the davinci platform to using the reset framework.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 755ab2dc6969..f55dc78957ad 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1376,15 +1376,6 @@ static struct s3c64xx_spi_port_config exynos4_spi_port_config = {
- 	.clk_from_cmu	= true,
- };
- 
--static struct s3c64xx_spi_port_config exynos5440_spi_port_config = {
--	.fifo_lvl_mask	= { 0x1ff },
--	.rx_lvl_offset	= 15,
--	.tx_st_done	= 25,
--	.high_speed	= true,
--	.clk_from_cmu	= true,
--	.quirks		= S3C64XX_SPI_QUIRK_POLL,
--};
--
- static struct s3c64xx_spi_port_config exynos7_spi_port_config = {
- 	.fifo_lvl_mask	= { 0x1ff, 0x7F, 0x7F, 0x7F, 0x7F, 0x1ff},
- 	.rx_lvl_offset	= 15,
-@@ -1428,9 +1419,6 @@ static const struct of_device_id s3c64xx_spi_dt_match[] = {
- 	{ .compatible = "samsung,exynos4210-spi",
- 			.data = (void *)&exynos4_spi_port_config,
- 	},
--	{ .compatible = "samsung,exynos5440-spi",
--			.data = (void *)&exynos5440_spi_port_config,
--	},
- 	{ .compatible = "samsung,exynos7-spi",
- 			.data = (void *)&exynos7_spi_port_config,
- 	},
+Patches 1-2 add necessary lookups/DT-properties.
+
+Patches 3-5 fix issues found in the remoteproc davinci driver.
+
+Patch 6 converts the davinci-rproc driver to the reset framework.
+
+Patch 7 removes now dead code.
+
+Tested both in DT and legacy modes by booting the examples from
+ti-ipc-rtos recipe in meta-ti.
+
+This series applies on top of David Lechner's common-clk-v9 branch[1].
+
+[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
+
+v1 -> v2:
+- fixed the device tree patches the descriptions of which were mixed up
+- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
+  reset provider, since it's possible that the lookup table was not yet
+  registered
+- made the local variable naming consistent in the davinci-rproc driver
+- fixed a typo in PATCH 5/8
+
+v2 -> v3:
+- modify PATCH 1/8: drop the provider argument from the function adding
+  lookup entries and instead pass the provider name to the RESET_LOOKUP
+  macro, return -EPROBE_DEFER if we locate a correct lookup entry but
+  cannot get the corresponding reset controller
+- modify the reset lookup entry in psc-da850
+- don't manually return -EPROBE_DEFER from davinci-rproc, instead don't
+  emit an error message if devm_reset_control_get_exclusive() returns
+  this error code
+
+v3 -> v4:
+- make index the second parameter in RESET_LOOKUP() (right after the
+  provider name)
+
+v4 -> v5:
+- fix a bug where the dsp_reset object correctly stored in drproc struct
+
+v5 -> v6:
+- rebased on top of v4.17-rc1 and retested
+- dropped patches that were applied during 4.17 merge window
+- added relevant review and ack tags
+
+Bartosz Golaszewski (7):
+  ARM: davinci: dts: make psc0 a reset provider
+  ARM: davinci: dts: add a reset control to the dsp node
+  remoteproc/davinci: add the missing retval check for clk_enable()
+  remoteproc/davinci: prepare and unprepare the clock where needed
+  remoteproc/davinci: use octal permissions for module_param()
+  remoteproc/davinci: use the reset framework
+  clk: davinci: kill davinci_clk_reset_assert/deassert()
+
+ arch/arm/boot/dts/da850.dtsi               |  2 +
+ arch/arm/mach-davinci/include/mach/clock.h | 21 ----------
+ drivers/clk/davinci/psc.c                  | 18 ---------
+ drivers/remoteproc/da8xx_remoteproc.c      | 46 ++++++++++++++++++----
+ 4 files changed, 40 insertions(+), 47 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+
 -- 
-2.14.1
+2.17.0
