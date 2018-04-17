@@ -1,51 +1,53 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 04/21] bindings: display: Add compatible for A64 DE2 pipeline
-Date: Mon, 30 Apr 2018 17:10:41 +0530
-Message-Id: <20180430114058.5061-5-jagan@amarulasolutions.com>
-In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v2 0/5] update Mediatek MT2712 clock and scpsys support
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ Weiyi Lu <weiyi.lu@mediatek.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Mike Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ James Liao <jamesjj.liao@mediatek.com>, Fan Chen <fan.chen@mediatek.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-clk@vger.kernel.org, srv_heupstream@mediatek.com
+References: <20180312070342.4335-1-weiyi.lu@mediatek.com>
+ <1521526068.13313.8.camel@mtksdaap41>
+ <152153061465.254778.3061562183948751301@swboyd.mtv.corp.google.com>
+ <6c29df1f-f619-5e11-4160-b58e154f6592@gmail.com>
+Message-ID: <bcec1e3c-de22-daf5-fda5-53b1569a68a6@gmail.com>
+Date: Tue, 17 Apr 2018 16:22:50 +0200
+MIME-Version: 1.0
+In-Reply-To: <6c29df1f-f619-5e11-4160-b58e154f6592@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner A64 has DE2 pipeline similar to other Allwinner
-SOC's like A83T, H3/H5.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 3346c1e2a7a0..f0fd9274a25d 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -343,6 +343,7 @@ Required properties:
-     * allwinner,sun8i-h3-display-engine
-     * allwinner,sun8i-v3s-display-engine
-     * allwinner,sun9i-a80-display-engine
-+    * allwinner,sun50i-a64-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
-     frontends (DE 1.0) or mixers (DE 2.0) available.
--- 
-2.14.3
+On 03/21/2018 10:11 AM, Matthias Brugger wrote:
+> 
+> 
+> On 03/20/2018 08:23 AM, Stephen Boyd wrote:
+>> Quoting Weiyi Lu (2018-03-19 23:07:48)
+>>> On Mon, 2018-03-12 at 15:03 +0800, Weiyi Lu wrote:
+>>>> This series is based on v4.16-rc1 and composed of scpsys control (PATCH 1-2) and clock control (PATCH 3-5).
+>>>> Basically, all changes are for the ECO design change of MT2712.
+>>>>
+>>>> changes since v1:
+>>>> - Avoid renumbering clocks. Append new clocks at the bottom of each own subsystem.
+>>>>
+>>> Hi Matthias & Stephen,
+>>>
+>>> Sorry to bother. Just saw patch 1/2 are already pushed to v4.16-next-soc
+>>> and patch 3/5 are applied onto clk-next. What about the patch 4(arm64:
+>>> dts: add clock device nodes of MT2712). Does there any problem remain or
+>>> it cause some problems? Many thanks.
+>>
+>> Patch 4 can go via arm-soc? I'm not planning to apply that patch.
+>>
+> 
+> I can take it through my branch, no problem. But I think it is too late for this
+> cycle. CCing Arnd to confirm.
+> 
+
+Now pushed to v4.17-next/dts64
+
+Thanks a lot.
