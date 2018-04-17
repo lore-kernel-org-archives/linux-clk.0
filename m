@@ -1,81 +1,73 @@
-Return-Path: <evgreen@chromium.org>
-Return-Path: <evgreen@chromium.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
- <1522304274-18989-2-git-send-email-tdas@codeaurora.org> <CAE=gft6-FggNjP0nj6XrLN1rQqnep_PHHWg2fiRUrM8ZBf36Sg@mail.gmail.com>
- <65abfb98-802a-d7aa-5213-9fcd531b18d9@codeaurora.org>
-In-Reply-To: <65abfb98-802a-d7aa-5213-9fcd531b18d9@codeaurora.org>
-From: Evan Green <evgreen@chromium.org>
-Date: Tue, 03 Apr 2018 17:55:55 +0000
-Message-ID: <CAE=gft5WsHBkt3N=pMRmKqtw4SOks9xm4J9bv8b74nMatF5_7Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: tdas@codeaurora.org
-Cc: sboyd@codeaurora.org, Michael Turquette <mturquette@baylibre.com>,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>, okukatla@codeaurora.org, anischal@codeaurora.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	collinsd@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Russell King <linux@armlinux.org.uk>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180416175743.20826-1-jbrunet@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180416175743.20826-1-jbrunet@baylibre.com>
+Message-ID: <152394414961.51482.3707791896217213422@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 0/3] clk: add duty cycle support
+Date: Mon, 16 Apr 2018 22:49:09 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Taniya,
+Quoting Jerome Brunet (2018-04-16 10:57:40)
+> This patchset adds the possibility to control the duty cycle ratio of a
+> clock within the clock framework.
+> =
 
-On Mon, Apr 2, 2018 at 3:33 AM Taniya Das <tdas@codeaurora.org> wrote:
+> This useful when the duty cycle ratio depends on another parameter
+> controlled by the clock framework. For example, the duty cycle ratio may
+> depends on the value of a divider (ratio =3D N / div).
+> =
 
-> Hello Evan,
+> This is also useful if the related clock is part of large tree. In this
+> case, using CCF to control the clock tree and the PWM framework for the
+> duty cycle would be a nightmare for the provider and the consumer.
 
-> Thanks for the review comments.
+Can you please Cc the PWM maintainer on this patch series?
 
-> On 3/30/2018 3:19 AM, Evan Green wrote:
-> > Hi Taniya,
-> >
-> > On Wed, Mar 28, 2018 at 11:19 PM Taniya Das <tdas@codeaurora.org> wrote:
-> >
-> >> From: Amit Nischal <anischal@codeaurora.org>
+> =
 
-> >> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
-> >> +{
-> >> +       struct tcs_cmd cmd = { 0 };
-> >> +       int ret = 0;
-> >> +
-> >> +       cmd.addr = c->res_addr + c->res_en_offset;
-> >> +
-> >> +       if (has_state_changed(c, RPMH_SLEEP_STATE)) {
-> >> +               cmd.data = (c->aggr_state >> RPMH_SLEEP_STATE) & 1
-> >> +                       ? c->res_on_val : c->res_off_val;
-> >
-> > I found it quite confusing that you're shifting in the opposite
-direction
-> > than in has_state_changed. How about this:
-> >
-> > cmd.data = (c->aggr_state & BIT(RPMH_SLEEP_STATE)) ? c->res_on_val :
-> > c->res_off_val;
-> >
+> A clock provider is not required to implement the operation to set and get
+> the duty cycle. If it does not implement .get_duty_cycle(), the ratio is
+> assumed to be 50%.
+> =
 
-> It is kept keeping in mind the consistency of the command data for all
-> the different states.
+> This series also provides pass-through operations ready to be used for
+> clock which don't resample the clock signal (such as gates and muxes).
+> This is provided to make things easier for consumers. Clocks are usually
+> made of several elements, like a composite clocks with a mux, a divider,
+> and a gate. With the pass-through ops set on the gate, the consumer does
+> not need to be aware that the duty cycle is actually controlled by the
+> divider, it can continue to use the clock through the gate, as usual.  The
+> simple propagation will stop at the first clock which resample the signal
+> (such as a divider).
+> =
 
-> Would it be better if I define a new macro ?
+> Patch 2 and 3 add the pass-through ops to the generic gate and mux ops.  =
+In
+> this first version, it is unconditional, but maybe we should provide a fl=
+ag
+> to let people decide what is best for them ?
+> =
 
-> #define RPMH_CMD_DATA(aggr_state, rpmh_state) \
->           ((aggr_state >> rpmh_state) & 1)
+> The series has been developed to handled the sample clocks provided by
+> audio clock controller of amlogic's A113 SoC. To support i2s modes, this
+> clock need to have a 50% duty cycle ratio, while it should be just one
+> pulse of the parent clock in dsp modes.
 
-> If you agree, I could use the new macro in the next series.
+Cool. I've heard rumblings from some other SoC manufacturers that they
+want duty cycle control via the clk framework but nothing came of it, so
+thanks for picking this up.
 
+> =
 
-I'm afraid I don't really understand the "consistency of command data for
-all the different states". It seems like every other time you refer to a
-state mask (eg state, valid_state_mask, and all the *_STATE_MASK defines,
-you use BIT(state). The version above seemed like an unnecessarily
-confusing variant. In this case, aggr_state is only being used as a
-conditional to determine whether to put the res_on or off value, so it's
-not like that form is needed because of hardware bitfields or something.
-All of the state-like members seem to be purely software masks.
+> PS: Checkpatch complains heavily about the white space in the trace header
+> file. I believe I have respected the style already used in this
+> file. Please let me know if it should be done differently.
 
-Anyway, I'll leave it to you after this. If you choose to keep the shifts
-as written and hide them behind a macro, the name as you've suggested isn't
-great, as that macro only gives you the conditional for which data to use,
-not the data itself as the macro name might have you believe.
-
--Evan
+The trace file looks fine. Ignore checkpatch.
