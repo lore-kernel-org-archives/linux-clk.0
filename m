@@ -1,65 +1,67 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/5] ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
-Date: Tue, 10 Apr 2018 14:51:38 +0200
-Message-Id: <1523364701-15383-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
-References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1523946602.2601.78.camel@baylibre.com>
+Subject: Re: [PATCH 0/3] clk: add duty cycle support
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Russell King <linux@armlinux.org.uk>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 17 Apr 2018 08:30:02 +0200
+In-Reply-To: <152394414961.51482.3707791896217213422@swboyd.mtv.corp.google.com>
+References: <20180416175743.20826-1-jbrunet@baylibre.com>
+	 <152394414961.51482.3707791896217213422@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
-<linux/of_clk.h>".
+On Mon, 2018-04-16 at 22:49 -0700, Stephen Boyd wrote:
+> Quoting Jerome Brunet (2018-04-16 10:57:40)
+> > This patchset adds the possibility to control the duty cycle ratio of a
+> > clock within the clock framework.
+> > 
+> > This useful when the duty cycle ratio depends on another parameter
+> > controlled by the clock framework. For example, the duty cycle ratio may
+> > depends on the value of a divider (ratio = N / div).
+> > 
+> > This is also useful if the related clock is part of large tree. In this
+> > case, using CCF to control the clock tree and the PWM framework for the
+> > duty cycle would be a nightmare for the provider and the consumer.
+> 
+> Can you please Cc the PWM maintainer on this patch series?
+Sure. I'll see him of the v2.
 
-v2:
-  - of_clk_get_parent_count() was moved to <linux/of_clk.h>,
-  - Dropped RFC, as a dummy is now available in the !CONFIG_COMMON_CLK
-    case.
----
- drivers/clocksource/timer-sp804.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clocksource/timer-sp804.c b/drivers/clocksource/timer-sp804.c
-index 3ac9dec9a03852f9..e01222ea888ff9d2 100644
---- a/drivers/clocksource/timer-sp804.c
-+++ b/drivers/clocksource/timer-sp804.c
-@@ -27,6 +27,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_clk.h>
- #include <linux/of_irq.h>
- #include <linux/sched_clock.h>
- 
-@@ -245,7 +246,7 @@ static int __init sp804_of_init(struct device_node *np)
- 		clk1 = NULL;
- 
- 	/* Get the 2nd clock if the timer has 3 timer clocks */
--	if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
-+	if (of_clk_get_parent_count(np) == 3) {
- 		clk2 = of_clk_get(np, 1);
- 		if (IS_ERR(clk2)) {
- 			pr_err("sp804: %s clock not found: %d\n", np->name,
--- 
-2.7.4
+> 
+> > 
+> > A clock provider is not required to implement the operation to set and get
+> > the duty cycle. If it does not implement .get_duty_cycle(), the ratio is
+> > assumed to be 50%.
+> > 
+> > This series also provides pass-through operations ready to be used for
+> > clock which don't resample the clock signal (such as gates and muxes).
+> > This is provided to make things easier for consumers. Clocks are usually
+> > made of several elements, like a composite clocks with a mux, a divider,
+> > and a gate. With the pass-through ops set on the gate, the consumer does
+> > not need to be aware that the duty cycle is actually controlled by the
+> > divider, it can continue to use the clock through the gate, as usual.  The
+> > simple propagation will stop at the first clock which resample the signal
+> > (such as a divider).
+> > 
+> > Patch 2 and 3 add the pass-through ops to the generic gate and mux ops.  In
+> > this first version, it is unconditional, but maybe we should provide a flag
+> > to let people decide what is best for them ?
+> > 
+> > The series has been developed to handled the sample clocks provided by
+> > audio clock controller of amlogic's A113 SoC. To support i2s modes, this
+> > clock need to have a 50% duty cycle ratio, while it should be just one
+> > pulse of the parent clock in dsp modes.
+> 
+> Cool. I've heard rumblings from some other SoC manufacturers that they
+> want duty cycle control via the clk framework but nothing came of it, so
+> thanks for picking this up.
+> 
+> > 
+> > PS: Checkpatch complains heavily about the white space in the trace header
+> > file. I believe I have respected the style already used in this
+> > file. Please let me know if it should be done differently.
+> 
+> The trace file looks fine. Ignore checkpatch.
