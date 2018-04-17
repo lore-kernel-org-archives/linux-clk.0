@@ -1,36 +1,68 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 19 Apr 2018 22:03:31 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Anson Huang <anson.huang@nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"S.j. Wang" <shengjiu.wang@nxp.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz
- clock source
-Message-ID: <20180419140330.GV25429@dragon>
-References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
- <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
- <20180417142203.GM25429@dragon>
- <152410785516.46528.12432838242068784117@swboyd.mtv.corp.google.com>
- <AM3PR04MB1315FCBBAFCE808BD35FF2CFF5B50@AM3PR04MB1315.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <AM3PR04MB1315FCBBAFCE808BD35FF2CFF5B50@AM3PR04MB1315.eurprd04.prod.outlook.com>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Suman Anna <s-anna@ti.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v6 3/7] remoteproc/davinci: add the missing retval check for clk_enable()
+Date: Tue, 17 Apr 2018 19:30:34 +0200
+Message-Id: <20180417173038.25510-4-brgl@bgdev.pl>
+In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
+References: <20180417173038.25510-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 03:23:39AM +0000, Anson Huang wrote:
-> If so, I think we should use V1 patch to keep clocks container?
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Ah, right.  I will just pick up v1 of patch #2.
+The davinci platform is being switched to using the common clock
+framework, where clk_enable() can fail. Add the return value check.
 
-Shawn
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Acked-by: Suman Anna <s-anna@ti.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index bf3b9034c319..2b24291337b7 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 	struct device *dev = rproc->dev.parent;
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
++	int ret;
+ 
+ 	/* hw requires the start (boot) address be on 1KB boundary */
+ 	if (rproc->bootaddr & 0x3ff) {
+@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 
+ 	writel(rproc->bootaddr, drproc->bootreg);
+ 
+-	clk_enable(dsp_clk);
++	ret = clk_enable(dsp_clk);
++	if (ret) {
++		dev_err(dev, "clk_enable() failed: %d\n", ret);
++		return ret;
++	}
++
+ 	davinci_clk_reset_deassert(dsp_clk);
+ 
+ 	return 0;
+-- 
+2.17.0
