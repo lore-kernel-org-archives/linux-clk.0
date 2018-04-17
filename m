@@ -1,134 +1,101 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v9 15/27] ARM: davinci: switch to common clock framework
-Date: Thu, 26 Apr 2018 19:17:33 -0500
-Message-Id: <20180427001745.4116-16-david@lechnology.com>
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1523263306-28665-4-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+References: <1523263306-28665-1-git-send-email-tdas@codeaurora.org>
+ <1523263306-28665-4-git-send-email-tdas@codeaurora.org>
+Message-ID: <152393945465.51482.14681802799278909180@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 3/3] clk: qcom: gdsc: Add support to poll CFG register to
+ check GDSC state
+Date: Mon, 16 Apr 2018 21:30:54 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This switches ARCH_DAVINCI to use the common clock framework. The legacy
-clock code in arch/arm/mach-davinci/ is no longer used. New drivers in
-drivers/clk/davinci/ are used instead.
+Quoting Taniya Das (2018-04-09 01:41:46)
+> @@ -64,18 +69,43 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
+>         return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK,=
+ val);
+>  }
+> =
 
-A few macros had to be moved to prevent compilation errors.
+> +static int gdsc_is_enabled_by_poll_cfg_reg(struct gdsc *sc, bool en)
+> +{
+> +       u32 val;
+> +       int ret;
+> +
+> +       ret =3D regmap_read(sc->regmap, sc->gdscr + CFG_GDSCR_OFFSET, &va=
+l);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (en)
+> +               return !!(val & GDSC_POWER_UP_COMPLETE);
+> +
+> +       return !(val & GDSC_POWER_DOWN_COMPLETE);
+> +}
+> +
+>  static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
+>  {
+>         ktime_t start;
+> =
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+>         start =3D ktime_get();
+>         do {
+> -               if (gdsc_is_enabled(sc, reg) =3D=3D en)
+> -                       return 0;
+> +               if (sc->flags & POLL_CFG_GDSCR) {
+> +                       if (gdsc_is_enabled_by_poll_cfg_reg(sc, en) =3D=
+=3D en)
+> +                               return 0;
+> +               } else {
+> +                       if (gdsc_is_enabled(sc, reg) =3D=3D en)
+> +                               return 0;
 
-v9 changes:
-- none
+Ok, I thought you would bury the is_enabled_by_poll_cfg_reg() stuff into
+gdsc_is_enabled() directly. Because that function is used in one more
+place than here, in gdsc_init(), to figure out if a GDSC is on at boot
+time. The sc->gds_hw_ctrl check should be able to get buried into
+gdsc_is_enabled() as well so that the function doesn't have to take a
+register at all.
 
-v8 changes:
-- none
+> +               }
+>         } while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
+> =
 
-v7 changes:
-- s/compile/compilation and space instead of tab
-- add PM_GENERIC_DOMAINS dependencies
+> -       if (gdsc_is_enabled(sc, reg) =3D=3D en)
+> -               return 0;
+> +       if (sc->flags & POLL_CFG_GDSCR) {
+> +               if (gdsc_is_enabled_by_poll_cfg_reg(sc, en) =3D=3D en)
+> +                       return 0;
+> +       } else {
+> +               if (gdsc_is_enabled(sc, reg) =3D=3D en)
+> +                       return 0;
+> +       }
 
-v6 changes:
-- clean up indent on Common objects section
+And then this duplicate diff wouldn't happen either.
 
+> =
 
- arch/arm/Kconfig                | 5 ++++-
- arch/arm/mach-davinci/Makefile  | 4 ++--
- arch/arm/mach-davinci/clock.h   | 4 ----
- arch/arm/mach-davinci/davinci.h | 4 ++++
- arch/arm/mach-davinci/psc.h     | 2 --
- 5 files changed, 10 insertions(+), 9 deletions(-)
+>         return -ETIMEDOUT;
+>  }
+> @@ -254,6 +284,7 @@ static int gdsc_disable(struct generic_pm_domain *dom=
+ain)
+>                 udelay(1);
+> =
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index a7f8e7f4b88f..a57ad13810c8 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -609,13 +609,16 @@ config ARCH_S3C24XX
- config ARCH_DAVINCI
- 	bool "TI DaVinci"
- 	select ARCH_HAS_HOLES_MEMORYMODEL
--	select CLKDEV_LOOKUP
-+	select COMMON_CLK
- 	select CPU_ARM926T
- 	select GENERIC_ALLOCATOR
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_IRQ_CHIP
- 	select GPIOLIB
- 	select HAVE_IDE
-+	select PM_GENERIC_DOMAINS if PM
-+	select PM_GENERIC_DOMAINS_OF if PM && OF
-+	select RESET_CONTROLLER
- 	select USE_OF
- 	select ZONE_DMA
- 	help
-diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
-index 4e8178050027..8725d8bea567 100644
---- a/arch/arm/mach-davinci/Makefile
-+++ b/arch/arm/mach-davinci/Makefile
-@@ -5,8 +5,8 @@
- #
- 
- # Common objects
--obj-y 			:= time.o clock.o serial.o psc.o \
--			   usb.o common.o sram.o aemif.o
-+obj-y 					:= time.o serial.o usb.o \
-+					   common.o sram.o aemif.o
- 
- obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
- 
-diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
-index d7894d5aaa25..2d058568e004 100644
---- a/arch/arm/mach-davinci/clock.h
-+++ b/arch/arm/mach-davinci/clock.h
-@@ -12,10 +12,6 @@
- #ifndef __ARCH_ARM_DAVINCI_CLOCK_H
- #define __ARCH_ARM_DAVINCI_CLOCK_H
- 
--#define DAVINCI_PLL1_BASE 0x01c40800
--#define DAVINCI_PLL2_BASE 0x01c40c00
--#define MAX_PLL 2
--
- /* PLL/Reset register offsets */
- #define PLLCTL          0x100
- #define PLLCTL_PLLEN    BIT(0)
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index fa99197d36f9..db4c95ef4d5c 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -35,6 +35,10 @@
- #include <media/davinci/vpbe.h>
- #include <media/davinci/vpbe_osd.h>
- 
-+#define DAVINCI_PLL1_BASE		0x01c40800
-+#define DAVINCI_PLL2_BASE		0x01c40c00
-+#define DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01c41000
-+
- #define DAVINCI_SYSTEM_MODULE_BASE	0x01c40000
- #define SYSMOD_VDAC_CONFIG		0x2c
- #define SYSMOD_VIDCLKCTL		0x38
-diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
-index 8af9f09fc10c..b58707cf7033 100644
---- a/arch/arm/mach-davinci/psc.h
-+++ b/arch/arm/mach-davinci/psc.h
-@@ -27,8 +27,6 @@
- #ifndef __ASM_ARCH_PSC_H
- #define __ASM_ARCH_PSC_H
- 
--#define	DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01C41000
--
- /* Power and Sleep Controller (PSC) Domains */
- #define DAVINCI_GPSC_ARMDOMAIN		0
- #define DAVINCI_GPSC_DSPDOMAIN		1
--- 
-2.17.0
+>                 reg =3D sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+> +
+
+This change shouldn't be here?
+
+>                 ret =3D gdsc_poll_status(sc, reg, true);
+>                 if (ret)
+>                         return ret;
