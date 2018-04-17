@@ -1,58 +1,77 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [[PATCH v2] 1/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- David Collins <collinsd@codeaurora.org>
-References: <1523183533-23171-1-git-send-email-tdas@codeaurora.org>
- <1523183533-23171-2-git-send-email-tdas@codeaurora.org>
- <20180413163705.io4xbukerjkzjmri@rob-hp-laptop>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <cba2a99f-fa6f-42d8-9063-8a642bea6f2c@codeaurora.org>
-Date: Sat, 14 Apr 2018 07:32:59 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180413163705.io4xbukerjkzjmri@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1523974533.2601.95.camel@baylibre.com>
+Subject: Re: [PATCH v5 2/7] clk: meson: aoclk: refactor common code into
+ dedicated file
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
+ linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Date: Tue, 17 Apr 2018 16:15:33 +0200
+In-Reply-To: <759078f5-fcbf-9ef1-6945-67d9d951d8eb@amlogic.com>
+References: <20180409143749.71197-1-yixun.lan@amlogic.com>
+	 <20180409143749.71197-3-yixun.lan@amlogic.com>
+	 <1523875084.2601.28.camel@baylibre.com>
+	 <759078f5-fcbf-9ef1-6945-67d9d951d8eb@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Rob,
-
-Thank you for the review comments.
-
-On 4/13/2018 10:07 PM, Rob Herring wrote:
-> On Sun, Apr 08, 2018 at 04:02:12PM +0530, Taniya Das wrote:
->> From: Amit Nischal <anischal@codeaurora.org>
->>
->> Add the RPMh clock driver to control the RPMh managed clock resources on
->> some of the Qualcomm Technologies, Inc. SoCs.
->>
->> Signed-off-by: David Collins <collinsd@codeaurora.org>
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> ---
->>   drivers/clk/qcom/Kconfig              |   9 +
->>   drivers/clk/qcom/Makefile             |   1 +
->>   drivers/clk/qcom/clk-rpmh.c           | 394 ++++++++++++++++++++++++++++++++++
+On Tue, 2018-04-17 at 16:16 +0800, Yixun Lan wrote:
+> Hi Jerome
 > 
->>   include/dt-bindings/clock/qcom,rpmh.h |  25 +++
-> 
-> This goes with the binding patch which should come first in the series.
+> On 04/16/18 18:38, Jerome Brunet wrote:
+> > > +	 */
+> > > +	for (clkid = 0; clkid < data->num_clks; clkid++) {
+> > > +		data->clks[clkid]->map = regmap;
+> > > +
+> > > +		ret = devm_clk_hw_register(dev, data->hw_data->hws[clkid]);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +	}
+> > > +
+> > > +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> > > +		(void *) data->hw_data);
+> > > +}
+> > 
+> > Missing new line here. Please run checkpatch and pay attention to git warnings
+> > about whitespace errors.
+> > 
 > 
 
-I would make the change in the next patch series.
+Google this if you want, As far as I know the C language requires it and makes
+things nice when I cat the file.
 
->>   4 files changed, 429 insertions(+)
->>   create mode 100644 drivers/clk/qcom/clk-rpmh.c
->>   create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+Anyway, I don't make those rules, It is just how it is.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+> 
+> I think we actually need to avoid this extra new line, or what's the
+> benefits with new line?
+> 
+> and besides， I didn't see any complaint from checkpatch.pl ..
+> 
+>  ./scripts/checkpatch.pl
+> 0002-clk-meson-aoclk-refactor-common-code-into-dedicated-.patch
+> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+> #235:
+> new file mode 100644
+> 
+> total: 0 errors, 1 warnings, 302 lines checked
+> 
+> NOTE: For some of the reported defects, checkpatch may be able to
+>       mechanically convert to the typical style using --fix or
+> --fix-inplace.
+> 
+> 0002-clk-meson-aoclk-refactor-common-code-into-dedicated-.patch has
+> style problems, please review.
+> 
+> NOTE: If any of the errors are false positives, please report
+>       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+> 
+> 
+> Yixun
