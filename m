@@ -1,6 +1,6 @@
 Return-Path: <daniel.lezcano@linaro.org>
 Return-Path: <daniel.lezcano@linaro.org>
-Date: Mon, 30 Apr 2018 15:41:05 +0200
+Date: Tue, 17 Apr 2018 10:50:20 +0200
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -16,23 +16,26 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
 	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] soc: rockchip: power-domain: Use
- of_clk_get_parent_count() instead of open coding
-Message-ID: <20180430134105.GD11457@mai>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-4-git-send-email-geert+renesas@glider.be>
+Subject: Re: [PATCH v2 2/5] ARM: timer-sp: Use of_clk_get_parent_count()
+ instead of open coding
+Message-ID: <20180417085020.GA7214@mai>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+ <1523364701-15383-3-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1524063005-1716-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1523364701-15383-3-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 18, 2018 at 04:50:03PM +0200, Geert Uytterhoeven wrote:
-> As of_clk_get_parent_count() returns zero on failure, while
-> of_count_phandle_with_args() might return a negative error code, this
-> also fixes the issue of possibly using a negative number in the
-> allocation below.
-> 
+On Tue, Apr 10, 2018 at 02:51:38PM +0200, Geert Uytterhoeven wrote:
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+> This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
+> <linux/of_clk.h>".
+> 
+> v2:
+>   - of_clk_get_parent_count() was moved to <linux/of_clk.h>,
+>   - Dropped RFC, as a dummy is now available in the !CONFIG_COMMON_CLK
+>     case.
+> ---
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
