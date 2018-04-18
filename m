@@ -1,40 +1,49 @@
-Return-Path: <maxi.jourdan@wanadoo.fr>
-From: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Subject: [PATCH v2 0/2] clk: meson: gxbb: add the video decoder clocks
-Date: Tue, 24 Apr 2018 20:48:36 +0200
-Message-Id: <20180424184838.3406-1-maxi.jourdan@wanadoo.fr>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 3/7] remoteproc/davinci: add the missing retval check
+ for clk_enable()
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Suman Anna <s-anna@ti.com>,
+        Kevin
+ Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner
+	<david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson
+	<bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Bartosz Golaszewski
+	<bgolaszewski@baylibre.com>
+References: <20180417173038.25510-1-brgl@bgdev.pl>
+ <20180417173038.25510-4-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <887cabcb-ebb5-0ad9-5bf4-8bb5eba2a017@ti.com>
+Date: Wed, 18 Apr 2018 10:34:42 +0530
+MIME-Version: 1.0
+In-Reply-To: <20180417173038.25510-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the necessary clocks for VDEC_1 and VDEC_HEVC.
+On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The davinci platform is being switched to using the common clock
+> framework, where clk_enable() can fail. Add the return value check.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Acked-by: Suman Anna <s-anna@ti.com>
+> Reviewed-by: David Lechner <david@lechnology.com>
 
-On Amlogic SoCs, VDEC1 is responsible for the decoding of:
-MPEG 1/2/4, H.263, H.264, MJPEG, VC1, Real Video
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-VDEC_HEVC is responsible for the decoding of:
-HEVC, VP9
+This should be safe to apply to v4.17-rc1 and should be queued by Ohad /
+Bjorn.
 
-Changes since v1:
- - Drop CLK_IGNORE_UNUSED flags
- - Change CLK_SET_RATE_NO_REPARENT to CLK_SET_RATE_PARENT for muxes
- - Add CLK_MUX_ROUND_CLOSEST for muxes
-
-Maxime Jourdan (2):
-  clk: meson: gxbb: expose VDEC_1 and VDEC_HEVC clocks
-  clk: meson: gxbb: add the video decoder clocks
-
- drivers/clk/meson/gxbb.c              | 114 ++++++++++++++++++++++++++
- drivers/clk/meson/gxbb.h              |   6 +-
- include/dt-bindings/clock/gxbb-clkc.h |   2 +
- 3 files changed, 121 insertions(+), 1 deletion(-)
-
--- 
-2.17.0
+Thanks,
+Sekhar
