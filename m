@@ -1,188 +1,192 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1] clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
-Date: Tue,  1 May 2018 10:33:33 +0530
-Message-Id: <1525151013-28291-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<airlied@linux.ie>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
+CC: <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Sean
+ Wang" <sean.wang@mediatek.com>
+Subject: [PATCH v1 3/4] clk: mediatek: add g3dsys support for MT2701 and MT7623
+Date: Wed, 18 Apr 2018 18:24:55 +0800
+Message-ID: <96dc02879c10388c2efa08b1cf33b77f938908ee.1524044917.git.sean.wang@mediatek.com>
+In-Reply-To: <cover.1524044917.git.sean.wang@mediatek.com>
+References: <cover.1524044917.git.sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Amit Nischal <anischal@codeaurora.org>
+From: Sean Wang <sean.wang@mediatek.com>
 
-The default behavior of the GDSC enable/disable sequence is to
-poll the status bits of either the actual GDSCR or the
-corresponding HW_CTRL registers.
+Add clock driver support for g3dsys on MT2701 and MT7623, which is
+providing essential clock gate and reset controller to Mali-450.
 
-On targets which have support for a CFG_GDSCR register, the
-status bits might not show the correct state of the GDSC,
-especially in the disable sequence, where the status bit
-will be cleared even before the core is completely power
-collapsed. On targets with this issue, poll the power on/off
-bits in the CFG_GDSCR register instead to correctly determine
-the GDSC state.
-
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/clk/qcom/gdsc.c | 42 ++++++++++++++++++++++++++----------------
- drivers/clk/qcom/gdsc.h |  1 +
- 2 files changed, 27 insertions(+), 16 deletions(-)
+ drivers/clk/mediatek/Kconfig              |  6 ++
+ drivers/clk/mediatek/Makefile             |  1 +
+ drivers/clk/mediatek/clk-mt2701-g3d.c     | 95 +++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/mt2701-clk.h    |  4 ++
+ include/dt-bindings/reset/mt2701-resets.h |  3 +
+ 5 files changed, 109 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-g3d.c
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index cb61c15..2a6b0ff 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -33,6 +33,11 @@
- #define GMEM_CLAMP_IO_MASK	BIT(0)
- #define GMEM_RESET_MASK		BIT(4)
-
-+/* CFG_GDSCR */
-+#define GDSC_POWER_UP_COMPLETE		BIT(16)
-+#define GDSC_POWER_DOWN_COMPLETE	BIT(15)
-+#define CFG_GDSCR_OFFSET		0x4
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 92afe59..3dd1dab 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -60,6 +60,12 @@ config COMMON_CLK_MT2701_AUDSYS
+ 	---help---
+ 	  This driver supports Mediatek MT2701 audsys clocks.
+ 
++config COMMON_CLK_MT2701_G3DSYS
++	bool "Clock driver for MediaTek MT2701 g3dsys"
++	depends on COMMON_CLK_MT2701
++	---help---
++	  This driver supports MediaTek MT2701 g3dsys clocks.
 +
- /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
- #define EN_REST_WAIT_VAL	(0x2 << 20)
- #define EN_FEW_WAIT_VAL		(0x8 << 16)
-@@ -45,15 +50,28 @@
-
- #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
-
--static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
-+static int gdsc_is_enabled(struct gdsc *sc, bool en)
- {
-+	unsigned int reg;
- 	u32 val;
- 	int ret;
-
-+	if (sc->flags & POLL_CFG_GDSCR)
-+		reg = sc->gdscr + CFG_GDSCR_OFFSET;
-+	else
-+		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+ config COMMON_CLK_MT2712
+ 	bool "Clock driver for MediaTek MT2712"
+ 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index b80eff2..844b55d 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_COMMON_CLK_MT2701) += clk-mt2701.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_AUDSYS) += clk-mt2701-aud.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_BDPSYS) += clk-mt2701-bdp.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_ETHSYS) += clk-mt2701-eth.o
++obj-$(CONFIG_COMMON_CLK_MT2701_G3DSYS) += clk-mt2701-g3d.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_HIFSYS) += clk-mt2701-hif.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_IMGSYS) += clk-mt2701-img.o
+ obj-$(CONFIG_COMMON_CLK_MT2701_MMSYS) += clk-mt2701-mm.o
+diff --git a/drivers/clk/mediatek/clk-mt2701-g3d.c b/drivers/clk/mediatek/clk-mt2701-g3d.c
+new file mode 100644
+index 0000000..1328c11
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt2701-g3d.c
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Sean Wang <sean.wang@mediatek.com>
++ *
++ */
 +
- 	ret = regmap_read(sc->regmap, reg, &val);
- 	if (ret)
- 		return ret;
-
-+	if (sc->flags & POLL_CFG_GDSCR) {
-+		if (en)
-+			return !!(val & GDSC_POWER_UP_COMPLETE);
-+		else
-+			return !(val & GDSC_POWER_DOWN_COMPLETE);
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt2701-clk.h>
++
++#define GATE_G3D(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &g3d_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
 +	}
 +
- 	return !!(val & PWR_ON_MASK);
- }
-
-@@ -64,17 +82,17 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
- 	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
- }
-
--static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
-+static int gdsc_poll_status(struct gdsc *sc, bool en)
- {
- 	ktime_t start;
-
- 	start = ktime_get();
- 	do {
--		if (gdsc_is_enabled(sc, reg) == en)
-+		if (gdsc_is_enabled(sc, en) == en)
- 			return 0;
- 	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
-
--	if (gdsc_is_enabled(sc, reg) == en)
-+	if (gdsc_is_enabled(sc, en) == en)
- 		return 0;
-
- 	return -ETIMEDOUT;
-@@ -84,7 +102,6 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
- {
- 	int ret;
- 	u32 val = en ? 0 : SW_COLLAPSE_MASK;
--	unsigned int status_reg = sc->gdscr;
-
- 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
- 	if (ret)
-@@ -101,8 +118,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
- 		return 0;
- 	}
-
--	if (sc->gds_hw_ctrl) {
--		status_reg = sc->gds_hw_ctrl;
-+	if (sc->gds_hw_ctrl)
- 		/*
- 		 * The gds hw controller asserts/de-asserts the status bit soon
- 		 * after it receives a power on/off request from a master.
-@@ -114,9 +130,8 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
- 		 * and polling the status bit.
- 		 */
- 		udelay(1);
--	}
-
--	return gdsc_poll_status(sc, status_reg, en);
-+	return gdsc_poll_status(sc, en);
- }
-
- static inline int gdsc_deassert_reset(struct gdsc *sc)
-@@ -240,8 +255,6 @@ static int gdsc_disable(struct generic_pm_domain *domain)
-
- 	/* Turn off HW trigger mode if supported */
- 	if (sc->flags & HW_CTRL) {
--		unsigned int reg;
--
- 		ret = gdsc_hwctrl(sc, false);
- 		if (ret < 0)
- 			return ret;
-@@ -253,8 +266,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 		 */
- 		udelay(1);
-
--		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
--		ret = gdsc_poll_status(sc, reg, true);
-+		ret = gdsc_poll_status(sc, true);
- 		if (ret)
- 			return ret;
- 	}
-@@ -276,7 +288,6 @@ static int gdsc_init(struct gdsc *sc)
- {
- 	u32 mask, val;
- 	int on, ret;
--	unsigned int reg;
-
- 	/*
- 	 * Disable HW trigger: collapse/restore occur based on registers writes.
-@@ -297,8 +308,7 @@ static int gdsc_init(struct gdsc *sc)
- 			return ret;
- 	}
-
--	reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
--	on = gdsc_is_enabled(sc, reg);
-+	on = gdsc_is_enabled(sc, true);
- 	if (on < 0)
- 		return on;
-
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 9279278..b0cbb87 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -55,6 +55,7 @@ struct gdsc {
- #define HW_CTRL		BIT(2)
- #define SW_RESET	BIT(3)
- #define AON_RESET	BIT(4)
-+#define POLL_CFG_GDSCR	BIT(5)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
++static const struct mtk_gate_regs g3d_cg_regs = {
++	.sta_ofs = 0x0,
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
++};
++
++static const struct mtk_gate g3d_clks[] = {
++	GATE_G3D(CLK_G3DSYS_CORE, "g3d_core", "mfg_sel", 0),
++};
++
++static int clk_mt2701_g3dsys_init(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	struct device_node *node = pdev->dev.of_node;
++	int r;
++
++	clk_data = mtk_alloc_clk_data(CLK_G3DSYS_NR);
++
++	mtk_clk_register_gates(node, g3d_clks, ARRAY_SIZE(g3d_clks),
++			       clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	if (r)
++		dev_err(&pdev->dev,
++			"could not register clock provider: %s: %d\n",
++			pdev->name, r);
++
++	mtk_register_reset_controller(node, 1, 0xc);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt2701_g3d[] = {
++	{
++		.compatible = "mediatek,mt2701-g3dsys",
++		.data = clk_mt2701_g3dsys_init,
++	}, {
++		/* sentinel */
++	}
++};
++
++static int clk_mt2701_g3d_probe(struct platform_device *pdev)
++{
++	int (*clk_init)(struct platform_device *);
++	int r;
++
++	clk_init = of_device_get_match_data(&pdev->dev);
++	if (!clk_init)
++		return -EINVAL;
++
++	r = clk_init(pdev);
++	if (r)
++		dev_err(&pdev->dev,
++			"could not register clock provider: %s: %d\n",
++			pdev->name, r);
++
++	return r;
++}
++
++static struct platform_driver clk_mt2701_g3d_drv = {
++	.probe = clk_mt2701_g3d_probe,
++	.driver = {
++		.name = "clk-mt2701-g3d",
++		.of_match_table = of_match_clk_mt2701_g3d,
++	},
++};
++
++builtin_platform_driver(clk_mt2701_g3d_drv);
+diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings/clock/mt2701-clk.h
+index 24e93df..2ac62a6 100644
+--- a/include/dt-bindings/clock/mt2701-clk.h
++++ b/include/dt-bindings/clock/mt2701-clk.h
+@@ -431,6 +431,10 @@
+ #define CLK_ETHSYS_CRYPTO			8
+ #define CLK_ETHSYS_NR				9
+ 
++/* G3DSYS */
++#define CLK_G3DSYS_CORE				1
++#define CLK_G3DSYS_NR				2
++
+ /* BDP */
+ 
+ #define CLK_BDP_BRG_BA				1
+diff --git a/include/dt-bindings/reset/mt2701-resets.h b/include/dt-bindings/reset/mt2701-resets.h
+index 21deb54..50b7f06 100644
+--- a/include/dt-bindings/reset/mt2701-resets.h
++++ b/include/dt-bindings/reset/mt2701-resets.h
+@@ -87,4 +87,7 @@
+ #define MT2701_ETHSYS_GMAC_RST			23
+ #define MT2701_ETHSYS_PPE_RST			31
+ 
++/* G3DSYS resets */
++#define MT2701_G3DSYS_CORE_RST			0
++
+ #endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT2701 */
+-- 
+2.7.4
