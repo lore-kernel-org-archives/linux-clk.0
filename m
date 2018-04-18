@@ -1,71 +1,61 @@
-Return-Path: <biju.das@bp.renesas.com>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-	Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Jacopo Mondi <jacopo+renesas@jmondi.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Borislav Petkov <bp@suse.de>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH v3 0/3] Add r8a77470/iW-RainboW-G23S single board computer support
-Date: Tue,  3 Apr 2018 12:19:36 +0100
-Message-Id: <1522754379-64116-1-git-send-email-biju.das@bp.renesas.com>
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<airlied@linux.ie>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
+CC: <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Sean
+ Wang <sean.wang@mediatek.com>
+Subject: [PATCH v1 0/4] add Mali-450 support to MT7623 SoC
+Date: Wed, 18 Apr 2018 18:24:52 +0800
+Message-ID: <cover.1524044917.git.sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello, 
+From: Sean Wang <sean.wang@mediatek.com>
 
-This series adds support for Rensas RZ/G1C (r8a77470) SoC and
-RZ/G1C based iW-RainboW-G23S single board computer.
+Hi,
 
-The series introduces a cpg-mssr clock/power gating module, a power/reset
-controller for the SoC.
+The series adds a required resource setup to allow Mali-450 to work on
+MT7623. This also can benefits other MediaTek SoCs having Mali-450 device.
 
-power areas for RZ/G1C are similar to RZ/G1E.
+In order to prove the setup is proper, I also have added mediatek port to
+linux-lima at [1] and make a few of tests along with off-screen rendering
+[2][3][4][5][6][7] through mesa-lima [8]. All work correctly.
 
-Few functionalities have currently been enabled in DTS and tested: serial
-boot console.
+[1] https://github.com/objelf/linux-lima/tree/mediatek-lima-4.16-rc5
+[2] simple triangle: https://github.com/yuq/gfx/tree/master/gbm-surface
+[3] vertex shader uniform: https://github.com/yuq/gfx/tree/master/gbm-surface-move
+[4] multi varying: https://github.com/yuq/gfx/tree/master/gbm-surface-color
+[5] multi draw: https://github.com/yuq/gfx/tree/master/gbm-surface-draw
+[6] FBO: https://github.com/yuq/gfx/tree/master/gbm-surface-fbo
+[7] kmscube: https://github.com/yuq/kmscube
+[8] https://github.com/yuq/mesa-lima
 
-This patch series tested against renesas-dev branch 
-tag "renesas-dev-20180328-v4.16-rc7
+Hope these patches can help people working on BPI-R2.
 
-V1-->V2
-	Incorporated geert's review comments.
-V2-->V3
-        Incorporated simon and geert's review comments.
+	Sean
 
-Biju Das (3):
-  serial: sh-sci: Document r8a77470 bindings
-  ARM: dts: r8a77470: Initial SoC device tree
-  ARM: dts: iwg23s-sbc: Add support for iWave G23S-SBC based on RZ/G1C
+Sean Wang (4):
+  dt-bindings: gpu: mali-utgard: add mediatek,mt7623-mali compatible
+  dt-bindings: clock: mediatek: add g3dsys bindings
+  clk: mediatek: add g3dsys support for MT2701 and MT7623
+  arm: dts: mt7623: add Mali-450 and related device nodes
 
- .../bindings/serial/renesas,sci-serial.txt         |   2 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |  35 +++++
- arch/arm/boot/dts/r8a77470.dtsi                    | 154 +++++++++++++++++++++
- 4 files changed, 192 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
- create mode 100644 arch/arm/boot/dts/r8a77470.dtsi
+ .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 +++++++
+ .../devicetree/bindings/gpu/arm,mali-utgard.txt    |  9 ++
+ arch/arm/boot/dts/mt7623.dtsi                      | 70 ++++++++++++++++
+ arch/arm/boot/dts/mt7623a.dtsi                     |  4 +
+ drivers/clk/mediatek/Kconfig                       |  6 ++
+ drivers/clk/mediatek/Makefile                      |  1 +
+ drivers/clk/mediatek/clk-mt2701-g3d.c              | 95 ++++++++++++++++++++++
+ include/dt-bindings/clock/mt2701-clk.h             |  4 +
+ include/dt-bindings/reset/mt2701-resets.h          |  3 +
+ 9 files changed, 222 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+ create mode 100644 drivers/clk/mediatek/clk-mt2701-g3d.c
 
 -- 
 2.7.4
