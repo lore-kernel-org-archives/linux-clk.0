@@ -1,41 +1,73 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [RFC 05/10] i2c: s3c2410: Remove support for Exynos5440
-To: Krzysztof Kozlowski <krzk@kernel.org>, Russell King
-	<linux@armlinux.org.uk>, linux-i2c@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
-	Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Tomasz Figa
-	<tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
-	<viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin
-	<edubezval@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij
-	<linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown
-	<broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-usb@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd
-	Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Jaehoon Chung
-	<jh80.chung@samsung.com>
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <fe4ac171-e7dd-a643-35b6-7beebee81bdb@samsung.com>
-Date: Wed, 25 Apr 2018 14:56:48 +0200
-MIME-version: 1.0
-In-reply-to: <20180424203239.21885-6-krzk@kernel.org>
-Content-type: text/plain; charset="utf-8"
-References: <20180424203239.21885-1-krzk@kernel.org>
-	<CGME20180424203349epcas2p1a47060486c2e349b27fd0b2c4ea0394c@epcas2p1.samsung.com>
-	<20180424203239.21885-6-krzk@kernel.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Ripard <maxime.ripard@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 3/5] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
+Date: Wed, 18 Apr 2018 16:50:03 +0200
+Message-Id: <1524063005-1716-4-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/24/2018 10:32 PM, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a negative number in the
+allocation below.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
+This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
+<linux/of_clk.h>".
+
+v3:
+  - Add Reviewed-by,
+
+v2:
+  - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
+---
+ drivers/soc/rockchip/pm_domains.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+index 53efc386b1ada8cf..13913d40c8213e36 100644
+--- a/drivers/soc/rockchip/pm_domains.c
++++ b/drivers/soc/rockchip/pm_domains.c
+@@ -14,6 +14,7 @@
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
+ #include <linux/of_address.h>
++#include <linux/of_clk.h>
+ #include <linux/of_platform.h>
+ #include <linux/clk.h>
+ #include <linux/regmap.h>
+@@ -400,8 +401,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+ 	pd->info = pd_info;
+ 	pd->pmu = pmu;
+ 
+-	pd->num_clks = of_count_phandle_with_args(node, "clocks",
+-						  "#clock-cells");
++	pd->num_clks = of_clk_get_parent_count(node);
+ 	if (pd->num_clks > 0) {
+ 		pd->clks = devm_kcalloc(pmu->dev, pd->num_clks,
+ 					sizeof(*pd->clks), GFP_KERNEL);
+-- 
+2.7.4
