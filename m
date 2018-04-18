@@ -1,82 +1,46 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andi Shyti <andi@etezian.org>,
-	Mark Brown <broonie@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [RFC 02/10] ata: ahci-platform: Remove support for Exynos5440
-Date: Tue, 24 Apr 2018 22:32:31 +0200
-Message-Id: <20180424203239.21885-3-krzk@kernel.org>
-In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
-References: <20180424203239.21885-1-krzk@kernel.org>
+Return-Path: <mgautam@codeaurora.org>
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC)
+ driver for SDM845
+To: Amit Nischal <anischal@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
+ David Brown <david.brown@linaro.org>, Rajendra Nayak
+ <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
+ Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>
+References: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
+ <1522761761-15262-4-git-send-email-anischal@codeaurora.org>
+ <152393708031.51482.15076025836699678476@swboyd.mtv.corp.google.com>
+ <f563532b5c43960a61ae12a37a131be8@codeaurora.org>
+From: Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <23b9ca5a-b708-f142-9906-3f3eadd8c26a@codeaurora.org>
+Date: Wed, 18 Apr 2018 22:08:41 +0530
+MIME-Version: 1.0
+In-Reply-To: <f563532b5c43960a61ae12a37a131be8@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The Exynos5440 is not actively developed, there are no development
-boards available and probably there are no real products with it.
-Remove wide-tree support for Exynos5440.
+Hi Amit,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- Documentation/devicetree/bindings/ata/ahci-platform.txt | 1 -
- drivers/ata/ahci_platform.c                             | 1 -
- 2 files changed, 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-index c760ecb81381..663766685818 100644
---- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
-+++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-@@ -17,7 +17,6 @@ Required properties:
-   - "marvell,armada-380-ahci"
-   - "marvell,armada-3700-ahci"
-   - "snps,dwc-ahci"
--  - "snps,exynos5440-ahci"
-   - "snps,spear-ahci"
-   - "generic-ahci"
- - interrupts        : <interrupt mapping for SATA IRQ>
-diff --git a/drivers/ata/ahci_platform.c b/drivers/ata/ahci_platform.c
-index 99f9a895a459..564570ea3e27 100644
---- a/drivers/ata/ahci_platform.c
-+++ b/drivers/ata/ahci_platform.c
-@@ -75,7 +75,6 @@ static const struct of_device_id ahci_of_match[] = {
- 	{ .compatible = "generic-ahci", },
- 	/* Keep the following compatibles for device tree compatibility */
- 	{ .compatible = "snps,spear-ahci", },
--	{ .compatible = "snps,exynos5440-ahci", },
- 	{ .compatible = "ibm,476gtr-ahci", },
- 	{ .compatible = "snps,dwc-ahci", },
- 	{ .compatible = "hisilicon,hisi-ahci", },
+On 4/18/2018 6:33 PM, Amit Nischal wrote:
+>>> +       /* Disable the GPLL0 active input to MMSS and GPU via MISC registers */
+>>> +       regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
+>>> +       regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+>>
+>> I think we'll have to throw in the pipe clk branch stuff in here too?
+>> And then drop the pipe clks from the driver?
+>
+> All the USB pipe clocks would be taken care. The PCIE pipe branch
+> clocks would have to be explicitly disabled so as to retain the
+> memory logic. Otherwise, it would lead to memory corruption in case
+> the external source is directly disabled without disabling the branch clock. 
+
+PHY driver is same for both USB and PCIE and both PHYs use pipe_clk.
+If there is indeed some limitation and pipe_clk cant be left enabled
+always then I will suggest to not change pipe_clk handling for USB as well.
+
 -- 
-2.14.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
