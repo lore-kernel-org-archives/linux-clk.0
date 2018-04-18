@@ -1,235 +1,158 @@
-Return-Path: <bgolaszewski@baylibre.com>
-MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Mon, 30 Apr 2018 22:35:18 +0200
-Message-ID: <CAMpxmJVYfJ34CzMjYwiJjHGDVypDDMSD6AsZHUdmG-rMBdNWgQ@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v9_00=2F27=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
-	arm-soc <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
-	David Lechner <david@lechnology.com>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Ripard <maxime.ripard@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
+Date: Wed, 18 Apr 2018 16:50:01 +0200
+Message-Id: <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-04-27 2:17 GMT+02:00 David Lechner <david@lechnology.com>:
-> This series converts mach-davinci to use the common clock framework.
->
-> The series works like this, the first 3 patches fix some issues with the clock
-> drivers that have already been accepted into the mainline kernel.
->
-> Then, starting with "ARM: davinci: pass clock as parameter to
-> davinci_timer_init()", we get the mach code ready for the switch by adding the
-> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
-> around the legacy clocks so that we can switch easily between the old and the
-> new.
->
-> "ARM: davinci: switch to common clock framework" actually flips the switch
-> to start using the new clock drivers. Then the next 8 patches remove all
-> of the old clock code.
->
-> The final four patches add device tree clock support to the one SoC that
-> supports it.
->
-> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
-> board file).
->
->
-> Changes:
->
-> v9 changes (also see individual patches for details):
-> - Rebased on linux-davnci/master (f5e3203bb775)
-> - Dropped drivers/clk patches that landed in v4.17
-> - New drivers/clk patches for early boot special case
-> - New patch for ti,davinci-timer device tree bindings
-> - Updated mach/davinci patches to register clocks in early boot when needed
->
-> v8 changes (also see individual patches for details):
-> - Rebased on linux-davinci/master
-> - Dropped use of __init and __initconst attributes in clk drivers
-> - Add clkdev lookups for PLL SYSCLKs
-> - Fix genpd clock reference counting issue
-> - Fix PSC clock driver loading order issue
-> - Fix typo in device tree and add more power-domains properties
->
-> v7 changes (also see individual patches for details):
-> - Rebased on linux-davinci/master (v4.16-rc)
-> - Convert clock drivers to platform devices
-> - New patch "ARM: davinci: pass clock as parameter to davinci_timer_init()"
-> - Fix issues with lcdk and aemif clock lookups and power domains
-> - Fixed other minor issues brought up in v6 review
->
-> v6 changes (also see individual patches for details):
-> - All of the device tree bindings are changed
-> - All of the clock drivers are changed significantly
-> - Fixed issues brought up during review of v5
-> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from this
->   series and submitted separately
->
-> v5 changes:
-> - Basically, this is an entirely new series
-> - Patches are broken up into bite-sized pieces
-> - Converted PSC clock driver to use regmap
-> - Restored "force" flag for certain DA850 clocks
-> - Added device tree bindings
-> - Moved more of the clock init to drivers/clk
-> - Fixed frequency scaling (maybe*)
->
-> * I have frequency scaling using cpufreq-dt, so I know the clocks are doing
->   what they need to do to make this work, but I haven't figured out how to
->   test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will be
->   sent separately after this series has landed.)
->
->
-> Dependencies:
->
-> Only one dependency didn't land in v4.17. It is just a runtime dependency for
-> the LCDK board to make the display work.
->
-> - "drm/tilcdc: Fix setting clock divider for omap-l138"[1]
->
-> [1]: https://patchwork.freedesktop.org/patch/210696/
->
-> You can find a working branch with everything included (plus a few extras, like
-> cpufreq-dt) in the "common-clk-v8" branch of https://github.com/dlech/ev3dev-kernel.git.
->
->
-> Testing/debugging for the uninitiated:
->
-> I only have one device to test with, which is based on da850, so I will
-> have to rely on others to do some testing here. Since we are dealing with
-> clocks, if something isn't working, you most likely won't see output on
-> the serial port. To figure out what is going on, you need to enable...
->
->         CONFIG_DEBUG_LL=y
->         CONFIG_EARLY_PRINTK=y
->
-> and add "earlyprintk clk_ignore_unused" to the kernel command line options.
-> You may need to select a different UART for this depending on your board. I
-> think UART1 is the default in the kernel configuration.
->
-> On da850 devices comment out the lines:
->
->         else
->                 clk_set_parent(clk, parent->clk);
->
-> in da850.c or, if using device tree, comment out the lines:
->
->         assigned-clocks = <&async3_clk>;
->         assigned-clock-parents = <&pll1_sysclk 2>;
->
-> in da850.dtsi when doing earlyprintk, otherwise the UART1 and UART2 clock
-> source will change during boot and cause garbled output after a point.
->
->
-> David Lechner (27):
->   clk: davinci: pll: allow dev == NULL
->   clk: davinci: da850-pll: change PLL0 to CLK_OF_DECLARE
->   clk: davinci: psc: allow for dev == NULL
->   ARM: davinci: pass clock as parameter to davinci_timer_init()
->   ARM: davinci: da830: add new clock init using common clock framework
->   ARM: davinci: da850: add new clock init using common clock framework
->   ARM: davinci: dm355: add new clock init using common clock framework
->   ARM: davinci: dm365: add new clock init using common clock framework
->   ARM: davinci: dm644x: add new clock init using common clock framework
->   ARM: davinci: dm646x: add new clock init using common clock framework
->   ARM: davinci: da8xx: add new USB PHY clock init using common clock
->     framework
->   ARM: davinci: da8xx: add new sata_refclk init using common clock
->     framework
->   ARM: davinci: remove CONFIG_DAVINCI_RESET_CLOCKS
->   ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
->   ARM: davinci: switch to common clock framework
->   ARM: davinci: da830: Remove legacy clock init
->   ARM: davinci: da850: Remove legacy clock init
->   ARM: davinci: dm355: Remove legacy clock init
->   ARM: davinci: dm365: Remove legacy clock init
->   ARM: davinci: dm644x: Remove legacy clock init
->   ARM: davinci: dm646x: Remove legacy clock init
->   ARM: davinci: da8xx: Remove legacy USB and SATA clock init
->   ARM: davinci: remove legacy clocks
->   dt-bindings: timer: new bindings for TI DaVinci timer
->   ARM: davinci: add device tree support to timer
->   ARM: davinci: da8xx-dt: switch to device tree clocks
->   ARM: dts: da850: Add clocks
->
->  .../bindings/timer/ti,davinci-timer.txt       |  24 +
->  arch/arm/Kconfig                              |   5 +-
->  arch/arm/boot/dts/da850-enbw-cmc.dts          |   4 +
->  arch/arm/boot/dts/da850-evm.dts               |   4 +
->  arch/arm/boot/dts/da850-lcdk.dts              |   9 +
->  arch/arm/boot/dts/da850-lego-ev3.dts          |   4 +
->  arch/arm/boot/dts/da850.dtsi                  | 166 ++++
->  arch/arm/configs/davinci_all_defconfig        |   1 -
->  arch/arm/mach-davinci/Kconfig                 |  13 +-
->  arch/arm/mach-davinci/Makefile                |   4 +-
->  arch/arm/mach-davinci/board-da830-evm.c       |  12 +-
->  arch/arm/mach-davinci/board-da850-evm.c       |   2 +
->  arch/arm/mach-davinci/board-dm355-evm.c       |   2 +
->  arch/arm/mach-davinci/board-dm355-leopard.c   |   2 +
->  arch/arm/mach-davinci/board-dm365-evm.c       |   2 +
->  arch/arm/mach-davinci/board-dm644x-evm.c      |   2 +
->  arch/arm/mach-davinci/board-dm646x-evm.c      |   2 +
->  arch/arm/mach-davinci/board-mityomapl138.c    |   2 +
->  arch/arm/mach-davinci/board-neuros-osd2.c     |   2 +
->  arch/arm/mach-davinci/board-omapl138-hawk.c   |  11 +-
->  arch/arm/mach-davinci/board-sffsdr.c          |   2 +
->  arch/arm/mach-davinci/clock.c                 | 745 -----------------
->  arch/arm/mach-davinci/clock.h                 |  76 --
->  arch/arm/mach-davinci/common.c                |   3 -
->  arch/arm/mach-davinci/da830.c                 | 462 ++---------
->  arch/arm/mach-davinci/da850.c                 | 778 +++---------------
->  arch/arm/mach-davinci/da8xx-dt.c              |  60 --
->  arch/arm/mach-davinci/davinci.h               |   8 +
->  arch/arm/mach-davinci/devices-da8xx.c         |  43 +-
->  arch/arm/mach-davinci/devices.c               |   1 -
->  arch/arm/mach-davinci/dm355.c                 | 406 ++-------
->  arch/arm/mach-davinci/dm365.c                 | 485 +----------
->  arch/arm/mach-davinci/dm644x.c                | 344 +-------
->  arch/arm/mach-davinci/dm646x.c                | 372 +--------
->  arch/arm/mach-davinci/include/mach/clock.h    |   3 -
->  arch/arm/mach-davinci/include/mach/common.h   |  11 +-
->  arch/arm/mach-davinci/include/mach/da8xx.h    |   6 +-
->  arch/arm/mach-davinci/pm_domain.c             |   5 +
->  arch/arm/mach-davinci/psc.c                   | 137 ---
->  arch/arm/mach-davinci/psc.h                   |  12 -
->  arch/arm/mach-davinci/time.c                  |  39 +-
->  arch/arm/mach-davinci/usb-da8xx.c             | 242 +-----
->  drivers/clk/davinci/pll-da830.c               |   4 +-
->  drivers/clk/davinci/pll-da850.c               |  41 +-
->  drivers/clk/davinci/pll-dm355.c               |   8 +-
->  drivers/clk/davinci/pll-dm365.c               |   8 +-
->  drivers/clk/davinci/pll-dm644x.c              |   8 +-
->  drivers/clk/davinci/pll-dm646x.c              |   8 +-
->  drivers/clk/davinci/pll.c                     | 134 +--
->  drivers/clk/davinci/pll.h                     |  35 +-
->  drivers/clk/davinci/psc-dm355.c               |   2 +-
->  drivers/clk/davinci/psc-dm365.c               |   2 +-
->  drivers/clk/davinci/psc-dm644x.c              |   2 +-
->  drivers/clk/davinci/psc-dm646x.c              |   2 +-
->  drivers/clk/davinci/psc.c                     |  70 +-
->  include/linux/clk/davinci.h                   |  29 +
->  56 files changed, 924 insertions(+), 3942 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
->  delete mode 100644 arch/arm/mach-davinci/clock.c
->  delete mode 100644 arch/arm/mach-davinci/psc.c
->  create mode 100644 include/linux/clk/davinci.h
->
-> --
-> 2.17.0
->
+The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
+limited to clock providers.
 
-Hi Arnd,
+Hence move these helpers into their own header file, so callers that are
+not clock providers no longer have to include <linux/clk-provider.h>.
 
-I know you're on vacation, but I thought I'd Cc you on this thread to
-show you what kind of workarounds we need without unifying the early
-probing mechanisms. This is a very good example of the problem we're
-trying to solve.
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
+v3:
+  - Add Reviewed-by,
+  - Add SPDX-License-Identifier,
+  - Add to clock section in MAINTAINERS (note that Rob is still listed
+    as a maintainer, too, due to the include/linux/of*.h catch-all
+    rule),
 
-Best regards,
-Bartosz Golaszewski
+v2:
+  - New.
+---
+ MAINTAINERS                  |  1 +
+ include/linux/clk-provider.h | 14 +-------------
+ include/linux/of_clk.h       | 30 ++++++++++++++++++++++++++++++
+ 3 files changed, 32 insertions(+), 13 deletions(-)
+ create mode 100644 include/linux/of_clk.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 50927cba875771e8..abf08b50a85d969d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3556,6 +3556,7 @@ F:	drivers/clk/
+ X:	drivers/clk/clkdev.c
+ F:	include/linux/clk-pr*
+ F:	include/linux/clk/
++F:	include/linux/of_clk.h
+ 
+ COMMON INTERNET FILE SYSTEM (CIFS)
+ M:	Steve French <sfrench@samba.org>
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 210a890008f9e129..61cb4729f22acd6b 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/io.h>
+ #include <linux/of.h>
++#include <linux/of_clk.h>
+ 
+ #ifdef CONFIG_COMMON_CLK
+ 
+@@ -890,13 +891,10 @@ struct clk_hw *of_clk_hw_simple_get(struct of_phandle_args *clkspec,
+ struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data);
+ struct clk_hw *of_clk_hw_onecell_get(struct of_phandle_args *clkspec,
+ 				     void *data);
+-unsigned int of_clk_get_parent_count(struct device_node *np);
+ int of_clk_parent_fill(struct device_node *np, const char **parents,
+ 		       unsigned int size);
+-const char *of_clk_get_parent_name(struct device_node *np, int index);
+ int of_clk_detect_critical(struct device_node *np, int index,
+ 			    unsigned long *flags);
+-void of_clk_init(const struct of_device_id *matches);
+ 
+ #else /* !CONFIG_OF */
+ 
+@@ -943,26 +941,16 @@ of_clk_hw_onecell_get(struct of_phandle_args *clkspec, void *data)
+ {
+ 	return ERR_PTR(-ENOENT);
+ }
+-static inline unsigned int of_clk_get_parent_count(struct device_node *np)
+-{
+-	return 0;
+-}
+ static inline int of_clk_parent_fill(struct device_node *np,
+ 				     const char **parents, unsigned int size)
+ {
+ 	return 0;
+ }
+-static inline const char *of_clk_get_parent_name(struct device_node *np,
+-						 int index)
+-{
+-	return NULL;
+-}
+ static inline int of_clk_detect_critical(struct device_node *np, int index,
+ 					  unsigned long *flags)
+ {
+ 	return 0;
+ }
+-static inline void of_clk_init(const struct of_device_id *matches) {}
+ #endif /* CONFIG_OF */
+ 
+ /*
+diff --git a/include/linux/of_clk.h b/include/linux/of_clk.h
+new file mode 100644
+index 0000000000000000..b27da9f164cbd221
+--- /dev/null
++++ b/include/linux/of_clk.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * OF clock helpers
++ */
++
++#ifndef __LINUX_OF_CLK_H
++#define __LINUX_OF_CLK_H
++
++#if defined(CONFIG_COMMON_CLK) && defined(CONFIG_OF)
++
++unsigned int of_clk_get_parent_count(struct device_node *np);
++const char *of_clk_get_parent_name(struct device_node *np, int index);
++void of_clk_init(const struct of_device_id *matches);
++
++#else /* !CONFIG_COMMON_CLK || !CONFIG_OF */
++
++static inline unsigned int of_clk_get_parent_count(struct device_node *np)
++{
++	return 0;
++}
++static inline const char *of_clk_get_parent_name(struct device_node *np,
++						 int index)
++{
++	return NULL;
++}
++static inline void of_clk_init(const struct of_device_id *matches) {}
++
++#endif /* !CONFIG_COMMON_CLK || !CONFIG_OF */
++
++#endif /* __LINUX_OF_CLK_H */
+-- 
+2.7.4
