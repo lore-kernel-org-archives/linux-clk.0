@@ -1,109 +1,50 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1522665945-28147-4-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-References: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
- <1522665945-28147-4-git-send-email-tdas@codeaurora.org>
-Message-ID: <152303280515.143116.7021012753371503067@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 3/3] clk: qcom: gdsc: Add support to poll CFG register to check
- GDSC state
-Date: Fri, 06 Apr 2018 09:40:05 -0700
+In-Reply-To: <a0c390ae-53fe-5d17-1ebf-d55e805f4118@ti.com>
+References: <20180417173038.25510-1-brgl@bgdev.pl> <20180417173038.25510-5-brgl@bgdev.pl>
+ <a0c390ae-53fe-5d17-1ebf-d55e805f4118@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 18 Apr 2018 10:03:46 +0200
+Message-ID: <CAMRc=Md_BaaV1UedisxnvXx0eopEAOj5zF3rox775NUHcf5qJg@mail.gmail.com>
+Subject: Re: [PATCH v6 4/7] remoteproc/davinci: prepare and unprepare the
+ clock where needed
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: Suman Anna <s-anna@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-04-02 03:45:45)
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index e89584e..e0c83ba 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -83,6 +88,38 @@ static int gdsc_poll_status(struct gdsc *sc, unsigned =
-int reg, bool en)
->         return -ETIMEDOUT;
->  }
-> =
+2018-04-18 7:27 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+> On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> We're currently switching the platform to using the common clock
+>> framework. We need to explicitly prepare and unprepare the rproc
+>> clock.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> Acked-by: Suman Anna <s-anna@ti.com>
+>> Reviewed-by: David Lechner <david@lechnology.com>
+>
+> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+>
+> This should be safe to apply to v4.17-rc1 as well (for inclusion in v4.18).
+>
+> Bartosz, I noticed that CONFIG_REMOTEPROC and the DA8XX driver is not
+> enabled in davinci_all_defconfig. Can you please send a patch enabling
+> that too?
+>
+> Thanks,
+> Sekhar
 
-> +static int gdsc_is_enabled_by_poll_cfg_reg(struct gdsc *sc, bool en)
-> +{
-> +       u32 val;
-> +       int ret;
-> +
-> +       ret =3D regmap_read(sc->regmap, sc->gdscr + CFG_GDSCR_OFFSET, &va=
-l);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (en)
-> +               return !!(val & GDSC_POWER_UP_COMPLETE);
-> +       else
-> +               return !(val & GDSC_POWER_DOWN_COMPLETE);
+Sure, will do.
 
-Make this into
-
-	if (en)
-		return ...
-
-	return ...
-
-> +}
-> +
-> +static int gdsc_poll_cfg_status(struct gdsc *sc, bool en)
-> +{
-> +       ktime_t start =3D ktime_get();
-> +       ktime_t timeout =3D
-> +               (sc->flags & GDS_TIMEOUT) ? TIMEOUT_US_GDS : TIMEOUT_US;
-> +
-> +       do {
-> +               if (gdsc_is_enabled_by_poll_cfg_reg(sc, en) =3D=3D en)
-> +                       return 0;
-> +       } while (ktime_us_delta(ktime_get(), start) < timeout);
-> +
-> +       if (gdsc_is_enabled_by_poll_cfg_reg(sc, en) =3D=3D en)
-> +               return 0;
-> +
-> +       return -ETIMEDOUT;
-> +}
-> +
->  static int gdsc_toggle_logic(struct gdsc *sc, bool en)
->  {
->         int ret;
-> @@ -106,6 +143,9 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
->                 return 0;
->         }
-> =
-
-> +       if (sc->flags & POLL_CFG_GDSCR)
-> +               return gdsc_poll_cfg_status(sc, en);
-> +
->         if (sc->gds_hw_ctrl) {
->                 status_reg =3D sc->gds_hw_ctrl;
->                 /*
-> @@ -258,8 +298,12 @@ static int gdsc_disable(struct generic_pm_domain *do=
-main)
->                  */
->                 udelay(1);
-> =
-
-> -               reg =3D sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
-> -               ret =3D gdsc_poll_status(sc, reg, true);
-> +               if (sc->flags & POLL_CFG_GDSCR) {
-> +                       ret =3D gdsc_poll_cfg_status(sc, true);
-> +               } else {
-> +                       reg =3D sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->g=
-dscr;
-> +                       ret =3D gdsc_poll_status(sc, reg, true);
-> +               }
-
-Maybe this can be pushed into the gdsc_poll_status() function so that
-we can keep the "how do we poll status bit" logic in one place.
-
->                 if (ret)
->                         return ret;
->         }
+Bart
