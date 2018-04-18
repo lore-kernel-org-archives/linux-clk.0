@@ -1,91 +1,154 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr40052.outbound.protection.outlook.com ([40.107.4.52]:11785
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752911AbeDRNDg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Apr 2018 09:03:36 -0400
+From: Jacky Bai <ping.bai@nxp.com>
+To: Stefan Agner <stefan@agner.ch>
+CC: "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "jacky.baip@gmail.com" <jacky.baip@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v6 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy
+ divider and busy mux
+Date: Wed, 18 Apr 2018 13:03:31 +0000
+Message-ID: <HE1PR04MB31135AACF6954F400B02675087B60@HE1PR04MB3113.eurprd04.prod.outlook.com>
+References: <1521512644-25265-1-git-send-email-ping.bai@nxp.com>
+ <2da28adb2c0478f5303473f3be327237@agner.ch>
+In-Reply-To: <2da28adb2c0478f5303473f3be327237@agner.ch>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <624665d7af39686d331c863ba7b9af4d@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
- David Brown <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk-owner@vger.kernel.org
-References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
- <1520493495-3084-5-git-send-email-anischal@codeaurora.org>
- <152150657982.254778.14132033041219278756@swboyd.mtv.corp.google.com>
- <624665d7af39686d331c863ba7b9af4d@codeaurora.org>
-Message-ID: <152296902025.143116.550838977705296456@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2 4/4] clk: qcom: Add Global Clock controller (GCC) driver for
- SDM845
-Date: Thu, 05 Apr 2018 15:57:00 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-04-03 05:24:41)
-> On 2018-03-20 06:12, Stephen Boyd wrote:
-> > Quoting Amit Nischal (2018-03-07 23:18:15)
-> >> +};
-> >> +
-> >> +static struct clk_rcg2 gcc_sdcc4_apps_clk_src =3D {
-> >> +       .cmd_rcgr =3D 0x1600c,
-> >> +       .mnd_width =3D 8,
-> >> +       .hid_width =3D 5,
-> >> +       .parent_map =3D gcc_parent_map_0,
-> >> +       .freq_tbl =3D ftbl_gcc_sdcc4_apps_clk_src,
-> >> +       .safe_src_freq_tbl =3D &cxo_safe_src_f,
-> > =
+> Subject: Re: [PATCH v6 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy
+> divider and busy mux
+>=20
+> Hi Bai,
+>=20
+> On 20.03.2018 03:24, Bai Ping wrote:
+> > The busy divider and busy mux is actually used by the system critical
+> > clocks, so add 'CLK_IS_CRITICAL' to clocks registered with these two ty=
+pe.
+>=20
+> This seems that this patch breaks i.MX 6ULL. Our Colibri iMX6ULL freezes =
+with
+> v4.17-rc1:
+>=20
 
-> > Why does sdcc have safe src stuff? Is something turning on the sdcc clk
-> > outside of our control?
-> =
+Thanks for you report this. I will try on imx6ull and look into it.
 
-> I will get more details on this and will get back.
-
-Any news?
-
-> =
-
-> > =
-
-> >> +       .clkr.hw.init =3D &(struct clk_init_data){
-> >> +               .name =3D "gcc_sdcc4_apps_clk_src",
-> >> +               .parent_names =3D gcc_parent_names_0,
-> >> +               .num_parents =3D 4,
-> >> +               .flags =3D CLK_SET_RATE_PARENT,
-> >> +               .ops =3D &clk_rcg2_shared_ops,
-> >> +       },
-> >> +};
-> >> +
-> > [...]
-> >> +
-> >> +static struct clk_branch gcc_video_xo_clk =3D {
-> >> +       .halt_reg =3D 0xb028,
-> >> +       .halt_check =3D BRANCH_HALT,
-> >> +       .clkr =3D {
-> >> +               .enable_reg =3D 0xb028,
-> >> +               .enable_mask =3D BIT(0),
-> >> +               .hw.init =3D &(struct clk_init_data){
-> >> +                       .name =3D "gcc_video_xo_clk",
-> >> +                       .flags =3D CLK_IS_CRITICAL,
-> >> +                       .ops =3D &clk_branch2_ops,
-> >> +
-> > =
-
-> > These things have no parents and we mark them critical. Why are we
-> > even exposing them to the kernel? Are they not on by default? Are we
-> > going to change these to non-critical at some point in the future?
-> =
-
-> These clocks are not enabled by default and going to video or other
-> multimedia cores so we are marking them as critical and need to expose
-> to the kernel. As of now, there is no plan to change these to =
-
-> non-critical.
-
-Ok. Can we open code enabling these branches in the driver probe then?
-Still seems wasteful if nobody uses these.
-
-Put another way, either a driver (or other clk controller) should be
-toggling these gates at runtime or we should enable them once and leave
-them out of the framework. If the driver approach is taken, then the
-drivers should be able to turn the clks on and off to save some power.
+BR
+Jacky Bai
+> [    0.000000] Booting Linux on physical CPU 0x0
+> [    0.000000] Linux version 4.17.0-rc1-00002-g7529efa14a7c-dirty
+> (ags@trochilidae) (gcc version 7.2.1 20171011 (Linaro GCC 7.2-2017.11))
+> #517 SMP Wed Apr 18 11:11:07 CEST 2018
+> [    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7),
+> cr=3D10c5387d
+> [    0.000000] CPU: div instructions available: patching division code
+> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
+> instruction cache
+> [    0.000000] OF: fdt: Machine model: Toradex Colibri iMX6ULL 512MB on
+> Colibri Evaluation Board V3
+> [    0.000000] earlycon: ec_imx6q0 at MMIO 0x02020000 (options
+> '115200n8')
+> [    0.000000] bootconsole [ec_imx6q0] enabled
+> [    0.000000] debug: ignoring loglevel setting.
+> [    0.000000] Memory policy: Data cache writealloc
+> [    0.000000] cma: Reserved 256 MiB at 0x90000000
+> [    0.000000] On node 0 totalpages: 131072
+> [    0.000000]   Normal zone: 1024 pages used for memmap
+> [    0.000000]   Normal zone: 0 pages reserved
+> [    0.000000]   Normal zone: 131072 pages, LIFO batch:31
+> [    0.000000] random: fast init done
+> [    0.000000] percpu: Embedded 16 pages/cpu @(ptrval) s35084 r8192
+> d22260 u65536
+> [    0.000000] pcpu-alloc: s35084 r8192 d22260 u65536 alloc=3D16*4096
+> [    0.000000] pcpu-alloc: [0] 0
+> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages:
+> 130048
+> [    0.000000] Kernel command line:
+> mtdparts=3Dgpmi-nand:512k(mx6ull-bcb),1536k(u-boot1)ro,1536k(u-
+> boot2)ro,512k(u-boot-env),-(ubi)
+> earlycon user_debug=3D31 ignore_loglevel ubi.mtd=3Dubi root=3Dubi0:rootfs=
+ rw
+> rootfstype=3Dubifs ubi.fm_autoconvert=3D1 consoleblank=3D0
+> no_console_suspend=3D1 console=3Dtty1 console=3Dttymxc0,115200n8
+> [    0.000000] Dentry cache hash table entries: 65536 (order: 6, 262144
+> bytes)
+> [    0.000000] Inode-cache hash table entries: 32768 (order: 5, 131072
+> bytes)
+> [    0.000000] Memory: 243904K/524288K available (8192K kernel code,
+> 365K rwdata, 2720K rodata, 1024K init, 389K bss, 18240K reserved, 262144K
+> cma-reserved)
+> [    0.000000] Virtual kernel memory layout:
+> [    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+> [    0.000000]     fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
+> [    0.000000]     vmalloc : 0xe0800000 - 0xff800000   ( 496 MB)
+> [    0.000000]     lowmem  : 0xc0000000 - 0xe0000000   ( 512 MB)
+> [    0.000000]     modules : 0xbf000000 - 0xc0000000   (  16 MB)
+> [    0.000000]       .text : 0x(ptrval) - 0x(ptrval)   (9184 kB)
+> [    0.000000]       .init : 0x(ptrval) - 0x(ptrval)   (1024 kB)
+> [    0.000000]       .data : 0x(ptrval) - 0x(ptrval)   ( 366 kB)
+> [    0.000000]        .bss : 0x(ptrval) - 0x(ptrval)   ( 390 kB)
+> [    0.000000] SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D1,
+> Nodes=3D1
+> [    0.000000] Hierarchical RCU implementation.
+> [    0.000000]  RCU restricting CPUs from NR_CPUS=3D4 to nr_cpu_ids=3D1.
+> [    0.000000] RCU: Adjusting geometry for rcu_fanout_leaf=3D16,
+> nr_cpu_ids=3D1
+> [    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+> <freeze>
+>=20
+> Yet need to understand what is exactly going on.
+>=20
+> --
+> Stefan
+>=20
+>=20
+> >
+> > Signed-off-by: Bai Ping <ping.bai@nxp.com>
+> > Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > ---
+> >  change from V3->v4:
+> >  - fix a typo in commit log
+> >  change from v4->v5:
+> >  - optimize the commit subject
+> >  change from v5->v6:
+> >  - no change
+> > ---
+> >  drivers/clk/imx/clk-busy.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+> > index 6df3389..9903652 100644
+> > --- a/drivers/clk/imx/clk-busy.c
+> > +++ b/drivers/clk/imx/clk-busy.c
+> > @@ -101,7 +101,7 @@ struct clk *imx_clk_busy_divider(const char *name,
+> > const char *parent_name,
+> >
+> >  	init.name =3D name;
+> >  	init.ops =3D &clk_busy_divider_ops;
+> > -	init.flags =3D CLK_SET_RATE_PARENT;
+> > +	init.flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL;
+> >  	init.parent_names =3D &parent_name;
+> >  	init.num_parents =3D 1;
+> >
+> > @@ -175,7 +175,7 @@ struct clk *imx_clk_busy_mux(const char *name,
+> > void __iomem *reg, u8 shift,
+> >
+> >  	init.name =3D name;
+> >  	init.ops =3D &clk_busy_mux_ops;
+> > -	init.flags =3D 0;
+> > +	init.flags =3D CLK_IS_CRITICAL;
+> >  	init.parent_names =3D parent_names;
+> >  	init.num_parents =3D num_parents;
