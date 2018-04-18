@@ -1,53 +1,55 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Suman Anna <s-anna@ti.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 2/7] ARM: davinci: dts: add a reset control to the dsp node
-Date: Tue, 17 Apr 2018 19:30:33 +0200
-Message-Id: <20180417173038.25510-3-brgl@bgdev.pl>
-In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
-References: <20180417173038.25510-1-brgl@bgdev.pl>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1524052351-14103-1-git-send-email-yamada.masahiro@socionext.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Maxime Ripard <maxime.ripard@bootlin.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <stephen.boyd@linaro.org>, Nicholas Piggin <npiggin@gmail.com>,
+ linux-kernel@vger.kernel.org,
+ Masahiro Yamada <yamada.masahiro@socionext.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
+References: <1524052351-14103-1-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <152409404578.51482.16644171573677016161@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: sunxi-ng: replace lib-y with obj-y
+Date: Wed, 18 Apr 2018 16:27:25 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Quoting Masahiro Yamada (2018-04-18 04:52:31)
+> We had commit 06e226c7fb23 ("clk: sunxi-ng: Move all clock types to a
+> library") and commit 799c43415442 ("kbuild: thin archives make default
+> for all archs") in the same development cycle, from different trees.
+> =
 
-The davinci-rproc driver will soon use the reset framework. Add the
-resets property to the dsp node in da850.dtsi.
+> With migration to the thin archive, the entire drivers/clk/sunxi-ng/lib.a
+> is linked to the vmlinux.  This does not break build, but we do not get
+> any size saving.
+> =
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
----
- arch/arm/boot/dts/da850.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+> However, we do not need to go back to the individual Kconfig options.
+> The default configuration pulls in all (or most) of the CCU parts anyway.
+> Also, once we enable CONFIG_LD_DEAD_CODE_DATA_ELIMINATION, we can simply
+> list all files with obj-y, and the linker will drop all unused functions
+> by itself.
+> =
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index d56e670d9a32..250aeee53202 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -109,6 +109,7 @@
- 		interrupt-parent = <&intc>;
- 		interrupts = <28>;
- 		clocks = <&psc0 15>;
-+		resets = <&psc0 15>;
- 		status = "disabled";
- 	};
- 	soc@1c00000 {
--- 
-2.17.0
+> After the long discussion [1], people there agreed to fix this, but
+> nobody sent a patch after all.  I am doing it now.
+> =
+
+> I lifted up CONFIG_SUNXI_CCU to drivers/clk/Makefile because everything
+> in drivers/clk/sunxi-ng/ depends on SUNXI_CCU.
+> =
+
+> [1] https://patchwork.kernel.org/patch/9796521/
+> =
+
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+
+Thanks for remembering to take care of this. I forgot about it all.
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+
+Or I can pick this up directly. Let me know.
