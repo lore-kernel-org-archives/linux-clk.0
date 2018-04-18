@@ -1,93 +1,40 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v6 4/7] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-Date: Thu, 19 Apr 2018 21:54:23 +0800
-Message-ID: <20180419135426.155794-5-yixun.lan@amlogic.com>
-In-Reply-To: <20180419135426.155794-1-yixun.lan@amlogic.com>
-References: <20180419135426.155794-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de
+Cc: fabio.estevam@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] clk: imx6ul: fix periph clk2 clock mux selection
+Date: Wed, 18 Apr 2018 14:52:54 +0200
+Message-Id: <20180418125254.4397-1-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add dt-bindings headers for the Meson-AXG's AO clock and
-reset controller.
+According to the data sheet the 3rd choice is the bypass clock
+of pll2. This should not have any effect in practice as this
+selection is not used currently.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
- include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
- create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+ drivers/clk/imx/clk-imx6ul.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
-new file mode 100644
-index 000000000000..61955016a55b
---- /dev/null
-+++ b/include/dt-bindings/clock/axg-aoclkc.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define CLKID_AO_REMOTE		0
-+#define CLKID_AO_I2C_MASTER	1
-+#define CLKID_AO_I2C_SLAVE	2
-+#define CLKID_AO_UART1		3
-+#define CLKID_AO_UART2		4
-+#define CLKID_AO_IR_BLASTER	5
-+#define CLKID_AO_SAR_ADC	6
-+#define CLKID_AO_CLK81		7
-+#define CLKID_AO_SAR_ADC_SEL	8
-+#define CLKID_AO_SAR_ADC_DIV	9
-+#define CLKID_AO_SAR_ADC_CLK	10
-+#define CLKID_AO_ALT_XTAL	11
-+
-+#endif
-diff --git a/include/dt-bindings/reset/axg-aoclkc.h b/include/dt-bindings/reset/axg-aoclkc.h
-new file mode 100644
-index 000000000000..d342c0b6b2a7
---- /dev/null
-+++ b/include/dt-bindings/reset/axg-aoclkc.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define RESET_AO_REMOTE		0
-+#define RESET_AO_I2C_MASTER	1
-+#define RESET_AO_I2C_SLAVE	2
-+#define RESET_AO_UART1		3
-+#define RESET_AO_UART2		4
-+#define RESET_AO_IR_BLASTER	5
-+
-+#endif
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 12320118f8de..2ed7dae39008 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -40,7 +40,7 @@ static const char *axi_alt_sels[] = { "pll2_pfd2_396m", "pll3_pfd1_540m", };
+ static const char *axi_sels[] = {"periph", "axi_alt_sel", };
+ static const char *periph_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll2_198m", };
+ static const char *periph2_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll4_audio_div", };
+-static const char *periph_clk2_sels[] = { "pll3_usb_otg", "osc", "osc", };
++static const char *periph_clk2_sels[] = { "pll3_usb_otg", "osc", "pll2_bypass_src", };
+ static const char *periph2_clk2_sels[] = { "pll3_usb_otg", "osc", };
+ static const char *periph_sels[] = { "periph_pre", "periph_clk2", };
+ static const char *periph2_sels[] = { "periph2_pre", "periph2_clk2", };
 -- 
-2.15.1
+2.17.0
