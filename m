@@ -1,154 +1,142 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr40052.outbound.protection.outlook.com ([40.107.4.52]:11785
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752911AbeDRNDg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:03:36 -0400
-From: Jacky Bai <ping.bai@nxp.com>
-To: Stefan Agner <stefan@agner.ch>
-CC: "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "jacky.baip@gmail.com" <jacky.baip@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v6 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy
- divider and busy mux
-Date: Wed, 18 Apr 2018 13:03:31 +0000
-Message-ID: <HE1PR04MB31135AACF6954F400B02675087B60@HE1PR04MB3113.eurprd04.prod.outlook.com>
-References: <1521512644-25265-1-git-send-email-ping.bai@nxp.com>
- <2da28adb2c0478f5303473f3be327237@agner.ch>
-In-Reply-To: <2da28adb2c0478f5303473f3be327237@agner.ch>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<airlied@linux.ie>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
+CC: <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Sean
+ Wang <sean.wang@mediatek.com>
+Subject: [PATCH v1 4/4] arm: dts: mt7623: add Mali-450 and related device nodes
+Date: Wed, 18 Apr 2018 18:24:56 +0800
+Message-ID: <b9f4f8566bd2c20df528b760447d09aef5aa418f.1524044917.git.sean.wang@mediatek.com>
+In-Reply-To: <cover.1524044917.git.sean.wang@mediatek.com>
+References: <cover.1524044917.git.sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-> Subject: Re: [PATCH v6 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy
-> divider and busy mux
->=20
-> Hi Bai,
->=20
-> On 20.03.2018 03:24, Bai Ping wrote:
-> > The busy divider and busy mux is actually used by the system critical
-> > clocks, so add 'CLK_IS_CRITICAL' to clocks registered with these two ty=
-pe.
->=20
-> This seems that this patch breaks i.MX 6ULL. Our Colibri iMX6ULL freezes =
-with
-> v4.17-rc1:
->=20
+From: Sean Wang <sean.wang@mediatek.com>
 
-Thanks for you report this. I will try on imx6ull and look into it.
+Add nodes for Mali-450 device, g3dsys device providing required clock
+gate and reset control and larb3 offering an arbiter through iommu for
+controlling access to external memory requested from Mali-450.
 
-BR
-Jacky Bai
-> [    0.000000] Booting Linux on physical CPU 0x0
-> [    0.000000] Linux version 4.17.0-rc1-00002-g7529efa14a7c-dirty
-> (ags@trochilidae) (gcc version 7.2.1 20171011 (Linaro GCC 7.2-2017.11))
-> #517 SMP Wed Apr 18 11:11:07 CEST 2018
-> [    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7),
-> cr=3D10c5387d
-> [    0.000000] CPU: div instructions available: patching division code
-> [    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
-> instruction cache
-> [    0.000000] OF: fdt: Machine model: Toradex Colibri iMX6ULL 512MB on
-> Colibri Evaluation Board V3
-> [    0.000000] earlycon: ec_imx6q0 at MMIO 0x02020000 (options
-> '115200n8')
-> [    0.000000] bootconsole [ec_imx6q0] enabled
-> [    0.000000] debug: ignoring loglevel setting.
-> [    0.000000] Memory policy: Data cache writealloc
-> [    0.000000] cma: Reserved 256 MiB at 0x90000000
-> [    0.000000] On node 0 totalpages: 131072
-> [    0.000000]   Normal zone: 1024 pages used for memmap
-> [    0.000000]   Normal zone: 0 pages reserved
-> [    0.000000]   Normal zone: 131072 pages, LIFO batch:31
-> [    0.000000] random: fast init done
-> [    0.000000] percpu: Embedded 16 pages/cpu @(ptrval) s35084 r8192
-> d22260 u65536
-> [    0.000000] pcpu-alloc: s35084 r8192 d22260 u65536 alloc=3D16*4096
-> [    0.000000] pcpu-alloc: [0] 0
-> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages:
-> 130048
-> [    0.000000] Kernel command line:
-> mtdparts=3Dgpmi-nand:512k(mx6ull-bcb),1536k(u-boot1)ro,1536k(u-
-> boot2)ro,512k(u-boot-env),-(ubi)
-> earlycon user_debug=3D31 ignore_loglevel ubi.mtd=3Dubi root=3Dubi0:rootfs=
- rw
-> rootfstype=3Dubifs ubi.fm_autoconvert=3D1 consoleblank=3D0
-> no_console_suspend=3D1 console=3Dtty1 console=3Dttymxc0,115200n8
-> [    0.000000] Dentry cache hash table entries: 65536 (order: 6, 262144
-> bytes)
-> [    0.000000] Inode-cache hash table entries: 32768 (order: 5, 131072
-> bytes)
-> [    0.000000] Memory: 243904K/524288K available (8192K kernel code,
-> 365K rwdata, 2720K rodata, 1024K init, 389K bss, 18240K reserved, 262144K
-> cma-reserved)
-> [    0.000000] Virtual kernel memory layout:
-> [    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
-> [    0.000000]     fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
-> [    0.000000]     vmalloc : 0xe0800000 - 0xff800000   ( 496 MB)
-> [    0.000000]     lowmem  : 0xc0000000 - 0xe0000000   ( 512 MB)
-> [    0.000000]     modules : 0xbf000000 - 0xc0000000   (  16 MB)
-> [    0.000000]       .text : 0x(ptrval) - 0x(ptrval)   (9184 kB)
-> [    0.000000]       .init : 0x(ptrval) - 0x(ptrval)   (1024 kB)
-> [    0.000000]       .data : 0x(ptrval) - 0x(ptrval)   ( 366 kB)
-> [    0.000000]        .bss : 0x(ptrval) - 0x(ptrval)   ( 390 kB)
-> [    0.000000] SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D1,
-> Nodes=3D1
-> [    0.000000] Hierarchical RCU implementation.
-> [    0.000000]  RCU restricting CPUs from NR_CPUS=3D4 to nr_cpu_ids=3D1.
-> [    0.000000] RCU: Adjusting geometry for rcu_fanout_leaf=3D16,
-> nr_cpu_ids=3D1
-> [    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
-> <freeze>
->=20
-> Yet need to understand what is exactly going on.
->=20
-> --
-> Stefan
->=20
->=20
-> >
-> > Signed-off-by: Bai Ping <ping.bai@nxp.com>
-> > Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > ---
-> >  change from V3->v4:
-> >  - fix a typo in commit log
-> >  change from v4->v5:
-> >  - optimize the commit subject
-> >  change from v5->v6:
-> >  - no change
-> > ---
-> >  drivers/clk/imx/clk-busy.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-> > index 6df3389..9903652 100644
-> > --- a/drivers/clk/imx/clk-busy.c
-> > +++ b/drivers/clk/imx/clk-busy.c
-> > @@ -101,7 +101,7 @@ struct clk *imx_clk_busy_divider(const char *name,
-> > const char *parent_name,
-> >
-> >  	init.name =3D name;
-> >  	init.ops =3D &clk_busy_divider_ops;
-> > -	init.flags =3D CLK_SET_RATE_PARENT;
-> > +	init.flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL;
-> >  	init.parent_names =3D &parent_name;
-> >  	init.num_parents =3D 1;
-> >
-> > @@ -175,7 +175,7 @@ struct clk *imx_clk_busy_mux(const char *name,
-> > void __iomem *reg, u8 shift,
-> >
-> >  	init.name =3D name;
-> >  	init.ops =3D &clk_busy_mux_ops;
-> > -	init.flags =3D 0;
-> > +	init.flags =3D CLK_IS_CRITICAL;
-> >  	init.parent_names =3D parent_names;
-> >  	init.num_parents =3D num_parents;
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ arch/arm/boot/dts/mt7623.dtsi  | 70 ++++++++++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/mt7623a.dtsi |  4 +++
+ 2 files changed, 74 insertions(+)
+
+diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+index d1eb123..ace92b3 100644
+--- a/arch/arm/boot/dts/mt7623.dtsi
++++ b/arch/arm/boot/dts/mt7623.dtsi
+@@ -274,6 +274,17 @@
+ 		clock-names = "system-clk", "rtc-clk";
+ 	};
+ 
++	smi_common: smi@1000c000 {
++		compatible = "mediatek,mt7623-smi-common",
++			     "mediatek,mt2701-smi-common";
++		reg = <0 0x1000c000 0 0x1000>;
++		clocks = <&infracfg CLK_INFRA_SMI>,
++			 <&mmsys CLK_MM_SMI_COMMON>,
++			 <&infracfg CLK_INFRA_SMI>;
++		clock-names = "apb", "smi", "async";
++		power-domains = <&scpsys MT2701_POWER_DOMAIN_DISP>;
++	};
++
+ 	pwrap: pwrap@1000d000 {
+ 		compatible = "mediatek,mt7623-pwrap",
+ 			     "mediatek,mt2701-pwrap";
+@@ -305,6 +316,17 @@
+ 		reg = <0 0x10200100 0 0x1c>;
+ 	};
+ 
++	iommu: iommu@10205000 {
++		compatible = "mediatek,mt7623-m4u",
++			     "mediatek,mt2701-m4u";
++		reg = <0 0x10205000 0 0x1000>;
++		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&infracfg CLK_INFRA_M4U>;
++		clock-names = "bclk";
++		mediatek,larbs = <&larb3>;
++		#iommu-cells = <1>;
++	};
++
+ 	efuse: efuse@10206000 {
+ 		compatible = "mediatek,mt7623-efuse",
+ 			     "mediatek,mt8173-efuse";
+@@ -680,6 +702,54 @@
+ 		status = "disabled";
+ 	};
+ 
++	g3dsys: clock-controller@13000000 {
++		compatible = "mediatek,mt7623-g3dsys",
++			     "mediatek,mt2701-g3dsys",
++			     "syscon";
++		reg = <0 0x13000000 0 0x200>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++	larb3: larb@13010000 {
++		compatible = "mediatek,mt7623-smi-larb",
++			     "mediatek,mt2701-smi-larb";
++		reg = <0 0x13010000 0 0x1000>;
++		mediatek,smi = <&smi_common>;
++		mediatek,larb-id = <3>;
++		clocks = <&clk26m>, <&clk26m>;
++		clock-names = "apb", "smi";
++		power-domains = <&scpsys MT2701_POWER_DOMAIN_MFG>;
++	};
++
++	mali: gpu@13040000 {
++		compatible = "mediatek,mt7623-mali", "arm,mali-450";
++		reg = <0 0x13040000 0 0x30000>;
++		interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 171 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 172 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 173 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 174 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 175 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 176 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 177 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_SPI 180 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "gp", "gpmmu", "pp0", "ppmmu0", "pp1",
++				  "ppmmu1", "pp2", "ppmmu2", "pp";
++		clocks = <&topckgen CLK_TOP_MMPLL>,
++			 <&g3dsys CLK_G3DSYS_CORE>;
++		clock-names = "bus", "core";
++		power-domains = <&scpsys MT2701_POWER_DOMAIN_MFG>;
++		mediatek,larb = <&larb3>;
++		resets = <&g3dsys MT2701_G3DSYS_CORE_RST>;
++	};
++
++	mmsys: syscon@14000000 {
++		compatible = "mediatek,mt2701-mmsys", "syscon";
++		reg = <0 0x14000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	hifsys: syscon@1a000000 {
+ 		compatible = "mediatek,mt7623-hifsys",
+ 			     "mediatek,mt2701-hifsys",
+diff --git a/arch/arm/boot/dts/mt7623a.dtsi b/arch/arm/boot/dts/mt7623a.dtsi
+index 0735a1fb8..a42fd46 100644
+--- a/arch/arm/boot/dts/mt7623a.dtsi
++++ b/arch/arm/boot/dts/mt7623a.dtsi
+@@ -21,6 +21,10 @@
+ 	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
+ };
+ 
++&mali {
++	status = "disabled";
++};
++
+ &nandc {
+ 	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
+ };
+-- 
+2.7.4
