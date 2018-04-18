@@ -1,48 +1,42 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 18 Apr 2018 10:32:16 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	Abel Vesa <abelvesa@linux.com>, linux-imx@nxp.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] clk: imx: Set CLK_SET_RATE_GATE for gate and divider
+ clocks
+Message-ID: <20180418023214.GN25429@dragon>
+References: <1521812006-6173-1-git-send-email-abel.vesa@nxp.com>
+ <1523455409-7771-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <14b8384d-707d-42b7-b3ac-1ad914997a2e@ti.com>
-References: <20180417173038.25510-1-brgl@bgdev.pl> <20180417173038.25510-7-brgl@bgdev.pl>
- <14b8384d-707d-42b7-b3ac-1ad914997a2e@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 18 Apr 2018 10:56:30 +0200
-Message-ID: <CAMRc=Mfj=M2a8Dw1SCzc4DBG6B+B8gbkr9DKaaSKiEs9hN6Bag@mail.gmail.com>
-Subject: Re: [PATCH v6 6/7] remoteproc/davinci: use the reset framework
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Suman Anna <s-anna@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1523455409-7771-1-git-send-email-abel.vesa@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-04-18 7:44 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
-> On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> Switch to using the reset framework instead of handcoded reset routines
->> we used so far.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Looks good!
->
-> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
->
-> This depends on DaVinci gaining common clock / reset framework support
-> though. I am guessing remoteproc maintainers will have to be reminded
-> when its safe to apply.
->
-> Thanks,
-> Sekhar
+On Wed, Apr 11, 2018 at 05:03:29PM +0300, Abel Vesa wrote:
+> From: Shawn Guo <shawnguo@kernel.org>
+> 
+> Add flag CLK_SET_RATE_GATE for i.MX gate and divider clocks on which the
+> client drivers usually make clk_set_rate() call, so that the call will fail
+> when clock is still on instead of standing the risk of running into glitch
+> issue. Rate cannot be changed when the clock is enabled due to the glitchy
+> multiplexers.
+> 
+> Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+> [initial patch from imx internal repo]
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> [carried over from 3.14 and also applied the flag to newer functions]
+> ---
+> 
+> Changes since v1:
+>  - changed ownership as per initial patch
 
-Right, I assume you plan to apply the platform & DT patches from David
-for 4.18? We can then provide an immutable branch to remoteproc
-maintainers.
+IIRC, the patch was created on vendor kernel long time ago to work
+around a specific glitchy multiplexer issue seen on particular SoC.
+I'm not sure it's good for the upstream kernel today.
 
-Bart
+Shawn
