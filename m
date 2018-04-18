@@ -1,104 +1,103 @@
-Return-Path: <sricharan@codeaurora.org>
-Subject: Re: [PATCH v4 13/14] dt-bindings: cpufreq: Document
- operating-points-v2-kryo-cpu
-To: Viresh Kumar <viresh.kumar@linaro.org>, Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
- broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
- catalin.marinas@arm.com, will.deacon@arm.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- rnayak@codeaurora.org, amit.kucheria@linaro.org,
- nicolas.dechesne@linaro.org, celster@codeaurora.org, tfinkel@codeaurora.org
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
- <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
- <20180402093018.GC3572@vireshk-i7>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <7ca35b7a-6078-620b-4772-091e53ef6790@codeaurora.org>
-Date: Mon, 2 Apr 2018 20:37:54 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180402093018.GC3572@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v5 0/2] Misc patches to support clocks for SDM845
+Date: Wed, 18 Apr 2018 19:04:31 +0530
+Message-Id: <1524058473-15860-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Viresh,
+Changes in v5:
+1. Adressed review comments for v3 and v4 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/16/1129
+2. Removed bi_tcxo clock being modelled from the GCC driver, as RPMH clock
+   driver would provide the same. https://lkml.org/lkml/2018/4/13/685
+3. The GCC clock driver(patch 2) depends upon the below patches related to
+   GDSC operation and RPMh clock driver, which are under review.
+   https://lkml.org/lkml/2018/4/2/143
+   https://lkml.org/lkml/2018/4/13/685
 
-On 4/2/2018 3:00 PM, Viresh Kumar wrote:
-> +Sricharan,
-> 
-> On 30-03-18, 00:26, Ilia Lin wrote:
->> In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
->> that have KRYO processors, the CPU ferequencies subset and voltage value
->> of each OPP varies based on the silicon variant in use.
->> Qualcomm Technologies, Inc. Process Voltage Scaling Tables
->> defines the voltage and frequency value based on the msm-id in SMEM
->> and speedbin blown in the efuse combination.
->> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
->> to provide the OPP framework with required information.
->> This is used to determine the voltage and frequency value for each OPP of
->> operating-points-v2 table when it is parsed by the OPP framework.
->>
->> This change adds documentation.
->>
->> Change-Id: I1953f652a48249fb516d175f0e965a9510cd4209
->> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
->> ---
->>  .../devicetree/bindings/cpufreq/kryo-cpufreq.txt   | 693 +++++++++++++++++++++
->>  1 file changed, 693 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
->>
->> diff --git a/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
-> 
-> This should really go in opp directory.
-> 
->> new file mode 100644
->> index 0000000..20cef9d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/cpufreq/kryo-cpufreq.txt
->> @@ -0,0 +1,693 @@
->> +Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
->> +===================================
->> +
->> +In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
->> +that have KRYO processors, the CPU ferequencies subset and voltage value
->> +of each OPP varies based on the silicon variant in use.
->> +Qualcomm Technologies, Inc. Process Voltage Scaling Tables
->> +defines the voltage and frequency value based on the msm-id in SMEM
->> +and speedbin blown in the efuse combination.
->> +The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
->> +to provide the OPP framework with required information (existing HW bitmap).
->> +This is used to determine the voltage and frequency value for each OPP of
->> +operating-points-v2 table when it is parsed by the OPP framework.
->> +
->> +Required properties:
->> +--------------------
->> +In 'cpus' nodes:
->> +- operating-points-v2: Phandle to the operating-points-v2 table to use.
->> +
->> +In 'operating-points-v2' table:
->> +- compatible: Should be
->> +	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
->> +- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
->> +		efuse registers that has information about the
->> +		speedbin that is used to select the right frequency/voltage
->> +		value pair.
->> +		Please refer the for nvmem-cells
->> +		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
->> +		and also examples below.
-> 
-> Sricharan is also working on adding these, just make sure you guys do the same
-> thing..
-> 
+Changes in v4:
+1. Adressed review comments for v2 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/9/55.
+2. The GCC clock driver(patch 3) depends upon the below patches
+   related to GDSC operation and are under review.
 
- Right, i was adding a similar one for krait cores [1]. There is code common in the
- init sequence across both (little). Do you intent to make them common ?
+   https://lkml.org/lkml/2018/4/2/142
 
-Regards,
- Sricharan
+Changes in v3:
+1. Adressed review comments given for v2 series.
+2. The GCC clock driver(patch 3) depends upon the below patches related
+   to GDSC operation and are under review.
 
- [1] https://patchwork.kernel.org/patch/10261873/
+   https://lkml.org/lkml/2018/4/2/142
 
+Changes in v2:
+Fixup for recalc_rate ops for clk_rcg2_shared_ops:
+There could be few scenarios where shared clocks are configured
+at rate other than CXO by boot. In those cases there would be a
+mismatch between the rate calculated by the recalc shared ops
+and the actual HW register configuration. Fix the same by adding
+an additional check to read current src from CFG register and
+make a decision based on that.
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Changes in v1:
+https://lkml.org/lkml/2018/1/31/209
+
+This patch series does the miscellaneous changes to support
+clock nodes for SDM845. Below are the major changes for
+which the existing code does not have support.
+
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
+3. Add support for controlling Fabia PLL for which the support
+   is not available in existing alpha PLL code.
+4. Add Global Clock controller (GCC) driver for SDM845. This
+   should allow most non-multimedia device drivers to probe
+   and control their clocks.
+
+[v1] : https://lkml.org/lkml/2018/1/31/209
+[v2] : https://lkml.org/lkml/2018/3/8/495
+[v3] : https://www.spinics.net/lists/linux-arm-msm/msg35009.html
+[v4] : https://lkml.org/lkml/2018/4/9/79
+
+Amit Nischal (1):
+  clk: qcom: Configure the RCGs to a safe source as needed
+
+Taniya Das (1):
+  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-rcg.h                         |    7 +-
+ drivers/clk/qcom/clk-rcg2.c                        |  173 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 3456 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  237 ++
+ 7 files changed, 3882 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
