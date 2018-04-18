@@ -1,68 +1,67 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Suman Anna <s-anna@ti.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 4/7] remoteproc/davinci: prepare and unprepare the clock where needed
-Date: Tue, 17 Apr 2018 19:30:35 +0200
-Message-Id: <20180417173038.25510-5-brgl@bgdev.pl>
-In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
-References: <20180417173038.25510-1-brgl@bgdev.pl>
+Return-Path: <sean.wang@mediatek.com>
+From: <sean.wang@mediatek.com>
+To: <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<airlied@linux.ie>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
+CC: <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Sean
+ Wang <sean.wang@mediatek.com>
+Subject: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
+Date: Wed, 18 Apr 2018 18:24:54 +0800
+Message-ID: <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
+In-Reply-To: <cover.1524044917.git.sean.wang@mediatek.com>
+References: <cover.1524044917.git.sean.wang@mediatek.com>
+Return-Path: sean.wang@mediatek.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Sean Wang <sean.wang@mediatek.com>
 
-We're currently switching the platform to using the common clock
-framework. We need to explicitly prepare and unprepare the rproc
-clock.
+Add bindings to g3dsys providing necessary clock and reset control to
+Mali-450.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 2b24291337b7..f134192922e0 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	ret = clk_enable(dsp_clk);
-+	ret = clk_prepare_enable(dsp_clk);
- 	if (ret) {
--		dev_err(dev, "clk_enable() failed: %d\n", ret);
-+		dev_err(dev, "clk_prepare_enable() failed: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
- 	struct da8xx_rproc *drproc = rproc->priv;
- 
- 	davinci_clk_reset_assert(drproc->dsp_clk);
--	clk_disable(drproc->dsp_clk);
-+	clk_disable_unprepare(drproc->dsp_clk);
- 
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+new file mode 100644
+index 0000000..ff2d70c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+@@ -0,0 +1,30 @@
++MediaTek g3dsys controller
++============================
++
++The MediaTek g3dsys controller provides various clocks and reset controller to
++the GPU.
++
++Required Properties:
++
++- compatible: Should be:
++	- "mediatek,mt2701-g3dsys", "syscon":
++		for MT2701 SoC
++	- "mediatek,mt7623-ethsys", "mediatek,mt2701-g3dsys", "syscon":
++		for MT7623 SoC
++- #clock-cells: Must be 1
++- #reset-cells: Must be 1
++
++The ethsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++g3dsys: clock-controller@13000000 {
++	compatible = "mediatek,mt7623-g3dsys",
++		     "mediatek,mt2701-g3dsys",
++		     "syscon";
++	reg = <0 0x13000000 0 0x200>;
++	#clock-cells = <1>;
++	#reset-cells = <1>;
++};
 -- 
-2.17.0
+2.7.4
