@@ -1,54 +1,82 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Ripard <maxime.ripard@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
-	Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-gpio@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/4] Restore ULPI USB on Tegra20
-Date: Fri, 27 Apr 2018 02:58:14 +0300
-Message-Id: <20180426235818.10018-1-digetx@gmail.com>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 0/5] Use of_clk_get_parent_count() instead of open coding
+Date: Wed, 18 Apr 2018 16:50:00 +0200
+Message-Id: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+	Hi Mike, Stephen, et al,
 
-This series of patches fixes ULPI USB on Tegra20. The original problem
-was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
-incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
-that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
-with the USB for the devices that have CDEV2 being enabled by bootloader.
-The patch got into the kernel and later Marc Dietrich found that USB
-stopped working on the "paz00" Tegra20 board. After a bit of discussion
-was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
-driver was setting CDEV2's parent incorrectly. The parent clock is actually
-determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
-the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
-providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
-suggestion), and then setting these clock muxes as parents for the CDEV1/2
-clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CDEV2
-(aka MCLK2) is the actual clock source for "ulpi-link".
+This patch series replaces open-coded versions of
+of_clk_get_parent_count() by calls to the helper function.
 
-Dmitry Osipenko (4):
-  clk: tegra20: Add DEV1/DEV2 OSC dividers
-  pinctrl: tegra20: Provide CDEV1/2 clock muxes
-  clk: tegra20: Set correct parents for CDEV1/2 clocks
-  ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+Changes compared to v2:
+  - Add Acked-by, Reviewed-by,
+  - Add SPDX-License-Identifier to <linux/of_clk.h>,
+  - Add <linux/of_clk.h> to clock section in MAINTAINERS (note that Rob
+    is still listed as a maintainer, too, due to the include/linux/of*.h
+    catch-all rule),
 
- arch/arm/boot/dts/tegra20.dtsi          |  2 +-
- drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
- drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
- drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
- drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
- 5 files changed, 55 insertions(+), 17 deletions(-)
+Changes compared to v1:
+  - Move OF clock helpers (a.o. of_clk_get_parent_count()) to their own
+    include file <linux/of_clk.h>, as suggested by Stephen,
+  - Update includes for the above change,
+  - Fix timer-sp804, now a dummy is available in the !CONFIG_COMMON_CLK
+    case,
+  - Fix a new occurrence.
+
+Note that patches 2-5 depend on the first patch.
+
+Thanks!
+
+Geert Uytterhoeven (5):
+  clk: Extract OF clock helpers in <linux/of_clk.h>
+  ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
+  soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of
+    open coding
+  soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
+  pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
+
+ MAINTAINERS                           |  1 +
+ drivers/clocksource/timer-sp804.c     |  3 ++-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c |  4 ++--
+ drivers/soc/rockchip/pm_domains.c     |  4 ++--
+ drivers/soc/tegra/pmc.c               |  3 ++-
+ include/linux/clk-provider.h          | 14 +-------------
+ include/linux/of_clk.h                | 30 ++++++++++++++++++++++++++++++
+ 7 files changed, 40 insertions(+), 19 deletions(-)
+ create mode 100644 include/linux/of_clk.h
 
 -- 
-2.17.0
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
