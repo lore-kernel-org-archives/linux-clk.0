@@ -1,140 +1,74 @@
-Return-Path: <bgolaszewski@baylibre.com>
+Return-Path: <yoshihiro.shimoda.uh@renesas.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk <linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED
+ DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 2/2] clk: renesas: cpg-mssr: Add support for R-Car E3
+Date: Wed, 18 Apr 2018 08:46:35 +0000
+Message-ID: <TY1PR06MB0992839D645B697E5D2DD2C9D8B60@TY1PR06MB0992.apcprd06.prod.outlook.com>
+References: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1523439447-1084-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdXViS-HoHWaO55FW3vepMt-KOmo-EpF1C-6N=Kq_WgV1Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdXViS-HoHWaO55FW3vepMt-KOmo-EpF1C-6N=Kq_WgV1Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Fri, 27 Apr 2018 14:04:19 +0200
-Message-ID: <CAMpxmJUCOHqds-zVz736fma7EDZ_o6PpbHMwtFF8wRXJMHCqzA@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v9_00=2F27=5D_ARM=3A_davinci=3A_convert_to_common?=
-	=?UTF-8?Q?_clock_framework=E2=80=8B?=
-To: Sekhar Nori <nsekhar@ti.com>, David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, linux-devicetree <devicetree@vger.kernel.org>,
-	arm-soc <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-04-27 2:17 GMT+02:00 David Lechner <david@lechnology.com>:
-> This series converts mach-davinci to use the common clock framework.
->
-> The series works like this, the first 3 patches fix some issues with the clock
-> drivers that have already been accepted into the mainline kernel.
->
-> Then, starting with "ARM: davinci: pass clock as parameter to
-> davinci_timer_init()", we get the mach code ready for the switch by adding the
-> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
-> around the legacy clocks so that we can switch easily between the old and the
-> new.
->
-> "ARM: davinci: switch to common clock framework" actually flips the switch
-> to start using the new clock drivers. Then the next 8 patches remove all
-> of the old clock code.
->
-> The final four patches add device tree clock support to the one SoC that
-> supports it.
->
-> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
-> board file).
->
->
-> Changes:
->
-> v9 changes (also see individual patches for details):
-> - Rebased on linux-davnci/master (f5e3203bb775)
-> - Dropped drivers/clk patches that landed in v4.17
-> - New drivers/clk patches for early boot special case
-> - New patch for ti,davinci-timer device tree bindings
-> - Updated mach/davinci patches to register clocks in early boot when needed
->
-> v8 changes (also see individual patches for details):
-> - Rebased on linux-davinci/master
-> - Dropped use of __init and __initconst attributes in clk drivers
-> - Add clkdev lookups for PLL SYSCLKs
-> - Fix genpd clock reference counting issue
-> - Fix PSC clock driver loading order issue
-> - Fix typo in device tree and add more power-domains properties
->
-> v7 changes (also see individual patches for details):
-> - Rebased on linux-davinci/master (v4.16-rc)
-> - Convert clock drivers to platform devices
-> - New patch "ARM: davinci: pass clock as parameter to davinci_timer_init()"
-> - Fix issues with lcdk and aemif clock lookups and power domains
-> - Fixed other minor issues brought up in v6 review
->
-> v6 changes (also see individual patches for details):
-> - All of the device tree bindings are changed
-> - All of the clock drivers are changed significantly
-> - Fixed issues brought up during review of v5
-> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from this
->   series and submitted separately
->
-> v5 changes:
-> - Basically, this is an entirely new series
-> - Patches are broken up into bite-sized pieces
-> - Converted PSC clock driver to use regmap
-> - Restored "force" flag for certain DA850 clocks
-> - Added device tree bindings
-> - Moved more of the clock init to drivers/clk
-> - Fixed frequency scaling (maybe*)
->
-> * I have frequency scaling using cpufreq-dt, so I know the clocks are doing
->   what they need to do to make this work, but I haven't figured out how to
->   test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will be
->   sent separately after this series has landed.)
->
->
-> Dependencies:
->
-> Only one dependency didn't land in v4.17. It is just a runtime dependency for
-> the LCDK board to make the display work.
->
-> - "drm/tilcdc: Fix setting clock divider for omap-l138"[1]
->
-> [1]: https://patchwork.freedesktop.org/patch/210696/
->
-> You can find a working branch with everything included (plus a few extras, like
-> cpufreq-dt) in the "common-clk-v8" branch of https://github.com/dlech/ev3dev-kernel.git.
->
->
-> Testing/debugging for the uninitiated:
->
-> I only have one device to test with, which is based on da850, so I will
-> have to rely on others to do some testing here. Since we are dealing with
-> clocks, if something isn't working, you most likely won't see output on
-> the serial port. To figure out what is going on, you need to enable...
->
->         CONFIG_DEBUG_LL=y
->         CONFIG_EARLY_PRINTK=y
->
-> and add "earlyprintk clk_ignore_unused" to the kernel command line options.
-> You may need to select a different UART for this depending on your board. I
-> think UART1 is the default in the kernel configuration.
->
-> On da850 devices comment out the lines:
->
->         else
->                 clk_set_parent(clk, parent->clk);
->
-> in da850.c or, if using device tree, comment out the lines:
->
->         assigned-clocks = <&async3_clk>;
->         assigned-clock-parents = <&pll1_sysclk 2>;
->
-> in da850.dtsi when doing earlyprintk, otherwise the UART1 and UART2 clock
-> source will change during boot and cause garbled output after a point.
->
->
-
-Hi David, Sekhar,
-
-Patches 3-5 from the reset series[1] should go in before this series
-or we'll be getting WARN's from the common clock framework core about
-unprepared clocks on boards using the remoteproc driver.
-
-Thanks,
-Bartosz
-
-[1] https://lkml.org/lkml/2018/4/17/1000
+SGkgR2VlcnQtc2FuLA0KDQpUaGFuayB5b3UgZm9yIHRoZSByZXZpZXchDQoNCj4gRnJvbTogR2Vl
+cnQgVXl0dGVyaG9ldmVuLCBTZW50OiBGcmlkYXksIEFwcmlsIDEzLCAyMDE4IDc6MzcgUE0NCj4g
+DQo+IEhpIFNoaW1vZGEtc2FuLA0KPiANCj4gT24gV2VkLCBBcHIgMTEsIDIwMTggYXQgMTE6Mzcg
+QU0sIFlvc2hpaGlybyBTaGltb2RhDQo+IDx5b3NoaWhpcm8uc2hpbW9kYS51aEByZW5lc2FzLmNv
+bT4gd3JvdGU6DQo8c25pcD4NCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvY2xvY2svcmVuZXNhcyxjcGctbXNzci50eHQNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svcmVuZXNhcyxjcGctbXNzci50eHQNCj4gPiBAQCAt
+MjYsNiArMjYsNyBAQCBSZXF1aXJlZCBQcm9wZXJ0aWVzOg0KPiA+ICAgICAgICAtICJyZW5lc2Fz
+LHI4YTc3OTY1LWNwZy1tc3NyIiBmb3IgdGhlIHI4YTc3OTY1IFNvQyAoUi1DYXIgTTMtTikNCj4g
+PiAgICAgICAgLSAicmVuZXNhcyxyOGE3Nzk3MC1jcGctbXNzciIgZm9yIHRoZSByOGE3Nzk3MCBT
+b0MgKFItQ2FyIFYzTSkNCj4gPiAgICAgICAgLSAicmVuZXNhcyxyOGE3Nzk4MC1jcGctbXNzciIg
+Zm9yIHRoZSByOGE3Nzk4MCBTb0MgKFItQ2FyIFYzSCkNCj4gPiArICAgICAgLSAicmVuZXNhcyxy
+OGE3Nzk5MC1jcGctbXNzciIgZm9yIHRoZSByOGE3Nzk5NSBTb0MgKFItQ2FyIEUzKQ0KPiANCj4g
+cjhhNzc5OTAgU29DDQoNCk9vcHMhIEkgd2lsbCBmaXggdGhpcyBpbiB2Mi4NCg0KPiA+ICAgICAg
+ICAtICJyZW5lc2FzLHI4YTc3OTk1LWNwZy1tc3NyIiBmb3IgdGhlIHI4YTc3OTk1IFNvQyAoUi1D
+YXIgRDMpDQo+IA0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9yZW5l
+c2FzL3I4YTc3OTkwLWNwZy1tc3NyLmMNCj4gPiBAQCAtMCwwICsxLDI5MSBAQA0KPiANCj4gPiAr
+c3RhdGljIGNvbnN0IHN0cnVjdCBjcGdfY29yZV9jbGsgcjhhNzc5OTBfY29yZV9jbGtzW10gX19p
+bml0Y29uc3QgPSB7DQo+IA0KPiA+ICsgICAgICAgLyogQ29yZSBDbG9jayBPdXRwdXRzICovDQo+
+IA0KPiA+ICsgICAgICAgREVGX0dFTjNfUEUoInMwZDZjIiwgICBSOEE3Nzk5MF9DTEtfUzBENkMs
+IENMS19TMCwgNiwgQ0xLX1BFLCA2KSwNCj4gDQo+IC4uLiBDTEtfUEUsIDIpLA0KDQpJIHdpbGwg
+Zml4IHRoaXMuDQoNCj4gPiArICAgICAgIERFRl9HRU4zX1BFKCJzM2QxYyIsICAgUjhBNzc5OTBf
+Q0xLX1MzRDFDLCBDTEtfUzMsIDEsIENMS19QRSwgMSksDQo+ID4gKyAgICAgICBERUZfR0VOM19Q
+RSgiczNkMmMiLCAgIFI4QTc3OTkwX0NMS19TM0QyQywgQ0xLX1MzLCAyLCBDTEtfUEUsIDIpLA0K
+PiA+ICsgICAgICAgREVGX0dFTjNfUEUoInMzZDRjIiwgICBSOEE3Nzk5MF9DTEtfUzNENEMsIENM
+S19TMywgNCwgQ0xLX1BFLCA0KSwNCj4gPiArDQo+ID4gKyAgICAgICBERUZfRElWNlAxKCJjYW5m
+ZCIsICAgIFI4QTc3OTkwX0NMS19DQU5GRCwgQ0xLX1BMTDBENiwgMHgyNDQpLA0KPiANCj4gSSBj
+YW5ub3QgY29uZmlybSB0aGUgcGFyZW50LCBhcyBTZWN0aW9uIDguMi4xOCAoIkNBTi1GRCBDbG9j
+ayBGcmVxdWVuY3kNCj4gQ29udHJvbCBSZWdpc3RlciAoQ0FORkRDS0NSKSIpIGRvZXMgbm90IHNw
+ZWNpZnkgdGhlIHNvdXJjZSBjbG9jayBmcmVxdWVuY3kNCj4gZm9yIFItQ2FyIEUzICh1bmxpa2Ug
+Zm9yIEQzKS4gQnV0IDgwMCBNSHogc291bmRzIHNhbmUuDQoNCkFjY29yZGluZyB0byB0aGUgRmln
+dXJlIDguMWcsIFBMTDAgd2l0aCAxLzIgLS0gMS8zIC0tIENBTkZEIGNsb2NrLg0KU28sIHRoZSBw
+YXJlbnQgY2xvY2sgaXMgUExMMEQ2IChQTEwwIHdpdGggRElWIDYpLg0KDQo+ID4gKyAgICAgICBE
+RUZfRElWNlAxKCJjc2kwIiwgICAgIFI4QTc3OTkwX0NMS19DU0kwLCAgQ0xLX1BMTDFEMiwgMHgw
+MGMpLA0KPiANCj4gSSBjYW5ub3QgY29uZmlybSB0aGUgcGFyZW50IGNsb2NrLCBhcyBDU0kwIGlz
+IG5vdCBkb2N1bWVudGVkLg0KPiBCdXQgZ2l2ZW4gUExMMSBydW5zIGF0IDEuNiBHSHosIFBMTDEv
+MiBpcyBjb25zaXN0ZW50IHdpdGggUExMMS80IG9uIG90aGVyDQo+IFItQ2FyIEdlbjMgU29DcyB3
+aXRoIGEgZmFzdGVyIFBMTDEgKDMuMiBHSHopLg0KDQpJIGhlYXJkIHRoZSBDU0kwIHdpbGwgYmUg
+ZG9jdW1lbnRlZCBpbiB0aGUgZnV0dXJlLg0KDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgbXNz
+cl9tb2RfY2xrIHI4YTc3OTkwX21vZF9jbGtzW10gX19pbml0Y29uc3QgPSB7DQo+IA0KPiA+ICsg
+ICAgICAgREVGX01PRCgidmluNyIsICAgICAgICAgICAgICAgICAgODA0LCAgIFI4QTc3OTkwX0NM
+S19TMUQyKSwNCj4gPiArICAgICAgIERFRl9NT0QoInZpbjYiLCAgICAgICAgICAgICAgICAgIDgw
+NSwgICBSOEE3Nzk5MF9DTEtfUzFEMiksDQo+IA0KPiBWaW42LzcgaGF2ZSBiZWVuIHJlbW92ZWQg
+aW4gdGhlIEZlYi4gZXJyYXRhLg0KDQpPb3BzLCBJIHdpbGwgcmVtb3ZlIHRoZW0gaW4gdjIgcGF0
+Y2guDQoNCj4gV2l0aCB0aGUgYWJvdmUgZml4ZWQvY29uZmlybWVkOg0KPiBSZXZpZXdlZC1ieTog
+R2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCg0KVGhhbmtzIQ0K
+DQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+IEdye29ldGplLGVldGluZ31z
+LA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0
+IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2Vl
+cnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0
+ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20g
+dGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhp
+bmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVz
+IFRvcnZhbGRzDQo=
