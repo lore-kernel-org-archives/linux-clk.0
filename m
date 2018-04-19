@@ -1,100 +1,241 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20180313200548.fgexoxlha3coa7hs@verge.net.au>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdX=m9ui6GczF51SJH2X7Cw1OnxoH9pfk1DybpDX-A873Q@mail.gmail.com>
- <20180221161326.ktvf3mlzzxith5kw@verge.net.au> <CAMuHMdUTSmrWggMK4ehSL3Ux-JUzVpamTuToveuXogjuvGKkaw@mail.gmail.com>
- <20180221183223.qacrmmuzoqlzzbpo@verge.net.au> <CAMuHMdXCt1-coXGgtgFBm4rZLGBRMvSjbgeBSweiyKrOfCF0Xg@mail.gmail.com>
- <20180223081443.ak6kl3z72kamcxob@verge.net.au> <CAMuHMdVKPFSVTbnQy9RwAg13OC3R=H1PN9+1FyU0SDHQPa1cuQ@mail.gmail.com>
- <20180313200548.fgexoxlha3coa7hs@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 18 Apr 2018 15:37:29 +0200
-Message-ID: <CAMuHMdVAi+rU3+TLSp7YQSHzJKFyMH8ZbS3-d8yADKmfz1KiTA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/26] Fix watchdog on Renesas R-Car Gen2 and RZ/G1
-To: Simon Horman <horms@verge.net.au>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>, Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Guenter Roeck <linux@roeck-us.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1524058473-15860-2-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Nischal <anischal@codeaurora.org>
+References: <1524058473-15860-1-git-send-email-anischal@codeaurora.org>
+ <1524058473-15860-2-git-send-email-anischal@codeaurora.org>
+Message-ID: <152412344454.46528.15443283917197272382@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 1/2] clk: qcom: Configure the RCGs to a safe source as needed
+Date: Thu, 19 Apr 2018 00:37:24 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simon,
+Quoting Amit Nischal (2018-04-18 06:34:32)
+> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> index 2a7489a..9d9d59d 100644
+> --- a/drivers/clk/qcom/clk-rcg.h
+> +++ b/drivers/clk/qcom/clk-rcg.h
+> @@ -153,8 +155,10 @@ struct clk_rcg2 {
+>         u32                     cmd_rcgr;
+>         u8                      mnd_width;
+>         u8                      hid_width;
+> +       const u8                safe_src_index;
 
-On Tue, Mar 13, 2018 at 9:05 PM, Simon Horman <horms@verge.net.au> wrote:
-> I understand that the watchdog driver has been accepted and that as things
-> currently stand if it is enabled in the build it will be enabled in DT and
-> a crash will result. From my POV that is a regression so I have decided
-> to adopt the alternate plan proposed by Geert above: in short drop DT
-> patches (to avoid enabling broken driver) and enqueue mach-shmobile
-> patches (which don't make things any worse.
->
-> Patch-by-patch things are as follows.
->
-> Dropped from "[PATCH v5 00/26] Fix watchdog on Renesas R-Car Gen2 and RZ/G1":
->
-> 979d28f29742 ARM: dts: r8a7743: Adjust SMP routine size
-> 0b205f679f5d ARM: dts: r8a7745: Adjust SMP routine size
-> 2ad21a1d78b3 ARM: dts: r8a7790: Adjust SMP routine size
-> 82c978459c77 ARM: dts: r8a7791: Adjust SMP routine size
-> d303698e6ff3 ARM: dts: r8a7792: Adjust SMP routine size
-> d8b8b9a1e295 ARM: dts: r8a7793: Adjust SMP routine size
-> 70b3ab369773 ARM: dts: r8a7794: Adjust SMP routine size
->
-> ebf26cf1b1de ARM: dts: r8a7743: Add watchdog support to SoC dtsi
-> 5a4566ab3777 ARM: dts: r8a7745: Add watchdog support to SoC dtsi
-> acd58e2bb1e5 ARM: dts: r8a7790: Add watchdog support to SoC dtsi
-> e3f89168e72f ARM: dts: r8a7791: Add watchdog support to SoC dtsi
-> e76a6a69a1fc ARM: dts: r8a7794: Add watchdog support to SoC dtsi
-> 242cc1ab7f7c ARM: dts: iwg20m: Add watchdog support to SoM dtsi
-> 748ed07f6c7c ARM: dts: iwg22m: Add watchdog support to SoM dtsi
->
->
-> Dropped from "[PATCH/RFC 00/11] ARM: dts: rcar-gen2: Enable watchdog support":
->
-> c257202482e2 ARM: dts: r8a7792: Add RWDT node
-> 01ec04dec8eb ARM: dts: r8a7793: Add RWDT node
-> 8e6ebe4f2f94 ARM: dts: lager: Enable watchdog support
-> f223ad0198f6 ARM: dts: koelsch: Enable watchdog support
-> 1d14d2bb700d ARM: dts: porter: Enable watchdog support
-> bf71652fc955 ARM: dts: blanche: Enable watchdog support
-> 13a0b10aeea4 ARM: dts: wheat: Enable watchdog support
-> 4e247bf110b8 ARM: dts: gose: Enable watchdog support
-> 2dcbd24bbf5e ARM: dts: alt: Enable watchdog support
-> 7f6844c900b4 ARM: dts: silk: Enable watchdog support
->
-> And applied:
->
-> [v5] ARM: shmobile: rcar-gen2: Add watchdog support
-> [v5] ARM: shmobile: Add watchdog support
->
-> In the case of the last patch above I removed the #ifdef from the header file.
+Please drop const.
 
-I guess the time is ripe to apply the DTS patches again, in the following order:
-  1. SMP routine size adjustments,
-  2. Watchdog support additions to dtsi,
-  3. Watchdog enablement for dts?
+>         const struct parent_map *parent_map;
+>         const struct freq_tbl   *freq_tbl;
+> +       unsigned long           current_freq;
+>         struct clk_regmap       clkr;
+>  };
+> =
 
-Thanks!
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 984de9c..4d971bf 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> +
+> +static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rat=
+e,
+> +                                   unsigned long parent_rate)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       int ret;
+> +
+> +       /*
+> +        * Return if the RCG is currently disabled. This configuration
+> +        * update will happen as part of the RCG enable sequence.
+> +        */
+> +       if (!__clk_is_enabled(hw->clk)) {
+> +               rcg->current_freq =3D rate;
 
-Gr{oetje,eeting}s,
+We should probably check that 'rate' can be achieved during
+clk_set_rate() though. So I imagine we would need to do all the
+rounding, etc. and then cache the frequency at that point. Or cross
+fingers that this set rate op is never called without the round_rate op
+being called on it too.
 
-                        Geert
+> +               return 0;
+> +       }
+> +
+> +       ret =3D clk_rcg2_shared_force_enable_clear(hw, rate);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* Update current frequency with the requested frequency. */
+> +       rcg->current_freq =3D rate;
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Is this even needed? recalc_rate() would be called shortly after and do
+this too.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +
+> +       return ret;
+> +}
+> +
+> +static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
+> +               unsigned long rate, unsigned long parent_rate, u8 index)
+> +{
+> +       return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
+
+We lost index. I guess that's OK...
+
+> +}
+> +
+[...]
+> +
+> +static unsigned long clk_rcg2_get_safe_src_rate(struct clk_hw *hw)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       int index;
+> +
+> +       index =3D qcom_find_src_index(hw, rcg->parent_map, rcg->safe_src_=
+index);
+
+Why are we finding it though? Can't we just set the bit to be what it's
+supposed to be all the time at compile time instead of going through the
+parent map to find the register value?
+
+> +       if (index < 0)
+> +               index =3D 0;
+> +
+> +       return clk_hw_get_rate(clk_hw_get_parent_by_index(hw, index));
+
+I'm still failing to see why the 'rate' is so important for the safe
+source.
+
+> +}
+> +
+> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       struct freq_tbl safe_src_freq_tbl =3D { 0 };
+> +
+> +       safe_src_freq_tbl.freq =3D clk_rcg2_get_safe_src_rate(hw);
+> +
+> +       if (rcg->current_freq =3D=3D safe_src_freq_tbl.freq) {
+
+I'd prefer this became a bool condition like rcg->on_safe_src or
+something like that, instead of calculating the safe src frequency and
+comparing that to whatever recalc_rate saw.
+
+> +               safe_src_freq_tbl.src =3D rcg->safe_src_index;
+> +               /*
+> +                * Reconfigure the RCG - Incase if any other sub system u=
+pdates
+> +                * the div or src without the knowledge of application pr=
+ocessor
+> +                * subsystem and RCG could run at different rate other th=
+an
+> +                * software cached rate.
+
+This happens? But then if we force enable RCG and the src was changed by
+another subsystem and that src isn't enabled anymore we're going to get
+a stuck rcg switch. So they really shouldn't be switching it over to a
+non-safe src before handing it off to us. I can believe div, so ok we
+may need to update div, but then either the 'current_freq' is in the
+table that matches the safe src speed, and then we can call
+clk_rcg2_shared_force_enable_clear() or the frequency doesn't match safe
+src speed and we can still call clk_rcg2_shared_force_enable_clear()
+because it's in the freq table. I thought these three lines below in
+this if condition were purely there because the frequency table didn't
+hold the entry for safe src speed, sometimes.
+
+> +                */
+> +               clk_rcg2_set_force_enable(hw);
+> +               clk_rcg2_configure(rcg, &safe_src_freq_tbl);
+
+This could be a few more lines to regmap_write() the cfg reg with the
+proper index then leave the mnd registers empty, and then call
+update_config()? Instead of doing index gymnastics.
+
+> +               clk_rcg2_clear_force_enable(hw);
+> +
+> +               return 0;
+> +       }
+> +
+> +       /*
+> +        * Switch from safe source to the stashed mux selection. The curr=
+ent
+> +        * parent has already been prepared and enabled at this point, and
+> +        * the safe source is always on while application processor subsy=
+stem
+> +        * is online. Therefore, the RCG can safely switch its source.
+> +        */
+> +
+> +       return clk_rcg2_shared_force_enable_clear(hw, rcg->current_freq);
+
+Ok maybe it's because we may boot up, rate is safe src speed in
+hardware, that entry is not in the freq table, recalc_rate() is called
+and that finds safe src speed and assigns it into current_freq. I can
+believe that. So in this case, the above if condition is going to catch
+it and allow enable to be called before clk_set_rate().
+
+How about changing 'current_freq' to literally a struct freq_table
+member, that stores a copy of the frequency table entry to use or
+constructs the entry on the fly when the frequency doesn't exist in the
+plan? At boot time, that could be populated with the value we read from
+hardware, and then otherwise when we call disable() it would just copy
+it over into the member and on enable() it would slam it into the
+hardware and do update_config().
+
+Or we could even just read the M, N, D, and CFG registers and save them
+off at driver probe time or during disable and then restore them on
+enable. Make a pointer in clk_rcg2 to some regcache structure and then
+assign those statically in the SoC driver to avoid wasting space for
+each RCG out there. The recalc_rate() function could fill in the cache
+too if there's some special bit set indicating it needs to load it
+initially, and then a new recalc_rate() function could be written to
+operate on the mini-cache of register values for these clks. We could
+even go a step further and have the clk_set_rate() path write into the
+cache when the clk is disabled to update the mnd and cfg and bypass the
+cache when the clk is enabled.
+
+It would be super nice if regmap could handle all of this too, so we
+could enable caching for a few registers, regmap write into them and
+skip the update_config() step when clk disabled, and then flush the
+cache when we enable, update_config(), and disable caching for the
+registers. recalc_rate() would work unchanged then because it would
+always hit in the cache when caching is on, or read the hardware when
+caching was off. We would need something that lets us bypass the cache
+though and write directly when we force the safe src. There's already
+some regmap caching code, so it might work with some more APIs added. Or
+we could go the custom cache route and see how bad it is.
+
+> +}
+> +
+> +static void clk_rcg2_shared_disable(struct clk_hw *hw)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       struct freq_tbl safe_src_freq_tbl =3D { 0 };
+> +
+> +       safe_src_freq_tbl.src =3D rcg->safe_src_index;
+> +       safe_src_freq_tbl.freq =3D clk_rcg2_get_safe_src_rate(hw);
+> +
+> +       /*
+> +        * Park the RCG at a safe configuration - sourced off from safe s=
+ource.
+> +        * Force enable and disable the RCG while configuring it to safeg=
+uard
+> +        * against any update signal coming from the downstream clock.
+> +        * The current parent is still prepared and enabled at this point=
+, and
+> +        * the safe source is always on while application processor subsy=
+stem
+> +        * is online. Therefore, the RCG can safely switch its parent.
+> +        */
+> +       clk_rcg2_set_force_enable(hw);
+> +       clk_rcg2_configure(rcg, &safe_src_freq_tbl);
+
+Again, slam in index and call update_config() directly.
+
+> +       clk_rcg2_clear_force_enable(hw);
+> +}
