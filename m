@@ -1,50 +1,48 @@
-Return-Path: <krzk@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <066e917b-7207-9c10-4d6c-07273c6f49d9@samsung.com>
-References: <20180424203239.21885-1-krzk@kernel.org> <CGME20180424203409epcas2p45f55e5a5d211e78d4cadc3c4ffa5a9c0@epcas2p4.samsung.com>
- <20180424203239.21885-9-krzk@kernel.org> <066e917b-7207-9c10-4d6c-07273c6f49d9@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 25 Apr 2018 14:55:03 +0200
-Message-ID: <CAJKOXPcOCSKbRMEn738MwvS6f2DhxNPDb0BcNn0FY2Jqx1MtbQ@mail.gmail.com>
-Subject: Re: [RFC 08/10] spi: s3c64xx: samsung: Remove support for Exynos5440
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>,
-	Mark Brown <broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>
+Return-Path: <sean.wang@mediatek.com>
+Message-ID: <1524109802.12959.10.camel@mtkswgap22>
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
+From: Sean Wang <sean.wang@mediatek.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: <airlied@linux.ie>, <devicetree@vger.kernel.org>,
+	<linux-mediatek@lists.infradead.org>, <mark.rutland@arm.com>,
+	<matthias.bgg@gmail.com>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Thu, 19 Apr 2018 11:50:02 +0800
+In-Reply-To: <152410791532.46528.10083030894445315558@swboyd.mtv.corp.google.com>
+References: <cover.1524044917.git.sean.wang@mediatek.com>
+	 <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
+	 <152410791532.46528.10083030894445315558@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 2:49 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 04/24/2018 10:32 PM, Krzysztof Kozlowski wrote:
->> The Exynos5440 is not actively developed, there are no development
->> boards available and probably there are no real products with it.
->> Remove wide-tree support for Exynos5440.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> It's good you didn't remove S3C64XX_SPI_QUIRK_POLL entirely as it will
-> be needed for Exynos5433 ISP SPI controllers.
+On Wed, 2018-04-18 at 20:18 -0700, Stephen Boyd wrote:
+> Quoting sean.wang@mediatek.com (2018-04-18 03:24:54)
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > Add bindings to g3dsys providing necessary clock and reset control to
+> > Mali-450.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> >  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
+> 
+> Why isn't this under bindings/clock/ ?
+> 
 
-Ah, actually I did not plan to skip it... I just missed it :).
-I should check affected drivers if this removal left any unused
-symbols (except the one mentioned).
+Tons of bindings for clock controller have been present at
+binding/arm/mediatek. g3dsys just have a follow-up to them.
 
-Thanks for hint!
+It's worth another patch moving them all from bindings/arm/mediatek/ to
+bindings/clock/mediatek.
 
-Krzysztof
+what's your opinion for either doing it prior to g3dsys binding being
+added or doing it in the future ?
+
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
