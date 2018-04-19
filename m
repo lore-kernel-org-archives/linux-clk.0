@@ -1,71 +1,69 @@
-Return-Path: <jae.hyun.yoo@linux.intel.com>
-From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-	stable <stable@vger.kernel.org>
-Subject: [PATCH] clk:aspeed: Fix reset bits for PCI/VGA and PECI
-Date: Thu, 26 Apr 2018 10:22:32 -0700
-Message-Id: <20180426172232.12535-1-jae.hyun.yoo@linux.intel.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:39984 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750996AbeDSGfh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Apr 2018 02:35:37 -0400
+Received: by mail-it0-f67.google.com with SMTP id u62-v6so5361644ita.5
+        for <linux-clk@vger.kernel.org>; Wed, 18 Apr 2018 23:35:36 -0700 (PDT)
+MIME-Version: 1.0
+In-Reply-To: <CAMty3ZAfBZSc9f5mRxSaYzW6W1JkVkJ7+swMAm3Gg_EFWUkULw@mail.gmail.com>
+References: <20180316175354.21437-1-icenowy@aosc.io> <20180316175354.21437-4-icenowy@aosc.io>
+ <CAMty3ZBOSXu=+jQpsdnykioDGsp=VphSnzQdDDs_hh3Y1FPKyg@mail.gmail.com>
+ <CAGb2v64-sWsFfHThVrcE5ivrf6kZSZa_tkB_GtC=Z+1TLpWV_Q@mail.gmail.com> <CAMty3ZAfBZSc9f5mRxSaYzW6W1JkVkJ7+swMAm3Gg_EFWUkULw@mail.gmail.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Thu, 19 Apr 2018 12:05:36 +0530
+Message-ID: <CAMty3ZBAbMzRaSwWat+irbxALcOCuEHzsL6yOQJ4AkC9N8Ugxg@mail.gmail.com>
+Subject: Re: [PATCH 3/7] bus: add bus driver for accessing Allwinner A64 DE2
+To: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit fixes incorrect setting of reset bits for PCI/VGA and
-PECI modules.
+On Sat, Apr 14, 2018 at 4:16 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> On Sat, Apr 14, 2018 at 4:00 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+>> On Sat, Apr 14, 2018 at 6:25 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>> On Fri, Mar 16, 2018 at 11:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>>>> The "Display Engine 2.0" (usually called DE2) on the Allwinner A64 SoC
+>>>> is different from the ones on other Allwinner SoCs. It requires a SRAM
+>>>> region to be claimed, otherwise all DE2 subblocks won't be accessible.
+>>>>
+>>>> Add a bus driver for the Allwinner A64 DE2 part which claims the SRAM
+>>>> region when probing.
+>>>
+>>> Along with this bus driver, we also need
+>>> drivers/gpu/drm/sun4i/sun4i_drv.c which can usually drive the
+>>> pipelines like mixer0 and 1 are the cases for A64?
+>>
+>> I imagine that's the next part to be sent out, after the hardware
+>> representation in the device tree has been decided on.
+>
+> Yeah, this hardware representation along with separate bus driver
+> going like in another direction especially if we add pipelines support
+> to it, may be we can add sram stuff to platdata of existinf
+> sun4i_drv.c
 
-1. Reset bit for PCI/VGA is 8.
-2. PECI reset bit is missing so added bit 10 as its reset bit.
+Look like SRAM init during sun4i_drv is unable to claim or map the
+memory? do we have any suggestion on adding 'allwinner,pipelines' ? is
+it ok to add one more de which is compatible with sun4i_drv.c like
+this.
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
-Cc: stable <stable@vger.kernel.org>
----
- drivers/clk/clk-aspeed.c                 | 4 ++--
- include/dt-bindings/clock/aspeed-clock.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+de: display-engine {
+                compatible = "allwinner,sun8i-a64-display-engine",
+"allwinner,sun8i-h3-display-engine";
+                allwinner,pipelines = <&mixer0>;
+};
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 5eb50c31e455..2c23e7d7ba28 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -88,7 +88,7 @@ static const struct aspeed_gate_data aspeed_gates[] = {
- 	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
- 	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
- 	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
--	[ASPEED_CLK_GATE_BCLK] =	{  4, 10, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
-+	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
- 	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
- 	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
- 	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
-@@ -297,7 +297,7 @@ static const u8 aspeed_resets[] = {
- 	[ASPEED_RESET_JTAG_MASTER] = 22,
- 	[ASPEED_RESET_MIC]	= 18,
- 	[ASPEED_RESET_PWM]	=  9,
--	[ASPEED_RESET_PCIVGA]	=  8,
-+	[ASPEED_RESET_PECI]	= 10,
- 	[ASPEED_RESET_I2C]	=  2,
- 	[ASPEED_RESET_AHB]	=  1,
- };
-diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-index d3558d897a4d..8d69b9134bef 100644
---- a/include/dt-bindings/clock/aspeed-clock.h
-+++ b/include/dt-bindings/clock/aspeed-clock.h
-@@ -45,7 +45,7 @@
- #define ASPEED_RESET_JTAG_MASTER	3
- #define ASPEED_RESET_MIC		4
- #define ASPEED_RESET_PWM		5
--#define ASPEED_RESET_PCIVGA		6
-+#define ASPEED_RESET_PECI		6
- #define ASPEED_RESET_I2C		7
- #define ASPEED_RESET_AHB		8
- 
+Jagan.
+
 -- 
-2.17.0
+Jagan Teki
+Senior Linux Kernel Engineer | Amarula Solutions
+U-Boot, Linux | Upstream Maintainer
+Hyderabad, India.
