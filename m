@@ -1,50 +1,47 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 07/21] bindings: display: Add compatible for A64 HDMI
-Date: Mon, 30 Apr 2018 17:10:44 +0530
-Message-Id: <20180430114058.5061-8-jagan@amarulasolutions.com>
-In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 1/7] clk: meson: migrate to devm_of_clk_add_hw_provider API
+Date: Thu, 19 Apr 2018 21:54:20 +0800
+Message-ID: <20180419135426.155794-2-yixun.lan@amlogic.com>
+In-Reply-To: <20180419135426.155794-1-yixun.lan@amlogic.com>
+References: <20180419135426.155794-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-HDMI on Allwinner A64 has similar like H3/H5.
+There is a protential memory leak, as of_clk_del_provider is
+never called if of_clk_add_hw_provider has been executed.
+Fix this by using devm variant API.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Fixes: f8c11f79912d ("clk: meson: Add GXBB AO Clock and Reset controller driver")
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/meson/gxbb-aoclk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index f0fd9274a25d..9ea4353caadd 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -78,6 +78,7 @@ Required properties:
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 9ec23ae9a219..eebb580b9e0f 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -191,7 +191,7 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
-   - compatible: value must be one of:
-     * "allwinner,sun8i-a83t-dw-hdmi"
-+    * "allwinner,sun50i-a64-dw-hdmi"
-   - reg: base address and size of memory-mapped region
-   - reg-io-width: See dw_hdmi.txt. Shall be 1.
-   - interrupts: HDMI interrupt number
+-	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+ 			&gxbb_aoclk_onecell_data);
+ }
+ 
 -- 
-2.14.3
+2.15.1
