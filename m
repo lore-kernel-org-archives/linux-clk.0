@@ -1,75 +1,48 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 5/5] pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
-Date: Tue, 10 Apr 2018 14:51:41 +0200
-Message-Id: <1523364701-15383-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
-References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 19 Apr 2018 22:24:42 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>, mark.rutland@arm.com,
+	devicetree@vger.kernel.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+	linux-kernel@vger.kernel.org, robh+dt@kernel.org, Linux-imx@nxp.com,
+	kernel@pengutronix.de, fabio.estevam@nxp.com, shengjiu.wang@nxp.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V2 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz
+ clock source
+Message-ID: <20180419142441.GW25429@dragon>
+References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
+ <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
+ <20180417142203.GM25429@dragon>
+ <152410785516.46528.12432838242068784117@swboyd.mtv.corp.google.com>
+ <20180419140236.GU25429@dragon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180419140236.GU25429@dragon>
 List-ID: <linux-clk.vger.kernel.org>
 
-A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
-Use of_clk_get_parent_count() instead of open coding"), replace it.
+On Thu, Apr 19, 2018 at 10:02:37PM +0800, Shawn Guo wrote:
+> On Wed, Apr 18, 2018 at 08:17:35PM -0700, Stephen Boyd wrote:
+> > Quoting Shawn Guo (2018-04-17 07:22:05)
+> > > On Mon, Mar 19, 2018 at 10:30:45AM +0800, Anson Huang wrote:
+> > > > On i.MX6SX SabreAuto board, there is external 24MHz clock
+> > > > source for analog clock2, add this clock source to clock tree.
+> > > > 
+> > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > > > ---
+> > > > changes since V1:
+> > > >       remove unnecessary clocks container.
+> > > 
+> > > I understand this is suggested by Fabio, but I'm afraid that it's not
+> > > going to work with imx_obtain_fixed_clock() call, which is coded to
+> > > look for clocks under /clocks node.
+> > > 
+> > 
+> > Should patch #1 be dropped from clk tree?
+> 
+> No.  Patch #1 is good.
 
-of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
-instead of <linux/clk-provider.h>.
+Sorry, Stephen.  I just had a closer look at the driver code, and I
+think it can be done in a better way.  So please drop patch #1 for now.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
-<linux/of_clk.h>".
-
-v2:
-  - New.
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 020d6d84639ca002..25e80a5370ca02f6 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -12,12 +12,12 @@
- 
- #include <linux/io.h>
- #include <linux/clk.h>
--#include <linux/clk-provider.h>
- #include <linux/gpio/driver.h>
- #include <linux/irqdomain.h>
- #include <linux/irqchip/chained_irq.h>
- #include <linux/export.h>
- #include <linux/of.h>
-+#include <linux/of_clk.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/of_irq.h>
-@@ -1361,7 +1361,7 @@ int sunxi_pinctrl_init_with_variant(struct platform_device *pdev,
- 			goto gpiochip_error;
- 	}
- 
--	ret = of_count_phandle_with_args(node, "clocks", "#clock-cells");
-+	ret = of_clk_get_parent_count(node);
- 	clk = devm_clk_get(&pdev->dev, ret == 1 ? NULL : "apb");
- 	if (IS_ERR(clk)) {
- 		ret = PTR_ERR(clk);
--- 
-2.7.4
+Shawn
