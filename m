@@ -1,59 +1,56 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Mon, 30 Apr 2018 10:46:44 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
-	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd
-	<sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>, <linux-clk@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 3/4] clk: tegra20: Set correct parents for CDEV1/2
- clocks
-Message-ID: <20180430074644.GL6835@tbergstrom-lnx.Nvidia.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180426235818.10018-4-digetx@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180426235818.10018-4-digetx@gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+To: Sean Wang <sean.wang@mediatek.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1524109802.12959.10.camel@mtkswgap22>
+Cc: airlied@linux.ie, devicetree@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, mark.rutland@arm.com,
+ matthias.bgg@gmail.com, mturquette@baylibre.com, robh+dt@kernel.org,
+ dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1524044917.git.sean.wang@mediatek.com>
+ <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
+ <152410791532.46528.10083030894445315558@swboyd.mtv.corp.google.com>
+ <1524109802.12959.10.camel@mtkswgap22>
+Message-ID: <152415874117.46528.7501317526173019067@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
+Date: Thu, 19 Apr 2018 10:25:41 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 02:58:17AM +0300, Dmitry Osipenko wrote:
-> Parents of CDEV1/2 clocks are determined by muxing of the corresponding
-> pins. Pinctrl driver now provides the CDEV1/2 clock muxes and hence
-> CDEV1/2 clocks could have correct parents. Set CDEV1/2 parents to the
-> corresponding muxes to fix the parents.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-By:  Peter De Schrijver <pdeschrijver@nvidia.com>
+Quoting Sean Wang (2018-04-18 20:50:02)
+> On Wed, 2018-04-18 at 20:18 -0700, Stephen Boyd wrote:
+> > Quoting sean.wang@mediatek.com (2018-04-18 03:24:54)
+> > > From: Sean Wang <sean.wang@mediatek.com>
+> > > =
 
-> ---
->  drivers/clk/tegra/clk-tegra20.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index 16cf4108f2ff..7e8b6de86d89 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -844,14 +844,12 @@ static void __init tegra20_periph_clk_init(void)
->  			     CLK_DIVIDER_POWER_OF_TWO, NULL);
->  
->  	/* cdev1 */
-> -	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
-> -	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
-> +	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_mux", 0,
->  				    clk_base, 0, 94, periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_CDEV1] = clk;
->  
->  	/* cdev2 */
-> -	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, 0, 26000000);
-> -	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_fixed", 0,
-> +	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_mux", 0,
->  				    clk_base, 0, 93, periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_CDEV2] = clk;
->  
-> -- 
-> 2.17.0
-> 
+> > > Add bindings to g3dsys providing necessary clock and reset control to
+> > > Mali-450.
+> > > =
+
+> > > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > > ---
+> > >  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++=
+++++++++++
+> > =
+
+> > Why isn't this under bindings/clock/ ?
+> > =
+
+> =
+
+> Tons of bindings for clock controller have been present at
+> binding/arm/mediatek. g3dsys just have a follow-up to them.
+> =
+
+> It's worth another patch moving them all from bindings/arm/mediatek/ to
+> bindings/clock/mediatek.
+> =
+
+> what's your opinion for either doing it prior to g3dsys binding being
+> added or doing it in the future ?
+> =
+
+
+Doing it at a later time is fine. Just wondering why they're all getting
+dumped into the arm/ directory.
