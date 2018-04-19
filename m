@@ -1,93 +1,44 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v4 0/3] Misc patches to support clocks for SDM845
-Date: Mon,  9 Apr 2018 11:44:50 +0530
-Message-Id: <1523254493-5313-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v6 3/7] dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+Date: Thu, 19 Apr 2018 21:54:22 +0800
+Message-ID: <20180419135426.155794-4-yixun.lan@amlogic.com>
+In-Reply-To: <20180419135426.155794-1-yixun.lan@amlogic.com>
+References: <20180419135426.155794-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes in v4:
-1. Adressed review comments for v2 version of GCC driver for SDM845
-   https://lkml.org/lkml/2018/4/9/55.
-2. The GCC clock driver(patch 3) depends upon the below patches
-   related to GDSC operation and are under review.
+Update the dt-binding documentation to support new compatible string
+for the Amlogic's Meson-AXG SoC.
 
-   https://lkml.org/lkml/2018/4/2/142
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v3:
-1. Adressed review comments given for v2 series.
-2. The GCC clock driver(patch 3) depends upon the below patches related
-   to GDSC operation and are under review.
-
-   https://lkml.org/lkml/2018/4/2/142
-
-Changes in v2:
-Fixup for recalc_rate ops for clk_rcg2_shared_ops:
-There could be few scenarios where shared clocks are configured
-at rate other than CXO by boot. In those cases there would be a
-mismatch between the rate calculated by the recalc shared ops
-and the actual HW register configuration. Fix the same by adding
-an additional check to read current src from CFG register and
-make a decision based on that.
-
-Changes in v1:
-https://lkml.org/lkml/2018/1/31/209
-
-This patch series does the miscellaneous changes to support
-clock nodes for SDM845. Below are the major changes for
-which the existing code does not have support.
-
-1. Clear hardware clock control bit of RCGs where HW clock
-   control bit is set by default so that software can control
-   those root clocks.
-2. Introduces clk_rcg2_shared_ops to support clock controller
-   drivers for SDM845. With new shared ops, RCGs with shared
-   branches will be configured to a safe source in disable
-   path and actual RCG update configuration will be done in
-   enable path instead of doing config update in set_rate.
-   In set_rate(), just cache the rate instead of doing actual
-   configuration update. Also each RCG in clock controller
-   driver will have their own safe configuration frequency
-   table to switch to safe frequency.
-3. Add support for controlling Fabia PLL for which the support
-   is not available in existing alpha PLL code.
-4. Add Global Clock controller (GCC) driver for SDM845. This
-   should allow most non-multimedia device drivers to probe
-   and control their clocks.
-
-[v1] : https://lkml.org/lkml/2018/1/31/209
-[v2] : https://lkml.org/lkml/2018/3/8/495
-[v3] : https://www.spinics.net/lists/linux-arm-msm/msg35009.html
-
-Amit Nischal (2):
-  clk: qcom: Clear hardware clock control bit of RCG
-  clk: qcom: Configure the RCGs to a safe source as needed
-
-Taniya Das (1):
-  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
-
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- drivers/clk/qcom/Kconfig                           |    9 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/clk-rcg.h                         |    7 +-
- drivers/clk/qcom/clk-rcg2.c                        |  176 +-
- drivers/clk/qcom/gcc-sdm845.c                      | 3546 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h        |  242 ++
- 7 files changed, 3979 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/qcom/gcc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
-
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+index 786dc39ca904..3a880528030e 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ 	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
+ 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
+ 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
++	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
+ 	followed by the common "amlogic,meson-gx-aoclkc"
+ 
+ - #clock-cells: should be 1.
+-- 
+2.15.1
