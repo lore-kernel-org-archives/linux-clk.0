@@ -1,93 +1,94 @@
-Return-Path: <boris.brezillon@bootlin.com>
-Date: Mon, 30 Apr 2018 07:58:47 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Marcin Ziemianowicz <marcin@ziemianowicz.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4] clk: at91: PLL recalc_rate() now using cached MUL
- and DIV values
-Message-ID: <20180430075847.29706679@bbrezillon>
-In-Reply-To: <20180429190111.14247-1-marcin@ziemianowicz.com>
-References: <20180429190111.14247-1-marcin@ziemianowicz.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Thu, 19 Apr 2018 15:42:21 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+	linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <stephen.boyd@linaro.org>,
+	Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+	Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: sunxi-ng: replace lib-y with obj-y
+Message-ID: <20180419134221.ufsc462fw7j7so6q@flea>
+References: <1524052351-14103-1-git-send-email-yamada.masahiro@socionext.com>
+ <152409404578.51482.16644171573677016161@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="itrnzyqajswcthfu"
+In-Reply-To: <152409404578.51482.16644171573677016161@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 29 Apr 2018 15:01:11 -0400
-Marcin Ziemianowicz <marcin@ziemianowicz.com> wrote:
 
-> When a USB device is connected to the USB host port on the SAM9N12 then
-> you get "-62" error which seems to indicate USB replies from the device
-> are timing out. Based on a logic sniffer, I saw the USB bus was running
-> at half speed.
-> 
-> The PLL code uses cached MUL and DIV values which get set in set_rate()
-> and applied in prepare(), but the recalc_rate() function instead
-> queries the hardware instead of using these cached values. Therefore,
-> if recalc_rate() is called between a set_rate() and prepare(), the
-> wrong frequency is calculated and later the USB clock divider for the
-> SAM9N12 SOC will be configured for an incorrect clock.
-> 
-> In my case, the PLL hardware was set to 96 Mhz before the OHCI
-> driver loads, and therefore the usb clock divider was being set
-> to /2 even though the OHCI driver set the PLL to 48 Mhz.
-> 
-> As an alternative explanation, I noticed this was fixed in the past by
-> 87e2ed338f1b ("clk: at91: fix recalc_rate implementation of PLL
-> driver") but the bug was later re-introduced by 1bdf02326b71 ("clk:
-> at91: make use of syscon/regmap internally").
-> 
-> Fixes: 1bdf02326b71 ("clk: at91: make use of syscon/regmap internally)
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+--itrnzyqajswcthfu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+On Wed, Apr 18, 2018 at 04:27:25PM -0700, Stephen Boyd wrote:
+> Quoting Masahiro Yamada (2018-04-18 04:52:31)
+> > We had commit 06e226c7fb23 ("clk: sunxi-ng: Move all clock types to a
+> > library") and commit 799c43415442 ("kbuild: thin archives make default
+> > for all archs") in the same development cycle, from different trees.
+> >=20
+> > With migration to the thin archive, the entire drivers/clk/sunxi-ng/lib=
+=2Ea
+> > is linked to the vmlinux.  This does not break build, but we do not get
+> > any size saving.
+> >=20
+> > However, we do not need to go back to the individual Kconfig options.
+> > The default configuration pulls in all (or most) of the CCU parts anywa=
+y.
+> > Also, once we enable CONFIG_LD_DEAD_CODE_DATA_ELIMINATION, we can simply
+> > list all files with obj-y, and the linker will drop all unused functions
+> > by itself.
+> >=20
+> > After the long discussion [1], people there agreed to fix this, but
+> > nobody sent a patch after all.  I am doing it now.
+> >=20
+> > I lifted up CONFIG_SUNXI_CCU to drivers/clk/Makefile because everything
+> > in drivers/clk/sunxi-ng/ depends on SUNXI_CCU.
+> >=20
+> > [1] https://patchwork.kernel.org/patch/9796521/
+> >=20
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+>=20
+> Thanks for remembering to take care of this. I forgot about it all.
+>=20
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+>=20
+> Or I can pick this up directly. Let me know.
 
-> ---
-> Thank you for bearing with me about this Boris.
-> 
-> Changes since V3:
->   Fix for double returns found by kbluild test robot
->   > Comments by Boris Brezillon about email formatting issues  
-> Changes since V2:
->   Removed all logging/debug messages I added
->   > Comment by Boris Brezillon about my fix being wrong addressed  
-> Changes since V1:
->   Added patch set cover letter
->   Shortened lines which were over >80 characters long
->   > Comment by Greg Kroah-Hartman about "from" field in email addressed
->   > Comment by Alan Stern about redundant debug lines addressed  
-> 
->  drivers/clk/at91/clk-pll.c | 13 +------------
->  1 file changed, 1 insertion(+), 12 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
-> index 7d3223fc..72b6091e 100644
-> --- a/drivers/clk/at91/clk-pll.c
-> +++ b/drivers/clk/at91/clk-pll.c
-> @@ -132,19 +132,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
->  					 unsigned long parent_rate)
->  {
->  	struct clk_pll *pll = to_clk_pll(hw);
-> -	unsigned int pllr;
-> -	u16 mul;
-> -	u8 div;
-> -
-> -	regmap_read(pll->regmap, PLL_REG(pll->id), &pllr);
-> -
-> -	div = PLL_DIV(pllr);
-> -	mul = PLL_MUL(pllr, pll->layout);
-> -
-> -	if (!div || !mul)
-> -		return 0;
->  
-> -	return (parent_rate / div) * (mul + 1);
-> +	return (parent_rate / pll->div) * (pll->mul + 1);
->  }
->  
->  static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,
+We'll probably have our usual round of patches that might generate
+some conflicts on the Makefile. I've picked it up with your A-b, and
+will send you a PR with it, as usual.
+
+Thanks !
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--itrnzyqajswcthfu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrYnLwACgkQ0rTAlCFN
+r3QKMRAAhWMtTHozTEcgveboPc1vDRrzjyW3FIsD/XLqE2y13uOUbfYTvilRIcc6
+goBQLZLJNw6335iR2RuBtqQ3PXUcCx0VaasAQ1aKBZHNHXV9QDX9+6stcfSHIyuI
+/Oyj5Ua5J8BZY666oDE7CRqQ13kS5YLv2G8+A2/hq3XULHsaEdDtCchnaKlzuYYK
+YPCtqbg0uufYw1mfCvloqLnjTevnJ1LLb/fftBjCSswfnaFXL7J2hU6dDG6FZBXu
+MeeM2E/mSvu8e1At/LLirExCKQDuFLp50SsqvXKYpXvLrZmtiOmwHmGXJu9et+Eb
+fDN5IRlDSxfCoCvQ8bbptjPAgqAVnlYpxI8dRFBx5s0RSCHsfdkt+LDZpOBnGZlU
+JKSH66Z561eAJh+vV31Ro9b4Fc2ifYKjuRxwq3BDWLTCeuxQP8/4jzdW3TXCwKFE
+bMBW178vOWhjwliCRTmrPVNAslm/fTJvGnr4WA3sUNxo5SUhhJ7zstibEKs07v3S
+NlrfvZVmgPGnAAvBCAt/jvspzTMoOruQXr9qrrf74kVP6Cw7mcr81VpFjoiOlRgT
+Au5FT1Gjp0G7pIBOjsxZkyfuAG9aADhz9uiFhKtGyKvYiSMIqdEgESr8TkixLwoR
+pQTrji6cnE8QBAKfwIPAok8Hji+dNMxR2SCJS1Ym6e0RGHnRpKc=
+=ywQA
+-----END PGP SIGNATURE-----
+
+--itrnzyqajswcthfu--
