@@ -1,73 +1,59 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 24 Apr 2018 09:39:07 -0500
-From: Rob Herring <robh@kernel.org>
-To: sean.wang@mediatek.com
-Cc: mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
-	matthias.bgg@gmail.com, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
-Message-ID: <20180424143907.eewrpzdmkhhux3lb@rob-hp-laptop>
-References: <cover.1524044917.git.sean.wang@mediatek.com>
- <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 7/7] clk: meson: drop CLK_IGNORE_UNUSED flag
+Date: Thu, 19 Apr 2018 21:54:26 +0800
+Message-ID: <20180419135426.155794-8-yixun.lan@amlogic.com>
+In-Reply-To: <20180419135426.155794-1-yixun.lan@amlogic.com>
+References: <20180419135426.155794-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 18, 2018 at 06:24:54PM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Add bindings to g3dsys providing necessary clock and reset control to
-> Mali-450.
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> new file mode 100644
-> index 0000000..ff2d70c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
-> @@ -0,0 +1,30 @@
-> +MediaTek g3dsys controller
-> +============================
-> +
-> +The MediaTek g3dsys controller provides various clocks and reset controller to
-> +the GPU.
-> +
-> +Required Properties:
-> +
-> +- compatible: Should be:
-> +	- "mediatek,mt2701-g3dsys", "syscon":
-> +		for MT2701 SoC
-> +	- "mediatek,mt7623-ethsys", "mediatek,mt2701-g3dsys", "syscon":
-> +		for MT7623 SoC
+Rely on drivers to request the clock explicitly.
 
-ethsys?
+Previous the kernel will leave the clock on while
+bootloader adready initilized the clock, this wasn't
+optimal way, so fix it here.
 
-> +- #clock-cells: Must be 1
-> +- #reset-cells: Must be 1
-> +
-> +The ethsys controller uses the common clk binding from
-> +Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-> +
-> +Example:
-> +
-> +g3dsys: clock-controller@13000000 {
-> +	compatible = "mediatek,mt7623-g3dsys",
-> +		     "mediatek,mt2701-g3dsys",
-> +		     "syscon";
-> +	reg = <0 0x13000000 0 0x200>;
-> +	#clock-cells = <1>;
-> +	#reset-cells = <1>;
-> +};
-> -- 
-> 2.7.4
-> 
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ drivers/clk/meson/axg-aoclk.c  | 1 -
+ drivers/clk/meson/gxbb-aoclk.c | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index a5d00ef12268..d68b3e8ef483 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -27,7 +27,6 @@ static struct clk_regmap axg_aoclk_##_name = {					\
+ 		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+-		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
+ 
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index e145ebcdef38..c4d6027653a3 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -69,7 +69,6 @@ static struct clk_regmap _name##_ao = {					\
+ 		.ops = &clk_regmap_gate_ops,				\
+ 		.parent_names = (const char *[]){ "clk81" },		\
+ 		.num_parents = 1,					\
+-		.flags = CLK_IGNORE_UNUSED,				\
+ 	},								\
+ }
+ 
+-- 
+2.15.1
