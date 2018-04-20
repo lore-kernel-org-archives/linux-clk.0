@@ -1,363 +1,421 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1523946530.2601.76.camel@baylibre.com>
-Subject: Re: [PATCH 1/3] clk: add duty cycle support
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Russell King <linux@armlinux.org.uk>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 17 Apr 2018 08:28:50 +0200
-In-Reply-To: <152394381701.51482.13679537430987320563@swboyd.mtv.corp.google.com>
-References: <20180416175743.20826-1-jbrunet@baylibre.com>
-	 <20180416175743.20826-2-jbrunet@baylibre.com>
-	 <152394381701.51482.13679537430987320563@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	geert+renesas@glider.be,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 2/2] clk: renesas: cpg-mssr: Add support for R-Car E3
+Date: Fri, 20 Apr 2018 21:27:44 +0900
+Message-Id: <1524227264-24896-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1524227264-24896-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1524227264-24896-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-04-16 at 22:43 -0700, Stephen Boyd wrote:
-> Quoting Jerome Brunet (2018-04-16 10:57:41)
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 7af555f0e60c..fff7890ae355 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -68,6 +68,8 @@ struct clk_core {
-> >         unsigned long           max_rate;
-> >         unsigned long           accuracy;
-> >         int                     phase;
-> > +       unsigned int            duty_num;
-> > +       unsigned int            duty_den;
-> 
-> Maybe this can be a struct?
-> 
-> 	struct duty {
-> 		unsigned int num;
-> 		unsigned int den;
-> 	};
-> 
-> Or even more generically, a struct frac?
+Initial support for R-Car E3 (r8a77990), including core and module
+clocks.
 
-Sure, I'll look into it
+Based on the Table 8.2g of "R-Car Series, 3rd Generation User's Manual:
+Hardware ((Rev. 0.80, Oct 31, 2017) with Manual Errata on Feb. 28, 2018".
 
-> 
-> >         struct hlist_head       children;
-> >         struct hlist_node       child_node;
-> >         struct hlist_head       clks;
-> > @@ -2401,6 +2403,164 @@ int clk_get_phase(struct clk *clk)
-> >  }
-> >  EXPORT_SYMBOL_GPL(clk_get_phase);
-> >  
-> > +static int clk_core_update_duty_cycle_nolock(struct clk_core *core)
-> > +{
-> > +       int ret;
-> > +       unsigned int num, den;
-> > +
-> > +       if (!core || !core->ops->get_duty_cycle)
-> 
-> Does !core happen?
+Inspried by patches by Takeshi Kihara in the BSP.
 
-With the passthrough mechanism, it does
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   3 +-
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a77990-cpg-mssr.c            | 289 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ 6 files changed, 304 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/renesas/r8a77990-cpg-mssr.c
 
-> 
-> > +               return 0;
-> > +
-> > +       /* Update the duty cycle if the callback is available */
-> > +       ret = core->ops->get_duty_cycle(core->hw, &num, &den);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       /* Don't trust the clock provider too much */
-> > +       if (den == 0 || (num > den))
-> 
-> Drop useless parenthesis please.
-
-Sure
-
-> 
-> > +               return -EINVAL;
-> > +
-> > +       core->duty_num = num;
-> > +       core->duty_den = den;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int clk_core_get_duty_cycle_nolock(struct clk_core *core,
-> > +                                         unsigned int *num,
-> > +                                         unsigned int *den)
-> > +{
-> > +       int ret;
-> > +
-> > +       if (!core)
-> > +               return 0;
-> 
-> Shouldn't this return 50%? At least it seems like the "no clk" case
-> should be the default 50% duty cycle case.
-
-Can't hurt, It is certainly better than leaving whatever was there.
-
-> 
-> > +
-> > +       ret = clk_core_update_duty_cycle_nolock(core);
-> > +
-> > +       if (!ret) {
-> > +               *num = core->duty_num;
-> > +               *den = core->duty_den;
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int clk_core_set_duty_cycle_nolock(struct clk_core *core,
-> > +                                         unsigned int num,
-> > +                                         unsigned int den)
-> > +{
-> > +       int ret;
-> > +
-> > +       lockdep_assert_held(&prepare_lock);
-> > +
-> > +       if (!core || !core->ops->set_duty_cycle)
-> 
-> Does the !core case happen?
-yep
-
-> 
-> > +               return 0;
-> > +
-> > +       if (clk_core_rate_is_protected(core))
-> > +               return -EBUSY;
-> > +
-> > +       trace_clk_set_duty_cycle(core, num, den);
-> > +
-> > +       ret = core->ops->set_duty_cycle(core->hw, num, den);
-> 
-> Is the assumption that we aren't going to need to adjust the duty cycle
-> of any parent clks when we set the duty cycle on a clk?
-
-I'm not sure I understand what you mean, but I don't make any assumption about
-the parent, Did I miss something ?
-
-> 
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       core->duty_num = num;
-> > +       core->duty_den = den;
-> > +
-> > +       trace_clk_set_duty_cycle_complete(core, num, den);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +/**
-> > + * clk_set_duty_cycle - adjust the duty cycle ratio of a clock signal
-> > + * @clk: clock signal source
-> > + * @ratio: duty cycle ratio in milli-percent
-> 
-> This doesn't match anymore.
-> 
-> > + *
-> > + * ADD BLURB HERE
-> 
-> Please do! :)
-
-Oops ... sorry about that.
-
-> 
-> > + */
-> > +int clk_set_duty_cycle(struct clk *clk, unsigned int num, unsigned int den)
-> > +{
-> > +       int ret;
-> > +
-> > +       if (!clk)
-> > +               return 0;
-> > +
-> > +       /* sanity check the ratio */
-> > +       if (den == 0 || (num > den))
-> 
-> Drop useless parenthesis please.
-sure
-
-> 
-> > +               return -EINVAL;
-> > +
-> > +       clk_prepare_lock();
-> > +
-> > +       if (clk->exclusive_count)
-> > +               clk_core_rate_unprotect(clk->core);
-> > +
-> > +       ret = clk_core_set_duty_cycle_nolock(clk->core, num, den);
-> > +
-> > +       if (clk->exclusive_count)
-> > +               clk_core_rate_protect(clk->core);
-> > +
-> > +       clk_prepare_unlock();
-> > +
-> > +       return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(clk_set_duty_cycle);
-> > +
-> > +static unsigned int clk_core_get_scaled_duty_cycle(struct clk_core *core,
-> > +                                                  unsigned int scale)
-> > +{
-> > +       int ret;
-> > +       unsigned int duty;
-> > +
-> > +       clk_prepare_lock();
-> > +       ret = clk_core_update_duty_cycle_nolock(core);
-> > +       if (ret)
-> > +               return 0;
-> > +
-> > +       duty = DIV_ROUND_CLOSEST_ULL((u64)core->duty_num * scale,
-> > +                                    core->duty_den);
-> 
-> Just use mult_frac() instead of casting and rounding to closest? I
-> haven't looked closely so feel free to correct me if that doesn't make
-> sense.
-> 
-> > +
-> > +       clk_prepare_unlock();
-> > +
-> > +       return duty;
-> > +}
-> > +
-> > +/**
-> > + * clk_get_scaled_duty_cycle - return the duty cycle ratio of a clock signal
-> > + * @clk: clock signal source
-> > + * @scale: scaling factor to be applied to represent the ratio as an integer
-> > + *
-> > + * Returns the duty cycle ratio of a clock node multiplied by the provided
-> > + * scaling factor.
-> > + */
-> > +unsigned int clk_get_scaled_duty_cycle(struct clk *clk, unsigned int scale)
-> > +{
-> > +       if (!clk)
-> > +               return 0;
-> > +
-> > +       return clk_core_get_scaled_duty_cycle(clk->core, scale);
-> > +}
-> > +EXPORT_SYMBOL_GPL(clk_get_scaled_duty_cycle);
-> > +
-> > +int __clk_set_duty_cycle_passthrough(struct clk_hw *hw, unsigned int num,
-> > +                                    unsigned int den)
-> > +{
-> > +       struct clk_core *parent = hw->core->parent;
-> > +
-> > +       return clk_core_set_duty_cycle_nolock(parent, num, den);
-> 
-> Ah I see. So a pass through clk will do the parent traversal itself? And
-> more complicated cases could even adjust their phase and then call to
-> the parent to do some other adjustment?
-
-Actually, it is more a delegation. Either the clock
-* can't do anything (fixed duty)
-* or, can the duty cycle
-* or, it a "wire" a provides whatever the parent provides
-
-I'm not sure if making something more complicated makes sense. Duty cycle does
-not seem to be a function of the parent duty cycle, unlike the rate.
-
-I'm not against the suggestion, but I don't see the use case. Could you give a
-hint ?
-
-> 
-> If we ever want to make the prepare lock more fine grained then we'll
-> want the framework to be in control or at least aware of the traversal
-> that's going on,
-
-If/when it gets done, I suspect this new lock would have tight relationship with
-the core structure, no ? I guess putting the lock where lockdep_assert_held() is
- in clk_core_get_duty_cycle_nolock() and clk_core_set_duty_cycle_nolock() would
-do the trick.
-
->  so it would be better to design it more like how
-> clk_set_rate() works today, 
-
-you mean with a recalc(), determine() and set() callback ?
-I thought about it, but it seemed a bit too much for a v1 ... 
-
-Even with this, as far as I understand, the clock does tree traversal for rate
-in the same way, in determine()/round() instead of set().
-
-in clk-divider.c:clk_divider_bestdiv()
-- parent_rate = clk_hw_round_rate(parent, rate * i);
-
-Seems to be the same thing/issue.
-Did you mean something else ? like core flag (CLK_SET_DUTY_PASSTHROUGH) ?
-
-> even if that is only to direct the traversal
-> upwards to the parent until we find the last parent to actually change
-> duty cycle on. 
-> Then we can more easily lock the right clk subtree
-> without having to worry about clk providers traversing the tree
-> themselves.
-> 
-> > +}
-> > +EXPORT_SYMBOL_GPL(__clk_set_duty_cycle_passthrough);
-> > +
-> > +int __clk_get_duty_cycle_passthrough(struct clk_hw *hw, unsigned int *num,
-> > +                                    unsigned int *den)
-> > +{
-> > +       struct clk_core *parent = hw->core->parent;
-> > +
-> > +       return clk_core_get_duty_cycle_nolock(parent, num, den);
-> > +}
-> > +EXPORT_SYMBOL_GPL(__clk_get_duty_cycle_passthrough);
-> > +
-> >  /**
-> >   * clk_is_match - check if two clk's point to the same hardware clock
-> >   * @p: clk compared against q
-> > @@ -2638,6 +2801,16 @@ static int clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
-> >         if (!d)
-> >                 goto err_out;
-> >  
-> > +       d = debugfs_create_u32("clk_duty_num", 0444, core->dentry,
-> 
-> Can we spell it out? clk_duty_numerator?
-sure
-
-> 
-> > +                              &core->duty_num);
-> > +       if (!d)
-> > +               goto err_out;
-> > +
-> > +       d = debugfs_create_u32("clk_duty_den", 0444, core->dentry,
-> 
-> And clk_duty_denominator? Or have a two entry file that reads both so
-> that there isn't a "debugfs race" where the duty is half updated while
-> we read the numerator and denominator changes or something.
-
-I thought it was best keep it simple to parse, with just one value.
-I prefer to have this in a single file, I'll do it.
-
-> 
-> > +                              &core->duty_den);
-> > +       if (!d)
-> > +               goto err_out;
-> > +
-> >         d = debugfs_create_file("clk_flags", 0444, core->dentry, core,
-> >                                 &clk_flags_fops);
-> >         if (!d)
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index 1d25e149c1c5..91e0e37e736b 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -168,6 +168,15 @@ struct clk_rate_request {
-> >   *             by the second argument. Valid values for degrees are
-> >   *             0-359. Return 0 on success, otherwise -EERROR.
-> >   *
-> > + * @get_duty_cycle: Queries the hardware to get the current duty cycle ratio
-> > + *              of a clock. Returned values denominator cannot be 0 and must be
-> > + *              superior or egal to the numerator.
-> 
-> equal?
-> 
-> > + *
-> > + * @set_duty_cycle: Apply the duty cycle ratio to this clock signal specified by
-> > + *              the numerator (2nd argurment) and denominator (3rd  argument).
-> > + *              Argument must be a valid ratio (denominator > 0
-> > + *              and >= numerator) Return 0 on success, otherwise -EERROR.
-> > + *
-> >   * @init:      Perform platform-specific initialization magic.
-> >   *             This is not not used by any of the basic clock types.
-> >   *             Please consider other ways of solving initialization problems
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index c3473df..db542ab 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -26,6 +26,7 @@ Required Properties:
+       - "renesas,r8a77965-cpg-mssr" for the r8a77965 SoC (R-Car M3-N)
+       - "renesas,r8a77970-cpg-mssr" for the r8a77970 SoC (R-Car V3M)
+       - "renesas,r8a77980-cpg-mssr" for the r8a77980 SoC (R-Car V3H)
++      - "renesas,r8a77990-cpg-mssr" for the r8a77990 SoC (R-Car E3)
+       - "renesas,r8a77995-cpg-mssr" for the r8a77995 SoC (R-Car D3)
+ 
+   - reg: Base address and length of the memory resource used by the CPG/MSSR
+@@ -36,7 +37,7 @@ Required Properties:
+   - clock-names: List of external parent clock names. Valid names are:
+       - "extal" (r8a7743, r8a7745, r8a77470, r8a7790, r8a7791, r8a7792,
+ 		 r8a7793, r8a7794, r8a7795, r8a7796, r8a77965, r8a77970,
+-		 r8a77980, r8a77995)
++		 r8a77980, r8a77990, r8a77995)
+       - "extalr" (r8a7795, r8a7796, r8a77965, r8a77970, r8a77980)
+       - "usb_extal" (r8a7743, r8a7745, r8a77470, r8a7790, r8a7791, r8a7793,
+ 		     r8a7794)
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index f32896fa..f9ba71311 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -19,6 +19,7 @@ config CLK_RENESAS
+ 	select CLK_R8A77965 if ARCH_R8A77965
+ 	select CLK_R8A77970 if ARCH_R8A77970
+ 	select CLK_R8A77980 if ARCH_R8A77980
++	select CLK_R8A77990 if ARCH_R8A77990
+ 	select CLK_R8A77995 if ARCH_R8A77995
+ 	select CLK_SH73A0 if ARCH_SH73A0
+ 
+@@ -116,6 +117,10 @@ config CLK_R8A77980
+ 	bool "R-Car V3H clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN3_CPG
+ 
++config CLK_R8A77990
++	bool "R-Car E3 clock support" if COMPILE_TEST
++	select CLK_RCAR_GEN3_CPG
++
+ config CLK_R8A77995
+ 	bool "R-Car D3 clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN3_CPG
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index a4edea9..fe5bac9 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_CLK_R8A7796)		+= r8a7796-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A77965)		+= r8a77965-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A77970)		+= r8a77970-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A77980)		+= r8a77980-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A77990)		+= r8a77990-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A77995)		+= r8a77995-cpg-mssr.o
+ obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
+ 
+diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+new file mode 100644
+index 0000000..bf439e2
+--- /dev/null
++++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+@@ -0,0 +1,289 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * r8a77990 Clock Pulse Generator / Module Standby and Software Reset
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ *
++ * Based on r8a7795-cpg-mssr.c
++ *
++ * Copyright (C) 2015 Glider bvba
++ * Copyright (C) 2015 Renesas Electronics Corp.
++ */
++
++#include <linux/device.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/soc/renesas/rcar-rst.h>
++
++#include <dt-bindings/clock/r8a77990-cpg-mssr.h>
++
++#include "renesas-cpg-mssr.h"
++#include "rcar-gen3-cpg.h"
++
++enum clk_ids {
++	/* Core Clock Outputs exported to DT */
++	LAST_DT_CORE_CLK = R8A77990_CLK_CPEX,
++
++	/* External Input Clocks */
++	CLK_EXTAL,
++
++	/* Internal Core Clocks */
++	CLK_MAIN,
++	CLK_PLL0,
++	CLK_PLL1,
++	CLK_PLL3,
++	CLK_PLL0D4,
++	CLK_PLL0D6,
++	CLK_PLL0D8,
++	CLK_PLL0D20,
++	CLK_PLL0D24,
++	CLK_PLL1D2,
++	CLK_PE,
++	CLK_S0,
++	CLK_S1,
++	CLK_S2,
++	CLK_S3,
++	CLK_SDSRC,
++
++	/* Module Clocks */
++	MOD_CLK_BASE
++};
++
++static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
++	/* External Clock Inputs */
++	DEF_INPUT("extal",     CLK_EXTAL),
++
++	/* Internal Core Clocks */
++	DEF_BASE(".main",      CLK_MAIN, CLK_TYPE_GEN3_MAIN,       CLK_EXTAL),
++	DEF_BASE(".pll1",      CLK_PLL1, CLK_TYPE_GEN3_PLL1,       CLK_MAIN),
++	DEF_BASE(".pll3",      CLK_PLL3, CLK_TYPE_GEN3_PLL3,       CLK_MAIN),
++
++	DEF_FIXED(".pll0",     CLK_PLL0,           CLK_MAIN,	   1, 100),
++	DEF_FIXED(".pll0d4",   CLK_PLL0D4,         CLK_PLL0,       4, 1),
++	DEF_FIXED(".pll0d6",   CLK_PLL0D6,         CLK_PLL0,       6, 1),
++	DEF_FIXED(".pll0d8",   CLK_PLL0D8,         CLK_PLL0,       8, 1),
++	DEF_FIXED(".pll0d20",  CLK_PLL0D20,        CLK_PLL0,      20, 1),
++	DEF_FIXED(".pll0d24",  CLK_PLL0D24,        CLK_PLL0,      24, 1),
++	DEF_FIXED(".pll1d2",   CLK_PLL1D2,         CLK_PLL1,       2, 1),
++	DEF_FIXED(".pe",       CLK_PE,             CLK_PLL0D20,    1, 1),
++	DEF_FIXED(".s0",       CLK_S0,             CLK_PLL1,       2, 1),
++	DEF_FIXED(".s1",       CLK_S1,             CLK_PLL1,       3, 1),
++	DEF_FIXED(".s2",       CLK_S2,             CLK_PLL1,       4, 1),
++	DEF_FIXED(".s3",       CLK_S3,             CLK_PLL1,       6, 1),
++	DEF_FIXED(".sdsrc",    CLK_SDSRC,          CLK_PLL1,       2, 1),
++
++	/* Core Clock Outputs */
++	DEF_FIXED("za2",       R8A77990_CLK_ZA2,   CLK_PLL0D24,    1, 1),
++	DEF_FIXED("za8",       R8A77990_CLK_ZA8,   CLK_PLL0D8,     1, 1),
++	DEF_FIXED("ztr",       R8A77990_CLK_ZTR,   CLK_PLL1,       6, 1),
++	DEF_FIXED("zt",        R8A77990_CLK_ZT,    CLK_PLL1,       4, 1),
++	DEF_FIXED("zx",        R8A77990_CLK_ZX,    CLK_PLL1,       3, 1),
++	DEF_FIXED("s0d1",      R8A77990_CLK_S0D1,  CLK_S0,         1, 1),
++	DEF_FIXED("s0d3",      R8A77990_CLK_S0D3,  CLK_S0,         3, 1),
++	DEF_FIXED("s0d6",      R8A77990_CLK_S0D6,  CLK_S0,         6, 1),
++	DEF_FIXED("s0d12",     R8A77990_CLK_S0D12, CLK_S0,        12, 1),
++	DEF_FIXED("s0d24",     R8A77990_CLK_S0D24, CLK_S0,        24, 1),
++	DEF_FIXED("s1d1",      R8A77990_CLK_S1D1,  CLK_S1,         1, 1),
++	DEF_FIXED("s1d2",      R8A77990_CLK_S1D2,  CLK_S1,         2, 1),
++	DEF_FIXED("s1d4",      R8A77990_CLK_S1D4,  CLK_S1,         4, 1),
++	DEF_FIXED("s2d1",      R8A77990_CLK_S2D1,  CLK_S2,         1, 1),
++	DEF_FIXED("s2d2",      R8A77990_CLK_S2D2,  CLK_S2,         2, 1),
++	DEF_FIXED("s2d4",      R8A77990_CLK_S2D4,  CLK_S2,         4, 1),
++	DEF_FIXED("s3d1",      R8A77990_CLK_S3D1,  CLK_S3,         1, 1),
++	DEF_FIXED("s3d2",      R8A77990_CLK_S3D2,  CLK_S3,         2, 1),
++	DEF_FIXED("s3d4",      R8A77990_CLK_S3D4,  CLK_S3,         4, 1),
++
++	DEF_GEN3_SD("sd0",     R8A77990_CLK_SD0,   CLK_SDSRC,	  0x0074),
++	DEF_GEN3_SD("sd1",     R8A77990_CLK_SD1,   CLK_SDSRC,	  0x0078),
++	DEF_GEN3_SD("sd3",     R8A77990_CLK_SD3,   CLK_SDSRC,	  0x026c),
++
++	DEF_FIXED("cl",        R8A77990_CLK_CL,    CLK_PLL1,      48, 1),
++	DEF_FIXED("cp",        R8A77990_CLK_CP,    CLK_EXTAL,      2, 1),
++	DEF_FIXED("cpex",      R8A77990_CLK_CPEX,  CLK_EXTAL,      4, 1),
++	DEF_FIXED("osc",       R8A77990_CLK_OSC,   CLK_EXTAL,    384, 1),
++	DEF_FIXED("r",         R8A77990_CLK_R,     CLK_EXTAL,   1536, 1),
++
++	DEF_GEN3_PE("s0d6c",   R8A77990_CLK_S0D6C, CLK_S0, 6, CLK_PE, 2),
++	DEF_GEN3_PE("s3d1c",   R8A77990_CLK_S3D1C, CLK_S3, 1, CLK_PE, 1),
++	DEF_GEN3_PE("s3d2c",   R8A77990_CLK_S3D2C, CLK_S3, 2, CLK_PE, 2),
++	DEF_GEN3_PE("s3d4c",   R8A77990_CLK_S3D4C, CLK_S3, 4, CLK_PE, 4),
++
++	DEF_DIV6P1("canfd",    R8A77990_CLK_CANFD, CLK_PLL0D6, 0x244),
++	DEF_DIV6P1("csi0",     R8A77990_CLK_CSI0,  CLK_PLL1D2, 0x00c),
++	DEF_DIV6P1("mso",      R8A77990_CLK_MSO,   CLK_PLL1D2, 0x014),
++};
++
++static const struct mssr_mod_clk r8a77990_mod_clks[] __initconst = {
++	DEF_MOD("scif5",		 202,	R8A77990_CLK_S3D4C),
++	DEF_MOD("scif4",		 203,	R8A77990_CLK_S3D4C),
++	DEF_MOD("scif3",		 204,	R8A77990_CLK_S3D4C),
++	DEF_MOD("scif1",		 206,	R8A77990_CLK_S3D4C),
++	DEF_MOD("scif0",		 207,	R8A77990_CLK_S3D4C),
++	DEF_MOD("msiof3",		 208,	R8A77990_CLK_MSO),
++	DEF_MOD("msiof2",		 209,	R8A77990_CLK_MSO),
++	DEF_MOD("msiof1",		 210,	R8A77990_CLK_MSO),
++	DEF_MOD("msiof0",		 211,	R8A77990_CLK_MSO),
++	DEF_MOD("sys-dmac2",		 217,	R8A77990_CLK_S3D1),
++	DEF_MOD("sys-dmac1",		 218,	R8A77990_CLK_S3D1),
++	DEF_MOD("sys-dmac0",		 219,	R8A77990_CLK_S3D1),
++
++	DEF_MOD("cmt3",			 300,	R8A77990_CLK_R),
++	DEF_MOD("cmt2",			 301,	R8A77990_CLK_R),
++	DEF_MOD("cmt1",			 302,	R8A77990_CLK_R),
++	DEF_MOD("cmt0",			 303,	R8A77990_CLK_R),
++	DEF_MOD("scif2",		 310,	R8A77990_CLK_S3D4C),
++	DEF_MOD("sdif3",		 311,	R8A77990_CLK_SD3),
++	DEF_MOD("sdif1",		 313,	R8A77990_CLK_SD1),
++	DEF_MOD("sdif0",		 314,	R8A77990_CLK_SD0),
++	DEF_MOD("pcie0",		 319,	R8A77990_CLK_S3D1),
++	DEF_MOD("usb3-if0",		 328,	R8A77990_CLK_S3D1),
++	DEF_MOD("usb-dmac0",		 330,	R8A77990_CLK_S3D1),
++	DEF_MOD("usb-dmac1",		 331,	R8A77990_CLK_S3D1),
++
++	DEF_MOD("rwdt",			 402,	R8A77990_CLK_R),
++	DEF_MOD("intc-ex",		 407,	R8A77990_CLK_CP),
++	DEF_MOD("intc-ap",		 408,	R8A77990_CLK_S0D3),
++
++	DEF_MOD("audmac0",		 502,	R8A77990_CLK_S3D4),
++	DEF_MOD("drif7",		 508,	R8A77990_CLK_S3D2),
++	DEF_MOD("drif6",		 509,	R8A77990_CLK_S3D2),
++	DEF_MOD("drif5",		 510,	R8A77990_CLK_S3D2),
++	DEF_MOD("drif4",		 511,	R8A77990_CLK_S3D2),
++	DEF_MOD("drif3",		 512,	R8A77990_CLK_S3D2),
++	DEF_MOD("drif2",		 513,	R8A77990_CLK_S3D2),
++	DEF_MOD("drif1",		 514,	R8A77990_CLK_S3D2),
++	DEF_MOD("drif0",		 515,	R8A77990_CLK_S3D2),
++	DEF_MOD("hscif4",		 516,	R8A77990_CLK_S3D1C),
++	DEF_MOD("hscif3",		 517,	R8A77990_CLK_S3D1C),
++	DEF_MOD("hscif2",		 518,	R8A77990_CLK_S3D1C),
++	DEF_MOD("hscif1",		 519,	R8A77990_CLK_S3D1C),
++	DEF_MOD("hscif0",		 520,	R8A77990_CLK_S3D1C),
++	DEF_MOD("thermal",		 522,	R8A77990_CLK_CP),
++	DEF_MOD("pwm",			 523,	R8A77990_CLK_S3D4C),
++
++	DEF_MOD("fcpvd1",		 602,	R8A77990_CLK_S1D2),
++	DEF_MOD("fcpvd0",		 603,	R8A77990_CLK_S1D2),
++	DEF_MOD("fcpvb0",		 607,	R8A77990_CLK_S0D1),
++	DEF_MOD("fcpvi0",		 611,	R8A77990_CLK_S0D1),
++	DEF_MOD("fcpf0",		 615,	R8A77990_CLK_S0D1),
++	DEF_MOD("fcpcs",		 619,	R8A77990_CLK_S0D1),
++	DEF_MOD("vspd1",		 622,	R8A77990_CLK_S1D2),
++	DEF_MOD("vspd0",		 623,	R8A77990_CLK_S1D2),
++	DEF_MOD("vspb",			 626,	R8A77990_CLK_S0D1),
++	DEF_MOD("vspi0",		 631,	R8A77990_CLK_S0D1),
++
++	DEF_MOD("ehci0",		 703,	R8A77990_CLK_S3D4),
++	DEF_MOD("hsusb",		 704,	R8A77990_CLK_S3D4),
++	DEF_MOD("csi40",		 716,	R8A77990_CLK_CSI0),
++	DEF_MOD("du1",			 723,	R8A77990_CLK_S2D1),
++	DEF_MOD("du0",			 724,	R8A77990_CLK_S2D1),
++	DEF_MOD("lvds",			 727,	R8A77990_CLK_S2D1),
++
++	DEF_MOD("vin5",			 806,	R8A77990_CLK_S1D2),
++	DEF_MOD("vin4",			 807,	R8A77990_CLK_S1D2),
++	DEF_MOD("etheravb",		 812,	R8A77990_CLK_S3D2),
++
++	DEF_MOD("gpio6",		 906,	R8A77990_CLK_S3D4),
++	DEF_MOD("gpio5",		 907,	R8A77990_CLK_S3D4),
++	DEF_MOD("gpio4",		 908,	R8A77990_CLK_S3D4),
++	DEF_MOD("gpio3",		 909,	R8A77990_CLK_S3D4),
++	DEF_MOD("gpio2",		 910,	R8A77990_CLK_S3D4),
++	DEF_MOD("gpio1",		 911,	R8A77990_CLK_S3D4),
++	DEF_MOD("gpio0",		 912,	R8A77990_CLK_S3D4),
++	DEF_MOD("can-fd",		 914,	R8A77990_CLK_S3D2),
++	DEF_MOD("can-if1",		 915,	R8A77990_CLK_S3D4),
++	DEF_MOD("can-if0",		 916,	R8A77990_CLK_S3D4),
++	DEF_MOD("i2c6",			 918,	R8A77990_CLK_S3D2),
++	DEF_MOD("i2c5",			 919,	R8A77990_CLK_S3D2),
++	DEF_MOD("i2c-dvfs",		 926,	R8A77990_CLK_CP),
++	DEF_MOD("i2c4",			 927,	R8A77990_CLK_S3D2),
++	DEF_MOD("i2c3",			 928,	R8A77990_CLK_S3D2),
++	DEF_MOD("i2c2",			 929,	R8A77990_CLK_S3D2),
++	DEF_MOD("i2c1",			 930,	R8A77990_CLK_S3D2),
++	DEF_MOD("i2c0",			 931,	R8A77990_CLK_S3D2),
++
++	DEF_MOD("ssi-all",		1005,	R8A77990_CLK_S3D4),
++	DEF_MOD("ssi9",			1006,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi8",			1007,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi7",			1008,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi6",			1009,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi5",			1010,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi4",			1011,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi3",			1012,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi2",			1013,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi1",			1014,	MOD_CLK_ID(1005)),
++	DEF_MOD("ssi0",			1015,	MOD_CLK_ID(1005)),
++	DEF_MOD("scu-all",		1017,	R8A77990_CLK_S3D4),
++	DEF_MOD("scu-dvc1",		1018,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-dvc0",		1019,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-ctu1-mix1",	1020,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-ctu0-mix0",	1021,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src9",		1022,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src8",		1023,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src7",		1024,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src6",		1025,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src5",		1026,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src4",		1027,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src3",		1028,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src2",		1029,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src1",		1030,	MOD_CLK_ID(1017)),
++	DEF_MOD("scu-src0",		1031,	MOD_CLK_ID(1017)),
++};
++
++static const unsigned int r8a77990_crit_mod_clks[] __initconst = {
++	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
++};
++
++/*
++ * CPG Clock Data
++ */
++
++/*
++ * MD19		EXTAL (MHz)	PLL0		PLL1		PLL3
++ *--------------------------------------------------------------------
++ * 0		48 x 1		x100/4		x100/3		x100/3
++ * 1		48 x 1		x100/4		x100/3		 x58/3
++ */
++#define CPG_PLL_CONFIG_INDEX(md)	(((md) & BIT(19)) >> 19)
++
++static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[2] __initconst = {
++	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
++	{ 1,		100,	3,	100,	3,	},
++	{ 1,		100,	3,	 58,	3,	},
++};
++
++static int __init r8a77990_cpg_mssr_init(struct device *dev)
++{
++	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
++	u32 cpg_mode;
++	int error;
++
++	error = rcar_rst_read_mode_pins(&cpg_mode);
++	if (error)
++		return error;
++
++	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
++
++	return rcar_gen3_cpg_init(cpg_pll_config, 0, cpg_mode);
++}
++
++const struct cpg_mssr_info r8a77990_cpg_mssr_info __initconst = {
++	/* Core Clocks */
++	.core_clks = r8a77990_core_clks,
++	.num_core_clks = ARRAY_SIZE(r8a77990_core_clks),
++	.last_dt_core_clk = LAST_DT_CORE_CLK,
++	.num_total_core_clks = MOD_CLK_BASE,
++
++	/* Module Clocks */
++	.mod_clks = r8a77990_mod_clks,
++	.num_mod_clks = ARRAY_SIZE(r8a77990_mod_clks),
++	.num_hw_mod_clks = 12 * 32,
++
++	/* Critical Module Clocks */
++	.crit_mod_clks = r8a77990_crit_mod_clks,
++	.num_crit_mod_clks = ARRAY_SIZE(r8a77990_crit_mod_clks),
++
++	/* Callbacks */
++	.init = r8a77990_cpg_mssr_init,
++	.cpg_clk_register = rcar_gen3_cpg_clk_register,
++};
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 2c467f9..49e5106 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -717,6 +717,12 @@ static inline int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
+ 		.data = &r8a77980_cpg_mssr_info,
+ 	},
+ #endif
++#ifdef CONFIG_CLK_R8A77990
++	{
++		.compatible = "renesas,r8a77990-cpg-mssr",
++		.data = &r8a77990_cpg_mssr_info,
++	},
++#endif
+ #ifdef CONFIG_CLK_R8A77995
+ 	{
+ 		.compatible = "renesas,r8a77995-cpg-mssr",
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index efe2a14..642f720 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -143,6 +143,7 @@ struct cpg_mssr_info {
+ extern const struct cpg_mssr_info r8a77965_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a77970_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a77980_cpg_mssr_info;
++extern const struct cpg_mssr_info r8a77990_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a77995_cpg_mssr_info;
+ 
+ 
+-- 
+1.9.1
