@@ -1,147 +1,145 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Dinh Nguyen <dinguyen@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521642012-9770-3-git-send-email-dinguyen@kernel.org>
-Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mturquette@baylibre.com,
- will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1521642012-9770-1-git-send-email-dinguyen@kernel.org>
- <1521642012-9770-3-git-send-email-dinguyen@kernel.org>
-Message-ID: <152303474801.143116.12893988829541761898@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCHv7 3/3] clk: socfpga: stratix10: add clock driver for Stratix10
- platform
-Date: Fri, 06 Apr 2018 10:12:28 -0700
+Return-Path: <michael@amarulasolutions.com>
+Return-Path: <michael@amarulasolutions.com>
+From: Michael Trimarchi <michael@amarulasolutions.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Matteo Lisi <matteo.lisi@engicam.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH V2] clk: imx: Add new clo01 and clo2 controlled by CCOSR
+Date: Fri, 20 Apr 2018 23:00:04 +0200
+Message-Id: <1524258004-28717-1-git-send-email-michael@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dinh Nguyen (2018-03-21 07:20:12)
-> Add a clock driver for the Stratix10 SoC. The driver is similar to the
-> Cyclone5/Arria10 platforms, with the exception that this driver only uses
-> one single clock binding.
-> =
+osc->cko2_sel->cko2_podf->clk_cko2->clk_cko
 
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
+Example of usage to provide clock to the sgtl5000
 
-Applied to clk-next but I made some fixes. Also, it would be nice if you
-could follow up with using the platform driver APIs to map memory and
-also make sure to implement a driver remove path or block it with the
-suppress attribute.
+codec: sgtl5000@0a {
+	compatible = "fsl,sgtl5000";
+	reg = <0x0a>;
+	clocks = <&clks IMX6UL_CLK_OSC>;
+	#sound-dai-cells = <0>;
+	clocks = <&clks IMX6UL_CLK_CKO>;
+	assigned-clocks = <&clks IMX6UL_CLK_CKO2_SEL>,
+			  <&clks IMX6UL_CLK_CKO2_PODF>,
+			  <&clks IMX6UL_CLK_CKO2>,
+			  <&clks IMX6UL_CLK_CKO>;
+	assigned-clock-parents = <&clks IMX6UL_CLK_OSC>,
+				 <&clks IMX6UL_CLK_CKO2_SEL>,
+				 <&clks IMX6UL_CLK_CKO2_PODF>,
+				 <&clks IMX6UL_CLK_CKO2>;
+	clock-names = "mclk";
+	wlf,shared-lrclk;
 
-diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk-g=
-ate-s10.c
-index 71ca3c045a42..eee2d48ab656 100644
---- a/drivers/clk/socfpga/clk-gate-s10.c
-+++ b/drivers/clk/socfpga/clk-gate-s10.c
-@@ -4,6 +4,7 @@
-  */
- #include <linux/clk-provider.h>
- #include <linux/slab.h>
-+#include "stratix10-clk.h"
- #include "clk.h"
- =
+Signed-off-by: Matteo Lisi <matteo.lisi@engicam.com>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Tested-by: Michael Trimarchi <michael@amarulasolutions.com>
+---
+v1->v2
+	Forget Matteo Lisi from where I get original code
+	on freescale kernel
+---
+ drivers/clk/imx/clk-imx6ul.c             | 18 +++++++++++++++++
+ include/dt-bindings/clock/imx6ul-clock.h | 33 +++++++++++++++++++-------------
+ 2 files changed, 38 insertions(+), 13 deletions(-)
 
- #define SOCFPGA_CS_PDBG_CLK	"cs_pdbg_clk"
-@@ -63,7 +64,7 @@ static const struct clk_ops dbgclk_ops =3D {
- 	.get_parent =3D socfpga_gate_get_parent,
- };
- =
-
--struct clk *s10_register_gate(char *name, const char *parent_name,
-+struct clk *s10_register_gate(const char *name, const char *parent_name,
- 			      const char * const *parent_names,
- 			      u8 num_parents, unsigned long flags,
- 			      void __iomem *regbase, unsigned long gate_reg,
-diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk=
--periph-s10.c
-index 6021ac1b0667..568f59b58ddf 100644
---- a/drivers/clk/socfpga/clk-periph-s10.c
-+++ b/drivers/clk/socfpga/clk-periph-s10.c
-@@ -5,6 +5,7 @@
- #include <linux/slab.h>
- #include <linux/clk-provider.h>
- =
-
-+#include "stratix10-clk.h"
- #include "clk.h"
- =
-
- #define CLK_MGR_FREE_SHIFT		16
-@@ -71,7 +72,7 @@ static const struct clk_ops peri_cnt_clk_ops =3D {
- 	.get_parent =3D clk_periclk_get_parent,
- };
- =
-
--struct clk *s10_register_periph(char *name, const char *parent_name,
-+struct clk *s10_register_periph(const char *name, const char *parent_name,
- 				const char * const *parent_names,
- 				u8 num_parents, unsigned long flags,
- 				void __iomem *reg, unsigned long offset)
-@@ -103,7 +104,7 @@ struct clk *s10_register_periph(char *name, const char =
-*parent_name,
- 	return clk;
- }
- =
-
--struct clk *s10_register_cnt_periph(char *name, const char *parent_name,
-+struct clk *s10_register_cnt_periph(const char *name, const char *parent_n=
-ame,
- 				    const char * const *parent_names,
- 				    u8 num_parents, unsigned long flags,
- 				    void __iomem *regbase, unsigned long offset,
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pl=
-l-s10.c
-index ef24ca7a0cc4..2d5d8b43727e 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -5,6 +5,7 @@
- #include <linux/slab.h>
- #include <linux/clk-provider.h>
- =
-
-+#include "stratix10-clk.h"
- #include "clk.h"
- =
-
- /* Clock Manager offsets */
-diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
-index 27a08b3b30e6..3a11c382a663 100644
---- a/drivers/clk/socfpga/clk-s10.c
-+++ b/drivers/clk/socfpga/clk-s10.c
-@@ -48,11 +48,11 @@ static const struct stratix10_pll_clock s10_pll_clks[] =
-=3D {
- };
- =
-
- static const struct stratix10_perip_c_clock s10_main_perip_c_clks[] =3D {
--	{ STRATIX10_MAIN_MPU_BASE_CLK, "main_mpu_base_clk", "main_pll", 0, 1, 0, =
-0x84},
--	{ STRATIX10_MAIN_NOC_BASE_CLK, "main_noc_base_clk", "main_pll", 0, 1, 0, =
-0x88},
--	{ STRATIX10_PERI_MPU_BASE_CLK, "peri_mpu_base_clk", "periph_pll", 0, 1, 0,
-+	{ STRATIX10_MAIN_MPU_BASE_CLK, "main_mpu_base_clk", "main_pll", NULL, 1, =
-0, 0x84},
-+	{ STRATIX10_MAIN_NOC_BASE_CLK, "main_noc_base_clk", "main_pll", NULL, 1, =
-0, 0x88},
-+	{ STRATIX10_PERI_MPU_BASE_CLK, "peri_mpu_base_clk", "periph_pll", NULL, 1=
-, 0,
- 	  0xF4},
--	{ STRATIX10_PERI_NOC_BASE_CLK, "peri_noc_base_clk", "periph_pll", 0, 1, 0,
-+	{ STRATIX10_PERI_NOC_BASE_CLK, "peri_noc_base_clk", "periph_pll", NULL, 1=
-, 0,
- 	  0xF8},
- };
- =
-
-diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stra=
-tix10-clk.h
-index f6c9291ed315..e8e121907952 100644
---- a/drivers/clk/socfpga/stratix10-clk.h
-+++ b/drivers/clk/socfpga/stratix10-clk.h
-@@ -76,5 +76,5 @@ struct clk *s10_register_gate(const char *, const char *,
- 			      unsigned long, void __iomem *,
- 			      unsigned long, unsigned long,
- 			      unsigned long, unsigned long, u8,
--			      unsigned long, unsigned long, u8);
-+			      unsigned long, u8, u8);
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 114ecbb..9bfef1a 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -68,6 +68,13 @@ static const char *sim_sels[] = { "sim_podf", "ipp_di0", "ipp_di1", "ldb_di0", "
+ static const char *epdc_pre_sels[] = { "pll2_bus", "pll3_usb_otg", "pll5_video_div", "pll2_pfd0_352m", "pll2_pfd2_396m", "pll3_pfd2_508m", };
+ static const char *esai_sels[] = { "pll4_audio_div", "pll3_pfd2_508m", "pll5_video_div", "pll3_usb_otg", };
+ static const char *epdc_sels[] = { "epdc_podf", "ipp_di0", "ipp_di1", "ldb_di0", "ldb_di1", };
++static const char *cko1_sels[] = { "dummy", "dummy", "dummy", "dummy", "dummy", "axi", "enfc", "dummy", "dummy",
++				   "dummy", "lcdif_pix", "ahb", "ipg", "ipg_per", "ckil", "pll4_audio_div", };
++static const char *cko2_sels[] = { "dummy", "dummy", "dummy", "usdhc1", "dummy", "dummy", "ecspi_root", "dummy",
++				   "dummy", "dummy", "dummy", "dummy", "dummy", "dummy", "osc", "dummy",
++				   "dummy", "usdhc2", "sai1", "sai2", "sai3", "dummy", "dummy", "can_root",
++				   "dummy", "dummy", "dummy", "dummy", "uart_serial", "spdif", "dummy", "dummy", };
++static const char *cko_sels[] = { "cko1", "cko2", };
+ 
+ static struct clk *clks[IMX6UL_CLK_END];
+ static struct clk_onecell_data clk_data;
+@@ -273,6 +280,10 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_LDB_DI0_DIV_SEL]  = imx_clk_mux("ldb_di0", base + 0x20, 10, 1, ldb_di0_div_sels, ARRAY_SIZE(ldb_di0_div_sels));
+ 	clks[IMX6UL_CLK_LDB_DI1_DIV_SEL]  = imx_clk_mux("ldb_di1", base + 0x20, 11, 1, ldb_di1_div_sels, ARRAY_SIZE(ldb_di1_div_sels));
+ 
++	clks[IMX6UL_CLK_CKO1_SEL]	  = imx_clk_mux("cko1_sel", base + 0x60, 0,  4, cko1_sels, ARRAY_SIZE(cko1_sels));
++	clks[IMX6UL_CLK_CKO2_SEL]	  = imx_clk_mux("cko2_sel", base + 0x60, 16, 5, cko2_sels, ARRAY_SIZE(cko2_sels));
++	clks[IMX6UL_CLK_CKO]		  = imx_clk_mux("cko", base + 0x60, 8, 1, cko_sels, ARRAY_SIZE(cko_sels));
++
+ 	clks[IMX6UL_CLK_LDB_DI0_DIV_3_5] = imx_clk_fixed_factor("ldb_di0_div_3_5", "ldb_di0_sel", 2, 7);
+ 	clks[IMX6UL_CLK_LDB_DI0_DIV_7]	 = imx_clk_fixed_factor("ldb_di0_div_7",   "ldb_di0_sel", 1, 7);
+ 	clks[IMX6UL_CLK_LDB_DI1_DIV_3_5] = imx_clk_fixed_factor("ldb_di1_div_3_5", "qspi1_sel", 2, 7);
+@@ -316,6 +327,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_LCDIF_PRED]	= imx_clk_divider("lcdif_pred",	   "lcdif_pre_sel",	base + 0x38, 12, 3);
+ 	clks[IMX6UL_CLK_CSI_PODF]       = imx_clk_divider("csi_podf",      "csi_sel",           base + 0x3c, 11, 3);
+ 
++	clks[IMX6UL_CLK_CKO1_PODF]	= imx_clk_divider("cko1_podf",     "cko1_sel",          base + 0x60, 4,  3);
++	clks[IMX6UL_CLK_CKO2_PODF]	= imx_clk_divider("cko2_podf",     "cko2_sel",          base + 0x60, 21, 3);
++
+ 	clks[IMX6UL_CLK_ARM]		= imx_clk_busy_divider("arm",	    "pll1_sw",	base +	0x10, 0,  3,  base + 0x48, 16);
+ 	clks[IMX6UL_CLK_MMDC_PODF]	= imx_clk_busy_divider("mmdc_podf", "periph2",	base +  0x14, 3,  3,  base + 0x48, 2);
+ 	clks[IMX6UL_CLK_AXI_PODF]	= imx_clk_busy_divider("axi_podf",  "axi_sel",	base +  0x14, 16, 3,  base + 0x48, 0);
+@@ -445,6 +459,10 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_PWM6]		= imx_clk_gate2("pwm6",		"perclk",	 base +	0x80,	28);
+ 	clks[IMX6UL_CLK_PWM7]		= imx_clk_gate2("pwm7",		"perclk",	 base + 0x80,	30);
+ 
++	/* CCOSR */
++	clks[IMX6UL_CLK_CKO1]		= imx_clk_gate("cko1",		"cko1_podf",	 base + 0x60,	7);
++	clks[IMX6UL_CLK_CKO2]		= imx_clk_gate("cko2",		"cko2_podf",	 base + 0x60,	24);
++
+ 	/* mask handshake of mmdc */
+ 	writel_relaxed(BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
+ 
+diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
+index ee9f1a5..9564597 100644
+--- a/include/dt-bindings/clock/imx6ul-clock.h
++++ b/include/dt-bindings/clock/imx6ul-clock.h
+@@ -235,20 +235,27 @@
+ #define IMX6UL_CLK_CSI_PODF		222
+ #define IMX6UL_CLK_PLL3_120M		223
+ #define IMX6UL_CLK_KPP			224
++#define IMX6UL_CLK_CKO1_SEL		225
++#define IMX6UL_CLK_CKO1_PODF		226
++#define IMX6UL_CLK_CKO1			227
++#define IMX6UL_CLK_CKO2_SEL		228
++#define IMX6UL_CLK_CKO2_PODF		229
++#define IMX6UL_CLK_CKO2			230
++#define IMX6UL_CLK_CKO			231
+ 
+ /* For i.MX6ULL */
+-#define IMX6ULL_CLK_ESAI_PRED		225
+-#define IMX6ULL_CLK_ESAI_PODF		226
+-#define IMX6ULL_CLK_ESAI_EXTAL		227
+-#define IMX6ULL_CLK_ESAI_MEM		228
+-#define IMX6ULL_CLK_ESAI_IPG		229
+-#define IMX6ULL_CLK_DCP_CLK		230
+-#define IMX6ULL_CLK_EPDC_PRE_SEL	231
+-#define IMX6ULL_CLK_EPDC_SEL		232
+-#define IMX6ULL_CLK_EPDC_PODF		233
+-#define IMX6ULL_CLK_EPDC_ACLK		234
+-#define IMX6ULL_CLK_EPDC_PIX		235
+-#define IMX6ULL_CLK_ESAI_SEL		236
+-#define IMX6UL_CLK_END			237
++#define IMX6ULL_CLK_ESAI_PRED		232
++#define IMX6ULL_CLK_ESAI_PODF		233
++#define IMX6ULL_CLK_ESAI_EXTAL		234
++#define IMX6ULL_CLK_ESAI_MEM		235
++#define IMX6ULL_CLK_ESAI_IPG		236
++#define IMX6ULL_CLK_DCP_CLK		237
++#define IMX6ULL_CLK_EPDC_PRE_SEL	238
++#define IMX6ULL_CLK_EPDC_SEL		239
++#define IMX6ULL_CLK_EPDC_PODF		240
++#define IMX6ULL_CLK_EPDC_ACLK		241
++#define IMX6ULL_CLK_EPDC_PIX		242
++#define IMX6ULL_CLK_ESAI_SEL		243
++#define IMX6UL_CLK_END			244
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
+-- 
+2.7.4
