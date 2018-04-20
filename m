@@ -1,64 +1,48 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v6 5/7] remoteproc/davinci: use octal permissions for
- module_param()
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin
- Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner
-	<david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson
-	<bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>
-References: <20180417173038.25510-1-brgl@bgdev.pl>
- <20180417173038.25510-6-brgl@bgdev.pl>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <0bd29608-fe2c-50c8-3f8c-eb1b2f001a6d@ti.com>
-Date: Fri, 27 Apr 2018 12:11:54 -0500
+Return-Path: <>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	geert+renesas@glider.be,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 0/2] clk: renesas: Add support for R-Car E3
+Date: Fri, 20 Apr 2018 21:27:42 +0900
+Message-Id: <1524227264-24896-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20180417173038.25510-6-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/17/2018 12:30 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Checkpatch recommends to use octal perms instead of S_IRUGO.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+This patch is based on the renesas-devel-20180418-v4.17-rc1 tag of
+renesas.git.
 
-Looks like you missed by Acked-by from v3, so adding it back
+Changes from v1:
+ - Remove POST3's definition in patch 1.
+  Discussed on https://patchwork.kernel.org/patch/10335231/
 
-Acked-by: Suman Anna <s-anna@ti.com>
+ - Fix typo and some errors in patch 2.
+ - Add Geert-san's Reviewed-by in patch 2.
+  Discussed on https://patchwork.kernel.org/patch/10335235/
 
-regards
-Suman
+Takeshi Kihara (1):
+  clk: renesas: Add r8a77990 CPG Core Clock Definitions
 
-> ---
->  drivers/remoteproc/da8xx_remoteproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-> index f134192922e0..b668e32996e2 100644
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -25,7 +25,7 @@
->  #include "remoteproc_internal.h"
->  
->  static char *da8xx_fw_name;
-> -module_param(da8xx_fw_name, charp, S_IRUGO);
-> +module_param(da8xx_fw_name, charp, 0444);
->  MODULE_PARM_DESC(da8xx_fw_name,
->  		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
->  
-> 
+Yoshihiro Shimoda (1):
+  clk: renesas: cpg-mssr: Add support for R-Car E3
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   3 +-
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a77990-cpg-mssr.c            | 289 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ include/dt-bindings/clock/r8a77990-cpg-mssr.h      |  62 +++++
+ 7 files changed, 366 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/renesas/r8a77990-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a77990-cpg-mssr.h
+
+-- 
+1.9.1
