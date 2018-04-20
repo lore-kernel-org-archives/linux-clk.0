@@ -1,56 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:40941 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbeDNKqj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Apr 2018 06:46:39 -0400
-Received: by mail-io0-f193.google.com with SMTP id t123so5746209iof.7
-        for <linux-clk@vger.kernel.org>; Sat, 14 Apr 2018 03:46:39 -0700 (PDT)
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 4/8] clk: mediatek: mt2701-mm: switch to mfd device
+From: Matthias Brugger <matthias.bgg@gmail.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+ ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
+ robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ lee.jones@linaro.org, davem@davemloft.net, gregkh@linuxfoundation.org,
+ mchehab@kernel.org, rdunlap@infradead.org, pi-cheng.chen@linaro.org,
+ sean.wang@mediatek.com, linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Matthias Brugger <mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+ <20171114214114.15793-5-mbrugger@suse.com>
+ <20171115001705.GJ11955@codeaurora.org>
+ <e41d07ff-5870-1ec5-18fc-d89538529a8f@gmail.com>
+Message-ID: <b00448fb-6e8c-1766-f9b7-2a8581ad075b@gmail.com>
+Date: Fri, 20 Apr 2018 15:04:29 +0200
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v64-sWsFfHThVrcE5ivrf6kZSZa_tkB_GtC=Z+1TLpWV_Q@mail.gmail.com>
-References: <20180316175354.21437-1-icenowy@aosc.io> <20180316175354.21437-4-icenowy@aosc.io>
- <CAMty3ZBOSXu=+jQpsdnykioDGsp=VphSnzQdDDs_hh3Y1FPKyg@mail.gmail.com> <CAGb2v64-sWsFfHThVrcE5ivrf6kZSZa_tkB_GtC=Z+1TLpWV_Q@mail.gmail.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Sat, 14 Apr 2018 16:16:38 +0530
-Message-ID: <CAMty3ZAfBZSc9f5mRxSaYzW6W1JkVkJ7+swMAm3Gg_EFWUkULw@mail.gmail.com>
-Subject: Re: [PATCH 3/7] bus: add bus driver for accessing Allwinner A64 DE2
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <e41d07ff-5870-1ec5-18fc-d89538529a8f@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Apr 14, 2018 at 4:00 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Sat, Apr 14, 2018 at 6:25 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
->> On Fri, Mar 16, 2018 at 11:23 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->>> The "Display Engine 2.0" (usually called DE2) on the Allwinner A64 SoC
->>> is different from the ones on other Allwinner SoCs. It requires a SRAM
->>> region to be claimed, otherwise all DE2 subblocks won't be accessible.
+
+
+On 04/20/2018 03:00 PM, Matthias Brugger wrote:
+> Hi Stephen,
+> 
+> On 11/15/2017 01:17 AM, Stephen Boyd wrote:
+>> On 11/14, Matthias Brugger wrote:
+>>> As the new mfd device is in place, switch probing
+>>> for the MMSYS to support invocation from the mfd device.
 >>>
->>> Add a bus driver for the Allwinner A64 DE2 part which claims the SRAM
->>> region when probing.
+>>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>>> ---
 >>
->> Along with this bus driver, we also need
->> drivers/gpu/drm/sun4i/sun4i_drv.c which can usually drive the
->> pipelines like mixer0 and 1 are the cases for A64?
->
-> I imagine that's the next part to be sent out, after the hardware
-> representation in the device tree has been decided on.
+>> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+>>
+> 
+> I did a minor change to this patch and patch 7/8 to get rid of mmsys_private
+> variable. Nevertheless I kept your Acked-by, as it only changes how we get the
+> device tree node.
+> 
+> Hope that's OK with you.
+> 
 
-Yeah, this hardware representation along with separate bus driver
-going like in another direction especially if we add pipelines support
-to it, may be we can add sram stuff to platdata of existinf
-sun4i_drv.c
+Sorry, I didn't explain me. I'm talking about v2 of the series, which I'm
+working on right now.
 
-Jagan.
-
--- 
-Jagan Teki
-Senior Linux Kernel Engineer | Amarula Solutions
-U-Boot, Linux | Upstream Maintainer
-Hyderabad, India.
+Regards,
+Matthias
