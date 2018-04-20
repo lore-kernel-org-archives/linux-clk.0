@@ -1,54 +1,74 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Fri, 6 Apr 2018 13:26:48 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Quentin Schulz <quentin.schulz@bootlin.com>
-Cc: vireshk@kernel.org, shiraz.linux.kernel@gmail.com, robh+dt@kernel.org,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH 1/2] ARM: SPEAr600: add DT description of the watchdog
-Message-ID: <20180406075648.GW3572@vireshk-i7>
-References: <0635969b6ef0fe528a27a8b6493cc3df770e1f60.1523000725.git-series.quentin.schulz@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <0635969b6ef0fe528a27a8b6493cc3df770e1f60.1523000725.git-series.quentin.schulz@bootlin.com>
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1524218419.16259.7.camel@pengutronix.de>
+Subject: Re: [PATCH 1/8] drm/mediatek: Use regmap for register access
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+ ulrich.hecht+renesas@gmail.com,  laurent.pinchart@ideasonboard.com,
+ ck.hu@mediatek.com, airlied@linux.ie,  robh+dt@kernel.org,
+ mark.rutland@arm.com, mturquette@baylibre.com,  sboyd@codeaurora.org,
+ lee.jones@linaro.org
+Cc: davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
+	rdunlap@infradead.org, pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+	Matthias Brugger
+	 <mbrugger@suse.com>
+Date: Fri, 20 Apr 2018 12:00:19 +0200
+In-Reply-To: <3fffe06c-f19b-ef26-a19d-771611aae158@gmail.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+	 <20171114214114.15793-2-mbrugger@suse.com>
+	 <1511427282.7685.1.camel@pengutronix.de>
+	 <3fffe06c-f19b-ef26-a19d-771611aae158@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06-04-18, 09:50, Quentin Schulz wrote:
-> The SPEAr600 has a built-in watchdog which already has a DT binding
-> described in Documentation/devicetree/bindings/watchdog/sp805-wdt.txt.
-> 
-> Let's add the description of the watchdog device in the SPEAr600 Device
-> Tree.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> ---
->  arch/arm/boot/dts/spear600.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/spear600.dtsi b/arch/arm/boot/dts/spear600.dtsi
-> index 00166eb..d7c3096 100644
-> --- a/arch/arm/boot/dts/spear600.dtsi
-> +++ b/arch/arm/boot/dts/spear600.dtsi
-> @@ -213,6 +213,14 @@
->  				interrupts = <6>;
->  				status = "disabled";
->  			};
-> +
-> +			wdt: wdt@fc880000 {
-> +				compatible = "arm,sp805", "arm,primecell";
-> +				reg = <0xfc880000 0x1000>;
-> +				interrupt-parent = <&vic1>;
-> +				interrupts = <20>;
-> +				status = "disabled";
-> +			};
->  		};
->  	};
->  };
+Hi Matthias,
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+On Fri, 2018-04-20 at 11:41 +0200, Matthias Brugger wrote:
+> Hi Philipp,
+> 
+> On 11/23/2017 09:54 AM, Philipp Zabel wrote:
+> > Hi Matthias,
+> > 
+> > On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+> > > The mmsys memory space is shared between the drm and the
+> > > clk driver. Use regmap to access it.
+> > > 
+> > > Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> > > ---
+> > >  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 ++--
+> > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 30 +++++++++++++++++-------------
+> > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 ++--
+> > >  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++++---------
+> > >  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
+> > >  5 files changed, 26 insertions(+), 27 deletions(-)
+> > 
+> > [...]
+> 
+> [...]
+> > >  	}
+> > >  
+> > >  	value = mtk_ddp_sel_in(cur, next, &addr);
+> > >  	if (value) {
+> > > -		reg = readl_relaxed(config_regs + addr) & ~value;
+> > > -		writel_relaxed(reg, config_regs + addr);
+> > > +		regmap_read(config_regs, addr, &reg);
+> > > +		reg &= ~value;
+> > > +		regmap_write(config_regs, addr, reg);
+> > 
+> > 		regmap_update_bits(config_regs, addr, value, 0);
+> > 
+> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> > 
+> 
+> Thanks for having a look on that.
+> 
+> I'll update the next version with regmap_update_bits and leave your Reviewed-by,
+> hope that's ok.
 
--- 
-viresh
+Yes, that's fine.
+
+regards
+Philipp
