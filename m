@@ -1,43 +1,65 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 6/7] clk: meson: drop CLK_SET_RATE_PARENT flag
-Date: Thu, 26 Apr 2018 16:44:36 +0800
-Message-ID: <20180426084437.192394-7-yixun.lan@amlogic.com>
-In-Reply-To: <20180426084437.192394-1-yixun.lan@amlogic.com>
-References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH 1/8] drm/mediatek: Use regmap for register access
+To: Philipp Zabel <p.zabel@pengutronix.de>, ulrich.hecht+renesas@gmail.com,
+ laurent.pinchart@ideasonboard.com, ck.hu@mediatek.com, airlied@linux.ie,
+ robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, lee.jones@linaro.org
+Cc: davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
+ rdunlap@infradead.org, pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
+ linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Matthias Brugger <mbrugger@suse.com>
+References: <20171114214114.15793-1-mbrugger@suse.com>
+ <20171114214114.15793-2-mbrugger@suse.com>
+ <1511427282.7685.1.camel@pengutronix.de>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <3fffe06c-f19b-ef26-a19d-771611aae158@gmail.com>
+Date: Fri, 20 Apr 2018 11:41:22 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+In-Reply-To: <1511427282.7685.1.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The clk81 is not expected to be changed, so drop this flag.
+Hi Philipp,
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/clk/meson/gxbb-aoclk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 11/23/2017 09:54 AM, Philipp Zabel wrote:
+> Hi Matthias,
+> 
+> On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
+>> The mmsys memory space is shared between the drm and the
+>> clk driver. Use regmap to access it.
+>>
+>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>> ---
+>>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 ++--
+>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 30 +++++++++++++++++-------------
+>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 ++--
+>>  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++++---------
+>>  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
+>>  5 files changed, 26 insertions(+), 27 deletions(-)
+> [...]
+[...]
+>>  	}
+>>  
+>>  	value = mtk_ddp_sel_in(cur, next, &addr);
+>>  	if (value) {
+>> -		reg = readl_relaxed(config_regs + addr) & ~value;
+>> -		writel_relaxed(reg, config_regs + addr);
+>> +		regmap_read(config_regs, addr, &reg);
+>> +		reg &= ~value;
+>> +		regmap_write(config_regs, addr, reg);
+> 
+> 		regmap_update_bits(config_regs, addr, value, 0);
+> 
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> 
 
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 20f73e0d82a4..408e3e2fca18 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -69,7 +69,7 @@ static struct clk_regmap _name##_ao = {					\
- 		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
--		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-+		.flags = CLK_IGNORE_UNUSED,				\
- 	},								\
- }
- 
--- 
-2.17.0
+Thanks for having a look on that.
+
+I'll update the next version with regmap_update_bits and leave your Reviewed-by,
+hope that's ok.
+
+Regards,
+Matthias
