@@ -1,322 +1,70 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 4/7] clk: meson: add axg audio sclk divider driver
-To: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Kevin Hilman <khilman@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180425163304.10852-1-jbrunet@baylibre.com>
- <20180425163304.10852-5-jbrunet@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <d0435ffb-1101-6f1b-b2de-1dc74f6a9543@baylibre.com>
-Date: Thu, 26 Apr 2018 10:47:38 +0200
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180425163304.10852-5-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+ <1524063005-1716-2-git-send-email-geert+renesas@glider.be> <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Apr 2018 08:28:28 +0200
+Message-ID: <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
+	Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-tegra@vger.kernel.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/04/2018 18:33, Jerome Brunet wrote:
-> Add a driver to control the clock divider found in the sample clock
-> generator of the axg audio clock controller.
-> 
-> The sclk divider accumulates specific features which make the generic
-> divider unsuitable to control it:
-> - zero based divider (div = val + 1), but zero value gates the clock,
->   so minimum divider value is 2.
-> - lrclk variant may adjust the duty cycle depending the divider value
->   and the 'hi' value.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/Makefile     |   2 +-
->  drivers/clk/meson/clkc-audio.h |   8 ++
->  drivers/clk/meson/sclk-div.c   | 243 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 252 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/meson/sclk-div.c
-> 
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 64bb917fe1f0..f51b4754c31b 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -4,7 +4,7 @@
->  
->  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
->  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
-> -obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o
-> +obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
->  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
->  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-> diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
-> index 286ff1201258..0a7c157ebf81 100644
-> --- a/drivers/clk/meson/clkc-audio.h
-> +++ b/drivers/clk/meson/clkc-audio.h
-> @@ -15,6 +15,14 @@ struct meson_clk_triphase_data {
->  	struct parm ph2;
->  };
->  
-> +struct meson_sclk_div_data {
-> +	struct parm div;
-> +	struct parm hi;
-> +	unsigned int cached_div;
-> +	struct clk_duty cached_duty;
-> +};
-> +
->  extern const struct clk_ops meson_clk_triphase_ops;
-> +extern const struct clk_ops meson_sclk_div_ops;
->  
->  #endif /* __MESON_CLKC_AUDIO_H */
-> diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
-> new file mode 100644
-> index 000000000000..8c0bc914a6d7
-> --- /dev/null
-> +++ b/drivers/clk/meson/sclk-div.c
-> @@ -0,0 +1,243 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2018 BayLibre, SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + *
-> + * Sample clock generator divider:
-> + * This HW divider gates with value 0 but is otherwise a zero based divider:
-> + *
-> + * val >= 1
-> + * divider = val + 1
-> + *
-> + * The duty cycle may also be set for the LR clock variant. The duty cycle
-> + * ratio is:
-> + *
-> + * hi = [0 - val]
-> + * duty_cycle = (1 + hi) / (1 + val)
-> + */
-> +
-> +#include "clkc-audio.h"
-> +
-> +static inline struct meson_sclk_div_data *
-> +meson_sclk_div_data(struct clk_regmap *clk)
-> +{
-> +	return (struct meson_sclk_div_data *)clk->data;
-> +}
-> +
-> +static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
-> +{
-> +	return (1 << sclk->div.width) - 1;
-> +}
-> +
-> +static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
-> +{
-> +	return sclk_div_maxval(sclk) + 1;
-> +}
-> +
-> +static int sclk_div_getdiv(struct clk_hw *hw, unsigned long rate,
-> +			   unsigned long prate, int maxdiv)
-> +{
-> +	int div = DIV_ROUND_CLOSEST_ULL((u64)prate, rate);
-> +
-> +	return clamp(div, 2, maxdiv);
-> +}
-> +
-> +static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
-> +			    unsigned long *prate,
-> +			    struct meson_sclk_div_data *sclk)
-> +{
-> +	struct clk_hw *parent = clk_hw_get_parent(hw);
-> +	int bestdiv = 0, i;
-> +	unsigned long maxdiv, now, parent_now;
-> +	unsigned long best = 0, best_parent = 0;
-> +
-> +	if (!rate)
-> +		rate = 1;
-> +
-> +	maxdiv = sclk_div_maxdiv(sclk);
-> +
-> +	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT))
-> +		return sclk_div_getdiv(hw, rate, *prate, maxdiv);
-> +
-> +	/*
-> +	 * The maximum divider we can use without overflowing
-> +	 * unsigned long in rate * i below
-> +	 */
-> +	maxdiv = min(ULONG_MAX / rate, maxdiv);
-> +
-> +	for (i = 2; i <= maxdiv; i++) {
-> +		/*
-> +		 * It's the most ideal case if the requested rate can be
-> +		 * divided from parent clock without needing to change
-> +		 * parent rate, so return the divider immediately.
-> +		 */
-> +		if (rate * i == *prate)
-> +			return i;
-> +
-> +		parent_now = clk_hw_round_rate(parent, rate * i);
-> +		now = DIV_ROUND_UP_ULL((u64)parent_now, i);
-> +
-> +		if (abs(rate - now) < abs(rate - best)) {
-> +			bestdiv = i;
-> +			best = now;
-> +			best_parent = parent_now;
-> +		}
-> +	}
-> +
-> +	if (!bestdiv)
-> +		bestdiv = sclk_div_maxdiv(sclk);
-> +	else
-> +		*prate = best_parent;
-> +
-> +	return bestdiv;
-> +}
-> +
-> +static long sclk_div_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				unsigned long *prate)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-> +	int div;
-> +
-> +	div = sclk_div_bestdiv(hw, rate, prate, sclk);
-> +
-> +	return DIV_ROUND_UP_ULL((u64)*prate, div);
-> +}
-> +
-> +static void sclk_apply_ratio(struct clk_regmap *clk,
-> +			     struct meson_sclk_div_data *sclk)
-> +{
-> +	unsigned int hi = DIV_ROUND_CLOSEST(sclk->cached_div *
-> +					    sclk->cached_duty.num,
-> +					    sclk->cached_duty.den);
-> +
-> +	if (hi)
-> +		hi -= 1;
-> +
-> +	meson_parm_write(clk->map, &sclk->hi, hi);
-> +}
-> +
-> +static int sclk_div_set_duty_cycle(struct clk_hw *hw,
-> +				   struct clk_duty *duty)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-> +
-> +	if (MESON_PARM_APPLICABLE(&sclk->hi)) {
-> +		memcpy(&sclk->cached_duty, duty, sizeof(*duty));
-> +		sclk_apply_ratio(clk, sclk);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int sclk_div_get_duty_cycle(struct clk_hw *hw,
-> +				   struct clk_duty *duty)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-> +	int hi;
-> +
-> +	if (!MESON_PARM_APPLICABLE(&sclk->hi)) {
-> +		duty->num = 1;
-> +		duty->den = 2;
-> +		return 0;
-> +	}
-> +
-> +	hi = meson_parm_read(clk->map, &sclk->hi);
-> +	duty->num = hi + 1;
-> +	duty->den = sclk->cached_div;
-> +	return 0;
-> +}
-> +
-> +static void sclk_apply_divider(struct clk_regmap *clk,
-> +			       struct meson_sclk_div_data *sclk)
-> +{
-> +	if (MESON_PARM_APPLICABLE(&sclk->hi))
-> +		sclk_apply_ratio(clk, sclk);
-> +
-> +	meson_parm_write(clk->map, &sclk->div, sclk->cached_div - 1);
-> +}
-> +
-> +static int sclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			     unsigned long prate)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-> +	unsigned long maxdiv = sclk_div_maxdiv(sclk);
-> +
-> +	sclk->cached_div = sclk_div_getdiv(hw, rate, prate, maxdiv);
-> +
-> +	if (clk_hw_is_enabled(hw))
-> +		sclk_apply_divider(clk, sclk);
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned long sclk_div_recalc_rate(struct clk_hw *hw,
-> +					  unsigned long prate)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-> +
-> +	return DIV_ROUND_UP_ULL((u64)prate, sclk->cached_div);
-> +}
-> +
-> +static int sclk_div_enable(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-> +
-> +	sclk_apply_divider(clk, sclk);
-> +
-> +	return 0;
-> +}
-> +
-> +static void sclk_div_disable(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-> +
-> +	meson_parm_write(clk->map, &sclk->div, 0);
-> +}
-> +
-> +static int sclk_div_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-> +
-> +	if (meson_parm_read(clk->map, &sclk->div))
-> +		return 1;
-> +
-> +	return 0;
-> +}
-> +
-> +static void sclk_div_init(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-> +	unsigned int val;
-> +
-> +	val = meson_parm_read(clk->map, &sclk->div);
-> +
-> +	/* if the divider is initially disabled, assume max */
-> +	if (!val)
-> +		sclk->cached_div = sclk_div_maxdiv(sclk);
-> +	else
-> +		sclk->cached_div = val + 1;
-> +
-> +	sclk_div_get_duty_cycle(hw, &sclk->cached_duty);
-> +}
-> +
-> +const struct clk_ops meson_sclk_div_ops = {
-> +	.recalc_rate	= sclk_div_recalc_rate,
-> +	.round_rate	= sclk_div_round_rate,
-> +	.set_rate	= sclk_div_set_rate,
-> +	.enable		= sclk_div_enable,
-> +	.disable	= sclk_div_disable,
-> +	.is_enabled	= sclk_div_is_enabled,
-> +	.get_duty_cycle	= sclk_div_get_duty_cycle,
-> +	.set_duty_cycle = sclk_div_set_duty_cycle,
-> +	.init		= sclk_div_init,
-> +};
-> +EXPORT_SYMBOL_GPL(meson_sclk_div_ops);
-> 
+Hi Stephen, Rob,
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+On Fri, Apr 20, 2018 at 12:25 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
+>> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
+>> limited to clock providers.
+>>
+>> Hence move these helpers into their own header file, so callers that are
+>> not clock providers no longer have to include <linux/clk-provider.h>.
+>>
+>> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>> ---
+>> v3:
+>>   - Add Reviewed-by,
+>>   - Add SPDX-License-Identifier,
+>>   - Add to clock section in MAINTAINERS (note that Rob is still listed
+>>     as a maintainer, too, due to the include/linux/of*.h catch-all
+>>     rule),
+>
+> Can you X: out this file so Rob is happy? Or that doesn't work?
+
+I guess that should work.
+
+My point here is that due to the catch-all rule, he's listed as maintainer
+for of_{dma,gpio,irq,iommu,mdio,net,pci} too, which are all helpers for
+other subsystems. Perhaps these should be X'd-out too?
+Or is it OK without X-ing them out, as the clock maintainers are now shown, too?
+
+Rob: What's your preference?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
