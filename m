@@ -1,40 +1,109 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de
-Cc: fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <miquel.raynal@bootlin.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Nadav Haklai <nadavh@marvell.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] clk: imx6ul: fix periph clk2 clock mux selection
-Date: Wed, 18 Apr 2018 14:52:54 +0200
-Message-Id: <20180418125254.4397-1-stefan@agner.ch>
+	linux-pm@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 2/2] clk: mvebu: armada-37xx-periph: add suspend/resume support
+Date: Sat, 21 Apr 2018 16:23:44 +0200
+Message-Id: <20180421142344.25944-2-miquel.raynal@bootlin.com>
+In-Reply-To: <20180421142344.25944-1-miquel.raynal@bootlin.com>
+References: <20180421142344.25944-1-miquel.raynal@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to the data sheet the 3rd choice is the bypass clock
-of pll2. This should not have any effect in practice as this
-selection is not used currently.
+Add suspend/resume hooks in Armada 37xx peripheral clocks driver to
+handle S2RAM operations.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+One can think that these hooks are useless by comparing the register
+values before and after a suspend/resume cycle: they will look the same
+anyway. This is because of some scripts executed by the Cortex-M3 core
+during ATF operations to init both the clocks and the DDR. These values
+could be modified by the BL33 stage or by Linux itself and should be
+preserved.
+
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/clk/imx/clk-imx6ul.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mvebu/armada-37xx-periph.c | 48 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 12320118f8de..2ed7dae39008 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -40,7 +40,7 @@ static const char *axi_alt_sels[] = { "pll2_pfd2_396m", "pll3_pfd1_540m", };
- static const char *axi_sels[] = {"periph", "axi_alt_sel", };
- static const char *periph_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll2_198m", };
- static const char *periph2_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll4_audio_div", };
--static const char *periph_clk2_sels[] = { "pll3_usb_otg", "osc", "osc", };
-+static const char *periph_clk2_sels[] = { "pll3_usb_otg", "osc", "pll2_bypass_src", };
- static const char *periph2_clk2_sels[] = { "pll3_usb_otg", "osc", };
- static const char *periph_sels[] = { "periph_pre", "periph_clk2", };
- static const char *periph2_sels[] = { "periph2_pre", "periph2_clk2", };
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index 723bb7f6cea1..cd560bdcb8a9 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -59,6 +59,15 @@ struct clk_periph_driver_data {
+ 	struct clk_hw_onecell_data *hw_data;
+ 	spinlock_t lock;
+ 	void __iomem *reg;
++#if defined(CONFIG_PM)
++	/* Storage registers for suspend/resume operations */
++	u32 tbg_sel;
++	u32 div_sel0;
++	u32 div_sel1;
++	u32 div_sel2;
++	u32 clk_sel;
++	u32 clk_dis;
++#endif /* CONFIG_PM */
+ };
+ 
+ struct clk_double_div {
+@@ -642,6 +651,42 @@ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
+ 	return PTR_ERR_OR_ZERO(*hw);
+ }
+ 
++#if defined(CONFIG_PM)
++static int armada_3700_periph_clock_suspend(struct device *dev)
++{
++	struct clk_periph_driver_data *data = dev_get_drvdata(dev);
++
++	data->tbg_sel = readl(data->reg + TBG_SEL);
++	data->div_sel0 = readl(data->reg + DIV_SEL0);
++	data->div_sel1 = readl(data->reg + DIV_SEL1);
++	data->div_sel2 = readl(data->reg + DIV_SEL2);
++	data->clk_sel = readl(data->reg + CLK_SEL);
++	data->clk_dis = readl(data->reg + CLK_DIS);
++
++	return 0;
++}
++
++static int armada_3700_periph_clock_resume(struct device *dev)
++{
++	struct clk_periph_driver_data *data = dev_get_drvdata(dev);
++
++	/* Follow the same order than what the Cortex-M3 does (ATF code) */
++	writel(data->clk_dis, data->reg + CLK_DIS);
++	writel(data->div_sel0, data->reg + DIV_SEL0);
++	writel(data->div_sel1, data->reg + DIV_SEL1);
++	writel(data->div_sel2, data->reg + DIV_SEL2);
++	writel(data->tbg_sel, data->reg + TBG_SEL);
++	writel(data->clk_sel, data->reg + CLK_SEL);
++
++	return 0;
++}
++
++static const struct dev_pm_ops armada_3700_periph_clock_pm_ops = {
++	.suspend        = armada_3700_periph_clock_suspend,
++	.resume         = armada_3700_periph_clock_resume,
++};
++#endif /* CONFIG_PM */
++
+ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
+ {
+ 	struct clk_periph_driver_data *driver_data;
+@@ -716,6 +761,9 @@ static struct platform_driver armada_3700_periph_clock_driver = {
+ 	.driver		= {
+ 		.name	= "marvell-armada-3700-periph-clock",
+ 		.of_match_table = armada_3700_periph_clock_of_match,
++#if defined(CONFIG_PM)
++		.pm	= &armada_3700_periph_clock_pm_ops,
++#endif /* CONFIG_PM */
+ 	},
+ };
+ 
 -- 
-2.17.0
+2.14.1
