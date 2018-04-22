@@ -1,81 +1,50 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
 	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 19/21] arm64: dts: allwinner: a64: a64-olinuxino: Enable HDMI output
-Date: Mon, 30 Apr 2018 17:10:56 +0530
-Message-Id: <20180430114058.5061-20-jagan@amarulasolutions.com>
-In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH clk-fixes] clk: meson: meson8b: fix meson8b_fclk_div3_div clock name
+Date: Sun, 22 Apr 2018 12:28:43 +0200
+Message-Id: <20180422102843.31238-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable HDMI output on a64-olinuxino board.
+The names of all fclk divider gate clocks follow the naming schema
+"fclk_divN" and the name of all fclk fixed dividers follow the naming
+schema "fclk_divN_div".
+There's one exception to this rule: meson8b_fclk_div3_div's name is
+"fclk_div_div3". It's child clock meson8b_fclk_div3 however references
+it as "fclk_div3_div" (following the naming schema explained above).
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Fix the naming of the meson8b_fclk_div3_div clock to follow the naming
+schema. This also fixes serial console on my Meson8m2 board because
+"clk81" uses fclk_div3 as parent. However, since the hierarchy stops at
+meson8b_fclk_div3 there's no known parent clock and the rate of "clk81"
+and all of it's children (UART clock, SDIO MMC controller clock, ...)
+are all 0.
+
+Fixes: 05f814402d6174 ("clk: meson: add fdiv clock gates")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- .../boot/dts/allwinner/sun50i-a64-olinuxino.dts    | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/clk/meson/meson8b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index 3b3081b10ecb..83329c8fec4f 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -58,12 +58,38 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	wifi_pwrseq: wifi_pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index cc2992493e0b..2c4ff6192852 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -253,7 +253,7 @@ static struct clk_fixed_factor meson8b_fclk_div3_div = {
+ 	.mult = 1,
+ 	.div = 3,
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fclk_div_div3",
++		.name = "fclk_div3_div",
+ 		.ops = &clk_fixed_factor_ops,
+ 		.parent_names = (const char *[]){ "fixed_pll" },
+ 		.num_parents = 1,
 -- 
-2.14.3
+2.17.0
