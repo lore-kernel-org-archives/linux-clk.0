@@ -1,52 +1,62 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v8 25/42] ARM: davinci: dm644x: add new clock init using
- common clock framework
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-26-git-send-email-david@lechnology.com>
- <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <b44de0a4-776d-153c-54e3-ce6ddc4f074f@lechnology.com>
-Date: Wed, 4 Apr 2018 11:21:02 -0500
-MIME-Version: 1.0
-In-Reply-To: <333f49c7-bafd-8e2d-65e9-7d1aff4836de@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:45577 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750916AbeDVKdq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Apr 2018 06:33:46 -0400
+Received: by mail-wr0-f194.google.com with SMTP id p5-v6so5715642wre.12
+        for <linux-clk@vger.kernel.org>; Sun, 22 Apr 2018 03:33:46 -0700 (PDT)
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com, jbrunet@baylibre.com,
+        linux-amlogic@lists.infradead.org
+Cc: carlo@caione.org, khilman@baylibre.com, linux-clk@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 0/1] add support for the NAND clocks on Meson8b
+Date: Sun, 22 Apr 2018 12:33:38 +0200
+Message-Id: <20180422103339.32608-1-martin.blumenstingl@googlemail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/03/2018 05:26 AM, Sekhar Nori wrote:
-> On Friday 16 March 2018 08:22 AM, David Lechner wrote:
->> +static struct resource dm644x_pll1_resources[] = {
->> +	{
->> +		.start	= DAVINCI_PLL1_BASE,
->> +		.end	= DAVINCI_PLL1_BASE + SZ_4K - 1,
-> 
-> The .end should be DAVINCI_PLL1_BASE + SZ_1K - 1, otherwise it prevents
-> PLL2 from getting registered.
-> 
->> +		.flags	= IORESOURCE_MEM,
->> +	},
->> +};
->> +
->> +static struct platform_device dm644x_pll1_device = {
->> +	.name		= "dm644x-pll1",
->> +	.id		= -1,
->> +	.resource	= dm644x_pll1_resources,
->> +	.num_resources	= ARRAY_SIZE(dm644x_pll1_resources),
->> +};
->> +
->> +static struct resource dm644x_pll2_resources[] = {
->> +	{
->> +		.start	= DAVINCI_PLL2_BASE,
->> +		.end	= DAVINCI_PLL2_BASE + SZ_4K - 1,
-> 
-> And this too should be fixed, else it prevents the PSC from getting
-> registered.
+This adds support for the NAND clocks found in the Meson8, Meson8b
+and Meson8m2 SoCs.
+The clocks consist of a simple gate, a divider and a mux. The mux
+parents are not documented in the public S805 datasheet [0], so I
+had to use a bit of math and take the vendor kernel as reference [1]
+to find the actual parent clocks.
+Some mux parents cannot be divided down without remainder to the
+target clocks (as expected by the vendor NAND driver) these clocks
+have the ROUND_CLOSEST flag set.
 
-Thanks. I've checked and this needs to be fixed for dm646x, dm355 and
-dm365 as well.
+The new clocks are similar to gxbb_sd_emmc_c_clk0_sel,
+gxbb_sd_emmc_c_clk0_div and gxbb_sd_emmc_c_clk0 on the GX SoCs.
+Actual differences are:
+- mux parents are re-ordered
+- the gate is controlled by bit 8 (instead of bit 7 on GX)
+
+Changes since v2 at [1]:
+- rebased on top of v4.17-rc1 and updated the clocks to use the new
+  clk_regmap framework (as all other clocks in meson8b.c)
+
+Changes since v1 at [0]:
+- rebased so it still applies in 2018
+- dropped mux table (since the known parents are values 0..4)
+- replaced CLK_SET_RATE_NO_REPARENT with CLK_SET_RATE_PARENT on the mux
+- added CLK_SET_RATE_PARENT on the divider
+- fixed width of the divider (it's 7 bits wide, ranging from bit 0 to 6
+  while v1 only used a width of 6 bits)
+
+
+[0] http://lists.infradead.org/pipermail/linux-amlogic/2017-April/003237.html
+[1] http://lists.infradead.org/pipermail/linux-amlogic/2018-January/005934.html
+
+
+Martin Blumenstingl (1):
+  clk: meson: meson8b: add support for the NAND clocks
+
+ drivers/clk/meson/meson8b.c              | 54 ++++++++++++++++++++++++
+ drivers/clk/meson/meson8b.h              |  3 +-
+ include/dt-bindings/clock/meson8b-clkc.h |  3 ++
+ 3 files changed, 59 insertions(+), 1 deletion(-)
+
+-- 
+2.17.0
+
