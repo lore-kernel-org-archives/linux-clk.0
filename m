@@ -1,57 +1,62 @@
-Return-Path: <sean.wang@mediatek.com>
-From: <sean.wang@mediatek.com>
-To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>, <p.zabel@pengutronix.de>
-CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 1/6] dt-bindings: gpu: mali-utgard: add mediatek,mt7623-mali compatible
-Date: Fri, 27 Apr 2018 16:14:42 +0800
-Message-ID: <7ab060c2e9ef2b220fc62913b8936b706dfaf202.1524816502.git.sean.wang@mediatek.com>
-In-Reply-To: <cover.1524816502.git.sean.wang@mediatek.com>
-References: <cover.1524816502.git.sean.wang@mediatek.com>
-Return-Path: sean.wang@mediatek.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1524471797.4026.3.camel@baylibre.com>
+Subject: Re: [PATCH clk-fixes] clk: meson: meson8b: fix
+ meson8b_fclk_div3_div clock name
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Stephen Boyd
+	 <sboyd@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
+	narmstrong@baylibre.com, linux-amlogic@lists.infradead.org
+Date: Mon, 23 Apr 2018 10:23:17 +0200
+In-Reply-To: <20180422102843.31238-1-martin.blumenstingl@googlemail.com>
+References: <20180422102843.31238-1-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Sun, 2018-04-22 at 12:28 +0200, Martin Blumenstingl wrote:
+> The names of all fclk divider gate clocks follow the naming schema
+> "fclk_divN" and the name of all fclk fixed dividers follow the naming
+> schema "fclk_divN_div".
+> There's one exception to this rule: meson8b_fclk_div3_div's name is
+> "fclk_div_div3". It's child clock meson8b_fclk_div3 however references
+> it as "fclk_div3_div" (following the naming schema explained above).
+> 
+> Fix the naming of the meson8b_fclk_div3_div clock to follow the naming
+> schema. This also fixes serial console on my Meson8m2 board because
+> "clk81" uses fclk_div3 as parent. However, since the hierarchy stops at
+> meson8b_fclk_div3 there's no known parent clock and the rate of "clk81"
+> and all of it's children (UART clock, SDIO MMC controller clock, ...)
+> are all 0.
+> 
+> Fixes: 05f814402d6174 ("clk: meson: add fdiv clock gates")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-The MediaTek MT7623 SoC contains a Mali-450, so add a compatible for it
-and define its own vendor-specific properties.
+Oopss ... Thanks for fixing this Martin.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-index 99d1c0a..656068f 100644
---- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-@@ -19,6 +19,7 @@ Required properties:
-       + rockchip,rk3228-mali
-       + rockchip,rk3328-mali
-       + stericsson,db8500-mali
-+      + mediatek,mt7623-mali
- 
-   - reg: Physical base address and length of the GPU registers
- 
-@@ -89,6 +90,14 @@ to specify one more vendor-specific compatible, among:
-       * interrupt-names and interrupts:
-         + combined: combined interrupt of all of the above lines
- 
-+  - mediatek,mt7623-mali
-+     Required properties:
-+      * resets: phandle to the reset line for the GPU
-+      * mediatek,larb: phandle pointed to the local arbiter used to control the
-+	access to external memory on the SoC.
-+	see Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
-+	for details
-+
- Example:
- 
- mali: gpu@1c40000 {
--- 
-2.7.4
+Stephen, Do you mind taking this directly for fixes ? I can prepare a PR if you
+prefer.
+
+Regards
+Jerome
+
+> ---
+>  drivers/clk/meson/meson8b.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index cc2992493e0b..2c4ff6192852 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -253,7 +253,7 @@ static struct clk_fixed_factor meson8b_fclk_div3_div = {
+>  	.mult = 1,
+>  	.div = 3,
+>  	.hw.init = &(struct clk_init_data){
+> -		.name = "fclk_div_div3",
+> +		.name = "fclk_div3_div",
+>  		.ops = &clk_fixed_factor_ops,
+>  		.parent_names = (const char *[]){ "fixed_pll" },
+>  		.num_parents = 1,
