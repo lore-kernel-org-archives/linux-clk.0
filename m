@@ -1,49 +1,63 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 3/7] remoteproc/davinci: add the missing retval check
- for clk_enable()
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Suman Anna <s-anna@ti.com>,
-        Kevin
- Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner
-	<david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson
-	<bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>
-References: <20180417173038.25510-1-brgl@bgdev.pl>
- <20180417173038.25510-4-brgl@bgdev.pl>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <887cabcb-ebb5-0ad9-5bf4-8bb5eba2a017@ti.com>
-Date: Wed, 18 Apr 2018 10:34:42 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180417173038.25510-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v2 09/10] drm: mediatek: Omit warning on probe defers
+Date: Mon, 23 Apr 2018 18:13:58 +0200
+Message-Id: <a698a40ce7723200fd55d0d98daff5a28a7d0039.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The davinci platform is being switched to using the common clock
-> framework, where clk_enable() can fail. Add the return value check.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Acked-by: Suman Anna <s-anna@ti.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
+From: Matthias Brugger <mbrugger@suse.com>
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+When probe through the MFD, it can happen that the
+clock drivers wasn't probed before the ddp driver gets
+invoked. The driver used to omit a warning that the driver
+failed to get the clocks. Omit this error on the defered probe path.
 
-This should be safe to apply to v4.17-rc1 and should be queued by Ohad /
-Bjorn.
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-Sekhar
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index bafc5c77c4fb..6b399348a2dc 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -374,7 +374,8 @@ static int mtk_ddp_probe(struct platform_device *pdev)
+ 
+ 	ddp->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(ddp->clk)) {
+-		dev_err(dev, "Failed to get clock\n");
++		if (PTR_ERR(ddp->clk) != -EPROBE_DEFER)
++			dev_err(dev, "Failed to get clock\n");
+ 		return PTR_ERR(ddp->clk);
+ 	}
+ 
+-- 
+2.16.3
