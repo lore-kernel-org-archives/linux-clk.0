@@ -1,286 +1,121 @@
-Return-Path: <anischal@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:40004 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932178AbeDWRuD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Apr 2018 13:50:03 -0400
+Received: by mail-ot0-f196.google.com with SMTP id h8-v6so18190049otj.7
+        for <linux-clk@vger.kernel.org>; Mon, 23 Apr 2018 10:50:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Tue, 03 Apr 2018 14:22:47 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown
- <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Odelu
- Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] clk: qcom: Configure the RCGs to a safe source as
- needed
-In-Reply-To: <152150582284.254778.15552235408861080239@swboyd.mtv.corp.google.com>
-References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
- <1520493495-3084-3-git-send-email-anischal@codeaurora.org>
- <152150582284.254778.15552235408861080239@swboyd.mtv.corp.google.com>
-Message-ID: <07dbf890975c1178bc4cc2360c25526a@codeaurora.org>
+In-Reply-To: <1524472409.4026.10.camel@baylibre.com>
+References: <20180422103339.32608-1-martin.blumenstingl@googlemail.com>
+ <20180422103339.32608-2-martin.blumenstingl@googlemail.com> <1524472409.4026.10.camel@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 23 Apr 2018 19:49:42 +0200
+Message-ID: <CAFBinCCKde+42PXzak8nuGEGTxwrvOVV7KDeoD1RkV_DjMdDOA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] clk: meson: meson8b: add support for the NAND clocks
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, carlo@caione.org,
+        khilman@baylibre.com, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018-03-20 06:00, Stephen Boyd wrote:
-> Quoting Amit Nischal (2018-03-07 23:18:13)
->> For some root clock generators, there could be child branches which 
->> are
->> controlled by an entity other than application processor subsystem. 
->> For
->> such RCGs, as per application processor subsystem clock driver, all of 
->> its
->> downstream clocks are disabled and RCG is in disabled state but in 
->> actual
->> downstream clocks can be left enabled before.
-> 
-> s/actual/reality?
-Thanks for the review. I will address this in next patch series.
+Hi Jerome,
 
-> 
->> 
->> So in this scenario, when RCG is disabled as per clock driver's point 
->> of
->> view and when rate scaling request comes before downstream clock 
->> enable
->> request, then RCG fails to update its configuration because in actual 
->> RCG
-> 
-> s/actual/reality?
-> 
-I will address this in next patch series.
-
->> is on and it expects its new source to alredy in enable state  but in
-> 
-> s/alredy/already be/
-I will address this in next patch series.
-
-> 
->> reality new source is in off state. In order to avoid letting the RCG 
->> to
-> 
-> s/is in off state/is off/
-> s/letting/having/
-I will address this in next patch series.
-
-> 
->> go into an invalid state, add support to just cache the rate of RCG 
->> during
-> 
-> s/just//
-I will address this in next patch series.
-
-> 
->> set_rate(), defer actual RCG configuration update to be done during
->> clk_enable() as at this point of time, both its new parent and safe 
->> source
->> will be already enabled and RCG can safely switch to new parent.
->> 
->> During clk_disable() request, configure it to safe source as both
->> its parents, safe source and current parent will be enabled and RCG 
->> can
->> safely execute a switch. Also add support to have safe configuration
->> frequency table structure for each shared RCG.
->> 
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+On Mon, Apr 23, 2018 at 10:33 AM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> On Sun, 2018-04-22 at 12:33 +0200, Martin Blumenstingl wrote:
+>> This adds the NAND clocks (from the HHI_NAND_CLK_CNTL register) to the
+>> Meson8b clock driver. There are three NAND clocks: a gate which enables
+>> or disables the NAND clock, a mux and a divider (which divides the mux
+>> output).
+>> Unfortunately the public S805 datasheet does not document the mux
+>> parents. However, the vendor kernel has a few hints for us which allows
+>> us to make an educated guess about the clock parents. To do this we need
+>> to have a look at set_nand_core_clk() from the vendor's NAND driver (see
+>> [0]):
+>> - XTAL = (4<<9) | (1<<8) | 0
+>> - 160MHz = (0<<9) | (1<<8) | 3)
+>> - 182MHz = (3<<9) | (1<<8) | 1)
+>> - 212MHz = (1<<9) | (1<<8) | 3)
+>> - 255MHz = (2<<9) | (1<<8) | 1)
+>>
+>> While there is a comment for the XTAL parent (which indicates that it
+>> should only be used for debugging) we have to do a bit of math for the
+>> other parents: target_freq * divider = rate of parent clock
+>> Bit 8 above is the enable bit, so we can ignore it here. Bits 11:9 are
+>> the mux index and bits 6:0 are the 0-based divider (so we need to add
+>> 1). This gives us:
+>> - mux 0 (160MHz * 4) = fclk_div4 (actual rate = 637.5MHz, off by 2.5MHz)
+>> - mux 1 (212MHz * 4) = fclk_div3 (actual rate = 850MHz, off by 2MHz)
+>> - mux 2 (255MHz * 2) = fclk_div5 (matches exactly 510MHz)
+>> - mux 3 (182MHz * 2) = fclk_div7 (actual rate = 346.3MHz, off by 0.3MHz)
+>>
+>> [0] https://github.com/khadas/linux/blob/9587681285cb/drivers/amlogic/amlnf/dev/amlnf_ctrl.c#L314
+>>
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 >> ---
->> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
->> index 2a7489a..205fa34 100644
->> --- a/drivers/clk/qcom/clk-rcg.h
->> +++ b/drivers/clk/qcom/clk-rcg.h
->> @@ -146,6 +146,9 @@ struct clk_dyn_rcg {
->>   * @hid_width: number of bits in half integer divider
->>   * @parent_map: map from software's parent index to hardware's 
->> src_sel field
->>   * @freq_tbl: frequency table
->> + * @current_freq: last cached frequency when using branches with 
->> shared RCGs
->> + * @safe_src_freq_tbl : frequency table of safe source when using 
->> branches
->> + *                     with shared RCGs
->>   * @clkr: regmap clock handle
->>   *
->>   */
->> @@ -155,6 +158,8 @@ struct clk_rcg2 {
->>         u8                      hid_width;
->>         const struct parent_map *parent_map;
->>         const struct freq_tbl   *freq_tbl;
->> +       unsigned long           current_freq;
->> +       const struct freq_tbl   *safe_src_freq_tbl;
-> 
-> Can we store safe_src index instead? And then construct the frequency
-> table entry on the fly at the call site? I think it would greatly
-> clarify that we don't really care about the rate of the clk at all.
-> Instead, all we care about is making sure the mux is set to whatever
-> source selection can provide an always on signal.
-> 
-We will address the above in the V3 series of the patch set. We will be
-generating the safe frequency table on the fly taking the safe source
-frequency index input from the RCG clock.
-
->>         struct clk_regmap       clkr;
+>>  drivers/clk/meson/meson8b.c              | 54 ++++++++++++++++++++++++
+>>  drivers/clk/meson/meson8b.h              |  3 +-
+>>  include/dt-bindings/clock/meson8b-clkc.h |  3 ++
+>>  3 files changed, 59 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+>> index 2c4ff6192852..3f726ff73261 100644
+>> --- a/drivers/clk/meson/meson8b.c
+>> +++ b/drivers/clk/meson/meson8b.c
+>> @@ -639,6 +639,54 @@ static struct clk_regmap meson8b_cpu_clk = {
+>>       },
 >>  };
->> 
->> @@ -167,5 +172,6 @@ struct clk_rcg2 {
->>  extern const struct clk_ops clk_byte2_ops;
->>  extern const struct clk_ops clk_pixel_ops;
->>  extern const struct clk_ops clk_gfx3d_ops;
->> +extern const struct clk_ops clk_rcg2_shared_ops;
->> 
->>  #endif
->> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
->> index e63db10..a52de54 100644
->> --- a/drivers/clk/qcom/clk-rcg2.c
->> +++ b/drivers/clk/qcom/clk-rcg2.c
->> @@ -790,3 +790,158 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, 
->> unsigned long rate,
->>         .determine_rate = clk_gfx3d_determine_rate,
->>  };
->> +
->> +static unsigned long
->> +clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long 
->> parent_rate)
->> +{
->> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
->> +
->> +       if (!__clk_is_enabled(hw->clk)) {
->> +               if (!rcg->current_freq) {
->> +                       if (!clk_rcg2_get_parent(hw))
-> 
-> This is checking for 0 source selection of parent? So basically if
-> source is XO selected then return what we know is the XO speed? We
-> should be able to do that by returning parent_rate though?
-> 
->> +                               rcg->current_freq =
->> +                                       rcg->safe_src_freq_tbl->freq;
->> +                       else
->> +                               rcg->current_freq =
->> +                                       clk_rcg2_recalc_rate(hw, 
->> parent_rate);
->> +               }
->> +
->> +               return rcg->current_freq;
->> +       }
->> +
->> +       return rcg->current_freq = clk_rcg2_recalc_rate(hw, 
->> parent_rate);
-> 
-> I don't get this function.
-> 
-> To simplify just return cached rate if it's set and clk is off,
-> otherwise read the hardware?
-> 
-> 	if (!__clk_is_enabled(hw->clk) && rcg->current_freq)
-> 		return rcg->current_freq;
-> 
-> 	return clk_rcg2_recalc_rate(hw, parent_rate);
-> 
-> I would also rename current_freq to something like cached_freq and then
-> *only* assign it when someone calls clk_set_rate() (and save around the
-> frequency table pointer instead of raw frequency). Out of boot, we will
-> return the right frequency and clk_set_rate() called before enable will
-> cache the rate to what we want.
+>>
+>> +static struct clk_regmap meson8b_nand_clk_sel = {
+>> +     .data = &(struct clk_regmap_mux_data){
+>> +             .offset = HHI_NAND_CLK_CNTL,
+>> +             .mask = 0x7,
+>> +             .shift = 9,
+>> +             .flags = CLK_MUX_ROUND_CLOSEST,
+>
+> Maybe you have seen it already, but there was a problem with this flag, it was
+> ignored. Fix should land in this cycle.
+>
+> https://lkml.kernel.org/r/152389589448.51482.15489333464741262913@swboyd.mtv.cor
+> p.google.com
+yep, I've seen your fix (thank you!) so I decided to re-send this
 
-Thanks for your valuable suggestion. We will fix this in the next patch
-series. But we would like to have one modification i.e. to update the
-current_freq value with the clk_rcg2_recalc_rate(). Reason for the same
-is given below. So the final logic would be:
+>> +     },
+>> +     .hw.init = &(struct clk_init_data){
+>> +             .name = "nand_clk_sel",
+>>
+>
+> [...]
+>
+>>  /*
+>>   * include the CLKID and RESETID that have
+>> diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
+>> index dea9d46d4fa7..434d7ba63801 100644
+>> --- a/include/dt-bindings/clock/meson8b-clkc.h
+>> +++ b/include/dt-bindings/clock/meson8b-clkc.h
+>> @@ -102,5 +102,8 @@
+>>  #define CLKID_MPLL0          93
+>>  #define CLKID_MPLL1          94
+>>  #define CLKID_MPLL2          95
+>> +#define CLKID_NAND_SEL               110
+>> +#define CLKID_NAND_DIV               111
+>
+> Nitpick: Could put the bindings in separate patch ?
+> It makes our life easier if intend to push a DT patch using them in this cycle.
+OK, I'll split the patch (even though it's HIGHLY unlikely that the
+NAND driver will make it anytime soon..)
 
-static unsigned long
-clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long 
-parent_rate)
-{
-    ...
-    if (!__clk_is_enabled(hw->clk) && rcg->current_freq)
-       return rcg->current_freq;
+> Also, do you need to expose the divider and the mux ?
+I think only the most specific leaf (= gate clock) is needed, I'll
+keep the mux and divider in the private header file
 
-    return rcg->current_freq = clk_rcg2_recalc_rate(hw, parent_rate);
-}
+> Apart from this, patch looks good to me.
+>
+> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+thank you!
 
-Updation of current_freq is required in recalc_rate() because in a
-case where clk_enable() is called before the set_rate()[which actually
-updates the current_freq] then inside the clk_rcg2_shared_enable(),
-current_freq value will be 0 and clk_rcg2_shared_force_enable_clear()
-will configure the RCG with the first frequency entry in the frequency
-table and RCG will get enable at rate which BOOT has not configured.
 
-> 
->> +}
->> +
->> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
->> +{
->> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
->> +
->> +       if (rcg->current_freq == rcg->safe_src_freq_tbl->freq) {
->> +               clk_rcg2_set_force_enable(hw);
->> +               clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
->> +               clk_rcg2_clear_force_enable(hw);
->> +
->> +               return 0;
->> +       }
->> +
->> +       /*
->> +        * Switch from safe source to the stashed mux selection. The 
->> current
->> +        * parent has already been prepared and enabled at this point, 
->> and
->> +        * the safe source is always on while application processor 
->> subsystem
->> +        * is online. Therefore, the RCG can safely switch its source.
->> +        */
->> +
->> +       return clk_rcg2_shared_force_enable_clear(hw, 
->> rcg->current_freq);
-> 
-> Not much is different between clk_rcg2_shared_force_enable_clear() and
-> the three lines above inside that if condition. The only difference is
-> we don't search for a rate in the frequency table. Ugh, but we can't
-> change the frequency table because of hw clk control stuff that relies
-> on the table in software matching the table in hardware? Sad.
-> 
-> Can we at least change the if condition above to be something like:
-> 
-> 	if (rcg->force_safe_src) {
-> 		clk_rcg2_set_force_enable(...
-> 
-> And then set the force_safe_src bool when we want enable to skip normal
-> rate restoration behavior? We should be able to use that flag in other
-> places too, like where we check for the clk being enabled in software 
-> or
-> not.
-
-As per the new implementation in V3 series, we think there is no need to
-have one new flag.
-
-> 
->> +}
->> +
->> +static void clk_rcg2_shared_disable(struct clk_hw *hw)
->> +{
->> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
->> +
->> +       /*
->> +        * Park the RCG at a safe configuration - sourced off from 
->> safe source.
->> +        * Force enable and disable the RCG while configuring it to 
->> safeguard
->> +        * against any update signal coming from the downstream clock.
->> +        * The current parent is still prepared and enabled at this 
->> point, and
->> +        * the safe source is always on while application processor 
->> subsystem
->> +        * is online. Therefore, the RCG can safely switch its parent.
->> +        */
->> +       clk_rcg2_set_force_enable(hw);
->> +       clk_rcg2_configure(rcg, rcg->safe_src_freq_tbl);
->> +       clk_rcg2_clear_force_enable(hw);
->> +}
->> +
-> 
-> Yeah, all this stuff would get simpler if we stopped using frequencies.
-> Hopefully I made sense!
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards
+Martin
