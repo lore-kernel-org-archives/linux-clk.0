@@ -1,50 +1,93 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com,
-	jbrunet@baylibre.com,
-	linux-amlogic@lists.infradead.org
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
 	linux-clk@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH clk-fixes] clk: meson: meson8b: fix meson8b_fclk_div3_div clock name
-Date: Sun, 22 Apr 2018 12:28:43 +0200
-Message-Id: <20180422102843.31238-1-martin.blumenstingl@googlemail.com>
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v2 06/10] mfd: mtk-mmsys: Add mt8173 nodes
+Date: Mon, 23 Apr 2018 18:13:55 +0200
+Message-Id: <ce7c173efe9929712af11ea38be7f3a4d515879b.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The names of all fclk divider gate clocks follow the naming schema
-"fclk_divN" and the name of all fclk fixed dividers follow the naming
-schema "fclk_divN_div".
-There's one exception to this rule: meson8b_fclk_div3_div's name is
-"fclk_div_div3". It's child clock meson8b_fclk_div3 however references
-it as "fclk_div3_div" (following the naming schema explained above).
+From: Matthias Brugger <mbrugger@suse.com>
 
-Fix the naming of the meson8b_fclk_div3_div clock to follow the naming
-schema. This also fixes serial console on my Meson8m2 board because
-"clk81" uses fclk_div3 as parent. However, since the hierarchy stops at
-meson8b_fclk_div3 there's no known parent clock and the rate of "clk81"
-and all of it's children (UART clock, SDIO MMC controller clock, ...)
-are all 0.
+Add devices for the mt8173 SoC.
 
-Fixes: 05f814402d6174 ("clk: meson: add fdiv clock gates")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/clk/meson/meson8b.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/mtk-mmsys.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index cc2992493e0b..2c4ff6192852 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -253,7 +253,7 @@ static struct clk_fixed_factor meson8b_fclk_div3_div = {
- 	.mult = 1,
- 	.div = 3,
- 	.hw.init = &(struct clk_init_data){
--		.name = "fclk_div_div3",
-+		.name = "fclk_div3_div",
- 		.ops = &clk_fixed_factor_ops,
- 		.parent_names = (const char *[]){ "fixed_pll" },
- 		.num_parents = 1,
+diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
+index c802343fb1c6..5585a561a02f 100644
+--- a/drivers/mfd/mtk-mmsys.c
++++ b/drivers/mfd/mtk-mmsys.c
+@@ -19,6 +19,7 @@
+ 
+ enum {
+ 	MMSYS_MT2701 = 1,
++	MMSYS_MT8173,
+ };
+ 
+ static const struct mfd_cell mmsys_mt2701_devs[] = {
+@@ -26,6 +27,12 @@ static const struct mfd_cell mmsys_mt2701_devs[] = {
+ 	{ .name = "drm-mt2701-mm", },
+ };
+ 
++static const struct mfd_cell mmsys_mt8173_devs[] = {
++	{ .name = "clk-mt8173-mm", },
++	{ .name = "drm-mt8173-mm", },
++};
++
++
+ static int mmsys_probe(struct platform_device *pdev)
+ {
+ 	const struct mfd_cell *mmsys_cells;
+@@ -44,6 +51,10 @@ static int mmsys_probe(struct platform_device *pdev)
+ 		mmsys_cells = mmsys_mt2701_devs;
+ 		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
+ 		break;
++	case MMSYS_MT8173:
++		mmsys_cells = mmsys_mt8173_devs;
++		nr_cells = ARRAY_SIZE(mmsys_mt8173_devs);
++		break;
+ 	default:
+ 		return -ENODEV;
+ 	}
+@@ -62,6 +73,9 @@ static const struct of_device_id of_match_mmsys[] = {
+ 	{ .compatible = "mediatek,mt2701-mmsys",
+ 	  .data = (void *) MMSYS_MT2701,
+ 	},
++	{ .compatible = "mediatek,mt8173-mmsys",
++	  .data = (void *) MMSYS_MT8173,
++	},
+ 	{ /* sentinel */ },
+ };
+ 
 -- 
-2.17.0
+2.16.3
