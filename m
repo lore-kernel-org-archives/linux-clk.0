@@ -1,37 +1,167 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Tue, 3 Apr 2018 09:53:41 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: Ilia Lin <ilialin@codeaurora.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-	rjw@rjwysocki.net, lgirdwood@gmail.com, broonie@kernel.org,
-	andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v4 13/14] dt-bindings: cpufreq: Document
- operating-points-v2-kryo-cpu
-Message-ID: <20180403042341.GI3572@vireshk-i7>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
- <1522358807-10413-14-git-send-email-ilialin@codeaurora.org>
- <20180402093018.GC3572@vireshk-i7>
- <7ca35b7a-6078-620b-4772-091e53ef6790@codeaurora.org>
- <06308b25-14ea-8d8b-6f95-f05c101a617b@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <06308b25-14ea-8d8b-6f95-f05c101a617b@codeaurora.org>
+Return-Path: <mbrugger@localhost>
+From: Matthias Brugger <mbrugger@suse.com>
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v2 03/10] mfd: mtk-mmsys: Add mmsys driver
+Date: Mon, 23 Apr 2018 17:32:02 +0200
+Message-Id: <99bef17c57ad60eff6104da780cf59b785bd3e42.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03-04-18, 08:11, Sricharan R wrote:
->  Right, i was adding a similar one for krait cores [1]. There is code common in the
->  init sequence across both (little). Do you suggest to make them common ?
+The MMSYS subsystem includes clocks and drm components.
+This patch adds a MFD device to probe both drivers from the same
+device tree compatible.
 
-It may make sense as we are talking about one SoC family here :)
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/mfd/Kconfig     |  9 ++++++
+ drivers/mfd/Makefile    |  2 ++
+ drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 90 insertions(+)
+ create mode 100644 drivers/mfd/mtk-mmsys.c
 
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b860eb5aa194..a2c928e26026 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -378,6 +378,15 @@ config MFD_MC13XXX_I2C
+ 	help
+ 	  Select this if your MC13xxx is connected via an I2C bus.
+ 
++config MFD_MEDIATEK_MMSYS
++	tristate "Mediatek MMSYS interface"
++	select MDF_CORE
++	select REGMAP_MMIO
++	help
++	  Select this if you have a MMSYS subsystem in your SoC. The
++	  MMSYS subsystem has at least a clock driver part and some
++	  DRM components.
++
+ config MFD_MXS_LRADC
+ 	tristate "Freescale i.MX23/i.MX28 LRADC"
+ 	depends on ARCH_MXS || COMPILE_TEST
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index d9d2cf0d32ef..b96118bd68d9 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -98,6 +98,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
+ obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
+ obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
+ 
++obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
++
+ obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
+ 
+ obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
+diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
+new file mode 100644
+index 000000000000..c802343fb1c6
+--- /dev/null
++++ b/drivers/mfd/mtk-mmsys.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++/*
++ * mtk-mmsys.c -- Mediatek MMSYS multi-function driver
++ *
++ * Copyright (c) 2018 Matthias Brugger <matthias.bgg@gmail.com>
++ *
++ * Author: Matthias Brugger <matthias.bgg@gmail.com>
++ */
++
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/mfd/core.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++enum {
++	MMSYS_MT2701 = 1,
++};
++
++static const struct mfd_cell mmsys_mt2701_devs[] = {
++	{ .name = "clk-mt2701-mm", },
++	{ .name = "drm-mt2701-mm", },
++};
++
++static int mmsys_probe(struct platform_device *pdev)
++{
++	const struct mfd_cell *mmsys_cells;
++	int nr_cells;
++	long id;
++	int ret;
++
++	id = (long) of_device_get_match_data(&pdev->dev);
++	if (!id) {
++		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
++		return -EINVAL;
++	}
++
++	switch (id) {
++	case MMSYS_MT2701:
++		mmsys_cells = mmsys_mt2701_devs;
++		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
++		break;
++	default:
++		return -ENODEV;
++	}
++
++	ret = devm_mfd_add_devices(&pdev->dev, 0, mmsys_cells, nr_cells,
++					NULL, 0, NULL);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++};
++
++static const struct of_device_id of_match_mmsys[] = {
++	{ .compatible = "mediatek,mt2701-mmsys",
++	  .data = (void *) MMSYS_MT2701,
++	},
++	{ /* sentinel */ },
++};
++
++static struct platform_driver mmsys_drv = {
++	.probe = mmsys_probe,
++	.driver = {
++		.name = "mediatek-mmysys",
++		.of_match_table = of_match_ptr(of_match_mmsys),
++	},
++};
++
++builtin_platform_driver(mmsys_drv);
++
++MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
++MODULE_LICENSE("GPL");
 -- 
-viresh
+2.16.3
