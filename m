@@ -1,131 +1,80 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/4] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Date: Fri, 27 Apr 2018 02:58:16 +0300
-Message-Id: <20180426235818.10018-3-digetx@gmail.com>
-In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v2 05/10] clk: mediatek: mt2701-mm: switch to mfd device
+Date: Mon, 23 Apr 2018 18:13:54 +0200
+Message-Id: <16dd3041d81069f87422fd29b26d9d74c8a36293.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-that main clk-controller driver could get an actual parent clock for the
-CDEV1/2 clocks.
+From: Matthias Brugger <mbrugger@suse.com>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+As the new mfd device is in place, switch probing
+for the MMSYS to support invocation from the mfd device.
+
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
- drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
- drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
- 3 files changed, 40 insertions(+), 12 deletions(-)
+ drivers/clk/mediatek/clk-mt2701-mm.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-index 72c718e66ebb..49c7c1499bc3 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-@@ -33,17 +33,6 @@
- #include "../pinctrl-utils.h"
- #include "pinctrl-tegra.h"
- 
--struct tegra_pmx {
--	struct device *dev;
--	struct pinctrl_dev *pctl;
--
--	const struct tegra_pinctrl_soc_data *soc;
--	const char **group_pins;
--
--	int nbanks;
--	void __iomem **regs;
--};
--
- static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
- {
- 	return readl(pmx->regs[bank] + reg);
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
-index 33b17cb1471e..aa33c20766c4 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra.h
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
-@@ -16,6 +16,17 @@
- #ifndef __PINMUX_TEGRA_H__
- #define __PINMUX_TEGRA_H__
- 
-+struct tegra_pmx {
-+	struct device *dev;
-+	struct pinctrl_dev *pctl;
-+
-+	const struct tegra_pinctrl_soc_data *soc;
-+	const char **group_pins;
-+
-+	int nbanks;
-+	void __iomem **regs;
-+};
-+
- enum tegra_pinconf_param {
- 	/* argument: tegra_pinconf_pull */
- 	TEGRA_PINCONF_PARAM_PULL,
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-index 7e38ee9bae78..f31e39d797f9 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-@@ -19,6 +19,7 @@
-  * more details.
-  */
- 
-+#include <linux/clk-provider.h>
- #include <linux/init.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -2231,9 +2232,36 @@ static const struct tegra_pinctrl_soc_data tegra20_pinctrl = {
- 	.drvtype_in_mux = false,
+diff --git a/drivers/clk/mediatek/clk-mt2701-mm.c b/drivers/clk/mediatek/clk-mt2701-mm.c
+index fe1f85072fc5..4517525887dd 100644
+--- a/drivers/clk/mediatek/clk-mt2701-mm.c
++++ b/drivers/clk/mediatek/clk-mt2701-mm.c
+@@ -87,16 +87,13 @@ static const struct mtk_gate mm_clks[] = {
+ 	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
  };
  
-+static const char *cdev1_parents[4] = {
-+	"cdev1_osc_div", "pll_a_out0", "pll_m_out1", "audio",
-+};
-+
-+static const char *cdev2_parents[4] = {
-+	"cdev2_osc_div", "hclk", "pclk", "pll_p_out4",
-+};
-+
-+static void tegra20_pinctrl_register_clock_muxes(struct platform_device *pdev)
-+{
-+	struct tegra_pmx *pmx = platform_get_drvdata(pdev);
-+
-+	clk_register_mux(NULL, "cdev1_mux", cdev1_parents, 4, 0,
-+			 pmx->regs[1] + 0x8, 2, 2, CLK_MUX_READ_ONLY, NULL);
-+
-+	clk_register_mux(NULL, "cdev2_mux", cdev2_parents, 4, 0,
-+			 pmx->regs[1] + 0x8, 4, 2, CLK_MUX_READ_ONLY, NULL);
-+}
-+
- static int tegra20_pinctrl_probe(struct platform_device *pdev)
+-static const struct of_device_id of_match_clk_mt2701_mm[] = {
+-	{ .compatible = "mediatek,mt2701-mmsys", },
+-	{}
+-};
+-
+ static int clk_mt2701_mm_probe(struct platform_device *pdev)
  {
--	return tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
-+	int err;
+ 	struct clk_onecell_data *clk_data;
+ 	int r;
+-	struct device_node *node = pdev->dev.of_node;
++	struct device_node *node;
 +
-+	err = tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
-+	if (err)
-+		return err;
-+
-+	tegra20_pinctrl_register_clock_muxes(pdev);
-+
-+	return 0;
- }
++	node = pdev->dev.parent->of_node;
  
- static const struct of_device_id tegra20_pinctrl_of_match[] = {
+ 	clk_data = mtk_alloc_clk_data(CLK_MM_NR);
+ 
+@@ -116,7 +113,6 @@ static struct platform_driver clk_mt2701_mm_drv = {
+ 	.probe = clk_mt2701_mm_probe,
+ 	.driver = {
+ 		.name = "clk-mt2701-mm",
+-		.of_match_table = of_match_clk_mt2701_mm,
+ 	},
+ };
+ 
 -- 
-2.17.0
+2.16.3
