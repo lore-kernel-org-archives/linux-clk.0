@@ -1,53 +1,48 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <gabriel.fernandez.st@gmail.com>, <olivier.bideau@st.com>,
-        Loic PALLARDY
-	<loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>
-Subject: [PATCH 2/6] clk: stm32mp1: remove unused dfsdm_src[] const
-Date: Fri, 6 Apr 2018 08:39:29 +0200
-Message-ID: <1522996773-24129-3-git-send-email-gabriel.fernandez@st.com>
-In-Reply-To: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
-References: <1522996773-24129-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-clk@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH clk-fixes] clk: meson: meson8b: fix meson8b_cpu_clk parent clock name
+Date: Mon, 23 Apr 2018 21:30:29 +0200
+Message-Id: <20180423193029.29428-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+meson8b_cpu_clk has two parent clocks:
+- meson8b_xtal
+- meson8b_cpu_scale_out_sel
 
-This patch remove unused constant.
+The name of the "xtal" clock parent is specified correctly. However,
+there is a typo in the name of the second parent clock. The
+meson8b_cpu_scale_out_sel definition uses the name "cpu_scale_out_sel"
+(which matches the name from the datasheet). However, the mux parent
+definition uses the name "cpu_out_sel" which does not match any existing
+clock.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/clk-stm32mp1.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/clk/meson/meson8b.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index 62f172c..9a67b1c 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -224,10 +224,6 @@
- 	"pclk2", "pll4_q", "ck_hsi", "ck_csi", "ck_hse"
- };
- 
--static const char * const dfsdm_src[] = {
--	"pclk2", "ck_mcu"
--};
--
- static const char * const fdcan_src[] = {
- 	"ck_hse", "pll3_q", "pll4_q"
- };
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 2c4ff6192852..d0524ec71aad 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -632,7 +632,8 @@ static struct clk_regmap meson8b_cpu_clk = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "cpu_clk",
+ 		.ops = &clk_regmap_mux_ro_ops,
+-		.parent_names = (const char *[]){ "xtal", "cpu_out_sel" },
++		.parent_names = (const char *[]){ "xtal",
++						  "cpu_scale_out_sel" },
+ 		.num_parents = 2,
+ 		.flags = (CLK_SET_RATE_PARENT |
+ 			  CLK_SET_RATE_NO_REPARENT),
 -- 
-1.9.1
+2.17.0
