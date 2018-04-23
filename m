@@ -1,48 +1,75 @@
-Return-Path: <sean.wang@mediatek.com>
-Message-ID: <1524109802.12959.10.camel@mtkswgap22>
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
-From: Sean Wang <sean.wang@mediatek.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: <airlied@linux.ie>, <devicetree@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <mark.rutland@arm.com>,
-	<matthias.bgg@gmail.com>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Thu, 19 Apr 2018 11:50:02 +0800
-In-Reply-To: <152410791532.46528.10083030894445315558@swboyd.mtv.corp.google.com>
-References: <cover.1524044917.git.sean.wang@mediatek.com>
-	 <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
-	 <152410791532.46528.10083030894445315558@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Return-Path: sean.wang@mediatek.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34542 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755154AbeDWNse (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Apr 2018 09:48:34 -0400
+Received: by mail-wr0-f195.google.com with SMTP id p18-v6so22303305wrm.1
+        for <linux-clk@vger.kernel.org>; Mon, 23 Apr 2018 06:48:34 -0700 (PDT)
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        Rui Miguel Silva <rui.silva@linaro.org>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2 03/15] clk: imx7d: fix mipi dphy div parent
+Date: Mon, 23 Apr 2018 14:47:38 +0100
+Message-Id: <20180423134750.30403-4-rui.silva@linaro.org>
+In-Reply-To: <20180423134750.30403-1-rui.silva@linaro.org>
+References: <20180423134750.30403-1-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-04-18 at 20:18 -0700, Stephen Boyd wrote:
-> Quoting sean.wang@mediatek.com (2018-04-18 03:24:54)
-> > From: Sean Wang <sean.wang@mediatek.com>
-> > 
-> > Add bindings to g3dsys providing necessary clock and reset control to
-> > Mali-450.
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > ---
-> >  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
-> 
-> Why isn't this under bindings/clock/ ?
-> 
+Fix the mipi dphy root divider to mipi_dphy_pre_div, this would remove a orphan
+clock and set the correct parent.
 
-Tons of bindings for clock controller have been present at
-binding/arm/mediatek. g3dsys just have a follow-up to them.
+before:
+cat clk_orphan_summary
+                                 enable  prepare  protect
+   clock                          count    count    count        rate   accuracy   phase
+----------------------------------------------------------------------------------------
+ mipi_dphy_post_div                   1        1        0           0          0 0
+    mipi_dphy_root_clk                1        1        0           0          0 0
 
-It's worth another patch moving them all from bindings/arm/mediatek/ to
-bindings/clock/mediatek.
+cat clk_dump | grep mipi_dphy
+mipi_dphy_post_div                    1        1        0           0          0 0
+    mipi_dphy_root_clk                1        1        0           0          0 0
 
-what's your opinion for either doing it prior to g3dsys binding being
-added or doing it in the future ?
+after:
+cat clk_dump | grep mipi_dphy
+   mipi_dphy_src                     1        1        0    24000000          0 0
+       mipi_dphy_cg                  1        1        0    24000000          0 0
+          mipi_dphy_pre_div          1        1        0    24000000          0 0
+             mipi_dphy_post_div      1        1        0    24000000          0 0
+                mipi_dphy_root_clk   1        1        0    24000000          0 0
 
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+---
+ drivers/clk/imx/clk-imx7d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 975a20d3cc94..f7f4db2e6fa6 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -729,7 +729,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_LCDIF_PIXEL_ROOT_DIV] = imx_clk_divider2("lcdif_pixel_post_div", "lcdif_pixel_pre_div", base + 0xa300, 0, 6);
+ 	clks[IMX7D_MIPI_DSI_ROOT_DIV] = imx_clk_divider2("mipi_dsi_post_div", "mipi_dsi_pre_div", base + 0xa380, 0, 6);
+ 	clks[IMX7D_MIPI_CSI_ROOT_DIV] = imx_clk_divider2("mipi_csi_post_div", "mipi_csi_pre_div", base + 0xa400, 0, 6);
+-	clks[IMX7D_MIPI_DPHY_ROOT_DIV] = imx_clk_divider2("mipi_dphy_post_div", "mipi_csi_dphy_div", base + 0xa480, 0, 6);
++	clks[IMX7D_MIPI_DPHY_ROOT_DIV] = imx_clk_divider2("mipi_dphy_post_div", "mipi_dphy_pre_div", base + 0xa480, 0, 6);
+ 	clks[IMX7D_SAI1_ROOT_DIV] = imx_clk_divider2("sai1_post_div", "sai1_pre_div", base + 0xa500, 0, 6);
+ 	clks[IMX7D_SAI2_ROOT_DIV] = imx_clk_divider2("sai2_post_div", "sai2_pre_div", base + 0xa580, 0, 6);
+ 	clks[IMX7D_SAI3_ROOT_DIV] = imx_clk_divider2("sai3_post_div", "sai3_pre_div", base + 0xa600, 0, 6);
+-- 
+2.17.0
+
