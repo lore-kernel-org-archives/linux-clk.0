@@ -1,44 +1,42 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v5 3/7] dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
-Date: Mon, 9 Apr 2018 22:37:45 +0800
-Message-ID: <20180409143749.71197-4-yixun.lan@amlogic.com>
-In-Reply-To: <20180409143749.71197-1-yixun.lan@amlogic.com>
-References: <20180409143749.71197-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42493 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932244AbeDWTfR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Apr 2018 15:35:17 -0400
+Received: by mail-wr0-f196.google.com with SMTP id s18-v6so44350347wrg.9
+        for <linux-clk@vger.kernel.org>; Mon, 23 Apr 2018 12:35:17 -0700 (PDT)
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com, jbrunet@baylibre.com,
+        linux-amlogic@lists.infradead.org
+Cc: carlo@caione.org, khilman@baylibre.com, linux-clk@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v4 1/2] dt-bindings: clock: meson8b: export the NAND clock
+Date: Mon, 23 Apr 2018 21:35:08 +0200
+Message-Id: <20180423193509.30584-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20180423193509.30584-1-martin.blumenstingl@googlemail.com>
+References: <20180423193509.30584-1-martin.blumenstingl@googlemail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the dt-binding documentation to support new compatible string
-for the Amlogic's Meson-AXG SoC.
+Export the NAND clock to the dt-bindings.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt | 1 +
+ include/dt-bindings/clock/meson8b-clkc.h | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-index 786dc39ca904..3a880528030e 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-@@ -9,6 +9,7 @@ Required Properties:
- 	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
- 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
- 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
-+	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
- 	followed by the common "amlogic,meson-gx-aoclkc"
+diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
+index dea9d46d4fa7..a60f47b49231 100644
+--- a/include/dt-bindings/clock/meson8b-clkc.h
++++ b/include/dt-bindings/clock/meson8b-clkc.h
+@@ -102,5 +102,6 @@
+ #define CLKID_MPLL0		93
+ #define CLKID_MPLL1		94
+ #define CLKID_MPLL2		95
++#define CLKID_NAND_CLK		112
  
- - #clock-cells: should be 1.
+ #endif /* __MESON8B_CLKC_H */
 -- 
-2.15.1
+2.17.0
+
