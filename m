@@ -1,48 +1,94 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com,
-	jbrunet@baylibre.com,
-	linux-amlogic@lists.infradead.org
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
 	linux-clk@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH clk-fixes] clk: meson: meson8b: fix meson8b_cpu_clk parent clock name
-Date: Mon, 23 Apr 2018 21:30:29 +0200
-Message-Id: <20180423193029.29428-1-martin.blumenstingl@googlemail.com>
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v2 08/10] clk: mediatek: mt8173-mm: switch to mfd device
+Date: Mon, 23 Apr 2018 18:13:57 +0200
+Message-Id: <74bf4058534cf187e10ef041da1706878914aa45.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-meson8b_cpu_clk has two parent clocks:
-- meson8b_xtal
-- meson8b_cpu_scale_out_sel
+From: Matthias Brugger <mbrugger@suse.com>
 
-The name of the "xtal" clock parent is specified correctly. However,
-there is a typo in the name of the second parent clock. The
-meson8b_cpu_scale_out_sel definition uses the name "cpu_scale_out_sel"
-(which matches the name from the datasheet). However, the mux parent
-definition uses the name "cpu_out_sel" which does not match any existing
-clock.
+As the new mfd device is in place, switch probing
+for the MMSYS to support invocation from the mfd device.
 
-Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/meson/meson8b.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-mt8173.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 2c4ff6192852..d0524ec71aad 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -632,7 +632,8 @@ static struct clk_regmap meson8b_cpu_clk = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cpu_clk",
- 		.ops = &clk_regmap_mux_ro_ops,
--		.parent_names = (const char *[]){ "xtal", "cpu_out_sel" },
-+		.parent_names = (const char *[]){ "xtal",
-+						  "cpu_scale_out_sel" },
- 		.num_parents = 2,
- 		.flags = (CLK_SET_RATE_PARENT |
- 			  CLK_SET_RATE_NO_REPARENT),
+diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
+index 96c292c3e440..abd2592078d4 100644
+--- a/drivers/clk/mediatek/clk-mt8173.c
++++ b/drivers/clk/mediatek/clk-mt8173.c
+@@ -15,6 +15,7 @@
+ #include <linux/clk.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
+ 
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+@@ -1152,10 +1153,13 @@ static void __init mtk_imgsys_init(struct device_node *node)
+ }
+ CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt8173-imgsys", mtk_imgsys_init);
+ 
+-static void __init mtk_mmsys_init(struct device_node *node)
++static int mtk_mmsys_probe(struct platform_device *pdev)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	int r;
++	struct device_node *node;
++
++	node = pdev->dev.parent->of_node;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
+ 
+@@ -1166,8 +1170,17 @@ static void __init mtk_mmsys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	return r;
+ }
+-CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt8173-mmsys", mtk_mmsys_init);
++
++static struct platform_driver clk_mt8173_mm_drv = {
++	.probe = mtk_mmsys_probe,
++	.driver = {
++		.name = "clk-mt8173-mm",
++	},
++};
++builtin_platform_driver(clk_mt8173_mm_drv);
+ 
+ static void __init mtk_vdecsys_init(struct device_node *node)
+ {
 -- 
-2.17.0
+2.16.3
