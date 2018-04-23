@@ -1,56 +1,101 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
+Return-Path: <mbrugger@localhost>
+From: Matthias Brugger <mbrugger@suse.com>
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
 	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Subject: [PATCH 2/2] clk: meson: honor CLK_MUX_ROUND_CLOSEST in clk_regmap
-Date: Mon,  9 Apr 2018 15:59:21 +0200
-Message-Id: <20180409135921.5617-3-jbrunet@baylibre.com>
-In-Reply-To: <20180409135921.5617-1-jbrunet@baylibre.com>
-References: <20180409135921.5617-1-jbrunet@baylibre.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v2 07/10] drm/mediatek: Add mfd support for mt8173
+Date: Mon, 23 Apr 2018 17:32:06 +0200
+Message-Id: <ae6e77bc3f5c29ce53e248162a42f4eb4e42a417.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Using __clk_mux_determine_rate effectively ignores CLK_MUX_ROUND_CLOSEST
-if set the related clk_regmap mux instance.
+Use the MFD device for SoC mt8173. Probing via devicetree
+is no longer needed for any SoC, so delete it.
 
-Use clk_mux_determine_rate_flags() to make sure the flag is honored.
-
-Fixes: ea11dda9e091 ("clk: meson: add regmap clocks")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/clk/meson/clk-regmap.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 28 +++++++---------------------
+ 1 file changed, 7 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-index 3645fdb62343..ab7a3556f5b2 100644
---- a/drivers/clk/meson/clk-regmap.c
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -153,10 +153,19 @@ static int clk_regmap_mux_set_parent(struct clk_hw *hw, u8 index)
- 				  val << mux->shift);
- }
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 88ee35907744..3cc433ebfa8f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -399,20 +399,12 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ 	INIT_WORK(&private->commit.work, mtk_atomic_work);
+ 	private->data = of_device_get_match_data(dev);
  
-+static int clk_regmap_mux_determine_rate(struct clk_hw *hw,
-+					 struct clk_rate_request *req)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_mux_data *mux = clk_get_regmap_mux_data(clk);
-+
-+	return clk_mux_determine_rate_flags(hw, req, mux->flags);
-+}
-+
- const struct clk_ops clk_regmap_mux_ops = {
- 	.get_parent = clk_regmap_mux_get_parent,
- 	.set_parent = clk_regmap_mux_set_parent,
--	.determine_rate = __clk_mux_determine_rate,
-+	.determine_rate = clk_regmap_mux_determine_rate,
+-	/* Check if called from mfd */
+-	if (!dev->of_node) {
+-		mmsys_node = pdev->dev.parent->of_node;
+-		private->data = (struct mtk_mmsys_driver_data *)
+-				platform_get_device_id(pdev)->driver_data;
+-		private->config_regs =
+-			syscon_node_to_regmap(mmsys_node);
+-		parent_node = mmsys_node->parent;
+-	} else {
+-		private->config_regs = syscon_node_to_regmap(dev->of_node);
+-		if (IS_ERR(private->config_regs))
+-			return PTR_ERR(private->config_regs);
+-		parent_node = dev->of_node->parent;
+-	}
++	mmsys_node = pdev->dev.parent->of_node;
++	private->data = (struct mtk_mmsys_driver_data *)
++			platform_get_device_id(pdev)->driver_data;
++	private->config_regs =
++		syscon_node_to_regmap(mmsys_node);
++	parent_node = mmsys_node->parent;
+ 
+ 	/* Iterate over sibling DISP function blocks */
+ 	for_each_child_of_node(parent_node, node) {
+@@ -555,14 +547,9 @@ static int mtk_drm_sys_resume(struct device *dev)
+ static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
+ 			 mtk_drm_sys_resume);
+ 
+-static const struct of_device_id mtk_drm_of_ids[] = {
+-	{ .compatible = "mediatek,mt8173-mmsys",
+-	  .data = &mt8173_mmsys_driver_data},
+-	{ }
+-};
+-
+ static const struct platform_device_id mtk_drm_ids[] = {
+ 	{ "drm-mt2701-mm", (kernel_ulong_t)&mt2701_mmsys_driver_data },
++	{ "drm-mt8173-mm", (kernel_ulong_t)&mt8173_mmsys_driver_data },
+ 	{ /* sentinel */ },
  };
- EXPORT_SYMBOL_GPL(clk_regmap_mux_ops);
- 
+ MODULE_DEVICE_TABLE(platform, mtk_drm_ids);
+@@ -572,7 +559,6 @@ static struct platform_driver mtk_drm_platform_driver = {
+ 	.remove	= mtk_drm_remove,
+ 	.driver	= {
+ 		.name	= "mediatek-drm",
+-		.of_match_table = mtk_drm_of_ids,
+ 		.pm     = &mtk_drm_pm_ops,
+ 	},
+ 	.id_table = mtk_drm_ids,
 -- 
-2.14.3
+2.16.3
