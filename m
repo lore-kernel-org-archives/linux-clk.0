@@ -1,77 +1,169 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1523974533.2601.95.camel@baylibre.com>
-Subject: Re: [PATCH v5 2/7] clk: meson: aoclk: refactor common code into
- dedicated file
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>
-Cc: Rob Herring <robh@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
- linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Date: Tue, 17 Apr 2018 16:15:33 +0200
-In-Reply-To: <759078f5-fcbf-9ef1-6945-67d9d951d8eb@amlogic.com>
-References: <20180409143749.71197-1-yixun.lan@amlogic.com>
-	 <20180409143749.71197-3-yixun.lan@amlogic.com>
-	 <1523875084.2601.28.camel@baylibre.com>
-	 <759078f5-fcbf-9ef1-6945-67d9d951d8eb@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v2 resend 03/10] mfd: mtk-mmsys: Add mmsys driver
+Date: Tue, 24 Apr 2018 11:47:00 +0200
+Message-Id: <99bef17c57ad60eff6104da780cf59b785bd3e42.1524563001.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
+References: <cover.1524563001.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
+References: <cover.1524563001.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-04-17 at 16:16 +0800, Yixun Lan wrote:
-> Hi Jerome
-> 
-> On 04/16/18 18:38, Jerome Brunet wrote:
-> > > +	 */
-> > > +	for (clkid = 0; clkid < data->num_clks; clkid++) {
-> > > +		data->clks[clkid]->map = regmap;
-> > > +
-> > > +		ret = devm_clk_hw_register(dev, data->hw_data->hws[clkid]);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +	}
-> > > +
-> > > +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> > > +		(void *) data->hw_data);
-> > > +}
-> > 
-> > Missing new line here. Please run checkpatch and pay attention to git warnings
-> > about whitespace errors.
-> > 
-> 
+From: Matthias Brugger <mbrugger@suse.com>
 
-Google this if you want, As far as I know the C language requires it and makes
-things nice when I cat the file.
+The MMSYS subsystem includes clocks and drm components.
+This patch adds a MFD device to probe both drivers from the same
+device tree compatible.
 
-Anyway, I don't make those rules, It is just how it is.
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/mfd/Kconfig     |  9 ++++++
+ drivers/mfd/Makefile    |  2 ++
+ drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 90 insertions(+)
+ create mode 100644 drivers/mfd/mtk-mmsys.c
 
-> 
-> I think we actually need to avoid this extra new line, or what's the
-> benefits with new line?
-> 
-> and besides， I didn't see any complaint from checkpatch.pl ..
-> 
->  ./scripts/checkpatch.pl
-> 0002-clk-meson-aoclk-refactor-common-code-into-dedicated-.patch
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> #235:
-> new file mode 100644
-> 
-> total: 0 errors, 1 warnings, 302 lines checked
-> 
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or
-> --fix-inplace.
-> 
-> 0002-clk-meson-aoclk-refactor-common-code-into-dedicated-.patch has
-> style problems, please review.
-> 
-> NOTE: If any of the errors are false positives, please report
->       them to the maintainer, see CHECKPATCH in MAINTAINERS.
-> 
-> 
-> Yixun
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b860eb5aa194..a2c928e26026 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -378,6 +378,15 @@ config MFD_MC13XXX_I2C
+ 	help
+ 	  Select this if your MC13xxx is connected via an I2C bus.
+ 
++config MFD_MEDIATEK_MMSYS
++	tristate "Mediatek MMSYS interface"
++	select MDF_CORE
++	select REGMAP_MMIO
++	help
++	  Select this if you have a MMSYS subsystem in your SoC. The
++	  MMSYS subsystem has at least a clock driver part and some
++	  DRM components.
++
+ config MFD_MXS_LRADC
+ 	tristate "Freescale i.MX23/i.MX28 LRADC"
+ 	depends on ARCH_MXS || COMPILE_TEST
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index d9d2cf0d32ef..b96118bd68d9 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -98,6 +98,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
+ obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
+ obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
+ 
++obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
++
+ obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
+ 
+ obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
+diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
+new file mode 100644
+index 000000000000..c802343fb1c6
+--- /dev/null
++++ b/drivers/mfd/mtk-mmsys.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++/*
++ * mtk-mmsys.c -- Mediatek MMSYS multi-function driver
++ *
++ * Copyright (c) 2018 Matthias Brugger <matthias.bgg@gmail.com>
++ *
++ * Author: Matthias Brugger <matthias.bgg@gmail.com>
++ */
++
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/mfd/core.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++enum {
++	MMSYS_MT2701 = 1,
++};
++
++static const struct mfd_cell mmsys_mt2701_devs[] = {
++	{ .name = "clk-mt2701-mm", },
++	{ .name = "drm-mt2701-mm", },
++};
++
++static int mmsys_probe(struct platform_device *pdev)
++{
++	const struct mfd_cell *mmsys_cells;
++	int nr_cells;
++	long id;
++	int ret;
++
++	id = (long) of_device_get_match_data(&pdev->dev);
++	if (!id) {
++		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
++		return -EINVAL;
++	}
++
++	switch (id) {
++	case MMSYS_MT2701:
++		mmsys_cells = mmsys_mt2701_devs;
++		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
++		break;
++	default:
++		return -ENODEV;
++	}
++
++	ret = devm_mfd_add_devices(&pdev->dev, 0, mmsys_cells, nr_cells,
++					NULL, 0, NULL);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++};
++
++static const struct of_device_id of_match_mmsys[] = {
++	{ .compatible = "mediatek,mt2701-mmsys",
++	  .data = (void *) MMSYS_MT2701,
++	},
++	{ /* sentinel */ },
++};
++
++static struct platform_driver mmsys_drv = {
++	.probe = mmsys_probe,
++	.driver = {
++		.name = "mediatek-mmysys",
++		.of_match_table = of_match_ptr(of_match_mmsys),
++	},
++};
++
++builtin_platform_driver(mmsys_drv);
++
++MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
++MODULE_LICENSE("GPL");
+-- 
+2.16.3
