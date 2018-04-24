@@ -1,112 +1,77 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 1/3] clk: qcom: gdsc: Add support to reset AON and block reset logic
-Date: Mon,  2 Apr 2018 16:15:43 +0530
-Message-Id: <1522665945-28147-2-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
-References: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <arndbergmann@gmail.com>
+MIME-Version: 1.0
+Sender: arndbergmann@gmail.com
+In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
+References: <20180424203239.21885-1-krzk@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 24 Apr 2018 22:50:58 +0200
+Message-ID: <CAK8P3a2CZU1CYFt0fdVSFFnj2Wg=mUcC=yuWAW7zDO0u2Q2dUQ@mail.gmail.com>
+Subject: Re: [RFC 00/10] ARM: Remove support for Exynos5440
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, IDE-ML <linux-ide@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>,
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-spi <linux-spi@vger.kernel.org>, linux-usb@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>, Olof Johansson <olof@lixom.net>,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Amit Nischal <anischal@codeaurora.org>
+On Tue, Apr 24, 2018 at 10:32 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Hi,
+>
+>
+> Overview
+> ========
+> Let's continue the removal of old platforms. We already get rid of Exynos4212.
+> Now it's time for Exynos5440.
+>
+> The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
+> server platforms but it did not make it to the market really.  There are
+> no development boards with it and probably there are no real products
+> neither.  The development for Exynos5440 ended in 2013 and since then
+> the platform is in maintenance mode.
+>
+> The only development happening around it is the PCIe driver for Exynos5433
+> (ARMv8). [1]
+>
+> Removing Exynos5440, makes our life slightly easier:
+> 1. Less maintenance,
+> 2. Smaller code, less quirks,
+> 3. No need to preserve (imaginary) backward-compatibility for Exynos PCIe
+>    driver (so it is easier to add support for Exynos5433).
+>
+>
+> Because of point (3) above - I left the PCIe and PCIe PHY drivers intact.
+>
+>
+> Dependencies
+> ============
+> I think about starting with removal of DTS in some kernel release (patch 1/10).
+> Then all drivers can be removed/updated - subsystem maintainers can pick their
+> patches freely.
+>
+> Finally, after getting rid of all Exynos5440 symbols, the last patch (10/10) will
+> end in arm-soc tree.
+>
+>
+> Any comments?
 
-For some of the gdsc power domains, there could be need to reset the
-AON logic or assert/deassert the block control reset before removing
-the clamp_io. Add support for the same by introducing new flags
-SW_RESET and AON_RESET. Both SW reset and AON reset requires to be
-asserted for at least 1us before being de-asserted.
+I don't see any hard dependency here, if this is all unused, I think we
+can apply both patches 1 and 10 into arm-soc at the same time as merging
+the other patches through the respective subsystem trees.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
----
- drivers/clk/qcom/gdsc.c | 22 ++++++++++++++++++++--
- drivers/clk/qcom/gdsc.h |  4 +++-
- 2 files changed, 23 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a4f3580..266fefa 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2015, 2017-2018, The Linux Foundation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -31,6 +31,7 @@
- #define HW_CONTROL_MASK		BIT(1)
- #define SW_COLLAPSE_MASK	BIT(0)
- #define GMEM_CLAMP_IO_MASK	BIT(0)
-+#define GMEM_RESET_MASK		BIT(4)
-
- /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
- #define EN_REST_WAIT_VAL	(0x2 << 20)
-@@ -166,6 +167,14 @@ static inline void gdsc_assert_clamp_io(struct gdsc *sc)
- 			   GMEM_CLAMP_IO_MASK, 1);
- }
-
-+static inline void gdsc_assert_reset_aon(struct gdsc *sc)
-+{
-+	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
-+			   GMEM_RESET_MASK, 1);
-+	udelay(1);
-+	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
-+			   GMEM_RESET_MASK, 0);
-+}
- static int gdsc_enable(struct generic_pm_domain *domain)
- {
- 	struct gdsc *sc = domain_to_gdsc(domain);
-@@ -174,8 +183,17 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_deassert_reset(sc);
-
--	if (sc->flags & CLAMP_IO)
-+	if (sc->flags & SW_RESET) {
-+		gdsc_assert_reset(sc);
-+		udelay(1);
-+		gdsc_deassert_reset(sc);
-+	}
-+
-+	if (sc->flags & CLAMP_IO) {
-+		if (sc->flags & AON_RESET)
-+			gdsc_assert_reset_aon(sc);
- 		gdsc_deassert_clamp_io(sc);
-+	}
-
- 	ret = gdsc_toggle_logic(sc, true);
- 	if (ret)
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 3964834..9279278 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2015, 2017-2018, The Linux Foundation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -53,6 +53,8 @@ struct gdsc {
- #define VOTABLE		BIT(0)
- #define CLAMP_IO	BIT(1)
- #define HW_CTRL		BIT(2)
-+#define SW_RESET	BIT(3)
-+#define AON_RESET	BIT(4)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+      Arnd
