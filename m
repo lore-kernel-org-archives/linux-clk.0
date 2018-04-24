@@ -1,60 +1,32 @@
-Return-Path: <matthias.bgg@kernel.org>
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 resend 10/10] MAINTAINERS: update Mediatek Soc entry
-Date: Tue, 24 Apr 2018 11:47:07 +0200
-Message-Id: <0fd5bf87d227fdb44bd0ddd2f83c5595380957fb.1524563001.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
-References: <cover.1524563001.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
-References: <cover.1524563001.git.mbrugger@suse.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 24 Apr 2018 09:37:59 -0500
+From: Rob Herring <robh@kernel.org>
+To: sean.wang@mediatek.com
+Cc: mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
+	matthias.bgg@gmail.com, mark.rutland@arm.com,
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/4] dt-bindings: gpu: mali-utgard: add
+ mediatek,mt7623-mali compatible
+Message-ID: <20180424143759.tyveqnfxtkmanosn@rob-hp-laptop>
+References: <cover.1524044917.git.sean.wang@mediatek.com>
+ <831e85ebdfdaba3c7b05ac8407a1584c20ba4a86.1524044917.git.sean.wang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <831e85ebdfdaba3c7b05ac8407a1584c20ba4a86.1524044917.git.sean.wang@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+On Wed, Apr 18, 2018 at 06:24:53PM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> The MediaTek MT7623 SoC contains a Mali-450, so add a compatible for it
+> and define its own vendor-specific properties.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-Mediatek SoCs include several soc specific drivers as well
-as a mfd device. Add these to the maintainers file.
-
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0a1410d5a621..74f7ea345096 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1621,6 +1621,8 @@ F:	arch/arm/boot/dts/mt7*
- F:	arch/arm/boot/dts/mt8*
- F:	arch/arm/mach-mediatek/
- F:	arch/arm64/boot/dts/mediatek/
-+F:	drivers/soc/mediatek/
-+F:	drivers/mfd/mtk-mmsys.c
- N:	mtk
- K:	mediatek
- 
--- 
-2.16.3
+Reviewed-by: Rob Herring <robh@kernel.org>
