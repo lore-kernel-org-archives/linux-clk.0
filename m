@@ -1,161 +1,108 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:39068 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932331AbeDWTfT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Apr 2018 15:35:19 -0400
-Received: by mail-wr0-f196.google.com with SMTP id q3-v6so34366393wrj.6
-        for <linux-clk@vger.kernel.org>; Mon, 23 Apr 2018 12:35:18 -0700 (PDT)
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com, jbrunet@baylibre.com,
-        linux-amlogic@lists.infradead.org
-Cc: carlo@caione.org, khilman@baylibre.com, linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v4 2/2] clk: meson: meson8b: add support for the NAND clocks
-Date: Mon, 23 Apr 2018 21:35:09 +0200
-Message-Id: <20180423193509.30584-3-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20180423193509.30584-1-martin.blumenstingl@googlemail.com>
-References: <20180423193509.30584-1-martin.blumenstingl@googlemail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <2b0ba677-921c-c6e0-00d2-ac5bdefd2d6b@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ David Collins <collinsd@codeaurora.org>
+References: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
+ <1523673401-21611-3-git-send-email-tdas@codeaurora.org>
+ <152390031768.51482.12790579493617671456@swboyd.mtv.corp.google.com>
+ <2b0ba677-921c-c6e0-00d2-ac5bdefd2d6b@codeaurora.org>
+Message-ID: <152458440904.46528.10430507697972810594@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Tue, 24 Apr 2018 08:40:09 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the NAND clocks (from the HHI_NAND_CLK_CNTL register) to the
-Meson8b clock driver. There are three NAND clocks: a gate which enables
-or disables the NAND clock, a mux and a divider (which divides the mux
-output).
-Unfortunately the public S805 datasheet does not document the mux
-parents. However, the vendor kernel has a few hints for us which allows
-us to make an educated guess about the clock parents. To do this we need
-to have a look at set_nand_core_clk() from the vendor's NAND driver (see
-[0]):
-- XTAL = (4<<9) | (1<<8) | 0
-- 160MHz = (0<<9) | (1<<8) | 3)
-- 182MHz = (3<<9) | (1<<8) | 1)
-- 212MHz = (1<<9) | (1<<8) | 3)
-- 255MHz = (2<<9) | (1<<8) | 1)
+Quoting Taniya Das (2018-04-23 09:50:22)
+> On 4/16/2018 11:08 PM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-04-13 19:36:41)
+> =
 
-While there is a comment for the XTAL parent (which indicates that it
-should only be used for debugging) we have to do a bit of math for the
-other parents: target_freq * divider = rate of parent clock
-Bit 8 above is the enable bit, so we can ignore it here. Bits 11:9 are
-the mux index and bits 6:0 are the 0-based divider (so we need to add
-1). This gives us:
-- mux 0 (160MHz * 4) = fclk_div4 (actual rate = 637.5MHz, off by 2.5MHz)
-- mux 1 (212MHz * 4) = fclk_div3 (actual rate = 850MHz, off by 2MHz)
-- mux 2 (255MHz * 2) = fclk_div5 (matches exactly 510MHz)
-- mux 3 (182MHz * 2) = fclk_div7 (actual rate = 346.3MHz, off by 0.3MHz)
+> >> +struct clk_rpmh {
+> >> +       struct clk_hw hw;
+> >> +       const char *res_name;
+> >> +       u32 res_addr;
+> >> +       u32 res_en_offset;
+> > =
 
-[0] https://github.com/khadas/linux/blob/9587681285cb/drivers/amlogic/amlnf/dev/amlnf_ctrl.c#L314
+> > Why do we store both res_addr and res_en_offset? Can't we just store
+> > res_en_offset and then use that all the time? I don't see a user of
+> > res_addr anywhere.
+> > =
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/meson8b.c | 54 +++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/meson8b.h |  5 +++-
- 2 files changed, 58 insertions(+), 1 deletion(-)
+> =
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index d0524ec71aad..40068c1b5e80 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -640,6 +640,54 @@ static struct clk_regmap meson8b_cpu_clk = {
- 	},
- };
- 
-+static struct clk_regmap meson8b_nand_clk_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_NAND_CLK_CNTL,
-+		.mask = 0x7,
-+		.shift = 9,
-+		.flags = CLK_MUX_ROUND_CLOSEST,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "nand_clk_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		/* FIXME all other parents are unknown: */
-+		.parent_names = (const char *[]){ "fclk_div4", "fclk_div3",
-+			"fclk_div5", "fclk_div7", "xtal" },
-+		.num_parents = 5,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap meson8b_nand_clk_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset =  HHI_NAND_CLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+		.flags = CLK_DIVIDER_ROUND_CLOSEST,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "nand_clk_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "nand_clk_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap meson8b_nand_clk_gate = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_NAND_CLK_CNTL,
-+		.bit_idx = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "nand_clk_gate",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_names = (const char *[]){ "nand_clk_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- /* Everything Else (EE) domain gates */
- 
- static MESON_GATE(meson8b_ddr, HHI_GCLK_MPEG0, 0);
-@@ -835,6 +883,9 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
- 		[CLKID_FCLK_DIV4_DIV]	    = &meson8b_fclk_div4_div.hw,
- 		[CLKID_FCLK_DIV5_DIV]	    = &meson8b_fclk_div5_div.hw,
- 		[CLKID_FCLK_DIV7_DIV]	    = &meson8b_fclk_div7_div.hw,
-+		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
-+		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
-+		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
- 		[CLK_NR_CLKS]		    = NULL,
- 	},
- 	.num = CLK_NR_CLKS,
-@@ -940,6 +991,9 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
- 	&meson8b_fclk_div4,
- 	&meson8b_fclk_div5,
- 	&meson8b_fclk_div7,
-+	&meson8b_nand_clk_sel,
-+	&meson8b_nand_clk_div,
-+	&meson8b_nand_clk_gate,
- };
- 
- static const struct meson8b_clk_reset_line {
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index 6e414bd36981..a687dc60b6d0 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -40,6 +40,7 @@
- #define HHI_VID_CLK_CNTL		0x17c /* 0x5f offset in data sheet */
- #define HHI_VID_DIVIDER_CNTL		0x198 /* 0x66 offset in data sheet */
- #define HHI_SYS_CPU_CLK_CNTL0		0x19c /* 0x67 offset in data sheet */
-+#define HHI_NAND_CLK_CNTL		0x25c /* 0x97 offset in data sheet */
- #define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data sheet */
- #define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
- #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
-@@ -83,8 +84,10 @@
- #define CLKID_FCLK_DIV4_DIV	107
- #define CLKID_FCLK_DIV5_DIV	108
- #define CLKID_FCLK_DIV7_DIV	109
-+#define CLKID_NAND_SEL		110
-+#define CLKID_NAND_DIV		111
- 
--#define CLK_NR_CLKS		110
-+#define CLK_NR_CLKS		113
- 
- /*
-  * include the CLKID and RESETID that have
--- 
-2.17.0
+> The res_addr would be the address for the resource returned by the =
 
+> cmd_db_read_addr. And the res_en_offset would be the offsets of ARC_EN =
+
+> or VRM_EN.
+
+Yes. But why can't we store the combination of the two?
+
+> =
+
+> >> +       u32 res_on_val;
+> >> +       u32 res_off_val;
+> > =
+
+> > Is this used?
+> =
+
+> Yes the above are used.
+
+I just meant res_off_val. Which looks unused.
+
+> > =
+
+> >> +       u32 state;
+> >> +       u32 aggr_state;
+> >> +       u32 last_sent_aggr_state;
+> >> +       u32 valid_state_mask;
+> >> +       struct rpmh_client *rpmh_client;
+> >> +       struct device *dev;
+> >> +       struct clk_rpmh *peer;
+> >> +       unsigned long rate;
+> >> +};
+> > =
+
+> > Can you add some kernel-doc on these structure members?
+> > =
+
+> Sure will add the same.
+
+Great! Hopefully that clarifies things.
+
+> >> +       /*
+> >> +        * RPMh clocks have a fixed rate. Return static rate set
+> >> +        * at init time.
+> >> +        */
+> >> +       return r->rate;
+> > =
+
+> > The rate should come from the parent. In the case of tcxo it would be
+> > board_xo clk rate (or maybe some fixed div-2 on the board XO that's also
+> > defined in DT because the board_xo seems to be two times 19.2 MHz?).
+> > =
+
+> =
+
+> There would not be any parent for the RPMH clock, they would be the =
+
+> parent for other clocks.
+> =
+
+> The TCXO is 19.2MHz and once we have the RPMH clocks, we would remove =
+
+> the DT reference for board_xo.
+
+No that's wrong. There is a parent of the RPMh clks, and that's the
+board XO clk in the DT file. We will never remove the board clks.
