@@ -1,68 +1,64 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH v5 2/7] clk: meson: aoclk: refactor common code into
- dedicated file
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-References: <20180409143749.71197-1-yixun.lan@amlogic.com>
- <20180409143749.71197-3-yixun.lan@amlogic.com>
- <1523875084.2601.28.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <759078f5-fcbf-9ef1-6945-67d9d951d8eb@amlogic.com>
-Date: Tue, 17 Apr 2018 16:16:39 +0800
-MIME-Version: 1.0
-In-Reply-To: <1523875084.2601.28.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [v4 0/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Tue, 24 Apr 2018 17:53:17 +0530
+Message-Id: <1524572599-5425-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome
+ [v4]
+  * Addressed comments from Stephen
 
-On 04/16/18 18:38, Jerome Brunet wrote:
->> +	 */
->> +	for (clkid = 0; clkid < data->num_clks; clkid++) {
->> +		data->clks[clkid]->map = regmap;
->> +
->> +		ret = devm_clk_hw_register(dev, data->hw_data->hws[clkid]);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->> +		(void *) data->hw_data);
->> +}
-> Missing new line here. Please run checkpatch and pay attention to git warnings
-> about whitespace errors.
-> 
+ [v3]
+  * Addressed documentation & code review comments from Bjorn
+  * Addressed bindings comments from Rob
+  * Updated the patch series order for bindings
 
+ [v2]
+  * Addressed comments from Stephen
+  * Addressed comments from Evan
 
-I think we actually need to avoid this extra new line, or what's the
-benefits with new line?
+This patch series adds a driver and device tree documentation binding
+for the clock control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
+would send requests for the RPMh managed clock resources.
 
-and besides， I didn't see any complaint from checkpatch.pl ..
+The RPMh clock driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.
 
- ./scripts/checkpatch.pl
-0002-clk-meson-aoclk-refactor-common-code-into-dedicated-.patch
-WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-#235:
-new file mode 100644
+Thanks,
+Taniya
 
-total: 0 errors, 1 warnings, 302 lines checked
-
-NOTE: For some of the reported defects, checkpatch may be able to
-      mechanically convert to the typical style using --fix or
---fix-inplace.
-
-0002-clk-meson-aoclk-refactor-common-code-into-dedicated-.patch has
-style problems, please review.
-
-NOTE: If any of the errors are false positives, please report
-      them to the maintainer, see CHECKPATCH in MAINTAINERS.
+[1]: https://lkml.org/lkml/2018/3/9/979
+[2]: https://lkml.org/lkml/2018/3/14/787
 
 
-Yixun
+Taniya Das (2):
+  dt-bindings: clock: Introduce QCOM RPMh clock bindings
+  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+
+ .../devicetree/bindings/clock/qcom,rpmh-clk.txt    |  22 ++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-rpmh.c                        | 364 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h              |  24 ++
+ 5 files changed, 420 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
+ create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
