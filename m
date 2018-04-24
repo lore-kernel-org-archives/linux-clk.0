@@ -1,68 +1,92 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v8 40/42] ARM: davinci: add device tree support to timer
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <1521168778-27236-1-git-send-email-david@lechnology.com>
- <1521168778-27236-41-git-send-email-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <205cae72-4e91-aca2-e3b2-829a12066dc8@ti.com>
-Date: Thu, 5 Apr 2018 17:00:01 +0530
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 24 Apr 2018 06:48:54 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: matthias.bgg@kernel.org
+Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
+	robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+	sboyd@codeaurora.org, davem@davemloft.net,
+	gregkh@linuxfoundation.org, mchehab@kernel.org,
+	rdunlap@infradead.org, pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com, linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk, matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: Re: [v2 00/10] arm/arm64: mediatek: Fix mmsys device probing
+Message-ID: <20180424054854.bpd6h3imazhqnuy3@dell>
+References: <cover.1524497268.git.mbrugger@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <1521168778-27236-41-git-send-email-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 16 March 2018 08:22 AM, David Lechner wrote:
-> +static int __init of_davinci_timer_init(struct device_node *np)
-> +{
-> +	struct clk *clk;
-> +
-> +	clk = of_clk_get(np, 0);
-> +	if (IS_ERR(clk)) {
-> +		struct of_phandle_args clkspec;
-> +
-> +		/*
-> +		 * Fall back to using ref_clk if the actual clock is not
-> +		 * available. This currently always happens because platform
-> +		 * clocks (i.e PLLs and PSCs) are registered as platform
-> +		 * devices and therefore are not available at this point in
-> +		 * the boot process.
+On Mon, 23 Apr 2018, matthias.bgg@kernel.org wrote:
 
-It seems to me that this is not going to be a temporary problem (or at
-least will be around for quite a while). So, I think we can as well just
-look for ref_clk directly.
+> From: Matthias Brugger <mbrugger@suse.com>
+> 
+> Changes since v1:
+> - add binding documentation
+> - ddp: use regmap_update_bits
+> - ddp: ignore EPROBE_DEFER on clock probing
+> - mfd: delete mmsys_private
+> - add Reviewed-by and Acked-by tags
 
-> +		 */
-> +		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
-> +		if (IS_ERR(clkspec.np)) {
-> +			pr_err("%s: No clock available for timer!\n", __func__);
-> +			return PTR_ERR(clkspec.np);
-> +		}
-> +		clk = of_clk_get_from_provider(&clkspec);
-> +		of_node_put(clkspec.np);
-> +	}
-> +
-> +	davinci_timer_init(clk);
-> +
-> +	return 0;
-> +}
-> +TIMER_OF_DECLARE(davinci_timer, "ti,davinci-timer", of_davinci_timer_init);
+I'm confused by the double submission.
 
-Here, I think we should use "ti,da850-timer" so we can change the fixed
-clock we are looking for based on the SoC. At a minimum, we should have
-"ti,da850-timer" in the DT along with "ti,davinci-timer".
+Please can you send it again completely detached from the first and
+the second submissions please?
 
-BTW, I noticed that "ti,davinci-timer" is not documented. I think we
-need to add a binding documentation too.
+> ---
+> 
+> MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
+> used in the clk driver) and some registers to set the routing and enable
+> the differnet blocks of the display subsystem.
+> 
+> Up to now both drivers, clock and drm are probed with the same device tree
+> compatible. But only the first driver get probed, which in effect breaks
+> graphics on mt8173 and mt2701.
+> 
+> This patch set introduces a new mfd device, which binds against the mmsys
+> compatible and takes care of probing the needed devices. It was tested on the
+> bananapi-r2 and the Acer R13 Chromebook.
+> 
+> 
+> Matthias Brugger (10):
+>   dt-bindings: mediatek: mmsys: Add support for mfd
+>   drm/mediatek: Use regmap for register access
+>   mfd: mtk-mmsys: Add mmsys driver
+>   drm/mediatek: mt2701: switch to mfd probing.
+>   clk: mediatek: mt2701-mm: switch to mfd device
+>   mfd: mtk-mmsys: Add mt8173 nodes
+>   drm/mediatek: Add mfd support for mt8173
+>   clk: mediatek: mt8173-mm: switch to mfd device
+>   drm: mediatek: Omit warning on probe defers
+>   MAINTAINERS: update Mediatek Soc entry
+> 
+>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 -
+>  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
+>  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 +++++++
+>  MAINTAINERS                                        |  2 +
+>  drivers/clk/mediatek/clk-mt2701-mm.c               | 10 +--
+>  drivers/clk/mediatek/clk-mt8173.c                  | 17 +++-
+>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |  4 +-
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 41 ++++------
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h             |  4 +-
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 33 ++++----
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.h             |  2 +-
+>  drivers/mfd/Kconfig                                |  9 +++
+>  drivers/mfd/Makefile                               |  2 +
+>  drivers/mfd/mtk-mmsys.c                            | 93 ++++++++++++++++++++++
+>  14 files changed, 189 insertions(+), 59 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+>  create mode 100644 drivers/mfd/mtk-mmsys.c
+> 
 
-Thanks,
-Sekhar
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
