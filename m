@@ -1,52 +1,78 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Suman Anna <s-anna@ti.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 5/7] remoteproc/davinci: use octal permissions for module_param()
-Date: Tue, 17 Apr 2018 19:30:36 +0200
-Message-Id: <20180417173038.25510-6-brgl@bgdev.pl>
-In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
-References: <20180417173038.25510-1-brgl@bgdev.pl>
+Return-Path: <sean.wang@mediatek.com>
+Message-ID: <1524584738.12322.17.camel@mtkswgap22>
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
+From: Sean Wang <sean.wang@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: <mturquette@baylibre.com>, <sboyd@kernel.org>, <airlied@linux.ie>,
+	<matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Tue, 24 Apr 2018 23:45:38 +0800
+In-Reply-To: <20180424143907.eewrpzdmkhhux3lb@rob-hp-laptop>
+References: <cover.1524044917.git.sean.wang@mediatek.com>
+	 <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
+	 <20180424143907.eewrpzdmkhhux3lb@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, 2018-04-24 at 09:39 -0500, Rob Herring wrote:
+> On Wed, Apr 18, 2018 at 06:24:54PM +0800, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > Add bindings to g3dsys providing necessary clock and reset control to
+> > Mali-450.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> >  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
+> >  1 file changed, 30 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+> > new file mode 100644
+> > index 0000000..ff2d70c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+> > @@ -0,0 +1,30 @@
+> > +MediaTek g3dsys controller
+> > +============================
+> > +
+> > +The MediaTek g3dsys controller provides various clocks and reset controller to
+> > +the GPU.
+> > +
+> > +Required Properties:
+> > +
+> > +- compatible: Should be:
+> > +	- "mediatek,mt2701-g3dsys", "syscon":
+> > +		for MT2701 SoC
+> > +	- "mediatek,mt7623-ethsys", "mediatek,mt2701-g3dsys", "syscon":
+> > +		for MT7623 SoC
+> 
+> ethsys?
+> 
 
-Checkpatch recommends to use octal perms instead of S_IRUGO.
+thanks! I'll also fix it up in the next version.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index f134192922e0..b668e32996e2 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -25,7 +25,7 @@
- #include "remoteproc_internal.h"
- 
- static char *da8xx_fw_name;
--module_param(da8xx_fw_name, charp, S_IRUGO);
-+module_param(da8xx_fw_name, charp, 0444);
- MODULE_PARM_DESC(da8xx_fw_name,
- 		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
- 
--- 
-2.17.0
+> > +- #clock-cells: Must be 1
+> > +- #reset-cells: Must be 1
+> > +
+> > +The ethsys controller uses the common clk binding from
+> > +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> > +
+> > +Example:
+> > +
+> > +g3dsys: clock-controller@13000000 {
+> > +	compatible = "mediatek,mt7623-g3dsys",
+> > +		     "mediatek,mt2701-g3dsys",
+> > +		     "syscon";
+> > +	reg = <0 0x13000000 0 0x200>;
+> > +	#clock-cells = <1>;
+> > +	#reset-cells = <1>;
+> > +};
+> > -- 
+> > 2.7.4
+> > 
