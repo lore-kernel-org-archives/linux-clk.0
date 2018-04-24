@@ -1,47 +1,82 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de
-Cc: fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Tejun Heo <tj@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andi Shyti <andi@etezian.org>,
+	Mark Brown <broonie@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
-Date: Wed, 18 Apr 2018 14:49:08 +0200
-Message-Id: <20180418124908.3079-1-stefan@agner.ch>
+	linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [RFC 02/10] ata: ahci-platform: Remove support for Exynos5440
+Date: Tue, 24 Apr 2018 22:32:31 +0200
+Message-Id: <20180424203239.21885-3-krzk@kernel.org>
+In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
+References: <20180424203239.21885-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On i.MX6 ULL using PLL3 seems to cause a freeze when setting
-the parent to IMX6UL_CLK_PLL3_USB_OTG. This only seems to appear
-since commit 6f9575e55632 ("clk: imx: Add CLK_IS_CRITICAL flag
-for busy divider and busy mux"), probably because the clock is
-now forced to be on.
+The Exynos5440 is not actively developed, there are no development
+boards available and probably there are no real products with it.
+Remove wide-tree support for Exynos5440.
 
-Fixes: 6f9575e55632("clk: imx: Add CLK_IS_CRITICAL flag for busy divider and busy mux")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
-This addresses a regression ssen on v4.17-rc1 where the kernel
-boots during clock initialization, see also:
-https://patchwork.kernel.org/patch/10295927/
+ Documentation/devicetree/bindings/ata/ahci-platform.txt | 1 -
+ drivers/ata/ahci_platform.c                             | 1 -
+ 2 files changed, 2 deletions(-)
 
- drivers/clk/imx/clk-imx6ul.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 114ecbb94ec5..12320118f8de 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -464,7 +464,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clk_set_rate(clks[IMX6UL_CLK_AHB], 99000000);
- 
- 	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
--	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_PLL3_USB_OTG]);
-+	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_OSC]);
- 	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_CLK2]);
- 	clk_set_parent(clks[IMX6UL_CLK_PERIPH_PRE], clks[IMX6UL_CLK_PLL2_BUS]);
- 	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_PRE]);
+diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
+index c760ecb81381..663766685818 100644
+--- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
++++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
+@@ -17,7 +17,6 @@ Required properties:
+   - "marvell,armada-380-ahci"
+   - "marvell,armada-3700-ahci"
+   - "snps,dwc-ahci"
+-  - "snps,exynos5440-ahci"
+   - "snps,spear-ahci"
+   - "generic-ahci"
+ - interrupts        : <interrupt mapping for SATA IRQ>
+diff --git a/drivers/ata/ahci_platform.c b/drivers/ata/ahci_platform.c
+index 99f9a895a459..564570ea3e27 100644
+--- a/drivers/ata/ahci_platform.c
++++ b/drivers/ata/ahci_platform.c
+@@ -75,7 +75,6 @@ static const struct of_device_id ahci_of_match[] = {
+ 	{ .compatible = "generic-ahci", },
+ 	/* Keep the following compatibles for device tree compatibility */
+ 	{ .compatible = "snps,spear-ahci", },
+-	{ .compatible = "snps,exynos5440-ahci", },
+ 	{ .compatible = "ibm,476gtr-ahci", },
+ 	{ .compatible = "snps,dwc-ahci", },
+ 	{ .compatible = "hisilicon,hisi-ahci", },
 -- 
-2.17.0
+2.14.1
