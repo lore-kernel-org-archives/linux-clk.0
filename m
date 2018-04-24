@@ -1,66 +1,147 @@
-Return-Path: <mgautam@codeaurora.org>
-Subject: Re: [PATCH v4 1/7] clk: msm8996-gcc: change halt check for USB/PCIE
- pipe_clk
-To: Stephen Boyd <sboyd@kernel.org>, Doug Anderson <dianders@chromium.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>,
- devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
- Vivek Gautam <vivek.gautam@codeaurora.org>, Evan Green
- <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
- Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
- <1522321466-21755-2-git-send-email-mgautam@codeaurora.org>
- <CAD=FV=UXvf+_rvbFGrHAQ1N0kbrMR_c2=LBVD=AMuL6DAjWO+Q@mail.gmail.com>
- <152295883900.91052.4792431636170417291@swboyd.mtv.corp.google.com>
-From: Manu Gautam <mgautam@codeaurora.org>
-Message-ID: <b2ad0e6f-addb-5d68-1f5d-ba7e44ce3d70@codeaurora.org>
-Date: Tue, 10 Apr 2018 12:14:10 +0530
-MIME-Version: 1.0
-In-Reply-To: <152295883900.91052.4792431636170417291@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Tejun Heo <tj@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andi Shyti <andi@etezian.org>,
+	Mark Brown <broonie@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [RFC 00/10] ARM: Remove support for Exynos5440
+Date: Tue, 24 Apr 2018 22:32:29 +0200
+Message-Id: <20180424203239.21885-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
 Hi,
 
 
-On 4/6/2018 1:37 AM, Stephen Boyd wrote:
-> Quoting Doug Anderson (2018-03-29 13:55:55)
->> Hi,
->>
->> On Thu, Mar 29, 2018 at 4:04 AM, Manu Gautam <mgautam@codeaurora.org> wrote:
->>> The USB and PCIE pipe clocks are sourced from external clocks
->>> inside the QMP USB/PCIE PHYs. Enabling or disabling of PIPE RCG
->>> clocks is dependent on PHY initialization sequence hence
->>> update halt_check to BRANCH_HALT_DELAY for these clocks so
->>> that clock status bit is not polled when enabling or disabling
->>> the clocks. It allows to simplify PHY client driver code which
->>> is both user and source of the pipe_clk and avoid error logging
->>> related status check on clk_disable/enable.
->>>
->>> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
->>> ---
->>>  drivers/clk/qcom/gcc-msm8996.c | 4 ++++
->>>  1 file changed, 4 insertions(+)
->> As per my feedback on <https://patchwork.kernel.org/patch/10314937/>,
->> I'm not a fan of this.  Hopefully we can adjust the PHY driver so it's
->> not needed.
->>
-> Agreed. We should be able to enable the clks at the right time and halt
-> bits should work. From what I can recall we had that working before on
-> db820c, so has something changed?
+Overview
+========
+Let's continue the removal of old platforms. We already get rid of Exynos4212.
+Now it's time for Exynos5440.
 
-As replied in other patch IMO it is better to stick to the recommended
-sequence and have this change as it would allow to cleanup PHY driver
-and align with HPG. One reason I can think of why it works
-on db820c is that there is some code in bootloader that enables
-all USB clocks (including pipe_clk). Same is the case with SDM845.
-And I start seeing errors if bootloader is changed or skip pipe_clk enable.
+The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
+server platforms but it did not make it to the market really.  There are
+no development boards with it and probably there are no real products
+neither.  The development for Exynos5440 ended in 2013 and since then
+the platform is in maintenance mode.
+
+The only development happening around it is the PCIe driver for Exynos5433
+(ARMv8). [1]
+
+Removing Exynos5440, makes our life slightly easier:
+1. Less maintenance,
+2. Smaller code, less quirks,
+3. No need to preserve (imaginary) backward-compatibility for Exynos PCIe
+   driver (so it is easier to add support for Exynos5433).
 
 
+Because of point (3) above - I left the PCIe and PCIe PHY drivers intact.
+
+
+Dependencies
+============
+I think about starting with removal of DTS in some kernel release (patch 1/10).
+Then all drivers can be removed/updated - subsystem maintainers can pick their
+patches freely.
+
+Finally, after getting rid of all Exynos5440 symbols, the last patch (10/10) will
+end in arm-soc tree.
+
+
+Any comments?
+
+
+Best regards,
+Krzysztof
+
+[1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1569919.html
+
+Krzysztof Kozlowski (10):
+  ARM: dts: exynos: Remove Exynos5440
+  ata: ahci-platform: Remove support for Exynos5440
+  cpufreq: exynos: Remove support for Exynos5440
+  clk: samsung: Remove support for Exynos5440
+  i2c: s3c2410: Remove support for Exynos5440
+  thermal: samsung: Remove support for Exynos5440
+  pinctrl: samsung: Remove support for Exynos5440
+  spi: s3c64xx: samsung: Remove support for Exynos5440
+  usb: host: exynos: Remove support for Exynos5440
+  ARM: exynos: Remove support for Exynos5440
+
+ .../bindings/arm/samsung/samsung-boards.txt        |    2 -
+ .../devicetree/bindings/ata/ahci-platform.txt      |    1 -
+ .../devicetree/bindings/clock/exynos5440-clock.txt |   28 -
+ .../bindings/cpufreq/cpufreq-exynos5440.txt        |   28 -
+ .../devicetree/bindings/i2c/i2c-s3c2410.txt        |    4 +-
+ .../devicetree/bindings/thermal/exynos-thermal.txt |   14 +-
+ arch/arm/boot/dts/Makefile                         |    2 -
+ arch/arm/boot/dts/exynos5440-sd5v1.dts             |   42 -
+ arch/arm/boot/dts/exynos5440-ssdk5440.dts          |   81 --
+ arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |   20 -
+ arch/arm/boot/dts/exynos5440-trip-points.dtsi      |   21 -
+ arch/arm/boot/dts/exynos5440.dtsi                  |  355 -------
+ arch/arm/mach-exynos/Kconfig                       |   12 -
+ arch/arm/mach-exynos/common.h                      |    8 -
+ arch/arm/mach-exynos/exynos.c                      |   15 +-
+ drivers/ata/ahci_platform.c                        |    1 -
+ drivers/clk/samsung/Makefile                       |    1 -
+ drivers/clk/samsung/clk-exynos5440.c               |  167 ----
+ drivers/cpufreq/Kconfig.arm                        |   14 -
+ drivers/cpufreq/Makefile                           |    1 -
+ drivers/cpufreq/exynos5440-cpufreq.c               |  452 ---------
+ drivers/i2c/busses/i2c-s3c2410.c                   |    2 -
+ drivers/pinctrl/samsung/Kconfig                    |   10 +-
+ drivers/pinctrl/samsung/Makefile                   |    1 -
+ drivers/pinctrl/samsung/pinctrl-exynos5440.c       | 1005 --------------------
+ drivers/spi/spi-s3c64xx.c                          |   12 -
+ drivers/thermal/samsung/exynos_tmu.c               |  155 +--
+ drivers/thermal/samsung/exynos_tmu.h               |    1 -
+ drivers/usb/host/ehci-exynos.c                     |    7 -
+ drivers/usb/host/ohci-exynos.c                     |    6 -
+ include/dt-bindings/clock/exynos5440.h             |   44 -
+ 31 files changed, 9 insertions(+), 2503 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/exynos5440-clock.txt
+ delete mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
+ delete mode 100644 arch/arm/boot/dts/exynos5440-sd5v1.dts
+ delete mode 100644 arch/arm/boot/dts/exynos5440-ssdk5440.dts
+ delete mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+ delete mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
+ delete mode 100644 arch/arm/boot/dts/exynos5440.dtsi
+ delete mode 100644 drivers/clk/samsung/clk-exynos5440.c
+ delete mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
+ delete mode 100644 drivers/pinctrl/samsung/pinctrl-exynos5440.c
+ delete mode 100644 include/dt-bindings/clock/exynos5440.h
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.14.1
