@@ -1,48 +1,28 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 19 Apr 2018 22:24:42 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org, robh+dt@kernel.org, Linux-imx@nxp.com,
-	kernel@pengutronix.de, fabio.estevam@nxp.com, shengjiu.wang@nxp.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz
- clock source
-Message-ID: <20180419142441.GW25429@dragon>
-References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
- <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
- <20180417142203.GM25429@dragon>
- <152410785516.46528.12432838242068784117@swboyd.mtv.corp.google.com>
- <20180419140236.GU25429@dragon>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180419140236.GU25429@dragon>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1523365565-17124-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1523365565-17124-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <152458361660.46528.16887219181368039617@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: Remove clk_init_cb typedef
+Date: Tue, 24 Apr 2018 08:26:56 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 10:02:37PM +0800, Shawn Guo wrote:
-> On Wed, Apr 18, 2018 at 08:17:35PM -0700, Stephen Boyd wrote:
-> > Quoting Shawn Guo (2018-04-17 07:22:05)
-> > > On Mon, Mar 19, 2018 at 10:30:45AM +0800, Anson Huang wrote:
-> > > > On i.MX6SX SabreAuto board, there is external 24MHz clock
-> > > > source for analog clock2, add this clock source to clock tree.
-> > > > 
-> > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > > ---
-> > > > changes since V1:
-> > > >       remove unnecessary clocks container.
-> > > 
-> > > I understand this is suggested by Fabio, but I'm afraid that it's not
-> > > going to work with imx_obtain_fixed_clock() call, which is coded to
-> > > look for clocks under /clocks node.
-> > > 
-> > 
-> > Should patch #1 be dropped from clk tree?
-> 
-> No.  Patch #1 is good.
+Quoting Geert Uytterhoeven (2018-04-10 06:06:05)
+> Since commit c08ee14cc6634457 ("clk: ti: change clock init to use
+> generic of_clk_init"), there is only a single (private) user left of the
+> (public) clk_init_cb typedef.
+> =
 
-Sorry, Stephen.  I just had a closer look at the driver code, and I
-think it can be done in a better way.  So please drop patch #1 for now.
+> Hence expand its single user in the core clock code, and remove the
+> typedef.
+> =
 
-Shawn
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+
+Looks like Mike "Applied to clk-next".
