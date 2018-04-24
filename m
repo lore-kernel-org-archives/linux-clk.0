@@ -1,94 +1,116 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Suman Anna <s-anna@ti.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 0/7] ARM: davinci: complete the conversion to using the reset framework
-Date: Tue, 17 Apr 2018 19:30:31 +0200
-Message-Id: <20180417173038.25510-1-brgl@bgdev.pl>
+Return-Path: <ezequiel@vanguardiasur.com.ar>
+MIME-Version: 1.0
+In-Reply-To: <20180409135921.5617-2-jbrunet@baylibre.com>
+References: <20180409135921.5617-1-jbrunet@baylibre.com> <20180409135921.5617-2-jbrunet@baylibre.com>
+From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Date: Tue, 24 Apr 2018 11:04:25 -0300
+Message-ID: <CAAEAJfDgGYu9WR5+qA-trQUTkb--bam=LLbhH+1N2OdrtBGLzA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: honor CLK_MUX_ROUND_CLOSEST in generic clk mux
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 9 April 2018 at 10:59, Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+> CLK_MUX_ROUND_CLOSEST is part of the clk_mux documentation but clk_mux
+> directly calls __clk_mux_determine_rate(), which overrides the flag.
+> As result, if clk_mux is instantiated with CLK_MUX_ROUND_CLOSEST, the
+> flag will be ignored and the clock rounded down.
+>
+> To solve this, this patch expose clk_mux_determine_rate_flags() in the
+> clk-provider API and uses it in the determine_rate() callback of clk_mux.
+>
+> Fixes: 15a02c1f6dd7 ("clk: Add __clk_mux_determine_rate_closest")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/clk-mux.c        | 10 +++++++++-
+>  drivers/clk/clk.c            |  7 ++++---
+>  include/linux/clk-provider.h |  3 +++
+>  3 files changed, 16 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+> index ac4a042f8658..1628b93655ed 100644
+> --- a/drivers/clk/clk-mux.c
+> +++ b/drivers/clk/clk-mux.c
+> @@ -112,10 +112,18 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8=
+ index)
+>         return 0;
+>  }
+>
+> +static int clk_mux_determine_rate(struct clk_hw *hw,
+> +                                 struct clk_rate_request *req)
+> +{
+> +       struct clk_mux *mux =3D to_clk_mux(hw);
+> +
+> +       return clk_mux_determine_rate_flags(hw, req, mux->flags);
+> +}
+> +
+>  const struct clk_ops clk_mux_ops =3D {
+>         .get_parent =3D clk_mux_get_parent,
+>         .set_parent =3D clk_mux_set_parent,
+> -       .determine_rate =3D __clk_mux_determine_rate,
+> +       .determine_rate =3D clk_mux_determine_rate,
+>  };
+>  EXPORT_SYMBOL_GPL(clk_mux_ops);
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index ea67ac81c6f9..7af555f0e60c 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -426,9 +426,9 @@ static bool mux_is_better_rate(unsigned long rate, un=
+signed long now,
+>         return now <=3D rate && now > best;
+>  }
+>
+> -static int
+> -clk_mux_determine_rate_flags(struct clk_hw *hw, struct clk_rate_request =
+*req,
+> -                            unsigned long flags)
+> +int clk_mux_determine_rate_flags(struct clk_hw *hw,
+> +                                struct clk_rate_request *req,
+> +                                unsigned long flags)
+>  {
+>         struct clk_core *core =3D hw->core, *parent, *best_parent =3D NUL=
+L;
+>         int i, num_parents, ret;
+> @@ -488,6 +488,7 @@ clk_mux_determine_rate_flags(struct clk_hw *hw, struc=
+t clk_rate_request *req,
+>
+>         return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(clk_mux_determine_rate_flags);
+>
 
-This series converts the only user of the handcoded, mach-specific reset
-routines in the davinci platform to using the reset framework.
+Why do we need to export this?
 
-Patches 1-2 add necessary lookups/DT-properties.
+>  struct clk *__clk_lookup(const char *name)
+>  {
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 210a890008f9..1d25e149c1c5 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -765,6 +765,9 @@ int __clk_mux_determine_rate(struct clk_hw *hw,
+>  int __clk_determine_rate(struct clk_hw *core, struct clk_rate_request *r=
+eq);
+>  int __clk_mux_determine_rate_closest(struct clk_hw *hw,
+>                                      struct clk_rate_request *req);
+> +int clk_mux_determine_rate_flags(struct clk_hw *hw,
+> +                                struct clk_rate_request *req,
+> +                                unsigned long flags);
+>  void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
+>  void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
+>                            unsigned long max_rate);
+> --
+> 2.14.3
+>
 
-Patches 3-5 fix issues found in the remoteproc davinci driver.
+Reviewed-by: Ezequiel Garcia <ezequiel@collabora.com>
 
-Patch 6 converts the davinci-rproc driver to the reset framework.
-
-Patch 7 removes now dead code.
-
-Tested both in DT and legacy modes by booting the examples from
-ti-ipc-rtos recipe in meta-ti.
-
-This series applies on top of David Lechner's common-clk-v9 branch[1].
-
-[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
-
-v1 -> v2:
-- fixed the device tree patches the descriptions of which were mixed up
-- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
-  reset provider, since it's possible that the lookup table was not yet
-  registered
-- made the local variable naming consistent in the davinci-rproc driver
-- fixed a typo in PATCH 5/8
-
-v2 -> v3:
-- modify PATCH 1/8: drop the provider argument from the function adding
-  lookup entries and instead pass the provider name to the RESET_LOOKUP
-  macro, return -EPROBE_DEFER if we locate a correct lookup entry but
-  cannot get the corresponding reset controller
-- modify the reset lookup entry in psc-da850
-- don't manually return -EPROBE_DEFER from davinci-rproc, instead don't
-  emit an error message if devm_reset_control_get_exclusive() returns
-  this error code
-
-v3 -> v4:
-- make index the second parameter in RESET_LOOKUP() (right after the
-  provider name)
-
-v4 -> v5:
-- fix a bug where the dsp_reset object correctly stored in drproc struct
-
-v5 -> v6:
-- rebased on top of v4.17-rc1 and retested
-- dropped patches that were applied during 4.17 merge window
-- added relevant review and ack tags
-
-Bartosz Golaszewski (7):
-  ARM: davinci: dts: make psc0 a reset provider
-  ARM: davinci: dts: add a reset control to the dsp node
-  remoteproc/davinci: add the missing retval check for clk_enable()
-  remoteproc/davinci: prepare and unprepare the clock where needed
-  remoteproc/davinci: use octal permissions for module_param()
-  remoteproc/davinci: use the reset framework
-  clk: davinci: kill davinci_clk_reset_assert/deassert()
-
- arch/arm/boot/dts/da850.dtsi               |  2 +
- arch/arm/mach-davinci/include/mach/clock.h | 21 ----------
- drivers/clk/davinci/psc.c                  | 18 ---------
- drivers/remoteproc/da8xx_remoteproc.c      | 46 ++++++++++++++++++----
- 4 files changed, 40 insertions(+), 47 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
-
--- 
-2.17.0
+Thanks!
+--=20
+Ezequiel Garc=C3=ADa, VanguardiaSur
+www.vanguardiasur.com.ar
