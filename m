@@ -1,91 +1,71 @@
-Return-Path: <o.rempel@pengutronix.de>
-Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
- external PMIC
-To: Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180409113744.GA14582@dragon> <20180409114022.GE11532@sirena.org.uk>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <c3883979-8658-96d2-e62f-396aa5be332d@pengutronix.de>
-Date: Mon, 9 Apr 2018 13:43:03 +0200
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 24 Apr 2018 10:44:31 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Ripard <maxime.ripard@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	linux-tegra@vger.kernel.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
+Message-ID: <20180424154431.5bf35ck4z5xtusnm@rob-hp-laptop>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+ <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
+ <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+ <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180409114022.GE11532@sirena.org.uk>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL
-Content-Type: multipart/mixed; boundary="TvrTA2pS7JKYsMy9WzeD1NqvW6wOQ9FIE";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>
-Message-ID: <c3883979-8658-96d2-e62f-396aa5be332d@pengutronix.de>
-Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
- external PMIC
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180409113744.GA14582@dragon> <20180409114022.GE11532@sirena.org.uk>
-In-Reply-To: <20180409114022.GE11532@sirena.org.uk>
+On Fri, Apr 20, 2018 at 08:28:28AM +0200, Geert Uytterhoeven wrote:
+> Hi Stephen, Rob,
+> 
+> On Fri, Apr 20, 2018 at 12:25 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
+> >> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
+> >> limited to clock providers.
+> >>
+> >> Hence move these helpers into their own header file, so callers that are
+> >> not clock providers no longer have to include <linux/clk-provider.h>.
+> >>
+> >> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> >> ---
+> >> v3:
+> >>   - Add Reviewed-by,
+> >>   - Add SPDX-License-Identifier,
+> >>   - Add to clock section in MAINTAINERS (note that Rob is still listed
+> >>     as a maintainer, too, due to the include/linux/of*.h catch-all
+> >>     rule),
+> >
+> > Can you X: out this file so Rob is happy? Or that doesn't work?
+> 
+> I guess that should work.
+> 
+> My point here is that due to the catch-all rule, he's listed as maintainer
+> for of_{dma,gpio,irq,iommu,mdio,net,pci} too, which are all helpers for
+> other subsystems. Perhaps these should be X'd-out too?
+> Or is it OK without X-ing them out, as the clock maintainers are now shown, too?
+> 
+> Rob: What's your preference?
 
---TvrTA2pS7JKYsMy9WzeD1NqvW6wOQ9FIE
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+It's fine as-is.
 
-On 09.04.2018 13:40, Mark Brown wrote:
-> On Mon, Apr 09, 2018 at 07:37:45PM +0800, Shawn Guo wrote:
->> On Mon, Mar 05, 2018 at 11:25:17AM +0100, Oleksij Rempel wrote:
->=20
->>> As this patch set touches multiple subsystems I think it would make
->>> sense for Shawn Guo to take the all patch set.
->>> The only part which didn't receive an ACK is regulator stuff. So I wo=
-uld
->>> hope that Mark Brown can ACK it.
->=20
->> Besides regulator changes, I did not see an ACK on kernel/reboot.c
->> either.
->=20
-> Right, that's the big blocker here.
->=20
-
-Ok, Who should ACK it?
-
-
---TvrTA2pS7JKYsMy9WzeD1NqvW6wOQ9FIE--
-
---g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlrLUccACgkQdQOiSHVI
-77TVsgf/aAmByLZtRwbKkAWW7yBOKHJxklPPJ7/V6ZHppEhiX2Imv+F91ikGcpwX
-ubux4WNizQ3gFZtU40RCOC4twLnty3lh2w1DUR9+H+79EwZGTo4NcQdYtrx1NYW8
-yvGFx3bZtMvVwk/ABGgzj5Uix39nrtY1+G9Tar+VDjT1xMrTRNggj/UVGVo90a55
-IqUf+U4h3UCrUD0bOL4768yuOSK2CukOUL02Xh+JVLFoMIkcfMdYk7pb6jMt6uen
-GcphITM8GkhHxLYbV9tQ3tnVuYH5w0s1HsL9Lt+NhrTJruw77vwxfw4Vkb2YDDgh
-CEjde5aDNPqUnZs49NgYKZcEGYWP/Q==
-=M5YS
------END PGP SIGNATURE-----
-
---g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL--
+Rob
