@@ -1,57 +1,192 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <maxi.jourdan@wanadoo.fr>
+From: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v3 1/3] clk: qcom: Clear hardware clock control bit of RCG
-Date: Tue,  3 Apr 2018 18:52:39 +0530
-Message-Id: <1522761761-15262-2-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
-References: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Subject: [PATCH v2 2/2] clk: meson: gxbb: add the video decoder clocks
+Date: Tue, 24 Apr 2018 20:48:38 +0200
+Message-Id: <20180424184838.3406-3-maxi.jourdan@wanadoo.fr>
+In-Reply-To: <20180424184838.3406-1-maxi.jourdan@wanadoo.fr>
+References: <20180424184838.3406-1-maxi.jourdan@wanadoo.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-For upcoming targets like sdm845, POR value of the hardware clock control
-bit is set for most of root clocks which needs to be cleared for software
-to be able to control. For older targets like MSM8996, this bit is reserved
-bit and having POR value as 0 so this patch will work for the older targets
-too. So update the configuration mask to take care of the same to clear
-hardware clock control bit.
+Add the SEL/DIV/GATE for VDEC_1 and VDEC_HEVC.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
 ---
- drivers/clk/qcom/clk-rcg2.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/meson/gxbb.c | 114 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h |   6 ++-
+ 2 files changed, 119 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index bbeaf9c..984de9c 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -42,6 +42,7 @@
- #define CFG_MODE_SHIFT		12
- #define CFG_MODE_MASK		(0x3 << CFG_MODE_SHIFT)
- #define CFG_MODE_DUAL_EDGE	(0x2 << CFG_MODE_SHIFT)
-+#define CFG_HW_CLK_CTRL_MASK	BIT(20)
-
- #define M_REG			0x8
- #define N_REG			0xc
-@@ -276,7 +277,7 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- 	}
-
- 	mask = BIT(rcg->hid_width) - 1;
--	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK;
-+	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
- 	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
- 	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
- 	if (rcg->mnd_width && f->n && (f->m != f->n))
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index b1e4d9557610..a893b1edda22 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -1543,6 +1543,102 @@ static struct clk_regmap gxbb_vapb = {
+ 	},
+ };
+ 
++/* VDEC clocks */
++
++static const char * const gxbb_vdec_parent_names[] = {
++	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7"
++};
++
++static struct clk_regmap gxbb_vdec_1_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_VDEC_CLK_CNTL,
++		.mask = 0x3,
++		.shift = 9,
++		.flags = CLK_MUX_ROUND_CLOSEST,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vdec_1_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = gxbb_vdec_parent_names,
++		.num_parents = ARRAY_SIZE(gxbb_vdec_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap gxbb_vdec_1_div = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_VDEC_CLK_CNTL,
++		.shift = 0,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vdec_1_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_names = (const char *[]){ "vdec_1_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap gxbb_vdec_1 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_VDEC_CLK_CNTL,
++		.bit_idx = 8,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "vdec_1",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "vdec_1_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap gxbb_vdec_hevc_sel = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_VDEC2_CLK_CNTL,
++		.mask = 0x3,
++		.shift = 25,
++		.flags = CLK_MUX_ROUND_CLOSEST,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vdec_hevc_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = gxbb_vdec_parent_names,
++		.num_parents = ARRAY_SIZE(gxbb_vdec_parent_names),
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap gxbb_vdec_hevc_div = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_VDEC2_CLK_CNTL,
++		.shift = 16,
++		.width = 7,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vdec_hevc_div",
++		.ops = &clk_regmap_divider_ops,
++		.parent_names = (const char *[]){ "vdec_hevc_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap gxbb_vdec_hevc = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_VDEC2_CLK_CNTL,
++		.bit_idx = 24,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "vdec_hevc",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "vdec_hevc_div" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ /* Everything Else (EE) domain gates */
+ static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
+ static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
+@@ -1786,6 +1882,12 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_FCLK_DIV4_DIV]	    = &gxbb_fclk_div4_div.hw,
+ 		[CLKID_FCLK_DIV5_DIV]	    = &gxbb_fclk_div5_div.hw,
+ 		[CLKID_FCLK_DIV7_DIV]	    = &gxbb_fclk_div7_div.hw,
++		[CLKID_VDEC_1_SEL]	    = &gxbb_vdec_1_sel.hw,
++		[CLKID_VDEC_1_DIV]	    = &gxbb_vdec_1_div.hw,
++		[CLKID_VDEC_1]		    = &gxbb_vdec_1.hw,
++		[CLKID_VDEC_HEVC_SEL]	    = &gxbb_vdec_hevc_sel.hw,
++		[CLKID_VDEC_HEVC_DIV]	    = &gxbb_vdec_hevc_div.hw,
++		[CLKID_VDEC_HEVC]	    = &gxbb_vdec_hevc.hw,
+ 		[NR_CLKS]		    = NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -1942,6 +2044,12 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_FCLK_DIV4_DIV]	    = &gxbb_fclk_div4_div.hw,
+ 		[CLKID_FCLK_DIV5_DIV]	    = &gxbb_fclk_div5_div.hw,
+ 		[CLKID_FCLK_DIV7_DIV]	    = &gxbb_fclk_div7_div.hw,
++		[CLKID_VDEC_1_SEL]	    = &gxbb_vdec_1_sel.hw,
++		[CLKID_VDEC_1_DIV]	    = &gxbb_vdec_1_div.hw,
++		[CLKID_VDEC_1]		    = &gxbb_vdec_1.hw,
++		[CLKID_VDEC_HEVC_SEL]	    = &gxbb_vdec_hevc_sel.hw,
++		[CLKID_VDEC_HEVC_DIV]	    = &gxbb_vdec_hevc_div.hw,
++		[CLKID_VDEC_HEVC]	    = &gxbb_vdec_hevc.hw,
+ 		[NR_CLKS]		    = NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -2100,6 +2208,12 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
+ 	&gxbb_fclk_div4,
+ 	&gxbb_fclk_div5,
+ 	&gxbb_fclk_div7,
++	&gxbb_vdec_1_sel,
++	&gxbb_vdec_1_div,
++	&gxbb_vdec_1,
++	&gxbb_vdec_hevc_sel,
++	&gxbb_vdec_hevc_div,
++	&gxbb_vdec_hevc,
+ };
+ 
+ struct clkc_data {
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 9febf3f03739..b3ef54f65a9d 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -204,8 +204,12 @@
+ #define CLKID_FCLK_DIV4_DIV	  148
+ #define CLKID_FCLK_DIV5_DIV	  149
+ #define CLKID_FCLK_DIV7_DIV	  150
++#define CLKID_VDEC_1_SEL	  151
++#define CLKID_VDEC_1_DIV	  152
++#define CLKID_VDEC_HEVC_SEL	  154
++#define CLKID_VDEC_HEVC_DIV	  155
+ 
+-#define NR_CLKS			  151
++#define NR_CLKS			  157
+ 
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+-- 
+2.17.0
