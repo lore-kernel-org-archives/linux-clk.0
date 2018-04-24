@@ -1,54 +1,93 @@
-Return-Path: <marvin24@gmx.de>
-From: Marc Dietrich <marvin24@gmx.de>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
-Date: Fri, 27 Apr 2018 14:30:41 +0200
-Message-ID: <4032338.O1BXeabcRj@ax5200p>
-In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v2 resend 06/10] mfd: mtk-mmsys: Add mt8173 nodes
+Date: Tue, 24 Apr 2018 11:47:03 +0200
+Message-Id: <ce7c173efe9929712af11ea38be7f3a4d515879b.1524563001.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
+References: <cover.1524563001.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
+References: <cover.1524563001.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dmitry,
+From: Matthias Brugger <mbrugger@suse.com>
 
-Am Freitag, 27. April 2018, 01:58:14 CEST schrieb Dmitry Osipenko:
-> Hello,
-> 
-> This series of patches fixes ULPI USB on Tegra20. The original problem
-> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
-> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
-> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
-> with the USB for the devices that have CDEV2 being enabled by bootloader.
-> The patch got into the kernel and later Marc Dietrich found that USB
-> stopped working on the "paz00" Tegra20 board. After a bit of discussion
-> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
-> driver was setting CDEV2's parent incorrectly. The parent clock is actually
-> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
-> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
-> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
-> suggestion), and then setting these clock muxes as parents for the CDEV1/2
-> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since
-> CDEV2 (aka MCLK2) is the actual clock source for "ulpi-link".
-> 
-> Dmitry Osipenko (4):
->   clk: tegra20: Add DEV1/DEV2 OSC dividers
->   pinctrl: tegra20: Provide CDEV1/2 clock muxes
->   clk: tegra20: Set correct parents for CDEV1/2 clocks
->   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
-> 
->  arch/arm/boot/dts/tegra20.dtsi          |  2 +-
->  drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
->  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
->  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
->  5 files changed, 55 insertions(+), 17 deletions(-)
+Add devices for the mt8173 SoC.
 
-Thanks for taking a look at this!
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/mfd/mtk-mmsys.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Series is:
-
-Tested-by: Marc Dietrich <marvin24@gmx.de>
-
-Marc
+diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
+index c802343fb1c6..5585a561a02f 100644
+--- a/drivers/mfd/mtk-mmsys.c
++++ b/drivers/mfd/mtk-mmsys.c
+@@ -19,6 +19,7 @@
+ 
+ enum {
+ 	MMSYS_MT2701 = 1,
++	MMSYS_MT8173,
+ };
+ 
+ static const struct mfd_cell mmsys_mt2701_devs[] = {
+@@ -26,6 +27,12 @@ static const struct mfd_cell mmsys_mt2701_devs[] = {
+ 	{ .name = "drm-mt2701-mm", },
+ };
+ 
++static const struct mfd_cell mmsys_mt8173_devs[] = {
++	{ .name = "clk-mt8173-mm", },
++	{ .name = "drm-mt8173-mm", },
++};
++
++
+ static int mmsys_probe(struct platform_device *pdev)
+ {
+ 	const struct mfd_cell *mmsys_cells;
+@@ -44,6 +51,10 @@ static int mmsys_probe(struct platform_device *pdev)
+ 		mmsys_cells = mmsys_mt2701_devs;
+ 		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
+ 		break;
++	case MMSYS_MT8173:
++		mmsys_cells = mmsys_mt8173_devs;
++		nr_cells = ARRAY_SIZE(mmsys_mt8173_devs);
++		break;
+ 	default:
+ 		return -ENODEV;
+ 	}
+@@ -62,6 +73,9 @@ static const struct of_device_id of_match_mmsys[] = {
+ 	{ .compatible = "mediatek,mt2701-mmsys",
+ 	  .data = (void *) MMSYS_MT2701,
+ 	},
++	{ .compatible = "mediatek,mt8173-mmsys",
++	  .data = (void *) MMSYS_MT8173,
++	},
+ 	{ /* sentinel */ },
+ };
+ 
+-- 
+2.16.3
