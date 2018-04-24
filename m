@@ -13,54 +13,38 @@ Cc: Andy Gross <andy.gross@linaro.org>,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v6 2/3] clk: qcom: Add support for BRANCH_NO_DELAY flag for branch clocks
-Date: Mon, 30 Apr 2018 21:50:09 +0530
-Message-Id: <1525105210-8689-3-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
-References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
+Subject: [PATCH 0/2] Add QCOM video clock controller driver
+Date: Tue, 24 Apr 2018 19:02:49 +0530
+Message-Id: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-There could be few clocks where the clock status bit is not
-required to be polled as the clock on/off would be controlled
-by enabling/disabling external source. Add support for the
-same by introducing new flag named as 'BRANCH_NO_DELAY'.
+This patch series adds a driver and device tree documentation binding
+for the video clock controller on some Qualcomm Technologies, Inc, SoCs
+such as SDM845. This would allow video drivers to probe and control their
+clocks.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
----
- drivers/clk/qcom/clk-branch.c | 7 +++++--
- drivers/clk/qcom/clk-branch.h | 1 +
- 2 files changed, 6 insertions(+), 2 deletions(-)
+The video clock driver depends upon the RPMh driver[1], command DB driver[2],
+RPMh clock driver[3], rcg2 shared ops[4] changes which are undergoing review.
 
-diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-index 26f7af31..1a3db39 100644
---- a/drivers/clk/qcom/clk-branch.c
-+++ b/drivers/clk/qcom/clk-branch.c
-@@ -77,8 +77,11 @@ static int clk_branch_wait(const struct clk_branch *br, bool enabling,
- 	bool voted = br->halt_check & BRANCH_VOTED;
- 	const char *name = clk_hw_get_name(&br->clkr.hw);
+[1]: https://lkml.org/lkml/2018/4/19/914
+[2]: https://lkml.org/lkml/2018/4/5/451
+[3]: https://lkml.org/lkml/2018/4/24/390
+[4]: https://lkml.org/lkml/2018/4/18/367
 
--	/* Skip checking halt bit if the clock is in hardware gated mode */
--	if (clk_branch_in_hwcg_mode(br))
-+	/*
-+	 * Skip checking halt bit if halt_check is BRANCH_NO_DELAY or
-+	 * the clock is in hardware gated mode
-+	 */
-+	if (br->halt_check == BRANCH_NO_DELAY || clk_branch_in_hwcg_mode(br))
- 		return 0;
+Amit Nischal (2):
+  dt-bindings: clock: Introduce QCOM Video clock bindings
+  clk: qcom: Add video clock controller driver for SDM845
 
- 	if (br->halt_check == BRANCH_HALT_DELAY || (!enabling && voted)) {
-diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-index 284df3f..5d621f3 100644
---- a/drivers/clk/qcom/clk-branch.h
-+++ b/drivers/clk/qcom/clk-branch.h
-@@ -42,6 +42,7 @@ struct clk_branch {
- #define BRANCH_HALT_ENABLE		1 /* pol: 0 = halt */
- #define BRANCH_HALT_ENABLE_VOTED	(BRANCH_HALT_ENABLE | BRANCH_VOTED)
- #define BRANCH_HALT_DELAY		2 /* No bit to check; just delay */
-+#define BRANCH_NO_DELAY			3 /* No bit to check; without delay */
+ .../devicetree/bindings/clock/qcom,videocc.txt     |  18 ++
+ drivers/clk/qcom/Kconfig                           |  11 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/videocc-sdm845.c                  | 359 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,videocc-sdm845.h    |  25 ++
+ 5 files changed, 414 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.txt
+ create mode 100644 drivers/clk/qcom/videocc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,videocc-sdm845.h
 
- 	struct clk_regmap clkr;
- };
 --
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
