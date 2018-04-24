@@ -1,52 +1,73 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>, Finley Xiao <finley.xiao@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, Xing Zheng <xing.zheng@rock-chips.com>, Elaine Zhang <zhangqing@rock-chips.com>, Ziyuan Xu <xzy.xu@rock-chips.com>
-Subject: Re: [PATCH 1/2] clk: divider: Add CLK_DIVIDER_EVEN flag support
-Date: Thu, 05 Apr 2018 15:30:07 +0200
-Message-ID: <3456608.qSAPWuSAs9@phil>
-In-Reply-To: <1522906699-127765-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1522906699-127765-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 24 Apr 2018 09:39:07 -0500
+From: Rob Herring <robh@kernel.org>
+To: sean.wang@mediatek.com
+Cc: mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
+	matthias.bgg@gmail.com, mark.rutland@arm.com,
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
+Message-ID: <20180424143907.eewrpzdmkhhux3lb@rob-hp-laptop>
+References: <cover.1524044917.git.sean.wang@mediatek.com>
+ <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Shawn,
-
-Am Donnerstag, 5. April 2018, 07:38:18 CEST schrieb Shawn Lin:
-> CLK_DIVIDER_EVEN is used for clock divders that should only
-> use even number in the div field.
+On Wed, Apr 18, 2018 at 06:24:54PM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
 > 
-> Two clock divder should consider to use this flag
-> (1) The divder is physically only support even div number to
-> generate 50% duty cycle clock rate.
-> (2) The divder's clock consumer request it to use even div number
-> to generate the most closest requested rate for whatever reason.
+> Add bindings to g3dsys providing necessary clock and reset control to
+> Mali-450.
 > 
-> In some platforms, for instance Rockchip, the eMMC/SDIO/SDMMC should
-> request divder to use even number when working at a high throughput
-> speed mode reliably. However, that wasn't guaranteed by clock framework.
-> So the previous tricky is to carefully assign magic clock rate to their
-> parents as well as consumer's clock rate when requesting. That works
-> bad in practice if folks change the parents clock rate or the clock
-> hierarchy randomly. That also work bad if the consumer's clock rate
-> came from the DT, which is changed so fraquent for different boards.
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
 > 
-> To make it's less prone to make mistake and to make it really respect
-> the fact that the divder should use even number to the div field, we
-> need the clock framework's help. Now we have CLK_DIVIDER_POWER_OF_TWO,
-> which could guarantee the div field is even number, however, obviously
-> it skips the even numbers which is the power of 2, but maybe which is
-> the best div to generate closest clock rate for consumer.
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+> new file mode 100644
+> index 0000000..ff2d70c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
+> @@ -0,0 +1,30 @@
+> +MediaTek g3dsys controller
+> +============================
+> +
+> +The MediaTek g3dsys controller provides various clocks and reset controller to
+> +the GPU.
+> +
+> +Required Properties:
+> +
+> +- compatible: Should be:
+> +	- "mediatek,mt2701-g3dsys", "syscon":
+> +		for MT2701 SoC
+> +	- "mediatek,mt7623-ethsys", "mediatek,mt2701-g3dsys", "syscon":
+> +		for MT7623 SoC
 
-I think there is a slight misunderstanding here, CLK_DIVIDER_POWER_OF_TWO
-means "2 raised to the value read from the hardware register", so describes
-a hardware property, while your CLK_DIVIDER_EVEN describes needed special
-handling due to some hardware necessity.
+ethsys?
 
-That is not meant to nack your change, but just to point out that you can
-also have CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_EVEN, which is
-relevant for the uneven 2^0 = 1 case and should be taken in to account.
-
-
-Heiko
+> +- #clock-cells: Must be 1
+> +- #reset-cells: Must be 1
+> +
+> +The ethsys controller uses the common clk binding from
+> +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> +
+> +Example:
+> +
+> +g3dsys: clock-controller@13000000 {
+> +	compatible = "mediatek,mt7623-g3dsys",
+> +		     "mediatek,mt2701-g3dsys",
+> +		     "syscon";
+> +	reg = <0 0x13000000 0 0x200>;
+> +	#clock-cells = <1>;
+> +	#reset-cells = <1>;
+> +};
+> -- 
+> 2.7.4
+> 
