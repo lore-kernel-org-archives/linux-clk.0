@@ -1,176 +1,98 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH 3/7] clk: meson: add triple phase clock driver
-To: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Kevin Hilman <khilman@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180425163304.10852-1-jbrunet@baylibre.com>
- <20180425163304.10852-4-jbrunet@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <bc770c22-f0b9-ed1f-bba7-631b9cd42436@baylibre.com>
-Date: Thu, 26 Apr 2018 10:47:04 +0200
+Return-Path: <k.kozlowski.k@gmail.com>
+Return-Path: <k.kozlowski.k@gmail.com>
+Date: Tue, 24 Apr 2018 22:56:36 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>,
+	DTML <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	IDE-ML <linux-ide@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>, linux-i2c@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-spi <linux-spi@vger.kernel.org>,
+	linux-usb@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Olof Johansson <olof@lixom.net>,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [RFC 00/10] ARM: Remove support for Exynos5440
+Message-ID: <20180424205636.cdp4czq6hhs5gu5a@kozik-lap>
+References: <20180424203239.21885-1-krzk@kernel.org>
+ <CAK8P3a2CZU1CYFt0fdVSFFnj2Wg=mUcC=yuWAW7zDO0u2Q2dUQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180425163304.10852-4-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAK8P3a2CZU1CYFt0fdVSFFnj2Wg=mUcC=yuWAW7zDO0u2Q2dUQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/04/2018 18:33, Jerome Brunet wrote:
-> Add a driver to control the output of the sample clock generator found
-> in the axg audio clock controller.
+On Tue, Apr 24, 2018 at 10:50:58PM +0200, Arnd Bergmann wrote:
+> On Tue, Apr 24, 2018 at 10:32 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > Hi,
+> >
+> >
+> > Overview
+> > ========
+> > Let's continue the removal of old platforms. We already get rid of Exynos4212.
+> > Now it's time for Exynos5440.
+> >
+> > The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
+> > server platforms but it did not make it to the market really.  There are
+> > no development boards with it and probably there are no real products
+> > neither.  The development for Exynos5440 ended in 2013 and since then
+> > the platform is in maintenance mode.
+> >
+> > The only development happening around it is the PCIe driver for Exynos5433
+> > (ARMv8). [1]
+> >
+> > Removing Exynos5440, makes our life slightly easier:
+> > 1. Less maintenance,
+> > 2. Smaller code, less quirks,
+> > 3. No need to preserve (imaginary) backward-compatibility for Exynos PCIe
+> >    driver (so it is easier to add support for Exynos5433).
+> >
+> >
+> > Because of point (3) above - I left the PCIe and PCIe PHY drivers intact.
+> >
+> >
+> > Dependencies
+> > ============
+> > I think about starting with removal of DTS in some kernel release (patch 1/10).
+> > Then all drivers can be removed/updated - subsystem maintainers can pick their
+> > patches freely.
+> >
+> > Finally, after getting rid of all Exynos5440 symbols, the last patch (10/10) will
+> > end in arm-soc tree.
+> >
+> >
+> > Any comments?
 > 
-> The goal of this driver is to coherently control the phase provided to
-> the different element using the sample clock generator. This simplify
-> the usage of the sample clock generator a lot, without comprising the
-> ability of the SoC.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/Kconfig        |  5 +++
->  drivers/clk/meson/Makefile       |  1 +
->  drivers/clk/meson/clk-triphase.c | 68 ++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/meson/clkc-audio.h   | 20 ++++++++++++
->  4 files changed, 94 insertions(+)
->  create mode 100644 drivers/clk/meson/clk-triphase.c
->  create mode 100644 drivers/clk/meson/clkc-audio.h
-> 
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index 87d69573e172..7f7fd6fb3809 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -3,6 +3,11 @@ config COMMON_CLK_AMLOGIC
->  	depends on ARCH_MESON || COMPILE_TEST
->  	select COMMON_CLK_REGMAP_MESON
->  
-> +config COMMON_CLK_AMLOGIC_AUDIO
-> +	bool
-> +	depends on ARCH_MESON || COMPILE_TEST
-> +	select COMMON_CLK_AMLOGIC
-> +
->  config COMMON_CLK_REGMAP_MESON
->  	bool
->  	select REGMAP
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 352fb848c406..64bb917fe1f0 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -4,6 +4,7 @@
->  
->  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
->  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
-> +obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o
->  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
->  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-> diff --git a/drivers/clk/meson/clk-triphase.c b/drivers/clk/meson/clk-triphase.c
-> new file mode 100644
-> index 000000000000..9508c03c73c1
-> --- /dev/null
-> +++ b/drivers/clk/meson/clk-triphase.c
-> @@ -0,0 +1,68 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2018 BayLibre, SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include "clkc-audio.h"
-> +
-> +/*
-> + * This is a special clock for the audio controller.
-> + * The phase of mst_sclk clock output can be controlled independently
-> + * for the outside world (ph0), the tdmout (ph1) and tdmin (ph2).
-> + * Controlling these 3 phases as just one makes things simpler and
-> + * give the same clock view to all the element on the i2s bus.
-> + * If necessary, we can still control the phase in the tdm block
-> + * which makes these independent control redundant.
-> + */
-> +static inline struct meson_clk_triphase_data *
-> +meson_clk_triphase_data(struct clk_regmap *clk)
-> +{
-> +	return (struct meson_clk_triphase_data *)clk->data;
-> +}
-> +
-> +static void meson_clk_triphase_sync(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
-> +	unsigned int val;
-> +
-> +	/* Get phase 0 and sync it to phase 1 and 2 */
-> +	val = meson_parm_read(clk->map, &tph->ph0);
-> +	meson_parm_write(clk->map, &tph->ph1, val);
-> +	meson_parm_write(clk->map, &tph->ph2, val);
-> +}
-> +
-> +static int meson_clk_triphase_get_phase(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
-> +	unsigned int val;
-> +
-> +	/* Phase are in sync, reading phase 0 is enough */
-> +	val = meson_parm_read(clk->map, &tph->ph0);
-> +
-> +	return meson_clk_degrees_from_val(val, tph->ph0.width);
-> +}
-> +
-> +static int meson_clk_triphase_set_phase(struct clk_hw *hw, int degrees)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
-> +	unsigned int val;
-> +
-> +	val = meson_clk_degrees_to_val(degrees, tph->ph0.width);
-> +	meson_parm_write(clk->map, &tph->ph0, val);
-> +	meson_parm_write(clk->map, &tph->ph1, val);
-> +	meson_parm_write(clk->map, &tph->ph2, val);
-> +
-> +	return 0;
-> +}
-> +
-> +const struct clk_ops meson_clk_triphase_ops = {
-> +	.init		= meson_clk_triphase_sync,
-> +	.get_phase	= meson_clk_triphase_get_phase,
-> +	.set_phase	= meson_clk_triphase_set_phase,
-> +};
-> +EXPORT_SYMBOL_GPL(meson_clk_triphase_ops);
-> diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
-> new file mode 100644
-> index 000000000000..286ff1201258
-> --- /dev/null
-> +++ b/drivers/clk/meson/clkc-audio.h
-> @@ -0,0 +1,20 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
+> I don't see any hard dependency here, if this is all unused, I think we
+> can apply both patches 1 and 10 into arm-soc at the same time as merging
+> the other patches through the respective subsystem trees.
 
-// SPDX-License-Identifier: GPL-2.0
+The only dependency is through Kconfig symbol (SOC_EXYNOS5440).  After
+applying 10/10, which removes SOC_EXYNOS5440, some automatic code
+testers can complain about non-existing Kconfig option.  That's not big
+issue because all this will go away so indeed we could take everything
+in one release.
 
-Checkpatch should have warned about this !
 
-> +/*
-> + * Copyright (c) 2018 BayLibre, SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + */
-> +
-> +#ifndef __MESON_CLKC_AUDIO_H
-> +#define __MESON_CLKC_AUDIO_H
-> +
-> +#include "clkc.h"
-> +
-> +struct meson_clk_triphase_data {
-> +	struct parm ph0;
-> +	struct parm ph1;
-> +	struct parm ph2;
-> +};
-> +
-> +extern const struct clk_ops meson_clk_triphase_ops;
-> +
-> +#endif /* __MESON_CLKC_AUDIO_H */
-> 
-
-Apart that :
-
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Best regards,
+rzysztof
