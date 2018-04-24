@@ -1,43 +1,76 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 0/3] Update reset and poll logic for GDSCs
-Date: Mon,  9 Apr 2018 14:11:43 +0530
-Message-Id: <1523263306-28665-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1524227264-24896-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1524227264-24896-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1524227264-24896-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 24 Apr 2018 09:57:33 +0200
+Message-ID: <CAMuHMdXCPq7TjDAtu7AffsnZO-rmokjvwZunMByap-iYyjpjRw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: Add r8a77990 CPG Core Clock Definitions
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
- [v2]
-  * Addressed review comments given in v1 series
+Hi Shimoda-san,
 
-This series implements the below logic for the GDSCs
+On Fri, Apr 20, 2018 at 2:27 PM, Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds all R-Car E3 Clock Pulse Generator Core Clock Outputs.
+>
+> Note that internal CPG clocks (S0, S1, S2, S3, SDSRC) are not included,
+> as they are used as internal clock sources only, and never referenced
+> from DT.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [shimoda: add SPDX-License-Identifier]
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
- 1. logic to reset the AON logic before or assert/deassert the block
-   control reset removing the clamp io for few GDSCs on SDM845 SoC.
- 2. It also introduces the requirement to poll for higher timeout values
-   for few of the GDSCs.
- 3. There is a new poll register for the GDSCs on SDM845 SoCs which needs
-   to be polled for the correct hardware status of the GDSCs.
+Thanks for your patch!
 
-Amit Nischal (3):
-  clk: qcom: gdsc: Add support to reset AON and block reset logic
-  clk: qcom: gdsc: Add support to poll for higher timeout value
-  clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r8a77990-cpg-mssr.h
+> @@ -0,0 +1,62 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2018 Renesas Electronics Corp.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__
+> +#define __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* r8a77990 CPG Core Clocks */
+> +#define R8A77990_CLK_Z2                        0
 
- drivers/clk/qcom/gdsc.c | 63 +++++++++++++++++++++++++++++++++++++++++++------
- drivers/clk/qcom/gdsc.h |  5 +++-
- 2 files changed, 60 insertions(+), 8 deletions(-)
+[...]
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+> +#define R8A77990_CLK_CSI0              47
+> +#define R8A77990_CLK_CP                        49
+> +#define R8A77990_CLK_CPEX              50
+
+The numbering should be contiguous.
+I'll fix it up while applying, and add "POST3" to the list of internal clocks in
+the commit message.
+
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__ */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
