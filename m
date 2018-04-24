@@ -1,69 +1,77 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/5] ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
-Date: Wed, 18 Apr 2018 16:50:02 +0200
-Message-Id: <1524063005-1716-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
+ DA850 PSC
+To: David Lechner <david@lechnology.com>, Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        linux-clk
+	<linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux
+ ARM <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>, Adam Ford
+	<aford173@gmail.com>,
+        Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>
+References: <1515377863-20358-1-git-send-email-david@lechnology.com>
+ <1515377863-20358-13-git-send-email-david@lechnology.com>
+ <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
+ <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
+ <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
+ <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
+ <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
+ <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
+ <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
+ <152303318048.143116.2883441215887455211@swboyd.mtv.corp.google.com>
+ <48c8531f-8cd9-a9f8-9c38-cbc4c921c4c9@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <aa1c2e6f-793c-1d9e-366a-3496f500f946@ti.com>
+Date: Tue, 24 Apr 2018 13:58:33 +0530
+MIME-Version: 1.0
+In-Reply-To: <48c8531f-8cd9-a9f8-9c38-cbc4c921c4c9@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
-This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
-<linux/of_clk.h>".
+On Monday 23 April 2018 08:29 PM, David Lechner wrote:
+> On 04/06/2018 11:46 AM, Stephen Boyd wrote:
+>> Quoting Sekhar Nori (2018-04-06 02:37:03)
+>>>
+>>> Can you please check that and confirm there is no issue with genpd and
+>>> using CLK_OF_DECLARE() to initialize clocks?
+>>>
+>>> Unless you report an issue back, or Mike and Stephen have ideas about
+>>> how to handle the dependency between PSC/PLL derived timer clock
+>>> initialization and and timer_probe(), I think we need to move back to
+>>> using CLK_OF_DECLARE().
+>>
+>> In such a case, please use the hybrid approach where the clks required
+>> for the clockevent and/or clocksource are registered in the early
+>> CLK_OF_DECLARE path but the rest of the clks get registered with a
+>> proper platform device and driver. There are examples of this approach
+>> on other platforms already.
+>>
+> 
+> I looked at this a bit last week, but I didn't come up with any approach
+> that I was happy with. It seems like it would be nice to just register
+> the absolute minimum clocks needed. On DA8XX, that would just be the PLL0
+> AUXCLK. On most of the other SoCs, it would be the PLL AUXCLK plus one
+> LPSC clock. The AUXCLKs are easy because they are just a simple gate
+> from the oscillator. The LPSC clocks are a bit more tricky because they
+> have a complex sequence for turning on. Furthermore, on DM646X, we need
+> the whole PLL up to SYSCLK3 plus one LPSC clock, so things get a bit
+> messy there.
 
-v3:
-  - Add Acked-by,
+Things might change in the context of work being done here by Bartosz
+for converting clocks to early platform devices.
 
-v2:
-  - of_clk_get_parent_count() was moved to <linux/of_clk.h>,
-  - Dropped RFC, as a dummy is now available in the !CONFIG_COMMON_CLK
-    case.
----
- drivers/clocksource/timer-sp804.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+But, keeping that development aside for a moment: I think this means the
+PLLs and PSCs need to be CLK_OF_DECLARE(). What we can have as platform
+devices are clocks that are not in the path to get timer clock working
+(like CFGCHIP clocks).
 
-diff --git a/drivers/clocksource/timer-sp804.c b/drivers/clocksource/timer-sp804.c
-index 3ac9dec9a03852f9..e01222ea888ff9d2 100644
---- a/drivers/clocksource/timer-sp804.c
-+++ b/drivers/clocksource/timer-sp804.c
-@@ -27,6 +27,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_clk.h>
- #include <linux/of_irq.h>
- #include <linux/sched_clock.h>
- 
-@@ -245,7 +246,7 @@ static int __init sp804_of_init(struct device_node *np)
- 		clk1 = NULL;
- 
- 	/* Get the 2nd clock if the timer has 3 timer clocks */
--	if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
-+	if (of_clk_get_parent_count(np) == 3) {
- 		clk2 = of_clk_get(np, 1);
- 		if (IS_ERR(clk2)) {
- 			pr_err("sp804: %s clock not found: %d\n", np->name,
--- 
-2.7.4
+Thanks,
+Sekhar
