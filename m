@@ -1,48 +1,94 @@
-Return-Path: <quentin.schulz@bootlin.com>
-From: Quentin Schulz <quentin.schulz@bootlin.com>
-To: vireshk@kernel.org,
-	shiraz.linux.kernel@gmail.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH 2/2] clk: spear: fix WDT clock definition on SPEAr600
-Date: Fri,  6 Apr 2018 09:50:45 +0200
-Message-Id: <c7240072ab53d5d34a9756389729343243028eb3.1523000725.git-series.quentin.schulz@bootlin.com>
-In-Reply-To: <0635969b6ef0fe528a27a8b6493cc3df770e1f60.1523000725.git-series.quentin.schulz@bootlin.com>
-References: <0635969b6ef0fe528a27a8b6493cc3df770e1f60.1523000725.git-series.quentin.schulz@bootlin.com>
-In-Reply-To: <0635969b6ef0fe528a27a8b6493cc3df770e1f60.1523000725.git-series.quentin.schulz@bootlin.com>
-References: <0635969b6ef0fe528a27a8b6493cc3df770e1f60.1523000725.git-series.quentin.schulz@bootlin.com>
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [v2 00/10] arm/arm64: mediatek: Fix mmsys device probing
+To: Lee Jones <lee.jones@linaro.org>, matthias.bgg@kernel.org
+Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+ ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
+ robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, davem@davemloft.net, gregkh@linuxfoundation.org,
+ mchehab@kernel.org, rdunlap@infradead.org, pi-cheng.chen@linaro.org,
+ sean.wang@mediatek.com, linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Matthias Brugger <mbrugger@suse.com>
+References: <cover.1524497268.git.mbrugger@suse.com>
+ <20180424054854.bpd6h3imazhqnuy3@dell>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <723392d5-ee51-d49b-050b-db4f9709e6bf@gmail.com>
+Date: Tue, 24 Apr 2018 11:46:13 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180424054854.bpd6h3imazhqnuy3@dell>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-There is no SPEAr600 device named "wdt". Instead, the description of the
-WDT (watchdog) was recently added to the Device Tree, and the device
-name is "fc880000.wdt", so we should associate the WDT fixed rate clock
-to this device name.
+Hi Lee,
 
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
----
- drivers/clk/spear/spear6xx_clock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 04/24/2018 07:48 AM, Lee Jones wrote:
+> On Mon, 23 Apr 2018, matthias.bgg@kernel.org wrote:
+> 
+>> From: Matthias Brugger <mbrugger@suse.com>
+>>
+>> Changes since v1:
+>> - add binding documentation
+>> - ddp: use regmap_update_bits
+>> - ddp: ignore EPROBE_DEFER on clock probing
+>> - mfd: delete mmsys_private
+>> - add Reviewed-by and Acked-by tags
+> 
+> I'm confused by the double submission.
+> 
+> Please can you send it again completely detached from the first and
+> the second submissions please?
+> 
 
-diff --git a/drivers/clk/spear/spear6xx_clock.c b/drivers/clk/spear/spear6xx_clock.c
-index f911d9f..47810be 100644
---- a/drivers/clk/spear/spear6xx_clock.c
-+++ b/drivers/clk/spear/spear6xx_clock.c
-@@ -147,7 +147,7 @@ void __init spear6xx_clk_init(void __iomem *misc_base)
- 
- 	clk = clk_register_fixed_factor(NULL, "wdt_clk", "osc_30m_clk", 0, 1,
- 			1);
--	clk_register_clkdev(clk, NULL, "wdt");
-+	clk_register_clkdev(clk, NULL, "fc880000.wdt");
- 
- 	/* clock derived from pll1 clk */
- 	clk = clk_register_fixed_factor(NULL, "cpu_clk", "pll1_clk",
--- 
-git-series 0.9.1
+I had some problems with my mailclient. I'll resend as 'v2 resend'.
+
+Sorry for that.
+Matthias
+
+>> ---
+>>
+>> MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
+>> used in the clk driver) and some registers to set the routing and enable
+>> the differnet blocks of the display subsystem.
+>>
+>> Up to now both drivers, clock and drm are probed with the same device tree
+>> compatible. But only the first driver get probed, which in effect breaks
+>> graphics on mt8173 and mt2701.
+>>
+>> This patch set introduces a new mfd device, which binds against the mmsys
+>> compatible and takes care of probing the needed devices. It was tested on the
+>> bananapi-r2 and the Acer R13 Chromebook.
+>>
+>>
+>> Matthias Brugger (10):
+>>   dt-bindings: mediatek: mmsys: Add support for mfd
+>>   drm/mediatek: Use regmap for register access
+>>   mfd: mtk-mmsys: Add mmsys driver
+>>   drm/mediatek: mt2701: switch to mfd probing.
+>>   clk: mediatek: mt2701-mm: switch to mfd device
+>>   mfd: mtk-mmsys: Add mt8173 nodes
+>>   drm/mediatek: Add mfd support for mt8173
+>>   clk: mediatek: mt8173-mm: switch to mfd device
+>>   drm: mediatek: Omit warning on probe defers
+>>   MAINTAINERS: update Mediatek Soc entry
+>>
+>>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 -
+>>  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
+>>  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 +++++++
+>>  MAINTAINERS                                        |  2 +
+>>  drivers/clk/mediatek/clk-mt2701-mm.c               | 10 +--
+>>  drivers/clk/mediatek/clk-mt8173.c                  | 17 +++-
+>>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |  4 +-
+>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 41 ++++------
+>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h             |  4 +-
+>>  drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 33 ++++----
+>>  drivers/gpu/drm/mediatek/mtk_drm_drv.h             |  2 +-
+>>  drivers/mfd/Kconfig                                |  9 +++
+>>  drivers/mfd/Makefile                               |  2 +
+>>  drivers/mfd/mtk-mmsys.c                            | 93 ++++++++++++++++++++++
+>>  14 files changed, 189 insertions(+), 59 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+>>  create mode 100644 drivers/mfd/mtk-mmsys.c
+>>
+> 
