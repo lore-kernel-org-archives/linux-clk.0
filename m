@@ -1,35 +1,67 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Bjorn Andersson <bjorn.andersson@linaro.org>,
- David Lechner <david@lechnology.com>, Kevin Hilman <khilman@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Ohad Ben-Cohen <ohad@wizery.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Sekhar Nori <nsekhar@ti.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180330152856.12297-4-brgl@bgdev.pl>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-remoteproc@vger.kernel.org,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180330152856.12297-1-brgl@bgdev.pl> <20180330152856.12297-4-brgl@bgdev.pl>
-Message-ID: <152304711592.94378.4448268823064394140@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 3/8] clk: davinci: add a reset lookup table for psc0
-Date: Fri, 06 Apr 2018 13:38:35 -0700
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5ADEDD27.3070207@samsung.com>
+Date: Tue, 24 Apr 2018 16:30:47 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa
+	<tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
+In-reply-to: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+	<CGME20180419140651epcas5p22119a061c760dd54c0c3e630b053ec1b@epcas5p2.samsung.com>
+	<20180419140641.27926-6-wsa+renesas@sang-engineering.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Bartosz Golaszewski (2018-03-30 08:28:51)
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> =
+Hi,
 
-> In order to be able to use the reset framework in legacy boot mode as
-> well, add the reset lookup table to the psc driver for da850 variant.
-> =
-
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 2018년 04월 19일 23:05, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/clk/samsung/clk-s3c2410-dclk.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> index 077df3e539a7..f41d89cef0f1 100644
+> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
+> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+> @@ -219,8 +219,7 @@ static int s3c24xx_dclk1_div_notify(struct notifier_block *nb,
+>  #ifdef CONFIG_PM_SLEEP
+>  static int s3c24xx_dclk_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
+> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+>  
+>  	s3c24xx_dclk->reg_save = readl_relaxed(s3c24xx_dclk->base);
+>  	return 0;
+> @@ -228,8 +227,7 @@ static int s3c24xx_dclk_suspend(struct device *dev)
+>  
+>  static int s3c24xx_dclk_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
+> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
+>  
+>  	writel_relaxed(s3c24xx_dclk->reg_save, s3c24xx_dclk->base);
+>  	return 0;
+> 
 
-Applied to clk-next
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
