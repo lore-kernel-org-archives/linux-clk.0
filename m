@@ -1,139 +1,103 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-amlogic@lists.infradead.org,
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] clk: meson: add clk-phase clock driver
-Date: Wed, 25 Apr 2018 18:32:59 +0200
-Message-Id: <20180425163304.10852-3-jbrunet@baylibre.com>
-In-Reply-To: <20180425163304.10852-1-jbrunet@baylibre.com>
-References: <20180425163304.10852-1-jbrunet@baylibre.com>
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v2 resend 07/10] drm/mediatek: Add mfd support for mt8173
+Date: Tue, 24 Apr 2018 11:47:04 +0200
+Message-Id: <ae6e77bc3f5c29ce53e248162a42f4eb4e42a417.1524563001.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
+References: <cover.1524563001.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
+References: <cover.1524563001.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a driver based meson clk-regmap to control clock phase on
-amlogic SoCs
+From: Matthias Brugger <mbrugger@suse.com>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Use the MFD device for SoC mt8173. Probing via devicetree
+is no longer needed for any SoC, so delete it.
+
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/clk/meson/Makefile    |  1 +
- drivers/clk/meson/clk-phase.c | 63 +++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/clkc.h      |  8 ++++++
- 3 files changed, 72 insertions(+)
- create mode 100644 drivers/clk/meson/clk-phase.c
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 28 +++++++---------------------
+ 1 file changed, 7 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index ffee82e60b7a..352fb848c406 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -3,6 +3,7 @@
- #
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 88ee35907744..3cc433ebfa8f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -399,20 +399,12 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ 	INIT_WORK(&private->commit.work, mtk_atomic_work);
+ 	private->data = of_device_get_match_data(dev);
  
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-diff --git a/drivers/clk/meson/clk-phase.c b/drivers/clk/meson/clk-phase.c
-new file mode 100644
-index 000000000000..96e70497ef1b
---- /dev/null
-+++ b/drivers/clk/meson/clk-phase.c
-@@ -0,0 +1,63 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2018 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include "clkc.h"
-+
-+#define phase_step(_width) (360 / (1 << (_width)))
-+
-+static inline struct meson_clk_phase_data *
-+meson_clk_phase_data(struct clk_regmap *clk)
-+{
-+	return (struct meson_clk_phase_data *)clk->data;
-+}
-+
-+int meson_clk_degrees_from_val(unsigned int val, unsigned int width)
-+{
-+	return phase_step(width) * val;
-+}
-+EXPORT_SYMBOL_GPL(meson_clk_degrees_from_val);
-+
-+unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width)
-+{
-+	unsigned int val = DIV_ROUND_CLOSEST(degrees, phase_step(width));
-+
-+	/*
-+	 * This last calculation is here for cases when degrees is rounded
-+	 * to 360, in which case val == (1 << width).
-+	 */
-+	return val % (1 << width);
-+}
-+EXPORT_SYMBOL_GPL(meson_clk_degrees_to_val);
-+
-+static int meson_clk_phase_get_phase(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_phase_data *phase = meson_clk_phase_data(clk);
-+	unsigned int val;
-+
-+	val = meson_parm_read(clk->map, &phase->ph);
-+
-+	return meson_clk_degrees_from_val(val, phase->ph.width);
-+}
-+
-+static int meson_clk_phase_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_phase_data *phase = meson_clk_phase_data(clk);
-+	unsigned int val;
-+
-+	val = meson_clk_degrees_to_val(degrees, phase->ph.width);
-+	meson_parm_write(clk->map, &phase->ph, val);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops meson_clk_phase_ops = {
-+	.get_phase	= meson_clk_phase_get_phase,
-+	.set_phase	= meson_clk_phase_set_phase,
-+};
-+EXPORT_SYMBOL_GPL(meson_clk_phase_ops);
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 8fe73c4edca8..9a17d6705e0a 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -104,6 +104,13 @@ struct meson_clk_audio_div_data {
- 	u8 flags;
+-	/* Check if called from mfd */
+-	if (!dev->of_node) {
+-		mmsys_node = pdev->dev.parent->of_node;
+-		private->data = (struct mtk_mmsys_driver_data *)
+-				platform_get_device_id(pdev)->driver_data;
+-		private->config_regs =
+-			syscon_node_to_regmap(mmsys_node);
+-		parent_node = mmsys_node->parent;
+-	} else {
+-		private->config_regs = syscon_node_to_regmap(dev->of_node);
+-		if (IS_ERR(private->config_regs))
+-			return PTR_ERR(private->config_regs);
+-		parent_node = dev->of_node->parent;
+-	}
++	mmsys_node = pdev->dev.parent->of_node;
++	private->data = (struct mtk_mmsys_driver_data *)
++			platform_get_device_id(pdev)->driver_data;
++	private->config_regs =
++		syscon_node_to_regmap(mmsys_node);
++	parent_node = mmsys_node->parent;
+ 
+ 	/* Iterate over sibling DISP function blocks */
+ 	for_each_child_of_node(parent_node, node) {
+@@ -555,14 +547,9 @@ static int mtk_drm_sys_resume(struct device *dev)
+ static SIMPLE_DEV_PM_OPS(mtk_drm_pm_ops, mtk_drm_sys_suspend,
+ 			 mtk_drm_sys_resume);
+ 
+-static const struct of_device_id mtk_drm_of_ids[] = {
+-	{ .compatible = "mediatek,mt8173-mmsys",
+-	  .data = &mt8173_mmsys_driver_data},
+-	{ }
+-};
+-
+ static const struct platform_device_id mtk_drm_ids[] = {
+ 	{ "drm-mt2701-mm", (kernel_ulong_t)&mt2701_mmsys_driver_data },
++	{ "drm-mt8173-mm", (kernel_ulong_t)&mt8173_mmsys_driver_data },
+ 	{ /* sentinel */ },
  };
- 
-+struct meson_clk_phase_data {
-+	struct parm ph;
-+};
-+
-+int meson_clk_degrees_from_val(unsigned int val, unsigned int width);
-+unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width);
-+
- #define MESON_GATE(_name, _reg, _bit)					\
- struct clk_regmap _name = {						\
- 	.data = &(struct clk_regmap_gate_data){				\
-@@ -127,5 +134,6 @@ extern const struct clk_ops meson_clk_mpll_ro_ops;
- extern const struct clk_ops meson_clk_mpll_ops;
- extern const struct clk_ops meson_clk_audio_divider_ro_ops;
- extern const struct clk_ops meson_clk_audio_divider_ops;
-+extern const struct clk_ops meson_clk_phase_ops;
- 
- #endif /* __CLKC_H */
+ MODULE_DEVICE_TABLE(platform, mtk_drm_ids);
+@@ -572,7 +559,6 @@ static struct platform_driver mtk_drm_platform_driver = {
+ 	.remove	= mtk_drm_remove,
+ 	.driver	= {
+ 		.name	= "mediatek-drm",
+-		.of_match_table = mtk_drm_of_ids,
+ 		.pm     = &mtk_drm_pm_ops,
+ 	},
+ 	.id_table = mtk_drm_ids,
 -- 
-2.14.3
+2.16.3
