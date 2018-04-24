@@ -1,268 +1,162 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Qiufang Dai <qiufang.dai@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>,
-	Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 5/7] clk: meson-axg: Add AO Clock and Reset controller driver
-Date: Mon, 9 Apr 2018 22:37:47 +0800
-Message-ID: <20180409143749.71197-6-yixun.lan@amlogic.com>
-In-Reply-To: <20180409143749.71197-1-yixun.lan@amlogic.com>
-References: <20180409143749.71197-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Tejun Heo <tj@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andi Shyti <andi@etezian.org>,
+	Mark Brown <broonie@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [RFC 10/10] ARM: exynos: Remove support for Exynos5440
+Date: Tue, 24 Apr 2018 22:32:39 +0200
+Message-Id: <20180424203239.21885-11-krzk@kernel.org>
+In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
+References: <20180424203239.21885-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Qiufang Dai <qiufang.dai@amlogic.com>
+The Exynos5440 is not actively developed, there are no development
+boards available and probably there are no real products with it.
+Remove wide-tree support for Exynos5440.
 
-Adds a Clock and Reset controller driver for the Always-On part
-of the Amlogic Meson-AXG SoC.
-
-Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/meson/Kconfig     |   1 +
- drivers/clk/meson/Makefile    |   2 +-
- drivers/clk/meson/axg-aoclk.c | 164 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/axg-aoclk.h |  31 ++++++++
- 4 files changed, 197 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/axg-aoclk.c
- create mode 100644 drivers/clk/meson/axg-aoclk.h
+ arch/arm/mach-exynos/Kconfig  | 12 ------------
+ arch/arm/mach-exynos/common.h |  8 --------
+ arch/arm/mach-exynos/exynos.c | 15 ++-------------
+ 3 files changed, 2 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index fddc7ec7b820..815659eebea3 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -38,6 +38,7 @@ config COMMON_CLK_AXG
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
- 	select RESET_CONTROLLER
-+	select COMMON_CLK_MESON_AO
- 	select COMMON_CLK_REGMAP_MESON
- 	select MFD_SYSCON
- 	help
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 0a8df284f4e7..d0d13aeb369a 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -6,5 +6,5 @@ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
--obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
-+obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-new file mode 100644
-index 000000000000..cb56d809d3df
---- /dev/null
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Amlogic Meson-AXG Clock Controller Driver
-+ *
-+ * Copyright (c) 2016 Baylibre SAS.
-+ * Author: Michael Turquette <mturquette@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/init.h>
-+#include "clkc.h"
-+#include "axg-aoclk.h"
-+
-+#define AXG_AO_GATE(_name, _bit)					\
-+static struct clk_regmap _name##_ao = {					\
-+	.data = &(struct clk_regmap_gate_data) {			\
-+		.offset = (AO_RTI_GEN_CNTL_REG0),			\
-+		.bit_idx = (_bit),					\
-+	},								\
-+	.hw.init = &(struct clk_init_data) {				\
-+		.name = #_name "_ao",					\
-+		.ops = &clk_regmap_gate_ops,				\
-+		.parent_names = (const char *[]){ "clk81" },		\
-+		.num_parents = 1,					\
-+		.flags = CLK_IGNORE_UNUSED,				\
-+	},								\
-+}
-+
-+AXG_AO_GATE(remote, 0);
-+AXG_AO_GATE(i2c_master, 1);
-+AXG_AO_GATE(i2c_slave, 2);
-+AXG_AO_GATE(uart1, 3);
-+AXG_AO_GATE(uart2, 5);
-+AXG_AO_GATE(ir_blaster, 6);
-+AXG_AO_GATE(saradc, 7);
-+
-+static struct clk_regmap ao_clk81 = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_RTI_PWR_CNTL_REG0,
-+		.mask = 0x1,
-+		.shift = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "ao_clk81",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ "clk81", "ao_alt_xtal"},
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_mux = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = AO_SAR_CLK,
-+		.mask = 0x3,
-+		.shift = 9,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_mux",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_names = (const char *[]){ "xtal", "ao_clk81" },
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = AO_SAR_CLK,
-+		.shift = 0,
-+		.width = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "axg_saradc_mux" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap axg_saradc_gate = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = AO_SAR_CLK,
-+		.bit_idx = 8,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axg_saradc_gate",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_names = (const char *[]){ "axg_saradc_div" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const unsigned int axg_aoclk_reset[] = {
-+	[RESET_AO_REMOTE] = 16,
-+	[RESET_AO_I2C_MASTER] = 18,
-+	[RESET_AO_I2C_SLAVE] = 19,
-+	[RESET_AO_UART1] = 17,
-+	[RESET_AO_UART2] = 22,
-+	[RESET_AO_IR_BLASTER] = 23,
-+};
-+
-+static struct clk_regmap *axg_aoclk_regmap[] = {
-+	[CLKID_AO_REMOTE]	= &remote_ao,
-+	[CLKID_AO_I2C_MASTER]	= &i2c_master_ao,
-+	[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao,
-+	[CLKID_AO_UART1]	= &uart1_ao,
-+	[CLKID_AO_UART2]	= &uart2_ao,
-+	[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao,
-+	[CLKID_AO_SAR_ADC]	= &saradc_ao,
-+	[CLKID_AO_CLK81]	= &ao_clk81,
-+	[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux,
-+	[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div,
-+	[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate,
-+};
-+
-+static const struct clk_hw_onecell_data axg_aoclk_onecell_data = {
-+	.hws = {
-+		[CLKID_AO_REMOTE]	= &remote_ao.hw,
-+		[CLKID_AO_I2C_MASTER]	= &i2c_master_ao.hw,
-+		[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao.hw,
-+		[CLKID_AO_UART1]	= &uart1_ao.hw,
-+		[CLKID_AO_UART2]	= &uart2_ao.hw,
-+		[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao.hw,
-+		[CLKID_AO_SAR_ADC]	= &saradc_ao.hw,
-+		[CLKID_AO_CLK81]	= &ao_clk81.hw,
-+		[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux.hw,
-+		[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div.hw,
-+		[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate.hw,
-+	},
-+	.num = NR_CLKS,
-+};
-+
-+static const struct meson_aoclk_data axg_aoclkc_data = {
-+	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
-+	.num_reset	= ARRAY_SIZE(axg_aoclk_reset),
-+	.reset		= axg_aoclk_reset,
-+	.num_clks	= ARRAY_SIZE(axg_aoclk_regmap),
-+	.clks		= axg_aoclk_regmap,
-+	.hw_data	= &axg_aoclk_onecell_data,
-+};
-+
-+static const struct of_device_id axg_aoclkc_match_table[] = {
-+	{
-+		.compatible	= "amlogic,meson-axg-aoclkc",
-+		.data		= &axg_aoclkc_data,
-+	},
-+	{ }
-+};
-+
-+static struct platform_driver axg_aoclkc_driver = {
-+	.probe		= meson_aoclkc_probe,
-+	.driver		= {
-+		.name	= "axg-aoclkc",
-+		.of_match_table = axg_aoclkc_match_table,
-+	},
-+};
-+
-+builtin_platform_driver(axg_aoclkc_driver);
-diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
-new file mode 100644
-index 000000000000..396cd3023064
---- /dev/null
-+++ b/drivers/clk/meson/axg-aoclk.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2017 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef __AXG_AOCLKC_H
-+#define __AXG_AOCLKC_H
-+
-+#include "meson-aoclk.h"
-+
-+#define NR_CLKS	11
-+/* AO Configuration Clock registers offsets
-+ * Register offsets from the data sheet must be multiplied by 4.
-+ */
-+#define AO_RTI_PWR_CNTL_REG1	0x0C
-+#define AO_RTI_PWR_CNTL_REG0	0x10
-+#define AO_RTI_GEN_CNTL_REG0	0x40
-+#define AO_OSCIN_CNTL		0x58
-+#define AO_CRT_CLK_CNTL1	0x68
-+#define AO_SAR_CLK		0x90
-+#define AO_RTC_ALT_CLK_CNTL0	0x94
-+#define AO_RTC_ALT_CLK_CNTL1	0x98
-+
-+#include <dt-bindings/clock/axg-aoclkc.h>
-+#include <dt-bindings/reset/axg-aoclkc.h>
-+
-+#endif /* __AXG_AOCLKC_H */
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 647c319f9f5f..219d389a8521 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -108,18 +108,6 @@ config SOC_EXYNOS5420
+ 	default y
+ 	depends on ARCH_EXYNOS5
+ 
+-config SOC_EXYNOS5440
+-	bool "SAMSUNG EXYNOS5440"
+-	default y
+-	depends on ARCH_EXYNOS5
+-	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+-	select HAVE_ARM_ARCH_TIMER
+-	select AUTO_ZRELADDR
+-	select PINCTRL_EXYNOS5440
+-	select PM_OPP
+-	help
+-	  Enable EXYNOS5440 SoC support
+-
+ config SOC_EXYNOS5800
+ 	bool "SAMSUNG EXYNOS5800"
+ 	default y
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 098f84a149a3..f332c654784b 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -21,7 +21,6 @@
+ #define EXYNOS5250_SOC_ID	0x43520000
+ #define EXYNOS5410_SOC_ID	0xE5410000
+ #define EXYNOS5420_SOC_ID	0xE5420000
+-#define EXYNOS5440_SOC_ID	0xE5440000
+ #define EXYNOS5800_SOC_ID	0xE5422000
+ #define EXYNOS5_SOC_MASK	0xFFFFF000
+ 
+@@ -39,7 +38,6 @@ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5410, EXYNOS5410_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
+-IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
+ 
+ #if defined(CONFIG_SOC_EXYNOS3250)
+@@ -82,12 +80,6 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
+ # define soc_is_exynos5420()	0
+ #endif
+ 
+-#if defined(CONFIG_SOC_EXYNOS5440)
+-# define soc_is_exynos5440()	is_samsung_exynos5440()
+-#else
+-# define soc_is_exynos5440()	0
+-#endif
+-
+ #if defined(CONFIG_SOC_EXYNOS5800)
+ # define soc_is_exynos5800()	is_samsung_exynos5800()
+ #else
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 8c4f5e342dc1..460ae13b3145 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -63,15 +63,6 @@ void __init exynos_sysram_init(void)
+ 	}
+ }
+ 
+-static void __init exynos_init_late(void)
+-{
+-	if (of_machine_is_compatible("samsung,exynos5440"))
+-		/* to be supported later */
+-		return;
+-
+-	exynos_pm_init();
+-}
+-
+ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+ 					int depth, void *data)
+ {
+@@ -79,8 +70,7 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
+ 	const __be32 *reg;
+ 	int len;
+ 
+-	if (!of_flat_dt_is_compatible(node, "samsung,exynos4210-chipid") &&
+-		!of_flat_dt_is_compatible(node, "samsung,exynos5440-clock"))
++	if (!of_flat_dt_is_compatible(node, "samsung,exynos4210-chipid"))
+ 		return 0;
+ 
+ 	reg = of_get_flat_dt_prop(node, "reg", &len);
+@@ -209,7 +199,6 @@ static char const *const exynos_dt_compat[] __initconst = {
+ 	"samsung,exynos5250",
+ 	"samsung,exynos5260",
+ 	"samsung,exynos5420",
+-	"samsung,exynos5440",
+ 	NULL
+ };
+ 
+@@ -232,7 +221,7 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+ 	.init_early	= exynos_firmware_init,
+ 	.init_irq	= exynos_init_irq,
+ 	.init_machine	= exynos_dt_machine_init,
+-	.init_late	= exynos_init_late,
++	.init_late	= exynos_pm_init,
+ 	.dt_compat	= exynos_dt_compat,
+ 	.dt_fixup	= exynos_dt_fixup,
+ MACHINE_END
 -- 
-2.15.1
+2.14.1
