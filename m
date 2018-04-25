@@ -1,63 +1,52 @@
-Return-Path: <matthias.bgg@kernel.org>
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 09/10] drm: mediatek: Omit warning on probe defers
-Date: Mon, 23 Apr 2018 18:13:58 +0200
-Message-Id: <a698a40ce7723200fd55d0d98daff5a28a7d0039.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1524649974.4026.51.camel@baylibre.com>
+Subject: [GIT PULL] Amlogic clock fixes for v4.17-rc
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, "open list:ARM/Amlogic Meson..."
+ <linux-amlogic@lists.infradead.org>, Neil Armstrong
+ <narmstrong@baylibre.com>
+Date: Wed, 25 Apr 2018 11:52:54 +0200
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+Dear clock maintainers,
 
-When probe through the MFD, it can happen that the
-clock drivers wasn't probed before the ddp driver gets
-invoked. The driver used to omit a warning that the driver
-failed to get the clocks. Omit this error on the defered probe path.
+Below is a request to pull amlogic clock fixes for v4.17.
+These changes fixes a few simple mistakes I did while reworking meson clock
+providers in the last cycle.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Cheers
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index bafc5c77c4fb..6b399348a2dc 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -374,7 +374,8 @@ static int mtk_ddp_probe(struct platform_device *pdev)
- 
- 	ddp->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(ddp->clk)) {
--		dev_err(dev, "Failed to get clock\n");
-+		if (PTR_ERR(ddp->clk) != -EPROBE_DEFER)
-+			dev_err(dev, "Failed to get clock\n");
- 		return PTR_ERR(ddp->clk);
- 	}
- 
--- 
-2.16.3
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the Git repository at:
+
+  git://github.com/BayLibre/clk-meson.git tags/meson-clk-fixes-4.17-1
+
+for you to fetch changes up to 5b33139b1a08eabcba7b39d8a4babd7fc2d3b534:
+
+  clk: meson: meson8b: fix meson8b_cpu_clk parent clock name (2018-04-25
+10:23:19 +0200)
+
+----------------------------------------------------------------
+First round of fixes for meson clocks targeted for v4.17
+ - fix typos in two meson8 clock names
+ - remove unused clock ops declaration
+
+----------------------------------------------------------------
+Martin Blumenstingl (2):
+      clk: meson: meson8b: fix meson8b_fclk_div3_div clock name
+      clk: meson: meson8b: fix meson8b_cpu_clk parent clock name
+
+Yixun Lan (1):
+      clk: meson: drop meson_aoclk_gate_regmap_ops
+
+ drivers/clk/meson/gxbb-aoclk.h | 2 --
+ drivers/clk/meson/meson8b.c    | 5 +++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
