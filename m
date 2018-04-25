@@ -1,62 +1,131 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AE12441.2090506@samsung.com>
-Date: Thu, 26 Apr 2018 09:58:41 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun
-	Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz
-	Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>, Russell King
-	<linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij
-	<linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown
-	<broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann
-	<arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Jaehoon Chung
-	<jh80.chung@samsung.com>
-Subject: Re: [RFC 04/10] clk: samsung: Remove support for Exynos5440
-In-reply-to: <20180424203239.21885-5-krzk@kernel.org>
-References: <20180424203239.21885-1-krzk@kernel.org>
-	<CGME20180424203341epcas5p3a6db7d58b0ce8940d03711823fbf6e41@epcas5p3.samsung.com>
-	<20180424203239.21885-5-krzk@kernel.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 5/7] clk: meson: axg: export audio clock controller id bindings
+Date: Wed, 25 Apr 2018 18:33:02 +0200
+Message-Id: <20180425163304.10852-6-jbrunet@baylibre.com>
+In-Reply-To: <20180425163304.10852-1-jbrunet@baylibre.com>
+References: <20180425163304.10852-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
+export the clock ids dt-bindings usable by the consumers of the axg
+audio clock controller
 
-On 2018년 04월 25일 05:32, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../devicetree/bindings/clock/exynos5440-clock.txt |  28 ----
->  drivers/clk/samsung/Makefile                       |   1 -
->  drivers/clk/samsung/clk-exynos5440.c               | 167 ---------------------
->  include/dt-bindings/clock/exynos5440.h             |  44 ------
->  4 files changed, 240 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/exynos5440-clock.txt
->  delete mode 100644 drivers/clk/samsung/clk-exynos5440.c
->  delete mode 100644 include/dt-bindings/clock/exynos5440.h
-> 
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ include/dt-bindings/clock/axg-audio-clkc.h | 94 ++++++++++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
+ create mode 100644 include/dt-bindings/clock/axg-audio-clkc.h
 
-Looks good to me. Thanks.
-
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-[snip]
-
+diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
+new file mode 100644
+index 000000000000..4426ae655858
+--- /dev/null
++++ b/include/dt-bindings/clock/axg-audio-clkc.h
+@@ -0,0 +1,94 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Copyright (c) 2018 Baylibre SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++#ifndef __AXG_AUDIO_CLKC_BINDINGS_H
++#define __AXG_AUDIO_CLKC_BINDINGS_H
++
++#define AUD_CLKID_SLV_SCLK0		9
++#define AUD_CLKID_SLV_SCLK1		10
++#define AUD_CLKID_SLV_SCLK2		11
++#define AUD_CLKID_SLV_SCLK3		12
++#define AUD_CLKID_SLV_SCLK4		13
++#define AUD_CLKID_SLV_SCLK5		14
++#define AUD_CLKID_SLV_SCLK6		15
++#define AUD_CLKID_SLV_SCLK7		16
++#define AUD_CLKID_SLV_SCLK8		17
++#define AUD_CLKID_SLV_SCLK9		18
++#define AUD_CLKID_SLV_LRCLK0		19
++#define AUD_CLKID_SLV_LRCLK1		20
++#define AUD_CLKID_SLV_LRCLK2		21
++#define AUD_CLKID_SLV_LRCLK3		22
++#define AUD_CLKID_SLV_LRCLK4		23
++#define AUD_CLKID_SLV_LRCLK5		24
++#define AUD_CLKID_SLV_LRCLK6		25
++#define AUD_CLKID_SLV_LRCLK7		26
++#define AUD_CLKID_SLV_LRCLK8		27
++#define AUD_CLKID_SLV_LRCLK9		28
++#define AUD_CLKID_DDR_ARB		29
++#define AUD_CLKID_PDM			30
++#define AUD_CLKID_TDMIN_A		31
++#define AUD_CLKID_TDMIN_B		32
++#define AUD_CLKID_TDMIN_C		33
++#define AUD_CLKID_TDMIN_LB		34
++#define AUD_CLKID_TDMOUT_A		35
++#define AUD_CLKID_TDMOUT_B		36
++#define AUD_CLKID_TDMOUT_C		37
++#define AUD_CLKID_FRDDR_A		38
++#define AUD_CLKID_FRDDR_B		39
++#define AUD_CLKID_FRDDR_C		40
++#define AUD_CLKID_TODDR_A		41
++#define AUD_CLKID_TODDR_B		42
++#define AUD_CLKID_TODDR_C		43
++#define AUD_CLKID_LOOPBACK		44
++#define AUD_CLKID_SPDIFIN		45
++#define AUD_CLKID_SPDIFOUT		46
++#define AUD_CLKID_RESAMPLE		47
++#define AUD_CLKID_POWER_DETECT		48
++#define AUD_CLKID_MST_A_MCLK		49
++#define AUD_CLKID_MST_B_MCLK		50
++#define AUD_CLKID_MST_C_MCLK		51
++#define AUD_CLKID_MST_D_MCLK		52
++#define AUD_CLKID_MST_E_MCLK		53
++#define AUD_CLKID_MST_F_MCLK		54
++#define AUD_CLKID_SPDIFOUT_CLK		55
++#define AUD_CLKID_SPDIFIN_CLK		56
++#define AUD_CLKID_PDM_DCLK		57
++#define AUD_CLKID_PDM_SYSCLK		58
++#define AUD_CLKID_MST_A_SCLK		79
++#define AUD_CLKID_MST_B_SCLK		80
++#define AUD_CLKID_MST_C_SCLK		81
++#define AUD_CLKID_MST_D_SCLK		82
++#define AUD_CLKID_MST_E_SCLK		83
++#define AUD_CLKID_MST_F_SCLK		84
++#define AUD_CLKID_MST_A_LRCLK		86
++#define AUD_CLKID_MST_B_LRCLK		87
++#define AUD_CLKID_MST_C_LRCLK		88
++#define AUD_CLKID_MST_D_LRCLK		89
++#define AUD_CLKID_MST_E_LRCLK		90
++#define AUD_CLKID_MST_F_LRCLK		91
++#define AUD_CLKID_TDMIN_A_SCLK_SEL	116
++#define AUD_CLKID_TDMIN_B_SCLK_SEL	117
++#define AUD_CLKID_TDMIN_C_SCLK_SEL	118
++#define AUD_CLKID_TDMIN_LB_SCLK_SEL	119
++#define AUD_CLKID_TDMOUT_A_SCLK_SEL	120
++#define AUD_CLKID_TDMOUT_B_SCLK_SEL	121
++#define AUD_CLKID_TDMOUT_C_SCLK_SEL	122
++#define AUD_CLKID_TDMIN_A_SCLK		123
++#define AUD_CLKID_TDMIN_B_SCLK		124
++#define AUD_CLKID_TDMIN_C_SCLK		125
++#define AUD_CLKID_TDMIN_LB_SCLK		126
++#define AUD_CLKID_TDMOUT_A_SCLK		127
++#define AUD_CLKID_TDMOUT_B_SCLK		128
++#define AUD_CLKID_TDMOUT_C_SCLK		129
++#define AUD_CLKID_TDMIN_A_LRCLK		130
++#define AUD_CLKID_TDMIN_B_LRCLK		131
++#define AUD_CLKID_TDMIN_C_LRCLK		132
++#define AUD_CLKID_TDMIN_LB_LRCLK	133
++#define AUD_CLKID_TDMOUT_A_LRCLK	134
++#define AUD_CLKID_TDMOUT_B_LRCLK	135
++#define AUD_CLKID_TDMOUT_C_LRCLK	136
++
++#endif /* __AXG_AUDIO_CLKC_BINDINGS_H */
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.14.3
