@@ -1,70 +1,78 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Biju Das
-	<biju.das@bp.renesas.com>, Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 5/5] clk: renesas: r8a7794: Fix LB clock divider
-Date: Tue, 3 Apr 2018 10:20:59 +0000
-Message-ID: <TY1PR01MB177024C408EE1AE2AFCE6D16C0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
- <1522344790-20061-6-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-6-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/7] clk: meson: clean-up meson clock configuration
+Date: Wed, 25 Apr 2018 18:32:58 +0200
+Message-Id: <20180425163304.10852-2-jbrunet@baylibre.com>
+In-Reply-To: <20180425163304.10852-1-jbrunet@baylibre.com>
+References: <20180425163304.10852-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Geert,
+Clean the dependencies in meson clock Kconfig.
+CLK_AMLOGIC should actually select CLK_REGMAP_MESON which it uses. Also,
+each platform should select CLK_AMLOGIC, so everything is properly turned
+on when the platform Kconfig enable each configuration flag
 
-> Subject: [PATCH 5/5] clk: renesas: r8a7794: Fix LB clock divider
->
-> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-> the LB clock divider depends on the value of the MD18 pin.
->
-> On R-Car E2, the LB clock divider is fixed to 24.  Hence model the clock
-> as a fixed factor clock instead.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/clk/renesas/r8a7794-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/r8a7794-cpg-mssr.c b/drivers/clk/renesas=
-/r8a7794-cpg-mssr.c
-> index 2a40bbeaeeafc2a4..3ce74f063fa86b19 100644
-> --- a/drivers/clk/renesas/r8a7794-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7794-cpg-mssr.c
-> @@ -55,7 +55,6 @@ static const struct cpg_core_clk r8a7794_core_clks[] __=
-initconst =3D {
->  DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
->
->  /* Core Clock Outputs */
-> -DEF_BASE("lb",   R8A7794_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
->  DEF_BASE("adsp", R8A7794_CLK_ADSP, CLK_TYPE_GEN2_ADSP, CLK_PLL1),
->  DEF_BASE("sdh",  R8A7794_CLK_SDH,  CLK_TYPE_GEN2_SDH,  CLK_PLL1),
->  DEF_BASE("sd0",  R8A7794_CLK_SD0,  CLK_TYPE_GEN2_SD0,  CLK_PLL1),
-> @@ -69,6 +68,7 @@ static const struct cpg_core_clk r8a7794_core_clks[] __=
-initconst =3D {
->  DEF_FIXED("hp",     R8A7794_CLK_HP,    CLK_PLL1,         12, 1),
->  DEF_FIXED("i",      R8A7794_CLK_I,     CLK_PLL1,          2, 1),
->  DEF_FIXED("b",      R8A7794_CLK_B,     CLK_PLL1,         12, 1),
-> +DEF_FIXED("lb",     R8A7794_CLK_B,     CLK_PLL1,         24, 1),
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/Kconfig | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-s/R8A7794_CLK_B/R8A7794_CLK_LB/
-
-With that fixed:
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
->  DEF_FIXED("p",      R8A7794_CLK_P,     CLK_PLL1,         24, 1),
->  DEF_FIXED("cl",     R8A7794_CLK_CL,    CLK_PLL1,         48, 1),
->  DEF_FIXED("cp",     R8A7794_CLK_CP,    CLK_PLL1,         48, 1),
-> --
-> 2.7.4
-
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index d5cbec522aec..87d69573e172 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -1,7 +1,7 @@
+ config COMMON_CLK_AMLOGIC
+ 	bool
+-	depends on OF
+ 	depends on ARCH_MESON || COMPILE_TEST
++	select COMMON_CLK_REGMAP_MESON
+ 
+ config COMMON_CLK_REGMAP_MESON
+ 	bool
+@@ -9,9 +9,8 @@ config COMMON_CLK_REGMAP_MESON
+ 
+ config COMMON_CLK_MESON8B
+ 	bool
+-	depends on COMMON_CLK_AMLOGIC
++	select COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
+-	select COMMON_CLK_REGMAP_MESON
+ 	help
+ 	  Support for the clock controller on AmLogic S802 (Meson8),
+ 	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
+@@ -19,9 +18,8 @@ config COMMON_CLK_MESON8B
+ 
+ config COMMON_CLK_GXBB
+ 	bool
+-	depends on COMMON_CLK_AMLOGIC
++	select COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
+-	select COMMON_CLK_REGMAP_MESON
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+@@ -29,9 +27,8 @@ config COMMON_CLK_GXBB
+ 
+ config COMMON_CLK_AXG
+ 	bool
+-	depends on COMMON_CLK_AMLOGIC
++	select COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
+-	select COMMON_CLK_REGMAP_MESON
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on AmLogic A113D devices, aka axg.
+-- 
+2.14.3
