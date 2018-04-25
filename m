@@ -1,83 +1,48 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH] clk: qcom: gdsc: Add support to poll CFG register to
- check GDSC state
-To: Doug Anderson <dianders@chromium.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <1524817171-7258-1-git-send-email-tdas@codeaurora.org>
- <CAD=FV=X=2nVbP+C14UMjBYveDuVYgvhbAKji6SUnXDtE8_G_uA@mail.gmail.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <d7d652a9-6385-464a-49d1-3f699a4889b7@codeaurora.org>
-Date: Tue, 1 May 2018 10:32:54 +0530
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
+	Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Sylwester
+	Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J.
+ Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang
+	Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>, Russell
+	King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus
+	Walleij <linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark
+	Brown <broonie@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Greg
+	Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-i2c@vger.kernel.org, linux
+	-gpio@vger.kernel.org, linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [RFC 06/10] thermal: samsung: Remove support for Exynos5440
+Date: Wed, 25 Apr 2018 12:42:28 +0200
+Message-ID: <2298900.1CNNTOno1l@amdc3058>
+In-Reply-To: <20180424203239.21885-7-krzk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=X=2nVbP+C14UMjBYveDuVYgvhbAKji6SUnXDtE8_G_uA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+References: <20180424203239.21885-1-krzk@kernel.org>
+	<CGME20180424203356epcas4p44b884a8d409d0faa188a0ecdf4945c11@epcas4p4.samsung.com>
+	<20180424203239.21885-7-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Doug,
+On Tuesday, April 24, 2018 10:32:35 PM Krzysztof Kozlowski wrote:
+> The Exynos5440 is not actively developed, there are no development
+> boards available and probably there are no real products with it.
+> Remove wide-tree support for Exynos5440.
 
-Thanks for the comments, I have based my latest patch on top of the 
-earlier patches (clk-qcom-sdm845 branch of clk-next).
+Thanks for doing this.
 
-On 5/1/2018 12:12 AM, Doug Anderson wrote:
-> Hi,
-> 
-> On Fri, Apr 27, 2018 at 1:19 AM, Taniya Das <tdas@codeaurora.org> wrote:
-> 
->> -static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
->> +static int gdsc_is_enabled(struct gdsc *sc, bool en)
->>   {
->> +       unsigned int reg;
->>          u32 val;
->>          int ret;
->>
->> +       if (sc->flags & POLL_CFG_GDSCR)
->> +               reg = sc->gdscr + CFG_GDSCR_OFFSET;
->> +       else
->> +               reg = sc->gds_hw_ctrl ?  sc->gds_hw_ctrl : sc->gdscr;
-> 
-> nit: why two spaces after the "?" in this new patch?  Should be just one.
-> 
-> 
->> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
->> index 3964834..ac5f844 100644
->> --- a/drivers/clk/qcom/gdsc.h
->> +++ b/drivers/clk/qcom/gdsc.h
->> @@ -53,6 +53,7 @@ struct gdsc {
->>   #define VOTABLE                BIT(0)
->>   #define CLAMP_IO       BIT(1)
->>   #define HW_CTRL                BIT(2)
->> +#define POLL_CFG_GDSCR  BIT(5)
-> 
-> This doesn't apply cleanly to clk-next because clk-next already has
-> the old patch #1 and patch #2 from your series.  You should have
-> applied your patch to clk-next before sending out.
-> 
-> Also a nit here is that you have two spaces before "BIT(5)" but all
-> other entries in this list have a tab before them.  You should be
-> consistent and use a tab.
-> 
-> 
-> In general I'd tend to assume that Stephen could handle this small
-> merge conflict and fixing the whitespace issues when applying, but if
-> he tells you to spin then you certainly should.  I'll also say that
-> I'm nowhere near an expert on gdsc but it looks like Stephen's
-> previous comments were addressed and the patch seems sane in general.
-> Stephen: feel free to add my Reviewed-by: if you wish when applying
-> (or Taniya, if you end up spinning).
-> 
-> 
-> -Doug
-> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
+Best regards,
 --
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
