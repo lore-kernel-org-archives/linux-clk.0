@@ -1,121 +1,63 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sun, 1 Apr 2018 15:34:56 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-	lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
-	david.brown@linaro.org, catalin.marinas@arm.com,
-	will.deacon@arm.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org, amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org, celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: Re: [PATCH v4 01/14] soc: qcom: Separate kryo l2 accessors from PMU
- driver
-Message-ID: <20180401223456.GG510@tuxbook-pro>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
- <1522358807-10413-2-git-send-email-ilialin@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1522358807-10413-2-git-send-email-ilialin@codeaurora.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] clk: meson: axg: add audio clock controller support
+Date: Wed, 25 Apr 2018 18:32:57 +0200
+Message-Id: <20180425163304.10852-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu 29 Mar 14:26 PDT 2018, Ilia Lin wrote:
+The purpose of this patchset is to add support for the clock controller
+dedicated to the audio subsystem found on A113 based SoCs
 
-> diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
-> new file mode 100644
-> index 0000000..b0356c2
-> --- /dev/null
-> +++ b/drivers/soc/qcom/kryo-l2-accessors.c
-> @@ -0,0 +1,66 @@
-> +/*
-> + * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-> + */
+The series depends on the CLK_MUX_ROUND_CLOSEST fixes [0] and the duty
+cycle support [1] making their way into CCF.
 
-The copyright header in the C file should be:
+First patch is a clean-up of the meson clk Kconfig.
+Then, there is 3 clock provider drivers for clocks found in the audio
+The last 3 are for the clock controller itself.
 
-// SPDX-License-Identifier: GPL-2.0
-/*
- * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
- */
+[0]: https://lkml.kernel.org/r/152389589448.51482.15489333464741262913@swboyd.mtv.corp.google.com
+[1]: https://lkml.kernel.org/r/20180420211141.28929-1-jbrunet@baylibre.com
 
-> +
-> +#include <linux/spinlock.h>
-> +#include <asm/sysreg.h>
-> +#include <soc/qcom/kryo-l2-accessors.h>
-> +
-> +#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
-> +#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
-> +
-> +static DEFINE_RAW_SPINLOCK(l2_access_lock);
-> +
-> +/**
-> + * set_l2_indirect_reg: write value to an L2 register
+Jerome Brunet (7):
+  clk: meson: clean-up meson clock configuration
+  clk: meson: add clk-phase clock driver
+  clk: meson: add triple phase clock driver
+  clk: meson: add axg audio sclk divider driver
+  clk: meson: axg: export audio clock controller id bindings
+  clk: meson: axg: document bindings for the audio clock controller
+  clk: meson: axg: add the audio clock controller driver
 
-* set_l2_indirect_reg() - write value to an L2 register
+ .../bindings/clock/amlogic,axg-audio-clkc.txt      |  56 ++
+ drivers/clk/meson/Kconfig                          |  25 +-
+ drivers/clk/meson/Makefile                         |   3 +
+ drivers/clk/meson/axg-audio.c                      | 845 +++++++++++++++++++++
+ drivers/clk/meson/axg-audio.h                      | 127 ++++
+ drivers/clk/meson/clk-phase.c                      |  63 ++
+ drivers/clk/meson/clk-triphase.c                   |  68 ++
+ drivers/clk/meson/clkc-audio.h                     |  28 +
+ drivers/clk/meson/clkc.h                           |   8 +
+ drivers/clk/meson/sclk-div.c                       | 243 ++++++
+ include/dt-bindings/clock/axg-audio-clkc.h         |  94 +++
+ 11 files changed, 1553 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+ create mode 100644 drivers/clk/meson/axg-audio.c
+ create mode 100644 drivers/clk/meson/axg-audio.h
+ create mode 100644 drivers/clk/meson/clk-phase.c
+ create mode 100644 drivers/clk/meson/clk-triphase.c
+ create mode 100644 drivers/clk/meson/clkc-audio.h
+ create mode 100644 drivers/clk/meson/sclk-div.c
+ create mode 100644 include/dt-bindings/clock/axg-audio-clkc.h
 
-> + * @reg: Address of L2 register.
-> + * @value: Value to be written to register.
-> + *
-> + * Use architecturally required barriers for ordering between system register
-> + * accesses, and system registers with respect to device memory
-> + */
-> +void set_l2_indirect_reg(u64 reg, u64 val)
-
-As these are now kernel-global functions I recommend that you give them
-a slightly more specific name; e.g. kryo_l2_set_indirect_reg() and
-kryo_l2_get_indirect_reg().
-
-[..]
-> diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
-> new file mode 100644
-> index 0000000..3c796cf
-> --- /dev/null
-> +++ b/include/soc/qcom/kryo-l2-accessors.h
-> @@ -0,0 +1,20 @@
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-
-And in the header file it should be:
-
-/* SPDX-License-Identifier: GPL-2.0 */
-/*
- * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
- */
-
-> +
-> +#ifndef __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-> +#define __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-> +
-> +void set_l2_indirect_reg(u64 reg_addr, u64 val);
-> +u64 get_l2_indirect_reg(u64 reg_addr);
-
-Rename "reg_addr" to "reg" to match the implementation.
-
-Regards,
-Bjorn
+-- 
+2.14.3
