@@ -1,82 +1,25 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/5] Use of_clk_get_parent_count() instead of open coding
-Date: Wed, 18 Apr 2018 16:50:00 +0200
-Message-Id: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1524657786.4026.63.camel@baylibre.com>
+Subject: Re: [PATCH v2 2/2] clk: meson: gxbb: add the video decoder clocks
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Maxime Jourdan <maxi.jourdan@wanadoo.fr>, Neil Armstrong
+	 <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Wed, 25 Apr 2018 14:03:06 +0200
+In-Reply-To: <20180424184838.3406-3-maxi.jourdan@wanadoo.fr>
+References: <20180424184838.3406-1-maxi.jourdan@wanadoo.fr>
+	 <20180424184838.3406-3-maxi.jourdan@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen, et al,
+On Tue, 2018-04-24 at 20:48 +0200, Maxime Jourdan wrote:
+> Add the SEL/DIV/GATE for VDEC_1 and VDEC_HEVC.
+> 
+> Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
 
-This patch series replaces open-coded versions of
-of_clk_get_parent_count() by calls to the helper function.
-
-Changes compared to v2:
-  - Add Acked-by, Reviewed-by,
-  - Add SPDX-License-Identifier to <linux/of_clk.h>,
-  - Add <linux/of_clk.h> to clock section in MAINTAINERS (note that Rob
-    is still listed as a maintainer, too, due to the include/linux/of*.h
-    catch-all rule),
-
-Changes compared to v1:
-  - Move OF clock helpers (a.o. of_clk_get_parent_count()) to their own
-    include file <linux/of_clk.h>, as suggested by Stephen,
-  - Update includes for the above change,
-  - Fix timer-sp804, now a dummy is available in the !CONFIG_COMMON_CLK
-    case,
-  - Fix a new occurrence.
-
-Note that patches 2-5 depend on the first patch.
-
-Thanks!
-
-Geert Uytterhoeven (5):
-  clk: Extract OF clock helpers in <linux/of_clk.h>
-  ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
-  soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of
-    open coding
-  soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
-  pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
-
- MAINTAINERS                           |  1 +
- drivers/clocksource/timer-sp804.c     |  3 ++-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c |  4 ++--
- drivers/soc/rockchip/pm_domains.c     |  4 ++--
- drivers/soc/tegra/pmc.c               |  3 ++-
- include/linux/clk-provider.h          | 14 +-------------
- include/linux/of_clk.h                | 30 ++++++++++++++++++++++++++++++
- 7 files changed, 40 insertions(+), 19 deletions(-)
- create mode 100644 include/linux/of_clk.h
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Applied to next/drivers
+Thx
