@@ -1,69 +1,41 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 2 Apr 2018 14:46:17 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v4 08/14] dt: qcom: Add opp and thermal to the msm8996
-Message-ID: <20180402091617.GA3572@vireshk-i7>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
- <1522358807-10413-9-git-send-email-ilialin@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1522358807-10413-9-git-send-email-ilialin@codeaurora.org>
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [RFC 05/10] i2c: s3c2410: Remove support for Exynos5440
+To: Krzysztof Kozlowski <krzk@kernel.org>, Russell King
+	<linux@armlinux.org.uk>, linux-i2c@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
+	Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Tomasz Figa
+	<tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
+	<viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin
+	<edubezval@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij
+	<linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown
+	<broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-usb@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd
+	Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Jaehoon Chung
+	<jh80.chung@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <fe4ac171-e7dd-a643-35b6-7beebee81bdb@samsung.com>
+Date: Wed, 25 Apr 2018 14:56:48 +0200
+MIME-version: 1.0
+In-reply-to: <20180424203239.21885-6-krzk@kernel.org>
+Content-type: text/plain; charset="utf-8"
+References: <20180424203239.21885-1-krzk@kernel.org>
+	<CGME20180424203349epcas2p1a47060486c2e349b27fd0b2c4ea0394c@epcas2p1.samsung.com>
+	<20180424203239.21885-6-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30-03-18, 00:26, Ilia Lin wrote:
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/msm8996.dtsi | 275 +++++++++++++++++++++++++++++++++-
->  1 file changed, 267 insertions(+), 8 deletions(-)
+On 04/24/2018 10:32 PM, Krzysztof Kozlowski wrote:
+> The Exynos5440 is not actively developed, there are no development
+> boards available and probably there are no real products with it.
+> Remove wide-tree support for Exynos5440.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index 410ae78..a0792bd 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -14,6 +14,7 @@
->  #include <dt-bindings/clock/qcom,gcc-msm8996.h>
->  #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
->  #include <dt-bindings/clock/qcom,rpmcc.h>
-> +#include <dt-bindings/thermal/thermal.h>
->  
->  / {
->  	model = "Qualcomm Technologies, Inc. MSM8996";
-> @@ -97,6 +98,11 @@
->  			compatible = "qcom,kryo";
->  			reg = <0x0 0x0>;
->  			enable-method = "psci";
-> +			clocks = <&kryocc 0>;
-> +			operating-points-v2 = <&cluster0_opp>;
-> +			cooling-min-level = <0>;
-> +			cooling-max-level = <15>;
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-The min/max properties are removed from DT documentation now. You don't need to
-add them anymore.
-
-> +	cluster0_opp: opp_table0 {
-> +		compatible = "operating-points-v2";
-> +		opp-shared;
-
-Is Kryo like krait where CPUs do DVFS independently ? If yes, then opp-shared
-thing should be dropped.
-
-> +
-> +		opp-307200000 {
-> +			opp-hz = /bits/ 64 <  307200000 >;
-
-Why have you added spaces after < and before > here ?
-
--- 
-viresh
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
