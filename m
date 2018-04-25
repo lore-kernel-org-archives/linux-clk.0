@@ -1,75 +1,74 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 02/21] arm64: dts: allwinner: a64: Add DE2 CCU
-Date: Mon, 30 Apr 2018 17:10:39 +0530
-Message-Id: <20180430114058.5061-3-jagan@amarulasolutions.com>
-In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1524661512.4026.67.camel@baylibre.com>
+Subject: Re: [PATCH v6 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
+ linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Date: Wed, 25 Apr 2018 15:05:12 +0200
+In-Reply-To: <20180419135426.155794-1-yixun.lan@amlogic.com>
+References: <20180419135426.155794-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-DE2 in A64 has clock control unit and behavior is
-same like H3/H5, so reuse the same in A64.
+On Thu, 2018-04-19 at 21:54 +0800, Yixun Lan wrote:
+>   This patch try to add AO clock and Reset driver for Amlogic's
+> Meson-AXG SoC.
+>   Please note that patch 7 need to wait for the DTS changes[3] merged
+> into mainline first, otherwise it will break the serial console.
+> 
+>  patch 2: factor the common code into a dedicated file
+>  patch 3-5: add the aoclk driver for AXG SoC
+>  patch 6-7: drop unnecessary clock flags
+> 
+> changes since v5 at [6]: 
+>  - drop unnecessary header files
+>  - add 'axg_aoclk' prefix to clk driver, make them more consistent
+>  - add missing end new line..
+> 
+> changes since v4 at [5]: 
+>  - fix return err
+>  - introduce CONFIG_COMMON_CLK_MESON_AO
+>  - format/style minor fix
+> 
+> changes since v3 at [4]: 
+>  - add 'const' contraint to the read-only data
+>  - switch to devm_of_clk_add_hw_provider API
+>  - check return value of devm_reset_controller_register
+> 
+> changes since v2 at [2]: 
+>  - rework meson_aoclkc_probe() which leverage the of_match_data
+>  - merge patch 5-6 into this series
+>  - seperate DTS patch, will send to Kevin Hilman independently
+>  
+> changes since v1 at [0]: 
+>  - rebase to clk-meson's branch 'next/drivers' [1]
+>  - fix license, update to BSD-3-Clause
+>  - drop un-used include header file
+> 
+> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
+> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
+> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
+> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
+> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
+> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Yixun
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 1b2ef28c42bd..67b80bbe5bf5 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -43,9 +43,11 @@
-  */
- 
- #include <dt-bindings/clock/sun50i-a64-ccu.h>
-+#include <dt-bindings/clock/sun8i-de2.h>
- #include <dt-bindings/clock/sun8i-r-ccu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/sun50i-a64-ccu.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -168,6 +170,19 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		display_clocks: clock@1000000 {
-+			compatible = "allwinner,sun50i-a64-de2-clk",
-+				     "allwinner,sun50i-h5-de2-clk";
-+			reg = <0x01000000 0x100000>;
-+			clocks = <&ccu CLK_DE>,
-+				 <&ccu CLK_BUS_DE>;
-+			clock-names = "mod",
-+				      "bus";
-+			resets = <&ccu RST_BUS_DE>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun50i-a64-system-controller",
- 				"syscon";
--- 
-2.14.3
+Please :
+ - Fix checkpatch error in patch 5 
+ - Collect Philip's Ack on patch 4
+ - Remove the extra new lines at EOF in patch 2 (maybe others, I did not check
+them all) - 1 new line at the end of each file, not 2.
+
+Regards
+Jerome
