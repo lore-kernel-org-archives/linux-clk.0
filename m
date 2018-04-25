@@ -1,73 +1,49 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Russell King <linux@armlinux.org.uk>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180416175743.20826-1-jbrunet@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180416175743.20826-1-jbrunet@baylibre.com>
-Message-ID: <152394414961.51482.3707791896217213422@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 0/3] clk: add duty cycle support
-Date: Mon, 16 Apr 2018 22:49:09 -0700
+Return-Path: <s.nawrocki@samsung.com>
+Subject: Re: [RFC 04/10] clk: samsung: Remove support for Exynos5440
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark
+	Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>, Tomasz Figa
+	<tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar
+	<viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin
+	<edubezval@gmail.com>, Russell King <linux@armlinux.org.uk>, Hans de Goede
+	<hdegoede@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, Andi Shyti
+	<andi@etezian.org>, Mark Brown <broonie@kernel.org>, Bartlomiej
+	Zolnierkiewicz <b.zolnierkie@samsung.com>, Alan Stern
+	<stern@rowland.harvard.edu>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson
+	<olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, Jingoo Han
+	<jingoohan1@gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <8e4e4712-4b21-83f8-fa06-142e9557a251@samsung.com>
+Date: Wed, 25 Apr 2018 14:49:24 +0200
+MIME-version: 1.0
+In-reply-to: <20180424203239.21885-5-krzk@kernel.org>
+Content-type: text/plain; charset="utf-8"
+References: <20180424203239.21885-1-krzk@kernel.org>
+	<CGME20180424203341epcas5p3a6db7d58b0ce8940d03711823fbf6e41@epcas5p3.samsung.com>
+	<20180424203239.21885-5-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2018-04-16 10:57:40)
-> This patchset adds the possibility to control the duty cycle ratio of a
-> clock within the clock framework.
-> =
+Cc: Jingoo Han
 
-> This useful when the duty cycle ratio depends on another parameter
-> controlled by the clock framework. For example, the duty cycle ratio may
-> depends on the value of a divider (ratio =3D N / div).
-> =
+On 04/24/2018 10:32 PM, Krzysztof Kozlowski wrote:
+> The Exynos5440 is not actively developed, there are no development
+> boards available and probably there are no real products with it.
+> Remove wide-tree support for Exynos5440.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> This is also useful if the related clock is part of large tree. In this
-> case, using CCF to control the clock tree and the PWM framework for the
-> duty cycle would be a nightmare for the provider and the consumer.
+Thanks Krzysztof, patch applied, assuming there is no issues with applying 
+patches from this series individually through the subsystem trees.
 
-Can you please Cc the PWM maintainer on this patch series?
-
-> =
-
-> A clock provider is not required to implement the operation to set and get
-> the duty cycle. If it does not implement .get_duty_cycle(), the ratio is
-> assumed to be 50%.
-> =
-
-> This series also provides pass-through operations ready to be used for
-> clock which don't resample the clock signal (such as gates and muxes).
-> This is provided to make things easier for consumers. Clocks are usually
-> made of several elements, like a composite clocks with a mux, a divider,
-> and a gate. With the pass-through ops set on the gate, the consumer does
-> not need to be aware that the duty cycle is actually controlled by the
-> divider, it can continue to use the clock through the gate, as usual.  The
-> simple propagation will stop at the first clock which resample the signal
-> (such as a divider).
-> =
-
-> Patch 2 and 3 add the pass-through ops to the generic gate and mux ops.  =
-In
-> this first version, it is unconditional, but maybe we should provide a fl=
-ag
-> to let people decide what is best for them ?
-> =
-
-> The series has been developed to handled the sample clocks provided by
-> audio clock controller of amlogic's A113 SoC. To support i2s modes, this
-> clock need to have a 50% duty cycle ratio, while it should be just one
-> pulse of the parent clock in dsp modes.
-
-Cool. I've heard rumblings from some other SoC manufacturers that they
-want duty cycle control via the clk framework but nothing came of it, so
-thanks for picking this up.
-
-> =
-
-> PS: Checkpatch complains heavily about the white space in the trace header
-> file. I believe I have respected the style already used in this
-> file. Please let me know if it should be done differently.
-
-The trace file looks fine. Ignore checkpatch.
+-- 
+Regards,
+Sylwester
