@@ -1,58 +1,93 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Shawn Guo <shawnguo@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180419142441.GW25429@dragon>
-Cc: Anson Huang <Anson.Huang@nxp.com>, mark.rutland@arm.com,
- devicetree@vger.kernel.org, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- linux-kernel@vger.kernel.org, robh+dt@kernel.org, Linux-imx@nxp.com,
- kernel@pengutronix.de, fabio.estevam@nxp.com, shengjiu.wang@nxp.com,
- linux-arm-kernel@lists.infradead.org
-References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
- <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
- <20180417142203.GM25429@dragon>
- <152410785516.46528.12432838242068784117@swboyd.mtv.corp.google.com>
- <20180419140236.GU25429@dragon> <20180419142441.GW25429@dragon>
-Message-ID: <152416634843.46528.15132016550155650911@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz clock
- source
-Date: Thu, 19 Apr 2018 12:32:28 -0700
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 6/7] clk: meson: axg: document bindings for the audio clock controller
+Date: Wed, 25 Apr 2018 18:33:03 +0200
+Message-Id: <20180425163304.10852-7-jbrunet@baylibre.com>
+In-Reply-To: <20180425163304.10852-1-jbrunet@baylibre.com>
+References: <20180425163304.10852-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Shawn Guo (2018-04-19 07:24:42)
-> On Thu, Apr 19, 2018 at 10:02:37PM +0800, Shawn Guo wrote:
-> > On Wed, Apr 18, 2018 at 08:17:35PM -0700, Stephen Boyd wrote:
-> > > Quoting Shawn Guo (2018-04-17 07:22:05)
-> > > > On Mon, Mar 19, 2018 at 10:30:45AM +0800, Anson Huang wrote:
-> > > > > On i.MX6SX SabreAuto board, there is external 24MHz clock
-> > > > > source for analog clock2, add this clock source to clock tree.
-> > > > > =
+Add documentation for the device tree bindings of the audio clock
+controller of the A113 based SoCs
 
-> > > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > > > ---
-> > > > > changes since V1:
-> > > > >       remove unnecessary clocks container.
-> > > > =
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../bindings/clock/amlogic,axg-audio-clkc.txt      | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
 
-> > > > I understand this is suggested by Fabio, but I'm afraid that it's n=
-ot
-> > > > going to work with imx_obtain_fixed_clock() call, which is coded to
-> > > > look for clocks under /clocks node.
-> > > > =
-
-> > > =
-
-> > > Should patch #1 be dropped from clk tree?
-> > =
-
-> > No.  Patch #1 is good.
-> =
-
-> Sorry, Stephen.  I just had a closer look at the driver code, and I
-> think it can be done in a better way.  So please drop patch #1 for now.
-> =
-
-
-Ok.
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+new file mode 100644
+index 000000000000..1b989ceda567
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+@@ -0,0 +1,56 @@
++* Amlogic AXG Audio Clock Controllers
++
++The Amlogic AXG audio clock controller generates and supplies clock to the
++other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
++devices.
++
++Required Properties:
++
++- compatible	: should be "amlogic,axg-audio-clkc" for the A113X and A113D
++- reg		: physical base address of the clock controller and length of
++		  memory mapped region.
++- clocks	: a list of phandle + clock-specifier pairs for the clocks listed
++		  in clock-names.
++- clock-names	: must contain the following:
++		  * "pclk" - Main peripheral bus clock
++		  may contain the following:
++		  * "mst_in[0-7]" - 8 input plls to generate clock signals
++		  * "slv_sclk[0-9]" - 10 slave bit clocks provided by external
++				      components.
++		  * "slv_lrclk[0-9]" - 10 slave sample clocks provided by external
++				       components.
++- reset		: phandle of the internal reset line
++- #clock-cells	: should be 1.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/axg-audio-clkc.h header and can be
++used in device tree sources.
++
++Example:
++
++clkc_audio: clock-controller {
++	compatible = "amlogic,axg-audio-clkc";
++	reg = <0x0 0x0 0x0 0xb4>;
++	#clock-cells = <1>;
++
++	clocks = <&clkc CLKID_AUDIO>,
++		 <&clkc CLKID_MPLL0>,
++		 <&clkc CLKID_MPLL1>,
++		 <&clkc CLKID_MPLL2>,
++		 <&clkc CLKID_MPLL3>,
++		 <&clkc CLKID_HIFI_PLL>,
++		 <&clkc CLKID_FCLK_DIV3>,
++		 <&clkc CLKID_FCLK_DIV4>,
++		 <&clkc CLKID_GP0_PLL>;
++	clock-names = "pclk",
++		      "mst_in0",
++		      "mst_in1",
++		      "mst_in2",
++		      "mst_in3",
++		      "mst_in4",
++		      "mst_in5",
++		      "mst_in6",
++		      "mst_in7";
++	resets = <&reset RESET_AUDIO>;
++};
+-- 
+2.14.3
