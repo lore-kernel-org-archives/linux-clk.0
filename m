@@ -1,102 +1,93 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v7 4/7] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+Date: Thu, 26 Apr 2018 16:44:34 +0800
+Message-ID: <20180426084437.192394-5-yixun.lan@amlogic.com>
+In-Reply-To: <20180426084437.192394-1-yixun.lan@amlogic.com>
+References: <20180426084437.192394-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <9982975F-0911-48F2-BEEB-CE93AB561A55@aosc.io>
-References: <20180317092857.4396-1-wens@csie.org> <20180317092857.4396-3-wens@csie.org>
- <20180318213129.ucwslzvwq6khxrcd@flea> <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com>
- <20180403094845.le2hfuxktlv66lre@flea> <20180403095005.skflxb7m2qzbhjix@flea>
- <CAGb2v67NO0hbATReq11Y_-2M_yF4hbj_sOtK3D_8yUQb1xi2ww@mail.gmail.com> <9982975F-0911-48F2-BEEB-CE93AB561A55@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 3 Apr 2018 17:58:05 +0800
-Message-ID: <CAGb2v65c0wFKecrNtLhJvP71iMPxio4xJ835hD91GdwtFZKXBQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to
- access the GMAC register
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	netdev <netdev@vger.kernel.org>, Corentin Labbe <clabbe.montjoie@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 3, 2018 at 5:54 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->
->
-> =E4=BA=8E 2018=E5=B9=B44=E6=9C=883=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=885=
-:53:08, Chen-Yu Tsai <wens@csie.org> =E5=86=99=E5=88=B0:
->>On Tue, Apr 3, 2018 at 5:50 PM, Maxime Ripard
->><maxime.ripard@bootlin.com> wrote:
->>> On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
->>>> On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
->>>> > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
->>>> > <maxime.ripard@bootlin.com> wrote:
->>>> > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
->>>> > >> From: Icenowy Zheng <icenowy@aosc.io>
->>>> > >>
->>>> > >> There's a GMAC configuration register, which exists on
->>A64/A83T/H3/H5 in
->>>> > >> the syscon part, in the CCU of R40 SoC.
->>>> > >>
->>>> > >> Export a regmap of the CCU.
->>>> > >>
->>>> > >> Read access is not restricted to all registers, but only the
->>GMAC
->>>> > >> register is allowed to be written.
->>>> > >>
->>>> > >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>>> > >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>>> > >
->>>> > > Gah, this is crazy. I'm really starting to regret letting that
->>syscon
->>>> > > in in the first place...
->>>> >
->>>> > IMHO syscon is really a better fit. It's part of the glue layer
->>and
->>>> > most other dwmac user platforms treat it as such and use a syscon.
->>>> > Plus the controls encompass delays (phase), inverters (polarity),
->>>> > and even signal routing. It's not really just a group of clock
->>controls,
->>>> > like what we poorly modeled for A20/A31. I think that was really a
->>>> > mistake.
->>>> >
->>>> > As I mentioned in the cover letter, a slightly saner approach
->>would
->>>> > be to let drivers add custom syscon entries, which would then
->>require
->>>> > less custom plumbing.
->>>>
->>>> A syscon is convenient, sure, but it also bypasses any abstraction
->>>> layer we have everywhere else, which means that we'll have to
->>maintain
->>>> the register layout in each and every driver that uses it.
->>>>
->>>> So far, it's only be the GMAC, but it can also be others (the SRAM
->>>> controller comes to my mind), and then, if there's any difference in
->>>> the design in a future SoC, we'll have to maintain that in the GMAC
->>>> driver as well.
->>>
->>> I guess I forgot to say something, I'm fine with using a syscon we
->>> already have.
->>>
->>> I'm just questionning if merging any other driver using one is the
->>> right move.
->>
->>Right. So in this case, we are not actually going through the syscon
->>API. Rather we are exporting a regmap whose properties we actually
->>define. If it makes you more acceptable to it, we could map just
->>the GMAC register in the new regmap, and also have it named. This
->>is all plumbing within the kernel so the device tree stays the same.
->
-> I think my driver has already restricted the write permission
-> only to GMAC register.
+Add dt-bindings headers for the Meson-AXG's AO clock and
+reset controller.
 
-Correct, but it still maps the entire region out, which means the
-consumer needs to know which offset to use. Maxime is saying this
-is something that is troublesome to maintain. So my proposal was
-to create a regmap with a base at the GMAC register offset. That
-way, the consumer doesn't need to use an offset to access it.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
+ include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
 
-ChenYu
+diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
+new file mode 100644
+index 000000000000..61955016a55b
+--- /dev/null
++++ b/include/dt-bindings/clock/axg-aoclkc.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
++/*
++ * Copyright (c) 2016 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
++ */
++
++#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
++#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
++
++#define CLKID_AO_REMOTE		0
++#define CLKID_AO_I2C_MASTER	1
++#define CLKID_AO_I2C_SLAVE	2
++#define CLKID_AO_UART1		3
++#define CLKID_AO_UART2		4
++#define CLKID_AO_IR_BLASTER	5
++#define CLKID_AO_SAR_ADC	6
++#define CLKID_AO_CLK81		7
++#define CLKID_AO_SAR_ADC_SEL	8
++#define CLKID_AO_SAR_ADC_DIV	9
++#define CLKID_AO_SAR_ADC_CLK	10
++#define CLKID_AO_ALT_XTAL	11
++
++#endif
+diff --git a/include/dt-bindings/reset/axg-aoclkc.h b/include/dt-bindings/reset/axg-aoclkc.h
+new file mode 100644
+index 000000000000..d342c0b6b2a7
+--- /dev/null
++++ b/include/dt-bindings/reset/axg-aoclkc.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
++/*
++ * Copyright (c) 2016 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
++ */
++
++#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
++#define DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
++
++#define RESET_AO_REMOTE		0
++#define RESET_AO_I2C_MASTER	1
++#define RESET_AO_I2C_SLAVE	2
++#define RESET_AO_UART1		3
++#define RESET_AO_UART2		4
++#define RESET_AO_IR_BLASTER	5
++
++#endif
+-- 
+2.17.0
