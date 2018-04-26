@@ -1,147 +1,72 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shengjiu.wang@nxp.com
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH V3 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz clock source
-Date: Fri, 20 Apr 2018 15:38:11 +0800
-Message-Id: <1524209891-14146-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1524209891-14146-1-git-send-email-Anson.Huang@nxp.com>
-References: <1524209891-14146-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5AE12E4A.90907@samsung.com>
+Date: Thu, 26 Apr 2018 10:41:30 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun
+	Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz
+	Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>, Russell King
+	<linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij
+	<linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown
+	<broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann
+	<arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Jaehoon Chung
+	<jh80.chung@samsung.com>
+Subject: Re: [RFC 06/10] thermal: samsung: Remove support for Exynos5440
+In-reply-to: <20180424203239.21885-7-krzk@kernel.org>
+References: <20180424203239.21885-1-krzk@kernel.org>
+	<CGME20180424203603epcas5p4cdd2039eabe7039e4daf286ed4c1ecc0@epcas5p4.samsung.com>
+	<20180424203239.21885-7-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On i.MX6SX SabreAuto board, there is external 24MHz clock
-source for analog clock2, add this clock source to clock tree
-and remove "clocks" container for all input clocks.
+Hi Krzysztof,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-changes since V2:
-	remove "clocks" container and use new way for all input clocks definition.
- arch/arm/boot/dts/imx6sx-sabreauto.dts |  4 ++
- arch/arm/boot/dts/imx6sx.dtsi          | 71 ++++++++++++++++++----------------
- 2 files changed, 42 insertions(+), 33 deletions(-)
+On 2018년 04월 25일 05:32, Krzysztof Kozlowski wrote:
+> The Exynos5440 is not actively developed, there are no development
+> boards available and probably there are no real products with it.
+> Remove wide-tree support for Exynos5440.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../devicetree/bindings/thermal/exynos-thermal.txt |  14 +-
+>  drivers/thermal/samsung/exynos_tmu.c               | 155 +--------------------
+>  drivers/thermal/samsung/exynos_tmu.h               |   1 -
+>  3 files changed, 4 insertions(+), 166 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-index 72da5ac..57d1ea0 100644
---- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-+++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-@@ -37,6 +37,10 @@
- 	};
- };
- 
-+&anaclk2 {
-+	clock-frequency = <24576000>;
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart1>;
-diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
-index 49c7205..7e463d2 100644
---- a/arch/arm/boot/dts/imx6sx.dtsi
-+++ b/arch/arm/boot/dts/imx6sx.dtsi
-@@ -104,41 +104,46 @@
- 		interrupt-parent = <&intc>;
- 	};
- 
--	clocks {
--		#address-cells = <1>;
--		#size-cells = <0>;
-+	ckil: clock-ckil {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		clock-output-names = "ckil";
-+	};
- 
--		ckil: clock@0 {
--			compatible = "fixed-clock";
--			reg = <0>;
--			#clock-cells = <0>;
--			clock-frequency = <32768>;
--			clock-output-names = "ckil";
--		};
-+	osc: clock-osc {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+		clock-output-names = "osc";
-+	};
- 
--		osc: clock@1 {
--			compatible = "fixed-clock";
--			reg = <1>;
--			#clock-cells = <0>;
--			clock-frequency = <24000000>;
--			clock-output-names = "osc";
--		};
-+	ipp_di0: clock-ipp-di0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+		clock-output-names = "ipp_di0";
-+	};
- 
--		ipp_di0: clock@2 {
--			compatible = "fixed-clock";
--			reg = <2>;
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--			clock-output-names = "ipp_di0";
--		};
-+	ipp_di1: clock-ipp-di1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+		clock-output-names = "ipp_di1";
-+	};
- 
--		ipp_di1: clock@3 {
--			compatible = "fixed-clock";
--			reg = <3>;
--			#clock-cells = <0>;
--			clock-frequency = <0>;
--			clock-output-names = "ipp_di1";
--		};
-+	anaclk1: clock-anaclk1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+		clock-output-names = "anaclk1";
-+	};
-+
-+	anaclk2: clock-anaclk2 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+		clock-output-names = "anaclk2";
- 	};
- 
- 	tempmon: tempmon {
-@@ -575,8 +580,8 @@
- 				interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
- 				#clock-cells = <1>;
--				clocks = <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
--				clock-names = "ckil", "osc", "ipp_di0", "ipp_di1";
-+				clocks = <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>, <&anaclk1>, <&anaclk2>;
-+				clock-names = "ckil", "osc", "ipp_di0", "ipp_di1", "anaclk1", "anaclk2";
- 			};
- 
- 			anatop: anatop@20c8000 {
+
+After applied this patch, I tested the build and found out
+'exynos5440' keyword. There is one comment including 'exynos5440' as following:
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index f92f470bce21..cb525228cfe1 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -943,7 +943,7 @@ static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
+         * Exynos3250, Exynos4412, Exynos5250 and Exynos5260 incorrectly
+         * states that INTCLEAR register has a different placing of bits
+         * responsible for FALL IRQs than INTSTAT register.  Exynos5420
+-        * and Exynos5440 documentation is correct (Exynos4210 doesn't
++        * documentation is correct (Exynos4210 doesn't
+         * support FALL IRQs at all).
+         */
+        writel(val_irq, data->base + tmu_intclear);
+
+After removing it, looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.7.4
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
