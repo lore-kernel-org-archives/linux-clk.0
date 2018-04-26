@@ -1,34 +1,54 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Eric Anholt <eric@anholt.net>,
- Florian Fainelli <f.fainelli@gmail.com>, Lee Jones <lee@kernel.org>,
- Mike Turquette <mturquette@baylibre.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Stefan Wahren <stefan.wahren@i2se.com>, Stephen Boyd <sboyd@codeaurora.org>,
- bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180322091130.5997-1-boris.brezillon@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>, stable@vger.kernel.org
-References: <20180322091130.5997-1-boris.brezillon@bootlin.com>
-Message-ID: <152303857267.143116.15438875333965911725@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2] clk: bcm2835: De-assert/assert PLL reset signal when
- appropriate
-Date: Fri, 06 Apr 2018 11:16:12 -0700
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/4] Restore ULPI USB on Tegra20
+Date: Fri, 27 Apr 2018 02:58:14 +0300
+Message-Id: <20180426235818.10018-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Boris Brezillon (2018-03-22 02:11:30)
-> In order to enable a PLL, not only the PLL has to be powered up and
-> locked, but you also have to de-assert the reset signal. The last part
-> was missing. Add it so PLLs that were not enabled by the FW/bootloader
-> can be enabled from Linux.
-> =
+Hello,
 
-> Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio=
- domain clocks")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> ---
+This series of patches fixes ULPI USB on Tegra20. The original problem
+was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+with the USB for the devices that have CDEV2 being enabled by bootloader.
+The patch got into the kernel and later Marc Dietrich found that USB
+stopped working on the "paz00" Tegra20 board. After a bit of discussion
+was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+driver was setting CDEV2's parent incorrectly. The parent clock is actually
+determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
+providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+suggestion), and then setting these clock muxes as parents for the CDEV1/2
+clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CDEV2
+(aka MCLK2) is the actual clock source for "ulpi-link".
 
-Applied to clk-next
+Dmitry Osipenko (4):
+  clk: tegra20: Add DEV1/DEV2 OSC dividers
+  pinctrl: tegra20: Provide CDEV1/2 clock muxes
+  clk: tegra20: Set correct parents for CDEV1/2 clocks
+  ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+
+ arch/arm/boot/dts/tegra20.dtsi          |  2 +-
+ drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
+ drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+ drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+ drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+ 5 files changed, 55 insertions(+), 17 deletions(-)
+
+-- 
+2.17.0
