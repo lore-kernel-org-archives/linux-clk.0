@@ -1,65 +1,55 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 1/8] drm/mediatek: Use regmap for register access
-To: Philipp Zabel <p.zabel@pengutronix.de>, ulrich.hecht+renesas@gmail.com,
- laurent.pinchart@ideasonboard.com, ck.hu@mediatek.com, airlied@linux.ie,
- robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, lee.jones@linaro.org
-Cc: davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
- rdunlap@infradead.org, pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
- linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Matthias Brugger <mbrugger@suse.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
- <20171114214114.15793-2-mbrugger@suse.com>
- <1511427282.7685.1.camel@pengutronix.de>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <3fffe06c-f19b-ef26-a19d-771611aae158@gmail.com>
-Date: Fri, 20 Apr 2018 11:41:22 +0200
-MIME-Version: 1.0
-In-Reply-To: <1511427282.7685.1.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5AE12829.4090607@samsung.com>
+Date: Thu, 26 Apr 2018 10:15:21 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun
+	Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz
+	Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>, Russell King
+	<linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij
+	<linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown
+	<broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann
+	<arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Jaehoon Chung
+	<jh80.chung@samsung.com>
+Subject: Re: [RFC 07/10] pinctrl: samsung: Remove support for Exynos5440
+In-reply-to: <20180424203239.21885-8-krzk@kernel.org>
+References: <20180424203239.21885-1-krzk@kernel.org>
+	<CGME20180424203539epcas2p4e099df5797adb9a49c0d49bbfc829543@epcas2p4.samsung.com>
+	<20180424203239.21885-8-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Philipp,
+Hi,
 
-On 11/23/2017 09:54 AM, Philipp Zabel wrote:
-> Hi Matthias,
+On 2018년 04월 25일 05:32, Krzysztof Kozlowski wrote:
+> The Exynos5440 is not actively developed, there are no development
+> boards available and probably there are no real products with it.
+> Remove wide-tree support for Exynos5440.
 > 
-> On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
->> The mmsys memory space is shared between the drm and the
->> clk driver. Use regmap to access it.
->>
->> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
->> ---
->>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 ++--
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 30 +++++++++++++++++-------------
->>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 ++--
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++++---------
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
->>  5 files changed, 26 insertions(+), 27 deletions(-)
-> [...]
-[...]
->>  	}
->>  
->>  	value = mtk_ddp_sel_in(cur, next, &addr);
->>  	if (value) {
->> -		reg = readl_relaxed(config_regs + addr) & ~value;
->> -		writel_relaxed(reg, config_regs + addr);
->> +		regmap_read(config_regs, addr, &reg);
->> +		reg &= ~value;
->> +		regmap_write(config_regs, addr, reg);
-> 
-> 		regmap_update_bits(config_regs, addr, value, 0);
-> 
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/pinctrl/samsung/Kconfig              |   10 +-
+>  drivers/pinctrl/samsung/Makefile             |    1 -
+>  drivers/pinctrl/samsung/pinctrl-exynos5440.c | 1005 --------------------------
+>  3 files changed, 2 insertions(+), 1014 deletions(-)
+>  delete mode 100644 drivers/pinctrl/samsung/pinctrl-exynos5440.c
 
-Thanks for having a look on that.
+Looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-I'll update the next version with regmap_update_bits and leave your Reviewed-by,
-hope that's ok.
-
-Regards,
-Matthias
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
