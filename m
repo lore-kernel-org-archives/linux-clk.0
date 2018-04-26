@@ -1,123 +1,33 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v9 12/27] ARM: davinci: da8xx: add new sata_refclk init using common clock framework
-Date: Thu, 26 Apr 2018 19:17:30 -0500
-Message-Id: <20180427001745.4116-13-david@lechnology.com>
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
+Return-Path: <p.zabel@pengutronix.de>
+Message-ID: <1524733179.3408.5.camel@pengutronix.de>
+Subject: Re: [PATCH v7 4/7] dt-bindings: clock: reset: Add AXG AO Clock and
+ Reset Bindings
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Jerome Brunet <jbrunet@baylibre.com>, Kevin
+ Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Qiufang
+ Dai <qiufang.dai@amlogic.com>,  linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
+Date: Thu, 26 Apr 2018 10:59:39 +0200
+In-Reply-To: <20180426084437.192394-5-yixun.lan@amlogic.com>
+References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+	 <20180426084437.192394-5-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
-using the new common clock framework drivers.
+On Thu, 2018-04-26 at 16:44 +0800, Yixun Lan wrote:
+> Add dt-bindings headers for the Meson-AXG's AO clock and
+> reset controller.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+This one is
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Also, the #includes are sorted since we are adding some here.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
-
-v9 changes:
-- none
-
-v8 changes:
-- none
-
-v7 changes:
-- none
-
-v6 changes:
-- none
-
-
- arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 78390c64e6ca..73de449bbc68 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -10,25 +10,30 @@
-  * the Free Software Foundation; either version 2 of the License, or
-  * (at your option) any later version.
-  */
--#include <linux/init.h>
--#include <linux/platform_device.h>
--#include <linux/dma-contiguous.h>
--#include <linux/serial_8250.h>
- #include <linux/ahci_platform.h>
-+#include <linux/clk-provider.h>
- #include <linux/clk.h>
--#include <linux/reboot.h>
-+#include <linux/clkdev.h>
-+#include <linux/dma-contiguous.h>
- #include <linux/dmaengine.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+#include <linux/serial_8250.h>
- 
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
--#include <mach/clock.h>
-+#include <mach/time.h>
-+
-+#include "asp.h"
- #include "cpuidle.h"
- #include "sram.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include <mach/clock.h>
- #include "clock.h"
--#include "asp.h"
-+#endif
- 
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
-@@ -1040,6 +1045,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
- }
- 
- #ifdef CONFIG_ARCH_DAVINCI_DA850
-+#ifndef CONFIG_COMMON_CLK
- static struct clk sata_refclk = {
- 	.name		= "sata_refclk",
- 	.set_rate	= davinci_simple_set_rate,
-@@ -1061,6 +1067,18 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return 0;
- }
-+#else
-+int __init da850_register_sata_refclk(int rate)
-+{
-+	struct clk *clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	return clk_register_clkdev(clk, "refclk", "ahci_da850");
-+}
-+#endif
- 
- static struct resource da850_sata_resources[] = {
- 	{
--- 
-2.17.0
+regards
+Philipp
