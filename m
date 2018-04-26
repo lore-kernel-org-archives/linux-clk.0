@@ -1,46 +1,64 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: <sboyd@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Alexandre Torgue
-	<alexandre.torgue@st.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <olivier.bideau@st.com>,
-        Loic PALLARDY
-	<loic.pallardy@st.com>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Gabriel
- Fernandez <gabriel.fernandez@st.com>
-Subject: [PATCH] clk: stm32mp1: Add CLK_IGNORE_UNUSED to ck_sys_dbg clock
-Date: Tue, 24 Apr 2018 09:58:43 +0200
-Message-ID: <1524556723-26926-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Date: Fri, 27 Apr 2018 02:58:15 +0300
+Message-Id: <20180426235818.10018-2-digetx@gmail.com>
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
+a parent. Add these dividers in order to be able to provide that parent
+option.
 
-Don't disable the dbg clock if was set by bootloader.
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/clk-stm32mp1.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index edd3cf4..35dabf1 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -1988,7 +1988,8 @@ enum {
- 		  _DIV(RCC_MCO2CFGR, 4, 4, 0, NULL)),
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 0ee56dd04cec..16cf4108f2ff 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -26,6 +26,8 @@
+ #include "clk.h"
+ #include "clk-id.h"
  
- 	/* Debug clocks */
--	GATE(CK_DBG, "ck_sys_dbg", "ck_axi", 0, RCC_DBGCFGR, 8, 0),
-+	GATE(CK_DBG, "ck_sys_dbg", "ck_axi", CLK_IGNORE_UNUSED,
-+	     RCC_DBGCFGR, 8, 0),
++#define MISC_CLK_ENB 0x48
++
+ #define OSC_CTRL 0x50
+ #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+ #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+@@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
+ 				    periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_PEX] = clk;
  
- 	COMPOSITE(CK_TRACE, "ck_trace", ck_trace_src, CLK_OPS_PARENT_ENABLE,
- 		  _GATE(RCC_DBGCFGR, 9, 0),
++	/* cdev1 OSC divider */
++	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
++			     0, clk_base + MISC_CLK_ENB, 20, 2,
++			     CLK_DIVIDER_POWER_OF_TWO, NULL);
++
++	/* cdev2 OSC divider */
++	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
++			     0, clk_base + MISC_CLK_ENB, 22, 2,
++			     CLK_DIVIDER_POWER_OF_TWO, NULL);
++
+ 	/* cdev1 */
+ 	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
+ 	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
 -- 
-1.9.1
+2.17.0
