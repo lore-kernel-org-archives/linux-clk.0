@@ -1,62 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45577 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750916AbeDVKdq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Apr 2018 06:33:46 -0400
-Received: by mail-wr0-f194.google.com with SMTP id p5-v6so5715642wre.12
-        for <linux-clk@vger.kernel.org>; Sun, 22 Apr 2018 03:33:46 -0700 (PDT)
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com, jbrunet@baylibre.com,
-        linux-amlogic@lists.infradead.org
-Cc: carlo@caione.org, khilman@baylibre.com, linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v3 0/1] add support for the NAND clocks on Meson8b
-Date: Sun, 22 Apr 2018 12:33:38 +0200
-Message-Id: <20180422103339.32608-1-martin.blumenstingl@googlemail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5AE125C2.70105@samsung.com>
+Date: Thu, 26 Apr 2018 10:05:06 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tejun
+	Heo <tj@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz
+	Figa <tomasz.figa@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>, Russell King
+	<linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>, Linus Walleij
+	<linus.walleij@linaro.org>, Andi Shyti <andi@etezian.org>, Mark Brown
+	<broonie@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann
+	<arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Jaehoon Chung
+	<jh80.chung@samsung.com>
+Subject: Re: [RFC 03/10] cpufreq: exynos: Remove support for Exynos5440
+In-reply-to: <20180424203239.21885-4-krzk@kernel.org>
+References: <20180424203239.21885-1-krzk@kernel.org>
+	<CGME20180424203335epcas5p3bfd2172f68574b67818c1d2bc74041bb@epcas5p3.samsung.com>
+	<20180424203239.21885-4-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds support for the NAND clocks found in the Meson8, Meson8b
-and Meson8m2 SoCs.
-The clocks consist of a simple gate, a divider and a mux. The mux
-parents are not documented in the public S805 datasheet [0], so I
-had to use a bit of math and take the vendor kernel as reference [1]
-to find the actual parent clocks.
-Some mux parents cannot be divided down without remainder to the
-target clocks (as expected by the vendor NAND driver) these clocks
-have the ROUND_CLOSEST flag set.
+Hi Krzysztof,
 
-The new clocks are similar to gxbb_sd_emmc_c_clk0_sel,
-gxbb_sd_emmc_c_clk0_div and gxbb_sd_emmc_c_clk0 on the GX SoCs.
-Actual differences are:
-- mux parents are re-ordered
-- the gate is controlled by bit 8 (instead of bit 7 on GX)
+On 2018년 04월 25일 05:32, Krzysztof Kozlowski wrote:
+> The Exynos5440 is not actively developed, there are no development
+> boards available and probably there are no real products with it.
+> Remove wide-tree support for Exynos5440.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../bindings/cpufreq/cpufreq-exynos5440.txt        |  28 --
+>  drivers/cpufreq/Kconfig.arm                        |  14 -
+>  drivers/cpufreq/Makefile                           |   1 -
+>  drivers/cpufreq/exynos5440-cpufreq.c               | 452 ---------------------
+>  4 files changed, 495 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-exynos5440.txt
+>  delete mode 100644 drivers/cpufreq/exynos5440-cpufreq.c
+> 
 
-Changes since v2 at [1]:
-- rebased on top of v4.17-rc1 and updated the clocks to use the new
-  clk_regmap framework (as all other clocks in meson8b.c)
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Changes since v1 at [0]:
-- rebased so it still applies in 2018
-- dropped mux table (since the known parents are values 0..4)
-- replaced CLK_SET_RATE_NO_REPARENT with CLK_SET_RATE_PARENT on the mux
-- added CLK_SET_RATE_PARENT on the divider
-- fixed width of the divider (it's 7 bits wide, ranging from bit 0 to 6
-  while v1 only used a width of 6 bits)
+[snip]
 
-
-[0] http://lists.infradead.org/pipermail/linux-amlogic/2017-April/003237.html
-[1] http://lists.infradead.org/pipermail/linux-amlogic/2018-January/005934.html
-
-
-Martin Blumenstingl (1):
-  clk: meson: meson8b: add support for the NAND clocks
-
- drivers/clk/meson/meson8b.c              | 54 ++++++++++++++++++++++++
- drivers/clk/meson/meson8b.h              |  3 +-
- include/dt-bindings/clock/meson8b-clkc.h |  3 ++
- 3 files changed, 59 insertions(+), 1 deletion(-)
 
 -- 
-2.17.0
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
