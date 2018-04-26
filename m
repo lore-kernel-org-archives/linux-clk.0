@@ -1,160 +1,182 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH 3/7] clk: meson: add triple phase clock driver
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ Kevin Hilman <khilman@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180425163304.10852-1-jbrunet@baylibre.com>
+ <20180425163304.10852-4-jbrunet@baylibre.com>
+ <bc770c22-f0b9-ed1f-bba7-631b9cd42436@baylibre.com>
+Message-ID: <1696abba-abc2-ebbb-0d57-9fe252411b4a@baylibre.com>
+Date: Thu, 26 Apr 2018 10:50:59 +0200
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1524572599-5425-3-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Taniya Das <tdas@codeaurora.org>
-References: <1524572599-5425-1-git-send-email-tdas@codeaurora.org>
- <1524572599-5425-3-git-send-email-tdas@codeaurora.org>
-Message-ID: <152478600630.46528.279344846112571167@swboyd.mtv.corp.google.com>
-Subject: Re: [v4 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Thu, 26 Apr 2018 16:40:06 -0700
+In-Reply-To: <bc770c22-f0b9-ed1f-bba7-631b9cd42436@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-04-24 05:23:19)
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> new file mode 100644
-> index 0000000..907a73f
-> --- /dev/null
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -0,0 +1,364 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <soc/qcom/cmd-db.h>
-> +#include <soc/qcom/rpmh.h>
-> +
-> +#include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +#define CLK_RPMH_ARC_EN_OFFSET         0
-> +#define CLK_RPMH_VRM_EN_OFFSET         4
-> +
-> +/**
-> + * struct clk_rpmh - individual rpmh clock data structure
-> + * @hw:                        handle between common and hardware-specif=
-ic interfaces
-> + * @res_name:          resource name for the rpmh clock
-> + * @res_addr:          base address of the rpmh resource within the RPMh
-> + * @res_en_offset:     clock resource enable offset corresponding to ARC=
- or
-> + *                     VRM type clock
+On 26/04/2018 10:47, Neil Armstrong wrote:
+> On 25/04/2018 18:33, Jerome Brunet wrote:
+>> Add a driver to control the output of the sample clock generator found
+>> in the axg audio clock controller.
+>>
+>> The goal of this driver is to coherently control the phase provided to
+>> the different element using the sample clock generator. This simplify
+>> the usage of the sample clock generator a lot, without comprising the
+>> ability of the SoC.
+>>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> ---
+>>  drivers/clk/meson/Kconfig        |  5 +++
+>>  drivers/clk/meson/Makefile       |  1 +
+>>  drivers/clk/meson/clk-triphase.c | 68 ++++++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/meson/clkc-audio.h   | 20 ++++++++++++
+>>  4 files changed, 94 insertions(+)
+>>  create mode 100644 drivers/clk/meson/clk-triphase.c
+>>  create mode 100644 drivers/clk/meson/clkc-audio.h
+>>
+>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+>> index 87d69573e172..7f7fd6fb3809 100644
+>> --- a/drivers/clk/meson/Kconfig
+>> +++ b/drivers/clk/meson/Kconfig
+>> @@ -3,6 +3,11 @@ config COMMON_CLK_AMLOGIC
+>>  	depends on ARCH_MESON || COMPILE_TEST
+>>  	select COMMON_CLK_REGMAP_MESON
+>>  
+>> +config COMMON_CLK_AMLOGIC_AUDIO
+>> +	bool
+>> +	depends on ARCH_MESON || COMPILE_TEST
+>> +	select COMMON_CLK_AMLOGIC
+>> +
+>>  config COMMON_CLK_REGMAP_MESON
+>>  	bool
+>>  	select REGMAP
+>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+>> index 352fb848c406..64bb917fe1f0 100644
+>> --- a/drivers/clk/meson/Makefile
+>> +++ b/drivers/clk/meson/Makefile
+>> @@ -4,6 +4,7 @@
+>>  
+>>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
+>>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
+>> +obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o
+>>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+>>  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+>>  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
+>> diff --git a/drivers/clk/meson/clk-triphase.c b/drivers/clk/meson/clk-triphase.c
+>> new file mode 100644
+>> index 000000000000..9508c03c73c1
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/clk-triphase.c
+>> @@ -0,0 +1,68 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (c) 2018 BayLibre, SAS.
+>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include "clkc-audio.h"
+>> +
+>> +/*
+>> + * This is a special clock for the audio controller.
+>> + * The phase of mst_sclk clock output can be controlled independently
+>> + * for the outside world (ph0), the tdmout (ph1) and tdmin (ph2).
+>> + * Controlling these 3 phases as just one makes things simpler and
+>> + * give the same clock view to all the element on the i2s bus.
+>> + * If necessary, we can still control the phase in the tdm block
+>> + * which makes these independent control redundant.
+>> + */
+>> +static inline struct meson_clk_triphase_data *
+>> +meson_clk_triphase_data(struct clk_regmap *clk)
+>> +{
+>> +	return (struct meson_clk_triphase_data *)clk->data;
+>> +}
+>> +
+>> +static void meson_clk_triphase_sync(struct clk_hw *hw)
+>> +{
+>> +	struct clk_regmap *clk = to_clk_regmap(hw);
+>> +	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
+>> +	unsigned int val;
+>> +
+>> +	/* Get phase 0 and sync it to phase 1 and 2 */
+>> +	val = meson_parm_read(clk->map, &tph->ph0);
+>> +	meson_parm_write(clk->map, &tph->ph1, val);
+>> +	meson_parm_write(clk->map, &tph->ph2, val);
+>> +}
+>> +
+>> +static int meson_clk_triphase_get_phase(struct clk_hw *hw)
+>> +{
+>> +	struct clk_regmap *clk = to_clk_regmap(hw);
+>> +	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
+>> +	unsigned int val;
+>> +
+>> +	/* Phase are in sync, reading phase 0 is enough */
+>> +	val = meson_parm_read(clk->map, &tph->ph0);
+>> +
+>> +	return meson_clk_degrees_from_val(val, tph->ph0.width);
+>> +}
+>> +
+>> +static int meson_clk_triphase_set_phase(struct clk_hw *hw, int degrees)
+>> +{
+>> +	struct clk_regmap *clk = to_clk_regmap(hw);
+>> +	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
+>> +	unsigned int val;
+>> +
+>> +	val = meson_clk_degrees_to_val(degrees, tph->ph0.width);
+>> +	meson_parm_write(clk->map, &tph->ph0, val);
+>> +	meson_parm_write(clk->map, &tph->ph1, val);
+>> +	meson_parm_write(clk->map, &tph->ph2, val);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +const struct clk_ops meson_clk_triphase_ops = {
+>> +	.init		= meson_clk_triphase_sync,
+>> +	.get_phase	= meson_clk_triphase_get_phase,
+>> +	.set_phase	= meson_clk_triphase_set_phase,
+>> +};
+>> +EXPORT_SYMBOL_GPL(meson_clk_triphase_ops);
+>> diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
+>> new file mode 100644
+>> index 000000000000..286ff1201258
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/clkc-audio.h
+>> @@ -0,0 +1,20 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+> 
+> // SPDX-License-Identifier: GPL-2.0
+> 
+> Checkpatch should have warned about this !
 
-Can these be combined still? Just do a +=3D on res_addr after we get the
-base of it?
+My bad, I wasn't totally aware there is an exception in headers...
 
-> + * @res_on_val:                rpmh clock enable value
-> + * @res_off_val:       rpmh clock disable value
-> + * @state:             rpmh clock requested state
-> + * @aggr_state:                rpmh clock aggregated state
-> + * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
-> + * @valid_state_mask:  mask to determine the state of the rpmh clock
-> + * @rpmh_client:       handle used for rpmh communications
-> + * @dev:               device to which it is attached
-> + * @peer:              pointer to the clock rpmh sibling
-> + * @rate:              rate of the rpmh clock
-> + */
-> +struct clk_rpmh {
-> +       struct clk_hw hw;
-> +       const char *res_name;
-> +       u32 res_addr;
-> +       u32 res_en_offset;
-> +       u32 res_on_val;
-> +       u32 res_off_val;
-> +       u32 state;
-> +       u32 aggr_state;
-> +       u32 last_sent_aggr_state;
-> +       u32 valid_state_mask;
-> +       struct rpmh_client *rpmh_client;
-> +       struct device *dev;
-> +       struct clk_rpmh *peer;
-> +       unsigned long rate;
-> +};
-[...]
-> +
-> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
-> +{
-> +       return (c->last_sent_aggr_state & BIT(state))
-> +               !=3D (c->aggr_state & BIT(state));
-
-Please drop useless parenthesis.
-
-> +}
-> +
-> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
-> +{
-> +       struct tcs_cmd cmd =3D { 0 };
-> +       u32 cmd_state, on_val;
-> +       enum rpmh_state state =3D RPMH_SLEEP_STATE;
-> +       int ret;
-> +
-> +       cmd.addr =3D c->res_addr + c->res_en_offset;
-> +       cmd_state =3D c->aggr_state;
-> +       on_val =3D c->res_on_val;
-> +
-> +       for (; state <=3D RPMH_ACTIVE_ONLY_STATE; state++) {
-> +               if (has_state_changed(c, state)) {
-> +                       cmd.data =3D (cmd_state & BIT(state)) ? on_val : =
-0;
-> +                       ret =3D rpmh_write_async(c->rpmh_client, state,
-> +                                               &cmd, 1);
-> +                       if (ret) {
-> +                               dev_err(c->dev, "set %s state of %s faile=
-d: (%d)\n",
-> +                                       (!state) ? "sleep" :
-
-Drop parenthesis please.
-
-> +                                       (state =3D=3D RPMH_WAKE_ONLY_STAT=
-E) ?
-
-Drop parenthesis please.
-
-> +                                       "wake" : "active", c->res_name, r=
-et);
-> +                               return ret;
-> +                       }
-> +               }
-> +       }
-> +
-> +       c->last_sent_aggr_state =3D c->aggr_state;
-> +       c->peer->last_sent_aggr_state =3D  c->last_sent_aggr_state;
-> +
-> +       return 0;
-> +}
-[...]
-> +
-> +static const struct clk_ops clk_rpmh_ops =3D {
-> +       .prepare        =3D clk_rpmh_prepare,
-> +       .unprepare      =3D clk_rpmh_unprepare,
-> +       .recalc_rate    =3D clk_rpmh_recalc_rate,
-> +};
-> +
-> +/* Resource name must match resource id present in cmd-db. */
-> +DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 0x0, 192=
-00000);
-> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 19200=
-000);
-> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 19200=
-000);
-> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 38400000);
-> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 38400000);
-> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 38400000);
-
-These rates should come from DT and parents of these clks.
+> 
+>> +/*
+>> + * Copyright (c) 2018 BayLibre, SAS.
+>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>> + */
+>> +
+>> +#ifndef __MESON_CLKC_AUDIO_H
+>> +#define __MESON_CLKC_AUDIO_H
+>> +
+>> +#include "clkc.h"
+>> +
+>> +struct meson_clk_triphase_data {
+>> +	struct parm ph0;
+>> +	struct parm ph1;
+>> +	struct parm ph2;
+>> +};
+>> +
+>> +extern const struct clk_ops meson_clk_triphase_ops;
+>> +
+>> +#endif /* __MESON_CLKC_AUDIO_H */
+>>
+> 
+> Apart that :
+> 
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
