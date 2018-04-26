@@ -1,171 +1,267 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:40478 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750916AbeDVKds (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Apr 2018 06:33:48 -0400
-Received: by mail-wr0-f195.google.com with SMTP id v60-v6so33485787wrc.7
-        for <linux-clk@vger.kernel.org>; Sun, 22 Apr 2018 03:33:47 -0700 (PDT)
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com, jbrunet@baylibre.com,
-        linux-amlogic@lists.infradead.org
-Cc: carlo@caione.org, khilman@baylibre.com, linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v3 1/1] clk: meson: meson8b: add support for the NAND clocks
-Date: Sun, 22 Apr 2018 12:33:39 +0200
-Message-Id: <20180422103339.32608-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20180422103339.32608-1-martin.blumenstingl@googlemail.com>
-References: <20180422103339.32608-1-martin.blumenstingl@googlemail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Qiufang Dai <qiufang.dai@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>,
+	Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v7 5/7] clk: meson-axg: Add AO Clock and Reset controller driver
+Date: Thu, 26 Apr 2018 16:44:35 +0800
+Message-ID: <20180426084437.192394-6-yixun.lan@amlogic.com>
+In-Reply-To: <20180426084437.192394-1-yixun.lan@amlogic.com>
+References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the NAND clocks (from the HHI_NAND_CLK_CNTL register) to the
-Meson8b clock driver. There are three NAND clocks: a gate which enables
-or disables the NAND clock, a mux and a divider (which divides the mux
-output).
-Unfortunately the public S805 datasheet does not document the mux
-parents. However, the vendor kernel has a few hints for us which allows
-us to make an educated guess about the clock parents. To do this we need
-to have a look at set_nand_core_clk() from the vendor's NAND driver (see
-[0]):
-- XTAL = (4<<9) | (1<<8) | 0
-- 160MHz = (0<<9) | (1<<8) | 3)
-- 182MHz = (3<<9) | (1<<8) | 1)
-- 212MHz = (1<<9) | (1<<8) | 3)
-- 255MHz = (2<<9) | (1<<8) | 1)
+From: Qiufang Dai <qiufang.dai@amlogic.com>
 
-While there is a comment for the XTAL parent (which indicates that it
-should only be used for debugging) we have to do a bit of math for the
-other parents: target_freq * divider = rate of parent clock
-Bit 8 above is the enable bit, so we can ignore it here. Bits 11:9 are
-the mux index and bits 6:0 are the 0-based divider (so we need to add
-1). This gives us:
-- mux 0 (160MHz * 4) = fclk_div4 (actual rate = 637.5MHz, off by 2.5MHz)
-- mux 1 (212MHz * 4) = fclk_div3 (actual rate = 850MHz, off by 2MHz)
-- mux 2 (255MHz * 2) = fclk_div5 (matches exactly 510MHz)
-- mux 3 (182MHz * 2) = fclk_div7 (actual rate = 346.3MHz, off by 0.3MHz)
+Adds a Clock and Reset controller driver for the Always-On part
+of the Amlogic Meson-AXG SoC.
 
-[0] https://github.com/khadas/linux/blob/9587681285cb/drivers/amlogic/amlnf/dev/amlnf_ctrl.c#L314
-
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- drivers/clk/meson/meson8b.c              | 54 ++++++++++++++++++++++++
- drivers/clk/meson/meson8b.h              |  3 +-
- include/dt-bindings/clock/meson8b-clkc.h |  3 ++
- 3 files changed, 59 insertions(+), 1 deletion(-)
+ drivers/clk/meson/Kconfig     |   1 +
+ drivers/clk/meson/Makefile    |   2 +-
+ drivers/clk/meson/axg-aoclk.c | 164 ++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/axg-aoclk.h |  29 ++++++
+ 4 files changed, 195 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/meson/axg-aoclk.c
+ create mode 100644 drivers/clk/meson/axg-aoclk.h
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 2c4ff6192852..3f726ff73261 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -639,6 +639,54 @@ static struct clk_regmap meson8b_cpu_clk = {
- 	},
- };
- 
-+static struct clk_regmap meson8b_nand_clk_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_NAND_CLK_CNTL,
-+		.mask = 0x7,
-+		.shift = 9,
-+		.flags = CLK_MUX_ROUND_CLOSEST,
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index fddc7ec7b820..815659eebea3 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -38,6 +38,7 @@ config COMMON_CLK_AXG
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
+ 	select RESET_CONTROLLER
++	select COMMON_CLK_MESON_AO
+ 	select COMMON_CLK_REGMAP_MESON
+ 	select MFD_SYSCON
+ 	help
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 0a8df284f4e7..d0d13aeb369a 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -6,5 +6,5 @@ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
+ obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+ obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+-obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
++obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+new file mode 100644
+index 000000000000..29e088542387
+--- /dev/null
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Amlogic Meson-AXG Clock Controller Driver
++ *
++ * Copyright (c) 2016 Baylibre SAS.
++ * Author: Michael Turquette <mturquette@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
++ */
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/mfd/syscon.h>
++#include "clk-regmap.h"
++#include "meson-aoclk.h"
++#include "axg-aoclk.h"
++
++#define AXG_AO_GATE(_name, _bit)					\
++static struct clk_regmap axg_aoclk_##_name = {				\
++	.data = &(struct clk_regmap_gate_data) {			\
++		.offset = (AO_RTI_GEN_CNTL_REG0),			\
++		.bit_idx = (_bit),					\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name =  "axg_ao_" #_name,				\
++		.ops = &clk_regmap_gate_ops,				\
++		.parent_names = (const char *[]){ "clk81" },		\
++		.num_parents = 1,					\
++		.flags = CLK_IGNORE_UNUSED,				\
++	},								\
++}
++
++AXG_AO_GATE(remote, 0);
++AXG_AO_GATE(i2c_master, 1);
++AXG_AO_GATE(i2c_slave, 2);
++AXG_AO_GATE(uart1, 3);
++AXG_AO_GATE(uart2, 5);
++AXG_AO_GATE(ir_blaster, 6);
++AXG_AO_GATE(saradc, 7);
++
++static struct clk_regmap axg_aoclk_clk81 = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = AO_RTI_PWR_CNTL_REG0,
++		.mask = 0x1,
++		.shift = 8,
 +	},
 +	.hw.init = &(struct clk_init_data){
-+		.name = "nand_clk_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		/* FIXME all other parents are unknown: */
-+		.parent_names = (const char *[]){ "fclk_div4", "fclk_div3",
-+			"fclk_div5", "fclk_div7", "xtal" },
-+		.num_parents = 5,
-+		.flags = CLK_SET_RATE_PARENT,
++		.name = "axg_ao_clk81",
++		.ops = &clk_regmap_mux_ro_ops,
++		.parent_names = (const char *[]){ "clk81", "ao_alt_xtal"},
++		.num_parents = 2,
 +	},
 +};
 +
-+static struct clk_regmap meson8b_nand_clk_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset =  HHI_NAND_CLK_CNTL,
-+		.shift = 0,
-+		.width = 7,
-+		.flags = CLK_DIVIDER_ROUND_CLOSEST,
++static struct clk_regmap axg_aoclk_saradc_mux = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = AO_SAR_CLK,
++		.mask = 0x3,
++		.shift = 9,
 +	},
 +	.hw.init = &(struct clk_init_data){
-+		.name = "nand_clk_div",
++		.name = "axg_ao_saradc_mux",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = (const char *[]){ "xtal", "axg_ao_clk81" },
++		.num_parents = 2,
++	},
++};
++
++static struct clk_regmap axg_aoclk_saradc_div = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = AO_SAR_CLK,
++		.shift = 0,
++		.width = 8,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "axg_ao_saradc_div",
 +		.ops = &clk_regmap_divider_ops,
-+		.parent_names = (const char *[]){ "nand_clk_sel" },
++		.parent_names = (const char *[]){ "axg_ao_saradc_mux" },
 +		.num_parents = 1,
 +		.flags = CLK_SET_RATE_PARENT,
 +	},
 +};
 +
-+static struct clk_regmap meson8b_nand_clk_gate = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_NAND_CLK_CNTL,
++static struct clk_regmap axg_aoclk_saradc_gate = {
++	.data = &(struct clk_regmap_gate_data) {
++		.offset = AO_SAR_CLK,
 +		.bit_idx = 8,
 +	},
 +	.hw.init = &(struct clk_init_data){
-+		.name = "nand_clk_gate",
++		.name = "axg_ao_saradc_gate",
 +		.ops = &clk_regmap_gate_ops,
-+		.parent_names = (const char *[]){ "nand_clk_div" },
++		.parent_names = (const char *[]){ "axg_ao_saradc_div" },
 +		.num_parents = 1,
 +		.flags = CLK_SET_RATE_PARENT,
 +	},
 +};
 +
- /* Everything Else (EE) domain gates */
- 
- static MESON_GATE(meson8b_ddr, HHI_GCLK_MPEG0, 0);
-@@ -834,6 +882,9 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
- 		[CLKID_FCLK_DIV4_DIV]	    = &meson8b_fclk_div4_div.hw,
- 		[CLKID_FCLK_DIV5_DIV]	    = &meson8b_fclk_div5_div.hw,
- 		[CLKID_FCLK_DIV7_DIV]	    = &meson8b_fclk_div7_div.hw,
-+		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
-+		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
-+		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
- 		[CLK_NR_CLKS]		    = NULL,
- 	},
- 	.num = CLK_NR_CLKS,
-@@ -939,6 +990,9 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
- 	&meson8b_fclk_div4,
- 	&meson8b_fclk_div5,
- 	&meson8b_fclk_div7,
-+	&meson8b_nand_clk_sel,
-+	&meson8b_nand_clk_div,
-+	&meson8b_nand_clk_gate,
- };
- 
- static const struct meson8b_clk_reset_line {
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index 6e414bd36981..96549837ea7c 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -40,6 +40,7 @@
- #define HHI_VID_CLK_CNTL		0x17c /* 0x5f offset in data sheet */
- #define HHI_VID_DIVIDER_CNTL		0x198 /* 0x66 offset in data sheet */
- #define HHI_SYS_CPU_CLK_CNTL0		0x19c /* 0x67 offset in data sheet */
-+#define HHI_NAND_CLK_CNTL		0x25c /* 0x97 offset in data sheet */
- #define HHI_MPLL_CNTL			0x280 /* 0xa0 offset in data sheet */
- #define HHI_SYS_PLL_CNTL		0x300 /* 0xc0 offset in data sheet */
- #define HHI_VID_PLL_CNTL		0x320 /* 0xc8 offset in data sheet */
-@@ -84,7 +85,7 @@
- #define CLKID_FCLK_DIV5_DIV	108
- #define CLKID_FCLK_DIV7_DIV	109
- 
--#define CLK_NR_CLKS		110
-+#define CLK_NR_CLKS		113
- 
- /*
-  * include the CLKID and RESETID that have
-diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
-index dea9d46d4fa7..434d7ba63801 100644
---- a/include/dt-bindings/clock/meson8b-clkc.h
-+++ b/include/dt-bindings/clock/meson8b-clkc.h
-@@ -102,5 +102,8 @@
- #define CLKID_MPLL0		93
- #define CLKID_MPLL1		94
- #define CLKID_MPLL2		95
-+#define CLKID_NAND_SEL		110
-+#define CLKID_NAND_DIV		111
-+#define CLKID_NAND_CLK		112
- 
- #endif /* __MESON8B_CLKC_H */
++static const unsigned int axg_aoclk_reset[] = {
++	[RESET_AO_REMOTE]	= 16,
++	[RESET_AO_I2C_MASTER]	= 18,
++	[RESET_AO_I2C_SLAVE]	= 19,
++	[RESET_AO_UART1]	= 17,
++	[RESET_AO_UART2]	= 22,
++	[RESET_AO_IR_BLASTER]	= 23,
++};
++
++static struct clk_regmap *axg_aoclk_regmap[] = {
++	[CLKID_AO_REMOTE]	= &axg_aoclk_remote,
++	[CLKID_AO_I2C_MASTER]	= &axg_aoclk_i2c_master,
++	[CLKID_AO_I2C_SLAVE]	= &axg_aoclk_i2c_slave,
++	[CLKID_AO_UART1]	= &axg_aoclk_uart1,
++	[CLKID_AO_UART2]	= &axg_aoclk_uart2,
++	[CLKID_AO_IR_BLASTER]	= &axg_aoclk_ir_blaster,
++	[CLKID_AO_SAR_ADC]	= &axg_aoclk_saradc,
++	[CLKID_AO_CLK81]	= &axg_aoclk_clk81,
++	[CLKID_AO_SAR_ADC_SEL]	= &axg_aoclk_saradc_mux,
++	[CLKID_AO_SAR_ADC_DIV]	= &axg_aoclk_saradc_div,
++	[CLKID_AO_SAR_ADC_CLK]	= &axg_aoclk_saradc_gate,
++};
++
++static const struct clk_hw_onecell_data axg_aoclk_onecell_data = {
++	.hws = {
++		[CLKID_AO_REMOTE]	= &axg_aoclk_remote.hw,
++		[CLKID_AO_I2C_MASTER]	= &axg_aoclk_i2c_master.hw,
++		[CLKID_AO_I2C_SLAVE]	= &axg_aoclk_i2c_slave.hw,
++		[CLKID_AO_UART1]	= &axg_aoclk_uart1.hw,
++		[CLKID_AO_UART2]	= &axg_aoclk_uart2.hw,
++		[CLKID_AO_IR_BLASTER]	= &axg_aoclk_ir_blaster.hw,
++		[CLKID_AO_SAR_ADC]	= &axg_aoclk_saradc.hw,
++		[CLKID_AO_CLK81]	= &axg_aoclk_clk81.hw,
++		[CLKID_AO_SAR_ADC_SEL]	= &axg_aoclk_saradc_mux.hw,
++		[CLKID_AO_SAR_ADC_DIV]	= &axg_aoclk_saradc_div.hw,
++		[CLKID_AO_SAR_ADC_CLK]	= &axg_aoclk_saradc_gate.hw,
++	},
++	.num = NR_CLKS,
++};
++
++static const struct meson_aoclk_data axg_aoclkc_data = {
++	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
++	.num_reset	= ARRAY_SIZE(axg_aoclk_reset),
++	.reset		= axg_aoclk_reset,
++	.num_clks	= ARRAY_SIZE(axg_aoclk_regmap),
++	.clks		= axg_aoclk_regmap,
++	.hw_data	= &axg_aoclk_onecell_data,
++};
++
++static const struct of_device_id axg_aoclkc_match_table[] = {
++	{
++		.compatible	= "amlogic,meson-axg-aoclkc",
++		.data		= &axg_aoclkc_data,
++	},
++	{ }
++};
++
++static struct platform_driver axg_aoclkc_driver = {
++	.probe		= meson_aoclkc_probe,
++	.driver		= {
++		.name	= "axg-aoclkc",
++		.of_match_table = axg_aoclkc_match_table,
++	},
++};
++
++builtin_platform_driver(axg_aoclkc_driver);
+diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
+new file mode 100644
+index 000000000000..91384d8dd844
+--- /dev/null
++++ b/drivers/clk/meson/axg-aoclk.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Copyright (c) 2017 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
++ */
++
++#ifndef __AXG_AOCLKC_H
++#define __AXG_AOCLKC_H
++
++#define NR_CLKS	11
++/* AO Configuration Clock registers offsets
++ * Register offsets from the data sheet must be multiplied by 4.
++ */
++#define AO_RTI_PWR_CNTL_REG1	0x0C
++#define AO_RTI_PWR_CNTL_REG0	0x10
++#define AO_RTI_GEN_CNTL_REG0	0x40
++#define AO_OSCIN_CNTL		0x58
++#define AO_CRT_CLK_CNTL1	0x68
++#define AO_SAR_CLK		0x90
++#define AO_RTC_ALT_CLK_CNTL0	0x94
++#define AO_RTC_ALT_CLK_CNTL1	0x98
++
++#include <dt-bindings/clock/axg-aoclkc.h>
++#include <dt-bindings/reset/axg-aoclkc.h>
++
++#endif /* __AXG_AOCLKC_H */
 -- 
 2.17.0
-
