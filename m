@@ -1,72 +1,176 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v6 01/11] dt-bindings: firmware: Add bindings for ZynqMP firmware
-Date: Tue, 10 Apr 2018 12:38:37 -0700
-Message-ID: <1523389127-14243-2-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
-References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH 3/7] clk: meson: add triple phase clock driver
+To: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ Kevin Hilman <khilman@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180425163304.10852-1-jbrunet@baylibre.com>
+ <20180425163304.10852-4-jbrunet@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <bc770c22-f0b9-ed1f-bba7-631b9cd42436@baylibre.com>
+Date: Thu, 26 Apr 2018 10:47:04 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180425163304.10852-4-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+On 25/04/2018 18:33, Jerome Brunet wrote:
+> Add a driver to control the output of the sample clock generator found
+> in the axg audio clock controller.
+> 
+> The goal of this driver is to coherently control the phase provided to
+> the different element using the sample clock generator. This simplify
+> the usage of the sample clock generator a lot, without comprising the
+> ability of the SoC.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/Kconfig        |  5 +++
+>  drivers/clk/meson/Makefile       |  1 +
+>  drivers/clk/meson/clk-triphase.c | 68 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/meson/clkc-audio.h   | 20 ++++++++++++
+>  4 files changed, 94 insertions(+)
+>  create mode 100644 drivers/clk/meson/clk-triphase.c
+>  create mode 100644 drivers/clk/meson/clkc-audio.h
+> 
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index 87d69573e172..7f7fd6fb3809 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -3,6 +3,11 @@ config COMMON_CLK_AMLOGIC
+>  	depends on ARCH_MESON || COMPILE_TEST
+>  	select COMMON_CLK_REGMAP_MESON
+>  
+> +config COMMON_CLK_AMLOGIC_AUDIO
+> +	bool
+> +	depends on ARCH_MESON || COMPILE_TEST
+> +	select COMMON_CLK_AMLOGIC
+> +
+>  config COMMON_CLK_REGMAP_MESON
+>  	bool
+>  	select REGMAP
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index 352fb848c406..64bb917fe1f0 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -4,6 +4,7 @@
+>  
+>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
+>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
+> +obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o
+>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+>  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+>  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
+> diff --git a/drivers/clk/meson/clk-triphase.c b/drivers/clk/meson/clk-triphase.c
+> new file mode 100644
+> index 000000000000..9508c03c73c1
+> --- /dev/null
+> +++ b/drivers/clk/meson/clk-triphase.c
+> @@ -0,0 +1,68 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2018 BayLibre, SAS.
+> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include "clkc-audio.h"
+> +
+> +/*
+> + * This is a special clock for the audio controller.
+> + * The phase of mst_sclk clock output can be controlled independently
+> + * for the outside world (ph0), the tdmout (ph1) and tdmin (ph2).
+> + * Controlling these 3 phases as just one makes things simpler and
+> + * give the same clock view to all the element on the i2s bus.
+> + * If necessary, we can still control the phase in the tdm block
+> + * which makes these independent control redundant.
+> + */
+> +static inline struct meson_clk_triphase_data *
+> +meson_clk_triphase_data(struct clk_regmap *clk)
+> +{
+> +	return (struct meson_clk_triphase_data *)clk->data;
+> +}
+> +
+> +static void meson_clk_triphase_sync(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
+> +	unsigned int val;
+> +
+> +	/* Get phase 0 and sync it to phase 1 and 2 */
+> +	val = meson_parm_read(clk->map, &tph->ph0);
+> +	meson_parm_write(clk->map, &tph->ph1, val);
+> +	meson_parm_write(clk->map, &tph->ph2, val);
+> +}
+> +
+> +static int meson_clk_triphase_get_phase(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
+> +	unsigned int val;
+> +
+> +	/* Phase are in sync, reading phase 0 is enough */
+> +	val = meson_parm_read(clk->map, &tph->ph0);
+> +
+> +	return meson_clk_degrees_from_val(val, tph->ph0.width);
+> +}
+> +
+> +static int meson_clk_triphase_set_phase(struct clk_hw *hw, int degrees)
+> +{
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
+> +	unsigned int val;
+> +
+> +	val = meson_clk_degrees_to_val(degrees, tph->ph0.width);
+> +	meson_parm_write(clk->map, &tph->ph0, val);
+> +	meson_parm_write(clk->map, &tph->ph1, val);
+> +	meson_parm_write(clk->map, &tph->ph2, val);
+> +
+> +	return 0;
+> +}
+> +
+> +const struct clk_ops meson_clk_triphase_ops = {
+> +	.init		= meson_clk_triphase_sync,
+> +	.get_phase	= meson_clk_triphase_get_phase,
+> +	.set_phase	= meson_clk_triphase_set_phase,
+> +};
+> +EXPORT_SYMBOL_GPL(meson_clk_triphase_ops);
+> diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
+> new file mode 100644
+> index 000000000000..286ff1201258
+> --- /dev/null
+> +++ b/drivers/clk/meson/clkc-audio.h
+> @@ -0,0 +1,20 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 
-Add documentation to describe Xilinx ZynqMP firmware driver
-bindings. Firmware driver provides an interface to firmware
-APIs. Interface APIs can be used by any driver to communicate
-to PMUFW (Platform Management Unit).
+// SPDX-License-Identifier: GPL-2.0
 
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- .../firmware/xilinx/xlnx,zynqmp-firmware.txt       | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+Checkpatch should have warned about this !
 
-diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-new file mode 100644
-index 0000000..1b431d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-@@ -0,0 +1,29 @@
-+-----------------------------------------------------------------
-+Device Tree Bindings for the Xilinx Zynq MPSoC Firmware Interface
-+-----------------------------------------------------------------
-+
-+The zynqmp-firmware node describes the interface to platform firmware.
-+ZynqMP has an interface to communicate with secure firmware. Firmware
-+driver provides an interface to firmware APIs. Interface APIs can be
-+used by any driver to communicate to PMUFW(Platform Management Unit).
-+These requests include clock management, pin control, device control,
-+power management service, FPGA service and other platform management
-+services.
-+
-+Required properties:
-+ - compatible:	Must contain:	"xlnx,zynqmp-firmware"
-+ - method:	The method of calling the PM-API firmware layer.
-+		Permitted values are:
-+		  - "smc" : SMC #0, following the SMCCC
-+		  - "hvc" : HVC #0, following the SMCCC
-+
-+-------
-+Example
-+-------
-+
-+firmware {
-+	zynqmp_firmware: zynqmp-firmware {
-+		compatible = "xlnx,zynqmp-firmware";
-+		method = "smc";
-+	};
-+};
--- 
-2.7.4
+> +/*
+> + * Copyright (c) 2018 BayLibre, SAS.
+> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> + */
+> +
+> +#ifndef __MESON_CLKC_AUDIO_H
+> +#define __MESON_CLKC_AUDIO_H
+> +
+> +#include "clkc.h"
+> +
+> +struct meson_clk_triphase_data {
+> +	struct parm ph0;
+> +	struct parm ph1;
+> +	struct parm ph2;
+> +};
+> +
+> +extern const struct clk_ops meson_clk_triphase_ops;
+> +
+> +#endif /* __MESON_CLKC_AUDIO_H */
+> 
+
+Apart that :
+
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
