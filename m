@@ -1,40 +1,48 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 16 Apr 2018 15:45:23 -0500
-From: Rob Herring <robh@kernel.org>
-To: Taniya Das <tdas@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Introduce QCOM RPMh clock
- bindings
-Message-ID: <20180416204523.onak3fxtfsqskspc@rob-hp-laptop>
-References: <1523673401-21611-1-git-send-email-tdas@codeaurora.org>
- <1523673401-21611-2-git-send-email-tdas@codeaurora.org>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1523673401-21611-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1524063005-1716-6-git-send-email-geert+renesas@glider.be>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be> <1524063005-1716-6-git-send-email-geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 26 Apr 2018 13:57:58 +0200
+Message-ID: <CACRpkdYdkb0WRLr55dT1ZbgjCy6d+xj0tbhf6OnXMuM5ktJ9xQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] pinctrl: sunxi: Use of_clk_get_parent_count()
+ instead of open coding
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
+	Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-tegra@vger.kernel.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Apr 14, 2018 at 08:06:40AM +0530, Taniya Das wrote:
-> Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
-> devices would be used for communicating resource state requests to control
-> the clocks managed by RPMh.
-> 
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 22 ++++++++++++++++++++
->  include/dt-bindings/clock/qcom,rpmh.h              | 24 ++++++++++++++++++++++
->  2 files changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
->  create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+On Wed, Apr 18, 2018 at 4:50 PM, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
+> Use of_clk_get_parent_count() instead of open coding"), replace it.
+>
+> of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
+> instead of <linux/clk-provider.h>.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+> This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
+> <linux/of_clk.h>".
+>
+> v3:
+>   - Add Acked-by,
+
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Please merge this through the clk tree.
+
+Yours,
+Linus Walleij
