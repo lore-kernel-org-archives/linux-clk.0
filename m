@@ -1,75 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34542 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755154AbeDWNse (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Apr 2018 09:48:34 -0400
-Received: by mail-wr0-f195.google.com with SMTP id p18-v6so22303305wrm.1
-        for <linux-clk@vger.kernel.org>; Mon, 23 Apr 2018 06:48:34 -0700 (PDT)
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        Rui Miguel Silva <rui.silva@linaro.org>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2 03/15] clk: imx7d: fix mipi dphy div parent
-Date: Mon, 23 Apr 2018 14:47:38 +0100
-Message-Id: <20180423134750.30403-4-rui.silva@linaro.org>
-In-Reply-To: <20180423134750.30403-1-rui.silva@linaro.org>
-References: <20180423134750.30403-1-rui.silva@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 3/4] clk: tegra20: Set correct parents for CDEV1/2 clocks
+Date: Fri, 27 Apr 2018 02:58:17 +0300
+Message-Id: <20180426235818.10018-4-digetx@gmail.com>
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix the mipi dphy root divider to mipi_dphy_pre_div, this would remove a orphan
-clock and set the correct parent.
+Parents of CDEV1/2 clocks are determined by muxing of the corresponding
+pins. Pinctrl driver now provides the CDEV1/2 clock muxes and hence
+CDEV1/2 clocks could have correct parents. Set CDEV1/2 parents to the
+corresponding muxes to fix the parents.
 
-before:
-cat clk_orphan_summary
-                                 enable  prepare  protect
-   clock                          count    count    count        rate   accuracy   phase
-----------------------------------------------------------------------------------------
- mipi_dphy_post_div                   1        1        0           0          0 0
-    mipi_dphy_root_clk                1        1        0           0          0 0
-
-cat clk_dump | grep mipi_dphy
-mipi_dphy_post_div                    1        1        0           0          0 0
-    mipi_dphy_root_clk                1        1        0           0          0 0
-
-after:
-cat clk_dump | grep mipi_dphy
-   mipi_dphy_src                     1        1        0    24000000          0 0
-       mipi_dphy_cg                  1        1        0    24000000          0 0
-          mipi_dphy_pre_div          1        1        0    24000000          0 0
-             mipi_dphy_post_div      1        1        0    24000000          0 0
-                mipi_dphy_root_clk   1        1        0    24000000          0 0
-
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
-
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/imx/clk-imx7d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra20.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 975a20d3cc94..f7f4db2e6fa6 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -729,7 +729,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_LCDIF_PIXEL_ROOT_DIV] = imx_clk_divider2("lcdif_pixel_post_div", "lcdif_pixel_pre_div", base + 0xa300, 0, 6);
- 	clks[IMX7D_MIPI_DSI_ROOT_DIV] = imx_clk_divider2("mipi_dsi_post_div", "mipi_dsi_pre_div", base + 0xa380, 0, 6);
- 	clks[IMX7D_MIPI_CSI_ROOT_DIV] = imx_clk_divider2("mipi_csi_post_div", "mipi_csi_pre_div", base + 0xa400, 0, 6);
--	clks[IMX7D_MIPI_DPHY_ROOT_DIV] = imx_clk_divider2("mipi_dphy_post_div", "mipi_csi_dphy_div", base + 0xa480, 0, 6);
-+	clks[IMX7D_MIPI_DPHY_ROOT_DIV] = imx_clk_divider2("mipi_dphy_post_div", "mipi_dphy_pre_div", base + 0xa480, 0, 6);
- 	clks[IMX7D_SAI1_ROOT_DIV] = imx_clk_divider2("sai1_post_div", "sai1_pre_div", base + 0xa500, 0, 6);
- 	clks[IMX7D_SAI2_ROOT_DIV] = imx_clk_divider2("sai2_post_div", "sai2_pre_div", base + 0xa580, 0, 6);
- 	clks[IMX7D_SAI3_ROOT_DIV] = imx_clk_divider2("sai3_post_div", "sai3_pre_div", base + 0xa600, 0, 6);
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 16cf4108f2ff..7e8b6de86d89 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -844,14 +844,12 @@ static void __init tegra20_periph_clk_init(void)
+ 			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+ 
+ 	/* cdev1 */
+-	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
+-	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
++	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_mux", 0,
+ 				    clk_base, 0, 94, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_CDEV1] = clk;
+ 
+ 	/* cdev2 */
+-	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, 0, 26000000);
+-	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_fixed", 0,
++	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_mux", 0,
+ 				    clk_base, 0, 93, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_CDEV2] = clk;
+ 
 -- 
 2.17.0
-
