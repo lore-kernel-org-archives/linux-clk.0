@@ -1,275 +1,71 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
+Return-Path: <jae.hyun.yoo@linux.intel.com>
+From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Xing Zheng <xing.zheng@rock-chips.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Xiao Yao <xiaoyao@rock-chips.com>,
-	Ziyuan Xu <xzy.xu@rock-chips.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH v2 2/2] clk: rockchip: Add CLK_DIVIDER_EVEN for all mmc clock consumers
-Date: Sun,  8 Apr 2018 09:58:16 +0800
-Message-Id: <1523152696-27492-2-git-send-email-shawn.lin@rock-chips.com>
-In-Reply-To: <1523152696-27492-1-git-send-email-shawn.lin@rock-chips.com>
-References: <1523152696-27492-1-git-send-email-shawn.lin@rock-chips.com>
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+	stable <stable@vger.kernel.org>
+Subject: [PATCH] clk:aspeed: Fix reset bits for PCI/VGA and PECI
+Date: Thu, 26 Apr 2018 10:22:32 -0700
+Message-Id: <20180426172232.12535-1-jae.hyun.yoo@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-For conventional Rockchip platforms, mmc hosts, except RK3399's
-eMMC controller, should ask their clock parents to provider the
-closest clock rate with a even div number. That wasn't done
-explicitly by the clock framework. but now we have CLK_DIVIDER_EVEN
-flag to help.
+This commit fixes incorrect setting of reset bits for PCI/VGA and
+PECI modules.
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+1. Reset bit for PCI/VGA is 8.
+2. PECI reset bit is missing so added bit 10 as its reset bit.
+
+Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
+Cc: stable <stable@vger.kernel.org>
 ---
+ drivers/clk/clk-aspeed.c                 | 4 ++--
+ include/dt-bindings/clock/aspeed-clock.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Changes in v2: None
-
- drivers/clk/rockchip/clk-rk3036.c |  7 ++++---
- drivers/clk/rockchip/clk-rk3128.c |  9 ++++++---
- drivers/clk/rockchip/clk-rk3188.c |  6 +++---
- drivers/clk/rockchip/clk-rk3228.c |  7 ++++---
- drivers/clk/rockchip/clk-rk3288.c | 12 ++++++++----
- drivers/clk/rockchip/clk-rk3328.c |  9 ++++++---
- drivers/clk/rockchip/clk-rk3368.c |  9 ++++++---
- drivers/clk/rockchip/clk-rk3399.c |  6 ++++--
- drivers/clk/rockchip/clk-rv1108.c |  7 ++++---
- 9 files changed, 45 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3036.c b/drivers/clk/rockchip/clk-rk3036.c
-index c300198..155fd4f 100644
---- a/drivers/clk/rockchip/clk-rk3036.c
-+++ b/drivers/clk/rockchip/clk-rk3036.c
-@@ -290,16 +290,17 @@ enum rk3036_plls {
- 			RK2928_CLKSEL_CON(12), 8, 2, MFLAGS,
- 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
- 	DIV(SCLK_SDMMC, "sclk_sdmmc", "sclk_sdmmc_src", 0,
--			RK2928_CLKSEL_CON(11), 0, 7, DFLAGS),
-+			RK2928_CLKSEL_CON(11), 0, 7, DFLAGS | CLK_DIVIDER_EVEN),
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 5eb50c31e455..2c23e7d7ba28 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -88,7 +88,7 @@ static const struct aspeed_gate_data aspeed_gates[] = {
+ 	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
+ 	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
+ 	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
+-	[ASPEED_CLK_GATE_BCLK] =	{  4, 10, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
++	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
+ 	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
+ 	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
+ 	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
+@@ -297,7 +297,7 @@ static const u8 aspeed_resets[] = {
+ 	[ASPEED_RESET_JTAG_MASTER] = 22,
+ 	[ASPEED_RESET_MIC]	= 18,
+ 	[ASPEED_RESET_PWM]	=  9,
+-	[ASPEED_RESET_PCIVGA]	=  8,
++	[ASPEED_RESET_PECI]	= 10,
+ 	[ASPEED_RESET_I2C]	=  2,
+ 	[ASPEED_RESET_AHB]	=  1,
+ };
+diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+index d3558d897a4d..8d69b9134bef 100644
+--- a/include/dt-bindings/clock/aspeed-clock.h
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -45,7 +45,7 @@
+ #define ASPEED_RESET_JTAG_MASTER	3
+ #define ASPEED_RESET_MIC		4
+ #define ASPEED_RESET_PWM		5
+-#define ASPEED_RESET_PCIVGA		6
++#define ASPEED_RESET_PECI		6
+ #define ASPEED_RESET_I2C		7
+ #define ASPEED_RESET_AHB		8
  
- 	COMPOSITE_NODIV(0, "sclk_sdio_src", mux_mmc_src_p, 0,
- 			RK2928_CLKSEL_CON(12), 10, 2, MFLAGS,
- 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
- 	DIV(SCLK_SDIO, "sclk_sdio", "sclk_sdio_src", 0,
--			RK2928_CLKSEL_CON(11), 8, 7, DFLAGS),
-+			RK2928_CLKSEL_CON(11), 8, 7, DFLAGS | CLK_DIVIDER_EVEN),
- 
- 	COMPOSITE(SCLK_EMMC, "sclk_emmc", mux_mmc_src_p, 0,
--			RK2928_CLKSEL_CON(12), 12, 2, MFLAGS, 0, 7, DFLAGS,
-+			RK2928_CLKSEL_CON(12), 12, 2, MFLAGS, 0, 7,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK2928_CLKGATE_CON(2), 14, GFLAGS),
- 
- 	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RK3036_SDMMC_CON0, 1),
-diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
-index 5970a50..7c6e30a 100644
---- a/drivers/clk/rockchip/clk-rk3128.c
-+++ b/drivers/clk/rockchip/clk-rk3128.c
-@@ -324,15 +324,18 @@ enum rk3128_plls {
- 			RK2928_CLKGATE_CON(2), 15, GFLAGS),
- 
- 	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc0", mux_mmc_src_p, 0,
--			RK2928_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 6, DFLAGS,
-+			RK2928_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 6,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
- 
- 	COMPOSITE(SCLK_SDIO, "sclk_sdio", mux_mmc_src_p, 0,
--			RK2928_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 6, DFLAGS,
-+			RK2928_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 6,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
- 
- 	COMPOSITE(SCLK_EMMC, "sclk_emmc", mux_mmc_src_p, 0,
--			RK2928_CLKSEL_CON(12), 14, 2, MFLAGS, 8, 6, DFLAGS,
-+			RK2928_CLKSEL_CON(12), 14, 2, MFLAGS, 8, 6,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK2928_CLKGATE_CON(2), 14, GFLAGS),
- 
- 	DIV(SCLK_PVTM, "clk_pvtm", "clk_pvtm_func", 0,
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index 67e73fd..32f199d 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -402,13 +402,13 @@ enum rk3188_plls {
- 			RK2928_CLKGATE_CON(2), 10, GFLAGS),
- 
- 	COMPOSITE_NOMUX(SCLK_SDMMC, "sclk_sdmmc", "hclk_peri", 0,
--			RK2928_CLKSEL_CON(11), 0, 6, DFLAGS,
-+			RK2928_CLKSEL_CON(11), 0, 6, DFLAGS | CLK_DIVIDER_EVEN,
- 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
- 	COMPOSITE_NOMUX(SCLK_SDIO, "sclk_sdio", "hclk_peri", 0,
--			RK2928_CLKSEL_CON(12), 0, 6, DFLAGS,
-+			RK2928_CLKSEL_CON(12), 0, 6, DFLAGS | CLK_DIVIDER_EVEN,
- 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
- 	COMPOSITE_NOMUX(SCLK_EMMC, "sclk_emmc", "hclk_peri", 0,
--			RK2928_CLKSEL_CON(12), 8, 6, DFLAGS,
-+			RK2928_CLKSEL_CON(12), 8, 6, DFLAGS | CLK_DIVIDER_EVEN,
- 			RK2928_CLKGATE_CON(2), 14, GFLAGS),
- 
- 	MUX(0, "uart_src", mux_pll_src_gpll_cpll_p, 0,
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index 7af4818..15da16a 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -388,20 +388,21 @@ enum rk3228_plls {
- 			RK2928_CLKGATE_CON(2), 15, GFLAGS),
- 
- 	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
--			RK2928_CLKSEL_CON(11), 8, 2, MFLAGS, 0, 8, DFLAGS,
-+			RK2928_CLKSEL_CON(11), 8, 2, MFLAGS, 0, 8,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK2928_CLKGATE_CON(2), 11, GFLAGS),
- 
- 	COMPOSITE_NODIV(SCLK_SDIO_SRC, "sclk_sdio_src", mux_mmc_src_p, 0,
- 			RK2928_CLKSEL_CON(11), 10, 2, MFLAGS,
- 			RK2928_CLKGATE_CON(2), 13, GFLAGS),
- 	DIV(SCLK_SDIO, "sclk_sdio", "sclk_sdio_src", 0,
--			RK2928_CLKSEL_CON(12), 0, 8, DFLAGS),
-+			RK2928_CLKSEL_CON(12), 0, 8, DFLAGS | CLK_DIVIDER_EVEN),
- 
- 	COMPOSITE_NODIV(0, "sclk_emmc_src", mux_mmc_src_p, 0,
- 			RK2928_CLKSEL_CON(11), 12, 2, MFLAGS,
- 			RK2928_CLKGATE_CON(2), 14, GFLAGS),
- 	DIV(SCLK_EMMC, "sclk_emmc", "sclk_emmc_src", 0,
--			RK2928_CLKSEL_CON(12), 8, 8, DFLAGS),
-+			RK2928_CLKSEL_CON(12), 8, 8, DFLAGS | CLK_DIVIDER_EVEN),
- 
- 	/*
- 	 * Clock-Architecture Diagram 2
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 450de24..2a6f231 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -508,16 +508,20 @@ enum rk3288_plls {
- 			RK3288_CLKGATE_CON(2), 11, GFLAGS),
- 
- 	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
--			RK3288_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 6, DFLAGS,
-+			RK3288_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 6,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3288_CLKGATE_CON(13), 0, GFLAGS),
- 	COMPOSITE(SCLK_SDIO0, "sclk_sdio0", mux_mmc_src_p, 0,
--			RK3288_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 6, DFLAGS,
-+			RK3288_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 6,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3288_CLKGATE_CON(13), 1, GFLAGS),
- 	COMPOSITE(SCLK_SDIO1, "sclk_sdio1", mux_mmc_src_p, 0,
--			RK3288_CLKSEL_CON(34), 14, 2, MFLAGS, 8, 6, DFLAGS,
-+			RK3288_CLKSEL_CON(34), 14, 2, MFLAGS, 8, 6,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3288_CLKGATE_CON(13), 2, GFLAGS),
- 	COMPOSITE(SCLK_EMMC, "sclk_emmc", mux_mmc_src_p, 0,
--			RK3288_CLKSEL_CON(12), 14, 2, MFLAGS, 8, 6, DFLAGS,
-+			RK3288_CLKSEL_CON(12), 14, 2, MFLAGS, 8, 6,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3288_CLKGATE_CON(13), 3, GFLAGS),
- 
- 	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RK3288_SDMMC_CON0, 1),
-diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
-index 252366a..f81acf8 100644
---- a/drivers/clk/rockchip/clk-rk3328.c
-+++ b/drivers/clk/rockchip/clk-rk3328.c
-@@ -632,15 +632,18 @@ enum rk3328_plls {
- 			RK3328_CLKGATE_CON(4), 3, GFLAGS),
- 
- 	COMPOSITE(SCLK_SDIO, "clk_sdio", mux_2plls_24m_u480m_p, 0,
--			RK3328_CLKSEL_CON(31), 8, 2, MFLAGS, 0, 8, DFLAGS,
-+			RK3328_CLKSEL_CON(31), 8, 2, MFLAGS, 0, 8,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3328_CLKGATE_CON(4), 4, GFLAGS),
- 
- 	COMPOSITE(SCLK_EMMC, "clk_emmc", mux_2plls_24m_u480m_p, 0,
--			RK3328_CLKSEL_CON(32), 8, 2, MFLAGS, 0, 8, DFLAGS,
-+			RK3328_CLKSEL_CON(32), 8, 2, MFLAGS, 0, 8,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3328_CLKGATE_CON(4), 5, GFLAGS),
- 
- 	COMPOSITE(SCLK_SDMMC_EXT, "clk_sdmmc_ext", mux_2plls_24m_u480m_p, 0,
--			RK3328_CLKSEL_CON(43), 8, 2, MFLAGS, 0, 8, DFLAGS,
-+			RK3328_CLKSEL_CON(43), 8, 2, MFLAGS, 0, 8,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3328_CLKGATE_CON(4), 10, GFLAGS),
- 
- 	COMPOSITE(SCLK_REF_USB3OTG_SRC, "clk_ref_usb3otg_src", mux_2plls_p, 0,
-diff --git a/drivers/clk/rockchip/clk-rk3368.c b/drivers/clk/rockchip/clk-rk3368.c
-index 7c4d242..17a6293 100644
---- a/drivers/clk/rockchip/clk-rk3368.c
-+++ b/drivers/clk/rockchip/clk-rk3368.c
-@@ -550,13 +550,16 @@ enum rk3368_plls {
- 
- 
- 	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
--			RK3368_CLKSEL_CON(50), 8, 2, MFLAGS, 0, 7, DFLAGS,
-+			RK3368_CLKSEL_CON(50), 8, 2, MFLAGS, 0, 7,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3368_CLKGATE_CON(7), 12, GFLAGS),
- 	COMPOSITE(SCLK_SDIO0, "sclk_sdio0", mux_mmc_src_p, 0,
--			RK3368_CLKSEL_CON(48), 8, 2, MFLAGS, 0, 7, DFLAGS,
-+			RK3368_CLKSEL_CON(48), 8, 2, MFLAGS, 0, 7,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3368_CLKGATE_CON(7), 13, GFLAGS),
- 	COMPOSITE(SCLK_EMMC, "sclk_emmc", mux_mmc_src_p, 0,
--			RK3368_CLKSEL_CON(51), 8, 2, MFLAGS, 0, 7, DFLAGS,
-+			RK3368_CLKSEL_CON(51), 8, 2, MFLAGS, 0, 7,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3368_CLKGATE_CON(7), 15, GFLAGS),
- 
- 	MMC(SCLK_SDMMC_DRV,    "sdmmc_drv",    "sclk_sdmmc", RK3368_SDMMC_CON0, 1),
-diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-index 118759d..aedb3d0 100644
---- a/drivers/clk/rockchip/clk-rk3399.c
-+++ b/drivers/clk/rockchip/clk-rk3399.c
-@@ -896,11 +896,13 @@ enum rk3399_pmu_plls {
- 			RK3399_CLKGATE_CON(33), 9, GFLAGS),
- 
- 	COMPOSITE(SCLK_SDIO, "clk_sdio", mux_pll_src_cpll_gpll_npll_ppll_upll_24m_p, 0,
--			RK3399_CLKSEL_CON(15), 8, 3, MFLAGS, 0, 7, DFLAGS,
-+			RK3399_CLKSEL_CON(15), 8, 3, MFLAGS, 0, 7,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3399_CLKGATE_CON(6), 0, GFLAGS),
- 
- 	COMPOSITE(SCLK_SDMMC, "clk_sdmmc", mux_pll_src_cpll_gpll_npll_ppll_upll_24m_p, 0,
--			RK3399_CLKSEL_CON(16), 8, 3, MFLAGS, 0, 7, DFLAGS,
-+			RK3399_CLKSEL_CON(16), 8, 3, MFLAGS, 0, 7,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RK3399_CLKGATE_CON(6), 1, GFLAGS),
- 
- 	MMC(SCLK_SDMMC_DRV,     "sdmmc_drv",    "clk_sdmmc", RK3399_SDMMC_CON0, 1),
-diff --git a/drivers/clk/rockchip/clk-rv1108.c b/drivers/clk/rockchip/clk-rv1108.c
-index 089cb17..b63af26 100644
---- a/drivers/clk/rockchip/clk-rv1108.c
-+++ b/drivers/clk/rockchip/clk-rv1108.c
-@@ -721,20 +721,21 @@ enum rv1108_plls {
- 			RV1108_CLKGATE_CON(15), 11, GFLAGS),
- 
- 	COMPOSITE(SCLK_SDMMC, "sclk_sdmmc", mux_mmc_src_p, 0,
--			RV1108_CLKSEL_CON(25), 8, 2, MFLAGS, 0, 8, DFLAGS,
-+			RV1108_CLKSEL_CON(25), 8, 2, MFLAGS, 0, 8,
-+			DFLAGS | CLK_DIVIDER_EVEN,
- 			RV1108_CLKGATE_CON(5), 0, GFLAGS),
- 
- 	COMPOSITE_NODIV(0, "sclk_sdio_src", mux_mmc_src_p, 0,
- 			RV1108_CLKSEL_CON(25), 10, 2, MFLAGS,
- 			RV1108_CLKGATE_CON(5), 2, GFLAGS),
- 	DIV(SCLK_SDIO, "sclk_sdio", "sclk_sdio_src", 0,
--			RV1108_CLKSEL_CON(26), 0, 8, DFLAGS),
-+			RV1108_CLKSEL_CON(26), 0, 8, DFLAGS | CLK_DIVIDER_EVEN),
- 
- 	COMPOSITE_NODIV(0, "sclk_emmc_src", mux_mmc_src_p, 0,
- 			RV1108_CLKSEL_CON(25), 12, 2, MFLAGS,
- 			RV1108_CLKGATE_CON(5), 1, GFLAGS),
- 	DIV(SCLK_EMMC, "sclk_emmc", "sclk_emmc_src", 0,
--			RK2928_CLKSEL_CON(26), 8, 8, DFLAGS),
-+			RK2928_CLKSEL_CON(26), 8, 8, DFLAGS | CLK_DIVIDER_EVEN),
- 	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_periph", 0, RV1108_CLKGATE_CON(15), 0, GFLAGS),
- 	GATE(HCLK_SDIO, "hclk_sdio", "hclk_periph", 0, RV1108_CLKGATE_CON(15), 1, GFLAGS),
- 	GATE(HCLK_EMMC, "hclk_emmc", "hclk_periph", 0, RV1108_CLKGATE_CON(15), 2, GFLAGS),
 -- 
-1.9.1
+2.17.0
