@@ -1,48 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34680 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753392AbeDSRlX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Apr 2018 13:41:23 -0400
-Received: by mail-pl0-f65.google.com with SMTP id z12-v6so3669046plo.1
-        for <linux-clk@vger.kernel.org>; Thu, 19 Apr 2018 10:41:22 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/4] ARM64: dts: meson: hhi syscon and clock controllers
-References: <20180315115545.1884-1-jbrunet@baylibre.com>
-Date: Thu, 19 Apr 2018 10:41:20 -0700
-In-Reply-To: <20180315115545.1884-1-jbrunet@baylibre.com> (Jerome Brunet's
-        message of "Thu, 15 Mar 2018 12:55:41 +0100")
-Message-ID: <7h1sfb5c1r.fsf@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+Subject: Re: [PATCH 1/7] clk: meson: clean-up meson clock configuration
+To: Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ Kevin Hilman <khilman@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180425163304.10852-1-jbrunet@baylibre.com>
+ <20180425163304.10852-2-jbrunet@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <d643c87a-d364-1587-100d-119f8b417f11@baylibre.com>
+Date: Thu, 26 Apr 2018 10:46:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180425163304.10852-2-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+On 25/04/2018 18:32, Jerome Brunet wrote:
+> Clean the dependencies in meson clock Kconfig.
+> CLK_AMLOGIC should actually select CLK_REGMAP_MESON which it uses. Also,
+> each platform should select CLK_AMLOGIC, so everything is properly turned
+> on when the platform Kconfig enable each configuration flag
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/Kconfig | 11 ++++-------
+>  1 file changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index d5cbec522aec..87d69573e172 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -1,7 +1,7 @@
+>  config COMMON_CLK_AMLOGIC
+>  	bool
+> -	depends on OF
+>  	depends on ARCH_MESON || COMPILE_TEST
+> +	select COMMON_CLK_REGMAP_MESON
+>  
+>  config COMMON_CLK_REGMAP_MESON
+>  	bool
+> @@ -9,9 +9,8 @@ config COMMON_CLK_REGMAP_MESON
+>  
+>  config COMMON_CLK_MESON8B
+>  	bool
+> -	depends on COMMON_CLK_AMLOGIC
+> +	select COMMON_CLK_AMLOGIC
+>  	select RESET_CONTROLLER
+> -	select COMMON_CLK_REGMAP_MESON
+>  	help
+>  	  Support for the clock controller on AmLogic S802 (Meson8),
+>  	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
+> @@ -19,9 +18,8 @@ config COMMON_CLK_MESON8B
+>  
+>  config COMMON_CLK_GXBB
+>  	bool
+> -	depends on COMMON_CLK_AMLOGIC
+> +	select COMMON_CLK_AMLOGIC
+>  	select RESET_CONTROLLER
+> -	select COMMON_CLK_REGMAP_MESON
+>  	select MFD_SYSCON
+>  	help
+>  	  Support for the clock controller on AmLogic S905 devices, aka gxbb.
+> @@ -29,9 +27,8 @@ config COMMON_CLK_GXBB
+>  
+>  config COMMON_CLK_AXG
+>  	bool
+> -	depends on COMMON_CLK_AMLOGIC
+> +	select COMMON_CLK_AMLOGIC
+>  	select RESET_CONTROLLER
+> -	select COMMON_CLK_REGMAP_MESON
+>  	select MFD_SYSCON
+>  	help
+>  	  Support for the clock controller on AmLogic A113D devices, aka axg.
+> 
 
-> The HHI register region provides more than just clocks. Several drivers may
-> need to access this region, such as the clock controllers and the display
-> driver.
->
-> Meson-gx clock controllers has been developed and merged before we knew the
-> hhi could be needed elsewhere, which is why it requests the region directly.
-> Meson-axg was built following the model of meson-gx.
->
-> To fix this situation, the clock controller should be a child of the hhi
-> system controllers. The hhi system controller node already exists on meson-gx.
-> It needs to be added on the axg.
->
-> This changeset depends on [0]. This dependency has been merged in
-> clk-next. A topic branch is available here [1]
-
-As the dependencies are now merged for v4.17, applying this to
-v4.18/dt64,
-
-Thanks,
-
-Kevin
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
