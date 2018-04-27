@@ -1,79 +1,59 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [RFC 05/10] i2c: s3c2410: Remove support for Exynos5440
-Date: Tue, 24 Apr 2018 22:32:34 +0200
-Message-Id: <20180424203239.21885-6-krzk@kernel.org>
-In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
-References: <20180424203239.21885-1-krzk@kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v9 14/27] ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
+Date: Thu, 26 Apr 2018 19:17:32 -0500
+Message-Id: <20180427001745.4116-15-david@lechnology.com>
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Exynos5440 is not actively developed, there are no development
-boards available and probably there are no real products with it.
-Remove wide-tree support for Exynos5440.
+This removes CONFIG_DAVINCI_RESET_CLOCKS. The option has been removed from
+the kernel.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
- Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt | 4 +---
- drivers/i2c/busses/i2c-s3c2410.c                      | 2 --
- 2 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-index 89b3250f049b..66ae46d3bc2f 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-@@ -8,9 +8,7 @@ Required properties:
-       (b) "samsung, s3c2440-i2c", for i2c compatible with s3c2440 i2c.
-       (c) "samsung, s3c2440-hdmiphy-i2c", for s3c2440-like i2c used
-           inside HDMIPHY block found on several samsung SoCs
--      (d) "samsung, exynos5440-i2c", for s3c2440-like i2c used
--	   on EXYNOS5440 which does not need GPIO configuration.
--      (e) "samsung, exynos5-sata-phy-i2c", for s3c2440-like i2c used as
-+      (d) "samsung, exynos5-sata-phy-i2c", for s3c2440-like i2c used as
- 	   a host to SATA PHY controller on an internal bus.
-   - reg: physical base address of the controller and length of memory mapped
-     region.
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 5d97510ee48b..9fe2b6951895 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -154,8 +154,6 @@ static const struct of_device_id s3c24xx_i2c_match[] = {
- 	{ .compatible = "samsung,s3c2440-i2c", .data = (void *)QUIRK_S3C2440 },
- 	{ .compatible = "samsung,s3c2440-hdmiphy-i2c",
- 	  .data = (void *)(QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_NO_GPIO) },
--	{ .compatible = "samsung,exynos5440-i2c",
--	  .data = (void *)(QUIRK_S3C2440 | QUIRK_NO_GPIO) },
- 	{ .compatible = "samsung,exynos5-sata-phy-i2c",
- 	  .data = (void *)(QUIRK_S3C2440 | QUIRK_POLL | QUIRK_NO_GPIO) },
- 	{},
+v9 changes:
+- none
+
+v8 changes:
+- none
+
+v7 changes:
+- none
+
+v6 changes:
+- none
+
+
+ arch/arm/configs/davinci_all_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
+index 21b2d7791df4..f83ea4131df2 100644
+--- a/arch/arm/configs/davinci_all_defconfig
++++ b/arch/arm/configs/davinci_all_defconfig
+@@ -31,7 +31,6 @@ CONFIG_MACH_MITYOMAPL138=y
+ CONFIG_MACH_OMAPL138_HAWKBOARD=y
+ CONFIG_DAVINCI_MUX_DEBUG=y
+ CONFIG_DAVINCI_MUX_WARNINGS=y
+-CONFIG_DAVINCI_RESET_CLOCKS=y
+ CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
+ CONFIG_CMA=y
 -- 
-2.14.1
+2.17.0
