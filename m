@@ -1,45 +1,106 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH v7 4/7] dt-bindings: clock: reset: Add AXG AO Clock and
- Reset Bindings
-To: Philipp Zabel <p.zabel@pengutronix.de>, Neil Armstrong
-	<narmstrong@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman
-	<khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-References: <20180426084437.192394-1-yixun.lan@amlogic.com>
- <20180426084437.192394-5-yixun.lan@amlogic.com>
- <1524733179.3408.5.camel@pengutronix.de>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <2c7eb0fb-1ddb-728c-0f2c-e807449a4f59@amlogic.com>
-Date: Thu, 26 Apr 2018 17:05:52 +0800
-MIME-Version: 1.0
-In-Reply-To: <1524733179.3408.5.camel@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v9 25/27] ARM: davinci: add device tree support to timer
+Date: Thu, 26 Apr 2018 19:17:43 -0500
+Message-Id: <20180427001745.4116-26-david@lechnology.com>
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This adds device tree support to the davinci timer so that when clocks
+are moved to device tree, the timer will still work.
 
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-On 04/26/18 16:59, Philipp Zabel wrote:
-> On Thu, 2018-04-26 at 16:44 +0800, Yixun Lan wrote:
->> Add dt-bindings headers for the Meson-AXG's AO clock and
->> reset controller.
->>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> 
-> This one is
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-> 
+v9 changes:
+- none (there were supposed to be changed, but apparently they got squashed
+  into the next commit - will fix on the next round)
 
-Hi Philipp
- My bad, Indeed, I made a mistake..
+v8 changes:
+- none
 
-HI Jerome:
- Could you fix this once apply the patch series?
-or do you want me send another version?
+v7 changes:
+- rebased
+- add davinci prefix to commit message
 
-Yixun
+v6 changes:
+- rebased
+
+ arch/arm/mach-davinci/Kconfig |  1 +
+ arch/arm/mach-davinci/time.c  | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+
+diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
+index ba9912b4dfab..da8a039d65f9 100644
+--- a/arch/arm/mach-davinci/Kconfig
++++ b/arch/arm/mach-davinci/Kconfig
+@@ -59,6 +59,7 @@ config MACH_DA8XX_DT
+ 	default y
+ 	depends on ARCH_DAVINCI_DA850
+ 	select PINCTRL
++	select TIMER_OF
+ 	help
+ 	  Say y here to include support for TI DaVinci DA850 based using
+ 	  Flattened Device Tree. More information at Documentation/devicetree
+diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
+index 7ea3db0ff062..7a8c6fada644 100644
+--- a/arch/arm/mach-davinci/time.c
++++ b/arch/arm/mach-davinci/time.c
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
+ #include <linux/clk.h>
+ #include <linux/err.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/sched_clock.h>
+ 
+@@ -397,3 +398,33 @@ void __init davinci_timer_init(struct clk *timer_clk)
+ 	for (i=0; i< ARRAY_SIZE(timers); i++)
+ 		timer32_config(&timers[i]);
+ }
++
++static int __init of_davinci_timer_init(struct device_node *np)
++{
++	struct clk *clk;
++
++	clk = of_clk_get(np, 0);
++	if (IS_ERR(clk)) {
++		struct of_phandle_args clkspec;
++
++		/*
++		 * Fall back to using ref_clk if the actual clock is not
++		 * available. This currently always happens because platform
++		 * clocks (i.e PLLs and PSCs) are registered as platform
++		 * devices and therefore are not available at this point in
++		 * the boot process.
++		 */
++		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
++		if (IS_ERR(clkspec.np)) {
++			pr_err("%s: No clock available for timer!\n", __func__);
++			return PTR_ERR(clkspec.np);
++		}
++		clk = of_clk_get_from_provider(&clkspec);
++		of_node_put(clkspec.np);
++	}
++
++	davinci_timer_init(clk);
++
++	return 0;
++}
++TIMER_OF_DECLARE(davinci_timer, "ti,davinci-timer", of_davinci_timer_init);
+-- 
+2.17.0
