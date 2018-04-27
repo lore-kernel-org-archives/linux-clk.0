@@ -1,64 +1,159 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 5 Apr 2018 08:18:44 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-	rjw@rjwysocki.net, viresh.kumar@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v4 04/14] clk: qcom: Add DT bindings for CPU clock driver
- for msm8996
-Message-ID: <20180405131844.sfhta7qjdsmxpa4d@rob-hp-laptop>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
- <1522358807-10413-5-git-send-email-ilialin@codeaurora.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 06/12] clk: imx: scu: add scu clock gpr gate
+Date: Sat, 28 Apr 2018 02:56:37 +0800
+Message-Id: <1524855403-15301-7-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1522358807-10413-5-git-send-email-ilialin@codeaurora.org>
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Mar 30, 2018 at 12:26:37AM +0300, Ilia Lin wrote:
+Add scu based clock gpr gate. Unlike the normal scu gate, such
+gates are controlled by GPR bits through SCU sc_misc_set_control
+API.
 
-Needs a commit message.
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/scu/Makefile           |  3 +-
+ drivers/clk/imx/scu/clk-gate-gpr-scu.c | 84 ++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h          |  9 ++++
+ 3 files changed, 95 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/scu/clk-gate-gpr-scu.c
 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-
-Add acks/reviewed-bys when posting new versions.
-
-> ---
->  Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-> new file mode 100644
-> index 0000000..8458783
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-> @@ -0,0 +1,17 @@
-> +Qualcomm CPUSS clock controller for Kryo CPUs
-> +----------------------------------------------------
-> +
-> +Required properties :
-> +- compatible : shall contain only one of the following:
-> +
-> +			"qcom,msm8996-apcc"
-> +
-> +- reg : shall contain base register location and length
-> +- #clock-cells : shall contain 1
-> +
-> +Example:
-> +	kryocc: clock-controller@6400000 {
-> +		compatible = "qcom,msm8996-apcc";
-> +		reg = <0x6400000 0x90000>;
-> +		#clock-cells = <1>;
-> +	};
-> -- 
-> 1.9.1
-> 
+diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
+index 2abed17..25d3511 100644
+--- a/drivers/clk/imx/scu/Makefile
++++ b/drivers/clk/imx/scu/Makefile
+@@ -4,4 +4,5 @@ obj-$(CONFIG_MXC_CLK_SCU) += \
+ 	clk-scu.o \
+ 	clk-divider-scu.o \
+ 	clk-divider-gpr-scu.o \
+-	clk-gate-scu.o
++	clk-gate-scu.o \
++	clk-gate-gpr-scu.o
+diff --git a/drivers/clk/imx/scu/clk-gate-gpr-scu.c b/drivers/clk/imx/scu/clk-gate-gpr-scu.c
+new file mode 100644
+index 0000000..b55b857
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-gate-gpr-scu.c
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *	Dong Aisheng <aisheng.dong@nxp.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <soc/imx/sc/sci.h>
++
++#include "clk-scu.h"
++
++struct clk_gate_gpr_scu {
++	struct clk_hw hw;
++	sc_rsrc_t	rsrc_id;
++	sc_ctrl_t	gpr_id;
++
++	/* default: enable 1 disable 0 */
++	bool	invert;
++};
++
++#define to_clk_gate_gpr_scu(_hw) container_of(_hw, struct clk_gate_gpr_scu, hw)
++
++static int clk_gate_gpr_scu_enable(struct clk_hw *hw)
++{
++	struct clk_gate_gpr_scu *gate = to_clk_gate_gpr_scu(hw);
++
++	return sc_misc_set_control(ccm_ipc_handle, gate->rsrc_id,
++				   gate->gpr_id, !gate->invert);
++}
++
++static void clk_gate_gpr_scu_disable(struct clk_hw *hw)
++{
++	struct clk_gate_gpr_scu *gate = to_clk_gate_gpr_scu(hw);
++	sc_err_t sci_err;
++
++	sci_err = sc_misc_set_control(ccm_ipc_handle, gate->rsrc_id,
++				      gate->gpr_id, gate->invert);
++	if (sci_err)
++		pr_warn("%s: %s: clk disable failed %d\n",
++			__func__, clk_hw_get_name(hw), sci_err);
++}
++
++static const struct clk_ops clk_gate_gpr_scu_ops = {
++	.enable = clk_gate_gpr_scu_enable,
++	.disable = clk_gate_gpr_scu_disable,
++};
++
++struct clk_hw *clk_register_gate_gpr_scu(const char *name, const char *parent_name,
++					 sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id,
++					 bool invert_flag)
++{
++	struct clk_gate_gpr_scu *gate;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	gate->rsrc_id = rsrc_id;
++	gate->gpr_id = gpr_id;
++	gate->invert = invert_flag;
++
++	init.name = name;
++	init.ops = &clk_gate_gpr_scu_ops;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++
++	gate->hw.init = &init;
++
++	hw = &gate->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(gate);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+index c08dca1..e419035 100644
+--- a/drivers/clk/imx/scu/clk-scu.h
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -59,4 +59,13 @@ static inline struct clk_hw *imx_clk_gate2_scu(const char *name, const char *par
+ 	return clk_register_gate2_scu(name, parent, 0, reg, bit_idx, hw_gate);
+ }
+ 
++struct clk_hw *clk_register_gate_gpr_scu(const char *name, const char *parent_name,
++				sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id, bool invert_flag);
++
++static inline struct clk_hw *imx_clk_gate_gpr_scu(const char *name, const char *parent,
++				sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id, bool invert_flag)
++{
++	return clk_register_gate_gpr_scu(name, parent, rsrc_id, gpr_id, invert_flag);
++}
++
+ #endif
+-- 
+2.7.4
