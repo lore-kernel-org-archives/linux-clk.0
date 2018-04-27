@@ -1,133 +1,451 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:35978 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753368AbeDRLlQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Apr 2018 07:41:16 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Wed, 18 Apr 2018 13:41:13 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Bai Ping <ping.bai@nxp.com>
-Cc: sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
-        kernel@pengutronix.de, aisheng.dong@nxp.com, linux-imx@nxp.com,
-        jacky.baip@gmail.com, fabio.estevam@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 1/4] clk: imx: Add CLK_IS_CRITICAL flag for busy
- divider and busy mux
-In-Reply-To: <1521512644-25265-1-git-send-email-ping.bai@nxp.com>
-References: <1521512644-25265-1-git-send-email-ping.bai@nxp.com>
-Message-ID: <2da28adb2c0478f5303473f3be327237@agner.ch>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v9 18/27] ARM: davinci: dm355: Remove legacy clock init
+Date: Thu, 26 Apr 2018 19:17:36 -0500
+Message-Id: <20180427001745.4116-19-david@lechnology.com>
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bai,
+This removes the unused legacy clock init code from
+arch/arm/mach-davinci/dm355.c.
 
-On 20.03.2018 03:24, Bai Ping wrote:
-> The busy divider and busy mux is actually used by the system critical clocks,
-> so add 'CLK_IS_CRITICAL' to clocks registered with these two type.
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+---
 
-This seems that this patch breaks i.MX 6ULL. Our Colibri iMX6ULL freezes
-with v4.17-rc1:
+v9 changes:
+- rebased
 
-[    0.000000] Booting Linux on physical CPU 0x0
-[    0.000000] Linux version 4.17.0-rc1-00002-g7529efa14a7c-dirty
-(ags@trochilidae) (gcc version 7.2.1 20171011 (Linaro GCC 7.2-2017.11))
-#517 SMP Wed Apr 18 11:11:07 CEST 2018
-[    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7),
-cr=10c5387d
-[    0.000000] CPU: div instructions available: patching division code
-[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing
-instruction cache
-[    0.000000] OF: fdt: Machine model: Toradex Colibri iMX6ULL 512MB on
-Colibri Evaluation Board V3
-[    0.000000] earlycon: ec_imx6q0 at MMIO 0x02020000 (options
-'115200n8')
-[    0.000000] bootconsole [ec_imx6q0] enabled
-[    0.000000] debug: ignoring loglevel setting.
-[    0.000000] Memory policy: Data cache writealloc
-[    0.000000] cma: Reserved 256 MiB at 0x90000000
-[    0.000000] On node 0 totalpages: 131072
-[    0.000000]   Normal zone: 1024 pages used for memmap
-[    0.000000]   Normal zone: 0 pages reserved
-[    0.000000]   Normal zone: 131072 pages, LIFO batch:31
-[    0.000000] random: fast init done
-[    0.000000] percpu: Embedded 16 pages/cpu @(ptrval) s35084 r8192
-d22260 u65536
-[    0.000000] pcpu-alloc: s35084 r8192 d22260 u65536 alloc=16*4096
-[    0.000000] pcpu-alloc: [0] 0
-[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages:
-130048
-[    0.000000] Kernel command line:
-mtdparts=gpmi-nand:512k(mx6ull-bcb),1536k(u-boot1)ro,1536k(u-boot2)ro,512k(u-boot-env),-(ubi)
-earlycon user_debug=31 ignore_loglevel ubi.mtd=ubi root=ubi0:rootfs rw
-rootfstype=ubifs ubi.fm_autoconvert=1 consoleblank=0
-no_console_suspend=1 console=tty1 console=ttymxc0,115200n8
-[    0.000000] Dentry cache hash table entries: 65536 (order: 6, 262144
-bytes)
-[    0.000000] Inode-cache hash table entries: 32768 (order: 5, 131072
-bytes)
-[    0.000000] Memory: 243904K/524288K available (8192K kernel code,
-365K rwdata, 2720K rodata, 1024K init, 389K bss, 18240K reserved,
-262144K cma-reserved)
-[    0.000000] Virtual kernel memory layout:
-[    0.000000]     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
-[    0.000000]     fixmap  : 0xffc00000 - 0xfff00000   (3072 kB)
-[    0.000000]     vmalloc : 0xe0800000 - 0xff800000   ( 496 MB)
-[    0.000000]     lowmem  : 0xc0000000 - 0xe0000000   ( 512 MB)
-[    0.000000]     modules : 0xbf000000 - 0xc0000000   (  16 MB)
-[    0.000000]       .text : 0x(ptrval) - 0x(ptrval)   (9184 kB)
-[    0.000000]       .init : 0x(ptrval) - 0x(ptrval)   (1024 kB)
-[    0.000000]       .data : 0x(ptrval) - 0x(ptrval)   ( 366 kB)
-[    0.000000]        .bss : 0x(ptrval) - 0x(ptrval)   ( 390 kB)
-[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1,
-Nodes=1
-[    0.000000] Hierarchical RCU implementation.
-[    0.000000]  RCU restricting CPUs from NR_CPUS=4 to nr_cpu_ids=1.
-[    0.000000] RCU: Adjusting geometry for rcu_fanout_leaf=16,
-nr_cpu_ids=1
-[    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
-<freeze>
+v8 changes:
+- none
 
-Yet need to understand what is exactly going on.
+v7 changes:
+- rebased
+- add davinci prefix to commit message
 
---
-Stefan
+v6 changes:
+- rebased
 
 
-> 
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
-> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
->  change from V3->v4:
->  - fix a typo in commit log
->  change from v4->v5:
->  - optimize the commit subject
->  change from v5->v6:
->  - no change
-> ---
->  drivers/clk/imx/clk-busy.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-> index 6df3389..9903652 100644
-> --- a/drivers/clk/imx/clk-busy.c
-> +++ b/drivers/clk/imx/clk-busy.c
-> @@ -101,7 +101,7 @@ struct clk *imx_clk_busy_divider(const char *name,
-> const char *parent_name,
->  
->  	init.name = name;
->  	init.ops = &clk_busy_divider_ops;
-> -	init.flags = CLK_SET_RATE_PARENT;
-> +	init.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL;
->  	init.parent_names = &parent_name;
->  	init.num_parents = 1;
->  
-> @@ -175,7 +175,7 @@ struct clk *imx_clk_busy_mux(const char *name,
-> void __iomem *reg, u8 shift,
->  
->  	init.name = name;
->  	init.ops = &clk_busy_mux_ops;
-> -	init.flags = 0;
-> +	init.flags = CLK_IS_CRITICAL;
->  	init.parent_names = parent_names;
->  	init.num_parents = num_parents;
+ arch/arm/mach-davinci/dm355.c | 357 ----------------------------------
+ 1 file changed, 357 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
+index 14014b942e8a..9f7d38d12c88 100644
+--- a/arch/arm/mach-davinci/dm355.c
++++ b/arch/arm/mach-davinci/dm355.c
+@@ -35,11 +35,6 @@
+ #include "davinci.h"
+ #include "mux.h"
+ 
+-#ifndef CONFIG_COMMON_CLK
+-#include "clock.h"
+-#include "psc.h"
+-#endif
+-
+ #define DM355_UART2_BASE	(IO_PHYS + 0x206000)
+ #define DM355_OSD_BASE		(IO_PHYS + 0x70200)
+ #define DM355_VENC_BASE		(IO_PHYS + 0x70400)
+@@ -49,349 +44,6 @@
+  */
+ #define DM355_REF_FREQ		24000000	/* 24 or 36 MHz */
+ 
+-#ifndef CONFIG_COMMON_CLK
+-static struct pll_data pll1_data = {
+-	.num       = 1,
+-	.phys_base = DAVINCI_PLL1_BASE,
+-	.flags     = PLL_HAS_PREDIV | PLL_HAS_POSTDIV,
+-};
+-
+-static struct pll_data pll2_data = {
+-	.num       = 2,
+-	.phys_base = DAVINCI_PLL2_BASE,
+-	.flags     = PLL_HAS_PREDIV,
+-};
+-
+-static struct clk ref_clk = {
+-	.name = "ref_clk",
+-	/* FIXME -- crystal rate is board-specific */
+-	.rate = DM355_REF_FREQ,
+-};
+-
+-static struct clk pll1_clk = {
+-	.name = "pll1",
+-	.parent = &ref_clk,
+-	.flags = CLK_PLL,
+-	.pll_data = &pll1_data,
+-};
+-
+-static struct clk pll1_aux_clk = {
+-	.name = "pll1_aux_clk",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-};
+-
+-static struct clk pll1_sysclk1 = {
+-	.name = "pll1_sysclk1",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV1,
+-};
+-
+-static struct clk pll1_sysclk2 = {
+-	.name = "pll1_sysclk2",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV2,
+-};
+-
+-static struct clk pll1_sysclk3 = {
+-	.name = "pll1_sysclk3",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV3,
+-};
+-
+-static struct clk pll1_sysclk4 = {
+-	.name = "pll1_sysclk4",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV4,
+-};
+-
+-static struct clk pll1_sysclkbp = {
+-	.name = "pll1_sysclkbp",
+-	.parent = &pll1_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-	.div_reg = BPDIV
+-};
+-
+-static struct clk vpss_dac_clk = {
+-	.name = "vpss_dac",
+-	.parent = &pll1_sysclk3,
+-	.lpsc = DM355_LPSC_VPSS_DAC,
+-};
+-
+-static struct clk vpss_master_clk = {
+-	.name = "vpss_master",
+-	.parent = &pll1_sysclk4,
+-	.lpsc = DAVINCI_LPSC_VPSSMSTR,
+-	.flags = CLK_PSC,
+-};
+-
+-static struct clk vpss_slave_clk = {
+-	.name = "vpss_slave",
+-	.parent = &pll1_sysclk4,
+-	.lpsc = DAVINCI_LPSC_VPSSSLV,
+-};
+-
+-static struct clk clkout1_clk = {
+-	.name = "clkout1",
+-	.parent = &pll1_aux_clk,
+-	/* NOTE:  clkout1 can be externally gated by muxing GPIO-18 */
+-};
+-
+-static struct clk clkout2_clk = {
+-	.name = "clkout2",
+-	.parent = &pll1_sysclkbp,
+-};
+-
+-static struct clk pll2_clk = {
+-	.name = "pll2",
+-	.parent = &ref_clk,
+-	.flags = CLK_PLL,
+-	.pll_data = &pll2_data,
+-};
+-
+-static struct clk pll2_sysclk1 = {
+-	.name = "pll2_sysclk1",
+-	.parent = &pll2_clk,
+-	.flags = CLK_PLL,
+-	.div_reg = PLLDIV1,
+-};
+-
+-static struct clk pll2_sysclkbp = {
+-	.name = "pll2_sysclkbp",
+-	.parent = &pll2_clk,
+-	.flags = CLK_PLL | PRE_PLL,
+-	.div_reg = BPDIV
+-};
+-
+-static struct clk clkout3_clk = {
+-	.name = "clkout3",
+-	.parent = &pll2_sysclkbp,
+-	/* NOTE:  clkout3 can be externally gated by muxing GPIO-16 */
+-};
+-
+-static struct clk arm_clk = {
+-	.name = "arm_clk",
+-	.parent = &pll1_sysclk1,
+-	.lpsc = DAVINCI_LPSC_ARM,
+-	.flags = ALWAYS_ENABLED,
+-};
+-
+-/*
+- * NOT LISTED below, and not touched by Linux
+- *   - in SyncReset state by default
+- *	.lpsc = DAVINCI_LPSC_TPCC,
+- *	.lpsc = DAVINCI_LPSC_TPTC0,
+- *	.lpsc = DAVINCI_LPSC_TPTC1,
+- *	.lpsc = DAVINCI_LPSC_DDR_EMIF, .parent = &sysclk2_clk,
+- *	.lpsc = DAVINCI_LPSC_MEMSTICK,
+- *   - in Enabled state by default
+- *	.lpsc = DAVINCI_LPSC_SYSTEM_SUBSYS,
+- *	.lpsc = DAVINCI_LPSC_SCR2,	// "bus"
+- *	.lpsc = DAVINCI_LPSC_SCR3,	// "bus"
+- *	.lpsc = DAVINCI_LPSC_SCR4,	// "bus"
+- *	.lpsc = DAVINCI_LPSC_CROSSBAR,	// "emulation"
+- *	.lpsc = DAVINCI_LPSC_CFG27,	// "test"
+- *	.lpsc = DAVINCI_LPSC_CFG3,	// "test"
+- *	.lpsc = DAVINCI_LPSC_CFG5,	// "test"
+- */
+-
+-static struct clk mjcp_clk = {
+-	.name = "mjcp",
+-	.parent = &pll1_sysclk1,
+-	.lpsc = DAVINCI_LPSC_IMCOP,
+-};
+-
+-static struct clk uart0_clk = {
+-	.name = "uart0",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_UART0,
+-};
+-
+-static struct clk uart1_clk = {
+-	.name = "uart1",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_UART1,
+-};
+-
+-static struct clk uart2_clk = {
+-	.name = "uart2",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_UART2,
+-};
+-
+-static struct clk i2c_clk = {
+-	.name = "i2c",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_I2C,
+-};
+-
+-static struct clk asp0_clk = {
+-	.name = "asp0",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_McBSP,
+-};
+-
+-static struct clk asp1_clk = {
+-	.name = "asp1",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM355_LPSC_McBSP1,
+-};
+-
+-static struct clk mmcsd0_clk = {
+-	.name = "mmcsd0",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_MMC_SD,
+-};
+-
+-static struct clk mmcsd1_clk = {
+-	.name = "mmcsd1",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM355_LPSC_MMC_SD1,
+-};
+-
+-static struct clk spi0_clk = {
+-	.name = "spi0",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_SPI,
+-};
+-
+-static struct clk spi1_clk = {
+-	.name = "spi1",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM355_LPSC_SPI1,
+-};
+-
+-static struct clk spi2_clk = {
+-	.name = "spi2",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DM355_LPSC_SPI2,
+-};
+-
+-static struct clk gpio_clk = {
+-	.name = "gpio",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_GPIO,
+-};
+-
+-static struct clk aemif_clk = {
+-	.name = "aemif",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_AEMIF,
+-};
+-
+-static struct clk pwm0_clk = {
+-	.name = "pwm0",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_PWM0,
+-};
+-
+-static struct clk pwm1_clk = {
+-	.name = "pwm1",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_PWM1,
+-};
+-
+-static struct clk pwm2_clk = {
+-	.name = "pwm2",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_PWM2,
+-};
+-
+-static struct clk pwm3_clk = {
+-	.name = "pwm3",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DM355_LPSC_PWM3,
+-};
+-
+-static struct clk timer0_clk = {
+-	.name = "timer0",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_TIMER0,
+-};
+-
+-static struct clk timer1_clk = {
+-	.name = "timer1",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_TIMER1,
+-};
+-
+-static struct clk timer2_clk = {
+-	.name = "timer2",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DAVINCI_LPSC_TIMER2,
+-	.usecount = 1,              /* REVISIT: why can't this be disabled? */
+-};
+-
+-static struct clk timer3_clk = {
+-	.name = "timer3",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DM355_LPSC_TIMER3,
+-};
+-
+-static struct clk rto_clk = {
+-	.name = "rto",
+-	.parent = &pll1_aux_clk,
+-	.lpsc = DM355_LPSC_RTO,
+-};
+-
+-static struct clk usb_clk = {
+-	.name = "usb",
+-	.parent = &pll1_sysclk2,
+-	.lpsc = DAVINCI_LPSC_USB,
+-};
+-
+-static struct clk_lookup dm355_clks[] = {
+-	CLK(NULL, "ref", &ref_clk),
+-	CLK(NULL, "pll1", &pll1_clk),
+-	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
+-	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
+-	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
+-	CLK(NULL, "pll1_sysclk4", &pll1_sysclk4),
+-	CLK(NULL, "pll1_aux", &pll1_aux_clk),
+-	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
+-	CLK(NULL, "vpss_dac", &vpss_dac_clk),
+-	CLK("vpss", "master", &vpss_master_clk),
+-	CLK("vpss", "slave", &vpss_slave_clk),
+-	CLK(NULL, "clkout1", &clkout1_clk),
+-	CLK(NULL, "clkout2", &clkout2_clk),
+-	CLK(NULL, "pll2", &pll2_clk),
+-	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
+-	CLK(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
+-	CLK(NULL, "clkout3", &clkout3_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK(NULL, "mjcp", &mjcp_clk),
+-	CLK("serial8250.0", NULL, &uart0_clk),
+-	CLK("serial8250.1", NULL, &uart1_clk),
+-	CLK("serial8250.2", NULL, &uart2_clk),
+-	CLK("i2c_davinci.1", NULL, &i2c_clk),
+-	CLK("davinci-mcbsp.0", NULL, &asp0_clk),
+-	CLK("davinci-mcbsp.1", NULL, &asp1_clk),
+-	CLK("dm6441-mmc.0", NULL, &mmcsd0_clk),
+-	CLK("dm6441-mmc.1", NULL, &mmcsd1_clk),
+-	CLK("spi_davinci.0", NULL, &spi0_clk),
+-	CLK("spi_davinci.1", NULL, &spi1_clk),
+-	CLK("spi_davinci.2", NULL, &spi2_clk),
+-	CLK(NULL, "gpio", &gpio_clk),
+-	CLK(NULL, "aemif", &aemif_clk),
+-	CLK(NULL, "pwm0", &pwm0_clk),
+-	CLK(NULL, "pwm1", &pwm1_clk),
+-	CLK(NULL, "pwm2", &pwm2_clk),
+-	CLK(NULL, "pwm3", &pwm3_clk),
+-	CLK(NULL, "timer0", &timer0_clk),
+-	CLK(NULL, "timer1", &timer1_clk),
+-	CLK("davinci-wdt", NULL, &timer2_clk),
+-	CLK(NULL, "timer3", &timer3_clk),
+-	CLK(NULL, "rto", &rto_clk),
+-	CLK(NULL, "usb", &usb_clk),
+-	CLK(NULL, NULL, NULL),
+-};
+-#endif
+-/*----------------------------------------------------------------------*/
+-
+ static u64 dm355_spi0_dma_mask = DMA_BIT_MASK(32);
+ 
+ static struct resource dm355_spi0_resources[] = {
+@@ -933,8 +585,6 @@ static struct davinci_id dm355_ids[] = {
+ 	},
+ };
+ 
+-static u32 dm355_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
+-
+ /*
+  * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
+  * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
+@@ -1019,8 +669,6 @@ static const struct davinci_soc_info davinci_soc_info_dm355 = {
+ 	.jtag_id_reg		= 0x01c40028,
+ 	.ids			= dm355_ids,
+ 	.ids_num		= ARRAY_SIZE(dm355_ids),
+-	.psc_bases		= dm355_psc_bases,
+-	.psc_bases_num		= ARRAY_SIZE(dm355_psc_bases),
+ 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
+ 	.pinmux_pins		= dm355_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm355_pins),
+@@ -1053,7 +701,6 @@ void __init dm355_init(void)
+ 
+ void __init dm355_init_time(void)
+ {
+-#ifdef CONFIG_COMMON_CLK
+ 	void __iomem *pll1, *psc;
+ 	struct clk *clk;
+ 
+@@ -1068,10 +715,6 @@ void __init dm355_init_time(void)
+ 	clk = clk_get(NULL, "timer0");
+ 
+ 	davinci_timer_init(clk);
+-#else
+-	davinci_clk_init(dm355_clks);
+-	davinci_timer_init(&timer0_clk);
+-#endif
+ }
+ 
+ static struct resource dm355_pll2_resources[] = {
+-- 
+2.17.0
