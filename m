@@ -1,113 +1,114 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51605 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750714AbeDDGrE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Apr 2018 02:47:04 -0400
-Message-ID: <1522824302.2049.7.camel@aosc.io>
-Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to
- access the GMAC register
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Date: Wed, 04 Apr 2018 14:45:02 +0800
-In-Reply-To: <20180403095005.skflxb7m2qzbhjix@flea>
-References: <20180317092857.4396-1-wens@csie.org>
-         <20180317092857.4396-3-wens@csie.org>
-         <20180318213129.ucwslzvwq6khxrcd@flea>
-         <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com>
-         <20180403094845.le2hfuxktlv66lre@flea>
-         <20180403095005.skflxb7m2qzbhjix@flea>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v9 02/27] clk: davinci: da850-pll: change PLL0 to CLK_OF_DECLARE
+Date: Thu, 26 Apr 2018 19:17:20 -0500
+Message-Id: <20180427001745.4116-3-david@lechnology.com>
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-在 2018-04-03二的 11:50 +0200，Maxime Ripard写道：
-> On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
-> > On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
-> > > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
-> > > <maxime.ripard@bootlin.com> wrote:
-> > > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
-> > > > > From: Icenowy Zheng <icenowy@aosc.io>
-> > > > > 
-> > > > > There's a GMAC configuration register, which exists on
-> > > > > A64/A83T/H3/H5 in
-> > > > > the syscon part, in the CCU of R40 SoC.
-> > > > > 
-> > > > > Export a regmap of the CCU.
-> > > > > 
-> > > > > Read access is not restricted to all registers, but only the
-> > > > > GMAC
-> > > > > register is allowed to be written.
-> > > > > 
-> > > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > > 
-> > > > Gah, this is crazy. I'm really starting to regret letting that
-> > > > syscon
-> > > > in in the first place...
-> > > 
-> > > IMHO syscon is really a better fit. It's part of the glue layer
-> > > and
-> > > most other dwmac user platforms treat it as such and use a
-> > > syscon.
-> > > Plus the controls encompass delays (phase), inverters (polarity),
-> > > and even signal routing. It's not really just a group of clock
-> > > controls,
-> > > like what we poorly modeled for A20/A31. I think that was really
-> > > a
-> > > mistake.
-> > > 
-> > > As I mentioned in the cover letter, a slightly saner approach
-> > > would
-> > > be to let drivers add custom syscon entries, which would then
-> > > require
-> > > less custom plumbing.
-> > 
-> > A syscon is convenient, sure, but it also bypasses any abstraction
-> > layer we have everywhere else, which means that we'll have to
-> > maintain
-> > the register layout in each and every driver that uses it.
-> > 
-> > So far, it's only be the GMAC, but it can also be others (the SRAM
-> > controller comes to my mind), and then, if there's any difference
-> > in
-> > the design in a future SoC, we'll have to maintain that in the GMAC
-> > driver as well.
-> 
-> I guess I forgot to say something, I'm fine with using a syscon we
-> already have.
+PLL0 on davinci/da850-type device needs to be registered early in boot
+because it is needed for clocksource/clockevent. Change the driver
+to use CLK_OF_DECLARE for this special case.
 
-As we finally need the SRAM controller on these new SoCs (for VE on all
-SoCs targeted by dwmac-sun8i, and for DE on A64), should we deprecate
-the syscon and all switch to device regmap (and let sunxi-dram driver
-to export a regmap)? (As in the A64 DE2 thread discussed, two device
-nodes shouldn't cover the same MMIO region.)
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-In addition, there might be multiple registers in the syscon/sram zone
-that are needed (for example, if a version driver is written, it will
-need the "0x24 Version Register"; and GMAC needs "0x30 EMAC Clock
-Register"). How to deal with this if we export the syscon/sram zone as
-a generic device regmap?
+v9 changes:
+- new patch in v9
 
-> 
-> I'm just questionning if merging any other driver using one is the
-> right move.
-> 
-> Maxime
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+ drivers/clk/davinci/pll-da850.c | 26 ++++++++++++++++++++++----
+ drivers/clk/davinci/pll.c       |  4 +++-
+ drivers/clk/davinci/pll.h       |  2 +-
+ 3 files changed, 26 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/davinci/pll-da850.c b/drivers/clk/davinci/pll-da850.c
+index 00a6ece7b524..743527de1da2 100644
+--- a/drivers/clk/davinci/pll-da850.c
++++ b/drivers/clk/davinci/pll-da850.c
+@@ -12,6 +12,8 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/mfd/syscon.h>
++#include <linux/of_address.h>
+ #include <linux/of.h>
+ #include <linux/types.h>
+ 
+@@ -135,11 +137,27 @@ static const struct davinci_pll_sysclk_info *da850_pll0_sysclk_info[] = {
+ 	NULL
+ };
+ 
+-int of_da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
++void of_da850_pll0_init(struct device_node *node)
+ {
+-	return of_davinci_pll_init(dev, dev->of_node, &da850_pll0_info,
+-				   &da850_pll0_obsclk_info,
+-				   da850_pll0_sysclk_info, 7, base, cfgchip);
++	void __iomem *base;
++	struct regmap *cfgchip;
++
++	base = of_iomap(node, 0);
++	if (!base) {
++		pr_err("%s: ioremap failed\n", __func__);
++		return;
++	}
++
++	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
++	if (IS_ERR(cfgchip)) {
++		pr_warn("%s: failed to get cfgchip (%ld)\n", __func__,
++			PTR_ERR(cfgchip));
++		cfgchip = NULL;
++	}
++
++	of_davinci_pll_init(NULL, node, &da850_pll0_info,
++			    &da850_pll0_obsclk_info,
++			    da850_pll0_sysclk_info, 7, base, cfgchip);
+ }
+ 
+ static const struct davinci_pll_clk_info da850_pll1_info = {
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 7c4d808b8fdb..7d55e7470005 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -794,8 +794,10 @@ static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *de
+ 	return pdata;
+ }
+ 
++/* needed in early boot for clocksource/clockevent */
++CLK_OF_DECLARE(da850_pll0, "ti,da850-pll0", of_da850_pll0_init);
++
+ static const struct of_device_id davinci_pll_of_match[] = {
+-	{ .compatible = "ti,da850-pll0", .data = of_da850_pll0_init },
+ 	{ .compatible = "ti,da850-pll1", .data = of_da850_pll1_init },
+ 	{ }
+ };
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index 92a0978a7d29..5fe59ca45638 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -126,7 +126,7 @@ int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchi
+ 
+ int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ int da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+-int of_da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++void of_da850_pll0_init(struct device_node *node);
+ int of_da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+ int dm355_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+-- 
+2.17.0
