@@ -1,56 +1,76 @@
-Return-Path: <suzuki.katsuhiro@socionext.com>
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 27 Apr 2018 09:05:22 -0500
+From: Rob Herring <robh@kernel.org>
+To: David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@codeaurora.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-	Jassi Brar <jaswinder.singh@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH] clk: uniphier: add LD11/LD20 stream demux system clock
-Date: Fri, 27 Apr 2018 09:40:13 +0900
-Message-Id: <20180427004013.4006-1-suzuki.katsuhiro@socionext.com>
+	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 24/27] dt-bindings: timer: new bindings for TI DaVinci
+ timer
+Message-ID: <20180427140522.npmhjamhwxgp7y73@rob-hp-laptop>
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-25-david@lechnology.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180427001745.4116-25-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock for MPEG2 transport stream I/O and demux system (HSC) on
-UniPhier LD11/LD20 SoCs.
+On Thu, Apr 26, 2018 at 07:17:42PM -0500, David Lechner wrote:
+> This adds new device tree bindings for the timer IP block of TI
+> DaVinci-like SoCs.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+> 
+> v9 changes:
+> - new patch in v9
+> 
+> 
+>  .../bindings/timer/ti,davinci-timer.txt       | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt b/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
+> new file mode 100644
+> index 000000000000..2091eca46981
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
+> @@ -0,0 +1,24 @@
+> +* Device tree bindings for Texas Instruments DaVinci timer
+> +
+> +This document provides bindings for the 64-bit timer in the DaVinci
+> +architecture devices. The timer can be configured as a general-purpose 64-bit
+> +timer, dual general-purpose 32-bit timers. When configured as dual 32-bit
+> +timers, each half can operate in conjunction (chain mode) or independently
+> +(unchained mode) of each other.
+> +
+> +It is global timer is a free running up-counter and can generate interrupt
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
----
- drivers/clk/uniphier/clk-uniphier-sys.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Doesn't make sense, too many 'is'.
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-index ebc78ab2df05..4f5ff9fa11fd 100644
---- a/drivers/clk/uniphier/clk-uniphier-sys.c
-+++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-@@ -51,6 +51,9 @@
- #define UNIPHIER_LD11_SYS_CLK_STDMAC(idx)				\
- 	UNIPHIER_CLK_GATE("stdmac", (idx), NULL, 0x210c, 8)
- 
-+#define UNIPHIER_LD11_SYS_CLK_HSC(idx)					\
-+	UNIPHIER_CLK_GATE("hsc", (idx), NULL, 0x210c, 9)
-+
- #define UNIPHIER_PRO4_SYS_CLK_GIO(idx)					\
- 	UNIPHIER_CLK_GATE("gio", (idx), NULL, 0x2104, 6)
- 
-@@ -182,6 +185,7 @@ const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
- 	/* Index 5 reserved for eMMC PHY */
- 	UNIPHIER_LD11_SYS_CLK_ETHER(6),
- 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC, MIO */
-+	UNIPHIER_LD11_SYS_CLK_HSC(9),
- 	UNIPHIER_CLK_FACTOR("usb2", -1, "ref", 24, 25),
- 	UNIPHIER_LD11_SYS_CLK_AIO(40),
- 	UNIPHIER_LD11_SYS_CLK_EVEA(41),
-@@ -215,6 +219,7 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
- 	UNIPHIER_LD20_SYS_CLK_SD,
- 	UNIPHIER_LD11_SYS_CLK_ETHER(6),
- 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC */
-+	UNIPHIER_LD11_SYS_CLK_HSC(9),
- 	/* GIO is always clock-enabled: no function for 0x210c bit5 */
- 	/*
- 	 * clock for USB Link is enabled by the logic "OR" of bit 14 and bit 15.
--- 
-2.17.0
+There's no interrupt property listed.
+
+> +when the counter reaches preset counter values.
+> +
+> +Required properties:
+> +
+> +- compatible : should be "ti,davinci-timer".
+> +- reg : specifies base physical address and count of the registers.
+> +- clocks : the clock feeding the timer clock.
+> +
+> +Example:
+> +
+> +	clocksource: timer@20000 {
+> +		compatible = "ti,davinci-timer";
+> +		reg = <0x20000 0x1000>;
+> +		clocks = <&pll0_auxclk>;
+> +	};
+> -- 
+> 2.17.0
+> 
