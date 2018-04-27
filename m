@@ -1,132 +1,123 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-References: <20180426084437.192394-1-yixun.lan@amlogic.com>
- <1524820841.4026.112.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <fbd24a73-6793-76be-3ca5-04cbac5db198@amlogic.com>
-Date: Fri, 27 Apr 2018 17:31:44 +0800
-MIME-Version: 1.0
-In-Reply-To: <1524820841.4026.112.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v9 12/27] ARM: davinci: da8xx: add new sata_refclk init using common clock framework
+Date: Thu, 26 Apr 2018 19:17:30 -0500
+Message-Id: <20180427001745.4116-13-david@lechnology.com>
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-hi Jerome:
+This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
+using the new common clock framework drivers.
+
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
+
+Also, the #includes are sorted since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+---
+
+v9 changes:
+- none
+
+v8 changes:
+- none
+
+v7 changes:
+- none
+
+v6 changes:
+- none
 
 
-On 04/27/18 17:20, Jerome Brunet wrote:
-> On Thu, 2018-04-26 at 16:44 +0800, Yixun Lan wrote:
->>   This patch try to add AO clock and Reset driver for Amlogic's
->> Meson-AXG SoC.
->>   Please note that patch 7 need to wait for the DTS changes[3] merged
->> into mainline first, otherwise it will break the serial console.
->>
->>  patch 2: factor the common code into a dedicated file
->>  patch 3-5: add the aoclk driver for AXG SoC
->>  patch 6-7: drop unnecessary clock flags
->>
->> changes since v6 at [7]: 
->>  - fix over 80 chars chechpatch error
->>  - add Philip's Ack on patch 5
->>  - drop extra end of newline
->>
->> changes since v5 at [6]: 
->>  - drop unnecessary header files
->>  - add 'axg_aoclk' prefix to clk driver, make them more consistent
->>  - add missing end new line..
->>
->> changes since v4 at [5]: 
->>  - fix return err
->>  - introduce CONFIG_COMMON_CLK_MESON_AO
->>  - format/style minor fix
->>
->> changes since v3 at [4]: 
->>  - add 'const' contraint to the read-only data
->>  - switch to devm_of_clk_add_hw_provider API
->>  - check return value of devm_reset_controller_register
->>
->> changes since v2 at [2]: 
->>  - rework meson_aoclkc_probe() which leverage the of_match_data
->>  - merge patch 5-6 into this series
->>  - seperate DTS patch, will send to Kevin Hilman independently
->>  
->> changes since v1 at [0]: 
->>  - rebase to clk-meson's branch 'next/drivers' [1]
->>  - fix license, update to BSD-3-Clause
->>  - drop un-used include header file
->>
->> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
->> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
->> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
->> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
->> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
->> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
->> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
->> [7] https://lkml.kernel.org/r/20180419135426.155794-1-yixun.lan@amlogic.com
-> 
-> Yixun,
-> 
-> Your series looks mostly Ok to me, apart from the problem reported by Philipp.
-> 
-> However, once applied, if the clkc ao controller is enabled, both gxl and axg
-> fail to complete the boot. Could you please explain how this was tested ??
-> 
+ arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
 
-isn't this caused by the patch 7?
- [PATCH v7 7/7] clk: meson: drop CLK_IGNORE_UNUSED flag
-
-
-you need to also apply this DT patch which I've sent[1]:
- [PATCH v3 3/3] ARM64: dts: meson: fix clock source of the pclk for UART_AO
-
-could you exclude the patch 7 for now until Kevin merged the DT part?
-
-[1] https://lkml.kernel.org/r/20180328030130.240336-4-yixun.lan@amlogic.com
-
-
-> Not merging it until we get to the bottom of this.
-> 
->>
->>
->> Qiufang Dai (1):
->>   clk: meson-axg: Add AO Clock and Reset controller driver
->>
->> Yixun Lan (6):
->>   clk: meson: migrate to devm_of_clk_add_hw_provider API
->>   clk: meson: aoclk: refactor common code into dedicated file
->>   dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
->>   dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
->>   clk: meson: drop CLK_SET_RATE_PARENT flag
->>   clk: meson: drop CLK_IGNORE_UNUSED flag
->>
->>  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
->>  drivers/clk/meson/Kconfig                     |   8 +
->>  drivers/clk/meson/Makefile                    |   3 +-
->>  drivers/clk/meson/axg-aoclk.c                 | 163 ++++++++++++++++++
->>  drivers/clk/meson/axg-aoclk.h                 |  29 ++++
->>  drivers/clk/meson/gxbb-aoclk.c                |  95 ++++------
->>  drivers/clk/meson/gxbb-aoclk.h                |   5 +
->>  drivers/clk/meson/meson-aoclk.c               |  81 +++++++++
->>  drivers/clk/meson/meson-aoclk.h               |  34 ++++
->>  include/dt-bindings/clock/axg-aoclkc.h        |  26 +++
->>  include/dt-bindings/reset/axg-aoclkc.h        |  20 +++
->>  11 files changed, 401 insertions(+), 64 deletions(-)
->>  create mode 100644 drivers/clk/meson/axg-aoclk.c
->>  create mode 100644 drivers/clk/meson/axg-aoclk.h
->>  create mode 100644 drivers/clk/meson/meson-aoclk.c
->>  create mode 100644 drivers/clk/meson/meson-aoclk.h
->>  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
->>  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
->>
-> 
-> .
-> 
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 78390c64e6ca..73de449bbc68 100644
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -10,25 +10,30 @@
+  * the Free Software Foundation; either version 2 of the License, or
+  * (at your option) any later version.
+  */
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+-#include <linux/dma-contiguous.h>
+-#include <linux/serial_8250.h>
+ #include <linux/ahci_platform.h>
++#include <linux/clk-provider.h>
+ #include <linux/clk.h>
+-#include <linux/reboot.h>
++#include <linux/clkdev.h>
++#include <linux/dma-contiguous.h>
+ #include <linux/dmaengine.h>
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/reboot.h>
++#include <linux/serial_8250.h>
+ 
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
++#include <mach/cputype.h>
+ #include <mach/da8xx.h>
+-#include <mach/clock.h>
++#include <mach/time.h>
++
++#include "asp.h"
+ #include "cpuidle.h"
+ #include "sram.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include <mach/clock.h>
+ #include "clock.h"
+-#include "asp.h"
++#endif
+ 
+ #define DA8XX_TPCC_BASE			0x01c00000
+ #define DA8XX_TPTC0_BASE		0x01c08000
+@@ -1040,6 +1045,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
+ }
+ 
+ #ifdef CONFIG_ARCH_DAVINCI_DA850
++#ifndef CONFIG_COMMON_CLK
+ static struct clk sata_refclk = {
+ 	.name		= "sata_refclk",
+ 	.set_rate	= davinci_simple_set_rate,
+@@ -1061,6 +1067,18 @@ int __init da850_register_sata_refclk(int rate)
+ 
+ 	return 0;
+ }
++#else
++int __init da850_register_sata_refclk(int rate)
++{
++	struct clk *clk;
++
++	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	return clk_register_clkdev(clk, "refclk", "ahci_da850");
++}
++#endif
+ 
+ static struct resource da850_sata_resources[] = {
+ 	{
+-- 
+2.17.0
