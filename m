@@ -1,29 +1,112 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
- mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180326173905.22313-12-manivannan.sadhasivam@linaro.org>
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
- devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
- daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
- <20180326173905.22313-12-manivannan.sadhasivam@linaro.org>
-Message-ID: <152305052178.94378.12754514753260262003@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v7 11/11] clk: actions: Add S900 SoC clock support
-Date: Fri, 06 Apr 2018 14:35:21 -0700
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v3 01/10] dt-bindings: mediatek: mmsys: Add support for mfd
+Date: Fri, 27 Apr 2018 11:23:53 +0200
+Message-Id: <64ca273429d92f581568a48f3efe6035af65f579.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Manivannan Sadhasivam (2018-03-26 10:39:05)
-> Add Actions Semi S900 SoC clock support.
-> =
+From: Matthias Brugger <mbrugger@suse.com>
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+Add binding description for the mmsys mfd for some Mediatek
+devices. mmsys has some registers to control clock gates (which is
+used in the clk driver) and some registers to set the routing and enable
+the differnet blocks of the display subsystem.
 
-Applied to clk-next
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 --
+ .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
+ .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 ++++++++++++++++++++++
+ 3 files changed, 28 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index 4eb8bbe15c01..4468345f8b1a 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -6,10 +6,8 @@ The Mediatek mmsys controller provides various clocks to the system.
+ Required Properties:
+ 
+ - compatible: Should be one of:
+-	- "mediatek,mt2701-mmsys", "syscon"
+ 	- "mediatek,mt2712-mmsys", "syscon"
+ 	- "mediatek,mt6797-mmsys", "syscon"
+-	- "mediatek,mt8173-mmsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The mmsys controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+index 383183a89164..85a3b4ec06cd 100644
+--- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
++++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+@@ -9,7 +9,7 @@ function block.
+ 
+ All DISP device tree nodes must be siblings to the central MMSYS_CONFIG node.
+ For a description of the MMSYS_CONFIG binding, see
+-Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt.
++Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+ 
+ DISP function blocks
+ ====================
+diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+new file mode 100644
+index 000000000000..2331ae16917e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+@@ -0,0 +1,27 @@
++MediaTek MMSYS Multifunction Device Driver
++
++MMSYS is a multifunction device with the following sub modules:
++- clocks for the multi-media subsystem
++- central node for the DRM subsystem.
++
++This document describes the binding for MFD device. The MFD takes care to initailize
++the clock driver and the DRM driver. More info see
++Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
++
++Required properties:
++- compatible: Should be one of:
++	- "mediatek,mt2701-mmsys", "syscon"
++	- "mediatek,mt8173-mmsys", "syscon"
++- #clock-cells: Must be 1
++
++Optional properties:
++- power-domains: list of powerdomains needed for the subsystem to work
++
++Example:
++
++mmsys: clock-controller@14000000 {
++	compatible = "mediatek,mt8173-mmsys", "syscon";
++	reg = <0 0x14000000 0 0x1000>;
++	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
++	#clock-cells = <1>;
++};
+-- 
+2.16.3
