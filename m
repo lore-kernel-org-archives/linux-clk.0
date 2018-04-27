@@ -1,41 +1,92 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:18540 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757352AbeD0DNe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Apr 2018 23:13:34 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180427004013.4006-1-suzuki.katsuhiro@socionext.com>
-References: <20180427004013.4006-1-suzuki.katsuhiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 27 Apr 2018 12:12:43 +0900
-Message-ID: <CAK7LNATb5-7Z-6+TzDmRU3wxpAGDjNA=c1QQ31aGSXRA3Niptg@mail.gmail.com>
-Subject: Re: [PATCH] clk: uniphier: add LD11/LD20 stream demux system clock
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v3 06/10] mfd: mtk-mmsys: Add mt8173 nodes
+Date: Fri, 27 Apr 2018 11:23:58 +0200
+Message-Id: <fb942cf83613f75299cff6df1791c63ad7b02e3a.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-04-27 9:40 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> Add clock for MPEG2 transport stream I/O and demux system (HSC) on
-> UniPhier LD11/LD20 SoCs.
->
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> ---
+From: Matthias Brugger <mbrugger@suse.com>
 
+Add devices for the mt8173 SoC.
 
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/mfd/mtk-mmsys.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-
-
+diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
+index c802343fb1c6..5585a561a02f 100644
+--- a/drivers/mfd/mtk-mmsys.c
++++ b/drivers/mfd/mtk-mmsys.c
+@@ -19,6 +19,7 @@
+ 
+ enum {
+ 	MMSYS_MT2701 = 1,
++	MMSYS_MT8173,
+ };
+ 
+ static const struct mfd_cell mmsys_mt2701_devs[] = {
+@@ -26,6 +27,12 @@ static const struct mfd_cell mmsys_mt2701_devs[] = {
+ 	{ .name = "drm-mt2701-mm", },
+ };
+ 
++static const struct mfd_cell mmsys_mt8173_devs[] = {
++	{ .name = "clk-mt8173-mm", },
++	{ .name = "drm-mt8173-mm", },
++};
++
++
+ static int mmsys_probe(struct platform_device *pdev)
+ {
+ 	const struct mfd_cell *mmsys_cells;
+@@ -44,6 +51,10 @@ static int mmsys_probe(struct platform_device *pdev)
+ 		mmsys_cells = mmsys_mt2701_devs;
+ 		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
+ 		break;
++	case MMSYS_MT8173:
++		mmsys_cells = mmsys_mt8173_devs;
++		nr_cells = ARRAY_SIZE(mmsys_mt8173_devs);
++		break;
+ 	default:
+ 		return -ENODEV;
+ 	}
+@@ -62,6 +73,9 @@ static const struct of_device_id of_match_mmsys[] = {
+ 	{ .compatible = "mediatek,mt2701-mmsys",
+ 	  .data = (void *) MMSYS_MT2701,
+ 	},
++	{ .compatible = "mediatek,mt8173-mmsys",
++	  .data = (void *) MMSYS_MT8173,
++	},
+ 	{ /* sentinel */ },
+ };
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.16.3
