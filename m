@@ -1,60 +1,54 @@
-Return-Path: <matthias.bgg@kernel.org>
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 10/10] MAINTAINERS: update Mediatek Soc entry
-Date: Mon, 23 Apr 2018 18:13:59 +0200
-Message-Id: <0fd5bf87d227fdb44bd0ddd2f83c5595380957fb.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
+Return-Path: <marvin24@gmx.de>
+From: Marc Dietrich <marvin24@gmx.de>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
+Date: Fri, 27 Apr 2018 14:30:41 +0200
+Message-ID: <4032338.O1BXeabcRj@ax5200p>
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+Hi Dmitry,
 
-Mediatek SoCs include several soc specific drivers as well
-as a mfd device. Add these to the maintainers file.
+Am Freitag, 27. April 2018, 01:58:14 CEST schrieb Dmitry Osipenko:
+> Hello,
+> 
+> This series of patches fixes ULPI USB on Tegra20. The original problem
+> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+> with the USB for the devices that have CDEV2 being enabled by bootloader.
+> The patch got into the kernel and later Marc Dietrich found that USB
+> stopped working on the "paz00" Tegra20 board. After a bit of discussion
+> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+> driver was setting CDEV2's parent incorrectly. The parent clock is actually
+> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
+> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+> suggestion), and then setting these clock muxes as parents for the CDEV1/2
+> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since
+> CDEV2 (aka MCLK2) is the actual clock source for "ulpi-link".
+> 
+> Dmitry Osipenko (4):
+>   clk: tegra20: Add DEV1/DEV2 OSC dividers
+>   pinctrl: tegra20: Provide CDEV1/2 clock muxes
+>   clk: tegra20: Set correct parents for CDEV1/2 clocks
+>   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+> 
+>  arch/arm/boot/dts/tegra20.dtsi          |  2 +-
+>  drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
+>  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+>  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+>  5 files changed, 55 insertions(+), 17 deletions(-)
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks for taking a look at this!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0a1410d5a621..74f7ea345096 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1621,6 +1621,8 @@ F:	arch/arm/boot/dts/mt7*
- F:	arch/arm/boot/dts/mt8*
- F:	arch/arm/mach-mediatek/
- F:	arch/arm64/boot/dts/mediatek/
-+F:	drivers/soc/mediatek/
-+F:	drivers/mfd/mtk-mmsys.c
- N:	mtk
- K:	mediatek
- 
--- 
-2.16.3
+Series is:
+
+Tested-by: Marc Dietrich <marvin24@gmx.de>
+
+Marc
