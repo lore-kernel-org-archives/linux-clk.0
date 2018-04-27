@@ -1,232 +1,37 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1524341993.2601.131.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson: add the video decoder clocks
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Maxime Jourdan <maxi.jourdan@wanadoo.fr>, Neil
- <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-amlogic
-	 <linux-amlogic@lists.infradead.org>, linux-clk <linux-clk@vger.kernel.org>
-Date: Sat, 21 Apr 2018 22:19:53 +0200
-In-Reply-To: <CAHStOZ7m+8xSX=k5k-LwmgZy6Ja4MFwsVjMy-FeoG=2c0rpm2g@mail.gmail.com>
-References: 
-	<CAHStOZ7m+8xSX=k5k-LwmgZy6Ja4MFwsVjMy-FeoG=2c0rpm2g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 27 Apr 2018 08:41:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com,
+	geert+renesas@glider.be, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: Add r8a77990 CPG Core Clock
+ Definitions
+Message-ID: <20180427134144.kxqsmefmulewotne@rob-hp-laptop>
+References: <1524227264-24896-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1524227264-24896-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1524227264-24896-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2018-04-21 at 10:18 +0200, Maxime Jourdan wrote:
-> In preparation for the V4L2 M2M driver, add the clocks for
-> VDEC_1 and VDEC_HEVC to gxbb.
+On Fri, Apr 20, 2018 at 09:27:43PM +0900, Yoshihiro Shimoda wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
-> Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-
-a few other comments, in addition to what neil pointed out.
-
+> This patch adds all R-Car E3 Clock Pulse Generator Core Clock Outputs.
+> 
+> Note that internal CPG clocks (S0, S1, S2, S3, SDSRC) are not included,
+> as they are used as internal clock sources only, and never referenced
+> from DT.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [shimoda: add SPDX-License-Identifier]
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 > ---
->  drivers/clk/meson/gxbb.c              | 112 ++++++++++++++++++++++++++
->  drivers/clk/meson/gxbb.h              |   4 +-
->  include/dt-bindings/clock/gxbb-clkc.h |   4 +
->  3 files changed, 119 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index b1e4d9557610..f9d7ab9c924e 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -1543,6 +1543,100 @@ static struct clk_regmap gxbb_vapb = {
->  	},
->  };
->  
-> +/* VDEC clocks */
-> +
-> +static const char * const gxbb_vdec_parent_names[] = {
-> +	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7"
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_1_sel = {
-> +	.data = &(struct clk_regmap_mux_data){
-> +		.offset = HHI_VDEC_CLK_CNTL,
-> +		.mask = 0x3,
-> +		.shift = 9,
-> +	},
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "vdec_1_sel",
-> +		.ops = &clk_regmap_mux_ops,
-> +		.parent_names = gxbb_vdec_parent_names,
-> +		.num_parents = ARRAY_SIZE(gxbb_vdec_parent_names),
-> +		.flags = CLK_SET_RATE_NO_REPARENT,
+>  include/dt-bindings/clock/r8a77990-cpg-mssr.h | 62 +++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/r8a77990-cpg-mssr.h
 
-Looks like you are/will be controlling the mux manually from your driver.
-Any particular reason for doing so ?
-
-Looking at the possible parent, you may as well call clk_set_rate() on the leaf
-clock with 500Mhz, 666Mhz, etc ... it would accomplish the same thing but :
-* You would need to get only one clock in your driver
-* You don't need to manage the topology of the clock tree in your driver, which
-could be interresting  if your driver ends up supporting more than GXBB.
-
-> +	},
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_1_div = {
-> +	.data = &(struct clk_regmap_div_data){
-> +		.offset = HHI_VDEC_CLK_CNTL,
-> +		.shift = 0,
-> +		.width = 7,
-> +	},
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "vdec_1_div",
-> +		.ops = &clk_regmap_divider_ops,
-> +		.parent_names = (const char *[]){ "vdec_1_sel" },
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_1 = {
-> +	.data = &(struct clk_regmap_gate_data){
-> +		.offset = HHI_VDEC_CLK_CNTL,
-> +		.bit_idx = 8,
-> +	},
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "vdec_1",
-> +		.ops = &clk_regmap_gate_ops,
-> +		.parent_names = (const char *[]){ "vdec_1_div" },
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-
-Any particular reason for using CLK_IGNORE_UNUSED ?
-
-You should only need CLK_IGNORE_UNUSED when the clock is left on by the
-bootloader, and you need it stay that way until the driver load.
-
-It allows to skip the clk_disable_unused() mechanism of CCF but I don't think
-the video decoder should require this, unless I missed something.
-
-> +	},
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_hevc_sel = {
-> +	.data = &(struct clk_regmap_mux_data){
-> +		.offset = HHI_VDEC2_CLK_CNTL,
-> +		.mask = 0x3,
-> +		.shift = 25,
-> +	},
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "vdec_hevc_sel",
-> +		.ops = &clk_regmap_mux_ops,
-> +		.parent_names = gxbb_vdec_parent_names,
-> +		.num_parents = ARRAY_SIZE(gxbb_vdec_parent_names),
-> +		.flags = CLK_SET_RATE_NO_REPARENT,
-> +	},
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_hevc_div = {
-> +	.data = &(struct clk_regmap_div_data){
-> +		.offset = HHI_VDEC2_CLK_CNTL,
-> +		.shift = 16,
-> +		.width = 7,
-> +	},
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "vdec_hevc_div",
-> +		.ops = &clk_regmap_divider_ops,
-> +		.parent_names = (const char *[]){ "vdec_hevc_sel" },
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_hevc = {
-> +	.data = &(struct clk_regmap_gate_data){
-> +		.offset = HHI_VDEC2_CLK_CNTL,
-> +		.bit_idx = 24,
-> +	},
-> +	.hw.init = &(struct clk_init_data) {
-> +		.name = "vdec_hevc",
-> +		.ops = &clk_regmap_gate_ops,
-> +		.parent_names = (const char *[]){ "vdec_hevc_div" },
-> +		.num_parents = 1,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +	},
-> +};
-> +
->  /* Everything Else (EE) domain gates */
->  static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
->  static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-> @@ -1786,6 +1880,12 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
->  		[CLKID_FCLK_DIV4_DIV]	    = &gxbb_fclk_div4_div.hw,
->  		[CLKID_FCLK_DIV5_DIV]	    = &gxbb_fclk_div5_div.hw,
->  		[CLKID_FCLK_DIV7_DIV]	    = &gxbb_fclk_div7_div.hw,
-> +		[CLKID_VDEC_1_SEL]	    = &gxbb_vdec_1_sel.hw,
-> +		[CLKID_VDEC_1_DIV]	    = &gxbb_vdec_1_div.hw,
-> +		[CLKID_VDEC_1]		    = &gxbb_vdec_1.hw,
-> +		[CLKID_VDEC_HEVC_SEL]	    = &gxbb_vdec_hevc_sel.hw,
-> +		[CLKID_VDEC_HEVC_DIV]	    = &gxbb_vdec_hevc_div.hw,
-> +		[CLKID_VDEC_HEVC]	    = &gxbb_vdec_hevc.hw,
->  		[NR_CLKS]		    = NULL,
->  	},
->  	.num = NR_CLKS,
-> @@ -1942,6 +2042,12 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
->  		[CLKID_FCLK_DIV4_DIV]	    = &gxbb_fclk_div4_div.hw,
->  		[CLKID_FCLK_DIV5_DIV]	    = &gxbb_fclk_div5_div.hw,
->  		[CLKID_FCLK_DIV7_DIV]	    = &gxbb_fclk_div7_div.hw,
-> +		[CLKID_VDEC_1_SEL]	    = &gxbb_vdec_1_sel.hw,
-> +		[CLKID_VDEC_1_DIV]	    = &gxbb_vdec_1_div.hw,
-> +		[CLKID_VDEC_1]		    = &gxbb_vdec_1.hw,
-> +		[CLKID_VDEC_HEVC_SEL]	    = &gxbb_vdec_hevc_sel.hw,
-> +		[CLKID_VDEC_HEVC_DIV]	    = &gxbb_vdec_hevc_div.hw,
-> +		[CLKID_VDEC_HEVC]	    = &gxbb_vdec_hevc.hw,
->  		[NR_CLKS]		    = NULL,
->  	},
->  	.num = NR_CLKS,
-> @@ -2100,6 +2206,12 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
->  	&gxbb_fclk_div4,
->  	&gxbb_fclk_div5,
->  	&gxbb_fclk_div7,
-> +	&gxbb_vdec_1_sel,
-> +	&gxbb_vdec_1_div,
-> +	&gxbb_vdec_1,
-> +	&gxbb_vdec_hevc_sel,
-> +	&gxbb_vdec_hevc_div,
-> +	&gxbb_vdec_hevc,
->  };
->  
->  struct clkc_data {
-> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-> index 9febf3f03739..ae21d235355a 100644
-> --- a/drivers/clk/meson/gxbb.h
-> +++ b/drivers/clk/meson/gxbb.h
-> @@ -204,8 +204,10 @@
->  #define CLKID_FCLK_DIV4_DIV	  148
->  #define CLKID_FCLK_DIV5_DIV	  149
->  #define CLKID_FCLK_DIV7_DIV	  150
-> +#define CLKID_VDEC_1_DIV	  152
-> +#define CLKID_VDEC_HEVC_DIV	  155
->  
-> -#define NR_CLKS			  151
-> +#define NR_CLKS			  157
->  
-
-We prefer to get the DT binding part in a separate patch, it makes the platform
-maintainer's life easier.
-
->  /* include the CLKIDs that have been made part of the DT binding */
->  #include <dt-bindings/clock/gxbb-clkc.h>
-> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-> index 8ba99a5e3fd3..ae7f6be747e4 100644
-> --- a/include/dt-bindings/clock/gxbb-clkc.h
-> +++ b/include/dt-bindings/clock/gxbb-clkc.h
-> @@ -125,5 +125,9 @@
->  #define CLKID_VAPB_1		138
->  #define CLKID_VAPB_SEL		139
->  #define CLKID_VAPB		140
-> +#define CLKID_VDEC_1_SEL	151
-> +#define CLKID_VDEC_1		153
-> +#define CLKID_VDEC_HEVC_SEL	154
-> +#define CLKID_VDEC_HEVC	156
->  
->  #endif /* __GXBB_CLKC_H */
-> -- 
-> 2.17.0
-> 
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
