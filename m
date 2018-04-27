@@ -1,50 +1,32 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 27 Apr 2018 15:10:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: sean.wang@mediatek.com
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
+	mark.rutland@arm.com, p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] dt-bindings: clock: mediatek: add g3dsys bindings
+Message-ID: <20180427201054.fghwgp4l4yvfs6n6@rob-hp-laptop>
+References: <cover.1524816502.git.sean.wang@mediatek.com>
+ <665c38d5803573aa9a01471253f406301b1123a1.1524816502.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <a0c390ae-53fe-5d17-1ebf-d55e805f4118@ti.com>
-References: <20180417173038.25510-1-brgl@bgdev.pl> <20180417173038.25510-5-brgl@bgdev.pl>
- <a0c390ae-53fe-5d17-1ebf-d55e805f4118@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 18 Apr 2018 10:03:46 +0200
-Message-ID: <CAMRc=Md_BaaV1UedisxnvXx0eopEAOj5zF3rox775NUHcf5qJg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/7] remoteproc/davinci: prepare and unprepare the
- clock where needed
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Suman Anna <s-anna@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <665c38d5803573aa9a01471253f406301b1123a1.1524816502.git.sean.wang@mediatek.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-04-18 7:27 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
-> On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> We're currently switching the platform to using the common clock
->> framework. We need to explicitly prepare and unprepare the rproc
->> clock.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> Acked-by: Suman Anna <s-anna@ti.com>
->> Reviewed-by: David Lechner <david@lechnology.com>
->
-> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
->
-> This should be safe to apply to v4.17-rc1 as well (for inclusion in v4.18).
->
-> Bartosz, I noticed that CONFIG_REMOTEPROC and the DA8XX driver is not
-> enabled in davinci_all_defconfig. Can you please send a patch enabling
-> that too?
->
-> Thanks,
-> Sekhar
+On Fri, Apr 27, 2018 at 04:14:43PM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> Add bindings to g3dsys providing necessary clock and reset control to
+> Mali-450.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,g3dsys.txt
 
-Sure, will do.
-
-Bart
+Reviewed-by: Rob Herring <robh@kernel.org>
