@@ -1,33 +1,50 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: airlied@linux.ie, devicetree@vger.kernel.org,
- linux-mediatek@lists.infradead.org, mark.rutland@arm.com,
- matthias.bgg@gmail.com, mturquette@baylibre.com, robh+dt@kernel.org,
- sean.wang@mediatek.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
-Cc: linux-arm-kernel@lists.infradead.org, Sean Wang <sean.wang@mediatek.com>,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <cover.1524044917.git.sean.wang@mediatek.com>
- <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
-Message-ID: <152410791532.46528.10083030894445315558@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
-Date: Wed, 18 Apr 2018 20:18:35 -0700
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1524823252.4026.124.camel@baylibre.com>
+Subject: Re: [PATCH v7 1/7] clk: meson: migrate to
+ devm_of_clk_add_hw_provider API
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
+ linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Date: Fri, 27 Apr 2018 12:00:52 +0200
+In-Reply-To: <20180426084437.192394-2-yixun.lan@amlogic.com>
+References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+	 <20180426084437.192394-2-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting sean.wang@mediatek.com (2018-04-18 03:24:54)
-> From: Sean Wang <sean.wang@mediatek.com>
-> =
-
-> Add bindings to g3dsys providing necessary clock and reset control to
-> Mali-450.
-> =
-
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+On Thu, 2018-04-26 at 16:44 +0800, Yixun Lan wrote:
+> There is a protential memory leak, as of_clk_del_provider is
+> never called if of_clk_add_hw_provider has been executed.
+> Fix this by using devm variant API.
+> 
+> Fixes: f8c11f79912d ("clk: meson: Add GXBB AO Clock and Reset controller driver")
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 > ---
->  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++=
-++++++
+>  drivers/clk/meson/gxbb-aoclk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+> index 9ec23ae9a219..eebb580b9e0f 100644
+> --- a/drivers/clk/meson/gxbb-aoclk.c
+> +++ b/drivers/clk/meson/gxbb-aoclk.c
+> @@ -191,7 +191,7 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>  			&gxbb_aoclk_onecell_data);
+>  }
+>  
 
-Why isn't this under bindings/clock/ ?
+Applied
+Thx
