@@ -1,30 +1,156 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 01/12] clk: imx: add configuration option for mmio clks
+Date: Sat, 28 Apr 2018 02:56:32 +0800
+Message-Id: <1524855403-15301-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, afaerber@suse.de,
- mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180326173905.22313-5-manivannan.sadhasivam@linaro.org>
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com, 96boards@ucrobotics.com,
- devicetree@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
- daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- viresh.kumar@linaro.org, hzhang@ucrobotics.com, bdong@ucrobotics.com,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180326173905.22313-1-manivannan.sadhasivam@linaro.org>
- <20180326173905.22313-5-manivannan.sadhasivam@linaro.org>
-Message-ID: <152305050430.94378.7992043565205553328@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v7 04/11] clk: actions: Add gate clock support
-Date: Fri, 06 Apr 2018 14:35:04 -0700
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Manivannan Sadhasivam (2018-03-26 10:38:58)
-> Add support for Actions Semi gate clock together with helper
-> functions to be used in composite clock.
-> =
+The patch introduces CONFIG_MXC_CLK option for legacy MMIO clocks,
+this is required to compile legacy MMIO clock conditionally when adding
+SCU based clocks for MX8 platforms later.
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ arch/arm/mach-imx/Kconfig | 10 ++++++++++
+ drivers/clk/Kconfig       |  1 +
+ drivers/clk/imx/Kconfig   |  5 +++++
+ drivers/clk/imx/Makefile  |  2 +-
+ 4 files changed, 17 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/Kconfig
 
-Applied to clk-next
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index e47fa13..45f2a08 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -57,23 +57,27 @@ config SOC_IMX21
+ 	select CPU_ARM926T
+ 	select IMX_HAVE_IOMUX_V1
+ 	select MXC_AVIC
++	select MXC_CLK
+ 
+ config SOC_IMX27
+ 	bool
+ 	select CPU_ARM926T
+ 	select IMX_HAVE_IOMUX_V1
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX27
+ 
+ config SOC_IMX31
+ 	bool
+ 	select CPU_V6
+ 	select MXC_AVIC
++	select MXC_CLK
+ 
+ config SOC_IMX35
+ 	bool
+ 	select ARCH_MXC_IOMUX_V3
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX35
+ 
+ if ARCH_MULTI_V5
+@@ -417,6 +421,7 @@ config SOC_IMX1
+ 	bool "i.MX1 support"
+ 	select CPU_ARM920T
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX1
+ 	help
+ 	  This enables support for Freescale i.MX1 processor
+@@ -430,6 +435,7 @@ config SOC_IMX25
+ 	select ARCH_MXC_IOMUX_V3
+ 	select CPU_ARM926T
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX25
+ 	help
+ 	  This enables support for Freescale i.MX25 processor
+@@ -442,6 +448,7 @@ comment "Cortex-A platforms"
+ config SOC_IMX5
+ 	bool
+ 	select HAVE_IMX_SRC
++	select MXC_CLK
+ 	select MXC_TZIC
+ 
+ config	SOC_IMX50
+@@ -478,6 +485,7 @@ config SOC_IMX6
+ 	select HAVE_IMX_MMDC
+ 	select HAVE_IMX_SRC
+ 	select MFD_SYSCON
++	select MXC_CLK
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
+ 
+ config SOC_IMX6Q
+@@ -531,6 +539,7 @@ config SOC_IMX7D
+ 	select HAVE_IMX_MMDC
+ 	select HAVE_IMX_SRC
+ 	select IMX_GPCV2
++	select MXC_CLK
+ 	help
+ 		This enables support for Freescale i.MX7 Dual processor.
+ 
+@@ -551,6 +560,7 @@ if ARCH_MULTI_V7 || ARM_SINGLE_ARMV7M
+ config SOC_VF610
+ 	bool "Vybrid Family VF610 support"
+ 	select ARM_GIC if ARCH_MULTI_V7
++	select MXC_CLK
+ 	select PINCTRL_VF610
+ 
+ 	help
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 41492e9..5b2e74f 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -282,6 +282,7 @@ config COMMON_CLK_STM32H7
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
++source "drivers/clk/imx/Kconfig"
+ source "drivers/clk/keystone/Kconfig"
+ source "drivers/clk/mediatek/Kconfig"
+ source "drivers/clk/meson/Kconfig"
+diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+new file mode 100644
+index 0000000..43a3ecc
+--- /dev/null
++++ b/drivers/clk/imx/Kconfig
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++# common clock support for NXP i.MX SoC family.
++config MXC_CLK
++	bool
++	depends on ARCH_MXC
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 8c3baa7..d447f8c 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+-obj-y += \
++obj-$(CONFIG_MXC_CLK) += \
+ 	clk.o \
+ 	clk-busy.o \
+ 	clk-cpu.o \
+-- 
+2.7.4
