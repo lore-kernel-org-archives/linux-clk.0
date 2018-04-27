@@ -1,87 +1,84 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v5 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-Date: Mon, 9 Apr 2018 22:37:42 +0800
-Message-ID: <20180409143749.71197-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <marcel@ziswiler.com>
+Message-ID: <1524832404.6979.9.camel@ziswiler.com>
+Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+From: Marcel Ziswiler <marcel@ziswiler.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter
+ De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc
+ Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 27 Apr 2018 14:33:24 +0200
+In-Reply-To: <20180426235818.10018-2-digetx@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+	 <20180426235818.10018-2-digetx@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-  This patch try to add AO clock and Reset driver for Amlogic's
-Meson-AXG SoC.
-  Please note that patch 7 need to wait for the DTS changes[3] merged
-into mainline first, otherwise it will break the serial console.
+Hi Dmitry
 
- patch 2: factor the common code into a dedicated file
- patch 3-5: add the aoclk driver for AXG SoC
- patch 6-7: drop unnecessary clock flags
+Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around e.g.
+DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
 
-changes since v4 at [5]: 
- - fix return err
- - introduce CONFIG_COMMON_CLK_MESON_AO
- - format/style minor fix
+On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
+> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider
+> as
+> a parent. Add these dividers in order to be able to provide that
+> parent
+> option.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-
+> tegra20.c
+> index 0ee56dd04cec..16cf4108f2ff 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -26,6 +26,8 @@
+>  #include "clk.h"
+>  #include "clk-id.h"
+>  
+> +#define MISC_CLK_ENB 0x48
+> +
+>  #define OSC_CTRL 0x50
+>  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+>  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
+>  				    periph_clk_enb_refcnt);
+>  	clks[TEGRA20_CLK_PEX] = clk;
+>  
+> +	/* cdev1 OSC divider */
+> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
+> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
 
-changes since v3 at [4]: 
- - add 'const' contraint to the read-only data
- - switch to devm_of_clk_add_hw_provider API
- - check return value of devm_reset_controller_register
+So it would be:
 
-changes since v2 at [2]: 
- - rework meson_aoclkc_probe() which leverage the of_match_data
- - merge patch 5-6 into this series
- - seperate DTS patch, will send to Kevin Hilman independently
- 
-changes since v1 at [0]: 
- - rebase to clk-meson's branch 'next/drivers' [1]
- - fix license, update to BSD-3-Clause
- - drop un-used include header file
++			     0, clk_base + MISC_CLK_ENB, 22, 2,
 
-[0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
-[1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
-[2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
-[3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
-[4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
-[5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
+> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+> +
+> +	/* cdev2 OSC divider */
+> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
+> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
 
-Qiufang Dai (1):
-  clk: meson-axg: Add AO Clock and Reset controller driver
+And:
 
-Yixun Lan (6):
-  clk: meson: migrate to devm_of_clk_add_hw_provider API
-  clk: meson: aoclk: refactor common code into dedicated file
-  dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
-  dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-  clk: meson: drop CLK_SET_RATE_PARENT flag
-  clk: meson: drop CLK_IGNORE_UNUSED flag
++			     0, clk_base + MISC_CLK_ENB, 20, 2,
 
- .../bindings/clock/amlogic,gxbb-aoclkc.txt         |   1 +
- drivers/clk/meson/Kconfig                          |   8 +
- drivers/clk/meson/Makefile                         |   3 +-
- drivers/clk/meson/axg-aoclk.c                      | 163 +++++++++++++++++++++
- drivers/clk/meson/axg-aoclk.h                      |  31 ++++
- drivers/clk/meson/gxbb-aoclk.c                     |  92 ++++--------
- drivers/clk/meson/gxbb-aoclk.h                     |   7 +
- drivers/clk/meson/meson-aoclk.c                    |  82 +++++++++++
- drivers/clk/meson/meson-aoclk.h                    |  35 +++++
- include/dt-bindings/clock/axg-aoclkc.h             |  26 ++++
- include/dt-bindings/reset/axg-aoclkc.h             |  20 +++
- 11 files changed, 406 insertions(+), 62 deletions(-)
- create mode 100644 drivers/clk/meson/axg-aoclk.c
- create mode 100644 drivers/clk/meson/axg-aoclk.h
- create mode 100644 drivers/clk/meson/meson-aoclk.c
- create mode 100644 drivers/clk/meson/meson-aoclk.h
- create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
- create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+> +
+>  	/* cdev1 */
+>  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0,
+> 26000000);
+>  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed",
+> 0,
 
--- 
-2.15.1
+Cheers
+
+Marcel
