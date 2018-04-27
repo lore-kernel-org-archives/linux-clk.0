@@ -1,221 +1,196 @@
-Return-Path: <narmstrong@baylibre.com>
-Return-Path: <narmstrong@baylibre.com>
-Subject: Re: [PATCH] clk: meson: add the video decoder clocks
-To: Maxime Jourdan <maxi.jourdan@wanadoo.fr>,
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
- linux-amlogic <linux-amlogic@lists.infradead.org>,
- linux-clk <linux-clk@vger.kernel.org>
-References: <CAHStOZ7m+8xSX=k5k-LwmgZy6Ja4MFwsVjMy-FeoG=2c0rpm2g@mail.gmail.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <928202bc-0dea-5eb4-264b-7774b5a31de1@baylibre.com>
-Date: Sat, 21 Apr 2018 14:50:06 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAHStOZ7m+8xSX=k5k-LwmgZy6Ja4MFwsVjMy-FeoG=2c0rpm2g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v9 10/27] ARM: davinci: dm646x: add new clock init using common clock framework
+Date: Thu, 26 Apr 2018 19:17:28 -0500
+Message-Id: <20180427001745.4116-11-david@lechnology.com>
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+This adds the new board-specific clock init in mach-davinci/dm646x.c
+using the new common clock framework drivers.
 
-On 21/04/2018 10:18, Maxime Jourdan wrote:
-> In preparation for the V4L2 M2M driver, add the clocks for
-> VDEC_1 and VDEC_HEVC to gxbb.
-> 
-> Signed-off-by: Maxime Jourdan <maxi.jourdan@wanadoo.fr <mailto:maxi.jourdan@wanadoo.fr>>
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-Send it in text-only, HTML is forbidden ! It breaks all the formatting and other stuff.
+Also clean up the #includes since we are adding some here.
 
-Use git- send-email for that, or other tools like patman or git-series.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-Next time also CC linux-kernel@vger.kernel.org and linux-arm-kernel@lists.infradead.org !
+v9 changes:
+- register PLL1 and PSC in dm646x_init_time() instead of as platform device so
+  that we get the correct timer0 clock for davinci_timer_init()
+- Fixed size of PLL memory block
 
-> ---
->  drivers/clk/meson/gxbb.c              | 112 ++++++++++++++++++++++++++
->  drivers/clk/meson/gxbb.h              |   4 +-
->  include/dt-bindings/clock/gxbb-clkc.h |   4 +
->  3 files changed, 119 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index b1e4d9557610..f9d7ab9c924e 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -1543,6 +1543,100 @@ static struct clk_regmap gxbb_vapb = {
->  },
->  };
->  
-> +/* VDEC clocks */
-> +
-> +static const char * const gxbb_vdec_parent_names[] = {
-> +"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7"
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_1_sel = {
-> +.data = &(struct clk_regmap_mux_data){
-> +.offset = HHI_VDEC_CLK_CNTL,
-> +.mask = 0x3,
-> +.shift = 9,
-> +},
-> +.hw.init = &(struct clk_init_data){
-> +.name = "vdec_1_sel",
-> +.ops = &clk_regmap_mux_ops,
-> +.parent_names = gxbb_vdec_parent_names,
-> +.num_parents = ARRAY_SIZE(gxbb_vdec_parent_names),
-> +.flags = CLK_SET_RATE_NO_REPARENT,
-> +},
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_1_div = {
-> +.data = &(struct clk_regmap_div_data){
-> +.offset = HHI_VDEC_CLK_CNTL,
-> +.shift = 0,
-> +.width = 7,
-> +},
-> +.hw.init = &(struct clk_init_data){
-> +.name = "vdec_1_div",
-> +.ops = &clk_regmap_divider_ops,
-> +.parent_names = (const char *[]){ "vdec_1_sel" },
-> +.num_parents = 1,
-> +.flags = CLK_SET_RATE_PARENT,
-> +},
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_1 = {
-> +.data = &(struct clk_regmap_gate_data){
-> +.offset = HHI_VDEC_CLK_CNTL,
-> +.bit_idx = 8,
-> +},
-> +.hw.init = &(struct clk_init_data) {
-> +.name = "vdec_1",
-> +.ops = &clk_regmap_gate_ops,
-> +.parent_names = (const char *[]){ "vdec_1_div" },
-> +.num_parents = 1,
-> +.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +},
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_hevc_sel = {
-> +.data = &(struct clk_regmap_mux_data){
-> +.offset = HHI_VDEC2_CLK_CNTL,
-> +.mask = 0x3,
-> +.shift = 25,
-> +},
-> +.hw.init = &(struct clk_init_data){
-> +.name = "vdec_hevc_sel",
-> +.ops = &clk_regmap_mux_ops,
-> +.parent_names = gxbb_vdec_parent_names,
-> +.num_parents = ARRAY_SIZE(gxbb_vdec_parent_names),
-> +.flags = CLK_SET_RATE_NO_REPARENT,
-> +},
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_hevc_div = {
-> +.data = &(struct clk_regmap_div_data){
-> +.offset = HHI_VDEC2_CLK_CNTL,
-> +.shift = 16,
-> +.width = 7,
-> +},
-> +.hw.init = &(struct clk_init_data){
-> +.name = "vdec_hevc_div",
-> +.ops = &clk_regmap_divider_ops,
-> +.parent_names = (const char *[]){ "vdec_hevc_sel" },
-> +.num_parents = 1,
-> +.flags = CLK_SET_RATE_PARENT,
-> +},
-> +};
-> +
-> +static struct clk_regmap gxbb_vdec_hevc = {
-> +.data = &(struct clk_regmap_gate_data){
-> +.offset = HHI_VDEC2_CLK_CNTL,
-> +.bit_idx = 24,
-> +},
-> +.hw.init = &(struct clk_init_data) {
-> +.name = "vdec_hevc",
-> +.ops = &clk_regmap_gate_ops,
-> +.parent_names = (const char *[]){ "vdec_hevc_div" },
-> +.num_parents = 1,
-> +.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-> +},
-> +};
-> +
->  /* Everything Else (EE) domain gates */
->  static MESON_GATE(gxbb_ddr, HHI_GCLK_MPEG0, 0);
->  static MESON_GATE(gxbb_dos, HHI_GCLK_MPEG0, 1);
-> @@ -1786,6 +1880,12 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
->  [CLKID_FCLK_DIV4_DIV]    = &gxbb_fclk_div4_div.hw,
->  [CLKID_FCLK_DIV5_DIV]    = &gxbb_fclk_div5_div.hw,
->  [CLKID_FCLK_DIV7_DIV]    = &gxbb_fclk_div7_div.hw,
-> +[CLKID_VDEC_1_SEL]    = &gxbb_vdec_1_sel.hw,
-> +[CLKID_VDEC_1_DIV]    = &gxbb_vdec_1_div.hw,
-> +[CLKID_VDEC_1]    = &gxbb_vdec_1.hw,
-> +[CLKID_VDEC_HEVC_SEL]    = &gxbb_vdec_hevc_sel.hw,
-> +[CLKID_VDEC_HEVC_DIV]    = &gxbb_vdec_hevc_div.hw,
-> +[CLKID_VDEC_HEVC]    = &gxbb_vdec_hevc.hw,
->  [NR_CLKS]    = NULL,
->  },
->  .num = NR_CLKS,
-> @@ -1942,6 +2042,12 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
->  [CLKID_FCLK_DIV4_DIV]    = &gxbb_fclk_div4_div.hw,
->  [CLKID_FCLK_DIV5_DIV]    = &gxbb_fclk_div5_div.hw,
->  [CLKID_FCLK_DIV7_DIV]    = &gxbb_fclk_div7_div.hw,
-> +[CLKID_VDEC_1_SEL]    = &gxbb_vdec_1_sel.hw,
-> +[CLKID_VDEC_1_DIV]    = &gxbb_vdec_1_div.hw,
-> +[CLKID_VDEC_1]    = &gxbb_vdec_1.hw,
-> +[CLKID_VDEC_HEVC_SEL]    = &gxbb_vdec_hevc_sel.hw,
-> +[CLKID_VDEC_HEVC_DIV]    = &gxbb_vdec_hevc_div.hw,
-> +[CLKID_VDEC_HEVC]    = &gxbb_vdec_hevc.hw,
->  [NR_CLKS]    = NULL,
->  },
->  .num = NR_CLKS,
-> @@ -2100,6 +2206,12 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
->  &gxbb_fclk_div4,
->  &gxbb_fclk_div5,
->  &gxbb_fclk_div7,
-> +&gxbb_vdec_1_sel,
-> +&gxbb_vdec_1_div,
-> +&gxbb_vdec_1,
-> +&gxbb_vdec_hevc_sel,
-> +&gxbb_vdec_hevc_div,
-> +&gxbb_vdec_hevc,
->  };
->  
->  struct clkc_data {
-> diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-> index 9febf3f03739..ae21d235355a 100644
-> --- a/drivers/clk/meson/gxbb.h
-> +++ b/drivers/clk/meson/gxbb.h
-> @@ -204,8 +204,10 @@
->  #define CLKID_FCLK_DIV4_DIV  148
->  #define CLKID_FCLK_DIV5_DIV  149
->  #define CLKID_FCLK_DIV7_DIV  150
-> +#define CLKID_VDEC_1_DIV  152
-> +#define CLKID_VDEC_HEVC_DIV  155
->  
-> -#define NR_CLKS  151
-> +#define NR_CLKS  157
->  
->  /* include the CLKIDs that have been made part of the DT binding */
->  #include <dt-bindings/clock/gxbb-clkc.h>
-> diff --git a/include/dt-bindings/clock/gxbb-clkc.h b/include/dt-bindings/clock/gxbb-clkc.h
-> index 8ba99a5e3fd3..ae7f6be747e4 100644
-> --- a/include/dt-bindings/clock/gxbb-clkc.h
-> +++ b/include/dt-bindings/clock/gxbb-clkc.h
-> @@ -125,5 +125,9 @@
->  #define CLKID_VAPB_1138
->  #define CLKID_VAPB_SEL139
->  #define CLKID_VAPB140
-> +#define CLKID_VDEC_1_SEL151
-> +#define CLKID_VDEC_1153
-> +#define CLKID_VDEC_HEVC_SEL154
-> +#define CLKID_VDEC_HEVC156
->  
->  #endif /* __GXBB_CLKC_H */
-> -- 
-> 2.17.0
-> 
-> 
+v8 changes:
+- register clkdev lookup for ref_clk and aux_clkin
 
-Otherwise, looks good for me !
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- add davinci prefix to commit description
 
-Simply resend with "[PATCH RESEND]" in the subject so I can apply it to the clk-meson tree.
+v6 changes:
+- add blank lines between function calls
 
-Neil
+
+ arch/arm/mach-davinci/board-dm646x-evm.c |  2 +
+ arch/arm/mach-davinci/davinci.h          |  1 +
+ arch/arm/mach-davinci/dm646x.c           | 63 +++++++++++++++++++++---
+ 3 files changed, 58 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
+index 2d37f5b0e1f5..d672804df817 100644
+--- a/arch/arm/mach-davinci/board-dm646x-evm.c
++++ b/arch/arm/mach-davinci/board-dm646x-evm.c
+@@ -772,6 +772,8 @@ static __init void evm_init(void)
+ 	int ret;
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 
++	dm646x_register_clocks();
++
+ 	ret = dm646x_gpio_register();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index 16aca5853ab2..fa99197d36f9 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -116,6 +116,7 @@ int dm644x_gpio_register(void);
+ /* DM646x function declarations */
+ void dm646x_init(void);
+ void dm646x_init_time(unsigned long ref_clk_rate, unsigned long aux_clkin_rate);
++void dm646x_register_clocks(void);
+ void dm646x_init_mcasp0(struct snd_platform_data *pdata);
+ void dm646x_init_mcasp1(struct snd_platform_data *pdata);
+ int dm646x_init_edma(struct edma_rsv_info *rsv);
+diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
+index e1d6e92f434a..d260ca5f6827 100644
+--- a/arch/arm/mach-davinci/dm646x.c
++++ b/arch/arm/mach-davinci/dm646x.c
+@@ -8,29 +8,35 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
++
++#include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+ #include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/serial_8250.h>
+-#include <linux/platform_device.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
+ 
+ #include <asm/mach/map.h>
+ 
++#include <mach/common.h>
+ #include <mach/cputype.h>
+ #include <mach/irqs.h>
+-#include "psc.h"
+ #include <mach/mux.h>
+-#include <mach/time.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
++
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ #define DAVINCI_VPIF_BASE       (0x01C12000)
+ 
+@@ -46,6 +52,7 @@
+ #define DM646X_EMAC_CNTRL_RAM_OFFSET	0x2000
+ #define DM646X_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num       = 1,
+ 	.phys_base = DAVINCI_PLL1_BASE,
+@@ -356,6 +363,7 @@ static struct clk_lookup dm646x_clks[] = {
+ 	CLK(NULL, "vpif1", &vpif1_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
++#endif
+ 
+ static struct emac_platform_data dm646x_emac_pdata = {
+ 	.ctrl_reg_offset	= DM646X_EMAC_CNTRL_OFFSET,
+@@ -953,10 +961,49 @@ void __init dm646x_init(void)
+ void __init dm646x_init_time(unsigned long ref_clk_rate,
+ 			     unsigned long aux_clkin_rate)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll1, *psc;
++	struct clk *clk;
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, ref_clk_rate);
++	clk_register_fixed_rate(NULL, "aux_clkin", NULL, 0, aux_clkin_rate);
++
++	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
++	dm355_pll1_init(NULL, pll1, NULL);
++
++	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
++	dm355_psc_init(NULL, psc);
++
++	clk = clk_get(NULL, "timer0");
++
++	davinci_timer_init(clk);
++#else
+ 	ref_clk.rate = ref_clk_rate;
+ 	aux_clkin.rate = aux_clkin_rate;
+ 	davinci_clk_init(dm646x_clks);
+ 	davinci_timer_init(&timer0_clk);
++#endif
++}
++
++static struct resource dm646x_pll2_resources[] = {
++	{
++		.start	= DAVINCI_PLL2_BASE,
++		.end	= DAVINCI_PLL2_BASE + SZ_1K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device dm646x_pll2_device = {
++	.name		= "dm646x-pll2",
++	.id		= -1,
++	.resource	= dm646x_pll2_resources,
++	.num_resources	= ARRAY_SIZE(dm646x_pll2_resources),
++};
++
++void __init dm646x_register_clocks(void)
++{
++	/* PLL1 and PSC are registered in dm646x_init_time() */
++	platform_device_register(&dm646x_pll2_device);
+ }
+ 
+ static int __init dm646x_init_devices(void)
+-- 
+2.17.0
