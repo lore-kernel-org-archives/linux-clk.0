@@ -1,110 +1,143 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 02/12] clk: imx: scu: add scu clock common part
+Date: Sat, 28 Apr 2018 02:56:33 +0800
+Message-Id: <1524855403-15301-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1522824302.2049.7.camel@aosc.io>
-References: <20180317092857.4396-1-wens@csie.org> <20180317092857.4396-3-wens@csie.org>
- <20180318213129.ucwslzvwq6khxrcd@flea> <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com>
- <20180403094845.le2hfuxktlv66lre@flea> <20180403095005.skflxb7m2qzbhjix@flea> <1522824302.2049.7.camel@aosc.io>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 4 Apr 2018 15:00:48 +0800
-Message-ID: <CAGb2v64eD7H2BB3u_Gvk0EfUB8NwTJjDi6b4+Z3-k+1ok4vNcw@mail.gmail.com>
-Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to
- access the GMAC register
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>,
-	devicetree <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	netdev <netdev@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>, Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 4, 2018 at 2:45 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> =E5=9C=A8 2018-04-03=E4=BA=8C=E7=9A=84 11:50 +0200=EF=BC=8CMaxime Ripard=
-=E5=86=99=E9=81=93=EF=BC=9A
->> On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
->> > On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
->> > > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
->> > > <maxime.ripard@bootlin.com> wrote:
->> > > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
->> > > > > From: Icenowy Zheng <icenowy@aosc.io>
->> > > > >
->> > > > > There's a GMAC configuration register, which exists on
->> > > > > A64/A83T/H3/H5 in
->> > > > > the syscon part, in the CCU of R40 SoC.
->> > > > >
->> > > > > Export a regmap of the CCU.
->> > > > >
->> > > > > Read access is not restricted to all registers, but only the
->> > > > > GMAC
->> > > > > register is allowed to be written.
->> > > > >
->> > > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> > > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> > > >
->> > > > Gah, this is crazy. I'm really starting to regret letting that
->> > > > syscon
->> > > > in in the first place...
->> > >
->> > > IMHO syscon is really a better fit. It's part of the glue layer
->> > > and
->> > > most other dwmac user platforms treat it as such and use a
->> > > syscon.
->> > > Plus the controls encompass delays (phase), inverters (polarity),
->> > > and even signal routing. It's not really just a group of clock
->> > > controls,
->> > > like what we poorly modeled for A20/A31. I think that was really
->> > > a
->> > > mistake.
->> > >
->> > > As I mentioned in the cover letter, a slightly saner approach
->> > > would
->> > > be to let drivers add custom syscon entries, which would then
->> > > require
->> > > less custom plumbing.
->> >
->> > A syscon is convenient, sure, but it also bypasses any abstraction
->> > layer we have everywhere else, which means that we'll have to
->> > maintain
->> > the register layout in each and every driver that uses it.
->> >
->> > So far, it's only be the GMAC, but it can also be others (the SRAM
->> > controller comes to my mind), and then, if there's any difference
->> > in
->> > the design in a future SoC, we'll have to maintain that in the GMAC
->> > driver as well.
->>
->> I guess I forgot to say something, I'm fine with using a syscon we
->> already have.
->
-> As we finally need the SRAM controller on these new SoCs (for VE on all
-> SoCs targeted by dwmac-sun8i, and for DE on A64), should we deprecate
-> the syscon and all switch to device regmap (and let sunxi-dram driver
-> to export a regmap)? (As in the A64 DE2 thread discussed, two device
-> nodes shouldn't cover the same MMIO region.)
+Add scu clock common part which will be used by client clock drivers.
 
-Sounds like a plan.
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/Kconfig       |  2 ++
+ drivers/clk/imx/Makefile      |  2 ++
+ drivers/clk/imx/scu/Kconfig   |  5 +++++
+ drivers/clk/imx/scu/Makefile  |  4 ++++
+ drivers/clk/imx/scu/clk-scu.c | 25 +++++++++++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h | 18 ++++++++++++++++++
+ 6 files changed, 56 insertions(+)
+ create mode 100644 drivers/clk/imx/scu/Kconfig
+ create mode 100644 drivers/clk/imx/scu/Makefile
+ create mode 100644 drivers/clk/imx/scu/clk-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-scu.h
 
-> In addition, there might be multiple registers in the syscon/sram zone
-> that are needed (for example, if a version driver is written, it will
-> need the "0x24 Version Register"; and GMAC needs "0x30 EMAC Clock
-> Register"). How to deal with this if we export the syscon/sram zone as
-> a generic device regmap?
-
-You can have multiple regmaps for a device. And the API allows you to
-request them up by name.
-
-ChenYu
-
->>
->> I'm just questionning if merging any other driver using one is the
->> right move.
->>
->> Maxime
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+index 43a3ecc..b1599bf 100644
+--- a/drivers/clk/imx/Kconfig
++++ b/drivers/clk/imx/Kconfig
+@@ -3,3 +3,5 @@
+ config MXC_CLK
+ 	bool
+ 	depends on ARCH_MXC
++
++source drivers/clk/imx/scu/Kconfig
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index d447f8c..79b641a 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -13,6 +13,8 @@ obj-$(CONFIG_MXC_CLK) += \
+ 	clk-pllv3.o \
+ 	clk-pfd.o
+ 
++obj-y += scu/
++
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+ obj-$(CONFIG_SOC_IMX25)  += clk-imx25.o
+diff --git a/drivers/clk/imx/scu/Kconfig b/drivers/clk/imx/scu/Kconfig
+new file mode 100644
+index 0000000..4d018fd
+--- /dev/null
++++ b/drivers/clk/imx/scu/Kconfig
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++# SCU based common clock support for NXP i.MX SoC family.
++config MXC_CLK_SCU
++	bool
++	depends on ARCH_MXC && ARM64
+diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
+new file mode 100644
+index 0000000..7dead13
+--- /dev/null
++++ b/drivers/clk/imx/scu/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_MXC_CLK_SCU) += \
++	clk-scu.o
+diff --git a/drivers/clk/imx/scu/clk-scu.c b/drivers/clk/imx/scu/clk-scu.c
+new file mode 100644
+index 0000000..c19cd38
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-scu.c
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *	Dong Aisheng <aisheng.dong@nxp.com>
++ */
++
++#include <linux/errno.h>
++#include "clk-scu.h"
++
++DEFINE_SPINLOCK(imx_ccm_lock);
++sc_ipc_t ccm_ipc_handle;
++
++int imx_clk_scu_init(void)
++{
++	sc_err_t sci_err;
++
++	sci_err = sc_ipc_get_handle(&ccm_ipc_handle);
++	if (sci_err != SC_ERR_NONE) {
++		pr_err("imx_clk_scu: failed to get sc ipc handle\n");
++		return -EPROBE_DEFER;
++	}
++
++	return 0;
++}
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+new file mode 100644
+index 0000000..6b39e4a
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ */
++
++#ifndef __IMX_CLK_SCU_H
++#define __IMX_CLK_SCU_H
++
++#include <linux/spinlock.h>
++#include <soc/imx/sc/sci.h>
++
++extern spinlock_t imx_ccm_lock;
++extern sc_ipc_t ccm_ipc_handle;
++
++int imx_clk_scu_init(void);
++
++#endif
+-- 
+2.7.4
