@@ -1,70 +1,102 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-2-git-send-email-geert+renesas@glider.be> <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Apr 2018 08:28:28 +0200
-Message-ID: <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
-	Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, linux-tegra@vger.kernel.org,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v3 08/10] clk: mediatek: mt8173-mm: switch to mfd device
+Date: Fri, 27 Apr 2018 11:24:00 +0200
+Message-Id: <228863cbbde4a4c682a6596343a8071119b913e7.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen, Rob,
+From: Matthias Brugger <mbrugger@suse.com>
 
-On Fri, Apr 20, 2018 at 12:25 AM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
->> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
->> limited to clock providers.
->>
->> Hence move these helpers into their own header file, so callers that are
->> not clock providers no longer have to include <linux/clk-provider.h>.
->>
->> Suggested-by: Stephen Boyd <sboyd@kernel.org>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
->> ---
->> v3:
->>   - Add Reviewed-by,
->>   - Add SPDX-License-Identifier,
->>   - Add to clock section in MAINTAINERS (note that Rob is still listed
->>     as a maintainer, too, due to the include/linux/of*.h catch-all
->>     rule),
->
-> Can you X: out this file so Rob is happy? Or that doesn't work?
+As the new mfd device is in place, switch probing
+for the MMSYS to support invocation from the mfd device.
 
-I guess that should work.
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/mediatek/clk-mt8173.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-My point here is that due to the catch-all rule, he's listed as maintainer
-for of_{dma,gpio,irq,iommu,mdio,net,pci} too, which are all helpers for
-other subsystems. Perhaps these should be X'd-out too?
-Or is it OK without X-ing them out, as the clock maintainers are now shown, too?
-
-Rob: What's your preference?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
+index 96c292c3e440..e31b3ee3e968 100644
+--- a/drivers/clk/mediatek/clk-mt8173.c
++++ b/drivers/clk/mediatek/clk-mt8173.c
+@@ -15,6 +15,7 @@
+ #include <linux/clk.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
+ 
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+@@ -791,7 +792,7 @@ static const struct mtk_gate_regs mm1_cg_regs __initconst = {
+ 		.ops = &mtk_clk_gate_ops_setclr,		\
+ 	}
+ 
+-static const struct mtk_gate mm_clks[] __initconst = {
++static const struct mtk_gate mm_clks[] = {
+ 	/* MM0 */
+ 	GATE_MM0(CLK_MM_SMI_COMMON, "mm_smi_common", "mm_sel", 0),
+ 	GATE_MM0(CLK_MM_SMI_LARB0, "mm_smi_larb0", "mm_sel", 1),
+@@ -1152,10 +1153,13 @@ static void __init mtk_imgsys_init(struct device_node *node)
+ }
+ CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt8173-imgsys", mtk_imgsys_init);
+ 
+-static void __init mtk_mmsys_init(struct device_node *node)
++static int mtk_mmsys_probe(struct platform_device *pdev)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	int r;
++	struct device_node *node;
++
++	node = pdev->dev.parent->of_node;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
+ 
+@@ -1166,8 +1170,17 @@ static void __init mtk_mmsys_init(struct device_node *node)
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	return r;
+ }
+-CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt8173-mmsys", mtk_mmsys_init);
++
++static struct platform_driver clk_mt8173_mm_drv = {
++	.probe = mtk_mmsys_probe,
++	.driver = {
++		.name = "clk-mt8173-mm",
++	},
++};
++builtin_platform_driver(clk_mt8173_mm_drv);
+ 
+ static void __init mtk_vdecsys_init(struct device_node *node)
+ {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.16.3
