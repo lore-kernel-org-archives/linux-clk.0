@@ -1,105 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:57902 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759215AbeD1Bts (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Apr 2018 21:49:48 -0400
-Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-To: Kevin Hilman <khilman@baylibre.com>
-References: <20180426084437.192394-1-yixun.lan@amlogic.com>
- <1524820841.4026.112.camel@baylibre.com>
- <fbd24a73-6793-76be-3ca5-04cbac5db198@amlogic.com>
- <1524823154.4026.123.camel@baylibre.com>
- <ab754711-f727-133c-7bc3-a9f3243c2278@amlogic.com>
- <7hsh7g1o3k.fsf@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <973672c6-1cc1-7f38-ac30-263fd5f0b69c@amlogic.com>
-Date: Sat, 28 Apr 2018 09:50:06 +0800
-MIME-Version: 1.0
-In-Reply-To: <7hsh7g1o3k.fsf@baylibre.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v9 24/27] dt-bindings: timer: new bindings for TI DaVinci timer
+Date: Thu, 26 Apr 2018 19:17:42 -0500
+Message-Id: <20180427001745.4116-25-david@lechnology.com>
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Kevin
+This adds new device tree bindings for the timer IP block of TI
+DaVinci-like SoCs.
 
-On 04/28/18 02:49, Kevin Hilman wrote:
-> Hi Yixun,
-> 
-> Yixun Lan <yixun.lan@amlogic.com> writes:
-> 
->> On 04/27/2018 05:59 PM, Jerome Brunet wrote:
-> 
-> [...]
-> 
->>>
->>> Looks to be the problem indeed. But it is still an issue with how your patchset
->>> in organized.
->>>
->>> I can't merge this until Kevin merges the patch above, which he can't merge
->>> until there is the clkc_ao support in axg, which is given by this series.
->>>
->>> 1# You should remove the axg part of the patch above. Kevin will be able to
->>> merge it w/o any dependencies. (BTW, the patch is broken for axg because 1) you
->>> did not include the dt-binding header for the clkc_ao in axg and 2) the clkc_ao
->>> does not exist at this stage)
->>> 2# I can then safely merge this series - w/o breaking gxbb and gxl.
->>> 3# Finally you'll have to make a DT change for the axg, enabling the clkc_ao and
->>> changes the uart clocks at the same time.
->>>
->>
->>   I didn't make myself clear in previous email
->>
->>   I mean, could you merge patch 1-6, just exclude the patch 7
->> then kevin can merge the DT part (there are three patches) [1]
->> after the DT patches merged, then you can take this patch 7
->> This way, it won't break gxl or any other SoCs
->>
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
->>   I'm sending patch 7 along with this series, it would be better if I
->> give a warning about it.
-> 
-> Your proposal requires extra work from a couple different maintainers to
-> track all the dependencies, and is very error prone.  Sometimes
-> maintainers may do this for you if they have time and are feeling
-> generous, but you will have much more success if you can ease the
-> process.
-> 
-Indeed
-
- I've actually put a note in the cover letter to highlight special
-attention needed for patch 7, but turns out rely on maintainers to
-handle the dependencies isn't a wise idea
- Lesson has been learned here, and I'll handle dependencies myself next
-time.
+v9 changes:
+- new patch in v9
 
 
-> Jerome has provided lots of guidance throughout this series and just
-> above has provided you with a very good proposal above which minimizes
-> the dependencies, and provides the changes in the right order.
-> 
-> Please follow Jerome's suggestion,
-> 
-as already replied in my previous email, again here is my approach
+ .../bindings/timer/ti,davinci-timer.txt       | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
 
-a) I'll send patch 2-6, just leave out patch 7 for now, and as patch 1
-is already accepted.. this way it won't break gxbb/gxl (the OLD SoC)
-b) will pin you to require DT patch merged or re-send if necessary (as
-till now the clkao driver is merged)
-c) send out the patch 7 for UART AO clock fix
-
-this is exactly what Jerome suggested..
-
-Thank you
-
-Yixun
-
+diff --git a/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt b/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
+new file mode 100644
+index 000000000000..2091eca46981
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
+@@ -0,0 +1,24 @@
++* Device tree bindings for Texas Instruments DaVinci timer
++
++This document provides bindings for the 64-bit timer in the DaVinci
++architecture devices. The timer can be configured as a general-purpose 64-bit
++timer, dual general-purpose 32-bit timers. When configured as dual 32-bit
++timers, each half can operate in conjunction (chain mode) or independently
++(unchained mode) of each other.
++
++It is global timer is a free running up-counter and can generate interrupt
++when the counter reaches preset counter values.
++
++Required properties:
++
++- compatible : should be "ti,davinci-timer".
++- reg : specifies base physical address and count of the registers.
++- clocks : the clock feeding the timer clock.
++
++Example:
++
++	clocksource: timer@20000 {
++		compatible = "ti,davinci-timer";
++		reg = <0x20000 0x1000>;
++		clocks = <&pll0_auxclk>;
++	};
+-- 
+2.17.0
