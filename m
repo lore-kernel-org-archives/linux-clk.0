@@ -1,69 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45831 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932295AbeDWTfQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Apr 2018 15:35:16 -0400
-Received: by mail-wr0-f195.google.com with SMTP id p5-v6so16577852wre.12
-        for <linux-clk@vger.kernel.org>; Mon, 23 Apr 2018 12:35:15 -0700 (PDT)
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com, jbrunet@baylibre.com,
-        linux-amlogic@lists.infradead.org
-Cc: carlo@caione.org, khilman@baylibre.com, linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v4 0/2] add support for the NAND clocks on Meson8b
-Date: Mon, 23 Apr 2018 21:35:07 +0200
-Message-Id: <20180423193509.30584-1-martin.blumenstingl@googlemail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1524820841.4026.112.camel@baylibre.com>
+Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
+ linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Date: Fri, 27 Apr 2018 11:20:41 +0200
+In-Reply-To: <20180426084437.192394-1-yixun.lan@amlogic.com>
+References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds support for the NAND clocks found in the Meson8, Meson8b
-and Meson8m2 SoCs.
-The clocks consist of a simple gate, a divider and a mux. The mux
-parents are not documented in the public S805 datasheet [0], so I
-had to use a bit of math and take the vendor kernel as reference [1]
-to find the actual parent clocks.
-Some mux parents cannot be divided down without remainder to the
-target clocks (as expected by the vendor NAND driver) these clocks
-have the ROUND_CLOSEST flag set.
+On Thu, 2018-04-26 at 16:44 +0800, Yixun Lan wrote:
+>   This patch try to add AO clock and Reset driver for Amlogic's
+> Meson-AXG SoC.
+>   Please note that patch 7 need to wait for the DTS changes[3] merged
+> into mainline first, otherwise it will break the serial console.
+> 
+>  patch 2: factor the common code into a dedicated file
+>  patch 3-5: add the aoclk driver for AXG SoC
+>  patch 6-7: drop unnecessary clock flags
+> 
+> changes since v6 at [7]: 
+>  - fix over 80 chars chechpatch error
+>  - add Philip's Ack on patch 5
+>  - drop extra end of newline
+> 
+> changes since v5 at [6]: 
+>  - drop unnecessary header files
+>  - add 'axg_aoclk' prefix to clk driver, make them more consistent
+>  - add missing end new line..
+> 
+> changes since v4 at [5]: 
+>  - fix return err
+>  - introduce CONFIG_COMMON_CLK_MESON_AO
+>  - format/style minor fix
+> 
+> changes since v3 at [4]: 
+>  - add 'const' contraint to the read-only data
+>  - switch to devm_of_clk_add_hw_provider API
+>  - check return value of devm_reset_controller_register
+> 
+> changes since v2 at [2]: 
+>  - rework meson_aoclkc_probe() which leverage the of_match_data
+>  - merge patch 5-6 into this series
+>  - seperate DTS patch, will send to Kevin Hilman independently
+>  
+> changes since v1 at [0]: 
+>  - rebase to clk-meson's branch 'next/drivers' [1]
+>  - fix license, update to BSD-3-Clause
+>  - drop un-used include header file
+> 
+> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
+> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
+> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
+> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
+> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
+> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
+> [7] https://lkml.kernel.org/r/20180419135426.155794-1-yixun.lan@amlogic.com
 
-The new clocks are similar to gxbb_sd_emmc_c_clk0_sel,
-gxbb_sd_emmc_c_clk0_div and gxbb_sd_emmc_c_clk0 on the GX SoCs.
-Actual differences are:
-- mux parents are re-ordered
-- the gate is controlled by bit 8 (instead of bit 7 on GX)
+Yixun,
 
-Changes since v3 at [2]:
-- move the dt-bindings change into a separate patch
-- do not export the mux and the divider as we only need to manage the
-  left clock (in our case: the gate - the common clock framework will
-  take care of the rest)
+Your series looks mostly Ok to me, apart from the problem reported by Philipp.
 
-Changes since v2 at [1]:
-- rebased on top of v4.17-rc1 and updated the clocks to use the new
-  clk_regmap framework (as all other clocks in meson8b.c)
+However, once applied, if the clkc ao controller is enabled, both gxl and axg
+fail to complete the boot. Could you please explain how this was tested ??
 
-Changes since v1 at [0]:
-- rebased so it still applies in 2018
-- dropped mux table (since the known parents are values 0..4)
-- replaced CLK_SET_RATE_NO_REPARENT with CLK_SET_RATE_PARENT on the mux
-- added CLK_SET_RATE_PARENT on the divider
-- fixed width of the divider (it's 7 bits wide, ranging from bit 0 to 6
-  while v1 only used a width of 6 bits)
+Not merging it until we get to the bottom of this.
 
-
-[0] http://lists.infradead.org/pipermail/linux-amlogic/2017-April/003237.html
-[1] http://lists.infradead.org/pipermail/linux-amlogic/2018-January/005934.html
-[2] http://lists.infradead.org/pipermail/linux-amlogic/2018-April/007134.html
-
-Martin Blumenstingl (2):
-  dt-bindings: clock: meson8b: export the NAND clock
-  clk: meson: meson8b: add support for the NAND clocks
-
- drivers/clk/meson/meson8b.c              | 54 ++++++++++++++++++++++++
- drivers/clk/meson/meson8b.h              |  5 ++-
- include/dt-bindings/clock/meson8b-clkc.h |  1 +
- 3 files changed, 59 insertions(+), 1 deletion(-)
-
--- 
-2.17.0
-
+> 
+> 
+> Qiufang Dai (1):
+>   clk: meson-axg: Add AO Clock and Reset controller driver
+> 
+> Yixun Lan (6):
+>   clk: meson: migrate to devm_of_clk_add_hw_provider API
+>   clk: meson: aoclk: refactor common code into dedicated file
+>   dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+>   dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+>   clk: meson: drop CLK_SET_RATE_PARENT flag
+>   clk: meson: drop CLK_IGNORE_UNUSED flag
+> 
+>  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
+>  drivers/clk/meson/Kconfig                     |   8 +
+>  drivers/clk/meson/Makefile                    |   3 +-
+>  drivers/clk/meson/axg-aoclk.c                 | 163 ++++++++++++++++++
+>  drivers/clk/meson/axg-aoclk.h                 |  29 ++++
+>  drivers/clk/meson/gxbb-aoclk.c                |  95 ++++------
+>  drivers/clk/meson/gxbb-aoclk.h                |   5 +
+>  drivers/clk/meson/meson-aoclk.c               |  81 +++++++++
+>  drivers/clk/meson/meson-aoclk.h               |  34 ++++
+>  include/dt-bindings/clock/axg-aoclkc.h        |  26 +++
+>  include/dt-bindings/reset/axg-aoclkc.h        |  20 +++
+>  11 files changed, 401 insertions(+), 64 deletions(-)
+>  create mode 100644 drivers/clk/meson/axg-aoclk.c
+>  create mode 100644 drivers/clk/meson/axg-aoclk.h
+>  create mode 100644 drivers/clk/meson/meson-aoclk.c
+>  create mode 100644 drivers/clk/meson/meson-aoclk.h
+>  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+>  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+> 
