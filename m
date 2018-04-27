@@ -1,70 +1,221 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Biju Das
-	<biju.das@bp.renesas.com>, Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: [PATCH 4/5] clk: renesas: r8a7792: Fix LB clock divider
-Date: Tue, 3 Apr 2018 10:17:19 +0000
-Message-ID: <TY1PR01MB1770B77B715CF949AC551EE9C0A50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1522344790-20061-1-git-send-email-geert+renesas@glider.be>
- <1522344790-20061-5-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1522344790-20061-5-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v9 09/27] ARM: davinci: dm644x: add new clock init using common clock framework
+Date: Thu, 26 Apr 2018 19:17:27 -0500
+Message-Id: <20180427001745.4116-10-david@lechnology.com>
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Geert
+This adds the new board-specific clock init in mach-davinci/dm644x.c
+using the new common clock framework drivers.
 
-> Subject: [PATCH 4/5] clk: renesas: r8a7792: Fix LB clock divider
->
-> The CLK_TYPE_GEN2_LB clock type is meant for SoCs like R-Car H2, where
-> the LB clock divider depends on the value of the MD18 pin.
->
-> On R-Car V2H, the LB clock divider is fixed to 24.  Hence model the
-> clock as a fixed factor clock instead.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/clk/renesas/r8a7792-cpg-mssr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/r8a7792-cpg-mssr.c b/drivers/clk/renesas=
-/r8a7792-cpg-mssr.c
-> index 609a540804965c40..8b66e6f4b4584de1 100644
-> --- a/drivers/clk/renesas/r8a7792-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a7792-cpg-mssr.c
-> @@ -53,7 +53,6 @@ static const struct cpg_core_clk r8a7792_core_clks[] __=
-initconst =3D {
->  DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
->
->  /* Core Clock Outputs */
-> -DEF_BASE("lb",   R8A7792_CLK_LB,   CLK_TYPE_GEN2_LB,   CLK_PLL1),
->  DEF_BASE("qspi", R8A7792_CLK_QSPI, CLK_TYPE_GEN2_QSPI, CLK_PLL1_DIV2),
->
->  DEF_FIXED("z",      R8A7792_CLK_Z,     CLK_PLL0,          1, 1),
-> @@ -63,6 +62,7 @@ static const struct cpg_core_clk r8a7792_core_clks[] __=
-initconst =3D {
->  DEF_FIXED("hp",     R8A7792_CLK_HP,    CLK_PLL1,         12, 1),
->  DEF_FIXED("i",      R8A7792_CLK_I,     CLK_PLL1,          3, 1),
->  DEF_FIXED("b",      R8A7792_CLK_B,     CLK_PLL1,         12, 1),
-> +DEF_FIXED("lb",     R8A7792_CLK_B,     CLK_PLL1,         24, 1),
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-s/ R8A7792_CLK_B/ R8A7792_CLK_LB/
+Also clean up the #includes since we are adding some here.
 
-With that fixed:
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
->  DEF_FIXED("p",      R8A7792_CLK_P,     CLK_PLL1,         24, 1),
->  DEF_FIXED("cl",     R8A7792_CLK_CL,    CLK_PLL1,         48, 1),
->  DEF_FIXED("m2",     R8A7792_CLK_M2,    CLK_PLL1,          8, 1),
-> --
-> 2.7.4
+v9 changes:
+- register PLL1 and PSC in dm644x_init_time() instead of as platform device so
+  that we get the correct timer0 clock for davinci_timer_init()
+- Fixed size of PLL memory block
+
+v8 changes:
+- none
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
 
 
+ arch/arm/mach-davinci/board-dm644x-evm.c  |  2 +
+ arch/arm/mach-davinci/board-neuros-osd2.c |  2 +
+ arch/arm/mach-davinci/board-sffsdr.c      |  2 +
+ arch/arm/mach-davinci/davinci.h           |  1 +
+ arch/arm/mach-davinci/dm644x.c            | 64 +++++++++++++++++++----
+ 5 files changed, 62 insertions(+), 9 deletions(-)
 
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 5bf024784738..190a28cc91bd 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -768,6 +768,8 @@ static __init void davinci_evm_init(void)
+ 	struct clk *aemif_clk;
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 
++	dm644x_register_clocks();
++
+ 	dm644x_init_devices();
+ 
+ 	ret = dm644x_gpio_register();
+diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
+index 0b13237e63f2..06e7f592b62b 100644
+--- a/arch/arm/mach-davinci/board-neuros-osd2.c
++++ b/arch/arm/mach-davinci/board-neuros-osd2.c
+@@ -174,6 +174,8 @@ static __init void davinci_ntosd2_init(void)
+ 	struct clk *aemif_clk;
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 
++	dm644x_register_clocks();
++
+ 	dm644x_init_devices();
+ 
+ 	ret = dm644x_gpio_register();
+diff --git a/arch/arm/mach-davinci/board-sffsdr.c b/arch/arm/mach-davinci/board-sffsdr.c
+index e7c1728b0833..792bb84d5011 100644
+--- a/arch/arm/mach-davinci/board-sffsdr.c
++++ b/arch/arm/mach-davinci/board-sffsdr.c
+@@ -134,6 +134,8 @@ static __init void davinci_sffsdr_init(void)
+ {
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 
++	dm644x_register_clocks();
++
+ 	dm644x_init_devices();
+ 
+ 	platform_add_devices(davinci_sffsdr_devices,
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index a799b5266d4b..16aca5853ab2 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -108,6 +108,7 @@ int dm365_gpio_register(void);
+ void dm644x_init(void);
+ void dm644x_init_devices(void);
+ void dm644x_init_time(void);
++void dm644x_register_clocks(void);
+ void dm644x_init_asp(void);
+ int dm644x_init_video(struct vpfe_config *, struct vpbe_config *);
+ int dm644x_gpio_register(void);
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 708df0ed8554..b359f9a68134 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -8,28 +8,34 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
+-#include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/serial_8250.h>
++
++#include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/dmaengine.h>
+-#include <linux/platform_device.h>
++#include <linux/init.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
+ 
+ #include <asm/mach/map.h>
+ 
++#include <mach/common.h>
+ #include <mach/cputype.h>
+ #include <mach/irqs.h>
+-#include "psc.h"
+ #include <mach/mux.h>
+-#include <mach/time.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
++
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ /*
+  * Device specific clocks
+@@ -43,6 +49,7 @@
+ #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
+ #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num       = 1,
+ 	.phys_base = DAVINCI_PLL1_BASE,
+@@ -326,6 +333,7 @@ static struct clk_lookup dm644x_clks[] = {
+ 	CLK("davinci-wdt", NULL, &timer2_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
++#endif
+ 
+ static struct emac_platform_data dm644x_emac_pdata = {
+ 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
+@@ -934,8 +942,46 @@ void __init dm644x_init(void)
+ 
+ void __init dm644x_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll1, *psc;
++	struct clk *clk;
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
++
++	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
++	dm355_pll1_init(NULL, pll1, NULL);
++
++	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
++	dm355_psc_init(NULL, psc);
++
++	clk = clk_get(NULL, "timer0");
++
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(dm644x_clks);
+ 	davinci_timer_init(&timer0_clk);
++#endif
++}
++
++static struct resource dm644x_pll2_resources[] = {
++	{
++		.start	= DAVINCI_PLL2_BASE,
++		.end	= DAVINCI_PLL2_BASE + SZ_1K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device dm644x_pll2_device = {
++	.name		= "dm644x-pll2",
++	.id		= -1,
++	.resource	= dm644x_pll2_resources,
++	.num_resources	= ARRAY_SIZE(dm644x_pll2_resources),
++};
++
++void __init dm644x_register_clocks(void)
++{
++	/* PLL1 and PSC are registered in dm644x_init_time() */
++	platform_device_register(&dm644x_pll2_device);
+ }
+ 
+ int __init dm644x_init_video(struct vpfe_config *vpfe_cfg,
+-- 
+2.17.0
