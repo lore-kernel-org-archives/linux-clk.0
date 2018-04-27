@@ -1,43 +1,59 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v6 5/7] remoteproc/davinci: use octal permissions for
- module_param()
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Suman Anna <s-anna@ti.com>,
-        Kevin
- Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner
-	<david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson
-	<bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>
-References: <20180417173038.25510-1-brgl@bgdev.pl>
- <20180417173038.25510-6-brgl@bgdev.pl>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <743a0d42-0760-e1ed-3e31-f40b65d6a985@ti.com>
-Date: Wed, 18 Apr 2018 11:00:56 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180417173038.25510-6-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v3 10/10] MAINTAINERS: update Mediatek Soc entry
+Date: Fri, 27 Apr 2018 11:24:02 +0200
+Message-Id: <d4283880be7689a83affbd8548a999731cb7c031.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Checkpatch recommends to use octal perms instead of S_IRUGO.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Matthias Brugger <mbrugger@suse.com>
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Mediatek SoCs include several soc specific drivers as well
+as a mfd device. Add these to the maintainers file.
 
-Thanks,
-Sekhar
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0a1410d5a621..74f7ea345096 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1621,6 +1621,8 @@ F:	arch/arm/boot/dts/mt7*
+ F:	arch/arm/boot/dts/mt8*
+ F:	arch/arm/mach-mediatek/
+ F:	arch/arm64/boot/dts/mediatek/
++F:	drivers/soc/mediatek/
++F:	drivers/mfd/mtk-mmsys.c
+ N:	mtk
+ K:	mediatek
+ 
+-- 
+2.16.3
