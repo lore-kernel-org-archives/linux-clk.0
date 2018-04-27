@@ -1,72 +1,188 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1524512283.4026.28.camel@baylibre.com>
-Subject: Re: [PATCH clk-fixes] clk: meson: meson8b: fix
- meson8b_fclk_div3_div clock name
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Stephen Boyd
-	 <sboyd@kernel.org>
-Cc: mturquette@baylibre.com, linux-clk@vger.kernel.org,
- narmstrong@baylibre.com,  linux-amlogic@lists.infradead.org
-Date: Mon, 23 Apr 2018 21:38:03 +0200
-In-Reply-To: <1524471797.4026.3.camel@baylibre.com>
-References: <20180422102843.31238-1-martin.blumenstingl@googlemail.com>
-	 <1524471797.4026.3.camel@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH] clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
+Date: Fri, 27 Apr 2018 13:49:31 +0530
+Message-Id: <1524817171-7258-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-04-23 at 10:23 +0200, Jerome Brunet wrote:
-> On Sun, 2018-04-22 at 12:28 +0200, Martin Blumenstingl wrote:
-> > The names of all fclk divider gate clocks follow the naming schema
-> > "fclk_divN" and the name of all fclk fixed dividers follow the naming
-> > schema "fclk_divN_div".
-> > There's one exception to this rule: meson8b_fclk_div3_div's name is
-> > "fclk_div_div3". It's child clock meson8b_fclk_div3 however references
-> > it as "fclk_div3_div" (following the naming schema explained above).
-> > 
-> > Fix the naming of the meson8b_fclk_div3_div clock to follow the naming
-> > schema. This also fixes serial console on my Meson8m2 board because
-> > "clk81" uses fclk_div3 as parent. However, since the hierarchy stops at
-> > meson8b_fclk_div3 there's no known parent clock and the rate of "clk81"
-> > and all of it's children (UART clock, SDIO MMC controller clock, ...)
-> > are all 0.
-> > 
-> > Fixes: 05f814402d6174 ("clk: meson: add fdiv clock gates")
-> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> 
-> Oopss ... Thanks for fixing this Martin.
-> 
-> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-> 
-> Stephen, Do you mind taking this directly for fixes ? I can prepare a PR if you
-> prefer.
+From: Amit Nischal <anischal@codeaurora.org>
 
-Nevermind, apparently I have another mistake of the same kind, so there is
-another fix coming up.
+The default behavior of the GDSC enable/disable sequence is to
+poll the status bits of either the actual GDSCR or the
+corresponding HW_CTRL registers.
 
-I'ĺl make a PR 
+On targets which have support for a CFG_GDSCR register, the
+status bits might not show the correct state of the GDSC,
+especially in the disable sequence, where the status bit
+will be cleared even before the core is completely power
+collapsed. On targets with this issue, poll the power on/off
+bits in the CFG_GDSCR register instead to correctly determine
+the GDSC state.
 
-> 
-> Regards
-> Jerome
-> 
-> > ---
-> >  drivers/clk/meson/meson8b.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> > index cc2992493e0b..2c4ff6192852 100644
-> > --- a/drivers/clk/meson/meson8b.c
-> > +++ b/drivers/clk/meson/meson8b.c
-> > @@ -253,7 +253,7 @@ static struct clk_fixed_factor meson8b_fclk_div3_div = {
-> >  	.mult = 1,
-> >  	.div = 3,
-> >  	.hw.init = &(struct clk_init_data){
-> > -		.name = "fclk_div_div3",
-> > +		.name = "fclk_div3_div",
-> >  		.ops = &clk_fixed_factor_ops,
-> >  		.parent_names = (const char *[]){ "fixed_pll" },
-> >  		.num_parents = 1,
-> 
-> 
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gdsc.c | 42 ++++++++++++++++++++++++++----------------
+ drivers/clk/qcom/gdsc.h |  1 +
+ 2 files changed, 27 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index a4f3580..f8a9501 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -32,6 +32,11 @@
+ #define SW_COLLAPSE_MASK	BIT(0)
+ #define GMEM_CLAMP_IO_MASK	BIT(0)
+
++/* CFG_GDSCR */
++#define GDSC_POWER_UP_COMPLETE		BIT(16)
++#define GDSC_POWER_DOWN_COMPLETE	BIT(15)
++#define CFG_GDSCR_OFFSET		0x4
++
+ /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
+ #define EN_REST_WAIT_VAL	(0x2 << 20)
+ #define EN_FEW_WAIT_VAL		(0x8 << 16)
+@@ -44,15 +49,28 @@
+
+ #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
+
+-static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
++static int gdsc_is_enabled(struct gdsc *sc, bool en)
+ {
++	unsigned int reg;
+ 	u32 val;
+ 	int ret;
+
++	if (sc->flags & POLL_CFG_GDSCR)
++		reg = sc->gdscr + CFG_GDSCR_OFFSET;
++	else
++		reg = sc->gds_hw_ctrl ?  sc->gds_hw_ctrl : sc->gdscr;
++
+ 	ret = regmap_read(sc->regmap, reg, &val);
+ 	if (ret)
+ 		return ret;
+
++	if (sc->flags & POLL_CFG_GDSCR) {
++		if (en)
++			return !!(val & GDSC_POWER_UP_COMPLETE);
++		else
++			return !(val & GDSC_POWER_DOWN_COMPLETE);
++	}
++
+ 	return !!(val & PWR_ON_MASK);
+ }
+
+@@ -63,17 +81,17 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
+ 	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
+ }
+
+-static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
++static int gdsc_poll_status(struct gdsc *sc, bool en)
+ {
+ 	ktime_t start;
+
+ 	start = ktime_get();
+ 	do {
+-		if (gdsc_is_enabled(sc, reg) == en)
++		if (gdsc_is_enabled(sc, en) == en)
+ 			return 0;
+ 	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
+
+-	if (gdsc_is_enabled(sc, reg) == en)
++	if (gdsc_is_enabled(sc, en) == en)
+ 		return 0;
+
+ 	return -ETIMEDOUT;
+@@ -83,7 +101,6 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ {
+ 	int ret;
+ 	u32 val = en ? 0 : SW_COLLAPSE_MASK;
+-	unsigned int status_reg = sc->gdscr;
+
+ 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+ 	if (ret)
+@@ -100,8 +117,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 		return 0;
+ 	}
+
+-	if (sc->gds_hw_ctrl) {
+-		status_reg = sc->gds_hw_ctrl;
++	if (sc->gds_hw_ctrl)
+ 		/*
+ 		 * The gds hw controller asserts/de-asserts the status bit soon
+ 		 * after it receives a power on/off request from a master.
+@@ -113,9 +129,8 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 		 * and polling the status bit.
+ 		 */
+ 		udelay(1);
+-	}
+
+-	return gdsc_poll_status(sc, status_reg, en);
++	return gdsc_poll_status(sc, en);
+ }
+
+ static inline int gdsc_deassert_reset(struct gdsc *sc)
+@@ -222,8 +237,6 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+
+ 	/* Turn off HW trigger mode if supported */
+ 	if (sc->flags & HW_CTRL) {
+-		unsigned int reg;
+-
+ 		ret = gdsc_hwctrl(sc, false);
+ 		if (ret < 0)
+ 			return ret;
+@@ -235,8 +248,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 		 */
+ 		udelay(1);
+
+-		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+-		ret = gdsc_poll_status(sc, reg, true);
++		ret = gdsc_poll_status(sc, true);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -258,7 +270,6 @@ static int gdsc_init(struct gdsc *sc)
+ {
+ 	u32 mask, val;
+ 	int on, ret;
+-	unsigned int reg;
+
+ 	/*
+ 	 * Disable HW trigger: collapse/restore occur based on registers writes.
+@@ -279,8 +290,7 @@ static int gdsc_init(struct gdsc *sc)
+ 			return ret;
+ 	}
+
+-	reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+-	on = gdsc_is_enabled(sc, reg);
++	on = gdsc_is_enabled(sc, true);
+ 	if (on < 0)
+ 		return on;
+
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 3964834..ac5f844 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -53,6 +53,7 @@ struct gdsc {
+ #define VOTABLE		BIT(0)
+ #define CLAMP_IO	BIT(1)
+ #define HW_CTRL		BIT(2)
++#define POLL_CFG_GDSCR  BIT(5)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
