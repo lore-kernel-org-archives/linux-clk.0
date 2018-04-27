@@ -1,101 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:47516 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754764AbeDCJzA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Apr 2018 05:55:00 -0400
-Date: Tue, 03 Apr 2018 17:54:19 +0800
-In-Reply-To: <CAGb2v67NO0hbATReq11Y_-2M_yF4hbj_sOtK3D_8yUQb1xi2ww@mail.gmail.com>
-References: <20180317092857.4396-1-wens@csie.org> <20180317092857.4396-3-wens@csie.org> <20180318213129.ucwslzvwq6khxrcd@flea> <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com> <20180403094845.le2hfuxktlv66lre@flea> <20180403095005.skflxb7m2qzbhjix@flea> <CAGb2v67NO0hbATReq11Y_-2M_yF4hbj_sOtK3D_8yUQb1xi2ww@mail.gmail.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,  Neil Armstrong <narmstrong@baylibre.com>,  Carlo Caione <carlo@caione.org>,  Rob Herring <robh@kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>,  Philipp Zabel <p.zabel@pengutronix.de>,  Qiufang Dai <qiufang.dai@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <linux-clk@vger.kernel.org>,  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,  <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+	<1524820841.4026.112.camel@baylibre.com>
+	<fbd24a73-6793-76be-3ca5-04cbac5db198@amlogic.com>
+	<1524823154.4026.123.camel@baylibre.com>
+	<ab754711-f727-133c-7bc3-a9f3243c2278@amlogic.com>
+Date: Fri, 27 Apr 2018 11:49:35 -0700
+In-Reply-To: <ab754711-f727-133c-7bc3-a9f3243c2278@amlogic.com> (Yixun Lan's
+	message of "Fri, 27 Apr 2018 20:33:42 +0800")
+Message-ID: <7hsh7g1o3k.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to access the GMAC register
-To: Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <9982975F-0911-48F2-BEEB-CE93AB561A55@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Yixun,
 
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
-于 2018年4月3日 GMT+08:00 下午5:53:08, Chen-Yu Tsai <wens@csie.org> 写到:
->On Tue, Apr 3, 2018 at 5:50 PM, Maxime Ripard
-><maxime.ripard@bootlin.com> wrote:
->> On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
->>> On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
->>> > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
->>> > <maxime.ripard@bootlin.com> wrote:
->>> > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
->>> > >> From: Icenowy Zheng <icenowy@aosc.io>
->>> > >>
->>> > >> There's a GMAC configuration register, which exists on
->A64/A83T/H3/H5 in
->>> > >> the syscon part, in the CCU of R40 SoC.
->>> > >>
->>> > >> Export a regmap of the CCU.
->>> > >>
->>> > >> Read access is not restricted to all registers, but only the
->GMAC
->>> > >> register is allowed to be written.
->>> > >>
->>> > >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> > >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>> > >
->>> > > Gah, this is crazy. I'm really starting to regret letting that
->syscon
->>> > > in in the first place...
->>> >
->>> > IMHO syscon is really a better fit. It's part of the glue layer
->and
->>> > most other dwmac user platforms treat it as such and use a syscon.
->>> > Plus the controls encompass delays (phase), inverters (polarity),
->>> > and even signal routing. It's not really just a group of clock
->controls,
->>> > like what we poorly modeled for A20/A31. I think that was really a
->>> > mistake.
->>> >
->>> > As I mentioned in the cover letter, a slightly saner approach
->would
->>> > be to let drivers add custom syscon entries, which would then
->require
->>> > less custom plumbing.
->>>
->>> A syscon is convenient, sure, but it also bypasses any abstraction
->>> layer we have everywhere else, which means that we'll have to
->maintain
->>> the register layout in each and every driver that uses it.
->>>
->>> So far, it's only be the GMAC, but it can also be others (the SRAM
->>> controller comes to my mind), and then, if there's any difference in
->>> the design in a future SoC, we'll have to maintain that in the GMAC
->>> driver as well.
->>
->> I guess I forgot to say something, I'm fine with using a syscon we
->> already have.
->>
->> I'm just questionning if merging any other driver using one is the
->> right move.
+> On 04/27/2018 05:59 PM, Jerome Brunet wrote:
+
+[...]
+
+>> 
+>> Looks to be the problem indeed. But it is still an issue with how your patchset
+>> in organized.
+>> 
+>> I can't merge this until Kevin merges the patch above, which he can't merge
+>> until there is the clkc_ao support in axg, which is given by this series.
+>> 
+>> 1# You should remove the axg part of the patch above. Kevin will be able to
+>> merge it w/o any dependencies. (BTW, the patch is broken for axg because 1) you
+>> did not include the dt-binding header for the clkc_ao in axg and 2) the clkc_ao
+>> does not exist at this stage)
+>> 2# I can then safely merge this series - w/o breaking gxbb and gxl.
+>> 3# Finally you'll have to make a DT change for the axg, enabling the clkc_ao and
+>> changes the uart clocks at the same time.
+>> 
 >
->Right. So in this case, we are not actually going through the syscon
->API. Rather we are exporting a regmap whose properties we actually
->define. If it makes you more acceptable to it, we could map just
->the GMAC register in the new regmap, and also have it named. This
->is all plumbing within the kernel so the device tree stays the same.
-
-I think my driver has already restricted the write permission
-only to GMAC register.
-
+>   I didn't make myself clear in previous email
 >
->ChenYu
+>   I mean, could you merge patch 1-6, just exclude the patch 7
+> then kevin can merge the DT part (there are three patches) [1]
+> after the DT patches merged, then you can take this patch 7
+> This way, it won't break gxl or any other SoCs
+>
+>   I'm sending patch 7 along with this series, it would be better if I
+> give a warning about it.
+
+Your proposal requires extra work from a couple different maintainers to
+track all the dependencies, and is very error prone.  Sometimes
+maintainers may do this for you if they have time and are feeling
+generous, but you will have much more success if you can ease the
+process.
+
+Jerome has provided lots of guidance throughout this series and just
+above has provided you with a very good proposal above which minimizes
+the dependencies, and provides the changes in the right order.
+
+Please follow Jerome's suggestion,
+
+Thanks,
+
+Kevin
