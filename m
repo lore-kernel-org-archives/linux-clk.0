@@ -1,108 +1,168 @@
-Return-Path: <>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: mturquette@baylibre.com,
-	sboyd@codeaurora.org,
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
 	robh+dt@kernel.org,
 	mark.rutland@arm.com,
-	geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	sean.wang@mediatek.com,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] clk: renesas: Add r8a77990 CPG Core Clock Definitions
-Date: Wed, 11 Apr 2018 18:37:26 +0900
-Message-Id: <1523439447-1084-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1523439447-1084-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v3 03/10] mfd: mtk-mmsys: Add mmsys driver
+Date: Fri, 27 Apr 2018 11:23:55 +0200
+Message-Id: <e0894c97775e46ce6d9a441dc05e2e2479a4b612.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Matthias Brugger <mbrugger@suse.com>
 
-This patch adds all R-Car E3 Clock Pulse Generator Core Clock Outputs.
+The MMSYS subsystem includes clocks and drm components.
+This patch adds a MFD device to probe both drivers from the same
+device tree compatible.
 
-Note that internal CPG clocks (S0, S1, S2, S3, SDSRC) are not included,
-as they are used as internal clock sources only, and never referenced
-from DT.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[shimoda: add SPDX-License-Identifier]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 ---
- include/dt-bindings/clock/r8a77990-cpg-mssr.h | 63 +++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a77990-cpg-mssr.h
+ drivers/mfd/Kconfig     |  9 ++++++
+ drivers/mfd/Makefile    |  2 ++
+ drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 90 insertions(+)
+ create mode 100644 drivers/mfd/mtk-mmsys.c
 
-diff --git a/include/dt-bindings/clock/r8a77990-cpg-mssr.h b/include/dt-bindings/clock/r8a77990-cpg-mssr.h
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b860eb5aa194..d23a3b9a2c58 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -378,6 +378,15 @@ config MFD_MC13XXX_I2C
+ 	help
+ 	  Select this if your MC13xxx is connected via an I2C bus.
+ 
++config MFD_MEDIATEK_MMSYS
++	tristate "Mediatek MMSYS interface"
++	select MFD_CORE
++	select REGMAP_MMIO
++	help
++	  Select this if you have a MMSYS subsystem in your SoC. The
++	  MMSYS subsystem has at least a clock driver part and some
++	  DRM components.
++
+ config MFD_MXS_LRADC
+ 	tristate "Freescale i.MX23/i.MX28 LRADC"
+ 	depends on ARCH_MXS || COMPILE_TEST
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index d9d2cf0d32ef..b96118bd68d9 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -98,6 +98,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
+ obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
+ obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
+ 
++obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
++
+ obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
+ 
+ obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
+diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
 new file mode 100644
-index 0000000..c806fce
+index 000000000000..c802343fb1c6
 --- /dev/null
-+++ b/include/dt-bindings/clock/r8a77990-cpg-mssr.h
-@@ -0,0 +1,63 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/drivers/mfd/mtk-mmsys.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0+
++
 +/*
-+ * Copyright (C) 2018 Renesas Electronics Corp.
++ * mtk-mmsys.c -- Mediatek MMSYS multi-function driver
++ *
++ * Copyright (c) 2018 Matthias Brugger <matthias.bgg@gmail.com>
++ *
++ * Author: Matthias Brugger <matthias.bgg@gmail.com>
 + */
-+#ifndef __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__
 +
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/mfd/core.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
 +
-+/* r8a77990 CPG Core Clocks */
-+#define R8A77990_CLK_Z2			0
-+#define R8A77990_CLK_ZR			1
-+#define R8A77990_CLK_ZG			2
-+#define R8A77990_CLK_ZTR		3
-+#define R8A77990_CLK_ZT			4
-+#define R8A77990_CLK_ZX			5
-+#define R8A77990_CLK_S0D1		6
-+#define R8A77990_CLK_S0D3		7
-+#define R8A77990_CLK_S0D6		8
-+#define R8A77990_CLK_S0D12		9
-+#define R8A77990_CLK_S0D24		10
-+#define R8A77990_CLK_S1D1		11
-+#define R8A77990_CLK_S1D2		12
-+#define R8A77990_CLK_S1D4		13
-+#define R8A77990_CLK_S2D1		14
-+#define R8A77990_CLK_S2D2		15
-+#define R8A77990_CLK_S2D4		16
-+#define R8A77990_CLK_S3D1		17
-+#define R8A77990_CLK_S3D2		18
-+#define R8A77990_CLK_S3D4		19
-+#define R8A77990_CLK_S0D6C		20
-+#define R8A77990_CLK_S3D1C		21
-+#define R8A77990_CLK_S3D2C		22
-+#define R8A77990_CLK_S3D4C		23
-+#define R8A77990_CLK_LB			24
-+#define R8A77990_CLK_CL			25
-+#define R8A77990_CLK_ZB3		26
-+#define R8A77990_CLK_ZB3D2		27
-+#define R8A77990_CLK_CR			28
-+#define R8A77990_CLK_CRD2		29
-+#define R8A77990_CLK_SD0H		30
-+#define R8A77990_CLK_SD0		31
-+#define R8A77990_CLK_SD1H		32
-+#define R8A77990_CLK_SD1		33
-+#define R8A77990_CLK_SD3H		34
-+#define R8A77990_CLK_SD3		35
-+#define R8A77990_CLK_RPC		36
-+#define R8A77990_CLK_RPCD2		37
-+#define R8A77990_CLK_ZA2		38
-+#define R8A77990_CLK_ZA8		39
-+#define R8A77990_CLK_Z2D		40
-+#define R8A77990_CLK_CANFD		41
-+#define R8A77990_CLK_MSO		42
-+#define R8A77990_CLK_R			43
-+#define R8A77990_CLK_OSC		44
-+#define R8A77990_CLK_LV0		45
-+#define R8A77990_CLK_LV1		46
-+#define R8A77990_CLK_CSI0		47
-+#define R8A77990_CLK_POST3		48
-+#define R8A77990_CLK_CP			49
-+#define R8A77990_CLK_CPEX		50
++enum {
++	MMSYS_MT2701 = 1,
++};
 +
-+#endif /* __DT_BINDINGS_CLOCK_R8A77990_CPG_MSSR_H__ */
++static const struct mfd_cell mmsys_mt2701_devs[] = {
++	{ .name = "clk-mt2701-mm", },
++	{ .name = "drm-mt2701-mm", },
++};
++
++static int mmsys_probe(struct platform_device *pdev)
++{
++	const struct mfd_cell *mmsys_cells;
++	int nr_cells;
++	long id;
++	int ret;
++
++	id = (long) of_device_get_match_data(&pdev->dev);
++	if (!id) {
++		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
++		return -EINVAL;
++	}
++
++	switch (id) {
++	case MMSYS_MT2701:
++		mmsys_cells = mmsys_mt2701_devs;
++		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
++		break;
++	default:
++		return -ENODEV;
++	}
++
++	ret = devm_mfd_add_devices(&pdev->dev, 0, mmsys_cells, nr_cells,
++					NULL, 0, NULL);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++};
++
++static const struct of_device_id of_match_mmsys[] = {
++	{ .compatible = "mediatek,mt2701-mmsys",
++	  .data = (void *) MMSYS_MT2701,
++	},
++	{ /* sentinel */ },
++};
++
++static struct platform_driver mmsys_drv = {
++	.probe = mmsys_probe,
++	.driver = {
++		.name = "mediatek-mmysys",
++		.of_match_table = of_match_ptr(of_match_mmsys),
++	},
++};
++
++builtin_platform_driver(mmsys_drv);
++
++MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
++MODULE_LICENSE("GPL");
 -- 
-1.9.1
+2.16.3
