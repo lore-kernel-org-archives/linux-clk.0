@@ -1,39 +1,146 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Anson Huang <Anson.Huang@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180417142203.GM25429@dragon>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- linux-kernel@vger.kernel.org, robh+dt@kernel.org, Linux-imx@nxp.com,
- kernel@pengutronix.de, fabio.estevam@nxp.com, shengjiu.wang@nxp.com,
- linux-arm-kernel@lists.infradead.org
-References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
- <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
- <20180417142203.GM25429@dragon>
-Message-ID: <152410785516.46528.12432838242068784117@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz clock
- source
-Date: Wed, 18 Apr 2018 20:17:35 -0700
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH v2] clk: aspeed: Support second reset register
+Date: Fri, 27 Apr 2018 12:25:47 +0930
+Message-Id: <20180427025547.14115-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Shawn Guo (2018-04-17 07:22:05)
-> On Mon, Mar 19, 2018 at 10:30:45AM +0800, Anson Huang wrote:
-> > On i.MX6SX SabreAuto board, there is external 24MHz clock
-> > source for analog clock2, add this clock source to clock tree.
-> > =
+The ast2500 has an additional reset register that contains resets not
+present in the ast2400. This enables support for this register, and adds
+the one reset line that is controlled by it.
 
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > ---
-> > changes since V1:
-> >       remove unnecessary clocks container.
-> =
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+v2:
+ This commit fixes a bug in aspeed_reset_assert() which determines
+ the second reset register using condition.
 
-> I understand this is suggested by Fabio, but I'm afraid that it's not
-> going to work with imx_obtain_fixed_clock() call, which is coded to
-> look for clocks under /clocks node.
-> =
+ drivers/clk/clk-aspeed.c                 | 44 +++++++++++++++++++-----
+ include/dt-bindings/clock/aspeed-clock.h |  1 +
+ 2 files changed, 37 insertions(+), 8 deletions(-)
 
-
-Should patch #1 be dropped from clk tree?
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index c7cb1f2b6f8a..1fbf45738535 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -16,6 +16,8 @@
+ 
+ #define ASPEED_NUM_CLKS		35
+ 
++#define ASPEED_RESET2_OFFSET	32
++
+ #define ASPEED_RESET_CTRL	0x04
+ #define ASPEED_CLK_SELECTION	0x08
+ #define ASPEED_CLK_STOP_CTRL	0x0c
+@@ -30,6 +32,7 @@
+ #define  CLKIN_25MHZ_EN		BIT(23)
+ #define  AST2400_CLK_SOURCE_SEL	BIT(18)
+ #define ASPEED_CLK_SELECTION_2	0xd8
++#define ASPEED_RESET_CTRL2	0xd4
+ 
+ /* Globally visible clocks */
+ static DEFINE_SPINLOCK(aspeed_clk_lock);
+@@ -291,6 +294,7 @@ struct aspeed_reset {
+ #define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
+ 
+ static const u8 aspeed_resets[] = {
++	/* SCU04 resets */
+ 	[ASPEED_RESET_XDMA]	= 25,
+ 	[ASPEED_RESET_MCTP]	= 24,
+ 	[ASPEED_RESET_ADC]	= 23,
+@@ -300,38 +304,62 @@ static const u8 aspeed_resets[] = {
+ 	[ASPEED_RESET_PCIVGA]	=  8,
+ 	[ASPEED_RESET_I2C]	=  2,
+ 	[ASPEED_RESET_AHB]	=  1,
++
++	/*
++	 * SCUD4 resets start at an offset to separate them from
++	 * the SCU04 resets.
++	 */
++	[ASPEED_RESET_CRT1]	= ASPEED_RESET2_OFFSET + 5,
+ };
+ 
+ static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
+ 				 unsigned long id)
+ {
+ 	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
+-	u32 rst = BIT(aspeed_resets[id]);
++	u32 reg = ASPEED_RESET_CTRL;
++	u32 bit = aspeed_resets[id];
++
++	if (bit >= ASPEED_RESET2_OFFSET) {
++		bit -= ASPEED_RESET2_OFFSET;
++		reg = ASPEED_RESET_CTRL2;
++	}
+ 
+-	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
++	return regmap_update_bits(ar->map, reg, BIT(bit), 0);
+ }
+ 
+ static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
+ 			       unsigned long id)
+ {
+ 	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
+-	u32 rst = BIT(aspeed_resets[id]);
++	u32 reg = ASPEED_RESET_CTRL;
++	u32 bit = aspeed_resets[id];
+ 
+-	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
++	if (bit >= ASPEED_RESET2_OFFSET) {
++		bit -= ASPEED_RESET2_OFFSET;
++		reg = ASPEED_RESET_CTRL2;
++	}
++
++	return regmap_update_bits(ar->map, reg, BIT(bit), BIT(bit));
+ }
+ 
+ static int aspeed_reset_status(struct reset_controller_dev *rcdev,
+ 			       unsigned long id)
+ {
+ 	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
+-	u32 val, rst = BIT(aspeed_resets[id]);
+-	int ret;
++	u32 reg = ASPEED_RESET_CTRL;
++	u32 bit = aspeed_resets[id];
++	int ret, val;
++
++	if (bit >= ASPEED_RESET2_OFFSET) {
++		bit -= ASPEED_RESET2_OFFSET;
++		reg = ASPEED_RESET_CTRL2;
++	}
+ 
+-	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
++	ret = regmap_read(ar->map, reg, &val);
+ 	if (ret)
+ 		return ret;
+ 
+-	return !!(val & rst);
++	return !!(val & BIT(bit));
+ }
+ 
+ static const struct reset_control_ops aspeed_reset_ops = {
+diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+index d3558d897a4d..513c1b4af7a8 100644
+--- a/include/dt-bindings/clock/aspeed-clock.h
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -48,5 +48,6 @@
+ #define ASPEED_RESET_PCIVGA		6
+ #define ASPEED_RESET_I2C		7
+ #define ASPEED_RESET_AHB		8
++#define ASPEED_RESET_CRT1		9
+ 
+ #endif
+-- 
+2.17.0
