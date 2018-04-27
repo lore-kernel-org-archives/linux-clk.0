@@ -1,169 +1,356 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 30 Apr 2018 11:18:26 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: matthias.bgg@kernel.org
-Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
-	robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, davem@davemloft.net,
-	gregkh@linuxfoundation.org, mchehab@kernel.org,
-	rdunlap@infradead.org, sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-	matthias.bgg@gmail.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [v3 03/10] mfd: mtk-mmsys: Add mmsys driver
-Message-ID: <20180430101826.GC5147@dell>
-References: <cover.1524820923.git.mbrugger@suse.com>
- <e0894c97775e46ce6d9a441dc05e2e2479a4b612.1524820923.git.mbrugger@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <e0894c97775e46ce6d9a441dc05e2e2479a4b612.1524820923.git.mbrugger@suse.com>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v9 06/27] ARM: davinci: da850: add new clock init using common clock framework
+Date: Thu, 26 Apr 2018 19:17:24 -0500
+Message-Id: <20180427001745.4116-7-david@lechnology.com>
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
+This adds the new board-specific clock init in mach-davinci/da850.c
+using the new common clock framework drivers.
 
-> From: Matthias Brugger <mbrugger@suse.com>
-> 
-> The MMSYS subsystem includes clocks and drm components.
-> This patch adds a MFD device to probe both drivers from the same
-> device tree compatible.
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> ---
->  drivers/mfd/Kconfig     |  9 ++++++
->  drivers/mfd/Makefile    |  2 ++
->  drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 90 insertions(+)
->  create mode 100644 drivers/mfd/mtk-mmsys.c
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index b860eb5aa194..d23a3b9a2c58 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -378,6 +378,15 @@ config MFD_MC13XXX_I2C
->  	help
->  	  Select this if your MC13xxx is connected via an I2C bus.
->  
-> +config MFD_MEDIATEK_MMSYS
-> +	tristate "Mediatek MMSYS interface"
-> +	select MFD_CORE
-> +	select REGMAP_MMIO
-> +	help
-> +	  Select this if you have a MMSYS subsystem in your SoC. The
-> +	  MMSYS subsystem has at least a clock driver part and some
-> +	  DRM components.
-> +
->  config MFD_MXS_LRADC
->  	tristate "Freescale i.MX23/i.MX28 LRADC"
->  	depends on ARCH_MXS || COMPILE_TEST
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index d9d2cf0d32ef..b96118bd68d9 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -98,6 +98,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
->  obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
->  obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
->  
-> +obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
-> +
->  obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
->  
->  obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
-> diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
-> new file mode 100644
-> index 000000000000..c802343fb1c6
-> --- /dev/null
-> +++ b/drivers/mfd/mtk-mmsys.c
-> @@ -0,0 +1,79 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +
-> +/*
-> + * mtk-mmsys.c -- Mediatek MMSYS multi-function driver
-> + *
-> + * Copyright (c) 2018 Matthias Brugger <matthias.bgg@gmail.com>
-> + *
-> + * Author: Matthias Brugger <matthias.bgg@gmail.com>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +enum {
-> +	MMSYS_MT2701 = 1,
-> +};
-> +
-> +static const struct mfd_cell mmsys_mt2701_devs[] = {
-> +	{ .name = "clk-mt2701-mm", },
-> +	{ .name = "drm-mt2701-mm", },
-> +};
-> +
-> +static int mmsys_probe(struct platform_device *pdev)
-> +{
-> +	const struct mfd_cell *mmsys_cells;
-> +	int nr_cells;
-> +	long id;
-> +	int ret;
-> +
-> +	id = (long) of_device_get_match_data(&pdev->dev);
-> +	if (!id) {
-> +		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	switch (id) {
-> +	case MMSYS_MT2701:
-> +		mmsys_cells = mmsys_mt2701_devs;
-> +		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
-> +		break;
-> +	default:
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = devm_mfd_add_devices(&pdev->dev, 0, mmsys_cells, nr_cells,
-> +					NULL, 0, NULL);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +};
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-This driver is pretty pointless.  It doesn't actually do anything.
+Also clean up the #includes since we are adding some here.
 
-I think you just want to use "simple-mfd" instead.
+Some CFGCHIP macros were removed because we are now including
+linux/mfd/da8xx-cfgchip.h which defines the same values.
 
-> +static const struct of_device_id of_match_mmsys[] = {
-> +	{ .compatible = "mediatek,mt2701-mmsys",
-> +	  .data = (void *) MMSYS_MT2701,
-> +	},
-> +	{ /* sentinel */ },
-> +};
-> +
-> +static struct platform_driver mmsys_drv = {
-> +	.probe = mmsys_probe,
-> +	.driver = {
-> +		.name = "mediatek-mmysys",
-> +		.of_match_table = of_match_ptr(of_match_mmsys),
-> +	},
-> +};
-> +
-> +builtin_platform_driver(mmsys_drv);
-> +
-> +MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
-> +MODULE_LICENSE("GPL");
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
+v9 changes:
+- register PLL in da850_init_time() instead of as platform device so that we
+  get the correct timer0 clock for davinci_timer_init()
+
+v8 changes:
+- add platform data for PLL clocks
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- clkdev lookup is moved to drivers/clk
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
+- include da8xx_register_cfgchip()
+- add async1 and async2 clock domains
+
+
+ arch/arm/mach-davinci/board-da850-evm.c     |   2 +
+ arch/arm/mach-davinci/board-mityomapl138.c  |   2 +
+ arch/arm/mach-davinci/board-omapl138-hawk.c |   2 +
+ arch/arm/mach-davinci/da850.c               | 155 ++++++++++++++++++--
+ arch/arm/mach-davinci/da8xx-dt.c            |   2 +
+ arch/arm/mach-davinci/include/mach/da8xx.h  |   1 +
+ 6 files changed, 151 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index 3063478bcc36..78a670aafea0 100644
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -1334,6 +1334,8 @@ static __init void da850_evm_init(void)
+ {
+ 	int ret;
+ 
++	da850_register_clocks();
++
+ 	ret = da850_register_gpio();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
+index d1c85484c2e2..f442784eded3 100644
+--- a/arch/arm/mach-davinci/board-mityomapl138.c
++++ b/arch/arm/mach-davinci/board-mityomapl138.c
+@@ -502,6 +502,8 @@ static void __init mityomapl138_init(void)
+ {
+ 	int ret;
+ 
++	da850_register_clocks();
++
+ 	/* for now, no special EDMA channels are reserved */
+ 	ret = da850_register_edma(NULL);
+ 	if (ret)
+diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+index 0d32042b728f..eb09e333b6cd 100644
+--- a/arch/arm/mach-davinci/board-omapl138-hawk.c
++++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+@@ -281,6 +281,8 @@ static __init void omapl138_hawk_init(void)
+ {
+ 	int ret;
+ 
++	da850_register_clocks();
++
+ 	ret = da850_register_gpio();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+index 1dbf01c4124b..9e00beb943c9 100644
+--- a/arch/arm/mach-davinci/da850.c
++++ b/arch/arm/mach-davinci/da850.c
+@@ -11,39 +11,45 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
++
++#include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
+ #include <linux/clkdev.h>
++#include <linux/cpufreq.h>
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+-#include <linux/clk.h>
++#include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/platform_data/clk-da8xx-cfgchip.h>
++#include <linux/platform_data/clk-davinci-pll.h>
++#include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_device.h>
+-#include <linux/cpufreq.h>
++#include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+-#include <linux/platform_data/gpio-davinci.h>
+ 
+ #include <asm/mach/map.h>
+ 
+-#include "psc.h"
+-#include <mach/irqs.h>
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
+-#include <mach/da8xx.h>
+ #include <mach/cpufreq.h>
++#include <mach/cputype.h>
++#include <mach/da8xx.h>
++#include <mach/irqs.h>
+ #include <mach/pm.h>
++#include <mach/time.h>
+ 
+-#include "clock.h"
+ #include "mux.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
++
+ #define DA850_PLL1_BASE		0x01e1a000
+ #define DA850_TIMER64P2_BASE	0x01f0c000
+ #define DA850_TIMER64P3_BASE	0x01f0d000
+ 
+ #define DA850_REF_FREQ		24000000
+ 
+-#define CFGCHIP3_ASYNC3_CLKSRC	BIT(4)
+-#define CFGCHIP3_PLL1_MASTER_LOCK	BIT(5)
+-#define CFGCHIP0_PLL_MASTER_LOCK	BIT(4)
+-
++#ifndef CONFIG_COMMON_CLK
+ static int da850_set_armrate(struct clk *clk, unsigned long rate);
+ static int da850_round_armrate(struct clk *clk, unsigned long rate);
+ static int da850_set_pll0rate(struct clk *clk, unsigned long armrate);
+@@ -583,6 +589,7 @@ static struct clk_lookup da850_clks[] = {
+ 	CLK("ecap.2",		"fck",		&ecap2_clk),
+ 	CLK(NULL,		NULL,		NULL),
+ };
++#endif
+ 
+ /*
+  * Device specific mux setup
+@@ -1170,6 +1177,7 @@ int da850_register_cpufreq(char *async_clk)
+ 	return platform_device_register(&da850_cpufreq_device);
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static int da850_round_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	int ret = 0, diff;
+@@ -1232,12 +1240,14 @@ static int da850_set_pll0rate(struct clk *clk, unsigned long rate)
+ 
+ 	return 0;
+ }
++#endif /* CONFIG_COMMON_CLK */
+ #else
+ int __init da850_register_cpufreq(char *async_clk)
+ {
+ 	return 0;
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static int da850_set_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	return -EINVAL;
+@@ -1252,6 +1262,7 @@ static int da850_round_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	return clk->rate;
+ }
++#endif /* CONFIG_COMMON_CLK */
+ #endif
+ 
+ /* VPIF resource, platform data */
+@@ -1395,6 +1406,124 @@ void __init da850_init(void)
+ 
+ void __init da850_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll0;
++	struct regmap *cfgchip;
++	struct clk *clk;
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
++
++	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
++	cfgchip = da8xx_get_cfgchip();
++
++	da850_pll0_init(NULL, pll0, cfgchip);
++
++	clk = clk_get(NULL, "timer0");
++
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(da850_clks);
+ 	davinci_timer_init(&timerp64_0_clk);
++#endif
++}
++
++static struct resource da850_pll1_resources[] = {
++	{
++		.start	= DA850_PLL1_BASE,
++		.end	= DA850_PLL1_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct davinci_pll_platform_data da850_pll1_pdata;
++
++static struct platform_device da850_pll1_device = {
++	.name		= "da850-pll1",
++	.id		= -1,
++	.resource	= da850_pll1_resources,
++	.num_resources	= ARRAY_SIZE(da850_pll1_resources),
++	.dev		= {
++		.platform_data	= &da850_pll1_pdata,
++	},
++};
++
++static struct resource da850_psc0_resources[] = {
++	{
++		.start	= DA8XX_PSC0_BASE,
++		.end	= DA8XX_PSC0_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device da850_psc0_device = {
++	.name		= "da850-psc0",
++	.id		= -1,
++	.resource	= da850_psc0_resources,
++	.num_resources	= ARRAY_SIZE(da850_psc0_resources),
++};
++
++static struct resource da850_psc1_resources[] = {
++	{
++		.start	= DA8XX_PSC1_BASE,
++		.end	= DA8XX_PSC1_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device da850_psc1_device = {
++	.name		= "da850-psc1",
++	.id		= -1,
++	.resource	= da850_psc1_resources,
++	.num_resources	= ARRAY_SIZE(da850_psc1_resources),
++};
++
++static struct da8xx_cfgchip_clk_platform_data da850_async1_pdata;
++
++static struct platform_device da850_async1_clksrc_device = {
++	.name		= "da850-async1-clksrc",
++	.id		= -1,
++	.dev		= {
++		.platform_data	= &da850_async1_pdata,
++	},
++};
++
++static struct da8xx_cfgchip_clk_platform_data da850_async3_pdata;
++
++static struct platform_device da850_async3_clksrc_device = {
++	.name		= "da850-async3-clksrc",
++	.id		= -1,
++	.dev		= {
++		.platform_data	= &da850_async3_pdata,
++	},
++};
++
++static struct da8xx_cfgchip_clk_platform_data da850_tbclksync_pdata;
++
++static struct platform_device da850_tbclksync_device = {
++	.name		= "da830-tbclksync",
++	.id		= -1,
++	.dev		= {
++		.platform_data	= &da850_tbclksync_pdata,
++	},
++};
++
++void __init da850_register_clocks(void)
++{
++	/* PLL0 is registered in da850_init_time() */
++
++	da850_pll1_pdata.cfgchip = da8xx_get_cfgchip();
++	platform_device_register(&da850_pll1_device);
++
++	da850_async1_pdata.cfgchip = da8xx_get_cfgchip();
++	platform_device_register(&da850_async1_clksrc_device);
++
++	da850_async3_pdata.cfgchip = da8xx_get_cfgchip();
++	platform_device_register(&da850_async3_clksrc_device);
++
++	platform_device_register(&da850_psc0_device);
++
++	platform_device_register(&da850_psc1_device);
++
++	da850_tbclksync_pdata.cfgchip = da8xx_get_cfgchip();
++	platform_device_register(&da850_tbclksync_device);
+ }
+diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
+index ab199f4b9ce4..91dd9cb6d113 100644
+--- a/arch/arm/mach-davinci/da8xx-dt.c
++++ b/arch/arm/mach-davinci/da8xx-dt.c
+@@ -67,6 +67,8 @@ static void __init da850_init_machine(void)
+ 
+ 	int ret;
+ 
++	da850_register_clocks();
++
+ 	ret = da8xx_register_usb20_phy_clk(false);
+ 	if (ret)
+ 		pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
+diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
+index 64861ac6a9d4..612e45437cec 100644
+--- a/arch/arm/mach-davinci/include/mach/da8xx.h
++++ b/arch/arm/mach-davinci/include/mach/da8xx.h
+@@ -93,6 +93,7 @@ void da830_register_clocks(void);
+ 
+ void da850_init(void);
+ void da850_init_time(void);
++void da850_register_clocks(void);
+ 
+ int da830_register_edma(struct edma_rsv_info *rsv);
+ int da850_register_edma(struct edma_rsv_info *rsv[2]);
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.0
