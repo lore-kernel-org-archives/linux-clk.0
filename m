@@ -1,162 +1,105 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andi Shyti <andi@etezian.org>,
-	Mark Brown <broonie@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [RFC 10/10] ARM: exynos: Remove support for Exynos5440
-Date: Tue, 24 Apr 2018 22:32:39 +0200
-Message-Id: <20180424203239.21885-11-krzk@kernel.org>
-In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
-References: <20180424203239.21885-1-krzk@kernel.org>
+Return-Path: <marcel@ziswiler.com>
+Message-ID: <1524834018.6979.13.camel@ziswiler.com>
+Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+From: Marcel Ziswiler <marcel@ziswiler.com>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter
+ De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
+ <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc
+ Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 27 Apr 2018 15:00:18 +0200
+In-Reply-To: <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+	 <20180426235818.10018-2-digetx@gmail.com>
+	 <1524832404.6979.9.camel@ziswiler.com>
+	 <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The Exynos5440 is not actively developed, there are no development
-boards available and probably there are no real products with it.
-Remove wide-tree support for Exynos5440.
+On Fri, 2018-04-27 at 15:54 +0300, Dmitry Osipenko wrote:
+> Hi Marcel,
+> 
+> On 27.04.2018 15:33,  Ziswiler wrote:
+> > Hi Dmitry
+> > 
+> > Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around
+> > e.g.
+> > DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
+> > 
+> > On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
+> > > CDEV1/CDEV2 clocks could have corresponding oscillator clock
+> > > divider
+> > > as
+> > > a parent. Add these dividers in order to be able to provide that
+> > > parent
+> > > option.
+> > > 
+> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > > ---
+> > >  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+> > >  1 file changed, 12 insertions(+)
+> > > 
+> > > diff --git a/drivers/clk/tegra/clk-tegra20.c
+> > > b/drivers/clk/tegra/clk-
+> > > tegra20.c
+> > > index 0ee56dd04cec..16cf4108f2ff 100644
+> > > --- a/drivers/clk/tegra/clk-tegra20.c
+> > > +++ b/drivers/clk/tegra/clk-tegra20.c
+> > > @@ -26,6 +26,8 @@
+> > >  #include "clk.h"
+> > >  #include "clk-id.h"
+> > >  
+> > > +#define MISC_CLK_ENB 0x48
+> > > +
+> > >  #define OSC_CTRL 0x50
+> > >  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+> > >  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+> > > @@ -831,6 +833,16 @@ static void __init
+> > > tegra20_periph_clk_init(void)
+> > >  				    periph_clk_enb_refcnt);
+> > >  	clks[TEGRA20_CLK_PEX] = clk;
+> > >  
+> > > +	/* cdev1 OSC divider */
+> > > +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
+> > > +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+> > 
+> > So it would be:
+> > 
+> > +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+> > 
+> > > +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+> > > +
+> > > +	/* cdev2 OSC divider */
+> > > +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
+> > > +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+> > 
+> > And:
+> > 
+> > +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+> > 
+> > > +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+> > > +
+> > >  	/* cdev1 */
+> > >  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL,
+> > > 0,
+> > > 26000000);
+> > >  	clk = tegra_clk_register_periph_gate("cdev1",
+> > > "cdev1_fixed",
+> > > 0,
+> 
+> Indeed, good catch! I'll wait for more comments and then re-spin
+> patchset with
+> the fix. Thank you.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/mach-exynos/Kconfig  | 12 ------------
- arch/arm/mach-exynos/common.h |  8 --------
- arch/arm/mach-exynos/exynos.c | 15 ++-------------
- 3 files changed, 2 insertions(+), 33 deletions(-)
+You are very welcome. Thank you!
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 647c319f9f5f..219d389a8521 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -108,18 +108,6 @@ config SOC_EXYNOS5420
- 	default y
- 	depends on ARCH_EXYNOS5
- 
--config SOC_EXYNOS5440
--	bool "SAMSUNG EXYNOS5440"
--	default y
--	depends on ARCH_EXYNOS5
--	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
--	select HAVE_ARM_ARCH_TIMER
--	select AUTO_ZRELADDR
--	select PINCTRL_EXYNOS5440
--	select PM_OPP
--	help
--	  Enable EXYNOS5440 SoC support
--
- config SOC_EXYNOS5800
- 	bool "SAMSUNG EXYNOS5800"
- 	default y
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 098f84a149a3..f332c654784b 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -21,7 +21,6 @@
- #define EXYNOS5250_SOC_ID	0x43520000
- #define EXYNOS5410_SOC_ID	0xE5410000
- #define EXYNOS5420_SOC_ID	0xE5420000
--#define EXYNOS5440_SOC_ID	0xE5440000
- #define EXYNOS5800_SOC_ID	0xE5422000
- #define EXYNOS5_SOC_MASK	0xFFFFF000
- 
-@@ -39,7 +38,6 @@ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
- IS_SAMSUNG_CPU(exynos5410, EXYNOS5410_SOC_ID, EXYNOS5_SOC_MASK)
- IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
--IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
- IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
- 
- #if defined(CONFIG_SOC_EXYNOS3250)
-@@ -82,12 +80,6 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
- # define soc_is_exynos5420()	0
- #endif
- 
--#if defined(CONFIG_SOC_EXYNOS5440)
--# define soc_is_exynos5440()	is_samsung_exynos5440()
--#else
--# define soc_is_exynos5440()	0
--#endif
--
- #if defined(CONFIG_SOC_EXYNOS5800)
- # define soc_is_exynos5800()	is_samsung_exynos5800()
- #else
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 8c4f5e342dc1..460ae13b3145 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -63,15 +63,6 @@ void __init exynos_sysram_init(void)
- 	}
- }
- 
--static void __init exynos_init_late(void)
--{
--	if (of_machine_is_compatible("samsung,exynos5440"))
--		/* to be supported later */
--		return;
--
--	exynos_pm_init();
--}
--
- static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
- 					int depth, void *data)
- {
-@@ -79,8 +70,7 @@ static int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
- 	const __be32 *reg;
- 	int len;
- 
--	if (!of_flat_dt_is_compatible(node, "samsung,exynos4210-chipid") &&
--		!of_flat_dt_is_compatible(node, "samsung,exynos5440-clock"))
-+	if (!of_flat_dt_is_compatible(node, "samsung,exynos4210-chipid"))
- 		return 0;
- 
- 	reg = of_get_flat_dt_prop(node, "reg", &len);
-@@ -209,7 +199,6 @@ static char const *const exynos_dt_compat[] __initconst = {
- 	"samsung,exynos5250",
- 	"samsung,exynos5260",
- 	"samsung,exynos5420",
--	"samsung,exynos5440",
- 	NULL
- };
- 
-@@ -232,7 +221,7 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
- 	.init_early	= exynos_firmware_init,
- 	.init_irq	= exynos_init_irq,
- 	.init_machine	= exynos_dt_machine_init,
--	.init_late	= exynos_init_late,
-+	.init_late	= exynos_pm_init,
- 	.dt_compat	= exynos_dt_compat,
- 	.dt_fixup	= exynos_dt_fixup,
- MACHINE_END
--- 
-2.14.1
+Other than that it all looks proper and works fine at least in the
+configuration we use on Colibri T20. So you may add my reviewed and
+tested bys to the whole series:
+
+Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
