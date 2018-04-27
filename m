@@ -1,46 +1,167 @@
-Return-Path: <mgautam@codeaurora.org>
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC)
- driver for SDM845
-To: Amit Nischal <anischal@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
- David Brown <david.brown@linaro.org>, Rajendra Nayak
- <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
- Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>
-References: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
- <1522761761-15262-4-git-send-email-anischal@codeaurora.org>
- <152393708031.51482.15076025836699678476@swboyd.mtv.corp.google.com>
- <f563532b5c43960a61ae12a37a131be8@codeaurora.org>
-From: Manu Gautam <mgautam@codeaurora.org>
-Message-ID: <23b9ca5a-b708-f142-9906-3f3eadd8c26a@codeaurora.org>
-Date: Wed, 18 Apr 2018 22:08:41 +0530
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 08/12] clk: imx: scu: add scu clock gpr mux
+Date: Sat, 28 Apr 2018 02:56:39 +0800
+Message-Id: <1524855403-15301-9-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <f563532b5c43960a61ae12a37a131be8@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Amit,
+Add scu based clock gpr mux. Unlike the normal scu mux, such
+muxes are controlled by GPR bits through SCU sc_misc_set_control
+API.
 
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/scu/Makefile          |  3 +-
+ drivers/clk/imx/scu/clk-mux-gpr-scu.c | 90 +++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h         | 11 +++++
+ 3 files changed, 103 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/scu/clk-mux-gpr-scu.c
 
-On 4/18/2018 6:33 PM, Amit Nischal wrote:
->>> +       /* Disable the GPLL0 active input to MMSS and GPU via MISC registers */
->>> +       regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
->>> +       regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
->>
->> I think we'll have to throw in the pipe clk branch stuff in here too?
->> And then drop the pipe clks from the driver?
->
-> All the USB pipe clocks would be taken care. The PCIE pipe branch
-> clocks would have to be explicitly disabled so as to retain the
-> memory logic. Otherwise, it would lead to memory corruption in case
-> the external source is directly disabled without disabling the branch clock. 
-
-PHY driver is same for both USB and PCIE and both PHYs use pipe_clk.
-If there is indeed some limitation and pipe_clk cant be left enabled
-always then I will suggest to not change pipe_clk handling for USB as well.
-
+diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
+index aee56bf..a76ed78 100644
+--- a/drivers/clk/imx/scu/Makefile
++++ b/drivers/clk/imx/scu/Makefile
+@@ -6,4 +6,5 @@ obj-$(CONFIG_MXC_CLK_SCU) += \
+ 	clk-divider-gpr-scu.o \
+ 	clk-gate-scu.o \
+ 	clk-gate-gpr-scu.o \
+-	clk-mux-scu.o
++	clk-mux-scu.o \
++	clk-mux-gpr-scu.o
+diff --git a/drivers/clk/imx/scu/clk-mux-gpr-scu.c b/drivers/clk/imx/scu/clk-mux-gpr-scu.c
+new file mode 100644
+index 0000000..4d666eb
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-mux-gpr-scu.c
+@@ -0,0 +1,90 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *	Dong Aisheng <aisheng.dong@nxp.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <soc/imx/sc/sci.h>
++
++#include "clk-scu.h"
++
++struct clk_mux_gpr_scu {
++	struct clk_hw hw;
++	sc_rsrc_t	rsrc_id;
++	sc_ctrl_t	gpr_id;
++};
++
++#define to_clk_mux_gpr_scu(_hw) container_of(_hw, struct clk_mux_gpr_scu, hw)
++
++static u8 clk_mux_gpr_scu_get_parent(struct clk_hw *hw)
++{
++	struct clk_mux_gpr_scu *gpr_mux = to_clk_mux_gpr_scu(hw);
++	sc_err_t ret;
++	u32 val = 0;
++
++	ret = sc_misc_get_control(ccm_ipc_handle, gpr_mux->rsrc_id,
++				  gpr_mux->gpr_id, &val);
++	if (ret != SC_ERR_NONE) {
++		pr_warn("%s: failed to get clock parent %d\n",
++			clk_hw_get_name(hw), ret);
++		return 0;
++	}
++
++	return (u8)val;
++}
++
++static int clk_mux_gpr_scu_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_mux_gpr_scu *gpr_mux = to_clk_mux_gpr_scu(hw);
++	sc_err_t ret;
++
++	ret = sc_misc_set_control(ccm_ipc_handle, gpr_mux->rsrc_id,
++				  gpr_mux->gpr_id, index);
++	if (ret != SC_ERR_NONE)
++		return -EINVAL;
++
++	return 0;
++}
++
++static const struct clk_ops clk_mux_gpr_scu_ops = {
++	.get_parent = clk_mux_gpr_scu_get_parent,
++	.set_parent = clk_mux_gpr_scu_set_parent,
++};
++
++struct clk_hw *clk_register_mux_gpr_scu(const char *name, const char * const *parents,
++					int num_parents, unsigned long flags,
++					sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id)
++{
++	struct clk_mux_gpr_scu *mux;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &clk_mux_gpr_scu_ops;
++	init.parent_names = parents;
++	init.num_parents = num_parents;
++	init.flags = flags;
++
++	mux->hw.init = &init;
++	mux->rsrc_id = rsrc_id;
++	mux->gpr_id = gpr_id;
++
++	hw = &mux->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(mux);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+index 672a26c..918056e 100644
+--- a/drivers/clk/imx/scu/clk-scu.h
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -81,4 +81,15 @@ static inline struct clk_hw *imx_clk_mux_scu(const char *name,
+ 			clk_type);
+ }
+ 
++struct clk_hw *clk_register_mux_gpr_scu(const char *name, const char * const *parents,
++			int num_parents, unsigned long flags,
++			sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id);
++
++static inline struct clk_hw *imx_clk_mux_gpr_scu(const char *name, const char * const *parents,
++			int num_parents, sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id)
++{
++	return clk_register_mux_gpr_scu(name, parents, num_parents,
++			CLK_SET_RATE_NO_REPARENT, rsrc_id, gpr_id);
++}
++
+ #endif
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
