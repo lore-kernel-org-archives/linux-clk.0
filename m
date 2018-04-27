@@ -1,35 +1,166 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 07/12] clk: imx: scu: add scu clock mux
+Date: Sat, 28 Apr 2018 02:56:38 +0800
+Message-Id: <1524855403-15301-8-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1523254493-5313-2-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Amit Nischal <anischal@codeaurora.org>
-References: <1523254493-5313-1-git-send-email-anischal@codeaurora.org>
- <1523254493-5313-2-git-send-email-anischal@codeaurora.org>
-Message-ID: <152393976444.51482.14239555065542681076@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 1/3] clk: qcom: Clear hardware clock control bit of RCG
-Date: Mon, 16 Apr 2018 21:36:04 -0700
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-04-08 23:14:51)
-> For upcoming targets like sdm845, POR value of the hardware clock control
-> bit is set for most of root clocks which needs to be cleared for software
-> to be able to control. For older targets like MSM8996, this bit is reserv=
-ed
-> bit and having POR value as 0 so this patch will work for the older targe=
-ts
-> too. So update the configuration mask to take care of the same to clear
-> hardware clock control bit.
-> =
+Add scu based clock mux.
 
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/scu/Makefile      |  3 +-
+ drivers/clk/imx/scu/clk-mux-scu.c | 89 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h     | 13 ++++++
+ 3 files changed, 104 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/scu/clk-mux-scu.c
 
-This one's already been applied. Please stop sending it.
+diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
+index 25d3511..aee56bf 100644
+--- a/drivers/clk/imx/scu/Makefile
++++ b/drivers/clk/imx/scu/Makefile
+@@ -5,4 +5,5 @@ obj-$(CONFIG_MXC_CLK_SCU) += \
+ 	clk-divider-scu.o \
+ 	clk-divider-gpr-scu.o \
+ 	clk-gate-scu.o \
+-	clk-gate-gpr-scu.o
++	clk-gate-gpr-scu.o \
++	clk-mux-scu.o
+diff --git a/drivers/clk/imx/scu/clk-mux-scu.c b/drivers/clk/imx/scu/clk-mux-scu.c
+new file mode 100644
+index 0000000..52efd99b
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-mux-scu.c
+@@ -0,0 +1,89 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *	Dong Aisheng <aisheng.dong@nxp.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <soc/imx/sc/sci.h>
++
++#include "clk-scu.h"
++
++struct clk_mux_scu {
++	struct clk_hw	hw;
++	sc_rsrc_t	rsrc_id;
++	sc_pm_clk_t	clk_type;
++};
++
++#define to_clk_mux_scu(_hw) container_of(_hw, struct clk_mux_scu, hw)
++
++static u8 clk_mux_scu_get_parent(struct clk_hw *hw)
++{
++	struct clk_mux_scu *mux = to_clk_mux_scu(hw);
++	sc_pm_clk_parent_t parent;
++	sc_err_t ret;
++
++	ret = sc_pm_get_clock_parent(ccm_ipc_handle, mux->rsrc_id,
++				     mux->clk_type, &parent);
++	if (ret != SC_ERR_NONE) {
++		pr_warn("%s: failed to get clock parent %d\n",
++		clk_hw_get_name(hw), ret);
++		return 0;
++	}
++
++	return (u8)parent;
++}
++
++static int clk_mux_scu_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_mux_scu *mux = to_clk_mux_scu(hw);
++	sc_err_t ret;
++
++	ret = sc_pm_set_clock_parent(ccm_ipc_handle, mux->rsrc_id,
++				     mux->clk_type, index);
++	if (ret != SC_ERR_NONE)
++		return -EINVAL;
++
++	return 0;
++}
++
++static const struct clk_ops clk_mux_scu_ops = {
++	.get_parent = clk_mux_scu_get_parent,
++	.set_parent = clk_mux_scu_set_parent,
++};
++
++struct clk_hw *clk_register_mux_scu(const char *name, const char * const *parents,
++				    int num_parents, unsigned long flags,
++				    sc_rsrc_t rsrc_id, sc_pm_clk_t clk_type)
++{
++	struct clk_init_data init;
++	struct clk_mux_scu *mux;
++	struct clk_hw *hw;
++	int ret;
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &clk_mux_scu_ops;
++	init.parent_names = parents;
++	init.num_parents = num_parents;
++
++	mux->hw.init = &init;
++	mux->rsrc_id = rsrc_id;
++	mux->clk_type = clk_type;
++
++	hw = &mux->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(mux);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+index e419035..672a26c 100644
+--- a/drivers/clk/imx/scu/clk-scu.h
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -68,4 +68,17 @@ static inline struct clk_hw *imx_clk_gate_gpr_scu(const char *name, const char *
+ 	return clk_register_gate_gpr_scu(name, parent, rsrc_id, gpr_id, invert_flag);
+ }
+ 
++struct clk_hw *clk_register_mux_scu(const char *name, const char * const *parents,
++			int num_parents, unsigned long flags,
++			sc_rsrc_t rsrc_id, sc_pm_clk_t clk_type);
++
++static inline struct clk_hw *imx_clk_mux_scu(const char *name,
++			const char * const *parents, int num_parents,
++			sc_rsrc_t rsrc_id, sc_pm_clk_t clk_type)
++{
++	return clk_register_mux_scu(name, parents, num_parents,
++			CLK_SET_RATE_NO_REPARENT, rsrc_id,
++			clk_type);
++}
++
+ #endif
+-- 
+2.7.4
