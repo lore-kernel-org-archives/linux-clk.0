@@ -1,80 +1,76 @@
-Return-Path: <matthias.bgg@kernel.org>
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
 	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 05/10] clk: mediatek: mt2701-mm: switch to mfd device
-Date: Mon, 23 Apr 2018 18:13:54 +0200
-Message-Id: <16dd3041d81069f87422fd29b26d9d74c8a36293.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524497268.git.mbrugger@suse.com>
-References: <cover.1524497268.git.mbrugger@suse.com>
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 00/12] clk: imx: add imx8qxp clock support
+Date: Sat, 28 Apr 2018 02:56:31 +0800
+Message-Id: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+This patch series adds i.MX8QXP clock support which is based
+on the clock service provided by SCU firmware.
+It depends on SCU APIs patch set.
 
-As the new mfd device is in place, switch probing
-for the MMSYS to support invocation from the mfd device.
+Dong Aisheng (12):
+  clk: imx: add configuration option for mmio clks
+  clk: imx: scu: add scu clock common part
+  clk: imx: scu: add scu clock divider
+  clk: imx: scu: add scu clock gpr divider
+  clk: imx: scu: add scu clock gate
+  clk: imx: scu: add scu clock gpr gate
+  clk: imx: scu: add scu clock mux
+  clk: imx: scu: add scu clock gpr mux
+  clk: imx: add common imx_clk_hw_fixed functions
+  clk: imx: add imx_check_clk_hws helper function
+  dt-bindings: clock: add imx8qxp clock binding doc
+  clk: imx: add imx8qxp clk driver
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-Acked-by: Stephen Boyd <sboyd@codeaurora.org>
----
- drivers/clk/mediatek/clk-mt2701-mm.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ .../devicetree/bindings/clock/imx8qxp-clk.txt      |  39 ++
+ arch/arm/mach-imx/Kconfig                          |  10 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/imx/Kconfig                            |   7 +
+ drivers/clk/imx/Makefile                           |   4 +-
+ drivers/clk/imx/clk-common.h                       |  27 ++
+ drivers/clk/imx/scu/Kconfig                        |   5 +
+ drivers/clk/imx/scu/Makefile                       |  12 +
+ drivers/clk/imx/scu/clk-divider-gpr-scu.c          | 131 +++++++
+ drivers/clk/imx/scu/clk-divider-scu.c              | 129 +++++++
+ drivers/clk/imx/scu/clk-gate-gpr-scu.c             |  84 ++++
+ drivers/clk/imx/scu/clk-gate-scu.c                 | 193 ++++++++++
+ drivers/clk/imx/scu/clk-imx8qxp.c                  | 426 +++++++++++++++++++++
+ drivers/clk/imx/scu/clk-mux-gpr-scu.c              |  90 +++++
+ drivers/clk/imx/scu/clk-mux-scu.c                  |  89 +++++
+ drivers/clk/imx/scu/clk-scu.c                      |  25 ++
+ drivers/clk/imx/scu/clk-scu.h                      |  97 +++++
+ include/dt-bindings/clock/imx8qxp-clock.h          | 362 +++++++++++++++++
+ include/soc/imx/imx8qxp/lpcg.h                     | 186 +++++++++
+ 19 files changed, 1916 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8qxp-clk.txt
+ create mode 100644 drivers/clk/imx/Kconfig
+ create mode 100644 drivers/clk/imx/clk-common.h
+ create mode 100644 drivers/clk/imx/scu/Kconfig
+ create mode 100644 drivers/clk/imx/scu/Makefile
+ create mode 100644 drivers/clk/imx/scu/clk-divider-gpr-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-divider-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-gate-gpr-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-gate-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-imx8qxp.c
+ create mode 100644 drivers/clk/imx/scu/clk-mux-gpr-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-mux-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-scu.h
+ create mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
+ create mode 100644 include/soc/imx/imx8qxp/lpcg.h
 
-diff --git a/drivers/clk/mediatek/clk-mt2701-mm.c b/drivers/clk/mediatek/clk-mt2701-mm.c
-index fe1f85072fc5..4517525887dd 100644
---- a/drivers/clk/mediatek/clk-mt2701-mm.c
-+++ b/drivers/clk/mediatek/clk-mt2701-mm.c
-@@ -87,16 +87,13 @@ static const struct mtk_gate mm_clks[] = {
- 	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
- };
- 
--static const struct of_device_id of_match_clk_mt2701_mm[] = {
--	{ .compatible = "mediatek,mt2701-mmsys", },
--	{}
--};
--
- static int clk_mt2701_mm_probe(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
- 	int r;
--	struct device_node *node = pdev->dev.of_node;
-+	struct device_node *node;
-+
-+	node = pdev->dev.parent->of_node;
- 
- 	clk_data = mtk_alloc_clk_data(CLK_MM_NR);
- 
-@@ -116,7 +113,6 @@ static struct platform_driver clk_mt2701_mm_drv = {
- 	.probe = clk_mt2701_mm_probe,
- 	.driver = {
- 		.name = "clk-mt2701-mm",
--		.of_match_table = of_match_clk_mt2701_mm,
- 	},
- };
- 
 -- 
-2.16.3
+2.7.4
