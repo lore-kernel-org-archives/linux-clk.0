@@ -1,59 +1,55 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 13 Apr 2018 16:16:44 -0500
-From: Rob Herring <robh@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
-Message-ID: <20180413211644.wd7lrl4phqtshpzp@rob-hp-laptop>
-References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
- <1523364701-15383-2-git-send-email-geert+renesas@glider.be>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH 10/12] clk: imx: add imx_check_clk_hws helper function
+Date: Sat, 28 Apr 2018 02:56:41 +0800
+Message-Id: <1524855403-15301-11-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1523364701-15383-2-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 10, 2018 at 02:51:37PM +0200, Geert Uytterhoeven wrote:
-> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
-> limited to clock providers.
-> 
-> Hence move these helpers into their own header file, so callers that are
-> not clock providers no longer have to include <linux/clk-provider.h>.
-> 
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - New.
-> 
-> I have't added an SPDX-License-Identifier line, as
-> <linux/clk-provider.h> also doesn't have one yet.
+Add imx_check_clk_hws helper function
 
-Should that matter?
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-common.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> 
-> Other candidates to be moved here later?
->   - of_clk_get(),
->   - of_clk_get_by_name(),
->   - of_clk_get_from_provider().
-> ---
->  include/linux/clk-provider.h | 14 +-------------
->  include/linux/of_clk.h       | 29 +++++++++++++++++++++++++++++
-
-Please update MAINTAINERS so I am not the maintainer. :)
-
->  2 files changed, 30 insertions(+), 13 deletions(-)
->  create mode 100644 include/linux/of_clk.h
+diff --git a/drivers/clk/imx/clk-common.h b/drivers/clk/imx/clk-common.h
+index e3634a5..01550fd 100644
+--- a/drivers/clk/imx/clk-common.h
++++ b/drivers/clk/imx/clk-common.h
+@@ -13,4 +13,15 @@ static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rate)
+ 	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
+ }
+ 
++static inline void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count)
++{
++	unsigned int i;
++
++	for (i = 0; i < count; i++) {
++		if (IS_ERR(clks[i]))
++			pr_err("i.MX clk %u: register failed with %ld\n",
++				i, PTR_ERR(clks[i]));
++	}
++}
++
+ #endif /* __IMX_CLK_COMMON_H */
+-- 
+2.7.4
