@@ -1,57 +1,64 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH 2/3] clk: qcom: gdsc: Add support to poll for higher
- timeout value
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1522665945-28147-1-git-send-email-tdas@codeaurora.org>
- <1522665945-28147-3-git-send-email-tdas@codeaurora.org>
- <152297065260.143116.4250583205921081457@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <aa305cce-1244-45cb-267d-565f1f95b0e8@codeaurora.org>
-Date: Mon, 9 Apr 2018 14:10:06 +0530
-MIME-Version: 1.0
-In-Reply-To: <152297065260.143116.4250583205921081457@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: jbrunet@baylibre.com,
+	narmstrong@baylibre.com,
+	linux-amlogic@lists.infradead.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	linux-clk@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH meson-clk-next] clk: meson: meson8b: enable CLK_MESON_MPLL_ROUND_CLOSEST for all MPLLs
+Date: Sat, 28 Apr 2018 15:23:16 +0200
+Message-Id: <20180428132316.20108-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+Until recently the clk-mpll implementation always used
+DIV_ROUND_UP_ULL(). However, since commit 1b0e500dc606e9 ("clk: meson:
+mpll: add round closest support") the default was changed to round down
+the SDM divisor.
+This broke RGMII Ethernet on Meson8b (which uses MPLL2 as RGMII TX
+clock). With the old implementation the MPLL2 output was 249999701Hz,
+but with "round closest" disabled the output is 212500000Hz.
 
-Thanks for the review comments.
+Enabling CLK_MESON_MPLL_ROUND_CLOSEST for all MPLL2 clocks on Meson8b
+fixes this because we now get the same 249999701Hz from MPLL2 as before.
 
-On 4/6/2018 4:54 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-04-02 03:45:44)
->> From: Amit Nischal <anischal@codeaurora.org>
->>
->> For some gdscs, it might take longer time up to 500us for
->> updating their status. So add support for the same by
->> defining a new flag 'GDS_TIMEOUT' to mark such gdsc in
->> order to poll their status for longer timeout value.
->>
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> ---
-> 
-> Let's just increase the timeout to 500 if it's required? This is a
-> timeout, so we're not really expecting to hit it anyway so optimizing
-> the uncommon case is not useful.
-> --
+Fixes: 1b0e500dc606e9 ("clk: meson: mpll: add round closest support")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/meson8b.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Will fix this in the next series.
-
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index d0524ec71aad..2639a892a5d4 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -382,6 +382,7 @@ static struct clk_regmap meson8b_mpll0_div = {
+ 			.width   = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -423,6 +424,7 @@ static struct clk_regmap meson8b_mpll1_div = {
+ 			.width   = 9,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1_div",
+@@ -464,6 +466,7 @@ static struct clk_regmap meson8b_mpll2_div = {
+ 			.width   = 9,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2_div",
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+2.17.0
