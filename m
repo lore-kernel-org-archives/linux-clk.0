@@ -1,278 +1,130 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v3 2/3] clk: qcom: Configure the RCGs to a safe source as needed
-Date: Tue,  3 Apr 2018 18:52:40 +0530
-Message-Id: <1522761761-15262-3-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
-References: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.132]:57475 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759746AbeD1JZB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 28 Apr 2018 05:25:01 -0400
+From: Shawn Lin <shawn.lin@rock-chips.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH 1/2] clk: Add clk_set_rate_safe() API support
+Date: Sat, 28 Apr 2018 17:16:57 +0800
+Message-Id: <1524907018-195819-1-git-send-email-shawn.lin@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-For some root clock generators, there could be child branches which are
-controlled by an entity other than application processor subsystem. For
-such RCGs, as per application processor subsystem clock driver, all of
-its downstream clocks are disabled and RCG is in disabled state but in
-reality downstream clocks can be left enabled before.
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
-So in this scenario, when RCG is disabled as per clock driver's point of
-view and when rate scaling request comes before downstream clock enable
-request, then RCG fails to update its configuration because in reality
-RCG is on and it expects its new source to alredy be in enable state but
-in reality new source is off. In order to avoid having the RCG to go into
-an invalid state, add support to cache the rate of RCG during set_rate(),
-defer actual RCG configuration update to be done during clk_enable() as
-at this point of time, both its new parent and safe source will be
-already enabled and RCG can safely switch to new parent.
+Compared with clk_set_rate(), this API would maintain the clock rate
+of its children to avoid exception if the new rate is higher than
+the old rate.
 
-During clk_disable() request, configure it to safe source as both its
-parents, safe source and current parent will be enabled and RCG can
-safely execute a switch. Also add support to have safe configuration
-frequency table structure for each shared RCG.
-
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 ---
- drivers/clk/qcom/clk-rcg.h  |   7 +-
- drivers/clk/qcom/clk-rcg2.c | 173 +++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 178 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 2a7489a..9d9d59d 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2013, 2018, The Linux Foundation. All rights reserved.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -144,8 +144,10 @@ struct clk_dyn_rcg {
-  * @cmd_rcgr: corresponds to *_CMD_RCGR
-  * @mnd_width: number of bits in m/n/d values
-  * @hid_width: number of bits in half integer divider
-+ * @safe_src_index: safe src index value
-  * @parent_map: map from software's parent index to hardware's src_sel field
-  * @freq_tbl: frequency table
-+ * @current_freq: last cached frequency when using branches with shared RCGs
-  * @clkr: regmap clock handle
-  *
-  */
-@@ -153,8 +155,10 @@ struct clk_rcg2 {
- 	u32			cmd_rcgr;
- 	u8			mnd_width;
- 	u8			hid_width;
-+	const u8		safe_src_index;
- 	const struct parent_map	*parent_map;
- 	const struct freq_tbl	*freq_tbl;
-+	unsigned long		current_freq;
- 	struct clk_regmap	clkr;
- };
+ drivers/clk/clk.c   | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h | 15 +++++++++++++++
+ 2 files changed, 66 insertions(+)
 
-@@ -167,5 +171,6 @@ struct clk_rcg2 {
- extern const struct clk_ops clk_byte2_ops;
- extern const struct clk_ops clk_pixel_ops;
- extern const struct clk_ops clk_gfx3d_ops;
-+extern const struct clk_ops clk_rcg2_shared_ops;
-
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 984de9c..4d971bf 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2013, 2018 The Linux Foundation. All rights reserved.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -790,3 +790,174 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
- 	.determine_rate = clk_gfx3d_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
-+
-+static int clk_rcg2_set_force_enable(struct clk_hw *hw)
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9ae92aa..7dec6a8 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2013,6 +2013,57 @@ int clk_set_rate_exclusive(struct clk *clk, unsigned long rate)
+ EXPORT_SYMBOL_GPL(clk_set_rate_exclusive);
+ 
+ /**
++ * clk_set_rate_safe - specify a new rate for clk
++ * @clk: the clk whose rate is being changed
++ * @new_rate: the new rate for clk
++ *
++ * Compared with clk_set_rate, this API would also make sure children
++ * of @clk are in the safe clock rate range by maintaining the original
++ * clock rate.
++ *
++ * When changing the parent's clock rate in some cases, we should make
++ * sure the children's clock rate are still in the safe range, namely
++ * [clk->min_rate, clk->max_rate], which is especially important
++ * if its child is a system bus. In general, the lower clock rate the
++ * safer, so simply walk through the parent's clock chain to maintain
++ * the children's clock rate if the new clock rate is higher than the
++ * older one.
++ *
++ * Returns 0 on success, -EERROR otherwise.
++ */
++int clk_set_rate_safe(struct clk *clk, unsigned long new_rate)
 +{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	const char *name = clk_hw_get_name(hw);
-+	int ret, count;
++	unsigned long old_rate, child_rate;
++	struct hlist_node *hn;
++	struct clk_core *core;
++	int div, ret;
 +
-+	/* Force enable bit */
-+	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+				 CMD_ROOT_EN, CMD_ROOT_EN);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for RCG to turn ON */
-+	for (count = 500; count > 0; count--) {
-+		if (clk_rcg2_is_enabled(hw))
-+			return 0;
-+
-+		/* Delay for 1usec and retry polling the status bit */
-+		udelay(1);
-+	}
-+	if (!count)
-+		pr_err("%s: RCG did not turn on\n", name);
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static int clk_rcg2_clear_force_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/* Clear force enable bit */
-+	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+					CMD_ROOT_EN, 0);
-+}
-+
-+static int
-+clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, unsigned long rate)
-+{
-+	int ret;
-+
-+	ret = clk_rcg2_set_force_enable(hw);
-+	if (ret)
-+		return ret;
-+
-+	/* set clock rate */
-+	ret = __clk_rcg2_set_rate(hw, rate, CEIL);
-+	if (ret)
-+		return ret;
-+
-+	return clk_rcg2_clear_force_enable(hw);
-+}
-+
-+static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int ret;
-+
-+	/*
-+	 * Return if the RCG is currently disabled. This configuration
-+	 * update will happen as part of the RCG enable sequence.
-+	 */
-+	if (!__clk_is_enabled(hw->clk)) {
-+		rcg->current_freq = rate;
++	if (!clk)
 +		return 0;
++
++	old_rate = clk_get_rate(clk);
++
++	if (new_rate <= old_rate)
++		goto set_rate;
++
++	hlist_for_each_entry_safe(core, hn, &clk->core->children,
++				  child_node) {
++		if (strcmp(core->parent->name, clk->core->name))
++			continue;
++
++		child_rate = core->rate;
++		div = DIV_ROUND_UP_ULL((u64)new_rate, old_rate);
++		core->rate = child_rate / div;
++		clk_change_rate(core);
 +	}
 +
-+	ret = clk_rcg2_shared_force_enable_clear(hw, rate);
-+	if (ret)
-+		return ret;
-+
-+	/* Update current frequency with the requested frequency. */
-+	rcg->current_freq = rate;
-+
++set_rate:
++	ret = clk_set_rate(clk, new_rate);
 +	return ret;
 +}
++EXPORT_SYMBOL_GPL(clk_set_rate_safe);
 +
-+static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
-+		unsigned long rate, unsigned long parent_rate, u8 index)
++/**
+  * clk_set_rate_range - set a rate range for a clock source
+  * @clk: clock source
+  * @min: desired minimum clock rate in Hz, inclusive
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0dbd088..244d030 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -505,6 +505,16 @@ int __must_check clk_bulk_enable(int num_clks,
+ int clk_set_rate(struct clk *clk, unsigned long rate);
+ 
+ /**
++ * clk_set_rate_safe - set the clock rate for a clock source and make sure
++ *		       its children still maintain the original rate
++ * @clk: clock source
++ * @rate: desired clock rate in Hz
++ *
++ * Returns success (0) or negative errno.
++ */
++int clk_set_rate_safe(struct clk *clk, unsigned long rate);
++
++/**
+  * clk_set_rate_exclusive- set the clock rate and claim exclusivity over
+  *                         clock source
+  * @clk: clock source
+@@ -671,6 +681,11 @@ static inline int clk_set_rate_exclusive(struct clk *clk, unsigned long rate)
+ 	return 0;
+ }
+ 
++static inline int clk_set_rate_safe(struct clk *clk, unsigned long rate)
 +{
-+	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
++	return 0;
 +}
 +
-+static unsigned long
-+clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	if (!__clk_is_enabled(hw->clk) && rcg->current_freq)
-+		return rcg->current_freq;
-+
-+	return rcg->current_freq = clk_rcg2_recalc_rate(hw, parent_rate);
-+}
-+
-+static unsigned long clk_rcg2_get_safe_src_rate(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int index;
-+
-+	index = qcom_find_src_index(hw, rcg->parent_map, rcg->safe_src_index);
-+	if (index < 0)
-+		index = 0;
-+
-+	return clk_hw_get_rate(clk_hw_get_parent_by_index(hw, index));
-+}
-+
-+static int clk_rcg2_shared_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	struct freq_tbl safe_src_freq_tbl = { 0 };
-+
-+	safe_src_freq_tbl.freq = clk_rcg2_get_safe_src_rate(hw);
-+
-+	if (rcg->current_freq == safe_src_freq_tbl.freq) {
-+		safe_src_freq_tbl.src = rcg->safe_src_index;
-+		/*
-+		 * Reconfigure the RCG - Incase if any other sub system updates
-+		 * the div or src without the knowledge of application processor
-+		 * subsystem and RCG could run at different rate other than
-+		 * software cached rate.
-+		 */
-+		clk_rcg2_set_force_enable(hw);
-+		clk_rcg2_configure(rcg, &safe_src_freq_tbl);
-+		clk_rcg2_clear_force_enable(hw);
-+
-+		return 0;
-+	}
-+
-+	/*
-+	 * Switch from safe source to the stashed mux selection. The current
-+	 * parent has already been prepared and enabled at this point, and
-+	 * the safe source is always on while application processor subsystem
-+	 * is online. Therefore, the RCG can safely switch its source.
-+	 */
-+
-+	return clk_rcg2_shared_force_enable_clear(hw, rcg->current_freq);
-+}
-+
-+static void clk_rcg2_shared_disable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	struct freq_tbl safe_src_freq_tbl = { 0 };
-+
-+	safe_src_freq_tbl.src = rcg->safe_src_index;
-+	safe_src_freq_tbl.freq = clk_rcg2_get_safe_src_rate(hw);
-+
-+	/*
-+	 * Park the RCG at a safe configuration - sourced off from safe source.
-+	 * Force enable and disable the RCG while configuring it to safeguard
-+	 * against any update signal coming from the downstream clock.
-+	 * The current parent is still prepared and enabled at this point, and
-+	 * the safe source is always on while application processor subsystem
-+	 * is online. Therefore, the RCG can safely switch its parent.
-+	 */
-+	clk_rcg2_set_force_enable(hw);
-+	clk_rcg2_configure(rcg, &safe_src_freq_tbl);
-+	clk_rcg2_clear_force_enable(hw);
-+}
-+
-+const struct clk_ops clk_rcg2_shared_ops = {
-+	.enable = clk_rcg2_shared_enable,
-+	.disable = clk_rcg2_shared_disable,
-+	.get_parent = clk_rcg2_get_parent,
-+	.set_parent = clk_rcg2_set_parent,
-+	.recalc_rate = clk_rcg2_shared_recalc_rate,
-+	.determine_rate = clk_rcg2_determine_rate,
-+	.set_rate = clk_rcg2_shared_set_rate,
-+	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
-+};
-+EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+ static inline long clk_round_rate(struct clk *clk, unsigned long rate)
+ {
+ 	return 0;
+-- 
+1.9.1
+
+
