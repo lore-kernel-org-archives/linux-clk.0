@@ -1,144 +1,105 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
-Date: Tue, 10 Apr 2018 14:51:37 +0200
-Message-Id: <1523364701-15383-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
-References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:57902 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759215AbeD1Bts (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Apr 2018 21:49:48 -0400
+Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+To: Kevin Hilman <khilman@baylibre.com>
+References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+ <1524820841.4026.112.camel@baylibre.com>
+ <fbd24a73-6793-76be-3ca5-04cbac5db198@amlogic.com>
+ <1524823154.4026.123.camel@baylibre.com>
+ <ab754711-f727-133c-7bc3-a9f3243c2278@amlogic.com>
+ <7hsh7g1o3k.fsf@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <973672c6-1cc1-7f38-ac30-263fd5f0b69c@amlogic.com>
+Date: Sat, 28 Apr 2018 09:50:06 +0800
+MIME-Version: 1.0
+In-Reply-To: <7hsh7g1o3k.fsf@baylibre.com>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
-limited to clock providers.
+Hi Kevin
 
-Hence move these helpers into their own header file, so callers that are
-not clock providers no longer have to include <linux/clk-provider.h>.
+On 04/28/18 02:49, Kevin Hilman wrote:
+> Hi Yixun,
+> 
+> Yixun Lan <yixun.lan@amlogic.com> writes:
+> 
+>> On 04/27/2018 05:59 PM, Jerome Brunet wrote:
+> 
+> [...]
+> 
+>>>
+>>> Looks to be the problem indeed. But it is still an issue with how your patchset
+>>> in organized.
+>>>
+>>> I can't merge this until Kevin merges the patch above, which he can't merge
+>>> until there is the clkc_ao support in axg, which is given by this series.
+>>>
+>>> 1# You should remove the axg part of the patch above. Kevin will be able to
+>>> merge it w/o any dependencies. (BTW, the patch is broken for axg because 1) you
+>>> did not include the dt-binding header for the clkc_ao in axg and 2) the clkc_ao
+>>> does not exist at this stage)
+>>> 2# I can then safely merge this series - w/o breaking gxbb and gxl.
+>>> 3# Finally you'll have to make a DT change for the axg, enabling the clkc_ao and
+>>> changes the uart clocks at the same time.
+>>>
+>>
+>>   I didn't make myself clear in previous email
+>>
+>>   I mean, could you merge patch 1-6, just exclude the patch 7
+>> then kevin can merge the DT part (there are three patches) [1]
+>> after the DT patches merged, then you can take this patch 7
+>> This way, it won't break gxl or any other SoCs
+>>
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
+>>   I'm sending patch 7 along with this series, it would be better if I
+>> give a warning about it.
+> 
+> Your proposal requires extra work from a couple different maintainers to
+> track all the dependencies, and is very error prone.  Sometimes
+> maintainers may do this for you if they have time and are feeling
+> generous, but you will have much more success if you can ease the
+> process.
+> 
+Indeed
 
-I have't added an SPDX-License-Identifier line, as
-<linux/clk-provider.h> also doesn't have one yet.
+ I've actually put a note in the cover letter to highlight special
+attention needed for patch 7, but turns out rely on maintainers to
+handle the dependencies isn't a wise idea
+ Lesson has been learned here, and I'll handle dependencies myself next
+time.
 
-Other candidates to be moved here later?
-  - of_clk_get(),
-  - of_clk_get_by_name(),
-  - of_clk_get_from_provider().
----
- include/linux/clk-provider.h | 14 +-------------
- include/linux/of_clk.h       | 29 +++++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+), 13 deletions(-)
- create mode 100644 include/linux/of_clk.h
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 210a890008f9e129..61cb4729f22acd6b 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -13,6 +13,7 @@
- 
- #include <linux/io.h>
- #include <linux/of.h>
-+#include <linux/of_clk.h>
- 
- #ifdef CONFIG_COMMON_CLK
- 
-@@ -890,13 +891,10 @@ struct clk_hw *of_clk_hw_simple_get(struct of_phandle_args *clkspec,
- struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data);
- struct clk_hw *of_clk_hw_onecell_get(struct of_phandle_args *clkspec,
- 				     void *data);
--unsigned int of_clk_get_parent_count(struct device_node *np);
- int of_clk_parent_fill(struct device_node *np, const char **parents,
- 		       unsigned int size);
--const char *of_clk_get_parent_name(struct device_node *np, int index);
- int of_clk_detect_critical(struct device_node *np, int index,
- 			    unsigned long *flags);
--void of_clk_init(const struct of_device_id *matches);
- 
- #else /* !CONFIG_OF */
- 
-@@ -943,26 +941,16 @@ of_clk_hw_onecell_get(struct of_phandle_args *clkspec, void *data)
- {
- 	return ERR_PTR(-ENOENT);
- }
--static inline unsigned int of_clk_get_parent_count(struct device_node *np)
--{
--	return 0;
--}
- static inline int of_clk_parent_fill(struct device_node *np,
- 				     const char **parents, unsigned int size)
- {
- 	return 0;
- }
--static inline const char *of_clk_get_parent_name(struct device_node *np,
--						 int index)
--{
--	return NULL;
--}
- static inline int of_clk_detect_critical(struct device_node *np, int index,
- 					  unsigned long *flags)
- {
- 	return 0;
- }
--static inline void of_clk_init(const struct of_device_id *matches) {}
- #endif /* CONFIG_OF */
- 
- /*
-diff --git a/include/linux/of_clk.h b/include/linux/of_clk.h
-new file mode 100644
-index 0000000000000000..ba3c0e6983ec1543
---- /dev/null
-+++ b/include/linux/of_clk.h
-@@ -0,0 +1,29 @@
-+/*
-+ * OF clock helpers
-+ */
-+
-+#ifndef __LINUX_OF_CLK_H
-+#define __LINUX_OF_CLK_H
-+
-+#if defined(CONFIG_COMMON_CLK) && defined(CONFIG_OF)
-+
-+unsigned int of_clk_get_parent_count(struct device_node *np);
-+const char *of_clk_get_parent_name(struct device_node *np, int index);
-+void of_clk_init(const struct of_device_id *matches);
-+
-+#else /* !CONFIG_COMMON_CLK || !CONFIG_OF */
-+
-+static inline unsigned int of_clk_get_parent_count(struct device_node *np)
-+{
-+	return 0;
-+}
-+static inline const char *of_clk_get_parent_name(struct device_node *np,
-+						 int index)
-+{
-+	return NULL;
-+}
-+static inline void of_clk_init(const struct of_device_id *matches) {}
-+
-+#endif /* !CONFIG_COMMON_CLK || !CONFIG_OF */
-+
-+#endif /* __LINUX_OF_CLK_H */
--- 
-2.7.4
+> Jerome has provided lots of guidance throughout this series and just
+> above has provided you with a very good proposal above which minimizes
+> the dependencies, and provides the changes in the right order.
+> 
+> Please follow Jerome's suggestion,
+> 
+as already replied in my previous email, again here is my approach
+
+a) I'll send patch 2-6, just leave out patch 7 for now, and as patch 1
+is already accepted.. this way it won't break gxbb/gxl (the OLD SoC)
+b) will pin you to require DT patch merged or re-send if necessary (as
+till now the clkao driver is merged)
+c) send out the patch 7 for UART AO clock fix
+
+this is exactly what Jerome suggested..
+
+Thank you
+
+Yixun
+
