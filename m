@@ -1,146 +1,142 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 00/21] arm64: allwinner: Add A64 DE2 HDMI support
-Date: Mon, 30 Apr 2018 17:10:37 +0530
-Message-Id: <20180430114058.5061-1-jagan@amarulasolutions.com>
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Sun, 29 Apr 2018 15:19:35 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] clk: at91: PLL recalc_rate() now using cached
+ MUL+DIV values
+Message-ID: <20180429151935.21df0784@bbrezillon>
+In-Reply-To: <20180429151710.4ca68978@bbrezillon>
+References: <20180427175609.GA83298@hak8or>
+	<20180429151710.4ca68978@bbrezillon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
+On Sun, 29 Apr 2018 15:17:10 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-A64 DE2 behaviour similar to Allwinner A83T where mixer0, connected to tcon0
-with RGB, LVDS MIPI-DSI and mixer1, connected to tcon1 with HDMI as per
-Display System Block DiagramAllwinner_A64_User_Manual_V1.1.pdf
+> Hi Marcin,
+> 
+> On Fri, 27 Apr 2018 13:56:09 -0400
+> Marcin Ziemianowicz <marcin@ziemianowicz.com> wrote:
+> 
+> > Stephen Boyd <sboyd@kernel.org>,
+> > linux-clk@vger.kernel.org,
+> > linux-arm-kernel@lists.infradead.org,
+> > linux-kernel@vger.kernel.org
+> > Bcc: 
+> > Subject: [PATCH v3] clk: at91: PLL recalc_rate() now using cached MUL and DIV
+> >  values
+> > Reply-To:  
+> 
+> Hm, I don't know how you prepared and sent your patch, but you shouldn't
+> have these fields in the body of your email. Please use git format-patch
+> to prepare the patch and then git send-email to send it.
+>  
+> > 
+> > When a USB device is connected to the USB host port on the SAM9N12 then
+> > you get "-62" error which seems to indicate USB replies from the device
+> > are timing out. Based on a logic sniffer, I saw the USB bus was running
+> > at half speed.
+> > 
+> > The PLL code uses cached MUL and DIV values which get set in set_rate()
+> > and applied in prepare(), but the recalc_rate() function instead
+> > queries the hardware instead of using these cached values. Therefore,
+> > if recalc_rate() is called between a set_rate() and prepare(), the
+> > wrong frequency is calculated and later the USB clock divider for the
+> > SAM9N12 SOC will be configured for an incorrect clock.
+> > 
+> > In my case, the PLL hardware was set to 96 Mhz before the OHCI
+> > driver loads, and therefore the usb clock divider was being set
+> > to /2 even though the OHCI driver set the PLL to 48 Mhz.
+> > 
+> > As an alternative explanation, I noticed this was fixed in the past:
+> > http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/283502.html
+> > but was later changed back via a large patch (maybe by mistake?):
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1bdf02326b71eae7e9b4b335b881856aaf9d1af6  
+> 
+> Yep, probably by mistake. I started this rework long before it has been
+> submitted to the ML, so I probably messed something up when rebasing.
+> 
+> Also, prefer commit IDs to links to the ML archive. The above would
+> sentence would give:
+> 
+> "
+> As an alternative explanation, I noticed this was fixed in the past by
+> 87e2ed338f1b ("clk: at91: fix recalc_rate implementation of PLL
+> driver") but the bug was later re-introduced by 1bdf02326b71 ("clk:
+> at91: make use of syscon/regmap internally").
+> "
+> 
+> 
+> The following comment and the changelog should be placed after the
+> '---' line, so that it's not part of the commit message.
+> 
+> > Thank you for bearing with me about this Boris.
+> > 
+> > Changes since V2:
+> >   Removed all logging/debug messages I added  
+> >   > Comment by Boris Brezillon about my fix being wrong addressed    
+> > Changes since V1:
+> >   Added patch set cover letter
+> >   Shortened lines which were over >80 characters long  
+> >   > Comment by Greg Kroah-Hartman about "from" field in email addressed
+> >   > Comment by Alan Stern about redundant debug lines addressed    
+> >   
+> 
+> You should add Fixes and Cc-stable tags so that the fix is backported
+> to stable branches:
+> 
+> Fixes: 1bdf02326b71 ("clk: at91: make use of syscon/regmap internally)
+> Cc: <stable@vger.kernel.org>
+> 
+> > Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+> > ---
+> >  drivers/clk/at91/clk-pll.c | 13 +------------
+> >  1 file changed, 1 insertion(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
+> > index 7d3223fc..cc6e0364 100644
+> > --- a/drivers/clk/at91/clk-pll.c
+> > +++ b/drivers/clk/at91/clk-pll.c
+> > @@ -132,19 +132,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+> >  					 unsigned long parent_rate)
+> >  {
+> >  	struct clk_pll *pll = to_clk_pll(hw);
+> > -	unsigned int pllr;
+> > -	u16 mul;
+> > -	u8 div;
+> > -
+> > -	regmap_read(pll->regmap, PLL_REG(pll->id), &pllr);
+> > -
+> > -	div = PLL_DIV(pllr);
+> > -	mul = PLL_MUL(pllr, pll->layout);
+> > -
+> > -	if (!div || !mul)
+> > -		return 0;
+> >  
+> > -	return (parent_rate / div) * (mul + 1);
+> > +	return return (parent_rate / pll->div) * (pll->mul + 1);
 
-This is the first series on Allwinner A64 DE2 HDMI support which followed
-with previous RFC series [1] (thanks to Maxime, Jernej for comments on RFC series)
-and rest will add in future patches.
+Oops, one too many return as reported by kbuild test robot.
 
-patch 1: dt-bindings for a64 de2 ccu
-
-patch 2: add node support for a64 de2 ccu
-
-patch 3: enable DE2_CCU for Allwinner 64-bit SoCs
-
-patch 4: dt-bindings for a64 de2 pipeline
-
-patch 5: add support for a64 de2
-
-patch 6: defconfig: enable CONFIG_DRM_SUN4I
-
-patch 7 -8: dt-bindings for a64 HDMI and HDMI PHY
-
-patch 9: add support for a64 HDMI
-
-patch 10: enable DesignWare HDMI for Allwinner 64-bit SoCs
-
-patch 11 - 12: dt-bindings for a64 mixer1 and tcon1
-
-patch 13: enable de2 mixer for Allwinner 64-bit SoCs
-
-patch 14: add support for a64 HDMI pipeline
-
-patch 15: add support for HVCC regulator
-
-patch 16: enable HDMI out for bananapi-m64
-
-patch 17: enable HDMI out for nanopi-a64
-
-patch 18: enable HDMI out for orangepi-win
-
-patch 19: enable HDMI out for a64-olinuxino
-
-patch 20: enable HDMI out for pine64
-
-patch 21: enable HDMI out for sopine
-
-Since this series added HDMI through mixer1 through tcon1,
-I have used CLK_PLL_VIDEO1 as pll-0 we need to update the driver
-to support both CLK_PLL_VIDEO0 and 1 once we have add hdmi through mixer0.
-
-Note:
-with pine64 and sopine, I'm unable to see any display on screen but
-loadded fine, request to verify anyone.
-
-Log:
----
-# modprobe -a sun4i-drm sun8i-mixer sun4i_tv sun4i-drm-hdmi sun8i-drm-hdmi          
-[   13.390465] sun4i-drm display-engine: bound 1200000.mixer (ops sun8i_mixer_ops [sun8i_mixer])
-[   13.399247] sun4i-drm display-engine: No panel or bridge found... RGB output disabled
-[   13.407113] sun4i-drm display-engine: bound 1c0d000.lcd-controller (ops sun4i_tcon_ops [sun4i_tcon])
-[   13.417386] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller v1.32a with HDCP (sun8i_dw_hdmi_ph
-y)                                                                                  
-[   13.427436] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI I2C bus driver
-[   13.435987] sun4i-drm display-engine: bound 1ee0000.hdmi (ops sun8i_dw_hdmi_ops [sun8i_drm_hdmi])
-[   13.444868] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).          
-[   13.451498] [drm] No driver support for vblank timestamp query.                  
-[   13.922226] Console: switching to colour frame buffer device 320x90              
-[   14.008789] sun4i-drm display-engine: fb0:  frame buffer device                  
-[   14.028297] [drm] Initialized sun4i-drm 1.0.0 20150629 for display-engine on minor 0
-
-[1] https://lkml.org/lkml/2018/4/24/547
-
-Icenowy Zheng (1):
-  drm: sun4i: add support for HVCC regulator for DWC HDMI glue
-
-Jagan Teki (20):
-  dt-bindings: clock: Add compatible for A64 DE2 CCU
-  arm64: dts: allwinner: a64: Add DE2 CCU
-  clk: sunxi-ng: Enable DE2_CCU for Allwinner 64-bit SoCs
-  bindings: display: Add compatible for A64 DE2 pipeline
-  drm/sun4i: Add support for A64 display engine
-  arm64: defconfig: Enable CONFIG_DRM_SUN4I
-  bindings: display: Add compatible for A64 HDMI
-  bindings: display: Add compatible for A64 HDMI PHY
-  arm64: dts: allwinner: a64: Add HDMI support
-  drm/sun4i: Enable DesignWare HDMI for Allwinner 64-bit SoCs
-  bindings: display: Add compatible for A64 Mixer1
-  bindings: display: Add compatible for A64 tcon-tv
-  drm/sun4i: Enable DE2 Mixer for Allwinner 64-bit SoCs
-  arm64: dts: allwinner: a64: Add HDMI pipeline
-  arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
-  arm64: dts: allwinner: a64: nanopi-a64: Enable HDMI output
-  arm64: dts: allwinner: a64: orangepi-win: Enable HDMI output
-  arm64: dts: allwinner: a64: a64-olinuxino: Enable HDMI output
-  arm64: dts: allwinner: a64: pine64: Enable HDMI output
-  arm64: dts: allwinner: a64: sopine: Enable HDMI output
-
- .../devicetree/bindings/clock/sun8i-de2.txt        |   1 +
- .../bindings/display/sunxi/sun4i-drm.txt           |   5 +
- .../boot/dts/allwinner/sun50i-a64-bananapi-m64.dts |  26 +++++
- .../boot/dts/allwinner/sun50i-a64-nanopi-a64.dts   |  26 +++++
- .../boot/dts/allwinner/sun50i-a64-olinuxino.dts    |  26 +++++
- .../boot/dts/allwinner/sun50i-a64-orangepi-win.dts |  26 +++++
- .../arm64/boot/dts/allwinner/sun50i-a64-pine64.dts |  26 +++++
- .../dts/allwinner/sun50i-a64-sopine-baseboard.dts  |  26 +++++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi      | 126 +++++++++++++++++++++
- arch/arm64/configs/defconfig                       |   1 +
- drivers/clk/sunxi-ng/Kconfig                       |   2 +
- drivers/gpu/drm/sun4i/Kconfig                      |   3 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c                  |   1 +
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c              |  14 +++
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h              |   2 +
- include/dt-bindings/clock/sun50i-a64-ccu.h         |   2 +
- 16 files changed, 312 insertions(+), 1 deletion(-)
-
--- 
-2.14.3
+> 
+> The fix looks good. Let me know if you struggle with git
+> format-patch/send-email and I'll try to help you (or send the patch for
+> you if you don't care learning the process, but I think it's better if
+> you learn how to submit patches).
+> 
+> Thanks,
+> 
+> Boris
+> 
+> >  }
+> >  
+> >  static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,  
+> 
