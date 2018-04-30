@@ -1,47 +1,70 @@
-Return-Path: <gustavo@embeddedor.com>
-Date: Tue, 3 Apr 2018 20:09:31 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] clk: samsung: s3c: Mark expected switch fall-through
-Message-ID: <20180404010931.GA30291@embeddedor.com>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 30 Apr 2018 10:48:54 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd
+	<sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>, <linux-clk@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Message-ID: <20180430074854.GM6835@tbergstrom-lnx.Nvidia.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+ <20180426235818.10018-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180426235818.10018-2-digetx@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Fri, Apr 27, 2018 at 02:58:15AM +0300, Dmitry Osipenko wrote:
+> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
+> a parent. Add these dividers in order to be able to provide that parent
+> option.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> index 0ee56dd04cec..16cf4108f2ff 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -26,6 +26,8 @@
+>  #include "clk.h"
+>  #include "clk-id.h"
+>  
+> +#define MISC_CLK_ENB 0x48
+> +
+>  #define OSC_CTRL 0x50
+>  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+>  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
+>  				    periph_clk_enb_refcnt);
+>  	clks[TEGRA20_CLK_PEX] = clk;
+>  
+> +	/* cdev1 OSC divider */
+> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
+> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+> +
 
-Notice that in this particular case I replaced the comma wiht a dash,
-which is what GCC is expecting to find when there are other comments
-in the same line in which "fall through" appears.
+I don't know if this divider can be changed glitchlessly so to be safe,
+I would mark this readonly, so add the CLK_DIVIDER_READ_ONLY flag.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-This code was compiled with GCC 7.3.0
+> +	/* cdev2 OSC divider */
+> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
+> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+> +
+>  	/* cdev1 */
+>  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
+>  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
+> -- 
+> 2.17.0
+> 
 
- drivers/clk/samsung/clk-s3c2443.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index c46e6d5..7ebb87f 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -429,7 +429,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
- 				ARRAY_SIZE(s3c2450_gates));
- 		samsung_clk_register_alias(ctx, s3c2450_aliases,
- 				ARRAY_SIZE(s3c2450_aliases));
--		/* fall through, as s3c2450 extends the s3c2416 clocks */
-+		/* fall through - as s3c2450 extends the s3c2416 clocks */
- 	case S3C2416:
- 		samsung_clk_register_div(ctx, s3c2416_dividers,
- 				ARRAY_SIZE(s3c2416_dividers));
--- 
-2.7.4
+Peter.
