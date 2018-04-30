@@ -1,53 +1,138 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1524512506.4026.31.camel@baylibre.com>
-Subject: Re: [PATCH clk-fixes] clk: meson: meson8b: fix meson8b_cpu_clk
- parent clock name
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	narmstrong@baylibre.com, linux-amlogic@lists.infradead.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org
-Date: Mon, 23 Apr 2018 21:41:46 +0200
-In-Reply-To: <20180423193029.29428-1-martin.blumenstingl@googlemail.com>
-References: <20180423193029.29428-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 30 Apr 2018 10:46:09 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd
+	<sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>, <linux-clk@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/4] pinctrl: tegra20: Provide CDEV1/2 clock muxes
+Message-ID: <20180430074609.GK6835@tbergstrom-lnx.Nvidia.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+ <20180426235818.10018-3-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180426235818.10018-3-digetx@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-04-23 at 21:30 +0200, Martin Blumenstingl wrote:
-> meson8b_cpu_clk has two parent clocks:
-> - meson8b_xtal
-> - meson8b_cpu_scale_out_sel
+On Fri, Apr 27, 2018 at 02:58:16AM +0300, Dmitry Osipenko wrote:
+> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
+> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
+> that main clk-controller driver could get an actual parent clock for the
+> CDEV1/2 clocks.
 > 
-> The name of the "xtal" clock parent is specified correctly. However,
-> there is a typo in the name of the second parent clock. The
-> meson8b_cpu_scale_out_sel definition uses the name "cpu_scale_out_sel"
-> (which matches the name from the datasheet). However, the mux parent
-> definition uses the name "cpu_out_sel" which does not match any existing
-> clock.
-> 
-> Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-
-Roohhh ... Sorry about that :(
-
-I'll take it along with the other typo fix. Thx Martin !
-
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/clk/meson/meson8b.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
+>  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
+>  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
+>  3 files changed, 40 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index 2c4ff6192852..d0524ec71aad 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -632,7 +632,8 @@ static struct clk_regmap meson8b_cpu_clk = {
->  	.hw.init = &(struct clk_init_data){
->  		.name = "cpu_clk",
->  		.ops = &clk_regmap_mux_ro_ops,
-> -		.parent_names = (const char *[]){ "xtal", "cpu_out_sel" },
-> +		.parent_names = (const char *[]){ "xtal",
-> +						  "cpu_scale_out_sel" },
->  		.num_parents = 2,
->  		.flags = (CLK_SET_RATE_PARENT |
->  			  CLK_SET_RATE_NO_REPARENT),
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> index 72c718e66ebb..49c7c1499bc3 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+> @@ -33,17 +33,6 @@
+>  #include "../pinctrl-utils.h"
+>  #include "pinctrl-tegra.h"
+>  
+> -struct tegra_pmx {
+> -	struct device *dev;
+> -	struct pinctrl_dev *pctl;
+> -
+> -	const struct tegra_pinctrl_soc_data *soc;
+> -	const char **group_pins;
+> -
+> -	int nbanks;
+> -	void __iomem **regs;
+> -};
+> -
+>  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+>  {
+>  	return readl(pmx->regs[bank] + reg);
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+> index 33b17cb1471e..aa33c20766c4 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra.h
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+> @@ -16,6 +16,17 @@
+>  #ifndef __PINMUX_TEGRA_H__
+>  #define __PINMUX_TEGRA_H__
+>  
+> +struct tegra_pmx {
+> +	struct device *dev;
+> +	struct pinctrl_dev *pctl;
+> +
+> +	const struct tegra_pinctrl_soc_data *soc;
+> +	const char **group_pins;
+> +
+> +	int nbanks;
+> +	void __iomem **regs;
+> +};
+> +
+>  enum tegra_pinconf_param {
+>  	/* argument: tegra_pinconf_pull */
+>  	TEGRA_PINCONF_PARAM_PULL,
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+> index 7e38ee9bae78..f31e39d797f9 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+> @@ -19,6 +19,7 @@
+>   * more details.
+>   */
+>  
+> +#include <linux/clk-provider.h>
+>  #include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> @@ -2231,9 +2232,36 @@ static const struct tegra_pinctrl_soc_data tegra20_pinctrl = {
+>  	.drvtype_in_mux = false,
+>  };
+>  
+> +static const char *cdev1_parents[4] = {
+
+No need to have 4 here, just cdev1_parents[] will do. 
+
+> +	"cdev1_osc_div", "pll_a_out0", "pll_m_out1", "audio",
+> +};
+> +
+> +static const char *cdev2_parents[4] = {
+> +	"cdev2_osc_div", "hclk", "pclk", "pll_p_out4",
+> +};
+> +
+
+Same here.
+
+> +static void tegra20_pinctrl_register_clock_muxes(struct platform_device *pdev)
+> +{
+> +	struct tegra_pmx *pmx = platform_get_drvdata(pdev);
+> +
+> +	clk_register_mux(NULL, "cdev1_mux", cdev1_parents, 4, 0,
+> +			 pmx->regs[1] + 0x8, 2, 2, CLK_MUX_READ_ONLY, NULL);
+> +
+> +	clk_register_mux(NULL, "cdev2_mux", cdev2_parents, 4, 0,
+> +			 pmx->regs[1] + 0x8, 4, 2, CLK_MUX_READ_ONLY, NULL);
+> +}
+> +
+>  static int tegra20_pinctrl_probe(struct platform_device *pdev)
+>  {
+> -	return tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
+> +	int err;
+> +
+> +	err = tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
+> +	if (err)
+> +		return err;
+> +
+> +	tegra20_pinctrl_register_clock_muxes(pdev);
+> +
+> +	return 0;
+>  }
+>  
+>  static const struct of_device_id tegra20_pinctrl_of_match[] = {
+
+Apart from these nitpicks:
+
+Acked-By:  Peter De Schrijver <pdeschrijver@nvidia.com>
