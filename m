@@ -1,64 +1,89 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-Date: Fri, 27 Apr 2018 02:58:15 +0300
-Message-Id: <20180426235818.10018-2-digetx@gmail.com>
-In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 21/21] arm64: dts: allwinner: a64: sopine: Enable HDMI output
+Date: Mon, 30 Apr 2018 17:10:58 +0530
+Message-Id: <20180430114058.5061-22-jagan@amarulasolutions.com>
+In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
-a parent. Add these dividers in order to be able to provide that parent
-option.
+Enable HDMI output on sopine board.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../dts/allwinner/sun50i-a64-sopine-baseboard.dts  | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 0ee56dd04cec..16cf4108f2ff 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -26,6 +26,8 @@
- #include "clk.h"
- #include "clk-id.h"
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+index abe179de35d7..72f29b78117c 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+@@ -61,6 +61,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
-+#define MISC_CLK_ENB 0x48
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
- #define OSC_CTRL 0x50
- #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
- #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
-@@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
- 				    periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_PEX] = clk;
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	reg_vcc1v8: vcc1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc1v8";
+@@ -69,6 +80,10 @@
+ 	};
+ };
  
-+	/* cdev1 OSC divider */
-+	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
-+			     0, clk_base + MISC_CLK_ENB, 20, 2,
-+			     CLK_DIVIDER_POWER_OF_TWO, NULL);
++&de {
++	status = "okay";
++};
 +
-+	/* cdev2 OSC divider */
-+	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
-+			     0, clk_base + MISC_CLK_ENB, 22, 2,
-+			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -86,6 +101,17 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
 +
- 	/* cdev1 */
- 	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
- 	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &mdio {
+ 	ext_rgmii_phy: ethernet-phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
 -- 
-2.17.0
+2.14.3
