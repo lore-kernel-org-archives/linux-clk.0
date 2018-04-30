@@ -1,80 +1,119 @@
-Return-Path: <evgreen@chromium.org>
-Return-Path: <evgreen@chromium.org>
-MIME-Version: 1.0
-References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
- <1522304274-18989-2-git-send-email-tdas@codeaurora.org> <CAE=gft6-FggNjP0nj6XrLN1rQqnep_PHHWg2fiRUrM8ZBf36Sg@mail.gmail.com>
- <65abfb98-802a-d7aa-5213-9fcd531b18d9@codeaurora.org> <152297026107.143116.8868825918169537109@swboyd.mtv.corp.google.com>
-In-Reply-To: <152297026107.143116.8868825918169537109@swboyd.mtv.corp.google.com>
-From: Evan Green <evgreen@chromium.org>
-Date: Tue, 10 Apr 2018 17:05:23 +0000
-Message-ID: <CAE=gft6q8ELJCN5JU5svS6cYHO65GMFKTVrHT9wu_mpr-j1-xw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: sboyd@kernel.org
-Cc: tdas@codeaurora.org, sboyd@codeaurora.org,
-	Michael Turquette <mturquette@baylibre.com>, Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, okukatla@codeaurora.org,
-	anischal@codeaurora.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, collinsd@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v6 0/3] Misc patches to support clocks for SDM845
+Date: Mon, 30 Apr 2018 21:50:07 +0530
+Message-Id: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 5, 2018 at 4:17 PM Stephen Boyd <sboyd@kernel.org> wrote:
+Changes in v6:
+1. Adressed review comments for v3 and v4 version of GCC driver for SDM845.
+   https://lkml.org/lkml/2018/4/16/1129.
+2. Add support for new flag 'BRANCH_NO_DELAY' for branch clocks.
+3. Addressed review comments for v5 version of rcg2_shared_ops patch.
+   https://lkml.org/lkml/2018/4/19/86
+4. The GCC clock driver(patch 3) depends upon the below patches related to
+   GDSC operation and RPMh clock driver, which are under review.
+   https://lkml.org/lkml/2018/4/27/110
+   https://lkml.org/lkml/2018/4/24/390
 
-> Quoting Taniya Das (2018-04-02 03:33:26)
-> >
-> > >
-> > >> +
-> > >> +#include "common.h"
-> > >> +#include "clk-regmap.h"
-> > >> +
-> > >> +#define CLK_RPMH_ARC_EN_OFFSET 0
-> > >> +#define CLK_RPMH_VRM_EN_OFFSET 4
-> > >> +#define CLK_RPMH_VRM_OFF_VAL 0
-> > >> +#define CLK_RPMH_VRM_ON_VAL 1
-> > >> +#define CLK_RPMH_APPS_RSC_AO_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE)
-| \
-> > >> +                                        BIT(RPMH_ACTIVE_ONLY_STATE))
-> > >> +#define CLK_RPMH_APPS_RSC_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
-> > >> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) | \
-> > >> +                                     BIT(RPMH_SLEEP_STATE))
-> > >> +struct clk_rpmh {
-> > >> +       const char *res_name;
-> > >> +       u32 res_addr;
-> > >> +       u32 res_en_offset;
-> > >> +       u32 res_on_val;
-> > >> +       u32 res_off_val;
-> > >> +       u32 state;
-> > >> +       u32 aggr_state;
-> > >> +       u32 last_sent_aggr_state;
-> > >> +       u32 valid_state_mask;
-> > >> +       struct rpmh_client *rpmh_client;
-> > >> +       unsigned long rate;
-> > >> +       struct clk_rpmh *peer;
-> > >> +       struct clk_hw hw;
-> > >
-> > > I believe this member should go at the beginning of the structure. At
-least
-> > > that's what everyone else seems to do, and that's what the clk.txt
-> > > documentation seems to ask for.
-> > >
-> >
-> > Yes I missed that, would update it in the next patch series.
+Changes in v5:
+1. Adressed review comments for v3 and v4 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/16/1129
+2. Removed bi_tcxo clock being modelled from the GCC driver, as RPMH clock
+   driver would provide the same. https://lkml.org/lkml/2018/4/13/685
+3. The GCC clock driver(patch 2) depends upon the below patches related to
+   GDSC operation and RPMh clock driver, which are under review.
+   https://lkml.org/lkml/2018/4/2/143
+   https://lkml.org/lkml/2018/4/13/685
 
-> Where is the documentation asking for that? There isn't any place that
-> clk_hw should be in a structure. container_of() can figure it out all
-> the time, and that macro is preferred instead of plain casts from one
-> type to another because it provides slightly more type safety.
+Changes in v4:
+1. Adressed review comments for v2 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/9/55.
+2. The GCC clock driver(patch 3) depends upon the below patches
+   related to GDSC operation and are under review.
 
-Perhaps I'm reading too strictly into the documentation, but this was the
-passage that gave me that idea:
+   https://lkml.org/lkml/2018/4/2/142
 
-To construct a clk hardware structure for your platform you must define
-the following::
+Changes in v3:
+1. Adressed review comments given for v2 series.
+2. The GCC clock driver(patch 3) depends upon the below patches related
+   to GDSC operation and are under review.
 
-struct clk_foo {
-struct clk_hw hw;
-... hardware specific data goes here ...
-};
+   https://lkml.org/lkml/2018/4/2/142
 
--Evan
+Changes in v2:
+Fixup for recalc_rate ops for clk_rcg2_shared_ops:
+There could be few scenarios where shared clocks are configured
+at rate other than CXO by boot. In those cases there would be a
+mismatch between the rate calculated by the recalc shared ops
+and the actual HW register configuration. Fix the same by adding
+an additional check to read current src from CFG register and
+make a decision based on that.
+
+Changes in v1:
+https://lkml.org/lkml/2018/1/31/209
+
+This patch series does the miscellaneous changes to support
+clock nodes for SDM845. Below are the major changes for
+which the existing code does not have support.
+
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
+3. Add support for controlling Fabia PLL for which the support
+   is not available in existing alpha PLL code.
+4. Add Global Clock controller (GCC) driver for SDM845. This
+   should allow most non-multimedia device drivers to probe
+   and control their clocks.
+
+[v1] : https://lkml.org/lkml/2018/1/31/209
+[v2] : https://lkml.org/lkml/2018/3/8/495
+[v3] : https://www.spinics.net/lists/linux-arm-msm/msg35009.html
+[v4] : https://lkml.org/lkml/2018/4/9/79
+[v5] : https://lkml.org/lkml/2018/4/18/367
+
+Amit Nischal (2):
+  clk: qcom: Configure the RCGs to a safe source as needed
+  clk: qcom: Add support for BRANCH_NO_DELAY flag for branch clocks
+
+Taniya Das (1):
+  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |   10 +-
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-branch.c                      |    7 +-
+ drivers/clk/qcom/clk-branch.h                      |    1 +
+ drivers/clk/qcom/clk-rcg.h                         |    7 +-
+ drivers/clk/qcom/clk-rcg2.c                        |  207 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 3480 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  239 ++
+ 9 files changed, 3940 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
