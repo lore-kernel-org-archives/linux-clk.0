@@ -1,53 +1,51 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Doug Anderson <dianders@chromium.org>, Manu Gautam <mgautam@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAD=FV=UXvf+_rvbFGrHAQ1N0kbrMR_c2=LBVD=AMuL6DAjWO+Q@mail.gmail.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>,
- devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
- Vivek Gautam <vivek.gautam@codeaurora.org>,
- Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
- Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>,
- "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
- <1522321466-21755-2-git-send-email-mgautam@codeaurora.org>
- <CAD=FV=UXvf+_rvbFGrHAQ1N0kbrMR_c2=LBVD=AMuL6DAjWO+Q@mail.gmail.com>
-Message-ID: <152295883900.91052.4792431636170417291@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 1/7] clk: msm8996-gcc: change halt check for USB/PCIE pipe_clk
-Date: Thu, 05 Apr 2018 13:07:19 -0700
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 04/21] bindings: display: Add compatible for A64 DE2 pipeline
+Date: Mon, 30 Apr 2018 17:10:41 +0530
+Message-Id: <20180430114058.5061-5-jagan@amarulasolutions.com>
+In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Doug Anderson (2018-03-29 13:55:55)
-> Hi,
-> =
+Allwinner A64 has DE2 pipeline similar to other Allwinner
+SOC's like A83T, H3/H5.
 
-> On Thu, Mar 29, 2018 at 4:04 AM, Manu Gautam <mgautam@codeaurora.org> wro=
-te:
-> > The USB and PCIE pipe clocks are sourced from external clocks
-> > inside the QMP USB/PCIE PHYs. Enabling or disabling of PIPE RCG
-> > clocks is dependent on PHY initialization sequence hence
-> > update halt_check to BRANCH_HALT_DELAY for these clocks so
-> > that clock status bit is not polled when enabling or disabling
-> > the clocks. It allows to simplify PHY client driver code which
-> > is both user and source of the pipe_clk and avoid error logging
-> > related status check on clk_disable/enable.
-> >
-> > Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-> > ---
-> >  drivers/clk/qcom/gcc-msm8996.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> =
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-> As per my feedback on <https://patchwork.kernel.org/patch/10314937/>,
-> I'm not a fan of this.  Hopefully we can adjust the PHY driver so it's
-> not needed.
-> =
-
-
-Agreed. We should be able to enable the clks at the right time and halt
-bits should work. From what I can recall we had that working before on
-db820c, so has something changed?
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 3346c1e2a7a0..f0fd9274a25d 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -343,6 +343,7 @@ Required properties:
+     * allwinner,sun8i-h3-display-engine
+     * allwinner,sun8i-v3s-display-engine
+     * allwinner,sun9i-a80-display-engine
++    * allwinner,sun50i-a64-display-engine
+ 
+   - allwinner,pipelines: list of phandle to the display engine
+     frontends (DE 1.0) or mixers (DE 2.0) available.
+-- 
+2.14.3
