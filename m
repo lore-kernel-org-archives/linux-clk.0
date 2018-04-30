@@ -1,70 +1,82 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Mon, 30 Apr 2018 10:48:54 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
-	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd
-	<sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>, <linux-clk@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-Message-ID: <20180430074854.GM6835@tbergstrom-lnx.Nvidia.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180426235818.10018-2-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180426235818.10018-2-digetx@gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 17/21] arm64: dts: allwinner: a64: nanopi-a64: Enable HDMI output
+Date: Mon, 30 Apr 2018 17:10:54 +0530
+Message-Id: <20180430114058.5061-18-jagan@amarulasolutions.com>
+In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 02:58:15AM +0300, Dmitry Osipenko wrote:
-> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
-> a parent. Add these dividers in order to be able to provide that parent
-> option.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index 0ee56dd04cec..16cf4108f2ff 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -26,6 +26,8 @@
->  #include "clk.h"
->  #include "clk-id.h"
->  
-> +#define MISC_CLK_ENB 0x48
-> +
->  #define OSC_CTRL 0x50
->  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
->  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
-> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
->  				    periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_PEX] = clk;
->  
-> +	/* cdev1 OSC divider */
-> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
-> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
-> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +
+Enable HDMI output on nanopi-a64 board.
 
-I don't know if this divider can be changed glitchlessly so to be safe,
-I would mark this readonly, so add the CLK_DIVIDER_READ_ONLY flag.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ .../boot/dts/allwinner/sun50i-a64-nanopi-a64.dts   | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-> +	/* cdev2 OSC divider */
-> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
-> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +
->  	/* cdev1 */
->  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
->  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
-> -- 
-> 2.17.0
-> 
-
-Peter.
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+index e2dce48fa29a..19fe7eed45e9 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+@@ -57,6 +57,21 @@
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++};
++
++&de {
++	status = "okay";
+ };
+ 
+ &ehci0 {
+@@ -67,6 +82,17 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ /* i2c1 connected with gpio headers like pine64, bananapi */
+ &i2c1 {
+ 	pinctrl-names = "default";
+-- 
+2.14.3
