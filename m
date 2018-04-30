@@ -1,67 +1,92 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v5 12/44] clk: davinci: Add platform information for TI
- DA850 PSC
-To: Stephen Boyd <sboyd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Sekhar Nori <nsekhar@ti.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- devicetree <devicetree@vger.kernel.org>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Adam Ford <aford173@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1515377863-20358-1-git-send-email-david@lechnology.com>
- <1515377863-20358-13-git-send-email-david@lechnology.com>
- <CAMRc=MfQuqTK+mDT0Gawa6J-3d1z6djLutaHREKfVm+3hATEqQ@mail.gmail.com>
- <CAEG3pND6Cu0P_t3y_VM9Sm-GCb3yW0Pa8q4cRUOXYxa5=2nWUQ@mail.gmail.com>
- <a4d84be0-e3d3-4e39-40f9-cae9006cb6ee@ti.com>
- <CAMRc=Mc228JAxxBXcObmokh2h-toojG8OHrmbunm_ORqbGWUnA@mail.gmail.com>
- <69bc0848-0698-b936-96a3-2257a5e27809@ti.com>
- <CAMRc=MenWp=2dtOs1yafnHVkCxfT7SDS0fS2UxUd+U0s_UDwVw@mail.gmail.com>
- <57f2182e-09b4-2cab-5602-9d0e029495be@ti.com>
- <152303318048.143116.2883441215887455211@swboyd.mtv.corp.google.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <48c8531f-8cd9-a9f8-9c38-cbc4c921c4c9@lechnology.com>
-Date: Mon, 23 Apr 2018 09:59:27 -0500
-MIME-Version: 1.0
-In-Reply-To: <152303318048.143116.2883441215887455211@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
+Date: Mon, 30 Apr 2018 17:10:46 +0530
+Message-Id: <20180430114058.5061-10-jagan@amarulasolutions.com>
+In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/06/2018 11:46 AM, Stephen Boyd wrote:
-> Quoting Sekhar Nori (2018-04-06 02:37:03)
->>
->> Can you please check that and confirm there is no issue with genpd and
->> using CLK_OF_DECLARE() to initialize clocks?
->>
->> Unless you report an issue back, or Mike and Stephen have ideas about
->> how to handle the dependency between PSC/PLL derived timer clock
->> initialization and and timer_probe(), I think we need to move back to
->> using CLK_OF_DECLARE().
-> 
-> In such a case, please use the hybrid approach where the clks required
-> for the clockevent and/or clocksource are registered in the early
-> CLK_OF_DECLARE path but the rest of the clks get registered with a
-> proper platform device and driver. There are examples of this approach
-> on other platforms already.
-> 
+HDMI on Allwinner A64 has similar behavior like H3/H5, so
+reuse the same dts node details for A64.
 
-I looked at this a bit last week, but I didn't come up with any approach
-that I was happy with. It seems like it would be nice to just register
-the absolute minimum clocks needed. On DA8XX, that would just be the PLL0
-AUXCLK. On most of the other SoCs, it would be the PLL AUXCLK plus one
-LPSC clock. The AUXCLKs are easy because they are just a simple gate
-from the oscillator. The LPSC clocks are a bit more tricky because they
-have a complex sequence for turning on. Furthermore, on DM646X, we need
-the whole PLL up to SYSCLK3 plus one LPSC clock, so things get a bit
-messy there.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 28 +++++++++++++++++++++++++++
+ include/dt-bindings/clock/sun50i-a64-ccu.h    |  2 ++
+ 2 files changed, 30 insertions(+)
 
-The other approach I considered was to make the PLL and PSC drivers
-work as platform devices or pure clock devices so that when needed,
-the whole IP block could be registered in very early init. However,
-this approach will pretty much require massive changes to the drivers
-to remove all of the uses of devm_, dev_err, etc. so that it works
-when dev == NULL.
-
-Any other bright ideas or a preference for one of these two approaches?
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 67b80bbe5bf5..da9128ae836d 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -644,6 +644,34 @@
+ 			#interrupt-cells = <3>;
+ 		};
+ 
++		hdmi: hdmi@1ee0000 {
++			compatible = "allwinner,sun50i-a64-dw-hdmi",
++				     "allwinner,sun8i-a83t-dw-hdmi";
++			reg = <0x01ee0000 0x10000>;
++			reg-io-width = <1>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
++				 <&ccu CLK_HDMI>;
++			clock-names = "iahb", "isfr", "tmds";
++			resets = <&ccu RST_BUS_HDMI1>;
++			reset-names = "ctrl";
++			phys = <&hdmi_phy>;
++			phy-names = "hdmi-phy";
++			status = "disabled";
++		};
++
++		hdmi_phy: hdmi-phy@1ef0000 {
++			compatible = "allwinner,sun50i-a64-hdmi-phy",
++				     "allwinner,sun8i-h3-hdmi-phy";
++			reg = <0x01ef0000 0x10000>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
++				 <&ccu CLK_PLL_VIDEO1>;
++			clock-names = "bus", "mod", "pll-0";
++			resets = <&ccu RST_BUS_HDMI0>;
++			reset-names = "phy";
++			#phy-cells = <0>;
++		};
++
+ 		rtc: rtc@1f00000 {
+ 			compatible = "allwinner,sun6i-a31-rtc";
+ 			reg = <0x01f00000 0x54>;
+diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h b/include/dt-bindings/clock/sun50i-a64-ccu.h
+index d66432c6e675..41c09df797ef 100644
+--- a/include/dt-bindings/clock/sun50i-a64-ccu.h
++++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
+@@ -45,6 +45,8 @@
+ 
+ #define CLK_PLL_PERIPH0		11
+ 
++#define CLK_PLL_VIDEO1		15
++
+ #define CLK_BUS_MIPI_DSI	28
+ #define CLK_BUS_CE		29
+ #define CLK_BUS_DMA		30
+-- 
+2.14.3
