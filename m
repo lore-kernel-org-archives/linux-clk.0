@@ -1,75 +1,57 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Date: Mon, 30 Apr 2018 15:44:20 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
 	Frank Rowand <frowand.list@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Maxime Ripard <maxime.ripard@bootlin.com>,
 	Chen-Yu Tsai <wens@csie.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Heiko Stuebner <heiko@sntech.de>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/5] Use of_clk_get_parent_count() instead of open coding
-Date: Tue, 10 Apr 2018 14:51:36 +0200
-Message-Id: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] soc/tegra: pmc: Use of_clk_get_parent_count()
+ instead of open coding
+Message-ID: <20180430134420.GE11457@mai>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+ <1524063005-1716-5-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1524063005-1716-5-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen, et al,
+On Wed, Apr 18, 2018 at 04:50:04PM +0200, Geert Uytterhoeven wrote:
+> As of_clk_get_parent_count() returns zero on failure, while
+> of_count_phandle_with_args() might return a negative error code, this
+> also fixes the issue of possibly using a very big number in the
+> allocation below.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
+> <linux/of_clk.h>".
+> 
+> v3:
+>   - Add Acked-by,
+> 
+> v2:
+>   - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
+> ---
 
-This patch series replaces open-coded versions of
-of_clk_get_parent_count() by calls to the helper function.
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Changes compared to v1:
-  - Move OF clock helpers (a.o. of_clk_get_parent_count()) to their own
-    include file <linux/of_clk.h>, as suggested by Stephen,
-  - Update includes for the above change,
-  - Fix timer-sp804, now a dummy is available in the !CONFIG_COMMON_CLK
-    case,
-  - Fix a new occurrence.
 
-Note that patches 2-5 depend on the first patch.  To simplify
-dependencies, perhaps the first patch can still make it in v4.17-rc1?
 
-Thanks!
 
-Geert Uytterhoeven (5):
-  clk: Extract OF clock helpers in <linux/of_clk.h>
-  ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
-  soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of
-    open coding
-  soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
-  pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
- drivers/clocksource/timer-sp804.c     |  3 ++-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c |  4 ++--
- drivers/soc/rockchip/pm_domains.c     |  4 ++--
- drivers/soc/tegra/pmc.c               |  3 ++-
- include/linux/clk-provider.h          | 14 +-------------
- include/linux/of_clk.h                | 29 +++++++++++++++++++++++++++++
- 6 files changed, 38 insertions(+), 19 deletions(-)
- create mode 100644 include/linux/of_clk.h
-
--- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
