@@ -1,57 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44237 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750790AbeDQFGk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Apr 2018 01:06:40 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180417050637euoutp028ac684ac231970086699118525fc2117~mIM8fUv7Q2111921119euoutp02H
-        for <linux-clk@vger.kernel.org>; Tue, 17 Apr 2018 05:06:37 +0000 (GMT)
-Subject: Re: [PATCH v3 5/6] soc: samsung: pm_domains: Deprecate support for
- clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <8e197cb7-143f-42a8-5d53-d2e9e7b34e2b@samsung.com>
-Date: Tue, 17 Apr 2018 07:06:34 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180416164639.d3nn6q6lz3robk7z@kozik-lap>
-Content-Type: text/plain; charset="utf-8"
-References: <20180306143312.21035-1-m.szyprowski@samsung.com>
-        <CGME20180306143324eucas1p2ec351b007e6c5a1e3a07437ff0aa9e97@eucas1p2.samsung.com>
-        <20180306143312.21035-6-m.szyprowski@samsung.com>
-        <20180416164639.d3nn6q6lz3robk7z@kozik-lap>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 12/21] bindings: display: Add compatible for A64 tcon-tv
+Date: Mon, 30 Apr 2018 17:10:49 +0530
+Message-Id: <20180430114058.5061-13-jagan@amarulasolutions.com>
+In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
+tcon-tv on Allwinner A64 has similar behavior like Allwinner A83T.
 
-On 2018-04-16 18:46, Krzysztof Kozlowski wrote:
-> On Tue, Mar 06, 2018 at 03:33:11PM +0100, Marek Szyprowski wrote:
->> Handling of special clock operations on power domain on/off sequences has
->> been moved to respective Exynos clock controller drivers, so there is no
->> need to keep the duplicated (and conflicting) code in Exynos power domain
->> driver. Mark clock related properties in Exynos power domain bindings as
->> deprecated. This change has no inpact on backwards-compatibility, as the
->> new drivers properly work with old DTBs (deprecated properties are
->> ignored).
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   .../devicetree/bindings/power/pd-samsung.txt       | 20 +----
->>   drivers/soc/samsung/pm_domains.c                   | 90 +---------------------
->>   2 files changed, 5 insertions(+), 105 deletions(-)
-> Hi Marek,
->
-> Can I take this and #6 (all dependencies merged?)?
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Yes, it is safe to apply it now.
-
-Best regards
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 5d448ef2132f..8b6b4bc43d98 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -150,6 +150,7 @@ Required properties:
+    * allwinner,sun8i-v3s-tcon
+    * allwinner,sun9i-a80-tcon-lcd
+    * allwinner,sun9i-a80-tcon-tv
++   * allwinner,sun50i-a64-tcon-tv
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+  - clocks: phandles to the clocks feeding the TCON.
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+2.14.3
