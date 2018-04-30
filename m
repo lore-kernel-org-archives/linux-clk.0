@@ -1,84 +1,50 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v3 0/3] Misc patches to support clocks for SDM845
-Date: Tue,  3 Apr 2018 18:52:38 +0530
-Message-Id: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
+	linux-sunxi@googlegroups.com,
+	Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 11/21] bindings: display: Add compatible for A64 Mixer1
+Date: Mon, 30 Apr 2018 17:10:48 +0530
+Message-Id: <20180430114058.5061-12-jagan@amarulasolutions.com>
+In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes in v3:
-1. Adressed review comments given for v2 series.
-2. The GCC clock driver(patch 3) depends upon the below patches related
-   to GDSC operation and are under review.
+Mixer1 on Allwinner A64 has similar behavior like Allwinner A83T.
 
-   https://lkml.org/lkml/2018/4/2/142
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v2:
-Fixup for recalc_rate ops for clk_rcg2_shared_ops:
-There could be few scenarios where shared clocks are configured
-at rate other than CXO by boot. In those cases there would be a
-mismatch between the rate calculated by the recalc shared ops
-and the actual HW register configuration. Fix the same by adding
-an additional check to read current src from CFG register and
-make a decision based on that.
-
-Changes in v1:
-https://lkml.org/lkml/2018/1/31/209
-
-This patch series does the miscellaneous changes to support
-clock nodes for SDM845. Below are the major changes for
-which the existing code does not have support.
-
-1. Clear hardware clock control bit of RCGs where HW clock
-   control bit is set by default so that software can control
-   those root clocks.
-2. Introduces clk_rcg2_shared_ops to support clock controller
-   drivers for SDM845. With new shared ops, RCGs with shared
-   branches will be configured to a safe source in disable
-   path and actual RCG update configuration will be done in
-   enable path instead of doing config update in set_rate.
-   In set_rate(), just cache the rate instead of doing actual
-   configuration update. Also each RCG in clock controller
-   driver will have their own safe configuration frequency
-   table to switch to safe frequency.
-3. Add support for controlling Fabia PLL for which the support
-   is not available in existing alpha PLL code.
-4. Add Global Clock controller (GCC) driver for SDM845. This
-   should allow most non-multimedia device drivers to probe
-   and control their clocks.
-
-[v1] : https://lkml.org/lkml/2018/1/31/209
-[v2] : https://lkml.org/lkml/2018/3/8/495
-
-Amit Nischal (2):
-  clk: qcom: Clear hardware clock control bit of RCG
-  clk: qcom: Configure the RCGs to a safe source as needed
-
-Taniya Das (1):
-  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
-
- .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
- drivers/clk/qcom/Kconfig                           |    9 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/clk-rcg.h                         |    7 +-
- drivers/clk/qcom/clk-rcg2.c                        |  176 +-
- drivers/clk/qcom/gcc-sdm845.c                      | 3546 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h        |  242 ++
- 7 files changed, 3979 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/qcom/gcc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
-
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 7dcd1d64dfe4..5d448ef2132f 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -313,6 +313,7 @@ Required properties:
+     * allwinner,sun8i-a83t-de2-mixer-1
+     * allwinner,sun8i-h3-de2-mixer-0
+     * allwinner,sun8i-v3s-de2-mixer
++    * allwinner,sun50i-a64-de2-mixer-1
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+     * bus: the mixer interface clock
+-- 
+2.14.3
