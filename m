@@ -1,66 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56732 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750952AbeDILka (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Apr 2018 07:40:30 -0400
-Date: Mon, 9 Apr 2018 12:40:22 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
- external PMIC
-Message-ID: <20180409114022.GE11532@sirena.org.uk>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180409113744.GA14582@dragon>
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LSp5EJdfMPwZcMS1"
-In-Reply-To: <20180409113744.GA14582@dragon>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: dianders@google.com
+In-Reply-To: <1524817171-7258-1-git-send-email-tdas@codeaurora.org>
+References: <1524817171-7258-1-git-send-email-tdas@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 30 Apr 2018 11:42:12 -0700
+Message-ID: <CAD=FV=X=2nVbP+C14UMjBYveDuVYgvhbAKji6SUnXDtE8_G_uA@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gdsc: Add support to poll CFG register to
+ check GDSC state
+To: Taniya Das <tdas@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
 
---LSp5EJdfMPwZcMS1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, Apr 27, 2018 at 1:19 AM, Taniya Das <tdas@codeaurora.org> wrote:
 
-On Mon, Apr 09, 2018 at 07:37:45PM +0800, Shawn Guo wrote:
-> On Mon, Mar 05, 2018 at 11:25:17AM +0100, Oleksij Rempel wrote:
+> -static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
+> +static int gdsc_is_enabled(struct gdsc *sc, bool en)
+>  {
+> +       unsigned int reg;
+>         u32 val;
+>         int ret;
+>
+> +       if (sc->flags & POLL_CFG_GDSCR)
+> +               reg = sc->gdscr + CFG_GDSCR_OFFSET;
+> +       else
+> +               reg = sc->gds_hw_ctrl ?  sc->gds_hw_ctrl : sc->gdscr;
 
-> > As this patch set touches multiple subsystems I think it would make
-> > sense for Shawn Guo to take the all patch set.
-> > The only part which didn't receive an ACK is regulator stuff. So I would
-> > hope that Mark Brown can ACK it.
+nit: why two spaces after the "?" in this new patch?  Should be just one.
 
-> Besides regulator changes, I did not see an ACK on kernel/reboot.c
-> either.
 
-Right, that's the big blocker here.
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 3964834..ac5f844 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -53,6 +53,7 @@ struct gdsc {
+>  #define VOTABLE                BIT(0)
+>  #define CLAMP_IO       BIT(1)
+>  #define HW_CTRL                BIT(2)
+> +#define POLL_CFG_GDSCR  BIT(5)
 
---LSp5EJdfMPwZcMS1
-Content-Type: application/pgp-signature; name="signature.asc"
+This doesn't apply cleanly to clk-next because clk-next already has
+the old patch #1 and patch #2 from your series.  You should have
+applied your patch to clk-next before sending out.
 
------BEGIN PGP SIGNATURE-----
+Also a nit here is that you have two spaces before "BIT(5)" but all
+other entries in this list have a tab before them.  You should be
+consistent and use a tab.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrLUSUACgkQJNaLcl1U
-h9BWmwf+N5uf/xy/Y7tUhi0MpSGVD1lUHK47H5HyGbL5k4RIzZMAvODp6i4dSUgD
-5OEvkIrJ5PZFhijPsmMzxPFzoh7PcetVTnoUpvQj0DhZ5y7GBRVl8Oa68LFSi9K3
-bUYdUwxo4XugrTIM666rIHvGo3pq7wQ5zE5pBr2k5vHmiCsm8nb0cU+C/nwDzK+0
-dVtchKQxjhJU9fj0bPLaVZ1vy6Qm2Dwom6tgU9WHfKA9TJgKv/zW1i83d8iHwBO8
-o5O7ZTe5n/hv4FF+EGY2vJvuE5ORgqcyAXvM7BL9wiR2XQUk8A3ZeKWiRpty34zk
-qFTdxA78pancA+KyjBieWA1KYOUlsw==
-=3drf
------END PGP SIGNATURE-----
 
---LSp5EJdfMPwZcMS1--
+In general I'd tend to assume that Stephen could handle this small
+merge conflict and fixing the whitespace issues when applying, but if
+he tells you to spin then you certainly should.  I'll also say that
+I'm nowhere near an expert on gdsc but it looks like Stephen's
+previous comments were addressed and the patch seems sane in general.
+Stephen: feel free to add my Reviewed-by: if you wish when applying
+(or Taniya, if you end up spinning).
+
+
+-Doug
