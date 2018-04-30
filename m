@@ -1,59 +1,18 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v9 14/27] ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
-Date: Thu, 26 Apr 2018 19:17:32 -0500
-Message-Id: <20180427001745.4116-15-david@lechnology.com>
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f45.google.com ([209.85.214.45]:38731 "EHLO
+        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751516AbeD3LjE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Apr 2018 07:39:04 -0400
+Received: by mail-it0-f45.google.com with SMTP id q4-v6so1211729ite.3
+        for <linux-clk@vger.kernel.org>; Mon, 30 Apr 2018 04:39:03 -0700 (PDT)
+MIME-Version: 1.0
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Mon, 30 Apr 2018 17:09:02 +0530
+Message-ID: <CAMty3ZC6SZp4HqyTXX1b17u-9JAYSZFP=+H5jGMwYgEmP+CbQw@mail.gmail.com>
+Subject: 
+To: linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes CONFIG_DAVINCI_RESET_CLOCKS. The option has been removed from
-the kernel.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
-
-v9 changes:
-- none
-
-v8 changes:
-- none
-
-v7 changes:
-- none
-
-v6 changes:
-- none
-
-
- arch/arm/configs/davinci_all_defconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
-index 21b2d7791df4..f83ea4131df2 100644
---- a/arch/arm/configs/davinci_all_defconfig
-+++ b/arch/arm/configs/davinci_all_defconfig
-@@ -31,7 +31,6 @@ CONFIG_MACH_MITYOMAPL138=y
- CONFIG_MACH_OMAPL138_HAWKBOARD=y
- CONFIG_DAVINCI_MUX_DEBUG=y
- CONFIG_DAVINCI_MUX_WARNINGS=y
--CONFIG_DAVINCI_RESET_CLOCKS=y
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
- CONFIG_CMA=y
--- 
-2.17.0
+subscribe linux-clk
