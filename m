@@ -1,40 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:16473 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754074AbeDBDlJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Apr 2018 23:41:09 -0400
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Mon, 30 Apr 2018 07:58:47 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4] clk: at91: PLL recalc_rate() now using cached MUL
+ and DIV values
+Message-ID: <20180430075847.29706679@bbrezillon>
+In-Reply-To: <20180429190111.14247-1-marcin@ziemianowicz.com>
+References: <20180429190111.14247-1-marcin@ziemianowicz.com>
 MIME-Version: 1.0
-In-Reply-To: <1522403054-18691-2-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1522403054-18691-1-git-send-email-hayashi.kunihiko@socionext.com> <1522403054-18691-2-git-send-email-hayashi.kunihiko@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 2 Apr 2018 12:40:23 +0900
-Message-ID: <CAK7LNAT_d6kN0sF_JrGPKdRG1ZbQEbnDQgMB-6VHdsjoJqjipg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: uniphier: add PCIe clock control support
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-03-30 18:44 GMT+09:00 Kunihiko Hayashi <hayashi.kunihiko@socionext.com>:
-> Add clock control for PCIe controller on UniPhier SoCs. This adds
-> support for Pro5, LD20 and PXs3.
->
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+On Sun, 29 Apr 2018 15:01:11 -0400
+Marcin Ziemianowicz <marcin@ziemianowicz.com> wrote:
+
+> When a USB device is connected to the USB host port on the SAM9N12 then
+> you get "-62" error which seems to indicate USB replies from the device
+> are timing out. Based on a logic sniffer, I saw the USB bus was running
+> at half speed.
+> 
+> The PLL code uses cached MUL and DIV values which get set in set_rate()
+> and applied in prepare(), but the recalc_rate() function instead
+> queries the hardware instead of using these cached values. Therefore,
+> if recalc_rate() is called between a set_rate() and prepare(), the
+> wrong frequency is calculated and later the USB clock divider for the
+> SAM9N12 SOC will be configured for an incorrect clock.
+> 
+> In my case, the PLL hardware was set to 96 Mhz before the OHCI
+> driver loads, and therefore the usb clock divider was being set
+> to /2 even though the OHCI driver set the PLL to 48 Mhz.
+> 
+> As an alternative explanation, I noticed this was fixed in the past by
+> 87e2ed338f1b ("clk: at91: fix recalc_rate implementation of PLL
+> driver") but the bug was later re-introduced by 1bdf02326b71 ("clk:
+> at91: make use of syscon/regmap internally").
+> 
+> Fixes: 1bdf02326b71 ("clk: at91: make use of syscon/regmap internally)
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+
+Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+
 > ---
-
-
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+> Thank you for bearing with me about this Boris.
+> 
+> Changes since V3:
+>   Fix for double returns found by kbluild test robot
+>   > Comments by Boris Brezillon about email formatting issues  
+> Changes since V2:
+>   Removed all logging/debug messages I added
+>   > Comment by Boris Brezillon about my fix being wrong addressed  
+> Changes since V1:
+>   Added patch set cover letter
+>   Shortened lines which were over >80 characters long
+>   > Comment by Greg Kroah-Hartman about "from" field in email addressed
+>   > Comment by Alan Stern about redundant debug lines addressed  
+> 
+>  drivers/clk/at91/clk-pll.c | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
+> index 7d3223fc..72b6091e 100644
+> --- a/drivers/clk/at91/clk-pll.c
+> +++ b/drivers/clk/at91/clk-pll.c
+> @@ -132,19 +132,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+>  					 unsigned long parent_rate)
+>  {
+>  	struct clk_pll *pll = to_clk_pll(hw);
+> -	unsigned int pllr;
+> -	u16 mul;
+> -	u8 div;
+> -
+> -	regmap_read(pll->regmap, PLL_REG(pll->id), &pllr);
+> -
+> -	div = PLL_DIV(pllr);
+> -	mul = PLL_MUL(pllr, pll->layout);
+> -
+> -	if (!div || !mul)
+> -		return 0;
+>  
+> -	return (parent_rate / div) * (mul + 1);
+> +	return (parent_rate / pll->div) * (pll->mul + 1);
+>  }
+>  
+>  static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,
