@@ -1,110 +1,131 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Fri, 1 Jun 2018 09:25:40 +0300
-To: Rob Herring <robh@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180601062540.GB5150@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030129.GA16122@rob-hp-laptop>
- <20180531071717.GG13528@localhost.localdomain>
- <20180531102315.GA5150@localhost.localdomain>
- <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
+	Mark Brown <broonie@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH net-next v2 09/15] net: stmmac: dwmac-sun8i: Support different ranges for TX/RX delay chains
+Date: Wed,  2 May 2018 00:12:21 +0800
+Message-Id: <20180501161227.2110-10-wens@csie.org>
+In-Reply-To: <20180501161227.2110-1-wens@csie.org>
+References: <20180501161227.2110-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 31, 2018 at 09:07:24AM -0500, Rob Herring wrote:
-> On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
-> > On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
-> >> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
-> >> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
-> >> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> >> > > + - interrupts            : The interrupt line the device is connected to.
-> >> > > + - interrupt-controller  : Marks the device node as an interrupt controller.
-> >> >
-> >> > What sub blocks have interrupts?
-> >>
-> >> The PMIC can generate interrupts from events which cause it to reset.
-> >> Eg, irq from watchdog line change, power button pushes, reset request
-> >> via register interface etc. I don't know any generic handling for these
-> >> interrupts. In "normal" use-case this PMIC is powering the processor
-> >> where driver is running and I do not see reasonable handling because
-> >> power-reset is going to follow the irq.
-> >>
-> >
-> > Oh, but when reading this I understand that the interrupt-controller
-> > property should at least be optional.
-> 
-> I don't think it should. The h/w either has an interrupt controller or
-> it doesn't.
+On the R40 SoC, the RX delay chain only has a range of 0~7 (hundred
+picoseconds), instead of 0~31. Also the TX delay chain is completely
+absent.
 
-I hope this explains why I did this interrupt controller - please tell
-me if this is legitimate use-case and what you think of following:
+This patch adds support for different ranges by adding per-compatible
+maximum values in the variant data. A maximum of 0 indicates that the
+delay chain is not supported or absent.
 
-+Optional properties:
-+ - interrupt-controller	: Marks the device node as an interrupt controller.
-+			  BD71837MWV can report different power state change
-+			  events to other devices. Different events can be seen
-+			  as separate BD71837 domain interrupts.
-+ - #interrupt-cells	: The number of cells to describe an IRQ should be 1.
-+			    The first cell is the IRQ number.
-+			    masks from ../interrupt-controller/interrupts.txt.
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 32 +++++++++++++------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
-> My concern is you added it but nothing uses it which tells
-> me your binding is incomplete. I'd rather see complete bindings even
-> if you don't have drivers.
-
-So this makes me wonder if my use-case for interrupt controller is
-valid. I thought making this PMIC as interrupt controller is a nice way
-of hiding the irq register and i2c access from other potential drivers
-using these interrupts. But as I don't know what could be the potential
-user for these irqs, I don't know how to complete binding. This is why I
-also thought of making this optional, so that the potential for using
-the interrupts would be there but it was not required when interrupts
-are not needed.
-
-> For example, as-is, there's not really any
-> need for the clocks child node. You can just make the parent a clock
-> provider.
-
-This sounds correct. I just lack of knowledge on how to handle clocks
-in "standard way" using the clock framework and this was a result of
-my first attempt. (Funny, I have written clk / synchronization drivers
-for work in the past but still I have no idea on how to do this in
-"standard way").
-
-> But we need a complete picture of the h/w to make that
-> determination.
-
-My attempt is to create generic driver for this PMIC. I would rather not
-limit it's use to any particular board/soc. The example binding is based
-on my test environment where I simply connected this PMIC break out
-board to beagle bone black. (I do also have a test board where i.MX8 and
-peripherials are powered by this PMIC but I rather not limit this driver
-to such single setup. Besides the linux running on that board is not
-'standard')
-
-The PMIC itself just has this 32.768 KHz clock output. Clock can be
-enabled/disabled via register interface. I think this is intended to be
-used for RTC but I thought this driver does not need to care about that.
-I thought it is just a good idea to provide control via clk subsystem
-and to not make assumptions on use-cases in this driver.
-
-Best Regards
-    Matti Vaittinen
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+index 79e104a20e20..4f5612a3c855 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -47,6 +47,12 @@
+  * @support_mii:		Does the MAC handle MII
+  * @support_rmii:		Does the MAC handle RMII
+  * @support_rgmii:		Does the MAC handle RGMII
++ *
++ * @rx_delay_max:		Maximum raw value for RX delay chain
++ * @tx_delay_max:		Maximum raw value for TX delay chain
++ *				These two also indicate the bitmask for
++ *				the RX and TX delay chain registers. A
++ *				value of zero indicates this is not supported.
+  */
+ struct emac_variant {
+ 	u32 default_syscon_value;
+@@ -55,6 +61,8 @@ struct emac_variant {
+ 	bool support_mii;
+ 	bool support_rmii;
+ 	bool support_rgmii;
++	u8 rx_delay_max;
++	u8 tx_delay_max;
+ };
+ 
+ /* struct sunxi_priv_data - hold all sunxi private data
+@@ -91,7 +99,9 @@ static const struct emac_variant emac_variant_h3 = {
+ 	.soc_has_internal_phy = true,
+ 	.support_mii = true,
+ 	.support_rmii = true,
+-	.support_rgmii = true
++	.support_rgmii = true,
++	.rx_delay_max = 31,
++	.tx_delay_max = 7,
+ };
+ 
+ static const struct emac_variant emac_variant_v3s = {
+@@ -106,7 +116,9 @@ static const struct emac_variant emac_variant_a83t = {
+ 	.syscon_field = &sun8i_syscon_reg_field,
+ 	.soc_has_internal_phy = false,
+ 	.support_mii = true,
+-	.support_rgmii = true
++	.support_rgmii = true,
++	.rx_delay_max = 31,
++	.tx_delay_max = 7,
+ };
+ 
+ static const struct emac_variant emac_variant_a64 = {
+@@ -115,7 +127,9 @@ static const struct emac_variant emac_variant_a64 = {
+ 	.soc_has_internal_phy = false,
+ 	.support_mii = true,
+ 	.support_rmii = true,
+-	.support_rgmii = true
++	.support_rgmii = true,
++	.rx_delay_max = 31,
++	.tx_delay_max = 7,
+ };
+ 
+ #define EMAC_BASIC_CTL0 0x00
+@@ -219,9 +233,7 @@ static const struct emac_variant emac_variant_a64 = {
+ #define SYSCON_RMII_EN		BIT(13) /* 1: enable RMII (overrides EPIT) */
+ 
+ /* Generic system control EMAC_CLK bits */
+-#define SYSCON_ETXDC_MASK		GENMASK(2, 0)
+ #define SYSCON_ETXDC_SHIFT		10
+-#define SYSCON_ERXDC_MASK		GENMASK(4, 0)
+ #define SYSCON_ERXDC_SHIFT		5
+ /* EMAC PHY Interface Type */
+ #define SYSCON_EPIT			BIT(2) /* 1: RGMII, 0: MII */
+@@ -847,8 +859,9 @@ static int sun8i_dwmac_set_syscon(struct stmmac_priv *priv)
+ 		}
+ 		val /= 100;
+ 		dev_dbg(priv->device, "set tx-delay to %x\n", val);
+-		if (val <= SYSCON_ETXDC_MASK) {
+-			reg &= ~(SYSCON_ETXDC_MASK << SYSCON_ETXDC_SHIFT);
++		if (val <= gmac->variant->tx_delay_max) {
++			reg &= ~(gmac->variant->tx_delay_max <<
++				 SYSCON_ETXDC_SHIFT);
+ 			reg |= (val << SYSCON_ETXDC_SHIFT);
+ 		} else {
+ 			dev_err(priv->device, "Invalid TX clock delay: %d\n",
+@@ -864,8 +877,9 @@ static int sun8i_dwmac_set_syscon(struct stmmac_priv *priv)
+ 		}
+ 		val /= 100;
+ 		dev_dbg(priv->device, "set rx-delay to %x\n", val);
+-		if (val <= SYSCON_ERXDC_MASK) {
+-			reg &= ~(SYSCON_ERXDC_MASK << SYSCON_ERXDC_SHIFT);
++		if (val <= gmac->variant->rx_delay_max) {
++			reg &= ~(gmac->variant->rx_delay_max <<
++				 SYSCON_ERXDC_SHIFT);
+ 			reg |= (val << SYSCON_ERXDC_SHIFT);
+ 		} else {
+ 			dev_err(priv->device, "Invalid RX clock delay: %d\n",
+-- 
+2.17.0
