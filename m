@@ -1,219 +1,135 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Wed, 30 May 2018 11:43:19 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v4 5/6] clk: bd71837: Add driver for BD71837 PMIC clock
-Message-ID: <3d9d7239331c30826a237ae55db28d918155d504.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v9 01/27] clk: davinci: pll: allow dev == NULL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-2-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <7f968fd3-eb0e-37ba-9f2d-2b948640ef73@ti.com>
+Date: Tue, 1 May 2018 18:57:53 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20180427001745.4116-2-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Support BD71837 gateable 32768 Hz clock.
+On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+> This modifies the TI DaVinci PLL clock driver to allow for the case
+> when dev == NULL. On some (most) SoCs that use this driver, the PLL
+> clock needs to be registered during early boot because it is used
+> for clocksource/clockevent and there will be no platform device available.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/Kconfig       |   9 +++
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-bd71837.c | 151 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 161 insertions(+)
- create mode 100644 drivers/clk/clk-bd71837.c
+> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+> index 23a24c944f1d..7c4d808b8fdb 100644
+> --- a/drivers/clk/davinci/pll.c
+> +++ b/drivers/clk/davinci/pll.c
+> @@ -111,6 +111,31 @@ struct davinci_pll_clk {
+>  #define to_davinci_pll_clk(_hw) \
+>  	container_of((_hw), struct davinci_pll_clk, hw)
+>  
+> +static inline void *_devm_kzalloc(struct device *dev, size_t size, gfp_t flags)
+> +{
+> +	if (dev)
+> +		return devm_kzalloc(dev, size, flags);
+> +
+> +	return kzalloc(size, flags);
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 41492e980ef4..4b045699bb5e 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -279,6 +279,15 @@ config COMMON_CLK_STM32H7
- 	---help---
- 	  Support for stm32h7 SoC family clocks
- 
-+config COMMON_CLK_BD71837
-+	tristate "Clock driver for ROHM BD71837 PMIC MFD"
-+	depends on MFD_BD71837
-+	depends on I2C=y
-+	depends on OF
-+	help
-+	  This driver supports ROHM BD71837 PMIC clock.
-+
-+
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index de6d06ac790b..8393c4af7d5a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -21,6 +21,7 @@ endif
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
-+obj-$(CONFIG_COMMON_CLK_BD71837)	+= clk-bd71837.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
-diff --git a/drivers/clk/clk-bd71837.c b/drivers/clk/clk-bd71837.c
-new file mode 100644
-index 000000000000..91456d1077ac
---- /dev/null
-+++ b/drivers/clk/clk-bd71837.c
-@@ -0,0 +1,151 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// bd71837.c  -- ROHM BD71837MWV clock driver
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/bd71837.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+
-+static int bd71837_clk_enable(struct clk_hw *hw);
-+static void bd71837_clk_disable(struct clk_hw *hw);
-+static int bd71837_clk_is_enabled(struct clk_hw *hw);
-+
-+struct bd71837_clk {
-+	struct clk_hw hw;
-+	uint8_t reg;
-+	uint8_t mask;
-+	unsigned long rate;
-+	struct platform_device *pdev;
-+	struct bd71837 *mfd;
-+};
-+
-+static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate);
-+
-+static const struct clk_ops bd71837_clk_ops = {
-+	.recalc_rate = &bd71837_clk_recalc_rate,
-+	.prepare = &bd71837_clk_enable,
-+	.unprepare = &bd71837_clk_disable,
-+	.is_prepared = &bd71837_clk_is_enabled,
-+};
-+
-+static int bd71837_clk_set(struct clk_hw *hw, int status)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return bd71837_update_bits(c->mfd, c->reg, c->mask, status);
-+}
-+
-+static void bd71837_clk_disable(struct clk_hw *hw)
-+{
-+	int rv;
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	rv = bd71837_clk_set(hw, 0);
-+	if (rv)
-+		dev_err(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
-+}
-+
-+static int bd71837_clk_enable(struct clk_hw *hw)
-+{
-+	return bd71837_clk_set(hw, 1);
-+}
-+
-+static int bd71837_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return c->mask & bd71837_reg_read(c->mfd, c->reg);
-+}
-+
-+static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return c->rate;
-+}
-+
-+static int bd71837_clk_probe(struct platform_device *pdev)
-+{
-+	struct bd71837_clk *c;
-+	int rval = -ENOMEM;
-+	struct bd71837 *mfd = dev_get_drvdata(pdev->dev.parent);
-+	const char *errstr = "memory allocation for bd71837 data failed";
-+	struct clk_init_data init = {
-+		.name = "bd71837-32k-out",
-+		.ops = &bd71837_clk_ops,
-+	};
-+
-+	c = kzalloc(sizeof(struct bd71837_clk), GFP_KERNEL);
-+	if (!c)
-+		goto err_out;
-+
-+	c->reg = BD71837_REG_OUT32K;
-+	c->mask = BD71837_OUT32K_EN;
-+	c->rate = BD71837_CLK_RATE;
-+	c->mfd = mfd;
-+	c->pdev = pdev;
-+
-+	if (pdev->dev.of_node)
-+		of_property_read_string_index(pdev->dev.of_node,
-+					      "clock-output-names", 0,
-+					      &init.name);
-+
-+	c->hw.init = &init;
-+
-+	errstr = "failed to register 32K clk";
-+	rval = clk_hw_register(&pdev->dev, &c->hw);
-+	if (rval)
-+		goto err_free;
-+
-+	errstr = "failed to register clkdev for bd71837";
-+	rval = clk_hw_register_clkdev(&c->hw, init.name, NULL);
-+	if (rval)
-+		goto err_unregister;
-+
-+	platform_set_drvdata(pdev, c);
-+	dev_dbg(&pdev->dev, "bd71837_clk successfully probed\n");
-+
-+	return 0;
-+
-+err_unregister:
-+	clk_hw_unregister(&c->hw);
-+err_free:
-+	kfree(c);
-+err_out:
-+	dev_err(&pdev->dev, "%s\n", errstr);
-+	return rval;
-+}
-+
-+static int bd71837_clk_remove(struct platform_device *pdev)
-+{
-+	struct bd71837_clk *c = platform_get_drvdata(pdev);
-+
-+	if (c) {
-+		clk_hw_unregister(&c->hw);
-+		kfree(c);
-+		platform_set_drvdata(pdev, NULL);
-+	}
-+	return 0;
-+}
-+
-+static struct platform_driver bd71837_clk = {
-+	.driver = {
-+		.name = "bd71837-clk",
-+	},
-+	.probe = bd71837_clk_probe,
-+	.remove = bd71837_clk_remove,
-+};
-+
-+module_platform_driver(bd71837_clk);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 chip clk driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+I would shift to using kzalloc() only. The utility of devm_kzalloc() is
+gone if you cannot always rely on it since you have to handle the free
+for the other case. Same thing for other devres APIs below.
+
+> +}
+> +
+> +static inline void *_devm_kmalloc_array(struct device *dev, size_t n,
+> +					size_t size, gfp_t flags)
+> +{
+> +	if (dev)
+> +		return devm_kmalloc_array(dev, n, size, flags);
+> +
+> +	return kmalloc_array(n, size, flags);
+> +}
+> +
+> +static inline struct clk *_devm_clk_register(struct device *dev, struct clk_hw *hw)
+> +{
+> +	if (dev)
+> +		return devm_clk_register(dev, hw);
+> +
+> +	return clk_register(NULL, hw);
+> +}
+> +
+
+
+> diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+> index b1b6fb23f972..92a0978a7d29 100644
+> --- a/drivers/clk/davinci/pll.h
+> +++ b/drivers/clk/davinci/pll.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/bitops.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+> +#include <linux/regmap.h>
+>  #include <linux/types.h>
+>  
+>  #define PLL_HAS_CLKMODE			BIT(0) /* PLL has PLLCTL[CLKMODE] */
+> @@ -94,7 +95,8 @@ struct davinci_pll_obsclk_info {
+>  struct clk *davinci_pll_clk_register(struct device *dev,
+>  				     const struct davinci_pll_clk_info *info,
+>  				     const char *parent_name,
+> -				     void __iomem *base);
+> +				     void __iomem *base,
+> +				     struct regmap *cfgchip);
+>  struct clk *davinci_pll_auxclk_register(struct device *dev,
+>  					const char *name,
+>  					void __iomem *base);
+> @@ -110,32 +112,33 @@ davinci_pll_sysclk_register(struct device *dev,
+>  			    const struct davinci_pll_sysclk_info *info,
+>  			    void __iomem *base);
+>  
+> -int of_davinci_pll_init(struct device *dev,
+> +int of_davinci_pll_init(struct device *dev, struct device_node *node,
+>  			const struct davinci_pll_clk_info *info,
+>  			const struct davinci_pll_obsclk_info *obsclk_info,
+>  			const struct davinci_pll_sysclk_info **div_info,
+>  			u8 max_sysclk_id,
+> -			void __iomem *base);
+> +			void __iomem *base,
+> +			struct regmap *cfgchip);
+>  
+>  /* Platform-specific callbacks */
+>  
+> -int da830_pll_init(struct device *dev, void __iomem *base);
+> +int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+>  
+> -int da850_pll0_init(struct device *dev, void __iomem *base);
+> -int da850_pll1_init(struct device *dev, void __iomem *base);
+> -int of_da850_pll0_init(struct device *dev, void __iomem *base);
+> -int of_da850_pll1_init(struct device *dev, void __iomem *base);
+> +int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+
+Having this declared both here and in include/linux/clk/davinci.h is
+strange. Can we include that file directly where its needed?
+
+> diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+> new file mode 100644
+> index 000000000000..1298cca509ac
+> --- /dev/null
+> +++ b/include/linux/clk/davinci.h
+> @@ -0,0 +1,24 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Clock driver for TI Davinci PSC controllers
+
+PSC/PLL controllers.
+
+Thanks,
+Sekhar
