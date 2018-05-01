@@ -1,39 +1,95 @@
-Return-Path: <viresh.kumar@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <20180402091617.GA3572@vireshk-i7>
-References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
- <1522358807-10413-9-git-send-email-ilialin@codeaurora.org> <20180402091617.GA3572@vireshk-i7>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Fri, 4 May 2018 11:34:04 +0530
-Message-ID: <CAKohpo=cw+2Leuwa6XjEYh4kVYK093A5eckUmPBDutgqeqpvog@mail.gmail.com>
-Subject: Re: [PATCH v4 08/14] dt: qcom: Add opp and thermal to the msm8996
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Linux Clock List <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"Nayak, Rajendra" <rnayak@codeaurora.org>, Amit Kucheria <amit.kucheria@linaro.org>,
-	Nicolas Dechesne <nicolas.dechesne@linaro.org>, celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH net-next v2 02/15] clk: sunxi-ng: r40: export a regmap to access the GMAC register
+Date: Wed,  2 May 2018 00:12:14 +0800
+Message-Id: <20180501161227.2110-3-wens@csie.org>
+In-Reply-To: <20180501161227.2110-1-wens@csie.org>
+References: <20180501161227.2110-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2 April 2018 at 14:46, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+From: Icenowy Zheng <icenowy@aosc.io>
 
->> +     cluster0_opp: opp_table0 {
->> +             compatible = "operating-points-v2";
->> +             opp-shared;
->
-> Is Kryo like krait where CPUs do DVFS independently ? If yes, then opp-shared
-> thing should be dropped.
+There's a GMAC configuration register, which exists on A64/A83T/H3/H5 in
+the syscon part, in the CCU of R40 SoC.
 
-Have you ever replied to this question ? Sorry, but I am not able to
-find it in my inbox :(
+Export a regmap of the CCU.
+
+Read access is not restricted to all registers, but only the GMAC
+register is allowed to be written.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 33 ++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index c3aa839a453d..65ba6455feb7 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -1251,9 +1251,37 @@ static struct ccu_mux_nb sun8i_r40_cpu_nb = {
+ 	.bypass_index	= 1, /* index of 24 MHz oscillator */
+ };
+ 
++/*
++ * Add a regmap for the GMAC driver (dwmac-sun8i) to access the
++ * GMAC configuration register.
++ * Only this register is allowed to be written, in order to
++ * prevent overriding critical clock configuration.
++ */
++
++#define SUN8I_R40_GMAC_CFG_REG 0x164
++static bool sun8i_r40_ccu_regmap_accessible_reg(struct device *dev,
++						unsigned int reg)
++{
++	if (reg == SUN8I_R40_GMAC_CFG_REG)
++		return true;
++	return false;
++}
++
++static struct regmap_config sun8i_r40_ccu_regmap_config = {
++	.reg_bits	= 32,
++	.val_bits	= 32,
++	.reg_stride	= 4,
++	.max_register	= 0x320, /* PLL_LOCK_CTRL_REG */
++
++	/* other devices have no business accessing other registers */
++	.readable_reg	= sun8i_r40_ccu_regmap_accessible_reg,
++	.writeable_reg	= sun8i_r40_ccu_regmap_accessible_reg,
++};
++
+ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
++	struct regmap *regmap;
+ 	void __iomem *reg;
+ 	u32 val;
+ 	int ret;
+@@ -1278,6 +1306,11 @@ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
+ 	val &= ~GENMASK(25, 20);
+ 	writel(val, reg + SUN8I_R40_USB_CLK_REG);
+ 
++	regmap = devm_regmap_init_mmio(&pdev->dev, reg,
++				       &sun8i_r40_ccu_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
+ 	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_r40_ccu_desc);
+ 	if (ret)
+ 		return ret;
+-- 
+2.17.0
