@@ -1,93 +1,147 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH 6/9] clk: davinci: pll: allow dev == NULL
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
- linux-kernel@vger.kernel.org, brgl@bgdev.pl
-References: <20180525181150.17873-1-david@lechnology.com>
- <20180525181150.17873-7-david@lechnology.com>
- <20180530194559.982.42844@harbor.lan>
-From: David Lechner <david@lechnology.com>
-Message-ID: <41524516-3b58-0db8-1e67-3d76f8596a23@lechnology.com>
-Date: Wed, 30 May 2018 14:59:01 -0500
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 1 May 2018 09:31:15 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] clk: meson: axg: export audio clock controller id
+ bindings
+Message-ID: <20180501143115.GA17513@rob-hp-laptop>
+References: <20180425163304.10852-1-jbrunet@baylibre.com>
+ <20180425163304.10852-6-jbrunet@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530194559.982.42844@harbor.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180425163304.10852-6-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/30/2018 02:46 PM, Michael Turquette wrote:
-> Hi David,
-> 
-> Quoting David Lechner (2018-05-25 11:11:47)
->> This modifies the TI Davinci PLL clock driver to allow for the case
->> when dev == NULL. On some (most) SoCs that use this driver, the PLL
->> clock needs to be registered during early boot because it is used
->> for clocksource/clkevent and there will be no platform device available.
-> 
-> A lot of this stuff feels like a step backwards. E.g:
-> 
->> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
->> index 23a24c944f1d..2eb981e61185 100644
->> --- a/drivers/clk/davinci/pll.c
->> +++ b/drivers/clk/davinci/pll.c
->> @@ -11,6 +11,7 @@
->>   
->>   #include <linux/clk-provider.h>
->>   #include <linux/clk.h>
->> +#include <linux/clk/davinci.h>
->>   #include <linux/delay.h>
->>   #include <linux/err.h>
->>   #include <linux/io.h>
->> @@ -223,6 +224,7 @@ static const struct clk_ops dm365_pll_ops = {
->>   
->>   /**
->>    * davinci_pll_div_register - common *DIV clock implementation
->> + * @dev: The PLL platform device or NULL
->>    * @name: the clock name
->>    * @parent_name: the parent clock name
->>    * @reg: the *DIV register
->> @@ -240,17 +242,21 @@ static struct clk *davinci_pll_div_register(struct device *dev,
->>          const struct clk_ops *divider_ops = &clk_divider_ops;
->>          struct clk_gate *gate;
->>          struct clk_divider *divider;
->> +       struct clk *clk;
->> +       int ret;
->>   
->> -       gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
->> +       gate = kzalloc(sizeof(*gate), GFP_KERNEL);
->>          if (!gate)
->>                  return ERR_PTR(-ENOMEM);
->>   
->>          gate->reg = reg;
->>          gate->bit_idx = DIV_ENABLE_SHIFT;
->>   
->> -       divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
->> -       if (!divider)
->> -               return ERR_PTR(-ENOMEM);
->> +       divider = kzalloc(sizeof(*divider), GFP_KERNEL);
->> +       if (!divider) {
->> +               ret = -ENOMEM;
->> +               goto err_free_gate;
->> +       }
->>   
->>          divider->reg = reg;
->>          divider->shift = DIV_RATIO_SHIFT;
-> 
-> Oh no my poor devm_ helpers!
-> 
-> I understand that we need to support early boot drivers better, so this
-> patch can be merged.
-> 
-> However I'm curious if you're tracking Bartosz's early_platform_driver
-> efforts? Converting to that if it is ever merged would likely be
-> cleaner:
-> 
-> https://lkml.kernel.org/r/20180511162028.20616-1-brgl@bgdev.pl
-> 
-> Best regards,
-> Mike
-> 
+On Wed, Apr 25, 2018 at 06:33:02PM +0200, Jerome Brunet wrote:
+> export the clock ids dt-bindings usable by the consumers of the axg
+> audio clock controller
 
-Yes. In fact, this is what got Bartosz working on it in the first
-place. :-)
+Capitalization and punctuation would be nice.
+
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  include/dt-bindings/clock/axg-audio-clkc.h | 94 ++++++++++++++++++++++++++++++
+>  1 file changed, 94 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/axg-audio-clkc.h
+
+This can be combined with the next patch. Otherwise,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> 
+> diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
+> new file mode 100644
+> index 000000000000..4426ae655858
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/axg-audio-clkc.h
+> @@ -0,0 +1,94 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Copyright (c) 2018 Baylibre SAS.
+> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> + */
+> +
+> +#ifndef __AXG_AUDIO_CLKC_BINDINGS_H
+> +#define __AXG_AUDIO_CLKC_BINDINGS_H
+> +
+> +#define AUD_CLKID_SLV_SCLK0		9
+> +#define AUD_CLKID_SLV_SCLK1		10
+> +#define AUD_CLKID_SLV_SCLK2		11
+> +#define AUD_CLKID_SLV_SCLK3		12
+> +#define AUD_CLKID_SLV_SCLK4		13
+> +#define AUD_CLKID_SLV_SCLK5		14
+> +#define AUD_CLKID_SLV_SCLK6		15
+> +#define AUD_CLKID_SLV_SCLK7		16
+> +#define AUD_CLKID_SLV_SCLK8		17
+> +#define AUD_CLKID_SLV_SCLK9		18
+> +#define AUD_CLKID_SLV_LRCLK0		19
+> +#define AUD_CLKID_SLV_LRCLK1		20
+> +#define AUD_CLKID_SLV_LRCLK2		21
+> +#define AUD_CLKID_SLV_LRCLK3		22
+> +#define AUD_CLKID_SLV_LRCLK4		23
+> +#define AUD_CLKID_SLV_LRCLK5		24
+> +#define AUD_CLKID_SLV_LRCLK6		25
+> +#define AUD_CLKID_SLV_LRCLK7		26
+> +#define AUD_CLKID_SLV_LRCLK8		27
+> +#define AUD_CLKID_SLV_LRCLK9		28
+> +#define AUD_CLKID_DDR_ARB		29
+> +#define AUD_CLKID_PDM			30
+> +#define AUD_CLKID_TDMIN_A		31
+> +#define AUD_CLKID_TDMIN_B		32
+> +#define AUD_CLKID_TDMIN_C		33
+> +#define AUD_CLKID_TDMIN_LB		34
+> +#define AUD_CLKID_TDMOUT_A		35
+> +#define AUD_CLKID_TDMOUT_B		36
+> +#define AUD_CLKID_TDMOUT_C		37
+> +#define AUD_CLKID_FRDDR_A		38
+> +#define AUD_CLKID_FRDDR_B		39
+> +#define AUD_CLKID_FRDDR_C		40
+> +#define AUD_CLKID_TODDR_A		41
+> +#define AUD_CLKID_TODDR_B		42
+> +#define AUD_CLKID_TODDR_C		43
+> +#define AUD_CLKID_LOOPBACK		44
+> +#define AUD_CLKID_SPDIFIN		45
+> +#define AUD_CLKID_SPDIFOUT		46
+> +#define AUD_CLKID_RESAMPLE		47
+> +#define AUD_CLKID_POWER_DETECT		48
+> +#define AUD_CLKID_MST_A_MCLK		49
+> +#define AUD_CLKID_MST_B_MCLK		50
+> +#define AUD_CLKID_MST_C_MCLK		51
+> +#define AUD_CLKID_MST_D_MCLK		52
+> +#define AUD_CLKID_MST_E_MCLK		53
+> +#define AUD_CLKID_MST_F_MCLK		54
+> +#define AUD_CLKID_SPDIFOUT_CLK		55
+> +#define AUD_CLKID_SPDIFIN_CLK		56
+> +#define AUD_CLKID_PDM_DCLK		57
+> +#define AUD_CLKID_PDM_SYSCLK		58
+> +#define AUD_CLKID_MST_A_SCLK		79
+> +#define AUD_CLKID_MST_B_SCLK		80
+> +#define AUD_CLKID_MST_C_SCLK		81
+> +#define AUD_CLKID_MST_D_SCLK		82
+> +#define AUD_CLKID_MST_E_SCLK		83
+> +#define AUD_CLKID_MST_F_SCLK		84
+> +#define AUD_CLKID_MST_A_LRCLK		86
+> +#define AUD_CLKID_MST_B_LRCLK		87
+> +#define AUD_CLKID_MST_C_LRCLK		88
+> +#define AUD_CLKID_MST_D_LRCLK		89
+> +#define AUD_CLKID_MST_E_LRCLK		90
+> +#define AUD_CLKID_MST_F_LRCLK		91
+> +#define AUD_CLKID_TDMIN_A_SCLK_SEL	116
+> +#define AUD_CLKID_TDMIN_B_SCLK_SEL	117
+> +#define AUD_CLKID_TDMIN_C_SCLK_SEL	118
+> +#define AUD_CLKID_TDMIN_LB_SCLK_SEL	119
+> +#define AUD_CLKID_TDMOUT_A_SCLK_SEL	120
+> +#define AUD_CLKID_TDMOUT_B_SCLK_SEL	121
+> +#define AUD_CLKID_TDMOUT_C_SCLK_SEL	122
+> +#define AUD_CLKID_TDMIN_A_SCLK		123
+> +#define AUD_CLKID_TDMIN_B_SCLK		124
+> +#define AUD_CLKID_TDMIN_C_SCLK		125
+> +#define AUD_CLKID_TDMIN_LB_SCLK		126
+> +#define AUD_CLKID_TDMOUT_A_SCLK		127
+> +#define AUD_CLKID_TDMOUT_B_SCLK		128
+> +#define AUD_CLKID_TDMOUT_C_SCLK		129
+> +#define AUD_CLKID_TDMIN_A_LRCLK		130
+> +#define AUD_CLKID_TDMIN_B_LRCLK		131
+> +#define AUD_CLKID_TDMIN_C_LRCLK		132
+> +#define AUD_CLKID_TDMIN_LB_LRCLK	133
+> +#define AUD_CLKID_TDMOUT_A_LRCLK	134
+> +#define AUD_CLKID_TDMOUT_B_LRCLK	135
+> +#define AUD_CLKID_TDMOUT_C_LRCLK	136
+> +
+> +#endif /* __AXG_AUDIO_CLKC_BINDINGS_H */
+> -- 
+> 2.14.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
