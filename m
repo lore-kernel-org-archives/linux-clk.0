@@ -1,94 +1,39 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	will.deacon@arm.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	vireshk@kernel.org,
-	ilialin@codeaurora.org
-Subject: [PATCH v11 5/8] dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
-Date: Wed, 23 May 2018 15:52:58 +0300
-Message-Id: <1527079981-11179-6-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
-References: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v9 05/27] ARM: davinci: da830: add new clock init using
+ common clock framework
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-6-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <0e0aac5a-70b5-e90a-2ae4-7209003da922@ti.com>
+Date: Tue, 1 May 2018 19:43:55 +0530
+MIME-Version: 1.0
+In-Reply-To: <20180427001745.4116-6-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Each of the CPU clusters (Power and Perf) on msm8996 are
-clocked via 2 PLLs, a primary and alternate. There are also
-2 Mux'es, a primary and secondary all connected together
-as shown below
+On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+> This adds the new board-specific clock init in mach-davinci/da830.c
+> using the new common clock framework drivers.
+> 
+> The #ifdefs are needed to prevent compile errors until the entire
+> ARCH_DAVINCI is converted.
+> 
+> Also clean up the #includes since we are adding some here.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-                             +-------+
-              XO             |       |
-          +------------------>0      |
-                             |       |
-                   PLL/2     | SMUX  +----+
-                     +------->1      |    |
-                     |       |       |    |
-                     |       +-------+    |    +-------+
-                     |                    +---->0      |
-                     |                         |       |
-+---------------+    |             +----------->1      | CPU clk
-|Primary PLL    +----+ PLL_EARLY   |           |       +------>
-|               +------+-----------+    +------>2 PMUX |
-+---------------+      |                |      |       |
-                       |   +------+     |   +-->3      |
-                       +--^+  ACD +-----+   |  +-------+
-+---------------+          +------+         |
-|Alt PLL        |                           |
-|               +---------------------------+
-+---------------+         PLL_EARLY
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-The primary PLL is what drives the CPU clk, except for times
-when we are reprogramming the PLL itself (for rate changes) when
-we temporarily switch to an alternate PLL. A subsequent patch adds
-support to switch between primary and alternate PLL during rate
-changes.
-
-The primary PLL operates on a single VCO range, between 600MHz
-and 3GHz. However the CPUs do support OPPs with frequencies
-between 300MHz and 600MHz. In order to support running the CPUs
-at those frequencies we end up having to lock the PLL at twice
-the rate and drive the CPU clk via the PLL/2 output and SMUX.
-
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-new file mode 100644
-index 0000000..8458783
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-@@ -0,0 +1,17 @@
-+Qualcomm CPUSS clock controller for Kryo CPUs
-+----------------------------------------------------
-+
-+Required properties :
-+- compatible : shall contain only one of the following:
-+
-+			"qcom,msm8996-apcc"
-+
-+- reg : shall contain base register location and length
-+- #clock-cells : shall contain 1
-+
-+Example:
-+	kryocc: clock-controller@6400000 {
-+		compatible = "qcom,msm8996-apcc";
-+		reg = <0x6400000 0x90000>;
-+		#clock-cells = <1>;
-+	};
--- 
-1.9.1
+Thanks,
+Sekhar
