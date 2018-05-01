@@ -1,161 +1,51 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Wed, 30 May 2018 11:42:32 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v4 3/6] regulator: bd71837: Devicetree bindings for BD71837
- regulators
-Message-ID: <318229ca7ffcceb090fc8d0c43f887decc3082f0.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <CAGb2v66bx2TguLjnMi2R0KFU4=aYC8xveexybnWdWPDd+xwOvg@mail.gmail.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-5-jagan@amarulasolutions.com> <20180501161723.GA376@rob-hp-laptop>
+ <CAGb2v66bx2TguLjnMi2R0KFU4=aYC8xveexybnWdWPDd+xwOvg@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 1 May 2018 11:34:51 -0500
+Message-ID: <CAL_JsqJ6PmWJZPjdhHTSMEkKdCiORXKcz3AMch=Nx2Z5FeC3_Q@mail.gmail.com>
+Subject: Re: [PATCH 04/21] bindings: display: Add compatible for A64 DE2 pipeline
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Jagan Teki <jagan@amarulasolutions.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC regulators.
+On Tue, May 1, 2018 at 11:31 AM, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Wed, May 2, 2018 at 12:17 AM, Rob Herring <robh@kernel.org> wrote:
+>> On Mon, Apr 30, 2018 at 05:10:41PM +0530, Jagan Teki wrote:
+>>> Allwinner A64 has DE2 pipeline similar to other Allwinner
+>>> SOC's like A83T, H3/H5.
+>>
+>> 'dt-bindings: ' for the subject prefix.
+>>
+>>>
+>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>
+>> Otherwise,
+>>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> Would it make sense to put all the display component related compatible
+> string additions in the same patch? i.e. "Add compatible strings for all
+> documented display component blocks". MIPI-DSI is missing, but it's not
+> documented.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../bindings/regulator/rohm,bd71837-regulator.txt  | 126 +++++++++++++++++++++
- 1 file changed, 126 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+That's fine by me.
 
-diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-new file mode 100644
-index 000000000000..4edf3137d9f7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-@@ -0,0 +1,126 @@
-+ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bindings
-+
-+BD71837MWV is a programmable Power Management
-+IC (PMIC) for powering single-core, dual-core, and
-+quad-core SoC’s such as NXP-i.MX 8M. It is optimized
-+for low BOM cost and compact solution footprint. It
-+integrates 8 Buck regulators and 7 LDO’s to provide all
-+the power rails required by the SoC and the commonly
-+used peripherals.
-+
-+Required properties:
-+ - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7"
-+
-+List of regulators provided by this controller. BD71837 regulators node
-+should be sub node of the BD71837 MFD node. See BD71837 MFD bindings at
-+Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-+Regulator nodes should be named to BUCK_<number> and LDO_<number>. The
-+definition for each of these nodes is defined using the standard
-+binding for regulators at
-+Documentation/devicetree/bindings/regulator/regulator.txt.
-+Note that if BD71837 starts at RUN state you probably want to use
-+regulator-boot-on at least for BUCK6 and BUCK7 so that those are not
-+disabled by driver at startup. LDO5 and LDO6 are supplied by those and
-+if they are disabled at startup the voltage monitoring for LDO5/LDO6 will
-+cause PMIC to reset.
-+
-+The valid names for regulator nodes are:
-+BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, BUCK7, BUCK8
-+LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7
-+
-+Optional properties:
-+- Any optional property defined in bindings/regulator/regulator.txt
-+
-+Example:
-+regulators {
-+	buck1: BUCK1 {
-+		regulator-name = "buck1";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+		regulator-ramp-delay = <1250>;
-+	};
-+	buck2: BUCK2 {
-+		regulator-name = "buck2";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-ramp-delay = <1250>;
-+	};
-+	buck3: BUCK3 {
-+		regulator-name = "buck3";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+	};
-+	buck4: BUCK4 {
-+		regulator-name = "buck4";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+	};
-+	buck5: BUCK5 {
-+		regulator-name = "buck5";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1350000>;
-+		regulator-boot-on;
-+	};
-+	buck6: BUCK6 {
-+		regulator-name = "buck6";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+	};
-+	buck7: BUCK7 {
-+		regulator-name = "buck7";
-+		regulator-min-microvolt = <1605000>;
-+		regulator-max-microvolt = <1995000>;
-+		regulator-boot-on;
-+	};
-+	buck8: BUCK8 {
-+		regulator-name = "buck8";
-+		regulator-min-microvolt = <800000>;
-+		regulator-max-microvolt = <1400000>;
-+	};
-+
-+	ldo1: LDO1 {
-+		regulator-name = "ldo1";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+	};
-+	ldo2: LDO2 {
-+		regulator-name = "ldo2";
-+		regulator-min-microvolt = <900000>;
-+		regulator-max-microvolt = <900000>;
-+		regulator-boot-on;
-+	};
-+	ldo3: LDO3 {
-+		regulator-name = "ldo3";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+	ldo4: LDO4 {
-+		regulator-name = "ldo4";
-+		regulator-min-microvolt = <900000>;
-+		regulator-max-microvolt = <1800000>;
-+	};
-+	ldo5: LDO5 {
-+		regulator-name = "ldo5";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+	ldo6: LDO6 {
-+		regulator-name = "ldo6";
-+		regulator-min-microvolt = <900000>;
-+		regulator-max-microvolt = <1800000>;
-+	};
-+	ldo7_reg: LDO7 {
-+		regulator-name = "ldo7";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+};
-+
-+
--- 
-2.14.3
+Rob
