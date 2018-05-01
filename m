@@ -1,105 +1,55 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 24 May 2018 13:00:41 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Benjamin Lindqvist <benjamin.lindqvist@endian.se>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
- mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com,
- richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, Mirza
- Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
-References: <cover.1526990589.git.stefan@agner.ch>
- <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
-Message-ID: <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
+In-Reply-To: <CAGb2v64ZTQ0jAaSpDXtV58c-EE2FMMbVASLLjxjGkWM3iJTMHg@mail.gmail.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-2-jagan@amarulasolutions.com> <20180501161618.GA32350@rob-hp-laptop>
+ <CAGb2v64ZTQ0jAaSpDXtV58c-EE2FMMbVASLLjxjGkWM3iJTMHg@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 1 May 2018 11:34:14 -0500
+Message-ID: <CAL_Jsq+0KhCWc-8cpTX=OtGapM+4YdymHDndY6AgGfq3z+mqhg@mail.gmail.com>
+Subject: Re: [PATCH 01/21] dt-bindings: clock: Add compatible for A64 DE2 CCU
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Jagan Teki <jagan@amarulasolutions.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 24.05.2018 09:45, Benjamin Lindqvist wrote:
-> Hi Stefan (and all),
-> 
-> First off, I apoloigize in advance if I'm deviating from common
-> kernel mailing list courtesy -- this is my first time responding.
-> I just have a comment on the NAND driver that I'd like to bring
-> to the public.
-> 
+On Tue, May 1, 2018 at 11:19 AM, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Wed, May 2, 2018 at 12:16 AM, Rob Herring <robh@kernel.org> wrote:
+>> On Mon, Apr 30, 2018 at 05:10:38PM +0530, Jagan Teki wrote:
+>>> Allwinner A64 has DE2 CCU which is similar to H3/H5 SoC.
+>>>
+>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/clock/sun8i-de2.txt | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>
+> Hi Rob,
+>
+> Do we need to add this if it's just a soc-specific compatible
+> we add in the device tree to future proof things in case we
+> discover quirks later on?
 
-Welcome!
+Yes, but the fallbacks should be documented too as I found in the rest
+of the series.
 
->> +       switch (mtd->oobsize) {
->> ...
->> +       case 224:
->> +               mtd_set_ooblayout(mtd, &tegra_nand_oob_224_ops);
->> +               chip->ecc.strength = 8;
->> +               chip->ecc.bytes = 18;
->> +               value |= CFG_ECC_SEL | CFG_TVAL_8;
->> +               break; +       case 224:
-> 
-> I am not sure how you arrived at this oobsize-based inference. I
-> have not seen any explicit relation between oob size and ECC
-> algorithm used in the reference manual. Indeed, the U-Boot I was
-> working on (a fork of the Toradex 2015.04 U-Boot) always has
-> oobsize == 224 but used either BCH[t=16] or RS[t=4]. In fact, we
-> tried choosing RS[t=8] in U-Boot but we failed to make the
-> BootROM decode this at all. So we had to use RS[t=4]. But
-> changing the algorithm did not automatically change the oobsize,
-> at least it didn't for us. So maybe you should consider if this
-> is really the way to go about deciding which algorithm is used.
+> AFAIK we haven't been doing this, and this is likely to create
+> some confusion, because they aren't actually mentioned anywhere
+> in the driver.
 
-The oobsize based inference to set the HW ECC mode comes from the
-patchset I picked up. Typically, the size of the OOB area is such that
-it allows "good enough" error correction required for that chip. So
-using it as indicator for the ECC algorithm is not entirely off...
+The binding doc needs to written such that compatible can be validated
+to contain the correct set of strings. We can't do that now with free
+form text, but when we move to a schema we will.
 
-But yeah I agree we have better means, and I already started working on
-a better mechanism. Also, I worked on BCH support, and it looks pretty
-good already.
-
-If we want to auto select mode we can use the ECC requirements from
-ONFI/JEDEC/parameter page. Or we could use device tree only. 
-
-Thanks for bringing up the Boot ROM issue. In fact I investigated the
-supported modes the recent days too. First off, as you mentioned, the
-boot ROM seems to probe different modes until it succeeds. By trying
-through all RS and BCH modes, it seems that it only probes some modes:
-- RS t=4
-- BCH t=8
-- BCH t=16
-
-I guess those are preferred modes in practise. Not sure if we should
-make sure the auto selection such that it only chooses from this list...
-
-> 
-> Note that we're in fact using this patch set in Linux today, but
-> we had to remove the oobsize inference part. Currently we're
-> simply hard coding it to CFG_TVAL_4, but maybe it would be
-> cleaner to add ECC algo as a board config instead, e.g. in the
-> .dts file or whatever. This seems to be done by other vendors
-> already, see for example excerpt of
-> Documentation/devicetree/bindings/mtd/gpmc-nand.txt below:
-> 
->  - ti,nand-ecc-opt: A string setting the ECC layout to use. One of:
-> "sw" 1-bit Hamming ecc code via software
-> "hw" <deprecated> use "ham1" instead
-> "hw-romcode" <deprecated> use "ham1" instead
-> "ham1" 1-bit Hamming ecc code
-> "bch4" 4-bit BCH ecc code
-> "bch8" 8-bit BCH ecc code
-> "bch16" 16-bit BCH ECC code
-> Refer below "How to select correct ECC scheme for your device ?"
-> 
-> It seems as if this method would be equally applicable to Tegra NAND.
-
-Yeah, ideally we can reuse "nand-ecc-algo". Although, Reed-Solomon is
-not yet in the list.  So using this property would require to extend
-this standard property.
-
---
-Stefan
+Rob
