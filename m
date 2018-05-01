@@ -1,72 +1,42 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Wed, 30 May 2018 11:42:55 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v4 4/6] clk: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <99bae24fdaee0fe101e9ed1f2e55682932b92a74.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 1 May 2018 11:17:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 04/21] bindings: display: Add compatible for A64 DE2
+ pipeline
+Message-ID: <20180501161723.GA376@rob-hp-laptop>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-5-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20180430114058.5061-5-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC clock output.
+On Mon, Apr 30, 2018 at 05:10:41PM +0530, Jagan Teki wrote:
+> Allwinner A64 has DE2 pipeline similar to other Allwinner
+> SOC's like A83T, H3/H5.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../bindings/clock/rohm,bd71837-clock.txt          | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+'dt-bindings: ' for the subject prefix.
 
-diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-new file mode 100644
-index 000000000000..9759fd145781
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-@@ -0,0 +1,37 @@
-+ROHM BD71837 Power Management Integrated Circuit clock bindings
-+
-+BD71837 clock node should be sub node of the BD71837 MFD node.
-+See BD71837 MFD bindings at
-+Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-+
-+Required properties:
-+- compatible		: Should be "rohm,bd71837-clk"
-+- clock-frequency	: Should be 32768
-+- #clock-cells		: Should be 0
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+  Name "bd71837-32k-out" is used if this is not given.
-+
-+
-+Example:
-+
-+pmic: bd71837@4b {
-+	compatible = "rohm,bd71837";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	reg = <0x4b>;
-+	interrupt-parent = <&gpio1>;
-+	interrupts = <29 GPIO_ACTIVE_LOW>;
-+	interrupt-names = "irq";
-+	#interrupt-cells = <1>;
-+	interrupt-controller;
-+
-+	/* Clock node */
-+	clk: bd71837-32k-out {
-+		compatible = "rohm,bd71837-clk";
-+		#clock-cells = <0>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "bd71837-32k-out";
-+	};
-+};
--- 
-2.14.3
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+>  1 file changed, 1 insertion(+)
+
+Otherwise,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
