@@ -1,71 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35005 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750796AbeFAG6b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jun 2018 02:58:31 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v1 2/4] dt-bindings: mailbox: provide imx-mailbox documentation
-Date: Fri,  1 Jun 2018 08:58:19 +0200
-Message-Id: <20180601065821.28234-3-o.rempel@pengutronix.de>
-In-Reply-To: <20180601065821.28234-1-o.rempel@pengutronix.de>
-References: <20180601065821.28234-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 1 May 2018 10:37:27 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
+	fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 11/12] dt-bindings: clock: add imx8qxp clock binding doc
+Message-ID: <20180501153727.GA21845@rob-hp-laptop>
+References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+ <1524855403-15301-12-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1524855403-15301-12-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- .../bindings/mailbox/imx-mailbox.txt          | 35 +++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+On Sat, Apr 28, 2018 at 02:56:42AM +0800, Dong Aisheng wrote:
+> Add imx8qxp clock binding doc.
+> 
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+>  .../devicetree/bindings/clock/imx8qxp-clk.txt      |  39 +++
+>  include/dt-bindings/clock/imx8qxp-clock.h          | 362 +++++++++++++++++++++
+>  2 files changed, 401 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx8qxp-clk.txt
+>  create mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx8qxp-clk.txt b/Documentation/devicetree/bindings/clock/imx8qxp-clk.txt
+> new file mode 100644
+> index 0000000..5e365d7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imx8qxp-clk.txt
+> @@ -0,0 +1,39 @@
+> +NXP i.MX8QXP Clocks Based on SCFW
+> +--------------------------------------------------------------------
+> +
+> +Some i.MX SoCs contain a system controller that is responsible for
+> +providing clock control service for the IPs. Communication between
+> +the host processor running an OS and the system controller happens
+> +through a SCU protocol [1].
+> +
+> +[1] Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> +
+> +Required properties:
+> +
+> +- compatible:	Should be "fsl,imx8qxp-clock".
+> +- #clock-cells:	Should be <1>.
 
-diff --git a/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
-new file mode 100644
-index 000000000000..a45604b33039
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
-@@ -0,0 +1,35 @@
-+i.MX Messaging Unit
-+===================
-+
-+The i.MX Messaging Unit (MU) contains two register sets: "A" and "B". In most cases
-+they are accessible from all Processor Units. On one hand, at least for mailbox functionality,
-+it makes no difference which application or processor is using which set of the MU. On
-+other hand, the register sets for each of the MU parts are not identical.
-+
-+Required properties:
-+- compatible :	Shell be one of:
-+                    "fsl,imx7s-mu-a" and "fsl,imx7s-mu-b" for i.MX7S or i.MX7D
-+- reg : 	physical base address of the mailbox and length of
-+		memory mapped region.
-+- #mbox-cells:	Common mailbox binding property to identify the number
-+		of cells required for the mailbox specifier. Should be 1.
-+- interrupts :	interrupt number. The interrupt specifier format
-+		depends on the interrupt controller parent.
-+- clocks     :  phandle to the input clock.
-+
-+Example:
-+	mu0a: mu@30aa0000 {
-+		compatible = "fsl,imx7s-mu-a";
-+		reg = <0x30aa0000 0x28>;
-+		interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&clks IMX7D_MU_ROOT_CLK>;
-+		#mbox-cells = <1>;
-+	};
-+
-+	mu0b: mu@30ab0000 {
-+		compatible = "fsl,imx7s-mu-b";
-+		reg = <0x30ab0000 0x28>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&clks IMX7D_MU_ROOT_CLK>;
-+		#mbox-cells = <1>;
-+	};
--- 
-2.17.1
+There's no reason for this node. Just make the parent (SCU) a clock 
+provider.
 
+> +
+> +The clock consumer should specify the desired clock by having the clock
+> +ID in its "clocks" phandle cell.
+> +See include/dt-bindings/clock/imx8qxp-clock.h
+> +for the full list of i.MX8QXP clock IDs.
+> +
+> +Examples:
+> +
+> +#include <dt-bindings/clock/imx8qxp-clock.h>
+> +
+> +clk: clk {
+> +	compatible = "fsl,imx8qxp-clk";
+> +	#clock-cells = <1>;
+> +};
+> +
+> +i2c0: i2c@5a800000 {
+> +	compatible = "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
+> +	reg = <0x0 0x5a800000 0x0 0x4000>;
+> +	interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
+> +	interrupt-parent = <&gic>;
+> +	clocks = <&clk IMX8QXP_I2C0_CLK>,
+> +		 <&clk IMX8QXP_I2C0_IPG_CLK>;
+> +	clock-names = "per", "ipg";
+> +	...
+> +};
