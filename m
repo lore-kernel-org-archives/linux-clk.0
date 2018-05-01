@@ -1,80 +1,78 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH 2/2] clk: davinci: psc-dm365: fix few clocks
-To: Sekhar Nori <nsekhar@ti.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Linux clk Mailing List <linux-clk@vger.kernel.org>,
- Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
- Kevin Hilman <khilman@kernel.org>
-References: <20180511141037.25250-1-nsekhar@ti.com>
- <20180511141037.25250-3-nsekhar@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <afdf0f39-1035-117e-a319-f615ac109902@lechnology.com>
-Date: Fri, 11 May 2018 20:42:36 -0500
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 1 May 2018 10:02:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	stable <stable@vger.kernel.org>
+Subject: Re: [PATCH] clk:aspeed: Fix reset bits for PCI/VGA and PECI
+Message-ID: <20180501150236.GA15330@rob-hp-laptop>
+References: <20180426172232.12535-1-jae.hyun.yoo@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180511141037.25250-3-nsekhar@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180426172232.12535-1-jae.hyun.yoo@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/11/2018 09:10 AM, Sekhar Nori wrote:
-> Fix parent of emac and voice codec PSC clocks. This now matches
-> existing implementation in arch/arm/mach-davinci/dm365.c
+On Thu, Apr 26, 2018 at 10:22:32AM -0700, Jae Hyun Yoo wrote:
+> This commit fixes incorrect setting of reset bits for PCI/VGA and
+> PECI modules.
 > 
-> Also, there is only one power domain on DM365. Fix the power
-> domain of voice codec and vpss dac modules.
+> 1. Reset bit for PCI/VGA is 8.
+> 2. PECI reset bit is missing so added bit 10 as its reset bit.
 > 
-> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+> Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
+> Cc: stable <stable@vger.kernel.org>
 > ---
->   drivers/clk/davinci/psc-dm365.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/clk/clk-aspeed.c                 | 4 ++--
+>  include/dt-bindings/clock/aspeed-clock.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
-> index 5b5b55b0b59a..beeda10fd2f0 100644
-> --- a/drivers/clk/davinci/psc-dm365.c
-> +++ b/drivers/clk/davinci/psc-dm365.c
-> @@ -65,9 +65,9 @@ static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
->   	LPSC(31, 0, arm,         pll2_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
->   	LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
->   	LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
-> -	LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
-> -	LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
-> -	LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
-> +	LPSC(40, 0, emac,        pll1_sysclk4, emac_clkdev,        0),
-> +	LPSC(44, 0, voice_codec, pll2_sysclk4, voice_codec_clkdev, 0),
-> +	LPSC(46, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
->   	LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
->   	LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
->   	{ }
+> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+> index 5eb50c31e455..2c23e7d7ba28 100644
+> --- a/drivers/clk/clk-aspeed.c
+> +++ b/drivers/clk/clk-aspeed.c
+> @@ -88,7 +88,7 @@ static const struct aspeed_gate_data aspeed_gates[] = {
+>  	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
+>  	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
+>  	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
+> -	[ASPEED_CLK_GATE_BCLK] =	{  4, 10, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
+> +	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
+>  	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
+>  	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
+>  	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
+> @@ -297,7 +297,7 @@ static const u8 aspeed_resets[] = {
+>  	[ASPEED_RESET_JTAG_MASTER] = 22,
+>  	[ASPEED_RESET_MIC]	= 18,
+>  	[ASPEED_RESET_PWM]	=  9,
+> -	[ASPEED_RESET_PCIVGA]	=  8,
+> +	[ASPEED_RESET_PECI]	= 10,
+>  	[ASPEED_RESET_I2C]	=  2,
+>  	[ASPEED_RESET_AHB]	=  1,
+>  };
+> diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+> index d3558d897a4d..8d69b9134bef 100644
+> --- a/include/dt-bindings/clock/aspeed-clock.h
+> +++ b/include/dt-bindings/clock/aspeed-clock.h
+> @@ -45,7 +45,7 @@
+>  #define ASPEED_RESET_JTAG_MASTER	3
+>  #define ASPEED_RESET_MIC		4
+>  #define ASPEED_RESET_PWM		5
+> -#define ASPEED_RESET_PCIVGA		6
+> +#define ASPEED_RESET_PECI		6
+
+You can't really be changing these as they represent an ABI.
+
+Is there no PCIVGA reset?
+
+>  #define ASPEED_RESET_I2C		7
+>  #define ASPEED_RESET_AHB		8
+>  
+> -- 
+> 2.17.0
 > 
-
-Slightly off topic...
-
-Hmm... Looking at the TRM, I see that there are a bunch of mux clocks that we
-have not implemented for the DM365 (all of the clocks in the VPSS_CLK_CTRL and
-PERI_CLKCTL registers). I'm wondering if we should be creating drivers for
-those like the DA8XX CFGCHIP clock driver.
-
-Back on topic...
-
-The emac fix here looks good.
-
-The TRM (sprufg5a.pdf) shows that there is a DIV2 clock (part of the
-PERI_CLKCTL register) between PLL2 SYSCLK4 and Voice Codec in Figure 5,
-It also shows PLL1 SYSCLK4 as a second parent clock to Voice Codec, however
-this dependency has probably gone unnoticed because so many other devices
-also use that same clock, it will pretty much always be on. In Figure 38,
-on the other hand, PLL1 SYSCLK4 is shown as the only parent of Voice Codec.
-
-So, I am thinking that pll1_sysclk4 is the correct parent for the
-voice_codec clock here since it is the only one listed in Figure 38
-(which is in the PSC section of the TRM). The pll2_sysclk4 clock should
-probably be used by the video codec device driver directly (well, the
-DIV2 clock really, but we don't have a driver for that yet).
-
-The vpss_dac clock in not very clear in the TRM. In Table 39, the name
-for LPSC 46, which we are calling "vpss_dac", is "VDAC CLK". In Figure
-37, however, there is not a node that matches exactly. There is "VIDEO
-DAC", which I take to be the same clock though. This has parent clocks
-of PLL1 SYSCLK6 and PLL1 AUXCLK. So, I am guessing that pll1_sysclk6
-should be the parent here rather than pll1_sysclk3. According to Figure
-5, PLL1 SYSCLK3 only feeds HDVPID and MJCP, which I don't think are the
-same as the video DAC since they are also listed separately in Figure 5.
