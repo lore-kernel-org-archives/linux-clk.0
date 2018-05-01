@@ -1,46 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36902 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932243AbeEWJ7Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 May 2018 05:59:16 -0400
-Received: by mail-pg0-f68.google.com with SMTP id a13-v6so9192710pgu.4
-        for <linux-clk@vger.kernel.org>; Wed, 23 May 2018 02:59:16 -0700 (PDT)
-Date: Wed, 23 May 2018 15:29:13 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Ilia Lin <ilialin@codeaurora.org>, rjw@rjwysocki.net,
-        sudeep.holla@arm.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180523095913.o6gfwz4e4owthb5p@vireshk-i7>
-References: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
- <1527066324-24726-1-git-send-email-ilialin@codeaurora.org>
- <20180523094033.GW17671@n2100.armlinux.org.uk>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v9 04/27] ARM: davinci: pass clock as parameter to
+ davinci_timer_init()
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-5-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <29a9a03c-93f5-dddf-2a6e-da7fd83e0c4f@ti.com>
+Date: Tue, 1 May 2018 19:39:56 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180523094033.GW17671@n2100.armlinux.org.uk>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180427001745.4116-5-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 23-05-18, 10:40, Russell King - ARM Linux wrote:
-> On Wed, May 23, 2018 at 12:05:24PM +0300, Ilia Lin wrote:
-> > +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-> > +	if (IS_ERR(np))
-> > +		return PTR_ERR(np);
-> ...
-> > +
-> > +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-> > +	if (!IS_ERR(pdev))
+On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+> This changes davinci_timer_init() so that we pass the clock as a
+> parameter instead of using clk_get(). This is done in preparation
+> for converting to the common clock framework.
 > 
-> Do you need to hold a reference to `np' here?
+> It removes the requirement that we have to have a clock with con_id
+> of "timer0", which will be good for DT bindings since clock-names =
+> "timer0" doesn't really make sense.
+> 
+> Also, drop use of extern in header file since we are touching the
+> definition.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-I am starting to feel bad for Ilia now. The problem is that there was
-a lot of stuff wrong with the patch and even with so many reviewers it
-wasn't easy to notice all the problems it had.
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-But you are right, this reference needs to be dropped.
-
--- 
-viresh
+Thanks,
+Sekhar
