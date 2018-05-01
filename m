@@ -1,33 +1,41 @@
 Return-Path: <robherring2@gmail.com>
 Return-Path: <robherring2@gmail.com>
-Date: Thu, 31 May 2018 11:25:56 -0500
+Date: Tue, 1 May 2018 11:26:15 -0500
 From: Rob Herring <robh@kernel.org>
-To: Ray Jui <ray.jui@broadcom.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Pramod Kumar <pramod.kumar@broadcom.com>
-Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
-Message-ID: <20180531162556.GA955@rob-hp-laptop>
-References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
- <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH net-next v2 03/15] dt-bindings: net: dwmac-sun8i: Clean
+ up clock delay chain descriptions
+Message-ID: <20180501162615.GA11761@rob-hp-laptop>
+References: <20180501161227.2110-1-wens@csie.org>
+ <20180501161227.2110-4-wens@csie.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
+In-Reply-To: <20180501161227.2110-4-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 25, 2018 at 09:45:16AM -0700, Ray Jui wrote:
-> Update and add Stingray clock definitions and tables so they match the
-> binding document and the latest ASIC datasheet
+On Wed, May 02, 2018 at 12:12:15AM +0800, Chen-Yu Tsai wrote:
+> The clock delay chains found in the glue layer for dwmac-sun8i are only
+> used with RGMII PHYs. They are not intended for non-RGMII PHYs, such as
+> MII external PHYs or the internal PHY. Also, a recent SoC has a smaller
+> range of possible values for the delay chain.
 > 
-> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> This patch reformats the delay chain section of the device tree binding
+> to make it clear that the delay chains only apply to RGMII PHYs, and
+> make it easier to add the R40-specific bits later.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  drivers/clk/bcm/clk-sr.c           | 135 ++++++++++++++++++++++++++++++++-----
->  include/dt-bindings/clock/bcm-sr.h |  24 +++++--
+>  Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 
-This goes in the 1st patch.
-
->  2 files changed, 137 insertions(+), 22 deletions(-)
+Reviewed-by: Rob Herring <robh@kernel.org>
