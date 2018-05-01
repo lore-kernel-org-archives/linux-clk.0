@@ -1,83 +1,66 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, maxime.ripard@bootlin.com
-Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH 05/15] drm/sun4i: Add TCON TOP driver
-Date: Thu, 24 May 2018 22:33:58 +0200
-Message-ID: <2523764.1gMShBa1ZC@jernej-laptop>
-In-Reply-To: <20180524084351.x4ugbbsz3mqv6fh7@flea>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net> <5965231.6ucpJrPIQ5@jernej-laptop> <20180524084351.x4ugbbsz3mqv6fh7@flea>
+Return-Path: <nsekhar@ti.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v9_00/27]_ARM:_davinci:_convert_to_common_cloc?=
+ =?UTF-8?Q?k_framework=e2=80=8b?=
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180427001745.4116-1-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <1ea1b841-24da-e74a-50a8-98b0793e61a5@ti.com>
+Date: Tue, 1 May 2018 20:15:19 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+> This series converts mach-davinci to use the common clock framework.
+> 
+> The series works like this, the first 3 patches fix some issues with the clock
+> drivers that have already been accepted into the mainline kernel.
+> 
+> Then, starting with "ARM: davinci: pass clock as parameter to
+> davinci_timer_init()", we get the mach code ready for the switch by adding the
+> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+> around the legacy clocks so that we can switch easily between the old and the
+> new.
+> 
+> "ARM: davinci: switch to common clock framework" actually flips the switch
+> to start using the new clock drivers. Then the next 8 patches remove all
+> of the old clock code.
+> 
+> The final four patches add device tree clock support to the one SoC that
+> supports it.
+> 
+> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
+> board file).
 
-Dne četrtek, 24. maj 2018 ob 10:43:51 CEST je Maxime Ripard napisal(a):
-> Hi,
-> 
-> On Mon, May 21, 2018 at 05:15:15PM +0200, Jernej Škrabec wrote:
-> > > > +	/*
-> > > > +	 * Default register values might have some reserved bits set, 
-which
-> > > > +	 * prevents TCON TOP from working properly. Set them to 0 here.
-> > > > +	 */
-> > > > +	writel(0, tcon_top->regs + TCON_TOP_PORT_SEL_REG);
-> > > > +	writel(0, tcon_top->regs + TCON_TOP_GATE_SRC_REG);
-> > > > +
-> > > > +	for (i = 0; i < CLK_NUM; i++) {
-> > > > +		const char *parent_name = "bus-tcon-top";
-> > > 
-> > > I guess retrieving the parent's clock name at runtime would be more
-> > > flexible.
-> > 
-> > It is, but will it ever be anything else?
-> 
-> Probably not, but when the complexity is exactly the same (using
-> __clk_get_name), we'd better use the more appropriate solution. If we
-> ever need to change that clock name, or to use the driver with an SoC
-> that wouldn't have the same clock name for whatever reason, it will
-> just work.
-> 
-> > > > +		struct clk_init_data init;
-> > > > +		struct clk_gate *gate;
-> > > > +
-> > > > +		gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
-> > > > +		if (!gate) {
-> > > > +			ret = -ENOMEM;
-> > > > +			goto err_disable_clock;
-> > > > +		}
-> > > > +
-> > > > +		init.name = gates[i].name;
-> > > > +		init.ops = &clk_gate_ops;
-> > > > +		init.flags = CLK_IS_BASIC;
-> > > > +		init.parent_names = &parent_name;
-> > > > +		init.num_parents = 1;
-> > > > +
-> > > > +		gate->reg = tcon_top->regs + TCON_TOP_GATE_SRC_REG;
-> > > > +		gate->bit_idx = gates[i].bit;
-> > > > +		gate->lock = &tcon_top->reg_lock;
-> > > > +		gate->hw.init = &init;
-> > > > +
-> > > > +		ret = devm_clk_hw_register(dev, &gate->hw);
-> > > > +		if (ret)
-> > > > +			goto err_disable_clock;
-> > > 
-> > > Isn't it what clk_hw_register_gate is doing?
-> > 
-> > Almost, but not exactly. My goal was to use devm_* functions, so there is
-> > no need to do any special cleanup.
-> 
-> Is it the only difference? If so, you can just create a
-> devm_clk_hw_register gate.
+I have reviewed this series and looks good to me except some comments I
+gave and some issues you have identified yourself in patches 25 and 26.
 
-I checked around and it seems that in clk core there are only non devm_* 
-helpers like clk_hw_register_gate() for some reason. I guess I'll just use 
-that and manually unregister all the clocks in cleanup function.
+I think this is a good compromise to achieve platform device based
+clocks as far as possible with current kernel framework. I know Bartosz
+is working on solving the problem generically and I guess once thats
+agreed upon, DaVinci can convert too.
 
-Best regards,
-Jernej
+But I think this series has been in the works for far too long and
+should be merged (the remoteproc dependencies that Bartosz pointed out
+should be resolved too). You can wait for clock maintainers opinion
+though before spinning another version.
+
+I have not tested this series yet, will do so soon.
+
+Thanks,
+Sekhar
+
+PS: I started giving a Reviewed-by: for the mach-davinci patches before
+realizing the futility of doing so and stopped mid-way. They will have
+my sign-off anyway once I test and merge them.
