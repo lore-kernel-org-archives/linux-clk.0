@@ -1,91 +1,32 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v1 1/2] dt-bindings: clock: Introduce QCOM Video clock controller bindings
-Date: Thu,  3 May 2018 18:05:24 +0530
-Message-Id: <1525350925-16006-2-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
-References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>,
+ Marcel Ziswiler <marcel@ziswiler.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180426235818.10018-4-digetx@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180426235818.10018-1-digetx@gmail.com>
+ <20180426235818.10018-4-digetx@gmail.com>
+Message-ID: <152521027630.138124.3736014507579667653@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1 3/4] clk: tegra20: Set correct parents for CDEV1/2 clocks
+Date: Tue, 01 May 2018 14:31:16 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings for video clock controller for Qualcomm
-Technology Inc's SoCs.
+Quoting Dmitry Osipenko (2018-04-26 16:58:17)
+> Parents of CDEV1/2 clocks are determined by muxing of the corresponding
+> pins. Pinctrl driver now provides the CDEV1/2 clock muxes and hence
+> CDEV1/2 clocks could have correct parents. Set CDEV1/2 parents to the
+> corresponding muxes to fix the parents.
+> =
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,videocc.txt     | 18 ++++++++++++++++
- include/dt-bindings/clock/qcom,videocc-sdm845.h    | 25 ++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.txt
- create mode 100644 include/dt-bindings/clock/qcom,videocc-sdm845.h
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.txt b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
-new file mode 100644
-index 0000000..600eda2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
-@@ -0,0 +1,18 @@
-+Qualcomm Video Clock & Reset Controller Binding
-+-----------------------------------------------
-+
-+Required properties :
-+- compatible : shall contain "qcom,sdm845-videocc"
-+- reg : shall contain base register location and length
-+- #clock-cells : from common clock binding, shall contain 1.
-+- #reset-cells : from common reset binding, shall contain 1.
-+- #power-domain-cells : from generic power domain binding, shall contain 1.
-+
-+Example:
-+	videocc: clock-controller@ab00000 {
-+		compatible = "qcom,sdm845-videocc";
-+		reg = <0xab00000 0x10000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+		#power-domain-cells = <1>;
-+	};
-diff --git a/include/dt-bindings/clock/qcom,videocc-sdm845.h b/include/dt-bindings/clock/qcom,videocc-sdm845.h
-new file mode 100644
-index 0000000..48f6a9e
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,videocc-sdm845.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
-+
-+#ifndef _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
-+#define _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
-+
-+#define VIDEO_CC_APB_CLK			0
-+#define VIDEO_CC_AT_CLK				1
-+#define VIDEO_CC_QDSS_TRIG_CLK			2
-+#define VIDEO_CC_QDSS_TSCTR_DIV8_CLK		3
-+#define VIDEO_CC_VCODEC0_AXI_CLK		4
-+#define VIDEO_CC_VCODEC0_CORE_CLK		5
-+#define VIDEO_CC_VCODEC1_AXI_CLK		6
-+#define VIDEO_CC_VCODEC1_CORE_CLK		7
-+#define VIDEO_CC_VENUS_AHB_CLK			8
-+#define VIDEO_CC_VENUS_CLK_SRC			9
-+#define VIDEO_CC_VENUS_CTL_AXI_CLK		10
-+#define VIDEO_CC_VENUS_CTL_CORE_CLK		11
-+#define VIDEO_PLL0				12
-+
-+#define VENUS_GDSC				0
-+#define VCODEC0_GDSC				1
-+#define VCODEC1_GDSC				2
-+
-+#endif
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Acked-by: Stephen Boyd <sboyd@kernel.org>
