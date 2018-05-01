@@ -1,121 +1,70 @@
-Return-Path: <benjamin.lindqvist@endian.se>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
-References: <cover.1526990589.git.stefan@agner.ch> <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com> <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
-From: Benjamin Lindqvist <benjamin.lindqvist@endian.se>
-Date: Thu, 24 May 2018 13:30:14 +0200
-Message-ID: <CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-To: Stefan Agner <stefan@agner.ch>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
-	computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-	mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
-	sboyd@kernel.org, Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com,
-	richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-	jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-	Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
-	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525164093-16645-2-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Taniya Das <tdas@codeaurora.org>
+References: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
+ <1525164093-16645-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <152520902751.138124.3904360654314728163@swboyd.mtv.corp.google.com>
+Subject: Re: [v5 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
+Date: Tue, 01 May 2018 14:10:27 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stefan,
+Quoting Taniya Das (2018-05-01 01:41:32)
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/=
+Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+> new file mode 100644
+> index 0000000..ecc1dbe
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+> @@ -0,0 +1,32 @@
+> +Qualcomm Technologies, Inc. RPMh Clocks
+> +-------------------------------------------------------
+> +
+> +Resource Power Manager Hardened (RPMh) manages shared resources on
+> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
+> +other hardware subsystems via RSC to control clocks.
+> +
+> +Required properties :
+> +- compatible : shall contain "qcom,sdm845-rpmh-clk"
+> +
+> +- #clock-cells : must contain 1
+> +
+> +Optional properties :
+> +- assigned-clk-divs : property should contain a list of divs for each cl=
+ock in
+> +                       the clk-output-names property. In case divs are n=
+ot
+> +                       provided the clock rate would be same as parent r=
+ate.
+> +- clk-output-names :  a list of strings of clock output signal for the d=
+ivs to
+> +                        be applied.
+> +
+> +Example :
+> +
+> +#include <dt-bindings/clock/qcom,rpmh.h>
+> +
+> +       &apps_rsc {
+> +               rpmhcc: clock-controller {
+> +                       compatible =3D "qcom,sdm845-rpmh-clk";
+> +                       #clock-cells =3D <1>;
+> +                       assigned-clk-divs =3D <2 2 2>;
 
-It seems to me that a probe similar to what the BootROM does shouldn't
-be awfully complicated to implement - just cycle through the switch
-cases in case of an ECC error. But I guess that's more of an idea for
-further improvements rather than a comment to the patch set under
-review.
+This property shouldn't need to exist. Instead, add a fixed div-2 clock
+to the DTS file (I guess in the SoC file) to divide the crystal
+frequency into the rate you want (19.2 MHz in this case).
 
-However, I think that allowing for an override of the oobsize
-inference would be a good idea before merging, no? This could just be
-a trivial #ifdef (at least temporarily). If you agree but don't feel
-like doing it yourself, I'd be happy to pitch in. Let me know.
+> +                       clk-output-names =3D "bi_tcxo", "lnbb_clk2",
+> +                                               "lnbb_clk3";
 
-Best regards,
-Benjamin
-
-2018-05-24 13:00 GMT+02:00 Stefan Agner <stefan@agner.ch>:
-> On 24.05.2018 09:45, Benjamin Lindqvist wrote:
->> Hi Stefan (and all),
->>
->> First off, I apoloigize in advance if I'm deviating from common
->> kernel mailing list courtesy -- this is my first time responding.
->> I just have a comment on the NAND driver that I'd like to bring
->> to the public.
->>
->
-> Welcome!
->
->>> +       switch (mtd->oobsize) {
->>> ...
->>> +       case 224:
->>> +               mtd_set_ooblayout(mtd, &tegra_nand_oob_224_ops);
->>> +               chip->ecc.strength = 8;
->>> +               chip->ecc.bytes = 18;
->>> +               value |= CFG_ECC_SEL | CFG_TVAL_8;
->>> +               break; +       case 224:
->>
->> I am not sure how you arrived at this oobsize-based inference. I
->> have not seen any explicit relation between oob size and ECC
->> algorithm used in the reference manual. Indeed, the U-Boot I was
->> working on (a fork of the Toradex 2015.04 U-Boot) always has
->> oobsize == 224 but used either BCH[t=16] or RS[t=4]. In fact, we
->> tried choosing RS[t=8] in U-Boot but we failed to make the
->> BootROM decode this at all. So we had to use RS[t=4]. But
->> changing the algorithm did not automatically change the oobsize,
->> at least it didn't for us. So maybe you should consider if this
->> is really the way to go about deciding which algorithm is used.
->
-> The oobsize based inference to set the HW ECC mode comes from the
-> patchset I picked up. Typically, the size of the OOB area is such that
-> it allows "good enough" error correction required for that chip. So
-> using it as indicator for the ECC algorithm is not entirely off...
->
-> But yeah I agree we have better means, and I already started working on
-> a better mechanism. Also, I worked on BCH support, and it looks pretty
-> good already.
->
-> If we want to auto select mode we can use the ECC requirements from
-> ONFI/JEDEC/parameter page. Or we could use device tree only.
->
-> Thanks for bringing up the Boot ROM issue. In fact I investigated the
-> supported modes the recent days too. First off, as you mentioned, the
-> boot ROM seems to probe different modes until it succeeds. By trying
-> through all RS and BCH modes, it seems that it only probes some modes:
-> - RS t=4
-> - BCH t=8
-> - BCH t=16
->
-> I guess those are preferred modes in practise. Not sure if we should
-> make sure the auto selection such that it only chooses from this list...
->
->>
->> Note that we're in fact using this patch set in Linux today, but
->> we had to remove the oobsize inference part. Currently we're
->> simply hard coding it to CFG_TVAL_4, but maybe it would be
->> cleaner to add ECC algo as a board config instead, e.g. in the
->> .dts file or whatever. This seems to be done by other vendors
->> already, see for example excerpt of
->> Documentation/devicetree/bindings/mtd/gpmc-nand.txt below:
->>
->>  - ti,nand-ecc-opt: A string setting the ECC layout to use. One of:
->> "sw" 1-bit Hamming ecc code via software
->> "hw" <deprecated> use "ham1" instead
->> "hw-romcode" <deprecated> use "ham1" instead
->> "ham1" 1-bit Hamming ecc code
->> "bch4" 4-bit BCH ecc code
->> "bch8" 8-bit BCH ecc code
->> "bch16" 16-bit BCH ECC code
->> Refer below "How to select correct ECC scheme for your device ?"
->>
->> It seems as if this method would be equally applicable to Tegra NAND.
->
-> Yeah, ideally we can reuse "nand-ecc-algo". Although, Reed-Solomon is
-> not yet in the list.  So using this property would require to extend
-> this standard property.
->
-> --
-> Stefan
+We don't need this either.
