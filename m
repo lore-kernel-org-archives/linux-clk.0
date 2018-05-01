@@ -1,77 +1,188 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20180403095005.skflxb7m2qzbhjix@flea>
-References: <20180317092857.4396-1-wens@csie.org> <20180317092857.4396-3-wens@csie.org>
- <20180318213129.ucwslzvwq6khxrcd@flea> <CAGb2v67Fp20wkmqWyRowpAmm4EDwENnKFG+mccqWaPa5Jj4zBw@mail.gmail.com>
- <20180403094845.le2hfuxktlv66lre@flea> <20180403095005.skflxb7m2qzbhjix@flea>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 3 Apr 2018 17:53:08 +0800
-Message-ID: <CAGb2v67NO0hbATReq11Y_-2M_yF4hbj_sOtK3D_8yUQb1xi2ww@mail.gmail.com>
-Subject: Re: [PATCH net-next 02/12] clk: sunxi-ng: r40: export a regmap to
- access the GMAC register
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
-	Icenowy Zheng <icenowy@aosc.io>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	netdev <netdev@vger.kernel.org>, Corentin Labbe <clabbe.montjoie@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1] clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
+Date: Tue,  1 May 2018 10:33:33 +0530
+Message-Id: <1525151013-28291-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 3, 2018 at 5:50 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> On Tue, Apr 03, 2018 at 11:48:45AM +0200, Maxime Ripard wrote:
->> On Tue, Mar 20, 2018 at 03:15:02PM +0800, Chen-Yu Tsai wrote:
->> > On Mon, Mar 19, 2018 at 5:31 AM, Maxime Ripard
->> > <maxime.ripard@bootlin.com> wrote:
->> > > On Sat, Mar 17, 2018 at 05:28:47PM +0800, Chen-Yu Tsai wrote:
->> > >> From: Icenowy Zheng <icenowy@aosc.io>
->> > >>
->> > >> There's a GMAC configuration register, which exists on A64/A83T/H3/H5 in
->> > >> the syscon part, in the CCU of R40 SoC.
->> > >>
->> > >> Export a regmap of the CCU.
->> > >>
->> > >> Read access is not restricted to all registers, but only the GMAC
->> > >> register is allowed to be written.
->> > >>
->> > >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> > >> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> > >
->> > > Gah, this is crazy. I'm really starting to regret letting that syscon
->> > > in in the first place...
->> >
->> > IMHO syscon is really a better fit. It's part of the glue layer and
->> > most other dwmac user platforms treat it as such and use a syscon.
->> > Plus the controls encompass delays (phase), inverters (polarity),
->> > and even signal routing. It's not really just a group of clock controls,
->> > like what we poorly modeled for A20/A31. I think that was really a
->> > mistake.
->> >
->> > As I mentioned in the cover letter, a slightly saner approach would
->> > be to let drivers add custom syscon entries, which would then require
->> > less custom plumbing.
->>
->> A syscon is convenient, sure, but it also bypasses any abstraction
->> layer we have everywhere else, which means that we'll have to maintain
->> the register layout in each and every driver that uses it.
->>
->> So far, it's only be the GMAC, but it can also be others (the SRAM
->> controller comes to my mind), and then, if there's any difference in
->> the design in a future SoC, we'll have to maintain that in the GMAC
->> driver as well.
->
-> I guess I forgot to say something, I'm fine with using a syscon we
-> already have.
->
-> I'm just questionning if merging any other driver using one is the
-> right move.
+From: Amit Nischal <anischal@codeaurora.org>
 
-Right. So in this case, we are not actually going through the syscon
-API. Rather we are exporting a regmap whose properties we actually
-define. If it makes you more acceptable to it, we could map just
-the GMAC register in the new regmap, and also have it named. This
-is all plumbing within the kernel so the device tree stays the same.
+The default behavior of the GDSC enable/disable sequence is to
+poll the status bits of either the actual GDSCR or the
+corresponding HW_CTRL registers.
 
-ChenYu
+On targets which have support for a CFG_GDSCR register, the
+status bits might not show the correct state of the GDSC,
+especially in the disable sequence, where the status bit
+will be cleared even before the core is completely power
+collapsed. On targets with this issue, poll the power on/off
+bits in the CFG_GDSCR register instead to correctly determine
+the GDSC state.
+
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gdsc.c | 42 ++++++++++++++++++++++++++----------------
+ drivers/clk/qcom/gdsc.h |  1 +
+ 2 files changed, 27 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index cb61c15..2a6b0ff 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -33,6 +33,11 @@
+ #define GMEM_CLAMP_IO_MASK	BIT(0)
+ #define GMEM_RESET_MASK		BIT(4)
+
++/* CFG_GDSCR */
++#define GDSC_POWER_UP_COMPLETE		BIT(16)
++#define GDSC_POWER_DOWN_COMPLETE	BIT(15)
++#define CFG_GDSCR_OFFSET		0x4
++
+ /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
+ #define EN_REST_WAIT_VAL	(0x2 << 20)
+ #define EN_FEW_WAIT_VAL		(0x8 << 16)
+@@ -45,15 +50,28 @@
+
+ #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
+
+-static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
++static int gdsc_is_enabled(struct gdsc *sc, bool en)
+ {
++	unsigned int reg;
+ 	u32 val;
+ 	int ret;
+
++	if (sc->flags & POLL_CFG_GDSCR)
++		reg = sc->gdscr + CFG_GDSCR_OFFSET;
++	else
++		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
++
+ 	ret = regmap_read(sc->regmap, reg, &val);
+ 	if (ret)
+ 		return ret;
+
++	if (sc->flags & POLL_CFG_GDSCR) {
++		if (en)
++			return !!(val & GDSC_POWER_UP_COMPLETE);
++		else
++			return !(val & GDSC_POWER_DOWN_COMPLETE);
++	}
++
+ 	return !!(val & PWR_ON_MASK);
+ }
+
+@@ -64,17 +82,17 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
+ 	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
+ }
+
+-static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
++static int gdsc_poll_status(struct gdsc *sc, bool en)
+ {
+ 	ktime_t start;
+
+ 	start = ktime_get();
+ 	do {
+-		if (gdsc_is_enabled(sc, reg) == en)
++		if (gdsc_is_enabled(sc, en) == en)
+ 			return 0;
+ 	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
+
+-	if (gdsc_is_enabled(sc, reg) == en)
++	if (gdsc_is_enabled(sc, en) == en)
+ 		return 0;
+
+ 	return -ETIMEDOUT;
+@@ -84,7 +102,6 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ {
+ 	int ret;
+ 	u32 val = en ? 0 : SW_COLLAPSE_MASK;
+-	unsigned int status_reg = sc->gdscr;
+
+ 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+ 	if (ret)
+@@ -101,8 +118,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 		return 0;
+ 	}
+
+-	if (sc->gds_hw_ctrl) {
+-		status_reg = sc->gds_hw_ctrl;
++	if (sc->gds_hw_ctrl)
+ 		/*
+ 		 * The gds hw controller asserts/de-asserts the status bit soon
+ 		 * after it receives a power on/off request from a master.
+@@ -114,9 +130,8 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+ 		 * and polling the status bit.
+ 		 */
+ 		udelay(1);
+-	}
+
+-	return gdsc_poll_status(sc, status_reg, en);
++	return gdsc_poll_status(sc, en);
+ }
+
+ static inline int gdsc_deassert_reset(struct gdsc *sc)
+@@ -240,8 +255,6 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+
+ 	/* Turn off HW trigger mode if supported */
+ 	if (sc->flags & HW_CTRL) {
+-		unsigned int reg;
+-
+ 		ret = gdsc_hwctrl(sc, false);
+ 		if (ret < 0)
+ 			return ret;
+@@ -253,8 +266,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 		 */
+ 		udelay(1);
+
+-		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+-		ret = gdsc_poll_status(sc, reg, true);
++		ret = gdsc_poll_status(sc, true);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -276,7 +288,6 @@ static int gdsc_init(struct gdsc *sc)
+ {
+ 	u32 mask, val;
+ 	int on, ret;
+-	unsigned int reg;
+
+ 	/*
+ 	 * Disable HW trigger: collapse/restore occur based on registers writes.
+@@ -297,8 +308,7 @@ static int gdsc_init(struct gdsc *sc)
+ 			return ret;
+ 	}
+
+-	reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+-	on = gdsc_is_enabled(sc, reg);
++	on = gdsc_is_enabled(sc, true);
+ 	if (on < 0)
+ 		return on;
+
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 9279278..b0cbb87 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -55,6 +55,7 @@ struct gdsc {
+ #define HW_CTRL		BIT(2)
+ #define SW_RESET	BIT(3)
+ #define AON_RESET	BIT(4)
++#define POLL_CFG_GDSCR	BIT(5)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
