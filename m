@@ -1,87 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:45562 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755690AbeEaQjZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 31 May 2018 12:39:25 -0400
-Date: Thu, 31 May 2018 09:39:21 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        robh+dt@kernel.org, bcousson@baylibre.com, paul@pwsan.com
-Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
-Message-ID: <20180531163921.GO5705@atomide.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-2-faiz_abbas@ti.com>
- <20180530145047.GC5705@atomide.com>
- <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
- <20180530152825.GG5705@atomide.com>
- <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
- <20180530155448.GH5705@atomide.com>
- <98c989ca-0694-5150-f74b-35f3e4bf20c0@ti.com>
- <20180531152623.GN5705@atomide.com>
- <f74763ed-7e27-146b-6856-6be1b2ba630d@ti.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 1 May 2018 07:39:48 -0500
+From: Rob Herring <robh@kernel.org>
+To: Amit Nischal <anischal@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] clk: qcom: Add Global Clock controller (GCC)
+ driver for SDM845
+Message-ID: <20180501123948.GA28494@rob-hp-laptop>
+References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
+ <1525105210-8689-4-git-send-email-anischal@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <f74763ed-7e27-146b-6856-6be1b2ba630d@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1525105210-8689-4-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Faiz Abbas <faiz_abbas@ti.com> [180531 16:36]:
-> Hi,
+On Mon, Apr 30, 2018 at 09:50:10PM +0530, Amit Nischal wrote:
+> From: Taniya Das <tdas@codeaurora.org>
 > 
-> On Thursday 31 May 2018 08:56 PM, Tony Lindgren wrote:
-> > * Tero Kristo <t-kristo@ti.com> [180531 06:18]:
-> >> On 30/05/18 18:54, Tony Lindgren wrote:
-> >>> * Tero Kristo <t-kristo@ti.com> [180530 15:44]:
-> >>>> On 30/05/18 18:28, Tony Lindgren wrote:
-> >>>>> * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
-> >>>>>> For the OCP if part, I think that is still needed until we switch over to
-> >>>>>> full sysc driver. clkctrl_offs you probably also need because that is used
-> >>>>>> for mapping the omap_hwmod against a specific clkctrl clock. Those can be
-> >>>>>> only removed once we are done with hwmod (or figure out some other way to
-> >>>>>> assign the clkctrl clock to a hwmod.)
-> >>>>>
-> >>>>> Hmm might be worth testing. I thought your commit 70f05be32133
-> >>>>> ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
-> >>>>> already parses the clkctrl from dts?
-> >>>>
-> >>>> It maps the clkctrl clock to be used by hwmod, if those are available. We
-> >>>> didn't add any specific clock entries to DT for mapping the actual clkctrl
-> >>>> clock without the hwmod_data hints yet though, as that was deemed temporary
-> >>>> solution only due to transition to interconnect driver. I.e., you would need
-> >>>> something like this in DT for every device node:
-> >>>>
-> >>>> &uart3 {
-> >>>>    clocks = <l4per_clkctrl UART3_CLK 0>;
-> >>>>    clock-names = "clkctrl";
-> >>>> };
-> >>>>
-> >>>> ... which is currently not present.
-> >>>
-> >>> Hmm is that not the "fck" clkctrl clock we have already in
-> >>> the dts files for the interconnect target modules?
-> >>
-> >> Oh okay, yeah, we could parse that one, but currently it is not done, and is
-> >> not present for everything either I believe.
-> >>
-> >>> We can also use pdata callbacks to pass the clock node if
-> >>> needed. But I guess I don't quite still understand what we
-> >>> are missing :)
-> >>
-> >> So, what is missing is the glue logic only from the hwmod codebase. Right
-> >> now this is not supported but should be relatively trivial thing to add if
-> >> we really want to do this.
-> > 
-> > OK let's think about this a bit for v4.19 then.
-> > 
+> Add support for the global clock controller found on SDM845
+> based devices. This should allow most non-multimedia device
+> drivers to probe and control their clocks.
 > 
-> I am not sure what the conclusion is. Should I try removing the
-> clkctrl_offsets, clkdm_name, and main_clk?
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+>  drivers/clk/qcom/Kconfig                           |   10 +-
+>  drivers/clk/qcom/Makefile                          |    1 +
+>  drivers/clk/qcom/gcc-sdm845.c                      | 3480 ++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-sdm845.h        |  239 ++
+>  5 files changed, 3727 insertions(+), 4 deletions(-)
+>  create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
 
-No need to, it's not going to work currently without them.
+For the DT bits:
 
-Regards,
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Tony
+In the future please split bindings and binding headers to separate 
+patch.
+
+Rob
