@@ -1,64 +1,61 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [v5 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+To: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
+ <1525164093-16645-3-git-send-email-tdas@codeaurora.org>
+ <20180501124333.GA32660@rob-hp-laptop>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <cbd9d87c-93ed-a004-487d-4014ac7a93b2@codeaurora.org>
+Date: Tue, 1 May 2018 21:03:42 +0530
 MIME-Version: 1.0
-To: Lee Jones <lee.jones@linaro.org>, Matti Vaittinen <mazziesaccount@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180530111649.GB8038@dell>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, mturquette@baylibre.com,
- robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
- broonie@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
- heikki.haikola@fi.rohmeurope.com
-References: <20180528090003.GA8778@localhost.localdomain> <20180529073958.GB4790@dell>
- <20180529083541.GA13528@localhost.localdomain> <20180530111649.GB8038@dell>
-Message-ID: <152769382760.144038.10609724773770264610@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC driver
-Date: Wed, 30 May 2018 08:23:47 -0700
+In-Reply-To: <20180501124333.GA32660@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Lee Jones (2018-05-30 04:16:49)
-> On Tue, 29 May 2018, Matti Vaittinen wrote:
-> =
-
-> > Hello,
-> > =
-
-> > On Tue, May 29, 2018 at 08:39:58AM +0100, Lee Jones wrote:
-> > > On Mon, 28 May 2018, Matti Vaittinen wrote:
-> > > =
-
-> > > > Patch series adding support for ROHM BD71837 PMIC.
-> > > FYI, this patch-set is going to be difficult to manage since it was
-> > > not sent 'threaded'.
-> > > =
-
-> > > If/when you send a subsequent version, could you please ensure you
-> > > send the set threaded so the patches keep in relation to one another
-> > > as they are reviewed?
-> > =
-
-> > Thanks for the guidance. I have not sent so many patches to community so
-> > I am grateful also from all the practical tips =3D) Just one slight pro=
-blem.
-> > I have only seen emails being threaded when one is replying to an email.
-> > So how should I send my patches in same thread? Just send first one and
-> > then send subsequent patches as replies?
-> > =
-
-> > I just killed some unused definitions and one unused variable from the
-> > code so I am about to send new version. I'll try doing that as a thread=
-ed
-> > series and resend all the patches as v3.
-> =
-
-> You don't need to do this manually.
-> =
-
-> Just use `git send-email` with the correct arguments.
-> =
 
 
-I usually send with 'git send-email *.patch' so that git can do the
-threading for me. Looks like these patches were sent with Mutt though,
-so perhaps 'git format-patch | git imap-send' was used without the
---thread option on format-patch.
+On 5/1/2018 6:13 PM, Rob Herring wrote:
+> On Tue, May 01, 2018 at 02:11:33PM +0530, Taniya Das wrote:
+>> Add the RPMh clock driver to control the RPMh managed clock resources on
+>> some of the Qualcomm Technologies, Inc. SoCs.
+>>
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   drivers/clk/qcom/Kconfig              |   9 +
+>>   drivers/clk/qcom/Makefile             |   1 +
+>>   drivers/clk/qcom/clk-rpmh.c           | 387 ++++++++++++++++++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,rpmh.h |   2 -
+>>   4 files changed, 397 insertions(+), 2 deletions(-)
+>>   create mode 100644 drivers/clk/qcom/clk-rpmh.c
+> 
+>> diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
+>> index 36caab2..f48fbd6 100644
+>> --- a/include/dt-bindings/clock/qcom,rpmh.h
+>> +++ b/include/dt-bindings/clock/qcom,rpmh.h
+>> @@ -18,7 +18,5 @@
+>>   #define RPMH_RF_CLK2_A				9
+>>   #define RPMH_RF_CLK3				10
+>>   #define RPMH_RF_CLK3_A				11
+>> -#define RPMH_RF_CLK4				12
+>> -#define RPMH_RF_CLK4_A				13
+> 
+> Did you mean to have this or squash into previous patch?
+> 
+
+Thanks, my mistake. It was meant to be squashed in the previous patch. I 
+would take care of it in the next series.
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
