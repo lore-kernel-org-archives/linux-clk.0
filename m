@@ -1,92 +1,51 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20180430114058.5061-11-jagan@amarulasolutions.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com> <20180430114058.5061-11-jagan@amarulasolutions.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 2 May 2018 00:20:48 +0800
+Message-ID: <CAGb2v67_WjVOfz0maTU7K9WWEChGjQoYqpc=xZkmy4W64+9DLw@mail.gmail.com>
+Subject: Re: [PATCH 10/21] drm/sun4i: Enable DesignWare HDMI for Allwinner
+ 64-bit SoCs
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
 	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 21/26] arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
-Date: Fri, 18 May 2018 15:15:31 +0530
-Message-Id: <20180518094536.17201-22-jagan@amarulasolutions.com>
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable HDMI output on Bananpi-m64 board.
+On Mon, Apr 30, 2018 at 7:40 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> Allwinner 64-bit SoC like H5/A64 has DesignWare HDMI so
+> enable them as default.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v2:
-- none
+Should we not also enable it by default for SUN8I (A83T, H3, R40?, etc.)
 
- .../boot/dts/allwinner/sun50i-a64-bananapi-m64.dts | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 0716b1441187..bbbf7b17b70b 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -86,6 +97,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -103,6 +118,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
--- 
-2.14.3
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/sun4i/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+> index eee6bc0eaf97..60468a779a63 100644
+> --- a/drivers/gpu/drm/sun4i/Kconfig
+> +++ b/drivers/gpu/drm/sun4i/Kconfig
+> @@ -42,6 +42,7 @@ config DRM_SUN4I_BACKEND
+>
+>  config DRM_SUN8I_DW_HDMI
+>         tristate "Support for Allwinner version of DesignWare HDMI"
+> +       default ARM64 && ARCH_SUNXI
+>         depends on DRM_SUN4I
+>         select DRM_DW_HDMI
+>         help
+> --
+> 2.14.3
+>
