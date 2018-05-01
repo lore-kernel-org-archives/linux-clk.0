@@ -1,195 +1,133 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <68f6216b3de12d90a54207a6a0110c6b@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
- David Brown <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk-owner@vger.kernel.org
-References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
- <1525105210-8689-2-git-send-email-anischal@codeaurora.org>
- <152524713612.138124.1776677011439726084@swboyd.mtv.corp.google.com>
- <68f6216b3de12d90a54207a6a0110c6b@codeaurora.org>
-Message-ID: <152549069940.138124.10210385659890209429@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v6 1/3] clk: qcom: Configure the RCGs to a safe source as needed
-Date: Fri, 04 May 2018 20:24:59 -0700
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH net-next v2 14/15] soc: sunxi: export a regmap for EMAC clock reg on A64
+Date: Wed,  2 May 2018 00:12:26 +0800
+Message-Id: <20180501161227.2110-15-wens@csie.org>
+In-Reply-To: <20180501161227.2110-1-wens@csie.org>
+References: <20180501161227.2110-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-05-03 04:57:37)
-> On 2018-05-02 13:15, Stephen Boyd wrote:
-> > Quoting Amit Nischal (2018-04-30 09:20:08)
-> > =
+From: Icenowy Zheng <icenowy@aosc.io>
 
-> >> +}
-> >> +
-> >> +static void clk_rcg2_shared_disable(struct clk_hw *hw)
-> >> +{
-> >> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> >> +       struct freq_tbl safe_src_tbl =3D { 0 };
-> >> +
-> >> +       /*
-> >> +        * Park the RCG at a safe configuration - sourced off from =
+The A64 SRAM controller memory zone has a EMAC clock register, which is
+needed by the Ethernet MAC driver (dwmac-sun8i).
 
-> >> safe source.
-> >> +        * Force enable and disable the RCG while configuring it to =
+Export a regmap for this register on A64.
 
-> >> safeguard
-> >> +        * against any update signal coming from the downstream clock.
-> >> +        * The current parent is still prepared and enabled at this =
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+[wens@csie.org: export whole address range with only EMAC register
+		accessible and drop regmap name]
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/soc/sunxi/sunxi_sram.c | 57 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 55 insertions(+), 2 deletions(-)
 
-> >> point, and
-> >> +        * the safe source is always on while application processor =
-
-> >> subsystem
-> >> +        * is online. Therefore, the RCG can safely switch its parent.
-> >> +        */
-> >> +       safe_src_tbl.src =3D rcg->safe_src_index;
-> >> +       clk_rcg2_shared_force_enable_clear(hw, &safe_src_tbl);
-> > =
-
-> > This should then re-dirty the config register to have the software
-> > frequency settings that existed in the hardware when disable was =
-
-> > called.
-> > Given that MND shouldn't be changed here, this should be as simple as
-> > saving away the CFG register, forcing it to XO speed by changing the =
-
-> > src
-> > and disabling dual edge in the CFG register (please don't call
-> > force_enable_clear with some frequency pointer, just do this inline
-> > here), and then rewriting the cfg register with the "real" settings for
-> > whatever frequency it's supposed to run at and then returning from this
-> > function.
-> > =
-
-> > I guess we have to do a read cfg from hardware, write cfg, hit update
-> > config, and then write cfg again each time we disable. For enable, we
-> > just do an update config (if it's dirty?) inside of a force
-> > enable/disable pair. And set_rate doesn't really change except it =
-
-> > either
-> > does or doesn't hit the update config bit if the clk is enabled or
-> > disabled respectively.
-> > =
-
-> =
-
-> We have done the below changes suggested by you and that logic seems to =
-
-> be
-> working fine. But we have one concern about leaving the RCG registers in
-> dirty state and would like to have a little bit modification as =
-
-> explained
-> below:
-> =
-
-> Suggested Logic:
-> 1. set_rate()--> Update CFG, M, N and D registers and don't hit the =
-
-> update
->                   bit if clock is disabled - call new =
-
-> __clk_rcg2_configure().
->                   Above will make the CFG register as dirty.
-> =
-
-> 2. _disable()--> 2.1 - Store the CFG register configuration in a =
-
-> variable.
->                   2.2 - Move to the safe source (XO) and hit the update =
-
-> bit.
->                         It will only touch the CFG register and M, N, D
->                         register values will remain as it was.
->                   2.3 - Write back the stored CFG value done in step #2.1
->                         This will again redirty the CFG register.
-> =
-
-> 3. _enable()--> Just hit the update bit as the configuration write will
->                  be taken care in the steps #1 and #2.
-> =
-
-> It would be great if we don't redirty the CFG register and leave the RCG
-> CFG register to at safe source(XO) in disable() path.
-> =
-
-> This would help us to debug the issues where device crashes and we want
-> to dump the RCG registers to know whether from software, we have =
-
-> actually
-> moved to safe source or not. Otherwise, we would get the dirty register
-> values in crash dumps.
-> =
-
-> So instead of writing back the stored CFG(corresponding to real rate
-> settings) in disable path, we want to restore the stored CFG in enable
-> path and then hit the update bit.
-> CFG configuration store can happen at two places - set_rate() and =
-
-> disable()
-> path and above logic will be modified as below:
-> =
-
-> 1. set_rate()--> 1.1 - Update CFG, M, N and D registers and don't hit =
-
-> the
->                         update bit if clock is disabled.
->                   1.2 - Store CFG register value in 'current_cfg' member
->                         of 'rcg2' structure.
-> =
-
-> 2. _disable()--> 2.1 - Store the CFG register value in 'current_cfg' =
-
-> before
->                         switching to the safe source (XO).
->                   2.2 - Move to the safe source (XO) and hit the update =
-
-> bit.
->                         Now RCG configuration wil not be dirty.
-> =
-
-> 3. _enable()--> 3.1 - Check for 'current_cfg' value and if 0 then =
-
-> return.
->                        This would catch the below one time condition:
->                        - when clk_enable() gets call without set_rate().
-
-We want clk_enable() to work without set_rate() though. So returning 0
-if the value is 0 is wrong.
-
->                  3.2 - Write the CFG value from 'current_cfg' to CFG =
-
-> register.
->                  3.2 - Hit the update bit as we have already written the =
-
-> latest
->                        configuration in step #3.2.
->                  3.3 - Clear the 'current_cfg' value.
-> =
-
-> We feel above logic will work as expected and in this way, we don't have =
-
-> CFG
-> registers in dirty state when clock is disabled.
-> Could you please inform us your thoughts about above implementation and =
-
-> based
-> on that I will send the required changes.
-> =
-
-
-If you want to save away current_cfg in a memory location so you know
-what it was before it was dirty, then perhaps that needs to be a debug
-patch that you stack on top when debugging. In the end, it would just be
-saving the state of the frequency setting that we have in software
-though, and that would be the latest rate of the clk we have configured
-the clk for. There aren't any mux switches going on when the clk is off,
-so you're saying you want to know the rate of the clk that the kernel
-set when we turned the clk off, which we already have with the clk rate.
-I'm confused.=20
+diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
+index 882be5ed7e84..eec7fc6e9f66 100644
+--- a/drivers/soc/sunxi/sunxi_sram.c
++++ b/drivers/soc/sunxi/sunxi_sram.c
+@@ -17,6 +17,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ 
+ #include <linux/soc/sunxi/sunxi_sram.h>
+ 
+@@ -281,13 +282,51 @@ int sunxi_sram_release(struct device *dev)
+ }
+ EXPORT_SYMBOL(sunxi_sram_release);
+ 
++struct sunxi_sramc_variant {
++	bool has_emac_clock;
++};
++
++static const struct sunxi_sramc_variant sun4i_a10_sramc_variant = {
++	/* Nothing special */
++};
++
++static const struct sunxi_sramc_variant sun50i_a64_sramc_variant = {
++	.has_emac_clock = true,
++};
++
++#define SUNXI_SRAM_EMAC_CLOCK_REG	0x30
++static bool sunxi_sram_regmap_accessible_reg(struct device *dev,
++					     unsigned int reg)
++{
++	if (reg == SUNXI_SRAM_EMAC_CLOCK_REG)
++		return true;
++	return false;
++}
++
++static struct regmap_config sunxi_sram_emac_clock_regmap = {
++	.reg_bits       = 32,
++	.val_bits       = 32,
++	.reg_stride     = 4,
++	/* last defined register */
++	.max_register   = SUNXI_SRAM_EMAC_CLOCK_REG,
++	/* other devices have no business accessing other registers */
++	.readable_reg	= sunxi_sram_regmap_accessible_reg,
++	.writeable_reg	= sunxi_sram_regmap_accessible_reg,
++};
++
+ static int sunxi_sram_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	struct dentry *d;
++	struct regmap *emac_clock;
++	const struct sunxi_sramc_variant *variant;
+ 
+ 	sram_dev = &pdev->dev;
+ 
++	variant = of_device_get_match_data(&pdev->dev);
++	if (!variant)
++		return -EINVAL;
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(base))
+@@ -300,12 +339,26 @@ static int sunxi_sram_probe(struct platform_device *pdev)
+ 	if (!d)
+ 		return -ENOMEM;
+ 
++	if (variant->has_emac_clock) {
++		emac_clock = devm_regmap_init_mmio(&pdev->dev, base,
++						   &sunxi_sram_emac_clock_regmap);
++
++		if (IS_ERR(emac_clock))
++			return PTR_ERR(emac_clock);
++	}
++
+ 	return 0;
+ }
+ 
+ static const struct of_device_id sunxi_sram_dt_match[] = {
+-	{ .compatible = "allwinner,sun4i-a10-sram-controller" },
+-	{ .compatible = "allwinner,sun50i-a64-sram-controller" },
++	{
++		.compatible = "allwinner,sun4i-a10-sram-controller",
++		.data = &sun4i_a10_sramc_variant,
++	},
++	{
++		.compatible = "allwinner,sun50i-a64-sram-controller",
++		.data = &sun50i_a64_sramc_variant,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, sunxi_sram_dt_match);
+-- 
+2.17.0
