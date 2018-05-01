@@ -1,131 +1,116 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/7] clk: meson: axg: export audio clock controller id bindings
-Date: Wed, 25 Apr 2018 18:33:02 +0200
-Message-Id: <20180425163304.10852-6-jbrunet@baylibre.com>
-In-Reply-To: <20180425163304.10852-1-jbrunet@baylibre.com>
-References: <20180425163304.10852-1-jbrunet@baylibre.com>
+Return-Path: <ore@pengutronix.de>
+Date: Tue, 1 May 2018 08:03:30 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+	linux-imx@nxp.com, kernel@pengutronix.de, fabio.estevam@nxp.com,
+	shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/12] clk: imx: add imx8qxp clock support
+Message-ID: <20180501060330.l5j6rztqal2whgge@pengutronix.de>
+References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2otwruyfhvai3ah3"
+In-Reply-To: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-export the clock ids dt-bindings usable by the consumers of the axg
-audio clock controller
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- include/dt-bindings/clock/axg-audio-clkc.h | 94 ++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
- create mode 100644 include/dt-bindings/clock/axg-audio-clkc.h
+--2otwruyfhvai3ah3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
-new file mode 100644
-index 000000000000..4426ae655858
---- /dev/null
-+++ b/include/dt-bindings/clock/axg-audio-clkc.h
-@@ -0,0 +1,94 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2018 Baylibre SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
-+
-+#ifndef __AXG_AUDIO_CLKC_BINDINGS_H
-+#define __AXG_AUDIO_CLKC_BINDINGS_H
-+
-+#define AUD_CLKID_SLV_SCLK0		9
-+#define AUD_CLKID_SLV_SCLK1		10
-+#define AUD_CLKID_SLV_SCLK2		11
-+#define AUD_CLKID_SLV_SCLK3		12
-+#define AUD_CLKID_SLV_SCLK4		13
-+#define AUD_CLKID_SLV_SCLK5		14
-+#define AUD_CLKID_SLV_SCLK6		15
-+#define AUD_CLKID_SLV_SCLK7		16
-+#define AUD_CLKID_SLV_SCLK8		17
-+#define AUD_CLKID_SLV_SCLK9		18
-+#define AUD_CLKID_SLV_LRCLK0		19
-+#define AUD_CLKID_SLV_LRCLK1		20
-+#define AUD_CLKID_SLV_LRCLK2		21
-+#define AUD_CLKID_SLV_LRCLK3		22
-+#define AUD_CLKID_SLV_LRCLK4		23
-+#define AUD_CLKID_SLV_LRCLK5		24
-+#define AUD_CLKID_SLV_LRCLK6		25
-+#define AUD_CLKID_SLV_LRCLK7		26
-+#define AUD_CLKID_SLV_LRCLK8		27
-+#define AUD_CLKID_SLV_LRCLK9		28
-+#define AUD_CLKID_DDR_ARB		29
-+#define AUD_CLKID_PDM			30
-+#define AUD_CLKID_TDMIN_A		31
-+#define AUD_CLKID_TDMIN_B		32
-+#define AUD_CLKID_TDMIN_C		33
-+#define AUD_CLKID_TDMIN_LB		34
-+#define AUD_CLKID_TDMOUT_A		35
-+#define AUD_CLKID_TDMOUT_B		36
-+#define AUD_CLKID_TDMOUT_C		37
-+#define AUD_CLKID_FRDDR_A		38
-+#define AUD_CLKID_FRDDR_B		39
-+#define AUD_CLKID_FRDDR_C		40
-+#define AUD_CLKID_TODDR_A		41
-+#define AUD_CLKID_TODDR_B		42
-+#define AUD_CLKID_TODDR_C		43
-+#define AUD_CLKID_LOOPBACK		44
-+#define AUD_CLKID_SPDIFIN		45
-+#define AUD_CLKID_SPDIFOUT		46
-+#define AUD_CLKID_RESAMPLE		47
-+#define AUD_CLKID_POWER_DETECT		48
-+#define AUD_CLKID_MST_A_MCLK		49
-+#define AUD_CLKID_MST_B_MCLK		50
-+#define AUD_CLKID_MST_C_MCLK		51
-+#define AUD_CLKID_MST_D_MCLK		52
-+#define AUD_CLKID_MST_E_MCLK		53
-+#define AUD_CLKID_MST_F_MCLK		54
-+#define AUD_CLKID_SPDIFOUT_CLK		55
-+#define AUD_CLKID_SPDIFIN_CLK		56
-+#define AUD_CLKID_PDM_DCLK		57
-+#define AUD_CLKID_PDM_SYSCLK		58
-+#define AUD_CLKID_MST_A_SCLK		79
-+#define AUD_CLKID_MST_B_SCLK		80
-+#define AUD_CLKID_MST_C_SCLK		81
-+#define AUD_CLKID_MST_D_SCLK		82
-+#define AUD_CLKID_MST_E_SCLK		83
-+#define AUD_CLKID_MST_F_SCLK		84
-+#define AUD_CLKID_MST_A_LRCLK		86
-+#define AUD_CLKID_MST_B_LRCLK		87
-+#define AUD_CLKID_MST_C_LRCLK		88
-+#define AUD_CLKID_MST_D_LRCLK		89
-+#define AUD_CLKID_MST_E_LRCLK		90
-+#define AUD_CLKID_MST_F_LRCLK		91
-+#define AUD_CLKID_TDMIN_A_SCLK_SEL	116
-+#define AUD_CLKID_TDMIN_B_SCLK_SEL	117
-+#define AUD_CLKID_TDMIN_C_SCLK_SEL	118
-+#define AUD_CLKID_TDMIN_LB_SCLK_SEL	119
-+#define AUD_CLKID_TDMOUT_A_SCLK_SEL	120
-+#define AUD_CLKID_TDMOUT_B_SCLK_SEL	121
-+#define AUD_CLKID_TDMOUT_C_SCLK_SEL	122
-+#define AUD_CLKID_TDMIN_A_SCLK		123
-+#define AUD_CLKID_TDMIN_B_SCLK		124
-+#define AUD_CLKID_TDMIN_C_SCLK		125
-+#define AUD_CLKID_TDMIN_LB_SCLK		126
-+#define AUD_CLKID_TDMOUT_A_SCLK		127
-+#define AUD_CLKID_TDMOUT_B_SCLK		128
-+#define AUD_CLKID_TDMOUT_C_SCLK		129
-+#define AUD_CLKID_TDMIN_A_LRCLK		130
-+#define AUD_CLKID_TDMIN_B_LRCLK		131
-+#define AUD_CLKID_TDMIN_C_LRCLK		132
-+#define AUD_CLKID_TDMIN_LB_LRCLK	133
-+#define AUD_CLKID_TDMOUT_A_LRCLK	134
-+#define AUD_CLKID_TDMOUT_B_LRCLK	135
-+#define AUD_CLKID_TDMOUT_C_LRCLK	136
-+
-+#endif /* __AXG_AUDIO_CLKC_BINDINGS_H */
--- 
-2.14.3
+Hi,
+
+same functionality is actually needed on iMX7d and many other non NXP
+socs.
+IMO proper solution is to introduce generic clock proxy or some thing
+like this on top of rpmsg/virtio=20
+
+On Sat, Apr 28, 2018 at 02:56:31AM +0800, Dong Aisheng wrote:
+> This patch series adds i.MX8QXP clock support which is based
+> on the clock service provided by SCU firmware.
+> It depends on SCU APIs patch set.
+>=20
+> Dong Aisheng (12):
+>   clk: imx: add configuration option for mmio clks
+>   clk: imx: scu: add scu clock common part
+>   clk: imx: scu: add scu clock divider
+>   clk: imx: scu: add scu clock gpr divider
+>   clk: imx: scu: add scu clock gate
+>   clk: imx: scu: add scu clock gpr gate
+>   clk: imx: scu: add scu clock mux
+>   clk: imx: scu: add scu clock gpr mux
+>   clk: imx: add common imx_clk_hw_fixed functions
+>   clk: imx: add imx_check_clk_hws helper function
+>   dt-bindings: clock: add imx8qxp clock binding doc
+>   clk: imx: add imx8qxp clk driver
+>=20
+>  .../devicetree/bindings/clock/imx8qxp-clk.txt      |  39 ++
+>  arch/arm/mach-imx/Kconfig                          |  10 +
+>  drivers/clk/Kconfig                                |   1 +
+>  drivers/clk/imx/Kconfig                            |   7 +
+>  drivers/clk/imx/Makefile                           |   4 +-
+>  drivers/clk/imx/clk-common.h                       |  27 ++
+>  drivers/clk/imx/scu/Kconfig                        |   5 +
+>  drivers/clk/imx/scu/Makefile                       |  12 +
+>  drivers/clk/imx/scu/clk-divider-gpr-scu.c          | 131 +++++++
+>  drivers/clk/imx/scu/clk-divider-scu.c              | 129 +++++++
+>  drivers/clk/imx/scu/clk-gate-gpr-scu.c             |  84 ++++
+>  drivers/clk/imx/scu/clk-gate-scu.c                 | 193 ++++++++++
+>  drivers/clk/imx/scu/clk-imx8qxp.c                  | 426 +++++++++++++++=
+++++++
+>  drivers/clk/imx/scu/clk-mux-gpr-scu.c              |  90 +++++
+>  drivers/clk/imx/scu/clk-mux-scu.c                  |  89 +++++
+>  drivers/clk/imx/scu/clk-scu.c                      |  25 ++
+>  drivers/clk/imx/scu/clk-scu.h                      |  97 +++++
+>  include/dt-bindings/clock/imx8qxp-clock.h          | 362 +++++++++++++++=
+++
+>  include/soc/imx/imx8qxp/lpcg.h                     | 186 +++++++++
+>  19 files changed, 1916 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx8qxp-clk.t=
+xt
+>  create mode 100644 drivers/clk/imx/Kconfig
+>  create mode 100644 drivers/clk/imx/clk-common.h
+>  create mode 100644 drivers/clk/imx/scu/Kconfig
+>  create mode 100644 drivers/clk/imx/scu/Makefile
+>  create mode 100644 drivers/clk/imx/scu/clk-divider-gpr-scu.c
+>  create mode 100644 drivers/clk/imx/scu/clk-divider-scu.c
+>  create mode 100644 drivers/clk/imx/scu/clk-gate-gpr-scu.c
+>  create mode 100644 drivers/clk/imx/scu/clk-gate-scu.c
+>  create mode 100644 drivers/clk/imx/scu/clk-imx8qxp.c
+>  create mode 100644 drivers/clk/imx/scu/clk-mux-gpr-scu.c
+>  create mode 100644 drivers/clk/imx/scu/clk-mux-scu.c
+>  create mode 100644 drivers/clk/imx/scu/clk-scu.c
+>  create mode 100644 drivers/clk/imx/scu/clk-scu.h
+>  create mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
+>  create mode 100644 include/soc/imx/imx8qxp/lpcg.h
+>=20
+> --=20
+> 2.7.4
+>=20
+>=20
+>=20
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--2otwruyfhvai3ah3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlroAzEACgkQdQOiSHVI
+77TvYQf+Kv657ptJ9dRY2wDpJHQSXk/eu4E8kRE5stg0danBfS2acE+eeSfIbrPv
+Pz+U175twDC1SY0+IfuuvSPhE0DSxLoN/VzqgoNFJCElsRkSG4Kpk1lih0VGu/YJ
+2NazEB0bGJqCWcmlgmp3UMvIShDoRyZGfhl2pCjD8jVvJmBSnWM27KZFkFzjb1ud
+qsOm96r2l3WXoRbQHBsjt6v/ddfWWRhxYb3O3+lCJnNC99P0I6ZVI+V36xXtK2e5
+jVgwSPW3xbfDdWbdm0h/BTFpCdY6ednquvBB5K6qU7UbtkpqT61Twlx6I2erFtye
+plusjMSI65CcJRSs1vN0sr3bjO2azQ==
+=iLX8
+-----END PGP SIGNATURE-----
+
+--2otwruyfhvai3ah3--
