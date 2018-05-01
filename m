@@ -1,73 +1,107 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH v2 6/6] ARM: dts: dra76x: Add MCAN node
-Date: Wed, 30 May 2018 19:41:33 +0530
-Message-ID: <20180530141133.3711-7-faiz_abbas@ti.com>
-In-Reply-To: <20180530141133.3711-1-faiz_abbas@ti.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [v5 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
+Date: Tue,  1 May 2018 14:11:32 +0530
+Message-Id: <1525164093-16645-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
+References: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Franklin S Cooper Jr <fcooper@ti.com>
+Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
+devices would be used for communicating resource state requests to control
+the clocks managed by RPMh.
 
-Add support for the MCAN peripheral which supports both classic
-CAN messages along with the new CAN-FD message.
-
-Add MCAN node to evm and enable it with a maximum datarate of 5 mbps
-
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/boot/dts/dra76-evm.dts |  7 +++++++
- arch/arm/boot/dts/dra76x.dtsi   | 15 +++++++++++++++
- 2 files changed, 22 insertions(+)
+ .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 32 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h              | 24 ++++++++++++++++
+ 2 files changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+ create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
 
-diff --git a/arch/arm/boot/dts/dra76-evm.dts b/arch/arm/boot/dts/dra76-evm.dts
-index 2deb96405d06..277765257410 100644
---- a/arch/arm/boot/dts/dra76-evm.dts
-+++ b/arch/arm/boot/dts/dra76-evm.dts
-@@ -404,3 +404,10 @@
- 	phys = <&pcie1_phy>, <&pcie2_phy>;
- 	phy-names = "pcie-phy0", "pcie-phy1";
- };
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+new file mode 100644
+index 0000000..ecc1dbe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+@@ -0,0 +1,32 @@
++Qualcomm Technologies, Inc. RPMh Clocks
++-------------------------------------------------------
 +
-+&m_can0 {
-+	status = "okay";
-+	can-transceiver {
-+		max-bitrate = <5000000>;
++Resource Power Manager Hardened (RPMh) manages shared resources on
++some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
++other hardware subsystems via RSC to control clocks.
++
++Required properties :
++- compatible : shall contain "qcom,sdm845-rpmh-clk"
++
++- #clock-cells : must contain 1
++
++Optional properties :
++- assigned-clk-divs : property should contain a list of divs for each clock in
++			the clk-output-names property. In case divs are not
++			provided the clock rate would be same as parent rate.
++- clk-output-names :  a list of strings of clock output signal for the divs to
++			 be applied.
++
++Example :
++
++#include <dt-bindings/clock/qcom,rpmh.h>
++
++	&apps_rsc {
++		rpmhcc: clock-controller {
++			compatible = "qcom,sdm845-rpmh-clk";
++			#clock-cells = <1>;
++			assigned-clk-divs = <2 2 2>;
++			clk-output-names = "bi_tcxo", "lnbb_clk2",
++						"lnbb_clk3";
++		};
 +	};
-+};
-diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
-index 57b8dc0fe719..d7a8cc569808 100644
---- a/arch/arm/boot/dts/dra76x.dtsi
-+++ b/arch/arm/boot/dts/dra76x.dtsi
-@@ -27,6 +27,21 @@
- 			ti,syss-mask = <1>;
- 			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
- 			clock-names = "fck";
+diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
+new file mode 100644
+index 0000000..36caab2
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,rpmh.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
 +
-+			m_can0: mcan@42c01a00 {
-+				compatible = "bosch,m_can";
-+				reg = <0x1a00 0x4000>, <0x0 0x18FC>;
-+				reg-names = "m_can", "message_ram";
-+				interrupt-parent = <&gic>;
-+				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-names = "int0", "int1";
-+				ti,hwmods = "mcan";
-+				clocks = <&mcan_clk>, <&l3_iclk_div>;
-+				clock-names = "cclk", "hclk";
-+				bosch,mram-cfg = <0x0 0 0 32 0 0 1 1>;
-+				status = "disabled";
-+			};
- 		};
- 	};
- 
--- 
-2.17.0
++
++#ifndef _DT_BINDINGS_CLK_MSM_RPMH_H
++#define _DT_BINDINGS_CLK_MSM_RPMH_H
++
++/* RPMh controlled clocks */
++#define RPMH_CXO_CLK				0
++#define RPMH_CXO_CLK_A				1
++#define RPMH_LN_BB_CLK2				2
++#define RPMH_LN_BB_CLK2_A			3
++#define RPMH_LN_BB_CLK3				4
++#define RPMH_LN_BB_CLK3_A			5
++#define RPMH_RF_CLK1				6
++#define RPMH_RF_CLK1_A				7
++#define RPMH_RF_CLK2				8
++#define RPMH_RF_CLK2_A				9
++#define RPMH_RF_CLK3				10
++#define RPMH_RF_CLK3_A				11
++#define RPMH_RF_CLK4				12
++#define RPMH_RF_CLK4_A				13
++
++#endif
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
