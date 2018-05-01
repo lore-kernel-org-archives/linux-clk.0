@@ -1,306 +1,112 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 1 May 2018 08:50:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: Amit Nischal <anischal@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 12/26] drm/sun4i: Add support for multiple DW HDMI PHY clock parents
-Date: Fri, 18 May 2018 15:15:22 +0530
-Message-Id: <20180518094536.17201-13-jagan@amarulasolutions.com>
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM Video clock
+ bindings
+Message-ID: <20180501135054.GA373@rob-hp-laptop>
+References: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
+ <1524576771-31096-2-git-send-email-anischal@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1524576771-31096-2-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+On Tue, Apr 24, 2018 at 07:02:50PM +0530, Amit Nischal wrote:
+> Add device tree bindings for video clock controller for Qualcomm
+> Technology Inc's SoCs.
+> 
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,videocc.txt     | 18 ++++++++++++++++
+>  include/dt-bindings/clock/qcom,videocc-sdm845.h    | 25 ++++++++++++++++++++++
+>  2 files changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.txt
+>  create mode 100644 include/dt-bindings/clock/qcom,videocc-sdm845.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.txt b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
+> new file mode 100644
+> index 0000000..1c23b41
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
+> @@ -0,0 +1,18 @@
+> +Qualcomm Video Clock & Reset Controller Binding
+> +-----------------------------------------------
+> +
+> +Required properties :
+> +- compatible : shall contain "qcom,videocc-sdm845"
 
-Some SoCs with DW HDMI have multiple possible clock parents, like A64
-and R40.
+'<vendor>,<soc>-<block>' is the preferred order. 
 
-Expand HDMI PHY clock driver to support second clock parent.
+Every single QCom binding... Can someone spread the word in QCom.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v2:
-- new patch
+> +- reg : shall contain base register location and length
+> +- #clock-cells : shall contain 1
+> +- #reset-cells : shall contain 1
+> +- #power-domain-cells : shall contain 1
 
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h      |  9 ++-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c     | 33 ++++++++---
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c | 89 ++++++++++++++++++++++--------
- 3 files changed, 96 insertions(+), 35 deletions(-)
+No header definitions for resets and power-domain? There's no 
+requirement to have headers, but the binding should be complete even if 
+you don't have a driver yet.
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index 79154f0f674a..303189d6602c 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -98,7 +98,8 @@
- #define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
- #define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
- #define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
--#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
-+#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK	BIT(26)
-+#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT	26
- #define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
- #define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
- #define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
-@@ -146,7 +147,7 @@
- struct sun8i_hdmi_phy;
- 
- struct sun8i_hdmi_phy_variant {
--	bool has_phy_clk;
-+	int  phy_clk_num;
- 	void (*phy_init)(struct sun8i_hdmi_phy *phy);
- 	void (*phy_disable)(struct dw_hdmi *hdmi,
- 			    struct sun8i_hdmi_phy *phy);
-@@ -160,6 +161,7 @@ struct sun8i_hdmi_phy {
- 	struct clk			*clk_mod;
- 	struct clk			*clk_phy;
- 	struct clk			*clk_pll0;
-+	struct clk			*clk_pll1;
- 	unsigned int			rcal;
- 	struct regmap			*regs;
- 	struct reset_control		*rst_phy;
-@@ -188,6 +190,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi);
- void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy);
- const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void);
- 
--int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev);
-+int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
-+			 int clk_num);
- 
- #endif /* _SUN8I_DW_HDMI_H_ */
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index 5a52fc489a9d..0eadf087fc46 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -183,7 +183,13 @@ static int sun8i_hdmi_phy_config_h3(struct dw_hdmi *hdmi,
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
- 			   SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK, 0);
- 
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, pll_cfg1_init);
-+	/*
-+	 * NOTE: We have to be careful not to overwrite PHY parent
-+	 * clock selection bit and clock divider.
-+	 */
-+	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
-+			   (u32)~SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK,
-+			   pll_cfg1_init);
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG,
- 			   (u32)~SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK,
- 			   pll_cfg2_init);
-@@ -232,7 +238,7 @@ static int sun8i_hdmi_phy_config(struct dw_hdmi *hdmi, void *data,
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
- 			   SUN8I_HDMI_PHY_DBG_CTRL_POL_MASK, val);
- 
--	if (phy->variant->has_phy_clk)
-+	if (phy->variant->phy_clk_num)
- 		clk_set_rate(phy->clk_phy, mode->crtc_clock * 1000);
- 
- 	return phy->variant->phy_config(hdmi, phy, mode->crtc_clock * 1000);
-@@ -393,7 +399,7 @@ static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
- };
- 
- static const struct sun8i_hdmi_phy_variant sun8i_h3_hdmi_phy = {
--	.has_phy_clk = true,
-+	.phy_clk_num = 1,
- 	.phy_init = &sun8i_hdmi_phy_init_h3,
- 	.phy_disable = &sun8i_hdmi_phy_disable_h3,
- 	.phy_config = &sun8i_hdmi_phy_config_h3,
-@@ -464,7 +470,7 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 		goto err_put_clk_bus;
- 	}
- 
--	if (phy->variant->has_phy_clk) {
-+	if (phy->variant->phy_clk_num) {
- 		phy->clk_pll0 = of_clk_get_by_name(node, "pll-0");
- 		if (IS_ERR(phy->clk_pll0)) {
- 			dev_err(dev, "Could not get pll-0 clock\n");
-@@ -472,7 +478,16 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 			goto err_put_clk_mod;
- 		}
- 
--		ret = sun8i_phy_clk_create(phy, dev);
-+		if (phy->variant->phy_clk_num) {
-+			phy->clk_pll1 = of_clk_get_by_name(node, "pll-1");
-+			if (IS_ERR(phy->clk_pll1)) {
-+				dev_err(dev, "Could not get pll-1 clock\n");
-+				ret = PTR_ERR(phy->clk_pll1);
-+				goto err_put_clk_mod;
-+			}
-+		}
-+
-+		ret = sun8i_phy_clk_create(phy, dev, phy->variant->phy_clk_num);
- 		if (ret) {
- 			dev_err(dev, "Couldn't create the PHY clock\n");
- 			goto err_put_clk_pll0;
-@@ -515,8 +530,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- err_put_rst_phy:
- 	reset_control_put(phy->rst_phy);
- err_put_clk_pll0:
--	if (phy->variant->has_phy_clk)
--		clk_put(phy->clk_pll0);
-+	clk_put(phy->clk_pll0);
-+	clk_put(phy->clk_pll1);
- err_put_clk_mod:
- 	clk_put(phy->clk_mod);
- err_put_clk_bus:
-@@ -536,8 +551,8 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi)
- 
- 	reset_control_put(phy->rst_phy);
- 
--	if (phy->variant->has_phy_clk)
--		clk_put(phy->clk_pll0);
-+	clk_put(phy->clk_pll0);
-+	clk_put(phy->clk_pll1);
- 	clk_put(phy->clk_mod);
- 	clk_put(phy->clk_bus);
- }
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-index faea449812f8..85b12fc96dbc 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
-@@ -22,29 +22,36 @@ static int sun8i_phy_clk_determine_rate(struct clk_hw *hw,
- {
- 	unsigned long rate = req->rate;
- 	unsigned long best_rate = 0;
--	struct clk_hw *parent;
-+	struct clk_hw *best_parent = NULL;
-+	struct clk_hw *parent = NULL;
- 	int best_div = 1;
--	int i;
-+	int i, p;
- 
--	parent = clk_hw_get_parent(hw);
--
--	for (i = 1; i <= 16; i++) {
--		unsigned long ideal = rate * i;
--		unsigned long rounded;
--
--		rounded = clk_hw_round_rate(parent, ideal);
--
--		if (rounded == ideal) {
--			best_rate = rounded;
--			best_div = i;
--			break;
--		}
-+	for (p = 0; p < clk_hw_get_num_parents(hw); p++) {
-+		parent = clk_hw_get_parent_by_index(hw, p);
-+		if (!parent)
-+			continue;
- 
--		if (!best_rate ||
--		    abs(rate - rounded / i) <
--		    abs(rate - best_rate / best_div)) {
--			best_rate = rounded;
--			best_div = i;
-+		for (i = 1; i <= 16; i++) {
-+			unsigned long ideal = rate * i;
-+			unsigned long rounded;
-+
-+			rounded = clk_hw_round_rate(parent, ideal);
-+
-+			if (rounded == ideal) {
-+				best_rate = rounded;
-+				best_div = i;
-+				best_parent = parent;
-+				break;
-+			}
-+
-+			if (!best_rate ||
-+			    abs(rate - rounded / i) <
-+			    abs(rate - best_rate / best_div)) {
-+				best_rate = rounded;
-+				best_div = i;
-+				best_parent = parent;
-+			}
- 		}
- 	}
- 
-@@ -95,22 +102,58 @@ static int sun8i_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
-+static u8 sun8i_phy_clk_get_parent(struct clk_hw *hw)
-+{
-+	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
-+	u32 reg;
-+
-+	regmap_read(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, &reg);
-+	reg = (reg & SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK) >>
-+	      SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT;
-+
-+	return reg;
-+}
-+
-+static int sun8i_phy_clk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
-+
-+	if (index > 1)
-+		return -EINVAL;
-+
-+	regmap_update_bits(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
-+			   SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK,
-+			   index << SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT);
-+
-+	return 0;
-+}
-+
- static const struct clk_ops sun8i_phy_clk_ops = {
- 	.determine_rate	= sun8i_phy_clk_determine_rate,
- 	.recalc_rate	= sun8i_phy_clk_recalc_rate,
- 	.set_rate	= sun8i_phy_clk_set_rate,
-+
-+	.get_parent	= sun8i_phy_clk_get_parent,
-+	.set_parent	= sun8i_phy_clk_set_parent,
- };
- 
--int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev)
-+int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
-+			 int clk_num)
- {
- 	struct clk_init_data init;
- 	struct sun8i_phy_clk *priv;
--	const char *parents[1];
-+	const char *parents[2];
- 
- 	parents[0] = __clk_get_name(phy->clk_pll0);
- 	if (!parents[0])
- 		return -ENODEV;
- 
-+	if (clk_num == 2) {
-+		parents[1] = __clk_get_name(phy->clk_pll1);
-+		if (!parents[1])
-+			return -ENODEV;
-+	}
-+
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
-@@ -118,7 +161,7 @@ int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev)
- 	init.name = "hdmi-phy-clk";
- 	init.ops = &sun8i_phy_clk_ops;
- 	init.parent_names = parents;
--	init.num_parents = 1;
-+	init.num_parents = clk_num;
- 	init.flags = CLK_SET_RATE_PARENT;
- 
- 	priv->phy = phy;
--- 
-2.14.3
+> +
+> +Example:
+> +	videocc: qcom,videocc@ab00000 {
+
+clock-controller@...
+
+> +		compatible = "qcom,videocc-sdm845";
+> +		reg = <0xab00000 0x10000>;
+> +		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+> +		#power-domain-cells = <1>;
+> +	};
+> diff --git a/include/dt-bindings/clock/qcom,videocc-sdm845.h b/include/dt-bindings/clock/qcom,videocc-sdm845.h
+> new file mode 100644
+> index 0000000..f5f7599
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,videocc-sdm845.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
+> +#define _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
+> +
+> +#define VIDEO_CC_APB_CLK			0
+> +#define VIDEO_CC_AT_CLK				1
+> +#define VIDEO_CC_QDSS_TRIG_CLK			2
+> +#define VIDEO_CC_QDSS_TSCTR_DIV8_CLK		3
+> +#define VIDEO_CC_VCODEC0_AXI_CLK		4
+> +#define VIDEO_CC_VCODEC0_CORE_CLK		5
+> +#define VIDEO_CC_VCODEC1_AXI_CLK		6
+> +#define VIDEO_CC_VCODEC1_CORE_CLK		7
+> +#define VIDEO_CC_VENUS_AHB_CLK			8
+> +#define VIDEO_CC_VENUS_CLK_SRC			9
+> +#define VIDEO_CC_VENUS_CTL_AXI_CLK		10
+> +#define VIDEO_CC_VENUS_CTL_CORE_CLK		11
+> +#define VIDEO_PLL0				12
+> +
+> +#define VENUS_GDSC				0
+> +#define VCODEC0_GDSC				1
+> +#define VCODEC1_GDSC				2
+> +
+> +#endif
+> --
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
