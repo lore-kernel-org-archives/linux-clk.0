@@ -1,124 +1,61 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Tue, 15 May 2018 09:39:22 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v6 12/14] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180515040922.hbk4xqdweel2hvsr@vireshk-i7>
-References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
- <1526303520-5843-13-git-send-email-ilialin@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526303520-5843-13-git-send-email-ilialin@codeaurora.org>
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH net-next v2 03/15] dt-bindings: net: dwmac-sun8i: Clean up clock delay chain descriptions
+Date: Wed,  2 May 2018 00:12:15 +0800
+Message-Id: <20180501161227.2110-4-wens@csie.org>
+In-Reply-To: <20180501161227.2110-1-wens@csie.org>
+References: <20180501161227.2110-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14-05-18, 16:11, Ilia Lin wrote:
-> +static int __init qcom_cpufreq_kryo_driver_init(void)
-> +{
-> +	size_t len;
-> +	int ret;
-> +	u32 versions;
-> +	enum _msm8996_version msm8996_version;
-> +	u8 *speedbin;
-> +	struct device *cpu_dev;
-> +	struct device_node *np;
-> +	struct nvmem_cell *speedbin_nvmem;
-> +	struct opp_table *opp_temp = NULL;
-> +
-> +	cpu_dev = get_cpu_device(SILVER_LEAD);
-> +	if (IS_ERR_OR_NULL(cpu_dev))
-> +		return PTR_ERR(cpu_dev);
-> +
-> +	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-> +	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-> +		dev_err(cpu_dev, "Not Snapdragon 820/821!");
-> +		return -ENODEV;
-> +        }
-> +
-> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-> +	if (IS_ERR_OR_NULL(np))
-> +		return PTR_ERR(np);
-> +
-> +	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-> +		ret = -ENOENT;
-> +		goto free_np;
-> +	}
-> +
-> +	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-> +	if (IS_ERR(speedbin_nvmem)) {
-> +		ret = PTR_ERR(speedbin_nvmem);
-> +		dev_err(cpu_dev, "Could not get nvmem cell: %d\n", ret);
-> +		goto free_np;
-> +	}
-> +
-> +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-> +
-> +	switch (msm8996_version) {
-> +	case MSM8996_V3:
-> +		versions = 1 << (unsigned int)(*speedbin);
-> +		break;
-> +	case MSM8996_SG:
-> +		versions = 1 << ((unsigned int)(*speedbin) + 4);
-> +		break;
-> +	default:
-> +		BUG();
-> +		break;
-> +	}
-> +
-> +	ret = PTR_ERR_OR_ZERO(opp_temp = \
+The clock delay chains found in the glue layer for dwmac-sun8i are only
+used with RGMII PHYs. They are not intended for non-RGMII PHYs, such as
+MII external PHYs or the internal PHY. Also, a recent SoC has a smaller
+range of possible values for the delay chain.
 
-Why back slash here ?
+This patch reformats the delay chain section of the device tree binding
+to make it clear that the delay chains only apply to RGMII PHYs, and
+make it easier to add the R40-specific bits later.
 
-> +			      dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> +	if (0 > ret)
-> +		goto free_np;
-> +
-> +	dev_pm_opp_put_supported_hw(opp_temp);
-> +
-> +	cpu_dev = get_cpu_device(GOLD_LEAD);
-> +	ret = PTR_ERR_OR_ZERO(opp_temp = \
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-And here.
-
-> +			      dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> +	if (0 > ret)
-> +		goto free_np;
-> +
-> +	ret = PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-dt", \
-
-and here.
-
-> +							      -1, NULL, 0));
-> +
-> +	dev_pm_opp_put_supported_hw(opp_temp);
-
-And this is wrong. You don't need to call this in success case here.
-It may have worked for you as cpufreq-dt driver would have already
-been initialized, but that's not the case always. For example try
-inserting cpufreq-dt module after kernel boots and it will fail.
-
-> +
-> +free_np:
-> +	of_node_put(np);
-> +
-> +	return ret;
-> +}
-> +late_initcall(qcom_cpufreq_kryo_driver_init);
-> +
-> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 1.9.1
-
+diff --git a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
+index 3d6d5fa0c4d5..e04ce75e24a3 100644
+--- a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
++++ b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
+@@ -28,10 +28,13 @@ Required properties:
+   - allwinner,sun8i-a83t-system-controller
+ 
+ Optional properties:
+-- allwinner,tx-delay-ps: TX clock delay chain value in ps. Range value is 0-700. Default is 0)
+-- allwinner,rx-delay-ps: RX clock delay chain value in ps. Range value is 0-3100. Default is 0)
+-Both delay properties need to be a multiple of 100. They control the delay for
+-external PHY.
++- allwinner,tx-delay-ps: TX clock delay chain value in ps.
++			 Range is 0-700. Default is 0.
++- allwinner,rx-delay-ps: RX clock delay chain value in ps.
++			 Range is 0-3100. Default is 0.
++Both delay properties need to be a multiple of 100. They control the
++clock delay for external RGMII PHY. They do not apply to the internal
++PHY or external non-RGMII PHYs.
+ 
+ Optional properties for the following compatibles:
+   - "allwinner,sun8i-h3-emac",
 -- 
-viresh
+2.17.0
