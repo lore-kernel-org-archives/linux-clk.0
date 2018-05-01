@@ -1,54 +1,123 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38447 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751823AbeEVOxb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 May 2018 10:53:31 -0400
-Received: by mail-wr0-f194.google.com with SMTP id 94-v6so20721284wrf.5
-        for <linux-clk@vger.kernel.org>; Tue, 22 May 2018 07:53:31 -0700 (PDT)
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
-Subject: [PATCH v6 13/13] media: staging/imx: add i.MX7 entries to TODO file
-Date: Tue, 22 May 2018 15:52:45 +0100
-Message-Id: <20180522145245.3143-14-rui.silva@linaro.org>
-In-Reply-To: <20180522145245.3143-1-rui.silva@linaro.org>
-References: <20180522145245.3143-1-rui.silva@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH net-next v2 11/15] ARM: dts: sun8i: r40: bananapi-m2-ultra: Sort device node dereferences
+Date: Wed,  2 May 2018 00:12:23 +0800
+Message-Id: <20180501161227.2110-12-wens@csie.org>
+In-Reply-To: <20180501161227.2110-1-wens@csie.org>
+References: <20180501161227.2110-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add some i.MX7 related entries to TODO file.
+The device nodes dereference (&foo) usages should be sorted by the label
+names, barring any parsing order issues such as the #include statement
+for the PMIC's .dtsi file that must come after the PMIC.
 
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+Move the mmc and ohci blocks in front of the PMIC's regulator blocks.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/staging/media/imx/TODO | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  | 69 ++++++++++---------
+ 1 file changed, 35 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/staging/media/imx/TODO b/drivers/staging/media/imx/TODO
-index aeeb15494a49..6f29b5ca5324 100644
---- a/drivers/staging/media/imx/TODO
-+++ b/drivers/staging/media/imx/TODO
-@@ -45,3 +45,12 @@
+diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+index 27d9ccd0ef2f..c6da21e43572 100644
+--- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
++++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+@@ -114,6 +114,41 @@
  
-      Which means a port must not contain mixed-use endpoints, they
-      must all refer to media links between V4L2 subdevices.
+ #include "axp22x.dtsi"
+ 
++&mmc0 {
++	vmmc-supply = <&reg_dcdc1>;
++	bus-width = <4>;
++	cd-gpios = <&pio 7 13 GPIO_ACTIVE_HIGH>; /* PH13 */
++	cd-inverted;
++	status = "okay";
++};
 +
-+- i.MX7: all of the above, since it uses the imx media core
++&mmc1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc1_pg_pins>;
++	vmmc-supply = <&reg_dldo2>;
++	vqmmc-supply = <&reg_dldo1>;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	bus-width = <4>;
++	non-removable;
++	status = "okay";
++};
 +
-+- i.MX7: use Frame Interval Monitor
++&mmc2 {
++	vmmc-supply = <&reg_dcdc1>;
++	vqmmc-supply = <&reg_dcdc1>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
 +
-+- i.MX7: runtime testing with parallel sensor, links setup and streaming
++&ohci1 {
++	status = "okay";
++};
 +
-+- i.MX7: runtime testing with different formats, for the time only 10-bit bayer
-+  is tested
++&ohci2 {
++	status = "okay";
++};
++
+ &reg_aldo3 {
+ 	regulator-always-on;
+ 	regulator-min-microvolt = <2700000>;
+@@ -161,40 +196,6 @@
+ 	regulator-name = "vcc-wifi";
+ };
+ 
+-&mmc0 {
+-	vmmc-supply = <&reg_dcdc1>;
+-	bus-width = <4>;
+-	cd-gpios = <&pio 7 13 GPIO_ACTIVE_LOW>; /* PH13 */
+-	status = "okay";
+-};
+-
+-&mmc1 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&mmc1_pg_pins>;
+-	vmmc-supply = <&reg_dldo2>;
+-	vqmmc-supply = <&reg_dldo1>;
+-	mmc-pwrseq = <&wifi_pwrseq>;
+-	bus-width = <4>;
+-	non-removable;
+-	status = "okay";
+-};
+-
+-&mmc2 {
+-	vmmc-supply = <&reg_dcdc1>;
+-	vqmmc-supply = <&reg_dcdc1>;
+-	bus-width = <8>;
+-	non-removable;
+-	status = "okay";
+-};
+-
+-&ohci1 {
+-	status = "okay";
+-};
+-
+-&ohci2 {
+-	status = "okay";
+-};
+-
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pb_pins>;
 -- 
 2.17.0
-
