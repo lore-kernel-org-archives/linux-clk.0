@@ -1,42 +1,40 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v9 03/27] clk: davinci: psc: allow for dev == NULL
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-4-david@lechnology.com>
- <8940259b-5811-ce9f-8262-17d39ca0a46f@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <94d4cfc5-0ea7-e642-c7e3-8d549bdef8ce@lechnology.com>
-Date: Tue, 1 May 2018 20:49:52 -0500
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 1 May 2018 11:28:01 -0500
+From: Rob Herring <robh@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH net-next v2 06/15] dt-bindings: net: dwmac-sun8i: Add
+ binding for GMAC on Allwinner R40 SoC
+Message-ID: <20180501162801.GA14124@rob-hp-laptop>
+References: <20180501161227.2110-1-wens@csie.org>
+ <20180501161227.2110-7-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <8940259b-5811-ce9f-8262-17d39ca0a46f@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180501161227.2110-7-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/01/2018 09:02 AM, Sekhar Nori wrote:
-> On Friday 27 April 2018 05:47 AM, David Lechner wrote:
->> +static inline void *_devm_kzalloc(struct device *dev, size_t size, gfp_t flags)
->> +{
->> +	if (dev)
->> +		return devm_kzalloc(dev, size, flags);
->> +
->> +	return kzalloc(size, flags);
->> +}
+On Wed, May 02, 2018 at 12:12:18AM +0800, Chen-Yu Tsai wrote:
+> The Allwinner R40 SoC has the EMAC controller supported by dwmac-sun8i.
+> It is named "GMAC", while EMAC refers to the 10/100 Mbps Ethernet
+> controller supported by sun4i-emac. The controller is the same, but
+> the R40 has the glue layer controls in the clock control unit (CCU),
+> with a reduced RX delay chain, and no TX delay chain.
 > 
-> I have the same question on the utility of this. A memory allocation
-> error so early on is not going to result in a bootable system anyway.
-> So, I wonder if its better to just BUG() in such cases. That will
-> actually help faster debug than returning an error back. I know the push
-> back on using BUG(), but clock drivers are special, and I think thats
-> why its seems to be used quite a bit already.
+> This patch adds the R40 specific bits to the dwmac-sun8i binding.
 > 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Same reply here as well. On DA850/DA830, you might not get a console,
-but you will "boot" even if one of the PSC devices fails though.
-
-WARN() is probably just as good as BUG() in this case too.
+Reviewed-by: Rob Herring <robh@kernel.org>
