@@ -1,204 +1,429 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 3/7] pinctrl: sunxi: add support for H6 R_PIO pin controller
-Date: Fri,  4 May 2018 02:38:43 +0800
-Message-Id: <20180503183847.11046-4-icenowy@aosc.io>
-In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
-References: <20180503183847.11046-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525164093-16645-3-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Taniya Das <tdas@codeaurora.org>
+References: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
+ <1525164093-16645-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <152521007133.138124.1057969694939363822@swboyd.mtv.corp.google.com>
+Subject: Re: [v5 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Tue, 01 May 2018 14:27:51 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H6 SoC has a R_PIO pin controller like other Allwinner SoCs,
-which controls the PL and PM pin banks.
+Quoting Taniya Das (2018-05-01 01:41:33)
+> Add the RPMh clock driver to control the RPMh managed clock resources on
+> some of the Qualcomm Technologies, Inc. SoCs.
+> =
 
-Add support for it.
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
- drivers/pinctrl/sunxi/Kconfig                      |   4 +
- drivers/pinctrl/sunxi/Makefile                     |   1 +
- drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c        | 128 +++++++++++++++++++++
- 4 files changed, 134 insertions(+)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c
+Drop Amit's signoff, or make it "Co-authored-by" please. First signoff
+should be the author and there should be a "From:" line either from the
+email header of the sender or explicitly here before the commit text
+body to indicate the authorship.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-index 64bc5c2a76da..258a4648ab81 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-@@ -28,6 +28,7 @@ Required properties:
-   "allwinner,sun50i-a64-r-pinctrl"
-   "allwinner,sun50i-h5-pinctrl"
-   "allwinner,sun50i-h6-pinctrl"
-+  "allwinner,sun50i-h6-r-pinctrl"
-   "nextthing,gr8-pinctrl"
- 
- - reg: Should contain the register physical address and length for the
-diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-index 5de1f63b07bb..95282cda6cee 100644
---- a/drivers/pinctrl/sunxi/Kconfig
-+++ b/drivers/pinctrl/sunxi/Kconfig
-@@ -81,4 +81,8 @@ config PINCTRL_SUN50I_H6
- 	def_bool ARM64 && ARCH_SUNXI
- 	select PINCTRL_SUNXI
- 
-+config PINCTRL_SUN50I_H6_R
-+	def_bool ARM64 && ARCH_SUNXI
-+	select PINCTRL_SUNXI
-+
- endif
-diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-index 3c4aec6611e9..adb8443aa55c 100644
---- a/drivers/pinctrl/sunxi/Makefile
-+++ b/drivers/pinctrl/sunxi/Makefile
-@@ -19,5 +19,6 @@ obj-$(CONFIG_PINCTRL_SUN8I_H3_R)	+= pinctrl-sun8i-h3-r.o
- obj-$(CONFIG_PINCTRL_SUN8I_V3S)		+= pinctrl-sun8i-v3s.o
- obj-$(CONFIG_PINCTRL_SUN50I_H5)		+= pinctrl-sun50i-h5.o
- obj-$(CONFIG_PINCTRL_SUN50I_H6)		+= pinctrl-sun50i-h6.o
-+obj-$(CONFIG_PINCTRL_SUN50I_H6_R)	+= pinctrl-sun50i-h6-r.o
- obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
- obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c b/drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c
-new file mode 100644
-index 000000000000..4557e18d5989
---- /dev/null
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c
-@@ -0,0 +1,128 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Allwinner H6 R_PIO pin controller driver
-+ *
-+ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-+ *
-+ * Based on pinctrl-sun6i-a31-r.c, which is:
-+ *   Copyright (C) 2014 Boris Brezillon
-+ *   Boris Brezillon <boris.brezillon@free-electrons.com>
-+ *   Copyright (C) 2014 Maxime Ripard
-+ *   Maxime Ripard <maxime.ripard@free-electrons.com>
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/reset.h>
-+
-+#include "pinctrl-sunxi.h"
-+
-+static const struct sunxi_desc_pin sun50i_h6_r_pins[] = {
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SCK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SDA */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_uart"),	/* TX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_uart"),	/* RX */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* MS */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* CK */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DO */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DI */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_pwm"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_cir_rx"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION(0x2, "s_w1"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PL_EINT10 */
-+	/* Hole */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 0),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 0)),	/* PM_EINT0 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 1),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 1)),	/* PM_EINT1 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 2),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 2),	/* PM_EINT2 */
-+		  SUNXI_FUNCTION(0x3, "1wire")),
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 3),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 3)),	/* PM_EINT3 */
-+	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 4),
-+		  SUNXI_FUNCTION(0x0, "gpio_in"),
-+		  SUNXI_FUNCTION(0x1, "gpio_out"),
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 4)),	/* PM_EINT4 */
-+};
-+
-+static const struct sunxi_pinctrl_desc sun50i_h6_r_pinctrl_data = {
-+	.pins = sun50i_h6_r_pins,
-+	.npins = ARRAY_SIZE(sun50i_h6_r_pins),
-+	.pin_base = PL_BASE,
-+	.irq_banks = 2,
-+};
-+
-+static int sun50i_h6_r_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return sunxi_pinctrl_init(pdev,
-+				  &sun50i_h6_r_pinctrl_data);
-+}
-+
-+static const struct of_device_id sun50i_h6_r_pinctrl_match[] = {
-+	{ .compatible = "allwinner,sun50i-h6-r-pinctrl", },
-+	{}
-+};
-+
-+static struct platform_driver sun50i_h6_r_pinctrl_driver = {
-+	.probe	= sun50i_h6_r_pinctrl_probe,
-+	.driver	= {
-+		.name		= "sun50i-h6-r-pinctrl",
-+		.of_match_table	= sun50i_h6_r_pinctrl_match,
-+	},
-+};
-+builtin_platform_driver(sun50i_h6_r_pinctrl_driver);
--- 
-2.15.1
+Overall this is looking close. Maybe one more round.
+
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> new file mode 100644
+> index 0000000..9cb7aa4
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -0,0 +1,387 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <soc/qcom/cmd-db.h>
+> +#include <soc/qcom/rpmh.h>
+> +
+> +#include <dt-bindings/clock/qcom,rpmh.h>
+> +
+> +#define CLK_RPMH_ARC_EN_OFFSET         0
+> +#define CLK_RPMH_VRM_EN_OFFSET         4
+> +
+> +/**
+> + * struct clk_rpmh - individual rpmh clock data structure
+> + * @hw:                        handle between common and hardware-specif=
+ic interfaces
+> + * @res_name:          resource name for the rpmh clock
+> + * @div:               clock divider to compute the clock rate
+> + * @res_addr:          base address of the rpmh resource within the RPMh
+> + * @res_on_val:                rpmh clock enable value
+> + * @res_off_val:       rpmh clock disable value
+
+It's still unused.
+
+> + * @state:             rpmh clock requested state
+> + * @aggr_state:                rpmh clock aggregated state
+> + * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
+> + * @valid_state_mask:  mask to determine the state of the rpmh clock
+> + * @rpmh_client:       handle used for rpmh communications
+> + * @dev:               device to which it is attached
+> + * @peer:              pointer to the clock rpmh sibling
+> + */
+> +struct clk_rpmh {
+> +       struct clk_hw hw;
+> +       const char *res_name;
+> +       u8  div;
+
+Weird space here.
+
+> +       u32 res_addr;
+> +       u32 res_on_val;
+> +       u32 res_off_val;
+> +       u32 state;
+> +       u32 aggr_state;
+> +       u32 last_sent_aggr_state;
+> +       u32 valid_state_mask;
+> +       struct rpmh_client *rpmh_client;
+> +       struct device *dev;
+> +       struct clk_rpmh *peer;
+> +};
+> +
+> +struct clk_rpmh_desc {
+> +       struct clk_hw **clks;
+> +       size_t num_clks;
+> +};
+> +
+> +static DEFINE_MUTEX(rpmh_clk_lock);
+> +
+> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,   \
+> +                         _res_en_offset, _res_on, _res_off)            \
+> +       static struct clk_rpmh _platform##_##_name_active;              \
+> +       static struct clk_rpmh _platform##_##_name =3D {                 =
+ \
+> +               .res_name =3D _res_name,                                 =
+ \
+> +               .res_addr =3D _res_en_offset,                            =
+ \
+> +               .res_on_val =3D _res_on,                                 =
+ \
+> +               .res_off_val =3D _res_off,                               =
+ \
+> +               .peer =3D &_platform##_##_name_active,                   =
+ \
+> +               .valid_state_mask =3D (BIT(RPMH_WAKE_ONLY_STATE) |       =
+ \
+> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) |     \
+> +                                     BIT(RPMH_SLEEP_STATE)),           \
+> +               .hw.init =3D &(struct clk_init_data){                    =
+ \
+> +                       .ops =3D &clk_rpmh_ops,                          =
+ \
+> +                       .name =3D #_name,                                =
+ \
+> +                       .parent_names =3D (const char *[]){ "xo_board" },=
+ \
+
+This would be different for the xo_board and the xo_board / 2 clk names.
+
+> +                       .num_parents =3D 1,                              =
+ \
+> +               },                                                      \
+> +       };                                                              \
+> +       static struct clk_rpmh _platform##_##_name_active =3D {          =
+ \
+> +               .res_name =3D _res_name,                                 =
+ \
+> +               .res_addr =3D _res_en_offset,                            =
+ \
+> +               .res_on_val =3D _res_on,                                 =
+ \
+> +               .res_off_val =3D _res_off,                               =
+ \
+> +               .peer =3D &_platform##_##_name,                          =
+ \
+> +               .valid_state_mask =3D (BIT(RPMH_WAKE_ONLY_STATE) |       =
+ \
+> +                                       BIT(RPMH_ACTIVE_ONLY_STATE)),   \
+> +               .hw.init =3D &(struct clk_init_data){                    =
+ \
+> +                       .ops =3D &clk_rpmh_ops,                          =
+ \
+> +                       .name =3D #_name_active,                         =
+ \
+> +                       .parent_names =3D (const char *[]){ "xo_board" },=
+ \
+> +                       .num_parents =3D 1,                              =
+ \
+> +               },                                                      \
+> +       }
+> +
+> +#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name, \
+> +                           _res_on, _res_off)                          \
+> +       __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
+> +                         CLK_RPMH_ARC_EN_OFFSET, _res_on, _res_off)
+> +
+> +#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name) \
+> +       __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
+> +                         CLK_RPMH_VRM_EN_OFFSET, true, false)
+
+s/true, false/1, 0/ ?
+
+> +
+> +static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
+> +{
+> +       return container_of(_hw, struct clk_rpmh, hw);
+> +}
+> +
+> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
+> +{
+> +       return (c->last_sent_aggr_state & BIT(state))
+> +               !=3D (c->aggr_state & BIT(state));
+> +}
+> +
+> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
+> +{
+> +       struct tcs_cmd cmd =3D { 0 };
+> +       u32 cmd_state, on_val;
+> +       enum rpmh_state state =3D RPMH_SLEEP_STATE;
+> +       int ret;
+> +
+> +       cmd.addr =3D c->res_addr;
+> +       cmd_state =3D c->aggr_state;
+> +       on_val =3D c->res_on_val;
+> +
+> +       for (; state <=3D RPMH_ACTIVE_ONLY_STATE; state++) {
+> +               if (has_state_changed(c, state)) {
+> +                       cmd.data =3D (cmd_state & BIT(state)) ? on_val : =
+0;
+
+Make this into an "if" please. Default is already 0 so just set bit if
+cmd_state & BIT(state).
+
+> +                       ret =3D rpmh_write_async(c->rpmh_client, state,
+> +                                               &cmd, 1);
+> +                       if (ret) {
+> +                               dev_err(c->dev, "set %s state of %s faile=
+d: (%d)\n",
+> +                                       !state ? "sleep" :
+> +                                       state =3D=3D RPMH_WAKE_ONLY_STATE=
+   ?
+> +                                       "wake" : "active", c->res_name, r=
+et);
+> +                               return ret;
+> +                       }
+> +               }
+> +       }
+> +
+> +       c->last_sent_aggr_state =3D c->aggr_state;
+> +       c->peer->last_sent_aggr_state =3D  c->last_sent_aggr_state;
+> +
+> +       return 0;
+> +}
+> +
+> +/*
+> + * Update state and aggregate state values based on enable value.
+> + */
+> +static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
+> +                                               bool enable)
+> +{
+> +       int ret;
+> +
+> +       c->state =3D enable ? c->valid_state_mask : 0;
+> +       c->aggr_state =3D c->state | c->peer->state;
+> +       c->peer->aggr_state =3D c->aggr_state;
+> +
+> +       ret =3D clk_rpmh_send_aggregate_command(c);
+> +       if (ret && enable) {
+> +               c->state =3D 0;
+
+Why don't we print a WARN if it fails to enable?
+
+> +       } else if (ret) {
+> +               c->state =3D c->valid_state_mask;
+> +               WARN(1, "clk: %s failed to disable\n", c->res_name);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int clk_rpmh_prepare(struct clk_hw *hw)
+> +{
+> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
+> +       int ret =3D 0;
+> +
+> +       mutex_lock(&rpmh_clk_lock);
+> +
+> +       if (!c->state)
+
+Can we push this into clk_rpmh_aggregate_state_send_command()? Something
+like:
+
+	/* Nothing to do if already off or on */
+	if (enable =3D=3D c->state)
+		return 0;
+
+> +               ret =3D clk_rpmh_aggregate_state_send_command(c, true);
+> +
+> +       mutex_unlock(&rpmh_clk_lock);
+> +       return ret;
+> +};
+> +
+> +static void clk_rpmh_unprepare(struct clk_hw *hw)
+> +{
+> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
+> +
+> +       mutex_lock(&rpmh_clk_lock);
+> +
+> +       if (c->state)
+> +               clk_rpmh_aggregate_state_send_command(c, false);
+> +
+> +       mutex_unlock(&rpmh_clk_lock);
+> +};
+> +
+> +static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
+> +                                               unsigned long prate)
+> +{
+> +       struct clk_rpmh *r =3D to_clk_rpmh(hw);
+> +       unsigned long rate;
+> +
+> +       /*
+> +        * RPMh clocks have a fixed rate.
+> +        */
+> +       rate =3D  prate;
+> +       do_div(rate, r->div);
+> +
+> +       return rate;
+> +}
+
+You shouldn't need any recalc rate in this driver.
+
+> +
+> +static int clk_rpmh_probe(struct platform_device *pdev)
+> +{
+> +       struct clk *clk;
+> +       struct clk_hw_onecell_data *hw_data;
+> +       struct clk_hw **hw_clks;
+> +       struct clk_rpmh *rpmh_clk;
+> +       const struct clk_rpmh_desc *desc;
+> +       struct rpmh_client *rpmh_client;
+> +       struct device *dev;
+> +       size_t num_clks, i;
+> +       int ret;
+> +
+> +       dev =3D &pdev->dev;
+
+Just do this when dev is defined please.
+
+> +
+> +       ret =3D cmd_db_ready();
+> +       if (ret) {
+> +               if (ret !=3D -EPROBE_DEFER)
+> +                       dev_err(dev, "Command DB not available (%d)\n", r=
+et);
+> +               return ret;
+> +       }
+> +
+> +       rpmh_client =3D rpmh_get_client(pdev);
+> +       if (IS_ERR(rpmh_client)) {
+> +               ret =3D PTR_ERR(rpmh_client);
+> +               dev_err(dev, "Failed to request RPMh client, ret=3D%d\n",=
+ ret);
+> +               return ret;
+> +       }
+> +
+> +       desc =3D of_device_get_match_data(&pdev->dev);
+> +       hw_clks =3D desc->clks;
+> +       num_clks =3D desc->num_clks;
+> +
+> +       hw_data =3D devm_kzalloc(dev,
+> +                       sizeof(*hw_data) + num_clks * sizeof(struct clk_h=
+w *),
+> +                       GFP_KERNEL);
+> +       if (!hw_data)
+> +               return -ENOMEM;
+> +
+> +       hw_data->num =3D num_clks;
+> +
+> +       for (i =3D 0; i < num_clks; i++) {
+> +               const char *clk_name;
+> +               struct property *prop;
+> +               const __be32 *p;
+> +               u32 res_addr;
+> +               int div, j =3D 0;
+> +
+> +               rpmh_clk =3D to_clk_rpmh(hw_clks[i]);
+> +               res_addr =3D cmd_db_read_addr(rpmh_clk->res_name);
+> +               if (!res_addr) {
+> +                       dev_err(dev, "missing RPMh resource address for %=
+s\n",
+> +                                       rpmh_clk->res_name);
+> +                       ret =3D -ENODEV;
+> +                       goto err;
+> +               }
+> +               rpmh_clk->res_addr +=3D res_addr;
+
+Thanks!
+
+> +
+> +               rpmh_clk->rpmh_client =3D rpmh_client;
+> +
+> +               /* default div for all clocks */
+> +               if (!rpmh_clk->div)
+> +                       rpmh_clk->div =3D 1;
+> +
+> +               of_property_for_each_u32(pdev->dev.of_node, "assigned-clk=
+-divs",
+> +                                               prop, p, div) {
+> +                       of_property_read_string_index(pdev->dev.of_node,
+> +                                       "clk-output-names", j, &clk_name);
+> +                       if (!strcmp(clk_name, hw_clks[i]->init->name)) {
+> +                               rpmh_clk->div =3D div;
+> +                               rpmh_clk->peer->div =3D div;
+> +                       }
+> +                       j++;
+> +               }
+> +
+> +               clk =3D devm_clk_register(&pdev->dev, hw_clks[i]);
+> +               if (IS_ERR(clk)) {
+> +                       ret =3D PTR_ERR(clk);
+> +                       dev_err(dev, "failed to register %s\n",
+> +                                       hw_clks[i]->init->name);
+> +                       goto err;
+> +               }
+> +
+> +               rpmh_clk->dev =3D &pdev->dev;
+> +       }
+> +
+> +       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+
+Why not roll your own "getter" function and then just index directly
+into your array of rpmh clks for sdm845? Then we don't have to copy
+things from one place to another.
+
+> +                                     hw_data);
+> +       if (ret) {
+> +               dev_err(dev, "Failed to add clock provider\n");
+> +               goto err;
+> +       }
+> +
+> +       dev_dbg(dev, "Registered RPMh clocks\n");
+> +
+> +       return 0;
+> +err:
+> +       if (rpmh_client)
+> +               rpmh_release(rpmh_client);
+> +
+> +       return ret;
+> +}
+> +
