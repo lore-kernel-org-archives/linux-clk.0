@@ -1,84 +1,111 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 30 May 2018 19:53:02 -0500
-From: Rob Herring <robh@kernel.org>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
-	mturquette@baylibre.com, shawnguo@kernel.org, Anson.Huang@nxp.com,
-	ping.bai@nxp.com, linux-imx@nxp.com,
+Return-Path: <wens@wens.csie.org>
+From: Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH RESEND V4 6/9] dt-bindings: clock: add imx7ulp clock
- binding doc
-Message-ID: <20180531005302.GA13776@rob-hp-laptop>
-References: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
- <1527234671-31755-7-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1527234671-31755-7-git-send-email-aisheng.dong@nxp.com>
+	Mark Brown <broonie@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH net-next v2 08/15] net: stmmac: dwmac-sun8i: Allow getting syscon regmap from external device
+Date: Wed,  2 May 2018 00:12:20 +0800
+Message-Id: <20180501161227.2110-9-wens@csie.org>
+In-Reply-To: <20180501161227.2110-1-wens@csie.org>
+References: <20180501161227.2110-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 25, 2018 at 03:51:08PM +0800, Dong Aisheng wrote:
-> i.MX7ULP Clock functions are under joint control of the System
-> Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-> modules, and Core Mode Controller (CMC)1 blocks
-> 
-> Note IMX7ULP has two clock domains: M4 and A7. This binding doc
-> is only for A7 clock domain.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Anson Huang <Anson.Huang@nxp.com>
-> Cc: Bai Ping <ping.bai@nxp.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> 
-> ---
-> ChangeLog:
-> v2->v3:
->  * no changes
-> v1->v2: no changes
-> ---
->  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  62 ++++++++++++
->  include/dt-bindings/clock/imx7ulp-clock.h          | 105 +++++++++++++++++++++
->  2 files changed, 167 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
->  create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> new file mode 100644
-> index 0000000..76ea3c7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> @@ -0,0 +1,62 @@
-> +* Clock bindings for Freescale i.MX7ULP
-> +
-> +i.MX7ULP Clock functions are under joint control of the System
-> +Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-> +modules, and Core Mode Controller (CMC)1 blocks
-> +
-> +The clocking scheme provides clear separation between M4 domain
-> +and A7 domain. Except for a few clock sources shared between two
-> +domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-> +and and the Fast IRC clock (FIRCLK), clock sources and clock
-> +management are separated and contained within each domain.
-> +
-> +M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-> +A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
-> +
-> +Note: this binding doc is only for A7 clock domain.
-> +
-> +Required properties:
-> +
-> +- compatible:	Should be "fsl,imx7ulp-clock".
-> +- reg : 	Should contain registers location and length for scg1,
-> +		pcc2 and pcc3.
-> +- reg-names:	Should contain the according reg names "scg1", "pcc2"
-> +		and "pcc3".
+On the Allwinner R40 SoC, the "GMAC clock" register is in the CCU
+address space. Using a standard syscon to access it provides no
+coordination with the CCU driver for register access. Neither does
+it prevent this and other drivers from accessing other, maybe critical,
+clock control registers. On other SoCs, the register is in the "system
+control" address space, which might also contain controls for mapping
+SRAM to devices or the CPU. This hardware has the same issues.
 
-Sounds like separate blocks. These should each be their own node and 
-binding.
+Instead, for these types of setups, we let the device containing the
+control register create a regmap tied to it. We can then get the device
+from the existing syscon phandle, and retrieve the regmap with
+dev_get_regmap().
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 50 ++++++++++++++++++-
+ 1 file changed, 49 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+index bbc051474806..79e104a20e20 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -983,6 +983,34 @@ static struct mac_device_info *sun8i_dwmac_setup(void *ppriv)
+ 	return mac;
+ }
+ 
++static struct regmap *sun8i_dwmac_get_syscon_from_dev(struct device_node *node)
++{
++	struct device_node *syscon_node;
++	struct platform_device *syscon_pdev;
++	struct regmap *regmap = NULL;
++
++	syscon_node = of_parse_phandle(node, "syscon", 0);
++	if (!syscon_node)
++		return ERR_PTR(-ENODEV);
++
++	syscon_pdev = of_find_device_by_node(syscon_node);
++	if (!syscon_pdev) {
++		/* platform device might not be probed yet */
++		regmap = ERR_PTR(-EPROBE_DEFER);
++		goto out_put_node;
++	}
++
++	/* If no regmap is found then the other device driver is at fault */
++	regmap = dev_get_regmap(&syscon_pdev->dev, NULL);
++	if (!regmap)
++		regmap = ERR_PTR(-EINVAL);
++
++	platform_device_put(syscon_pdev);
++out_put_node:
++	of_node_put(syscon_node);
++	return regmap;
++}
++
+ static int sun8i_dwmac_probe(struct platform_device *pdev)
+ {
+ 	struct plat_stmmacenet_data *plat_dat;
+@@ -1027,7 +1055,27 @@ static int sun8i_dwmac_probe(struct platform_device *pdev)
+ 		gmac->regulator = NULL;
+ 	}
+ 
+-	regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "syscon");
++	/* The "GMAC clock control" register might be located in the
++	 * CCU address range (on the R40), or the system control address
++	 * range (on most other sun8i and later SoCs).
++	 *
++	 * The former controls most if not all clocks in the SoC. The
++	 * latter has an SoC identification register, and on some SoCs,
++	 * controls to map device specific SRAM to either the intended
++	 * peripheral, or the CPU address space.
++	 *
++	 * In either case, there should be a coordinated and restricted
++	 * method of accessing the register needed here. This is done by
++	 * having the device export a custom regmap, instead of a generic
++	 * syscon, which grants all access to all registers.
++	 *
++	 * To support old device trees, we fall back to using the syscon
++	 * interface if possible.
++	 */
++	regmap = sun8i_dwmac_get_syscon_from_dev(pdev->dev.of_node);
++	if (IS_ERR(regmap))
++		regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
++							 "syscon");
+ 	if (IS_ERR(regmap)) {
+ 		ret = PTR_ERR(regmap);
+ 		dev_err(&pdev->dev, "Unable to map syscon: %d\n", ret);
+-- 
+2.17.0
