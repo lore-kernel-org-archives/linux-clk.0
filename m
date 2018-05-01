@@ -1,78 +1,52 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Tue, 29 May 2018 15:00:28 +0300
-To: Mark Brown <broonie@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
-Message-ID: <20180529120028.GB13528@localhost.localdomain>
-References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
- <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
- <20180529114740.GG23509@sirena.org.uk>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f179.google.com ([74.125.82.179]:37593 "EHLO
+        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750780AbeEAV4O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 May 2018 17:56:14 -0400
+Received: by mail-ot0-f179.google.com with SMTP id 77-v6so14378916otd.4
+        for <linux-clk@vger.kernel.org>; Tue, 01 May 2018 14:56:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180529114740.GG23509@sirena.org.uk>
+In-Reply-To: <20180501214555.11476-1-martin.blumenstingl@googlemail.com>
+References: <20180501214555.11476-1-martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Tue, 1 May 2018 23:55:53 +0200
+Message-ID: <CAFBinCBz9ne9qeU3a6SQJpqRFm0ix0Dc0LYvmzWKmKJWVML_UQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: meson8b: mark fclk_div gate clocks as CLK_IS_CRITICAL
+To: yixun.lan@amlogic.com
+Cc: linux-amlogic@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
+        linux-clk@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hello Yixun,
 
-On Tue, May 29, 2018 at 12:47:40PM +0100, Mark Brown wrote:
-> On Tue, May 29, 2018 at 01:02:15PM +0300, Matti Vaittinen wrote:
-> 
-> > @@ -0,0 +1,677 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/* Copyright (C) 2018 ROHM Semiconductors */
-> > +/*
-> > + * bd71837-regulator.c ROHM BD71837MWV regulator driver
-> > + */
-> 
-> The SPDX header (and the rest of the block) need to be C++ comments.
+On Tue, May 1, 2018 at 11:45 PM, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+> Until commit 05f814402d6174 ("clk: meson: add fdiv clock gates") we
+> relied on the bootloader to enable the fclk_div clock gates. It turns
+> out that our clock tree is incomplete at least on Meson8b (tested with
+> an Odroid-C1, which uses an RGMII PHY) because after the mentioned
+> commit Ethernet is not working anymore (no RX/TX activity can be seen).
+> At the same time Ethernet was still working on Meson8m2 with a RMII PHY.
+>
+> It is currently not clear which of the fclk_div gates is required for
+> (RGMII) Ethernet operation on Meson8b and why. Mark the fclk_div gates
+> as CLK_IS_CRITICAL so the common clock framework keeps these gates
+> enabled for us until we know which clock is required for Ethernet on
+> Meson8b and which driver has to claim it.
+based on the public datasheet for Meson8b (S805) I cannot see which
+part of the SoC uses fclk_divX for (RGMII) Ethernet.
+I did some further tests and it seems that Ethernet is not working if
+fclk_div2 is disabled (the other fclk_divX don't seem to affect
+Ethernet operation)
 
-Oh. My bad. I mixed up the C and Cpp style comments. So I will convert
-the SPDX and following block to // (Cpp -style) comments.
-> 
-> > +static int bd71837_regulator_set_regmap(struct regulator_dev *rdev, int set)
-> > +{
-> > +	int ret = -EINVAL;
-> > +	struct bd71837_pmic *pmic = rdev->reg_data;
-> > +
-> > +	/* According to the data sheet we must not change regulator voltage
-> > +	 * when it is enabled. Thus we need to check if regulator is enabled
-> > +	 * before changing the voltage. This mutex is used to avoid race where
-> > +	 * we might enable regulator after it's state has been checked but
-> > +	 * before the voltage is changed
-> > +	 */
-> > +	mutex_lock(&pmic->mtx);
-> > +	if (!set)
-> > +		ret = regulator_disable_regmap(rdev);
-> > +	else
-> > +		ret = regulator_enable_regmap(rdev);
-> > +	mutex_unlock(&pmic->mtx);
-> > +
-> 
-> This still has the weird locking/wrapper thing going on.  The regulator
-> core will ensure that only one operation is called on a given regulator
-> at once.
-Ok. I''ll remove the mutex and wrapper since core handles this. Also,
-after re-reading the data sheet I see that this restriction to voltage
-changes (regulator must be disabled when voltage is changed) is not
-mentioned for first 4 bucks. I will confirm if they can be changed when
-enabled and also reflect this in next patch set.
+could you please check your internal datasheets and let us know how
+fclk_div2 is routed internally and how it can affect Ethernet data
+transfers?
 
-> 
-> > +static const struct regulator_desc bd71837_regulators[] = {
-> > +	{
-> > +	 .name = "buck1",
-> 
-> The indentation style here is weird, please follow CodingStyle.  Looks
-> like the second level is just indented by a space for some reason, and
-> there's similar problems elsewhere.
-I'll change this too.
-
-Br,
-	Matti Vaittinen
+(my current speculation is that it may be related to the "Ethernet
+Memory Power Domain" in CBUS HHI_MEM_PD_REG0, but I have no proof for
+that)
