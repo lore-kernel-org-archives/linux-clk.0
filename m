@@ -1,89 +1,107 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v7 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
-Date: Thu, 17 May 2018 07:50:10 +0200
-Message-Id: <20180517055014.6607-3-o.rempel@pengutronix.de>
-In-Reply-To: <20180517055014.6607-1-o.rempel@pengutronix.de>
-References: <20180517055014.6607-1-o.rempel@pengutronix.de>
+Return-Path: <stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Tue, 01 May 2018 09:32:11 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>, Dong Aisheng
+ <aisheng.dong@nxp.com>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, linux-imx@nxp.com,
+ kernel@pengutronix.de, fabio.estevam@nxp.com, shawnguo@kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/12] clk: imx: add imx8qxp clock support
+In-Reply-To: <20180501060330.l5j6rztqal2whgge@pengutronix.de>
+References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+ <20180501060330.l5j6rztqal2whgge@pengutronix.de>
+Message-ID: <61f81e36a71f5c02f77163c8f32e1e5b@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the Freescale recommended sequences for power off with external
-PMIC is the following:
-...
-3.  SoC is programming PMIC for power off when standby is asserted.
-4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+On 01.05.2018 08:03, Oleksij Rempel wrote:
+> Hi,
+> 
+> same functionality is actually needed on iMX7d and many other non NXP
+> socs.
 
-See:
-http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-page 5083
+How is this needed on iMX7D?
 
-This patch implements step 4. of this sequence.
+Afaik, on i.MX8QXP Linux does not have any direct access to the clock
+registers. It is all managed by SCU. However, on i.MX 7 Linux as is
+today accesses the clocks registers directly...
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+> IMO proper solution is to introduce generic clock proxy or some thing
+> like this on top of rpmsg/virtio 
 
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index 017539dd712b..2f5c643f62fb 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -601,6 +601,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
- 				   IMX6Q_GPR1_GINT);
- }
- 
-+static void imx6_pm_stby_poweroff(void)
-+{
-+	imx6_set_lpm(STOP_POWER_OFF);
-+	imx6q_suspend_finish(0);
-+
-+	mdelay(1000);
-+
-+	pr_emerg("Unable to poweroff system\n");
-+}
-+
-+static int imx6_pm_stby_poweroff_probe(void)
-+{
-+	if (pm_power_off) {
-+		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
-+			__func__, pm_power_off, pm_power_off);
-+		return -EBUSY;
-+	}
-+
-+	pm_power_off = imx6_pm_stby_poweroff;
-+	return 0;
-+}
-+
- void __init imx6_pm_ccm_init(const char *ccm_compat)
- {
- 	struct device_node *np;
-@@ -617,6 +639,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
- 	val = readl_relaxed(ccm_base + CLPCR);
- 	val &= ~BM_CLPCR_LPM;
- 	writel_relaxed(val, ccm_base + CLPCR);
-+
-+	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
-+		imx6_pm_stby_poweroff_probe();
- }
- 
- void __init imx6q_pm_init(void)
--- 
-2.17.0
+Given that NXP already used rpmsg in the past, I was wondering too why a
+new messaging mechanism had to be invented.
+
+Dong, do you know why?
+
+--
+Stefan
+
+> 
+> On Sat, Apr 28, 2018 at 02:56:31AM +0800, Dong Aisheng wrote:
+>> This patch series adds i.MX8QXP clock support which is based
+>> on the clock service provided by SCU firmware.
+>> It depends on SCU APIs patch set.
+>>
+>> Dong Aisheng (12):
+>>   clk: imx: add configuration option for mmio clks
+>>   clk: imx: scu: add scu clock common part
+>>   clk: imx: scu: add scu clock divider
+>>   clk: imx: scu: add scu clock gpr divider
+>>   clk: imx: scu: add scu clock gate
+>>   clk: imx: scu: add scu clock gpr gate
+>>   clk: imx: scu: add scu clock mux
+>>   clk: imx: scu: add scu clock gpr mux
+>>   clk: imx: add common imx_clk_hw_fixed functions
+>>   clk: imx: add imx_check_clk_hws helper function
+>>   dt-bindings: clock: add imx8qxp clock binding doc
+>>   clk: imx: add imx8qxp clk driver
+>>
+>>  .../devicetree/bindings/clock/imx8qxp-clk.txt      |  39 ++
+>>  arch/arm/mach-imx/Kconfig                          |  10 +
+>>  drivers/clk/Kconfig                                |   1 +
+>>  drivers/clk/imx/Kconfig                            |   7 +
+>>  drivers/clk/imx/Makefile                           |   4 +-
+>>  drivers/clk/imx/clk-common.h                       |  27 ++
+>>  drivers/clk/imx/scu/Kconfig                        |   5 +
+>>  drivers/clk/imx/scu/Makefile                       |  12 +
+>>  drivers/clk/imx/scu/clk-divider-gpr-scu.c          | 131 +++++++
+>>  drivers/clk/imx/scu/clk-divider-scu.c              | 129 +++++++
+>>  drivers/clk/imx/scu/clk-gate-gpr-scu.c             |  84 ++++
+>>  drivers/clk/imx/scu/clk-gate-scu.c                 | 193 ++++++++++
+>>  drivers/clk/imx/scu/clk-imx8qxp.c                  | 426 +++++++++++++++++++++
+>>  drivers/clk/imx/scu/clk-mux-gpr-scu.c              |  90 +++++
+>>  drivers/clk/imx/scu/clk-mux-scu.c                  |  89 +++++
+>>  drivers/clk/imx/scu/clk-scu.c                      |  25 ++
+>>  drivers/clk/imx/scu/clk-scu.h                      |  97 +++++
+>>  include/dt-bindings/clock/imx8qxp-clock.h          | 362 +++++++++++++++++
+>>  include/soc/imx/imx8qxp/lpcg.h                     | 186 +++++++++
+>>  19 files changed, 1916 insertions(+), 1 deletion(-)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/imx8qxp-clk.txt
+>>  create mode 100644 drivers/clk/imx/Kconfig
+>>  create mode 100644 drivers/clk/imx/clk-common.h
+>>  create mode 100644 drivers/clk/imx/scu/Kconfig
+>>  create mode 100644 drivers/clk/imx/scu/Makefile
+>>  create mode 100644 drivers/clk/imx/scu/clk-divider-gpr-scu.c
+>>  create mode 100644 drivers/clk/imx/scu/clk-divider-scu.c
+>>  create mode 100644 drivers/clk/imx/scu/clk-gate-gpr-scu.c
+>>  create mode 100644 drivers/clk/imx/scu/clk-gate-scu.c
+>>  create mode 100644 drivers/clk/imx/scu/clk-imx8qxp.c
+>>  create mode 100644 drivers/clk/imx/scu/clk-mux-gpr-scu.c
+>>  create mode 100644 drivers/clk/imx/scu/clk-mux-scu.c
+>>  create mode 100644 drivers/clk/imx/scu/clk-scu.c
+>>  create mode 100644 drivers/clk/imx/scu/clk-scu.h
+>>  create mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
+>>  create mode 100644 include/soc/imx/imx8qxp/lpcg.h
+>>
+>> --
+>> 2.7.4
+>>
+>>
+>>
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
