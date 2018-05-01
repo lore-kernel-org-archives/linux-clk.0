@@ -1,51 +1,68 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 1 May 2018 09:07:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Tejun Heo <tj@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [RFC 01/10] ARM: dts: exynos: Remove Exynos5440
+Message-ID: <20180501140725.GA25487@rob-hp-laptop>
+References: <20180424203239.21885-1-krzk@kernel.org>
+ <20180424203239.21885-2-krzk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180430114058.5061-11-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com> <20180430114058.5061-11-jagan@amarulasolutions.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 2 May 2018 00:20:48 +0800
-Message-ID: <CAGb2v67_WjVOfz0maTU7K9WWEChGjQoYqpc=xZkmy4W64+9DLw@mail.gmail.com>
-Subject: Re: [PATCH 10/21] drm/sun4i: Enable DesignWare HDMI for Allwinner
- 64-bit SoCs
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180424203239.21885-2-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 30, 2018 at 7:40 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
-> Allwinner 64-bit SoC like H5/A64 has DesignWare HDMI so
-> enable them as default.
-
-Should we not also enable it by default for SUN8I (A83T, H3, R40?, etc.)
-
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+On Tue, Apr 24, 2018 at 10:32:30PM +0200, Krzysztof Kozlowski wrote:
+> The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
+> server platforms but it did not make it to the market really.  There are
+> no development boards with it and probably there are no real products
+> neither.  The development for Exynos5440 ended in 2013 and since then
+> the platform is in maintenance mode.
+> 
+> Remove all Device Tree sources for Exynos5440, as first step of removal
+> of the platform to simplify the code and drivers.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/gpu/drm/sun4i/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-> index eee6bc0eaf97..60468a779a63 100644
-> --- a/drivers/gpu/drm/sun4i/Kconfig
-> +++ b/drivers/gpu/drm/sun4i/Kconfig
-> @@ -42,6 +42,7 @@ config DRM_SUN4I_BACKEND
->
->  config DRM_SUN8I_DW_HDMI
->         tristate "Support for Allwinner version of DesignWare HDMI"
-> +       default ARM64 && ARCH_SUNXI
->         depends on DRM_SUN4I
->         select DRM_DW_HDMI
->         help
-> --
-> 2.14.3
->
+>  .../bindings/arm/samsung/samsung-boards.txt        |   2 -
+>  arch/arm/boot/dts/Makefile                         |   2 -
+>  arch/arm/boot/dts/exynos5440-sd5v1.dts             |  42 ---
+>  arch/arm/boot/dts/exynos5440-ssdk5440.dts          |  81 -----
+>  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  20 --
+>  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  21 --
+>  arch/arm/boot/dts/exynos5440.dtsi                  | 355 ---------------------
+>  7 files changed, 523 deletions(-)
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-sd5v1.dts
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-ssdk5440.dts
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+>  delete mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
+>  delete mode 100644 arch/arm/boot/dts/exynos5440.dtsi
+
+Reviewed-by: Rob Herring <robh@kernel.org>
