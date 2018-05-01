@@ -1,61 +1,49 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH net-next v2 06/15] dt-bindings: net: dwmac-sun8i: Add binding for GMAC on Allwinner R40 SoC
-Date: Wed,  2 May 2018 00:12:18 +0800
-Message-Id: <20180501161227.2110-7-wens@csie.org>
-In-Reply-To: <20180501161227.2110-1-wens@csie.org>
-References: <20180501161227.2110-1-wens@csie.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Dmitry Osipenko <digetx@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180430112804.GA5770@ulmo>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180426235818.10018-1-digetx@gmail.com> <20180430094821.GC2476@ulmo>
+ <20180430112804.GA5770@ulmo>
+Message-ID: <152521025891.138124.9469961084981688474@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1 0/4] Restore ULPI USB on Tegra20
+Date: Tue, 01 May 2018 14:30:58 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner R40 SoC has the EMAC controller supported by dwmac-sun8i.
-It is named "GMAC", while EMAC refers to the 10/100 Mbps Ethernet
-controller supported by sun4i-emac. The controller is the same, but
-the R40 has the glue layer controls in the clock control unit (CCU),
-with a reduced RX delay chain, and no TX delay chain.
+Quoting Thierry Reding (2018-04-30 04:28:04)
+> On Mon, Apr 30, 2018 at 11:48:21AM +0200, Thierry Reding wrote:
+> > =
 
-This patch adds the R40 specific bits to the dwmac-sun8i binding.
+> > as far as I can tell there aren't any build dependencies between the
+> > above, so technically these could all be merged through the individual
+> > trees. There's a runtime dependency from patch 2 on patch 1 and from
+> > patch 3 on patch 2, though I don't think they will cause any actual
+> > failures at runtime.
+> > =
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 3 +++
- 1 file changed, 3 insertions(+)
+> > But I can also pick this up into the Tegra tree and send out pull
+> > requests to you for v4.18 (at around v4.17-rc6), if that's what you
+> > prefer.
+> =
 
-diff --git a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-index 1c0906a5c02b..cfe724398a12 100644
---- a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-+++ b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-@@ -7,6 +7,7 @@ Required properties:
- - compatible: must be one of the following string:
- 		"allwinner,sun8i-a83t-emac"
- 		"allwinner,sun8i-h3-emac"
-+		"allwinner,sun8i-r40-gmac"
- 		"allwinner,sun8i-v3s-emac"
- 		"allwinner,sun50i-a64-emac"
- - reg: address and length of the register for the device.
-@@ -25,8 +26,10 @@ Required properties:
- Optional properties:
- - allwinner,tx-delay-ps: TX clock delay chain value in ps.
- 			 Range is 0-700. Default is 0.
-+			 Unavailable for allwinner,sun8i-r40-gmac
- - allwinner,rx-delay-ps: RX clock delay chain value in ps.
- 			 Range is 0-3100. Default is 0.
-+			 Range is 0-700 for allwinner,sun8i-r40-gmac
- Both delay properties need to be a multiple of 100. They control the
- clock delay for external RGMII PHY. They do not apply to the internal
- PHY or external non-RGMII PHYs.
--- 
-2.17.0
+> Marc just pointed out to me on IRC that this fixes a regression that was
+> introduced in v4.17-rc1.
+> =
+
+> Can you guys pick this up into your -fixes branches? Again, I volunteer
+> to collect these into a separate branch and submit via ARM SoC (the DTS
+> patch is crucial in enabling the fix) with your Acked-bys if that's the
+> preferred option.
+> =
+
+
+Will it go via ARM SoC? I can ack 1 and 3 and it can go that way.
