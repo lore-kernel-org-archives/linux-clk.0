@@ -1,78 +1,47 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 1 May 2018 10:02:36 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	stable <stable@vger.kernel.org>
-Subject: Re: [PATCH] clk:aspeed: Fix reset bits for PCI/VGA and PECI
-Message-ID: <20180501150236.GA15330@rob-hp-laptop>
-References: <20180426172232.12535-1-jae.hyun.yoo@linux.intel.com>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180426172232.12535-1-jae.hyun.yoo@linux.intel.com>
+In-Reply-To: <20180501161618.GA32350@rob-hp-laptop>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-2-jagan@amarulasolutions.com> <20180501161618.GA32350@rob-hp-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 2 May 2018 00:19:13 +0800
+Message-ID: <CAGb2v64ZTQ0jAaSpDXtV58c-EE2FMMbVASLLjxjGkWM3iJTMHg@mail.gmail.com>
+Subject: Re: [PATCH 01/21] dt-bindings: clock: Add compatible for A64 DE2 CCU
+To: Rob Herring <robh@kernel.org>
+Cc: Jagan Teki <jagan@amarulasolutions.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 10:22:32AM -0700, Jae Hyun Yoo wrote:
-> This commit fixes incorrect setting of reset bits for PCI/VGA and
-> PECI modules.
-> 
-> 1. Reset bit for PCI/VGA is 8.
-> 2. PECI reset bit is missing so added bit 10 as its reset bit.
-> 
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
-> Cc: stable <stable@vger.kernel.org>
-> ---
->  drivers/clk/clk-aspeed.c                 | 4 ++--
->  include/dt-bindings/clock/aspeed-clock.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index 5eb50c31e455..2c23e7d7ba28 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -88,7 +88,7 @@ static const struct aspeed_gate_data aspeed_gates[] = {
->  	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
->  	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
->  	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
-> -	[ASPEED_CLK_GATE_BCLK] =	{  4, 10, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
-> +	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
->  	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
->  	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
->  	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
-> @@ -297,7 +297,7 @@ static const u8 aspeed_resets[] = {
->  	[ASPEED_RESET_JTAG_MASTER] = 22,
->  	[ASPEED_RESET_MIC]	= 18,
->  	[ASPEED_RESET_PWM]	=  9,
-> -	[ASPEED_RESET_PCIVGA]	=  8,
-> +	[ASPEED_RESET_PECI]	= 10,
->  	[ASPEED_RESET_I2C]	=  2,
->  	[ASPEED_RESET_AHB]	=  1,
->  };
-> diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-> index d3558d897a4d..8d69b9134bef 100644
-> --- a/include/dt-bindings/clock/aspeed-clock.h
-> +++ b/include/dt-bindings/clock/aspeed-clock.h
-> @@ -45,7 +45,7 @@
->  #define ASPEED_RESET_JTAG_MASTER	3
->  #define ASPEED_RESET_MIC		4
->  #define ASPEED_RESET_PWM		5
-> -#define ASPEED_RESET_PCIVGA		6
-> +#define ASPEED_RESET_PECI		6
+On Wed, May 2, 2018 at 12:16 AM, Rob Herring <robh@kernel.org> wrote:
+> On Mon, Apr 30, 2018 at 05:10:38PM +0530, Jagan Teki wrote:
+>> Allwinner A64 has DE2 CCU which is similar to H3/H5 SoC.
+>>
+>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> ---
+>>  Documentation/devicetree/bindings/clock/sun8i-de2.txt | 1 +
+>>  1 file changed, 1 insertion(+)
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-You can't really be changing these as they represent an ABI.
+Hi Rob,
 
-Is there no PCIVGA reset?
+Do we need to add this if it's just a soc-specific compatible
+we add in the device tree to future proof things in case we
+discover quirks later on?
 
->  #define ASPEED_RESET_I2C		7
->  #define ASPEED_RESET_AHB		8
->  
-> -- 
-> 2.17.0
-> 
+AFAIK we haven't been doing this, and this is likely to create
+some confusion, because they aren't actually mentioned anywhere
+in the driver.
+
+ChenYu
