@@ -1,51 +1,84 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v66bx2TguLjnMi2R0KFU4=aYC8xveexybnWdWPDd+xwOvg@mail.gmail.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-5-jagan@amarulasolutions.com> <20180501161723.GA376@rob-hp-laptop>
- <CAGb2v66bx2TguLjnMi2R0KFU4=aYC8xveexybnWdWPDd+xwOvg@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 1 May 2018 11:34:51 -0500
-Message-ID: <CAL_JsqJ6PmWJZPjdhHTSMEkKdCiORXKcz3AMch=Nx2Z5FeC3_Q@mail.gmail.com>
-Subject: Re: [PATCH 04/21] bindings: display: Add compatible for A64 DE2 pipeline
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Jagan Teki <jagan@amarulasolutions.com>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40858 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751029AbeEAVqL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 May 2018 17:46:11 -0400
+Received: by mail-wr0-f196.google.com with SMTP id v60-v6so11948714wrc.7
+        for <linux-clk@vger.kernel.org>; Tue, 01 May 2018 14:46:10 -0700 (PDT)
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: jbrunet@baylibre.com, narmstrong@baylibre.com,
+        linux-amlogic@lists.infradead.org
+Cc: linux-clk@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH] clk: meson: meson8b: mark fclk_div gate clocks as CLK_IS_CRITICAL
+Date: Tue,  1 May 2018 23:45:55 +0200
+Message-Id: <20180501214555.11476-1-martin.blumenstingl@googlemail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 1, 2018 at 11:31 AM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Wed, May 2, 2018 at 12:17 AM, Rob Herring <robh@kernel.org> wrote:
->> On Mon, Apr 30, 2018 at 05:10:41PM +0530, Jagan Teki wrote:
->>> Allwinner A64 has DE2 pipeline similar to other Allwinner
->>> SOC's like A83T, H3/H5.
->>
->> 'dt-bindings: ' for the subject prefix.
->>
->>>
->>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->>> ---
->>>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
->>>  1 file changed, 1 insertion(+)
->>
->> Otherwise,
->>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->
-> Would it make sense to put all the display component related compatible
-> string additions in the same patch? i.e. "Add compatible strings for all
-> documented display component blocks". MIPI-DSI is missing, but it's not
-> documented.
+Until commit 05f814402d6174 ("clk: meson: add fdiv clock gates") we
+relied on the bootloader to enable the fclk_div clock gates. It turns
+out that our clock tree is incomplete at least on Meson8b (tested with
+an Odroid-C1, which uses an RGMII PHY) because after the mentioned
+commit Ethernet is not working anymore (no RX/TX activity can be seen).
+At the same time Ethernet was still working on Meson8m2 with a RMII PHY.
 
-That's fine by me.
+It is currently not clear which of the fclk_div gates is required for
+(RGMII) Ethernet operation on Meson8b and why. Mark the fclk_div gates
+as CLK_IS_CRITICAL so the common clock framework keeps these gates
+enabled for us until we know which clock is required for Ethernet on
+Meson8b and which driver has to claim it.
 
-Rob
+Fixes: 05f814402d6174 ("clk: meson: add fdiv clock gates")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/meson8b.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index d0524ec71aad..f3ac099ee22c 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -246,6 +246,7 @@ static struct clk_regmap meson8b_fclk_div2 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_names = (const char *[]){ "fclk_div2_div" },
+ 		.num_parents = 1,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+@@ -270,6 +271,7 @@ static struct clk_regmap meson8b_fclk_div3 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_names = (const char *[]){ "fclk_div3_div" },
+ 		.num_parents = 1,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+@@ -294,6 +296,7 @@ static struct clk_regmap meson8b_fclk_div4 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_names = (const char *[]){ "fclk_div4_div" },
+ 		.num_parents = 1,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+@@ -318,6 +321,7 @@ static struct clk_regmap meson8b_fclk_div5 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_names = (const char *[]){ "fclk_div5_div" },
+ 		.num_parents = 1,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+@@ -342,6 +346,7 @@ static struct clk_regmap meson8b_fclk_div7 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_names = (const char *[]){ "fclk_div7_div" },
+ 		.num_parents = 1,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+-- 
+2.17.0
+
