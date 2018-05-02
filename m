@@ -1,69 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout7.siol.net ([213.250.19.134]:34663 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752590AbeESScc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 19 May 2018 14:32:32 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH 02/15] clk: sunxi-ng: r40: Allow setting parent rate to display related clocks
-Date: Sat, 19 May 2018 20:31:14 +0200
-Message-Id: <20180519183127.2718-3-jernej.skrabec@siol.net>
-In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1524063005-1716-5-git-send-email-geert+renesas@glider.be>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+ <1524063005-1716-5-git-send-email-geert+renesas@glider.be>
+Message-ID: <152527553080.138124.1355023527391493631@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 4/5] soc/tegra: pmc: Use of_clk_get_parent_count() instead of
+ open coding
+Date: Wed, 02 May 2018 08:38:50 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Display related peripherals need precise clocks to operate correctly.
+Quoting Geert Uytterhoeven (2018-04-18 07:50:04)
+> As of_clk_get_parent_count() returns zero on failure, while
+> of_count_phandle_with_args() might return a negative error code, this
+> also fixes the issue of possibly using a very big number in the
+> allocation below.
+> =
 
-Allow DE2, TCONs and HDMI to set parent clock.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index c16a62a7bdbd..fa5317719684 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -655,7 +655,8 @@ static SUNXI_CCU_GATE(dram_deinterlace_clk,	"dram-deinterlace",	"dram",
- 
- static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
- static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
--				 0x104, 0, 4, 24, 3, BIT(31), 0);
-+				 0x104, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(mp_clk, "mp", de_parents,
- 				 0x108, 0, 4, 24, 3, BIT(31), 0);
- 
-@@ -667,9 +668,11 @@ static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd0_clk, "tcon-lcd0", tcon_parents,
- static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd1_clk, "tcon-lcd1", tcon_parents,
- 			       0x114, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0", tcon_parents,
--				 0x118, 0, 4, 24, 3, BIT(31), 0);
-+				 0x118, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv1_clk, "tcon-tv1", tcon_parents,
--				 0x11c, 0, 4, 24, 3, BIT(31), 0);
-+				 0x11c, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static const char * const deinterlace_parents[] = { "pll-periph0",
- 						    "pll-periph1" };
-@@ -699,7 +702,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 
- static const char * const hdmi_parents[] = { "pll-video0", "pll-video1" };
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
--				 0x150, 0, 4, 24, 2, BIT(31), 0);
-+				 0x150, 0, 4, 24, 2, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(hdmi_slow_clk,	"hdmi-slow",	"osc24M",
- 		      0x154, BIT(31), 0);
--- 
-2.17.0
-
+Applied to clk-next
