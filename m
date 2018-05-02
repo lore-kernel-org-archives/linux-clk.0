@@ -1,33 +1,27 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 2 May 2018 21:19:36 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
+	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+	shengjiu.wang@nxp.com, Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH V3 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz
+ clock source
+Message-ID: <20180502131934.GK3443@dragon>
+References: <1524209891-14146-1-git-send-email-Anson.Huang@nxp.com>
+ <1524209891-14146-2-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-To: Chanwoo Choi <cw00.choi@samsung.com>, David Airlie <airlied@linux.ie>,
- Enric Balletbo i Serra <enric.balletbo@collabora.com>,
- Heiko Stuebner <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>, Rob Herring <robh+dt@kernel.org>,
- Sandy Huang <hjc@rock-chips.com>, Will Deacon <will.deacon@arm.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180514211610.26618-8-enric.balletbo@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Derek Basehore <dbasehore@chromium.org>, linux-clk@vger.kernel.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
- Lin Huang <hl@rock-chips.com>, kernel@collabora.com,
- Sean Paul <seanpaul@chromium.org>, linux-arm-kernel@lists.infradead.org
-References: <20180514211610.26618-1-enric.balletbo@collabora.com>
- <20180514211610.26618-8-enric.balletbo@collabora.com>
-Message-ID: <152641691632.237094.11483387696003404182@swboyd.mtv.corp.google.com>
-Subject: Re: [RFC PATCH 07/10] clk: rockchip: set clk-ddr to GET_RATE_NOCACHE.
-Date: Tue, 15 May 2018 13:41:56 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1524209891-14146-2-git-send-email-Anson.Huang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Enric Balletbo i Serra (2018-05-14 14:16:07)
-> From: Derek Basehore <dbasehore@chromium.org>
-> =
+On Fri, Apr 20, 2018 at 03:38:11PM +0800, Anson Huang wrote:
+> On i.MX6SX SabreAuto board, there is external 24MHz clock
+> source for analog clock2, add this clock source to clock tree
+> and remove "clocks" container for all input clocks.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-> This adds the flag to the clk-ddr in rockchip to not use the cached
-> rate for get_rate. This is to handle timeout error conditions in SMC
-> for the set rate function.
-
-We need some more information here. Why does timeout error condition in
-set_rate() matter for get_rate()?
+Applied, thanks.
