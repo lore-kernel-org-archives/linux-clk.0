@@ -1,40 +1,51 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Wed, 30 May 2018 15:58:28 +0300
-To: Mark Brown <broonie@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: Applied "regulator: bd71837: BD71837 PMIC regulator driver" to
- the regulator tree
-Message-ID: <20180530125828.GF13528@localhost.localdomain>
-References: <72e644d9855621ea8cfd7ec555e2da02403f21f6.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <E1fNysa-0006jU-41@debutante>
- <20180530111425.GD13528@localhost.localdomain>
- <20180530111714.GJ6920@sirena.org.uk>
+Return-Path: <jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180530111714.GJ6920@sirena.org.uk>
+In-Reply-To: <20180501161909.GA1728@rob-hp-laptop>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-9-jagan@amarulasolutions.com> <20180501161909.GA1728@rob-hp-laptop>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Wed, 2 May 2018 11:57:22 +0530
+Message-ID: <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
+Subject: Re: [PATCH 08/21] bindings: display: Add compatible for A64 HDMI PHY
+To: Rob Herring <robh@kernel.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>, Jernej Skrabec <jernej.skrabec@siol.net>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 30, 2018 at 12:17:14PM +0100, Mark Brown wrote:
-> On Wed, May 30, 2018 at 02:14:25PM +0300, Matti Vaittinen wrote:
-> 
-> > The patch 1/6 contains the header file
-> > include/linux/mfd/bd71837.h with bunch of definitions this patch is
-> > requiring.
-> 
-> Your driver won't actually get built until the MFD parts end up in the
-> same tree since the regulator driver depends on the MFD so there's no
-> problem, the code will just sit there and not cause any problems.
+Hi Rob,
 
-Oh, right. Thanks! So MFD and clk portions should go through the other
-trees then.
+On Tue, May 1, 2018 at 9:49 PM, Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Apr 30, 2018 at 05:10:45PM +0530, Jagan Teki wrote:
+> > HDMI PHY on Allwinner A64 has similar like H3/H5.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > index 9ea4353caadd..7dcd1d64dfe4 100644
+> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > @@ -104,6 +104,7 @@ Required properties:
+> >    - compatible: value must be one of:
+> >      * allwinner,sun8i-a83t-hdmi-phy
+> >      * allwinner,sun8i-h3-hdmi-phy
+> > +    * allwinner,sun50i-a64-hdmi-phy
+>
+> This should be one valid combination per line. The dts shows that the h3
+> string is a fallback which should be captured in the binding doc.
 
-Br,
-	Matti Vaittinen
+The fallback compatible "allwinner,sun8i-h3-hdmi-phy" is already
+documented above, what we need to capture here? or did I miss anything
+here?
