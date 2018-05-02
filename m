@@ -1,81 +1,74 @@
-Return-Path: <colin.king@canonical.com>
-Subject: Re: [PATCH] clk: boston: fix memory leak of 'onecell' on error return
- paths
-To: Paul Burton <paul.burton@mips.com>,
- Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-mips@linux-mips.org,
- linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180509134031.11611-1-colin.king@canonical.com>
- <20180509140135.4dndt3baomtxups5@mwanda>
- <20180509163311.alvyibwwuwkumyxf@pburton-laptop>
-From: Colin Ian King <colin.king@canonical.com>
-Message-ID: <3fbc876f-cf9d-6184-96c2-f372a4406ab8@canonical.com>
-Date: Wed, 9 May 2018 17:44:40 +0100
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Wed, 2 May 2018 13:34:13 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
+Message-ID: <20180502113413.vv2r3ubfoh7gm3ms@flea>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-10-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <20180509163311.alvyibwwuwkumyxf@pburton-laptop>
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jipx7koxxx7erdq4"
+In-Reply-To: <20180430114058.5061-10-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09/05/18 17:33, Paul Burton wrote:
-> Hi Colin & Dan,
-> 
-> On Wed, May 09, 2018 at 05:01:35PM +0300, Dan Carpenter wrote:
->> On Wed, May 09, 2018 at 02:40:31PM +0100, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> There are several error return paths that don't free up onecell
->>> and hence we have some memory leaks. Add an error exit path that
->>> kfree's onecell to fix the leaks.
->>>
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>  drivers/clk/imgtec/clk-boston.c | 15 +++++++++++----
->>>  1 file changed, 11 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
->>> index 15af423cc0c9..d6bc468ff551 100644
->>> --- a/drivers/clk/imgtec/clk-boston.c
->>> +++ b/drivers/clk/imgtec/clk-boston.c
->>> @@ -73,27 +73,34 @@ static void __init clk_boston_setup(struct device_node *np)
->>>  	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
->>>  	if (IS_ERR(hw)) {
->>>  		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
->>> -		return;
->>> +		goto error;
->>
->> I hate vague label names like "error" and "out"...
->>
->> There are a bunch of other resources that we should free if we decide
->> it's worth freeing things.
-> 
-> Agreed - for example unregistering the clocks that we'd be discarding
-> references to by freeing onecell.
-> 
->> Can this even boot without the clk?
-> 
-> Nope. If this clock setup fails then whether you free this memory or not
-> you're going to be unable to do anything useful with it.
-> 
-> I imagine this patch is the result of some static analysis rather than a
-> problem being observed at runtime?
 
-Indeed. I propose ignoring this then as it's fairly terminal if one
-can't get memory anyhow in the early boot.
+--jipx7koxxx7erdq4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Colin
-> 
-> Thanks,
->     Paul
-> 
->> When
->> the label names says what is freed, then you mentally only have to keep
->> track of the most recently allocated resource.  So if
->>
->> 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
->>
->> succeeds then the next goto is going to "goto free_clk_input;".
->>
->> regards,
->> dan carpenter
+Hi,
+
+On Mon, Apr 30, 2018 at 05:10:46PM +0530, Jagan Teki wrote:
+> +		hdmi_phy: hdmi-phy@1ef0000 {
+> +			compatible =3D "allwinner,sun50i-a64-hdmi-phy",
+> +				     "allwinner,sun8i-h3-hdmi-phy";
+> +			reg =3D <0x01ef0000 0x10000>;
+> +			clocks =3D <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
+> +				 <&ccu CLK_PLL_VIDEO1>;
+
+You were discussing that the PLL0 could also be used to clock the PHY,
+has that been figured out?
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--jipx7koxxx7erdq4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrpojQACgkQ0rTAlCFN
+r3T+JQ//TxUuW9svfO940idbQAxF10oxginiBbDHcAPquDwd+/BxJz7Zn7ZmKML6
+CcNvzMf+PpDqBqpPjrjBGY/6qkcwqDnaoG2efocjCDTrrY23xca/7EUHA9rxg7pd
+2a7DMFWD2dAZycsDqhJNbZArtHxnu/aOFNU8TcFtvg0vuA+EvR0ceSS61K0FylxN
+q5QzHLWUQIGH34inNSLwaGilzLAvEx/xzK01tQDxT5uY+0EyIwbyYWFR7XKiJP32
+mYe2ByHUKgDnjDvVMoRNH8aPeosGwZTqD7bLmRcKOiG0H+dUQOfbND3R7ET/wipK
+nmxvSXZfM8dtlpKIfOzPcpwc4jkiEbJwUioR2/EEoMTVb6b9eug8qTX0FxdS4KOp
+a/lMfHsgQvVqOkJ1WoGaK5fP8iczWK0jmNeB18bYghot9fDmoGJ6RxoeNm6JvN8B
+qs4C/oFI0f5EZ34EyDHOdp91YmpLuvuPv+qEoTSeeZF5QhtGE0p7l/AdVDZLyPO3
+2Lur6tK6Z8vCIu5w2Ftdbn3I4X4dgpvfjcLy5QObvECi4bPMCqbigEdS2urBiciX
+mTukfaLxKp193uqrF6WJqL9GIleTQUaO9x58jUz+gOOxL/zB5ohlLK2ENI/uvQrX
+OVWI1oZSl/g7b59bdhNsXWKR1CiYgtLKw1tpshFNI0fJThYdamg=
+=VgEg
+-----END PGP SIGNATURE-----
+
+--jipx7koxxx7erdq4--
