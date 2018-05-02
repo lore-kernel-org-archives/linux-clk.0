@@ -1,65 +1,61 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 14/27] ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
-Date: Fri, 18 May 2018 11:48:16 -0500
-Message-Id: <20180518164829.27052-15-david@lechnology.com>
-In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
-References: <20180518164829.27052-1-david@lechnology.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v9 03/27] clk: davinci: psc: allow for dev == NULL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-4-david@lechnology.com>
+ <8940259b-5811-ce9f-8262-17d39ca0a46f@ti.com>
+ <94d4cfc5-0ea7-e642-c7e3-8d549bdef8ce@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <3cec9c1f-48fd-1c16-b642-eb93e41446fc@ti.com>
+Date: Wed, 2 May 2018 20:38:06 +0530
+MIME-Version: 1.0
+In-Reply-To: <94d4cfc5-0ea7-e642-c7e3-8d549bdef8ce@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes CONFIG_DAVINCI_RESET_CLOCKS. The option has been removed from
-the kernel.
+On Wednesday 02 May 2018 07:19 AM, David Lechner wrote:
+> On 05/01/2018 09:02 AM, Sekhar Nori wrote:
+>> On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+>>> +static inline void *_devm_kzalloc(struct device *dev, size_t size,
+>>> gfp_t flags)
+>>> +{
+>>> +    if (dev)
+>>> +        return devm_kzalloc(dev, size, flags);
+>>> +
+>>> +    return kzalloc(size, flags);
+>>> +}
+>>
+>> I have the same question on the utility of this. A memory allocation
+>> error so early on is not going to result in a bootable system anyway.
+>> So, I wonder if its better to just BUG() in such cases. That will
+>> actually help faster debug than returning an error back. I know the push
+>> back on using BUG(), but clock drivers are special, and I think thats
+>> why its seems to be used quite a bit already.
+>>
+> 
+> Same reply here as well. On DA850/DA830, you might not get a console,
+> but you will "boot" even if one of the PSC devices fails though.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
+Was not thinking of failure to boot due to clocks being disabled, but
+the fact that you are not able to allocate a small amount of memory so
+early in boot process. The chances of successful boot after memory
+allocation failures like that are close to zero.
 
-v11 changes:
-- none
+> WARN() is probably just as good as BUG() in this case too.
 
-v10 changes:
-- none
+Okay, but with WARN() you would continue to proceed to try to boot which
+is not going to be much fruitful (and might actually muddle the first
+failure). But up to you on this.
 
-v9 changes:
-- none
-
-v8 changes:
-- none
-
-v7 changes:
-- none
-
-v6 changes:
-- none
-
-
- arch/arm/configs/davinci_all_defconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
-index 21b2d7791df4..f83ea4131df2 100644
---- a/arch/arm/configs/davinci_all_defconfig
-+++ b/arch/arm/configs/davinci_all_defconfig
-@@ -31,7 +31,6 @@ CONFIG_MACH_MITYOMAPL138=y
- CONFIG_MACH_OMAPL138_HAWKBOARD=y
- CONFIG_DAVINCI_MUX_DEBUG=y
- CONFIG_DAVINCI_MUX_WARNINGS=y
--CONFIG_DAVINCI_RESET_CLOCKS=y
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
- CONFIG_CMA=y
--- 
-2.17.0
+Thanks,
+Sekhar
