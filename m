@@ -1,39 +1,66 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 May 2018 11:03:56 +0200
-Message-ID: <CAMuHMdXSGHg9P-MxCHr3h2NRTKAK79KSdf+cB+3a4+pQOvpmSQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/6] dt-bindings: arm: Document the RZN1D-DB board
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Taniya Das <tdas@codeaurora.org>
+References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
+ <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <152527500426.138124.18419525952886399750@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Wed, 02 May 2018 08:30:04 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This documents the RZ/N1 bindings for the RZN1D-DB board.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Quoting Taniya Das (2018-05-02 03:51:17)
+> +               ret =3D devm_clk_hw_register(&pdev->dev, hw_clks[i]);
+> +               if (ret) {
+> +                       dev_err(&pdev->dev, "failed to register %s\n",
+> +                                       hw_clks[i]->init->name);
+> +                       goto err;
+> +               }
+> +
+> +               rpmh_clk->dev =3D &pdev->dev;
+> +       }
+> +
+> +       ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_rpmh_hw_ge=
+t,
+> +                                     (void *) desc);
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Drop the void cast.
 
-Gr{oetje,eeting}s,
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "Failed to add clock provider\n");
+> +               goto err;
+> +       }
+> +
+> +       dev_dbg(&pdev->dev, "Registered RPMh clocks\n");
+> +
+> +       return 0;
+> +err:
+> +       if (rpmh_client)
+> +               rpmh_release(rpmh_client);
+> +
+> +       return ret;
+> +}
+> +
+> +static int clk_rpmh_remove(struct platform_device *pdev)
+> +{
+> +       const struct clk_rpmh_desc *desc =3D
+> +                       of_device_get_match_data(&pdev->dev);
+> +       struct clk_hw **hw_clks =3D desc->clks;
+> +       struct clk_rpmh *rpmh_clk =3D to_clk_rpmh(hw_clks[0]);
+> +
+> +       rpmh_release(rpmh_clk->rpmh_client);
+> +
+> +       return 0;
+> +}
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I'll review Lina's series again. Still hoping to drop the client thing.
