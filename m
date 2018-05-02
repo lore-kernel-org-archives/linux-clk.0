@@ -1,171 +1,97 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	Anson.Huang@nxp.com,
-	ping.bai@nxp.com,
-	linux-imx@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH RESEND V4 5/9] clk: imx: add composite clk support
-Date: Fri, 25 May 2018 15:51:07 +0800
-Message-Id: <1527234671-31755-6-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
-References: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Wed, 2 May 2018 11:51:18 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>, Icenowy Zheng <icenowy@aosc.io>,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: Re: [PATCH net-next v2 15/15] arm64: dts: allwinner: a64: add SRAM
+ controller device tree node
+Message-ID: <20180502095118.rqnfwy576xh6ercm@flea>
+References: <20180501161227.2110-1-wens@csie.org>
+ <20180501161227.2110-16-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="w7sjvnulmm2nvbrt"
+In-Reply-To: <20180501161227.2110-16-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The imx composite clk is designed for Peripheral Clock Control (PCC)
-module observed in IMX ULP SoC series. e.g. i.MX7ULP.
 
-NOTE pcc can only be operated when clk is gated.
+--w7sjvnulmm2nvbrt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Hi,
 
----
-ChangeLog:
-v2->v3:
- * no changes
-v1->v2:
- * remove an unneeded blank line change
- * use clk_hw_register
----
- drivers/clk/imx/Makefile        |  1 +
- drivers/clk/imx/clk-composite.c | 85 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h           |  6 +++
- 3 files changed, 92 insertions(+)
- create mode 100644 drivers/clk/imx/clk-composite.c
+On Wed, May 02, 2018 at 12:12:27AM +0800, Chen-Yu Tsai wrote:
+> From: Icenowy Zheng <icenowy@aosc.io>
+>=20
+> Allwinner A64 has a SRAM controller, and in the device tree currently
+> we have a syscon node to enable EMAC driver to access the EMAC clock
+> register. As SRAM controller driver can now export regmap for this
+> register, replace the syscon node to the SRAM controller device node,
+> and let EMAC driver to acquire its EMAC clock regmap.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 23 +++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
+oot/dts/allwinner/sun50i-a64.dtsi
+> index 1b2ef28c42bd..1c37659d9d41 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -168,10 +168,25 @@
+>  		#size-cells =3D <1>;
+>  		ranges;
+> =20
+> -		syscon: syscon@1c00000 {
+> -			compatible =3D "allwinner,sun50i-a64-system-controller",
+> -				"syscon";
+> +		sram_controller: sram-controller@1c00000 {
+> +			compatible =3D "allwinner,sun50i-a64-sram-controller";
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index e5b0d42..f4da12c 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -4,6 +4,7 @@ obj-y += \
- 	clk.o \
- 	clk-busy.o \
- 	clk-cpu.o \
-+	clk-composite.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
- 	clk-gate-exclusive.o \
-diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
-new file mode 100644
-index 0000000..297974b
---- /dev/null
-+++ b/drivers/clk/imx/clk-composite.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017~2018 NXP
-+ *
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/slab.h>
-+
-+#define PCG_PCS_SHIFT	24
-+#define PCG_PCS_MASK	0x7
-+#define PCG_CGC_SHIFT	30
-+#define PCG_FRAC_SHIFT	3
-+#define PCG_FRAC_WIDTH	1
-+#define PCG_FRAC_MASK	BIT(3)
-+#define PCG_PCD_SHIFT	0
-+#define PCG_PCD_WIDTH	3
-+#define PCG_PCD_MASK	0x7
-+
-+struct clk_hw *imx_clk_composite(const char *name,
-+			      const char * const *parent_names,
-+			      int num_parents, bool mux_present,
-+			      bool rate_present, bool gate_present,
-+			      void __iomem *reg)
-+{
-+	struct clk_hw *mux_hw = NULL, *fd_hw = NULL, *gate_hw = NULL;
-+	struct clk_fractional_divider *fd = NULL;
-+	struct clk_gate *gate = NULL;
-+	struct clk_mux *mux = NULL;
-+	struct clk_hw *hw;
-+
-+	if (mux_present) {
-+		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+		if (!mux)
-+			return ERR_PTR(-ENOMEM);
-+		mux_hw = &mux->hw;
-+		mux->reg = reg;
-+		mux->shift = PCG_PCS_SHIFT;
-+		mux->mask = PCG_PCS_MASK;
-+	}
-+
-+	if (rate_present) {
-+		fd = kzalloc(sizeof(*fd), GFP_KERNEL);
-+		if (!fd) {
-+			kfree(mux);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		fd_hw = &fd->hw;
-+		fd->reg = reg;
-+		fd->mshift = PCG_FRAC_SHIFT;
-+		fd->mwidth = PCG_FRAC_WIDTH;
-+		fd->mmask  = PCG_FRAC_MASK;
-+		fd->nshift = PCG_PCD_SHIFT;
-+		fd->nwidth = PCG_PCD_WIDTH;
-+		fd->nmask = PCG_PCD_MASK;
-+		fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
-+	}
-+
-+	if (gate_present) {
-+		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+		if (!gate) {
-+			kfree(mux);
-+			kfree(fd);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		gate_hw = &gate->hw;
-+		gate->reg = reg;
-+		gate->bit_idx = PCG_CGC_SHIFT;
-+	}
-+
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+				       mux_hw, &clk_mux_ops, fd_hw,
-+				       &clk_fractional_divider_ops, gate_hw,
-+				       &clk_gate_ops, CLK_SET_RATE_GATE |
-+				       CLK_SET_PARENT_GATE);
-+	if (IS_ERR(hw)) {
-+		kfree(mux);
-+		kfree(fd);
-+		kfree(gate);
-+	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index a5a9374..bc43f68 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -71,6 +71,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
- 			     const char **parent_names, int num_parents);
- 
-+struct clk_hw *imx_clk_composite(const char *name,
-+				 const char * const *parent_names,
-+				 int num_parents, bool mux_present,
-+				 bool rate_present, bool gate_present,
-+				 void __iomem *reg);
-+
- struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void __iomem *reg, u8 shift, u8 width,
- 				  void (*fixup)(u32 *val));
--- 
-2.7.4
+I don't think there's anything preventing us from keeping the
+-system-controller compatible. It's what was in the DT before, and
+it's how it's called in the datasheet.
+
+Otherwise, the whole serie looks good to me:
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--w7sjvnulmm2nvbrt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrpihUACgkQ0rTAlCFN
+r3RVCw//aZA2rPyqkFmrSHOFRQHH0hAa+nSEsBT2aj4vg1uvHpzp7bgW5Kn7fwxK
+H+5q5JgE0pDHB3yy3O5CyGdu9U9dEkAIG/+Cu6STgF8JP1VAhzRckZ+Wsv9Zo5/W
+fPwHjndcQ3zth4QGAybc0xR8yjxbsxQ4u93moPjiy5xWxJNzb8XJv1Cc2kmFfNxh
+6mofpQ5hAyWi5LBMFYje4XYQvrt1rYAEGri2eWY3yscTQk9p9krzWe4MXfn9KoH/
+DHSPblL2BuwyuL93MH9dTDHMS11PPQamQP5YrXaT3Sysruk3UJcBysdiEcw2ctlM
+7wDct57Vwakg7WjfiPjxJ+jBssn2ljOBLeq9pg59Qe+Y6WRfk6K7L10kPReRccDs
+fjGJooCwiQe11pMJmYvgJ6V0T+gNRqU6Q/FAQXxcyeRatHG5Ftdj02s+mBdbAtoe
+z4kkdjQIDAfS4C1ZAwOdpgZZUr50eJ9NKfwAeBHOwNHmWDjfGGD3tLD0qaUafS2d
+XDG/wBjB/d0nYShAyLBavoD/JsCx6F3V7z3wGoKGgO5DuEyZypo5oTMWb6i2et+w
+gAnF7zicG4L9pNsBLBVNz/6w4C0oQ4JcNMjTQpsLpBzlkd3KYJwvlCYDhzoAvUJx
+JL9HgNFZPHFrL1K41DbGSjwI9UQaZUQCRes2rftss+ms5xhTW8c=
+=sbTc
+-----END PGP SIGNATURE-----
+
+--w7sjvnulmm2nvbrt--
