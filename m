@@ -1,46 +1,34 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Tue, 29 May 2018 11:35:41 +0300
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
- driver
-Message-ID: <20180529083541.GA13528@localhost.localdomain>
-References: <20180528090003.GA8778@localhost.localdomain>
- <20180529073958.GB4790@dell>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180529073958.GB4790@dell>
+In-Reply-To: <20180426235818.10018-3-digetx@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com> <20180426235818.10018-3-digetx@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 May 2018 14:32:23 +0200
+Message-ID: <CACRpkdYP88CnsqakjcgBfHgjsR2i4jKvY_--Tw+hgZ_EuA+e6Q@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] pinctrl: tegra20: Provide CDEV1/2 clock muxes
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-tegra@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+On Fri, Apr 27, 2018 at 1:58 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
 
-On Tue, May 29, 2018 at 08:39:58AM +0100, Lee Jones wrote:
-> On Mon, 28 May 2018, Matti Vaittinen wrote:
-> 
-> > Patch series adding support for ROHM BD71837 PMIC.
-> FYI, this patch-set is going to be difficult to manage since it was
-> not sent 'threaded'.
-> 
-> If/when you send a subsequent version, could you please ensure you
-> send the set threaded so the patches keep in relation to one another
-> as they are reviewed?
+> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
+> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
+> that main clk-controller driver could get an actual parent clock for the
+> CDEV1/2 clocks.
+>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-Thanks for the guidance. I have not sent so many patches to community so
-I am grateful also from all the practical tips =) Just one slight problem.
-I have only seen emails being threaded when one is replying to an email.
-So how should I send my patches in same thread? Just send first one and
-then send subsequent patches as replies?
+If this can be applied separately from the other patches, then please
+send it separately after fixing Peter's review nits and adding his
+review-tag, thanks!
 
-I just killed some unused definitions and one unused variable from the
-code so I am about to send new version. I'll try doing that as a threaded
-series and resend all the patches as v3.
-
-Br,
-	Matti Vaittinen
+Yours,
+Linus Walleij
