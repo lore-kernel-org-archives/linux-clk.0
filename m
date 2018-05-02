@@ -1,120 +1,82 @@
-Return-Path: <amit.kucheria@verdurent.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v9 24/27] dt-bindings: timer: new bindings for TI DaVinci
+ timer
+To: Rob Herring <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
+ Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-25-david@lechnology.com>
+ <20180427140522.npmhjamhwxgp7y73@rob-hp-laptop>
+From: David Lechner <david@lechnology.com>
+Message-ID: <7cea07f1-e174-8496-a27a-01f0e3082054@lechnology.com>
+Date: Tue, 1 May 2018 20:52:18 -0500
 MIME-Version: 1.0
-Sender: amit.kucheria@verdurent.com
-In-Reply-To: <1526375616-16904-11-git-send-email-ilialin@codeaurora.org>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-11-git-send-email-ilialin@codeaurora.org>
-From: Amit Kucheria <amit.kucheria@linaro.org>
-Date: Wed, 16 May 2018 16:12:52 +0300
-Message-ID: <CAHLCerOxcUMTztT75rdkS-rrQWqEEgoVQr45Ueh_JRPE7CCm7Q@mail.gmail.com>
-Subject: Re: [PATCH v7 10/14] dt-bindings: qcom_spmi: Add support for SAW documentation
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>, catalin.marinas@arm.com, will.deacon@arm.com,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	lakml <linux-arm-kernel@lists.infradead.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>, nicolas.dechesne@linaro.org, celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180427140522.npmhjamhwxgp7y73@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 15, 2018 at 12:13 PM, Ilia Lin <ilialin@codeaurora.org> wrote:
-> Add support for SAW controlled regulators.
-> The regulators defined as SAW controlled in the device tree
-> will be controlled through special CPU registers instead of direct
-> SPMI accesses.
-> This is required especially for CPU supply regulators to synchronize
-> with clock scaling and for Automatic Voltage Switching.
-> Document it.
+Sekhar,
 
-Replace this boiler plate with what this patch actual does. Besides
-changing the subject, it could be, for example,
+On 04/27/2018 09:05 AM, Rob Herring wrote:
+> On Thu, Apr 26, 2018 at 07:17:42PM -0500, David Lechner wrote:
+>> This adds new device tree bindings for the timer IP block of TI
+>> DaVinci-like SoCs.
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+>> ---
+>>
+>> v9 changes:
+>> - new patch in v9
+>>
+>>
+>>   .../bindings/timer/ti,davinci-timer.txt       | 24 +++++++++++++++++++
+>>   1 file changed, 24 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt b/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
+>> new file mode 100644
+>> index 000000000000..2091eca46981
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
+>> @@ -0,0 +1,24 @@
+>> +* Device tree bindings for Texas Instruments DaVinci timer
+>> +
+>> +This document provides bindings for the 64-bit timer in the DaVinci
+>> +architecture devices. The timer can be configured as a general-purpose 64-bit
+>> +timer, dual general-purpose 32-bit timers. When configured as dual 32-bit
+>> +timers, each half can operate in conjunction (chain mode) or independently
+>> +(unchained mode) of each other.
+>> +
+>> +It is global timer is a free running up-counter and can generate interrupt
+> 
+> Doesn't make sense, too many 'is'.
+> 
+> There's no interrupt property listed.
+> 
+>> +when the counter reaches preset counter values.
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "ti,davinci-timer".
+>> +- reg : specifies base physical address and count of the registers.
+>> +- clocks : the clock feeding the timer clock.
+>> +
+>> +Example:
+>> +
+>> +	clocksource: timer@20000 {
+>> +		compatible = "ti,davinci-timer";
+>> +		reg = <0x20000 0x1000>;
+>> +		clocks = <&pll0_auxclk>;
+>> +	};
+>> -- 
+>> 2.17.0
+>>
 
-"Document the DT bindings for the SAW regulators.
-
-The saw-slave property allows ganging (grouping) of several regulators
-so that their outputs can be combined... blah blah.
-
-The saw-leader is the only one that then is configurable in DT"
-
-
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-> index 57d2c65..406f2e5 100644
-> --- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-> +++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-> @@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
->         Definition: Reference to regulator supplying the input pin, as
->                     described in the data sheet.
->
-> +- qcom,saw-reg:
-> +       Usage: optional
-> +       Value type: <phandle>
-> +       Description: Reference to syscon node defining the SAW registers.
-> +
->
->  The regulator node houses sub-nodes for each regulator within the device. Each
->  sub-node is identified using the node's name, with valid values listed for each
-> @@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
->                         2 = 0.55 uA
->                         3 = 0.75 uA
->
-> +- qcom,saw-slave:
-> +       Usage: optional
-> +       Value type: <boo>
-> +       Description: SAW controlled gang slave. Will not be configured.
-> +
-> +- qcom,saw-leader:
-> +       Usage: optional
-> +       Value type: <boo>
-> +       Description: SAW controlled gang leader. Will be configured as
-> +                    SAW regulator.
-> +
->  Example:
->
->         regulators {
-> @@ -221,3 +237,32 @@ Example:
->
->                 ....
->         };
-> +
-> +Example 2:
-> +
-> +       saw3: syscon@9A10000 {
-> +               compatible = "syscon";
-> +               reg = <0x9A10000 0x1000>;
-> +       };
-> +
-> +       ...
-> +
-> +       spm-regulators {
-> +               compatible = "qcom,pm8994-regulators";
-> +               qcom,saw-reg = <&saw3>;
-> +               s8 {
-> +                       qcom,saw-slave;
-> +               };
-> +               s9 {
-> +                       qcom,saw-slave;
-> +               };
-> +               s10 {
-> +                       qcom,saw-slave;
-> +               };
-> +               pm8994_s11_saw: s11 {
-> +                       qcom,saw-leader;
-> +                       regulator-always-on;
-> +                       regulator-min-microvolt = <900000>;
-> +                       regulator-max-microvolt = <1140000>;
-> +               };
-> +       };
-> --
-> 1.9.1
->
+What do you think about trying to reuse the keystone timer here instead of
+introducing our own binding? I assume it is basically the same since the
+watchdog timer is shared already between davinci and keystone.
