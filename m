@@ -1,75 +1,54 @@
-Return-Path: <sboyd@kernel.org>
-From: sboyd@kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.17-rc3
-Date: Fri,  4 May 2018 18:55:46 -0700
-Message-Id: <20180505015546.133327-1-sboyd@kernel.org>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 2 May 2018 15:38:08 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>, Jacky Bai <ping.bai@nxp.com>
+Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+Message-ID: <20180502073807.GE3443@dragon>
+References: <20180418124908.3079-1-stefan@agner.ch>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180418124908.3079-1-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@kernel.org>
+Hi Jacky,
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+Do you see this problem on i.MX6 ULL?  What's your take on Stefan's fix?
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+Shawn
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to c964cfc612b59910593fa10ee1c2673db274c9c7:
-
-  Merge tag 'meson-clk-fixes-4.17-1' of https://github.com/BayLibre/clk-meson into clk-fixes (2018-05-01 14:44:16 -0700)
-
-----------------------------------------------------------------
-A handful of fixes for the stm32mp1 clk driver came in during the merge
-window for the driver that got merged in the merge window. Plus a
-warning fix for unused PM ops and a couple fixes for the meson clk
-driver clk names that went unnoticed with the regmap rework. There's
-also another fix in here for the mux rounding flag which wasn't doing
-what it said it did, but now it does.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      clk: cs2000: mark resume function as __maybe_unused
-
-Gabriel Fernandez (6):
-      clk: stm32mp1: add missing static
-      clk: stm32mp1: remove unused dfsdm_src[] const
-      clk: stm32mp1: fix SAI3 & SAI4 clocks
-      clk: stm32mp1: add missing tzc2 clock
-      clk: stm32mp1: set stgen_k clock as critical
-      clk: stm32mp1: remove ck_apb_dbg clock
-
-Jerome Brunet (2):
-      clk: honor CLK_MUX_ROUND_CLOSEST in generic clk mux
-      clk: meson: honor CLK_MUX_ROUND_CLOSEST in clk_regmap
-
-Martin Blumenstingl (2):
-      clk: meson: meson8b: fix meson8b_fclk_div3_div clock name
-      clk: meson: meson8b: fix meson8b_cpu_clk parent clock name
-
-Stephen Boyd (2):
-      Merge branch 'clk-stm32mp1' into clk-fixes
-      Merge tag 'meson-clk-fixes-4.17-1' of https://github.com/BayLibre/clk-meson into clk-fixes
-
-Yixun Lan (1):
-      clk: meson: drop meson_aoclk_gate_regmap_ops
-
- drivers/clk/clk-cs2000-cp.c               |  2 +-
- drivers/clk/clk-mux.c                     | 10 +++++-
- drivers/clk/clk-stm32mp1.c                | 54 +++++++++++++------------------
- drivers/clk/clk.c                         |  7 ++--
- drivers/clk/meson/clk-regmap.c            | 11 ++++++-
- drivers/clk/meson/gxbb-aoclk.h            |  2 --
- drivers/clk/meson/meson8b.c               |  5 +--
- include/dt-bindings/clock/stm32mp1-clks.h |  4 +--
- include/linux/clk-provider.h              |  3 ++
- 9 files changed, 55 insertions(+), 43 deletions(-)
-
--- 
-Sent by a computer through tubes
+On Wed, Apr 18, 2018 at 02:49:08PM +0200, Stefan Agner wrote:
+> On i.MX6 ULL using PLL3 seems to cause a freeze when setting
+> the parent to IMX6UL_CLK_PLL3_USB_OTG. This only seems to appear
+> since commit 6f9575e55632 ("clk: imx: Add CLK_IS_CRITICAL flag
+> for busy divider and busy mux"), probably because the clock is
+> now forced to be on.
+> 
+> Fixes: 6f9575e55632("clk: imx: Add CLK_IS_CRITICAL flag for busy divider and busy mux")
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+> This addresses a regression ssen on v4.17-rc1 where the kernel
+> boots during clock initialization, see also:
+> https://patchwork.kernel.org/patch/10295927/
+> 
+>  drivers/clk/imx/clk-imx6ul.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+> index 114ecbb94ec5..12320118f8de 100644
+> --- a/drivers/clk/imx/clk-imx6ul.c
+> +++ b/drivers/clk/imx/clk-imx6ul.c
+> @@ -464,7 +464,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  	clk_set_rate(clks[IMX6UL_CLK_AHB], 99000000);
+>  
+>  	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
+> -	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_PLL3_USB_OTG]);
+> +	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_OSC]);
+>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_CLK2]);
+>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH_PRE], clks[IMX6UL_CLK_PLL2_BUS]);
+>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_PRE]);
+> -- 
+> 2.17.0
+> 
