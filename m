@@ -1,82 +1,71 @@
-Return-Path: <prvs=3682ee18e6=Matti.Vaittinen@fi.rohmeurope.com>
-From: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To: Mark Brown <broonie@kernel.org>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>, "lee.jones@linaro.org"
-	<lee.jones@linaro.org>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Mutanen,
- Mikko" <Mikko.Mutanen@fi.rohmeurope.com>, "Haikola, Heikki"
-	<Heikki.Haikola@fi.rohmeurope.com>
-Subject: RE: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
- regulators
-Date: Thu, 24 May 2018 17:30:57 +0000
-Message-ID: <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
-References: <20180524055752.GE4249@localhost.localdomain>,<20180524140118.GS4828@sirena.org.uk>
-In-Reply-To: <20180524140118.GS4828@sirena.org.uk>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [v6 0/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Wed,  2 May 2018 16:21:15 +0530
+Message-Id: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Mark,=0A=
-=0A=
-First of all, thank you for taking your time to check the patches. I do=0A=
-appreciate it. I find reading patches hard myself.=0A=
-=0A=
-> From: Mark Brown [broonie@kernel.org]=0A=
-> Sent: Thursday, May 24, 2018 5:01 PM=0A=
-> =0A=
-> > On Thu, May 24, 2018 at 08:57:52AM +0300, Matti Vaittinen wrote:=0A=
->=0A=
-> > +Required properties:=0A=
-> > + - compatible: should be "rohm,bd71837-pmic".=0A=
-> > + - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "l=
-do7"=0A=
->=0A=
-> The MFD is for a single device, there should be no need for compatibles=
-=0A=
-> on subfunctions.=0A=
-=0A=
-I will check this. I must admit I am not sure what is the de-facto mechanis=
-m=0A=
-for assigning the correct device-tree nodes to sub devices if compatibles=
-=0A=
-are not used? I think I saw device-tree node name being used for regulators=
-=0A=
-but how is it done for example with clk? I would be grateful if anyone coul=
-d=0A=
-point me to right direction with this.=0A=
-=0A=
-Also, another thing I was wondering is how supply regulators should be=0A=
-handled? In this case the LDO5 is supplied by BUCK6 and LDO6 by=0A=
-BUCK7. =0A=
-=0A=
->From generic regulator bindings=0A=
-/Documentation/devicetree/bindings/regulator/regulator.txt=0A=
-I found statement:=0A=
-=0A=
-> - <name>-supply: phandle to the parent supply/regulator node=0A=
-=0A=
-and=0A=
-=0A=
-> Regulator Consumers:=0A=
-> Consumer nodes can reference one or more of its supplies/=0A=
-> regulators using the below bindings.=0A=
->=0A=
-> - <name>-supply: phandle to the regulator node=0A=
->=0A=
-> These are the same bindings that a regulator in the above=0A=
-> example used to reference its own supply, in which case=0A=
-> ts just seen as a special case of a regulator being a=0A=
-> consumer itself.=0A=
-=0A=
-but I did not find handling for the supply properties from regulator core.=
-=0A=
-Thus I ended up hard coding the supply relation in driver. This means=0A=
-that buck6 name must be fixed.=0A=
-=0A=
-Br,=0A=
-    Matti Vaittinen=
+ [v6]
+   * Addressed comments from Rob
+   * Addressed comments from Stephen
+
+ [v5]
+   * Addressed comments from Stephen
+   * Introduced a new DT property to take clock divs
+
+ [v4]
+  * Addressed comments from Stephen
+
+ [v3]
+  * Addressed documentation & code review comments from Bjorn
+  * Addressed bindings comments from Rob
+  * Updated the patch series order for bindings
+
+ [v2]
+  * Addressed comments from Stephen
+  * Addressed comments from Evan
+
+This patch series adds a driver and device tree documentation binding
+for the clock control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
+would send requests for the RPMh managed clock resources.
+
+The RPMh clock driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.
+
+Thanks,
+Taniya
+
+[1]: https://lkml.org/lkml/2018/3/9/979
+[2]: https://lkml.org/lkml/2018/3/14/787
+
+Taniya Das (2):
+  dt-bindings: clock: Introduce QCOM RPMh clock bindings
+  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+
+ .../devicetree/bindings/clock/qcom,rpmh-clk.txt    |  53 +++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-rpmh.c                        | 368 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h              |  22 ++
+ 5 files changed, 453 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
+ create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
