@@ -1,91 +1,101 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:45203 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750898AbeEBKUR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 May 2018 06:20:17 -0400
+Date: Wed, 02 May 2018 18:19:51 +0800
+In-Reply-To: <CAGb2v67pvL58Pes1ZFDZtPu_nL2+m6dgf_XOOymG9nVAkXVpEw@mail.gmail.com>
+References: <20180501161227.2110-1-wens@csie.org> <20180501161227.2110-16-wens@csie.org> <20180502095118.rqnfwy576xh6ercm@flea> <CAGb2v67pvL58Pes1ZFDZtPu_nL2+m6dgf_XOOymG9nVAkXVpEw@mail.gmail.com>
 MIME-Version: 1.0
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
- Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
- Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
- Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Harry Wei <harryxiyou@gmail.com>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
- Michal Simek <monstr@monstr.eu>, Jeff Dike <jdike@addtoit.com>,
- Richard Weinberger <richard@nod.at>, Guan Xuetao <gxt@pku.edu.cn>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
- Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
- Jens Axboe <axboe@kernel.dk>, David Howells <dhowells@redhat.com>,
- David Woodhouse <dwmw2@infradead.org>,
- Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michael Turquette <mturquette@baylibre.com>, David Airlie <airlied@linux.ie>,
- Gustavo Padovan <gustavo@padovan.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Sean Paul <seanpaul@chromium.org>,
- =?utf-8?q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
- Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Malcolm Priestley <tvboxspy@gmail.com>, Antoine Jacquet <royale@zerezo.com>,
- Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
- Josh Triplett <josh@joshtriplett.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Juergen Gross <jgross@suse.com>, Li Zefan <lizefan@huawei.com>,
- Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>,
- Eric Paris <eparis@parisplace.org>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Alan Stern <stern@rowland.harvard.edu>,
- Andrea Parri <parri.andrea@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
- Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
- Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>,
- Akira Yokosawa <akiyks@gmail.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@zh-kernel.org,
- user-mode-linux-devel@lists.sourceforge.net,
- user-mode-linux-user@lists.sourceforge.net, linux-xtensa@linux-xtensa.org,
- linux-block@vger.kernel.org, keyrings@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org, patches@opensource.cirrus.com,
- linux-bcache@vger.kernel.org, linux-usb@vger.kernel.org,
- devel@driverdev.osuosl.org, xen-devel@lists.xenproject.org,
- cgroups@vger.kernel.org, selinux@tycho.nsa.gov,
- linux-security-module@vger.kernel.org, alsa-devel@alsa-project.org
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
- <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-Message-ID: <152641596420.237094.12177504626636253047@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
-Date: Tue, 15 May 2018 13:26:04 -0700
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH net-next v2 15/15] arm64: dts: allwinner: a64: add SRAM controller device tree node
+To: linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+CC: Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <29E5670C-9D17-4EC1-AAAC-0CF33DD0534C@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Mauro Carvalho Chehab (2018-05-09 06:18:52)
-> As we move stuff around, some doc references are broken. Fix some of
-> them via this script:
->         ./scripts/documentation-file-ref-check --fix-rst
-> =
 
-> Manually checked if the produced result is valid, removing a few
-> false-positives.
-> =
 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
+于 2018年5月2日 GMT+08:00 下午5:53:21, Chen-Yu Tsai <wens@csie.org> 写到:
+>On Wed, May 2, 2018 at 5:51 PM, Maxime Ripard
+><maxime.ripard@bootlin.com> wrote:
+>> Hi,
+>>
+>> On Wed, May 02, 2018 at 12:12:27AM +0800, Chen-Yu Tsai wrote:
+>>> From: Icenowy Zheng <icenowy@aosc.io>
+>>>
+>>> Allwinner A64 has a SRAM controller, and in the device tree
+>currently
+>>> we have a syscon node to enable EMAC driver to access the EMAC clock
+>>> register. As SRAM controller driver can now export regmap for this
+>>> register, replace the syscon node to the SRAM controller device
+>node,
+>>> and let EMAC driver to acquire its EMAC clock regmap.
+>>>
+>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>>> ---
+>>>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 23
+>+++++++++++++++----
+>>>  1 file changed, 19 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>> index 1b2ef28c42bd..1c37659d9d41 100644
+>>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>> @@ -168,10 +168,25 @@
+>>>               #size-cells = <1>;
+>>>               ranges;
+>>>
+>>> -             syscon: syscon@1c00000 {
+>>> -                     compatible =
+>"allwinner,sun50i-a64-system-controller",
+>>> -                             "syscon";
+>>> +             sram_controller: sram-controller@1c00000 {
+>>> +                     compatible =
+>"allwinner,sun50i-a64-sram-controller";
+>>
+>> I don't think there's anything preventing us from keeping the
+>> -system-controller compatible. It's what was in the DT before, and
+>> it's how it's called in the datasheet.
+>
+>I actually meant to ask you about this. The -system-controller
+>compatible
+>matches the datasheet better. Maybe we should just switch to that one?
 
->  drivers/clk/clk.c                             |  4 ++--
->  drivers/clk/ingenic/cgu.h                     |  2 +-
+No, if we do the switch the system-controller compatible,
+the device will be probed on the same memory region with
+a syscon on old DTs.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+>
+>ChenYu
+>
+>> Otherwise, the whole serie looks good to me:
+>> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+>>
+>> Maxime
+>>
+>> --
+>> Maxime Ripard, Bootlin (formerly Free Electrons)
+>> Embedded Linux and Kernel engineering
+>> https://bootlin.com
+>
+>_______________________________________________
+>linux-arm-kernel mailing list
+>linux-arm-kernel@lists.infradead.org
+>http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
