@@ -1,59 +1,36 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: boris.brezillon@bootlin.com,
-	dwmw2@infradead.org,
-	computersforpeace@gmail.com,
-	marek.vasut@gmail.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	thierry.reding@gmail.com,
+Return-Path: <dinguyen@kernel.org>
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: linux-clk@vger.kernel.org
+Cc: dinguyen@kernel.org,
+	sboyd@kernel.org,
 	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: dev@lynxeye.de,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	marcel@ziswiler.com,
-	krzk@kernel.org,
-	digetx@gmail.com,
-	benjamin.lindqvist@endian.se,
-	jonathanh@nvidia.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mirza.krak@gmail.com,
-	linux-mtd@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
-Date: Sun, 27 May 2018 23:54:40 +0200
-Message-Id: <20180527215442.14760-5-stefan@agner.ch>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] clk: socfpga: stratix10: suppress unbinding platform's clock driver
+Date: Wed,  2 May 2018 09:28:33 -0500
+Message-Id: <1525271313-24427-2-git-send-email-dinguyen@kernel.org>
+In-Reply-To: <1525271313-24427-1-git-send-email-dinguyen@kernel.org>
+References: <1525271313-24427-1-git-send-email-dinguyen@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lucas Stach <dev@lynxeye.de>
+The Stratix10 clock driver is essential to system operation, so their
+removal should never happen.
 
-Set up the NAND Flash controller clock to run at 150MHz
-instead of the rate set by the bootloader. This is a
-conservative rate which also yields good performance.
-
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra20.c | 1 +
+ drivers/clk/socfpga/clk-s10.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 0ee56dd04cec..dff8c425cd28 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-+	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+index c788997..3c953ca 100644
+--- a/drivers/clk/socfpga/clk-s10.c
++++ b/drivers/clk/socfpga/clk-s10.c
+@@ -329,6 +329,7 @@ static struct platform_driver stratix10_clkmgr_driver = {
+ 	.probe		= s10_clkmgr_probe,
+ 	.driver		= {
+ 		.name	= "stratix10-clkmgr",
++		.suppress_bind_attrs = true,
+ 		.of_match_table = stratix10_clkmgr_match_table,
+ 	},
  };
 -- 
-2.17.0
+2.7.4
