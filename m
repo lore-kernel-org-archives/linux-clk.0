@@ -1,180 +1,116 @@
-Return-Path: <enric.balletbo@collabora.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	David Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Derek Basehore <dbasehore@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	Lin Huang <hl@rock-chips.com>,
-	kernel@collabora.com,
-	Sean Paul <seanpaul@chromium.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 06/10] devfreq: rk3399_dmc / clk: rockchip: Disable DDR clk timeout on suspend.
-Date: Mon, 14 May 2018 23:16:06 +0200
-Message-Id: <20180514211610.26618-7-enric.balletbo@collabora.com>
-In-Reply-To: <20180514211610.26618-1-enric.balletbo@collabora.com>
-References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:47351 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751079AbeEBLdC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 May 2018 07:33:02 -0400
+Date: Wed, 2 May 2018 13:32:50 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 02/21] arm64: dts: allwinner: a64: Add DE2 CCU
+Message-ID: <20180502113250.5i2eyzv237t5oyl6@flea>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-3-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="urvus633irkg5na3"
+In-Reply-To: <20180430114058.5061-3-jagan@amarulasolutions.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Derek Basehore <dbasehore@chromium.org>
 
-This disables the timeout for the DDR clk when the governor is
-suspended or stopped. This makes sure that the suspend frequency is
-set. It also makes sure that the userspace governor will be able to
-change the frequency without failing.
+--urvus633irkg5na3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+On Mon, Apr 30, 2018 at 05:10:39PM +0530, Jagan Teki wrote:
+> DE2 in A64 has clock control unit and behavior is
+> same like H3/H5, so reuse the same in A64.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
+oot/dts/allwinner/sun50i-a64.dtsi
+> index 1b2ef28c42bd..67b80bbe5bf5 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -43,9 +43,11 @@
+>   */
+> =20
+>  #include <dt-bindings/clock/sun50i-a64-ccu.h>
+> +#include <dt-bindings/clock/sun8i-de2.h>
+>  #include <dt-bindings/clock/sun8i-r-ccu.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/reset/sun50i-a64-ccu.h>
+> +#include <dt-bindings/reset/sun8i-de2.h>
+> =20
+>  / {
+>  	interrupt-parent =3D <&gic>;
+> @@ -168,6 +170,19 @@
+>  		#size-cells =3D <1>;
+>  		ranges;
+> =20
+> +		display_clocks: clock@1000000 {
+> +			compatible =3D "allwinner,sun50i-a64-de2-clk",
+> +				     "allwinner,sun50i-h5-de2-clk";
 
- drivers/clk/rockchip/clk-ddr.c    | 21 ++++++++++++++++++---
- drivers/devfreq/rk3399_dmc.c      | 20 +++++++++++++++-----
- drivers/devfreq/rk3399_dmc_priv.h |  1 +
- 3 files changed, 34 insertions(+), 8 deletions(-)
+The A64 was released before the H5, so that should be the other way
+around.
 
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index 707be1bd8910..de00590af167 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -32,6 +32,7 @@ struct rockchip_ddrclk {
- 	int		div_shift;
- 	int		div_width;
- 	int		ddr_flag;
-+	bool		timeout_en;
- 	unsigned long	cached_rate;
- 	struct work_struct set_rate_work;
- 	struct mutex	lock;
-@@ -52,8 +53,9 @@ static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- 
- 	mutex_lock(&ddrclk->lock);
- 	for (i = 0; i < DDRCLK_SET_RATE_MAX_RETRIES; i++) {
--		ret = raw_notifier_call_chain(&ddrclk->sync_chain, 0, &timeout);
--		if (ret == NOTIFY_BAD)
-+		ret = raw_notifier_call_chain(&ddrclk->sync_chain, 0,
-+					      &timeout);
-+		if (ddrclk->timeout_en && ret == NOTIFY_BAD)
- 			goto out;
- 
- 		/*
-@@ -63,7 +65,8 @@ static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- 		 * at the wrong time.
- 		 */
- 		local_irq_disable();
--		if (ktime_after(ktime_add_ns(ktime_get(), DMC_MIN_VBLANK_NS),
-+		if (ddrclk->timeout_en &&
-+		    ktime_after(ktime_add_ns(ktime_get(), DMC_MIN_VBLANK_NS),
- 				timeout)) {
- 			local_irq_enable();
- 			continue;
-@@ -79,6 +82,17 @@ static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- 	mutex_unlock(&ddrclk->lock);
- }
- 
-+void rockchip_ddrclk_set_timeout_en(struct clk *clk, bool enable)
-+{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+
-+	mutex_lock(&ddrclk->lock);
-+	ddrclk->timeout_en = enable;
-+	mutex_unlock(&ddrclk->lock);
-+}
-+EXPORT_SYMBOL(rockchip_ddrclk_set_timeout_en);
-+
- int rockchip_ddrclk_register_sync_nb(struct clk *clk, struct notifier_block *nb)
- {
- 	struct clk_hw *hw = __clk_get_hw(clk);
-@@ -232,6 +246,7 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 	ddrclk->div_shift = div_shift;
- 	ddrclk->div_width = div_width;
- 	ddrclk->ddr_flag = ddr_flag;
-+	ddrclk->timeout_en = true;
- 	mutex_init(&ddrclk->lock);
- 	INIT_WORK(&ddrclk->set_rate_work, rockchip_ddrclk_set_rate_func);
- 	RAW_INIT_NOTIFIER_HEAD(&ddrclk->sync_chain);
-diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-index c174d13afe92..2fa4ab653c35 100644
---- a/drivers/devfreq/rk3399_dmc.c
-+++ b/drivers/devfreq/rk3399_dmc.c
-@@ -308,14 +308,18 @@ int rockchip_dmcfreq_register_clk_sync_nb(struct devfreq *devfreq,
- 	 * one notifier is not generally possible. Thus, if more than one sync
- 	 * notifier is registered, disable dmcfreq.
- 	 */
--	if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+	if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, false);
- 		devfreq_suspend_device(devfreq);
-+	}
- 
- 	ret = rockchip_ddrclk_register_sync_nb(dmcfreq->dmc_clk, nb);
- 	if (ret == 0)
- 		dmcfreq->num_sync_nb++;
--	else if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+	else if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, true);
- 		devfreq_resume_device(devfreq);
-+	}
- 
- 	mutex_unlock(&dmcfreq->en_lock);
- 	return ret;
-@@ -332,8 +336,10 @@ int rockchip_dmcfreq_unregister_clk_sync_nb(struct devfreq *devfreq,
- 	ret = rockchip_ddrclk_unregister_sync_nb(dmcfreq->dmc_clk, nb);
- 	if (ret == 0) {
- 		dmcfreq->num_sync_nb--;
--		if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+		if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0) {
-+			rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, true);
- 			devfreq_resume_device(devfreq);
-+		}
- 	}
- 
- 	mutex_unlock(&dmcfreq->en_lock);
-@@ -348,8 +354,10 @@ int rockchip_dmcfreq_block(struct devfreq *devfreq)
- 	int ret = 0;
- 
- 	mutex_lock(&dmcfreq->en_lock);
--	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count <= 0)
-+	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count <= 0) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, false);
- 		ret = devfreq_suspend_device(devfreq);
-+	}
- 
- 	if (!ret)
- 		dmcfreq->disable_count++;
-@@ -365,8 +373,10 @@ int rockchip_dmcfreq_unblock(struct devfreq *devfreq)
- 	int ret = 0;
- 
- 	mutex_lock(&dmcfreq->en_lock);
--	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count == 1)
-+	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count == 1) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, true);
- 		ret = devfreq_resume_device(devfreq);
-+	}
- 
- 	if (!ret)
- 		dmcfreq->disable_count--;
-diff --git a/drivers/devfreq/rk3399_dmc_priv.h b/drivers/devfreq/rk3399_dmc_priv.h
-index 8ac0340a4990..1ad46f4b15cc 100644
---- a/drivers/devfreq/rk3399_dmc_priv.h
-+++ b/drivers/devfreq/rk3399_dmc_priv.h
-@@ -7,6 +7,7 @@
- #ifndef __RK3399_DMC_PRIV_H
- #define __RK3399_DMC_PRIV_H
- 
-+void rockchip_ddrclk_set_timeout_en(struct clk *clk, bool enable);
- void rockchip_ddrclk_wait_set_rate(struct clk *clk);
- int rockchip_ddrclk_register_sync_nb(struct clk *clk,
- 				     struct notifier_block *nb);
--- 
-2.17.0
+> +			reg =3D <0x01000000 0x100000>;
+> +			clocks =3D <&ccu CLK_DE>,
+> +				 <&ccu CLK_BUS_DE>;
+> +			clock-names =3D "mod",
+> +				      "bus";
+> +			resets =3D <&ccu RST_BUS_DE>;
+> +			#clock-cells =3D <1>;
+> +			#reset-cells =3D <1>;
+> +		};
+> +
+
+So it turns out we don't need the SRAM to access the CCU driver?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--urvus633irkg5na3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrpodMACgkQ0rTAlCFN
+r3T3VQ//S/G55KqTYTfHCm8/2H0AQTqf8MyYhHeliYSAxF551L+shkCg0jmiSk/2
+lqE4O8LeeLS/nJe/gocSlW/UcurE1DDLJmqkjkZ8g5sPo1jtnSzAlpbI3oqnzU0A
+7dFeoAykbKgIlRpa5U6vg5VkUwd1GXP2asw6z+Qf9YcBcm8bMdgy+5JcbL+JdpEJ
+Tu5aZ8Z12wEyMPJAVgxFjANdR77rtWN0GkfamK1SPgnN/ARwZzKWBq6vZcJWHTvr
+4iCnJ0WrKi/EJGchARt6zxGn0/36LbP4ZqRKp44Uv4USeVw6veoQgisjgr2HUL9T
+P6jcQ7ANmRBnenXPDkl5BvYZPH6RUh13rwyX1lDEpTQ4aFHXig2QilZFmi/i852a
+5IG5UxaTdC9jiLrutEyJT0QEwRAm5IhrbH9MVRwqdhNCW2WjPk65SfSvUx7QkIVw
+k5XtpOM6Pb1zo5F51tLMu0Ikqv9qLO94XTGgpggXsdV5xy+eK/7OI9aaoKjYmJdB
+GIKy4+oFDFCFtNaIt+vmlc067fedOFic19LFNWpFNVVJ2rfc3L0JUZjwjklEtiMl
+CWpkrRlD5kK7pUu0vscHOR51FWkT1vjPxwGBuTAWciAkTg4iSRYVhWHDL+T0E92G
+jQ9CexZUqPSTonEBiz1+PVH8Ug4VV0kGZmcmHuxeN8+/HGGxdvA=
+=bJM5
+-----END PGP SIGNATURE-----
+
+--urvus633irkg5na3--
