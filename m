@@ -1,46 +1,40 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org
-Cc: David Lechner <david@lechnology.com>,
-	Sekhar Nori <nsekhar@ti.com>,
+Return-Path: <horms@verge.net.au>
+Date: Wed, 2 May 2018 11:38:21 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Wim Van Sebroeck <wim@iguana.be>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: davinci: psc-dm355: fix ASP0/1 clkdev lookups
-Date: Sat, 12 May 2018 15:49:42 -0500
-Message-Id: <20180512204942.10090-1-david@lechnology.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Subject: Re: [PATCH v5 14/26] ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
+Message-ID: <20180502093821.m276vxqixob47e4p@verge.net.au>
+References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1518457475-4480-15-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1518457475-4480-15-git-send-email-fabrizio.castro@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clkdev lookups for the ASP0/1 devices on TI DM355 were declared, but
-not assigned to any LPSC. This assigns the clkdev lookups to the
-correct LPSCs.
+On Mon, Feb 12, 2018 at 05:44:23PM +0000, Fabrizio Castro wrote:
+> R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
+> its driver by default.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reported-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: David Lechner <david@lechnology.com>
----
- drivers/clk/davinci/psc-dm355.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/davinci/psc-dm355.c b/drivers/clk/davinci/psc-dm355.c
-index 001288dfdfb1..fb71ad81bb9c 100644
---- a/drivers/clk/davinci/psc-dm355.c
-+++ b/drivers/clk/davinci/psc-dm355.c
-@@ -41,14 +41,14 @@ static const struct davinci_lpsc_clk_info dm355_psc_info[] = {
- 	LPSC(5,  0, timer3,      pll1_auxclk,  NULL,               0),
- 	LPSC(6,  0, spi1,        pll1_sysclk2, spi1_clkdev,        0),
- 	LPSC(7,  0, mmcsd1,      pll1_sysclk2, mmcsd1_clkdev,      0),
--	LPSC(8,  0, asp1,        pll1_sysclk2, NULL,               0),
-+	LPSC(8,  0, asp1,        pll1_sysclk2, mcbsp1_clkdev,      0),
- 	LPSC(9,  0, usb,         pll1_sysclk2, usb_clkdev,         0),
- 	LPSC(10, 0, pwm3,        pll1_auxclk,  NULL,               0),
- 	LPSC(11, 0, spi2,        pll1_sysclk2, spi2_clkdev,        0),
- 	LPSC(12, 0, rto,         pll1_auxclk,  NULL,               0),
- 	LPSC(14, 0, aemif,       pll1_sysclk2, aemif_clkdev,       0),
- 	LPSC(15, 0, mmcsd0,      pll1_sysclk2, mmcsd0_clkdev,      0),
--	LPSC(17, 0, asp0,        pll1_sysclk2, NULL,               0),
-+	LPSC(17, 0, asp0,        pll1_sysclk2, mcbsp0_clkdev,      0),
- 	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
- 	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
- 	LPSC(20, 0, uart1,       pll1_auxclk,  uart1_clkdev,       0),
--- 
-2.17.0
+Thanks, applied.
