@@ -1,64 +1,49 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 2 May 2018 15:40:28 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-imx@nxp.com
+Subject: Re: [PATCH] clk: imx6ul: fix periph clk2 clock mux selection
+Message-ID: <20180502074027.GF3443@dragon>
+References: <20180418125254.4397-1-stefan@agner.ch>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 22 May 2018 20:42:46 +0200
-Message-ID: <CAMuHMdUW-tteZ26J4rd9=KsrHotjCs7BR_pjyjFQnfoOF5=oFQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document
- RZ/N1 clock driver
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180418125254.4397-1-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+Add linux-imx list, in case NXP friends have a comment.
 
-On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-> to provide the SoC clock infrastructure for Linux.
->
-> This documents the driver bindings.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+On Wed, Apr 18, 2018 at 02:52:54PM +0200, Stefan Agner wrote:
+> According to the data sheet the 3rd choice is the bypass clock
+> of pll2. This should not have any effect in practice as this
+> selection is not used currently.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Thanks for your patch!
+For me it looks good,
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-> @@ -0,0 +1,44 @@
-> +* Renesas RZ/N1 Clock Driver
-> +
-> +This driver provides the clock infrastructure used by all the other drivers.
-> +
-> +One of the 'special' feature of this infrastructure is that Linux doesn't
-> +necessary 'own' all the clocks on the SoC, some other OS runs on
-> +the Cortex-M3 core and that OS can access and claim it's own clocks.
-> +
-> +Required Properties:
-> +
-> +  - compatible: Must be
-> +    - "renesas,r9a06g032-clocks" for the RZ/N1D
-> +    and "renesas,rzn1-clocks" as a fallback.
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 
-Why the fallback? I doubt all existing (and future) RZ/N1D SoCs provide the
-exact same clock hierarchy.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+>  drivers/clk/imx/clk-imx6ul.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+> index 12320118f8de..2ed7dae39008 100644
+> --- a/drivers/clk/imx/clk-imx6ul.c
+> +++ b/drivers/clk/imx/clk-imx6ul.c
+> @@ -40,7 +40,7 @@ static const char *axi_alt_sels[] = { "pll2_pfd2_396m", "pll3_pfd1_540m", };
+>  static const char *axi_sels[] = {"periph", "axi_alt_sel", };
+>  static const char *periph_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll2_198m", };
+>  static const char *periph2_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll4_audio_div", };
+> -static const char *periph_clk2_sels[] = { "pll3_usb_otg", "osc", "osc", };
+> +static const char *periph_clk2_sels[] = { "pll3_usb_otg", "osc", "pll2_bypass_src", };
+>  static const char *periph2_clk2_sels[] = { "pll3_usb_otg", "osc", };
+>  static const char *periph_sels[] = { "periph_pre", "periph_clk2", };
+>  static const char *periph2_sels[] = { "periph2_pre", "periph2_clk2", };
+> -- 
+> 2.17.0
+> 
