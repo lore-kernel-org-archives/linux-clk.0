@@ -1,49 +1,37 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:55128 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754207AbeEaKNa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 May 2018 06:13:30 -0400
-Subject: Re: [PATCH v2 3/6] clk: ti: dra7: Add clkctrl clock data for the mcan
- clocks
-To: Rob Herring <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <bcousson@baylibre.com>,
-        <tony@atomide.com>, <paul@pwsan.com>, <t-kristo@ti.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-4-faiz_abbas@ti.com>
- <20180531040350.GA25132@rob-hp-laptop>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <e7e3ade1-76b7-f216-ece5-bd64a55cede6@ti.com>
-Date: Thu, 31 May 2018 15:44:43 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180531040350.GA25132@rob-hp-laptop>
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Alexandre TORGUE
+	<alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        Olivier BIDEAU <olivier.bideau@st.com>,
+        "Loic
+ PALLARDY" <loic.pallardy@st.com>,
+        Benjamin GAIGNARD
+	<benjamin.gaignard@st.com>
+Subject: Re: [PATCH] clk: stm32mp1: Add CLK_IGNORE_UNUSED to ck_sys_dbg clock
+Date: Wed, 2 May 2018 13:57:23 +0000
+Message-ID: <fc59c88c-b25a-8e6f-ec14-5e7abba07829@st.com>
+References: <1524556723-26926-1-git-send-email-gabriel.fernandez@st.com>
+ <152521260300.138124.15551649788620481848@swboyd.mtv.corp.google.com>
+In-Reply-To: <152521260300.138124.15551649788620481848@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On Thursday 31 May 2018 09:33 AM, Rob Herring wrote:
-> On Wed, May 30, 2018 at 07:41:30PM +0530, Faiz Abbas wrote:
->> Add clkctrl data for the m_can clocks and register it within the
-...
->>  
->> diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
->> index 5e1061b15aed..d7549c57cac3 100644
->> --- a/include/dt-bindings/clock/dra7.h
->> +++ b/include/dt-bindings/clock/dra7.h
->> @@ -168,5 +168,6 @@
->>  #define DRA7_COUNTER_32K_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
->>  #define DRA7_UART10_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
->>  #define DRA7_DCAN1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
->> +#define DRA7_ADC_CLKCTRL	DRA7_CLKCTRL_INDEX(0xa0)
-> 
-> ADC and mcan are the same thing?
-> 
-
-The register to control MCAN clocks is called ADC_CLKCTRL, Yes.
-
-Thanks,
-Faiz
+SGkgU3RlcGhlbiwNCg0KVGhpcyBwYXRjaCBpcyBub3QgYSBjcml0aWNhbCBmaXggZm9yIHRoaXMg
+bWVyZ2Ugd2luZG93Lg0KDQpUaGFua3MNCg0KR2FicmllbA0KDQoNCk9uIDA1LzAyLzIwMTggMTI6
+MTAgQU0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gUXVvdGluZyBnYWJyaWVsLmZlcm5hbmRlekBz
+dC5jb20gKDIwMTgtMDQtMjQgMDA6NTg6NDMpDQo+PiBGcm9tOiBHYWJyaWVsIEZlcm5hbmRleiA8
+Z2FicmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4NCj4+IERvbid0IGRpc2FibGUgdGhlIGRiZyBj
+bG9jayBpZiB3YXMgc2V0IGJ5IGJvb3Rsb2FkZXIuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogR2Fi
+cmllbCBGZXJuYW5kZXogPGdhYnJpZWwuZmVybmFuZGV6QHN0LmNvbT4NCj4+IC0tLQ0KPiBJcyB0
+aGlzIGEgY3JpdGljYWwgZml4IGZvciB0aGlzIG1lcmdlIHdpbmRvdz8gUGxlYXNlIGFkZCAiRml4
+ZXM6IiB0YWcuDQo+DQo=
