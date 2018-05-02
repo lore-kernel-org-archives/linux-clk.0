@@ -1,55 +1,129 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Thu, 31 May 2018 10:21:45 +0300
-To: Rob Herring <robh@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 3/6] regulator: bd71837: Devicetree bindings for
- BD71837 regulators
-Message-ID: <20180531072145.GH13528@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <318229ca7ffcceb090fc8d0c43f887decc3082f0.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030436.GB16122@rob-hp-laptop>
+Return-Path: <anischal@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180531030436.GB16122@rob-hp-laptop>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Wed, 02 May 2018 13:15:12 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
+ <mturquette@baylibre.com>, Andy Gross <andy.gross@linaro.org>, David Brown
+ <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Odelu
+ Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM Video clock
+ bindings
+In-Reply-To: <20180501135054.GA373@rob-hp-laptop>
+References: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
+ <1524576771-31096-2-git-send-email-anischal@codeaurora.org>
+ <20180501135054.GA373@rob-hp-laptop>
+Message-ID: <55ef90a4034f5c7e94274c1ea02d3af1@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 30, 2018 at 10:04:36PM -0500, Rob Herring wrote:
-> On Wed, May 30, 2018 at 11:42:32AM +0300, Matti Vaittinen wrote:
-> > Document devicetree bindings for ROHM BD71837 PMIC regulators.
-> > +ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bindings
-> > +
-> > +BD71837MWV is a programmable Power Management
-> > +IC (PMIC) for powering single-core, dual-core, and
-> > +quad-core SoC’s such as NXP-i.MX 8M. It is optimized
-> > +for low BOM cost and compact solution footprint. It
-> > +integrates 8 Buck regulators and 7 LDO’s to provide all
-> > +the power rails required by the SoC and the commonly
-> > +used peripherals.
+On 2018-05-01 19:20, Rob Herring wrote:
+> On Tue, Apr 24, 2018 at 07:02:50PM +0530, Amit Nischal wrote:
+>> Add device tree bindings for video clock controller for Qualcomm
+>> Technology Inc's SoCs.
+>> 
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> ---
+>>  .../devicetree/bindings/clock/qcom,videocc.txt     | 18 
+>> ++++++++++++++++
+>>  include/dt-bindings/clock/qcom,videocc-sdm845.h    | 25 
+>> ++++++++++++++++++++++
+>>  2 files changed, 43 insertions(+)
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/clock/qcom,videocc.txt
+>>  create mode 100644 include/dt-bindings/clock/qcom,videocc-sdm845.h
+>> 
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.txt 
+>> b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
+>> new file mode 100644
+>> index 0000000..1c23b41
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
+>> @@ -0,0 +1,18 @@
+>> +Qualcomm Video Clock & Reset Controller Binding
+>> +-----------------------------------------------
+>> +
+>> +Required properties :
+>> +- compatible : shall contain "qcom,videocc-sdm845"
 > 
-> Why duplicate this from the core binding?
+> '<vendor>,<soc>-<block>' is the preferred order.
+> 
+> Every single QCom binding... Can someone spread the word in QCom.
 
-I can remove this. I just thought it is nice to see what this chip is
-doing even without opening the MFD binding doc. Just same question as in
-the other patch - how should I deliver the change? This was already
-applied to Mark's tree - should I do new patch on top of the Mark's tree
-- or do patch against tree which does not yet contain this change? If I
-  do it on top of Mark's tree then Mark should apply it, right? If I do
- it against some other three, thene there will be merge conflict with
- Mark, right?
+Thanks for the review. I will make the suggested change in the next
+series.
 
 > 
-> Otherwise,
+>> +- reg : shall contain base register location and length
+>> +- #clock-cells : shall contain 1
+>> +- #reset-cells : shall contain 1
+>> +- #power-domain-cells : shall contain 1
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> No header definitions for resets and power-domain? There's no
+> requirement to have headers, but the binding should be complete even if
+> you don't have a driver yet.
 
-Thanks!
+Will do the required changes in the next patch series.
+> 
+>> +
+>> +Example:
+>> +	videocc: qcom,videocc@ab00000 {
+> 
+> clock-controller@...
 
-Br,
-    Matti Vaittinen
+Will be fixed in the next patch series.
+
+> 
+>> +		compatible = "qcom,videocc-sdm845";
+>> +		reg = <0xab00000 0x10000>;
+>> +		#clock-cells = <1>;
+>> +		#reset-cells = <1>;
+>> +		#power-domain-cells = <1>;
+>> +	};
+>> diff --git a/include/dt-bindings/clock/qcom,videocc-sdm845.h 
+>> b/include/dt-bindings/clock/qcom,videocc-sdm845.h
+>> new file mode 100644
+>> index 0000000..f5f7599
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,videocc-sdm845.h
+>> @@ -0,0 +1,25 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/* Copyright (c) 2016-2018, The Linux Foundation. All rights 
+>> reserved. */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
+>> +#define _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
+>> +
+>> +#define VIDEO_CC_APB_CLK			0
+>> +#define VIDEO_CC_AT_CLK				1
+>> +#define VIDEO_CC_QDSS_TRIG_CLK			2
+>> +#define VIDEO_CC_QDSS_TSCTR_DIV8_CLK		3
+>> +#define VIDEO_CC_VCODEC0_AXI_CLK		4
+>> +#define VIDEO_CC_VCODEC0_CORE_CLK		5
+>> +#define VIDEO_CC_VCODEC1_AXI_CLK		6
+>> +#define VIDEO_CC_VCODEC1_CORE_CLK		7
+>> +#define VIDEO_CC_VENUS_AHB_CLK			8
+>> +#define VIDEO_CC_VENUS_CLK_SRC			9
+>> +#define VIDEO_CC_VENUS_CTL_AXI_CLK		10
+>> +#define VIDEO_CC_VENUS_CTL_CORE_CLK		11
+>> +#define VIDEO_PLL0				12
+>> +
+>> +#define VENUS_GDSC				0
+>> +#define VCODEC0_GDSC				1
+>> +#define VCODEC1_GDSC				2
+>> +
+>> +#endif
+>> --
+>> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+>> member
+>> of Code Aurora Forum, hosted by The Linux Foundation
+>> 
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe devicetree" 
+>> in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
