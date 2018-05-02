@@ -1,226 +1,114 @@
-Return-Path: <michel.pollet@bp.renesas.com>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Michel Pollet <michel.pollet@bp.renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
-Date: Tue, 22 May 2018 11:01:22 +0100
-Message-Id: <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:47659 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750936AbeEBLwP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 May 2018 07:52:15 -0400
+Date: Wed, 02 May 2018 19:51:37 +0800
+In-Reply-To: <20180502114843.ou4qczp5eaigrdfo@flea>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com> <20180430114058.5061-16-jagan@amarulasolutions.com> <20180502114843.ou4qczp5eaigrdfo@flea>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH 15/21] drm: sun4i: add support for HVCC regulator for DWC HDMI glue
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+CC: Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <2E519B6E-D1BA-4C6F-9105-446E564FBBB6@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the constants necessary to use the renesas,rzn1-clocks driver.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- include/dt-bindings/clock/rzn1-clocks.h | 187 ++++++++++++++++++++++++++++++++
- 1 file changed, 187 insertions(+)
- create mode 100644 include/dt-bindings/clock/rzn1-clocks.h
 
-diff --git a/include/dt-bindings/clock/rzn1-clocks.h b/include/dt-bindings/clock/rzn1-clocks.h
-new file mode 100644
-index 0000000..8a73db2
---- /dev/null
-+++ b/include/dt-bindings/clock/rzn1-clocks.h
-@@ -0,0 +1,187 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * RZ/N1 clock IDs
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from zx-reboot.c
-+ */
-+
-+#ifndef __DT_BINDINGS_RZN1_CLOCK_H__
-+#define __DT_BINDINGS_RZN1_CLOCK_H__
-+
-+#define RZN1_CLKOUT			0
-+#define RZN1_CLK_PLL_USB		1
-+#define RZN1_CLK_48			1	/* AKA CLK_PLL_USB */
-+#define RZN1_CLKOUT_D10			2
-+#define RZN1_CLKOUT_D16			3
-+#define RZN1_MSEBIS_CLK			3	/* AKA CLKOUT_D16 */
-+#define RZN1_MSEBIM_CLK			3	/* AKA CLKOUT_D16 */
-+#define RZN1_CLKOUT_D160		4
-+#define RZN1_CLKOUT_D1OR2		5
-+#define RZN1_CLK_DDRPHY_PLLCLK		5	/* AKA CLKOUT_D1OR2 */
-+#define RZN1_CLKOUT_D20			6
-+#define RZN1_CLK50			6	/* AKA CLKOUT_D20 */
-+#define RZN1_CLKOUT_D40			7
-+#define RZN1_CLK25			7	/* AKA CLKOUT_D40 */
-+#define RZN1_CLKOUT_D5			8
-+#define RZN1_CLKOUT_D8			9
-+#define RZN1_CLK125			9	/* AKA CLKOUT_D8 */
-+#define RZN1_DIV_ADC			10
-+#define RZN1_DIV_I2C			11
-+#define RZN1_DIV_NAND			12
-+#define RZN1_DIV_P1_PG			13
-+#define RZN1_DIV_P2_PG			14
-+#define RZN1_DIV_P3_PG			15
-+#define RZN1_DIV_P4_PG			16
-+#define RZN1_DIV_P5_PG			17
-+#define RZN1_CLK_P5_PG1			17	/* AKA DIV_P5_PG */
-+#define RZN1_DIV_P6_PG			18
-+#define RZN1_DIV_QSPI0			19
-+#define RZN1_DIV_QSPI1			20
-+#define RZN1_DIV_REF_SYNC		21
-+#define RZN1_CLK_REF_SYNC		21	/* AKA DIV_REF_SYNC */
-+#define RZN1_DIV_SDIO0			22
-+#define RZN1_DIV_SDIO1			23
-+#define RZN1_DIV_SWITCH			24
-+#define RZN1_DIV_UART			25
-+#define RZN1_CLK_25_PG4			26
-+#define RZN1_CLK_25_PG5			27
-+#define RZN1_CLK_25_PG6			28
-+#define RZN1_CLK_25_PG7			29
-+#define RZN1_CLK_25_PG8			30
-+#define RZN1_CLK_ADC			31
-+#define RZN1_CLK_ECAT100		32
-+#define RZN1_CLK_HSR100			33
-+#define RZN1_CLK_I2C0			34
-+#define RZN1_CLK_I2C1			35
-+#define RZN1_CLK_MII_REF		36
-+#define RZN1_CLK_NAND			37
-+#define RZN1_CLK_NOUSBP2_PG6		38
-+#define RZN1_CLK_P1_PG2			39
-+#define RZN1_CLK_P1_PG3			40
-+#define RZN1_CLK_P1_PG4			41
-+#define RZN1_CLK_P4_PG3			42
-+#define RZN1_CLK_P4_PG4			43
-+#define RZN1_CLK_P6_PG1			44
-+#define RZN1_CLK_P6_PG2			45
-+#define RZN1_CLK_P6_PG3			46
-+#define RZN1_CLK_P6_PG4			47
-+#define RZN1_CLK_PCI_USB		48
-+#define RZN1_CLK_QSPI0			49
-+#define RZN1_CLK_QSPI1			50
-+#define RZN1_CLK_RGMII_REF		51
-+#define RZN1_CLK_RMII_REF		52
-+#define RZN1_CLK_SDIO0			53
-+#define RZN1_CLK_SDIO1			54
-+#define RZN1_CLK_SERCOS100		55
-+#define RZN1_CLK_SLCD			56
-+#define RZN1_CLK_SPI0			57
-+#define RZN1_CLK_SPI1			58
-+#define RZN1_CLK_SPI2			59
-+#define RZN1_CLK_SPI3			60
-+#define RZN1_CLK_SPI4			61
-+#define RZN1_CLK_SPI5			62
-+#define RZN1_CLK_SWITCH			63
-+#define RZN1_DIV_MOTOR			64
-+#define RZN1_HCLK_ECAT125		65
-+#define RZN1_HCLK_PINCONFIG		66
-+#define RZN1_HCLK_SERCOS		67
-+#define RZN1_HCLK_SGPIO2		68
-+#define RZN1_HCLK_SGPIO3		69
-+#define RZN1_HCLK_SGPIO4		70
-+#define RZN1_HCLK_TIMER0		71
-+#define RZN1_HCLK_TIMER1		72
-+#define RZN1_HCLK_USBF			73
-+#define RZN1_HCLK_USBH			74
-+#define RZN1_HCLK_USBPM			75
-+#define RZN1_CLK_48_PG_F		76
-+#define RZN1_CLK_48_PG4			77
-+#define RZN1_CLK_DDRPHY_PLLCLK_D4	78
-+#define RZN1_CLK_ECAT100_D4		79
-+#define RZN1_CLK_HSR100_D2		80
-+#define RZN1_CLK_REF_SYNC_D4		81
-+#define RZN1_CLK_DDRPHY_PCLK		81	/* AKA CLK_REF_SYNC_D4 */
-+#define RZN1_CLK_FW			81	/* AKA CLK_REF_SYNC_D4 */
-+#define RZN1_CLK_CRYPTO			81	/* AKA CLK_REF_SYNC_D4 */
-+#define RZN1_CLK_REF_SYNC_D8		82
-+#define RZN1_CLK_SERCOS100_D2		83
-+#define RZN1_DIV_CA7			84
-+#define RZN1_CLK_A7MP			84	/* AKA DIV_CA7 */
-+#define RZN1_HCLK_CAN0			85
-+#define RZN1_HCLK_CAN1			86
-+#define RZN1_HCLK_DELTASIGMA		87
-+#define RZN1_HCLK_PWMPTO		88
-+#define RZN1_HCLK_RSV			89
-+#define RZN1_HCLK_SGPIO0		90
-+#define RZN1_HCLK_SGPIO1		91
-+#define RZN1_RTOS_MDC			92
-+#define RZN1_CLK_CM3			93
-+#define RZN1_CLK_DDRC			94
-+#define RZN1_CLK_ECAT25			95
-+#define RZN1_CLK_HSR50			96
-+#define RZN1_CLK_HW_RTOS		97
-+#define RZN1_CLK_SERCOS50		98
-+#define RZN1_HCLK_ADC			99
-+#define RZN1_HCLK_CM3			100
-+#define RZN1_HCLK_CRYPTO_EIP150		101
-+#define RZN1_HCLK_CRYPTO_EIP93		102
-+#define RZN1_HCLK_DDRC			103
-+#define RZN1_HCLK_DMA0			104
-+#define RZN1_HCLK_DMA1			105
-+#define RZN1_HCLK_GMAC0			106
-+#define RZN1_HCLK_GMAC1			107
-+#define RZN1_HCLK_GPIO0			108
-+#define RZN1_HCLK_GPIO1			109
-+#define RZN1_HCLK_GPIO2			110
-+#define RZN1_HCLK_HSR			111
-+#define RZN1_HCLK_I2C0			112
-+#define RZN1_HCLK_I2C1			113
-+#define RZN1_HCLK_LCD			114
-+#define RZN1_HCLK_MSEBI_M		115
-+#define RZN1_HCLK_MSEBI_S		116
-+#define RZN1_HCLK_NAND			117
-+#define RZN1_HCLK_PG_I			118
-+#define RZN1_HCLK_PG19			119
-+#define RZN1_HCLK_PG20			120
-+#define RZN1_HCLK_PG3			121
-+#define RZN1_HCLK_PG4			122
-+#define RZN1_HCLK_QSPI0			123
-+#define RZN1_HCLK_QSPI1			124
-+#define RZN1_HCLK_ROM			125
-+#define RZN1_HCLK_RTC			126
-+#define RZN1_HCLK_SDIO0			127
-+#define RZN1_HCLK_SDIO1			128
-+#define RZN1_HCLK_SEMAP			129
-+#define RZN1_HCLK_SPI0			130
-+#define RZN1_HCLK_SPI1			131
-+#define RZN1_HCLK_SPI2			132
-+#define RZN1_HCLK_SPI3			133
-+#define RZN1_HCLK_SPI4			134
-+#define RZN1_HCLK_SPI5			135
-+#define RZN1_HCLK_SWITCH		136
-+#define RZN1_HCLK_SWITCH_RG		137
-+#define RZN1_HCLK_UART0			138
-+#define RZN1_HCLK_UART1			139
-+#define RZN1_HCLK_UART2			140
-+#define RZN1_HCLK_UART3			141
-+#define RZN1_HCLK_UART4			142
-+#define RZN1_HCLK_UART5			143
-+#define RZN1_HCLK_UART6			144
-+#define RZN1_HCLK_UART7			145
-+#define RZN1_CLK_UART0			146
-+#define RZN1_CLK_UART1			147
-+#define RZN1_CLK_UART2			148
-+#define RZN1_CLK_UART3			149
-+#define RZN1_CLK_UART4			150
-+#define RZN1_CLK_UART5			151
-+#define RZN1_CLK_UART6			152
-+#define RZN1_CLK_UART7			153
-+
-+#define RZN1_UART_GROUP_012		154
-+#define RZN1_UART_GROUP_34567		155
-+
-+#define RZN1_CLOCK_COUNT		(RZN1_UART_GROUP_34567 + 1)
-+
-+#endif /* __DT_BINDINGS_RZN1_CLOCK_H__ */
--- 
-2.7.4
+于 2018年5月2日 GMT+08:00 下午7:48:43, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Mon, Apr 30, 2018 at 05:10:52PM +0530, Jagan Teki wrote:
+>> From: Icenowy Zheng <icenowy@aosc.io>
+>> 
+>> Allwinner SoCs with DWC HDMI controller have a "HVCC" power pin for
+>the
+>> HDMI part, and on some boards it's connected to a dedicated regulator
+>> rather than the main 3.3v.
+>> 
+>> Add support for optional HVCC regulator. For boards that doesn't use
+>a
+>> dedicated regulator to power it, the default dummy regulator is used.
+>>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> ---
+>>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 14 ++++++++++++++
+>>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 ++
+>>  2 files changed, 16 insertions(+)
+>> 
+>> diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+>b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+>> index 9f40a44b456b..7c33faff7ad4 100644
+>> --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+>> +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+>> @@ -73,6 +73,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
+>struct device *master,
+>>  	if (encoder->possible_crtcs == 0)
+>>  		return -EPROBE_DEFER;
+>>  
+>> +	hdmi->vcc_hdmi = devm_regulator_get(dev, "hvcc");
+>> +	if (IS_ERR(hdmi->vcc_hdmi)) {
+>> +		dev_err(dev, "Could not get HDMI power supply\n");
+>> +		return PTR_ERR(hdmi->vcc_hdmi);
+>> +	}
+>> +
+>
+>You're not making it optional here, unlike what your commit log
+>says. Not that I'm fine with both, but we need to be consistent :)
+
+If it's not set, regulator subsystem will generate a dummy
+regulator as a spaceholder, except using the exclusive variant
+of the function.
+
+The word "optional" is from DT perspectove, as it's possible that
+it's bound to some critical regulators.
+
+>
+>>  	hdmi->rst_ctrl = devm_reset_control_get(dev, "ctrl");
+>>  	if (IS_ERR(hdmi->rst_ctrl)) {
+>>  		dev_err(dev, "Could not get ctrl reset control\n");
+>> @@ -91,6 +97,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
+>struct device *master,
+>>  		return ret;
+>>  	}
+>>  
+>> +	ret = regulator_enable(hdmi->vcc_hdmi);
+>> +	if (ret) {
+>> +		dev_err(dev, "Cannot enable HDMI power supply\n");
+>> +		goto err_disable_vcc;
+>> +	}
+>> +
+>>  	ret = clk_prepare_enable(hdmi->clk_tmds);
+>>  	if (ret) {
+>>  		dev_err(dev, "Could not enable tmds clock\n");
+>> @@ -143,6 +155,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
+>struct device *master,
+>>  	clk_disable_unprepare(hdmi->clk_tmds);
+>>  err_assert_ctrl_reset:
+>>  	reset_control_assert(hdmi->rst_ctrl);
+>> +err_disable_vcc:
+>> +	regulator_disable(hdmi->vcc_hdmi);
+>
+>
+>The err_disable_vcc label will disable the regulator, but if there's
+>an error in regulator_enable, it will disable it while it wasn't
+>enabled in the first place, which is not really something we want to
+>do.
+>
+>Maxime
