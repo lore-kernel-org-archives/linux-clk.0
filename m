@@ -1,62 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:45242 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753695AbeE3PIB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 May 2018 11:08:01 -0400
-Date: Wed, 30 May 2018 08:07:57 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com
-Subject: Re: [PATCH v2 6/6] ARM: dts: dra76x: Add MCAN node
-Message-ID: <20180530150757.GF5705@atomide.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-7-faiz_abbas@ti.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180530141133.3711-7-faiz_abbas@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1524063005-1716-4-git-send-email-geert+renesas@glider.be>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+ <1524063005-1716-4-git-send-email-geert+renesas@glider.be>
+Message-ID: <152527552692.138124.9472680209483820124@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 3/5] soc: rockchip: power-domain: Use
+ of_clk_get_parent_count() instead of open coding
+Date: Wed, 02 May 2018 08:38:46 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-* Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
-> From: Franklin S Cooper Jr <fcooper@ti.com>
-> 
-> Add support for the MCAN peripheral which supports both classic
-> CAN messages along with the new CAN-FD message.
-...
-> --- a/arch/arm/boot/dts/dra76x.dtsi
-> +++ b/arch/arm/boot/dts/dra76x.dtsi
-> @@ -27,6 +27,21 @@
->  			ti,syss-mask = <1>;
->  			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
->  			clock-names = "fck";
-> +
-> +			m_can0: mcan@42c01a00 {
-> +				compatible = "bosch,m_can";
-> +				reg = <0x1a00 0x4000>, <0x0 0x18FC>;
-> +				reg-names = "m_can", "message_ram";
-> +				interrupt-parent = <&gic>;
-> +				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-> +					     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupt-names = "int0", "int1";
-> +				ti,hwmods = "mcan";
+Quoting Geert Uytterhoeven (2018-04-18 07:50:03)
+> As of_clk_get_parent_count() returns zero on failure, while
+> of_count_phandle_with_args() might return a negative error code, this
+> also fixes the issue of possibly using a negative number in the
+> allocation below.
+> =
 
-The "ti,hwmods" should be in the parent node now. But you may not even need
-it, see the reset comment I made for the parent node patch.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-> +				clocks = <&mcan_clk>, <&l3_iclk_div>;
-> +				clock-names = "cclk", "hclk";
-> +				bosch,mram-cfg = <0x0 0 0 32 0 0 1 1>;
-> +				status = "disabled";
-
-And then you should be able to also leave out status = "disabled" as the
-hardware is there for sure and we can idle it. Then a board specific
-dts file can set it to "disabled" if reallly needed. Setting everything
-manually to "disabled" and then again to "enabled" is the wrong way
-around, the default is "enabled".
-
-Regards,
-
-Tony
+Applied to clk-next
