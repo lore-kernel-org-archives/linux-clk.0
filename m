@@ -1,112 +1,71 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 25/27] ARM: davinci: add device tree support to timer
-Date: Wed,  9 May 2018 12:26:04 -0500
-Message-Id: <20180509172606.29387-26-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20180502095118.rqnfwy576xh6ercm@flea>
+References: <20180501161227.2110-1-wens@csie.org> <20180501161227.2110-16-wens@csie.org>
+ <20180502095118.rqnfwy576xh6ercm@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 2 May 2018 17:53:21 +0800
+Message-ID: <CAGb2v67pvL58Pes1ZFDZtPu_nL2+m6dgf_XOOymG9nVAkXVpEw@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 15/15] arm64: dts: allwinner: a64: add SRAM
+ controller device tree node
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
+	Icenowy Zheng <icenowy@aosc.io>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	netdev <netdev@vger.kernel.org>, Corentin Labbe <clabbe.montjoie@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds device tree support to the davinci timer so that when clocks
-are moved to device tree, the timer will still work.
+On Wed, May 2, 2018 at 5:51 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> Hi,
+>
+> On Wed, May 02, 2018 at 12:12:27AM +0800, Chen-Yu Tsai wrote:
+>> From: Icenowy Zheng <icenowy@aosc.io>
+>>
+>> Allwinner A64 has a SRAM controller, and in the device tree currently
+>> we have a syscon node to enable EMAC driver to access the EMAC clock
+>> register. As SRAM controller driver can now export regmap for this
+>> register, replace the syscon node to the SRAM controller device node,
+>> and let EMAC driver to acquire its EMAC clock regmap.
+>>
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> ---
+>>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 23 +++++++++++++++----
+>>  1 file changed, 19 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> index 1b2ef28c42bd..1c37659d9d41 100644
+>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> @@ -168,10 +168,25 @@
+>>               #size-cells = <1>;
+>>               ranges;
+>>
+>> -             syscon: syscon@1c00000 {
+>> -                     compatible = "allwinner,sun50i-a64-system-controller",
+>> -                             "syscon";
+>> +             sram_controller: sram-controller@1c00000 {
+>> +                     compatible = "allwinner,sun50i-a64-sram-controller";
+>
+> I don't think there's anything preventing us from keeping the
+> -system-controller compatible. It's what was in the DT before, and
+> it's how it's called in the datasheet.
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+I actually meant to ask you about this. The -system-controller compatible
+matches the datasheet better. Maybe we should just switch to that one?
 
-v10 changes:
-- change compatible to "ti,da830-timer"
-- remove comment clocks as platform devices
+ChenYu
 
-v9 changes:
-- none (there were supposed to be changed, but apparently they got squashed
-  into the next commit - will fix on the next round)
-
-v8 changes:
-- none
-
-v7 changes:
-- rebased
-- add davinci prefix to commit message
-
-v6 changes:
-- rebased
-
-
- arch/arm/mach-davinci/Kconfig |  1 +
- arch/arm/mach-davinci/time.c  | 32 ++++++++++++++++++++++++++++++++
- 2 files changed, 33 insertions(+)
-
-diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-index ba9912b4dfab..da8a039d65f9 100644
---- a/arch/arm/mach-davinci/Kconfig
-+++ b/arch/arm/mach-davinci/Kconfig
-@@ -59,6 +59,7 @@ config MACH_DA8XX_DT
- 	default y
- 	depends on ARCH_DAVINCI_DA850
- 	select PINCTRL
-+	select TIMER_OF
- 	help
- 	  Say y here to include support for TI DaVinci DA850 based using
- 	  Flattened Device Tree. More information at Documentation/devicetree
-diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
-index 7ea3db0ff062..184e72922cc1 100644
---- a/arch/arm/mach-davinci/time.c
-+++ b/arch/arm/mach-davinci/time.c
-@@ -17,6 +17,7 @@
- #include <linux/io.h>
- #include <linux/clk.h>
- #include <linux/err.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/sched_clock.h>
- 
-@@ -397,3 +398,34 @@ void __init davinci_timer_init(struct clk *timer_clk)
- 	for (i=0; i< ARRAY_SIZE(timers); i++)
- 		timer32_config(&timers[i]);
- }
-+
-+static int __init of_davinci_timer_init(struct device_node *np)
-+{
-+	struct clk *clk;
-+
-+	clk = of_clk_get(np, 0);
-+	if (IS_ERR(clk)) {
-+		struct of_phandle_args clkspec;
-+
-+		/*
-+		 * Fall back to using ref_clk if the actual clock is not
-+		 * available. There will be problems later if the real clock
-+		 * source is disabled.
-+		 */
-+
-+		pr_warn("%s: falling back to ref_clk\n", __func__);
-+
-+		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
-+		if (IS_ERR(clkspec.np)) {
-+			pr_err("%s: No clock available for timer!\n", __func__);
-+			return PTR_ERR(clkspec.np);
-+		}
-+		clk = of_clk_get_from_provider(&clkspec);
-+		of_node_put(clkspec.np);
-+	}
-+
-+	davinci_timer_init(clk);
-+
-+	return 0;
-+}
-+TIMER_OF_DECLARE(davinci_timer, "ti,da830-timer", of_davinci_timer_init);
--- 
-2.17.0
+> Otherwise, the whole serie looks good to me:
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
