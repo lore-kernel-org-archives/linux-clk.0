@@ -1,82 +1,38 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:41328 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750970AbeEBJTR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 May 2018 05:19:17 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Fri, 18 May 2018 15:03:48 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
- robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@kernel.org, adriana.reus@nxp.com, rui.silva@linaro.org,
- Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH V2 1/3] clk: imx7d: correct enet phy ref clock gates
-In-Reply-To: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
-References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <66f3e8827e41338291c3e2298cbc87cc@agner.ch>
+In-Reply-To: <152521142011.138124.3008284989746799940@swboyd.mtv.corp.google.com>
+References: <1524741668-158135-1-git-send-email-weiyongjun1@huawei.com> <152521142011.138124.3008284989746799940@swboyd.mtv.corp.google.com>
+From: Tali Perry <tali.perry1@gmail.com>
+Date: Wed, 2 May 2018 12:19:15 +0300
+Message-ID: <CAHb3i=vYwGAwAcyQVrsZVgc3xq2dSw58Zi9RtokauEjkoA+LpA@mail.gmail.com>
+Subject: Re: [PATCH -next] clk: npcm7xx: fix return value check in npcm7xx_clk_init()
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18.05.2018 03:01, Anson Huang wrote:
-> IMX7D_ENET_PHY_REF_ROOT_DIV supplies clock for PHY directly,
-> there is no clock gate after it, rename it to
-> IMX7D_ENET_PHY_REF_ROOT_CLK to avoid device tree change.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+I added the fix Wei Yongjun indicated ( Thanks Wei !)
+and another fix similar to the above + error print change.
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
+I'm a newbie... what's scripts/coccinelle/ script ?
+I just made a new patch same way I did before. Is this OK?
 
---
-Stefan
-
-> ---
->  drivers/clk/imx/clk-imx7d.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index 975a20d..23d5090a 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -738,7 +738,7 @@ static void __init imx7d_clocks_init(struct
-> device_node *ccm_node)
->  	clks[IMX7D_ENET1_TIME_ROOT_DIV] =
-> imx_clk_divider2("enet1_time_post_div", "enet1_time_pre_div", base +
-> 0xa780, 0, 6);
->  	clks[IMX7D_ENET2_REF_ROOT_DIV] =
-> imx_clk_divider2("enet2_ref_post_div", "enet2_ref_pre_div", base +
-> 0xa800, 0, 6);
->  	clks[IMX7D_ENET2_TIME_ROOT_DIV] =
-> imx_clk_divider2("enet2_time_post_div", "enet2_time_pre_div", base +
-> 0xa880, 0, 6);
-> -	clks[IMX7D_ENET_PHY_REF_ROOT_DIV] =
-> imx_clk_divider2("enet_phy_ref_post_div", "enet_phy_ref_pre_div", base
-> + 0xa900, 0, 6);
-> +	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =
-> imx_clk_divider2("enet_phy_ref_root_clk", "enet_phy_ref_pre_div", base
-> + 0xa900, 0, 6);
->  	clks[IMX7D_EIM_ROOT_DIV] = imx_clk_divider2("eim_post_div",
-> "eim_pre_div", base + 0xa980, 0, 6);
->  	clks[IMX7D_NAND_ROOT_CLK] = imx_clk_divider2("nand_root_clk",
-> "nand_pre_div", base + 0xaa00, 0, 6);
->  	clks[IMX7D_QSPI_ROOT_DIV] = imx_clk_divider2("qspi_post_div",
-> "qspi_pre_div", base + 0xaa80, 0, 6);
-> @@ -816,7 +816,6 @@ static void __init imx7d_clocks_init(struct
-> device_node *ccm_node)
->  	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
-> imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
-> 0x44f0, 0);
->  	clks[IMX7D_ENET2_REF_ROOT_CLK] = imx_clk_gate4("enet2_ref_root_clk",
-> "enet2_ref_post_div", base + 0x4500, 0);
->  	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
-> imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
-> 0x4510, 0);
-> -	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =
-> imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base +
-> 0x4520, 0);
->  	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk",
-> "eim_post_div", base + 0x4160, 0);
->  	clks[IMX7D_NAND_RAWNAND_CLK] =
-> imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
-> 0x4140, 0, &share_count_nand);
->  	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =
-> imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk",
-> base + 0x4140, 0, &share_count_nand);
+On Wed, May 2, 2018 at 12:50 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Wei Yongjun (2018-04-26 04:21:08)
+>> In case of error, the function ioremap() returns NULL pointer not
+>> ERR_PTR(). The IS_ERR() test in the return value check should be
+>> replaced with NULL test.
+>>
+>> Fixes: fcfd14369856 ("clk: npcm7xx: add clock controller")
+>> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+>
+> Have you made this into a scripts/coccinelle/ script I can run?
+>
+> Applied to clk-next
