@@ -1,249 +1,96 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v1] clk: qcom: gdsc: Add support to poll CFG register to
- check GDSC state
-To: Stephen Boyd <sboyd@kernel.org>,
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Amit Nischal <anischal@codeaurora.org>,
  Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525105210-8689-3-git-send-email-anischal@codeaurora.org>
 Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
  Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1525151013-28291-1-git-send-email-tdas@codeaurora.org>
- <152524425583.138124.2497854182982735033@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <e1d6f7a1-9b2b-113a-4c21-4730c6514e9c@codeaurora.org>
-Date: Thu, 3 May 2018 14:39:57 +0530
-MIME-Version: 1.0
-In-Reply-To: <152524425583.138124.2497854182982735033@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
+References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
+ <1525105210-8689-3-git-send-email-anischal@codeaurora.org>
+Message-ID: <152524527938.138124.8505584329413678951@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v6 2/3] clk: qcom: Add support for BRANCH_NO_DELAY flag for
+ branch clocks
+Date: Wed, 02 May 2018 00:14:39 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+Quoting Amit Nischal (2018-04-30 09:20:09)
+> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+> index 284df3f..5d621f3 100644
+> --- a/drivers/clk/qcom/clk-branch.h
+> +++ b/drivers/clk/qcom/clk-branch.h
+> @@ -42,6 +42,7 @@ struct clk_branch {
+>  #define BRANCH_HALT_ENABLE             1 /* pol: 0 =3D halt */
+>  #define BRANCH_HALT_ENABLE_VOTED       (BRANCH_HALT_ENABLE | BRANCH_VOTE=
+D)
+>  #define BRANCH_HALT_DELAY              2 /* No bit to check; just delay =
+*/
+> +#define BRANCH_NO_DELAY                        3 /* No bit to check; wit=
+hout delay */
 
-I have tested the below patch & didn't see any issues.
+Let's call it BRANCH_HALT_SKIP and indicate that it's skipping the halt
+bit check. Technically there is a bit to check, we just refuse to check
+it. I've reworked and applied this patch as below.
 
-On 5/2/2018 12:27 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-04-30 22:03:33)
->> @@ -45,15 +50,28 @@
->>
->>   #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
->>
->> -static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
->> +static int gdsc_is_enabled(struct gdsc *sc, bool en)
->>   {
->> +       unsigned int reg;
->>          u32 val;
->>          int ret;
->>
->> +       if (sc->flags & POLL_CFG_GDSCR)
->> +               reg = sc->gdscr + CFG_GDSCR_OFFSET;
->> +       else
->> +               reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
->> +
->>          ret = regmap_read(sc->regmap, reg, &val);
->>          if (ret)
->>                  return ret;
->>
->> +       if (sc->flags & POLL_CFG_GDSCR) {
->> +               if (en)
->> +                       return !!(val & GDSC_POWER_UP_COMPLETE);
->> +               else
->> +                       return !(val & GDSC_POWER_DOWN_COMPLETE);
-> 
-> This is confusing, but also is correct, because this function is
-> returning if the gdsc is enabled or not, and that also happens to be
-> false when the gdsc is not enabled and this bit is set.
-> 
->> +       }
->> +
->>          return !!(val & PWR_ON_MASK);
->>   }
->>
->> @@ -64,17 +82,17 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
->>          return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
->>   }
->>
->> -static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
->> +static int gdsc_poll_status(struct gdsc *sc, bool en)
->>   {
->>          ktime_t start;
->>
->>          start = ktime_get();
->>          do {
->> -               if (gdsc_is_enabled(sc, reg) == en)
->> +               if (gdsc_is_enabled(sc, en) == en)
-> 
-> I still don't like this == en logic. How about this patch on top? If you
-> can test it out, I'll merge your patch and then my patch to make this
-> all easier to read. Note that I changed the off case for
-> POWER_DOWN_COMPLETE to be a double negation.
-> 
-> ---8<---
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index 2a6b0ff7d451..4696e241db89 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -50,7 +50,13 @@
->   
->   #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
->   
-> -static int gdsc_is_enabled(struct gdsc *sc, bool en)
-> +enum gdsc_status {
-> +	GDSC_OFF,
-> +	GDSC_ON
-> +};
-> +
-> +/* Returns 1 if GDSC status is status, 0 if not, and < 0 on error */
-> +static int gdsc_check_status(struct gdsc *sc, enum gdsc_status status)
->   {
->   	unsigned int reg;
->   	u32 val;
-> @@ -58,21 +64,32 @@ static int gdsc_is_enabled(struct gdsc *sc, bool en)
->   
->   	if (sc->flags & POLL_CFG_GDSCR)
->   		reg = sc->gdscr + CFG_GDSCR_OFFSET;
-> +	else if (sc->gds_hw_ctrl)
-> +		reg = sc->gds_hw_ctrl;
->   	else
-> -		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
-> +		reg = sc->gdscr;
->   
->   	ret = regmap_read(sc->regmap, reg, &val);
->   	if (ret)
->   		return ret;
->   
->   	if (sc->flags & POLL_CFG_GDSCR) {
-> -		if (en)
-> +		switch (status) {
-> +		case GDSC_ON:
->   			return !!(val & GDSC_POWER_UP_COMPLETE);
-> -		else
-> -			return !(val & GDSC_POWER_DOWN_COMPLETE);
-> +		case GDSC_OFF:
-> +			return !!(val & GDSC_POWER_DOWN_COMPLETE);
-> +		}
-> +	}
-> +
-> +	switch (status) {
-> +	case GDSC_ON:
-> +		return !!(val & PWR_ON_MASK);
-> +	case GDSC_OFF:
-> +		return !(val & PWR_ON_MASK);
->   	}
->   
-> -	return !!(val & PWR_ON_MASK);
-> +	return -EINVAL;
->   }
->   
->   static int gdsc_hwctrl(struct gdsc *sc, bool en)
-> @@ -82,33 +99,33 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
->   	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
->   }
->   
-> -static int gdsc_poll_status(struct gdsc *sc, bool en)
-> +static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
->   {
->   	ktime_t start;
->   
->   	start = ktime_get();
->   	do {
-> -		if (gdsc_is_enabled(sc, en) == en)
-> +		if (gdsc_check_status(sc, status))
->   			return 0;
->   	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
->   
-> -	if (gdsc_is_enabled(sc, en) == en)
-> +	if (gdsc_check_status(sc, status))
->   		return 0;
->   
->   	return -ETIMEDOUT;
->   }
->   
-> -static int gdsc_toggle_logic(struct gdsc *sc, bool en)
-> +static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
->   {
->   	int ret;
-> -	u32 val = en ? 0 : SW_COLLAPSE_MASK;
-> +	u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
->   
->   	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
->   	if (ret)
->   		return ret;
->   
->   	/* If disabling votable gdscs, don't poll on status */
-> -	if ((sc->flags & VOTABLE) && !en) {
-> +	if ((sc->flags & VOTABLE) && status == GDSC_OFF) {
->   		/*
->   		 * Add a short delay here to ensure that an enable
->   		 * right after it was disabled does not put it in an
-> @@ -118,7 +135,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
->   		return 0;
->   	}
->   
-> -	if (sc->gds_hw_ctrl)
-> +	if (sc->gds_hw_ctrl) {
->   		/*
->   		 * The gds hw controller asserts/de-asserts the status bit soon
->   		 * after it receives a power on/off request from a master.
-> @@ -130,8 +147,9 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
->   		 * and polling the status bit.
->   		 */
->   		udelay(1);
-> +	}
->   
-> -	return gdsc_poll_status(sc, en);
-> +	return gdsc_poll_status(sc, status);
->   }
->   
->   static inline int gdsc_deassert_reset(struct gdsc *sc)
-> @@ -210,7 +228,7 @@ static int gdsc_enable(struct generic_pm_domain *domain)
->   		gdsc_deassert_clamp_io(sc);
->   	}
->   
-> -	ret = gdsc_toggle_logic(sc, true);
-> +	ret = gdsc_toggle_logic(sc, GDSC_ON);
->   	if (ret)
->   		return ret;
->   
-> @@ -266,7 +284,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
->   		 */
->   		udelay(1);
->   
-> -		ret = gdsc_poll_status(sc, true);
-> +		ret = gdsc_poll_status(sc, GDSC_ON);
->   		if (ret)
->   			return ret;
->   	}
-> @@ -274,7 +292,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
->   	if (sc->pwrsts & PWRSTS_OFF)
->   		gdsc_clear_mem_on(sc);
->   
-> -	ret = gdsc_toggle_logic(sc, false);
-> +	ret = gdsc_toggle_logic(sc, GDSC_OFF);
->   	if (ret)
->   		return ret;
->   
-> @@ -303,12 +321,12 @@ static int gdsc_init(struct gdsc *sc)
->   
->   	/* Force gdsc ON if only ON state is supported */
->   	if (sc->pwrsts == PWRSTS_ON) {
-> -		ret = gdsc_toggle_logic(sc, true);
-> +		ret = gdsc_toggle_logic(sc, GDSC_ON);
->   		if (ret)
->   			return ret;
->   	}
->   
-> -	on = gdsc_is_enabled(sc, true);
-> +	on = gdsc_check_status(sc, GDSC_ON);
->   	if (on < 0)
->   		return on;
->   
-> 
+From=20f9ddbd74bf4940d3b7a0eb076eb254833660643c Mon Sep 17 00:00:00 2001
+From: Amit Nischal <anischal@codeaurora.org>
+Date: Mon, 30 Apr 2018 21:50:09 +0530
+Subject: [PATCH] clk: qcom: Add support for BRANCH_HALT_SKIP flag for branch
+ clocks
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+There could be few clocks where the clock status bit is not
+required to be polled as the clock on/off would be controlled
+by enabling/disabling external source. Add support for the
+same by introducing new flag named as 'BRANCH_HALT_SKIP'.
 
---
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+[sboyd@kernel.org: Rename flag to BRANCH_HALT_SKIP]
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/qcom/clk-branch.c | 7 +++++--
+ drivers/clk/qcom/clk-branch.h | 1 +
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+index 26f7af315066..c58c5538b1b6 100644
+--- a/drivers/clk/qcom/clk-branch.c
++++ b/drivers/clk/qcom/clk-branch.c
+@@ -77,8 +77,11 @@ static int clk_branch_wait(const struct clk_branch *br, =
+bool enabling,
+ 	bool voted =3D br->halt_check & BRANCH_VOTED;
+ 	const char *name =3D clk_hw_get_name(&br->clkr.hw);
+ =
+
+-	/* Skip checking halt bit if the clock is in hardware gated mode */
+-	if (clk_branch_in_hwcg_mode(br))
++	/*
++	 * Skip checking halt bit if we're explicitly ignoring the bit or the
++	 * clock is in hardware gated mode
++	 */
++	if (br->halt_check =3D=3D BRANCH_HALT_SKIP || clk_branch_in_hwcg_mode(br))
+ 		return 0;
+ =
+
+ 	if (br->halt_check =3D=3D BRANCH_HALT_DELAY || (!enabling && voted)) {
+diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+index 284df3f3c55f..1702efb1c511 100644
+--- a/drivers/clk/qcom/clk-branch.h
++++ b/drivers/clk/qcom/clk-branch.h
+@@ -42,6 +42,7 @@ struct clk_branch {
+ #define BRANCH_HALT_ENABLE		1 /* pol: 0 =3D halt */
+ #define BRANCH_HALT_ENABLE_VOTED	(BRANCH_HALT_ENABLE | BRANCH_VOTED)
+ #define BRANCH_HALT_DELAY		2 /* No bit to check; just delay */
++#define BRANCH_HALT_SKIP		3 /* Don't check halt bit */
+ =
+
+ 	struct clk_regmap clkr;
+ };
+-- =
+
+Sent by a computer through tubes
