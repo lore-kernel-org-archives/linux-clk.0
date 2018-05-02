@@ -1,161 +1,122 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Tue, 29 May 2018 13:00:01 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v3 3/6] regulator: bd71837: Devicetree bindings for BD71837
- regulators
-Message-ID: <81fa35b78d71d43ef2fcfeebc8d4b35c1a97599f.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,  Antoine Tenart <antoine.tenart@bootlin.com>,  Maxime Chevallier <maxime.chevallier@bootlin.com>,  Nadav Haklai <nadavh@marvell.com>,  linux-clk@vger.kernel.org,  linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: mvebu: armada-37xx-periph: add suspend/resume support
+References: <20180421142344.25944-1-miquel.raynal@bootlin.com>
+	<20180421142344.25944-2-miquel.raynal@bootlin.com>
+Date: Wed, 02 May 2018 18:18:37 +0200
+In-Reply-To: <20180421142344.25944-2-miquel.raynal@bootlin.com> (Miquel
+	Raynal's message of "Sat, 21 Apr 2018 16:23:44 +0200")
+Message-ID: <87in868202.fsf@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC regulators.
+Hi Miquel,
+ 
+ On sam., avril 21 2018, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../bindings/regulator/rohm,bd71837-regulator.txt  | 126 +++++++++++++++++++++
- 1 file changed, 126 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+> Add suspend/resume hooks in Armada 37xx peripheral clocks driver to
+> handle S2RAM operations.
+>
+> One can think that these hooks are useless by comparing the register
+> values before and after a suspend/resume cycle: they will look the same
+> anyway. This is because of some scripts executed by the Cortex-M3 core
+> during ATF operations to init both the clocks and the DDR. These values
+> could be modified by the BL33 stage or by Linux itself and should be
+> preserved.
+>
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  drivers/clk/mvebu/armada-37xx-periph.c | 48 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>
+> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> index 723bb7f6cea1..cd560bdcb8a9 100644
+> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> @@ -59,6 +59,15 @@ struct clk_periph_driver_data {
+>  	struct clk_hw_onecell_data *hw_data;
+>  	spinlock_t lock;
+>  	void __iomem *reg;
+> +#if defined(CONFIG_PM)
+> +	/* Storage registers for suspend/resume operations */
+> +	u32 tbg_sel;
+> +	u32 div_sel0;
+> +	u32 div_sel1;
+> +	u32 div_sel2;
+> +	u32 clk_sel;
+> +	u32 clk_dis;
+> +#endif /* CONFIG_PM */
+>  };
+>  
+>  struct clk_double_div {
+> @@ -642,6 +651,42 @@ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
+>  	return PTR_ERR_OR_ZERO(*hw);
+>  }
+>  
+> +#if defined(CONFIG_PM)
 
-diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-new file mode 100644
-index 000000000000..4edf3137d9f7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-@@ -0,0 +1,126 @@
-+ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bindings
-+
-+BD71837MWV is a programmable Power Management
-+IC (PMIC) for powering single-core, dual-core, and
-+quad-core SoC’s such as NXP-i.MX 8M. It is optimized
-+for low BOM cost and compact solution footprint. It
-+integrates 8 Buck regulators and 7 LDO’s to provide all
-+the power rails required by the SoC and the commonly
-+used peripherals.
-+
-+Required properties:
-+ - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7"
-+
-+List of regulators provided by this controller. BD71837 regulators node
-+should be sub node of the BD71837 MFD node. See BD71837 MFD bindings at
-+Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-+Regulator nodes should be named to BUCK_<number> and LDO_<number>. The
-+definition for each of these nodes is defined using the standard
-+binding for regulators at
-+Documentation/devicetree/bindings/regulator/regulator.txt.
-+Note that if BD71837 starts at RUN state you probably want to use
-+regulator-boot-on at least for BUCK6 and BUCK7 so that those are not
-+disabled by driver at startup. LDO5 and LDO6 are supplied by those and
-+if they are disabled at startup the voltage monitoring for LDO5/LDO6 will
-+cause PMIC to reset.
-+
-+The valid names for regulator nodes are:
-+BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, BUCK7, BUCK8
-+LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7
-+
-+Optional properties:
-+- Any optional property defined in bindings/regulator/regulator.txt
-+
-+Example:
-+regulators {
-+	buck1: BUCK1 {
-+		regulator-name = "buck1";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+		regulator-ramp-delay = <1250>;
-+	};
-+	buck2: BUCK2 {
-+		regulator-name = "buck2";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-ramp-delay = <1250>;
-+	};
-+	buck3: BUCK3 {
-+		regulator-name = "buck3";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+	};
-+	buck4: BUCK4 {
-+		regulator-name = "buck4";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+	};
-+	buck5: BUCK5 {
-+		regulator-name = "buck5";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1350000>;
-+		regulator-boot-on;
-+	};
-+	buck6: BUCK6 {
-+		regulator-name = "buck6";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+	};
-+	buck7: BUCK7 {
-+		regulator-name = "buck7";
-+		regulator-min-microvolt = <1605000>;
-+		regulator-max-microvolt = <1995000>;
-+		regulator-boot-on;
-+	};
-+	buck8: BUCK8 {
-+		regulator-name = "buck8";
-+		regulator-min-microvolt = <800000>;
-+		regulator-max-microvolt = <1400000>;
-+	};
-+
-+	ldo1: LDO1 {
-+		regulator-name = "ldo1";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+	};
-+	ldo2: LDO2 {
-+		regulator-name = "ldo2";
-+		regulator-min-microvolt = <900000>;
-+		regulator-max-microvolt = <900000>;
-+		regulator-boot-on;
-+	};
-+	ldo3: LDO3 {
-+		regulator-name = "ldo3";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+	ldo4: LDO4 {
-+		regulator-name = "ldo4";
-+		regulator-min-microvolt = <900000>;
-+		regulator-max-microvolt = <1800000>;
-+	};
-+	ldo5: LDO5 {
-+		regulator-name = "ldo5";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+	ldo6: LDO6 {
-+		regulator-name = "ldo6";
-+		regulator-min-microvolt = <900000>;
-+		regulator-max-microvolt = <1800000>;
-+	};
-+	ldo7_reg: LDO7 {
-+		regulator-name = "ldo7";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+};
-+
-+
+I think you could get rid of this conditional code. Have a look on what
+is done in others drivers around DEV_PM_OPS and __maybe_unused.
+
+Gregory
+
+
+> +static int armada_3700_periph_clock_suspend(struct device *dev)
+> +{
+> +	struct clk_periph_driver_data *data = dev_get_drvdata(dev);
+> +
+> +	data->tbg_sel = readl(data->reg + TBG_SEL);
+> +	data->div_sel0 = readl(data->reg + DIV_SEL0);
+> +	data->div_sel1 = readl(data->reg + DIV_SEL1);
+> +	data->div_sel2 = readl(data->reg + DIV_SEL2);
+> +	data->clk_sel = readl(data->reg + CLK_SEL);
+> +	data->clk_dis = readl(data->reg + CLK_DIS);
+> +
+> +	return 0;
+> +}
+> +
+> +static int armada_3700_periph_clock_resume(struct device *dev)
+> +{
+> +	struct clk_periph_driver_data *data = dev_get_drvdata(dev);
+> +
+> +	/* Follow the same order than what the Cortex-M3 does (ATF code) */
+> +	writel(data->clk_dis, data->reg + CLK_DIS);
+> +	writel(data->div_sel0, data->reg + DIV_SEL0);
+> +	writel(data->div_sel1, data->reg + DIV_SEL1);
+> +	writel(data->div_sel2, data->reg + DIV_SEL2);
+> +	writel(data->tbg_sel, data->reg + TBG_SEL);
+> +	writel(data->clk_sel, data->reg + CLK_SEL);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops armada_3700_periph_clock_pm_ops = {
+> +	.suspend        = armada_3700_periph_clock_suspend,
+> +	.resume         = armada_3700_periph_clock_resume,
+> +};
+> +#endif /* CONFIG_PM */
+> +
+>  static int armada_3700_periph_clock_probe(struct platform_device *pdev)
+>  {
+>  	struct clk_periph_driver_data *driver_data;
+> @@ -716,6 +761,9 @@ static struct platform_driver armada_3700_periph_clock_driver = {
+>  	.driver		= {
+>  		.name	= "marvell-armada-3700-periph-clock",
+>  		.of_match_table = armada_3700_periph_clock_of_match,
+> +#if defined(CONFIG_PM)
+> +		.pm	= &armada_3700_periph_clock_pm_ops,
+> +#endif /* CONFIG_PM */
+>  	},
+>  };
+>  
+> -- 
+> 2.14.1
+>
+
 -- 
-2.14.3
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
