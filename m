@@ -1,49 +1,68 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 24 May 2018 15:01:18 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
- regulators
-Message-ID: <20180524140118.GS4828@sirena.org.uk>
-References: <20180524055752.GE4249@localhost.localdomain>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jesV4P1FjH8FXPjZ"
-In-Reply-To: <20180524055752.GE4249@localhost.localdomain>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525258277-3478-2-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Taniya Das <tdas@codeaurora.org>
+References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
+ <1525258277-3478-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <152527385298.138124.8046800128520264876@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
+Date: Wed, 02 May 2018 08:10:52 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Taniya Das (2018-05-02 03:51:16)
+> Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
+> devices would be used for communicating resource state requests to control
+> the clocks managed by RPMh.
+> =
 
---jesV4P1FjH8FXPjZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-On Thu, May 24, 2018 at 08:57:52AM +0300, Matti Vaittinen wrote:
+When you change things you shouldn't keep around reviewed-by tags if it
+significantly changes..
 
-> +Required properties:
-> + - compatible: should be "rohm,bd71837-pmic".
-> + - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7"
+> +Example :
+> +
+> +#include <dt-bindings/clock/qcom,rpmh.h>
+> +
+> +       &apps_rsc {
+> +               rpmhcc: clock-controller {
+> +                       compatible =3D "qcom,sdm845-rpmh-clk";
+> +                       #clock-cells =3D <1>;
+> +                       assigned-clocks =3D <&clock_rpmh RPMH_CXO_CLK>,
+> +                                       <&clock_rpmh RPMH_CXO_CLK_A>,
+> +                                       <&clock_rpmh RPMH_LN_BB_CLK2>,
+> +                                       <&clock_rpmh RPMH_LN_BB_CLK2_A>,
+> +                                       <&clock_rpmh RPMH_LN_BB_CLK3>,
+> +                                       <&clock_rpmh RPMH_LN_BB_CLK3_A>;
+> +                       assigned-clock-parents =3D <&xo_board_div>,
+> +                                               <&xo_board_div>,
+> +                                               <&xo_board_div>,
+> +                                               <&xo_board_div>,
+> +                                               <&xo_board_div>,
+> +                                               <&xo_board_div>,
 
-The MFD is for a single device, there should be no need for compatibles
-on subfunctions.
+There's only one parent, so assigned-clock-parents doesn't really make
+sense. If anything, we would have 'clocks =3D ' here and specify the xo
+board clk and the div 2 clk that live in DT. But I already merged this
+binding, two patchsets ago. Please look in clk-next.
 
---jesV4P1FjH8FXPjZ
-Content-Type: application/pgp-signature; name="signature.asc"
+> +               };
+> +#define RPMH_RF_CLK2                           8
+> +#define RPMH_RF_CLK2_A                         9
+> +#define RPMH_RF_CLK3                           10
+> +#define RPMH_RF_CLK3_A                         11
+> +
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsGxa0ACgkQJNaLcl1U
-h9DzoAf/YtDROa5spIF4Aj92gogq2LCWJvmR0STB4Nbei4Mqbb/m5Q6Vrl4/hDn3
-TKFumDLaK0XXUC7ggXNcv7r+1hXo72SGzpUwbN9sYkc8VDIlyimdLUHVpV/GHuuI
-kQMBIeRe9KWnmJERhAolLDxtSoQFh4ma1kZCdWpjepBsRaS6tSznzrZhGlaEC0tG
-2E8rm711TIk6WDcTEsggTCIYzbQVKlT9C6RyKCcQ5YRZ+GvkVhE1mpTaVtYrkD+P
-COUMKzGV/J3wOotvDdBKIShCZ562dK4rpchUKTAWDP2YMowy0DAJFykU4SzPQC2i
-b5Mo5ola3dgBXm6kiCgrMd8BWrx/og==
-=IokF
------END PGP SIGNATURE-----
-
---jesV4P1FjH8FXPjZ--
+Ok. I dropped CLK4* from the previous patch you sent and dropped Amit's
+signed-off-by.
