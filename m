@@ -1,93 +1,62 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Thu, 24 May 2018 08:54:53 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH 0/9] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC driver
-Message-ID: <20180524055453.GA4249@localhost.localdomain>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Taniya Das <tdas@codeaurora.org>
+References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
+ <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <152527482828.138124.7114901348273696817@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Wed, 02 May 2018 08:27:08 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Patch series adding support for ROHM BD71837 PMIC.
+Quoting Taniya Das (2018-05-02 03:51:17)
+> +
+> +static DEFINE_MUTEX(rpmh_clk_lock);
+> +
+> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,   \
+> +                         _res_en_offset, _res_on)                      \
+> +       static struct clk_rpmh _platform##_##_name_active;              \
+> +       static struct clk_rpmh _platform##_##_name =3D {                 =
+ \
+> +               .res_name =3D _res_name,                                 =
+ \
+> +               .res_addr =3D _res_en_offset,                            =
+ \
+> +               .res_on_val =3D _res_on,                                 =
+ \
+> +               .peer =3D &_platform##_##_name_active,                   =
+ \
+> +               .valid_state_mask =3D (BIT(RPMH_WAKE_ONLY_STATE) |       =
+ \
+> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) |     \
+> +                                     BIT(RPMH_SLEEP_STATE)),           \
+> +               .hw.init =3D &(struct clk_init_data){                    =
+ \
+> +                       .ops =3D &clk_rpmh_ops,                          =
+ \
+> +                       .name =3D #_name,                                =
+ \
+> +                       .parent_names =3D (const char *[]){ "xo_board",  =
+ \
+> +                                               "xo_board_div" },       \
 
-BD71837 is a programmable Power Management IC for powering single-core,
-dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-low BOM cost and compact solution footprint. It integrates 8 buck
-regulators and 7 LDO’s to provide all the power rails required by the
-SoC and the commonly used peripherals.
+The rpmh clks that do a div 2 can have a recalc_rate function that
+returns the xo_board clk rate divided by 2 all the time. That may be
+easier to do. Keep xo_board as parent, but then specify if it does div-2
+or div-1 in the SoC specific listing. Then DT can only show 38.4 MHz.
+The div 2 part is inside the SoC anyway so this seems more accurate too.
 
-The driver aims to not limit the usage of PMIC. Thus the buck and LDO
-naming is generic and not tied to any specific purposes. However there
-is following limitations which make it mostly suitable for use cases
-where the processor where PMIC driver is running is powered by the PMIC:
-
-- The PMIC is not re-initialized if it resets. PMIC may reset as a
-  result of voltage monitoring (over/under voltage) or due to reset
-  request. Driver is only initializing PMIC at probe. This is not
-  problem as long as processor controlling PMIC is powered by PMIC.
-
-- The PMIC internal state machine is ignored by driver. Driver assumes
-  the PMIC is wired so that it is always in "run" state when controlled
-  by the driver.
-
-patch 1: 
-        MFD driver and definitions bringing interrupt support and
-        enabling clk and regulator subsystems.
-Patch 2:
-        Kconfig and Makefiles for MFD.
-Patches 3, 4 and 5:
-        device tree binding documents.
-Patch 6:
-        clock subsystem and support for gated clock.
-Patch 7:
-        Kconfig and Makefiles for clock.
-Patch 8:
-        regulator driver supporting 8 bucks and 7 LDOs.
-Patch 9: 
-        Kconfig and Makefiles for regulators
-
-This patch series is based on for-mfd-next
-
----
-
-Matti Vaittinen (9):
-  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-  mfd: bd71837: build BD71837 PMIC MFD driver
-  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  regulator: bd71837: Devicetree bindings for BD71837 regulators
-  clk: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  clk: bd71837: Add driver for BD71837 PMIC clock
-  clk: bd71837: Build ROHM BD71837 PMIC clock driver
-  regulator: bd71837: BD71837 PMIC regulator driver
-  regulator: bd71837: Build BD71837 regulator driver
-
- .../bindings/clock/rohm,bd71837-clock.txt          |  37 ++
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  55 ++
- .../bindings/regulator/rohm,bd71837-regulator.txt  | 124 ++++
- drivers/clk/Kconfig                                |   9 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-bd71837.c                          | 155 +++++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/bd71837.c                              | 238 +++++++
- drivers/regulator/Kconfig                          |  11 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/bd71837-regulator.c              | 683 +++++++++++++++++++++
- include/linux/mfd/bd71837.h                        | 316 ++++++++++
- 13 files changed, 1644 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
- create mode 100644 drivers/clk/clk-bd71837.c
- create mode 100644 drivers/mfd/bd71837.c
- create mode 100644 drivers/regulator/bd71837-regulator.c
- create mode 100644 include/linux/mfd/bd71837.h
-
--- 
-2.14.3
+> +                       .num_parents =3D 2,                              =
+ \
+> +               },                                                      \
+> +       };                                                              \
