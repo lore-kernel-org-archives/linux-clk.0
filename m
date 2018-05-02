@@ -1,33 +1,40 @@
-Return-Path: <horms@verge.net.au>
-Date: Wed, 23 May 2018 10:57:24 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 1/6] dt-bindings: arm: Document the RZN1D-DB board
-Message-ID: <20180523085723.yp6qc32cozaf7l2n@verge.net.au>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+ <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
+Message-ID: <152527551948.138124.11345269390915156871@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
+Date: Wed, 02 May 2018 08:38:39 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 22, 2018 at 11:01:21AM +0100, Michel Pollet wrote:
-> This documents the RZ/N1 bindings for the RZN1D-DB board.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
+> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
+> limited to clock providers.
+> =
 
-This looks fine but I will wait to see if there are other reviews before
-applying.
+> Hence move these helpers into their own header file, so callers that are
+> not clock providers no longer have to include <linux/clk-provider.h>.
+> =
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+
+Applied to clk-next
