@@ -1,124 +1,32 @@
-Return-Path: <djkurtz@google.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 2 May 2018 21:15:26 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
+	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+	shengjiu.wang@nxp.com, Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH V3 1/2] clk: imx6sx: add missing lvds2 clock to the clock
+ tree
+Message-ID: <20180502131524.GJ3443@dragon>
+References: <1524209891-14146-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com> <1525859941-23654-3-git-send-email-akshu.agrawal@amd.com>
-In-Reply-To: <1525859941-23654-3-git-send-email-akshu.agrawal@amd.com>
-From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Wed, 09 May 2018 15:59:14 +0000
-Message-ID: <CAGS+omCy8B343pW-b26aEuRLyYHiQjMO2Rph4L6_x37uJ7r6vA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] ACPI: APD: Add AMD misc clock handler support
-To: Akshu Agrawal <akshu.agrawal@amd.com>
-Cc: Alexander.Deucher@amd.com, Mike Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	christian.koenig@amd.com, Dave Airlie <airlied@redhat.com>, Shaoyun.Liu@amd.com,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1524209891-14146-1-git-send-email-Anson.Huang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 9, 2018 at 4:01 AM Akshu Agrawal <akshu.agrawal@amd.com> wrote:
+On Fri, Apr 20, 2018 at 03:38:10PM +0800, Anson Huang wrote:
+> i.MX6SX has lvds2 (analog clock2), an I/O clock like lvds1.
+> And this lvds2, along with lvds1, can be used to provide
+> external clock source to the internal pll, such as pll4_audio
+> and pll5_video.
+> 
+> This patch mainly adds the lvds2 to the clock tree and fix its
+> relationship with pll accordingly.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-> AMD SoC exposes clock for general purpose use. The clock registration
-> is done in clk-st driver. The MMIO mapping are passed on to the
-> clock driver for accessing the registers.
-> The misc clock handler will create MMIO mappings to access the
-> clock registers and enable the clock driver to expose the clock
-> for use of drivers which will connect to it.
-
-> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
-
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-
-> ---
-> v2: Submitted with dependent patch, removed unneeded kfree for
-devm_kzalloc
-> v3: used devm_ioremap and fix coccinelle warning
->   drivers/acpi/acpi_apd.c | 47
-+++++++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 47 insertions(+)
-
-> diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
-> index d553b00..2664452 100644
-> --- a/drivers/acpi/acpi_apd.c
-> +++ b/drivers/acpi/acpi_apd.c
-> @@ -11,6 +11,7 @@
->    */
-
->   #include <linux/clk-provider.h>
-> +#include <linux/platform_data/clk-st.h>
->   #include <linux/platform_device.h>
->   #include <linux/pm_domain.h>
->   #include <linux/clkdev.h>
-> @@ -72,6 +73,47 @@ static int acpi_apd_setup(struct apd_private_data
-*pdata)
->   }
-
->   #ifdef CONFIG_X86_AMD_PLATFORM_DEVICE
-> +
-> +static int misc_check_res(struct acpi_resource *ares, void *data)
-> +{
-> +       struct resource res;
-> +
-> +       return !acpi_dev_resource_memory(ares, &res);
-> +}
-> +
-> +static int st_misc_setup(struct apd_private_data *pdata)
-> +{
-> +       struct acpi_device *adev = pdata->adev;
-> +       struct platform_device *clkdev;
-> +       struct st_clk_data *clk_data;
-> +       struct resource_entry *rentry;
-> +       struct list_head resource_list;
-> +       int ret;
-> +
-> +       clk_data = devm_kzalloc(&adev->dev, sizeof(*clk_data),
-GFP_KERNEL);
-> +       if (!clk_data)
-> +               return -ENOMEM;
-> +
-> +       INIT_LIST_HEAD(&resource_list);
-> +       ret = acpi_dev_get_resources(adev, &resource_list, misc_check_res,
-> +                                    NULL);
-> +       if (ret < 0)
-> +               return -ENOENT;
-> +
-> +       list_for_each_entry(rentry, &resource_list, node) {
-> +               clk_data->base = devm_ioremap(&adev->dev,
-rentry->res->start,
-> +                                             resource_size(rentry->res));
-> +               break;
-> +       }
-> +
-> +       acpi_dev_free_resource_list(&resource_list);
-> +
-> +       clkdev = platform_device_register_data(&adev->dev, "clk-st",
-> +                                              PLATFORM_DEVID_NONE,
-clk_data,
-> +                                              sizeof(*clk_data));
-> +       return PTR_ERR_OR_ZERO(clkdev);
-> +}
-> +
->   static const struct apd_device_desc cz_i2c_desc = {
->          .setup = acpi_apd_setup,
->          .fixed_clk_rate = 133000000,
-> @@ -94,6 +136,10 @@ static int acpi_apd_setup(struct apd_private_data
-*pdata)
->          .fixed_clk_rate = 48000000,
->          .properties = uart_properties,
->   };
-> +
-> +static const struct apd_device_desc st_misc_desc = {
-> +       .setup = st_misc_setup,
-> +};
->   #endif
-
->   #ifdef CONFIG_ARM64
-> @@ -179,6 +225,7 @@ static int acpi_apd_create_device(struct acpi_device
-*adev,
->          { "AMD0020", APD_ADDR(cz_uart_desc) },
->          { "AMDI0020", APD_ADDR(cz_uart_desc) },
->          { "AMD0030", },
-> +       { "AMD0040", APD_ADDR(st_misc_desc)},
->   #endif
->   #ifdef CONFIG_ARM64
->          { "APMC0D0F", APD_ADDR(xgene_i2c_desc) },
-> --
-> 1.9.1
+Acked-by: Shawn Guo <shawnguo@kernel.org>
