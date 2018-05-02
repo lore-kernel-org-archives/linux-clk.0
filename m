@@ -1,138 +1,146 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	will.deacon@arm.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	vireshk@kernel.org,
-	ilialin@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v12 7/8] clk: qcom: cpu-8996: Add support to switch below 600Mhz
-Date: Thu, 24 May 2018 10:50:17 +0300
-Message-Id: <1527148218-16540-8-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
-References: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v9 01/27] clk: davinci: pll: allow dev == NULL
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-2-david@lechnology.com>
+ <7f968fd3-eb0e-37ba-9f2d-2b948640ef73@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <5177c1e3-9004-0d6e-6707-caf3c7efc884@lechnology.com>
+Date: Tue, 1 May 2018 20:44:47 -0500
+MIME-Version: 1.0
+In-Reply-To: <7f968fd3-eb0e-37ba-9f2d-2b948640ef73@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The CPU clock controller's primary PLL operates on a single VCO range,
-between 600MHz and 3GHz. However the CPUs do support OPPs with
-frequencies between 300MHz and 600MHz. In order to support running the
-CPUs at those frequencies we end up having to lock the PLL at twice the
-rate and drive the CPU clk via the PLL/2 output and SMUX.
+On 05/01/2018 08:27 AM, Sekhar Nori wrote:
+> On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+>> This modifies the TI DaVinci PLL clock driver to allow for the case
+>> when dev == NULL. On some (most) SoCs that use this driver, the PLL
+>> clock needs to be registered during early boot because it is used
+>> for clocksource/clockevent and there will be no platform device available.
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+> 
+>> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+>> index 23a24c944f1d..7c4d808b8fdb 100644
+>> --- a/drivers/clk/davinci/pll.c
+>> +++ b/drivers/clk/davinci/pll.c
+>> @@ -111,6 +111,31 @@ struct davinci_pll_clk {
+>>   #define to_davinci_pll_clk(_hw) \
+>>   	container_of((_hw), struct davinci_pll_clk, hw)
+>>   
+>> +static inline void *_devm_kzalloc(struct device *dev, size_t size, gfp_t flags)
+>> +{
+>> +	if (dev)
+>> +		return devm_kzalloc(dev, size, flags);
+>> +
+>> +	return kzalloc(size, flags);
+> 
+> I would shift to using kzalloc() only. The utility of devm_kzalloc() is
+> gone if you cannot always rely on it since you have to handle the free
+> for the other case. Same thing for other devres APIs below.
+> 
 
-So for frequencies above 600MHz we follow the following path
- Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-and for frequencies between 300MHz and 600MHz we follow
- Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
+I omitted the usual unwinding on failure since if a non-platform-device
+clock fails to init, then Linux won't boot anyway. I left the devm stuff
+in there since there is one case where this driver is still used as a
+platform device, thinking that there could be an EPROBE_DEFER. However
+I think all uses of these inline functions are after the last possible
+EPROBE_DEFER, so doing as you suggest is probably just fine.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/qcom/clk-cpu-8996.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index 620fdc2..ff5c0a5 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -68,6 +68,8 @@ enum _pmux_input {
- 	NUM_OF_PMUX_INPUTS
- };
- 
-+#define DIV_2_THRESHOLD		600000000
-+
- static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-        [PLL_OFF_L_VAL] = 0x04,
-        [PLL_OFF_ALPHA_VAL] = 0x08,
-@@ -95,10 +97,11 @@ enum _pmux_input {
- 
- static const struct alpha_pll_config hfpll_config = {
- 	.l = 60,
--	.config_ctl_val = 0x200d4828,
-+	.config_ctl_val = 0x200d4aa8,
- 	.config_ctl_hi_val = 0x006,
- 	.pre_div_mask = BIT(12),
- 	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -140,7 +143,7 @@ enum _pmux_input {
- 	.vco_mask = 0x3 << 20,
- 	.config_ctl_val = 0x4001051b,
- 	.post_div_mask = 0x3 << 8,
--	.post_div_val = 0x1,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -181,6 +184,7 @@ struct clk_cpu_8996_mux {
- 	u8	width;
- 	struct notifier_block nb;
- 	struct clk_hw	*pll;
-+	struct clk_hw	*pll_div_2;
- 	struct clk_regmap clkr;
- };
- 
-@@ -226,6 +230,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
- 	struct clk_hw *parent = cpuclk->pll;
- 
-+	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
-+		if (req->rate < (DIV_2_THRESHOLD / 2))
-+			return -EINVAL;
-+
-+		parent = cpuclk->pll_div_2;
-+	}
-+
- 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
- 	req->best_parent_hw = parent;
- 
-@@ -237,13 +248,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- {
- 	int ret;
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+	struct clk_notifier_data *cnd = data;
- 
- 	switch (event) {
- 	case PRE_RATE_CHANGE:
- 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
- 		break;
- 	case POST_RATE_CHANGE:
--		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		if (cnd->new_rate < DIV_2_THRESHOLD)
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  DIV_2_INDEX);
-+		else
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  PLL_INDEX);
- 		break;
- 	default:
- 		ret = 0;
-@@ -295,6 +312,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.pll_div_2 = &pwrcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
-@@ -315,6 +333,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.pll_div_2 = &perfcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
--- 
-1.9.1
+>> +}
+>> +
+>> +static inline void *_devm_kmalloc_array(struct device *dev, size_t n,
+>> +					size_t size, gfp_t flags)
+>> +{
+>> +	if (dev)
+>> +		return devm_kmalloc_array(dev, n, size, flags);
+>> +
+>> +	return kmalloc_array(n, size, flags);
+>> +}
+>> +
+>> +static inline struct clk *_devm_clk_register(struct device *dev, struct clk_hw *hw)
+>> +{
+>> +	if (dev)
+>> +		return devm_clk_register(dev, hw);
+>> +
+>> +	return clk_register(NULL, hw);
+>> +}
+>> +
+> 
+> 
+>> diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+>> index b1b6fb23f972..92a0978a7d29 100644
+>> --- a/drivers/clk/davinci/pll.h
+>> +++ b/drivers/clk/davinci/pll.h
+>> @@ -11,6 +11,7 @@
+>>   #include <linux/bitops.h>
+>>   #include <linux/clk-provider.h>
+>>   #include <linux/of.h>
+>> +#include <linux/regmap.h>
+>>   #include <linux/types.h>
+>>   
+>>   #define PLL_HAS_CLKMODE			BIT(0) /* PLL has PLLCTL[CLKMODE] */
+>> @@ -94,7 +95,8 @@ struct davinci_pll_obsclk_info {
+>>   struct clk *davinci_pll_clk_register(struct device *dev,
+>>   				     const struct davinci_pll_clk_info *info,
+>>   				     const char *parent_name,
+>> -				     void __iomem *base);
+>> +				     void __iomem *base,
+>> +				     struct regmap *cfgchip);
+>>   struct clk *davinci_pll_auxclk_register(struct device *dev,
+>>   					const char *name,
+>>   					void __iomem *base);
+>> @@ -110,32 +112,33 @@ davinci_pll_sysclk_register(struct device *dev,
+>>   			    const struct davinci_pll_sysclk_info *info,
+>>   			    void __iomem *base);
+>>   
+>> -int of_davinci_pll_init(struct device *dev,
+>> +int of_davinci_pll_init(struct device *dev, struct device_node *node,
+>>   			const struct davinci_pll_clk_info *info,
+>>   			const struct davinci_pll_obsclk_info *obsclk_info,
+>>   			const struct davinci_pll_sysclk_info **div_info,
+>>   			u8 max_sysclk_id,
+>> -			void __iomem *base);
+>> +			void __iomem *base,
+>> +			struct regmap *cfgchip);
+>>   
+>>   /* Platform-specific callbacks */
+>>   
+>> -int da830_pll_init(struct device *dev, void __iomem *base);
+>> +int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+>>   
+>> -int da850_pll0_init(struct device *dev, void __iomem *base);
+>> -int da850_pll1_init(struct device *dev, void __iomem *base);
+>> -int of_da850_pll0_init(struct device *dev, void __iomem *base);
+>> -int of_da850_pll1_init(struct device *dev, void __iomem *base);
+>> +int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+> 
+> Having this declared both here and in include/linux/clk/davinci.h is
+> strange. Can we include that file directly where its needed?
+> 
+
+Sure thing. There are a number of duplicates that can be eliminated.
+
+>> diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+>> new file mode 100644
+>> index 000000000000..1298cca509ac
+>> --- /dev/null
+>> +++ b/include/linux/clk/davinci.h
+>> @@ -0,0 +1,24 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Clock driver for TI Davinci PSC controllers
+> 
+> PSC/PLL controllers.
+> 
+> Thanks,
+> Sekhar
+> 
