@@ -1,491 +1,120 @@
-Return-Path: <daniel@zonque.org>
-From: Daniel Mack <daniel@zonque.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	robh@kernel.org,
-	devicetree@vger.kernel.org,
-	Daniel Mack <zonque@gmail.com>,
-	Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v2 2/2] clk: Add driver for MAX9485
-Date: Fri, 25 May 2018 20:20:58 +0200
-Message-Id: <20180525182058.25969-3-daniel@zonque.org>
-In-Reply-To: <20180525182058.25969-1-daniel@zonque.org>
-References: <20180525182058.25969-1-daniel@zonque.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Rob Herring <robh@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, Fabio Estevam
+	<fabio.estevam@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, Mark Rutland
+	<mark.rutland@arm.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH 11/12] dt-bindings: clock: add imx8qxp clock binding doc
+Date: Wed, 2 May 2018 17:40:54 +0000
+Message-ID: <AM0PR04MB42112867033DD6A0D36D364B80800@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1524855403-15301-1-git-send-email-aisheng.dong@nxp.com>
+ <1524855403-15301-12-git-send-email-aisheng.dong@nxp.com>
+ <20180501153727.GA21845@rob-hp-laptop>
+In-Reply-To: <20180501153727.GA21845@rob-hp-laptop>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Daniel Mack <zonque@gmail.com>
+> -----Original Message-----
+> From: Rob Herring [mailto:robh@kernel.org]
+> Sent: Tuesday, May 1, 2018 11:37 PM
+> To: A.s. Dong <aisheng.dong@nxp.com>
+> Cc: linux-clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org; Fabio
+> Estevam <fabio.estevam@nxp.com>; dl-linux-imx <linux-imx@nxp.com>;
+> kernel@pengutronix.de; Mark Rutland <mark.rutland@arm.com>;
+> devicetree@vger.kernel.org
+> Subject: Re: [PATCH 11/12] dt-bindings: clock: add imx8qxp clock binding =
+doc
+>=20
+> On Sat, Apr 28, 2018 at 02:56:42AM +0800, Dong Aisheng wrote:
+> > Add imx8qxp clock binding doc.
+> >
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Cc: Sascha Hauer <kernel@pengutronix.de>
+> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > ---
+> >  .../devicetree/bindings/clock/imx8qxp-clk.txt      |  39 +++
+> >  include/dt-bindings/clock/imx8qxp-clock.h          | 362
+> +++++++++++++++++++++
+> >  2 files changed, 401 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/clock/imx8qxp-clk.txt
+> >  create mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/imx8qxp-clk.txt
+> > b/Documentation/devicetree/bindings/clock/imx8qxp-clk.txt
+> > new file mode 100644
+> > index 0000000..5e365d7
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/imx8qxp-clk.txt
+> > @@ -0,0 +1,39 @@
+> > +NXP i.MX8QXP Clocks Based on SCFW
+> > +--------------------------------------------------------------------
+> > +
+> > +Some i.MX SoCs contain a system controller that is responsible for
+> > +providing clock control service for the IPs. Communication between
+> > +the host processor running an OS and the system controller happens
+> > +through a SCU protocol [1].
+> > +
+> > +[1] Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > +
+> > +Required properties:
+> > +
+> > +- compatible:	Should be "fsl,imx8qxp-clock".
+> > +- #clock-cells:	Should be <1>.
+>=20
+> There's no reason for this node. Just make the parent (SCU) a clock provi=
+der.
+>=20
 
-This patch adds a driver for MAX9485, a programmable audio clock generator.
+It can be done, but do I need to also remove other nodes like pinctrl, powe=
+r domain
+in the same sub-nodes Of SCU?
 
-The device requires a 27.000 MHz clock input. It can provide a gated
-buffered output of its input clock and two gated outputs of a PLL that can
-generate one out of 16 discrete frequencies. There is only one PLL however,
-so the two gated outputs will always have the same frequency but they can
-be switched individually.
+BTW i saw arm,scpi.txt also keep the clk node under scpi node.
+Documentation/devicetree/bindings/arm/arm,scpi.txt
 
-The driver for this device exposes 4 clocks in total:
+Seems like SCU like ARM SCPI is more like a protocol node while still needs
+different drivers to provide services.
 
-- MAX9485_MCLKOUT:      A gated, buffered output of the input clock
-- MAX9485_CLKOUT:       A PLL that can be configured to 16 different
-			discrete frequencies
-- MAX9485_CLKOUT[1,2]:  Two gated outputs for MAX9485_CLKOUT
+Regards
+Dong Aisheng
 
-Some PLL output frequencies can be achieved with different register
-settings. The driver will select the one with lowest jitter in such cases.
-
-Signed-off-by: Daniel Mack <daniel@zonque.org>
----
- drivers/clk/Kconfig       |   8 +
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-max9485.c | 408 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 417 insertions(+)
- create mode 100644 drivers/clk/clk-max9485.c
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 34968a381d0f..f8ab54c41d16 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -45,6 +45,14 @@ config COMMON_CLK_MAX77686
- 	  This driver supports Maxim 77620/77686/77802 crystal oscillator
- 	  clock.
- 
-+config COMMON_CLK_MAX9485
-+	tristate "Clock driver for Maxim 9485 Programmable Clock Generator"
-+	depends on I2C
-+	depends on OF
-+	depends on GPIOLIB || COMPILE_TEST
-+	---help---
-+	  This driver supports Maxim 9485 Programmable Audio Clock Generator
-+
- config COMMON_CLK_RK808
- 	tristate "Clock driver for RK805/RK808/RK818"
- 	depends on MFD_RK808
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index de6d06ac790b..27417ba3c1df 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
- obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
- obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
- obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
-+obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
- obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
- obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
- obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
-diff --git a/drivers/clk/clk-max9485.c b/drivers/clk/clk-max9485.c
-new file mode 100644
-index 000000000000..9bbf2fee49c5
---- /dev/null
-+++ b/drivers/clk/clk-max9485.c
-@@ -0,0 +1,408 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * clk-max9485.c: MAX9485 Programmable Audio Clock Generator
-+ *
-+ * (c) 2018 Daniel Mack <daniel@zonque.org>
-+ *
-+ * References:
-+ *   MAX9485 Datasheet
-+ *     http://www.maximintegrated.com/datasheet/index.mvp/id/4421
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <dt-bindings/clock/maxim,max9485.h>
-+
-+#define MAX9485_INPUT_FREQ 27000000UL
-+#define MAX9485_NUM_CLKS 4
-+
-+/* This chip has only one register of 8 bit width. */
-+
-+enum {
-+	MAX9485_FS_12KHZ	= 0 << 0,
-+	MAX9485_FS_32KHZ	= 1 << 0,
-+	MAX9485_FS_44_1KHZ	= 2 << 0,
-+	MAX9485_FS_48KHZ	= 3 << 0,
-+};
-+
-+enum {
-+	MAX9485_SCALE_256	= 0 << 2,
-+	MAX9485_SCALE_384	= 1 << 2,
-+	MAX9485_SCALE_768	= 2 << 2,
-+};
-+
-+#define MAX9485_DOUBLE		BIT(4)
-+#define MAX9485_CLKOUT1_ENABLE	BIT(5)
-+#define MAX9485_CLKOUT2_ENABLE	BIT(6)
-+#define MAX9485_MCLK_ENABLE	BIT(7)
-+#define MAX9485_FREQ_MASK	0x1f
-+
-+struct max9485_rate {
-+	unsigned long out;
-+	u8 reg_value;
-+};
-+
-+/*
-+ * Ordered by frequency. For frequency the hardware can generate with
-+ * multiple settings, only the one with lowest jitter is listed.
-+ */
-+static const struct max9485_rate max9485_rates[] = {
-+	{  3072000, MAX9485_FS_12KHZ   | MAX9485_SCALE_256 },
-+	{  4608000, MAX9485_FS_12KHZ   | MAX9485_SCALE_384 },
-+	{  8192000, MAX9485_FS_32KHZ   | MAX9485_SCALE_256 },
-+	{  9126000, MAX9485_FS_12KHZ   | MAX9485_SCALE_768 },
-+	{ 11289600, MAX9485_FS_44_1KHZ | MAX9485_SCALE_256 },
-+	{ 12288000, MAX9485_FS_48KHZ   | MAX9485_SCALE_256 },
-+	{ 16384000, MAX9485_FS_32KHZ   | MAX9485_SCALE_256 | MAX9485_DOUBLE },
-+	{ 16934400, MAX9485_FS_44_1KHZ | MAX9485_SCALE_384 },
-+	{ 18384000, MAX9485_FS_48KHZ   | MAX9485_SCALE_384 },
-+	{ 22579200, MAX9485_FS_44_1KHZ | MAX9485_SCALE_256 | MAX9485_DOUBLE },
-+	{ 24576000, MAX9485_FS_48KHZ   | MAX9485_SCALE_256 | MAX9485_DOUBLE },
-+	{ 33868800, MAX9485_FS_44_1KHZ | MAX9485_SCALE_384 | MAX9485_DOUBLE },
-+	{ 36864000, MAX9485_FS_48KHZ   | MAX9485_SCALE_384 | MAX9485_DOUBLE },
-+	{ 49152000, MAX9485_FS_32KHZ   | MAX9485_SCALE_768 | MAX9485_DOUBLE },
-+	{ 67737600, MAX9485_FS_44_1KHZ | MAX9485_SCALE_768 | MAX9485_DOUBLE },
-+	{ 73728000, MAX9485_FS_48KHZ   | MAX9485_SCALE_768 | MAX9485_DOUBLE },
-+	{ } /* sentinel */
-+};
-+
-+struct max9485_driver_data;
-+
-+struct max9485_clk_hw {
-+	struct clk_hw hw;
-+	struct clk_init_data init;
-+	u8 enable_bit;
-+	struct max9485_driver_data *drvdata;
-+};
-+
-+struct max9485_driver_data {
-+	struct clk *xclk;
-+	struct i2c_client *client;
-+	u8 reg_value;
-+	unsigned long clkout_rate;
-+	struct regulator *supply;
-+	struct gpio_desc *reset_gpio;
-+	struct max9485_clk_hw hw[MAX9485_NUM_CLKS];
-+
-+	struct {
-+		struct clk_hw_onecell_data data;
-+		struct clk_hw *hw[MAX9485_NUM_CLKS];
-+	} onecell;
-+};
-+
-+static int max9485_update_bits(struct max9485_driver_data *drvdata,
-+			       u8 mask, u8 value)
-+{
-+	int ret;
-+
-+	drvdata->reg_value &= ~mask;
-+	drvdata->reg_value |= value;
-+
-+	dev_dbg(&drvdata->client->dev,
-+		"updating mask %02x value %02x -> %02x\n",
-+		mask, value, drvdata->reg_value);
-+
-+	ret = i2c_master_send(drvdata->client,
-+			      &drvdata->reg_value,
-+			      sizeof(drvdata->reg_value));
-+
-+	return (ret < 0) ? ret : 0;
-+}
-+
-+static int max9485_clk_prepare(struct clk_hw *hw)
-+{
-+	struct max9485_clk_hw *clk_hw =
-+		container_of(hw, struct max9485_clk_hw, hw);
-+
-+	return max9485_update_bits(clk_hw->drvdata,
-+				   clk_hw->enable_bit,
-+				   clk_hw->enable_bit);
-+}
-+
-+static void max9485_clk_unprepare(struct clk_hw *hw)
-+{
-+	struct max9485_clk_hw *clk_hw =
-+		container_of(hw, struct max9485_clk_hw, hw);
-+
-+	max9485_update_bits(clk_hw->drvdata, clk_hw->enable_bit, 0);
-+}
-+
-+/*
-+ * MCLK OUT
-+ */
-+
-+/* The MCLK output can only provide the same rate as the input clock */
-+static unsigned long max9485_mclkout_recalc_rate(struct clk_hw *hw,
-+						 unsigned long parent_rate)
-+{
-+	return MAX9485_INPUT_FREQ;
-+}
-+
-+/*
-+ * CLKOUT - configurable clock output
-+ */
-+static int max9485_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long parent_rate)
-+{
-+	const struct max9485_rate *entry;
-+	struct max9485_clk_hw *clk_hw =
-+		container_of(hw, struct max9485_clk_hw, hw);
-+
-+	for (entry = max9485_rates; entry->out != 0; entry++)
-+		if (entry->out == rate)
-+			break;
-+
-+	if (entry->out == 0)
-+		return -EINVAL;
-+
-+	clk_hw->drvdata->clkout_rate = rate;
-+
-+	return max9485_update_bits(clk_hw->drvdata,
-+				   MAX9485_FREQ_MASK,
-+				   entry->reg_value);
-+}
-+
-+static long max9485_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long *parent_rate)
-+{
-+	const struct max9485_rate *curr, *prev = NULL;
-+
-+	for (curr = max9485_rates; curr->out != 0; curr++) {
-+		/* Exact matches */
-+		if (curr->out == rate)
-+			return rate;
-+
-+		/*
-+		 * Find the first entry that has a frequency higher than the
-+		 * requested one.
-+		 */
-+		if (curr->out > rate) {
-+			unsigned int mid;
-+
-+			/*
-+			 * If this is the first entry, clamp the value to the
-+			 * lowest possible frequency.
-+			 */
-+			if (!prev)
-+				return curr->out;
-+
-+			/*
-+			 * Otherwise, determine whether the previous entry or
-+			 * current one is closer.
-+			 */
-+			mid = prev->out + ((curr->out - prev->out) / 2);
-+
-+			return (mid > rate) ? prev->out : curr->out;
-+		}
-+
-+		prev = curr;
-+	}
-+
-+	/* If the last entry was still too high, clamp the value */
-+	return prev->out;
-+}
-+
-+static unsigned long max9485_clkout_recalc_rate(struct clk_hw *hw,
-+						unsigned long parent_rate)
-+{
-+	struct max9485_clk_hw *clk_hw =
-+		container_of(hw, struct max9485_clk_hw, hw);
-+
-+	return clk_hw->drvdata->clkout_rate;
-+}
-+
-+struct max9485_clk {
-+	const char *name;
-+	int parent_index;
-+	const struct clk_ops ops;
-+	u8 enable_bit;
-+};
-+
-+static const struct max9485_clk max9485_clks[MAX9485_NUM_CLKS] = {
-+	[MAX9485_MCLKOUT] = {
-+		.name = "mclkout",
-+		.parent_index = -1,
-+		.enable_bit = MAX9485_MCLK_ENABLE,
-+		.ops = {
-+			.prepare	= max9485_clk_prepare,
-+			.unprepare	= max9485_clk_unprepare,
-+			.recalc_rate	= max9485_mclkout_recalc_rate,
-+		},
-+	},
-+	[MAX9485_CLKOUT] = {
-+		.name = "clkout",
-+		.parent_index = -1,
-+		.ops = {
-+			.set_rate	= max9485_clkout_set_rate,
-+			.round_rate	= max9485_clkout_round_rate,
-+			.recalc_rate	= max9485_clkout_recalc_rate,
-+		},
-+	},
-+	[MAX9485_CLKOUT1] = {
-+		.name = "clkout1",
-+		.parent_index = MAX9485_CLKOUT,
-+		.enable_bit = MAX9485_CLKOUT1_ENABLE,
-+		.ops = {
-+			.prepare	= max9485_clk_prepare,
-+			.unprepare	= max9485_clk_unprepare,
-+			.recalc_rate	= max9485_clkout_recalc_rate,
-+		},
-+	},
-+	[MAX9485_CLKOUT2] = {
-+		.name = "clkout2",
-+		.parent_index = MAX9485_CLKOUT,
-+		.enable_bit = MAX9485_CLKOUT2_ENABLE,
-+		.ops = {
-+			.prepare	= max9485_clk_prepare,
-+			.unprepare	= max9485_clk_unprepare,
-+			.recalc_rate	= max9485_clkout_recalc_rate,
-+		},
-+	},
-+};
-+
-+static int max9485_i2c_probe(struct i2c_client *client,
-+			     const struct i2c_device_id *id)
-+{
-+	struct max9485_driver_data *drvdata;
-+	struct device *dev = &client->dev;
-+	unsigned long freq;
-+	int i, ret;
-+
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (drvdata == NULL)
-+		return -ENOMEM;
-+
-+	drvdata->xclk = devm_clk_get(dev, "xclk");
-+	if (IS_ERR(drvdata->xclk))
-+		return PTR_ERR(drvdata->xclk);
-+
-+	freq = clk_get_rate(drvdata->xclk);
-+	if (freq != MAX9485_INPUT_FREQ) {
-+		dev_err(dev, "Illegal xclk frequency of %ld\n", freq);
-+		return -EINVAL;
-+	}
-+
-+	drvdata->supply = devm_regulator_get(dev, "vdd");
-+	if (IS_ERR(drvdata->supply))
-+		return PTR_ERR(drvdata->supply);
-+
-+	ret = regulator_enable(drvdata->supply);
-+	if (ret < 0)
-+		return ret;
-+
-+	drvdata->reset_gpio =
-+		devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(drvdata->reset_gpio))
-+		return PTR_ERR(drvdata->reset_gpio);
-+
-+	i2c_set_clientdata(client, drvdata);
-+	drvdata->client = client;
-+
-+	for (i = 0; i < MAX9485_NUM_CLKS; i++) {
-+		int parent_index = max9485_clks[i].parent_index;
-+		const char *name;
-+
-+		if (of_property_read_string_index(dev->of_node,
-+						  "clock-output-names",
-+						  i, &name) == 0)
-+			drvdata->hw[i].init.name = name;
-+		else
-+			drvdata->hw[i].init.name = max9485_clks[i].name;
-+
-+		drvdata->hw[i].init.ops = &max9485_clks[i].ops;
-+		drvdata->hw[i].init.flags = CLK_IS_BASIC;
-+
-+		if (parent_index > 0) {
-+			drvdata->hw[i].init.parent_names =
-+				&drvdata->hw[parent_index].init.name;
-+			drvdata->hw[i].init.num_parents = 1;
-+			drvdata->hw[i].init.flags |= CLK_SET_RATE_PARENT;
-+		}
-+
-+		drvdata->hw[i].enable_bit = max9485_clks[i].enable_bit;
-+		drvdata->hw[i].hw.init = &drvdata->hw[i].init;
-+		drvdata->hw[i].drvdata = drvdata;
-+
-+		ret = devm_clk_hw_register(dev, &drvdata->hw[i].hw);
-+		if (ret < 0)
-+			return ret;
-+
-+		drvdata->onecell.hw[i] = &drvdata->hw[i].hw;
-+	}
-+
-+	drvdata->onecell.data.num = MAX9485_NUM_CLKS;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   &drvdata->onecell.data);
-+}
-+
-+static int __maybe_unused max9485_suspend(struct device *dev)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+	struct max9485_driver_data *drvdata = i2c_get_clientdata(client);
-+
-+	if (drvdata->reset_gpio)
-+		gpiod_set_value_cansleep(drvdata->reset_gpio, 0);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused max9485_resume(struct device *dev)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+	struct max9485_driver_data *drvdata = i2c_get_clientdata(client);
-+	int ret;
-+
-+	if (drvdata->reset_gpio)
-+		gpiod_set_value_cansleep(drvdata->reset_gpio, 0);
-+
-+	ret = i2c_master_send(client, &drvdata->reg_value,
-+			      sizeof(drvdata->reg_value));
-+
-+	return (ret < 0) ? ret : 0;
-+}
-+
-+static const struct dev_pm_ops max9485_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(max9485_suspend, max9485_resume)
-+};
-+
-+static const struct of_device_id max9485_dt_ids[] = {
-+	{ .compatible = "maxim,max9485", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, max9485_dt_ids);
-+
-+static const struct i2c_device_id max9485_i2c_ids[] = {
-+	{ .name = "max9485", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, max9485_i2c_ids);
-+
-+static struct i2c_driver max9485_driver = {
-+	.driver = {
-+		.name		= "max9485",
-+		.pm		= &max9485_pm_ops,
-+		.of_match_table	= max9485_dt_ids,
-+	},
-+	.probe = max9485_i2c_probe,
-+	.id_table = max9485_i2c_ids,
-+};
-+module_i2c_driver(max9485_driver);
-+
-+MODULE_AUTHOR("Daniel Mack <daniel@zonque.org>");
-+MODULE_DESCRIPTION("MAX9485 Programmable Audio Clock Generator");
-+MODULE_LICENSE("GPL v2");
--- 
-2.14.3
+> > +
+> > +The clock consumer should specify the desired clock by having the
+> > +clock ID in its "clocks" phandle cell.
+> > +See include/dt-bindings/clock/imx8qxp-clock.h
+> > +for the full list of i.MX8QXP clock IDs.
+> > +
+> > +Examples:
+> > +
+> > +#include <dt-bindings/clock/imx8qxp-clock.h>
+> > +
+> > +clk: clk {
+> > +	compatible =3D "fsl,imx8qxp-clk";
+> > +	#clock-cells =3D <1>;
+> > +};
+> > +
+> > +i2c0: i2c@5a800000 {
+> > +	compatible =3D "fsl,imx8qxp-lpi2c", "fsl,imx7ulp-lpi2c";
+> > +	reg =3D <0x0 0x5a800000 0x0 0x4000>;
+> > +	interrupts =3D <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
+> > +	interrupt-parent =3D <&gic>;
+> > +	clocks =3D <&clk IMX8QXP_I2C0_CLK>,
+> > +		 <&clk IMX8QXP_I2C0_IPG_CLK>;
+> > +	clock-names =3D "per", "ipg";
+> > +	...
+> > +};
