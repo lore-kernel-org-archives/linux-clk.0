@@ -1,829 +1,439 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 17/27] ARM: davinci: da850: Remove legacy clock init
-Date: Wed,  9 May 2018 12:25:56 -0500
-Message-Id: <20180509172606.29387-18-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+	devicetree@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Wed,  2 May 2018 16:21:17 +0530
+Message-Id: <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
+References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy clock init code from
-arch/arm/mach-davinci/da850.c.
+Add the RPMh clock driver to control the RPMh managed clock resources on
+some of the Qualcomm Technologies, Inc. SoCs.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
+ drivers/clk/qcom/Kconfig    |   9 ++
+ drivers/clk/qcom/Makefile   |   1 +
+ drivers/clk/qcom/clk-rpmh.c | 366 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 376 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
 
-v10 changes:
-- none
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index e42e1af..627e6e1 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -59,6 +59,15 @@ config QCOM_CLK_SMD_RPM
+ 	  Say Y if you want to support the clocks exposed by the RPM on
+ 	  platforms such as apq8016, apq8084, msm8974 etc.
 
-v9 changes:
-- rebased
-
-v8 changes:
-- none
-
-v7 changes:
-- rebased
-- add davinci prefix to commit message
-
-v6 changes:
-- rebased
-
-
- arch/arm/mach-davinci/board-omapl138-hawk.c |  12 +-
- arch/arm/mach-davinci/da850.c               | 653 +-------------------
- arch/arm/mach-davinci/da8xx-dt.c            |  12 +-
- 3 files changed, 3 insertions(+), 674 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
-index 949ca567e965..466e87b24e9a 100644
---- a/arch/arm/mach-davinci/board-omapl138-hawk.c
-+++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
-@@ -235,22 +235,12 @@ static __init void omapl138_hawk_usb_init(void)
- 		pr_warn("%s: USB 1.1 PinMux setup failed: %d\n", __func__, ret);
- 		return;
- 	}
--#ifdef CONFIG_COMMON_CLK
++config QCOM_CLK_RPMH
++	tristate "RPMh Clock Driver"
++	depends on COMMON_CLK_QCOM && QCOM_RPMH
++	help
++	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
++	 SoCs. It accepts requests from other hardware subsystems via RSC.
++	 Say Y if you want to support the clocks exposed by RPMh on
++	 platforms such as SDM845.
 +
- 	ret = da8xx_register_usb_phy_clocks();
- 	if (ret)
- 		pr_warn("%s: USB PHY CLK registration failed: %d\n",
- 			__func__, ret);
--#else
--	ret = da8xx_register_usb20_phy_clk(false);
--	if (ret)
--		pr_warn("%s: USB 2.0 PHY CLK registration failed: %d\n",
--			__func__, ret);
- 
--	ret = da8xx_register_usb11_phy_clk(false);
--	if (ret)
--		pr_warn("%s: USB 1.1 PHY CLK registration failed: %d\n",
--			__func__, ret);
--#endif
- 	ret = da8xx_register_usb_phy();
- 	if (ret)
- 		pr_warn("%s: USB PHY registration failed: %d\n",
-diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index 9e00beb943c9..4528bbf0c861 100644
---- a/arch/arm/mach-davinci/da850.c
-+++ b/arch/arm/mach-davinci/da850.c
-@@ -38,559 +38,12 @@
- 
- #include "mux.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include "clock.h"
--#include "psc.h"
--#endif
--
- #define DA850_PLL1_BASE		0x01e1a000
- #define DA850_TIMER64P2_BASE	0x01f0c000
- #define DA850_TIMER64P3_BASE	0x01f0d000
- 
- #define DA850_REF_FREQ		24000000
- 
--#ifndef CONFIG_COMMON_CLK
--static int da850_set_armrate(struct clk *clk, unsigned long rate);
--static int da850_round_armrate(struct clk *clk, unsigned long rate);
--static int da850_set_pll0rate(struct clk *clk, unsigned long armrate);
--
--static struct pll_data pll0_data = {
--	.num		= 1,
--	.phys_base	= DA8XX_PLL0_BASE,
--	.flags		= PLL_HAS_PREDIV | PLL_HAS_POSTDIV,
--};
--
--static struct clk ref_clk = {
--	.name		= "ref_clk",
--	.rate		= DA850_REF_FREQ,
--	.set_rate	= davinci_simple_set_rate,
--};
--
--static struct clk pll0_clk = {
--	.name		= "pll0",
--	.parent		= &ref_clk,
--	.pll_data	= &pll0_data,
--	.flags		= CLK_PLL,
--	.set_rate	= da850_set_pll0rate,
--};
--
--static struct clk pll0_aux_clk = {
--	.name		= "pll0_aux_clk",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll0_sysclk1 = {
--	.name		= "pll0_sysclk1",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV1,
--};
--
--static struct clk pll0_sysclk2 = {
--	.name		= "pll0_sysclk2",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV2,
--};
--
--static struct clk pll0_sysclk3 = {
--	.name		= "pll0_sysclk3",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV3,
--	.set_rate	= davinci_set_sysclk_rate,
--	.maxrate	= 100000000,
--};
--
--static struct clk pll0_sysclk4 = {
--	.name		= "pll0_sysclk4",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV4,
--};
--
--static struct clk pll0_sysclk5 = {
--	.name		= "pll0_sysclk5",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV5,
--};
--
--static struct clk pll0_sysclk6 = {
--	.name		= "pll0_sysclk6",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV6,
--};
--
--static struct clk pll0_sysclk7 = {
--	.name		= "pll0_sysclk7",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV7,
--};
--
--static struct pll_data pll1_data = {
--	.num		= 2,
--	.phys_base	= DA850_PLL1_BASE,
--	.flags		= PLL_HAS_POSTDIV,
--};
--
--static struct clk pll1_clk = {
--	.name		= "pll1",
--	.parent		= &ref_clk,
--	.pll_data	= &pll1_data,
--	.flags		= CLK_PLL,
--};
--
--static struct clk pll1_aux_clk = {
--	.name		= "pll1_aux_clk",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll1_sysclk2 = {
--	.name		= "pll1_sysclk2",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV2,
--};
--
--static struct clk pll1_sysclk3 = {
--	.name		= "pll1_sysclk3",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV3,
--};
--
--static int da850_async3_set_parent(struct clk *clk, struct clk *parent)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP3_REG));
--
--	if (parent == &pll0_sysclk2) {
--		val &= ~CFGCHIP3_ASYNC3_CLKSRC;
--	} else if (parent == &pll1_sysclk2) {
--		val |= CFGCHIP3_ASYNC3_CLKSRC;
--	} else {
--		pr_err("Bad parent on async3 clock mux\n");
--		return -EINVAL;
--	}
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP3_REG));
--
--	return 0;
--}
--
--static struct clk async3_clk = {
--	.name		= "async3",
--	.parent		= &pll1_sysclk2,
--	.set_parent	= da850_async3_set_parent,
--};
--
--static struct clk i2c0_clk = {
--	.name		= "i2c0",
--	.parent		= &pll0_aux_clk,
--};
--
--static struct clk timerp64_0_clk = {
--	.name		= "timer0",
--	.parent		= &pll0_aux_clk,
--};
--
--static struct clk timerp64_1_clk = {
--	.name		= "timer1",
--	.parent		= &pll0_aux_clk,
--};
--
--static struct clk arm_rom_clk = {
--	.name		= "arm_rom",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_ARM_RAM_ROM,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk tpcc0_clk = {
--	.name		= "tpcc0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_TPCC,
--	.flags		= ALWAYS_ENABLED | CLK_PSC,
--};
--
--static struct clk tptc0_clk = {
--	.name		= "tptc0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_TPTC0,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk tptc1_clk = {
--	.name		= "tptc1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_TPTC1,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk tpcc1_clk = {
--	.name		= "tpcc1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA850_LPSC1_TPCC1,
--	.gpsc		= 1,
--	.flags		= CLK_PSC | ALWAYS_ENABLED,
--};
--
--static struct clk tptc2_clk = {
--	.name		= "tptc2",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA850_LPSC1_TPTC2,
--	.gpsc		= 1,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk pruss_clk = {
--	.name		= "pruss",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_PRUSS,
--};
--
--static struct clk uart0_clk = {
--	.name		= "uart0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_UART0,
--};
--
--static struct clk uart1_clk = {
--	.name		= "uart1",
--	.parent		= &async3_clk,
--	.lpsc		= DA8XX_LPSC1_UART1,
--	.gpsc		= 1,
--};
--
--static struct clk uart2_clk = {
--	.name		= "uart2",
--	.parent		= &async3_clk,
--	.lpsc		= DA8XX_LPSC1_UART2,
--	.gpsc		= 1,
--};
--
--static struct clk aintc_clk = {
--	.name		= "aintc",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC0_AINTC,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk gpio_clk = {
--	.name		= "gpio",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_GPIO,
--	.gpsc		= 1,
--};
--
--static struct clk i2c1_clk = {
--	.name		= "i2c1",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_I2C,
--	.gpsc		= 1,
--};
--
--static struct clk emif3_clk = {
--	.name		= "emif3",
--	.parent		= &pll0_sysclk5,
--	.lpsc		= DA8XX_LPSC1_EMIF3C,
--	.gpsc		= 1,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk arm_clk = {
--	.name		= "arm",
--	.parent		= &pll0_sysclk6,
--	.lpsc		= DA8XX_LPSC0_ARM,
--	.flags		= ALWAYS_ENABLED,
--	.set_rate	= da850_set_armrate,
--	.round_rate	= da850_round_armrate,
--};
--
--static struct clk rmii_clk = {
--	.name		= "rmii",
--	.parent		= &pll0_sysclk7,
--};
--
--static struct clk emac_clk = {
--	.name		= "emac",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_CPGMAC,
--	.gpsc		= 1,
--};
--
--/*
-- * In order to avoid adding the emac_clk to the clock lookup table twice (and
-- * screwing up the linked list in the process) create a separate clock for
-- * mdio inheriting the rate from emac_clk.
-- */
--static struct clk mdio_clk = {
--	.name		= "mdio",
--	.parent		= &emac_clk,
--};
--
--static struct clk mcasp_clk = {
--	.name		= "mcasp",
--	.parent		= &async3_clk,
--	.lpsc		= DA8XX_LPSC1_McASP0,
--	.gpsc		= 1,
--};
--
--static struct clk mcbsp0_clk = {
--	.name		= "mcbsp0",
--	.parent		= &async3_clk,
--	.lpsc		= DA850_LPSC1_McBSP0,
--	.gpsc		= 1,
--};
--
--static struct clk mcbsp1_clk = {
--	.name		= "mcbsp1",
--	.parent		= &async3_clk,
--	.lpsc		= DA850_LPSC1_McBSP1,
--	.gpsc		= 1,
--};
--
--static struct clk lcdc_clk = {
--	.name		= "lcdc",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_LCDC,
--	.gpsc		= 1,
--};
--
--static struct clk mmcsd0_clk = {
--	.name		= "mmcsd0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_MMC_SD,
--};
--
--static struct clk mmcsd1_clk = {
--	.name		= "mmcsd1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA850_LPSC1_MMC_SD1,
--	.gpsc		= 1,
--};
--
--static struct clk aemif_clk = {
--	.name		= "aemif",
--	.parent		= &pll0_sysclk3,
--	.lpsc		= DA8XX_LPSC0_EMIF25,
--	.flags		= ALWAYS_ENABLED,
--};
--
--/*
-- * In order to avoid adding the aemif_clk to the clock lookup table twice (and
-- * screwing up the linked list in the process) create a separate clock for
-- * nand inheriting the rate from aemif_clk.
-- */
--static struct clk aemif_nand_clk = {
--	.name		= "nand",
--	.parent		= &aemif_clk,
--};
--
--static struct clk usb11_clk = {
--	.name		= "usb11",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_USB11,
--	.gpsc		= 1,
--};
--
--static struct clk usb20_clk = {
--	.name		= "usb20",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_USB20,
--	.gpsc		= 1,
--};
--
--static struct clk cppi41_clk = {
--	.name		= "cppi41",
--	.parent		= &usb20_clk,
--};
--
--static struct clk spi0_clk = {
--	.name		= "spi0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_SPI0,
--};
--
--static struct clk spi1_clk = {
--	.name		= "spi1",
--	.parent		= &async3_clk,
--	.lpsc		= DA8XX_LPSC1_SPI1,
--	.gpsc		= 1,
--};
--
--static struct clk vpif_clk = {
--	.name		= "vpif",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA850_LPSC1_VPIF,
--	.gpsc		= 1,
--};
--
--static struct clk sata_clk = {
--	.name		= "sata",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA850_LPSC1_SATA,
--	.gpsc		= 1,
--	.flags		= PSC_FORCE,
--};
--
--static struct clk dsp_clk = {
--	.name		= "dsp",
--	.parent		= &pll0_sysclk1,
--	.domain		= DAVINCI_GPSC_DSPDOMAIN,
--	.lpsc		= DA8XX_LPSC0_GEM,
--	.flags		= PSC_LRST | PSC_FORCE,
--};
--
--static struct clk ehrpwm_clk = {
--	.name		= "ehrpwm",
--	.parent		= &async3_clk,
--	.lpsc		= DA8XX_LPSC1_PWM,
--	.gpsc		= 1,
--};
--
--static struct clk ehrpwm0_clk = {
--	.name		= "ehrpwm0",
--	.parent		= &ehrpwm_clk,
--};
--
--static struct clk ehrpwm1_clk = {
--	.name		= "ehrpwm1",
--	.parent		= &ehrpwm_clk,
--};
--
--#define DA8XX_EHRPWM_TBCLKSYNC	BIT(12)
--
--static void ehrpwm_tblck_enable(struct clk *clk)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP1_REG));
--	val |= DA8XX_EHRPWM_TBCLKSYNC;
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP1_REG));
--}
--
--static void ehrpwm_tblck_disable(struct clk *clk)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP1_REG));
--	val &= ~DA8XX_EHRPWM_TBCLKSYNC;
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP1_REG));
--}
--
--static struct clk ehrpwm_tbclk = {
--	.name		= "ehrpwm_tbclk",
--	.parent		= &ehrpwm_clk,
--	.clk_enable	= ehrpwm_tblck_enable,
--	.clk_disable	= ehrpwm_tblck_disable,
--};
--
--static struct clk ehrpwm0_tbclk = {
--	.name		= "ehrpwm0_tbclk",
--	.parent		= &ehrpwm_tbclk,
--};
--
--static struct clk ehrpwm1_tbclk = {
--	.name		= "ehrpwm1_tbclk",
--	.parent		= &ehrpwm_tbclk,
--};
--
--static struct clk ecap_clk = {
--	.name		= "ecap",
--	.parent		= &async3_clk,
--	.lpsc		= DA8XX_LPSC1_ECAP,
--	.gpsc		= 1,
--};
--
--static struct clk ecap0_clk = {
--	.name		= "ecap0_clk",
--	.parent		= &ecap_clk,
--};
--
--static struct clk ecap1_clk = {
--	.name		= "ecap1_clk",
--	.parent		= &ecap_clk,
--};
--
--static struct clk ecap2_clk = {
--	.name		= "ecap2_clk",
--	.parent		= &ecap_clk,
--};
--
--static struct clk_lookup da850_clks[] = {
--	CLK(NULL,		"ref",		&ref_clk),
--	CLK(NULL,		"pll0",		&pll0_clk),
--	CLK(NULL,		"pll0_aux",	&pll0_aux_clk),
--	CLK(NULL,		"pll0_sysclk1",	&pll0_sysclk1),
--	CLK(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
--	CLK(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
--	CLK(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
--	CLK(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
--	CLK(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
--	CLK(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
--	CLK(NULL,		"pll1",		&pll1_clk),
--	CLK(NULL,		"pll1_aux",	&pll1_aux_clk),
--	CLK(NULL,		"pll1_sysclk2",	&pll1_sysclk2),
--	CLK(NULL,		"pll1_sysclk3",	&pll1_sysclk3),
--	CLK(NULL,		"async3",	&async3_clk),
--	CLK("i2c_davinci.1",	NULL,		&i2c0_clk),
--	CLK(NULL,		"timer0",	&timerp64_0_clk),
--	CLK("davinci-wdt",	NULL,		&timerp64_1_clk),
--	CLK(NULL,		"arm_rom",	&arm_rom_clk),
--	CLK(NULL,		"tpcc0",	&tpcc0_clk),
--	CLK(NULL,		"tptc0",	&tptc0_clk),
--	CLK(NULL,		"tptc1",	&tptc1_clk),
--	CLK(NULL,		"tpcc1",	&tpcc1_clk),
--	CLK(NULL,		"tptc2",	&tptc2_clk),
--	CLK("pruss_uio",	"pruss",	&pruss_clk),
--	CLK("serial8250.0",	NULL,		&uart0_clk),
--	CLK("serial8250.1",	NULL,		&uart1_clk),
--	CLK("serial8250.2",	NULL,		&uart2_clk),
--	CLK(NULL,		"aintc",	&aintc_clk),
--	CLK(NULL,		"gpio",		&gpio_clk),
--	CLK("i2c_davinci.2",	NULL,		&i2c1_clk),
--	CLK(NULL,		"emif3",	&emif3_clk),
--	CLK(NULL,		"arm",		&arm_clk),
--	CLK(NULL,		"rmii",		&rmii_clk),
--	CLK("davinci_emac.1",	NULL,		&emac_clk),
--	CLK("davinci_mdio.0",	"fck",		&mdio_clk),
--	CLK("davinci-mcasp.0",	NULL,		&mcasp_clk),
--	CLK("davinci-mcbsp.0",	NULL,		&mcbsp0_clk),
--	CLK("davinci-mcbsp.1",	NULL,		&mcbsp1_clk),
--	CLK("da8xx_lcdc.0",	"fck",		&lcdc_clk),
--	CLK("da830-mmc.0",	NULL,		&mmcsd0_clk),
--	CLK("da830-mmc.1",	NULL,		&mmcsd1_clk),
--	CLK("ti-aemif",		NULL,		&aemif_clk),
--	CLK("davinci-nand.0",	"aemif",	&aemif_nand_clk),
--	CLK("ohci-da8xx",	NULL,		&usb11_clk),
--	CLK("musb-da8xx",	NULL,		&usb20_clk),
--	CLK("cppi41-dmaengine",	NULL,		&cppi41_clk),
--	CLK("spi_davinci.0",	NULL,		&spi0_clk),
--	CLK("spi_davinci.1",	NULL,		&spi1_clk),
--	CLK("vpif",		NULL,		&vpif_clk),
--	CLK("ahci_da850",	"fck",		&sata_clk),
--	CLK("davinci-rproc.0",	NULL,		&dsp_clk),
--	CLK(NULL,		NULL,		&ehrpwm_clk),
--	CLK("ehrpwm.0",		"fck",		&ehrpwm0_clk),
--	CLK("ehrpwm.1",		"fck",		&ehrpwm1_clk),
--	CLK(NULL,		NULL,		&ehrpwm_tbclk),
--	CLK("ehrpwm.0",		"tbclk",	&ehrpwm0_tbclk),
--	CLK("ehrpwm.1",		"tbclk",	&ehrpwm1_tbclk),
--	CLK(NULL,		NULL,		&ecap_clk),
--	CLK("ecap.0",		"fck",		&ecap0_clk),
--	CLK("ecap.1",		"fck",		&ecap1_clk),
--	CLK("ecap.2",		"fck",		&ecap2_clk),
--	CLK(NULL,		NULL,		NULL),
--};
--#endif
--
- /*
-  * Device specific mux setup
-  *
-@@ -965,8 +418,6 @@ static struct map_desc da850_io_desc[] = {
- 	},
- };
- 
--static u32 da850_psc_bases[] = { DA8XX_PSC0_BASE, DA8XX_PSC1_BASE };
--
- /* Contents of JTAG ID register used to identify exact cpu type */
- static struct davinci_id da850_ids[] = {
- 	{
-@@ -1176,93 +627,11 @@ int da850_register_cpufreq(char *async_clk)
- 
- 	return platform_device_register(&da850_cpufreq_device);
- }
--
--#ifndef CONFIG_COMMON_CLK
--static int da850_round_armrate(struct clk *clk, unsigned long rate)
--{
--	int ret = 0, diff;
--	unsigned int best = (unsigned int) -1;
--	struct cpufreq_frequency_table *table = cpufreq_info.freq_table;
--	struct cpufreq_frequency_table *pos;
--
--	rate /= 1000; /* convert to kHz */
--
--	cpufreq_for_each_entry(pos, table) {
--		diff = pos->frequency - rate;
--		if (diff < 0)
--			diff = -diff;
--
--		if (diff < best) {
--			best = diff;
--			ret = pos->frequency;
--		}
--	}
--
--	return ret * 1000;
--}
--
--static int da850_set_armrate(struct clk *clk, unsigned long index)
--{
--	struct clk *pllclk = &pll0_clk;
--
--	return clk_set_rate(pllclk, index);
--}
--
--static int da850_set_pll0rate(struct clk *clk, unsigned long rate)
--{
--	struct pll_data *pll = clk->pll_data;
--	struct cpufreq_frequency_table *freq;
--	unsigned int prediv, mult, postdiv;
--	struct da850_opp *opp = NULL;
--	int ret;
--
--	rate /= 1000;
--
--	for (freq = da850_freq_table;
--	     freq->frequency != CPUFREQ_TABLE_END; freq++) {
--		/* rate is in Hz, freq->frequency is in KHz */
--		if (freq->frequency == rate) {
--			opp = (struct da850_opp *)freq->driver_data;
--			break;
--		}
--	}
--
--	if (!opp)
--		return -EINVAL;
--
--	prediv = opp->prediv;
--	mult = opp->mult;
--	postdiv = opp->postdiv;
--
--	ret = davinci_set_pllrate(pll, prediv, mult, postdiv);
--	if (WARN_ON(ret))
--		return ret;
--
--	return 0;
--}
--#endif /* CONFIG_COMMON_CLK */
- #else
- int __init da850_register_cpufreq(char *async_clk)
- {
- 	return 0;
- }
--
--#ifndef CONFIG_COMMON_CLK
--static int da850_set_armrate(struct clk *clk, unsigned long rate)
--{
--	return -EINVAL;
--}
--
--static int da850_set_pll0rate(struct clk *clk, unsigned long armrate)
--{
--	return -EINVAL;
--}
--
--static int da850_round_armrate(struct clk *clk, unsigned long rate)
--{
--	return clk->rate;
--}
--#endif /* CONFIG_COMMON_CLK */
- #endif
- 
- /* VPIF resource, platform data */
-@@ -1364,8 +733,6 @@ static const struct davinci_soc_info davinci_soc_info_da850 = {
- 	.jtag_id_reg		= DA8XX_SYSCFG0_BASE + DA8XX_JTAG_ID_REG,
- 	.ids			= da850_ids,
- 	.ids_num		= ARRAY_SIZE(da850_ids),
--	.psc_bases		= da850_psc_bases,
--	.psc_bases_num		= ARRAY_SIZE(da850_psc_bases),
- 	.pinmux_base		= DA8XX_SYSCFG0_BASE + 0x120,
- 	.pinmux_pins		= da850_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(da850_pins),
-@@ -1381,8 +748,6 @@ static const struct davinci_soc_info davinci_soc_info_da850 = {
- 
- void __init da850_init(void)
- {
--	unsigned int v;
--
- 	davinci_common_init(&davinci_soc_info_da850);
- 
- 	da8xx_syscfg0_base = ioremap(DA8XX_SYSCFG0_BASE, SZ_4K);
-@@ -1390,23 +755,11 @@ void __init da850_init(void)
- 		return;
- 
- 	da8xx_syscfg1_base = ioremap(DA8XX_SYSCFG1_BASE, SZ_4K);
--	if (WARN(!da8xx_syscfg1_base, "Unable to map syscfg1 module"))
--		return;
--
--	/* Unlock writing to PLL0 registers */
--	v = __raw_readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP0_REG));
--	v &= ~CFGCHIP0_PLL_MASTER_LOCK;
--	__raw_writel(v, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP0_REG));
--
--	/* Unlock writing to PLL1 registers */
--	v = __raw_readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP3_REG));
--	v &= ~CFGCHIP3_PLL1_MASTER_LOCK;
--	__raw_writel(v, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP3_REG));
-+	WARN(!da8xx_syscfg1_base, "Unable to map syscfg1 module");
- }
- 
- void __init da850_init_time(void)
- {
--#ifdef CONFIG_COMMON_CLK
- 	void __iomem *pll0;
- 	struct regmap *cfgchip;
- 	struct clk *clk;
-@@ -1421,10 +774,6 @@ void __init da850_init_time(void)
- 	clk = clk_get(NULL, "timer0");
- 
- 	davinci_timer_init(clk);
--#else
--	davinci_clk_init(da850_clks);
--	davinci_timer_init(&timerp64_0_clk);
--#endif
- }
- 
- static struct resource da850_pll1_resources[] = {
-diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
-index c4edf051ef9b..088bc5c0318b 100644
---- a/arch/arm/mach-davinci/da8xx-dt.c
-+++ b/arch/arm/mach-davinci/da8xx-dt.c
-@@ -69,21 +69,11 @@ static void __init da850_init_machine(void)
- 
- 	da850_register_clocks();
- 
--#ifdef CONFIG_COMMON_CLK
- 	ret = da8xx_register_usb_phy_clocks();
- 	if (ret)
- 		pr_warn("%s: USB PHY CLK registration failed: %d\n",
- 			__func__, ret);
--#else
--	ret = da8xx_register_usb20_phy_clk(false);
--	if (ret)
--		pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
--			__func__, ret);
--	ret = da8xx_register_usb11_phy_clk(false);
--	if (ret)
--		pr_warn("%s: registering USB 1.1 PHY clock failed: %d",
--			__func__, ret);
--#endif
+ config APQ_GCC_8084
+ 	tristate "APQ8084 Global Clock Controller"
+ 	select QCOM_GDSC
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 7c09ab1..246a721 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -37,5 +37,6 @@ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+ obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
++obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+new file mode 100644
+index 0000000..21f9b9b
+--- /dev/null
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -0,0 +1,366 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
 +
- 	ret = da850_register_sata_refclk(sata_refclkpn);
- 	if (ret)
- 		pr_warn("%s: registering SATA REFCLK failed: %d",
--- 
-2.17.0
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <soc/qcom/cmd-db.h>
++#include <soc/qcom/rpmh.h>
++
++#include <dt-bindings/clock/qcom,rpmh.h>
++
++#define CLK_RPMH_ARC_EN_OFFSET		0
++#define CLK_RPMH_VRM_EN_OFFSET		4
++
++/**
++ * struct clk_rpmh - individual rpmh clock data structure
++ * @hw:			handle between common and hardware-specific interfaces
++ * @res_name:		resource name for the rpmh clock
++ * @div:		clock divider to compute the clock rate
++ * @res_addr:		base address of the rpmh resource within the RPMh
++ * @res_on_val:		rpmh clock enable value
++ * @state:		rpmh clock requested state
++ * @aggr_state:		rpmh clock aggregated state
++ * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
++ * @valid_state_mask:	mask to determine the state of the rpmh clock
++ * @rpmh_client:	handle used for rpmh communications
++ * @dev:		device to which it is attached
++ * @peer:		pointer to the clock rpmh sibling
++ */
++struct clk_rpmh {
++	struct clk_hw hw;
++	const char *res_name;
++	u8  div;
++	u32 res_addr;
++	u32 res_on_val;
++	u32 state;
++	u32 aggr_state;
++	u32 last_sent_aggr_state;
++	u32 valid_state_mask;
++	struct rpmh_client *rpmh_client;
++	struct device *dev;
++	struct clk_rpmh *peer;
++};
++
++struct clk_rpmh_desc {
++	struct clk_hw **clks;
++	size_t num_clks;
++};
++
++static DEFINE_MUTEX(rpmh_clk_lock);
++
++#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  _res_en_offset, _res_on)			\
++	static struct clk_rpmh _platform##_##_name_active;		\
++	static struct clk_rpmh _platform##_##_name = {			\
++		.res_name = _res_name,					\
++		.res_addr = _res_en_offset,				\
++		.res_on_val = _res_on,					\
++		.peer = &_platform##_##_name_active,			\
++		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
++				      BIT(RPMH_ACTIVE_ONLY_STATE) |	\
++				      BIT(RPMH_SLEEP_STATE)),		\
++		.hw.init = &(struct clk_init_data){			\
++			.ops = &clk_rpmh_ops,				\
++			.name = #_name,					\
++			.parent_names = (const char *[]){ "xo_board",	\
++						"xo_board_div" },	\
++			.num_parents = 2,				\
++		},							\
++	};								\
++	static struct clk_rpmh _platform##_##_name_active = {		\
++		.res_name = _res_name,					\
++		.res_addr = _res_en_offset,				\
++		.res_on_val = _res_on,					\
++		.peer = &_platform##_##_name,				\
++		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
++					BIT(RPMH_ACTIVE_ONLY_STATE)),	\
++		.hw.init = &(struct clk_init_data){			\
++			.ops = &clk_rpmh_ops,				\
++			.name = #_name_active,				\
++			.parent_names = (const char *[]){ "xo_board",	\
++						"xo_board_div" },	\
++			.num_parents = 2,				\
++		},							\
++	}
++
++#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name,	\
++			    _res_on)					\
++	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  CLK_RPMH_ARC_EN_OFFSET, _res_on)
++
++#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name)	\
++	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  CLK_RPMH_VRM_EN_OFFSET, 1)
++
++static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
++{
++	return container_of(_hw, struct clk_rpmh, hw);
++}
++
++static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
++{
++	return (c->last_sent_aggr_state & BIT(state))
++		!= (c->aggr_state & BIT(state));
++}
++
++static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
++{
++	struct tcs_cmd cmd = { 0 };
++	u32 cmd_state, on_val;
++	enum rpmh_state state = RPMH_SLEEP_STATE;
++	int ret;
++
++	cmd.addr = c->res_addr;
++	cmd_state = c->aggr_state;
++	on_val = c->res_on_val;
++
++	for (; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
++		if (has_state_changed(c, state)) {
++			if (cmd_state & BIT(state))
++				cmd.data = on_val;
++
++			ret = rpmh_write_async(c->rpmh_client, state,
++						&cmd, 1);
++			if (ret) {
++				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
++					!state ? "sleep" :
++					state == RPMH_WAKE_ONLY_STATE	?
++					"wake" : "active", c->res_name, ret);
++				return ret;
++			}
++		}
++	}
++
++	c->last_sent_aggr_state = c->aggr_state;
++	c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
++
++	return 0;
++}
++
++/*
++ * Update state and aggregate state values based on enable value.
++ */
++static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
++						bool enable)
++{
++	int ret;
++
++	/* Nothing required to be done if already off or on */
++	if (enable == c->state)
++		return 0;
++
++	c->state = enable ? c->valid_state_mask : 0;
++	c->aggr_state = c->state | c->peer->state;
++	c->peer->aggr_state = c->aggr_state;
++
++	ret = clk_rpmh_send_aggregate_command(c);
++	if (!ret)
++		return 0;
++	if (ret && enable)
++		c->state = 0;
++	else if (ret)
++		c->state = c->valid_state_mask;
++
++	WARN(1, "clk: %s failed to %s\n", c->res_name,
++				enable ? "enable" : "disable");
++	return ret;
++}
++
++static int clk_rpmh_prepare(struct clk_hw *hw)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++	int ret = 0;
++
++	mutex_lock(&rpmh_clk_lock);
++	ret = clk_rpmh_aggregate_state_send_command(c, true);
++	mutex_unlock(&rpmh_clk_lock);
++
++	return ret;
++};
++
++static void clk_rpmh_unprepare(struct clk_hw *hw)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++
++	mutex_lock(&rpmh_clk_lock);
++	clk_rpmh_aggregate_state_send_command(c, false);
++	mutex_unlock(&rpmh_clk_lock);
++};
++
++static int clk_rpmh_set_parent(struct clk_hw *hw, u8 index)
++{
++	return 0;
++}
++
++static u8 clk_rpmh_get_parent(struct clk_hw *hw)
++{
++	/* Default parent at index 0 */
++	return 0;
++}
++
++static const struct clk_ops clk_rpmh_ops = {
++	.prepare	= clk_rpmh_prepare,
++	.unprepare	= clk_rpmh_unprepare,
++	.set_parent	= clk_rpmh_set_parent,
++	.get_parent	= clk_rpmh_get_parent,
++};
++
++/* Resource name must match resource id present in cmd-db. */
++DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3);
++DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2");
++DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3");
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1");
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2");
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3");
++
++static struct clk_hw *sdm845_rpmh_clocks[] = {
++	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
++	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
++	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
++	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
++	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
++	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
++	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
++	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
++	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
++	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
++	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
++	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
++};
++
++static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
++	.clks = sdm845_rpmh_clocks,
++	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
++};
++
++static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
++					     void *data)
++{
++	struct clk_rpmh_desc *rpmh = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx >= rpmh->num_clks) {
++		pr_err("%s: invalid index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return rpmh->clks[idx];
++}
++
++static int clk_rpmh_probe(struct platform_device *pdev)
++{
++	struct clk_hw **hw_clks;
++	struct clk_rpmh *rpmh_clk;
++	const struct clk_rpmh_desc *desc;
++	struct rpmh_client *rpmh_client;
++	int ret, i;
++
++	ret = cmd_db_ready();
++	if (ret) {
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Command DB not available (%d)\n",
++									ret);
++		return ret;
++	}
++
++	rpmh_client = rpmh_get_client(pdev);
++	if (IS_ERR(rpmh_client)) {
++		ret = PTR_ERR(rpmh_client);
++		dev_err(&pdev->dev, "Failed to request RPMh client, ret=%d\n",
++									ret);
++		return ret;
++	}
++
++	desc = of_device_get_match_data(&pdev->dev);
++	hw_clks = desc->clks;
++
++	for (i = 0; i < desc->num_clks; i++) {
++		u32 res_addr;
++
++		rpmh_clk = to_clk_rpmh(hw_clks[i]);
++		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
++		if (!res_addr) {
++			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
++					rpmh_clk->res_name);
++			ret = -ENODEV;
++			goto err;
++		}
++		rpmh_clk->res_addr += res_addr;
++
++		rpmh_clk->rpmh_client = rpmh_client;
++
++		ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to register %s\n",
++					hw_clks[i]->init->name);
++			goto err;
++		}
++
++		rpmh_clk->dev = &pdev->dev;
++	}
++
++	ret = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_rpmh_hw_get,
++				      (void *) desc);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to add clock provider\n");
++		goto err;
++	}
++
++	dev_dbg(&pdev->dev, "Registered RPMh clocks\n");
++
++	return 0;
++err:
++	if (rpmh_client)
++		rpmh_release(rpmh_client);
++
++	return ret;
++}
++
++static int clk_rpmh_remove(struct platform_device *pdev)
++{
++	const struct clk_rpmh_desc *desc =
++			of_device_get_match_data(&pdev->dev);
++	struct clk_hw **hw_clks = desc->clks;
++	struct clk_rpmh *rpmh_clk = to_clk_rpmh(hw_clks[0]);
++
++	rpmh_release(rpmh_clk->rpmh_client);
++
++	return 0;
++}
++
++static const struct of_device_id clk_rpmh_match_table[] = {
++	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
++
++static struct platform_driver clk_rpmh_driver = {
++	.probe		= clk_rpmh_probe,
++	.remove		= clk_rpmh_remove,
++	.driver		= {
++		.name	= "clk-rpmh",
++		.of_match_table = clk_rpmh_match_table,
++	},
++};
++
++static int __init clk_rpmh_init(void)
++{
++	return platform_driver_register(&clk_rpmh_driver);
++}
++subsys_initcall(clk_rpmh_init);
++
++static void __exit clk_rpmh_exit(void)
++{
++	platform_driver_unregister(&clk_rpmh_driver);
++}
++module_exit(clk_rpmh_exit);
++
++MODULE_DESCRIPTION("QCOM RPMh Clock Driver");
++MODULE_LICENSE("GPL v2");
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
