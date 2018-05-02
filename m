@@ -1,118 +1,118 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
 	linux-arm-msm@vger.kernel.org,
 	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v6 10/14] dt-bindings: qcom_spmi: Add support for SAW documentation
-Date: Mon, 14 May 2018 16:11:56 +0300
-Message-Id: <1526303520-5843-11-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
-References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
+Date: Wed,  2 May 2018 16:21:16 +0530
+Message-Id: <1525258277-3478-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
+References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for SAW controlled regulators.
-The regulators defined as SAW controlled in the device tree
-will be controlled through special CPU registers instead of direct
-SPMI accesses.
-This is required especially for CPU supply regulators to synchronize
-with clock scaling and for Automatic Voltage Switching.
-Document it.
+Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
+devices would be used for communicating resource state requests to control
+the clocks managed by RPMh.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 46 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h              | 22 +++++++++++
+ 2 files changed, 68 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+ create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-index 57d2c65..406f2e5 100644
---- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-@@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
- 	Definition: Reference to regulator supplying the input pin, as
- 		    described in the data sheet.
- 
-+- qcom,saw-reg:
-+	Usage: optional
-+	Value type: <phandle>
-+	Description: Reference to syscon node defining the SAW registers.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+new file mode 100644
+index 0000000..2632cae
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+@@ -0,0 +1,46 @@
++Qualcomm Technologies, Inc. RPMh Clocks
++-------------------------------------------------------
 +
- 
- The regulator node houses sub-nodes for each regulator within the device. Each
- sub-node is identified using the node's name, with valid values listed for each
-@@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
- 			2 = 0.55 uA
- 			3 = 0.75 uA
- 
-+- qcom,saw-slave:
-+	Usage: optional
-+	Value type: <boo>
-+	Description: SAW controlled gang slave. Will not be configured.
++Resource Power Manager Hardened (RPMh) manages shared resources on
++some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
++other hardware subsystems via RSC to control clocks.
 +
-+- qcom,saw-leader:
-+	Usage: optional
-+	Value type: <boo>
-+	Description: SAW controlled gang leader. Will be configured as
-+		     SAW regulator.
++Required properties :
++- compatible : shall contain "qcom,sdm845-rpmh-clk"
 +
- Example:
- 
- 	regulators {
-@@ -221,3 +237,32 @@ Example:
- 
- 		....
- 	};
++- #clock-cells : must contain 1
 +
-+Example 2:
++Optional properties :
 +
-+	saw3: syscon@9A10000 {
-+		compatible = "syscon";
-+		reg = <0x9A10000 0x1000>;
-+	};
++These below properities would be required in the cases where the parent of the
++clocks would be "xo_board_div". The default parent for the clock is "xo_board".
 +
-+	...
++- assigned-clocks: from the common clock binding;
++		should be: clock specifier for each output clock of this
++		provider node
 +
-+	spm-regulators {
-+		compatible = "qcom,pm8994-regulators";
-+		qcom,saw-reg = <&saw3>;
-+		s8 {
-+			qcom,saw-slave;
-+		};
-+		s9 {
-+			qcom,saw-slave;
-+		};
-+		s10 {
-+			qcom,saw-slave;
-+		};
-+		pm8994_s11_saw: s11 {
-+			qcom,saw-leader;
-+			regulator-always-on;
-+			regulator-min-microvolt = <900000>;
-+			regulator-max-microvolt = <1140000>;
++- assigned-clock-parents: from the common clock binding;
++		should be: phandle of input clock listed in clocks
++		property
++Example :
++
++#include <dt-bindings/clock/qcom,rpmh.h>
++
++	&apps_rsc {
++		rpmhcc: clock-controller {
++			compatible = "qcom,sdm845-rpmh-clk";
++			#clock-cells = <1>;
++			assigned-clocks = <&clock_rpmh RPMH_CXO_CLK>,
++					<&clock_rpmh RPMH_CXO_CLK_A>,
++					<&clock_rpmh RPMH_LN_BB_CLK2>,
++					<&clock_rpmh RPMH_LN_BB_CLK2_A>,
++					<&clock_rpmh RPMH_LN_BB_CLK3>,
++					<&clock_rpmh RPMH_LN_BB_CLK3_A>;
++			assigned-clock-parents = <&xo_board_div>,
++						<&xo_board_div>,
++						<&xo_board_div>,
++						<&xo_board_div>,
++						<&xo_board_div>,
++						<&xo_board_div>,
 +		};
 +	};
--- 
-1.9.1
+diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
+new file mode 100644
+index 0000000..f48fbd6
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,rpmh.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
++
++
++#ifndef _DT_BINDINGS_CLK_MSM_RPMH_H
++#define _DT_BINDINGS_CLK_MSM_RPMH_H
++
++/* RPMh controlled clocks */
++#define RPMH_CXO_CLK				0
++#define RPMH_CXO_CLK_A				1
++#define RPMH_LN_BB_CLK2				2
++#define RPMH_LN_BB_CLK2_A			3
++#define RPMH_LN_BB_CLK3				4
++#define RPMH_LN_BB_CLK3_A			5
++#define RPMH_RF_CLK1				6
++#define RPMH_RF_CLK1_A				7
++#define RPMH_RF_CLK2				8
++#define RPMH_RF_CLK2_A				9
++#define RPMH_RF_CLK3				10
++#define RPMH_RF_CLK3_A				11
++
++#endif
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
