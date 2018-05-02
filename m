@@ -1,54 +1,70 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40928 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751415AbeEVOxL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 May 2018 10:53:11 -0400
-Received: by mail-wm0-f67.google.com with SMTP id j5-v6so519941wme.5
-        for <linux-clk@vger.kernel.org>; Tue, 22 May 2018 07:53:10 -0700 (PDT)
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
-Subject: [PATCH v6 05/13] clk: imx7d: reset parent for mipi csi root
-Date: Tue, 22 May 2018 15:52:37 +0100
-Message-Id: <20180522145245.3143-6-rui.silva@linaro.org>
-In-Reply-To: <20180522145245.3143-1-rui.silva@linaro.org>
-References: <20180522145245.3143-1-rui.silva@linaro.org>
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:64081
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750849AbeEBKgc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 May 2018 06:36:32 -0400
+Date: Wed, 2 May 2018 12:36:23 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+To: Tali Perry <tali.perry1@gmail.com>
+cc: Stephen Boyd <sboyd@kernel.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] clk: npcm7xx: fix return value check in
+ npcm7xx_clk_init()
+In-Reply-To: <CAHb3i=vYwGAwAcyQVrsZVgc3xq2dSw58Zi9RtokauEjkoA+LpA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.20.1805021234160.3409@hadrien>
+References: <1524741668-158135-1-git-send-email-weiyongjun1@huawei.com> <152521142011.138124.3008284989746799940@swboyd.mtv.corp.google.com> <CAHb3i=vYwGAwAcyQVrsZVgc3xq2dSw58Zi9RtokauEjkoA+LpA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-To guarantee that we do not get Overflow in image FIFO the outer bandwidth has
-to be faster than inputer bandwidth. For that it must be possible to set a
-faster frequency clock. So set new parent to sys_pfd3 clock for the mipi csi
-block.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
----
- drivers/clk/imx/clk-imx7d.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index f7f4db2e6fa6..27877d05faa2 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -891,6 +891,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
- 	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
- 
-+	clk_set_parent(clks[IMX7D_MIPI_CSI_ROOT_SRC], clks[IMX7D_PLL_SYS_PFD3_CLK]);
-+
- 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
- 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
- 
--- 
-2.17.0
+On Wed, 2 May 2018, Tali Perry wrote:
 
+> I added the fix Wei Yongjun indicated ( Thanks Wei !)
+> and another fix similar to the above + error print change.
+>
+> I'm a newbie... what's scripts/coccinelle/ script ?
+> I just made a new patch same way I did before. Is this OK?
+
+With Coccinelle, you can make a rule that can be put into the Linux kernel
+that can allow others to find this problem automatically. Maybe:
+
+@@
+expression e,e1;
+statement S1,S2;
+@@
+
+e = ioremap(...);
+... when != e = e1
+if (
+-    IS_ERR(e)
++    !e
+   )
+  S1 else S2
+
+http://coccinelle.lip6.fr/
+
+julia
+
+>
+> On Wed, May 2, 2018 at 12:50 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Wei Yongjun (2018-04-26 04:21:08)
+> >> In case of error, the function ioremap() returns NULL pointer not
+> >> ERR_PTR(). The IS_ERR() test in the return value check should be
+> >> replaced with NULL test.
+> >>
+> >> Fixes: fcfd14369856 ("clk: npcm7xx: add clock controller")
+> >> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> >
+> > Have you made this into a scripts/coccinelle/ script I can run?
+> >
+> > Applied to clk-next
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
