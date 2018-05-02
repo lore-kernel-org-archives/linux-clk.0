@@ -1,100 +1,73 @@
-Return-Path: <marcel@ziswiler.com>
-Message-ID: <1525440829.6296.22.camel@ziswiler.com>
-Subject: Re: [PATCH v2 0/4] Restore ULPI USB on Tegra20
-From: Marcel Ziswiler <marcel@ziswiler.com>
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Peter
- De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
- <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Linus Walleij <linus.walleij@linaro.org>, Marc
- Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 04 May 2018 15:33:49 +0200
-In-Reply-To: <20180503225537.20748-1-digetx@gmail.com>
-References: <20180503225537.20748-1-digetx@gmail.com>
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-9-jagan@amarulasolutions.com> <20180501161909.GA1728@rob-hp-laptop>
+ <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 2 May 2018 07:37:55 -0500
+Message-ID: <CAL_JsqK4rUB0M1Ta-HR9Yk+7-VzUhCodBbTfBFo3PcJWHFRVSg@mail.gmail.com>
+Subject: Re: [PATCH 08/21] bindings: display: Add compatible for A64 HDMI PHY
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>, Jernej Skrabec <jernej.skrabec@siol.net>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dmitry
+On Wed, May 2, 2018 at 1:27 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> Hi Rob,
+>
+> On Tue, May 1, 2018 at 9:49 PM, Rob Herring <robh@kernel.org> wrote:
+>>
+>> On Mon, Apr 30, 2018 at 05:10:45PM +0530, Jagan Teki wrote:
+>> > HDMI PHY on Allwinner A64 has similar like H3/H5.
+>> >
+>> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> > ---
+>> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+>> >  1 file changed, 1 insertion(+)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > index 9ea4353caadd..7dcd1d64dfe4 100644
+>> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > @@ -104,6 +104,7 @@ Required properties:
+>> >    - compatible: value must be one of:
+>> >      * allwinner,sun8i-a83t-hdmi-phy
+>> >      * allwinner,sun8i-h3-hdmi-phy
+>> > +    * allwinner,sun50i-a64-hdmi-phy
+>>
+>> This should be one valid combination per line. The dts shows that the h3
+>> string is a fallback which should be captured in the binding doc.
+>
+> The fallback compatible "allwinner,sun8i-h3-hdmi-phy" is already
+> documented above, what we need to capture here? or did I miss anything
+> here?
 
-On Fri, 2018-05-04 at 01:55 +0300, Dmitry Osipenko wrote:
-> Hello,
-> 
-> This series of patches fixes ULPI USB on Tegra20. The original
-> problem
-> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
-> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
-> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
-> with the USB for the devices that have CDEV2 being enabled by
-> bootloader.
-> The patch got into the kernel and later Marc Dietrich found that USB
-> stopped working on the "paz00" Tegra20 board. After a bit of
-> discussion
-> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and
-> clock
-> driver was setting CDEV2's parent incorrectly. The parent clock is
-> actually
-> determined by the pinmuxing config of CDEV2 pingroup. This patchset
-> fixes
-> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock
-> provider,
-> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
-> suggestion), and then setting these clock muxes as parents for the
-> CDEV1/2
-> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted
-> since CDEV2
-> (aka MCLK2) is the actual clock source for "ulpi-link".
-> 
-> Changelog:
-> 
-> v2:
-> 	- Added new patch "Add quirk for getting CDEV1/2 clocks",
-> assuring
-> 	  that clk user won't get CDEV1/2 clocks until parent clk muxes
-> 	  are available, i.e. resolves potential issue with CDEV-user
-> driver
-> 	  vs pinctrl driver probe order.
-> 
-> 	- Factored out "pinctrl" patch from the patchset as was
-> requested by
-> 	  Linus Walleij.
-> 
-> 	- Addressed v1 review comments: fixed swapped DEV1/2 clk div
-> bits,
-> 	  made DEV1/2 divs read-only, etc minor changes.
-> 
-> Dmitry Osipenko (4):
->   clk: tegra20: Add DEV1/DEV2 OSC dividers
->   clk: tegra20: Correct parents of CDEV1/2 clocks
->   clk: tegra: Add quirk for getting CDEV1/2 clocks
->   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
-> 
->  arch/arm/boot/dts/tegra20.dtsi  |  2 +-
->  drivers/clk/tegra/clk-tegra20.c | 20 +++++++++++++++----
->  drivers/clk/tegra/clk.c         | 34
-> ++++++++++++++++++++++++++++++++-
->  3 files changed, 50 insertions(+), 6 deletions(-)
+The documentation should make it clear which of these is valid in a dts:
 
-Beautiful (;-p).
+"allwinner,sun50i-a64-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
 
-root@colibri-t20:~# cat /sys/kernel/debug/clk/clk_summary | grep -E
-'pll_p_out4|cdev2'
-          pll_p_out4_div              1        1        0    24000000  
-        0 0  
-             pll_p_out4               2        2        0    24000000  
-        0 0  
-                cdev2_mux             1        1        0    24000000  
-        0 0  
-                   cdev2              1        1        0    24000000  
-        0 0  
+or:
 
-You may add my reviewed and tested bys to the remaining patches as
-well.
+"allwinner,sun50i-a64-hdmi-phy"
 
-Thanks!
 
-Cheers
+IOW, your list should look like this:
 
-Marcel
+* "allwinner,sun8i-a83t-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
+* "allwinner,sun50i-a64-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
+* "allwinner,sun8i-h3-hdmi-phy"
+
+Depending on whether the a83t is also compatible with h3.
+
+Rob
