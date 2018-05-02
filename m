@@ -1,95 +1,106 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Icenowy Zheng <icenowy@aosc.io>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH net-next v2 02/15] clk: sunxi-ng: r40: export a regmap to access the GMAC register
-Date: Wed,  2 May 2018 00:12:14 +0800
-Message-Id: <20180501161227.2110-3-wens@csie.org>
-In-Reply-To: <20180501161227.2110-1-wens@csie.org>
-References: <20180501161227.2110-1-wens@csie.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 02 May 2018 19:55:25 +0800
+In-Reply-To: <CAD6G_RQ3HmHBjwcUoCCth5TwVy5ygx_KwRmRjrkpwoOpvy7vvQ@mail.gmail.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com> <20180430114058.5061-3-jagan@amarulasolutions.com> <20180502113250.5i2eyzv237t5oyl6@flea> <DF02AB5F-D4A5-4198-B455-FEE880CF83CE@aosc.io> <CAD6G_RQ3HmHBjwcUoCCth5TwVy5ygx_KwRmRjrkpwoOpvy7vvQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] Re: [PATCH 02/21] arm64: dts: allwinner: a64: Add DE2 CCU
+To: linux-arm-kernel@lists.infradead.org,
+        Jagan Teki <jagannadh.teki@gmail.com>
+CC: Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-clk@vger.kernel.org
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <918A5AB7-E83F-40BD-9C4C-772230F798CF@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.io>
 
-There's a GMAC configuration register, which exists on A64/A83T/H3/H5 in
-the syscon part, in the CCU of R40 SoC.
 
-Export a regmap of the CCU.
+于 2018年5月2日 GMT+08:00 下午7:50:19, Jagan Teki <jagannadh.teki@gmail.com> 写到:
+>On Wed, May 2, 2018 at 5:04 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>>
+>>
+>> 于 2018年5月2日 GMT+08:00 下午7:32:50, Maxime Ripard
+><maxime.ripard@bootlin.com> 写到:
+>>>On Mon, Apr 30, 2018 at 05:10:39PM +0530, Jagan Teki wrote:
+>>>> DE2 in A64 has clock control unit and behavior is
+>>>> same like H3/H5, so reuse the same in A64.
+>>>>
+>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>>> ---
+>>>>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 15 +++++++++++++++
+>>>>  1 file changed, 15 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>>b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>>> index 1b2ef28c42bd..67b80bbe5bf5 100644
+>>>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>>>> @@ -43,9 +43,11 @@
+>>>>   */
+>>>>
+>>>>  #include <dt-bindings/clock/sun50i-a64-ccu.h>
+>>>> +#include <dt-bindings/clock/sun8i-de2.h>
+>>>>  #include <dt-bindings/clock/sun8i-r-ccu.h>
+>>>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>>  #include <dt-bindings/reset/sun50i-a64-ccu.h>
+>>>> +#include <dt-bindings/reset/sun8i-de2.h>
+>>>>
+>>>>  / {
+>>>>      interrupt-parent = <&gic>;
+>>>> @@ -168,6 +170,19 @@
+>>>>              #size-cells = <1>;
+>>>>              ranges;
+>>>>
+>>>> +            display_clocks: clock@1000000 {
+>>>> +                    compatible = "allwinner,sun50i-a64-de2-clk",
+>>>> +                                 "allwinner,sun50i-h5-de2-clk";
+>>>
+>>>The A64 was released before the H5, so that should be the other way
+>>>around.
+>>>
+>>>> +                    reg = <0x01000000 0x100000>;
+>>>> +                    clocks = <&ccu CLK_DE>,
+>>>> +                             <&ccu CLK_BUS_DE>;
+>>>> +                    clock-names = "mod",
+>>>> +                                  "bus";
+>>>> +                    resets = <&ccu RST_BUS_DE>;
+>>>> +                    #clock-cells = <1>;
+>>>> +                    #reset-cells = <1>;
+>>>> +            };
+>>>> +
+>>>
+>>>So it turns out we don't need the SRAM to access the CCU driver?
+>>
+>> As now U-Boot claims SRAM, people may forget thus :-(
+>
+>I've sent few mails about how we represent de2 with sram_c [1] but
+>none response after. Can I get further inputs so-that we can include
+>sram_c in proper manner.
 
-Read access is not restricted to all registers, but only the GMAC
-register is allowed to be written.
+Please wait for the SRAMC driver sent by Chen-Yu (and commited
+by me) and the DE2 bus driver pending for the SRAMC part.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 33 ++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index c3aa839a453d..65ba6455feb7 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -1251,9 +1251,37 @@ static struct ccu_mux_nb sun8i_r40_cpu_nb = {
- 	.bypass_index	= 1, /* index of 24 MHz oscillator */
- };
- 
-+/*
-+ * Add a regmap for the GMAC driver (dwmac-sun8i) to access the
-+ * GMAC configuration register.
-+ * Only this register is allowed to be written, in order to
-+ * prevent overriding critical clock configuration.
-+ */
-+
-+#define SUN8I_R40_GMAC_CFG_REG 0x164
-+static bool sun8i_r40_ccu_regmap_accessible_reg(struct device *dev,
-+						unsigned int reg)
-+{
-+	if (reg == SUN8I_R40_GMAC_CFG_REG)
-+		return true;
-+	return false;
-+}
-+
-+static struct regmap_config sun8i_r40_ccu_regmap_config = {
-+	.reg_bits	= 32,
-+	.val_bits	= 32,
-+	.reg_stride	= 4,
-+	.max_register	= 0x320, /* PLL_LOCK_CTRL_REG */
-+
-+	/* other devices have no business accessing other registers */
-+	.readable_reg	= sun8i_r40_ccu_regmap_accessible_reg,
-+	.writeable_reg	= sun8i_r40_ccu_regmap_accessible_reg,
-+};
-+
- static int sun8i_r40_ccu_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
-+	struct regmap *regmap;
- 	void __iomem *reg;
- 	u32 val;
- 	int ret;
-@@ -1278,6 +1306,11 @@ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
- 	val &= ~GENMASK(25, 20);
- 	writel(val, reg + SUN8I_R40_USB_CLK_REG);
- 
-+	regmap = devm_regmap_init_mmio(&pdev->dev, reg,
-+				       &sun8i_r40_ccu_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
- 	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_r40_ccu_desc);
- 	if (ret)
- 		return ret;
--- 
-2.17.0
+>
+>[1] https://patchwork.kernel.org/patch/10289737/
+>
+>Jagan.
+>
+>_______________________________________________
+>linux-arm-kernel mailing list
+>linux-arm-kernel@lists.infradead.org
+>http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
