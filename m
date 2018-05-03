@@ -1,152 +1,439 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
 	linux-arm-msm@vger.kernel.org,
 	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v5 06/14] clk: qcom: cpu-8996: Add support to switch below 600Mhz
-Date: Thu,  3 May 2018 14:52:27 +0300
-Message-Id: <1525348355-25471-7-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
-References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [v7] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Thu,  3 May 2018 16:09:16 +0530
+Message-Id: <1525343956-10089-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1525343956-10089-1-git-send-email-tdas@codeaurora.org>
+References: <1525343956-10089-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Add the RPMh clock driver to control the RPMh managed clock resources on
+some of the Qualcomm Technologies, Inc. SoCs.
 
-The CPU clock controller's primary PLL operates on a single VCO range,
-between 600MHz and 3GHz. However the CPUs do support OPPs with
-frequencies between 300MHz and 600MHz. In order to support running the
-CPUs at those frequencies we end up having to lock the PLL at twice the
-rate and drive the CPU clk via the PLL/2 output and SMUX.
-
-So for frequencies above 600MHz we follow the following path
- Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-and for frequencies between 300MHz and 600MHz we follow
- Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
-
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-
-Conflicts:
-	drivers/clk/qcom/clk-cpu-8996.c
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- drivers/clk/qcom/clk-cpu-8996.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/Kconfig    |   9 ++
+ drivers/clk/qcom/Makefile   |   1 +
+ drivers/clk/qcom/clk-rpmh.c | 368 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 378 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index 390b369..3ea0446 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -77,6 +77,8 @@ enum _pmux_input {
- 	NUM_OF_PMUX_INPUTS
- };
- 
-+#define DIV_2_THRESHOLD		600000000
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index e42e1af..627e6e1 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -59,6 +59,15 @@ config QCOM_CLK_SMD_RPM
+ 	  Say Y if you want to support the clocks exposed by the RPM on
+ 	  platforms such as apq8016, apq8084, msm8974 etc.
+
++config QCOM_CLK_RPMH
++	tristate "RPMh Clock Driver"
++	depends on COMMON_CLK_QCOM && QCOM_RPMH
++	help
++	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
++	 SoCs. It accepts requests from other hardware subsystems via RSC.
++	 Say Y if you want to support the clocks exposed by RPMh on
++	 platforms such as SDM845.
 +
- static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-        [PLL_OFF_L_VAL] = 0x04,
-        [PLL_OFF_ALPHA_VAL] = 0x08,
-@@ -104,10 +106,11 @@ enum _pmux_input {
- 
- static const struct alpha_pll_config hfpll_config = {
- 	.l = 60,
--	.config_ctl_val = 0x200d4828,
-+	.config_ctl_val = 0x200d4aa8,
- 	.config_ctl_hi_val = 0x006,
- 	.pre_div_mask = BIT(12),
- 	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -149,7 +152,7 @@ enum _pmux_input {
- 	.vco_mask = 0x3 << 20,
- 	.config_ctl_val = 0x4001051b,
- 	.post_div_mask = 0x3 << 8,
--	.post_div_val = 0x1,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -190,6 +193,7 @@ struct clk_cpu_8996_mux {
- 	u8	width;
- 	struct notifier_block nb;
- 	struct clk_hw	*pll;
-+	struct clk_hw	*pll_div_2;
- 	struct clk_regmap clkr;
- };
- 
-@@ -235,6 +239,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
- 	struct clk_hw *parent = cpuclk->pll;
- 
-+	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
-+		if (req->rate < (DIV_2_THRESHOLD / 2))
-+			return -EINVAL;
+ config APQ_GCC_8084
+ 	tristate "APQ8084 Global Clock Controller"
+ 	select QCOM_GDSC
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 7c09ab1..246a721 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -37,5 +37,6 @@ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+ obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
++obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+new file mode 100644
+index 0000000..7194fbf
+--- /dev/null
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -0,0 +1,368 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
 +
-+		parent = cpuclk->pll_div_2;
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <soc/qcom/cmd-db.h>
++#include <soc/qcom/rpmh.h>
++
++#include <dt-bindings/clock/qcom,rpmh.h>
++
++#define CLK_RPMH_ARC_EN_OFFSET		0
++#define CLK_RPMH_VRM_EN_OFFSET		4
++
++/**
++ * struct clk_rpmh - individual rpmh clock data structure
++ * @hw:			handle between common and hardware-specific interfaces
++ * @res_name:		resource name for the rpmh clock
++ * @div:		clock divider to compute the clock rate
++ * @res_addr:		base address of the rpmh resource within the RPMh
++ * @res_on_val:		rpmh clock enable value
++ * @state:		rpmh clock requested state
++ * @aggr_state:		rpmh clock aggregated state
++ * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
++ * @valid_state_mask:	mask to determine the state of the rpmh clock
++ * @rpmh_client:	handle used for rpmh communications
++ * @dev:		device to which it is attached
++ * @peer:		pointer to the clock rpmh sibling
++ */
++struct clk_rpmh {
++	struct clk_hw hw;
++	const char *res_name;
++	u8 div;
++	u32 res_addr;
++	u32 res_on_val;
++	u32 state;
++	u32 aggr_state;
++	u32 last_sent_aggr_state;
++	u32 valid_state_mask;
++	struct rpmh_client *rpmh_client;
++	struct device *dev;
++	struct clk_rpmh *peer;
++};
++
++struct clk_rpmh_desc {
++	struct clk_hw **clks;
++	size_t num_clks;
++};
++
++static DEFINE_MUTEX(rpmh_clk_lock);
++
++#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  _res_en_offset, _res_on, _div)		\
++	static struct clk_rpmh _platform##_##_name_active;		\
++	static struct clk_rpmh _platform##_##_name = {			\
++		.res_name = _res_name,					\
++		.res_addr = _res_en_offset,				\
++		.res_on_val = _res_on,					\
++		.div = _div,						\
++		.peer = &_platform##_##_name_active,			\
++		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
++				      BIT(RPMH_ACTIVE_ONLY_STATE) |	\
++				      BIT(RPMH_SLEEP_STATE)),		\
++		.hw.init = &(struct clk_init_data){			\
++			.ops = &clk_rpmh_ops,				\
++			.name = #_name,					\
++			.parent_names = (const char *[]){ "xo_board" },	\
++			.num_parents = 1,				\
++		},							\
++	};								\
++	static struct clk_rpmh _platform##_##_name_active = {		\
++		.res_name = _res_name,					\
++		.res_addr = _res_en_offset,				\
++		.res_on_val = _res_on,					\
++		.div = _div,						\
++		.peer = &_platform##_##_name,				\
++		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
++					BIT(RPMH_ACTIVE_ONLY_STATE)),	\
++		.hw.init = &(struct clk_init_data){			\
++			.ops = &clk_rpmh_ops,				\
++			.name = #_name_active,				\
++			.parent_names = (const char *[]){ "xo_board" },	\
++			.num_parents = 1,				\
++		},							\
 +	}
 +
- 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
- 	req->best_parent_hw = parent;
- 
-@@ -246,13 +257,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- {
- 	int ret;
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+	struct clk_notifier_data *cnd = data;
- 
- 	switch (event) {
- 	case PRE_RATE_CHANGE:
- 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
- 		break;
- 	case POST_RATE_CHANGE:
--		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		if (cnd->new_rate < DIV_2_THRESHOLD)
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  DIV_2_INDEX);
-+		else
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  PLL_INDEX);
- 		break;
- 	default:
- 		ret = 0;
-@@ -304,6 +321,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.pll_div_2 = &pwrcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
-@@ -324,6 +342,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.pll_div_2 = &perfcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
--- 
-1.9.1
++#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name,	\
++			    _res_on, _div)				\
++	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  CLK_RPMH_ARC_EN_OFFSET, _res_on, _div)
++
++#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name,	\
++				_div)					\
++	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  CLK_RPMH_VRM_EN_OFFSET, 1, _div)
++
++static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
++{
++	return container_of(_hw, struct clk_rpmh, hw);
++}
++
++static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
++{
++	return (c->last_sent_aggr_state & BIT(state))
++		!= (c->aggr_state & BIT(state));
++}
++
++static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
++{
++	struct tcs_cmd cmd = { 0 };
++	u32 cmd_state, on_val;
++	enum rpmh_state state = RPMH_SLEEP_STATE;
++	int ret;
++
++	cmd.addr = c->res_addr;
++	cmd_state = c->aggr_state;
++	on_val = c->res_on_val;
++
++	for (; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
++		if (has_state_changed(c, state)) {
++			if (cmd_state & BIT(state))
++				cmd.data = on_val;
++
++			ret = rpmh_write_async(c->rpmh_client, state,
++						&cmd, 1);
++			if (ret) {
++				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
++					!state ? "sleep" :
++					state == RPMH_WAKE_ONLY_STATE	?
++					"wake" : "active", c->res_name, ret);
++				return ret;
++			}
++		}
++	}
++
++	c->last_sent_aggr_state = c->aggr_state;
++	c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
++
++	return 0;
++}
++
++/*
++ * Update state and aggregate state values based on enable value.
++ */
++static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
++						bool enable)
++{
++	int ret;
++
++	/* Nothing required to be done if already off or on */
++	if (enable == c->state)
++		return 0;
++
++	c->state = enable ? c->valid_state_mask : 0;
++	c->aggr_state = c->state | c->peer->state;
++	c->peer->aggr_state = c->aggr_state;
++
++	ret = clk_rpmh_send_aggregate_command(c);
++	if (!ret)
++		return 0;
++	if (ret && enable)
++		c->state = 0;
++	else if (ret)
++		c->state = c->valid_state_mask;
++
++	WARN(1, "clk: %s failed to %s\n", c->res_name,
++				enable ? "enable" : "disable");
++	return ret;
++}
++
++static int clk_rpmh_prepare(struct clk_hw *hw)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++	int ret = 0;
++
++	mutex_lock(&rpmh_clk_lock);
++	ret = clk_rpmh_aggregate_state_send_command(c, true);
++	mutex_unlock(&rpmh_clk_lock);
++
++	return ret;
++};
++
++static void clk_rpmh_unprepare(struct clk_hw *hw)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++
++	mutex_lock(&rpmh_clk_lock);
++	clk_rpmh_aggregate_state_send_command(c, false);
++	mutex_unlock(&rpmh_clk_lock);
++};
++
++static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
++					unsigned long prate)
++{
++	struct clk_rpmh *r = to_clk_rpmh(hw);
++	unsigned long rate = prate;
++
++	/*
++	 * RPMh clocks have a fixed rate. Return static rate.
++	 */
++	do_div(rate, r->div);
++	return rate;
++}
++
++static const struct clk_ops clk_rpmh_ops = {
++	.prepare	= clk_rpmh_prepare,
++	.unprepare	= clk_rpmh_unprepare,
++	.recalc_rate	= clk_rpmh_recalc_rate,
++};
++
++/* Resource name must match resource id present in cmd-db. */
++DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
++DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
++DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
++
++static struct clk_hw *sdm845_rpmh_clocks[] = {
++	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
++	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
++	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
++	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
++	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
++	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
++	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
++	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
++	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
++	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
++	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
++	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
++};
++
++static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
++	.clks = sdm845_rpmh_clocks,
++	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
++};
++
++static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
++					     void *data)
++{
++	struct clk_rpmh_desc *rpmh = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx >= rpmh->num_clks) {
++		pr_err("%s: invalid index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return rpmh->clks[idx];
++}
++
++static int clk_rpmh_probe(struct platform_device *pdev)
++{
++	struct clk_hw **hw_clks;
++	struct clk_rpmh *rpmh_clk;
++	const struct clk_rpmh_desc *desc;
++	struct rpmh_client *rpmh_client;
++	int ret, i;
++
++	ret = cmd_db_ready();
++	if (ret) {
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Command DB not available (%d)\n",
++									ret);
++		return ret;
++	}
++
++	rpmh_client = rpmh_get_client(pdev);
++	if (IS_ERR(rpmh_client)) {
++		ret = PTR_ERR(rpmh_client);
++		dev_err(&pdev->dev, "Failed to request RPMh client, ret=%d\n",
++									ret);
++		return ret;
++	}
++
++	desc = of_device_get_match_data(&pdev->dev);
++	hw_clks = desc->clks;
++
++	for (i = 0; i < desc->num_clks; i++) {
++		u32 res_addr;
++
++		rpmh_clk = to_clk_rpmh(hw_clks[i]);
++		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
++		if (!res_addr) {
++			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
++					rpmh_clk->res_name);
++			ret = -ENODEV;
++			goto err;
++		}
++		rpmh_clk->res_addr += res_addr;
++
++		rpmh_clk->rpmh_client = rpmh_client;
++
++		ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to register %s\n",
++					hw_clks[i]->init->name);
++			goto err;
++		}
++
++		rpmh_clk->dev = &pdev->dev;
++	}
++
++	ret = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_rpmh_hw_get,
++				      (void *) desc);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to add clock provider\n");
++		goto err;
++	}
++
++	dev_dbg(&pdev->dev, "Registered RPMh clocks\n");
++
++	return 0;
++err:
++	if (rpmh_client)
++		rpmh_release(rpmh_client);
++
++	return ret;
++}
++
++static int clk_rpmh_remove(struct platform_device *pdev)
++{
++	const struct clk_rpmh_desc *desc =
++			of_device_get_match_data(&pdev->dev);
++	struct clk_hw **hw_clks = desc->clks;
++	struct clk_rpmh *rpmh_clk = to_clk_rpmh(hw_clks[0]);
++
++	rpmh_release(rpmh_clk->rpmh_client);
++
++	return 0;
++}
++
++static const struct of_device_id clk_rpmh_match_table[] = {
++	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
++
++static struct platform_driver clk_rpmh_driver = {
++	.probe		= clk_rpmh_probe,
++	.remove		= clk_rpmh_remove,
++	.driver		= {
++		.name	= "clk-rpmh",
++		.of_match_table = clk_rpmh_match_table,
++	},
++};
++
++static int __init clk_rpmh_init(void)
++{
++	return platform_driver_register(&clk_rpmh_driver);
++}
++subsys_initcall(clk_rpmh_init);
++
++static void __exit clk_rpmh_exit(void)
++{
++	platform_driver_unregister(&clk_rpmh_driver);
++}
++module_exit(clk_rpmh_exit);
++
++MODULE_DESCRIPTION("QCOM RPMh Clock Driver");
++MODULE_LICENSE("GPL v2");
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
