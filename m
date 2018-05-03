@@ -1,215 +1,388 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:47078 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751342AbeEVOx3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 May 2018 10:53:29 -0400
-Received: by mail-wr0-f196.google.com with SMTP id x9-v6so17878586wrl.13
-        for <linux-clk@vger.kernel.org>; Tue, 22 May 2018 07:53:28 -0700 (PDT)
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
-Subject: [PATCH v6 12/13] media: imx7.rst: add documentation for i.MX7 media driver
-Date: Tue, 22 May 2018 15:52:44 +0100
-Message-Id: <20180522145245.3143-13-rui.silva@linaro.org>
-In-Reply-To: <20180522145245.3143-1-rui.silva@linaro.org>
-References: <20180522145245.3143-1-rui.silva@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 1/7] clk: sunxi-ng: add support for H6 PRCM CCU
+Date: Fri,  4 May 2018 02:38:41 +0800
+Message-Id: <20180503183847.11046-2-icenowy@aosc.io>
+In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
+References: <20180503183847.11046-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add rst document to describe the i.MX7 media driver and also a working
-example from the Warp7 board usage with a OV2680 sensor.
+The H6 has clock/reset controls in PRCM part, like old SoCs such as H3
+and A64. However, the PRCM CCU is rearranged; the register arragement
+is now similar to the main CCU of H6, and the PRCM now has two APB
+buses to control -- one is clocked from AHB clock derivde from AR100
+clock, the other is clocked from the same mux with AR100 clock.
+Therefore a new driver is written for it.
 
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+As there's no official document about the PRCM in H6, all the information
+are indirectly collected from BSP and parts of the document, and the
+information source is noted as comments in the driver's source code. If
+reliable information is provided furtherly, the driver needs to be
+rechecked.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- Documentation/media/v4l-drivers/imx7.rst  | 157 ++++++++++++++++++++++
- Documentation/media/v4l-drivers/index.rst |   1 +
- 2 files changed, 158 insertions(+)
- create mode 100644 Documentation/media/v4l-drivers/imx7.rst
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |   3 +-
+ drivers/clk/sunxi-ng/Kconfig                       |   5 +
+ drivers/clk/sunxi-ng/Makefile                      |   1 +
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c             | 207 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h             |  19 ++
+ include/dt-bindings/clock/sun50i-h6-r-ccu.h        |  24 +++
+ include/dt-bindings/reset/sun50i-h6-r-ccu.h        |  17 ++
+ 7 files changed, 275 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+ create mode 100644 include/dt-bindings/clock/sun50i-h6-r-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-h6-r-ccu.h
 
-diff --git a/Documentation/media/v4l-drivers/imx7.rst b/Documentation/media/v4l-drivers/imx7.rst
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 460ef27b1008..47d2e902ced4 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -21,6 +21,7 @@ Required properties :
+ 		- "allwinner,sun50i-a64-r-ccu"
+ 		- "allwinner,sun50i-h5-ccu"
+ 		- "allwinner,sun50i-h6-ccu"
++		- "allwinner,sun50i-h6-r-ccu"
+ 		- "nextthing,gr8-ccu"
+ 
+ - reg: Must contain the registers base address and length
+@@ -35,7 +36,7 @@ Required properties :
+ For the main CCU on H6, one more clock is needed:
+ - "iosc": the SoC's internal frequency oscillator
+ 
+-For the PRCM CCUs on A83T/H3/A64, two more clocks are needed:
++For the PRCM CCUs on A83T/H3/A64/H6, two more clocks are needed:
+ - "pll-periph": the SoC's peripheral PLL from the main CCU
+ - "iosc": the SoC's internal frequency oscillator
+ 
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 79dfd296c3d1..826674d090fd 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -16,6 +16,11 @@ config SUN50I_H6_CCU
+ 	default ARM64 && ARCH_SUNXI
+ 	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
+ 
++config SUN50I_H6_R_CCU
++	bool "Support for the Allwinner H6 PRCM CCU"
++	default ARM64 && ARCH_SUNXI
++	depends on (ARM64 && ARCH_SUNXI) || COMPILE_TEST
++
+ config SUN4I_A10_CCU
+ 	bool "Support for the Allwinner A10/A20 CCU"
+ 	default MACH_SUN4I
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 9ac0fb948101..49454700f2e5 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -23,6 +23,7 @@ obj-y				+= ccu_mp.o
+ # SoC support
+ obj-$(CONFIG_SUN50I_A64_CCU)	+= ccu-sun50i-a64.o
+ obj-$(CONFIG_SUN50I_H6_CCU)	+= ccu-sun50i-h6.o
++obj-$(CONFIG_SUN50I_H6_R_CCU)	+= ccu-sun50i-h6-r.o
+ obj-$(CONFIG_SUN4I_A10_CCU)	+= ccu-sun4i-a10.o
+ obj-$(CONFIG_SUN5I_CCU)		+= ccu-sun5i.o
+ obj-$(CONFIG_SUN6I_A31_CCU)	+= ccu-sun6i-a31.o
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
 new file mode 100644
-index 000000000000..cd1195d391c5
+index 000000000000..27554eaf6929
 --- /dev/null
-+++ b/Documentation/media/v4l-drivers/imx7.rst
-@@ -0,0 +1,157 @@
-+i.MX7 Video Capture Driver
-+==========================
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+@@ -0,0 +1,207 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.xyz>
++ */
 +
-+Introduction
-+------------
++#include <linux/clk-provider.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
 +
-+The i.MX7 contrary to the i.MX5/6 family does not contain an Image Processing
-+Unit (IPU); because of that the capabilities to perform operations or
-+manipulation of the capture frames are less feature rich.
++#include "ccu_common.h"
++#include "ccu_reset.h"
 +
-+For image capture the i.MX7 has three units:
-+- CMOS Sensor Interface (CSI)
-+- Video Multiplexer
-+- MIPI CSI-2 Receiver
++#include "ccu_div.h"
++#include "ccu_gate.h"
++#include "ccu_mp.h"
++#include "ccu_nm.h"
 +
-+::
-+                                           |\
-+   MIPI Camera Input ---> MIPI CSI-2 --- > | \
-+                                           |  \
-+                                           | M |
-+                                           | U | ------>  CSI ---> Capture
-+                                           | X |
-+                                           |  /
-+   Parallel Camera Input ----------------> | /
-+                                           |/
++#include "ccu-sun50i-h6-r.h"
 +
-+For additional information, please refer to the latest versions of the i.MX7
-+reference manual [#f1]_.
++/*
++ * Information about AR100 and AHB/APB clocks in R_CCU are gathered from
++ * clock definitions in the BSP source code.
++ */
 +
-+Entities
-+--------
++static const char * const ar100_r_apb2_parents[] = { "osc24M", "osc32k",
++					     "pll-periph0", "iosc" };
++static const struct ccu_mux_var_prediv ar100_r_apb2_predivs[] = {
++	{ .index = 2, .shift = 0, .width = 5 },
++};
 +
-+imx7-mipi-csi2
-+--------------
++static struct ccu_div ar100_clk = {
++	.div		= _SUNXI_CCU_DIV_FLAGS(8, 2, CLK_DIVIDER_POWER_OF_TWO),
 +
-+This is the MIPI CSI-2 receiver entity. It has one sink pad to receive the pixel
-+data from MIPI CSI-2 camera sensor. It has one source pad, corresponding to the
-+virtual channel 0. This module is compliant to previous version of Samsung
-+D-phy, and supports two D-PHY Rx Data lanes.
++	.mux		= {
++		.shift	= 24,
++		.width	= 2,
 +
-+csi_mux
-+-------
++		.var_predivs	= ar100_r_apb2_predivs,
++		.n_var_predivs	= ARRAY_SIZE(ar100_r_apb2_predivs),
++	},
 +
-+This is the video multiplexer. It has two sink pads to select from either camera
-+sensor with a parallel interface or from MIPI CSI-2 virtual channel 0.  It has
-+a single source pad that routes to the CSI.
++	.common		= {
++		.reg		= 0x000,
++		.features	= CCU_FEATURE_VARIABLE_PREDIV,
++		.hw.init	= CLK_HW_INIT_PARENTS("ar100",
++						      ar100_r_apb2_parents,
++						      &ccu_div_ops,
++						      0),
++	},
++};
 +
-+csi
-+---
++static CLK_FIXED_FACTOR(r_ahb_clk, "r-ahb", "ar100", 1, 1, 0);
 +
-+The CSI enables the chip to connect directly to external CMOS image sensor. CSI
-+can interface directly with Parallel and MIPI CSI-2 buses. It has 256 x 64 FIFO
-+to store received image pixel data and embedded DMA controllers to transfer data
-+from the FIFO through AHB bus.
++static struct ccu_div r_apb1_clk = {
++	.div		= _SUNXI_CCU_DIV(0, 2),
 +
-+This entity has one sink pad that receives from the csi_mux entity and a single
-+source pad that routes video frames directly to memory buffers. This pad is
-+routed to a capture device node.
++	.common		= {
++		.reg		= 0x00c,
++		.hw.init	= CLK_HW_INIT("r-apb1",
++					      "r-ahb",
++					      &ccu_div_ops,
++					      0),
++	},
++};
 +
-+Usage Notes
-+-----------
++static struct ccu_div r_apb2_clk = {
++	.div		= _SUNXI_CCU_DIV_FLAGS(8, 2, CLK_DIVIDER_POWER_OF_TWO),
 +
-+To aid in configuration and for backward compatibility with V4L2 applications
-+that access controls only from video device nodes, the capture device interfaces
-+inherit controls from the active entities in the current pipeline, so controls
-+can be accessed either directly from the subdev or from the active capture
-+device interface. For example, the sensor controls are available either from the
-+sensor subdevs or from the active capture device.
++	.mux		= {
++		.shift	= 24,
++		.width	= 2,
 +
-+Warp7 with OV2680
-+-----------------
++		.var_predivs	= ar100_r_apb2_predivs,
++		.n_var_predivs	= ARRAY_SIZE(ar100_r_apb2_predivs),
++	},
 +
-+On this platform an OV2680 MIPI CSI-2 module is connected to the internal MIPI
-+CSI-2 receiver. The following example configures a video capture pipeline with
-+an output of 800x600, and BGGR 10 bit bayer format:
++	.common		= {
++		.reg		= 0x010,
++		.features	= CCU_FEATURE_VARIABLE_PREDIV,
++		.hw.init	= CLK_HW_INIT_PARENTS("r-apb2",
++						      ar100_r_apb2_parents,
++						      &ccu_div_ops,
++						      0),
++	},
++};
 +
-+.. code-block:: none
-+   # Setup links
-+   media-ctl -l "'ov2680 1-0036':0 -> 'imx7-mipi-csis.0':0[1]"
-+   media-ctl -l "'imx7-mipi-csis.0':1 -> 'csi_mux':1[1]"
-+   media-ctl -l "'csi_mux':2 -> 'csi':0[1]"
-+   media-ctl -l "'csi':1 -> 'csi capture':0[1]"
++/*
++ * Information about the gate/resets are gathered from the clock header file
++ * in the BSP source code, although most of them are unused. The existence
++ * of the hardware block is verified with "3.1 Memory Mapping" chapter in
++ * "Allwinner H6 V200 User Manual V1.1"; and the parent APB buses are verified
++ * with "3.3.2.1 System Bus Tree" chapter inthe same document.
++ */
++static SUNXI_CCU_GATE(r_apb1_timer_clk,	"r-apb1-timer",	"r-apb1",
++		      0x11c, BIT(0), 0);
++static SUNXI_CCU_GATE(r_apb1_twd_clk,	"r-apb1-twd",	"r-apb1",
++		      0x12c, BIT(0), 0);
++static SUNXI_CCU_GATE(r_apb1_pwm_clk,	"r-apb1-pwm",	"r-apb1",
++		      0x13c, BIT(0), 0);
++static SUNXI_CCU_GATE(r_apb2_uart_clk,	"r-apb2-uart",	"r-apb2",
++		      0x18c, BIT(0), 0);
++static SUNXI_CCU_GATE(r_apb2_i2c_clk,	"r-apb2-i2c",	"r-apb2",
++		      0x19c, BIT(0), 0);
++static SUNXI_CCU_GATE(r_apb1_ir_clk,	"r-apb1-ir",	"r-apb1",
++		      0x1cc, BIT(0), 0);
++static SUNXI_CCU_GATE(r_apb1_w1_clk,	"r-apb1-w1",	"r-apb1",
++		      0x1cc, BIT(0), 0);
 +
-+   # Configure pads for pipeline
-+   media-ctl -V "'ov2680 1-0036':0 [fmt:SBGGR10_1X10/800x600 field:none]"
-+   media-ctl -V "'csi_mux':1 [fmt:SBGGR10_1X10/800x600 field:none]"
-+   media-ctl -V "'csi_mux':2 [fmt:SBGGR10_1X10/800x600 field:none]"
-+   media-ctl -V "'imx7-mipi-csis.0':0 [fmt:SBGGR10_1X10/800x600 field:none]"
-+   media-ctl -V "'csi':0 [fmt:SBGGR10_1X10/800x600 field:none]"
++/* Information of IR(RX) mod clock is gathered from BSP source code */
++static const char * const r_mod0_default_parents[] = { "osc32k", "osc24M" };
++static SUNXI_CCU_MP_WITH_MUX_GATE(ir_clk, "ir",
++				  r_mod0_default_parents, 0x1c0,
++				  0, 5,		/* M */
++				  8, 2,		/* P */
++				  24, 1,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
 +
-+After this streaming can start. The v4l2-ctl tool can be used to select any of
-+the resolutions supported by the sensor.
++/*
++ * BSP didn't use the 1-wire function at all now, and the information about
++ * this mod clock is guessed from the IR mod clock above. The existence of
++ * this mod clock is proven by BSP clock header, and the dividers are verified
++ * by contents in the 1-wire related chapter of the User Manual.
++ */
 +
-+.. code-block:: none
-+    root@imx7s-warp:~# media-ctl -p
-+    Media controller API version 4.17.0
++static SUNXI_CCU_MP_WITH_MUX_GATE(w1_clk, "w1",
++				  r_mod0_default_parents, 0x1e0,
++				  0, 5,		/* M */
++				  8, 2,		/* P */
++				  24, 1,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
 +
-+    Media device information
-+    ------------------------
-+    driver          imx-media
-+    model           imx-media
-+    serial
-+    bus info
-+    hw revision     0x0
-+    driver version  4.17.0
++static struct ccu_common *sun50i_h6_r_ccu_clks[] = {
++	&ar100_clk.common,
++	&r_apb1_clk.common,
++	&r_apb2_clk.common,
++	&r_apb1_timer_clk.common,
++	&r_apb1_twd_clk.common,
++	&r_apb1_pwm_clk.common,
++	&r_apb2_uart_clk.common,
++	&r_apb2_i2c_clk.common,
++	&r_apb1_ir_clk.common,
++	&r_apb1_w1_clk.common,
++	&ir_clk.common,
++	&w1_clk.common,
++};
 +
-+    Device topology
-+    - entity 1: csi (2 pads, 2 links)
-+		type V4L2 subdev subtype Unknown flags 0
-+		device node name /dev/v4l-subdev0
-+	    pad0: Sink
-+		    [fmt:SBGGR10_1X10/800x600 field:none]
-+		    <- "csi_mux":2 [ENABLED]
-+	    pad1: Source
-+		    [fmt:SBGGR10_1X10/800x600 field:none]
-+		    -> "csi capture":0 [ENABLED]
++static struct clk_hw_onecell_data sun50i_h6_r_hw_clks = {
++	.hws	= {
++		[CLK_AR100]		= &ar100_clk.common.hw,
++		[CLK_R_AHB]		= &r_ahb_clk.hw,
++		[CLK_R_APB1]		= &r_apb1_clk.common.hw,
++		[CLK_R_APB2]		= &r_apb2_clk.common.hw,
++		[CLK_R_APB1_TIMER]	= &r_apb1_timer_clk.common.hw,
++		[CLK_R_APB1_TWD]	= &r_apb1_twd_clk.common.hw,
++		[CLK_R_APB1_PWM]	= &r_apb1_pwm_clk.common.hw,
++		[CLK_R_APB2_UART]	= &r_apb2_uart_clk.common.hw,
++		[CLK_R_APB2_I2C]	= &r_apb2_i2c_clk.common.hw,
++		[CLK_R_APB1_IR]		= &r_apb1_ir_clk.common.hw,
++		[CLK_R_APB1_W1]		= &r_apb1_w1_clk.common.hw,
++		[CLK_IR]		= &ir_clk.common.hw,
++		[CLK_W1]		= &w1_clk.common.hw,
++	},
++	.num	= CLK_NUMBER,
++};
 +
-+    - entity 4: csi capture (1 pad, 1 link)
-+		type Node subtype V4L flags 0
-+		device node name /dev/video0
-+	    pad0: Sink
-+		    <- "csi":1 [ENABLED]
++static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
++	[RST_R_APB1_TIMER]	=  { 0x11c, BIT(16) },
++	[RST_R_APB1_TWD]	=  { 0x12c, BIT(16) },
++	[RST_R_APB1_PWM]	=  { 0x13c, BIT(16) },
++	[RST_R_APB2_UART]	=  { 0x18c, BIT(16) },
++	[RST_R_APB2_I2C]	=  { 0x19c, BIT(16) },
++	[RST_R_APB1_IR]		=  { 0x1cc, BIT(16) },
++	[RST_R_APB1_W1]		=  { 0x1ec, BIT(16) },
++};
 +
-+    - entity 10: csi_mux (3 pads, 2 links)
-+		type V4L2 subdev subtype Unknown flags 0
-+		device node name /dev/v4l-subdev1
-+	    pad0: Sink
-+		    [fmt:unknown/0x0]
-+	    pad1: Sink
-+		    [fmt:unknown/800x600 field:none]
-+		    <- "imx7-mipi-csis.0":1 [ENABLED]
-+	    pad2: Source
-+		    [fmt:unknown/800x600 field:none]
-+		    -> "csi":0 [ENABLED]
++static const struct sunxi_ccu_desc sun50i_h6_r_ccu_desc = {
++	.ccu_clks	= sun50i_h6_r_ccu_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sun50i_h6_r_ccu_clks),
 +
-+    - entity 14: imx7-mipi-csis.0 (2 pads, 2 links)
-+		type V4L2 subdev subtype Unknown flags 0
-+		device node name /dev/v4l-subdev2
-+	    pad0: Sink
-+		    [fmt:SBGGR10_1X10/800x600 field:none]
-+		    <- "ov2680 1-0036":0 [ENABLED]
-+	    pad1: Source
-+		    [fmt:SBGGR10_1X10/800x600 field:none]
-+		    -> "csi_mux":1 [ENABLED]
++	.hw_clks	= &sun50i_h6_r_hw_clks,
 +
-+    - entity 17: ov2680 1-0036 (1 pad, 1 link)
-+		type V4L2 subdev subtype Sensor flags 0
-+		device node name /dev/v4l-subdev3
-+	    pad0: Source
-+		    [fmt:SBGGR10_1X10/800x600 field:none]
-+		    -> "imx7-mipi-csis.0":0 [ENABLED]
++	.resets		= sun50i_h6_r_ccu_resets,
++	.num_resets	= ARRAY_SIZE(sun50i_h6_r_ccu_resets),
++};
 +
++static void __init sunxi_r_ccu_init(struct device_node *node,
++				    const struct sunxi_ccu_desc *desc)
++{
++	void __iomem *reg;
 +
-+References
-+----------
++	reg = of_io_request_and_map(node, 0, of_node_full_name(node));
++	if (IS_ERR(reg)) {
++		pr_err("%pOF: Could not map the clock registers\n", node);
++		return;
++	}
 +
-+.. [#f1] https://www.nxp.com/docs/en/reference-manual/IMX7SRM.pdf
-diff --git a/Documentation/media/v4l-drivers/index.rst b/Documentation/media/v4l-drivers/index.rst
-index 679238e786a7..693295bbc53f 100644
---- a/Documentation/media/v4l-drivers/index.rst
-+++ b/Documentation/media/v4l-drivers/index.rst
-@@ -44,6 +44,7 @@ For more details see the file COPYING in the source distribution of Linux.
- 	davinci-vpbe
- 	fimc
- 	imx
-+	imx7
- 	ivtv
- 	max2175
- 	meye
++	sunxi_ccu_probe(node, reg, desc);
++}
++
++static void __init sun50i_h6_r_ccu_setup(struct device_node *node)
++{
++	sunxi_r_ccu_init(node, &sun50i_h6_r_ccu_desc);
++}
++CLK_OF_DECLARE(sun50i_h6_r_ccu, "allwinner,sun50i-h6-r-ccu",
++	       sun50i_h6_r_ccu_setup);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+new file mode 100644
+index 000000000000..782117dc0b28
+--- /dev/null
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright 2017 Icenowy Zheng <icenowy@aosc.xyz>
++ */
++
++#ifndef _CCU_SUN50I_H6_R_H
++#define _CCU_SUN50I_H6_R_H
++
++#include <dt-bindings/clock/sun50i-h6-r-ccu.h>
++#include <dt-bindings/reset/sun50i-h6-r-ccu.h>
++
++/* AHB/APB bus clocks are not exported except APB1 for R_PIO */
++#define CLK_R_AHB	1
++
++#define CLK_R_APB2	3
++
++#define CLK_NUMBER	(CLK_W1 + 1)
++
++#endif /* _CCU_SUN50I_H6_R_H */
+diff --git a/include/dt-bindings/clock/sun50i-h6-r-ccu.h b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
+new file mode 100644
+index 000000000000..76136132a13e
+--- /dev/null
++++ b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2017 Icenowy Zheng <icenowy@aosc.xyz>
++ */
++
++#ifndef _DT_BINDINGS_CLK_SUN50I_H6_R_CCU_H_
++#define _DT_BINDINGS_CLK_SUN50I_H6_R_CCU_H_
++
++#define CLK_AR100		0
++
++#define CLK_R_APB1		2
++
++#define CLK_R_APB1_TIMER	4
++#define CLK_R_APB1_TWD		5
++#define CLK_R_APB1_PWM		6
++#define CLK_R_APB2_UART		7
++#define CLK_R_APB2_I2C		8
++#define CLK_R_APB1_IR		9
++#define CLK_R_APB1_W1		10
++
++#define CLK_IR			11
++#define CLK_W1			12
++
++#endif /* _DT_BINDINGS_CLK_SUN50I_H6_R_CCU_H_ */
+diff --git a/include/dt-bindings/reset/sun50i-h6-r-ccu.h b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
+new file mode 100644
+index 000000000000..01c84dba49a4
+--- /dev/null
++++ b/include/dt-bindings/reset/sun50i-h6-r-ccu.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: (GPL-2.0+ or MIT) */
++/*
++ * Copyright (C) 2016 Icenowy Zheng <icenowy@aosc.xyz>
++ */
++
++#ifndef _DT_BINDINGS_RST_SUN50I_H6_R_CCU_H_
++#define _DT_BINDINGS_RST_SUN50I_H6_R_CCU_H_
++
++#define RST_R_APB1_TIMER	0
++#define RST_R_APB1_TWD		1
++#define RST_R_APB1_PWM		2
++#define RST_R_APB2_UART		3
++#define RST_R_APB2_I2C		4
++#define RST_R_APB1_IR		5
++#define RST_R_APB1_W1		6
++
++#endif /* _DT_BINDINGS_RST_SUN50I_H6_R_CCU_H_ */
 -- 
-2.17.0
-
+2.15.1
