@@ -1,71 +1,138 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:32989 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750750AbeENKDX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 May 2018 06:03:23 -0400
-Received: by mail-wm0-f45.google.com with SMTP id x12-v6so11096285wmc.0
-        for <linux-clk@vger.kernel.org>; Mon, 14 May 2018 03:03:22 -0700 (PDT)
-Message-ID: <1526292199.2897.7.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson: meson8b: mark fclk_div gate clocks as
- CLK_IS_CRITICAL
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        yixun.lan@amlogic.com
-Cc: linux-amlogic@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org
-Date: Mon, 14 May 2018 12:03:19 +0200
-In-Reply-To: <CAFBinCBz9ne9qeU3a6SQJpqRFm0ix0Dc0LYvmzWKmKJWVML_UQ@mail.gmail.com>
-References: <20180501214555.11476-1-martin.blumenstingl@googlemail.com>
-         <CAFBinCBz9ne9qeU3a6SQJpqRFm0ix0Dc0LYvmzWKmKJWVML_UQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Received: from mail-db5eur01on0054.outbound.protection.outlook.com ([104.47.2.54]:58576
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751862AbeECBuT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 May 2018 21:50:19 -0400
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+        Rui Miguel Silva <rui.silva@linaro.org>,
+        Anson Huang <anson.huang@nxp.com>
+CC: "mchehab@kernel.org" <mchehab@kernel.org>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH v2 03/15] clk: imx7d: fix mipi dphy div parent
+Date: Thu, 3 May 2018 01:50:16 +0000
+Message-ID: <AM0PR04MB4211B3698E0111312A192C0A80870@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20180423134750.30403-1-rui.silva@linaro.org>
+ <20180423134750.30403-4-rui.silva@linaro.org> <20180503010810.GN3443@dragon>
+In-Reply-To: <20180503010810.GN3443@dragon>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-05-01 at 23:55 +0200, Martin Blumenstingl wrote:
-> Hello Yixun,
-> 
-> On Tue, May 1, 2018 at 11:45 PM, Martin Blumenstingl
-> <martin.blumenstingl@googlemail.com> wrote:
-> > Until commit 05f814402d6174 ("clk: meson: add fdiv clock gates") we
-> > relied on the bootloader to enable the fclk_div clock gates. It turns
-> > out that our clock tree is incomplete at least on Meson8b (tested with
-> > an Odroid-C1, which uses an RGMII PHY) because after the mentioned
-> > commit Ethernet is not working anymore (no RX/TX activity can be seen).
-> > At the same time Ethernet was still working on Meson8m2 with a RMII PHY.
-> > 
-> > It is currently not clear which of the fclk_div gates is required for
-> > (RGMII) Ethernet operation on Meson8b and why. Mark the fclk_div gates
-> > as CLK_IS_CRITICAL so the common clock framework keeps these gates
-> > enabled for us until we know which clock is required for Ethernet on
-> > Meson8b and which driver has to claim it.
-> 
-> based on the public datasheet for Meson8b (S805) I cannot see which
-> part of the SoC uses fclk_divX for (RGMII) Ethernet.
-> I did some further tests and it seems that Ethernet is not working if
-> fclk_div2 is disabled (the other fclk_divX don't seem to affect
-> Ethernet operation)
-> 
-> could you please check your internal datasheets and let us know how
-> fclk_div2 is routed internally and how it can affect Ethernet data
-> transfers?
+> -----Original Message-----
+> From: Shawn Guo [mailto:shawnguo@kernel.org]
+> Sent: Thursday, May 3, 2018 9:08 AM
+> To: Rui Miguel Silva <rui.silva@linaro.org>; Anson Huang
+> <anson.huang@nxp.com>
+> Cc: mchehab@kernel.org; sakari.ailus@linux.intel.com; Steve Longerbeam
+> <slongerbeam@gmail.com>; Philipp Zabel <p.zabel@pengutronix.de>; Rob
+> Herring <robh+dt@kernel.org>; linux-media@vger.kernel.org;
+> devel@driverdev.osuosl.org; Fabio Estevam <fabio.estevam@nxp.com>;
+> devicetree@vger.kernel.org; Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>; Ryan Harkin <ryan.harkin@linaro.org>;
+> linux-clk@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
+> Subject: Re: [PATCH v2 03/15] clk: imx7d: fix mipi dphy div parent
+>=20
+> Anson,
+>=20
+> Please have a look at this change.
+>=20
+> Shawn
+>=20
+> On Mon, Apr 23, 2018 at 02:47:38PM +0100, Rui Miguel Silva wrote:
+> > Fix the mipi dphy root divider to mipi_dphy_pre_div, this would remove
+> > a orphan clock and set the correct parent.
+> >
+> > before:
+> > cat clk_orphan_summary
+> >                                  enable  prepare  protect
+> >    clock                          count    count    count        rate  =
+ accuracy   phase
+> > -----------------------------------------------------------------------=
+-----------------
+> >  mipi_dphy_post_div                   1        1        0           0  =
+        0 0
+> >     mipi_dphy_root_clk                1        1        0           0  =
+        0 0
+> >
+> > cat clk_dump | grep mipi_dphy
+> > mipi_dphy_post_div                    1        1        0           0  =
+        0 0
+> >     mipi_dphy_root_clk                1        1        0           0  =
+        0 0
+> >
+> > after:
+> > cat clk_dump | grep mipi_dphy
+> >    mipi_dphy_src                     1        1        0    24000000   =
+       0 0
+> >        mipi_dphy_cg                  1        1        0    24000000   =
+       0 0
+> >           mipi_dphy_pre_div          1        1        0    24000000   =
+       0 0
+> >              mipi_dphy_post_div      1        1        0    24000000   =
+       0 0
+> >                 mipi_dphy_root_clk   1        1        0    24000000   =
+       0 0
+> >
+> > Cc: linux-clk@vger.kernel.org
+> > Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+> >
+> > Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
 
-Hi Martin,
+Two sign-off?
 
-As usual, thanks for your thorough work !
+Otherwise, the patch looks ok to me.
+Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
 
-Now that you know which of the fdiv is actually required, I would prefer if we
-could mark only the required clock as critical.
+Regards
+Dong Aisheng
 
-Also, could you please add a short FIXME comment in the code explaining why this
-is necessary. This should a be temporary fix while we get the ethernet driver
-sorted out. If the ethernet of the meson8b requires the fdiv2 it should claim it
-(through other clock if necessary)
-
-> 
-> (my current speculation is that it may be related to the "Ethernet
-> Memory Power Domain" in CBUS HHI_MEM_PD_REG0, but I have no proof for
-> that)
-
-
+> > ---
+> >  drivers/clk/imx/clk-imx7d.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> > index 975a20d3cc94..f7f4db2e6fa6 100644
+> > --- a/drivers/clk/imx/clk-imx7d.c
+> > +++ b/drivers/clk/imx/clk-imx7d.c
+> > @@ -729,7 +729,7 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+> >  	clks[IMX7D_LCDIF_PIXEL_ROOT_DIV] =3D
+> imx_clk_divider2("lcdif_pixel_post_div", "lcdif_pixel_pre_div", base +
+> 0xa300, 0, 6);
+> >  	clks[IMX7D_MIPI_DSI_ROOT_DIV] =3D
+> imx_clk_divider2("mipi_dsi_post_div", "mipi_dsi_pre_div", base + 0xa380, =
+0,
+> 6);
+> >  	clks[IMX7D_MIPI_CSI_ROOT_DIV] =3D
+> imx_clk_divider2("mipi_csi_post_div", "mipi_csi_pre_div", base + 0xa400, =
+0,
+> 6);
+> > -	clks[IMX7D_MIPI_DPHY_ROOT_DIV] =3D
+> imx_clk_divider2("mipi_dphy_post_div", "mipi_csi_dphy_div", base +
+> 0xa480, 0, 6);
+> > +	clks[IMX7D_MIPI_DPHY_ROOT_DIV] =3D
+> > +imx_clk_divider2("mipi_dphy_post_div", "mipi_dphy_pre_div", base +
+> > +0xa480, 0, 6);
+> >  	clks[IMX7D_SAI1_ROOT_DIV] =3D imx_clk_divider2("sai1_post_div",
+> "sai1_pre_div", base + 0xa500, 0, 6);
+> >  	clks[IMX7D_SAI2_ROOT_DIV] =3D imx_clk_divider2("sai2_post_div",
+> "sai2_pre_div", base + 0xa580, 0, 6);
+> >  	clks[IMX7D_SAI3_ROOT_DIV] =3D imx_clk_divider2("sai3_post_div",
+> > "sai3_pre_div", base + 0xa600, 0, 6);
+> > --
+> > 2.17.0
+> >
