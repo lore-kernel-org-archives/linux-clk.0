@@ -1,191 +1,249 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <anson.huang@nxp.com>
-To: Stefan Agner <stefan@agner.ch>
-CC: "shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>, Adriana Reus <adriana.reus@nxp.com>,
-	"rui.silva@linaro.org" <rui.silva@linaro.org>, dl-linux-imx
-	<linux-imx@nxp.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: RE: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
-Date: Mon, 21 May 2018 02:35:17 +0000
-Message-ID: 
- <AM3PR04MB1315417C51882B554AEBC617F5950@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
- <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
- <c42c4274cfd06297d1699c96d3253125@agner.ch>
-In-Reply-To: <c42c4274cfd06297d1699c96d3253125@agner.ch>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v5 09/14] regulator: qcom_spmi: Add support for SAW
+Date: Thu,  3 May 2018 14:52:30 +0300
+Message-Id: <1525348355-25471-10-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi, Stefan
+Add support for SAW controlled regulators.
+The regulators defined as SAW controlled in the device tree
+will be controlled through special CPU registers instead of direct
+SPMI accesses.
+This is required especially for CPU supply regulators to synchronize
+with clock scaling and for Automatic Voltage Switching.
 
-Anson Huang
-Best Regards!
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/regulator/qcom_spmi-regulator.c | 133 +++++++++++++++++++++++++++++++-
+ 1 file changed, 130 insertions(+), 3 deletions(-)
 
-
-> -----Original Message-----
-> From: Stefan Agner [mailto:stefan@agner.ch]
-> Sent: Friday, May 18, 2018 9:02 PM
-> To: Anson Huang <anson.huang@nxp.com>
-> Cc: shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
-> <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
-> mturquette@baylibre.com; sboyd@kernel.org; Adriana Reus
-> <adriana.reus@nxp.com>; rui.silva@linaro.org; dl-linux-imx
-> <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-clk@vger.kernel.org
-> Subject: Re: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
->=20
-> On 18.05.2018 03:01, Anson Huang wrote:
-> > Correct enet clock gates as below:
-> >
-> > CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
-> > CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
-> > CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
-> >
-> > Just rename unused IMX7D_ENETx_REF_ROOT_CLK for
-> > IMX7D_ENETx_IPG_ROOT_CLK instead of adding new clocks.
->=20
-> Are you sure that IMX7D_ENETx_REF_ROOT_CLK are not used?
->=20
-> I understand that the reference manual does not a gate at 0x44e0...
->=20
-> But in a earlier revision of our Colibri iMX7 we actually used clock out,=
- and
-> referenced this clock to enable the reference clock (see also:
-> https://emea01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fpatc=
-h
-> work.kernel.org%2Fpatch%2F9211371%2F&data=3D02%7C01%7CAnson.Huang%
-> 40nxp.com%7Cea0856a68d8e4b921ba608d5bcbf9c02%7C686ea1d3bc2b4c6fa
-> 92cd99c5c301635%7C0%7C1%7C636622453508888330&sdata=3DrEhwj0innLDc
-> AEgxJyqd5vtG3SNVS05r2hEFvSc%2BQQs%3D&reserved=3D0).
->=20
-> I guess if the gate really does not exist, then we should/would have to s=
-et
-> IMX7D_ENET1_REF_ROOT_DIV to use the SoC provided ref clock.
->=20
-> --
-> Stefan
-=20
-I looked into the RTL and also checked with our design team, they confirm t=
-hat
-there is no CCGR78(0x44e0) and CCGR80(0x4500) on i.MX7D, the register offse=
-t
-are there, but no hardware wire connection for them. That is why they did N=
-OT
-list them in Reference Manual. So I think we can remove them.=20
-
-For your case of using them as clock input, maybe clock tree auto use its p=
-arent
-IMX7D_ENETx_REF_ROOT_DIV which is existing, so it works.
-
-Anson.
-
->=20
-> >
-> > Based on Andy Duan's patch from the NXP kernel tree.
-> >
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > ---
-> >  drivers/clk/imx/clk-imx7d.c             | 10 ++++++----
-> >  include/dt-bindings/clock/imx7d-clock.h |  4 ++--
-> >  2 files changed, 8 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> > index 23d5090a..d4936b9 100644
-> > --- a/drivers/clk/imx/clk-imx7d.c
-> > +++ b/drivers/clk/imx/clk-imx7d.c
-> > @@ -26,6 +26,8 @@ static u32 share_count_sai1;  static u32
-> > share_count_sai2;  static u32 share_count_sai3;  static u32
-> > share_count_nand;
-> > +static u32 share_count_enet1;
-> > +static u32 share_count_enet2;
-> >
-> >  static const struct clk_div_table test_div_table[] =3D {
-> >  	{ .val =3D 3, .div =3D 1, },
-> > @@ -805,6 +807,10 @@ static void __init imx7d_clocks_init(struct
-> > device_node *ccm_node)
-> >  	clks[IMX7D_MIPI_DSI_ROOT_CLK] =3D imx_clk_gate4("mipi_dsi_root_clk",
-> > "mipi_dsi_post_div", base + 0x4650, 0);
-> >  	clks[IMX7D_MIPI_CSI_ROOT_CLK] =3D imx_clk_gate4("mipi_csi_root_clk",
-> > "mipi_csi_post_div", base + 0x4640, 0);
-> >  	clks[IMX7D_MIPI_DPHY_ROOT_CLK] =3D
-> imx_clk_gate4("mipi_dphy_root_clk",
-> > "mipi_dphy_post_div", base + 0x4660, 0);
-> > +	clks[IMX7D_ENET1_IPG_ROOT_CLK] =3D
-> > imx_clk_gate2_shared2("enet1_ipg_root_clk", "enet_axi_post_div", base
-> > + 0x4700, 0, &share_count_enet1);
-> > +	clks[IMX7D_ENET1_TIME_ROOT_CLK] =3D
-> > imx_clk_gate2_shared2("enet1_time_root_clk", "enet1_time_post_div",
-> > base + 0x4700, 0, &share_count_enet1);
-> > +	clks[IMX7D_ENET2_IPG_ROOT_CLK] =3D
-> > imx_clk_gate2_shared2("enet2_ipg_root_clk", "enet_axi_post_div", base
-> > + 0x4710, 0, &share_count_enet2);
-> > +	clks[IMX7D_ENET2_TIME_ROOT_CLK] =3D
-> > imx_clk_gate2_shared2("enet2_time_root_clk", "enet2_time_post_div",
-> > base + 0x4710, 0, &share_count_enet2);
-> >  	clks[IMX7D_SAI1_ROOT_CLK] =3D imx_clk_gate2_shared2("sai1_root_clk",
-> > "sai1_post_div", base + 0x48c0, 0, &share_count_sai1);
-> >  	clks[IMX7D_SAI1_IPG_CLK]  =3D imx_clk_gate2_shared2("sai1_ipg_clk",
-> > "ipg_root_clk",  base + 0x48c0, 0, &share_count_sai1);
-> >  	clks[IMX7D_SAI2_ROOT_CLK] =3D imx_clk_gate2_shared2("sai2_root_clk",
-> > "sai2_post_div", base + 0x48d0, 0, &share_count_sai2); @@ -812,10
-> > +818,6 @@ static void __init imx7d_clocks_init(struct device_node
-> > *ccm_node)
-> >  	clks[IMX7D_SAI3_ROOT_CLK] =3D imx_clk_gate2_shared2("sai3_root_clk",
-> > "sai3_post_div", base + 0x48e0, 0, &share_count_sai3);
-> >  	clks[IMX7D_SAI3_IPG_CLK]  =3D imx_clk_gate2_shared2("sai3_ipg_clk",
-> > "ipg_root_clk",  base + 0x48e0, 0, &share_count_sai3);
-> >  	clks[IMX7D_SPDIF_ROOT_CLK] =3D imx_clk_gate4("spdif_root_clk",
-> > "spdif_post_div", base + 0x44d0, 0);
-> > -	clks[IMX7D_ENET1_REF_ROOT_CLK] =3D
-> imx_clk_gate4("enet1_ref_root_clk",
-> > "enet1_ref_post_div", base + 0x44e0, 0);
-> > -	clks[IMX7D_ENET1_TIME_ROOT_CLK] =3D
-> > imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
-> > 0x44f0, 0);
-> > -	clks[IMX7D_ENET2_REF_ROOT_CLK] =3D
-> imx_clk_gate4("enet2_ref_root_clk",
-> > "enet2_ref_post_div", base + 0x4500, 0);
-> > -	clks[IMX7D_ENET2_TIME_ROOT_CLK] =3D
-> > imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
-> > 0x4510, 0);
-> >  	clks[IMX7D_EIM_ROOT_CLK] =3D imx_clk_gate4("eim_root_clk",
-> > "eim_post_div", base + 0x4160, 0);
-> >  	clks[IMX7D_NAND_RAWNAND_CLK] =3D
-> > imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
-> > 0x4140, 0, &share_count_nand);
-> >  	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =3D
-> > imx_clk_gate2_shared2("nand_usdhc_rawnand_clk",
-> "nand_usdhc_root_clk",
-> > base + 0x4140, 0, &share_count_nand); diff --git
-> > a/include/dt-bindings/clock/imx7d-clock.h
-> > b/include/dt-bindings/clock/imx7d-clock.h
-> > index b2325d3e2..0d67f53 100644
-> > --- a/include/dt-bindings/clock/imx7d-clock.h
-> > +++ b/include/dt-bindings/clock/imx7d-clock.h
-> > @@ -168,7 +168,7 @@
-> >  #define IMX7D_SPDIF_ROOT_SRC		155
-> >  #define IMX7D_SPDIF_ROOT_CG		156
-> >  #define IMX7D_SPDIF_ROOT_DIV		157
-> > -#define IMX7D_ENET1_REF_ROOT_CLK	158
-> > +#define IMX7D_ENET1_IPG_ROOT_CLK        158
-> >  #define IMX7D_ENET1_REF_ROOT_SRC	159
-> >  #define IMX7D_ENET1_REF_ROOT_CG		160
-> >  #define IMX7D_ENET1_REF_ROOT_DIV	161
-> > @@ -176,7 +176,7 @@
-> >  #define IMX7D_ENET1_TIME_ROOT_SRC	163
-> >  #define IMX7D_ENET1_TIME_ROOT_CG	164
-> >  #define IMX7D_ENET1_TIME_ROOT_DIV	165
-> > -#define IMX7D_ENET2_REF_ROOT_CLK	166
-> > +#define IMX7D_ENET2_IPG_ROOT_CLK        166
-> >  #define IMX7D_ENET2_REF_ROOT_SRC	167
-> >  #define IMX7D_ENET2_REF_ROOT_CG		168
-> >  #define IMX7D_ENET2_REF_ROOT_DIV	169
+diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
+index 63c7a0c..9817f1a 100644
+--- a/drivers/regulator/qcom_spmi-regulator.c
++++ b/drivers/regulator/qcom_spmi-regulator.c
+@@ -25,6 +25,8 @@
+ #include <linux/regulator/driver.h>
+ #include <linux/regmap.h>
+ #include <linux/list.h>
++#include <linux/mfd/syscon.h>
++#include <linux/io.h>
+ 
+ /* Pin control enable input pins. */
+ #define SPMI_REGULATOR_PIN_CTRL_ENABLE_NONE		0x00
+@@ -181,6 +183,23 @@ enum spmi_boost_byp_registers {
+ 	SPMI_BOOST_BYP_REG_CURRENT_LIMIT	= 0x4b,
+ };
+ 
++enum spmi_saw3_registers {
++	SAW3_SECURE				= 0x00,
++	SAW3_ID					= 0x04,
++	SAW3_SPM_STS				= 0x0C,
++	SAW3_AVS_STS				= 0x10,
++	SAW3_PMIC_STS				= 0x14,
++	SAW3_RST				= 0x18,
++	SAW3_VCTL				= 0x1C,
++	SAW3_AVS_CTL				= 0x20,
++	SAW3_AVS_LIMIT				= 0x24,
++	SAW3_AVS_DLY				= 0x28,
++	SAW3_AVS_HYSTERESIS			= 0x2C,
++	SAW3_SPM_STS2				= 0x38,
++	SAW3_SPM_PMIC_DATA_3			= 0x4C,
++	SAW3_VERSION				= 0xFD0,
++};
++
+ /* Used for indexing into ctrl_reg.  These are offets from 0x40 */
+ enum spmi_common_control_register_index {
+ 	SPMI_COMMON_IDX_VOLTAGE_RANGE		= 0,
+@@ -1035,6 +1054,89 @@ static irqreturn_t spmi_regulator_vs_ocp_isr(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++#define SAW3_VCTL_DATA_MASK	0xFF
++#define SAW3_VCTL_CLEAR_MASK	0x700FF
++#define SAW3_AVS_CTL_EN_MASK	0x1
++#define SAW3_AVS_CTL_TGGL_MASK	0x8000000
++#define SAW3_AVS_CTL_CLEAR_MASK	0x7efc00
++
++static struct regmap *saw_regmap = NULL;
++
++static void spmi_saw_set_vdd(void *data)
++{
++	u32 vctl, data3, avs_ctl, pmic_sts;
++	bool avs_enabled = false;
++	unsigned long timeout;
++	u8 voltage_sel = *(u8 *)data;
++
++	regmap_read(saw_regmap, SAW3_AVS_CTL, &avs_ctl);
++	regmap_read(saw_regmap, SAW3_VCTL, &vctl);
++	regmap_read(saw_regmap, SAW3_SPM_PMIC_DATA_3, &data3);
++
++	/* select the band */
++	vctl &= ~SAW3_VCTL_CLEAR_MASK;
++	vctl |= (u32)voltage_sel;
++
++	data3 &= ~SAW3_VCTL_CLEAR_MASK;
++	data3 |= (u32)voltage_sel;
++
++	/* If AVS is enabled, switch it off during the voltage change */
++	avs_enabled = SAW3_AVS_CTL_EN_MASK & avs_ctl;
++	if (avs_enabled) {
++		avs_ctl &= ~SAW3_AVS_CTL_TGGL_MASK;
++		regmap_write(saw_regmap, SAW3_AVS_CTL, avs_ctl);
++	}
++
++	regmap_write(saw_regmap, SAW3_RST, 1);
++	regmap_write(saw_regmap, SAW3_VCTL, vctl);
++	regmap_write(saw_regmap, SAW3_SPM_PMIC_DATA_3, data3);
++
++	timeout = jiffies + usecs_to_jiffies(100);
++	do {
++		regmap_read(saw_regmap, SAW3_PMIC_STS, &pmic_sts);
++		pmic_sts &= SAW3_VCTL_DATA_MASK;
++		if (pmic_sts == (u32)voltage_sel)
++			break;
++
++		cpu_relax();
++
++	} while (time_before(jiffies, timeout));
++
++	/* After successful voltage change, switch the AVS back on */
++	if (avs_enabled) {
++		pmic_sts &= 0x3f;
++		avs_ctl &= ~SAW3_AVS_CTL_CLEAR_MASK;
++		avs_ctl |= ((pmic_sts - 4) << 10);
++		avs_ctl |= (pmic_sts << 17);
++		avs_ctl |= SAW3_AVS_CTL_TGGL_MASK;
++		regmap_write(saw_regmap, SAW3_AVS_CTL, avs_ctl);
++	}
++}
++
++static int
++spmi_regulator_saw_set_voltage(struct regulator_dev *rdev, unsigned selector)
++{
++	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
++	int ret;
++	u8 range_sel, voltage_sel;
++
++	ret = spmi_sw_selector_to_hw(vreg, selector, &range_sel, &voltage_sel);
++	if (ret)
++		return ret;
++
++	if (0 != range_sel) {
++		dev_dbg(&rdev->dev, "range_sel = %02X voltage_sel = %02X", \
++			range_sel, voltage_sel);
++		return -EINVAL;
++	}
++
++	/* Always do the SAW register writes on the first CPU */
++	return smp_call_function_single(0, spmi_saw_set_vdd, \
++					&voltage_sel, true);
++}
++
++static struct regulator_ops spmi_saw_ops = {};
++
+ static struct regulator_ops spmi_smps_ops = {
+ 	.enable			= regulator_enable_regmap,
+ 	.disable		= regulator_disable_regmap,
+@@ -1250,6 +1352,7 @@ static int spmi_regulator_match(struct spmi_regulator *vreg, u16 force_type)
+ 	}
+ 	dig_major_rev	= version[SPMI_COMMON_REG_DIG_MAJOR_REV
+ 					- SPMI_COMMON_REG_DIG_MAJOR_REV];
++
+ 	if (!force_type) {
+ 		type		= version[SPMI_COMMON_REG_TYPE -
+ 					  SPMI_COMMON_REG_DIG_MAJOR_REV];
+@@ -1648,7 +1751,9 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 	struct regmap *regmap;
+ 	const char *name;
+ 	struct device *dev = &pdev->dev;
+-	int ret;
++	struct device_node *node = pdev->dev.of_node;
++	struct device_node *syscon;
++	int ret, lenp;
+ 	struct list_head *vreg_list;
+ 
+ 	vreg_list = devm_kzalloc(dev, sizeof(*vreg_list), GFP_KERNEL);
+@@ -1665,7 +1770,22 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 	if (!match)
+ 		return -ENODEV;
+ 
++	if (of_find_property(node, "qcom,saw-reg", &lenp)) {
++		syscon = of_parse_phandle(node, "qcom,saw-reg", 0);
++		saw_regmap = syscon_node_to_regmap(syscon);
++		of_node_put(syscon);
++		if (IS_ERR(regmap))
++			dev_err(dev, "ERROR reading SAW regmap\n");
++	}
++
+ 	for (reg = match->data; reg->name; reg++) {
++
++		if (saw_regmap && \
++		    of_find_property(of_find_node_by_name(node, reg->name), \
++				     "qcom,saw-slave", &lenp)) {
++			continue;
++		}
++
+ 		vreg = devm_kzalloc(dev, sizeof(*vreg), GFP_KERNEL);
+ 		if (!vreg)
+ 			return -ENOMEM;
+@@ -1673,7 +1793,6 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 		vreg->dev = dev;
+ 		vreg->base = reg->base;
+ 		vreg->regmap = regmap;
+-
+ 		if (reg->ocp) {
+ 			vreg->ocp_irq = platform_get_irq_byname(pdev, reg->ocp);
+ 			if (vreg->ocp_irq < 0) {
+@@ -1681,7 +1800,6 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 				goto err;
+ 			}
+ 		}
+-
+ 		vreg->desc.id = -1;
+ 		vreg->desc.owner = THIS_MODULE;
+ 		vreg->desc.type = REGULATOR_VOLTAGE;
+@@ -1698,6 +1816,15 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 		if (ret)
+ 			continue;
+ 
++		if (saw_regmap && \
++		    of_find_property(of_find_node_by_name(node, reg->name), \
++				     "qcom,saw-leader", &lenp)) {
++			spmi_saw_ops = *(vreg->desc.ops);
++			spmi_saw_ops.set_voltage_sel = \
++				spmi_regulator_saw_set_voltage;
++			vreg->desc.ops = &spmi_saw_ops;
++		}
++
+ 		config.dev = dev;
+ 		config.driver_data = vreg;
+ 		config.regmap = regmap;
+-- 
+1.9.1
