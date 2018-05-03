@@ -1,218 +1,69 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 07/27] ARM: davinci: dm355: add new clock init using common clock framework
-Date: Wed,  9 May 2018 12:25:46 -0500
-Message-Id: <20180509172606.29387-8-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 6/7] arm64: allwinner: h6: add R_I2C controller
+Date: Fri,  4 May 2018 02:38:46 +0800
+Message-Id: <20180503183847.11046-7-icenowy@aosc.io>
+In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
+References: <20180503183847.11046-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specific clock init in mach-davinci/dm355.c
-using the new common clock framework drivers.
+Allwinner H6 SoC has a R_I2C controller wired to the PL0/PL1 pins, which
+are used in the reference design to connect AXP805 PMIC.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+Add support for it.
 
-Also clean up the #includes since we are adding some here.
-
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-v10 changes:
-- none (reported problems fixed in separate patch series [1])
-
-[1]: https://lkml.org/lkml/2018/5/9/626
-
-v9 changes:
-- register PLL1 and PSC in dm355_init_time() instead of as platform device so
-  that we get the correct timer0 clock for davinci_timer_init()
-- Fixed size of PLL memory block
-
-v8 changes:
-- none
-
-v7 changes:
-- add clock platform device declarations
-- register platform devices instead of registering clocks directly
-- add davinci prefix to commit description
-
-v6 changes:
-- add blank lines between function calls
-
-
- arch/arm/mach-davinci/board-dm355-evm.c     |  2 +
- arch/arm/mach-davinci/board-dm355-leopard.c |  2 +
- arch/arm/mach-davinci/davinci.h             |  1 +
- arch/arm/mach-davinci/dm355.c               | 69 +++++++++++++++++----
- 4 files changed, 62 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-dm355-evm.c b/arch/arm/mach-davinci/board-dm355-evm.c
-index a3377f959444..f53a461a606f 100644
---- a/arch/arm/mach-davinci/board-dm355-evm.c
-+++ b/arch/arm/mach-davinci/board-dm355-evm.c
-@@ -394,6 +394,8 @@ static __init void dm355_evm_init(void)
- 	struct clk *aemif;
- 	int ret;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index b0b342c8c189..37c2e11fca2e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -5,7 +5,9 @@
  
-+	dm355_register_clocks();
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/sun50i-h6-ccu.h>
++#include <dt-bindings/clock/sun50i-h6-r-ccu.h>
+ #include <dt-bindings/reset/sun50i-h6-ccu.h>
++#include <dt-bindings/reset/sun50i-h6-r-ccu.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -204,6 +206,24 @@
+ 			#gpio-cells = <3>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
 +
- 	ret = dm355_gpio_register();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/board-dm355-leopard.c b/arch/arm/mach-davinci/board-dm355-leopard.c
-index 8249a0bf69f0..0fdf1d03eb11 100644
---- a/arch/arm/mach-davinci/board-dm355-leopard.c
-+++ b/arch/arm/mach-davinci/board-dm355-leopard.c
-@@ -234,6 +234,8 @@ static __init void dm355_leopard_init(void)
- 	struct clk *aemif;
- 	int ret;
- 
-+	dm355_register_clocks();
++			r_i2c_pins: r-i2c {
++				pins = "PL0", "PL1";
++				function = "s_i2c";
++			};
++		};
 +
- 	ret = dm355_gpio_register();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index 376cdd51ce9d..c2c634b6578e 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -84,6 +84,7 @@ int davinci_init_wdt(void);
- /* DM355 function declarations */
- void dm355_init(void);
- void dm355_init_time(void);
-+void dm355_register_clocks(void);
- void dm355_init_spi0(unsigned chipselect_mask,
- 		const struct spi_board_info *info, unsigned len);
- void dm355_init_asp1(u32 evt_enable);
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index 0da7516018ca..14014b942e8a 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -8,31 +8,37 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
--#include <linux/init.h>
--#include <linux/clk.h>
--#include <linux/serial_8250.h>
--#include <linux/platform_device.h>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
-+#include <linux/clkdev.h>
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
--#include <linux/spi/spi.h>
-+#include <linux/init.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_data/spi-davinci.h>
-+#include <linux/platform_device.h>
-+#include <linux/serial_8250.h>
-+#include <linux/spi/spi.h>
- 
- #include <asm/mach/map.h>
- 
-+#include <mach/common.h>
- #include <mach/cputype.h>
--#include "psc.h"
--#include <mach/mux.h>
- #include <mach/irqs.h>
--#include <mach/time.h>
-+#include <mach/mux.h>
- #include <mach/serial.h>
--#include <mach/common.h>
-+#include <mach/time.h>
- 
-+#include "asp.h"
- #include "davinci.h"
--#include "clock.h"
- #include "mux.h"
--#include "asp.h"
-+
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
- 
- #define DM355_UART2_BASE	(IO_PHYS + 0x206000)
- #define DM355_OSD_BASE		(IO_PHYS + 0x70200)
-@@ -43,6 +49,7 @@
-  */
- #define DM355_REF_FREQ		24000000	/* 24 or 36 MHz */
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll1_data = {
- 	.num       = 1,
- 	.phys_base = DAVINCI_PLL1_BASE,
-@@ -382,7 +389,7 @@ static struct clk_lookup dm355_clks[] = {
- 	CLK(NULL, "usb", &usb_clk),
- 	CLK(NULL, NULL, NULL),
++		r_i2c: i2c@7081400 {
++			compatible = "allwinner,sun6i-a31-i2c";
++			reg = <0x07081400 0x400>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&r_ccu CLK_R_APB2_I2C>;
++			resets = <&r_ccu RST_R_APB2_I2C>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&r_i2c_pins>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
+ 		};
+ 	};
  };
--
-+#endif
- /*----------------------------------------------------------------------*/
- 
- static u64 dm355_spi0_dma_mask = DMA_BIT_MASK(32);
-@@ -1046,8 +1053,46 @@ void __init dm355_init(void)
- 
- void __init dm355_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll1, *psc;
-+	struct clk *clk;
-+
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM355_REF_FREQ);
-+
-+	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
-+	dm355_pll1_init(NULL, pll1, NULL);
-+
-+	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-+	dm355_psc_init(NULL, psc);
-+
-+	clk = clk_get(NULL, "timer0");
-+
-+	davinci_timer_init(clk);
-+#else
- 	davinci_clk_init(dm355_clks);
- 	davinci_timer_init(&timer0_clk);
-+#endif
-+}
-+
-+static struct resource dm355_pll2_resources[] = {
-+	{
-+		.start	= DAVINCI_PLL2_BASE,
-+		.end	= DAVINCI_PLL2_BASE + SZ_1K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm355_pll2_device = {
-+	.name		= "dm355-pll2",
-+	.id		= -1,
-+	.resource	= dm355_pll2_resources,
-+	.num_resources	= ARRAY_SIZE(dm355_pll2_resources),
-+};
-+
-+void __init dm355_register_clocks(void)
-+{
-+	/* PLL1 and PSC are registered in dm355_init_time() */
-+	platform_device_register(&dm355_pll2_device);
- }
- 
- int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
 -- 
-2.17.0
+2.15.1
