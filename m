@@ -1,194 +1,91 @@
-Return-Path: <shawn.lin@rock-chips.com>
-Cc: shawn.lin@rock-chips.com, Heiko Stuebner <heiko@sntech.de>,
- linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
- Jeffy Chen <jeffy.chen@rock-chips.com>,
- Finley Xiao <finley.xiao@rock-chips.com>, Andy Yan
- <andy.yan@rock-chips.com>, Xing Zheng <xing.zheng@rock-chips.com>,
- Elaine Zhang <zhangqing@rock-chips.com>, Xiao Yao <xiaoyao@rock-chips.com>,
- Ziyuan Xu <xzy.xu@rock-chips.com>
-Subject: Re: [PATCH v3 1/2] clk: divider: Add CLK_DIVIDER_EVEN flag support
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-References: <1523172498-74798-1-git-send-email-shawn.lin@rock-chips.com>
- <fab22026-32eb-04c2-6f18-d58394cafd08@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <55ab3c00-fa2f-b821-e512-a741a3c339ec@rock-chips.com>
-Date: Fri, 25 May 2018 16:37:39 +0800
-MIME-Version: 1.0
-In-Reply-To: <fab22026-32eb-04c2-6f18-d58394cafd08@rock-chips.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v1 1/2] dt-bindings: clock: Introduce QCOM Video clock controller bindings
+Date: Thu,  3 May 2018 18:05:24 +0530
+Message-Id: <1525350925-16006-2-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
+References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Ping.... :)
+Add device tree bindings for video clock controller for Qualcomm
+Technology Inc's SoCs.
 
-On 2018/5/8 10:19, Shawn Lin wrote:
-> Hi Michael and Stephen
-> 
-> Any chance to take a look at this patch? :)
-> 
-> On 2018/4/8 15:28, Shawn Lin wrote:
->> CLK_DIVIDER_EVEN is used for clock divders that should only
->> use even number in the div field.
->>
->> Two clock divder should consider to use this flag
->> (1) The divder is physically only support even div number to
->> generate 50% duty cycle clock rate.
->> (2) The divder's clock consumer request it to use even div number
->> to generate the most closest requested rate for whatever reason.
->>
->> In some platforms, for instance Rockchip, the eMMC/SDIO/SDMMC should
->> request divder to use even number when working at a high throughput
->> speed mode reliably. However, that wasn't guaranteed by clock framework.
->> So the previous tricky is to carefully assign magic clock rate to their
->> parents as well as consumer's clock rate when requesting. That works
->> bad in practice if folks change the parents clock rate or the clock
->> hierarchy randomly. That also work bad if the consumer's clock rate
->> came from the DT, which is changed so fraquent for different boards.
->>
->> To make it's less prone to make mistake and to make it really respect
->> the fact that the divder should use even number to the div field, we
->> need the clock framework's help. Now we have CLK_DIVIDER_POWER_OF_TWO,
->> which could guarantee the div field is even number, however, obviously
->> it skips the even numbers which isn't the power of 2, but maybe which is
->> the best div to generate closest clock rate for consumer.
->>
->> Look at the examples here when doing some random test on Rockchip's
->> platforms, by changing the requested clock rate from DT, namely
->> assigning different max-frquency for MMC node,
->>
->> when the mmc host driver requests 80MHz with CLK_DIVIDER_POWER_OF_TWO
->> flag for the clock divder, it shows the final clock rate is 61.44Mhz
->>
->> pll_vpll0        1        1 983039999     0   0
->>     vpll0        4        4 983039999     0   0
->>       clk_emmc_div       1        1 122880000     0   0
->>     clk_emmc    1        1 122880000     0   0
->>       emmc_sample    0        0  61440000    0 155
->>       emmc_drv    0        0  61440000    0 180
->>
->> With this patch and add CLK_DIVIDER_EVEN flag for clk_emmc_div, we get
->> the final clock rate, 67.7376MHz.
->>
->> pll_vpll1               1        1 812851199    0   0
->>     vpll1                2        2 812851199     0   0
->>       clk_emmc_div       1        1 135475200     0   0
->>     clk_emmc    1        1 135475200     0   0
->>       emmc_sample   0        0  67737600     0 113
->>       emmc_drv    0        0  67737600    0 180
->>
->> Apprently 67737600 is better than 61440000 when requesting 80MHz.
->> Of course, we could have more case that worsen the gap between
->> the desired rate and the actual rate if using CLK_DIVIDER_POWER_OF_TWO.
->>
->> Alternatively, clk_div_table could be resorted to handle different kinds
->> of div limilation, and it seems to be applied to irregular div 
->> calculation
->> in practice by current clock provider drivers, but even number for div
->> field is a rather common, regular and symmetrical requirement. So it is
->> worth to introduces CLK_DIVIDER_EVEN flag for clock framework to make
->> the best in this process.
->>
->> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
->>
->> ---
->>
->> Changes in v3:
->> - Fix a wrong if condition check
->>
->> Changes in v2:
->> - Avoid to use div 1 if (CLK_DIVIDER_EVEN | CLK_DIVIDER_POWER_OF_TWO)
->>    suggested by Heiko. And seems actually no other flags should be 
->> bothered
->>    by this newly added CLK_DIVIDER_EVEN.
->>
->>   drivers/clk/clk-divider.c    | 26 ++++++++++++++++++++++++--
->>   include/linux/clk-provider.h |  3 +++
->>   2 files changed, 27 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
->> index b6234a5..8f305f1 100644
->> --- a/drivers/clk/clk-divider.c
->> +++ b/drivers/clk/clk-divider.c
->> @@ -159,8 +159,17 @@ static bool _is_valid_table_div(const struct 
->> clk_div_table *table,
->>   static bool _is_valid_div(const struct clk_div_table *table, 
->> unsigned int div,
->>                 unsigned long flags)
->>   {
->> -    if (flags & CLK_DIVIDER_POWER_OF_TWO)
->> -        return is_power_of_2(div);
->> +    bool is_valid;
->> +
->> +    if (flags & CLK_DIVIDER_POWER_OF_TWO) {
->> +        is_valid = is_power_of_2(div);
->> +        if (flags & CLK_DIVIDER_EVEN)
->> +            return is_valid && (div != 1);
->> +        return is_valid;
->> +    }
->> +
->> +    if (flags & CLK_DIVIDER_EVEN)
->> +        return !(div % 2);
->>       if (table)
->>           return _is_valid_table_div(table, div);
->>       return true;
->> @@ -208,6 +217,12 @@ static int _div_round_up(const struct 
->> clk_div_table *table,
->>   {
->>       int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
->> +    /*
->> +     * Check even before power of two to avoid div 1 if combination
->> +     * happens, which applies to all the following similarities.
->> +     */
->> +    if (flags & CLK_DIVIDER_EVEN)
->> +        div = !(div % 2) ? div : (div + 1);
->>       if (flags & CLK_DIVIDER_POWER_OF_TWO)
->>           div = __roundup_pow_of_two(div);
->>       if (table)
->> @@ -226,6 +241,11 @@ static int _div_round_closest(const struct 
->> clk_div_table *table,
->>       up = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
->>       down = parent_rate / rate;
->> +    if (flags & CLK_DIVIDER_EVEN) {
->> +        up = !(up % 2) ? up : (up + 1);
->> +        down = !(down % 2) ? down : (down - 1);
->> +    }
->> +
->>       if (flags & CLK_DIVIDER_POWER_OF_TWO) {
->>           up = __roundup_pow_of_two(up);
->>           down = __rounddown_pow_of_two(down);
->> @@ -264,6 +284,8 @@ static int _next_div(const struct clk_div_table 
->> *table, int div,
->>   {
->>       div++;
->> +    if (flags & CLK_DIVIDER_EVEN)
->> +        div = !(div % 2) ? div : (div + 1);
->>       if (flags & CLK_DIVIDER_POWER_OF_TWO)
->>           return __roundup_pow_of_two(div);
->>       if (table)
->> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
->> index 210a890..7c59611 100644
->> --- a/include/linux/clk-provider.h
->> +++ b/include/linux/clk-provider.h
->> @@ -388,6 +388,8 @@ struct clk_div_table {
->>    * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like 
->> CLK_DIVIDER_ONE_BASED
->>    *    except when the value read from the register is zero, the 
->> divisor is
->>    *    2^width of the field.
->> + * CLK_DIVIDER_EVEN - For the dividers which could only use even 
->> number in the
->> + *    div field.
->>    */
->>   struct clk_divider {
->>       struct clk_hw    hw;
->> @@ -409,6 +411,7 @@ struct clk_divider {
->>   #define CLK_DIVIDER_ROUND_CLOSEST    BIT(4)
->>   #define CLK_DIVIDER_READ_ONLY        BIT(5)
->>   #define CLK_DIVIDER_MAX_AT_ZERO        BIT(6)
->> +#define CLK_DIVIDER_EVEN        BIT(7)
->>   extern const struct clk_ops clk_divider_ops;
->>   extern const struct clk_ops clk_divider_ro_ops;
->>
-> 
-> 
-> 
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,videocc.txt     | 18 ++++++++++++++++
+ include/dt-bindings/clock/qcom,videocc-sdm845.h    | 25 ++++++++++++++++++++++
+ 2 files changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.txt
+ create mode 100644 include/dt-bindings/clock/qcom,videocc-sdm845.h
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.txt b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
+new file mode 100644
+index 0000000..600eda2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
+@@ -0,0 +1,18 @@
++Qualcomm Video Clock & Reset Controller Binding
++-----------------------------------------------
++
++Required properties :
++- compatible : shall contain "qcom,sdm845-videocc"
++- reg : shall contain base register location and length
++- #clock-cells : from common clock binding, shall contain 1.
++- #reset-cells : from common reset binding, shall contain 1.
++- #power-domain-cells : from generic power domain binding, shall contain 1.
++
++Example:
++	videocc: clock-controller@ab00000 {
++		compatible = "qcom,sdm845-videocc";
++		reg = <0xab00000 0x10000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/qcom,videocc-sdm845.h b/include/dt-bindings/clock/qcom,videocc-sdm845.h
+new file mode 100644
+index 0000000..48f6a9e
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,videocc-sdm845.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
++
++#ifndef _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
++#define _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
++
++#define VIDEO_CC_APB_CLK			0
++#define VIDEO_CC_AT_CLK				1
++#define VIDEO_CC_QDSS_TRIG_CLK			2
++#define VIDEO_CC_QDSS_TSCTR_DIV8_CLK		3
++#define VIDEO_CC_VCODEC0_AXI_CLK		4
++#define VIDEO_CC_VCODEC0_CORE_CLK		5
++#define VIDEO_CC_VCODEC1_AXI_CLK		6
++#define VIDEO_CC_VCODEC1_CORE_CLK		7
++#define VIDEO_CC_VENUS_AHB_CLK			8
++#define VIDEO_CC_VENUS_CLK_SRC			9
++#define VIDEO_CC_VENUS_CTL_AXI_CLK		10
++#define VIDEO_CC_VENUS_CTL_CORE_CLK		11
++#define VIDEO_PLL0				12
++
++#define VENUS_GDSC				0
++#define VCODEC0_GDSC				1
++#define VCODEC1_GDSC				2
++
++#endif
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
