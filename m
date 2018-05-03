@@ -1,85 +1,433 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Fri, 18 May 2018 11:59:13 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 00/26] arm64: allwinner: Add A64 DE2 HDMI support
-Message-ID: <20180518095913.nzl3sr5wn6cg4ra5@flea>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lqbqmyz32rvoa32o"
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v1 2/2] clk: qcom: Add video clock controller driver for SDM845
+Date: Thu,  3 May 2018 18:05:25 +0530
+Message-Id: <1525350925-16006-3-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
+References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add support for the video clock controller found on SDM845
+based devices. This would allow video drivers to probe and
+control their clocks.
 
---lqbqmyz32rvoa32o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+---
+ drivers/clk/qcom/Kconfig          |  11 ++
+ drivers/clk/qcom/Makefile         |   1 +
+ drivers/clk/qcom/videocc-sdm845.c | 358 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 370 insertions(+)
+ create mode 100644 drivers/clk/qcom/videocc-sdm845.c
 
-On Fri, May 18, 2018 at 03:15:10PM +0530, Jagan Teki wrote:
-> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T=
-/H3/H5.
->=20
-> A64 behaviour similar to Allwinner A83T where
-> Mixer0 =3D> TCON0 =3D> LVDS/RGB/MIPI-DSI
-> Mixer1 =3D> TCON1 =3D> HDMI
-> as per Display System Block DiagramAllwinner_A64_User_Manual_V1.1.pdf
->=20
-> This is second patch-set followed with previous RFC[1] and first series[2]
-> and merely concentrated on HDMI pipeline through TCON1 and rest will add =
-eventually.
->=20
-> This series fixed previous version comments
-> - about documenting fallback compatibles
-> - adding new compatible for mixer1
-> - support for multiple DW HDMI PHY clock parents (thanks, to Jernej)
->=20
-> Note:
-> Pine64 boards are unable to get edid by default like other A64 boards,
-> but forcing 'video=3DHDMI-A-1:1920x1080@60D' kernel command line can
-> create edid with display on penel.
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index aec69d2..81388ee 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -235,6 +235,17 @@ config SDM_GCC_845
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+ 	  I2C, USB, UFS, SDDC, PCIe, etc.
 
-There's no point in trying to push this without the SRAM issue being
-solved. It is required, and won't be merged unless this is addressed.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---lqbqmyz32rvoa32o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr+o/AACgkQ0rTAlCFN
-r3Qsvw/+IYCEl9D8E5EokAzm6aRTGeD6yW8l6UcG9E1m/9qe8YqtTD4gZr7xbJVu
-Lqzxd2SZ8v2yE8S+0HWma2g3jx5Fn4sjGqiKQsq9ncazecWvfF8Pl5nknqtjm4IQ
-w4/6vStoe6tQ+Ur3dmY5DmQMLEHDJT9RwmHYwrRRMpXtPWz1FENq7+xFAvX/gjPa
-IEoepWgFkMK3wOCx6j/5ig+E3BCjL5ImqFTZt0LmTGnt+0j9kxSKQ9qJqKU12E7S
-tVGOOc5jDbyw+Bt4wG2nCagjB5XAEH+Nnghi4TvR8Vk4J4b/q/jfVQOhFubRLPmQ
-EdBfabw3Hr8Uojpc70etX8q7dlHOQNlhuKmp38GtHAU1EaeeyAbSIHhNIP6hGMY8
-6kqNg68TUuwraNMYbNSHUX0yOM/9AtQgIvUUa73DwrgQa2u3SHdwNrIoS5xDAnj/
-+Dkc97P2l9torcdzNDBcUwJf6tQxB9bhyCRu92EaVhsafV+Fwpe+x3fDR7tem9lp
-MA/i0mx/7pBpmcVVbxo9cvKQBdsA5HjHf+KLrGjayITQf4GTPS488KM5IjoAppXw
-O5xnq/VniGUDj1vsGFj6ZFU2SJAz+A4FIrYHAEfgTzueyh0vQE0Mtvkbh4n+2/U1
-gpjukrLRgGVPUHnsQg67tcJ7VCLCn9SykiX4PAK9WowBHtLaKKs=
-=S4r8
------END PGP SIGNATURE-----
-
---lqbqmyz32rvoa32o--
++config SDM_VIDEOCC_845
++	tristate "SDM845 Video Clock Controller"
++	depends on COMMON_CLK_QCOM
++	select SDM_GCC_845
++	select QCOM_GDSC
++	help
++	  Support for the video clock controller on Qualcomm Technologies, Inc
++	  SDM845 devices.
++	  Say Y if you want to support video devices and functionality such as
++	  video encode and decode.
++
+ config SPMI_PMIC_CLKDIV
+ 	tristate "SPMI PMIC clkdiv Support"
+ 	depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index bf8fb25..762c011 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -39,4 +39,5 @@ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
++obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
+new file mode 100644
+index 0000000..9073b7a
+--- /dev/null
++++ b/drivers/clk/qcom/videocc-sdm845.c
+@@ -0,0 +1,358 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,videocc-sdm845.h>
++
++#include "common.h"
++#include "clk-alpha-pll.h"
++#include "clk-branch.h"
++#include "clk-rcg.h"
++#include "clk-regmap.h"
++#include "clk-pll.h"
++#include "gdsc.h"
++
++#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
++
++enum {
++	P_BI_TCXO,
++	P_CORE_BI_PLL_TEST_SE,
++	P_VIDEO_PLL0_OUT_EVEN,
++	P_VIDEO_PLL0_OUT_MAIN,
++	P_VIDEO_PLL0_OUT_ODD,
++};
++
++static const struct parent_map video_cc_parent_map_0[] = {
++	{ P_BI_TCXO, 0 },
++	{ P_VIDEO_PLL0_OUT_MAIN, 1 },
++	{ P_VIDEO_PLL0_OUT_EVEN, 2 },
++	{ P_VIDEO_PLL0_OUT_ODD, 3 },
++	{ P_CORE_BI_PLL_TEST_SE, 4 },
++};
++
++static const char * const video_cc_parent_names_0[] = {
++	"bi_tcxo",
++	"video_pll0",
++	"video_pll0_out_even",
++	"video_pll0_out_odd",
++	"core_bi_pll_test_se",
++};
++
++static const struct alpha_pll_config video_pll0_config = {
++	.l = 0x10,
++	.alpha = 0xaaab,
++};
++
++static struct clk_alpha_pll video_pll0 = {
++	.offset = 0x42c,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr = {
++		.hw.init = &(struct clk_init_data){
++			.name = "video_pll0",
++			.parent_names = (const char *[]){ "bi_tcxo" },
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_fabia_ops,
++		},
++	},
++};
++
++static const struct freq_tbl ftbl_video_cc_venus_clk_src[] = {
++	F(100000000, P_VIDEO_PLL0_OUT_MAIN, 4, 0, 0),
++	F(200000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
++	F(330000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
++	F(404000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
++	F(444000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
++	F(533000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 video_cc_venus_clk_src = {
++	.cmd_rcgr = 0x7f0,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = video_cc_parent_map_0,
++	.freq_tbl = ftbl_video_cc_venus_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "video_cc_venus_clk_src",
++		.parent_names = video_cc_parent_names_0,
++		.num_parents = 5,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static struct clk_branch video_cc_apb_clk = {
++	.halt_reg = 0x990,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x990,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_apb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch video_cc_at_clk = {
++	.halt_reg = 0x9f0,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x9f0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_at_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch video_cc_qdss_trig_clk = {
++	.halt_reg = 0x970,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x970,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_qdss_trig_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch video_cc_qdss_tsctr_div8_clk = {
++	.halt_reg = 0x9d0,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x9d0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_qdss_tsctr_div8_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch video_cc_vcodec0_axi_clk = {
++	.halt_reg = 0x930,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x930,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_vcodec0_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch video_cc_vcodec0_core_clk = {
++	.halt_reg = 0x890,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x890,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_vcodec0_core_clk",
++			.parent_names = (const char *[]){
++				"video_cc_venus_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch video_cc_vcodec1_axi_clk = {
++	.halt_reg = 0x950,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x950,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_vcodec1_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch video_cc_vcodec1_core_clk = {
++	.halt_reg = 0x8d0,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x8d0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_vcodec1_core_clk",
++			.parent_names = (const char *[]){
++				"video_cc_venus_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch video_cc_venus_ahb_clk = {
++	.halt_reg = 0x9b0,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x9b0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_venus_ahb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch video_cc_venus_ctl_axi_clk = {
++	.halt_reg = 0x910,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x910,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_venus_ctl_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch video_cc_venus_ctl_core_clk = {
++	.halt_reg = 0x850,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x850,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "video_cc_venus_ctl_core_clk",
++			.parent_names = (const char *[]){
++				"video_cc_venus_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct gdsc venus_gdsc = {
++	.gdscr = 0x814,
++	.pd = {
++		.name = "venus_gdsc",
++	},
++	.cxcs = (unsigned int []){ 0x850, 0x910 },
++	.cxc_count = 2,
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = POLL_CFG_GDSCR,
++};
++
++static struct gdsc vcodec0_gdsc = {
++	.gdscr = 0x874,
++	.pd = {
++		.name = "vcodec0_gdsc",
++	},
++	.cxcs = (unsigned int []){ 0x890, 0x930 },
++	.cxc_count = 2,
++	.flags = HW_CTRL | POLL_CFG_GDSCR,
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc vcodec1_gdsc = {
++	.gdscr = 0x8b4,
++	.pd = {
++		.name = "vcodec1_gdsc",
++	},
++	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
++	.cxc_count = 2,
++	.flags = HW_CTRL | POLL_CFG_GDSCR,
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct clk_regmap *video_cc_sdm845_clocks[] = {
++	[VIDEO_CC_APB_CLK] = &video_cc_apb_clk.clkr,
++	[VIDEO_CC_AT_CLK] = &video_cc_at_clk.clkr,
++	[VIDEO_CC_QDSS_TRIG_CLK] = &video_cc_qdss_trig_clk.clkr,
++	[VIDEO_CC_QDSS_TSCTR_DIV8_CLK] = &video_cc_qdss_tsctr_div8_clk.clkr,
++	[VIDEO_CC_VCODEC0_AXI_CLK] = &video_cc_vcodec0_axi_clk.clkr,
++	[VIDEO_CC_VCODEC0_CORE_CLK] = &video_cc_vcodec0_core_clk.clkr,
++	[VIDEO_CC_VCODEC1_AXI_CLK] = &video_cc_vcodec1_axi_clk.clkr,
++	[VIDEO_CC_VCODEC1_CORE_CLK] = &video_cc_vcodec1_core_clk.clkr,
++	[VIDEO_CC_VENUS_AHB_CLK] = &video_cc_venus_ahb_clk.clkr,
++	[VIDEO_CC_VENUS_CLK_SRC] = &video_cc_venus_clk_src.clkr,
++	[VIDEO_CC_VENUS_CTL_AXI_CLK] = &video_cc_venus_ctl_axi_clk.clkr,
++	[VIDEO_CC_VENUS_CTL_CORE_CLK] = &video_cc_venus_ctl_core_clk.clkr,
++	[VIDEO_PLL0] = &video_pll0.clkr,
++};
++
++static struct gdsc *video_cc_sdm845_gdscs[] = {
++	[VENUS_GDSC] = &venus_gdsc,
++	[VCODEC0_GDSC] = &vcodec0_gdsc,
++	[VCODEC1_GDSC] = &vcodec1_gdsc,
++};
++
++static const struct regmap_config video_cc_sdm845_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0xb90,
++	.fast_io	= true,
++};
++
++static const struct qcom_cc_desc video_cc_sdm845_desc = {
++	.config = &video_cc_sdm845_regmap_config,
++	.clks = video_cc_sdm845_clocks,
++	.num_clks = ARRAY_SIZE(video_cc_sdm845_clocks),
++	.gdscs = video_cc_sdm845_gdscs,
++	.num_gdscs = ARRAY_SIZE(video_cc_sdm845_gdscs),
++};
++
++static const struct of_device_id video_cc_sdm845_match_table[] = {
++	{ .compatible = "qcom,sdm845-videocc" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, video_cc_sdm845_match_table);
++
++static int video_cc_sdm845_probe(struct platform_device *pdev)
++{
++	struct regmap *regmap;
++
++	regmap = qcom_cc_map(pdev, &video_cc_sdm845_desc);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_config);
++
++	return qcom_cc_really_probe(pdev, &video_cc_sdm845_desc, regmap);
++}
++
++static struct platform_driver video_cc_sdm845_driver = {
++	.probe		= video_cc_sdm845_probe,
++	.driver		= {
++		.name	= "sdm845-videocc",
++		.of_match_table = video_cc_sdm845_match_table,
++	},
++};
++
++static int __init video_cc_sdm845_init(void)
++{
++	return platform_driver_register(&video_cc_sdm845_driver);
++}
++subsys_initcall(video_cc_sdm845_init);
++
++static void __exit video_cc_sdm845_exit(void)
++{
++	platform_driver_unregister(&video_cc_sdm845_driver);
++}
++module_exit(video_cc_sdm845_exit);
++
++MODULE_LICENSE("GPL v2");
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
