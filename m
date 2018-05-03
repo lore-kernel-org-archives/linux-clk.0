@@ -1,45 +1,61 @@
-Return-Path: <anischal@codeaurora.org>
-Subject: Re: [PATCH 2/2] clk: qcom: Add video clock controller driver for
- SDM845
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
- <1524576771-31096-3-git-send-email-anischal@codeaurora.org>
- <152521087780.138124.7623601052057968460@swboyd.mtv.corp.google.com>
-From: "Nischal, Amit" <anischal@codeaurora.org>
-Message-ID: <d311e4d7-7ba8-0b26-93c7-5ee06db466ef@codeaurora.org>
-Date: Wed, 2 May 2018 13:26:35 +0530
-MIME-Version: 1.0
-In-Reply-To: <152521087780.138124.7623601052057968460@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/4] clk: tegra20: Correct parents of CDEV1/2 clocks
+Date: Fri,  4 May 2018 01:55:35 +0300
+Message-Id: <20180503225537.20748-4-digetx@gmail.com>
+In-Reply-To: <20180503225537.20748-1-digetx@gmail.com>
+References: <20180503225537.20748-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Parents of CDEV1/2 clocks are determined by muxing of the corresponding
+pins. Pinctrl driver now provides the CDEV1/2 clock muxes and hence
+CDEV1/2 clocks could have correct parents. Set CDEV1/2 parents to the
+corresponding muxes to fix the parents.
 
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Marc Dietrich <marvin24@gmx.de>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/tegra/clk-tegra20.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-On 5/2/2018 3:11 AM, Stephen Boyd wrote:
-> Quoting Amit Nischal (2018-04-24 06:32:51)
->> Add support for the video clock controller found on SDM845
->> based devices. This would allow video drivers to probe and
->> control their clocks.
->>
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> Driver looks small and good. Only concern is that there aren't resets
-> defined, but the binding says there are resets. Will you add them?
-Thanks for the review.
-As of now, there are no resets defined for VIDEOCC. So I will move
-the #reset-cells tooptional property in the dt-binding.
-Same will be updated in the next patch series.
->
-> I'm going to wait for the respin on the dts binding anyway.
-Yes, I will send the next patch series soon.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index ad5a7b5e3a39..636500a98561 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -846,14 +846,12 @@ static void __init tegra20_periph_clk_init(void)
+ 			     NULL);
+ 
+ 	/* cdev1 */
+-	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
+-	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
++	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_mux", 0,
+ 				    clk_base, 0, 94, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_CDEV1] = clk;
+ 
+ 	/* cdev2 */
+-	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, 0, 26000000);
+-	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_fixed", 0,
++	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_mux", 0,
+ 				    clk_base, 0, 93, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_CDEV2] = clk;
+ 
+-- 
+2.17.0
