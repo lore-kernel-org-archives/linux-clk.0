@@ -1,48 +1,44 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Tue, 15 May 2018 14:49:12 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180515091912.zhc2uo7js7ukjvl7@vireshk-i7>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
- <1526375616-16904-13-git-send-email-ilialin@codeaurora.org>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v8 2/5] dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+Date: Thu, 3 May 2018 21:26:21 +0800
+Message-ID: <20180503132624.78453-3-yixun.lan@amlogic.com>
+In-Reply-To: <20180503132624.78453-1-yixun.lan@amlogic.com>
+References: <20180503132624.78453-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526375616-16904-13-git-send-email-ilialin@codeaurora.org>
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15-05-18, 12:13, Ilia Lin wrote:
-> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-> the CPU ferequencies subset and voltage value of each OPP varies
-> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-> defines the voltage and frequency value based on the msm-id in SMEM
-> and speedbin blown in the efuse combination.
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
-> 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm          |  11 +++
->  drivers/cpufreq/Makefile             |   1 +
->  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
->  drivers/cpufreq/qcom-cpufreq-kryo.c  | 150 +++++++++++++++++++++++++++++++++++
->  4 files changed, 165 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+Update the dt-binding documentation to support new compatible string
+for the Amlogic's Meson-AXG SoC.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+index 786dc39ca904..3a880528030e 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ 	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
+ 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
+ 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
++	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
+ 	followed by the common "amlogic,meson-gx-aoclkc"
+ 
+ - #clock-cells: should be 1.
 -- 
-viresh
+2.17.0
