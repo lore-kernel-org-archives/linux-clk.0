@@ -1,27 +1,72 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: mturquette@baylibre.com, sunjg79@163.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525424190-15619-1-git-send-email-sunjg79@163.com>
-Cc: xuejiancheng@hisilicon.com, Jianguo Sun <sunjianguo1@huawei.com>,
- shawn.guo@linaro.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <1525424190-15619-1-git-send-email-sunjg79@163.com>
-Message-ID: <152642236988.237094.15243443692008356500@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: hisilicon: add missing usb3 clocks for Hi3798CV200 SoC
-Date: Tue, 15 May 2018 15:12:49 -0700
+Return-Path: <davem@davemloft.net>
+Date: Thu, 03 May 2018 14:40:42 -0400 (EDT)
+Message-Id: <20180503.144042.266645949281979304.davem@davemloft.net>
+To: maxime.ripard@bootlin.com
+Cc: wens@csie.org, mturquette@baylibre.com, sboyd@kernel.org,
+ peppe.cavallaro@st.com, robh+dt@kernel.org, mark.rutland@arm.com,
+ broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ netdev@vger.kernel.org, clabbe.montjoie@gmail.com, icenowy@aosc.io
+Subject: Re: [PATCH net-next v2 00/15] ARM: sun8i: r40: Add Ethernet support
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180503131257.rlqxetafejikmnji@flea>
+References: <CAGb2v67HFb6eLBS4_9s_wJ5uWFeQdUtwn_NMJnm59UUDFBDJUA@mail.gmail.com>
+	<20180502.110617.304411895589508709.davem@davemloft.net>
+	<20180503131257.rlqxetafejikmnji@flea>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting sunjg79@163.com (2018-05-04 01:56:30)
-> From: Jianguo Sun <sunjianguo1@huawei.com>
-> =
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Date: Thu, 3 May 2018 15:12:57 +0200
 
-> There are two USB3 host controllers on Hi3798CV200 SoC.
-> This commit adds missing clocks for them.
-> =
+> Hi Dave,
+> 
+> On Wed, May 02, 2018 at 11:06:17AM -0400, David Miller wrote:
+>> From: Chen-Yu Tsai <wens@csie.org>
+>> Date: Wed, 2 May 2018 00:33:45 +0800
+>> 
+>> > I should've mentioned that patches 3 ~ 10, and only these, should go
+>> > through net-next. sunxi will handle the remaining clk, device tree, and
+>> > soc driver patches.
+>> 
+>> Ok, I just noticed this.
+>> 
+>> Why don't you just post those patches separately as a series on their
+>> own then, in order to avoid confusion?
+>> 
+>> Then you can adjust the patch series header posting to explain the
+>> non-net-next changes, where they got merged, and what they provide
+>> in order to faciliate the net-next changes.
+> 
+> I now that we usually have some feedback from non-net maintainers that
+> they actually prefer seeing the full picture (and I also tend to
+> prefer that as well) and having all the patches relevant to enable a
+> particular feature, even if it means getting multiple maintainers
+> involved.
+> 
+> Just to make sure we understood you fully, do you want Chen-Yu to
+> resend his serie following your comments, or was that just a general
+> remark for next time?
 
-> Signed-off-by: Jianguo Sun <sunjianguo1@huawei.com>
-> ---
+Yeah, good questions.
 
-Applied to clk-next
+I think it can be argued either way.  For review having the complete
+context is important.
+
+But from a maintainer's standpoint, when there is any ambiguity
+whatsoever about what patches go into this tree or that, it is really
+frowned upon and is quite error prone.
+
+Also, that header posting is _SO_ important.  It explains the series.
+But for these 'partial apply' situations the header posting refers
+to patches not in the series.
+
+This looks terrible in the logs, when, as I do, the header posting
+text is added to a marge commit for the series.  People will read it
+and say "where are all of these other changes mentioned in the text?
+was this series misapplied?"
+
+That's why, maybe after the review is successful, I want the actual
+patch series standalone with appropriately updated header posting
+text.
