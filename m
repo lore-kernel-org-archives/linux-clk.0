@@ -1,62 +1,82 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH 4/9] clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always
- enabled
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20180525181150.17873-1-david@lechnology.com>
- <20180525181150.17873-5-david@lechnology.com>
- <20180530172239.982.48723@harbor.lan>
-From: David Lechner <david@lechnology.com>
-Message-ID: <c43af78a-de38-7ccc-924f-a349e395d779@lechnology.com>
-Date: Wed, 30 May 2018 14:20:48 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:42770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751745AbeECBI3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 May 2018 21:08:29 -0400
+Date: Thu, 3 May 2018 09:08:12 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Rui Miguel Silva <rui.silva@linaro.org>,
+        Anson Huang <Anson.Huang@nxp.com>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com
+Subject: Re: [PATCH v2 03/15] clk: imx7d: fix mipi dphy div parent
+Message-ID: <20180503010810.GN3443@dragon>
+References: <20180423134750.30403-1-rui.silva@linaro.org>
+ <20180423134750.30403-4-rui.silva@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180530172239.982.48723@harbor.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180423134750.30403-4-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/30/2018 12:22 PM, Michael Turquette wrote:
-> Quoting David Lechner (2018-05-25 11:11:45)
->> From: Sekhar Nori <nsekhar@ti.com>
->>
->> PLL2 SYSCLK1 on DM646x is connected to DDR2 PHY and cannot
->> be disabled. Mark it so to prevent unused clock disable
->> infrastructure from disabling it.
->>
->> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
->> Reviewed-by: David Lechner <david@lechnology.com>
->> ---
->>   drivers/clk/davinci/pll-dm646x.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
->> index a61cc3256418..0ae827e3ce80 100644
->> --- a/drivers/clk/davinci/pll-dm646x.c
->> +++ b/drivers/clk/davinci/pll-dm646x.c
->> @@ -72,7 +72,7 @@ static const struct davinci_pll_clk_info dm646x_pll2_info = {
->>          .flags = 0,
->>   };
->>   
->> -SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
->> +SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, SYSCLK_ALWAYS_ENABLED);
-> 
-> Nitpick: I dislike setting a platform-specific flag that just sets a
-> framework-specific flag during clk registration.
-> 
-> I know there is some legacy here so I'll take this patch as-is, but
-> perhaps cleaning this up to directly use CLK_IS_CRITICAL can be added to
-> someone's todo list?
+Anson,
 
-I can see how this would be better in general, but I don't think it would
-be an improvement in this case. We have other platform-specific flags that
-don't correspond to common framework flags (only the one you pointed out
-does). So, we  would have to introduce a second flags variable for the
-common framework flags (unless I am missing something, like a reserved
-range of bits for platform-specific flags that would allow platform-specific
-flags and common framework flags to coexist in a single 32 or 64-bit field).
-Then we would have to add comments saying that CLK_IS_CRITICAL is the only
-flag that you can use for this field because we really don't want someone
-to try to use any other common framework flags. This seems like quite a bit
-of effort just to try to avoid one redundant flag.
+Please have a look at this change.
+
+Shawn
+
+On Mon, Apr 23, 2018 at 02:47:38PM +0100, Rui Miguel Silva wrote:
+> Fix the mipi dphy root divider to mipi_dphy_pre_div, this would remove a orphan
+> clock and set the correct parent.
+> 
+> before:
+> cat clk_orphan_summary
+>                                  enable  prepare  protect
+>    clock                          count    count    count        rate   accuracy   phase
+> ----------------------------------------------------------------------------------------
+>  mipi_dphy_post_div                   1        1        0           0          0 0
+>     mipi_dphy_root_clk                1        1        0           0          0 0
+> 
+> cat clk_dump | grep mipi_dphy
+> mipi_dphy_post_div                    1        1        0           0          0 0
+>     mipi_dphy_root_clk                1        1        0           0          0 0
+> 
+> after:
+> cat clk_dump | grep mipi_dphy
+>    mipi_dphy_src                     1        1        0    24000000          0 0
+>        mipi_dphy_cg                  1        1        0    24000000          0 0
+>           mipi_dphy_pre_div          1        1        0    24000000          0 0
+>              mipi_dphy_post_div      1        1        0    24000000          0 0
+>                 mipi_dphy_root_clk   1        1        0    24000000          0 0
+> 
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+> 
+> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+> ---
+>  drivers/clk/imx/clk-imx7d.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> index 975a20d3cc94..f7f4db2e6fa6 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -729,7 +729,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX7D_LCDIF_PIXEL_ROOT_DIV] = imx_clk_divider2("lcdif_pixel_post_div", "lcdif_pixel_pre_div", base + 0xa300, 0, 6);
+>  	clks[IMX7D_MIPI_DSI_ROOT_DIV] = imx_clk_divider2("mipi_dsi_post_div", "mipi_dsi_pre_div", base + 0xa380, 0, 6);
+>  	clks[IMX7D_MIPI_CSI_ROOT_DIV] = imx_clk_divider2("mipi_csi_post_div", "mipi_csi_pre_div", base + 0xa400, 0, 6);
+> -	clks[IMX7D_MIPI_DPHY_ROOT_DIV] = imx_clk_divider2("mipi_dphy_post_div", "mipi_csi_dphy_div", base + 0xa480, 0, 6);
+> +	clks[IMX7D_MIPI_DPHY_ROOT_DIV] = imx_clk_divider2("mipi_dphy_post_div", "mipi_dphy_pre_div", base + 0xa480, 0, 6);
+>  	clks[IMX7D_SAI1_ROOT_DIV] = imx_clk_divider2("sai1_post_div", "sai1_pre_div", base + 0xa500, 0, 6);
+>  	clks[IMX7D_SAI2_ROOT_DIV] = imx_clk_divider2("sai2_post_div", "sai2_pre_div", base + 0xa580, 0, 6);
+>  	clks[IMX7D_SAI3_ROOT_DIV] = imx_clk_divider2("sai3_post_div", "sai3_pre_div", base + 0xa600, 0, 6);
+> -- 
+> 2.17.0
+> 
