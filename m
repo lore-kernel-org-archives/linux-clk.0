@@ -1,60 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:43685 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753025AbeERJ2n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:28:43 -0400
-Received: by mail-wr0-f193.google.com with SMTP id v15-v6so8454120wrm.10
-        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 02:28:43 -0700 (PDT)
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
-Subject: [PATCH v5 08/12] ARM: dts: imx7s: add multiplexer controls
-Date: Fri, 18 May 2018 10:28:02 +0100
-Message-Id: <20180518092806.3829-9-rui.silva@linaro.org>
-In-Reply-To: <20180518092806.3829-1-rui.silva@linaro.org>
-References: <20180518092806.3829-1-rui.silva@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [v7 0/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Thu,  3 May 2018 16:09:15 +0530
+Message-Id: <1525343956-10089-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The IOMUXC General Purpose Register has bitfield to control video bus
-multiplexer to control the CSI input between the MIPI-CSI2 and parallel
-interface. Add that register and mask.
+ [v7]
+  * Addressed comments from Stephen
+	- Keep only xo_board as clock parent.
+	- Associate divs from SoC specific clock listing to calculate
+	   the clock rate.
+	- Add back the recalc_rate clock ops to return the clock rate
+	   based on the parent rate and div associated with clock.
+	- void cast kept to avoid compiler warnings.
 
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- arch/arm/boot/dts/imx7s.dtsi | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ [v6]
+   * Addressed comments from Rob
+   * Addressed comments from Stephen
 
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index 67450ad89940..3590dab529f9 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -520,8 +520,14 @@
- 
- 			gpr: iomuxc-gpr@30340000 {
- 				compatible = "fsl,imx7d-iomuxc-gpr",
--					"fsl,imx6q-iomuxc-gpr", "syscon";
-+					"fsl,imx6q-iomuxc-gpr", "syscon", "simple-mfd";
- 				reg = <0x30340000 0x10000>;
-+
-+				mux: mux-controller {
-+					compatible = "mmio-mux";
-+					#mux-control-cells = <1>;
-+					mux-reg-masks = <0x14 0x00000010>;
-+				};
- 			};
- 
- 			ocotp: ocotp-ctrl@30350000 {
--- 
-2.17.0
+ [v5]
+   * Addressed comments from Stephen
+   * Introduced a new DT property to take clock divs
 
+ [v4]
+  * Addressed comments from Stephen
+
+ [v3]
+  * Addressed documentation & code review comments from Bjorn
+  * Addressed bindings comments from Rob
+  * Updated the patch series order for bindings
+
+ [v2]
+  * Addressed comments from Stephen
+  * Addressed comments from Evan
+
+This patch series adds a driver and device tree documentation binding
+for the clock control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
+would send requests for the RPMh managed clock resources.
+
+The RPMh clock driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.
+
+Thanks,
+Taniya
+
+[1]: https://lkml.org/lkml/2018/3/9/979
+[2]: https://lkml.org/lkml/2018/3/14/787
+
+Taniya Das (1):
+  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+
+ drivers/clk/qcom/Kconfig    |   9 ++
+ drivers/clk/qcom/Makefile   |   1 +
+ drivers/clk/qcom/clk-rpmh.c | 368 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 378 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
