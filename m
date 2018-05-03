@@ -1,71 +1,249 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH v1] clk: qcom: gdsc: Add support to poll CFG register to
+ check GDSC state
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1525151013-28291-1-git-send-email-tdas@codeaurora.org>
+ <152524425583.138124.2497854182982735033@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <e1d6f7a1-9b2b-113a-4c21-4730c6514e9c@codeaurora.org>
+Date: Thu, 3 May 2018 14:39:57 +0530
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
- <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
- <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
- <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 May 2018 15:17:42 +0200
-Message-ID: <CAMuHMdUd9A_JG4zvFTtJtKEJF4NFs11vWdG+vCnFAtoqYS0Yog@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <152524425583.138124.2497854182982735033@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 17, 2018 at 12:16 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, May 17, 2018 at 10:01 AM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->> On Wed, May 16, 2018 at 10:43 AM, Simon Horman <horms@verge.net.au> wrote:
->>> On Tue, May 15, 2018 at 04:50:44PM +0200, Geert Uytterhoeven wrote:
->>>> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->>>> > Add bindings for CryptoCell instance in the SoC.
->>>> >
->>>> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->>>>
->>>> Thanks for your patch!
->>>>
->>>> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>>> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
->>>> > @@ -528,6 +528,14 @@
->>>> >                         status = "disabled";
->>>> >                 };
->>>> >
->>>> > +               arm_cc630p: crypto@e6601000 {
->>>> > +                       compatible = "arm,cryptocell-630p-ree";
->>>> > +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
->>>> > +                       #interrupt-cells = <2>;
->>>>
->>>> I believe the #interrupt-cells property is not needed.
->>>>
->>>> > +                       reg = <0x0 0xe6601000 0 0x1000>;
->>>> > +                       clocks = <&cpg CPG_MOD 229>;
->
-> Missing "power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;", as
-> the Secure Engine is part of the CPG/MSSR clock domain (see below [*]).
+Hello Stephen,
 
-And missing "resets = <&cpg 229>;", as the module is tied to the CPG/MSSR
-reset controller.
+I have tested the below patch & didn't see any issues.
 
-Gr{oetje,eeting}s,
-
-                        Geert
+On 5/2/2018 12:27 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-04-30 22:03:33)
+>> @@ -45,15 +50,28 @@
+>>
+>>   #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
+>>
+>> -static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
+>> +static int gdsc_is_enabled(struct gdsc *sc, bool en)
+>>   {
+>> +       unsigned int reg;
+>>          u32 val;
+>>          int ret;
+>>
+>> +       if (sc->flags & POLL_CFG_GDSCR)
+>> +               reg = sc->gdscr + CFG_GDSCR_OFFSET;
+>> +       else
+>> +               reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+>> +
+>>          ret = regmap_read(sc->regmap, reg, &val);
+>>          if (ret)
+>>                  return ret;
+>>
+>> +       if (sc->flags & POLL_CFG_GDSCR) {
+>> +               if (en)
+>> +                       return !!(val & GDSC_POWER_UP_COMPLETE);
+>> +               else
+>> +                       return !(val & GDSC_POWER_DOWN_COMPLETE);
+> 
+> This is confusing, but also is correct, because this function is
+> returning if the gdsc is enabled or not, and that also happens to be
+> false when the gdsc is not enabled and this bit is set.
+> 
+>> +       }
+>> +
+>>          return !!(val & PWR_ON_MASK);
+>>   }
+>>
+>> @@ -64,17 +82,17 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
+>>          return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
+>>   }
+>>
+>> -static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
+>> +static int gdsc_poll_status(struct gdsc *sc, bool en)
+>>   {
+>>          ktime_t start;
+>>
+>>          start = ktime_get();
+>>          do {
+>> -               if (gdsc_is_enabled(sc, reg) == en)
+>> +               if (gdsc_is_enabled(sc, en) == en)
+> 
+> I still don't like this == en logic. How about this patch on top? If you
+> can test it out, I'll merge your patch and then my patch to make this
+> all easier to read. Note that I changed the off case for
+> POWER_DOWN_COMPLETE to be a double negation.
+> 
+> ---8<---
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 2a6b0ff7d451..4696e241db89 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -50,7 +50,13 @@
+>   
+>   #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
+>   
+> -static int gdsc_is_enabled(struct gdsc *sc, bool en)
+> +enum gdsc_status {
+> +	GDSC_OFF,
+> +	GDSC_ON
+> +};
+> +
+> +/* Returns 1 if GDSC status is status, 0 if not, and < 0 on error */
+> +static int gdsc_check_status(struct gdsc *sc, enum gdsc_status status)
+>   {
+>   	unsigned int reg;
+>   	u32 val;
+> @@ -58,21 +64,32 @@ static int gdsc_is_enabled(struct gdsc *sc, bool en)
+>   
+>   	if (sc->flags & POLL_CFG_GDSCR)
+>   		reg = sc->gdscr + CFG_GDSCR_OFFSET;
+> +	else if (sc->gds_hw_ctrl)
+> +		reg = sc->gds_hw_ctrl;
+>   	else
+> -		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
+> +		reg = sc->gdscr;
+>   
+>   	ret = regmap_read(sc->regmap, reg, &val);
+>   	if (ret)
+>   		return ret;
+>   
+>   	if (sc->flags & POLL_CFG_GDSCR) {
+> -		if (en)
+> +		switch (status) {
+> +		case GDSC_ON:
+>   			return !!(val & GDSC_POWER_UP_COMPLETE);
+> -		else
+> -			return !(val & GDSC_POWER_DOWN_COMPLETE);
+> +		case GDSC_OFF:
+> +			return !!(val & GDSC_POWER_DOWN_COMPLETE);
+> +		}
+> +	}
+> +
+> +	switch (status) {
+> +	case GDSC_ON:
+> +		return !!(val & PWR_ON_MASK);
+> +	case GDSC_OFF:
+> +		return !(val & PWR_ON_MASK);
+>   	}
+>   
+> -	return !!(val & PWR_ON_MASK);
+> +	return -EINVAL;
+>   }
+>   
+>   static int gdsc_hwctrl(struct gdsc *sc, bool en)
+> @@ -82,33 +99,33 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
+>   	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
+>   }
+>   
+> -static int gdsc_poll_status(struct gdsc *sc, bool en)
+> +static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
+>   {
+>   	ktime_t start;
+>   
+>   	start = ktime_get();
+>   	do {
+> -		if (gdsc_is_enabled(sc, en) == en)
+> +		if (gdsc_check_status(sc, status))
+>   			return 0;
+>   	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
+>   
+> -	if (gdsc_is_enabled(sc, en) == en)
+> +	if (gdsc_check_status(sc, status))
+>   		return 0;
+>   
+>   	return -ETIMEDOUT;
+>   }
+>   
+> -static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+> +static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+>   {
+>   	int ret;
+> -	u32 val = en ? 0 : SW_COLLAPSE_MASK;
+> +	u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
+>   
+>   	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+>   	if (ret)
+>   		return ret;
+>   
+>   	/* If disabling votable gdscs, don't poll on status */
+> -	if ((sc->flags & VOTABLE) && !en) {
+> +	if ((sc->flags & VOTABLE) && status == GDSC_OFF) {
+>   		/*
+>   		 * Add a short delay here to ensure that an enable
+>   		 * right after it was disabled does not put it in an
+> @@ -118,7 +135,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+>   		return 0;
+>   	}
+>   
+> -	if (sc->gds_hw_ctrl)
+> +	if (sc->gds_hw_ctrl) {
+>   		/*
+>   		 * The gds hw controller asserts/de-asserts the status bit soon
+>   		 * after it receives a power on/off request from a master.
+> @@ -130,8 +147,9 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
+>   		 * and polling the status bit.
+>   		 */
+>   		udelay(1);
+> +	}
+>   
+> -	return gdsc_poll_status(sc, en);
+> +	return gdsc_poll_status(sc, status);
+>   }
+>   
+>   static inline int gdsc_deassert_reset(struct gdsc *sc)
+> @@ -210,7 +228,7 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>   		gdsc_deassert_clamp_io(sc);
+>   	}
+>   
+> -	ret = gdsc_toggle_logic(sc, true);
+> +	ret = gdsc_toggle_logic(sc, GDSC_ON);
+>   	if (ret)
+>   		return ret;
+>   
+> @@ -266,7 +284,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>   		 */
+>   		udelay(1);
+>   
+> -		ret = gdsc_poll_status(sc, true);
+> +		ret = gdsc_poll_status(sc, GDSC_ON);
+>   		if (ret)
+>   			return ret;
+>   	}
+> @@ -274,7 +292,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>   	if (sc->pwrsts & PWRSTS_OFF)
+>   		gdsc_clear_mem_on(sc);
+>   
+> -	ret = gdsc_toggle_logic(sc, false);
+> +	ret = gdsc_toggle_logic(sc, GDSC_OFF);
+>   	if (ret)
+>   		return ret;
+>   
+> @@ -303,12 +321,12 @@ static int gdsc_init(struct gdsc *sc)
+>   
+>   	/* Force gdsc ON if only ON state is supported */
+>   	if (sc->pwrsts == PWRSTS_ON) {
+> -		ret = gdsc_toggle_logic(sc, true);
+> +		ret = gdsc_toggle_logic(sc, GDSC_ON);
+>   		if (ret)
+>   			return ret;
+>   	}
+>   
+> -	on = gdsc_is_enabled(sc, true);
+> +	on = gdsc_check_status(sc, GDSC_ON);
+>   	if (on < 0)
+>   		return on;
+>   
+> 
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--
