@@ -1,68 +1,51 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525258277-3478-2-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Taniya Das <tdas@codeaurora.org>
-References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
- <1525258277-3478-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <152527385298.138124.8046800128520264876@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
-Date: Wed, 02 May 2018 08:10:52 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 5/7] arm64: allwinner: h6: add R_INTC interrupt controller
+Date: Fri,  4 May 2018 02:38:45 +0800
+Message-Id: <20180503183847.11046-6-icenowy@aosc.io>
+In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
+References: <20180503183847.11046-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-05-02 03:51:16)
-> Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
-> devices would be used for communicating resource state requests to control
-> the clocks managed by RPMh.
-> =
+Allwinner H6 SoC has also a R_INTC interrupt controller like Allwinner
+A64 SoC, but has its base address changed due to the memory map change
+in H6.
 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Add it into the device tree.
 
-When you change things you shouldn't keep around reviewed-by tags if it
-significantly changes..
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> +Example :
-> +
-> +#include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +       &apps_rsc {
-> +               rpmhcc: clock-controller {
-> +                       compatible =3D "qcom,sdm845-rpmh-clk";
-> +                       #clock-cells =3D <1>;
-> +                       assigned-clocks =3D <&clock_rpmh RPMH_CXO_CLK>,
-> +                                       <&clock_rpmh RPMH_CXO_CLK_A>,
-> +                                       <&clock_rpmh RPMH_LN_BB_CLK2>,
-> +                                       <&clock_rpmh RPMH_LN_BB_CLK2_A>,
-> +                                       <&clock_rpmh RPMH_LN_BB_CLK3>,
-> +                                       <&clock_rpmh RPMH_LN_BB_CLK3_A>;
-> +                       assigned-clock-parents =3D <&xo_board_div>,
-> +                                               <&xo_board_div>,
-> +                                               <&xo_board_div>,
-> +                                               <&xo_board_div>,
-> +                                               <&xo_board_div>,
-> +                                               <&xo_board_div>,
-
-There's only one parent, so assigned-clock-parents doesn't really make
-sense. If anything, we would have 'clocks =3D ' here and specify the xo
-board clk and the div 2 clk that live in DT. But I already merged this
-binding, two patchsets ago. Please look in clk-next.
-
-> +               };
-> +#define RPMH_RF_CLK2                           8
-> +#define RPMH_RF_CLK2_A                         9
-> +#define RPMH_RF_CLK3                           10
-> +#define RPMH_RF_CLK3_A                         11
-> +
-
-Ok. I dropped CLK4* from the previous patch you sent and dropped Amit's
-signed-off-by.
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index a18b78fb4850..b0b342c8c189 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -184,6 +184,15 @@
+ 			#reset-cells = <1>;
+ 		};
+ 
++		r_intc: interrupt-controller@7021000 {
++			compatible = "allwinner,sun50i-h6-r-intc",
++				     "allwinner,sun6i-a31-r-intc";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			reg = <0x07021000 0x400>;
++			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
+ 		r_pio: pinctrl@7022000 {
+ 			compatible = "allwinner,sun50i-h6-r-pinctrl";
+ 			reg = <0x07022000 0x400>;
+-- 
+2.15.1
