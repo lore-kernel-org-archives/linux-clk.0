@@ -1,236 +1,120 @@
-Return-Path: <parri.andrea@gmail.com>
-Return-Path: <parri.andrea@gmail.com>
-Date: Wed, 9 May 2018 21:20:32 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Mauro Carvalho Chehab <mchehab@infradead.org>,
-	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Harry Wei <harryxiyou@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michal Simek <monstr@monstr.eu>,
-	Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-	Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	x86@kernel.org, Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	David Howells <dhowells@redhat.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Gustavo Padovan <gustavo@padovan.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Sean Paul <seanpaul@chromium.org>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-	Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Malcolm Priestley <tvboxspy@gmail.com>,
-	Antoine Jacquet <royale@zerezo.com>,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Juergen Gross <jgross@suse.com>, Li Zefan <lizefan@huawei.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <sds@tycho.nsa.gov>,
-	Eric Paris <eparis@parisplace.org>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@zh-kernel.org,
-	user-mode-linux-devel@lists.sourceforge.net,
-	user-mode-linux-user@lists.sourceforge.net,
-	linux-xtensa@linux-xtensa.org, linux-block@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	patches@opensource.cirrus.com, linux-bcache@vger.kernel.org,
-	linux-usb@vger.kernel.org, devel@driverdev.osuosl.org,
-	xen-devel@lists.xenproject.org, cgroups@vger.kernel.org,
-	selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
-	alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
-Message-ID: <20180509192032.GA2788@andrea>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
- <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
- <20180509171501.GA17405@andrea>
- <20180509152045.722f0c51@vento.lan>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Marcel Ziswiler <marcel@ziswiler.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180426235818.10018-1-digetx@gmail.com>
+ <20180426235818.10018-2-digetx@gmail.com>
+ <1524832404.6979.9.camel@ziswiler.com>
+ <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
+ <1524834018.6979.13.camel@ziswiler.com>
+ <7c4e96ea-8bcf-1643-1b0f-29dc85b62b7b@gmail.com>
+Message-ID: <440e71db-cd0b-c4d8-eb24-ac8ebec9ae75@gmail.com>
+Date: Thu, 3 May 2018 15:02:36 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180509152045.722f0c51@vento.lan>
+In-Reply-To: <7c4e96ea-8bcf-1643-1b0f-29dc85b62b7b@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 09, 2018 at 03:20:45PM -0300, Mauro Carvalho Chehab wrote:
-> Em Wed, 9 May 2018 19:15:01 +0200
-> Andrea Parri <parri.andrea@gmail.com> escreveu:
+On 03.05.2018 14:59, Dmitry Osipenko wrote:
+> On 27.04.2018 16:00, Marcel Ziswiler wrote:
+>> On Fri, 2018-04-27 at 15:54 +0300, Dmitry Osipenko wrote:
+>>> Hi Marcel,
+>>>
+>>> On 27.04.2018 15:33,  Ziswiler wrote:
+>>>> Hi Dmitry
+>>>>
+>>>> Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around
+>>>> e.g.
+>>>> DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
+>>>>
+>>>> On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
+>>>>> CDEV1/CDEV2 clocks could have corresponding oscillator clock
+>>>>> divider
+>>>>> as
+>>>>> a parent. Add these dividers in order to be able to provide that
+>>>>> parent
+>>>>> option.
+>>>>>
+>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>> ---
+>>>>>  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+>>>>>  1 file changed, 12 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/clk/tegra/clk-tegra20.c
+>>>>> b/drivers/clk/tegra/clk-
+>>>>> tegra20.c
+>>>>> index 0ee56dd04cec..16cf4108f2ff 100644
+>>>>> --- a/drivers/clk/tegra/clk-tegra20.c
+>>>>> +++ b/drivers/clk/tegra/clk-tegra20.c
+>>>>> @@ -26,6 +26,8 @@
+>>>>>  #include "clk.h"
+>>>>>  #include "clk-id.h"
+>>>>>  
+>>>>> +#define MISC_CLK_ENB 0x48
+>>>>> +
+>>>>>  #define OSC_CTRL 0x50
+>>>>>  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+>>>>>  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+>>>>> @@ -831,6 +833,16 @@ static void __init
+>>>>> tegra20_periph_clk_init(void)
+>>>>>  				    periph_clk_enb_refcnt);
+>>>>>  	clks[TEGRA20_CLK_PEX] = clk;
+>>>>>  
+>>>>> +	/* cdev1 OSC divider */
+>>>>> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
+>>>>> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+>>>>
+>>>> So it would be:
+>>>>
+>>>> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+>>>>
+>>>>> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+>>>>> +
+>>>>> +	/* cdev2 OSC divider */
+>>>>> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
+>>>>> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+>>>>
+>>>> And:
+>>>>
+>>>> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+>>>>
+>>>>> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+>>>>> +
+>>>>>  	/* cdev1 */
+>>>>>  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL,
+>>>>> 0,
+>>>>> 26000000);
+>>>>>  	clk = tegra_clk_register_periph_gate("cdev1",
+>>>>> "cdev1_fixed",
+>>>>> 0,
+>>>
+>>> Indeed, good catch! I'll wait for more comments and then re-spin
+>>> patchset with
+>>> the fix. Thank you.
+>>
+>> You are very welcome. Thank you!
+>>
+>> Other than that it all looks proper and works fine at least in the
+>> configuration we use on Colibri T20. So you may add my reviewed and
+>> tested bys to the whole series:
+>>
+>> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+>> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
 > 
-> > On Wed, May 09, 2018 at 10:18:52AM -0300, Mauro Carvalho Chehab wrote:
-> > > As we move stuff around, some doc references are broken. Fix some of
-> > > them via this script:
-> > > 	./scripts/documentation-file-ref-check --fix-rst
-> > > 
-> > > Manually checked if the produced result is valid, removing a few
-> > > false-positives.
-> > > 
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
-> > 
-> > Thank you again for doing this,
-> > 
-> > 
-> > > ---
-> > >  .../admin-guide/kernel-parameters.txt         |  4 ++--
-> > >  .../bindings/input/rotary-encoder.txt         |  2 +-
-> > >  Documentation/driver-api/gpio/consumer.rst    |  2 +-
-> > >  Documentation/kprobes.txt                     |  4 ++--
-> > >  Documentation/trace/coresight.txt             |  2 +-
-> > >  Documentation/trace/events.rst                |  2 +-
-> > >  Documentation/trace/ftrace-uses.rst           |  2 +-
-> > >  Documentation/trace/histogram.txt             |  2 +-
-> > >  Documentation/trace/intel_th.rst              |  2 +-
-> > >  Documentation/trace/tracepoint-analysis.rst   |  6 +++---
-> > >  Documentation/translations/ja_JP/howto.rst    |  4 ++--
-> > >  .../translations/zh_CN/magic-number.txt       |  4 ++--
-> > >  .../zh_CN/video4linux/omap3isp.txt            |  4 ++--
-> > >  MAINTAINERS                                   | 20 +++++++++----------
-> > >  arch/Kconfig                                  |  2 +-
-> > >  arch/arm/include/asm/cacheflush.h             |  2 +-
-> > >  arch/arm64/include/asm/cacheflush.h           |  2 +-
-> > >  arch/microblaze/include/asm/cacheflush.h      |  2 +-
-> > >  arch/um/Kconfig.um                            |  2 +-
-> > >  arch/unicore32/include/asm/cacheflush.h       |  2 +-
-> > >  arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
-> > >  arch/xtensa/include/asm/cacheflush.h          |  4 ++--
-> > >  block/Kconfig                                 |  2 +-
-> > >  certs/Kconfig                                 |  2 +-
-> > >  crypto/asymmetric_keys/asymmetric_type.c      |  2 +-
-> > >  crypto/asymmetric_keys/signature.c            |  2 +-
-> > >  drivers/char/Kconfig                          |  2 +-
-> > >  drivers/clk/clk.c                             |  4 ++--
-> > >  drivers/clk/ingenic/cgu.h                     |  2 +-
-> > >  drivers/gpu/vga/Kconfig                       |  2 +-
-> > >  drivers/gpu/vga/vgaarb.c                      |  2 +-
-> > >  drivers/input/joystick/Kconfig                | 10 +++++-----
-> > >  drivers/input/joystick/iforce/Kconfig         |  2 +-
-> > >  drivers/input/joystick/walkera0701.c          |  2 +-
-> > >  drivers/input/misc/Kconfig                    |  4 ++--
-> > >  drivers/input/misc/rotary_encoder.c           |  2 +-
-> > >  drivers/input/mouse/Kconfig                   |  6 +++---
-> > >  drivers/input/mouse/alps.c                    |  2 +-
-> > >  drivers/input/touchscreen/wm97xx-core.c       |  2 +-
-> > >  drivers/lightnvm/pblk-rb.c                    |  2 +-
-> > >  drivers/md/bcache/Kconfig                     |  2 +-
-> > >  drivers/md/bcache/btree.c                     |  2 +-
-> > >  drivers/md/bcache/extents.c                   |  2 +-
-> > >  drivers/media/dvb-core/dvb_ringbuffer.c       |  2 +-
-> > >  drivers/media/pci/meye/Kconfig                |  2 +-
-> > >  drivers/media/platform/pxa_camera.c           |  4 ++--
-> > >  .../soc_camera/sh_mobile_ceu_camera.c         |  2 +-
-> > >  drivers/media/radio/Kconfig                   |  2 +-
-> > >  drivers/media/radio/si470x/Kconfig            |  2 +-
-> > >  drivers/media/usb/dvb-usb-v2/lmedm04.c        |  2 +-
-> > >  drivers/media/usb/zr364xx/Kconfig             |  2 +-
-> > >  drivers/parport/Kconfig                       |  6 +++---
-> > >  drivers/staging/media/bcm2048/TODO            |  2 +-
-> > >  include/keys/asymmetric-subtype.h             |  2 +-
-> > >  include/keys/asymmetric-type.h                |  2 +-
-> > >  include/linux/assoc_array.h                   |  2 +-
-> > >  include/linux/assoc_array_priv.h              |  2 +-
-> > >  include/linux/circ_buf.h                      |  2 +-
-> > >  include/linux/ftrace.h                        |  2 +-
-> > >  include/linux/rculist_nulls.h                 |  2 +-
-> > >  include/uapi/linux/prctl.h                    |  2 +-
-> > >  include/xen/interface/io/kbdif.h              |  2 +-
-> > >  kernel/cgroup/cpuset.c                        |  2 +-
-> > >  kernel/trace/Kconfig                          | 16 +++++++--------
-> > >  lib/Kconfig                                   |  2 +-
-> > >  security/selinux/hooks.c                      |  2 +-
-> > >  sound/core/Kconfig                            |  4 ++--
-> > >  sound/drivers/Kconfig                         |  4 ++--
-> > >  sound/pci/Kconfig                             | 10 +++++-----
-> > >  tools/include/uapi/linux/prctl.h              |  2 +-
-> > >  tools/lib/api/fs/fs.c                         |  2 +-
-> 
-> 
-> > >  tools/memory-model/README                     | 10 +++++-----  
-> > 
-> > As mentioned in the previous thread, I am for keeping the current
-> > references: the REAMDE is listing the doc files, as well as other
-> > files in tools/memory-model/, relatively to that directory.
-> 
-> Yeah, at least this hunk deserves some rework, as now some
-> references are Documentation/.../foo, while others are just
-> bar.
-> 
-> As on (almost) all other places (except for tools/memory-model/README),
-> the references are always from the main directory, I would make all
-> patches there also relative to main dir. If you're afraid of
-> not being too clearer, we could prefix all of them with something
-> like:
+> Marcel, you previously mentioned that reverting of your DT patch works for the
+> Colibri now. Does that reverting also work for the 4.17 kernel? If yes, I may
+> add stable tag to the revert-patch to get back paz00 working with 4.17. If it's
+> not working, we should figure out why pll_p_out4 is getting disabled as it
+> should be a distinct issue.
 
-Actually, another place is (consistently):
-
-   tools/memory-model/litmus-tests/README
-
-Sorry, but we are not going to replace:
-
-  ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
-
-with
-
-   tools/memory-model/litmus-tests/README/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
-
-or
-
-   ${LINUX}/tools/memory-model/litmus-tests/README/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
-
-(for the obvious reason; and if you're thinking at "just rename the test"
- I anticipate a long discussion on naming schemes and related tools ...).
-
-  Andrea
-
-
-> 
-> 	${LINUX}/tools/memory-model/...
-> 
-> just like some DT binding files do:
-> 
-> 	Documentation/devicetree/bindings/sound/audio-graph-card.txt:see ${LINUX}/Documentation/devicetree/bindings/graph.txt
-> 
-> A bonus of doing that is that the broken reference detect script can
-> keep parsing it without changes (well, it wouldn't be hard to make
-> it also accept a relative file, but doing that just due to 
-> tools/memory-model/README seems overkill).
-> 
-> Another advantage is that it would allow to easily add references
-> there from the main kernel Documentation, if needed in the future,
-> without messing with local x non-local relative namespace.
-> 
-> Regards,
-> Mauro
+Oh, I just found that Thierry already asked to get this patches included into
+4.17. Anyway would be nice to know if a sole DT revert works with 4.17 for you.
