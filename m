@@ -1,54 +1,88 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 18/26] drm/sun4i: Enable DesignWare HDMI for SUN8I and SUN50I
-Date: Fri, 18 May 2018 15:15:28 +0530
-Message-Id: <20180518094536.17201-19-jagan@amarulasolutions.com>
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+Return-Path: <RAJANV@xilinx.com>
+From: Rajan Vaja <RAJANV@xilinx.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jolly Shah
+	<JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>
+Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
+ CLK_OF_DECLARE_DRIVER
+Date: Thu, 3 May 2018 09:18:30 +0000
+Message-ID: <CY1PR02MB20914DBB65A193DED2BEED92B7870@CY1PR02MB2091.namprd02.prod.outlook.com>
+References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
+ <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
+ <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
+ <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
+ <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
+In-Reply-To: <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner SoC like SUN8I and SUN50I are now using DesignWare HDMI
-so enable them as default.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v2:
-- Enable for SUN8I
-
- drivers/gpu/drm/sun4i/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index a84120025197..c10617c1f84b 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -52,6 +52,7 @@ config DRM_SUN6I_DSI
- 
- config DRM_SUN8I_DW_HDMI
- 	tristate "Support for Allwinner version of DesignWare HDMI"
-+	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
- 	depends on DRM_SUN4I
- 	select DRM_DW_HDMI
- 	help
--- 
-2.14.3
+SGkgU3RlcGhlbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSYWph
+biBWYWphDQo+IFNlbnQ6IDE2IE1hcmNoIDIwMTggMDU6MjAgUE0NCj4gVG86ICdTdGVwaGVuIEJv
+eWQnIDxzYm95ZEBrZXJuZWwub3JnPg0KPiBDYzogbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsg
+bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgSm9sbHkgU2hhaA0KPiA8Sk9MTFlTQHhpbGlu
+eC5jb20+OyBNaWNoYWwgU2ltZWsgPG1pY2hhbHNAeGlsaW54LmNvbT47DQo+IG10dXJxdWV0dGVA
+YmF5bGlicmUuY29tDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0hdIGNsazogY2xrLWZpeGVkLWZhY3Rv
+cjogVXNlIG5ldyBtYWNybw0KPiBDTEtfT0ZfREVDTEFSRV9EUklWRVINCj4gDQo+IEhpIFN0ZXBo
+ZW4sDQo+IA0KPiBUaGFua3MgZm9yIHRoZSBjb21tZW50Lg0KPiANCj4gPiAtLS0tLU9yaWdpbmFs
+IE1lc3NhZ2UtLS0tLQ0KPiA+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtlcm5l
+bC5vcmddDQo+ID4gU2VudDogMTYgTWFyY2ggMjAxOCAxMjoxNyBBTQ0KPiA+IFRvOiBSYWphbiBW
+YWphIDxSQUpBTlZAeGlsaW54LmNvbT4NCj4gPiBDYzogbGludXgtY2xrQHZnZXIua2VybmVsLm9y
+ZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgSm9sbHkgU2hhaA0KPiA+IDxKT0xMWVNA
+eGlsaW54LmNvbT47IE1pY2hhbCBTaW1layA8bWljaGFsc0B4aWxpbnguY29tPjsNCj4gPiBtdHVy
+cXVldHRlQGJheWxpYnJlLmNvbQ0KPiA+IFN1YmplY3Q6IFJFOiBbUEFUQ0hdIGNsazogY2xrLWZp
+eGVkLWZhY3RvcjogVXNlIG5ldyBtYWNybw0KPiA+IENMS19PRl9ERUNMQVJFX0RSSVZFUg0KPiA+
+DQo+ID4gUXVvdGluZyBSYWphbiBWYWphICgyMDE4LTAzLTA5IDExOjI3OjQwKQ0KPiA+ID4gPiBG
+cm9tOiBTdGVwaGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiA+ID4gPg0KPiA+
+ID4gPiBJcyB0aGUgaW50ZW50IHRvIHJlZ2lzdGVyIHRoZSBjbGsgdHdpY2U/IEkgYmVsaWV2ZSB0
+aGluZ3MgYXJlIHdvcmtpbmcgYXMNCj4gPiA+ID4gaW50ZW5kZWQgd2l0aG91dCB0aGlzIHBhdGNo
+LCBzbyBtYXliZSB5b3UgY2FuIGV4cGxhaW4gYSBsaXR0bGUgbW9yZSB3aGF0DQo+ID4gPiA+IHlv
+dSdyZSB0cnlpbmcgdG8gZml4Lg0KPiA+ID4gW1JhamFuXSBZZXMuIER1cmluZyBvZl9jbGtfaW5p
+dCgpIGlmIHNvbWUgRFQgZml4ZWQgZmFjdG9yIGNsb2NrIGhhcw0KPiA+ID4gcGFyZW50IHdoaWNo
+IGlzIG5laXRoZXIgbWVudGlvbmVkIGluIG91dHB1dC1jbG9jay1uYW1lcyBvZiBjbG9jaw0KPiA+
+ID4gY29udHJvbGxlciBub3IgcmVnaXN0ZXJlZCBhcyBjbG9jayBwcm92aWRlciwgb2ZfY2xrX2lu
+aXQoKSB3aWxsIHRyeSB0bw0KPiA+ID4gZm9yY2VmdWxseSByZWdpc3RlciBpbiBzZWNvbmQgbG9v
+cC4NCj4gPiA+DQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoZm9yY2UgfHwgcGFy
+ZW50X3JlYWR5KGNsa19wcm92aWRlci0+bnApKSB7DQo+ID4gPg0KPiA+ID4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAvKiBEb24ndCBwb3B1bGF0ZSBwbGF0Zm9ybSBkZXZpY2VzICov
+DQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9mX25vZGVfc2V0X2ZsYWco
+Y2xrX3Byb3ZpZGVyLT5ucCwNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBPRl9QT1BVTEFURUQpOw0KPiA+ID4NCj4gPiA+IFNvIHJlZ2lzdHJh
+dGlvbiBvZiB0aGlzIERUIGZpeGVkLWZhY3RvciBjbG9jayB3b3VsZCBmYWlsIGFzIHBhcmVudA0K
+PiA+ID4gd291bGQgYmUgTlVMTCBhcyBiZWxvdyAoY2FsbGVkIGZyb20gX29mX2ZpeGVkX2ZhY3Rv
+cl9jbGtfc2V0dXAoKSk6DQo+ID4gPiBwYXJlbnRfbmFtZSA9IG9mX2Nsa19nZXRfcGFyZW50X25h
+bWUobm9kZSwgMCk7DQo+ID4gPg0KPiA+ID4gT24gdGhlIG90aGVyIGhhbmQsIGV2ZW4gaWYgcmVn
+aXN0cmF0aW9uIGZhaWxlZCwgdGhhdCBub2RlIHdpbGwgYmUNCj4gPiA+IG1hcmtlZCBhcyBPRl9Q
+T1BVTEFURUQsIHNvIHByb2JlIG9mIGNsay1maXhlZC1mYWN0b3IuYyB3aWxsIGFsc28gbm90DQo+
+ID4gPiBiZSBjYWxsZWQgYW5kIHRoYXQgRFQgZml4ZWQtZmFjdG9yIGNsb2NrIHdvdWxkIG5ldmVy
+IGJlIHJlZ2lzdGVyZWQuDQo+ID4gPg0KPiA+ID4gU2FtZSB0aGluZyBpcyBkaXNjdXNzZWQgYXQg
+IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE3LzYvNS82ODEgLg0KPiA+DQo+ID4gT2suIEkgYmVs
+aWV2ZSB0aGUgYW5zd2VyIGlzIHRvIGZpeCB0aGUgRFQgdG8gZGVzY3JpYmUgdGhlIHBhcmVudCBj
+aGFpbg0KPiA+IHByb3Blcmx5IHdpdGggY2xvY2stb3V0cHV0LW5hbWVzLiBPdGhlcndpc2UsIHdl
+IGhhdmUgbm8gZ29vZCB3YXkgb2YNCj4gPiBmaWd1cmluZyBvdXQgd2hhdCB0aGUgbmFtZSBzaG91
+bGQgYmUuDQo+IFtSYWphbl0gY2xvY2sgRFQgYmluZGluZyBkb2Mgc2F5cyB0aGF0IGNsb2NrLW91
+dHB1dC1uYW1lcyBwcm9wZXJ0eQ0KPiBpcyBvcHRpb25hbCBhbmQgc29tZXRpbWVzIG5vdCByZWNv
+bW1lbmRlZC4NCj4gSSB0aGluayB0aGlzIHBhdGNoIGZpeGVzIHRoZSBpc3N1ZSB3ZSBoYXZlIHdo
+aWNoIG1hbmRhdGVzIHRvIGFkZCBjbG9jay1vdXRwdXQtDQo+IG5hbWVzDQo+IHByb3BlcnR5IChm
+b3IgdGhpcyBwYXJ0aWN1bGFyIGNhc2UpLiBBbHNvLCBJSVVDIHBsYXRmb3JtIGRyaXZlciBwcm9i
+ZSBpbiBjbGstZml4ZWQtDQo+IGZhY3Rvci5jDQo+IHdpbGwgbmV2ZXIgYmUgY2FsbGVkIHVubGVz
+cyB3ZSB1c2UgQ0xLX09GX0RFQ0xBUkVfRFJJVkVSLg0KPiBJIGNvbXBsZXRlbHkgYWdyZWUgdGhh
+dCBwcm9wZXIgc29sdXRpb24gd291bGQgYmUgdG8gc3RvcCB1c2luZyBzdHJpbmdzIHRvDQo+IGRl
+c2NyaWJlIGNsb2NrIHRvcG9sb2d5Lg0KW1JhamFuXSBBbnkgY29tbWVudHMgb24gdGhpcz8NClVu
+bGVzcyB3ZSBoYXZlIHByb3BlciBzb2x1dGlvbiByZWFkeSwgd2UgbmVlZCB0byBoYXZlIHNvbWUg
+bWVjaGFuaXNtIHRvIGhhbmRsZSB0aGlzIHNjZW5hcmlvLg0KY2xvY2stb3V0cHV0LW5hbWVzIGlz
+IG9wdGlvbmFsIGFuZCB3aXRob3V0IHRoaXMsIGl0IG1hbmRhdGVzIHRvIHVzZSBjbG9jay1vdXRw
+dXQtbmFtZXMuDQoNCj4gDQo+ID4NCj4gPiBUaGUgYWx0ZXJuYXRpdmUgaXMgdG8gc3RhcnQgd29y
+a2luZyBvbiBhIHNvbHV0aW9uIGZvciBoYXZpbmcgdGhlIGNsaw0KPiA+IGZyYW1ld29yayBzdG9w
+IHVzaW5nIHN0cmluZ3MgdG8gZGVzY3JpYmUgY2xrIHRvcG9sb2d5LiBNeSBwbGFuIHRoZXJlIGlz
+DQo+ID4gdG8gYWxsb3cgY2xrIHJlZ2lzdHJhdGlvbiB0byBpbmRpY2F0ZSB0aGF0IGFub3RoZXIg
+cGFyZW50IG5hbWVzIGFycmF5DQo+ID4gc2hvdWxkIGJlIHVzZWQgd2l0aCBjbGtfZ2V0KCkgb2Yg
+dGhlIGRldmljZSBvciBub2RlIHBvaW50ZXIgdGhhdCdzDQo+ID4gYXNzb2NpYXRlZCB3aXRoIHRo
+ZSBjbGsgZHVyaW5nIHJlZ2lzdHJhdGlvbiB0byBmaW5kIHRoZSBwYXJlbnQgLiBJZiB3ZQ0KPiA+
+IGhhZCB0aGF0LCB0aGVuIHdlIGNvdWxkIGhvb2sgdXAgY2xrcyBpbnRvIHRoZSB0cmVlIGJ5IGNh
+bGxpbmcgY2xrX2dldCgpDQo+ID4gaW4gdGhlIGZyYW1ld29yayBhbmQgbWFwIHRocm91Z2ggdGhl
+IGNsb2NrLW5hbWVzIHByb3BlcnR5LiBUaGlzIGFsc28NCj4gPiBnZXRzIHVzIHRvIGEgcG9pbnQg
+d2hlcmUgY2xrIG5hbWVzIGRvbid0IGhhdmUgdG8gYmUgZ2xvYmFsbHkgdW5pcXVlLA0KPiA+IHdo
+aWNoIHdvdWxkIGJlIG5pY2UuDQo=
