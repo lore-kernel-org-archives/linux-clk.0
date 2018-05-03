@@ -1,48 +1,116 @@
-Return-Path: <gilad@benyossef.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH 2/3] clk: renesas: r8a7795: Add ccree clock
-Date: Tue, 15 May 2018 13:29:28 +0100
-Message-Id: <1526387370-17142-3-git-send-email-gilad@benyossef.com>
-In-Reply-To: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v5 10/14] dt-bindings: qcom_spmi: Add support for SAW documentation
+Date: Thu,  3 May 2018 14:52:31 +0300
+Message-Id: <1525348355-25471-11-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the clock used by the CryptoCell 630p instance in the SoC.
+Add support for SAW controlled regulators.
+The regulators defined as SAW controlled in the device tree
+will be controlled through special CPU registers instead of direct
+SPMI accesses.
+This is required especially for CPU supply regulators to synchronize
+with clock scaling and for Automatic Voltage Switching.
+Document it.
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 775b0ce..642706a 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -132,6 +132,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
- 	DEF_MOD("sys-dmac2",		 217,	R8A7795_CLK_S0D3),
- 	DEF_MOD("sys-dmac1",		 218,	R8A7795_CLK_S0D3),
- 	DEF_MOD("sys-dmac0",		 219,	R8A7795_CLK_S0D3),
-+	DEF_MOD("ccree",		 229,	R8A7795_CLK_S3D2),
- 	DEF_MOD("cmt3",			 300,	R8A7795_CLK_R),
- 	DEF_MOD("cmt2",			 301,	R8A7795_CLK_R),
- 	DEF_MOD("cmt1",			 302,	R8A7795_CLK_R),
+diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+index 57d2c65..406f2e5 100644
+--- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+@@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
+ 	Definition: Reference to regulator supplying the input pin, as
+ 		    described in the data sheet.
+ 
++- qcom,saw-reg:
++	Usage: optional
++	Value type: <phandle>
++	Description: Reference to syscon node defining the SAW registers.
++
+ 
+ The regulator node houses sub-nodes for each regulator within the device. Each
+ sub-node is identified using the node's name, with valid values listed for each
+@@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
+ 			2 = 0.55 uA
+ 			3 = 0.75 uA
+ 
++- qcom,saw-slave:
++	Usage: optional
++	Value type: <boo>
++	Description: SAW controlled gang slave. Will not be configured.
++
++- qcom,saw-leader:
++	Usage: optional
++	Value type: <boo>
++	Description: SAW controlled gang leader. Will be configured as
++		     SAW regulator.
++
+ Example:
+ 
+ 	regulators {
+@@ -221,3 +237,32 @@ Example:
+ 
+ 		....
+ 	};
++
++Example 2:
++
++	saw3: syscon@9A10000 {
++		compatible = "syscon";
++		reg = <0x9A10000 0x1000>;
++	};
++
++	...
++
++	spm-regulators {
++		compatible = "qcom,pm8994-regulators";
++		qcom,saw-reg = <&saw3>;
++		s8 {
++			qcom,saw-slave;
++		};
++		s9 {
++			qcom,saw-slave;
++		};
++		s10 {
++			qcom,saw-slave;
++		};
++		pm8994_s11_saw: s11 {
++			qcom,saw-leader;
++			regulator-always-on;
++			regulator-min-microvolt = <900000>;
++			regulator-max-microvolt = <1140000>;
++		};
++	};
 -- 
-2.7.4
+1.9.1
