@@ -1,533 +1,392 @@
-Return-Path: <enric.balletbo@collabora.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	David Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org,
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Derek Basehore <dbasehore@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	Lin Huang <hl@rock-chips.com>,
-	kernel@collabora.com,
-	Sean Paul <seanpaul@chromium.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 05/10] devfreq: rk3399_dmc / clk: rockchip: Sync with vblank in the kernel for DDRfreq.
-Date: Mon, 14 May 2018 23:16:05 +0200
-Message-Id: <20180514211610.26618-6-enric.balletbo@collabora.com>
-In-Reply-To: <20180514211610.26618-1-enric.balletbo@collabora.com>
-References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v5 01/14] soc: qcom: Separate kryo l2 accessors from PMU driver
+Date: Thu,  3 May 2018 14:52:22 +0300
+Message-Id: <1525348355-25471-2-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Derek Basehore <dbasehore@chromium.org>
+The driver provides kernel level API for other drivers
+to access the MSM8996 L2 cache registers.
+Separating the L2 access code from the PMU driver and
+making it public to allow other drivers use it.
+The accesses must be separated with a single spinlock,
+maintained in this driver.
 
-This changes the kernel to sync with vblank for the display in the
-kernel. This was done in Trusted Firmware-A (TF-A) before, but that locks
-up one CPU for up to one display frame (1/60 second). That's bad for
-performance and power, so this moves waiting to the kernel where the
-waiting thread can properly wait on a completion.
-
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
+ drivers/perf/Kconfig                 |  1 +
+ drivers/perf/qcom_l2_pmu.c           | 90 ++++++++++--------------------------
+ drivers/soc/qcom/Kconfig             |  3 ++
+ drivers/soc/qcom/Makefile            |  1 +
+ drivers/soc/qcom/kryo-l2-accessors.c | 65 ++++++++++++++++++++++++++
+ include/soc/qcom/kryo-l2-accessors.h | 21 +++++++++
+ 6 files changed, 115 insertions(+), 66 deletions(-)
+ create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+ create mode 100644 include/soc/qcom/kryo-l2-accessors.h
 
- drivers/clk/rockchip/clk-ddr.c    | 142 +++++++++++++++++++++++++-----
- drivers/clk/rockchip/clk.c        |   2 +-
- drivers/clk/rockchip/clk.h        |   3 +-
- drivers/devfreq/rk3399_dmc.c      | 124 ++++++++++++++++++++------
- drivers/devfreq/rk3399_dmc_priv.h |  15 ++++
- include/soc/rockchip/rk3399_dmc.h |  30 +++++++
- 6 files changed, 264 insertions(+), 52 deletions(-)
- create mode 100644 drivers/devfreq/rk3399_dmc_priv.h
-
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index e8075359366b..707be1bd8910 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -17,7 +17,9 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-+#include <linux/ktime.h>
- #include <linux/slab.h>
-+#include <soc/rockchip/rk3399_dmc.h>
- #include <soc/rockchip/rockchip_sip.h>
- #include "clk.h"
+diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
+index 28bb5a0..561252a 100644
+--- a/drivers/perf/Kconfig
++++ b/drivers/perf/Kconfig
+@@ -69,6 +69,7 @@ config HISI_PMU
+ config QCOM_L2_PMU
+ 	bool "Qualcomm Technologies L2-cache PMU"
+ 	depends on ARCH_QCOM && ARM64 && ACPI
++	select QCOM_KRYO_L2_ACCESSORS
+ 	  help
+ 	  Provides support for the L2 cache performance monitor unit (PMU)
+ 	  in Qualcomm Technologies processors.
+diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
+index 842135c..cc31f51 100644
+--- a/drivers/perf/qcom_l2_pmu.c
++++ b/drivers/perf/qcom_l2_pmu.c
+@@ -31,6 +31,7 @@
+ #include <asm/barrier.h>
+ #include <asm/local64.h>
+ #include <asm/sysreg.h>
++#include <soc/qcom/kryo-l2-accessors.h>
  
-@@ -30,39 +32,104 @@ struct rockchip_ddrclk {
- 	int		div_shift;
- 	int		div_width;
- 	int		ddr_flag;
--	spinlock_t	*lock;
-+	unsigned long	cached_rate;
-+	struct work_struct set_rate_work;
-+	struct mutex	lock;
-+	struct raw_notifier_head sync_chain;
- };
+ #define MAX_L2_CTRS             9
  
- #define to_rockchip_ddrclk_hw(hw) container_of(hw, struct rockchip_ddrclk, hw)
-+#define DMC_DEFAULT_TIMEOUT_NS		NSEC_PER_SEC
-+#define DDRCLK_SET_RATE_MAX_RETRIES	3
+@@ -87,8 +88,6 @@
+ #define L2_COUNTER_RELOAD       BIT_ULL(31)
+ #define L2_CYCLE_COUNTER_RELOAD BIT_ULL(63)
  
--static int rockchip_ddrclk_sip_set_rate(struct clk_hw *hw, unsigned long drate,
--					unsigned long prate)
-+static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- {
--	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
+-#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
+-#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
+ 
+ #define reg_idx(reg, i)         (((i) * IA_L2_REG_OFFSET) + reg##_BASE)
+ 
+@@ -107,48 +106,7 @@
+ #define L2_EVENT_STREX                     0x421
+ #define L2_EVENT_CLREX                     0x422
+ 
+-static DEFINE_RAW_SPINLOCK(l2_access_lock);
+ 
+-/**
+- * set_l2_indirect_reg: write value to an L2 register
+- * @reg: Address of L2 register.
+- * @value: Value to be written to register.
+- *
+- * Use architecturally required barriers for ordering between system register
+- * accesses
+- */
+-static void set_l2_indirect_reg(u64 reg, u64 val)
+-{
 -	unsigned long flags;
-+	struct rockchip_ddrclk *ddrclk = container_of(work,
-+			struct rockchip_ddrclk, set_rate_work);
-+	ktime_t timeout = ktime_add_ns(ktime_get(), DMC_DEFAULT_TIMEOUT_NS);
- 	struct arm_smccc_res res;
-+	int ret, i;
-+
-+	mutex_lock(&ddrclk->lock);
-+	for (i = 0; i < DDRCLK_SET_RATE_MAX_RETRIES; i++) {
-+		ret = raw_notifier_call_chain(&ddrclk->sync_chain, 0, &timeout);
-+		if (ret == NOTIFY_BAD)
-+			goto out;
-+
-+		/*
-+		 * Check the timeout with irqs disabled. This is so we don't get
-+		 * preempted after checking the timeout. That could cause things
-+		 * like garbage values for the display if we change the DDR rate
-+		 * at the wrong time.
-+		 */
-+		local_irq_disable();
-+		if (ktime_after(ktime_add_ns(ktime_get(), DMC_MIN_VBLANK_NS),
-+				timeout)) {
-+			local_irq_enable();
-+			continue;
-+		}
-+
-+		arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, ddrclk->cached_rate, 0,
-+			      ROCKCHIP_SIP_CONFIG_DRAM_SET_RATE,
-+			      0, 0, 0, 0, &res);
-+		local_irq_enable();
-+		break;
-+	}
-+out:
-+	mutex_unlock(&ddrclk->lock);
-+}
+-
+-	raw_spin_lock_irqsave(&l2_access_lock, flags);
+-	write_sysreg_s(reg, L2CPUSRSELR_EL1);
+-	isb();
+-	write_sysreg_s(val, L2CPUSRDR_EL1);
+-	isb();
+-	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
+-}
+-
+-/**
+- * get_l2_indirect_reg: read an L2 register value
+- * @reg: Address of L2 register.
+- *
+- * Use architecturally required barriers for ordering between system register
+- * accesses
+- */
+-static u64 get_l2_indirect_reg(u64 reg)
+-{
+-	u64 val;
+-	unsigned long flags;
+-
+-	raw_spin_lock_irqsave(&l2_access_lock, flags);
+-	write_sysreg_s(reg, L2CPUSRSELR_EL1);
+-	isb();
+-	val = read_sysreg_s(L2CPUSRDR_EL1);
+-	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
+-
+-	return val;
+-}
  
--	spin_lock_irqsave(ddrclk->lock, flags);
--	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, drate, 0,
--		      ROCKCHIP_SIP_CONFIG_DRAM_SET_RATE,
--		      0, 0, 0, 0, &res);
--	spin_unlock_irqrestore(ddrclk->lock, flags);
-+int rockchip_ddrclk_register_sync_nb(struct clk *clk, struct notifier_block *nb)
-+{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct rockchip_ddrclk *ddrclk;
-+	int ret;
+ struct cluster_pmu;
  
--	return res.a0;
-+	if (!hw || !nb)
-+		return -EINVAL;
-+
-+	ddrclk = to_rockchip_ddrclk_hw(hw);
-+	if (!ddrclk)
-+		return -EINVAL;
-+
-+	mutex_lock(&ddrclk->lock);
-+	ret = raw_notifier_chain_register(&ddrclk->sync_chain, nb);
-+	mutex_unlock(&ddrclk->lock);
-+
-+	return ret;
- }
-+EXPORT_SYMBOL_GPL(rockchip_ddrclk_register_sync_nb);
- 
--static unsigned long
--rockchip_ddrclk_sip_recalc_rate(struct clk_hw *hw,
--				unsigned long parent_rate)
-+int rockchip_ddrclk_unregister_sync_nb(struct clk *clk,
-+				       struct notifier_block *nb)
+@@ -219,28 +177,28 @@ static inline struct cluster_pmu *get_cluster_pmu(
+ static void cluster_pmu_reset(void)
  {
--	struct arm_smccc_res res;
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct rockchip_ddrclk *ddrclk;
-+	int ret;
- 
--	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, 0, 0,
--		      ROCKCHIP_SIP_CONFIG_DRAM_GET_RATE,
--		      0, 0, 0, 0, &res);
-+	if (!hw || !nb)
-+		return -EINVAL;
- 
--	return res.a0;
-+	ddrclk = to_rockchip_ddrclk_hw(hw);
-+	if (!ddrclk)
-+		return -EINVAL;
-+
-+	mutex_lock(&ddrclk->lock);
-+	ret = raw_notifier_chain_unregister(&ddrclk->sync_chain, nb);
-+	mutex_unlock(&ddrclk->lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_ddrclk_unregister_sync_nb);
-+
-+void rockchip_ddrclk_wait_set_rate(struct clk *clk)
-+{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+
-+	flush_work(&ddrclk->set_rate_work);
- }
-+EXPORT_SYMBOL_GPL(rockchip_ddrclk_wait_set_rate);
- 
- static long rockchip_ddrclk_sip_round_rate(struct clk_hw *hw,
- 					   unsigned long rate,
-@@ -77,6 +144,30 @@ static long rockchip_ddrclk_sip_round_rate(struct clk_hw *hw,
- 	return res.a0;
+ 	/* Reset all counters */
+-	set_l2_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
+-	set_l2_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
+-	set_l2_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
+-	set_l2_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
++	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
++	kryo_l2_set_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
++	kryo_l2_set_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
++	kryo_l2_set_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
  }
  
-+static int rockchip_ddrclk_sip_set_rate(struct clk_hw *hw, unsigned long drate,
-+					unsigned long prate)
-+{
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+	long rate;
-+
-+	rate = rockchip_ddrclk_sip_round_rate(hw, drate, &prate);
-+	if (rate < 0)
-+		return rate;
-+
-+	ddrclk->cached_rate = rate;
-+	queue_work(system_highpri_wq, &ddrclk->set_rate_work);
-+	return 0;
-+}
-+
-+static unsigned long
-+rockchip_ddrclk_sip_recalc_rate(struct clk_hw *hw,
-+				unsigned long parent_rate)
-+{
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+
-+	return ddrclk->cached_rate;
-+}
-+
- static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
+ static inline void cluster_pmu_enable(void)
  {
- 	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-@@ -105,12 +196,12 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 					 u8 num_parents, int mux_offset,
- 					 int mux_shift, int mux_width,
- 					 int div_shift, int div_width,
--					 int ddr_flag, void __iomem *reg_base,
--					 spinlock_t *lock)
-+					 int ddr_flag, void __iomem *reg_base)
+-	set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
++	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
+ }
+ 
+ static inline void cluster_pmu_disable(void)
  {
- 	struct rockchip_ddrclk *ddrclk;
- 	struct clk_init_data init;
- 	struct clk *clk;
-+	struct arm_smccc_res res;
+-	set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
++	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
+ }
  
- 	ddrclk = kzalloc(sizeof(*ddrclk), GFP_KERNEL);
- 	if (!ddrclk)
-@@ -134,7 +225,6 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 	}
+ static inline void cluster_pmu_counter_set_value(u32 idx, u64 value)
+ {
+ 	if (idx == l2_cycle_ctr_idx)
+-		set_l2_indirect_reg(L2PMCCNTR, value);
++		kryo_l2_set_indirect_reg(L2PMCCNTR, value);
+ 	else
+-		set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
++		kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
+ }
  
- 	ddrclk->reg_base = reg_base;
--	ddrclk->lock = lock;
- 	ddrclk->hw.init = &init;
- 	ddrclk->mux_offset = mux_offset;
- 	ddrclk->mux_shift = mux_shift;
-@@ -142,6 +232,14 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 	ddrclk->div_shift = div_shift;
- 	ddrclk->div_width = div_width;
- 	ddrclk->ddr_flag = ddr_flag;
-+	mutex_init(&ddrclk->lock);
-+	INIT_WORK(&ddrclk->set_rate_work, rockchip_ddrclk_set_rate_func);
-+	RAW_INIT_NOTIFIER_HEAD(&ddrclk->sync_chain);
-+
-+	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, 0, 0,
-+		      ROCKCHIP_SIP_CONFIG_DRAM_GET_RATE,
-+		      0, 0, 0, 0, &res);
-+	ddrclk->cached_rate = res.a0;
+ static inline u64 cluster_pmu_counter_get_value(u32 idx)
+@@ -248,46 +206,46 @@ static inline u64 cluster_pmu_counter_get_value(u32 idx)
+ 	u64 value;
  
- 	clk = clk_register(NULL, &ddrclk->hw);
- 	if (IS_ERR(clk))
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 3cd8ad59e0b7..0e208d95d048 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -547,7 +547,7 @@ void __init rockchip_clk_register_branches(
- 				list->muxdiv_offset, list->mux_shift,
- 				list->mux_width, list->div_shift,
- 				list->div_width, list->div_flags,
--				ctx->reg_base, &ctx->lock);
-+				ctx->reg_base);
- 			break;
- 		}
+ 	if (idx == l2_cycle_ctr_idx)
+-		value = get_l2_indirect_reg(L2PMCCNTR);
++		value = kryo_l2_get_indirect_reg(L2PMCCNTR);
+ 	else
+-		value = get_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
++		value = kryo_l2_get_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
  
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index ef601dded32c..5e4ce49ef337 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -326,8 +326,7 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 					 u8 num_parents, int mux_offset,
- 					 int mux_shift, int mux_width,
- 					 int div_shift, int div_width,
--					 int ddr_flags, void __iomem *reg_base,
--					 spinlock_t *lock);
-+					 int ddr_flags, void __iomem *reg_base);
+ 	return value;
+ }
  
- #define ROCKCHIP_INVERTER_HIWORD_MASK	BIT(0)
+ static inline void cluster_pmu_counter_enable(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
+ }
  
-diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-index 2c4985a501cb..c174d13afe92 100644
---- a/drivers/devfreq/rk3399_dmc.c
-+++ b/drivers/devfreq/rk3399_dmc.c
-@@ -32,6 +32,8 @@
- #include <soc/rockchip/rk3399_grf.h>
- #include <soc/rockchip/rockchip_sip.h>
+ static inline void cluster_pmu_counter_disable(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
+ }
  
-+#include "rk3399_dmc_priv.h"
-+
- struct dram_timing {
- 	unsigned int ddr3_speed_bin;
- 	unsigned int pd_idle;
-@@ -71,6 +73,7 @@ struct rk3399_dmcfreq {
- 	struct clk *dmc_clk;
- 	struct devfreq_event_dev *edev;
- 	struct mutex lock;
-+	struct mutex en_lock;
- 	struct dram_timing timing;
- 	struct regulator *vdd_center;
- 	struct regmap *regmap_pmu;
-@@ -78,6 +81,8 @@ struct rk3399_dmcfreq {
- 	unsigned long volt, target_volt;
- 	unsigned int odt_dis_freq;
- 	int odt_pd_arg0, odt_pd_arg1;
-+	int num_sync_nb;
-+	int disable_count;
- };
+ static inline void cluster_pmu_counter_enable_interrupt(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
+ }
  
- static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
-@@ -136,6 +141,13 @@ static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
- 		goto out;
- 	}
+ static inline void cluster_pmu_counter_disable_interrupt(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
+ }
  
-+	/*
-+	 * Setting the dpll is asynchronous since clk_set_rate grabs a global
-+	 * common clk lock and set_rate for the dpll takes up to one display
-+	 * frame to complete. We still need to wait for the set_rate to complete
-+	 * here, though, before we change voltage.
-+	 */
-+	rockchip_ddrclk_wait_set_rate(dmcfreq->dmc_clk);
+ static inline void cluster_pmu_set_evccntcr(u32 val)
+ {
+-	set_l2_indirect_reg(L2PMCCNTCR, val);
++	kryo_l2_set_indirect_reg(L2PMCCNTCR, val);
+ }
+ 
+ static inline void cluster_pmu_set_evcntcr(u32 ctr, u32 val)
+ {
+-	set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
++	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
+ }
+ 
+ static inline void cluster_pmu_set_evtyper(u32 ctr, u32 val)
+ {
+-	set_l2_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
++	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
+ }
+ 
+ static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
+@@ -303,11 +261,11 @@ static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
+ 
+ 	spin_lock_irqsave(&cluster->pmu_lock, flags);
+ 
+-	resr_val = get_l2_indirect_reg(L2PMRESR);
++	resr_val = kryo_l2_get_indirect_reg(L2PMRESR);
+ 	resr_val &= ~(L2PMRESR_GROUP_MASK << shift);
+ 	resr_val |= field;
+ 	resr_val |= L2PMRESR_EN;
+-	set_l2_indirect_reg(L2PMRESR, resr_val);
++	kryo_l2_set_indirect_reg(L2PMRESR, resr_val);
+ 
+ 	spin_unlock_irqrestore(&cluster->pmu_lock, flags);
+ }
+@@ -323,14 +281,14 @@ static inline void cluster_pmu_set_evfilter_sys_mode(u32 ctr)
+ 		   L2PMXEVFILTER_ORGFILTER_IDINDEP |
+ 		   L2PMXEVFILTER_ORGFILTER_ALL;
+ 
+-	set_l2_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
++	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
+ }
+ 
+ static inline u32 cluster_pmu_getreset_ovsr(void)
+ {
+-	u32 result = get_l2_indirect_reg(L2PMOVSSET);
++	u32 result = kryo_l2_get_indirect_reg(L2PMOVSSET);
+ 
+-	set_l2_indirect_reg(L2PMOVSCLR, result);
++	kryo_l2_set_indirect_reg(L2PMOVSCLR, result);
+ 	return result;
+ }
+ 
+@@ -783,7 +741,7 @@ static int get_num_counters(void)
+ {
+ 	int val;
+ 
+-	val = get_l2_indirect_reg(L2PMCR);
++	val = kryo_l2_get_indirect_reg(L2PMCR);
+ 
  	/*
- 	 * Check the dpll rate,
- 	 * There only two result we will get,
-@@ -202,40 +214,15 @@ static struct devfreq_dev_profile rk3399_devfreq_dmc_profile = {
- static __maybe_unused int rk3399_dmcfreq_suspend(struct device *dev)
- {
- 	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(dev);
--	int ret = 0;
--
--	ret = devfreq_event_disable_edev(dmcfreq->edev);
--	if (ret < 0) {
--		dev_err(dev, "failed to disable the devfreq-event devices\n");
--		return ret;
--	}
+ 	 * Read number of counters from L2PMCR and add 1
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 7093fe7..0567dff 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -39,6 +39,9 @@ config QCOM_GSBI
+           functions for connecting the underlying serial UART, SPI, and I2C
+           devices to the output pins.
  
--	ret = devfreq_suspend_device(dmcfreq->devfreq);
--	if (ret < 0) {
--		dev_err(dev, "failed to suspend the devfreq devices\n");
--		return ret;
--	}
--
--	return 0;
-+	return rockchip_dmcfreq_block(dmcfreq->devfreq);
- }
- 
- static __maybe_unused int rk3399_dmcfreq_resume(struct device *dev)
- {
- 	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(dev);
--	int ret = 0;
- 
--	ret = devfreq_event_enable_edev(dmcfreq->edev);
--	if (ret < 0) {
--		dev_err(dev, "failed to enable the devfreq-event devices\n");
--		return ret;
--	}
--
--	ret = devfreq_resume_device(dmcfreq->devfreq);
--	if (ret < 0) {
--		dev_err(dev, "failed to resume the devfreq devices\n");
--		return ret;
--	}
--	return ret;
-+	return rockchip_dmcfreq_unblock(dmcfreq->devfreq);
- }
- 
- static SIMPLE_DEV_PM_OPS(rk3399_dmcfreq_pm, rk3399_dmcfreq_suspend,
-@@ -308,6 +295,88 @@ static int of_get_ddr_timings(struct dram_timing *timing,
- 	return ret;
- }
- 
-+int rockchip_dmcfreq_register_clk_sync_nb(struct devfreq *devfreq,
-+					struct notifier_block *nb)
-+{
-+	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(devfreq->dev.parent);
-+	int ret;
++config QCOM_KRYO_L2_ACCESSORS
++       bool
 +
-+	mutex_lock(&dmcfreq->en_lock);
-+	/*
-+	 * We have a short amount of time (~1ms or less typically) to run
-+	 * dmcfreq after we sync with the notifier, so syncing with more than
-+	 * one notifier is not generally possible. Thus, if more than one sync
-+	 * notifier is registered, disable dmcfreq.
-+	 */
-+	if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+		devfreq_suspend_device(devfreq);
-+
-+	ret = rockchip_ddrclk_register_sync_nb(dmcfreq->dmc_clk, nb);
-+	if (ret == 0)
-+		dmcfreq->num_sync_nb++;
-+	else if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+		devfreq_resume_device(devfreq);
-+
-+	mutex_unlock(&dmcfreq->en_lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_dmcfreq_register_clk_sync_nb);
-+
-+int rockchip_dmcfreq_unregister_clk_sync_nb(struct devfreq *devfreq,
-+					  struct notifier_block *nb)
-+{
-+	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(devfreq->dev.parent);
-+	int ret;
-+
-+	mutex_lock(&dmcfreq->en_lock);
-+	ret = rockchip_ddrclk_unregister_sync_nb(dmcfreq->dmc_clk, nb);
-+	if (ret == 0) {
-+		dmcfreq->num_sync_nb--;
-+		if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+			devfreq_resume_device(devfreq);
-+	}
-+
-+	mutex_unlock(&dmcfreq->en_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_dmcfreq_unregister_clk_sync_nb);
-+
-+int rockchip_dmcfreq_block(struct devfreq *devfreq)
-+{
-+	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(devfreq->dev.parent);
-+	int ret = 0;
-+
-+	mutex_lock(&dmcfreq->en_lock);
-+	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count <= 0)
-+		ret = devfreq_suspend_device(devfreq);
-+
-+	if (!ret)
-+		dmcfreq->disable_count++;
-+	mutex_unlock(&dmcfreq->en_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_dmcfreq_block);
-+
-+int rockchip_dmcfreq_unblock(struct devfreq *devfreq)
-+{
-+	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(devfreq->dev.parent);
-+	int ret = 0;
-+
-+	mutex_lock(&dmcfreq->en_lock);
-+	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count == 1)
-+		ret = devfreq_resume_device(devfreq);
-+
-+	if (!ret)
-+		dmcfreq->disable_count--;
-+	WARN_ON(dmcfreq->disable_count < 0);
-+	mutex_unlock(&dmcfreq->en_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_dmcfreq_unblock);
-+
- static int rk3399_dmcfreq_probe(struct platform_device *pdev)
- {
- 	struct arm_smccc_res res;
-@@ -325,6 +394,7 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	mutex_init(&data->lock);
-+	mutex_init(&data->en_lock);
- 
- 	data->vdd_center = devm_regulator_get(dev, "center");
- 	if (IS_ERR(data->vdd_center)) {
-diff --git a/drivers/devfreq/rk3399_dmc_priv.h b/drivers/devfreq/rk3399_dmc_priv.h
+ config QCOM_MDT_LOADER
+ 	tristate
+ 	select QCOM_SCM
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index cbf414c..e4d3f5a 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -14,3 +14,4 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
+ obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
+ obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
+ obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
++obj-$(CONFIG_QCOM_KRYO_L2_ACCESSORS) +=	kryo-l2-accessors.o
+diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
 new file mode 100644
-index 000000000000..8ac0340a4990
+index 0000000..d35a860
 --- /dev/null
-+++ b/drivers/devfreq/rk3399_dmc_priv.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/drivers/soc/qcom/kryo-l2-accessors.c
+@@ -0,0 +1,65 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (C) 2017-2018 Google, Inc.
-+ * Author: Derek Basehore <dbasehore@chromium.org>
++ * Copyright (c) 2014-2015, 2018, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
 +
-+#ifndef __RK3399_DMC_PRIV_H
-+#define __RK3399_DMC_PRIV_H
++#include <linux/spinlock.h>
++#include <asm/sysreg.h>
++#include <soc/qcom/kryo-l2-accessors.h>
 +
-+void rockchip_ddrclk_wait_set_rate(struct clk *clk);
-+int rockchip_ddrclk_register_sync_nb(struct clk *clk,
-+				     struct notifier_block *nb);
-+int rockchip_ddrclk_unregister_sync_nb(struct clk *clk,
-+				       struct notifier_block *nb);
++#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
++#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
++
++static DEFINE_RAW_SPINLOCK(l2_access_lock);
++
++/**
++ * kryo_l2_set_indirect_reg() - write value to an L2 register
++ * @reg: Address of L2 register.
++ * @value: Value to be written to register.
++ *
++ * Use architecturally required barriers for ordering between system register
++ * accesses, and system registers with respect to device memory
++ */
++void kryo_l2_set_indirect_reg(u64 reg, u64 val)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&l2_access_lock, flags);
++	write_sysreg_s(reg, L2CPUSRSELR_EL1);
++	isb();
++	write_sysreg_s(val, L2CPUSRDR_EL1);
++	isb();
++	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
++}
++EXPORT_SYMBOL(kryo_l2_set_indirect_reg);
++
++/**
++ * kryo_l2_get_indirect_reg() - read an L2 register value
++ * @reg: Address of L2 register.
++ *
++ * Use architecturally required barriers for ordering between system register
++ * accesses, and system registers with respect to device memory
++ */
++u64 kryo_l2_get_indirect_reg(u64 reg)
++{
++	u64 val;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&l2_access_lock, flags);
++	write_sysreg_s(reg, L2CPUSRSELR_EL1);
++	isb();
++	val = read_sysreg_s(L2CPUSRDR_EL1);
++	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
++
++	return val;
++}
++EXPORT_SYMBOL(kryo_l2_get_indirect_reg);
+diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
+new file mode 100644
+index 0000000..0840e87
+--- /dev/null
++++ b/include/soc/qcom/kryo-l2-accessors.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
++#define __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
++
++void kryo_l2_set_indirect_reg(u64 reg, u64 val);
++u64 kryo_l2_get_indirect_reg(u64 reg);
++
 +#endif
-diff --git a/include/soc/rockchip/rk3399_dmc.h b/include/soc/rockchip/rk3399_dmc.h
-index 031a62607f61..cc36e08f9b22 100644
---- a/include/soc/rockchip/rk3399_dmc.h
-+++ b/include/soc/rockchip/rk3399_dmc.h
-@@ -8,7 +8,37 @@
- #define __SOC_RK3399_DMC_H
- 
- #include <linux/devfreq.h>
-+#include <linux/notifier.h>
-+
-+#define DMC_MIN_SET_RATE_NS	(250 * NSEC_PER_USEC)
-+#define DMC_MIN_VBLANK_NS	(DMC_MIN_SET_RATE_NS + 50 * NSEC_PER_USEC)
- 
- int rockchip_pm_register_dmcfreq_notifier(struct devfreq *devfreq);
- 
-+#if IS_ENABLED(CONFIG_ARM_RK3399_DMC_DEVFREQ)
-+int rockchip_dmcfreq_register_clk_sync_nb(struct devfreq *devfreq,
-+					  struct notifier_block *nb);
-+
-+int rockchip_dmcfreq_unregister_clk_sync_nb(struct devfreq *devfreq,
-+					    struct notifier_block *nb);
-+
-+int rockchip_dmcfreq_block(struct devfreq *devfreq);
-+
-+int rockchip_dmcfreq_unblock(struct devfreq *devfreq);
-+#else
-+static inline int
-+rockchip_dmcfreq_register_clk_sync_nb(struct devfreq *devfreq,
-+				      struct notifier_block *nb)
-+{ return 0; }
-+
-+static inline int
-+rockchip_dmcfreq_unregister_clk_sync_nb(struct devfreq *devfreq,
-+					struct notifier_block *nb)
-+{ return 0; }
-+
-+static inline int rockchip_dmcfreq_block(struct devfreq *devfreq) { return 0; }
-+
-+static inline int rockchip_dmcfreq_unblock(struct devfreq *devfreq)
-+{ return 0; }
-+#endif
- #endif
 -- 
-2.17.0
+1.9.1
