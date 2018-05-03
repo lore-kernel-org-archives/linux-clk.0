@@ -1,42 +1,133 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v9 04/27] ARM: davinci: pass clock as parameter to
- davinci_timer_init()
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-5-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <29a9a03c-93f5-dddf-2a6e-da7fd83e0c4f@ti.com>
-Date: Tue, 1 May 2018 19:39:56 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-5-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v5 05/14] clk: qcom: cpu-8996: Add support to switch to alternate PLL
+Date: Thu,  3 May 2018 14:52:26 +0300
+Message-Id: <1525348355-25471-6-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 27 April 2018 05:47 AM, David Lechner wrote:
-> This changes davinci_timer_init() so that we pass the clock as a
-> parameter instead of using clk_get(). This is done in preparation
-> for converting to the common clock framework.
-> 
-> It removes the requirement that we have to have a clock with con_id
-> of "timer0", which will be good for DT bindings since clock-names =
-> "timer0" doesn't really make sense.
-> 
-> Also, drop use of extern in header file since we are touching the
-> definition.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Each of the CPU clusters on msm8996 are powered via a primary
+PLL and a secondary PLL. The primary PLL is what drives the
+CPU clk, except for times when we are reprogramming the PLL
+itself, when we temporarily switch to an alternate PLL.
+Use clock rate change notifiers to support this.
 
-Thanks,
-Sekhar
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index beb97eb..390b369 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -61,6 +61,7 @@
+  * detect voltage droops. We do not add support for ACD as yet.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+@@ -187,10 +188,14 @@ struct clk_cpu_8996_mux {
+ 	u32	reg;
+ 	u8	shift;
+ 	u8	width;
++	struct notifier_block nb;
+ 	struct clk_hw	*pll;
+ 	struct clk_regmap clkr;
+ };
+ 
++#define to_clk_cpu_8996_mux_nb(_nb) \
++	container_of(_nb, struct clk_cpu_8996_mux, nb)
++
+ static inline
+ struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
+ {
+@@ -236,6 +241,26 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	return 0;
+ }
+ 
++int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
++			void *data)
++{
++	int ret;
++	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		break;
++	case POST_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		break;
++	default:
++		ret = 0;
++		break;
++	}
++
++	return notifier_from_errno(ret);
++};
+ const struct clk_ops clk_cpu_8996_mux_ops = {
+ 	.set_parent = clk_cpu_8996_mux_set_parent,
+ 	.get_parent = clk_cpu_8996_mux_get_parent,
+@@ -279,6 +304,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -298,6 +324,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -356,6 +383,12 @@ struct clk_regmap *clks[] = {
+ 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+ 
++	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
++	if (ret)
++		return ret;
++
++	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
++
+ 	return ret;
+ }
+ 
+-- 
+1.9.1
