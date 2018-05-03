@@ -1,549 +1,204 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 19/27] ARM: davinci: dm365: Remove legacy clock init
-Date: Fri, 18 May 2018 11:48:21 -0500
-Message-Id: <20180518164829.27052-20-david@lechnology.com>
-In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
-References: <20180518164829.27052-1-david@lechnology.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 3/7] pinctrl: sunxi: add support for H6 R_PIO pin controller
+Date: Fri,  4 May 2018 02:38:43 +0800
+Message-Id: <20180503183847.11046-4-icenowy@aosc.io>
+In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
+References: <20180503183847.11046-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy clock init code from
-arch/arm/mach-davinci/dm365.c.
+Allwinner H6 SoC has a R_PIO pin controller like other Allwinner SoCs,
+which controls the PL and PM pin banks.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Add support for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
+ .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+ drivers/pinctrl/sunxi/Kconfig                      |   4 +
+ drivers/pinctrl/sunxi/Makefile                     |   1 +
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c        | 128 +++++++++++++++++++++
+ 4 files changed, 134 insertions(+)
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c
 
-v11 changes:
-- none
-
-v10 changes:
-- none
-
-v9 changes:
-- rebased
-
-v8 changes:
-- none
-
-v7 changes:
-- rebased
-- add davinci prefix to commit message
-
-v6 changes:
-- rebased
-
-
- arch/arm/mach-davinci/dm365.c | 449 ----------------------------------
- 1 file changed, 449 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 76de426a0e41..abcf2a5ed89b 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -40,11 +40,6 @@
- #include "davinci.h"
- #include "mux.h"
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+index 64bc5c2a76da..258a4648ab81 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+@@ -28,6 +28,7 @@ Required properties:
+   "allwinner,sun50i-a64-r-pinctrl"
+   "allwinner,sun50i-h5-pinctrl"
+   "allwinner,sun50i-h6-pinctrl"
++  "allwinner,sun50i-h6-r-pinctrl"
+   "nextthing,gr8-pinctrl"
  
--#ifndef CONFIG_COMMON_CLK
--#include "clock.h"
--#include "psc.h"
--#endif
--
- #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
- #define DM365_RTC_BASE			0x01c69000
- #define DM365_KEYSCAN_BASE		0x01c69400
-@@ -60,441 +55,6 @@
- #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
- #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
+ - reg: Should contain the register physical address and length for the
+diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+index 5de1f63b07bb..95282cda6cee 100644
+--- a/drivers/pinctrl/sunxi/Kconfig
++++ b/drivers/pinctrl/sunxi/Kconfig
+@@ -81,4 +81,8 @@ config PINCTRL_SUN50I_H6
+ 	def_bool ARM64 && ARCH_SUNXI
+ 	select PINCTRL_SUNXI
  
--#ifndef CONFIG_COMMON_CLK
--static struct pll_data pll1_data = {
--	.num		= 1,
--	.phys_base	= DAVINCI_PLL1_BASE,
--	.flags		= PLL_HAS_POSTDIV | PLL_HAS_PREDIV,
--};
--
--static struct pll_data pll2_data = {
--	.num		= 2,
--	.phys_base	= DAVINCI_PLL2_BASE,
--	.flags		= PLL_HAS_POSTDIV | PLL_HAS_PREDIV,
--};
--
--static struct clk ref_clk = {
--	.name		= "ref_clk",
--	.rate		= DM365_REF_FREQ,
--};
--
--static struct clk pll1_clk = {
--	.name		= "pll1",
--	.parent		= &ref_clk,
--	.flags		= CLK_PLL,
--	.pll_data	= &pll1_data,
--};
--
--static struct clk pll1_aux_clk = {
--	.name		= "pll1_aux_clk",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll1_sysclkbp = {
--	.name		= "pll1_sysclkbp",
--	.parent		= &pll1_clk,
--	.flags 		= CLK_PLL | PRE_PLL,
--	.div_reg	= BPDIV
--};
--
--static struct clk clkout0_clk = {
--	.name		= "clkout0",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll1_sysclk1 = {
--	.name		= "pll1_sysclk1",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV1,
--};
--
--static struct clk pll1_sysclk2 = {
--	.name		= "pll1_sysclk2",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV2,
--};
--
--static struct clk pll1_sysclk3 = {
--	.name		= "pll1_sysclk3",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV3,
--};
--
--static struct clk pll1_sysclk4 = {
--	.name		= "pll1_sysclk4",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV4,
--};
--
--static struct clk pll1_sysclk5 = {
--	.name		= "pll1_sysclk5",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV5,
--};
--
--static struct clk pll1_sysclk6 = {
--	.name		= "pll1_sysclk6",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV6,
--};
--
--static struct clk pll1_sysclk7 = {
--	.name		= "pll1_sysclk7",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV7,
--};
--
--static struct clk pll1_sysclk8 = {
--	.name		= "pll1_sysclk8",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV8,
--};
--
--static struct clk pll1_sysclk9 = {
--	.name		= "pll1_sysclk9",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV9,
--};
--
--static struct clk pll2_clk = {
--	.name		= "pll2",
--	.parent		= &ref_clk,
--	.flags		= CLK_PLL,
--	.pll_data	= &pll2_data,
--};
--
--static struct clk pll2_aux_clk = {
--	.name		= "pll2_aux_clk",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk clkout1_clk = {
--	.name		= "clkout1",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll2_sysclk1 = {
--	.name		= "pll2_sysclk1",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV1,
--};
--
--static struct clk pll2_sysclk2 = {
--	.name		= "pll2_sysclk2",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV2,
--};
--
--static struct clk pll2_sysclk3 = {
--	.name		= "pll2_sysclk3",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV3,
--};
--
--static struct clk pll2_sysclk4 = {
--	.name		= "pll2_sysclk4",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV4,
--};
--
--static struct clk pll2_sysclk5 = {
--	.name		= "pll2_sysclk5",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV5,
--};
--
--static struct clk pll2_sysclk6 = {
--	.name		= "pll2_sysclk6",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV6,
--};
--
--static struct clk pll2_sysclk7 = {
--	.name		= "pll2_sysclk7",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV7,
--};
--
--static struct clk pll2_sysclk8 = {
--	.name		= "pll2_sysclk8",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV8,
--};
--
--static struct clk pll2_sysclk9 = {
--	.name		= "pll2_sysclk9",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV9,
--};
--
--static struct clk vpss_dac_clk = {
--	.name		= "vpss_dac",
--	.parent		= &pll1_sysclk3,
--	.lpsc		= DM365_LPSC_DAC_CLK,
--};
--
--static struct clk vpss_master_clk = {
--	.name		= "vpss_master",
--	.parent		= &pll1_sysclk5,
--	.lpsc		= DM365_LPSC_VPSSMSTR,
--	.flags		= CLK_PSC,
--};
--
--static struct clk vpss_slave_clk = {
--	.name		= "vpss_slave",
--	.parent		= &pll1_sysclk5,
--	.lpsc		= DAVINCI_LPSC_VPSSSLV,
--};
--
--static struct clk arm_clk = {
--	.name		= "arm_clk",
--	.parent		= &pll2_sysclk2,
--	.lpsc		= DAVINCI_LPSC_ARM,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk uart0_clk = {
--	.name		= "uart0",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_UART0,
--};
--
--static struct clk uart1_clk = {
--	.name		= "uart1",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_UART1,
--};
--
--static struct clk i2c_clk = {
--	.name		= "i2c",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_I2C,
--};
--
--static struct clk mmcsd0_clk = {
--	.name		= "mmcsd0",
--	.parent		= &pll1_sysclk8,
--	.lpsc		= DAVINCI_LPSC_MMC_SD,
--};
--
--static struct clk mmcsd1_clk = {
--	.name		= "mmcsd1",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_MMC_SD1,
--};
--
--static struct clk spi0_clk = {
--	.name		= "spi0",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_SPI,
--};
--
--static struct clk spi1_clk = {
--	.name		= "spi1",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_SPI1,
--};
--
--static struct clk spi2_clk = {
--	.name		= "spi2",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_SPI2,
--};
--
--static struct clk spi3_clk = {
--	.name		= "spi3",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_SPI3,
--};
--
--static struct clk spi4_clk = {
--	.name		= "spi4",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DM365_LPSC_SPI4,
--};
--
--static struct clk gpio_clk = {
--	.name		= "gpio",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_GPIO,
--};
--
--static struct clk aemif_clk = {
--	.name		= "aemif",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_AEMIF,
--};
--
--static struct clk pwm0_clk = {
--	.name		= "pwm0",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_PWM0,
--};
--
--static struct clk pwm1_clk = {
--	.name		= "pwm1",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_PWM1,
--};
--
--static struct clk pwm2_clk = {
--	.name		= "pwm2",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_PWM2,
--};
--
--static struct clk pwm3_clk = {
--	.name		= "pwm3",
--	.parent		= &ref_clk,
--	.lpsc		= DM365_LPSC_PWM3,
--};
--
--static struct clk timer0_clk = {
--	.name		= "timer0",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_TIMER0,
--};
--
--static struct clk timer1_clk = {
--	.name		= "timer1",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_TIMER1,
--};
--
--static struct clk timer2_clk = {
--	.name		= "timer2",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_TIMER2,
--	.usecount	= 1,
--};
--
--static struct clk timer3_clk = {
--	.name		= "timer3",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DM365_LPSC_TIMER3,
--};
--
--static struct clk usb_clk = {
--	.name		= "usb",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_USB,
--};
--
--static struct clk emac_clk = {
--	.name		= "emac",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_EMAC,
--};
--
--static struct clk voicecodec_clk = {
--	.name		= "voice_codec",
--	.parent		= &pll2_sysclk4,
--	.lpsc		= DM365_LPSC_VOICE_CODEC,
--};
--
--static struct clk asp0_clk = {
--	.name		= "asp0",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_McBSP1,
--};
--
--static struct clk rto_clk = {
--	.name		= "rto",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_RTO,
--};
--
--static struct clk mjcp_clk = {
--	.name		= "mjcp",
--	.parent		= &pll1_sysclk3,
--	.lpsc		= DM365_LPSC_MJCP,
--};
--
--static struct clk_lookup dm365_clks[] = {
--	CLK(NULL, "ref", &ref_clk),
--	CLK(NULL, "pll1", &pll1_clk),
--	CLK(NULL, "pll1_aux", &pll1_aux_clk),
--	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
--	CLK(NULL, "clkout0", &clkout0_clk),
--	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
--	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
--	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
--	CLK(NULL, "pll1_sysclk4", &pll1_sysclk4),
--	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
--	CLK(NULL, "pll1_sysclk6", &pll1_sysclk6),
--	CLK(NULL, "pll1_sysclk7", &pll1_sysclk7),
--	CLK(NULL, "pll1_sysclk8", &pll1_sysclk8),
--	CLK(NULL, "pll1_sysclk9", &pll1_sysclk9),
--	CLK(NULL, "pll2", &pll2_clk),
--	CLK(NULL, "pll2_aux", &pll2_aux_clk),
--	CLK(NULL, "clkout1", &clkout1_clk),
--	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
--	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
--	CLK(NULL, "pll2_sysclk3", &pll2_sysclk3),
--	CLK(NULL, "pll2_sysclk4", &pll2_sysclk4),
--	CLK(NULL, "pll2_sysclk5", &pll2_sysclk5),
--	CLK(NULL, "pll2_sysclk6", &pll2_sysclk6),
--	CLK(NULL, "pll2_sysclk7", &pll2_sysclk7),
--	CLK(NULL, "pll2_sysclk8", &pll2_sysclk8),
--	CLK(NULL, "pll2_sysclk9", &pll2_sysclk9),
--	CLK(NULL, "vpss_dac", &vpss_dac_clk),
--	CLK("vpss", "master", &vpss_master_clk),
--	CLK("vpss", "slave", &vpss_slave_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK("serial8250.0", NULL, &uart0_clk),
--	CLK("serial8250.1", NULL, &uart1_clk),
--	CLK("i2c_davinci.1", NULL, &i2c_clk),
--	CLK("da830-mmc.0", NULL, &mmcsd0_clk),
--	CLK("da830-mmc.1", NULL, &mmcsd1_clk),
--	CLK("spi_davinci.0", NULL, &spi0_clk),
--	CLK("spi_davinci.1", NULL, &spi1_clk),
--	CLK("spi_davinci.2", NULL, &spi2_clk),
--	CLK("spi_davinci.3", NULL, &spi3_clk),
--	CLK("spi_davinci.4", NULL, &spi4_clk),
--	CLK(NULL, "gpio", &gpio_clk),
--	CLK(NULL, "aemif", &aemif_clk),
--	CLK(NULL, "pwm0", &pwm0_clk),
--	CLK(NULL, "pwm1", &pwm1_clk),
--	CLK(NULL, "pwm2", &pwm2_clk),
--	CLK(NULL, "pwm3", &pwm3_clk),
--	CLK(NULL, "timer0", &timer0_clk),
--	CLK(NULL, "timer1", &timer1_clk),
--	CLK("davinci-wdt", NULL, &timer2_clk),
--	CLK(NULL, "timer3", &timer3_clk),
--	CLK(NULL, "usb", &usb_clk),
--	CLK("davinci_emac.1", NULL, &emac_clk),
--	CLK("davinci_mdio.0", "fck", &emac_clk),
--	CLK("davinci_voicecodec", NULL, &voicecodec_clk),
--	CLK("davinci-mcbsp", NULL, &asp0_clk),
--	CLK(NULL, "rto", &rto_clk),
--	CLK(NULL, "mjcp", &mjcp_clk),
--	CLK(NULL, NULL, NULL),
--};
--#endif
--/*----------------------------------------------------------------------*/
--
- #define INTMUX		0x18
- #define EVTMUX		0x1c
- 
-@@ -1061,8 +621,6 @@ static struct davinci_id dm365_ids[] = {
- 	},
- };
- 
--static u32 dm365_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
--
- static struct davinci_timer_info dm365_timer_info = {
- 	.timers		= davinci_timer_instance,
- 	.clockevent_id	= T0_BOT,
-@@ -1123,8 +681,6 @@ static const struct davinci_soc_info davinci_soc_info_dm365 = {
- 	.jtag_id_reg		= 0x01c40028,
- 	.ids			= dm365_ids,
- 	.ids_num		= ARRAY_SIZE(dm365_ids),
--	.psc_bases		= dm365_psc_bases,
--	.psc_bases_num		= ARRAY_SIZE(dm365_psc_bases),
- 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
- 	.pinmux_pins		= dm365_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(dm365_pins),
-@@ -1178,7 +734,6 @@ void __init dm365_init(void)
- 
- void __init dm365_init_time(void)
- {
--#ifdef CONFIG_COMMON_CLK
- 	void __iomem *pll1, *pll2, *psc;
- 	struct clk *clk;
- 
-@@ -1196,10 +751,6 @@ void __init dm365_init_time(void)
- 	clk = clk_get(NULL, "timer0");
- 
- 	davinci_timer_init(clk);
--#else
--	davinci_clk_init(dm365_clks);
--	davinci_timer_init(&timer0_clk);
--#endif
- }
- 
- void __init dm365_register_clocks(void)
++config PINCTRL_SUN50I_H6_R
++	def_bool ARM64 && ARCH_SUNXI
++	select PINCTRL_SUNXI
++
+ endif
+diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
+index 3c4aec6611e9..adb8443aa55c 100644
+--- a/drivers/pinctrl/sunxi/Makefile
++++ b/drivers/pinctrl/sunxi/Makefile
+@@ -19,5 +19,6 @@ obj-$(CONFIG_PINCTRL_SUN8I_H3_R)	+= pinctrl-sun8i-h3-r.o
+ obj-$(CONFIG_PINCTRL_SUN8I_V3S)		+= pinctrl-sun8i-v3s.o
+ obj-$(CONFIG_PINCTRL_SUN50I_H5)		+= pinctrl-sun50i-h5.o
+ obj-$(CONFIG_PINCTRL_SUN50I_H6)		+= pinctrl-sun50i-h6.o
++obj-$(CONFIG_PINCTRL_SUN50I_H6_R)	+= pinctrl-sun50i-h6-r.o
+ obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
+ obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c b/drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c
+new file mode 100644
+index 000000000000..4557e18d5989
+--- /dev/null
++++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Allwinner H6 R_PIO pin controller driver
++ *
++ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
++ *
++ * Based on pinctrl-sun6i-a31-r.c, which is:
++ *   Copyright (C) 2014 Boris Brezillon
++ *   Boris Brezillon <boris.brezillon@free-electrons.com>
++ *   Copyright (C) 2014 Maxime Ripard
++ *   Maxime Ripard <maxime.ripard@free-electrons.com>
++ */
++
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/reset.h>
++
++#include "pinctrl-sunxi.h"
++
++static const struct sunxi_desc_pin sun50i_h6_r_pins[] = {
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 0),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SCK */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 0)),	/* PL_EINT0 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 1),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x3, "s_i2c"),		/* SDA */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 1)),	/* PL_EINT1 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 2),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_uart"),	/* TX */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 2)),	/* PL_EINT2 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 3),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_uart"),	/* RX */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 3)),	/* PL_EINT3 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 4),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* MS */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 4)),	/* PL_EINT4 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 5),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* CK */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 5)),	/* PL_EINT5 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 6),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DO */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 6)),	/* PL_EINT6 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 7),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_jtag"),	/* DI */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 7)),	/* PL_EINT7 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 8),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_pwm"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 8)),	/* PL_EINT8 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 9),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_cir_rx"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 9)),	/* PL_EINT9 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(L, 10),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION(0x2, "s_w1"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 0, 10)),	/* PL_EINT10 */
++	/* Hole */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 0),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 0)),	/* PM_EINT0 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 1),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 1)),	/* PM_EINT1 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 2),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 2),	/* PM_EINT2 */
++		  SUNXI_FUNCTION(0x3, "1wire")),
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 3),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 3)),	/* PM_EINT3 */
++	SUNXI_PIN(SUNXI_PINCTRL_PIN(M, 4),
++		  SUNXI_FUNCTION(0x0, "gpio_in"),
++		  SUNXI_FUNCTION(0x1, "gpio_out"),
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 1, 4)),	/* PM_EINT4 */
++};
++
++static const struct sunxi_pinctrl_desc sun50i_h6_r_pinctrl_data = {
++	.pins = sun50i_h6_r_pins,
++	.npins = ARRAY_SIZE(sun50i_h6_r_pins),
++	.pin_base = PL_BASE,
++	.irq_banks = 2,
++};
++
++static int sun50i_h6_r_pinctrl_probe(struct platform_device *pdev)
++{
++	return sunxi_pinctrl_init(pdev,
++				  &sun50i_h6_r_pinctrl_data);
++}
++
++static const struct of_device_id sun50i_h6_r_pinctrl_match[] = {
++	{ .compatible = "allwinner,sun50i-h6-r-pinctrl", },
++	{}
++};
++
++static struct platform_driver sun50i_h6_r_pinctrl_driver = {
++	.probe	= sun50i_h6_r_pinctrl_probe,
++	.driver	= {
++		.name		= "sun50i-h6-r-pinctrl",
++		.of_match_table	= sun50i_h6_r_pinctrl_match,
++	},
++};
++builtin_platform_driver(sun50i_h6_r_pinctrl_driver);
 -- 
-2.17.0
+2.15.1
