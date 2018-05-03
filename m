@@ -1,190 +1,437 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 08/27] ARM: davinci: dm365: add new clock init using common clock framework
-Date: Wed,  9 May 2018 12:25:47 -0500
-Message-Id: <20180509172606.29387-9-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v5 08/14] dt: qcom: Add opp and thermal to the msm8996
+Date: Thu,  3 May 2018 14:52:29 +0300
+Message-Id: <1525348355-25471-9-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specific clock init in mach-davinci/dm365.c
-using the new common clock framework drivers.
-
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
-
-Also clean up the #includes since we are adding some here.
-
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 269 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 260 insertions(+), 9 deletions(-)
 
-v10 changes:
-- none
-
-v9 changes:
-- register PLL1 and PSC in dm365_init_time() instead of as platform device so
-  that we get the correct timer0 clock for davinci_timer_init()
-- Fixed size of PLL memory block
-
-v8 changes:
-- none
-
-v7 changes:
-- add clock platform device declarations
-- register platform devices instead of registering clocks directly
-- add davinci prefix to commit description
-
-v6 changes:
-- add blank lines between function calls
-
-
- arch/arm/mach-davinci/board-dm365-evm.c |  2 +
- arch/arm/mach-davinci/davinci.h         |  1 +
- arch/arm/mach-davinci/dm365.c           | 56 +++++++++++++++++++------
- 3 files changed, 47 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-index 435f7ec7d9af..307e88d99dd3 100644
---- a/arch/arm/mach-davinci/board-dm365-evm.c
-+++ b/arch/arm/mach-davinci/board-dm365-evm.c
-@@ -742,6 +742,8 @@ static __init void dm365_evm_init(void)
- {
- 	int ret;
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 37b7152c..e6cf290 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -14,6 +14,7 @@
+ #include <dt-bindings/clock/qcom,gcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
++#include <dt-bindings/thermal/thermal.h>
  
-+	dm365_register_clocks();
-+
- 	ret = dm365_gpio_register();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index c2c634b6578e..a799b5266d4b 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -94,6 +94,7 @@ int dm355_gpio_register(void);
- /* DM365 function declarations */
- void dm365_init(void);
- void dm365_init_time(void);
-+void dm365_register_clocks(void);
- void dm365_init_asp(void);
- void dm365_init_vc(void);
- void dm365_init_ks(struct davinci_ks_platform_data *pdata);
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 871372a59da8..76de426a0e41 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -12,32 +12,38 @@
-  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  */
--#include <linux/init.h>
--#include <linux/clk.h>
--#include <linux/serial_8250.h>
--#include <linux/platform_device.h>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
-+#include <linux/clkdev.h>
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
--#include <linux/spi/spi.h>
-+#include <linux/init.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_data/keyscan-davinci.h>
- #include <linux/platform_data/spi-davinci.h>
-+#include <linux/platform_device.h>
-+#include <linux/serial_8250.h>
-+#include <linux/spi/spi.h>
+ / {
+ 	model = "Qualcomm Technologies, Inc. MSM8996";
+@@ -97,6 +98,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 			L2_0: l2-cache {
+ 			      compatible = "cache";
+@@ -109,6 +113,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 		};
  
- #include <asm/mach/map.h>
+@@ -117,6 +124,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 			L2_1: l2-cache {
+ 			      compatible = "cache";
+@@ -129,6 +139,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x101>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 		};
  
-+#include <mach/common.h>
- #include <mach/cputype.h>
--#include "psc.h"
--#include <mach/mux.h>
- #include <mach/irqs.h>
--#include <mach/time.h>
-+#include <mach/mux.h>
- #include <mach/serial.h>
--#include <mach/common.h>
-+#include <mach/time.h>
+@@ -155,6 +168,182 @@
+ 		};
+ 	};
  
-+#include "asp.h"
- #include "davinci.h"
--#include "clock.h"
- #include "mux.h"
--#include "asp.h"
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
++		opp-307200000 {
++			opp-hz = /bits/ 64 <307200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-422400000 {
++			opp-hz = /bits/ 64 <422400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <480000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <556800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <652800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <729600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-844800000 {
++			opp-hz = /bits/ 64 <844800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-960000000 {
++			opp-hz = /bits/ 64 <960000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 <1036800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 <1113600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 <1190400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1228800000 {
++			opp-hz = /bits/ 64 <1228800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 <1324800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 <1401600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 <1478400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 <1593600000>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <307200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-403200000 {
++			opp-hz = /bits/ 64 <403200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <480000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <556800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <652800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <729600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-806400000 {
++			opp-hz = /bits/ 64 <806400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-883200000 {
++			opp-hz = /bits/ 64 <883200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-940800000 {
++			opp-hz = /bits/ 64 <940800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 <1036800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 <1113600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 <1190400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1248000000 {
++			opp-hz = /bits/ 64 <1248000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 <1324800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 <1401600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 <1478400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1555200000 {
++			opp-hz = /bits/ 64 <1555200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1632000000 {
++			opp-hz = /bits/ 64 <1632000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1708800000 {
++			opp-hz = /bits/ 64 <1708800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1785600000 {
++			opp-hz = /bits/ 64 <1785600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1824000000 {
++			opp-hz = /bits/ 64 <1824000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1920000000 {
++			opp-hz = /bits/ 64 <1920000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 <1996800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2073600000 {
++			opp-hz = /bits/ 64 <2073600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2150400000 {
++			opp-hz = /bits/ 64 <2150400000>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
+ 	thermal-zones {
+ 		cpu-thermal0 {
+ 			polling-delay-passive = <250>;
+@@ -163,18 +352,34 @@
+ 			thermal-sensors = <&tsens0 3>;
  
- #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
- #define DM365_RTC_BASE			0x01c69000
-@@ -54,6 +60,7 @@
- #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
- #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
+ 			trips {
+-				cpu_alert0: trip0 {
++				cpu_alert0: cpu_alert0 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn0: cpu_warn0 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
  
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll1_data = {
- 	.num		= 1,
- 	.phys_base	= DAVINCI_PLL1_BASE,
-@@ -485,7 +492,7 @@ static struct clk_lookup dm365_clks[] = {
- 	CLK(NULL, "mjcp", &mjcp_clk),
- 	CLK(NULL, NULL, NULL),
- };
--
-+#endif
- /*----------------------------------------------------------------------*/
+-				cpu_crit0: trip1 {
++				cpu_crit0: cpu_crit0 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn0>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
  
- #define INTMUX		0x18
-@@ -1171,8 +1178,33 @@ void __init dm365_init(void)
+ 		cpu-thermal1 {
+@@ -184,18 +389,34 @@
+ 			thermal-sensors = <&tsens0 5>;
  
- void __init dm365_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll1, *pll2, *psc;
-+	struct clk *clk;
-+
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM365_REF_FREQ);
-+
-+	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
-+	dm365_pll1_init(NULL, pll1, NULL);
-+
-+	pll2 = ioremap(DAVINCI_PLL2_BASE, SZ_1K);
-+	dm365_pll2_init(NULL, pll2, NULL);
-+
-+	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-+	dm365_psc_init(NULL, psc);
-+
-+	clk = clk_get(NULL, "timer0");
-+
-+	davinci_timer_init(clk);
-+#else
- 	davinci_clk_init(dm365_clks);
- 	davinci_timer_init(&timer0_clk);
-+#endif
-+}
-+
-+void __init dm365_register_clocks(void)
-+{
-+	/* all clocks are currently registered in dm365_init_time() */
- }
+ 			trips {
+-				cpu_alert1: trip0 {
++				cpu_alert1: cpu_alert1 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn1: cpu_warn1 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
  
- static struct resource dm365_vpss_resources[] = {
+-				cpu_crit1: trip1 {
++				cpu_crit1: cpu_crit1 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert1>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn1>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal2 {
+@@ -205,18 +426,33 @@
+ 			thermal-sensors = <&tsens0 8>;
+ 
+ 			trips {
+-				cpu_alert2: trip0 {
++				cpu_alert2: cpu_alert2 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn2: cpu_warn2 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit2: trip1 {
++				cpu_crit2: cpu_crit2 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert2>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn2>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal3 {
+@@ -226,9 +462,14 @@
+ 			thermal-sensors = <&tsens0 10>;
+ 
+ 			trips {
+-				cpu_alert3: trip0 {
++				cpu_alert3: cpu_alert3 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn3: cpu_warn3 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+@@ -238,6 +479,16 @@
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert3>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn3>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 	};
+ 
+@@ -414,7 +665,7 @@
+ 		};
+ 
+ 		kryocc: clock-controller@6400000 {
+-			compatible = "qcom,apcc-msm8996";
++			compatible = "qcom,msm8996-apcc";
+ 			reg = <0x6400000 0x90000>;
+ 			#clock-cells = <1>;
+ 		};
+@@ -1001,7 +1252,7 @@
+ 
+ 				pinctrl-names = "default", "sleep";
+ 				pinctrl-0 = <&pcie2_clkreq_default &pcie2_perst_default &pcie2_wake_default>;
+-				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep >;
++				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep>;
+ 
+ 				vdda-supply = <&pm8994_l28>;
+ 
 -- 
-2.17.0
+1.9.1
