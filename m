@@ -1,70 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:35181 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751059AbeEDPGh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 May 2018 11:06:37 -0400
-Date: Fri, 4 May 2018 17:06:35 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 3/7] pinctrl: sunxi: add support for H6 R_PIO pin
- controller
-Message-ID: <20180504150635.cmtypedk55oxyg2n@flea>
-References: <20180503183847.11046-1-icenowy@aosc.io>
- <20180503183847.11046-4-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="saqtoq4pvu6fszm2"
-In-Reply-To: <20180503183847.11046-4-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Date: Fri,  4 May 2018 01:55:33 +0300
+Message-Id: <20180503225537.20748-2-digetx@gmail.com>
+In-Reply-To: <20180503225537.20748-1-digetx@gmail.com>
+References: <20180503225537.20748-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
+a parent. Add these dividers in order to be able to provide that parent
+option.
 
---saqtoq4pvu6fszm2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Marc Dietrich <marvin24@gmx.de>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/tegra/clk-tegra20.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-On Fri, May 04, 2018 at 02:38:43AM +0800, Icenowy Zheng wrote:
-> Allwinner H6 SoC has a R_PIO pin controller like other Allwinner SoCs,
-> which controls the PL and PM pin banks.
->=20
-> Add support for it.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---saqtoq4pvu6fszm2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrsdvoACgkQ0rTAlCFN
-r3QF9A//dypcxtWiVRia46qEZzZVvWdsP0XWZlTE6UJH0jOL3liy/56hLTyW9gyu
-3sv/o9sNmp+tx92feTHTt3OBv3xezUyfUeOux0vmydPS792md7KCOfnZV2eIHGqN
-aMUCZ/6Cr3w4BjC8lvqHFdli9gVJa0a8t5gN1jFkRfFd0y6qss7U/BGv/t1WZHY7
-5Zrk9wGO3FRc4+k7ftfhsmSeBn9h6NxA/pKIWgniyJ5mbw4HCTlQJLYda3FMEnK1
-S4KNMbmgEBuU9AQDRXGGIa59sV6oNSUoSJk6go8keZ+lMFI+Q8ALgAYSu27Turu1
-uY7eSa6ZAcU1Ul8cjN/+npqTzLSooo7gZrBRGO/q3TJryzvglZtQo7pNZbWeXqEZ
-rcfulzJFx7SkYjy/IpeOleIfbV/ScjuqZh42YG+M1TFXVXPZkSdrMN88w/6o1v9a
-OYduzxF3dDHHnTAjIbK+HbAZmZdCUUnmz8pnw/PSoR7x6FSHE2aOB3gyBO1IztBF
-pIpJQAUdJ9yZVLf6SZaSBy/CBF4TARh0wWU45ewX2Jr5zyDVp51UgRlKXI1EqU3v
-8gxLc9KFn4mC5ulRYwyLxUvZj+DYGE06LB4GmTkrs0AkCm8NDqECfRCIBZurdlqp
-G9NkYFWf01P53a2BxJf+V0Ri1QM4DTSjBpdldSrBTjcgY78qUqg=
-=kJur
------END PGP SIGNATURE-----
-
---saqtoq4pvu6fszm2--
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 0ee56dd04cec..ad5a7b5e3a39 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -26,6 +26,8 @@
+ #include "clk.h"
+ #include "clk-id.h"
+ 
++#define MISC_CLK_ENB 0x48
++
+ #define OSC_CTRL 0x50
+ #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+ #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+@@ -831,6 +833,18 @@ static void __init tegra20_periph_clk_init(void)
+ 				    periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_PEX] = clk;
+ 
++	/* dev1 OSC divider */
++	clk_register_divider(NULL, "dev1_osc_div", "clk_m",
++			     0, clk_base + MISC_CLK_ENB, 22, 2,
++			     CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
++			     NULL);
++
++	/* dev2 OSC divider */
++	clk_register_divider(NULL, "dev2_osc_div", "clk_m",
++			     0, clk_base + MISC_CLK_ENB, 20, 2,
++			     CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
++			     NULL);
++
+ 	/* cdev1 */
+ 	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
+ 	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
+-- 
+2.17.0
