@@ -1,80 +1,64 @@
-Return-Path: <gilad@benyossef.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:53734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751889AbeECC1b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 May 2018 22:27:31 -0400
+Date: Thu, 3 May 2018 10:27:16 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Rui Miguel Silva <rui.silva@linaro.org>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 04/15] clk: imx7d: reset parent for mipi csi root
+Message-ID: <20180503022714.GO3443@dragon>
+References: <20180423134750.30403-1-rui.silva@linaro.org>
+ <20180423134750.30403-5-rui.silva@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXWPwW_p=D56BhNF274m+JLe+mbD2fqQu8-we-uMW4b8Q@mail.gmail.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
- <1526387370-17142-3-git-send-email-gilad@benyossef.com> <CAMuHMdXWPwW_p=D56BhNF274m+JLe+mbD2fqQu8-we-uMW4b8Q@mail.gmail.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 17 May 2018 11:00:10 +0300
-Message-ID: <CAOtvUMf0pnX1+MOz0KkB5LxqL5HTmLRYjVZTUrAx-eCvm26+LA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: renesas: r8a7795: Add ccree clock
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180423134750.30403-5-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 15, 2018 at 5:47 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Gilad,
->
-> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->> This patch adds the clock used by the CryptoCell 630p instance in the SoC.
->>
->> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->
-> Thanks for your patch!
->
->> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
->> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
->> @@ -132,6 +132,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
->>         DEF_MOD("sys-dmac2",             217,   R8A7795_CLK_S0D3),
->>         DEF_MOD("sys-dmac1",             218,   R8A7795_CLK_S0D3),
->>         DEF_MOD("sys-dmac0",             219,   R8A7795_CLK_S0D3),
->> +       DEF_MOD("ccree",                 229,   R8A7795_CLK_S3D2),
->
-> I don't know if "ccree" is the proper name for this clock, as there
-> may be multiple
-> instances.
+On Mon, Apr 23, 2018 at 02:47:39PM +0100, Rui Miguel Silva wrote:
+> To guarantee that we do not get Overflow in image FIFO the outer bandwidth has
+> to be faster than inputer bandwidth. For that it must be possible to set a
+> faster frequency clock. So set new parent to sys_pfd3 clock for the mipi csi
+> block.
+> 
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+> ---
+>  drivers/clk/imx/clk-imx7d.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> index f7f4db2e6fa6..9a1a18ceb132 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -891,6 +891,9 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+>  	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
+>  	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
+>  
+> +	clk_set_parent(clks[IMX7D_MIPI_CSI_ROOT_SRC],
+> +		       clks[IMX7D_PLL_SYS_PFD3_CLK]);
+> +
 
-I'd be happy to rename it to anything else. Suggestions?
+For i.MX clock driver, we intentionally ignore line over 80 columns
+warning to make the file easier for read.  So I would suggest you keep
+it on a single line to stay consistent with other clk_set_parent() calls.
 
-> I also can't verify the parent clock.
+Other than that,
 
-I'm afraid I can't really help. This is based on code snippet from
-Renesas. I verified it works but
-I am not an expert on the clock settings :-(
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 
->
->>         DEF_MOD("cmt3",                  300,   R8A7795_CLK_R),
->>         DEF_MOD("cmt2",                  301,   R8A7795_CLK_R),
->>         DEF_MOD("cmt1",                  302,   R8A7795_CLK_R),
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
-
-
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+>  	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
+>  	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+>  
+> -- 
+> 2.17.0
+> 
