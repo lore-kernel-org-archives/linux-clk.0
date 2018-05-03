@@ -1,198 +1,180 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	linux-imx@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH V3 2/4] clk: add new APIs to operate on all available clocks
-Date: Fri, 25 May 2018 18:37:21 +0800
-Message-Id: <1527244643-10736-3-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
-References: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <Akshu.Agrawal@amd.com>
+From: Akshu Agrawal <akshu.agrawal@amd.com>
+To: 
+Cc: djkurtz@chromium.org,
+	akshu.agrawal@amd.com,
+	Alexander.Deucher@amd.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Shaoyun Liu <Shaoyun.Liu@amd.com>,
+	Dave Airlie <airlied@redhat.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH v2] clk: x86: Add ST oscout platform clock
+Date: Thu,  3 May 2018 16:30:26 +0800
+Message-Id: <1525336264-29243-1-git-send-email-akshu.agrawal@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Return-Path: akshu.agrawal@amd.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch introduces of_clk_bulk_get_all and clk_bulk_x_all APIs
-to users who just want to handle all available clocks from device tree
-without need to know the detailed clock information likes clock numbers
-and names. This is useful in writing some generic drivers to handle clock
-part.
+Stoney SoC provides oscout clock. This clock can support 25Mhz and
+48Mhz of frequency.
+The clock is available for general system use.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 ---
-v2->v3:
- * remove #if define condition
- * use kmalloc_array
-v1->v2:
- * make of_clk_bulk_get_all private
- * add clk_bulk_get/put_all
----
- drivers/clk/clk-bulk.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h    | 42 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 92 insertions(+), 1 deletion(-)
+v2: config change, added SPDX tag and used clk_hw_register_.
+ drivers/clk/x86/Makefile             |  1 +
+ drivers/clk/x86/clk-st.c             | 86 ++++++++++++++++++++++++++++++++++++
+ include/linux/platform_data/clk-st.h | 35 +++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/clk/x86/clk-st.c
+ create mode 100644 include/linux/platform_data/clk-st.h
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 4460ac5..6a7118d 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -17,9 +17,11 @@
-  */
- 
- #include <linux/clk.h>
+diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
+index 1367afb..2aee002 100644
+--- a/drivers/clk/x86/Makefile
++++ b/drivers/clk/x86/Makefile
+@@ -1,3 +1,4 @@
+ clk-x86-lpss-objs		:= clk-lpt.o
+ obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
+ obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
++obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-st.o
+diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
+new file mode 100644
+index 0000000..d8c283c
+--- /dev/null
++++ b/drivers/clk/x86/clk-st.c
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * clock framework for AMD Stoney based clocks
++ *
++ * Copyright 2018 Advanced Micro Devices, Inc.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
++ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
++ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ * OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++#include <linux/clk.h>
++#include <linux/clkdev.h>
 +#include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/export.h>
- #include <linux/of.h>
-+#include <linux/slab.h>
- 
- static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
- 					struct clk_bulk_data *clks)
-@@ -49,6 +51,32 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
- 	return ret;
- }
- 
-+static int __must_check of_clk_bulk_get_all(struct device_node *np,
-+					    struct clk_bulk_data **clks)
++#include <linux/platform_data/clk-st.h>
++#include <linux/platform_device.h>
++
++/* Clock Driving Strength 2 register */
++#define CLKDRVSTR2	0x28
++/* Clock Control 1 register */
++#define MISCCLKCNTL1	0x40
++/* Auxiliary clock1 enable bit */
++#define OSCCLKENB	2
++/* 25Mhz auxiliary output clock freq bit */
++#define OSCOUT1CLK25MHZ	16
++
++#define ST_CLK_48M	0
++#define ST_CLK_25M	1
++#define ST_CLK_MUX	2
++#define ST_CLK_GATE	3
++#define ST_MAX_CLKS	4
++
++static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
++
++static int st_clk_probe(struct platform_device *pdev)
 +{
-+	struct clk_bulk_data *clk_bulk;
-+	int num_clks;
-+	int ret;
++	struct st_clk_data *st_data;
++	struct clk_hw **hws;
 +
-+	num_clks = of_clk_get_parent_count(np);
-+	if (!num_clks)
-+		return 0;
++	st_data = dev_get_platdata(&pdev->dev);
++	if (!st_data || !st_data->base)
++		return -EINVAL;
 +
-+	clk_bulk = kmalloc_array(num_clks, sizeof(*clk_bulk), GFP_KERNEL);
-+	if (!clk_bulk)
-+		return -ENOMEM;
++	hws = kzalloc(sizeof(*hws) * ST_MAX_CLKS, GFP_KERNEL);
 +
-+	ret = of_clk_bulk_get(np, num_clks, clk_bulk);
-+	if (ret) {
-+		kfree(clk_bulk);
-+		return ret;
-+	}
++	hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
++						     48000000);
++	hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
++						     25000000);
 +
-+	*clks = clk_bulk;
++	hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
++		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
++		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
 +
-+	return num_clks;
-+}
++	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
 +
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
- {
- 	while (--num_clks >= 0) {
-@@ -88,6 +116,29 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
- }
- EXPORT_SYMBOL(clk_bulk_get);
- 
-+void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks)
-+{
-+	if (IS_ERR_OR_NULL(clks))
-+		return;
++	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
++		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
++		CLK_GATE_SET_TO_DISABLE, NULL);
 +
-+	clk_bulk_put(num_clks, clks);
++	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
 +
-+	kfree(clks);
-+}
-+EXPORT_SYMBOL(clk_bulk_put_all);
-+
-+int __must_check clk_bulk_get_all(struct device *dev,
-+				  struct clk_bulk_data **clks)
-+{
-+	struct device_node *np = dev_of_node(dev);
-+
-+	if (!np)
-+		return 0;
-+
-+	return of_clk_bulk_get_all(np, clks);
-+}
-+EXPORT_SYMBOL(clk_bulk_get_all);
-+
- #ifdef CONFIG_HAVE_CLK_PREPARE
- 
- /**
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 0dbd088..a76fdff 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -279,7 +279,26 @@ struct clk *clk_get(struct device *dev, const char *id);
-  */
- int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 			      struct clk_bulk_data *clks);
--
-+/**
-+ * clk_bulk_get_all - lookup and obtain all available references to clock
-+ *		      producer.
-+ * @dev: device for clock "consumer"
-+ * @clks: pointer to the clk_bulk_data table of consumer
-+ *
-+ * This helper function allows drivers to get all clk consumers in one
-+ * operation. If any of the clk cannot be acquired then any clks
-+ * that were obtained will be freed before returning to the caller.
-+ *
-+ * Returns a positive value for the number of clocks obtained while the
-+ * clock references are stored in the clk_bulk_data table in @clks field.
-+ * Returns 0 if there're none and a negative value if something failed.
-+ *
-+ * Drivers must assume that the clock source is not enabled.
-+ *
-+ * clk_bulk_get should not be called from within interrupt context.
-+ */
-+int __must_check clk_bulk_get_all(struct device *dev,
-+				  struct clk_bulk_data **clks);
- /**
-  * devm_clk_bulk_get - managed get multiple clk consumers
-  * @dev: device for clock "consumer"
-@@ -455,6 +474,19 @@ void clk_put(struct clk *clk);
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks);
- 
- /**
-+ * clk_bulk_put_all - "free" all the clock source
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table of consumer
-+ *
-+ * Note: drivers must ensure that all clk_bulk_enable calls made on this
-+ * clock source are balanced by clk_bulk_disable calls prior to calling
-+ * this function.
-+ *
-+ * clk_bulk_put_all should not be called from within interrupt context.
-+ */
-+void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks);
-+
-+/**
-  * devm_clk_put	- "free" a managed clock source
-  * @dev: device used to acquire the clock
-  * @clk: clock source acquired with devm_clk_get()
-@@ -609,6 +641,12 @@ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 	return 0;
- }
- 
-+static inline int __must_check clk_bulk_get_all(struct device *dev,
-+					 struct clk_bulk_data **clks)
-+{
 +	return 0;
 +}
 +
- static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- {
- 	return NULL;
-@@ -630,6 +668,8 @@ static inline void clk_put(struct clk *clk) {}
- 
- static inline void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) {}
- 
-+static inline void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks) {}
++static struct platform_driver st_clk_driver = {
++	.driver = {
++		.name = "clk-st",
++	},
++	.probe = st_clk_probe,
++};
++builtin_platform_driver(st_clk_driver);
+diff --git a/include/linux/platform_data/clk-st.h b/include/linux/platform_data/clk-st.h
+new file mode 100644
+index 0000000..6a992e9
+--- /dev/null
++++ b/include/linux/platform_data/clk-st.h
+@@ -0,0 +1,35 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * clock framework for AMD Stoney based clock
++ *
++ * Copyright 2018 Advanced Micro Devices, Inc.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
++ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
++ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ * OTHER DEALINGS IN THE SOFTWARE.
++ */
 +
- static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
- 
- 
++#ifndef __CLK_ST_H
++#define __CLK_ST_H
++
++#include <linux/compiler.h>
++
++struct st_clk_data {
++	void __iomem *base;
++};
++
++#endif /* __CLK_ST_H */
 -- 
-2.7.4
+1.9.1
