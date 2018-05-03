@@ -1,38 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:41328 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750970AbeEBJTR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 May 2018 05:19:17 -0400
+Return-Path: <anischal@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <152521142011.138124.3008284989746799940@swboyd.mtv.corp.google.com>
-References: <1524741668-158135-1-git-send-email-weiyongjun1@huawei.com> <152521142011.138124.3008284989746799940@swboyd.mtv.corp.google.com>
-From: Tali Perry <tali.perry1@gmail.com>
-Date: Wed, 2 May 2018 12:19:15 +0300
-Message-ID: <CAHb3i=vYwGAwAcyQVrsZVgc3xq2dSw58Zi9RtokauEjkoA+LpA@mail.gmail.com>
-Subject: Re: [PATCH -next] clk: npcm7xx: fix return value check in npcm7xx_clk_init()
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Thu, 03 May 2018 16:06:01 +0530
+From: Amit Nischal <anischal@codeaurora.org>
 To: Stephen Boyd <sboyd@kernel.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown
+ <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Odelu
+ Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: Add video clock controller driver for
+ SDM845
+In-Reply-To: <152528682776.138124.2183943878215041610@swboyd.mtv.corp.google.com>
+References: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
+ <1524576771-31096-3-git-send-email-anischal@codeaurora.org>
+ <152521087780.138124.7623601052057968460@swboyd.mtv.corp.google.com>
+ <d311e4d7-7ba8-0b26-93c7-5ee06db466ef@codeaurora.org>
+ <152528682776.138124.2183943878215041610@swboyd.mtv.corp.google.com>
+Message-ID: <fef9e787926f4e72bcadb3d87ea888d2@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-I added the fix Wei Yongjun indicated ( Thanks Wei !)
-and another fix similar to the above + error print change.
+On 2018-05-03 00:17, Stephen Boyd wrote:
+> Quoting Nischal, Amit (2018-05-02 00:56:35)
+>> 
+>> 
+>> Thanks for the review.
+>> As of now, there are no resets defined for VIDEOCC. So I will move
+>> the #reset-cells tooptional property in the dt-binding.
+>> Same will be updated in the next patch series.
+> 
+> Please don't make it optional. It should be required in the binding,
+> because there are resets in the hardware. If you don't want to add them
+> into the driver, that's ok, but it isn't really that hard to add them 
+> so
+> why not add them?
 
-I'm a newbie... what's scripts/coccinelle/ script ?
-I just made a new patch same way I did before. Is this OK?
+There is no reset client for VideoCC so that's why we have not
+added them in the driver file. However, I will make "#reset-cells"
+as required property in the dt-binding.
 
-On Wed, May 2, 2018 at 12:50 AM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Wei Yongjun (2018-04-26 04:21:08)
->> In case of error, the function ioremap() returns NULL pointer not
->> ERR_PTR(). The IS_ERR() test in the return value check should be
->> replaced with NULL test.
->>
->> Fixes: fcfd14369856 ("clk: npcm7xx: add clock controller")
->> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
->
-> Have you made this into a scripts/coccinelle/ script I can run?
->
-> Applied to clk-next
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
