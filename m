@@ -1,80 +1,55 @@
-Return-Path: <Alexander.Deucher@amd.com>
-From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-To: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
-CC: "djkurtz@chromium.org" <djkurtz@chromium.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>, "Koenig,
- Christian" <Christian.Koenig@amd.com>, "airlied@redhat.com"
-	<airlied@redhat.com>, "Liu, Shaoyun" <Shaoyun.Liu@amd.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "rjw@rjwysocki.net"
-	<rjw@rjwysocki.net>, "lenb@kernel.org" <lenb@kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Subject: RE: [PATCH v4 1/2] clk: x86: Add ST oscout platform clock
-Date: Tue, 8 May 2018 15:38:14 +0000
-Message-ID: <BN6PR12MB18094F5327A8DA2F560383E6F79A0@BN6PR12MB1809.namprd12.prod.outlook.com>
-References: <1525688013-9928-1-git-send-email-akshu.agrawal@amd.com>
- <1525688013-9928-2-git-send-email-akshu.agrawal@amd.com>
- <BN6PR12MB1809A66A78024F2E519A1A34F79B0@BN6PR12MB1809.namprd12.prod.outlook.com>
- <82d294fc-d108-a32a-1ada-2763f40dac01@amd.com>
-In-Reply-To: <82d294fc-d108-a32a-1ada-2763f40dac01@amd.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:36047 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751174AbeECSni (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 3 May 2018 14:43:38 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 7/7] arm64: allwinner: h6: add PCF8563 RTC on Pine H64 board
+Date: Fri,  4 May 2018 02:38:47 +0800
+Message-Id: <20180503183847.11046-8-icenowy@aosc.io>
+In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
+References: <20180503183847.11046-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBZ3Jhd2FsLCBBa3NodQ0KPiBT
-ZW50OiBUdWVzZGF5LCBNYXkgOCwgMjAxOCAxMjowNCBBTQ0KPiBUbzogRGV1Y2hlciwgQWxleGFu
-ZGVyIDxBbGV4YW5kZXIuRGV1Y2hlckBhbWQuY29tPg0KPiBDYzogZGprdXJ0ekBjaHJvbWl1bS5v
-cmc7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzYm95ZEBrZXJuZWwub3JnOw0KPiBLb2VuaWcs
-IENocmlzdGlhbiA8Q2hyaXN0aWFuLktvZW5pZ0BhbWQuY29tPjsgYWlybGllZEByZWRoYXQuY29t
-OyBMaXUsDQo+IFNoYW95dW4gPFNoYW95dW4uTGl1QGFtZC5jb20+OyBsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnOyBsaW51eC0NCj4gY2xrQHZnZXIua2VybmVsLm9yZzsgcmp3QHJqd3lzb2Nr
-aS5uZXQ7IGxlbmJAa2VybmVsLm9yZzsgbGludXgtDQo+IGFjcGlAdmdlci5rZXJuZWwub3JnDQo+
-IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjQgMS8yXSBjbGs6IHg4NjogQWRkIFNUIG9zY291dCBwbGF0
-Zm9ybSBjbG9jaw0KPiANCj4gDQo+IA0KPiBPbiA1LzgvMjAxOCAzOjE0IEFNLCBEZXVjaGVyLCBB
-bGV4YW5kZXIgd3JvdGU6DQo+ID4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZy
-b206IEFncmF3YWwsIEFrc2h1DQo+ID4+IFNlbnQ6IE1vbmRheSwgTWF5IDcsIDIwMTggNjoxNCBB
-TQ0KPiA+PiBDYzogZGprdXJ0ekBjaHJvbWl1bS5vcmc7IEFncmF3YWwsIEFrc2h1IDxBa3NodS5B
-Z3Jhd2FsQGFtZC5jb20+Ow0KPiA+PiBEZXVjaGVyLCBBbGV4YW5kZXIgPEFsZXhhbmRlci5EZXVj
-aGVyQGFtZC5jb20+Ow0KPiA+PiBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgc2JveWRAa2VybmVs
-Lm9yZzsgS29lbmlnLCBDaHJpc3RpYW4NCj4gPj4gPENocmlzdGlhbi5Lb2VuaWdAYW1kLmNvbT47
-IGFpcmxpZWRAcmVkaGF0LmNvbTsgTGl1LCBTaGFveXVuDQo+ID4+IDxTaGFveXVuLkxpdUBhbWQu
-Y29tPjsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+ID4+IGNsa0B2Z2Vy
-Lmtlcm5lbC5vcmc7IHJqd0Byand5c29ja2kubmV0OyBsZW5iQGtlcm5lbC5vcmc7IGxpbnV4LQ0K
-PiA+PiBhY3BpQHZnZXIua2VybmVsLm9yZw0KPiA+PiBTdWJqZWN0OiBbUEFUQ0ggdjQgMS8yXSBj
-bGs6IHg4NjogQWRkIFNUIG9zY291dCBwbGF0Zm9ybSBjbG9jaw0KPiA+Pg0KPiA+PiBTdG9uZXkg
-U29DIHByb3ZpZGVzIG9zY291dCBjbG9jay4gVGhpcyBjbG9jayBjYW4gc3VwcG9ydCAyNU1oeiBh
-bmQNCj4gPj4gNDhNaHogb2YgZnJlcXVlbmN5Lg0KPiA+PiBUaGUgY2xvY2sgaXMgYXZhaWxhYmxl
-IGZvciBnZW5lcmFsIHN5c3RlbSB1c2UuDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IEFrc2h1
-IEFncmF3YWwgPGFrc2h1LmFncmF3YWxAYW1kLmNvbT4NCj4gPj4gLS0tDQo+ID4+IHYyOiBjb25m
-aWcgY2hhbmdlLCBhZGRlZCBTUERYIHRhZyBhbmQgdXNlZCBjbGtfaHdfcmVnaXN0ZXJfLg0KPiA+
-PiB2MzogRml4IGtidWlsZCB3YXJuaW5nIGZvciBjaGVja2luZyBvZiBOVUxMIHBvaW50ZXINCj4g
-Pj4gdjQ6IHVucmVnaXN0ZXIgY2xrX2h3IGluIGRyaXZlciByZW1vdmUsIGFkZCAuc3VwcHJlc3Nf
-YmluZF9hdHRycw0KPiA+PiAgZHJpdmVycy9jbGsveDg2L01ha2VmaWxlICAgICAgICAgICAgIHwg
-IDMgKy0NCj4gPj4gIGRyaXZlcnMvY2xrL3g4Ni9jbGstc3QuYyAgICAgICAgICAgICB8IDg1DQo+
-ID4+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+PiAgaW5jbHVkZS9s
-aW51eC9wbGF0Zm9ybV9kYXRhL2Nsay1zdC5oIHwgMTcgKysrKysrKysNCj4gPj4gIDMgZmlsZXMg
-Y2hhbmdlZCwgMTA0IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkgIGNyZWF0ZSBtb2RlDQo+
-ID4+IDEwMDY0NCBkcml2ZXJzL2Nsay94ODYvY2xrLXN0LmMgIGNyZWF0ZSBtb2RlIDEwMDY0NA0K
-PiA+PiBpbmNsdWRlL2xpbnV4L3BsYXRmb3JtX2RhdGEvY2xrLXN0LmgNCj4gPj4NCj4gPj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvY2xrL3g4Ni9NYWtlZmlsZSBiL2RyaXZlcnMvY2xrL3g4Ni9NYWtl
-ZmlsZQ0KPiA+PiBpbmRleCAxMzY3YWZiLi4wMDMwM2JjIDEwMDY0NA0KPiA+PiAtLS0gYS9kcml2
-ZXJzL2Nsay94ODYvTWFrZWZpbGUNCj4gPj4gKysrIGIvZHJpdmVycy9jbGsveDg2L01ha2VmaWxl
-DQo+ID4+IEBAIC0xLDMgKzEsNCBAQA0KPiA+PiArb2JqLSQoQ09ORklHX1BNQ19BVE9NKQkJKz0g
-Y2xrLXBtYy1hdG9tLm8NCj4gPj4gK29iai0kKENPTkZJR19YODZfQU1EX1BMQVRGT1JNX0RFVklD
-RSkJKz0gY2xrLXN0Lm8NCj4gPj4gIGNsay14ODYtbHBzcy1vYmpzCQk6PSBjbGstbHB0Lm8NCj4g
-Pj4gIG9iai0kKENPTkZJR19YODZfSU5URUxfTFBTUykJKz0gY2xrLXg4Ni1scHNzLm8NCj4gPj4g
-LW9iai0kKENPTkZJR19QTUNfQVRPTSkJCSs9IGNsay1wbWMtYXRvbS5vDQo+ID4+IGRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2Nsay94ODYvY2xrLXN0LmMgYi9kcml2ZXJzL2Nsay94ODYvY2xrLXN0LmMg
-bmV3DQo+ID4+IGZpbGUgbW9kZQ0KPiA+PiAxMDA2NDQgaW5kZXggMDAwMDAwMC4uOGE3Nzk1Yw0K
-PiA+PiAtLS0gL2Rldi9udWxsDQo+ID4+ICsrKyBiL2RyaXZlcnMvY2xrL3g4Ni9jbGstc3QuYw0K
-PiA+PiBAQCAtMCwwICsxLDg1IEBADQo+ID4+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjog
-R1BMLTIuMA0KPiA+DQo+ID4gU2hvdWxkIHRoaXMgYmUgTUlUPyAgVGhlIG9yaWdpbmFsIGxpY2Vu
-c2Ugd2FzIE1JVC4NCj4gPg0KPiA+IEFsZXgNCj4gPg0KPiANCj4gV2UgYXJlIGFkZGluZyBTUERY
-IHRhZywgd2hpbGUgbGljZW5zZSByZW1haW5zIHNhbWUgR1BMLTIuMA0KPiANCj4gV2hhdCBJIGhh
-dmUgcmVhZCBpcyB0aGlzIGlzICJ0byBwcm92aWRlIGxpY2Vuc2UgaWRlbnRpZmllcnMgaW5zaWRl
-IHRoZSBzb3VyY2UNCj4gY29kZSB0aGF0IGNvdWxkIGJlIGVhc2lseSBwYXJzZWQgYnkgbWFjaGlu
-ZXMgYW5kIHdvdWxkIGFsbG93IGNoZWNraW5nIGZvcg0KPiBsaWNlbnNlIGNvbXBsaWFuY2Ugb2Yg
-YW4gb3BlbiBzb3VyY2UgcHJvamVjdCBlYXNpZXIuIg0KDQpNeSBwb2ludCBhcyBqdXN0IHRoYXQg
-dGhlIG9yaWdpbmFsIGxpY2Vuc2Ugb24gdGhlIGZpbGUgdGhhdCB5b3UgZmlyc3Qgc2VudCBvdXQg
-d2FzIE1JVCBzbyB0aGUgU1BEWCB0YWcgc2hvdWxkIGJlIE1JVCByYXRoZXIgdGhhbiBHUEwuICBF
-LmcuLA0KU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IE1JVA0KDQpBbGV4DQo=
+Pine H64 board has a PCF8563 dedicated RTC connected to its R_I2C bus.
+
+Enable the R_I2C bus and add the RTC to the device tree.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+index d36de5eb81f3..b6f2d6b2ecae 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+@@ -22,6 +22,16 @@
+ 	};
+ };
+ 
++&r_i2c {
++	status = "okay";
++
++	pcf8563: rtc@51 {
++		compatible = "nxp,pcf8563";
++		reg = <0x51>;
++		#clock-cells = <0>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_ph_pins>;
+-- 
+2.15.1
+
