@@ -1,70 +1,53 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: boris.brezillon@bootlin.com,
-	dwmw2@infradead.org,
-	computersforpeace@gmail.com,
-	marek.vasut@gmail.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	thierry.reding@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: dev@lynxeye.de,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	marcel@ziswiler.com,
-	krzk@kernel.org,
-	digetx@gmail.com,
-	benjamin.lindqvist@endian.se,
-	jonathanh@nvidia.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mirza.krak@gmail.com,
-	linux-mtd@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 5/6] ARM: tegra: add Tegra20 NAND flash controller node
-Date: Sun, 27 May 2018 23:54:41 +0200
-Message-Id: <20180527215442.14760-6-stefan@agner.ch>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 4/7] arm64: allwinner: h6: add node for R_PIO pin controller
+Date: Fri,  4 May 2018 02:38:44 +0800
+Message-Id: <20180503183847.11046-5-icenowy@aosc.io>
+In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
+References: <20180503183847.11046-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lucas Stach <dev@lynxeye.de>
+Allwinner H6 SoC has a R_PIO pin controller which controls PL and PM
+GPIO banks.
 
-Add basic controller description to be extended
-by individual boards.
+Add support for it.
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 13 +++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 13 +++++++++++++
  1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 0a7136462a1a..b106e4912b21 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -425,6 +425,19 @@
- 		status = "disabled";
- 	};
- 
-+	nand: nand@70008000 {
-+		compatible = "nvidia,tegra20-nand";
-+		reg = <0x70008000 0x100>;
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-+		clock-names = "nand";
-+		resets = <&tegra_car 13>;
-+		reset-names = "nand";
-+		status = "disabled";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index db9da343ba46..a18b78fb4850 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -183,5 +183,18 @@
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 		};
 +
- 	pwm: pwm@7000a000 {
- 		compatible = "nvidia,tegra20-pwm";
- 		reg = <0x7000a000 0x100>;
++		r_pio: pinctrl@7022000 {
++			compatible = "allwinner,sun50i-h6-r-pinctrl";
++			reg = <0x07022000 0x400>;
++			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&r_ccu CLK_R_APB1>, <&osc24M>, <&osc32k>;
++			clock-names = "apb", "hosc", "losc";
++			gpio-controller;
++			#gpio-cells = <3>;
++			interrupt-controller;
++			#interrupt-cells = <3>;
++		};
+ 	};
+ };
 -- 
-2.17.0
+2.15.1
