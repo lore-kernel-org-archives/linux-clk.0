@@ -1,1122 +1,754 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 23/27] ARM: davinci: remove legacy clocks
-Date: Fri, 18 May 2018 11:48:25 -0500
-Message-Id: <20180518164829.27052-24-david@lechnology.com>
-In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
-References: <20180518164829.27052-1-david@lechnology.com>
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v5 13/14] dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
+Date: Thu,  3 May 2018 14:52:34 +0300
+Message-Id: <1525348355-25471-14-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy clock code from arch/arm/mach-davinci/.
+In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+that have KRYO processors, the CPU ferequencies subset and voltage value
+of each OPP varies based on the silicon variant in use.
+Qualcomm Technologies, Inc. Process Voltage Scaling Tables
+defines the voltage and frequency value based on the msm-id in SMEM
+and speedbin blown in the efuse combination.
+The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+to provide the OPP framework with required information.
+This is used to determine the voltage and frequency value for each OPP of
+operating-points-v2 table when it is parsed by the OPP framework.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+This change adds documentation.
+
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
+ .../devicetree/bindings/opp/kryo-cpufreq.txt       | 693 +++++++++++++++++++++
+ 1 file changed, 693 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
 
-v11 changes:
-- none
-
-v10 changes:
-- none
-
-v9 changes:
-- none
-
-v8 changes:
-- none
-
-v7 changes:
-- rebased
-- add davinci prefix to commit message
-
-v6 changes:
-- rebased
-
-
- arch/arm/mach-davinci/clock.c               | 745 --------------------
- arch/arm/mach-davinci/clock.h               |  72 --
- arch/arm/mach-davinci/common.c              |   2 -
- arch/arm/mach-davinci/devices.c             |   1 -
- arch/arm/mach-davinci/include/mach/clock.h  |   3 -
- arch/arm/mach-davinci/include/mach/common.h |   2 -
- arch/arm/mach-davinci/psc.c                 | 137 ----
- arch/arm/mach-davinci/psc.h                 |  10 -
- arch/arm/mach-davinci/time.c                |   2 -
- 9 files changed, 974 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/clock.c
- delete mode 100644 arch/arm/mach-davinci/psc.c
-
-diff --git a/arch/arm/mach-davinci/clock.c b/arch/arm/mach-davinci/clock.c
-deleted file mode 100644
-index f77a4f766050..000000000000
---- a/arch/arm/mach-davinci/clock.c
-+++ /dev/null
-@@ -1,745 +0,0 @@
--/*
-- * Clock and PLL control for DaVinci devices
-- *
-- * Copyright (C) 2006-2007 Texas Instruments.
-- * Copyright (C) 2008-2009 Deep Root Systems, LLC
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
--
--#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/errno.h>
--#include <linux/clk.h>
--#include <linux/err.h>
--#include <linux/mutex.h>
--#include <linux/io.h>
--#include <linux/delay.h>
--
--#include <mach/hardware.h>
--
--#include <mach/clock.h>
--#include "psc.h"
--#include <mach/cputype.h>
--#include "clock.h"
--
--static LIST_HEAD(clocks);
--static DEFINE_MUTEX(clocks_mutex);
--static DEFINE_SPINLOCK(clockfw_lock);
--
--void davinci_clk_enable(struct clk *clk)
--{
--	if (clk->parent)
--		davinci_clk_enable(clk->parent);
--	if (clk->usecount++ == 0) {
--		if (clk->flags & CLK_PSC)
--			davinci_psc_config(clk->domain, clk->gpsc, clk->lpsc,
--					   true, clk->flags);
--		else if (clk->clk_enable)
--			clk->clk_enable(clk);
--	}
--}
--
--void davinci_clk_disable(struct clk *clk)
--{
--	if (WARN_ON(clk->usecount == 0))
--		return;
--	if (--clk->usecount == 0) {
--		if (!(clk->flags & CLK_PLL) && (clk->flags & CLK_PSC))
--			davinci_psc_config(clk->domain, clk->gpsc, clk->lpsc,
--					   false, clk->flags);
--		else if (clk->clk_disable)
--			clk->clk_disable(clk);
--	}
--	if (clk->parent)
--		davinci_clk_disable(clk->parent);
--}
--
--int davinci_clk_reset(struct clk *clk, bool reset)
--{
--	unsigned long flags;
--
--	if (clk == NULL || IS_ERR(clk))
--		return -EINVAL;
--
--	spin_lock_irqsave(&clockfw_lock, flags);
--	if (clk->flags & CLK_PSC)
--		davinci_psc_reset(clk->gpsc, clk->lpsc, reset);
--	spin_unlock_irqrestore(&clockfw_lock, flags);
--
--	return 0;
--}
--EXPORT_SYMBOL(davinci_clk_reset);
--
--int davinci_clk_reset_assert(struct clk *clk)
--{
--	if (clk == NULL || IS_ERR(clk) || !clk->reset)
--		return -EINVAL;
--
--	return clk->reset(clk, true);
--}
--EXPORT_SYMBOL(davinci_clk_reset_assert);
--
--int davinci_clk_reset_deassert(struct clk *clk)
--{
--	if (clk == NULL || IS_ERR(clk) || !clk->reset)
--		return -EINVAL;
--
--	return clk->reset(clk, false);
--}
--EXPORT_SYMBOL(davinci_clk_reset_deassert);
--
--int clk_enable(struct clk *clk)
--{
--	unsigned long flags;
--
--	if (!clk)
--		return 0;
--	else if (IS_ERR(clk))
--		return -EINVAL;
--
--	spin_lock_irqsave(&clockfw_lock, flags);
--	davinci_clk_enable(clk);
--	spin_unlock_irqrestore(&clockfw_lock, flags);
--
--	return 0;
--}
--EXPORT_SYMBOL(clk_enable);
--
--void clk_disable(struct clk *clk)
--{
--	unsigned long flags;
--
--	if (clk == NULL || IS_ERR(clk))
--		return;
--
--	spin_lock_irqsave(&clockfw_lock, flags);
--	davinci_clk_disable(clk);
--	spin_unlock_irqrestore(&clockfw_lock, flags);
--}
--EXPORT_SYMBOL(clk_disable);
--
--unsigned long clk_get_rate(struct clk *clk)
--{
--	if (clk == NULL || IS_ERR(clk))
--		return 0;
--
--	return clk->rate;
--}
--EXPORT_SYMBOL(clk_get_rate);
--
--long clk_round_rate(struct clk *clk, unsigned long rate)
--{
--	if (clk == NULL || IS_ERR(clk))
--		return 0;
--
--	if (clk->round_rate)
--		return clk->round_rate(clk, rate);
--
--	return clk->rate;
--}
--EXPORT_SYMBOL(clk_round_rate);
--
--/* Propagate rate to children */
--static void propagate_rate(struct clk *root)
--{
--	struct clk *clk;
--
--	list_for_each_entry(clk, &root->children, childnode) {
--		if (clk->recalc)
--			clk->rate = clk->recalc(clk);
--		propagate_rate(clk);
--	}
--}
--
--int clk_set_rate(struct clk *clk, unsigned long rate)
--{
--	unsigned long flags;
--	int ret = -EINVAL;
--
--	if (!clk)
--		return 0;
--	else if (IS_ERR(clk))
--		return -EINVAL;
--
--	if (clk->set_rate)
--		ret = clk->set_rate(clk, rate);
--
--	spin_lock_irqsave(&clockfw_lock, flags);
--	if (ret == 0) {
--		if (clk->recalc)
--			clk->rate = clk->recalc(clk);
--		propagate_rate(clk);
--	}
--	spin_unlock_irqrestore(&clockfw_lock, flags);
--
--	return ret;
--}
--EXPORT_SYMBOL(clk_set_rate);
--
--int clk_set_parent(struct clk *clk, struct clk *parent)
--{
--	unsigned long flags;
--
--	if (!clk)
--		return 0;
--	else if (IS_ERR(clk))
--		return -EINVAL;
--
--	/* Cannot change parent on enabled clock */
--	if (WARN_ON(clk->usecount))
--		return -EINVAL;
--
--	mutex_lock(&clocks_mutex);
--	if (clk->set_parent) {
--		int ret = clk->set_parent(clk, parent);
--
--		if (ret) {
--			mutex_unlock(&clocks_mutex);
--			return ret;
--		}
--	}
--	clk->parent = parent;
--	list_del_init(&clk->childnode);
--	list_add(&clk->childnode, &clk->parent->children);
--	mutex_unlock(&clocks_mutex);
--
--	spin_lock_irqsave(&clockfw_lock, flags);
--	if (clk->recalc)
--		clk->rate = clk->recalc(clk);
--	propagate_rate(clk);
--	spin_unlock_irqrestore(&clockfw_lock, flags);
--
--	return 0;
--}
--EXPORT_SYMBOL(clk_set_parent);
--
--struct clk *clk_get_parent(struct clk *clk)
--{
--	if (!clk)
--		return NULL;
--
--	return clk->parent;
--}
--EXPORT_SYMBOL(clk_get_parent);
--
--int clk_register(struct clk *clk)
--{
--	if (clk == NULL || IS_ERR(clk))
--		return -EINVAL;
--
--	if (WARN(clk->parent && !clk->parent->rate,
--			"CLK: %s parent %s has no rate!\n",
--			clk->name, clk->parent->name))
--		return -EINVAL;
--
--	INIT_LIST_HEAD(&clk->children);
--
--	mutex_lock(&clocks_mutex);
--	list_add_tail(&clk->node, &clocks);
--	if (clk->parent) {
--		if (clk->set_parent) {
--			int ret = clk->set_parent(clk, clk->parent);
--
--			if (ret) {
--				mutex_unlock(&clocks_mutex);
--				return ret;
--			}
--		}
--		list_add_tail(&clk->childnode, &clk->parent->children);
--	}
--	mutex_unlock(&clocks_mutex);
--
--	/* If rate is already set, use it */
--	if (clk->rate)
--		return 0;
--
--	/* Else, see if there is a way to calculate it */
--	if (clk->recalc)
--		clk->rate = clk->recalc(clk);
--
--	/* Otherwise, default to parent rate */
--	else if (clk->parent)
--		clk->rate = clk->parent->rate;
--
--	return 0;
--}
--EXPORT_SYMBOL(clk_register);
--
--void clk_unregister(struct clk *clk)
--{
--	if (clk == NULL || IS_ERR(clk))
--		return;
--
--	mutex_lock(&clocks_mutex);
--	list_del(&clk->node);
--	list_del(&clk->childnode);
--	mutex_unlock(&clocks_mutex);
--}
--EXPORT_SYMBOL(clk_unregister);
--
--#ifdef CONFIG_DAVINCI_RESET_CLOCKS
--/*
-- * Disable any unused clocks left on by the bootloader
-- */
--int __init davinci_clk_disable_unused(void)
--{
--	struct clk *ck;
--
--	spin_lock_irq(&clockfw_lock);
--	list_for_each_entry(ck, &clocks, node) {
--		if (ck->usecount > 0)
--			continue;
--		if (!(ck->flags & CLK_PSC))
--			continue;
--
--		/* ignore if in Disabled or SwRstDisable states */
--		if (!davinci_psc_is_clk_active(ck->gpsc, ck->lpsc))
--			continue;
--
--		pr_debug("Clocks: disable unused %s\n", ck->name);
--
--		davinci_psc_config(ck->domain, ck->gpsc, ck->lpsc,
--				false, ck->flags);
--	}
--	spin_unlock_irq(&clockfw_lock);
--
--	return 0;
--}
--#endif
--
--static unsigned long clk_sysclk_recalc(struct clk *clk)
--{
--	u32 v, plldiv;
--	struct pll_data *pll;
--	unsigned long rate = clk->rate;
--
--	/* If this is the PLL base clock, no more calculations needed */
--	if (clk->pll_data)
--		return rate;
--
--	if (WARN_ON(!clk->parent))
--		return rate;
--
--	rate = clk->parent->rate;
--
--	/* Otherwise, the parent must be a PLL */
--	if (WARN_ON(!clk->parent->pll_data))
--		return rate;
--
--	pll = clk->parent->pll_data;
--
--	/* If pre-PLL, source clock is before the multiplier and divider(s) */
--	if (clk->flags & PRE_PLL)
--		rate = pll->input_rate;
--
--	if (!clk->div_reg)
--		return rate;
--
--	v = __raw_readl(pll->base + clk->div_reg);
--	if (v & PLLDIV_EN) {
--		plldiv = (v & pll->div_ratio_mask) + 1;
--		if (plldiv)
--			rate /= plldiv;
--	}
--
--	return rate;
--}
--
--int davinci_set_sysclk_rate(struct clk *clk, unsigned long rate)
--{
--	unsigned v;
--	struct pll_data *pll;
--	unsigned long input;
--	unsigned ratio = 0;
--
--	/* If this is the PLL base clock, wrong function to call */
--	if (clk->pll_data)
--		return -EINVAL;
--
--	/* There must be a parent... */
--	if (WARN_ON(!clk->parent))
--		return -EINVAL;
--
--	/* ... the parent must be a PLL... */
--	if (WARN_ON(!clk->parent->pll_data))
--		return -EINVAL;
--
--	/* ... and this clock must have a divider. */
--	if (WARN_ON(!clk->div_reg))
--		return -EINVAL;
--
--	pll = clk->parent->pll_data;
--
--	input = clk->parent->rate;
--
--	/* If pre-PLL, source clock is before the multiplier and divider(s) */
--	if (clk->flags & PRE_PLL)
--		input = pll->input_rate;
--
--	if (input > rate) {
--		/*
--		 * Can afford to provide an output little higher than requested
--		 * only if maximum rate supported by hardware on this sysclk
--		 * is known.
--		 */
--		if (clk->maxrate) {
--			ratio = DIV_ROUND_CLOSEST(input, rate);
--			if (input / ratio > clk->maxrate)
--				ratio = 0;
--		}
--
--		if (ratio == 0)
--			ratio = DIV_ROUND_UP(input, rate);
--
--		ratio--;
--	}
--
--	if (ratio > pll->div_ratio_mask)
--		return -EINVAL;
--
--	do {
--		v = __raw_readl(pll->base + PLLSTAT);
--	} while (v & PLLSTAT_GOSTAT);
--
--	v = __raw_readl(pll->base + clk->div_reg);
--	v &= ~pll->div_ratio_mask;
--	v |= ratio | PLLDIV_EN;
--	__raw_writel(v, pll->base + clk->div_reg);
--
--	v = __raw_readl(pll->base + PLLCMD);
--	v |= PLLCMD_GOSET;
--	__raw_writel(v, pll->base + PLLCMD);
--
--	do {
--		v = __raw_readl(pll->base + PLLSTAT);
--	} while (v & PLLSTAT_GOSTAT);
--
--	return 0;
--}
--EXPORT_SYMBOL(davinci_set_sysclk_rate);
--
--static unsigned long clk_leafclk_recalc(struct clk *clk)
--{
--	if (WARN_ON(!clk->parent))
--		return clk->rate;
--
--	return clk->parent->rate;
--}
--
--int davinci_simple_set_rate(struct clk *clk, unsigned long rate)
--{
--	clk->rate = rate;
--	return 0;
--}
--
--static unsigned long clk_pllclk_recalc(struct clk *clk)
--{
--	u32 ctrl, mult = 1, prediv = 1, postdiv = 1;
--	u8 bypass;
--	struct pll_data *pll = clk->pll_data;
--	unsigned long rate = clk->rate;
--
--	ctrl = __raw_readl(pll->base + PLLCTL);
--	rate = pll->input_rate = clk->parent->rate;
--
--	if (ctrl & PLLCTL_PLLEN) {
--		bypass = 0;
--		mult = __raw_readl(pll->base + PLLM);
--		if (cpu_is_davinci_dm365())
--			mult = 2 * (mult & PLLM_PLLM_MASK);
--		else
--			mult = (mult & PLLM_PLLM_MASK) + 1;
--	} else
--		bypass = 1;
--
--	if (pll->flags & PLL_HAS_PREDIV) {
--		prediv = __raw_readl(pll->base + PREDIV);
--		if (prediv & PLLDIV_EN)
--			prediv = (prediv & pll->div_ratio_mask) + 1;
--		else
--			prediv = 1;
--	}
--
--	/* pre-divider is fixed, but (some?) chips won't report that */
--	if (cpu_is_davinci_dm355() && pll->num == 1)
--		prediv = 8;
--
--	if (pll->flags & PLL_HAS_POSTDIV) {
--		postdiv = __raw_readl(pll->base + POSTDIV);
--		if (postdiv & PLLDIV_EN)
--			postdiv = (postdiv & pll->div_ratio_mask) + 1;
--		else
--			postdiv = 1;
--	}
--
--	if (!bypass) {
--		rate /= prediv;
--		rate *= mult;
--		rate /= postdiv;
--	}
--
--	pr_debug("PLL%d: input = %lu MHz [ ",
--		 pll->num, clk->parent->rate / 1000000);
--	if (bypass)
--		pr_debug("bypass ");
--	if (prediv > 1)
--		pr_debug("/ %d ", prediv);
--	if (mult > 1)
--		pr_debug("* %d ", mult);
--	if (postdiv > 1)
--		pr_debug("/ %d ", postdiv);
--	pr_debug("] --> %lu MHz output.\n", rate / 1000000);
--
--	return rate;
--}
--
--/**
-- * davinci_set_pllrate - set the output rate of a given PLL.
-- *
-- * Note: Currently tested to work with OMAP-L138 only.
-- *
-- * @pll: pll whose rate needs to be changed.
-- * @prediv: The pre divider value. Passing 0 disables the pre-divider.
-- * @pllm: The multiplier value. Passing 0 leads to multiply-by-one.
-- * @postdiv: The post divider value. Passing 0 disables the post-divider.
-- */
--int davinci_set_pllrate(struct pll_data *pll, unsigned int prediv,
--					unsigned int mult, unsigned int postdiv)
--{
--	u32 ctrl;
--	unsigned int locktime;
--	unsigned long flags;
--
--	if (pll->base == NULL)
--		return -EINVAL;
--
--	/*
--	 *  PLL lock time required per OMAP-L138 datasheet is
--	 * (2000 * prediv)/sqrt(pllm) OSCIN cycles. We approximate sqrt(pllm)
--	 * as 4 and OSCIN cycle as 25 MHz.
--	 */
--	if (prediv) {
--		locktime = ((2000 * prediv) / 100);
--		prediv = (prediv - 1) | PLLDIV_EN;
--	} else {
--		locktime = PLL_LOCK_TIME;
--	}
--	if (postdiv)
--		postdiv = (postdiv - 1) | PLLDIV_EN;
--	if (mult)
--		mult = mult - 1;
--
--	/* Protect against simultaneous calls to PLL setting seqeunce */
--	spin_lock_irqsave(&clockfw_lock, flags);
--
--	ctrl = __raw_readl(pll->base + PLLCTL);
--
--	/* Switch the PLL to bypass mode */
--	ctrl &= ~(PLLCTL_PLLENSRC | PLLCTL_PLLEN);
--	__raw_writel(ctrl, pll->base + PLLCTL);
--
--	udelay(PLL_BYPASS_TIME);
--
--	/* Reset and enable PLL */
--	ctrl &= ~(PLLCTL_PLLRST | PLLCTL_PLLDIS);
--	__raw_writel(ctrl, pll->base + PLLCTL);
--
--	if (pll->flags & PLL_HAS_PREDIV)
--		__raw_writel(prediv, pll->base + PREDIV);
--
--	__raw_writel(mult, pll->base + PLLM);
--
--	if (pll->flags & PLL_HAS_POSTDIV)
--		__raw_writel(postdiv, pll->base + POSTDIV);
--
--	udelay(PLL_RESET_TIME);
--
--	/* Bring PLL out of reset */
--	ctrl |= PLLCTL_PLLRST;
--	__raw_writel(ctrl, pll->base + PLLCTL);
--
--	udelay(locktime);
--
--	/* Remove PLL from bypass mode */
--	ctrl |= PLLCTL_PLLEN;
--	__raw_writel(ctrl, pll->base + PLLCTL);
--
--	spin_unlock_irqrestore(&clockfw_lock, flags);
--
--	return 0;
--}
--EXPORT_SYMBOL(davinci_set_pllrate);
--
--/**
-- * davinci_set_refclk_rate() - Set the reference clock rate
-- * @rate:	The new rate.
-- *
-- * Sets the reference clock rate to a given value. This will most likely
-- * result in the entire clock tree getting updated.
-- *
-- * This is used to support boards which use a reference clock different
-- * than that used by default in <soc>.c file. The reference clock rate
-- * should be updated early in the boot process; ideally soon after the
-- * clock tree has been initialized once with the default reference clock
-- * rate (davinci_clk_init()).
-- *
-- * Returns 0 on success, error otherwise.
-- */
--int davinci_set_refclk_rate(unsigned long rate)
--{
--	struct clk *refclk;
--
--	refclk = clk_get(NULL, "ref");
--	if (IS_ERR(refclk)) {
--		pr_err("%s: failed to get reference clock\n", __func__);
--		return PTR_ERR(refclk);
--	}
--
--	clk_set_rate(refclk, rate);
--
--	clk_put(refclk);
--
--	return 0;
--}
--
--int __init davinci_clk_init(struct clk_lookup *clocks)
--{
--	struct clk_lookup *c;
--	struct clk *clk;
--	size_t num_clocks = 0;
--
--	for (c = clocks; c->clk; c++) {
--		clk = c->clk;
--
--		if (!clk->recalc) {
--
--			/* Check if clock is a PLL */
--			if (clk->pll_data)
--				clk->recalc = clk_pllclk_recalc;
--
--			/* Else, if it is a PLL-derived clock */
--			else if (clk->flags & CLK_PLL)
--				clk->recalc = clk_sysclk_recalc;
--
--			/* Otherwise, it is a leaf clock (PSC clock) */
--			else if (clk->parent)
--				clk->recalc = clk_leafclk_recalc;
--		}
--
--		if (clk->pll_data) {
--			struct pll_data *pll = clk->pll_data;
--
--			if (!pll->div_ratio_mask)
--				pll->div_ratio_mask = PLLDIV_RATIO_MASK;
--
--			if (pll->phys_base && !pll->base) {
--				pll->base = ioremap(pll->phys_base, SZ_4K);
--				WARN_ON(!pll->base);
--			}
--		}
--
--		if (clk->recalc)
--			clk->rate = clk->recalc(clk);
--
--		if (clk->lpsc)
--			clk->flags |= CLK_PSC;
--
--		if (clk->flags & PSC_LRST)
--			clk->reset = davinci_clk_reset;
--
--		clk_register(clk);
--		num_clocks++;
--
--		/* Turn on clocks that Linux doesn't otherwise manage */
--		if (clk->flags & ALWAYS_ENABLED)
--			clk_enable(clk);
--	}
--
--	clkdev_add_table(clocks, num_clocks);
--
--	return 0;
--}
--
--#ifdef CONFIG_DEBUG_FS
--
--#include <linux/debugfs.h>
--#include <linux/seq_file.h>
--
--#define CLKNAME_MAX	10		/* longest clock name */
--#define NEST_DELTA	2
--#define NEST_MAX	4
--
--static void
--dump_clock(struct seq_file *s, unsigned nest, struct clk *parent)
--{
--	char		*state;
--	char		buf[CLKNAME_MAX + NEST_DELTA * NEST_MAX];
--	struct clk	*clk;
--	unsigned	i;
--
--	if (parent->flags & CLK_PLL)
--		state = "pll";
--	else if (parent->flags & CLK_PSC)
--		state = "psc";
--	else
--		state = "";
--
--	/* <nest spaces> name <pad to end> */
--	memset(buf, ' ', sizeof(buf) - 1);
--	buf[sizeof(buf) - 1] = 0;
--	i = strlen(parent->name);
--	memcpy(buf + nest, parent->name,
--			min(i, (unsigned)(sizeof(buf) - 1 - nest)));
--
--	seq_printf(s, "%s users=%2d %-3s %9ld Hz\n",
--		   buf, parent->usecount, state, clk_get_rate(parent));
--	/* REVISIT show device associations too */
--
--	/* cost is now small, but not linear... */
--	list_for_each_entry(clk, &parent->children, childnode) {
--		dump_clock(s, nest + NEST_DELTA, clk);
--	}
--}
--
--static int davinci_ck_show(struct seq_file *m, void *v)
--{
--	struct clk *clk;
--
--	/*
--	 * Show clock tree; We trust nonzero usecounts equate to PSC enables...
--	 */
--	mutex_lock(&clocks_mutex);
--	list_for_each_entry(clk, &clocks, node)
--		if (!clk->parent)
--			dump_clock(m, 0, clk);
--	mutex_unlock(&clocks_mutex);
--
--	return 0;
--}
--
--static int davinci_ck_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, davinci_ck_show, NULL);
--}
--
--static const struct file_operations davinci_ck_operations = {
--	.open		= davinci_ck_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
--static int __init davinci_clk_debugfs_init(void)
--{
--	debugfs_create_file("davinci_clocks", S_IFREG | S_IRUGO, NULL, NULL,
--						&davinci_ck_operations);
--	return 0;
--
--}
--device_initcall(davinci_clk_debugfs_init);
--#endif /* CONFIG_DEBUG_FS */
-diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
-index 2d058568e004..307383472400 100644
---- a/arch/arm/mach-davinci/clock.h
-+++ b/arch/arm/mach-davinci/clock.h
-@@ -61,76 +61,4 @@
-  */
- #define PLL_LOCK_TIME		20
- 
--#ifndef __ASSEMBLER__
--
--#include <linux/list.h>
--#include <linux/clkdev.h>
--
--#define PLLSTAT_GOSTAT	BIT(0)
--#define PLLCMD_GOSET	BIT(0)
--
--struct pll_data {
--	u32 phys_base;
--	void __iomem *base;
--	u32 num;
--	u32 flags;
--	u32 input_rate;
--	u32 div_ratio_mask;
--};
--#define PLL_HAS_PREDIV          0x01
--#define PLL_HAS_POSTDIV         0x02
--
--struct clk {
--	struct list_head	node;
--	struct module		*owner;
--	const char		*name;
--	unsigned long		rate;
--	unsigned long		maxrate;	/* H/W supported max rate */
--	u8			usecount;
--	u8			lpsc;
--	u8			gpsc;
--	u8			domain;
--	u32			flags;
--	struct clk              *parent;
--	struct list_head	children; 	/* list of children */
--	struct list_head	childnode;	/* parent's child list node */
--	struct pll_data         *pll_data;
--	u32                     div_reg;
--	unsigned long (*recalc) (struct clk *);
--	int (*set_rate) (struct clk *clk, unsigned long rate);
--	int (*round_rate) (struct clk *clk, unsigned long rate);
--	int (*reset) (struct clk *clk, bool reset);
--	void (*clk_enable) (struct clk *clk);
--	void (*clk_disable) (struct clk *clk);
--	int (*set_parent) (struct clk *clk, struct clk *parent);
--};
--
--/* Clock flags: SoC-specific flags start at BIT(16) */
--#define ALWAYS_ENABLED		BIT(1)
--#define CLK_PSC			BIT(2)
--#define CLK_PLL			BIT(3) /* PLL-derived clock */
--#define PRE_PLL			BIT(4) /* source is before PLL mult/div */
--#define PSC_SWRSTDISABLE	BIT(5) /* Disable state is SwRstDisable */
--#define PSC_FORCE		BIT(6) /* Force module state transtition */
--#define PSC_LRST		BIT(8) /* Use local reset on enable/disable */
--
--#define CLK(dev, con, ck) 	\
--	{			\
--		.dev_id = dev,	\
--		.con_id = con,	\
--		.clk = ck,	\
--	}			\
--
--int davinci_clk_init(struct clk_lookup *clocks);
--int davinci_set_pllrate(struct pll_data *pll, unsigned int prediv,
--				unsigned int mult, unsigned int postdiv);
--int davinci_set_sysclk_rate(struct clk *clk, unsigned long rate);
--int davinci_set_refclk_rate(unsigned long rate);
--int davinci_simple_set_rate(struct clk *clk, unsigned long rate);
--int davinci_clk_reset(struct clk *clk, bool reset);
--void davinci_clk_enable(struct clk *clk);
--void davinci_clk_disable(struct clk *clk);
--
--#endif
--
- #endif
-diff --git a/arch/arm/mach-davinci/common.c b/arch/arm/mach-davinci/common.c
-index e03f95ccd95c..e1d0f0d841ff 100644
---- a/arch/arm/mach-davinci/common.c
-+++ b/arch/arm/mach-davinci/common.c
-@@ -20,8 +20,6 @@
- #include <mach/common.h>
- #include <mach/cputype.h>
- 
--#include "clock.h"
--
- struct davinci_soc_info davinci_soc_info;
- EXPORT_SYMBOL(davinci_soc_info);
- 
-diff --git a/arch/arm/mach-davinci/devices.c b/arch/arm/mach-davinci/devices.c
-index 0edda4093e47..e8dbbb7479ab 100644
---- a/arch/arm/mach-davinci/devices.c
-+++ b/arch/arm/mach-davinci/devices.c
-@@ -26,7 +26,6 @@
- 
- 
- #include "davinci.h"
--#include "clock.h"
- 
- #define DAVINCI_I2C_BASE	     0x01C21000
- #define DAVINCI_ATA_BASE	     0x01C66000
-diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
-index 3e8af6a0b64c..42ed4f2f5ce4 100644
---- a/arch/arm/mach-davinci/include/mach/clock.h
-+++ b/arch/arm/mach-davinci/include/mach/clock.h
-@@ -15,9 +15,6 @@
- 
- struct clk;
- 
--extern int clk_register(struct clk *clk);
--extern void clk_unregister(struct clk *clk);
--
- int davinci_clk_reset_assert(struct clk *c);
- int davinci_clk_reset_deassert(struct clk *c);
- 
-diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
-index ded8f5f42725..b577e13a9c23 100644
---- a/arch/arm/mach-davinci/include/mach/common.h
-+++ b/arch/arm/mach-davinci/include/mach/common.h
-@@ -54,8 +54,6 @@ struct davinci_soc_info {
- 	u32				jtag_id_reg;
- 	struct davinci_id		*ids;
- 	unsigned long			ids_num;
--	u32				*psc_bases;
--	unsigned long			psc_bases_num;
- 	u32				pinmux_base;
- 	const struct mux_config		*pinmux_pins;
- 	unsigned long			pinmux_pins_num;
-diff --git a/arch/arm/mach-davinci/psc.c b/arch/arm/mach-davinci/psc.c
-deleted file mode 100644
-index e5dc6bfde5f3..000000000000
---- a/arch/arm/mach-davinci/psc.c
-+++ /dev/null
-@@ -1,137 +0,0 @@
--/*
-- * TI DaVinci Power and Sleep Controller (PSC)
-- *
-- * Copyright (C) 2006 Texas Instruments.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- *  You should have received a copy of the GNU General Public License
-- *  along with this program; if not, write to the Free Software
-- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-- *
-- */
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/io.h>
--
--#include <mach/cputype.h>
--#include "psc.h"
--
--#include "clock.h"
--
--/* Return nonzero iff the domain's clock is active */
--int __init davinci_psc_is_clk_active(unsigned int ctlr, unsigned int id)
--{
--	void __iomem *psc_base;
--	u32 mdstat;
--	struct davinci_soc_info *soc_info = &davinci_soc_info;
--
--	if (!soc_info->psc_bases || (ctlr >= soc_info->psc_bases_num)) {
--		pr_warn("PSC: Bad psc data: 0x%x[%d]\n",
--				(int)soc_info->psc_bases, ctlr);
--		return 0;
--	}
--
--	psc_base = ioremap(soc_info->psc_bases[ctlr], SZ_4K);
--	mdstat = __raw_readl(psc_base + MDSTAT + 4 * id);
--	iounmap(psc_base);
--
--	/* if clocked, state can be "Enable" or "SyncReset" */
--	return mdstat & BIT(12);
--}
--
--/* Control "reset" line associated with PSC domain */
--void davinci_psc_reset(unsigned int ctlr, unsigned int id, bool reset)
--{
--	u32 mdctl;
--	void __iomem *psc_base;
--	struct davinci_soc_info *soc_info = &davinci_soc_info;
--
--	if (!soc_info->psc_bases || (ctlr >= soc_info->psc_bases_num)) {
--		pr_warn("PSC: Bad psc data: 0x%x[%d]\n",
--				(int)soc_info->psc_bases, ctlr);
--		return;
--	}
--
--	psc_base = ioremap(soc_info->psc_bases[ctlr], SZ_4K);
--
--	mdctl = readl(psc_base + MDCTL + 4 * id);
--	if (reset)
--		mdctl &= ~MDCTL_LRST;
--	else
--		mdctl |= MDCTL_LRST;
--	writel(mdctl, psc_base + MDCTL + 4 * id);
--
--	iounmap(psc_base);
--}
--
--/* Enable or disable a PSC domain */
--void davinci_psc_config(unsigned int domain, unsigned int ctlr,
--		unsigned int id, bool enable, u32 flags)
--{
--	u32 epcpr, ptcmd, ptstat, pdstat, pdctl, mdstat, mdctl;
--	void __iomem *psc_base;
--	struct davinci_soc_info *soc_info = &davinci_soc_info;
--	u32 next_state = PSC_STATE_ENABLE;
--
--	if (!soc_info->psc_bases || (ctlr >= soc_info->psc_bases_num)) {
--		pr_warn("PSC: Bad psc data: 0x%x[%d]\n",
--				(int)soc_info->psc_bases, ctlr);
--		return;
--	}
--
--	psc_base = ioremap(soc_info->psc_bases[ctlr], SZ_4K);
--
--	if (!enable) {
--		if (flags & PSC_SWRSTDISABLE)
--			next_state = PSC_STATE_SWRSTDISABLE;
--		else
--			next_state = PSC_STATE_DISABLE;
--	}
--
--	mdctl = __raw_readl(psc_base + MDCTL + 4 * id);
--	mdctl &= ~MDSTAT_STATE_MASK;
--	mdctl |= next_state;
--	if (flags & PSC_FORCE)
--		mdctl |= MDCTL_FORCE;
--	__raw_writel(mdctl, psc_base + MDCTL + 4 * id);
--
--	pdstat = __raw_readl(psc_base + PDSTAT + 4 * domain);
--	if ((pdstat & PDSTAT_STATE_MASK) == 0) {
--		pdctl = __raw_readl(psc_base + PDCTL + 4 * domain);
--		pdctl |= PDCTL_NEXT;
--		__raw_writel(pdctl, psc_base + PDCTL + 4 * domain);
--
--		ptcmd = 1 << domain;
--		__raw_writel(ptcmd, psc_base + PTCMD);
--
--		do {
--			epcpr = __raw_readl(psc_base + EPCPR);
--		} while ((((epcpr >> domain) & 1) == 0));
--
--		pdctl = __raw_readl(psc_base + PDCTL + 4 * domain);
--		pdctl |= PDCTL_EPCGOOD;
--		__raw_writel(pdctl, psc_base + PDCTL + 4 * domain);
--	} else {
--		ptcmd = 1 << domain;
--		__raw_writel(ptcmd, psc_base + PTCMD);
--	}
--
--	do {
--		ptstat = __raw_readl(psc_base + PTSTAT);
--	} while (!(((ptstat >> domain) & 1) == 0));
--
--	do {
--		mdstat = __raw_readl(psc_base + MDSTAT + 4 * id);
--	} while (!((mdstat & MDSTAT_STATE_MASK) == next_state));
--
--	iounmap(psc_base);
--}
-diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
-index b58707cf7033..68cd9d3fc82b 100644
---- a/arch/arm/mach-davinci/psc.h
-+++ b/arch/arm/mach-davinci/psc.h
-@@ -204,14 +204,4 @@
- #define PDCTL_NEXT		BIT(0)
- #define PDCTL_EPCGOOD		BIT(8)
- 
--#ifndef __ASSEMBLER__
--
--extern int davinci_psc_is_clk_active(unsigned int ctlr, unsigned int id);
--extern void davinci_psc_reset(unsigned int ctlr, unsigned int id,
--		bool reset);
--extern void davinci_psc_config(unsigned int domain, unsigned int ctlr,
--		unsigned int id, bool enable, u32 flags);
--
--#endif
--
- #endif /* __ASM_ARCH_PSC_H */
-diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
-index 486896f309c5..7ea3db0ff062 100644
---- a/arch/arm/mach-davinci/time.c
-+++ b/arch/arm/mach-davinci/time.c
-@@ -27,8 +27,6 @@
- #include <mach/hardware.h>
- #include <mach/time.h>
- 
--#include "clock.h"
--
- static struct clock_event_device clockevent_davinci;
- static unsigned int davinci_clock_tick_rate;
- 
+diff --git a/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+new file mode 100644
+index 0000000..20cef9d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+@@ -0,0 +1,693 @@
++Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
++===================================
++
++In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
++that have KRYO processors, the CPU ferequencies subset and voltage value
++of each OPP varies based on the silicon variant in use.
++Qualcomm Technologies, Inc. Process Voltage Scaling Tables
++defines the voltage and frequency value based on the msm-id in SMEM
++and speedbin blown in the efuse combination.
++The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
++to provide the OPP framework with required information (existing HW bitmap).
++This is used to determine the voltage and frequency value for each OPP of
++operating-points-v2 table when it is parsed by the OPP framework.
++
++Required properties:
++--------------------
++In 'cpus' nodes:
++- operating-points-v2: Phandle to the operating-points-v2 table to use.
++
++In 'operating-points-v2' table:
++- compatible: Should be
++	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
++- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
++		efuse registers that has information about the
++		speedbin that is used to select the right frequency/voltage
++		value pair.
++		Please refer the for nvmem-cells
++		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
++		and also examples below.
++
++In every OPP node:
++- opp-supported-hw: A single 32 bit bitmap value, representing compatible HW.
++		    Bitmap:
++			0:	MSM8996 V3, speedbin 0
++			1:	MSM8996 V3, speedbin 1
++			2:	MSM8996 V3, speedbin 2
++			3:	unused
++			4:	MSM8996 SG, speedbin 0
++			5:	MSM8996 SG, speedbin 1
++			6:	MSM8996 SG, speedbin 2
++			7-31:	unused
++
++Example 1:
++---------
++
++	cpus {
++		#address-cells = <2>;
++		#size-cells = <0>;
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "qcom,kryo";
++			reg = <0x0 0x0>;
++			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			cpu-supply = <&pm8994_s11_saw>;
++			operating-points-v2 = <&cluster0_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
++			next-level-cache = <&L2_0>;
++			L2_0: l2-cache {
++			      compatible = "cache";
++			      cache-level = <2>;
++			};
++		};
++
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "qcom,kryo";
++			reg = <0x0 0x1>;
++			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			cpu-supply = <&pm8994_s11_saw>;
++			operating-points-v2 = <&cluster0_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
++			next-level-cache = <&L2_0>;
++		};
++
++		CPU2: cpu@100 {
++			device_type = "cpu";
++			compatible = "qcom,kryo";
++			reg = <0x0 0x100>;
++			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			cpu-supply = <&pm8994_s11_saw>;
++			operating-points-v2 = <&cluster1_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
++			next-level-cache = <&L2_1>;
++			L2_1: l2-cache {
++			      compatible = "cache";
++			      cache-level = <2>;
++			};
++		};
++
++		CPU3: cpu@101 {
++			device_type = "cpu";
++			compatible = "qcom,kryo";
++			reg = <0x0 0x101>;
++			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			cpu-supply = <&pm8994_s11_saw>;
++			operating-points-v2 = <&cluster1_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
++			next-level-cache = <&L2_1>;
++		};
++
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&CPU0>;
++				};
++
++				core1 {
++					cpu = <&CPU1>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&CPU2>;
++				};
++
++				core1 {
++					cpu = <&CPU3>;
++				};
++			};
++		};
++	};
++
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2-kryo-cpu";
++		nvmem-cells = <&speedbin_efuse>;
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-384000000 {
++			opp-hz = /bits/ 64 <  384000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-422400000 {
++			opp-hz = /bits/ 64 <  422400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-460800000 {
++			opp-hz = /bits/ 64 <  460800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-537600000 {
++			opp-hz = /bits/ 64 <  537600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-614400000 {
++			opp-hz = /bits/ 64 <  614400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-691200000 {
++			opp-hz = /bits/ 64 <  691200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-768000000 {
++			opp-hz = /bits/ 64 <  768000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-844800000 {
++			opp-hz = /bits/ 64 <  844800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-902400000 {
++			opp-hz = /bits/ 64 <  902400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-960000000 {
++			opp-hz = /bits/ 64 <  960000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-979200000 {
++			opp-hz = /bits/ 64 <  979200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1056000000 {
++			opp-hz = /bits/ 64 < 1056000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1132800000 {
++			opp-hz = /bits/ 64 < 1132800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1209600000 {
++			opp-hz = /bits/ 64 < 1209600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1228800000 {
++			opp-hz = /bits/ 64 < 1228800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1286400000 {
++			opp-hz = /bits/ 64 < 1286400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x5>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1363200000 {
++			opp-hz = /bits/ 64 < 1363200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x72>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x5>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1440000000 {
++			opp-hz = /bits/ 64 < 1440000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1497600000 {
++			opp-hz = /bits/ 64 < 1497600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x4>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1516800000 {
++			opp-hz = /bits/ 64 < 1516800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 < 1593600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x71>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 < 1996800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x20>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2188800000 {
++			opp-hz = /bits/ 64 < 2188800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x10>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2-kryo-cpu";
++		nvmem-cells = <&speedbin_efuse>;
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-384000000 {
++			opp-hz = /bits/ 64 <  384000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-403200000 {
++			opp-hz = /bits/ 64 <  403200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-460800000 {
++			opp-hz = /bits/ 64 <  460800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-537600000 {
++			opp-hz = /bits/ 64 <  537600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-614400000 {
++			opp-hz = /bits/ 64 <  614400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-691200000 {
++			opp-hz = /bits/ 64 <  691200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-748800000 {
++			opp-hz = /bits/ 64 <  748800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-806400000 {
++			opp-hz = /bits/ 64 <  806400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-825600000 {
++			opp-hz = /bits/ 64 <  825600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-883200000 {
++			opp-hz = /bits/ 64 <  883200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-902400000 {
++			opp-hz = /bits/ 64 <  902400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-940800000 {
++			opp-hz = /bits/ 64 <  940800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-979200000 {
++			opp-hz = /bits/ 64 <  979200000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1056000000 {
++			opp-hz = /bits/ 64 < 1056000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1132800000 {
++			opp-hz = /bits/ 64 < 1132800000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1209600000 {
++			opp-hz = /bits/ 64 < 1209600000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1248000000 {
++			opp-hz = /bits/ 64 < 1248000000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1286400000 {
++			opp-hz = /bits/ 64 < 1286400000 >;
++			opp-microvolt = <905000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1363200000 {
++			opp-hz = /bits/ 64 < 1363200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1440000000 {
++			opp-hz = /bits/ 64 < 1440000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1516800000 {
++			opp-hz = /bits/ 64 < 1516800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1555200000 {
++			opp-hz = /bits/ 64 < 1555200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 < 1593600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1632000000 {
++			opp-hz = /bits/ 64 < 1632000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1670400000 {
++			opp-hz = /bits/ 64 < 1670400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1708800000 {
++			opp-hz = /bits/ 64 < 1708800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1747200000 {
++			opp-hz = /bits/ 64 < 1747200000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x70>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1785600000 {
++			opp-hz = /bits/ 64 < 1785600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1804800000 {
++			opp-hz = /bits/ 64 < 1804800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x6>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1824000000 {
++			opp-hz = /bits/ 64 < 1824000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x71>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1900800000 {
++			opp-hz = /bits/ 64 < 1900800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x74>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1920000000 {
++			opp-hz = /bits/ 64 < 1920000000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1977600000 {
++			opp-hz = /bits/ 64 < 1977600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x30>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 < 1996800000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2054400000 {
++			opp-hz = /bits/ 64 < 2054400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x30>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2073600000 {
++			opp-hz = /bits/ 64 < 2073600000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2150400000 {
++			opp-hz = /bits/ 64 < 2150400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x31>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2246400000 {
++			opp-hz = /bits/ 64 < 2246400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x10>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2342400000 {
++			opp-hz = /bits/ 64 < 2342400000 >;
++			opp-microvolt = <1140000 905000 1140000>;
++			opp-supported-hw = <0x10>;
++			clock-latency-ns = <200000>;
++		};
++
++	};
++
++....
++
++reserved-memory {
++	#address-cells = <2>;
++	#size-cells = <2>;
++	ranges;
++....
++	smem_mem: smem-mem@86000000 {
++		reg = <0x0 0x86000000 0x0 0x200000>;
++		no-map;
++	};
++....
++};
++
++smem {
++	compatible = "qcom,smem";
++	memory-region = <&smem_mem>;
++	hwlocks = <&tcsr_mutex 3>;
++};
++
++soc {
++....
++	qfprom: qfprom@74000 {
++		compatible = "qcom,qfprom";
++		reg = <0x00074000 0x8ff>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		....
++		speedbin_efuse: speedbin@133 {
++			reg = <0x133 0x1>;
++			bits = <5 3>;
++		};
++	};
++};
 -- 
-2.17.0
+1.9.1
