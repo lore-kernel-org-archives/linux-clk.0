@@ -1,92 +1,37 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: boris.brezillon@bootlin.com,
-	dwmw2@infradead.org,
-	computersforpeace@gmail.com,
-	marek.vasut@gmail.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	thierry.reding@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: dev@lynxeye.de,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	marcel@ziswiler.com,
-	krzk@kernel.org,
-	digetx@gmail.com,
-	benjamin.lindqvist@endian.se,
-	jonathanh@nvidia.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mirza.krak@gmail.com,
-	linux-mtd@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
-Date: Sun, 27 May 2018 23:54:36 +0200
-Message-Id: <20180527215442.14760-1-stefan@agner.ch>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v9 07/27] ARM: davinci: dm355: add new clock init using
+ common clock framework
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-8-david@lechnology.com>
+ <d9633747-0c50-2934-d3b2-ba745f021077@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <18b7b217-7ccb-d2dd-8f2c-ba3ba0e5d893@lechnology.com>
+Date: Thu, 3 May 2018 10:44:08 -0500
+MIME-Version: 1.0
+In-Reply-To: <d9633747-0c50-2934-d3b2-ba745f021077@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This picks up an older patchset written by Lucas Stach which
-adds raw NAND flash support for Tegra 2.
-http://lists.infradead.org/pipermail/linux-mtd/2015-November/063031.html
+On 05/03/2018 10:34 AM, Sekhar Nori wrote:
+> On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+>> This adds the new board-specific clock init in mach-davinci/dm355.c
+>> using the new common clock framework drivers.
+>>
+>> The #ifdefs are needed to prevent compile errors until the entire
+>> ARCH_DAVINCI is converted.
+>>
+>> Also clean up the #includes since we are adding some here.
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+> 
+> I am having trouble booting DM355 EVM with the series applied.
+> Still to debug what is going wrong.
 
-The driver has been reworked to implement the ->exec_op callback.
-Some smaller changes and bug fixes have been applied too, but I did
-not keep track of them. Since the original patchset has been posted
-some years back already, I guess review needs to be done from scratch
-anyway.
-
-This second revision is a rather major overhaul again. There are some
-open issues:
-- Driver specific DMA enabled (read/write)_page_raw are non functional
-  (I am not sure why, or if this is maybe even not possible at all...)
-- OOB layout discrepancy
-  When using HW BCH support, the location of the ECC bytes changes
-  depending on whether extra OOB bytes (tag data) are transmitted or
-  not... Writing/Reading should always be with tag enabled or always
-  without. I am not sure how to solve this correctly, maybe disallow
-  using OOB data with HW ECC completely?
-
---
-Stefan
-
-Changes since v1:
-- Split controller and NAND chip structure
-- Add BCH support
-- Allow to select algorithm and strength using device tree
-- Improve HW ECC error reporting and use DEC_STATUS_BUF only
-- Use SPDX license identifier
-- Use per algorithm mtd_ooblayout_ops
-- Use setup_data_interface callback for NAND timing configuration
-
-Lucas Stach (4):
-  mtd: rawnand: tegra: add devicetree binding
-  clk: tegra20: init NDFLASH clock to sensible rate
-  ARM: tegra: add Tegra20 NAND flash controller node
-  ARM: tegra: enable NAND flash on Colibri T20
-
-Stefan Agner (2):
-  mtd: rawnand: add Reed-Solomon error correction algorithm
-  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
-
- .../bindings/mtd/nvidia,tegra20-nand.txt      |  62 ++
- MAINTAINERS                                   |   7 +
- arch/arm/boot/dts/tegra20-colibri-512.dtsi    |  16 +
- arch/arm/boot/dts/tegra20.dtsi                |  13 +
- drivers/clk/tegra/clk-tegra20.c               |   1 +
- drivers/mtd/nand/raw/Kconfig                  |   6 +
- drivers/mtd/nand/raw/Makefile                 |   1 +
- drivers/mtd/nand/raw/nand_base.c              |   1 +
- drivers/mtd/nand/raw/tegra_nand.c             | 999 ++++++++++++++++++
- include/linux/mtd/rawnand.h                   |   1 +
- 10 files changed, 1107 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
- create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
-
--- 
-2.17.0
+Can you dump the PLL registers using /sys/kernel/debug/clk/... ?
