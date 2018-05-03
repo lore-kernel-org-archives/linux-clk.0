@@ -1,82 +1,57 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [v9] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Wed,  9 May 2018 11:26:06 +0530
-Message-Id: <1525845367-22185-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <gabriel.fernandez@st.com>
+From: <gabriel.fernandez@st.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Alexandre
+ TORGUE <alexandre.torgue@st.com>,
+        benjamin GAIGNARD
+	<benjamin.gaignard@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>
+Subject: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by default
+Date: Thu, 3 May 2018 08:40:09 +0200
+Message-ID: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
- [v9]
-   * clean up recalc function to use integer division.
-   * Add back type casting the desc data passed to "getter" function and
-   added comment for the same.
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
 
- [v8]
-   * cleanup code to remove of rpmh_client handle.
-   * pass the hw_clks array to the devm_of_clk_add_hw_provider getter function.
+Clock driver is mandatory if the machine is selected.
+Then don't use 'bool' and 'depends on' commands, but 'def_bool'
+with the machine(s).
 
- [v7]
-   * Addressed comments from Stephen
-	- Keep only xo_board as clock parent.
-	- Associate divs from SoC specific clock listing to calculate
-	   the clock rate.
-	- Add back the recalc_rate clock ops to return the clock rate
-	   based on the parent rate and div associated with clock.
-	- void cast kept to avoid compiler warnings.
+Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
 
- [v6]
-   * Addressed comments from Rob
-   * Addressed comments from Stephen
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+---
+ drivers/clk/Kconfig | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
- [v5]
-   * Addressed comments from Stephen
-   * Introduced a new DT property to take clock divs
-
- [v4]
-  * Addressed comments from Stephen
-
- [v3]
-  * Addressed documentation & code review comments from Bjorn
-  * Addressed bindings comments from Rob
-  * Updated the patch series order for bindings
-
- [v2]
-  * Addressed comments from Stephen
-  * Addressed comments from Evan
-
-This patch series adds a driver and device tree documentation binding
-for the clock control via Resource Power Manager-hardened (RPMh) on some
-Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
-would send requests for the RPMh managed clock resources.
-
-The RPMh clock driver depends upon the RPMh driver [1] and command DB
-driver [2] which are both still undergoing review.
-
-Thanks,
-Taniya
-
-[1]: https://lkml.org/lkml/2018/3/9/979
-[2]: https://lkml.org/lkml/2018/3/14/787
-
-Taniya Das (1):
-  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-
- drivers/clk/qcom/Kconfig    |   9 ++
- drivers/clk/qcom/Makefile   |   1 +
- drivers/clk/qcom/clk-rpmh.c | 333 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 343 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-rpmh.c
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 24a5bc3..721572a 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
+ 	  Support for stm32mp157 SoC family clocks
+ 
+ config COMMON_CLK_STM32F
+-	bool "Clock driver for stm32f4 and stm32f7 SoC families"
+-	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
++	def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
+ 	help
+ 	---help---
+ 	  Support for stm32f4 and stm32f7 SoC families clocks
+ 
+ config COMMON_CLK_STM32H7
+-	bool "Clock driver for stm32h7 SoC family"
+-	depends on MACH_STM32H743
++	def_bool COMMON_CLK && MACH_STM32H743
+ 	help
+ 	---help---
+ 	  Support for stm32h7 SoC family clocks
+-- 
+1.9.1
