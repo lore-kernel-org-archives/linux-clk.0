@@ -1,61 +1,47 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v10 02/27] clk: davinci: da850-pll: change PLL0 to
- CLK_OF_DECLARE
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <20180509172606.29387-1-david@lechnology.com>
- <20180509172606.29387-3-david@lechnology.com>
- <9203489d-0a5a-103a-67ea-d3e89bb7ebc4@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <88dec9b1-5f4d-a1ac-2b63-b30ae7665851@lechnology.com>
-Date: Tue, 15 May 2018 10:42:54 -0500
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Fri, 4 May 2018 11:30:55 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v5 00/14] CPU scaling support for msm8996
+Message-ID: <20180504060055.2pdb6tirhjboy2rq@vireshk-i7>
+References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <9203489d-0a5a-103a-67ea-d3e89bb7ebc4@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/15/2018 08:31 AM, Sekhar Nori wrote:
-> On Wednesday 09 May 2018 10:55 PM, David Lechner wrote:
->> +void of_da850_pll0_init(struct device_node *node)
->>   {
->> -	return of_davinci_pll_init(dev, dev->of_node, &da850_pll0_info,
->> -				   &da850_pll0_obsclk_info,
->> -				   da850_pll0_sysclk_info, 7, base, cfgchip);
->> +	void __iomem *base;
->> +	struct regmap *cfgchip;
->> +
->> +	base = of_iomap(node, 0);
->> +	if (!base) {
->> +		pr_err("%s: ioremap failed\n", __func__);
->> +		return;
->> +	}
->> +
->> +	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
+On 03-05-18, 14:52, Ilia Lin wrote:
+> [v5]
+>  * Rebased
+>  * Adressed comments from Bjorn
+>  * Adressed comments from Viresh
+>  * Adressed comments from Sricharan
+>  * Adressed comments from Nicolas
+>  * Adressed comments from Rob
+>  * Adressed comments from Mark
 
-In your previous review, you pointed out that the error did not need to
-be handled here because it is handled later in davinci_pll_clk_register().
+s/Adressed/Addressed/
 
-We get a warning there because cfgchip is only needed for unlocking the
-PLL for CPU frequency scaling and is not critical for operation of the
-clocks.
+And that's not how the history should be present here. I don't have
+any clue on what I commented on in the previous versions. Now that
+there is no clear history available, I need to go look at my previous
+replies to understand that. That's not right.
 
-> 
-> It will be nice to handle the error case here.
-> 
->> +
->> +	of_davinci_pll_init(NULL, node, &da850_pll0_info,
->> +			    &da850_pll0_obsclk_info,
->> +			    da850_pll0_sysclk_info, 7, base, cfgchip);
-> 
-> Apart from that, it looks good to me.
-> 
-> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-> 
-> Thanks,
-> Sekhar
-> 
+You should mention the exact changes here and you can include the name
+of the reviewer in parenthesis. Like this:
+
+* Replaced kmalloc with kzalloc (Viresh).
+
+-- 
+viresh
