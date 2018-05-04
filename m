@@ -1,65 +1,77 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 22 May 2018 14:07:04 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: viresh.kumar@linaro.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180522130704.GA31065@e107155-lin>
-References: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
- <1526988585-21678-1-git-send-email-ilialin@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526988585-21678-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [v8] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Fri,  4 May 2018 15:32:37 +0530
+Message-Id: <1525428158-29147-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 22, 2018 at 02:29:45PM +0300, Ilia Lin wrote:
-> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-> the CPU frequency subset and voltage value of each OPP varies
-> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-> defines the voltage and frequency value based on the msm-id in SMEM
-> and speedbin blown in the efuse combination.
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
-> 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+ [v8]
+   * cleanup code to remove of rpmh_client handle.
+   * pass the hw_clks array to the devm_of_clk_add_hw_provider getter function.
 
-[...]
+ [v7]
+   * Addressed comments from Stephen
+	- Keep only xo_board as clock parent.
+	- Associate divs from SoC specific clock listing to calculate
+	   the clock rate.
+	- Add back the recalc_rate clock ops to return the clock rate
+	   based on the parent rate and div associated with clock.
+	- void cast kept to avoid compiler warnings.
 
-> +
-> +	switch (msm8996_version) {
-> +	case MSM8996_V3:
-> +		versions = 1 << (unsigned int)(*speedbin);
-> +		break;
-> +	case MSM8996_SG:
-> +		versions = 1 << ((unsigned int)(*speedbin) + 4);
-> +		break;
-> +	default:
-> +		BUG();
-> +		break;
-> +	}
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		cpu_dev = get_cpu_device(cpu);
-> +		if (NULL == cpu_dev) {
-> +			ret = -ENODEV;
-> +			goto free_opp;
-> +		}
-> +
-> +		opp_tables[cpu] = dev_pm_opp_set_supported_hw(cpu_dev,
-> +							      &versions, 1);
+ [v6]
+   * Addressed comments from Rob
+   * Addressed comments from Stephen
 
-Will be not get NULL for all CPUs except 0 ?
-I haven't seen the patches from Viresh yet, if that prevents getting NULL
-or not.
+ [v5]
+   * Addressed comments from Stephen
+   * Introduced a new DT property to take clock divs
+
+ [v4]
+  * Addressed comments from Stephen
+
+ [v3]
+  * Addressed documentation & code review comments from Bjorn
+  * Addressed bindings comments from Rob
+  * Updated the patch series order for bindings
+
+ [v2]
+  * Addressed comments from Stephen
+  * Addressed comments from Evan
+
+This patch series adds a driver and device tree documentation binding
+for the clock control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
+would send requests for the RPMh managed clock resources.
+
+The RPMh clock driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.
+
+Thanks,
+Taniya
+
+[1]: https://lkml.org/lkml/2018/3/9/979
+[2]: https://lkml.org/lkml/2018/3/14/787
+
+Taniya Das (1):
+  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+
+ drivers/clk/qcom/Kconfig    |   9 ++
+ drivers/clk/qcom/Makefile   |   1 +
+ drivers/clk/qcom/clk-rpmh.c | 334 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 344 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
 
 --
-Regards,
-Sudeep
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
