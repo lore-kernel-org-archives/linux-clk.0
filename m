@@ -1,52 +1,123 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 1 May 2018 11:21:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 11/21] bindings: display: Add compatible for A64 Mixer1
-Message-ID: <20180501162130.GA6219@rob-hp-laptop>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-12-jagan@amarulasolutions.com>
+Return-Path: <Akshu.Agrawal@amd.com>
+From: Akshu Agrawal <akshu.agrawal@amd.com>
+To: 
+Cc: djkurtz@chromium.org,
+	akshu.agrawal@amd.com,
+	Alexander.Deucher@amd.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	christian.koenig@amd.com,
+	airlied@redhat.com,
+	Shaoyun.Liu@amd.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	rjw@rjwysocki.net,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH v2 2/2] ACPI: APD: Add AMD misc clock handler support
+Date: Sat,  5 May 2018 01:07:19 +0800
+Message-Id: <1525453639-30575-3-git-send-email-akshu.agrawal@amd.com>
+In-Reply-To: <1525453639-30575-1-git-send-email-akshu.agrawal@amd.com>
+References: <1525453639-30575-1-git-send-email-akshu.agrawal@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180430114058.5061-12-jagan@amarulasolutions.com>
+Content-Type: text/plain
+Return-Path: akshu.agrawal@amd.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 30, 2018 at 05:10:48PM +0530, Jagan Teki wrote:
-> Mixer1 on Allwinner A64 has similar behavior like Allwinner A83T.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> index 7dcd1d64dfe4..5d448ef2132f 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -313,6 +313,7 @@ Required properties:
->      * allwinner,sun8i-a83t-de2-mixer-1
->      * allwinner,sun8i-h3-de2-mixer-0
->      * allwinner,sun8i-v3s-de2-mixer
-> +    * allwinner,sun50i-a64-de2-mixer-1
+AMD SoC exposes clock for general purpose use. The clock registration
+is done in clk-st driver. The MMIO mapping are passed on to the
+clock driver for accessing the registers.
+The misc clock handler will create MMIO mappings to access the
+clock registers and enable the clock driver to expose the clock
+for use of drivers which will connect to it.
 
-Need to capture fallbacks here.
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+---
+v2: Submitted with dependent patch, removed unneeded kfree for devm_kzalloc
+ drivers/acpi/acpi_apd.c | 50 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
->    - reg: base address and size of the memory-mapped region.
->    - clocks: phandles to the clocks feeding the mixer
->      * bus: the mixer interface clock
-> -- 
-> 2.14.3
-> 
+diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
+index d553b00..88b8a3e 100644
+--- a/drivers/acpi/acpi_apd.c
++++ b/drivers/acpi/acpi_apd.c
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/platform_data/clk-st.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/clkdev.h>
+@@ -72,6 +73,50 @@ static int acpi_apd_setup(struct apd_private_data *pdata)
+ }
+ 
+ #ifdef CONFIG_X86_AMD_PLATFORM_DEVICE
++
++static int misc_check_res(struct acpi_resource *ares, void *data)
++{
++	struct resource res;
++
++	return !acpi_dev_resource_memory(ares, &res);
++}
++
++static int st_misc_setup(struct apd_private_data *pdata)
++{
++	struct acpi_device *adev = pdata->adev;
++	struct platform_device *clkdev;
++	struct st_clk_data *clk_data;
++	struct resource_entry *rentry;
++	struct list_head resource_list;
++	int ret;
++
++	clk_data = devm_kzalloc(&adev->dev, sizeof(*clk_data), GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	INIT_LIST_HEAD(&resource_list);
++	ret = acpi_dev_get_resources(adev, &resource_list, misc_check_res,
++				     NULL);
++	if (ret < 0)
++		return -ENOMEM;
++
++	list_for_each_entry(rentry, &resource_list, node) {
++		clk_data->base = ioremap(rentry->res->start,
++					 resource_size(rentry->res));
++		break;
++	}
++
++	acpi_dev_free_resource_list(&resource_list);
++
++	clkdev = platform_device_register_data(&adev->dev, "clk-st",
++					       PLATFORM_DEVID_NONE, clk_data,
++					       sizeof(*clk_data));
++	if (IS_ERR(clkdev))
++		return PTR_ERR(clkdev);
++
++	return 0;
++}
++
+ static const struct apd_device_desc cz_i2c_desc = {
+ 	.setup = acpi_apd_setup,
+ 	.fixed_clk_rate = 133000000,
+@@ -94,6 +139,10 @@ static int acpi_apd_setup(struct apd_private_data *pdata)
+ 	.fixed_clk_rate = 48000000,
+ 	.properties = uart_properties,
+ };
++
++static const struct apd_device_desc st_misc_desc = {
++	.setup = st_misc_setup,
++};
+ #endif
+ 
+ #ifdef CONFIG_ARM64
+@@ -179,6 +228,7 @@ static int acpi_apd_create_device(struct acpi_device *adev,
+ 	{ "AMD0020", APD_ADDR(cz_uart_desc) },
+ 	{ "AMDI0020", APD_ADDR(cz_uart_desc) },
+ 	{ "AMD0030", },
++	{ "AMD0040", APD_ADDR(st_misc_desc)},
+ #endif
+ #ifdef CONFIG_ARM64
+ 	{ "APMC0D0F", APD_ADDR(xgene_i2c_desc) },
+-- 
+1.9.1
