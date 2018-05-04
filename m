@@ -1,60 +1,94 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Thu, 24 May 2018 09:01:14 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH 9/9] regulator: bd71837: Build BD71837 regulator driver
-Message-ID: <20180524060114.GJ4249@localhost.localdomain>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58183 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751623AbeEDSvA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 May 2018 14:51:00 -0400
+Date: Fri, 4 May 2018 20:50:52 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180305102524.5905-4-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6e3ga3qhvjgmgc3v"
+In-Reply-To: <20180305102524.5905-4-o.rempel@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Configurations and Makefile for BD71837 regulator driver
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/regulator/Kconfig  | 11 +++++++++++
- drivers/regulator/Makefile |  1 +
- 2 files changed, 12 insertions(+)
+--6e3ga3qhvjgmgc3v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 097f61784a7d..139f4b53fea0 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -180,6 +180,17 @@ config REGULATOR_BCM590XX
- 	  BCM590xx PMUs. This will enable support for the software
- 	  controllable LDO/Switching regulators.
- 
-+config REGULATOR_BD71837
-+	tristate "ROHM BD71837 Power Regulator"
-+	depends on MFD_BD71837
-+	help
-+	  This driver supports voltage regulators on ROHM BD71837 PMIC.
-+	  This will enable support for the software controllable buck
-+	  and LDO regulators.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called bd71837-regulator.
-+
- config REGULATOR_BD9571MWV
- 	tristate "ROHM BD9571MWV Regulators"
- 	depends on MFD_BD9571MWV
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 590674fbecd7..1b4d8ec416c2 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
- obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
- obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
- obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
-+obj-$(CONFIG_REGULATOR_BD71837) += bd71837-regulator.o
- obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
- obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
- obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
--- 
-2.14.3
+Hallo Andrew,
+I need your ACK or NACK for this patch.
+
+This function is used to configure external PMIC to interpret
+signal which will be triggered by pm_power_off as power off.
+Since same signal can be used for stand by, I linked PMIC configuration
+with pm_power_off_prepare to avoid possible conflicts.
+
+On Mon, Mar 05, 2018 at 11:25:20AM +0100, Oleksij Rempel wrote:
+> Export pm_power_off_prepare. It is needed to implement power off on
+> Freescale/NXP iMX6 based boards with external power management
+> integrated circuit (PMIC).
+>=20
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  kernel/reboot.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/kernel/reboot.c b/kernel/reboot.c
+> index e4ced883d8de..350be6baa60d 100644
+> --- a/kernel/reboot.c
+> +++ b/kernel/reboot.c
+> @@ -49,6 +49,7 @@ int reboot_force;
+>   */
+> =20
+>  void (*pm_power_off_prepare)(void);
+> +EXPORT_SYMBOL(pm_power_off_prepare);
+> =20
+>  /**
+>   *	emergency_restart - reboot the system
+> --=20
+> 2.16.1
+>=20
+>=20
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--6e3ga3qhvjgmgc3v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlrsq4YACgkQdQOiSHVI
+77RrrAf+NcAmX7I0v3A0RtYgJl4/U+SH3tfZ1+vLFOE2EL2V/xZyfRJzZofV94Rx
+tZTDI2PidntjBmtIqLTYPCl70RjmmHJlzmmGHU34QqiTir9tJ8OCam1FXlJ5iv1U
+zi/ET9pScJyf8NS9LghYbX8JAdZqcP9PtDKntT4a90KawVsJKlEEw+LDsncQ2AJa
+lsdwTe/QsvMhSs4cRLDVd4G0q9xGZ/W7pkC+eB+z8tXQWU2IxLQ1OlWPG03K1e1n
+xKs4loCLVWlfp2U73Nk6+F0A5Pek+mhhUDeqG/q64W6fTvD5MzZTk7uSuEs7rBwT
+x6bJbpce+s88+W9Uw/7/H3CIMXniug==
+=JJlX
+-----END PGP SIGNATURE-----
+
+--6e3ga3qhvjgmgc3v--
