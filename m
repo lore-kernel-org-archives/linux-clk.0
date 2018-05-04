@@ -1,147 +1,51 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 1 May 2018 09:31:15 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] clk: meson: axg: export audio clock controller id
- bindings
-Message-ID: <20180501143115.GA17513@rob-hp-laptop>
-References: <20180425163304.10852-1-jbrunet@baylibre.com>
- <20180425163304.10852-6-jbrunet@baylibre.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v2 4/4] ARM: dts: tegra20: Revert "Fix ULPI regression on
+ Tegra20"
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180503225537.20748-1-digetx@gmail.com>
+ <20180503225537.20748-6-digetx@gmail.com> <20180504104051.GL13459@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5013e8c6-a56a-38ad-2a25-d18bf0a1e014@gmail.com>
+Date: Fri, 4 May 2018 14:21:30 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180425163304.10852-6-jbrunet@baylibre.com>
+In-Reply-To: <20180504104051.GL13459@ulmo>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 06:33:02PM +0200, Jerome Brunet wrote:
-> export the clock ids dt-bindings usable by the consumers of the axg
-> audio clock controller
-
-Capitalization and punctuation would be nice.
-
+On 04.05.2018 13:40, Thierry Reding wrote:
+> On Fri, May 04, 2018 at 01:55:37AM +0300, Dmitry Osipenko wrote:
+>> Commit 4c9a27a6c66d ("ARM: tegra: Fix ULPI regression on Tegra20") changed
+>> "ulpi-link" clock from CDEV2 to PLL_P_OUT4. Turned out that PLL_P_OUT4 is
+>> the parent of CDEV2 clock and original clock setup of "ulpi-link" was
+>> correct. The reverted patch was fixing USB for one board and broke the
+>> other, now Tegra's clk driver correctly sets parent for the CDEV2 clock
+>> and hence patch could be reverted safely, restoring USB for all of the
+>> boards.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+>> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+>> Tested-by: Marc Dietrich <marvin24@gmx.de>
+>> ---
+>>  arch/arm/boot/dts/tegra20.dtsi | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  include/dt-bindings/clock/axg-audio-clkc.h | 94 ++++++++++++++++++++++++++++++
->  1 file changed, 94 insertions(+)
->  create mode 100644 include/dt-bindings/clock/axg-audio-clkc.h
+> Is it still true that this patch alone fixes the known regression? I'm
+> just asking because the remainder of the series, even though it sounds
+> to be the right thing to do, is fairly big for a fix against v4.17.
 
-This can be combined with the next patch. Otherwise,
+Yes, Marcel says that reverting just this patch works for him now.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> So if this alone fixes the regression I think it'd be best to queue it
+> up for v4.17 and get the rest of the patches into v4.18.
 
-> 
-> diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
-> new file mode 100644
-> index 000000000000..4426ae655858
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/axg-audio-clkc.h
-> @@ -0,0 +1,94 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> +/*
-> + * Copyright (c) 2018 Baylibre SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + */
-> +
-> +#ifndef __AXG_AUDIO_CLKC_BINDINGS_H
-> +#define __AXG_AUDIO_CLKC_BINDINGS_H
-> +
-> +#define AUD_CLKID_SLV_SCLK0		9
-> +#define AUD_CLKID_SLV_SCLK1		10
-> +#define AUD_CLKID_SLV_SCLK2		11
-> +#define AUD_CLKID_SLV_SCLK3		12
-> +#define AUD_CLKID_SLV_SCLK4		13
-> +#define AUD_CLKID_SLV_SCLK5		14
-> +#define AUD_CLKID_SLV_SCLK6		15
-> +#define AUD_CLKID_SLV_SCLK7		16
-> +#define AUD_CLKID_SLV_SCLK8		17
-> +#define AUD_CLKID_SLV_SCLK9		18
-> +#define AUD_CLKID_SLV_LRCLK0		19
-> +#define AUD_CLKID_SLV_LRCLK1		20
-> +#define AUD_CLKID_SLV_LRCLK2		21
-> +#define AUD_CLKID_SLV_LRCLK3		22
-> +#define AUD_CLKID_SLV_LRCLK4		23
-> +#define AUD_CLKID_SLV_LRCLK5		24
-> +#define AUD_CLKID_SLV_LRCLK6		25
-> +#define AUD_CLKID_SLV_LRCLK7		26
-> +#define AUD_CLKID_SLV_LRCLK8		27
-> +#define AUD_CLKID_SLV_LRCLK9		28
-> +#define AUD_CLKID_DDR_ARB		29
-> +#define AUD_CLKID_PDM			30
-> +#define AUD_CLKID_TDMIN_A		31
-> +#define AUD_CLKID_TDMIN_B		32
-> +#define AUD_CLKID_TDMIN_C		33
-> +#define AUD_CLKID_TDMIN_LB		34
-> +#define AUD_CLKID_TDMOUT_A		35
-> +#define AUD_CLKID_TDMOUT_B		36
-> +#define AUD_CLKID_TDMOUT_C		37
-> +#define AUD_CLKID_FRDDR_A		38
-> +#define AUD_CLKID_FRDDR_B		39
-> +#define AUD_CLKID_FRDDR_C		40
-> +#define AUD_CLKID_TODDR_A		41
-> +#define AUD_CLKID_TODDR_B		42
-> +#define AUD_CLKID_TODDR_C		43
-> +#define AUD_CLKID_LOOPBACK		44
-> +#define AUD_CLKID_SPDIFIN		45
-> +#define AUD_CLKID_SPDIFOUT		46
-> +#define AUD_CLKID_RESAMPLE		47
-> +#define AUD_CLKID_POWER_DETECT		48
-> +#define AUD_CLKID_MST_A_MCLK		49
-> +#define AUD_CLKID_MST_B_MCLK		50
-> +#define AUD_CLKID_MST_C_MCLK		51
-> +#define AUD_CLKID_MST_D_MCLK		52
-> +#define AUD_CLKID_MST_E_MCLK		53
-> +#define AUD_CLKID_MST_F_MCLK		54
-> +#define AUD_CLKID_SPDIFOUT_CLK		55
-> +#define AUD_CLKID_SPDIFIN_CLK		56
-> +#define AUD_CLKID_PDM_DCLK		57
-> +#define AUD_CLKID_PDM_SYSCLK		58
-> +#define AUD_CLKID_MST_A_SCLK		79
-> +#define AUD_CLKID_MST_B_SCLK		80
-> +#define AUD_CLKID_MST_C_SCLK		81
-> +#define AUD_CLKID_MST_D_SCLK		82
-> +#define AUD_CLKID_MST_E_SCLK		83
-> +#define AUD_CLKID_MST_F_SCLK		84
-> +#define AUD_CLKID_MST_A_LRCLK		86
-> +#define AUD_CLKID_MST_B_LRCLK		87
-> +#define AUD_CLKID_MST_C_LRCLK		88
-> +#define AUD_CLKID_MST_D_LRCLK		89
-> +#define AUD_CLKID_MST_E_LRCLK		90
-> +#define AUD_CLKID_MST_F_LRCLK		91
-> +#define AUD_CLKID_TDMIN_A_SCLK_SEL	116
-> +#define AUD_CLKID_TDMIN_B_SCLK_SEL	117
-> +#define AUD_CLKID_TDMIN_C_SCLK_SEL	118
-> +#define AUD_CLKID_TDMIN_LB_SCLK_SEL	119
-> +#define AUD_CLKID_TDMOUT_A_SCLK_SEL	120
-> +#define AUD_CLKID_TDMOUT_B_SCLK_SEL	121
-> +#define AUD_CLKID_TDMOUT_C_SCLK_SEL	122
-> +#define AUD_CLKID_TDMIN_A_SCLK		123
-> +#define AUD_CLKID_TDMIN_B_SCLK		124
-> +#define AUD_CLKID_TDMIN_C_SCLK		125
-> +#define AUD_CLKID_TDMIN_LB_SCLK		126
-> +#define AUD_CLKID_TDMOUT_A_SCLK		127
-> +#define AUD_CLKID_TDMOUT_B_SCLK		128
-> +#define AUD_CLKID_TDMOUT_C_SCLK		129
-> +#define AUD_CLKID_TDMIN_A_LRCLK		130
-> +#define AUD_CLKID_TDMIN_B_LRCLK		131
-> +#define AUD_CLKID_TDMIN_C_LRCLK		132
-> +#define AUD_CLKID_TDMIN_LB_LRCLK	133
-> +#define AUD_CLKID_TDMOUT_A_LRCLK	134
-> +#define AUD_CLKID_TDMOUT_B_LRCLK	135
-> +#define AUD_CLKID_TDMOUT_C_LRCLK	136
-> +
-> +#endif /* __AXG_AUDIO_CLKC_BINDINGS_H */
-> -- 
-> 2.14.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Sounds good.
