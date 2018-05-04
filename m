@@ -1,66 +1,44 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Akshu.Agrawal@amd.com>
+From: Akshu Agrawal <akshu.agrawal@amd.com>
+To: 
+Cc: djkurtz@chromium.org,
+	akshu.agrawal@amd.com,
+	Alexander.Deucher@amd.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	christian.koenig@amd.com,
+	airlied@redhat.com,
+	Shaoyun.Liu@amd.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	rjw@rjwysocki.net,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH 0/2] Add support for general system clock on ST AMD platform
+Date: Sat,  5 May 2018 01:07:17 +0800
+Message-Id: <1525453639-30575-1-git-send-email-akshu.agrawal@amd.com>
 MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
- Sricharan R <sricharan@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <664089d4-b30d-99bb-2021-12128b2895ba@codeaurora.org>
-Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
- andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, linux@arm.linux.org.uk
-References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
- <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
- <20180524173926.GC14924@minitux>
- <664089d4-b30d-99bb-2021-12128b2895ba@codeaurora.org>
-Message-ID: <152769571081.144038.4314499217001219157@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v9 01/15] ARM: Add Krait L2 register accessor functions
-Date: Wed, 30 May 2018 08:55:10 -0700
+Content-Type: text/plain
+Return-Path: akshu.agrawal@amd.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sricharan R (2018-05-24 22:40:11)
-> Hi Bjorn,
-> =
+AMD ST/CZ platform provides a general system clock which can be used
+by any driver. Registration of this clock will done in clk-st driver.
+While the ACPI misc device will create the required MMIO mappings
+and pass the same to the clk-st driver. The clk-st driver will
+use the address to enable/disable and set frequency.
 
-> On 5/24/2018 11:09 PM, Bjorn Andersson wrote:
-> > On Tue 06 Mar 06:38 PST 2018, Sricharan R wrote:
-> > =
+Akshu Agrawal (2):
+  clk: x86: Add ST oscout platform clock
+  ACPI: APD: Add AMD misc clock handler support
 
-> >> From: Stephen Boyd <sboyd@codeaurora.org>
-> >>
-> >> Krait CPUs have a handful of L2 cache controller registers that
-> >> live behind a cp15 based indirection register. First you program
-> >> the indirection register (l2cpselr) to point the L2 'window'
-> >> register (l2cpdr) at what you want to read/write.  Then you
-> >> read/write the 'window' register to do what you want. The
-> >> l2cpselr register is not banked per-cpu so we must lock around
-> >> accesses to it to prevent other CPUs from re-pointing l2cpdr
-> >> underneath us.
-> >>
-> >> Cc: Mark Rutland <mark.rutland@arm.com>
-> >> Cc: Russell King <linux@arm.linux.org.uk>
-> >> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> > =
+ drivers/acpi/acpi_apd.c              | 50 ++++++++++++++++++++
+ drivers/clk/x86/Makefile             |  1 +
+ drivers/clk/x86/clk-st.c             | 88 ++++++++++++++++++++++++++++++++++++
+ include/linux/platform_data/clk-st.h | 35 ++++++++++++++
+ 4 files changed, 174 insertions(+)
+ create mode 100644 drivers/clk/x86/clk-st.c
+ create mode 100644 include/linux/platform_data/clk-st.h
 
-> > This should have your signed-off-by here as well.
-> > =
-
-> =
-
->  ok.
-> =
-
-> > Apart from that:
-> > =
-
-> > Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > =
-
-> =
-
-
-Will these patches come around again? I'll do a quick sweep on them
-today but I expect them to be resent.
+-- 
+1.9.1
