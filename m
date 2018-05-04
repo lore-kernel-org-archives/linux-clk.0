@@ -1,57 +1,64 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Fri, 25 May 2018 14:31:30 +0300
-To: Mark Brown <broonie@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	"Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"lee.jones@linaro.org" <lee.jones@linaro.org>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
-	"Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
-Subject: Re: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
- regulators
-Message-ID: <20180525113130.GD16888@localhost.localdomain>
-References: <20180524055752.GE4249@localhost.localdomain>
- <20180524140118.GS4828@sirena.org.uk>
- <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
- <20180524175721.GB4828@sirena.org.uk>
- <20180525055430.GB16888@localhost.localdomain>
- <20180525102458.GJ4828@sirena.org.uk>
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not
+ compiled by default
+To: <gabriel.fernandez@st.com>, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        benjamin
+ GAIGNARD <benjamin.gaignard@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+Date: Fri, 4 May 2018 09:54:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180525102458.GJ4828@sirena.org.uk>
+In-Reply-To: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 25, 2018 at 11:24:58AM +0100, Mark Brown wrote:
-> On Fri, May 25, 2018 at 08:54:30AM +0300, Matti Vaittinen wrote:
-> > On Thu, May 24, 2018 at 06:57:21PM +0100, Mark Brown wrote:
-> 
-> > > You can look at the regulators node within the parent device, you know
-> > > that in Linux the parent device will be the MFD.
-> 
-> > So I should parse the device-tree in MFD my driver in order to locate
-> > the regulators node? Isn't that somewhat like code dublication? If we
-> > rely on compatibles we can avoid device-tree parsing in MFD driver,
-> 
-> No, there's no need to do this - the child can just look at the of_node
-> of the parent since it can never be instantiated otherwise.
-> 
-> > right? An in-tree example of this is:
-> 
-> There are some bad examples (and some where the same regulators can get
-> used with multiple different parents) but that's no reason not to follow
-> good practice.
-Fair enough. I guess you may still know regulator subsystem better than I
-do with my one month of experience ;) I'll follow your suggestion and
-cook-up new patches.
+Stephen
 
-Br,
-    Matti Vaittinen
+On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> 
+> Clock driver is mandatory if the machine is selected.
+> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
+> with the machine(s).
+> 
+> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
+> 
+
+Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
+
+Thanks in advance
+Alex
+
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+> ---
+>   drivers/clk/Kconfig | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 24a5bc3..721572a 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
+>   	  Support for stm32mp157 SoC family clocks
+>   
+>   config COMMON_CLK_STM32F
+> -	bool "Clock driver for stm32f4 and stm32f7 SoC families"
+> -	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+> +	def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
+>   	help
+>   	---help---
+>   	  Support for stm32f4 and stm32f7 SoC families clocks
+>   
+>   config COMMON_CLK_STM32H7
+> -	bool "Clock driver for stm32h7 SoC family"
+> -	depends on MACH_STM32H743
+> +	def_bool COMMON_CLK && MACH_STM32H743
+>   	help
+>   	---help---
+>   	  Support for stm32h7 SoC family clocks
+> 
