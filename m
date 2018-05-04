@@ -1,57 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:60855 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751191AbeE3Pms (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 May 2018 11:42:48 -0400
-Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
-To: Tony Lindgren <tony@atomide.com>
-CC: Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>, <paul@pwsan.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-2-faiz_abbas@ti.com> <20180530145047.GC5705@atomide.com>
- <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
- <20180530152825.GG5705@atomide.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
-Date: Wed, 30 May 2018 18:41:59 +0300
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Fri, 4 May 2018 12:40:51 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] ARM: dts: tegra20: Revert "Fix ULPI regression on
+ Tegra20"
+Message-ID: <20180504104051.GL13459@ulmo>
+References: <20180503225537.20748-1-digetx@gmail.com>
+ <20180503225537.20748-6-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530152825.GG5705@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7l042bGvurpep9Wg"
+In-Reply-To: <20180503225537.20748-6-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 30/05/18 18:28, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
->> For the OCP if part, I think that is still needed until we switch over to
->> full sysc driver. clkctrl_offs you probably also need because that is used
->> for mapping the omap_hwmod against a specific clkctrl clock. Those can be
->> only removed once we are done with hwmod (or figure out some other way to
->> assign the clkctrl clock to a hwmod.)
-> 
-> Hmm might be worth testing. I thought your commit 70f05be32133
-> ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
-> already parses the clkctrl from dts?
 
-It maps the clkctrl clock to be used by hwmod, if those are available. 
-We didn't add any specific clock entries to DT for mapping the actual 
-clkctrl clock without the hwmod_data hints yet though, as that was 
-deemed temporary solution only due to transition to interconnect driver. 
-I.e., you would need something like this in DT for every device node:
+--7l042bGvurpep9Wg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-&uart3 {
-   clocks = <l4per_clkctrl UART3_CLK 0>;
-   clock-names = "clkctrl";
-};
+On Fri, May 04, 2018 at 01:55:37AM +0300, Dmitry Osipenko wrote:
+> Commit 4c9a27a6c66d ("ARM: tegra: Fix ULPI regression on Tegra20") changed
+> "ulpi-link" clock from CDEV2 to PLL_P_OUT4. Turned out that PLL_P_OUT4 is
+> the parent of CDEV2 clock and original clock setup of "ulpi-link" was
+> correct. The reverted patch was fixing USB for one board and broke the
+> other, now Tegra's clk driver correctly sets parent for the CDEV2 clock
+> and hence patch could be reverted safely, restoring USB for all of the
+> boards.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+> Tested-by: Marc Dietrich <marvin24@gmx.de>
+> ---
+>  arch/arm/boot/dts/tegra20.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-... which is currently not present.
+Is it still true that this patch alone fixes the known regression? I'm
+just asking because the remainder of the series, even though it sounds
+to be the right thing to do, is fairly big for a fix against v4.17.
 
-Alternatively you could rename the main_clk in the hwmod_data to point 
-towards the clkctrl clock, but again, that would be a temporary solution 
-only.
+So if this alone fixes the regression I think it'd be best to queue it
+up for v4.17 and get the rest of the patches into v4.18.
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Thierry
+
+--7l042bGvurpep9Wg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrsOLEACgkQ3SOs138+
+s6EGSA//eqg+XTznoksvEILxLT2d1DeiOijjzlYVUPKMTriI8Ss7hdg4Sc1HHjVW
+uCBgY+csl//d1RQ2kB+HgrCb8iJ2t/j7KdgLCScI9tlZQZrlciP/SIpxGoSeGa7u
+Xd46KKucNtuE5MEZLWHA6NpVx+b5EBIRCudTWCy5y31oGMGqqAMnQp9NHGL6/p8N
+5C3bRUPZA5w385aPjngGUoZrvKV8GPuLEPi1OHh5wp7rNax8aC75boNK8U3b1I0S
+LIgxJATJdEvSOvBOETfzQz/jXFHH2Q6rJuteu9TF1vzcnaBqRFKv1YTwcmxQM8Lk
+2Ie4rPwvFfd6yY9a7LVvBf/4TGJ01cqhsgFysnKW+4mKWlCKT2VACFFwYaTlYhDb
+M+9guQA6BsocY1ID1MaEiP5+0hCma/qA0n4vlKJwslFAKTUOlTJ4iwlwP/xilCsc
+hIcA671e0N2YYFGRSKFISOWTzEbGB2BD1uGRghwxXRN116+6skwqF9ES44OuoyYD
+s9/8byqPo2m0umKYtGz/KkVM1AvAAWyrmBdpAqtCHLQjk+zJDNloJ3eF1iWikBfm
+9GIDxf2ojxEp6rtA5x3JN+JXBNJQwiZuwB25HBBI8u5/afuFkM/fP59jrtJOQLI8
+3nqNWlQqxgKiP1PPCu2zg34DJwd+R/+7ginkV08T7xyvDrJNRuM=
+=KvsY
+-----END PGP SIGNATURE-----
+
+--7l042bGvurpep9Wg--
