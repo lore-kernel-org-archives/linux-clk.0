@@ -1,32 +1,28 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>,
- Marcel Ziswiler <marcel@ziswiler.com>,
+To: Amit Nischal <anischal@codeaurora.org>,
  Michael Turquette <mturquette@baylibre.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>
+ Stephen Boyd <sboyd@codeaurora.org>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180426235818.10018-4-digetx@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180426235818.10018-4-digetx@gmail.com>
-Message-ID: <152521027630.138124.3736014507579667653@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v1 3/4] clk: tegra20: Set correct parents for CDEV1/2 clocks
-Date: Tue, 01 May 2018 14:31:16 -0700
+In-Reply-To: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
+References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
+Message-ID: <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1 0/2] Add QCOM video clock controller driver
+Date: Fri, 04 May 2018 09:31:04 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dmitry Osipenko (2018-04-26 16:58:17)
-> Parents of CDEV1/2 clocks are determined by muxing of the corresponding
-> pins. Pinctrl driver now provides the CDEV1/2 clock muxes and hence
-> CDEV1/2 clocks could have correct parents. Set CDEV1/2 parents to the
-> corresponding muxes to fix the parents.
-> =
+Quoting Amit Nischal (2018-05-03 05:35:23)
+> Changes in v1:
+>    https://lkml.org/lkml/2018/4/24/545
+> Addressed below review comments given by Rob
+> - Change the compatible property as per '<vendor>,<soc>-<block>' format.
+> - Add header definitions for resets and power-domain cells.
 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+You didn't add any reset definitions though?
