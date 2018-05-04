@@ -1,190 +1,177 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Message-id: <5AFE3E04.6060801@samsung.com>
-Date: Fri, 18 May 2018 11:44:20 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, MyungJoo Ham
-	<myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob
-	Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Heiko
-	Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>, David
-	Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Derek Basehore
-	<dbasehore@chromium.org>, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, Lin
-	Huang <hl@rock-chips.com>, kernel@collabora.com, Sean Paul
-	<seanpaul@chromium.org>, linux-arm-kernel@lists.infradead.org, "Rafael J.
- Wysocki" <rafael.j.wysocki@intel.com>, Elaine Zhang
-	<zhangqing@rock-chips.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: Re: [RFC PATCH 04/10] devfreq: rk3399_dmc / rockchip: pm_domains:
- Register notify to DMC driver.
-In-reply-to: <20180514211610.26618-5-enric.balletbo@collabora.com>
-References: <20180514211610.26618-1-enric.balletbo@collabora.com>
-	<CGME20180514211809epcas3p47e2f67ad346dc2fc35c46465381fbffa@epcas3p4.samsung.com>
-	<20180514211610.26618-5-enric.balletbo@collabora.com>
+Return-Path: <ilialin@codeaurora.org>
+From: <ilialin@codeaurora.org>
+To: "'Viresh Kumar'" <viresh.kumar@linaro.org>
+Cc: <mturquette@baylibre.com>,
+	<sboyd@kernel.org>,
+	<robh@kernel.org>,
+	<mark.rutland@arm.com>,
+	<rjw@rjwysocki.net>,
+	<lgirdwood@gmail.com>,
+	<broonie@kernel.org>,
+	<andy.gross@linaro.org>,
+	<david.brown@linaro.org>,
+	<catalin.marinas@arm.com>,
+	<will.deacon@arm.com>,
+	<linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<rnayak@codeaurora.org>,
+	<amit.kucheria@linaro.org>,
+	<nicolas.dechesne@linaro.org>,
+	<celster@codeaurora.org>,
+	<tfinkel@codeaurora.org>
+References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org> <1525348355-25471-14-git-send-email-ilialin@codeaurora.org> <20180504061123.lf2ffpami23d3q72@vireshk-i7>
+In-Reply-To: <20180504061123.lf2ffpami23d3q72@vireshk-i7>
+Subject: RE: [PATCH v5 13/14] dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
+Date: Fri, 4 May 2018 09:46:58 +0300
+Message-ID: <002e01d3e373$b958b8e0$2c0a2aa0$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+bbbb
 
-As I already commented[1], I think that it is not proper in order to pass
-the devfreq instance to power_domain driver by separate defined function
-(rockchip_pm_register_dmcfreq_notifier()).
-[1] https://patchwork.kernel.org/patch/10349571/
-
-Maybe, you could check the 'OF graph[1]' or 'device connection[2]'
-for the device connection. Unfortunately, I'm not sure what is
-best solution for this issue.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/graph.txt
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f2d9b66d84f3ff5ea3aff111e6a403e04fa8bf37
-
-
-On 2018년 05월 15일 06:16, Enric Balletbo i Serra wrote:
-> From: Lin Huang <hl@rock-chips.com>
+> -----Original Message-----
+> From: Viresh Kumar <viresh.kumar@linaro.org>
+> Sent: Friday, May 4, 2018 09:11
+> To: Ilia Lin <ilialin@codeaurora.org>
+> Cc: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+> mark.rutland@arm.com; rjw@rjwysocki.net; lgirdwood@gmail.com;
+> broonie@kernel.org; andy.gross@linaro.org; david.brown@linaro.org;
+> catalin.marinas@arm.com; will.deacon@arm.com; linux-clk@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> pm@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
+> soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> rnayak@codeaurora.org; amit.kucheria@linaro.org;
+> nicolas.dechesne@linaro.org; celster@codeaurora.org;
+> tfinkel@codeaurora.org
+> Subject: Re: [PATCH v5 13/14] dt-bindings: cpufreq: Document operating-
+> points-v2-kryo-cpu
 > 
-> The DMC (Dynamic Memory Interface) controller does a SiP call to the
-> Trusted Firmware-A (TF-A) to change the DDR clock frequency. When this
-> happens the TF-A writes to the PMU bus idle request register
-> (PMU_BUS_IDLE_REQ) but at the same time it is possible that the Rockchip
-> power domain driver writes to the same register. So, add a notification
-> mechanism to ensure that the DMC and the PD driver does not access to this
-> register at the same time.
+> On 03-05-18, 14:52, Ilia Lin wrote:
+> > In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+> > that have KRYO processors, the CPU ferequencies subset and voltage
+> > value of each OPP varies based on the silicon variant in use.
+> > Qualcomm Technologies, Inc. Process Voltage Scaling Tables defines the
+> > voltage and frequency value based on the msm-id in SMEM and speedbin
+> > blown in the efuse combination.
+> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
+> > SoC to provide the OPP framework with required information.
+> > This is used to determine the voltage and frequency value for each OPP
+> > of
+> > operating-points-v2 table when it is parsed by the OPP framework.
+> >
+> > This change adds documentation.
+> >
+> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> > ---
+> >  .../devicetree/bindings/opp/kryo-cpufreq.txt       | 693
+> +++++++++++++++++++++
+> >  1 file changed, 693 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+> > b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+> > new file mode 100644
+> > index 0000000..20cef9d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+> > @@ -0,0 +1,693 @@
+> > +Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
+> > +===================================
+> > +
+> > +In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
+> > +that have KRYO processors, the CPU ferequencies subset and voltage
+> > +value of each OPP varies based on the silicon variant in use.
+> > +Qualcomm Technologies, Inc. Process Voltage Scaling Tables defines
+> > +the voltage and frequency value based on the msm-id in SMEM and
+> > +speedbin blown in the efuse combination.
+> > +The qcom-cpufreq-kryo driver reads the msm-id and efuse value from
+> > +the SoC to provide the OPP framework with required information
+> (existing HW bitmap).
+> > +This is used to determine the voltage and frequency value for each
+> > +OPP of
+> > +operating-points-v2 table when it is parsed by the OPP framework.
+> > +
+> > +Required properties:
+> > +--------------------
+> > +In 'cpus' nodes:
+> > +- operating-points-v2: Phandle to the operating-points-v2 table to use.
+> > +
+> > +In 'operating-points-v2' table:
+> > +- compatible: Should be
+> > +	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
+> > +- nvmem-cells: A phandle pointing to a nvmem-cells node representing
+> the
+> > +		efuse registers that has information about the
+> > +		speedbin that is used to select the right frequency/voltage
+> > +		value pair.
+> > +		Please refer the for nvmem-cells
+> > +		bindings
+> Documentation/devicetree/bindings/nvmem/nvmem.txt
+> > +		and also examples below.
+> > +
+> > +In every OPP node:
+> > +- opp-supported-hw: A single 32 bit bitmap value, representing
+> compatible HW.
+> > +		    Bitmap:
+> > +			0:	MSM8996 V3, speedbin 0
+> > +			1:	MSM8996 V3, speedbin 1
+> > +			2:	MSM8996 V3, speedbin 2
+> > +			3:	unused
+> > +			4:	MSM8996 SG, speedbin 0
+> > +			5:	MSM8996 SG, speedbin 1
+> > +			6:	MSM8996 SG, speedbin 2
+> > +			7-31:	unused
+> > +
+> > +Example 1:
+> > +---------
+> > +
+> > +	cpus {
+> > +		#address-cells = <2>;
+> > +		#size-cells = <0>;
+> > +
+> > +		CPU0: cpu@0 {
+> > +			device_type = "cpu";
+> > +			compatible = "qcom,kryo";
+> > +			reg = <0x0 0x0>;
+> > +			enable-method = "psci";
+> > +			clocks = <&kryocc 0>;
+> > +			cpu-supply = <&pm8994_s11_saw>;
+> > +			operating-points-v2 = <&cluster0_opp>;
+> > +			/* cooling options */
+> > +			cooling-min-level = <0>;
+> > +			cooling-max-level = <15>;
 > 
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-> [rewrite commit message]
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> As I explained in the cover letter I have doubts regarding this patch
-> but I did not find another way to do it. So I will appreciate any
-> feedback on this.
-> 
->  drivers/devfreq/rk3399_dmc.c      |  7 ++++++
->  drivers/soc/rockchip/pm_domains.c | 36 +++++++++++++++++++++++++++++++
->  include/soc/rockchip/rk3399_dmc.h | 14 ++++++++++++
->  3 files changed, 57 insertions(+)
->  create mode 100644 include/soc/rockchip/rk3399_dmc.h
-> 
-> diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-> index cc1bbca3fb15..2c4985a501cb 100644
-> --- a/drivers/devfreq/rk3399_dmc.c
-> +++ b/drivers/devfreq/rk3399_dmc.c
-> @@ -28,6 +28,7 @@
->  #include <linux/rwsem.h>
->  #include <linux/suspend.h>
->  
-> +#include <soc/rockchip/rk3399_dmc.h>
->  #include <soc/rockchip/rk3399_grf.h>
->  #include <soc/rockchip/rockchip_sip.h>
->  
-> @@ -443,6 +444,12 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
->  	data->dev = dev;
->  	platform_set_drvdata(pdev, data);
->  
-> +	rockchip_pm_register_dmcfreq_notifier(data->devfreq);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to register dmcfreq notifier\n");
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
-> index 53efc386b1ad..b0e66f24b3e3 100644
-> --- a/drivers/soc/rockchip/pm_domains.c
-> +++ b/drivers/soc/rockchip/pm_domains.c
-> @@ -8,6 +8,7 @@
->   * published by the Free Software Foundation.
->   */
->  
-> +#include <linux/devfreq.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
->  #include <linux/err.h>
-> @@ -76,9 +77,13 @@ struct rockchip_pmu {
->  	const struct rockchip_pmu_info *info;
->  	struct mutex mutex; /* mutex lock for pmu */
->  	struct genpd_onecell_data genpd_data;
-> +	struct devfreq *devfreq;
-> +	struct notifier_block dmc_nb;
->  	struct generic_pm_domain *domains[];
->  };
->  
-> +static struct rockchip_pmu *dmc_pmu;
-> +
->  #define to_rockchip_pd(gpd) container_of(gpd, struct rockchip_pm_domain, genpd)
->  
->  #define DOMAIN(pwr, status, req, idle, ack, wakeup)	\
-> @@ -601,6 +606,35 @@ static int rockchip_pm_add_subdomain(struct rockchip_pmu *pmu,
->  	return error;
->  }
->  
-> +static int rk3399_dmcfreq_notify(struct notifier_block *nb,
-> +				 unsigned long event, void *data)
-> +{
-> +	if (event == DEVFREQ_PRECHANGE)
-> +		mutex_lock(&dmc_pmu->mutex);
-> +	else if (event == DEVFREQ_POSTCHANGE)
-> +		mutex_unlock(&dmc_pmu->mutex);
-> +
-> +	return NOTIFY_OK;
-> +}
-> +
-> +int rockchip_pm_register_dmcfreq_notifier(struct devfreq *devfreq)
-> +{
-> +	int ret;
-> +
-> +	if (!dmc_pmu)
-> +		return -EPROBE_DEFER;
-> +
-> +	dmc_pmu->devfreq = devfreq;
-> +	dmc_pmu->dmc_nb.notifier_call = rk3399_dmcfreq_notify;
-> +	ret = devm_devfreq_register_notifier(devfreq->dev.parent,
-> +					     dmc_pmu->devfreq,
-> +					     &dmc_pmu->dmc_nb,
-> +					     DEVFREQ_TRANSITION_NOTIFIER);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(rockchip_pm_register_dmcfreq_notifier);
-> +
->  static int rockchip_pm_domain_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -694,6 +728,8 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
->  		goto err_out;
->  	}
->  
-> +	dmc_pmu = pmu;
-> +
->  	return 0;
->  
->  err_out:
-> diff --git a/include/soc/rockchip/rk3399_dmc.h b/include/soc/rockchip/rk3399_dmc.h
-> new file mode 100644
-> index 000000000000..031a62607f61
-> --- /dev/null
-> +++ b/include/soc/rockchip/rk3399_dmc.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2016-2018, Fuzhou Rockchip Electronics Co., Ltd
-> + * Author: Lin Huang <hl@rock-chips.com>
-> + */
-> +
-> +#ifndef __SOC_RK3399_DMC_H
-> +#define __SOC_RK3399_DMC_H
-> +
-> +#include <linux/devfreq.h>
-> +
-> +int rockchip_pm_register_dmcfreq_notifier(struct devfreq *devfreq);
-> +
-> +#endif
-> 
+> cooling min/max aren't required anymore, as I told you in the previous
+> version :)
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Sure, I removed them in the DT, but forgot in the documentation. Will fix.
+
+> 
+> > +	cluster0_opp: opp_table0 {
+> > +		compatible = "operating-points-v2-kryo-cpu";
+> > +		nvmem-cells = <&speedbin_efuse>;
+> > +		opp-shared;
+> > +
+> > +		opp-307200000 {
+> > +			opp-hz = /bits/ 64 <  307200000 >;
+> 
+> You fixed spacing around frequency values in the dts but not here.
+
+Same as above.
+
+> 
+> > +			opp-microvolt = <905000 905000 1140000>;
+> > +			opp-supported-hw = <0x77>;
+> > +			clock-latency-ns = <200000>;
+> > +		};
+> 
+> --
+> viresh
