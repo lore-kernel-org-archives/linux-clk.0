@@ -1,57 +1,62 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: <gabriel.fernandez@st.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Alexandre
- TORGUE <alexandre.torgue@st.com>,
-        benjamin GAIGNARD
-	<benjamin.gaignard@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>
-Subject: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by default
-Date: Thu, 3 May 2018 08:40:09 +0200
-Message-ID: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Sekhar Nori <nsekhar@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH] clk: davinci: pll-dm355: fix SYSCLKn parent names
+Date: Fri,  4 May 2018 09:24:26 -0500
+Message-Id: <20180504142426.4764-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+This fixes the parent clock names of the SYSCLKn clocks for the DM355
+SoC in the TI DaVinici PLL clock driver.
 
-Clock driver is mandatory if the machine is selected.
-Then don't use 'bool' and 'depends on' commands, but 'def_bool'
-with the machine(s).
+It appears that this name just didn't get updated to the correct name
+like the other SoCs during the driver's development.
 
-Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Reported-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/Kconfig | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 24a5bc3..721572a 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
- 	  Support for stm32mp157 SoC family clocks
+Sekhar, can you please test to make sure this works?
+
+
+ drivers/clk/davinci/pll-dm355.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+index a0cff4212ac3..13dc6b8ea97a 100644
+--- a/drivers/clk/davinci/pll-dm355.c
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -22,10 +22,10 @@ static const struct davinci_pll_clk_info dm355_pll1_info = {
+ 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
+ };
  
- config COMMON_CLK_STM32F
--	bool "Clock driver for stm32f4 and stm32f7 SoC families"
--	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-+	def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
- 	help
- 	---help---
- 	  Support for stm32f4 and stm32f7 SoC families clocks
+-SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+-SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+-SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED);
+-SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
  
- config COMMON_CLK_STM32H7
--	bool "Clock driver for stm32h7 SoC family"
--	depends on MACH_STM32H743
-+	def_bool COMMON_CLK && MACH_STM32H743
- 	help
- 	---help---
- 	  Support for stm32h7 SoC family clocks
+ int dm355_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+@@ -62,8 +62,8 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
+ 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
+ };
+ 
+-SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
+-SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV);
++SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+ 
+ int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
 -- 
-1.9.1
+2.17.0
