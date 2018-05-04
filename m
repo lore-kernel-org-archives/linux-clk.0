@@ -1,105 +1,66 @@
-Return-Path: <SRS0=7qdu=IQ=linuxfoundation.org=gregkh@kernel.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 4/5] clk: tegra: no need to check return value of debugfs_create functions
-Date: Tue, 29 May 2018 18:08:03 +0200
-Message-Id: <20180529160804.1982-4-gregkh@linuxfoundation.org>
-In-Reply-To: <20180529160804.1982-1-gregkh@linuxfoundation.org>
-References: <20180529160804.1982-1-gregkh@linuxfoundation.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:35263 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751059AbeEDPHI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 May 2018 11:07:08 -0400
+Date: Fri, 4 May 2018 17:07:06 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 2/7] arm64: allwinner: h6: add PRCM CCU device node
+Message-ID: <20180504150706.hivzti5eoejwlavm@flea>
+References: <20180503183847.11046-1-icenowy@aosc.io>
+ <20180503183847.11046-3-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="h63zj6d43wukwd46"
+In-Reply-To: <20180503183847.11046-3-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
 
-The return value of these functions were never checked in the end
-anyway, so it is obvious this does not change any functionality :)
+--h63zj6d43wukwd46
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/clk/tegra/clk-dfll.c | 42 ++++++++++--------------------------
- 1 file changed, 11 insertions(+), 31 deletions(-)
+On Fri, May 04, 2018 at 02:38:42AM +0800, Icenowy Zheng wrote:
+> Allwinner H6 has also a PRCM CCU.
+>=20
+> Add its device node into the device tree.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index 0a7deee74eea..48ee43734e05 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1196,42 +1196,24 @@ static const struct file_operations attr_registers_fops = {
- 	.release	= single_release,
- };
- 
--static int dfll_debug_init(struct tegra_dfll *td)
-+static void dfll_debug_init(struct tegra_dfll *td)
- {
--	int ret;
-+	struct dentry *root;
- 
- 	if (!td || (td->mode == DFLL_UNINITIALIZED))
--		return 0;
--
--	td->debugfs_dir = debugfs_create_dir("tegra_dfll_fcpu", NULL);
--	if (!td->debugfs_dir)
--		return -ENOMEM;
--
--	ret = -ENOMEM;
--
--	if (!debugfs_create_file("enable", S_IRUGO | S_IWUSR,
--				 td->debugfs_dir, td, &enable_fops))
--		goto err_out;
--
--	if (!debugfs_create_file("lock", S_IRUGO,
--				 td->debugfs_dir, td, &lock_fops))
--		goto err_out;
-+		return;
- 
--	if (!debugfs_create_file("rate", S_IRUGO,
--				 td->debugfs_dir, td, &rate_fops))
--		goto err_out;
-+	root = debugfs_create_dir("tegra_dfll_fcpu", NULL);
-+	td->debugfs_dir = root;
- 
--	if (!debugfs_create_file("registers", S_IRUGO,
--				 td->debugfs_dir, td, &attr_registers_fops))
--		goto err_out;
--
--	return 0;
--
--err_out:
--	debugfs_remove_recursive(td->debugfs_dir);
--	return ret;
-+	debugfs_create_file("enable", S_IRUGO | S_IWUSR, root, td, &enable_fops);
-+	debugfs_create_file("lock", S_IRUGO, root, td, &lock_fops);
-+	debugfs_create_file("rate", S_IRUGO, root, td, &rate_fops);
-+	debugfs_create_file("registers", S_IRUGO, root, td, &attr_registers_fops);
- }
- 
-+#else
-+static void inline dfll_debug_init(struct tegra_dfll *td) { }
- #endif /* CONFIG_DEBUG_FS */
- 
- /*
-@@ -1715,9 +1697,7 @@ int tegra_dfll_register(struct platform_device *pdev,
- 		return ret;
- 	}
- 
--#ifdef CONFIG_DEBUG_FS
- 	dfll_debug_init(td);
--#endif
- 
- 	return 0;
- }
--- 
-2.17.0
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--h63zj6d43wukwd46
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrsdxkACgkQ0rTAlCFN
+r3S3hg//WGTFJTlY/rV9zfXAy8/M3rpQl15cPT+tuuj+MwfLK/wWfXEnDSKLFZdC
+AW8aEB5whirknKPnH0DTy296ioel/EFJzIEylnkByKtcbGq3aIMNAAQuhGTDViY/
+2tfOhGaar6phqW72ZhOMMBbw3oYy1Sl5xIhmQa8tCxzYj3QyV7wW2mlFbnyQkACT
+Aa21o2KZ6Au75Nby/gvqRsBnSmU14l3SAHI3GhuPxUizP2ZCPPLBIlp6f5ZvhJXs
+i8hiLa1m+pycXeGeqD2h99T//R+mo3reiUNdQFWyRzayY6BgnhAiE9naKJQS0QFt
+tAvuukMfLiYOBZPwvF8602cqcPq79HyZjZG3eaVFPOJSwKTg4IDCJi3NnwEwq9sQ
+OUUN0NZpCSw91YovT7p8CC3ANKCKn3dwtquhlFMaN18eJe613M7elm9ACG/+2zeI
+WLQb5p38EB+xIdKtg7+qr+WqMkBn9rsKRW1qper/LLaPdVNN+YfJGI+hzdqASvjz
+2i8CPaKcwq3Fg0JA7oGfUVnCNaCUZxfB4V94HDh0qi7jQtE17LRdli06Si/Sxb49
+HzQG12R4K3Z2zJ1krNn0ndsn69szzjMpWI/8dUVpc6cnfVj3Q1eIAzIFf8LInxPD
+sECJw2DR5Y46Jg0m+9mLAtfiC9h531XFWdIlClBCl+sxXDbytm4=
+=/Qtv
+-----END PGP SIGNATURE-----
+
+--h63zj6d43wukwd46--
