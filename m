@@ -1,546 +1,208 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 19/27] ARM: davinci: dm365: Remove legacy clock init
-Date: Wed,  9 May 2018 12:25:58 -0500
-Message-Id: <20180509172606.29387-20-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+Return-Path: <ilialin@codeaurora.org>
+From: <ilialin@codeaurora.org>
+To: "'Viresh Kumar'" <viresh.kumar@linaro.org>
+Cc: <mturquette@baylibre.com>,
+	<sboyd@kernel.org>,
+	<robh@kernel.org>,
+	<mark.rutland@arm.com>,
+	<rjw@rjwysocki.net>,
+	<lgirdwood@gmail.com>,
+	<broonie@kernel.org>,
+	<andy.gross@linaro.org>,
+	<david.brown@linaro.org>,
+	<catalin.marinas@arm.com>,
+	<will.deacon@arm.com>,
+	<linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<rnayak@codeaurora.org>,
+	<amit.kucheria@linaro.org>,
+	<nicolas.dechesne@linaro.org>,
+	<celster@codeaurora.org>,
+	<tfinkel@codeaurora.org>
+References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org> <1525348355-25471-13-git-send-email-ilialin@codeaurora.org> <20180504060827.7bddb53ln2ogwcvv@vireshk-i7> <002a01d3e373$6b6ee410$424cac30$@codeaurora.org> <20180504065709.62kacfext6bbprlo@vireshk-i7>
+In-Reply-To: <20180504065709.62kacfext6bbprlo@vireshk-i7>
+Subject: RE: [PATCH v5 12/14] cpufreq: Add Kryo CPU scaling driver
+Date: Fri, 4 May 2018 22:20:17 +0300
+Message-ID: <007601d3e3dc$f7454a60$e5cfdf20$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy clock init code from
-arch/arm/mach-davinci/dm365.c.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
-
-v10 changes:
-- none
-
-v9 changes:
-- rebased
-
-v8 changes:
-- none
-
-v7 changes:
-- rebased
-- add davinci prefix to commit message
-
-v6 changes:
-- rebased
 
 
- arch/arm/mach-davinci/dm365.c | 449 ----------------------------------
- 1 file changed, 449 deletions(-)
+> -----Original Message-----
+> From: Viresh Kumar <viresh.kumar@linaro.org>
+> Sent: Friday, May 4, 2018 09:57
+> To: ilialin@codeaurora.org
+> Cc: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+> mark.rutland@arm.com; rjw@rjwysocki.net; lgirdwood@gmail.com;
+> broonie@kernel.org; andy.gross@linaro.org; david.brown@linaro.org;
+> catalin.marinas@arm.com; will.deacon@arm.com; linux-clk@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> pm@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
+> soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> rnayak@codeaurora.org; amit.kucheria@linaro.org;
+> nicolas.dechesne@linaro.org; celster@codeaurora.org;
+> tfinkel@codeaurora.org
+> Subject: Re: [PATCH v5 12/14] cpufreq: Add Kryo CPU scaling driver
+> 
+> On 04-05-18, 09:44, ilialin@codeaurora.org wrote:
+> >
+> >
+> > > -----Original Message-----
+> > > From: Viresh Kumar <viresh.kumar@linaro.org>
+> > > Sent: Friday, May 4, 2018 09:08
+> > > To: Ilia Lin <ilialin@codeaurora.org>
+> > > Cc: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+> > > mark.rutland@arm.com; rjw@rjwysocki.net; lgirdwood@gmail.com;
+> > > broonie@kernel.org; andy.gross@linaro.org; david.brown@linaro.org;
+> > > catalin.marinas@arm.com; will.deacon@arm.com;
+> > > linux-clk@vger.kernel.org; devicetree@vger.kernel.org;
+> > > linux-kernel@vger.kernel.org; linux- pm@vger.kernel.org;
+> > > linux-arm-msm@vger.kernel.org; linux- soc@vger.kernel.org;
+> > > linux-arm-kernel@lists.infradead.org;
+> > > rnayak@codeaurora.org; amit.kucheria@linaro.org;
+> > > nicolas.dechesne@linaro.org; celster@codeaurora.org;
+> > > tfinkel@codeaurora.org
+> > > Subject: Re: [PATCH v5 12/14] cpufreq: Add Kryo CPU scaling driver
+> > >
+> > > On 03-05-18, 14:52, Ilia Lin wrote:
+> > > > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO
+> > > > processors, the CPU ferequencies subset and voltage value of each
+> > > > OPP varies based on the silicon variant in use. Qualcomm Process
+> > > > Voltage Scaling Tables defines the voltage and frequency value
+> > > > based on the msm-id in SMEM and speedbin blown in the efuse
+> combination.
+> > > > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from
+> > > > the SoC to provide the OPP framework with required information.
+> > > > This is used to determine the voltage and frequency value for each
+> > > > OPP of
+> > > > operating-points-v2 table when it is parsed by the OPP framework.
+> > > >
+> > > > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> > > > ---
+> > > >  drivers/cpufreq/Kconfig.arm          |  11 +++
+> > > >  drivers/cpufreq/Makefile             |   1 +
+> > > >  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+> > > >  drivers/cpufreq/qcom-cpufreq-kryo.c  | 153
+> > > > +++++++++++++++++++++++++++++++++++
+> > > >  4 files changed, 168 insertions(+)  create mode 100644
+> > > > drivers/cpufreq/qcom-cpufreq-kryo.c
+> > > >
+> > > > diff --git a/drivers/cpufreq/Kconfig.arm
+> > > > b/drivers/cpufreq/Kconfig.arm index de55c7d..f9da18c 100644
+> > > > --- a/drivers/cpufreq/Kconfig.arm
+> > > > +++ b/drivers/cpufreq/Kconfig.arm
+> > > > @@ -124,6 +124,17 @@ config ARM_OMAP2PLUS_CPUFREQ
+> > > >  	depends on ARCH_OMAP2PLUS
+> > > >  	default ARCH_OMAP2PLUS
+> > > >
+> > > > +config ARM_QCOM_CPUFREQ_KRYO
+> > > > +	tristate "Qualcomm Technologies, Inc. Kryo based CPUFreq"
+> > >
+> > > I don't see any reply to Sricharan's query on this being tristate.
+> >
+> > Why shouldn't we leave possibility to compile the cpufreq-dt built-in,
+> > and the qcom-cpufreq-kryo module?
+> 
+> I was not saying this is incorrect, all I am saying is that you never
+replied to a
+> comment from one of the reviewers.
+> 
+> And I don't see a reason why this should be a tristate really.
+> cpufreq-dt is already capable of being a module, all your driver does is
+that it
+> creates the cpufreq-dt platform device after setting the OPP hw
+properties..
+> 
+> Over that, have you ever tried inserting, then removing and inserting the
+> driver module again? I feel it will fail.
+> 
+> The reason is that you never provided an exit routine which can get rid of
+the
+> platform device created in the first place.
 
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 76de426a0e41..abcf2a5ed89b 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -40,11 +40,6 @@
- #include "davinci.h"
- #include "mux.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include "clock.h"
--#include "psc.h"
--#endif
--
- #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
- #define DM365_RTC_BASE			0x01c69000
- #define DM365_KEYSCAN_BASE		0x01c69400
-@@ -60,441 +55,6 @@
- #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
- #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
- 
--#ifndef CONFIG_COMMON_CLK
--static struct pll_data pll1_data = {
--	.num		= 1,
--	.phys_base	= DAVINCI_PLL1_BASE,
--	.flags		= PLL_HAS_POSTDIV | PLL_HAS_PREDIV,
--};
--
--static struct pll_data pll2_data = {
--	.num		= 2,
--	.phys_base	= DAVINCI_PLL2_BASE,
--	.flags		= PLL_HAS_POSTDIV | PLL_HAS_PREDIV,
--};
--
--static struct clk ref_clk = {
--	.name		= "ref_clk",
--	.rate		= DM365_REF_FREQ,
--};
--
--static struct clk pll1_clk = {
--	.name		= "pll1",
--	.parent		= &ref_clk,
--	.flags		= CLK_PLL,
--	.pll_data	= &pll1_data,
--};
--
--static struct clk pll1_aux_clk = {
--	.name		= "pll1_aux_clk",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll1_sysclkbp = {
--	.name		= "pll1_sysclkbp",
--	.parent		= &pll1_clk,
--	.flags 		= CLK_PLL | PRE_PLL,
--	.div_reg	= BPDIV
--};
--
--static struct clk clkout0_clk = {
--	.name		= "clkout0",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll1_sysclk1 = {
--	.name		= "pll1_sysclk1",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV1,
--};
--
--static struct clk pll1_sysclk2 = {
--	.name		= "pll1_sysclk2",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV2,
--};
--
--static struct clk pll1_sysclk3 = {
--	.name		= "pll1_sysclk3",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV3,
--};
--
--static struct clk pll1_sysclk4 = {
--	.name		= "pll1_sysclk4",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV4,
--};
--
--static struct clk pll1_sysclk5 = {
--	.name		= "pll1_sysclk5",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV5,
--};
--
--static struct clk pll1_sysclk6 = {
--	.name		= "pll1_sysclk6",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV6,
--};
--
--static struct clk pll1_sysclk7 = {
--	.name		= "pll1_sysclk7",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV7,
--};
--
--static struct clk pll1_sysclk8 = {
--	.name		= "pll1_sysclk8",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV8,
--};
--
--static struct clk pll1_sysclk9 = {
--	.name		= "pll1_sysclk9",
--	.parent		= &pll1_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV9,
--};
--
--static struct clk pll2_clk = {
--	.name		= "pll2",
--	.parent		= &ref_clk,
--	.flags		= CLK_PLL,
--	.pll_data	= &pll2_data,
--};
--
--static struct clk pll2_aux_clk = {
--	.name		= "pll2_aux_clk",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk clkout1_clk = {
--	.name		= "clkout1",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll2_sysclk1 = {
--	.name		= "pll2_sysclk1",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV1,
--};
--
--static struct clk pll2_sysclk2 = {
--	.name		= "pll2_sysclk2",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV2,
--};
--
--static struct clk pll2_sysclk3 = {
--	.name		= "pll2_sysclk3",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV3,
--};
--
--static struct clk pll2_sysclk4 = {
--	.name		= "pll2_sysclk4",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV4,
--};
--
--static struct clk pll2_sysclk5 = {
--	.name		= "pll2_sysclk5",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV5,
--};
--
--static struct clk pll2_sysclk6 = {
--	.name		= "pll2_sysclk6",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV6,
--};
--
--static struct clk pll2_sysclk7 = {
--	.name		= "pll2_sysclk7",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV7,
--};
--
--static struct clk pll2_sysclk8 = {
--	.name		= "pll2_sysclk8",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV8,
--};
--
--static struct clk pll2_sysclk9 = {
--	.name		= "pll2_sysclk9",
--	.parent		= &pll2_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV9,
--};
--
--static struct clk vpss_dac_clk = {
--	.name		= "vpss_dac",
--	.parent		= &pll1_sysclk3,
--	.lpsc		= DM365_LPSC_DAC_CLK,
--};
--
--static struct clk vpss_master_clk = {
--	.name		= "vpss_master",
--	.parent		= &pll1_sysclk5,
--	.lpsc		= DM365_LPSC_VPSSMSTR,
--	.flags		= CLK_PSC,
--};
--
--static struct clk vpss_slave_clk = {
--	.name		= "vpss_slave",
--	.parent		= &pll1_sysclk5,
--	.lpsc		= DAVINCI_LPSC_VPSSSLV,
--};
--
--static struct clk arm_clk = {
--	.name		= "arm_clk",
--	.parent		= &pll2_sysclk2,
--	.lpsc		= DAVINCI_LPSC_ARM,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk uart0_clk = {
--	.name		= "uart0",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_UART0,
--};
--
--static struct clk uart1_clk = {
--	.name		= "uart1",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_UART1,
--};
--
--static struct clk i2c_clk = {
--	.name		= "i2c",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_I2C,
--};
--
--static struct clk mmcsd0_clk = {
--	.name		= "mmcsd0",
--	.parent		= &pll1_sysclk8,
--	.lpsc		= DAVINCI_LPSC_MMC_SD,
--};
--
--static struct clk mmcsd1_clk = {
--	.name		= "mmcsd1",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_MMC_SD1,
--};
--
--static struct clk spi0_clk = {
--	.name		= "spi0",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_SPI,
--};
--
--static struct clk spi1_clk = {
--	.name		= "spi1",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_SPI1,
--};
--
--static struct clk spi2_clk = {
--	.name		= "spi2",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_SPI2,
--};
--
--static struct clk spi3_clk = {
--	.name		= "spi3",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_SPI3,
--};
--
--static struct clk spi4_clk = {
--	.name		= "spi4",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DM365_LPSC_SPI4,
--};
--
--static struct clk gpio_clk = {
--	.name		= "gpio",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_GPIO,
--};
--
--static struct clk aemif_clk = {
--	.name		= "aemif",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DAVINCI_LPSC_AEMIF,
--};
--
--static struct clk pwm0_clk = {
--	.name		= "pwm0",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_PWM0,
--};
--
--static struct clk pwm1_clk = {
--	.name		= "pwm1",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_PWM1,
--};
--
--static struct clk pwm2_clk = {
--	.name		= "pwm2",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_PWM2,
--};
--
--static struct clk pwm3_clk = {
--	.name		= "pwm3",
--	.parent		= &ref_clk,
--	.lpsc		= DM365_LPSC_PWM3,
--};
--
--static struct clk timer0_clk = {
--	.name		= "timer0",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_TIMER0,
--};
--
--static struct clk timer1_clk = {
--	.name		= "timer1",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_TIMER1,
--};
--
--static struct clk timer2_clk = {
--	.name		= "timer2",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_TIMER2,
--	.usecount	= 1,
--};
--
--static struct clk timer3_clk = {
--	.name		= "timer3",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DM365_LPSC_TIMER3,
--};
--
--static struct clk usb_clk = {
--	.name		= "usb",
--	.parent		= &pll1_aux_clk,
--	.lpsc		= DAVINCI_LPSC_USB,
--};
--
--static struct clk emac_clk = {
--	.name		= "emac",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_EMAC,
--};
--
--static struct clk voicecodec_clk = {
--	.name		= "voice_codec",
--	.parent		= &pll2_sysclk4,
--	.lpsc		= DM365_LPSC_VOICE_CODEC,
--};
--
--static struct clk asp0_clk = {
--	.name		= "asp0",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_McBSP1,
--};
--
--static struct clk rto_clk = {
--	.name		= "rto",
--	.parent		= &pll1_sysclk4,
--	.lpsc		= DM365_LPSC_RTO,
--};
--
--static struct clk mjcp_clk = {
--	.name		= "mjcp",
--	.parent		= &pll1_sysclk3,
--	.lpsc		= DM365_LPSC_MJCP,
--};
--
--static struct clk_lookup dm365_clks[] = {
--	CLK(NULL, "ref", &ref_clk),
--	CLK(NULL, "pll1", &pll1_clk),
--	CLK(NULL, "pll1_aux", &pll1_aux_clk),
--	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
--	CLK(NULL, "clkout0", &clkout0_clk),
--	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
--	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
--	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
--	CLK(NULL, "pll1_sysclk4", &pll1_sysclk4),
--	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
--	CLK(NULL, "pll1_sysclk6", &pll1_sysclk6),
--	CLK(NULL, "pll1_sysclk7", &pll1_sysclk7),
--	CLK(NULL, "pll1_sysclk8", &pll1_sysclk8),
--	CLK(NULL, "pll1_sysclk9", &pll1_sysclk9),
--	CLK(NULL, "pll2", &pll2_clk),
--	CLK(NULL, "pll2_aux", &pll2_aux_clk),
--	CLK(NULL, "clkout1", &clkout1_clk),
--	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
--	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
--	CLK(NULL, "pll2_sysclk3", &pll2_sysclk3),
--	CLK(NULL, "pll2_sysclk4", &pll2_sysclk4),
--	CLK(NULL, "pll2_sysclk5", &pll2_sysclk5),
--	CLK(NULL, "pll2_sysclk6", &pll2_sysclk6),
--	CLK(NULL, "pll2_sysclk7", &pll2_sysclk7),
--	CLK(NULL, "pll2_sysclk8", &pll2_sysclk8),
--	CLK(NULL, "pll2_sysclk9", &pll2_sysclk9),
--	CLK(NULL, "vpss_dac", &vpss_dac_clk),
--	CLK("vpss", "master", &vpss_master_clk),
--	CLK("vpss", "slave", &vpss_slave_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK("serial8250.0", NULL, &uart0_clk),
--	CLK("serial8250.1", NULL, &uart1_clk),
--	CLK("i2c_davinci.1", NULL, &i2c_clk),
--	CLK("da830-mmc.0", NULL, &mmcsd0_clk),
--	CLK("da830-mmc.1", NULL, &mmcsd1_clk),
--	CLK("spi_davinci.0", NULL, &spi0_clk),
--	CLK("spi_davinci.1", NULL, &spi1_clk),
--	CLK("spi_davinci.2", NULL, &spi2_clk),
--	CLK("spi_davinci.3", NULL, &spi3_clk),
--	CLK("spi_davinci.4", NULL, &spi4_clk),
--	CLK(NULL, "gpio", &gpio_clk),
--	CLK(NULL, "aemif", &aemif_clk),
--	CLK(NULL, "pwm0", &pwm0_clk),
--	CLK(NULL, "pwm1", &pwm1_clk),
--	CLK(NULL, "pwm2", &pwm2_clk),
--	CLK(NULL, "pwm3", &pwm3_clk),
--	CLK(NULL, "timer0", &timer0_clk),
--	CLK(NULL, "timer1", &timer1_clk),
--	CLK("davinci-wdt", NULL, &timer2_clk),
--	CLK(NULL, "timer3", &timer3_clk),
--	CLK(NULL, "usb", &usb_clk),
--	CLK("davinci_emac.1", NULL, &emac_clk),
--	CLK("davinci_mdio.0", "fck", &emac_clk),
--	CLK("davinci_voicecodec", NULL, &voicecodec_clk),
--	CLK("davinci-mcbsp", NULL, &asp0_clk),
--	CLK(NULL, "rto", &rto_clk),
--	CLK(NULL, "mjcp", &mjcp_clk),
--	CLK(NULL, NULL, NULL),
--};
--#endif
--/*----------------------------------------------------------------------*/
--
- #define INTMUX		0x18
- #define EVTMUX		0x1c
- 
-@@ -1061,8 +621,6 @@ static struct davinci_id dm365_ids[] = {
- 	},
- };
- 
--static u32 dm365_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
--
- static struct davinci_timer_info dm365_timer_info = {
- 	.timers		= davinci_timer_instance,
- 	.clockevent_id	= T0_BOT,
-@@ -1123,8 +681,6 @@ static const struct davinci_soc_info davinci_soc_info_dm365 = {
- 	.jtag_id_reg		= 0x01c40028,
- 	.ids			= dm365_ids,
- 	.ids_num		= ARRAY_SIZE(dm365_ids),
--	.psc_bases		= dm365_psc_bases,
--	.psc_bases_num		= ARRAY_SIZE(dm365_psc_bases),
- 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
- 	.pinmux_pins		= dm365_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(dm365_pins),
-@@ -1178,7 +734,6 @@ void __init dm365_init(void)
- 
- void __init dm365_init_time(void)
- {
--#ifdef CONFIG_COMMON_CLK
- 	void __iomem *pll1, *pll2, *psc;
- 	struct clk *clk;
- 
-@@ -1196,10 +751,6 @@ void __init dm365_init_time(void)
- 	clk = clk_get(NULL, "timer0");
- 
- 	davinci_timer_init(clk);
--#else
--	davinci_clk_init(dm365_clks);
--	davinci_timer_init(&timer0_clk);
--#endif
- }
- 
- void __init dm365_register_clocks(void)
--- 
-2.17.0
+Convinced. I'll change it to bool.
+
+> 
+> > > > +	depends on QCOM_QFPROM
+> > > > +	depends on QCOM_SMEM
+> > > > +	select PM_OPP
+> > > > +	help
+> > > > +	  This adds the CPUFreq driver for
+> > > > +	  Qualcomm Technologies, Inc. Kryo SoC based boards.
+> > > > +
+> > > > +	  If in doubt, say N.
+> > > > +
+> > > >  config ARM_S3C_CPUFREQ
+> > > >  	bool
+> > > >  	help
+> > > > diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> > > > index 8d24ade..fb4a2ec 100644
+> > > > --- a/drivers/cpufreq/Makefile
+> > > > +++ b/drivers/cpufreq/Makefile
+> > > > @@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+=
+> > > mvebu-cpufreq.o
+> > > >  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+> > > >  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+> > > >  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
+> > > > +obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-
+> > > kryo.o
+> > > >  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+> > > >  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+> > > >  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+> > > > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c
+> > > > b/drivers/cpufreq/cpufreq-dt-platdev.c
+> > > > index 3b585e4..77d6ab8 100644
+> > > > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> > > > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> > > > @@ -118,6 +118,9 @@
+> > > >
+> > > >  	{ .compatible = "nvidia,tegra124", },
+> > > >
+> > > > +	{ .compatible = "qcom,apq8096", },
+> > > > +	{ .compatible = "qcom,msm8996", },
+> > > > +
+> > > >  	{ .compatible = "st,stih407", },
+> > > >  	{ .compatible = "st,stih410", },
+> > > >
+> > > > diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c
+> > > > b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> > > > new file mode 100644
+> > > > index 0000000..32371cc
+> > > > --- /dev/null
+> > > > +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+> > > > @@ -0,0 +1,153 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +/* Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> > >
+> > > Incorrect multi line comment.
+> >
+> > This was done as per Bjorn's instruction.
+> 
+> You haven't followed him correctly.
+> 
+> What he asked for is:
+> 
+> // SPDX...
+> /*
+>  * XXXX
+>  */
+> 
+> What you have done is:
+> 
+> // SPDX...
+> /* XXXX
+>  */
+
+OK. Got you. Will fix.
+
+> 
+> --
+> viresh
