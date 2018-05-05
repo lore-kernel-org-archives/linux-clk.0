@@ -1,27 +1,29 @@
-Return-Path: <ilialin@codeaurora.org>
-Date: Wed, 16 May 2018 18:45:26 +0300
-Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <d5e83697-442d-4e76-9b8d-6996d23631a2@email.android.com>
-In-Reply-To: <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: Amit Kucheria <amit.kucheria@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org, Rob
- Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Viresh
- Kumar <viresh.kumar@linaro.org>, nm@ti.com, lgirdwood@gmail.com,
- broonie@kernel.org, Andy Gross <andy.gross@linaro.org>, David Brown
- <david.brown@linaro.org>, catalin.marinas@arm.com, will.deacon@arm.com, "
-	Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux PM
- list <linux-pm@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, lakml <linux-arm-kernel@lists.infradead.org>,
- Rajendra Nayak <rnayak@codeaurora.org>, nicolas.dechesne@linaro.org,
- celster@codeaurora.org, tfinkel@codeaurora.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/html; charset=utf-8
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <e1d6f7a1-9b2b-113a-4c21-4730c6514e9c@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1525151013-28291-1-git-send-email-tdas@codeaurora.org>
+ <152524425583.138124.2497854182982735033@swboyd.mtv.corp.google.com>
+ <e1d6f7a1-9b2b-113a-4c21-4730c6514e9c@codeaurora.org>
+Message-ID: <152548867593.138124.17769741201119581476@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1] clk: qcom: gdsc: Add support to poll CFG register to check
+ GDSC state
+Date: Fri, 04 May 2018 19:51:15 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-PGRpdiBkaXI9J2F1dG8nPkhpIEFtaXQsPGRpdiBkaXI9ImF1dG8iPjxicj48L2Rpdj48ZGl2IGRp
-cj0iYXV0byI+VGhlIGZ1bGwgY29tcGFueSBuYW1lLCBhcyB3ZWxsIGFzIHRoZSBzcGVjaWZpYyBm
-aWxlIGhlYWRlciBmb3JtYXQgYXJlIHJlcXVpcmVtZW50cyBvZiB0aGUgUVRJcyBsZWdhbC48L2Rp
-dj48ZGl2IGRpcj0iYXV0byI+PGJyPjwvZGl2PjxkaXYgZGlyPSJhdXRvIj5UaGFua3MsPC9kaXY+
-PGRpdiBkaXI9ImF1dG8iPklsaWE8L2Rpdj48L2Rpdj4=
+Quoting Taniya Das (2018-05-03 02:09:57)
+> Hello Stephen,
+> =
+
+> I have tested the below patch & didn't see any issues.
+
+Alright. Thanks! Can I take that as a "Tested-by"?
