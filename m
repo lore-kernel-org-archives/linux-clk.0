@@ -1,148 +1,127 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v9 07/15] clk: qcom: cpu-8996: Add support to switch below 600Mhz
-Date: Mon, 21 May 2018 14:25:24 +0300
-Message-Id: <1526901932-9514-8-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
-References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+ Michael Turquette <mturquette@baylibre.com>, gabriel.fernandez@st.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin GAIGNARD <benjamin.gaignard@st.com>,
+ Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+ <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+Message-ID: <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
+ default
+Date: Fri, 04 May 2018 19:45:30 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The CPU clock controller's primary PLL operates on a single VCO range,
-between 600MHz and 3GHz. However the CPUs do support OPPs with
-frequencies between 300MHz and 600MHz. In order to support running the
-CPUs at those frequencies we end up having to lock the PLL at twice the
-rate and drive the CPU clk via the PLL/2 output and SMUX.
+Quoting Alexandre Torgue (2018-05-04 00:54:16)
+> Stephen
+> =
 
-So for frequencies above 600MHz we follow the following path
- Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-and for frequencies between 300MHz and 600MHz we follow
- Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
+> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
+> > From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> > =
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> > Clock driver is mandatory if the machine is selected.
+> > Then don't use 'bool' and 'depends on' commands, but 'def_bool'
+> > with the machine(s).
+> > =
+
+> > Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of t=
+he stm32 drivers")
+> > =
+
+> =
+
+> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
+
+Thanks for the bump. I missed this one. Of course, the user can still select
+the configs now, just it's annoying for upgrade path.
+
+> =
+
+> > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> > Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+> > ---
+> >   drivers/clk/Kconfig | 6 ++----
+> >   1 file changed, 2 insertions(+), 4 deletions(-)
+> > =
+
+> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > index 24a5bc3..721572a 100644
+> > --- a/drivers/clk/Kconfig
+> > +++ b/drivers/clk/Kconfig
+> > @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
+> >         Support for stm32mp157 SoC family clocks
+> >   =
+
+> >   config COMMON_CLK_STM32F
+> > -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
+> > -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+> > +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_=
+STM32F746)
+
+But the point of the change this patch is fixing was to expose these to
+the user to turn off they wanted. You'll need to do something like that
+again here, instead of removing the prompt and replacing it with a
+def_bool.
+
+So this patch instead? It leaves it around for the whole arch, but
+limits the default to be the machines that matter. I suppose we could
+put an 'if EXPERT' on the bool part too if we don't even want to expose
+the options to normal users.
+
+-----8<-----
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Date: Thu, 3 May 2018 08:40:09 +0200
+Subject: [PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
+ default
+Cc: <linux-kernel@vger.kernel.org>,
+    <linux-arm-kernel@lists.infradead.org>
+
+Clock driver is mandatory if the machine is selected. Add a default
+of the machines that need the clk driver, so that the user can turn it
+off if they want, but otherwise it's exposed on the SoCs the driver
+is for.
+
+Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the s=
+tm32 drivers")
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/qcom/clk-cpu-8996.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ drivers/clk/Kconfig | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index 620fdc2..ff5c0a5 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -68,6 +68,8 @@ enum _pmux_input {
- 	NUM_OF_PMUX_INPUTS
- };
- 
-+#define DIV_2_THRESHOLD		600000000
-+
- static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-        [PLL_OFF_L_VAL] = 0x04,
-        [PLL_OFF_ALPHA_VAL] = 0x08,
-@@ -95,10 +97,11 @@ enum _pmux_input {
- 
- static const struct alpha_pll_config hfpll_config = {
- 	.l = 60,
--	.config_ctl_val = 0x200d4828,
-+	.config_ctl_val = 0x200d4aa8,
- 	.config_ctl_hi_val = 0x006,
- 	.pre_div_mask = BIT(12),
- 	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -140,7 +143,7 @@ enum _pmux_input {
- 	.vco_mask = 0x3 << 20,
- 	.config_ctl_val = 0x4001051b,
- 	.post_div_mask = 0x3 << 8,
--	.post_div_val = 0x1,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -181,6 +184,7 @@ struct clk_cpu_8996_mux {
- 	u8	width;
- 	struct notifier_block nb;
- 	struct clk_hw	*pll;
-+	struct clk_hw	*pll_div_2;
- 	struct clk_regmap clkr;
- };
- 
-@@ -226,6 +230,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
- 	struct clk_hw *parent = cpuclk->pll;
- 
-+	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
-+		if (req->rate < (DIV_2_THRESHOLD / 2))
-+			return -EINVAL;
-+
-+		parent = cpuclk->pll_div_2;
-+	}
-+
- 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
- 	req->best_parent_hw = parent;
- 
-@@ -237,13 +248,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- {
- 	int ret;
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+	struct clk_notifier_data *cnd = data;
- 
- 	switch (event) {
- 	case PRE_RATE_CHANGE:
- 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
- 		break;
- 	case POST_RATE_CHANGE:
--		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		if (cnd->new_rate < DIV_2_THRESHOLD)
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  DIV_2_INDEX);
-+		else
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  PLL_INDEX);
- 		break;
- 	default:
- 		ret = 0;
-@@ -295,6 +312,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.pll_div_2 = &pwrcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
-@@ -315,6 +333,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.pll_div_2 = &perfcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
--- 
-1.9.1
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 41492e980ef4..ac3f0e2bc03f 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -267,15 +267,16 @@ config COMMON_CLK_STM32MP157
+ =
+
+ config COMMON_CLK_STM32F
+ 	bool "Clock driver for stm32f4 and stm32f7 SoC families"
+-	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
++	depends on ARCH_STM32
++	default MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+ 	help
+ 	---help---
+ 	  Support for stm32f4 and stm32f7 SoC families clocks
+ =
+
+ config COMMON_CLK_STM32H7
+ 	bool "Clock driver for stm32h7 SoC family"
+-	depends on MACH_STM32H743
+-	help
++	depends on ARCH_STM32
++	default MACH_STM32H743
+ 	---help---
+ 	  Support for stm32h7 SoC family clocks
+ =
+
+-- =
+
+Sent by a computer through tubes
