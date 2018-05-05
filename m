@@ -1,150 +1,195 @@
-Return-Path: <gilad@benyossef.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>,
-	stable@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH v2 1/5] crypto: ccree: correct host regs offset
-Date: Thu, 24 May 2018 15:19:06 +0100
-Message-Id: <1527171551-21979-2-git-send-email-gilad@benyossef.com>
-In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Amit Nischal <anischal@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <68f6216b3de12d90a54207a6a0110c6b@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
+ David Brown <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk-owner@vger.kernel.org
+References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
+ <1525105210-8689-2-git-send-email-anischal@codeaurora.org>
+ <152524713612.138124.1776677011439726084@swboyd.mtv.corp.google.com>
+ <68f6216b3de12d90a54207a6a0110c6b@codeaurora.org>
+Message-ID: <152549069940.138124.10210385659890209429@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v6 1/3] clk: qcom: Configure the RCGs to a safe source as needed
+Date: Fri, 04 May 2018 20:24:59 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The product signature and HW revision register have different offset on the
-older HW revisions.
-This fixes the problem of the driver failing sanity check on silicon
-despite working on the FPGA emulation systems.
+Quoting Amit Nischal (2018-05-03 04:57:37)
+> On 2018-05-02 13:15, Stephen Boyd wrote:
+> > Quoting Amit Nischal (2018-04-30 09:20:08)
+> > =
 
-Fixes: 27b3b22dd98c ("crypto: ccree - add support for older HW revs")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
----
- drivers/crypto/ccree/cc_debugfs.c   | 7 +++++--
- drivers/crypto/ccree/cc_driver.c    | 8 ++++++--
- drivers/crypto/ccree/cc_driver.h    | 2 ++
- drivers/crypto/ccree/cc_host_regs.h | 6 ++++--
- 4 files changed, 17 insertions(+), 6 deletions(-)
+> >> +}
+> >> +
+> >> +static void clk_rcg2_shared_disable(struct clk_hw *hw)
+> >> +{
+> >> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> >> +       struct freq_tbl safe_src_tbl =3D { 0 };
+> >> +
+> >> +       /*
+> >> +        * Park the RCG at a safe configuration - sourced off from =
 
-diff --git a/drivers/crypto/ccree/cc_debugfs.c b/drivers/crypto/ccree/cc_debugfs.c
-index 08f8db4..5ca184e 100644
---- a/drivers/crypto/ccree/cc_debugfs.c
-+++ b/drivers/crypto/ccree/cc_debugfs.c
-@@ -26,7 +26,8 @@ struct cc_debugfs_ctx {
- static struct dentry *cc_debugfs_dir;
- 
- static struct debugfs_reg32 debug_regs[] = {
--	CC_DEBUG_REG(HOST_SIGNATURE),
-+	{ .name = "SIGNATURE" }, /* Must be 0th */
-+	{ .name = "VERSION" }, /* Must be 1st */
- 	CC_DEBUG_REG(HOST_IRR),
- 	CC_DEBUG_REG(HOST_POWER_DOWN_EN),
- 	CC_DEBUG_REG(AXIM_MON_ERR),
-@@ -34,7 +35,6 @@ static struct debugfs_reg32 debug_regs[] = {
- 	CC_DEBUG_REG(HOST_IMR),
- 	CC_DEBUG_REG(AXIM_CFG),
- 	CC_DEBUG_REG(AXIM_CACHE_PARAMS),
--	CC_DEBUG_REG(HOST_VERSION),
- 	CC_DEBUG_REG(GPR_HOST),
- 	CC_DEBUG_REG(AXIM_MON_COMP),
- };
-@@ -58,6 +58,9 @@ int cc_debugfs_init(struct cc_drvdata *drvdata)
- 	struct debugfs_regset32 *regset;
- 	struct dentry *file;
- 
-+	debug_regs[0].offset = drvdata->sig_offset;
-+	debug_regs[1].offset = drvdata->ver_offset;
-+
- 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
-diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
-index 89ce013..6f93ce7 100644
---- a/drivers/crypto/ccree/cc_driver.c
-+++ b/drivers/crypto/ccree/cc_driver.c
-@@ -207,9 +207,13 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 	if (hw_rev->rev >= CC_HW_REV_712) {
- 		new_drvdata->hash_len_sz = HASH_LEN_SIZE_712;
- 		new_drvdata->axim_mon_offset = CC_REG(AXIM_MON_COMP);
-+		new_drvdata->sig_offset = CC_REG(HOST_SIGNATURE_712);
-+		new_drvdata->ver_offset = CC_REG(HOST_VERSION_712);
- 	} else {
- 		new_drvdata->hash_len_sz = HASH_LEN_SIZE_630;
- 		new_drvdata->axim_mon_offset = CC_REG(AXIM_MON_COMP8);
-+		new_drvdata->sig_offset = CC_REG(HOST_SIGNATURE_630);
-+		new_drvdata->ver_offset = CC_REG(HOST_VERSION_630);
- 	}
- 
- 	platform_set_drvdata(plat_dev, new_drvdata);
-@@ -276,7 +280,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 	}
- 
- 	/* Verify correct mapping */
--	signature_val = cc_ioread(new_drvdata, CC_REG(HOST_SIGNATURE));
-+	signature_val = cc_ioread(new_drvdata, new_drvdata->sig_offset);
- 	if (signature_val != hw_rev->sig) {
- 		dev_err(dev, "Invalid CC signature: SIGNATURE=0x%08X != expected=0x%08X\n",
- 			signature_val, hw_rev->sig);
-@@ -287,7 +291,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 
- 	/* Display HW versions */
- 	dev_info(dev, "ARM CryptoCell %s Driver: HW version 0x%08X, Driver version %s\n",
--		 hw_rev->name, cc_ioread(new_drvdata, CC_REG(HOST_VERSION)),
-+		 hw_rev->name, cc_ioread(new_drvdata, new_drvdata->ver_offset),
- 		 DRV_MODULE_VERSION);
- 
- 	rc = init_cc_regs(new_drvdata, true);
-diff --git a/drivers/crypto/ccree/cc_driver.h b/drivers/crypto/ccree/cc_driver.h
-index 2048fde..95f82b2 100644
---- a/drivers/crypto/ccree/cc_driver.h
-+++ b/drivers/crypto/ccree/cc_driver.h
-@@ -129,6 +129,8 @@ struct cc_drvdata {
- 	enum cc_hw_rev hw_rev;
- 	u32 hash_len_sz;
- 	u32 axim_mon_offset;
-+	u32 sig_offset;
-+	u32 ver_offset;
- };
- 
- struct cc_crypto_alg {
-diff --git a/drivers/crypto/ccree/cc_host_regs.h b/drivers/crypto/ccree/cc_host_regs.h
-index f510018..616b2e1 100644
---- a/drivers/crypto/ccree/cc_host_regs.h
-+++ b/drivers/crypto/ccree/cc_host_regs.h
-@@ -45,7 +45,8 @@
- #define CC_HOST_ICR_DSCRPTR_WATERMARK_QUEUE0_CLEAR_BIT_SIZE	0x1UL
- #define CC_HOST_ICR_AXIM_COMP_INT_CLEAR_BIT_SHIFT	0x17UL
- #define CC_HOST_ICR_AXIM_COMP_INT_CLEAR_BIT_SIZE	0x1UL
--#define CC_HOST_SIGNATURE_REG_OFFSET	0xA24UL
-+#define CC_HOST_SIGNATURE_712_REG_OFFSET	0xA24UL
-+#define CC_HOST_SIGNATURE_630_REG_OFFSET	0xAC8UL
- #define CC_HOST_SIGNATURE_VALUE_BIT_SHIFT	0x0UL
- #define CC_HOST_SIGNATURE_VALUE_BIT_SIZE	0x20UL
- #define CC_HOST_BOOT_REG_OFFSET	0xA28UL
-@@ -105,7 +106,8 @@
- #define CC_HOST_BOOT_ONLY_ENCRYPT_LOCAL_BIT_SIZE	0x1UL
- #define CC_HOST_BOOT_AES_EXISTS_LOCAL_BIT_SHIFT	0x1EUL
- #define CC_HOST_BOOT_AES_EXISTS_LOCAL_BIT_SIZE	0x1UL
--#define CC_HOST_VERSION_REG_OFFSET	0xA40UL
-+#define CC_HOST_VERSION_712_REG_OFFSET	0xA40UL
-+#define CC_HOST_VERSION_630_REG_OFFSET	0xAD8UL
- #define CC_HOST_VERSION_VALUE_BIT_SHIFT	0x0UL
- #define CC_HOST_VERSION_VALUE_BIT_SIZE	0x20UL
- #define CC_HOST_KFDE0_VALID_REG_OFFSET	0xA60UL
--- 
-2.7.4
+> >> safe source.
+> >> +        * Force enable and disable the RCG while configuring it to =
+
+> >> safeguard
+> >> +        * against any update signal coming from the downstream clock.
+> >> +        * The current parent is still prepared and enabled at this =
+
+> >> point, and
+> >> +        * the safe source is always on while application processor =
+
+> >> subsystem
+> >> +        * is online. Therefore, the RCG can safely switch its parent.
+> >> +        */
+> >> +       safe_src_tbl.src =3D rcg->safe_src_index;
+> >> +       clk_rcg2_shared_force_enable_clear(hw, &safe_src_tbl);
+> > =
+
+> > This should then re-dirty the config register to have the software
+> > frequency settings that existed in the hardware when disable was =
+
+> > called.
+> > Given that MND shouldn't be changed here, this should be as simple as
+> > saving away the CFG register, forcing it to XO speed by changing the =
+
+> > src
+> > and disabling dual edge in the CFG register (please don't call
+> > force_enable_clear with some frequency pointer, just do this inline
+> > here), and then rewriting the cfg register with the "real" settings for
+> > whatever frequency it's supposed to run at and then returning from this
+> > function.
+> > =
+
+> > I guess we have to do a read cfg from hardware, write cfg, hit update
+> > config, and then write cfg again each time we disable. For enable, we
+> > just do an update config (if it's dirty?) inside of a force
+> > enable/disable pair. And set_rate doesn't really change except it =
+
+> > either
+> > does or doesn't hit the update config bit if the clk is enabled or
+> > disabled respectively.
+> > =
+
+> =
+
+> We have done the below changes suggested by you and that logic seems to =
+
+> be
+> working fine. But we have one concern about leaving the RCG registers in
+> dirty state and would like to have a little bit modification as =
+
+> explained
+> below:
+> =
+
+> Suggested Logic:
+> 1. set_rate()--> Update CFG, M, N and D registers and don't hit the =
+
+> update
+>                   bit if clock is disabled - call new =
+
+> __clk_rcg2_configure().
+>                   Above will make the CFG register as dirty.
+> =
+
+> 2. _disable()--> 2.1 - Store the CFG register configuration in a =
+
+> variable.
+>                   2.2 - Move to the safe source (XO) and hit the update =
+
+> bit.
+>                         It will only touch the CFG register and M, N, D
+>                         register values will remain as it was.
+>                   2.3 - Write back the stored CFG value done in step #2.1
+>                         This will again redirty the CFG register.
+> =
+
+> 3. _enable()--> Just hit the update bit as the configuration write will
+>                  be taken care in the steps #1 and #2.
+> =
+
+> It would be great if we don't redirty the CFG register and leave the RCG
+> CFG register to at safe source(XO) in disable() path.
+> =
+
+> This would help us to debug the issues where device crashes and we want
+> to dump the RCG registers to know whether from software, we have =
+
+> actually
+> moved to safe source or not. Otherwise, we would get the dirty register
+> values in crash dumps.
+> =
+
+> So instead of writing back the stored CFG(corresponding to real rate
+> settings) in disable path, we want to restore the stored CFG in enable
+> path and then hit the update bit.
+> CFG configuration store can happen at two places - set_rate() and =
+
+> disable()
+> path and above logic will be modified as below:
+> =
+
+> 1. set_rate()--> 1.1 - Update CFG, M, N and D registers and don't hit =
+
+> the
+>                         update bit if clock is disabled.
+>                   1.2 - Store CFG register value in 'current_cfg' member
+>                         of 'rcg2' structure.
+> =
+
+> 2. _disable()--> 2.1 - Store the CFG register value in 'current_cfg' =
+
+> before
+>                         switching to the safe source (XO).
+>                   2.2 - Move to the safe source (XO) and hit the update =
+
+> bit.
+>                         Now RCG configuration wil not be dirty.
+> =
+
+> 3. _enable()--> 3.1 - Check for 'current_cfg' value and if 0 then =
+
+> return.
+>                        This would catch the below one time condition:
+>                        - when clk_enable() gets call without set_rate().
+
+We want clk_enable() to work without set_rate() though. So returning 0
+if the value is 0 is wrong.
+
+>                  3.2 - Write the CFG value from 'current_cfg' to CFG =
+
+> register.
+>                  3.2 - Hit the update bit as we have already written the =
+
+> latest
+>                        configuration in step #3.2.
+>                  3.3 - Clear the 'current_cfg' value.
+> =
+
+> We feel above logic will work as expected and in this way, we don't have =
+
+> CFG
+> registers in dirty state when clock is disabled.
+> Could you please inform us your thoughts about above implementation and =
+
+> based
+> on that I will send the required changes.
+> =
+
+
+If you want to save away current_cfg in a memory location so you know
+what it was before it was dirty, then perhaps that needs to be a debug
+patch that you stack on top when debugging. In the end, it would just be
+saving the state of the frequency setting that we have in software
+though, and that would be the latest rate of the clk we have configured
+the clk for. There aren't any mux switches going on when the clk is off,
+so you're saying you want to know the rate of the clk that the kernel
+set when we turned the clk off, which we already have with the clk rate.
+I'm confused.=20
