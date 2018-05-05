@@ -1,187 +1,95 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Thu, 24 May 2018 08:59:19 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH 6/9] clk: bd71837: Add driver for BD71837 PMIC clock
-Message-ID: <20180524055919.GG4249@localhost.localdomain>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57775 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750764AbeEEHCK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 May 2018 03:02:10 -0400
+Date: Sat, 5 May 2018 09:01:47 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180505070147.epsrglnypm72jr5u@pengutronix.de>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180305102524.5905-4-o.rempel@pengutronix.de>
+ <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
+ <20180504134956.36dc72a253d03e94a517a867@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d2dufsg5h4kwcp6r"
+In-Reply-To: <20180504134956.36dc72a253d03e94a517a867@linux-foundation.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Support BD71837 gateable 32768 Hz clock.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/clk-bd71837.c | 155 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 155 insertions(+)
- create mode 100644 drivers/clk/clk-bd71837.c
+--d2dufsg5h4kwcp6r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk-bd71837.c b/drivers/clk/clk-bd71837.c
-new file mode 100644
-index 000000000000..8519badb8fc0
---- /dev/null
-+++ b/drivers/clk/clk-bd71837.c
-@@ -0,0 +1,155 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (C) 2018 ROHM Semiconductors */
-+/*
-+ * bd71837.c  --  ROHM BD71837MWV clock driver
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/bd71837.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+
-+static int bd71837_clk_enable(struct clk_hw *hw);
-+static void bd71837_clk_disable(struct clk_hw *hw);
-+static int bd71837_clk_is_enabled(struct clk_hw *hw);
-+
-+struct bd71837_clk {
-+	struct clk_hw hw;
-+	uint8_t reg;
-+	uint8_t mask;
-+	unsigned long rate;
-+	struct platform_device *pdev;
-+	struct bd71837 *mfd;
-+};
-+
-+static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate);
-+
-+static const struct clk_ops bd71837_clk_ops = {
-+	.recalc_rate = &bd71837_clk_recalc_rate,
-+	.prepare = &bd71837_clk_enable,
-+	.unprepare = &bd71837_clk_disable,
-+	.is_prepared = &bd71837_clk_is_enabled,
-+};
-+
-+static int bd71837_clk_set(struct clk_hw *hw, int status)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return bd71837_update_bits(c->mfd, c->reg, c->mask, status);
-+}
-+
-+static void bd71837_clk_disable(struct clk_hw *hw)
-+{
-+	int rv;
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	rv = bd71837_clk_set(hw, 0);
-+	if (rv)
-+		dev_err(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
-+}
-+
-+static int bd71837_clk_enable(struct clk_hw *hw)
-+{
-+	return bd71837_clk_set(hw, 1);
-+}
-+
-+static int bd71837_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return c->mask & bd71837_reg_read(c->mfd, c->reg);
-+
-+}
-+
-+static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return c->rate;
-+}
-+
-+static int bd71837_clk_probe(struct platform_device *pdev)
-+{
-+	struct bd71837_clk *c;
-+	int rval = -ENOMEM;
-+	struct bd71837 *mfd = dev_get_drvdata(pdev->dev.parent);
-+	const char *errstr = "memory allocation for bd71837 data failed";
-+	struct clk_init_data init = {
-+		.name = "bd71837-32k-out",
-+		.ops = &bd71837_clk_ops,
-+	};
-+
-+	c = kzalloc(sizeof(struct bd71837_clk), GFP_KERNEL);
-+	if (!c)
-+		goto err_out;
-+
-+	c->reg = BD71837_REG_OUT32K;
-+	c->mask = BD71837_OUT32K_EN;
-+	c->rate = BD71837_CLK_RATE;
-+	c->mfd = mfd;
-+	c->pdev = pdev;
-+
-+	if (pdev->dev.of_node)
-+		of_property_read_string_index(pdev->dev.of_node,
-+					      "clock-output-names", 0,
-+					      &init.name);
-+
-+	c->hw.init = &init;
-+
-+	errstr = "failed to register 32K clk";
-+	rval = clk_hw_register(&pdev->dev, &c->hw);
-+	if (rval)
-+		goto err_free;
-+
-+	errstr = "failed to register clkdev for bd71837";
-+	rval = clk_hw_register_clkdev(&c->hw, init.name, NULL);
-+	if (rval)
-+		goto err_unregister;
-+
-+	platform_set_drvdata(pdev, c);
-+	dev_dbg(&pdev->dev, "bd71837_clk successfully probed\n");
-+
-+	return 0;
-+
-+err_unregister:
-+	clk_hw_unregister(&c->hw);
-+err_free:
-+	kfree(c);
-+err_out:
-+	dev_err(&pdev->dev, "%s\n", errstr);
-+	return rval;
-+}
-+
-+static int bd71837_clk_remove(struct platform_device *pdev)
-+{
-+	struct bd71837_clk *c = platform_get_drvdata(pdev);
-+
-+	if (c) {
-+		clk_hw_unregister(&c->hw);
-+		kfree(c);
-+		platform_set_drvdata(pdev, NULL);
-+	}
-+	return 0;
-+}
-+
-+static struct platform_driver bd71837_clk = {
-+	.driver = {
-+		   .name = "bd71837-clk",
-+		   .owner = THIS_MODULE,
-+		   },
-+	.probe = bd71837_clk_probe,
-+	.remove = bd71837_clk_remove,
-+};
-+
-+module_platform_driver(bd71837_clk);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 chip clk driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+Moving Rafael from Cc to To.
+
+Hi Rafael,
+
+can you please help here?
+I need your ACK or NACK for this patch.
+
+On Fri, May 04, 2018 at 01:49:56PM -0700, Andrew Morton wrote:
+> On Fri, 4 May 2018 20:50:52 +0200 Oleksij Rempel <o.rempel@pengutronix.de=
+> wrote:
+>=20
+> > Hallo Andrew,
+> > I need your ACK or NACK for this patch.
+> >=20
+> > This function is used to configure external PMIC to interpret
+> > signal which will be triggered by pm_power_off as power off.
+> > Since same signal can be used for stand by, I linked PMIC configuration
+> > with pm_power_off_prepare to avoid possible conflicts.
+> >=20
+> > ...
+> >
+> > > --- a/kernel/reboot.c
+> > > +++ b/kernel/reboot.c
+> > > @@ -49,6 +49,7 @@ int reboot_force;
+> > >   */
+> > > =20
+> > >  void (*pm_power_off_prepare)(void);
+> > > +EXPORT_SYMBOL(pm_power_off_prepare);
+> > > =20
+>=20
+> OK by me, but it's more of a Rafael thing.
+>=20
+
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--d2dufsg5h4kwcp6r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlrtVtgACgkQdQOiSHVI
+77QObwf/cJgr0HweQIkx/33FIMM9bFE7R39Zd40PxhnmAGb2n5Jwgu1QH5AEUyRc
+f1rIROhBmAh6hgX08WEb4axdAHGfERMpiOpak999lBC9VLCN5INt3jpLwfHPi/VM
+21fzxr4jvEd9i4S9l670JWKtUPxUCAw7BBmn273tJQv1qdkNsJblqyW7XOe5qO+l
+DIsp9ScgU2VOpt2vfk+tMEkdoNa4sCejrN6jt2umP0uQoJY+UQD7PAA5xAemfssW
+aYF3aqpRlPKzn++AMgtiBDr8r3kerCx8+Klgjzt9PedqGxY2azr+ieZ1tkmYEDfg
+4k+0ebsVUca+n9M8c7tmpQVqbnedQA==
+=cKqR
+-----END PGP SIGNATURE-----
+
+--d2dufsg5h4kwcp6r--
