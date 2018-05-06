@@ -1,75 +1,72 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH] clk: davinci: pll-dm355: fix SYSCLKn parent names
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>
+References: <20180504142426.4764-1-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <ebe8d8aa-ea7d-62ad-106e-abb0db95edce@ti.com>
+Date: Sun, 6 May 2018 20:43:30 +0530
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 22 May 2018 20:44:19 +0200
-Message-ID: <CAMuHMdW-HUBRF4rLdfzixcyMUBg7+4XU+-3zayePoyeQiBZ8ZA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180504142426.4764-1-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+Hi David,
 
-On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds the constants necessary to use the renesas,rzn1-clocks driver.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-
-Thanks for your patch!
-
+On Friday 04 May 2018 07:54 PM, David Lechner wrote:
+> This fixes the parent clock names of the SYSCLKn clocks for the DM355
+> SoC in the TI DaVinici PLL clock driver.
+> 
+> It appears that this name just didn't get updated to the correct name
+> like the other SoCs during the driver's development.
+> 
+> Reported-by: Sekhar Nori <nsekhar@ti.com>
+> Signed-off-by: David Lechner <david@lechnology.com>
 > ---
->  include/dt-bindings/clock/rzn1-clocks.h | 187 ++++++++++++++++++++++++++++++++
->  1 file changed, 187 insertions(+)
->  create mode 100644 include/dt-bindings/clock/rzn1-clocks.h
->
-> diff --git a/include/dt-bindings/clock/rzn1-clocks.h b/include/dt-bindings/clock/rzn1-clocks.h
-> new file mode 100644
-> index 0000000..8a73db2
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/rzn1-clocks.h
+> 
+> Sekhar, can you please test to make sure this works?
+> 
+> 
+>  drivers/clk/davinci/pll-dm355.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+> index a0cff4212ac3..13dc6b8ea97a 100644
+> --- a/drivers/clk/davinci/pll-dm355.c
+> +++ b/drivers/clk/davinci/pll-dm355.c
+> @@ -22,10 +22,10 @@ static const struct davinci_pll_clk_info dm355_pll1_info = {
+>  		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
+>  };
+>  
+> -SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+> -SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+> -SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED);
+> -SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED);
+> +SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+> +SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+> +SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
+> +SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
+>  
+>  int dm355_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+>  {
+> @@ -62,8 +62,8 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
+>  		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
+>  };
+>  
+> -SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
+> -SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+> +SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV);
 
-Given this is part of the DT ABI, and there exist multiple different RZ/N1
-SoCs (and there are probably planned more), I wouldn't call this header
-file "rzn1-clocks.h", but e.g. "r9a06g032-clocks.h".
+We also need SYSCLK_ALWAYS_ENABLED for PLL2 sysclk1. With that change, I
+was able to boot DM355 EVM and the clock tree looks good too.
 
-> @@ -0,0 +1,187 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * RZ/N1 clock IDs
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-> + * Derived from zx-reboot.c
-> + */
-> +
-> +#ifndef __DT_BINDINGS_RZN1_CLOCK_H__
-> +#define __DT_BINDINGS_RZN1_CLOCK_H__
-> +
-> +#define RZN1_CLKOUT                    0
+> +SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+>  
+>  int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+>  {
 
-Similar for the RZN1 prefix.
-
-I'll look at the actual list of clocks later...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Sekhar
