@@ -1,553 +1,293 @@
-Return-Path: <daniel@zonque.org>
-From: Daniel Mack <daniel@zonque.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Daniel Mack <zonque@gmail.com>,
-	Daniel Mack <daniel@zonque.org>
-Subject: [PATCH] clk: Add driver for MAX9485
-Date: Mon, 21 May 2018 10:58:48 +0200
-Message-Id: <20180521085848.17192-1-daniel@zonque.org>
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v7 2/3] clk: qcom: Add DT bindings for SDM845 gcc clock controller
+Date: Mon,  7 May 2018 16:20:19 +0530
+Message-Id: <1525690220-26525-3-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
+References: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Daniel Mack <zonque@gmail.com>
+Add compatible string and the include file for gcc clock
+controller for SDM845.
 
-This patch adds a driver for MAX9485, a programmable audio clock generator.
-
-The device requires a 27.000 MHz clock input. It can provide a gated
-buffered output of its input clock and two gated outputs of a PLL that can
-generate one out of 16 discrete frequencies. There is only one PLL however,
-so the two gated outputs will always have the same frequency but they can
-be switched individually.
-
-The driver for this device exposes 4 clocks in total:
-
-- MAX9485_MCLKOUT:      A gated, buffered output of the input clock
-- MAX9485_CLKOUT:       A PLL that can be configured to 16 different
-			discrete frequencies
-- MAX9485_CLKOUT[1,2]:  Two gated outputs for MAX9485_CLKOUT
-
-Some PLL output frequencies can be achieved with different register
-settings. The driver will select the one with lowest jitter in such cases.
-
-Signed-off-by: Daniel Mack <daniel@zonque.org>
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/clock/maxim,max9485.txt    |  59 ++++
- drivers/clk/Kconfig                                |   8 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-max9485.c                          | 379 +++++++++++++++++++++
- include/dt-bindings/clock/maxim,max9485.h          |  19 ++
- 5 files changed, 466 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
- create mode 100644 drivers/clk/clk-max9485.c
- create mode 100644 include/dt-bindings/clock/maxim,max9485.h
+ .../devicetree/bindings/clock/qcom,gcc.txt         |   1 +
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        | 239 +++++++++++++++++++++
+ 2 files changed, 240 insertions(+)
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max9485.txt b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+index d1fb8b2..664ea1f 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+@@ -19,6 +19,7 @@ Required properties :
+ 			"qcom,gcc-msm8996"
+ 			"qcom,gcc-msm8998"
+ 			"qcom,gcc-mdm9615"
++			"qcom,gcc-sdm845"
+
+ - reg : shall contain base register location and length
+ - #clock-cells : shall contain 1
+diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
 new file mode 100644
-index 000000000000..43713031be2c
+index 0000000..aca6126
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
-@@ -0,0 +1,59 @@
-+Devicetree bindings for Maxim MAX9485 Programmable Audio Clock Generator
-+
-+The driver for this device exposes 4 clocks in total:
-+
-+- MAX9485_MCLKOUT: 	A gated, buffered output of the input clock of 27 MHz
-+- MAX9485_CLKOUT:	A PLL that can be configured to 16 different discrete
-+			frequencies
-+- MAX9485_CLKOUT[1,2]:	Two gated outputs for MAX9485_CLKOUT
-+
-+MAX9485_CLKOUT[1,2] are children of MAX9485_CLKOUT which upchain all rate set
-+requests.
-+
-+Required properties:
-+- compatible:	"maxim,max9485"
-+- clocks:	Input clock, must provice 27.000 MHz
-+- clock-names:	Must be set to "xclk"
-+- #clock-cells: From common clock binding; shall be set to 1
-+
-+Optional properties:
-+- reset-gpio:		GPIO descriptor connected to the #RESET input pin
-+- vdd-supply:		A regulator node for Vdd
-+- clock-output-names:	Name of output clocks, as defined in common clock
-+			bindings
-+
-+If not explicitly set, the output names are "mclkout", "clkout", "clkout1"
-+and "clkout2".
-+
-+Clocks are defined as preprocessor macros in the dt-binding header.
-+
-+Example:
-+
-+	#include <dt-bindings/clock/maxim,max9485.h>
-+
-+	xo_27mhz: xo_27mhz {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <27000000>;
-+	};
-+
-+	&i2c0 {
-+		max9485: max9485@63 {
-+			compatible = "maxim,max9485";
-+			clock-names = "xclk";
-+			clocks = <&xo_27mhz>;
-+			reg = <0x63>;
-+			reset-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
-+			vdd-supply = <&3v3_reg>;
-+			#clock-cells = <1>;
-+		};
-+	};
-+
-+	// Clock consumer node
-+
-+	foo@0 {
-+		compatible = "bar,foo";
-+		/* ... */
-+		clock-names = "foo-intput-clk";
-+		clocks = <&max9485 MAX9485_CLKOUT1>;
-+	};
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 34968a381d0f..f8ab54c41d16 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -45,6 +45,14 @@ config COMMON_CLK_MAX77686
- 	  This driver supports Maxim 77620/77686/77802 crystal oscillator
- 	  clock.
- 
-+config COMMON_CLK_MAX9485
-+	tristate "Clock driver for Maxim 9485 Programmable Clock Generator"
-+	depends on I2C
-+	depends on OF
-+	depends on GPIOLIB || COMPILE_TEST
-+	---help---
-+	  This driver supports Maxim 9485 Programmable Audio Clock Generator
-+
- config COMMON_CLK_RK808
- 	tristate "Clock driver for RK805/RK808/RK818"
- 	depends on MFD_RK808
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index de6d06ac790b..27417ba3c1df 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
- obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
- obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
- obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
-+obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
- obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
- obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
- obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
-diff --git a/drivers/clk/clk-max9485.c b/drivers/clk/clk-max9485.c
-new file mode 100644
-index 000000000000..d6c0d51d2d72
---- /dev/null
-+++ b/drivers/clk/clk-max9485.c
-@@ -0,0 +1,379 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+@@ -0,0 +1,239 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * clk-max9485.c: MAX9485 Programmable Audio Clock Generator
-+ *
-+ * (c) 2018 Daniel Mack <daniel@zonque.org>
-+ *
-+ * References:
-+ *   MAX9485 Datasheet
-+ *     http://www.maximintegrated.com/datasheet/index.mvp/id/4421
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
 + */
 +
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <dt-bindings/clock/maxim,max9485.h>
-+
-+#define MAX9485_INPUT_FREQ 27000000UL
-+#define MAX9485_NUM_CLKS 4
-+
-+/* This chip has only one register of 8 bit width. */
-+
-+enum {
-+	MAX9485_FS_12KHZ	= 0 << 0,
-+	MAX9485_FS_32KHZ	= 1 << 0,
-+	MAX9485_FS_44_1KHZ	= 2 << 0,
-+	MAX9485_FS_48KHZ	= 3 << 0,
-+};
-+
-+enum {
-+	MAX9485_SCALE_256	= 0 << 2,
-+	MAX9485_SCALE_384	= 1 << 2,
-+	MAX9485_SCALE_768	= 2 << 2,
-+};
-+
-+#define MAX9485_DOUBLE		BIT(4)
-+#define MAX9485_CLKOUT1_ENABLE	BIT(5)
-+#define MAX9485_CLKOUT2_ENABLE	BIT(6)
-+#define MAX9485_MCLK_ENABLE	BIT(7)
-+#define MAX9485_FREQ_MASK	0x1f
-+
-+struct max9485_rate {
-+	unsigned long out;
-+	u8 reg_value;
-+};
-+
-+/*
-+ * Ordered by frequency. For frequency the hardware can generate with
-+ * multiple settings, only the one with lowest jitter is listed.
-+ */
-+static const struct max9485_rate max9485_rates[] = {
-+	{  3072000, MAX9485_FS_12KHZ   | MAX9485_SCALE_256 },
-+	{  4608000, MAX9485_FS_12KHZ   | MAX9485_SCALE_384 },
-+	{  8192000, MAX9485_FS_32KHZ   | MAX9485_SCALE_256 },
-+	{  9126000, MAX9485_FS_12KHZ   | MAX9485_SCALE_768 },
-+	{ 11289600, MAX9485_FS_44_1KHZ | MAX9485_SCALE_256 },
-+	{ 12288000, MAX9485_FS_48KHZ   | MAX9485_SCALE_256 },
-+	{ 16384000, MAX9485_FS_32KHZ   | MAX9485_SCALE_256 | MAX9485_DOUBLE },
-+	{ 16934400, MAX9485_FS_44_1KHZ | MAX9485_SCALE_384 },
-+	{ 18384000, MAX9485_FS_48KHZ   | MAX9485_SCALE_384 },
-+	{ 22579200, MAX9485_FS_44_1KHZ | MAX9485_SCALE_256 | MAX9485_DOUBLE },
-+	{ 24576000, MAX9485_FS_48KHZ   | MAX9485_SCALE_256 | MAX9485_DOUBLE },
-+	{ 33868800, MAX9485_FS_44_1KHZ | MAX9485_SCALE_384 | MAX9485_DOUBLE },
-+	{ 36864000, MAX9485_FS_48KHZ   | MAX9485_SCALE_384 | MAX9485_DOUBLE },
-+	{ 49152000, MAX9485_FS_32KHZ   | MAX9485_SCALE_768 | MAX9485_DOUBLE },
-+	{ 67737600, MAX9485_FS_44_1KHZ | MAX9485_SCALE_768 | MAX9485_DOUBLE },
-+	{ 73728000, MAX9485_FS_48KHZ   | MAX9485_SCALE_768 | MAX9485_DOUBLE },
-+	{ } /* sentinel */
-+};
-+
-+struct max9485_driver_data;
-+
-+struct max9485_clk_hw {
-+	struct clk_hw hw;
-+	struct clk_init_data init;
-+	u8 enable_bit;
-+	struct max9485_driver_data *drvdata;
-+};
-+
-+struct max9485_driver_data {
-+	struct clk *xclk;
-+	struct i2c_client *client;
-+	u8 reg_value;
-+	unsigned long clkout_rate;
-+	struct regulator *supply;
-+	struct gpio_desc *reset_gpio;
-+	struct max9485_clk_hw hw[MAX9485_NUM_CLKS];
-+
-+	struct {
-+		struct clk_hw_onecell_data data;
-+		struct clk_hw *hw[MAX9485_NUM_CLKS];
-+	} onecell;
-+};
-+
-+static int max9485_update_bits(struct max9485_driver_data *drvdata,
-+			       u8 mask, u8 value)
-+{
-+	int ret;
-+
-+	drvdata->reg_value &= ~mask;
-+	drvdata->reg_value |= value;
-+
-+	dev_dbg(&drvdata->client->dev,
-+		"updating mask %02x value %02x -> %02x\n",
-+		mask, value, drvdata->reg_value);
-+
-+	ret = i2c_master_send(drvdata->client,
-+			      &drvdata->reg_value,
-+			      sizeof(drvdata->reg_value));
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int max9485_clk_prepare(struct clk_hw *hw)
-+{
-+	struct max9485_clk_hw *clk_hw =
-+		container_of(hw, struct max9485_clk_hw, hw);
-+
-+	return max9485_update_bits(clk_hw->drvdata,
-+				   clk_hw->enable_bit,
-+				   clk_hw->enable_bit);
-+}
-+
-+static void max9485_clk_unprepare(struct clk_hw *hw)
-+{
-+	struct max9485_clk_hw *clk_hw =
-+		container_of(hw, struct max9485_clk_hw, hw);
-+
-+	max9485_update_bits(clk_hw->drvdata, clk_hw->enable_bit, 0);
-+}
-+
-+/*
-+ * MCLK OUT
-+ */
-+
-+/* The MCLK output can only provide the same rate as the input clock */
-+static unsigned long max9485_mclkout_recalc_rate(struct clk_hw *hw,
-+						 unsigned long parent_rate)
-+{
-+	return MAX9485_INPUT_FREQ;
-+}
-+
-+/*
-+ * CLKOUT - configurable clock output
-+ */
-+static int max9485_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long parent_rate)
-+{
-+	const struct max9485_rate *entry;
-+	struct max9485_clk_hw *clk_hw =
-+		container_of(hw, struct max9485_clk_hw, hw);
-+
-+	for (entry = max9485_rates; entry->out != 0; entry++)
-+		if (entry->out == rate)
-+			break;
-+
-+	if (entry->out == 0)
-+		return -EINVAL;
-+
-+	clk_hw->drvdata->clkout_rate = rate;
-+
-+	return max9485_update_bits(clk_hw->drvdata,
-+				   MAX9485_FREQ_MASK,
-+				   entry->reg_value);
-+}
-+
-+static long max9485_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long *parent_rate)
-+{
-+	const struct max9485_rate *curr, *prev = NULL;
-+
-+	for (curr = max9485_rates; curr->out != 0; curr++) {
-+		/* Exact matches */
-+		if (curr->out == rate)
-+			return rate;
-+
-+		/*
-+		 * Find the first entry that has a frequency higher than the
-+		 * requested one.
-+		 */
-+		if (curr->out > rate) {
-+			unsigned int mid;
-+
-+			/*
-+			 * If this is the first entry, clamp the value to the
-+			 * lowest possible frequency.
-+			 */
-+			if (!prev)
-+				return curr->out;
-+
-+			/*
-+			 * Otherwise, determine whether the previous entry or
-+			 * current one is closer.
-+			 */
-+			mid = prev->out + ((curr->out - prev->out) / 2);
-+
-+			return (mid > rate) ? prev->out : curr->out;
-+		}
-+
-+		prev = curr;
-+	}
-+
-+	/* If the last entry was still too high, clamp the value */
-+	return prev->out;
-+}
-+
-+static unsigned long max9485_clkout_recalc_rate(struct clk_hw *hw,
-+						unsigned long parent_rate)
-+{
-+	struct max9485_clk_hw *clk_hw =
-+		container_of(hw, struct max9485_clk_hw, hw);
-+
-+	return clk_hw->drvdata->clkout_rate;
-+}
-+
-+struct max9485_clk {
-+	const char *name;
-+	int parent_index;
-+	const struct clk_ops ops;
-+	u8 enable_bit;
-+};
-+
-+static const struct max9485_clk max9485_clks[MAX9485_NUM_CLKS] = {
-+	[MAX9485_MCLKOUT] = {
-+		.name = "mclkout",
-+		.parent_index = -1,
-+		.enable_bit = MAX9485_MCLK_ENABLE,
-+		.ops = {
-+			.prepare	= max9485_clk_prepare,
-+			.unprepare	= max9485_clk_unprepare,
-+			.recalc_rate	= max9485_mclkout_recalc_rate,
-+		},
-+	},
-+	[MAX9485_CLKOUT] = {
-+		.name = "clkout",
-+		.parent_index = -1,
-+		.ops = {
-+			.set_rate	= max9485_clkout_set_rate,
-+			.round_rate	= max9485_clkout_round_rate,
-+			.recalc_rate	= max9485_clkout_recalc_rate,
-+		},
-+	},
-+	[MAX9485_CLKOUT1] = {
-+		.name = "clkout1",
-+		.parent_index = MAX9485_CLKOUT,
-+		.enable_bit = MAX9485_CLKOUT1_ENABLE,
-+		.ops = {
-+			.prepare	= max9485_clk_prepare,
-+			.unprepare	= max9485_clk_unprepare,
-+			.recalc_rate	= max9485_clkout_recalc_rate,
-+		},
-+	},
-+	[MAX9485_CLKOUT2] = {
-+		.name = "clkout2",
-+		.parent_index = MAX9485_CLKOUT,
-+		.enable_bit = MAX9485_CLKOUT2_ENABLE,
-+		.ops = {
-+			.prepare	= max9485_clk_prepare,
-+			.unprepare	= max9485_clk_unprepare,
-+			.recalc_rate	= max9485_clkout_recalc_rate,
-+		},
-+	},
-+};
-+
-+static int max9485_i2c_probe(struct i2c_client *client,
-+			     const struct i2c_device_id *id)
-+{
-+	struct max9485_driver_data *drvdata;
-+	struct device *dev = &client->dev;
-+	unsigned long freq;
-+	int i, ret;
-+
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (drvdata == NULL)
-+		return -ENOMEM;
-+
-+	drvdata->xclk = devm_clk_get(dev, "xclk");
-+	if (IS_ERR(drvdata->xclk))
-+		return PTR_ERR(drvdata->xclk);
-+
-+	freq = clk_get_rate(drvdata->xclk);
-+	if (freq != MAX9485_INPUT_FREQ) {
-+		dev_err(dev, "Illegal xclk frequency of %ld\n", freq);
-+		return -EINVAL;
-+	}
-+
-+	drvdata->supply = devm_regulator_get(dev, "vdd");
-+	if (IS_ERR(drvdata->supply))
-+		return PTR_ERR(drvdata->supply);
-+
-+	ret = regulator_enable(drvdata->supply);
-+	if (ret < 0)
-+		return ret;
-+
-+	drvdata->reset_gpio =
-+		devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(drvdata->reset_gpio))
-+		return PTR_ERR(drvdata->reset_gpio);
-+
-+	i2c_set_clientdata(client, drvdata);
-+	drvdata->client = client;
-+
-+	for (i = 0; i < MAX9485_NUM_CLKS; i++) {
-+		int parent_index = max9485_clks[i].parent_index;
-+		const char *name;
-+
-+		if (of_property_read_string_index(dev->of_node,
-+						  "clock-output-names",
-+						  i, &name) == 0)
-+			drvdata->hw[i].init.name = name;
-+		else
-+			drvdata->hw[i].init.name = max9485_clks[i].name;
-+
-+		drvdata->hw[i].init.ops = &max9485_clks[i].ops;
-+		drvdata->hw[i].init.flags = CLK_IS_BASIC;
-+
-+		if (parent_index > 0) {
-+			drvdata->hw[i].init.parent_names =
-+				&drvdata->hw[parent_index].init.name;
-+			drvdata->hw[i].init.num_parents = 1;
-+			drvdata->hw[i].init.flags |= CLK_SET_RATE_PARENT;
-+		}
-+
-+		drvdata->hw[i].enable_bit = max9485_clks[i].enable_bit;
-+		drvdata->hw[i].hw.init = &drvdata->hw[i].init;
-+		drvdata->hw[i].drvdata = drvdata;
-+
-+		ret = devm_clk_hw_register(dev, &drvdata->hw[i].hw);
-+		if (ret < 0)
-+			return ret;
-+
-+		drvdata->onecell.hw[i] = &drvdata->hw[i].hw;
-+	}
-+
-+	drvdata->onecell.data.num = MAX9485_NUM_CLKS;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   &drvdata->onecell.data);
-+}
-+
-+static const struct of_device_id max9485_dt_ids[] = {
-+	{ .compatible = "maxim,max9485", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, max9485_dt_ids);
-+
-+static const struct i2c_device_id max9485_i2c_ids[] = {
-+	{ .name = "max9485", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, max9485_i2c_ids);
-+
-+static struct i2c_driver max9485_driver = {
-+	.driver = {
-+		.name = "max9485",
-+		.of_match_table = max9485_dt_ids,
-+	},
-+	.probe = max9485_i2c_probe,
-+	.id_table = max9485_i2c_ids,
-+};
-+module_i2c_driver(max9485_driver);
-+
-+MODULE_AUTHOR("Daniel Mack <daniel@zonque.org>");
-+MODULE_DESCRIPTION("MAX9485 Programmable Audio Clock Generator");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/dt-bindings/clock/maxim,max9485.h b/include/dt-bindings/clock/maxim,max9485.h
-new file mode 100644
-index 000000000000..23add67f32a7
---- /dev/null
-+++ b/include/dt-bindings/clock/maxim,max9485.h
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Daniel Mack
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_MAX9485_CLK_H
-+#define __DT_BINDINGS_MAX9485_CLK_H
-+
-+#define MAX9485_MCLKOUT	0
-+#define MAX9485_CLKOUT	1
-+#define MAX9485_CLKOUT1	2
-+#define MAX9485_CLKOUT2	3
-+
-+#endif /* __DT_BINDINGS_MAX9485_CLK_H */
--- 
-2.14.3
++#ifndef _DT_BINDINGS_CLK_SDM_GCC_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_GCC_SDM845_H
++
++/* GCC clock registers */
++#define GCC_AGGRE_NOC_PCIE_TBU_CLK				0
++#define GCC_AGGRE_UFS_CARD_AXI_CLK				1
++#define GCC_AGGRE_UFS_PHY_AXI_CLK				2
++#define GCC_AGGRE_USB3_PRIM_AXI_CLK				3
++#define GCC_AGGRE_USB3_SEC_AXI_CLK				4
++#define GCC_BOOT_ROM_AHB_CLK					5
++#define GCC_CAMERA_AHB_CLK					6
++#define GCC_CAMERA_AXI_CLK					7
++#define GCC_CAMERA_XO_CLK					8
++#define GCC_CE1_AHB_CLK						9
++#define GCC_CE1_AXI_CLK						10
++#define GCC_CE1_CLK						11
++#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK				12
++#define GCC_CFG_NOC_USB3_SEC_AXI_CLK				13
++#define GCC_CPUSS_AHB_CLK					14
++#define GCC_CPUSS_AHB_CLK_SRC					15
++#define GCC_CPUSS_RBCPR_CLK					16
++#define GCC_CPUSS_RBCPR_CLK_SRC					17
++#define GCC_DDRSS_GPU_AXI_CLK					18
++#define GCC_DISP_AHB_CLK					19
++#define GCC_DISP_AXI_CLK					20
++#define GCC_DISP_GPLL0_CLK_SRC					21
++#define GCC_DISP_GPLL0_DIV_CLK_SRC				22
++#define GCC_DISP_XO_CLK						23
++#define GCC_GP1_CLK						24
++#define GCC_GP1_CLK_SRC						25
++#define GCC_GP2_CLK						26
++#define GCC_GP2_CLK_SRC						27
++#define GCC_GP3_CLK						28
++#define GCC_GP3_CLK_SRC						29
++#define GCC_GPU_CFG_AHB_CLK					30
++#define GCC_GPU_GPLL0_CLK_SRC					31
++#define GCC_GPU_GPLL0_DIV_CLK_SRC				32
++#define GCC_GPU_MEMNOC_GFX_CLK					33
++#define GCC_GPU_SNOC_DVM_GFX_CLK				34
++#define GCC_MSS_AXIS2_CLK					35
++#define GCC_MSS_CFG_AHB_CLK					36
++#define GCC_MSS_GPLL0_DIV_CLK_SRC				37
++#define GCC_MSS_MFAB_AXIS_CLK					38
++#define GCC_MSS_Q6_MEMNOC_AXI_CLK				39
++#define GCC_MSS_SNOC_AXI_CLK					40
++#define GCC_PCIE_0_AUX_CLK					41
++#define GCC_PCIE_0_AUX_CLK_SRC					42
++#define GCC_PCIE_0_CFG_AHB_CLK					43
++#define GCC_PCIE_0_CLKREF_CLK					44
++#define GCC_PCIE_0_MSTR_AXI_CLK					45
++#define GCC_PCIE_0_PIPE_CLK					46
++#define GCC_PCIE_0_SLV_AXI_CLK					47
++#define GCC_PCIE_0_SLV_Q2A_AXI_CLK				48
++#define GCC_PCIE_1_AUX_CLK					49
++#define GCC_PCIE_1_AUX_CLK_SRC					50
++#define GCC_PCIE_1_CFG_AHB_CLK					51
++#define GCC_PCIE_1_CLKREF_CLK					52
++#define GCC_PCIE_1_MSTR_AXI_CLK					53
++#define GCC_PCIE_1_PIPE_CLK					54
++#define GCC_PCIE_1_SLV_AXI_CLK					55
++#define GCC_PCIE_1_SLV_Q2A_AXI_CLK				56
++#define GCC_PCIE_PHY_AUX_CLK					57
++#define GCC_PCIE_PHY_REFGEN_CLK					58
++#define GCC_PCIE_PHY_REFGEN_CLK_SRC				59
++#define GCC_PDM2_CLK						60
++#define GCC_PDM2_CLK_SRC					61
++#define GCC_PDM_AHB_CLK						62
++#define GCC_PDM_XO4_CLK						63
++#define GCC_PRNG_AHB_CLK					64
++#define GCC_QMIP_CAMERA_AHB_CLK					65
++#define GCC_QMIP_DISP_AHB_CLK					66
++#define GCC_QMIP_VIDEO_AHB_CLK					67
++#define GCC_QUPV3_WRAP0_S0_CLK					68
++#define GCC_QUPV3_WRAP0_S0_CLK_SRC				69
++#define GCC_QUPV3_WRAP0_S1_CLK					70
++#define GCC_QUPV3_WRAP0_S1_CLK_SRC				71
++#define GCC_QUPV3_WRAP0_S2_CLK					72
++#define GCC_QUPV3_WRAP0_S2_CLK_SRC				73
++#define GCC_QUPV3_WRAP0_S3_CLK					74
++#define GCC_QUPV3_WRAP0_S3_CLK_SRC				75
++#define GCC_QUPV3_WRAP0_S4_CLK					76
++#define GCC_QUPV3_WRAP0_S4_CLK_SRC				77
++#define GCC_QUPV3_WRAP0_S5_CLK					78
++#define GCC_QUPV3_WRAP0_S5_CLK_SRC				79
++#define GCC_QUPV3_WRAP0_S6_CLK					80
++#define GCC_QUPV3_WRAP0_S6_CLK_SRC				81
++#define GCC_QUPV3_WRAP0_S7_CLK					82
++#define GCC_QUPV3_WRAP0_S7_CLK_SRC				83
++#define GCC_QUPV3_WRAP1_S0_CLK					84
++#define GCC_QUPV3_WRAP1_S0_CLK_SRC				85
++#define GCC_QUPV3_WRAP1_S1_CLK					86
++#define GCC_QUPV3_WRAP1_S1_CLK_SRC				87
++#define GCC_QUPV3_WRAP1_S2_CLK					88
++#define GCC_QUPV3_WRAP1_S2_CLK_SRC				89
++#define GCC_QUPV3_WRAP1_S3_CLK					90
++#define GCC_QUPV3_WRAP1_S3_CLK_SRC				91
++#define GCC_QUPV3_WRAP1_S4_CLK					92
++#define GCC_QUPV3_WRAP1_S4_CLK_SRC				93
++#define GCC_QUPV3_WRAP1_S5_CLK					94
++#define GCC_QUPV3_WRAP1_S5_CLK_SRC				95
++#define GCC_QUPV3_WRAP1_S6_CLK					96
++#define GCC_QUPV3_WRAP1_S6_CLK_SRC				97
++#define GCC_QUPV3_WRAP1_S7_CLK					98
++#define GCC_QUPV3_WRAP1_S7_CLK_SRC				99
++#define GCC_QUPV3_WRAP_0_M_AHB_CLK				100
++#define GCC_QUPV3_WRAP_0_S_AHB_CLK				101
++#define GCC_QUPV3_WRAP_1_M_AHB_CLK				102
++#define GCC_QUPV3_WRAP_1_S_AHB_CLK				103
++#define GCC_SDCC2_AHB_CLK					104
++#define GCC_SDCC2_APPS_CLK					105
++#define GCC_SDCC2_APPS_CLK_SRC					106
++#define GCC_SDCC4_AHB_CLK					107
++#define GCC_SDCC4_APPS_CLK					108
++#define GCC_SDCC4_APPS_CLK_SRC					109
++#define GCC_SYS_NOC_CPUSS_AHB_CLK				110
++#define GCC_TSIF_AHB_CLK					111
++#define GCC_TSIF_INACTIVITY_TIMERS_CLK				112
++#define GCC_TSIF_REF_CLK					113
++#define GCC_TSIF_REF_CLK_SRC					114
++#define GCC_UFS_CARD_AHB_CLK					115
++#define GCC_UFS_CARD_AXI_CLK					116
++#define GCC_UFS_CARD_AXI_CLK_SRC				117
++#define GCC_UFS_CARD_CLKREF_CLK					118
++#define GCC_UFS_CARD_ICE_CORE_CLK				119
++#define GCC_UFS_CARD_ICE_CORE_CLK_SRC				120
++#define GCC_UFS_CARD_PHY_AUX_CLK				121
++#define GCC_UFS_CARD_PHY_AUX_CLK_SRC				122
++#define GCC_UFS_CARD_RX_SYMBOL_0_CLK				123
++#define GCC_UFS_CARD_RX_SYMBOL_1_CLK				124
++#define GCC_UFS_CARD_TX_SYMBOL_0_CLK				125
++#define GCC_UFS_CARD_UNIPRO_CORE_CLK				126
++#define GCC_UFS_CARD_UNIPRO_CORE_CLK_SRC			127
++#define GCC_UFS_MEM_CLKREF_CLK					128
++#define GCC_UFS_PHY_AHB_CLK					129
++#define GCC_UFS_PHY_AXI_CLK					130
++#define GCC_UFS_PHY_AXI_CLK_SRC					131
++#define GCC_UFS_PHY_ICE_CORE_CLK				132
++#define GCC_UFS_PHY_ICE_CORE_CLK_SRC				133
++#define GCC_UFS_PHY_PHY_AUX_CLK					134
++#define GCC_UFS_PHY_PHY_AUX_CLK_SRC				135
++#define GCC_UFS_PHY_RX_SYMBOL_0_CLK				136
++#define GCC_UFS_PHY_RX_SYMBOL_1_CLK				137
++#define GCC_UFS_PHY_TX_SYMBOL_0_CLK				138
++#define GCC_UFS_PHY_UNIPRO_CORE_CLK				139
++#define GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC				140
++#define GCC_USB30_PRIM_MASTER_CLK				141
++#define GCC_USB30_PRIM_MASTER_CLK_SRC				142
++#define GCC_USB30_PRIM_MOCK_UTMI_CLK				143
++#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC			144
++#define GCC_USB30_PRIM_SLEEP_CLK				145
++#define GCC_USB30_SEC_MASTER_CLK				146
++#define GCC_USB30_SEC_MASTER_CLK_SRC				147
++#define GCC_USB30_SEC_MOCK_UTMI_CLK				148
++#define GCC_USB30_SEC_MOCK_UTMI_CLK_SRC				149
++#define GCC_USB30_SEC_SLEEP_CLK					150
++#define GCC_USB3_PRIM_CLKREF_CLK				151
++#define GCC_USB3_PRIM_PHY_AUX_CLK				152
++#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC				153
++#define GCC_USB3_PRIM_PHY_COM_AUX_CLK				154
++#define GCC_USB3_PRIM_PHY_PIPE_CLK				155
++#define GCC_USB3_SEC_CLKREF_CLK					156
++#define GCC_USB3_SEC_PHY_AUX_CLK				157
++#define GCC_USB3_SEC_PHY_AUX_CLK_SRC				158
++#define GCC_USB3_SEC_PHY_PIPE_CLK				159
++#define GCC_USB3_SEC_PHY_COM_AUX_CLK				160
++#define GCC_USB_PHY_CFG_AHB2PHY_CLK				161
++#define GCC_VIDEO_AHB_CLK					162
++#define GCC_VIDEO_AXI_CLK					163
++#define GCC_VIDEO_XO_CLK					164
++#define GPLL0							165
++#define GPLL0_OUT_EVEN						166
++#define GPLL0_OUT_MAIN						167
++#define GCC_GPU_IREF_CLK					168
++#define GCC_SDCC1_AHB_CLK					169
++#define GCC_SDCC1_APPS_CLK					170
++#define GCC_SDCC1_ICE_CORE_CLK					171
++#define GCC_SDCC1_APPS_CLK_SRC					172
++#define GCC_SDCC1_ICE_CORE_CLK_SRC				173
++#define GCC_APC_VS_CLK						174
++#define GCC_GPU_VS_CLK						175
++#define GCC_MSS_VS_CLK						176
++#define GCC_VDDA_VS_CLK						177
++#define GCC_VDDCX_VS_CLK					178
++#define GCC_VDDMX_VS_CLK					179
++#define GCC_VS_CTRL_AHB_CLK					180
++#define GCC_VS_CTRL_CLK						181
++#define GCC_VS_CTRL_CLK_SRC					182
++#define GCC_VSENSOR_CLK_SRC					183
++#define GPLL4							184
++
++/* GCC Resets */
++#define GCC_MMSS_BCR						0
++#define GCC_PCIE_0_BCR						1
++#define GCC_PCIE_1_BCR						2
++#define GCC_PCIE_PHY_BCR					3
++#define GCC_PDM_BCR						4
++#define GCC_PRNG_BCR						5
++#define GCC_QUPV3_WRAPPER_0_BCR					6
++#define GCC_QUPV3_WRAPPER_1_BCR					7
++#define GCC_QUSB2PHY_PRIM_BCR					8
++#define GCC_QUSB2PHY_SEC_BCR					9
++#define GCC_SDCC2_BCR						10
++#define GCC_SDCC4_BCR						11
++#define GCC_TSIF_BCR						12
++#define GCC_UFS_CARD_BCR					13
++#define GCC_UFS_PHY_BCR						14
++#define GCC_USB30_PRIM_BCR					15
++#define GCC_USB30_SEC_BCR					16
++#define GCC_USB3_PHY_PRIM_BCR					17
++#define GCC_USB3PHY_PHY_PRIM_BCR				18
++#define GCC_USB3_DP_PHY_PRIM_BCR				19
++#define GCC_USB3_PHY_SEC_BCR					20
++#define GCC_USB3PHY_PHY_SEC_BCR					21
++#define GCC_USB3_DP_PHY_SEC_BCR					22
++#define GCC_USB_PHY_CFG_AHB2PHY_BCR				23
++#define GCC_PCIE_0_PHY_BCR					24
++#define GCC_PCIE_1_PHY_BCR					25
++
++/* GCC GDSCRs */
++#define PCIE_0_GDSC						0
++#define PCIE_1_GDSC						1
++#define UFS_CARD_GDSC						2
++#define UFS_PHY_GDSC						3
++#define USB30_PRIM_GDSC						4
++#define USB30_SEC_GDSC						5
++#define HLOS1_VOTE_AGGRE_NOC_MMU_AUDIO_TBU_GDSC			6
++#define HLOS1_VOTE_AGGRE_NOC_MMU_PCIE_TBU_GDSC			7
++#define HLOS1_VOTE_AGGRE_NOC_MMU_TBU1_GDSC			8
++#define HLOS1_VOTE_AGGRE_NOC_MMU_TBU2_GDSC			9
++#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC			10
++#define HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC			11
++#define HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC			12
++
++#endif
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
