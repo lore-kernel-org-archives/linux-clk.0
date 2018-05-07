@@ -1,62 +1,46 @@
 Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH] clk: davinci: psc-da830: fix USB0 48MHz PHY clock
+ registration
+To: Sekhar Nori <nsekhar@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Linux clk Mailing List <linux-clk@vger.kernel.org>,
+ Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+References: <20180507113457.4716-1-nsekhar@ti.com>
 From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 14/27] ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
-Date: Wed,  9 May 2018 12:25:53 -0500
-Message-Id: <20180509172606.29387-15-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+Message-ID: <a06ddbc4-e257-ddcd-55c6-3f3a745b91e3@lechnology.com>
+Date: Mon, 7 May 2018 09:25:05 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180507113457.4716-1-nsekhar@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes CONFIG_DAVINCI_RESET_CLOCKS. The option has been removed from
-the kernel.
+On 05/07/2018 06:34 AM, Sekhar Nori wrote:
+> USB0 48MHz PHY clock registration fails on DA830 because the
+> da8xx-cfgchip clock driver cannot get a reference to USB0
+> LPSC clock.
+> 
+> The USB0 LPSC needs to be enabled during PHY clock enable. Setup
+> the clock lookup correctly to fix this.
+> 
+> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> ---
+>   drivers/clk/davinci/psc-da830.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/davinci/psc-da830.c b/drivers/clk/davinci/psc-da830.c
+> index f61abf5632ff..081b039fcb02 100644
+> --- a/drivers/clk/davinci/psc-da830.c
+> +++ b/drivers/clk/davinci/psc-da830.c
+> @@ -55,7 +55,8 @@ const struct davinci_psc_init_data da830_psc0_init_data = {
+>   	.psc_init		= &da830_psc0_init,
+>   };
+>   
+> -LPSC_CLKDEV2(usb0_clkdev,	NULL,	"musb-da8xx",
+> +LPSC_CLKDEV3(usb0_clkdev,	"fck",	"da830-usb-phy-clks",
+> +				NULL,	"musb-da8xx",
+>   				NULL,	"cppi41-dmaengine");
+>   LPSC_CLKDEV1(usb1_clkdev,	NULL,	"ohci-da8xx");
+>   /* REVISIT: gpio-davinci.c should be modified to drop con_id */
+> 
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
-
-v10 changes:
-- none
-
-v9 changes:
-- none
-
-v8 changes:
-- none
-
-v7 changes:
-- none
-
-v6 changes:
-- none
-
-
- arch/arm/configs/davinci_all_defconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
-index 21b2d7791df4..f83ea4131df2 100644
---- a/arch/arm/configs/davinci_all_defconfig
-+++ b/arch/arm/configs/davinci_all_defconfig
-@@ -31,7 +31,6 @@ CONFIG_MACH_MITYOMAPL138=y
- CONFIG_MACH_OMAPL138_HAWKBOARD=y
- CONFIG_DAVINCI_MUX_DEBUG=y
- CONFIG_DAVINCI_MUX_WARNINGS=y
--CONFIG_DAVINCI_RESET_CLOCKS=y
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
- CONFIG_CMA=y
--- 
-2.17.0
+Reviewed-by: David Lechner <david@lechnology.com>
