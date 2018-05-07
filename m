@@ -1,54 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55905 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753212AbeERJ2l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:28:41 -0400
-Received: by mail-wm0-f65.google.com with SMTP id a8-v6so12965702wmg.5
-        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 02:28:40 -0700 (PDT)
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
-Subject: [PATCH v5 07/12] ARM: dts: imx7s: add mipi phy power domain
-Date: Fri, 18 May 2018 10:28:01 +0100
-Message-Id: <20180518092806.3829-8-rui.silva@linaro.org>
-In-Reply-To: <20180518092806.3829-1-rui.silva@linaro.org>
-References: <20180518092806.3829-1-rui.silva@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v2 1/2] clk: davinci: pll-dm355: fix SYSCLKn parent names
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org
+References: <20180507144307.32364-1-david@lechnology.com>
+ <5805f462-0cb5-3024-f5af-941db8a46895@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <f41e762d-273a-9e8a-579a-f43e90260020@lechnology.com>
+Date: Mon, 7 May 2018 13:32:41 -0500
+MIME-Version: 1.0
+In-Reply-To: <5805f462-0cb5-3024-f5af-941db8a46895@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add power domain index 0 related with mipi-phy to imx7s.
 
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
----
- arch/arm/boot/dts/imx7s.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index 4d42335c0dee..67450ad89940 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -636,6 +636,12 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 
-+					pgc_mipi_phy: pgc-power-domain@0 {
-+						#power-domain-cells = <0>;
-+						reg = <0>;
-+						power-supply = <&reg_1p0d>;
-+					};
-+
- 					pgc_pcie_phy: pgc-power-domain@1 {
- 						#power-domain-cells = <0>;
- 						reg = <1>;
--- 
-2.17.0
+On 5/7/18 10:21 AM, Sekhar Nori wrote:
+> On Monday 07 May 2018 08:13 PM, David Lechner wrote:
+>> This fixes the parent clock names of the SYSCLKn clocks for the DM355
+>> SoC in the TI DaVinici PLL clock driver.
+>>
+>> It appears that this name just didn't get updated to the correct name
+>> like the other SoCs during the driver's development.
+>>
+>> Reported-by: Sekhar Nori <nsekhar@ti.com>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+>> ---
+>>
+>> v2 changes:
+>> - add second patch to fix additional problems with DM355
+>>
+>>   drivers/clk/davinci/pll-dm355.c | 12 ++++++------
+>>   1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+>> index 5345f8286c50..1f746d2fc894 100644
+>> --- a/drivers/clk/davinci/pll-dm355.c
+>> +++ b/drivers/clk/davinci/pll-dm355.c
+>> @@ -22,10 +22,10 @@ static const struct davinci_pll_clk_info dm355_pll1_info = {
+>>   		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
+>>   };
+>>   
+>> -SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+>> -SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+>> -SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED);
+>> -SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED);
+>> +SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+>> +SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+>> +SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
+>> +SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
+>>   
+>>   int dm355_pll1_init(struct device *dev, void __iomem *base)
+>>   {
+>> @@ -62,8 +62,8 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
+>>   		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
+>>   };
+>>   
+>> -SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
+>> -SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+>> +SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV);
+>> +SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+> 
+> Good find with PLL2 SYSCLK2. Can you reverse the patch order so we are
+> not fixing up a non-existent clock?
+> 
 
+Sure. But it will take me a couple days to get back to it.
