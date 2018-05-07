@@ -1,56 +1,62 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 30 May 2018 12:16:49 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
- driver
-Message-ID: <20180530111649.GB8038@dell>
-References: <20180528090003.GA8778@localhost.localdomain>
- <20180529073958.GB4790@dell>
- <20180529083541.GA13528@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180529083541.GA13528@localhost.localdomain>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] clk: davinci: pll-dm355: fix SYSCLKn parent names
+Date: Mon,  7 May 2018 09:43:06 -0500
+Message-Id: <20180507144307.32364-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 29 May 2018, Matti Vaittinen wrote:
+This fixes the parent clock names of the SYSCLKn clocks for the DM355
+SoC in the TI DaVinici PLL clock driver.
 
-> Hello,
-> 
-> On Tue, May 29, 2018 at 08:39:58AM +0100, Lee Jones wrote:
-> > On Mon, 28 May 2018, Matti Vaittinen wrote:
-> > 
-> > > Patch series adding support for ROHM BD71837 PMIC.
-> > FYI, this patch-set is going to be difficult to manage since it was
-> > not sent 'threaded'.
-> > 
-> > If/when you send a subsequent version, could you please ensure you
-> > send the set threaded so the patches keep in relation to one another
-> > as they are reviewed?
-> 
-> Thanks for the guidance. I have not sent so many patches to community so
-> I am grateful also from all the practical tips =) Just one slight problem.
-> I have only seen emails being threaded when one is replying to an email.
-> So how should I send my patches in same thread? Just send first one and
-> then send subsequent patches as replies?
-> 
-> I just killed some unused definitions and one unused variable from the
-> code so I am about to send new version. I'll try doing that as a threaded
-> series and resend all the patches as v3.
+It appears that this name just didn't get updated to the correct name
+like the other SoCs during the driver's development.
 
-You don't need to do this manually.
+Reported-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-Just use `git send-email` with the correct arguments.
+v2 changes:
+- add second patch to fix additional problems with DM355
 
+ drivers/clk/davinci/pll-dm355.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+index 5345f8286c50..1f746d2fc894 100644
+--- a/drivers/clk/davinci/pll-dm355.c
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -22,10 +22,10 @@ static const struct davinci_pll_clk_info dm355_pll1_info = {
+ 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
+ };
+ 
+-SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+-SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+-SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED);
+-SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
+ 
+ int dm355_pll1_init(struct device *dev, void __iomem *base)
+ {
+@@ -62,8 +62,8 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
+ 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
+ };
+ 
+-SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
+-SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV);
++SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+ 
+ int dm355_pll2_init(struct device *dev, void __iomem *base)
+ {
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.0
