@@ -1,164 +1,133 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 23 May 2018 13:33:20 -0500
-From: Rob Herring <robh@kernel.org>
-To: Daniel Mack <daniel@zonque.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Daniel Mack <zonque@gmail.com>
-Subject: Re: [PATCH] clk: Add driver for MAX9485
-Message-ID: <20180523183320.GA15306@rob-hp-laptop>
-References: <20180521085848.17192-1-daniel@zonque.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180521085848.17192-1-daniel@zonque.org>
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v7 0/3] Misc patches to support clocks for SDM845
+Date: Mon,  7 May 2018 16:20:17 +0530
+Message-Id: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 21, 2018 at 10:58:48AM +0200, Daniel Mack wrote:
-> From: Daniel Mack <zonque@gmail.com>
-> 
-> This patch adds a driver for MAX9485, a programmable audio clock generator.
-> 
-> The device requires a 27.000 MHz clock input. It can provide a gated
-> buffered output of its input clock and two gated outputs of a PLL that can
-> generate one out of 16 discrete frequencies. There is only one PLL however,
-> so the two gated outputs will always have the same frequency but they can
-> be switched individually.
-> 
-> The driver for this device exposes 4 clocks in total:
-> 
-> - MAX9485_MCLKOUT:      A gated, buffered output of the input clock
-> - MAX9485_CLKOUT:       A PLL that can be configured to 16 different
-> 			discrete frequencies
-> - MAX9485_CLKOUT[1,2]:  Two gated outputs for MAX9485_CLKOUT
-> 
-> Some PLL output frequencies can be achieved with different register
-> settings. The driver will select the one with lowest jitter in such cases.
-> 
-> Signed-off-by: Daniel Mack <daniel@zonque.org>
-> ---
->  .../devicetree/bindings/clock/maxim,max9485.txt    |  59 ++++
->  drivers/clk/Kconfig                                |   8 +
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/clk-max9485.c                          | 379 +++++++++++++++++++++
->  include/dt-bindings/clock/maxim,max9485.h          |  19 ++
+Changes in v7:
+1. Addressed review comments from Stephen and Rob for GCC driver.
+   - Split dt-bindings to a separate patch from the driver patch.
+   - Change the 'halt_check' type to BRANCH_HALT_SKIP for pipe
+     and ufs_card tx/rx symbol clocks.
+   - Remove 'halt_reg' for the clocks where 'halt_check' type is
+     BRANCH_HALT_DELAY. For such clocks, there is no status bit
+     to poll. For e.g. gcc_disp_gpll0_clk_src clock.
+2. Implemented rcg2_shared_ops as suggested by Stephen in
+   https://lkml.org/lkml/2018/5/2/91.
+3. The GCC clock driver(patch 3) depends upon the below patches related to
+   GDSC operation and RPMh clock driver, which are under review.
+   https://lkml.org/lkml/2018/4/27/110
+   https://lkml.org/lkml/2018/4/24/390
 
-The 2 DT files should be a separate patch.
+Changes in v6:
+1. Addressed review comments for v3 and v4 version of GCC driver for SDM845.
+   https://lkml.org/lkml/2018/4/16/1129.
+2. Add support for new flag 'BRANCH_NO_DELAY' for branch clocks.
+3. Addressed review comments for v5 version of rcg2_shared_ops patch.
+   https://lkml.org/lkml/2018/4/19/86
+4. The GCC clock driver(patch 3) depends upon the below patches related to
+   GDSC operation and RPMh clock driver, which are under review.
+   https://lkml.org/lkml/2018/4/27/110
+   https://lkml.org/lkml/2018/4/24/390
 
->  5 files changed, 466 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
->  create mode 100644 drivers/clk/clk-max9485.c
->  create mode 100644 include/dt-bindings/clock/maxim,max9485.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/maxim,max9485.txt b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
-> new file mode 100644
-> index 000000000000..43713031be2c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
-> @@ -0,0 +1,59 @@
-> +Devicetree bindings for Maxim MAX9485 Programmable Audio Clock Generator
-> +
-> +The driver for this device exposes 4 clocks in total:
+Changes in v5:
+1. Addressed review comments for v3 and v4 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/16/1129
+2. Removed bi_tcxo clock being modelled from the GCC driver, as RPMH clock
+   driver would provide the same. https://lkml.org/lkml/2018/4/13/685
+3. The GCC clock driver(patch 2) depends upon the below patches related to
+   GDSC operation and RPMh clock driver, which are under review.
+   https://lkml.org/lkml/2018/4/2/143
+   https://lkml.org/lkml/2018/4/13/685
 
-Bindings describe h/w, not drivers.
+Changes in v4:
+1. Addressed review comments for v2 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/9/55.
+2. The GCC clock driver(patch 3) depends upon the below patches
+   related to GDSC operation and are under review.
 
-> +- MAX9485_MCLKOUT: 	A gated, buffered output of the input clock of 27 MHz
-> +- MAX9485_CLKOUT:	A PLL that can be configured to 16 different discrete
-> +			frequencies
-> +- MAX9485_CLKOUT[1,2]:	Two gated outputs for MAX9485_CLKOUT
-> +
-> +MAX9485_CLKOUT[1,2] are children of MAX9485_CLKOUT which upchain all rate set
-> +requests.
-> +
-> +Required properties:
-> +- compatible:	"maxim,max9485"
-> +- clocks:	Input clock, must provice 27.000 MHz
-> +- clock-names:	Must be set to "xclk"
-> +- #clock-cells: From common clock binding; shall be set to 1
-> +
-> +Optional properties:
-> +- reset-gpio:		GPIO descriptor connected to the #RESET input pin
+   https://lkml.org/lkml/2018/4/2/142
 
-reset-gpios
+Changes in v3:
+1. Addressed review comments given for v2 series.
+2. The GCC clock driver(patch 3) depends upon the below patches related
+   to GDSC operation and are under review.
 
-> +- vdd-supply:		A regulator node for Vdd
-> +- clock-output-names:	Name of output clocks, as defined in common clock
-> +			bindings
-> +
-> +If not explicitly set, the output names are "mclkout", "clkout", "clkout1"
-> +and "clkout2".
-> +
-> +Clocks are defined as preprocessor macros in the dt-binding header.
-> +
-> +Example:
-> +
-> +	#include <dt-bindings/clock/maxim,max9485.h>
-> +
-> +	xo_27mhz: xo_27mhz {
+   https://lkml.org/lkml/2018/4/2/142
 
-Don't use '_' in node names.
+Changes in v2:
+Fixup for recalc_rate ops for clk_rcg2_shared_ops:
+There could be few scenarios where shared clocks are configured
+at rate other than CXO by boot. In those cases there would be a
+mismatch between the rate calculated by the recalc shared ops
+and the actual HW register configuration. Fix the same by adding
+an additional check to read current src from CFG register and
+make a decision based on that.
 
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <27000000>;
-> +	};
-> +
-> +	&i2c0 {
-> +		max9485: max9485@63 {
+Changes in v1:
+https://lkml.org/lkml/2018/1/31/209
 
-clock-controller@63
+This patch series does the miscellaneous changes to support
+clock nodes for SDM845. Below are the major changes for
+which the existing code does not have support.
 
-> +			compatible = "maxim,max9485";
-> +			clock-names = "xclk";
-> +			clocks = <&xo_27mhz>;
-> +			reg = <0x63>;
-> +			reset-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
-> +			vdd-supply = <&3v3_reg>;
-> +			#clock-cells = <1>;
-> +		};
-> +	};
-> +
-> +	// Clock consumer node
-> +
-> +	foo@0 {
-> +		compatible = "bar,foo";
-> +		/* ... */
-> +		clock-names = "foo-intput-clk";
-> +		clocks = <&max9485 MAX9485_CLKOUT1>;
-> +	};
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
+3. Add support for controlling Fabia PLL for which the support
+   is not available in existing alpha PLL code.
+4. Add Global Clock controller (GCC) driver for SDM845. This
+   should allow most non-multimedia device drivers to probe
+   and control their clocks.
 
+[v1] : https://lkml.org/lkml/2018/1/31/209
+[v2] : https://lkml.org/lkml/2018/3/8/495
+[v3] : https://lkml.org/lkml/2018/4/3/356
+[v4] : https://lkml.org/lkml/2018/4/9/79
+[v5] : https://lkml.org/lkml/2018/4/18/367
+[v6] : https://lkml.org/lkml/2018/4/30/533
 
-> diff --git a/include/dt-bindings/clock/maxim,max9485.h b/include/dt-bindings/clock/maxim,max9485.h
-> new file mode 100644
-> index 000000000000..23add67f32a7
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/maxim,max9485.h
-> @@ -0,0 +1,19 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 Daniel Mack
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+Amit Nischal (2):
+  clk: qcom: Configure the RCGs to a safe source as needed
+  clk: qcom: Add DT bindings for SDM845 gcc clock controller
 
-Don't need this with the SPDX tag.
+Taniya Das (1):
+  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
 
-> + *
-> + */
-> +
-> +#ifndef __DT_BINDINGS_MAX9485_CLK_H
-> +#define __DT_BINDINGS_MAX9485_CLK_H
-> +
-> +#define MAX9485_MCLKOUT	0
-> +#define MAX9485_CLKOUT	1
-> +#define MAX9485_CLKOUT1	2
-> +#define MAX9485_CLKOUT2	3
-> +
-> +#endif /* __DT_BINDINGS_MAX9485_CLK_H */
-> -- 
-> 2.14.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-rcg.h                         |   17 +-
+ drivers/clk/qcom/clk-rcg2.c                        |  170 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 3465 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  239 ++
+ 7 files changed, 3878 insertions(+), 24 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
