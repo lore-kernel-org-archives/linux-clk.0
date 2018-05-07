@@ -1,169 +1,66 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 26/27] ARM: davinci: da8xx-dt: switch to device tree clocks
-Date: Wed,  9 May 2018 12:26:05 -0500
-Message-Id: <20180509172606.29387-27-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+Return-Path: <stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Mon, 07 May 2018 14:56:19 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Jacky Bai <ping.bai@nxp.com>, Shawn Guo <shawnguo@kernel.org>
+Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+In-Reply-To: <20180502073807.GE3443@dragon>
+References: <20180418124908.3079-1-stefan@agner.ch>
+ <20180502073807.GE3443@dragon>
+Message-ID: <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes all of the clock init code from da8xx-dt.c. This includes
-all of the OF_DEV_AUXDATA that was just used for looking up clocks.
+Hi Jacky,
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+On 02.05.2018 09:38, Shawn Guo wrote:
+> Hi Jacky,
+> 
+> Do you see this problem on i.MX6 ULL?  What's your take on Stefan's fix?
 
-v10 changes:
-- removed unused header files
-- removed arch/arm/mach-davinci/time.c changes accidentally introduced in v9
+Any comment to this?
 
-v9 changes:
-- changes to arch/arm/mach-davinci/time.c accidentally got squashed into this
-  commit. will drop this later.
+It is 4.17.0-rc4 is out and i.MX 6ULL is still broken :-(
 
-v8 changes:
-- none
+--
+Stefan
 
-v7 changes:
-- rebased
-- drop of_platform_default_populate(NULL, NULL, NULL)
-- add change in pm_domain.c
-
-v6 changes:
-- removed misleading statement from commit message
-
-
- arch/arm/mach-davinci/da8xx-dt.c  | 64 -------------------------------
- arch/arm/mach-davinci/pm_domain.c |  5 +++
- 2 files changed, 5 insertions(+), 64 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
-index 088bc5c0318b..beac80ec4037 100644
---- a/arch/arm/mach-davinci/da8xx-dt.c
-+++ b/arch/arm/mach-davinci/da8xx-dt.c
-@@ -7,79 +7,16 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-  */
--#include <linux/io.h>
--#include <linux/of_irq.h>
--#include <linux/of_platform.h>
--#include <linux/irqdomain.h>
--#include <linux/platform_data/ti-aemif.h>
- 
- #include <asm/mach/arch.h>
- 
- #include <mach/common.h>
--#include "cp_intc.h"
- #include <mach/da8xx.h>
- 
--static struct of_dev_auxdata da850_aemif_auxdata_lookup[] = {
--	OF_DEV_AUXDATA("ti,davinci-nand", 0x62000000, "davinci-nand.0", NULL),
--	{}
--};
--
--static struct aemif_platform_data aemif_data = {
--	.dev_lookup = da850_aemif_auxdata_lookup,
--};
--
--static struct of_dev_auxdata da850_auxdata_lookup[] __initdata = {
--	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01c22000, "i2c_davinci.1", NULL),
--	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01e28000, "i2c_davinci.2", NULL),
--	OF_DEV_AUXDATA("ti,davinci-wdt", 0x01c21000, "davinci-wdt", NULL),
--	OF_DEV_AUXDATA("ti,da830-mmc", 0x01c40000, "da830-mmc.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f00000, "ehrpwm.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f02000, "ehrpwm.1", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f06000, "ecap.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f07000, "ecap.1", NULL),
--	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f08000, "ecap.2", NULL),
--	OF_DEV_AUXDATA("ti,da830-spi", 0x01c41000, "spi_davinci.0", NULL),
--	OF_DEV_AUXDATA("ti,da830-spi", 0x01f0e000, "spi_davinci.1", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01c42000, "serial8250.0", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01d0c000, "serial8250.1", NULL),
--	OF_DEV_AUXDATA("ns16550a", 0x01d0d000, "serial8250.2", NULL),
--	OF_DEV_AUXDATA("ti,davinci_mdio", 0x01e24000, "davinci_mdio.0", NULL),
--	OF_DEV_AUXDATA("ti,davinci-dm6467-emac", 0x01e20000, "davinci_emac.1",
--		       NULL),
--	OF_DEV_AUXDATA("ti,da830-mcasp-audio", 0x01d00000, "davinci-mcasp.0", NULL),
--	OF_DEV_AUXDATA("ti,da850-aemif", 0x68000000, "ti-aemif", &aemif_data),
--	OF_DEV_AUXDATA("ti,da850-tilcdc", 0x01e13000, "da8xx_lcdc.0", NULL),
--	OF_DEV_AUXDATA("ti,da830-ohci", 0x01e25000, "ohci-da8xx", NULL),
--	OF_DEV_AUXDATA("ti,da830-musb", 0x01e00000, "musb-da8xx", NULL),
--	OF_DEV_AUXDATA("ti,da830-usb-phy", 0x01c1417c, "da8xx-usb-phy", NULL),
--	OF_DEV_AUXDATA("ti,da850-ahci", 0x01e18000, "ahci_da850", NULL),
--	OF_DEV_AUXDATA("ti,da850-vpif", 0x01e17000, "vpif", NULL),
--	OF_DEV_AUXDATA("ti,da850-dsp", 0x11800000, "davinci-rproc.0", NULL),
--	{}
--};
--
- #ifdef CONFIG_ARCH_DAVINCI_DA850
- 
- static void __init da850_init_machine(void)
- {
--	/* All existing boards use 100MHz SATA refclkpn */
--	static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
--
--	int ret;
--
--	da850_register_clocks();
--
--	ret = da8xx_register_usb_phy_clocks();
--	if (ret)
--		pr_warn("%s: USB PHY CLK registration failed: %d\n",
--			__func__, ret);
--
--	ret = da850_register_sata_refclk(sata_refclkpn);
--	if (ret)
--		pr_warn("%s: registering SATA REFCLK failed: %d",
--			__func__, ret);
--
--	of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
- 	davinci_pm_init();
- 	pdata_quirks_init();
- }
-@@ -94,7 +31,6 @@ static const char *const da850_boards_compat[] __initconst = {
- 
- DT_MACHINE_START(DA850_DT, "Generic DA850/OMAP-L138/AM18x")
- 	.map_io		= da850_init,
--	.init_time	= da850_init_time,
- 	.init_machine	= da850_init_machine,
- 	.dt_compat	= da850_boards_compat,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/pm_domain.c b/arch/arm/mach-davinci/pm_domain.c
-index 78eac2c0c146..e251fd593bfd 100644
---- a/arch/arm/mach-davinci/pm_domain.c
-+++ b/arch/arm/mach-davinci/pm_domain.c
-@@ -13,6 +13,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/pm_clock.h>
- #include <linux/platform_device.h>
-+#include <linux/of.h>
- 
- static struct dev_pm_domain davinci_pm_domain = {
- 	.ops = {
-@@ -28,6 +29,10 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
- 
- static int __init davinci_pm_runtime_init(void)
- {
-+	if (of_have_populated_dt())
-+		return 0;
-+
-+	/* Use pm_clk as fallback if we're not using genpd. */
- 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
- 
- 	return 0;
--- 
-2.17.0
+> 
+> Shawn
+> 
+> On Wed, Apr 18, 2018 at 02:49:08PM +0200, Stefan Agner wrote:
+>> On i.MX6 ULL using PLL3 seems to cause a freeze when setting
+>> the parent to IMX6UL_CLK_PLL3_USB_OTG. This only seems to appear
+>> since commit 6f9575e55632 ("clk: imx: Add CLK_IS_CRITICAL flag
+>> for busy divider and busy mux"), probably because the clock is
+>> now forced to be on.
+>>
+>> Fixes: 6f9575e55632("clk: imx: Add CLK_IS_CRITICAL flag for busy divider and busy mux")
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>> This addresses a regression ssen on v4.17-rc1 where the kernel
+>> boots during clock initialization, see also:
+>> https://patchwork.kernel.org/patch/10295927/
+>>
+>>  drivers/clk/imx/clk-imx6ul.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+>> index 114ecbb94ec5..12320118f8de 100644
+>> --- a/drivers/clk/imx/clk-imx6ul.c
+>> +++ b/drivers/clk/imx/clk-imx6ul.c
+>> @@ -464,7 +464,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>>  	clk_set_rate(clks[IMX6UL_CLK_AHB], 99000000);
+>>
+>>  	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
+>> -	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_PLL3_USB_OTG]);
+>> +	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_OSC]);
+>>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_CLK2]);
+>>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH_PRE], clks[IMX6UL_CLK_PLL2_BUS]);
+>>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_PRE]);
+>> --
+>> 2.17.0
+>>
