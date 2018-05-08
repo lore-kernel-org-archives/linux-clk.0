@@ -1,83 +1,54 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <8ac8a361a7dc69cce1e7498f1473bad8@codeaurora.org>
+References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
+ <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
+ <09ac2bd5eab25cfc70a1c5dc7b0f90ed@codeaurora.org> <20180507171121.GA22656@rob-hp-laptop>
+ <8ac8a361a7dc69cce1e7498f1473bad8@codeaurora.org>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 8 May 2018 07:48:07 -0500
+Message-ID: <CAL_JsqL3wz_Y0Qp7Z8-JjkFGegKLFOUscJgGp+XO-Lm52iN2Vg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Add QCOM video clock controller driver
 To: Amit Nischal <anischal@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <a56ffa424689ff354a63642bf2998088@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
- David Brown <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
- <1525105210-8689-4-git-send-email-anischal@codeaurora.org>
- <152524580953.138124.2159165461856101134@swboyd.mtv.corp.google.com>
- <a56ffa424689ff354a63642bf2998088@codeaurora.org>
-Message-ID: <152549007801.138124.1209193202019560634@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v6 3/3] clk: qcom: Add Global Clock controller (GCC) driver for
- SDM845
-Date: Fri, 04 May 2018 20:14:38 -0700
+Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+	linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-05-04 03:45:12)
-> On 2018-05-02 12:53, Stephen Boyd wrote:
-> > Quoting Amit Nischal (2018-04-30 09:20:10)
-> >> +
-> >> +static struct clk_branch gcc_disp_gpll0_clk_src =3D {
-> >> +       .halt_reg =3D 0x52004,
-> >> +       .halt_check =3D BRANCH_HALT_DELAY,
-> > =
+On Mon, May 7, 2018 at 11:53 PM, Amit Nischal <anischal@codeaurora.org> wrote:
+> On 2018-05-07 22:41, Rob Herring wrote:
+>>
+>> On Mon, May 07, 2018 at 04:16:53PM +0530, Amit Nischal wrote:
+>>>
+>>> On 2018-05-04 22:01, Stephen Boyd wrote:
+>>> > Quoting Amit Nischal (2018-05-03 05:35:23)
+>>> > > Changes in v1:
+>>> > >    https://lkml.org/lkml/2018/4/24/545
+>>> > > Addressed below review comments given by Rob
+>>> > > - Change the compatible property as per '<vendor>,<soc>-<block>'
+>>> > > format.
+>>> > > - Add header definitions for resets and power-domain cells.
+>>> >
+>>> > You didn't add any reset definitions though?
+>>>
+>>> We haven't added the reset definitions for videocc as there is no
+>>> video reset client.
+>>
+>>
+>> So? You don't know what resets there are?
+>>
+>
+> We know the resets, but video driver doesn't do any block resets
+> prior to accessing the video subsystem so that's the reason we do
+> not want to expose the resets in videocc driver.
 
-> > What about this one? It's not a phy so I'm confused again why we're
-> > unable to check the halt bit. To be clear(er), I don't see why we ever
-> > want to have HALT_DELAY used. Hopefully we can remove that flag.
-> > =
+Bindings don't have to match what drivers currently use but should be
+complete as possible.
 
-> > From what I recall, the flag is there for clks that don't toggle their
-> > status bit at all, but that we know take a few cycles to ungate the
-> > upstream clk. So we threw a delay into the code to make sure that when
-> > clk_enable() returned, a driver wouldn't try to use hardware before the
-> > clk was actually on. But these cases should pretty much never happen,
-> > hence all the pushback against this flag.
-> > =
-
-> =
-
-> For these "*gpll0_clk_src" and "*gpll0_div_clk" clocks, there is no halt
-> bit to check the status and it is required to have delay for few cycles
-> so that clock gets turned on before a client driver to use the hardware.
-
-Ok.. but then why is there a 'halt_reg' configured for the clk?
-
-> >> +
-> >> +static struct clk_branch gcc_ufs_card_rx_symbol_0_clk =3D {
-> >> +       .halt_reg =3D 0x75018,
-> >> +       .halt_check =3D BRANCH_HALT_DELAY,
-> > =
-
-> > There are still HALT_DELAY flags for UFS though? Why?
-> =
-
-> For ufs_card tx/rx symbol clocks, we don't poll the status bit as
-> per the recommendation from the HW team. We can change the halt_check
-> type to newly implemented flag "BRANCH_HALT_SKIP". Please update us with
-> your thoughts to change the flag to "BRANCH_HALT_SKIP".
-
-Yes use HALT_SKIP please.
-
-> =
-
-> > =
-
-> > Also, are you going to send DFS support for the QUP clks? I would like
-> > to see that code merged soon.
-> =
-
-> Taniya has sent the patches for DFS support for QUP clocks.
-> https://patchwork.kernel.org/patch/10376951/
-> =
-
-
-I'll take a look.
+Rob
