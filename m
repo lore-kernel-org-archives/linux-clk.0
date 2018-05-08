@@ -1,74 +1,96 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, rajanv@xilinx.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Jolly Shah <jollys@xilinx.com>
-Subject: Re: [PATCH v6 02/11] firmware: xilinx: Add Zynqmp firmware driver
-To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
- mingo@kernel.org, gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
- hkallweit1@gmail.com, keescook@chromium.org, dmitry.torokhov@gmail.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, michal.simek@xilinx.com,
- robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org
-References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
- <1523389127-14243-3-git-send-email-jollys@xilinx.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <9cbfb3cd-daa3-f145-c6f2-f15f61d1bea0@arm.com>
-Date: Thu, 10 May 2018 15:04:46 +0100
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 8 May 2018 13:54:31 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd
+	<sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>, <linux-clk@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] clk: tegra: Add quirk for getting CDEV1/2 clocks
+Message-ID: <20180508105431.GS6835@tbergstrom-lnx.Nvidia.com>
+References: <20180503225537.20748-1-digetx@gmail.com>
+ <20180503225537.20748-5-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1523389127-14243-3-git-send-email-jollys@xilinx.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180503225537.20748-5-digetx@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 10/04/18 20:38, Jolly Shah wrote:
-> From: Rajan Vaja <rajanv@xilinx.com>
+On Fri, May 04, 2018 at 01:55:36AM +0300, Dmitry Osipenko wrote:
+> CDEV1 and CDEV2 clocks are a bit special case, their parent clock is
+> created by the pinctrl driver. It should be possible for clk user to
+> request these clocks before pinctrl driver got probed and hence user will
+> get an orphaned clock. That might be undesirable because user expects
+> parent clock to be enabled by the child, so let's return EPROBE_DEFER
+> until parent clock appear.
 > 
-> This patch is adding communication layer with firmware.
-> Firmware driver provides an interface to firmware APIs.
-> Interface APIs can be used by any driver to communicate to
-> PMUFW(Platform Management Unit). All requests go through ATF.
-> 
-> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
-
-[...]
-
-> +
-> +/**
-> + * get_set_conduit_method() - Choose SMC or HVC based communication
-> + * @np:		Pointer to the device_node structure
-> + *
-> + * Use SMC or HVC-based functions to communicate with EL2/EL3.
-> + *
-> + * Return: Returns 0 on success or error code
-> + */
-> +static int get_set_conduit_method(struct device_node *np)
+>  drivers/clk/tegra/clk.c | 34 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+> index ba923f0d5953..04cbe7e9eff3 100644
+> --- a/drivers/clk/tegra/clk.c
+> +++ b/drivers/clk/tegra/clk.c
+> @@ -298,6 +298,38 @@ static struct reset_controller_dev rst_ctlr = {
+>  	.of_reset_n_cells = 1,
+>  };
+>  
+> +static struct clk *tegra_of_clk_src_onecell_get(struct of_phandle_args *clkspec,
+> +						void *data)
 > +{
-> +	const char *method;
+> +	struct clk_hw *parent_hw;
+> +	struct clk_hw *hw;
+> +	struct clk *clk;
+> +	const char *name;
 > +
-> +	if (of_property_read_string(np, "method", &method)) {
-> +		pr_warn("%s missing \"method\" property\n", __func__);
-> +		return -ENXIO;
+> +	clk = of_clk_src_onecell_get(clkspec, data);
+> +	if (IS_ERR(clk))
+> +		return clk;
+> +
+> +	name = __clk_get_name(clk);
+> +
+> +	/*
+> +	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
+> +	 * clock is created by the pinctrl driver. It is possible for clk user
+> +	 * to request these clocks before pinctrl driver got probed and hence
+> +	 * user will get an orphaned clock. That might be undesirable because
+> +	 * user may expect parent clock to be enabled by the child.
+> +	 */
+> +	if (!strcmp(name, "cdev1") || !strcmp(name, "cdev2")) {
+> +		hw = __clk_get_hw(clk);
+> +
+> +		parent_hw = clk_hw_get_parent(hw);
+> +		if (!parent_hw)
+> +			return ERR_PTR(-EPROBE_DEFER);
 > +	}
 > +
-> +	if (!strcmp("hvc", method)) {
-> +		do_fw_call = do_fw_call_hvc;
-> +	} else if (!strcmp("smc", method)) {
-> +		do_fw_call = do_fw_call_smc;
-> +	} else {
-> +		pr_warn("%s Invalid \"method\" property: %s\n",
-> +			__func__, method);
-> +		return -EINVAL;
-> +	}
+> +	return clk;
+> +}
 > +
 
-Mark R did some cleanup around SMCCC conduits[1]. It makes sense to base
-this on top that. But if you manage to push this for v4.18, then you may
-need to wait for that to be merged and clean it up after v4.18
+Rather than retrieving the struct clk * and comparing the names, you can use
+the DT ID in  clkspec->args[0] and compare against TEGRA20_CLK_CDEV1 and
+TEGRA20_CLK_CDEV2.
 
--- 
-Regards,
-Sudeep
+Peter.
 
-[1] https://www.spinics.net/lists/arm-kernel/msg650305.html
+>  void __init tegra_add_of_provider(struct device_node *np)
+>  {
+>  	int i;
+> @@ -314,7 +346,7 @@ void __init tegra_add_of_provider(struct device_node *np)
+>  
+>  	clk_data.clks = clks;
+>  	clk_data.clk_num = clk_num;
+> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+> +	of_clk_add_provider(np, tegra_of_clk_src_onecell_get, &clk_data);
+>  
+>  	rst_ctlr.of_node = np;
+>  	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
+> -- 
+> 2.17.0
+> 
