@@ -1,71 +1,64 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: boris.brezillon@bootlin.com,
-	dwmw2@infradead.org,
-	computersforpeace@gmail.com,
-	marek.vasut@gmail.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	thierry.reding@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: dev@lynxeye.de,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	marcel@ziswiler.com,
-	krzk@kernel.org,
-	digetx@gmail.com,
-	benjamin.lindqvist@endian.se,
-	jonathanh@nvidia.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mirza.krak@gmail.com,
-	linux-mtd@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [RESEND PATCH 0/5] mtd: rawnand: add NVIDIA Tegra NAND flash support
-Date: Tue, 22 May 2018 14:07:04 +0200
-Message-Id: <cover.1526990589.git.stefan@agner.ch>
+Return-Path: <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+ Mark Brown <broonie@kernel.org>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180305102524.5905-4-o.rempel@pengutronix.de>
+ <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
+ <20180504134956.36dc72a253d03e94a517a867@linux-foundation.org>
+ <20180505070147.epsrglnypm72jr5u@pengutronix.de>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Message-ID: <c1f2e09d-f64b-afe6-59bf-c0742409e4d6@intel.com>
+Date: Tue, 8 May 2018 23:39:45 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180505070147.epsrglnypm72jr5u@pengutronix.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-[resending, this time with mailing lists in cc]
+On 5/5/2018 9:01 AM, Oleksij Rempel wrote:
+> Moving Rafael from Cc to To.
+>
+> Hi Rafael,
+>
+> can you please help here?
+> I need your ACK or NACK for this patch.
 
-This picks up an older patchset written by Lucas Stach which
-adds raw NAND flash support for Tegra 2.
-http://lists.infradead.org/pipermail/linux-mtd/2015-November/063031.html
+Sorry for the delay, I'll have a closer look at it in the next couple of 
+days.
 
-The driver has been reworked to implement the ->exec_op callback.
-Some smaller changes and bug fixes have been applied too, but I did
-not keep track of them. Since the original patchset has been posted
-some years back already, I guess review needs to be done from scratch
-anyway.
+Thanks,
+Rafael
 
---
-Stefan
 
-Lucas Stach (4):
-  mtd: rawnand: tegra: add devicetree binding
-  clk: tegra20: init NDFLASH clock to sensible rate
-  ARM: tegra: add Tegra20 NAND flash controller node
-  ARM: tegra: enable NAND flash on Colibri T20
-
-Stefan Agner (1):
-  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
-
- .../bindings/mtd/nvidia,tegra20-nand.txt      |  29 +
- MAINTAINERS                                   |   7 +
- arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   7 +
- arch/arm/boot/dts/tegra20.dtsi                |  13 +
- drivers/clk/tegra/clk-tegra20.c               |   1 +
- drivers/mtd/nand/raw/Kconfig                  |   6 +
- drivers/mtd/nand/raw/Makefile                 |   1 +
- drivers/mtd/nand/raw/tegra_nand.c             | 915 ++++++++++++++++++
- 8 files changed, 979 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
- create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
-
--- 
-2.17.0
+> On Fri, May 04, 2018 at 01:49:56PM -0700, Andrew Morton wrote:
+>> On Fri, 4 May 2018 20:50:52 +0200 Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+>>
+>>> Hallo Andrew,
+>>> I need your ACK or NACK for this patch.
+>>>
+>>> This function is used to configure external PMIC to interpret
+>>> signal which will be triggered by pm_power_off as power off.
+>>> Since same signal can be used for stand by, I linked PMIC configuration
+>>> with pm_power_off_prepare to avoid possible conflicts.
+>>>
+>>> ...
+>>>
+>>>> --- a/kernel/reboot.c
+>>>> +++ b/kernel/reboot.c
+>>>> @@ -49,6 +49,7 @@ int reboot_force;
+>>>>    */
+>>>>   
+>>>>   void (*pm_power_off_prepare)(void);
+>>>> +EXPORT_SYMBOL(pm_power_off_prepare);
+>>>>   
+>> OK by me, but it's more of a Rafael thing.
+>>
