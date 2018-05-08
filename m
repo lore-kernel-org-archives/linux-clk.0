@@ -1,33 +1,61 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: David Lechner <david@lechnology.com>,
- Michael Turquette <mturquette@baylibre.com>, Sekhar Nori <nsekhar@ti.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180507113457.4716-1-nsekhar@ti.com>
-Cc: Sekhar Nori <nsekhar@ti.com>,
- Linux clk Mailing List <linux-clk@vger.kernel.org>,
- Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-References: <20180507113457.4716-1-nsekhar@ti.com>
-Message-ID: <152642368847.237094.1884631416189964435@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: davinci: psc-da830: fix USB0 48MHz PHY clock registration
-Date: Tue, 15 May 2018 15:34:48 -0700
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/4] clk: tegra20: Correct parents of CDEV1/2 clocks
+Date: Tue,  8 May 2018 19:26:05 +0300
+Message-Id: <20180508162607.3500-4-digetx@gmail.com>
+In-Reply-To: <20180508162607.3500-1-digetx@gmail.com>
+References: <20180508162607.3500-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sekhar Nori (2018-05-07 04:34:57)
-> USB0 48MHz PHY clock registration fails on DA830 because the
-> da8xx-cfgchip clock driver cannot get a reference to USB0
-> LPSC clock.
-> =
+Parents of CDEV1/2 clocks are determined by muxing of the corresponding
+pins. Pinctrl driver now provides the CDEV1/2 clock muxes and hence
+CDEV1/2 clocks could have correct parents. Set CDEV1/2 parents to the
+corresponding muxes to fix the parents.
 
-> The USB0 LPSC needs to be enabled during PHY clock enable. Setup
-> the clock lookup correctly to fix this.
-> =
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Marc Dietrich <marvin24@gmx.de>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/tegra/clk-tegra20.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-> ---
-
-Applied to clk-next
-
-Did this need a fixes tag? And should it go into 4.17 final? Or it's not
-causing problems right now?
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index ad5a7b5e3a39..636500a98561 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -846,14 +846,12 @@ static void __init tegra20_periph_clk_init(void)
+ 			     NULL);
+ 
+ 	/* cdev1 */
+-	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
+-	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
++	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_mux", 0,
+ 				    clk_base, 0, 94, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_CDEV1] = clk;
+ 
+ 	/* cdev2 */
+-	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, 0, 26000000);
+-	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_fixed", 0,
++	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_mux", 0,
+ 				    clk_base, 0, 93, periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_CDEV2] = clk;
+ 
+-- 
+2.17.0
