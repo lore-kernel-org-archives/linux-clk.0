@@ -1,51 +1,41 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Manu Gautam <mgautam@codeaurora.org>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-msm8996: Disable halt check on UFS clocks
-Date: Thu, 24 May 2018 14:37:35 -0700
-Message-Id: <20180524213735.12121-1-bjorn.andersson@linaro.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jacky Bai <ping.bai@nxp.com>, Stefan Agner <stefan@agner.ch>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <4188ee25bd5179b57d09e4624dcfbfbb@agner.ch>
+Cc: Shawn Guo <shawnguo@kernel.org>, kernel@pengutronix.de,
+ Fabio Estevam <fabio.estevam@nxp.com>, mturquette@baylibre.com,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180418124908.3079-1-stefan@agner.ch> <20180502073807.GE3443@dragon>
+ <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
+ <HE1PR04MB311395765D3DC03D5960DBA3879A0@HE1PR04MB3113.eurprd04.prod.outlook.com>
+ <4188ee25bd5179b57d09e4624dcfbfbb@agner.ch>
+Message-ID: <152580354289.138124.13657232356773397650@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+Date: Tue, 08 May 2018 11:19:02 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The halt check of the UFS symbol clocks always fails, as such probing
-UFS after clk_disable_unused always fails. This makes it impossible to
-boot a system with the UFS phy or UFS HCD drivers compiled as modules.
+Quoting Stefan Agner (2018-05-08 06:20:03)
+> On 08.05.2018 09:32, Jacky Bai wrote:
+> > =
 
-Follow SDM845 and disable the halt check on these clocks.
+> > I have tried two 6ULL board, I don't meet such issue. System can boot
+> > up successfully with commit 6f9575e55632 included.
+> > Anyway, the change in this patch is ok for me. it is no harm to the
+> > BUS clock change flow.
+> =
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/clk/qcom/gcc-msm8996.c | 2 ++
- 1 file changed, 2 insertions(+)
+> Hm, that is interesting, maybe it is because we use a different SKU? Or
+> maybe bootloader?
+> =
 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 3d6452932797..5f17080c5804 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -2792,6 +2792,7 @@ static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
- 
- static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
- 	.halt_reg = 0x7501c,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x7501c,
- 		.enable_mask = BIT(0),
-@@ -2807,6 +2808,7 @@ static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
- 
- static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
- 	.halt_reg = 0x75020,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x75020,
- 		.enable_mask = BIT(0),
--- 
-2.17.0
+> I tested here with a 800 MHz clocked variant on a Colibri iMX6ULL using
+> U-Boot 2016.11.
+> =
+
+
+I'll throw this into fixes today because it fixes something to be
+useful. It's still interesting to see what's different between the two
+setups though.
