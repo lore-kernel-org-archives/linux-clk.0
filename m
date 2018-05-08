@@ -1,130 +1,101 @@
-Return-Path: <robin.murphy@arm.com>
-Subject: Re: [RFC PATCH 01/10] devfreq: rockchip-dfi: Move GRF definitions to
- a common place.
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>,
- Will Deacon <will.deacon@arm.com>, Heiko Stuebner <heiko@sntech.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
- David Airlie <airlied@linux.ie>
-Cc: Lin Huang <hl@rock-chips.com>, linux-pm@vger.kernel.org,
- Derek Basehore <dbasehore@chromium.org>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- Sean Paul <seanpaul@chromium.org>, kernel@collabora.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180514211610.26618-1-enric.balletbo@collabora.com>
- <20180514211610.26618-2-enric.balletbo@collabora.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <c217cf74-c5fe-4e4b-7b55-7672381b3eaf@arm.com>
-Date: Tue, 15 May 2018 12:23:28 +0100
+Return-Path: <ping.bai@nxp.com>
+From: Jacky Bai <ping.bai@nxp.com>
+To: Stefan Agner <stefan@agner.ch>, Shawn Guo <shawnguo@kernel.org>
+CC: "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam
+	<fabio.estevam@nxp.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+Date: Tue, 8 May 2018 07:32:33 +0000
+Message-ID: 
+ <HE1PR04MB311395765D3DC03D5960DBA3879A0@HE1PR04MB3113.eurprd04.prod.outlook.com>
+References: <20180418124908.3079-1-stefan@agner.ch>
+ <20180502073807.GE3443@dragon> <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
+In-Reply-To: <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <20180514211610.26618-2-enric.balletbo@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Enric,
+> Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+>=20
+> Hi Jacky,
+>=20
+> On 02.05.2018 09:38, Shawn Guo wrote:
+> > Hi Jacky,
+> >
+> > Do you see this problem on i.MX6 ULL?  What's your take on Stefan's fix=
+?
+>=20
+> Any comment to this?
+>=20
+> It is 4.17.0-rc4 is out and i.MX 6ULL is still broken :-(
+>=20
+Hi Stefan,
 
-On 14/05/18 22:16, Enric Balletbo i Serra wrote:
-> Some rk3399 GRF (Generic Register Files) definitions can be used for
-> different drivers. Move these definitions to a common include so we
-> don't need to duplicate these definitions.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
->   drivers/devfreq/event/rockchip-dfi.c | 23 +++++++----------------
->   include/soc/rockchip/rk3399_grf.h    | 21 +++++++++++++++++++++
->   2 files changed, 28 insertions(+), 16 deletions(-)
->   create mode 100644 include/soc/rockchip/rk3399_grf.h
-> 
-> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
-> index 22b113363ffc..2fbbcbeb644f 100644
-> --- a/drivers/devfreq/event/rockchip-dfi.c
-> +++ b/drivers/devfreq/event/rockchip-dfi.c
-> @@ -26,6 +26,8 @@
->   #include <linux/list.h>
->   #include <linux/of.h>
->   
-> +#include <soc/rockchip/rk3399_grf.h>
-> +
->   #define RK3399_DMC_NUM_CH	2
->   
->   /* DDRMON_CTRL */
-> @@ -43,18 +45,6 @@
->   #define DDRMON_CH1_COUNT_NUM		0x3c
->   #define DDRMON_CH1_DFI_ACCESS_NUM	0x40
->   
-> -/* pmu grf */
-> -#define PMUGRF_OS_REG2	0x308
-> -#define DDRTYPE_SHIFT	13
-> -#define DDRTYPE_MASK	7
-> -
-> -enum {
-> -	DDR3 = 3,
-> -	LPDDR3 = 6,
-> -	LPDDR4 = 7,
-> -	UNUSED = 0xFF
-> -};
-> -
->   struct dmc_usage {
->   	u32 access;
->   	u32 total;
-> @@ -83,16 +73,17 @@ static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
->   	u32 ddr_type;
->   
->   	/* get ddr type */
-> -	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
-> -	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
-> +	regmap_read(info->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
-> +	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
-> +		    RK3399_PMUGRF_DDRTYPE_MASK;
->   
->   	/* clear DDRMON_CTRL setting */
->   	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
->   
->   	/* set ddr type to dfi */
-> -	if (ddr_type == LPDDR3)
-> +	if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
->   		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
-> -	else if (ddr_type == LPDDR4)
-> +	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
->   		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
->   
->   	/* enable count, use software mode */
-> diff --git a/include/soc/rockchip/rk3399_grf.h b/include/soc/rockchip/rk3399_grf.h
-> new file mode 100644
-> index 000000000000..0f94034e2e9a
-> --- /dev/null
-> +++ b/include/soc/rockchip/rk3399_grf.h
-> @@ -0,0 +1,21 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/*
-> + * Rockchip Generic Register Files definitions
+I have tried two 6ULL board, I don't meet such issue. System can boot up su=
+ccessfully with commit 6f9575e55632 included.
+Anyway, the change in this patch is ok for me. it is no harm to the BUS clo=
+ck change flow.
 
-Nit: s/Generic/General/
-
-(that's what the TRMs say)
-
-Robin.
-
-> + *
-> + * Copyright (c) 2018, Collabora Ltd.
-> + * Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> + */
-> +
-> +#ifndef __SOC_RK3399_GRF_H
-> +#define __SOC_RK3399_GRF_H
-> +
-> +/* PMU GRF Registers */
-> +#define RK3399_PMUGRF_OS_REG2		0x308
-> +#define RK3399_PMUGRF_DDRTYPE_SHIFT	13
-> +#define RK3399_PMUGRF_DDRTYPE_MASK	7
-> +#define RK3399_PMUGRF_DDRTYPE_DDR3	3
-> +#define RK3399_PMUGRF_DDRTYPE_LPDDR2	5
-> +#define RK3399_PMUGRF_DDRTYPE_LPDDR3	6
-> +#define RK3399_PMUGRF_DDRTYPE_LPDDR4	7
-> +
-> +#endif
-> 
+Jacky
+> --
+> Stefan
+>=20
+> >
+> > Shawn
+> >
+> > On Wed, Apr 18, 2018 at 02:49:08PM +0200, Stefan Agner wrote:
+> >> On i.MX6 ULL using PLL3 seems to cause a freeze when setting the
+> >> parent to IMX6UL_CLK_PLL3_USB_OTG. This only seems to appear since
+> >> commit 6f9575e55632 ("clk: imx: Add CLK_IS_CRITICAL flag for busy
+> >> divider and busy mux"), probably because the clock is now forced to
+> >> be on.
+> >>
+> >> Fixes: 6f9575e55632("clk: imx: Add CLK_IS_CRITICAL flag for busy
+> >> divider and busy mux")
+> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >> ---
+> >> This addresses a regression ssen on v4.17-rc1 where the kernel boots
+> >> during clock initialization, see also:
+> >>
+> https://emea01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fpa
+> >>
+> tchwork.kernel.org%2Fpatch%2F10295927%2F&data=3D02%7C01%7Cping.bai%
+> 40nx
+> >>
+> p.com%7C023287ec65034c4db45f08d5b419effb%7C686ea1d3bc2b4c6fa92cd9
+> 9c5c
+> >>
+> 301635%7C0%7C0%7C636612945852594725&sdata=3DU0ZGid9ZBey0FXfId2dhZb
+> hVl8p
+> >> CcjTiexG3JHYwCA4%3D&reserved=3D0
+> >>
+> >>  drivers/clk/imx/clk-imx6ul.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/clk/imx/clk-imx6ul.c
+> >> b/drivers/clk/imx/clk-imx6ul.c index 114ecbb94ec5..12320118f8de
+> >> 100644
+> >> --- a/drivers/clk/imx/clk-imx6ul.c
+> >> +++ b/drivers/clk/imx/clk-imx6ul.c
+> >> @@ -464,7 +464,7 @@ static void __init imx6ul_clocks_init(struct
+> device_node *ccm_node)
+> >>  	clk_set_rate(clks[IMX6UL_CLK_AHB], 99000000);
+> >>
+> >>  	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz
+> */
+> >> -	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL],
+> clks[IMX6UL_CLK_PLL3_USB_OTG]);
+> >> +	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL],
+> >> +clks[IMX6UL_CLK_OSC]);
+> >>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH],
+> clks[IMX6UL_CLK_PERIPH_CLK2]);
+> >>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH_PRE],
+> clks[IMX6UL_CLK_PLL2_BUS]);
+> >>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH],
+> >> clks[IMX6UL_CLK_PERIPH_PRE]);
+> >> --
+> >> 2.17.0
+> >>
