@@ -1,103 +1,331 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 18 May 2018 12:37:33 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] Restore ULPI USB on Tegra20
-Message-ID: <20180518103733.GE5312@ulmo>
-References: <20180508162607.3500-1-digetx@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PGNNI9BzQDUtgA2J"
-In-Reply-To: <20180508162607.3500-1-digetx@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525320752-15091-1-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+References: <1525320752-15091-1-git-send-email-tdas@codeaurora.org>
+Message-ID: <152574299379.138124.17545715298285645263@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: qcom: Add support for RCG to register for DFS
+Date: Mon, 07 May 2018 18:29:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Taniya Das (2018-05-02 21:12:32)
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index e63db10..7c35bca 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -122,6 +131,10 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8=
+ index)
+>         int ret;
+>         u32 cfg =3D rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+> =
 
---PGNNI9BzQDUtgA2J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +       /* In DFS mode skip updating the RCG CFG */
+> +       if (rcg->flags & DFS_ENABLE_RCG)
+> +               return 0;
+> +
+>         ret =3D regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_=
+REG,
+>                                  CFG_SRC_SEL_MASK, cfg);
+>         if (ret)
+> @@ -296,6 +309,9 @@ static int __clk_rcg2_set_rate(struct clk_hw *hw, uns=
+igned long rate,
+>         struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+>         const struct freq_tbl *f;
+> =
 
-On Tue, May 08, 2018 at 07:26:02PM +0300, Dmitry Osipenko wrote:
-> Hello,
->=20
-> This series of patches fixes ULPI USB on Tegra20. The original problem
-> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
-> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
-> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
-> with the USB for the devices that have CDEV2 being enabled by bootloader.
-> The patch got into the kernel and later Marc Dietrich found that USB
-> stopped working on the "paz00" Tegra20 board. After a bit of discussion
-> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
-> driver was setting CDEV2's parent incorrectly. The parent clock is actual=
-ly
-> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
-> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provid=
-er,
-> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
-> suggestion), and then setting these clock muxes as parents for the CDEV1/2
-> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CD=
-EV2
-> (aka MCLK2) is the actual clock source for "ulpi-link".
->=20
-> Changelog:
->=20
-> v3:
-> 	- Use clk DT ID's instead of comparing clk names and make
-> 	  custom of_src_onecell_get specific to Tegra20 clk provider
-> 	  in the "Add quirk for getting CDEV1/2 clocks on Tegra20" patch
-> 	  as was suggested by Peter De Schrijver for v2.
->=20
-> v2:
-> 	- Added new patch "Add quirk for getting CDEV1/2 clocks", assuring
-> 	  that clk user won't get CDEV1/2 clocks until parent clk muxes
-> 	  are available, i.e. resolves potential issue with CDEV-user driver
-> 	  vs pinctrl driver probe order.
->=20
-> 	- Factored out "pinctrl" patch from the patchset as was requested by
-> 	  Linus Walleij.
->=20
-> 	- Addressed v1 review comments: fixed swapped DEV1/2 clk div bits,
-> 	  made DEV1/2 divs read-only, etc minor changes.
->=20
-> Dmitry Osipenko (4):
->   clk: tegra20: Add DEV1/DEV2 OSC dividers
->   clk: tegra20: Correct parents of CDEV1/2 clocks
->   clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
->   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+> +       if (rcg->flags & DFS_ENABLE_RCG)
+> +               return -EPERM;
+> +
 
-Patches 1-3 applied, thanks.
+Please no.
 
-Thierry
+>         switch (policy) {
+>         case FLOOR:
+>                 f =3D qcom_find_freq_floor(rcg->freq_tbl, rate);
+> @@ -790,3 +806,159 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, un=
+signed long rate,
+>         .determine_rate =3D clk_gfx3d_determine_rate,
+>  };
+>  EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
+> +
+> +/* Common APIs to be used for DFS based RCGR */
+> +static u8 clk_parent_index_pre_div_and_mode(struct clk_hw *hw, u32 offse=
+t,
 
---PGNNI9BzQDUtgA2J
-Content-Type: application/pgp-signature; name="signature.asc"
+Fix return type please.
 
------BEGIN PGP SIGNATURE-----
+> +               u32 *mode, u32 *pre_div)
+> +{
+> +       struct clk_rcg2 *rcg;
+> +       int num_parents;
+> +       u32 cfg, mask;
+> +       int i, ret;
+> +
+> +       if (!hw)
+> +               return -EINVAL;
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+rO0ACgkQ3SOs138+
-s6H60RAAiCLfvdhXE4xAETzkyCF5yZp9N2b/3dMIC6gxAhvXoHZqS7Ko7cgEfJL0
-o+KxTf71EdOvIOZxNNvvLI/kiZBBrqdezvVUw0JkjTdrU2cRq1RPIC61Rvcpaq9F
-Mz0pURAsunOr5GxysB710BqFU6IyYWMctOpiyRLZc0o4W6UuMagSEvG0savopXMD
-MdWvEEmBA22TT4k1RtmB4vFgaCTya8pZYy0+Zq6DdcYUBNCT/tNazpFGjZ9Na4aM
-AfBwCb64Hp1YtAEhg6dAODjy6c0cetFeE2W/8mIb44+RqFjlu/wtDwpS4Uf8BYA6
-z7TUBWdfDD/HIbkdqh/rRCNu0vsNo36GpWGb0NqUWrNvkUfyyn42VLUHK3dd0LQM
-omnVup0NIsdk6Tfi+N0iMe4qVLNP4JbW6FPvr0+wpphee8TygPVJ2H7Ijk5qjG30
-5N165HgODS0Rr9KrjM5p1iqUVBpOx1AHxmTKazYPi5QI8OTAv9DWN3FWmZr9x50E
-XlVqJA05H7m078yy0mACNwmXvumzPaYRWwt498cxiLTUHQ4tBG9jyKx5AxSpSzog
-L3q+HKx70CPhBa/Ym31In2m9Zf94DIhwmGPz+8vP5fGLfJc1xKDASy+YybUTU+NS
-tlvQ8VSCePRcJv9EkBeUNqYDS/mNGABgiWgMhjSp1oo1CDuu8XY=
-=+hZo
------END PGP SIGNATURE-----
+Why?
 
---PGNNI9BzQDUtgA2J--
+> +
+> +       num_parents =3D clk_hw_get_num_parents(hw);
+> +
+> +       rcg =3D to_clk_rcg2(hw);
+> +
+> +       ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + offset, &cf=
+g);
+
+We may need to pass the regmap into here so this can be done before the
+clk is registered so that we can switch out the clk_ops at runtime. But
+that may not be the case if my other comment makes sense further down.
+
+> +       if (ret)
+> +               goto err;
+> +
+> +       mask =3D BIT(rcg->hid_width) - 1;
+> +       *pre_div =3D cfg & mask ? (cfg & mask) : 1;
+> +
+> +       *mode =3D cfg & CFG_MODE_MASK;
+> +       *mode >>=3D CFG_MODE_SHIFT;
+> +
+> +       cfg &=3D CFG_SRC_SEL_MASK;
+> +       cfg >>=3D CFG_SRC_SEL_SHIFT;
+> +
+> +       for (i =3D 0; i < num_parents; i++)
+> +               if (cfg =3D=3D rcg->parent_map[i].cfg)
+> +                       return i;
+> +err:
+> +       return 0;
+> +}
+> +
+> +static int calculate_m_and_n(struct clk_hw *hw, u32 m_offset, u32 n_offs=
+et,
+> +               u32 mode, u32 *m, u32 *n)
+
+Instead of returning pointers, please have these functions update a
+frequency table entry structure.
+
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       u32 val, mask;
+> +       int ret =3D 0;
+> +
+> +       if (!hw)
+> +               return -EINVAL;
+> +
+> +       *m =3D *n =3D 0;
+> +
+> +       if (mode) {
+> +               /* Calculate M & N values */
+> +               mask =3D BIT(rcg->mnd_width) - 1;
+> +               ret =3D  regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + m_=
+offset,
+> +                                       &val);
+> +               if (ret) {
+> +                       pr_err("Failed to read M offset register\n");
+> +                       goto err;
+> +               }
+> +
+> +               val &=3D mask;
+> +               *m  =3D val;
+> +
+> +               ret =3D  regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + n_=
+offset,
+> +                                       &val);
+> +               if (ret) {
+> +                       pr_err("Failed to read N offset register\n");
+> +                       goto err;
+> +               }
+> +
+> +               /* val ~(N-M) */
+> +               val =3D ~val;
+> +               val &=3D mask;
+> +               val +=3D *m;
+> +               *n =3D val;
+> +       }
+> +err:
+> +       return ret;
+> +}
+> +
+> +int clk_rcg2_get_dfs_clock_rate(struct clk_rcg2 *clk, struct device *dev)
+> +{
+> +       int i, j, index, ret =3D 0;
+> +       unsigned long calc_freq, prate;
+> +       u32 val, pre_div =3D 0, mode =3D 0, m =3D 0, n =3D 0;
+> +       struct freq_tbl *dfs_freq_tbl;
+> +       struct clk_hw *phw;
+> +
+> +       if (!clk)
+> +               return -EINVAL;
+
+Never happens?
+
+> +
+> +       /* Check for DFS_EN */
+> +       ret =3D regmap_read(clk->clkr.regmap, clk->cmd_rcgr + SE_CMD_DFSR=
+_OFFSET,
+> +                                               &val);
+> +       if (ret) {
+> +               dev_err(dev, "Failed to read DFS enable register\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (!(val & SE_CMD_DFS_EN))
+> +               return ret;
+> +
+> +       dfs_freq_tbl =3D devm_kzalloc(dev, MAX_PERF_LEVEL *
+> +                               sizeof(struct freq_tbl), GFP_KERNEL);
+
+Use devm_kcalloc() for numbers of elements in an array.
+
+> +       if (!dfs_freq_tbl)
+> +               return -ENOMEM;
+> +
+> +       /* Populate the Perf Level */
+> +       for (i =3D 0; i < MAX_PERF_LEVEL; i++) {
+> +               /* Get parent index and mode */
+> +               index =3D clk_parent_index_pre_div_and_mode(&clk->clkr.hw,
+> +                                                       SE_PERF_DFSR(i), =
+&mode,
+> +                                                       &pre_div);
+> +               if (index < 0) {
+> +                       pr_err("Failed to get parent index & mode %d\n", =
+index);
+> +                       return index;
+> +               }
+> +
+> +               /* clock pre_div */
+> +               dfs_freq_tbl[i].pre_div =3D pre_div;
+> +
+> +               /* Fill the parent src */
+> +               dfs_freq_tbl[i].src =3D clk->parent_map[index].src;
+> +
+> +               /* Get the parent clock and parent rate */
+> +               phw =3D clk_hw_get_parent_by_index(&clk->clkr.hw, index);
+> +               prate =3D clk_hw_get_rate(phw);
+
+Urgh this is sort of annoying. We'll need the parents to be registered
+when the frequency table is created, just so we can parse the parent
+rate out and calculate the final frequency? What do we do if the parent
+isn't registered yet? We may need to push this logic into the determine
+rate path, and calculate the frequency table lazily at that point and
+hope that the parent is registered with some frequency. Otherwise fail
+the determine rate call.
+
+> +
+> +               ret =3D calculate_m_and_n(&clk->clkr.hw, SE_PERF_M_DFSR(i=
+),
+> +                                       SE_PERF_N_DFSR(i), mode, &m, &n);
+> +               if (ret)
+> +                       goto err;
+> +
+> +               dfs_freq_tbl[i].m =3D m;
+> +               dfs_freq_tbl[i].n =3D n;
+> +
+> +               /* calculate the final frequency */
+> +               calc_freq =3D calc_rate(prate, dfs_freq_tbl[i].m,
+> +                                               dfs_freq_tbl[i].n, mode,
+> +                                               dfs_freq_tbl[i].pre_div);
+> +
+> +               /* Check for duplicate frequencies */
+> +               for (j =3D 0; j  < i; j++) {
+> +                       if (dfs_freq_tbl[j].freq =3D=3D calc_freq)
+> +                               goto done;
+> +               }
+> +
+> +               dfs_freq_tbl[i].freq =3D calc_freq;
+> +       }
+> +done:
+> +       j =3D i;
+
+Why do we care about j =3D i? It isn't used now.
+
+> +
+> +       clk->flags |=3D DFS_ENABLE_RCG;
+
+I'd rather the ops are replaced with different clk_ops for DFS
+explicitly. The flag is not very nice.
+
+> +       clk->freq_tbl =3D dfs_freq_tbl;
+> +err:
+> +       return ret;
+> +}
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index b8064a3..b27699b 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2013-2014, 2018, The Linux Foundation. All rights reser=
+ved.
+>   *
+>   * This software is licensed under the terms of the GNU General Public
+>   * License version 2, as published by the Free Software Foundation, and
+
+SPDX update?
+
+> @@ -288,4 +288,25 @@ int qcom_cc_probe(struct platform_device *pdev, cons=
+t struct qcom_cc_desc *desc)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_cc_probe);
+> =
+
+> +int qcom_cc_register_rcg_dfs(struct platform_device *pdev,
+> +                        const struct qcom_cc_dfs_desc *desc)
+> +{
+> +       struct clk_dfs *clks =3D desc->clks;
+> +       size_t num_clks =3D desc->num_clks;
+> +       int i, ret =3D 0;
+> +
+> +       for (i =3D 0; i < num_clks; i++) {
+> +               ret =3D clk_rcg2_get_dfs_clock_rate(clks[i].rcg, &pdev->d=
+ev);
+> +               if (ret) {
+> +                       dev_err(&pdev->dev,
+> +                               "Failed calculating DFS frequencies for %=
+s\n",
+> +                               clk_hw_get_name(&(clks[i].rcg)->clkr.hw));
+
+That is a long line. Preferably iterate a local variable 'rcg' that is
+set to the start of the array and ++ through this loop.
+
+> +                       break;
+> +               }
+> +       }
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL(qcom_cc_register_rcg_dfs);
+> +
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+> index 00196ee..6627aec 100644
+> --- a/drivers/clk/qcom/common.h
+> +++ b/drivers/clk/qcom/common.h
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2014, 2018, The Linux Foundation. All rights reserved.
+>   *
+>   * This software is licensed under the terms of the GNU General Public
+>   * License version 2, as published by the Free Software Foundation, and
+> @@ -48,6 +48,15 @@ struct parent_map {
+>         u8 cfg;
+>  };
+> =
+
+> +struct clk_dfs {
+> +       struct clk_rcg2 *rcg;
+> +};
+
+Just have an array of clk_rcg2's instead of this struct? I'd add it to
+the common descriptor structure too, because I'm going to guess this is
+common going forward.
