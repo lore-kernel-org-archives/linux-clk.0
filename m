@@ -1,200 +1,64 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 05/27] ARM: davinci: da830: add new clock init using common clock framework
-Date: Wed,  9 May 2018 12:25:44 -0500
-Message-Id: <20180509172606.29387-6-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <ebdc6b56-f6d6-7e63-ebc2-6d60f5d1b690@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1525428158-29147-1-git-send-email-tdas@codeaurora.org>
+ <1525428158-29147-2-git-send-email-tdas@codeaurora.org>
+ <152545267793.138124.15345698220033125655@swboyd.mtv.corp.google.com>
+ <a926924f-2033-acd6-67cb-210a5e487ebb@codeaurora.org>
+ <152573930157.138124.12994299541712205183@swboyd.mtv.corp.google.com>
+ <ebdc6b56-f6d6-7e63-ebc2-6d60f5d1b690@codeaurora.org>
+Message-ID: <152580143451.138124.11843604181263814941@swboyd.mtv.corp.google.com>
+Subject: Re: [v8] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Tue, 08 May 2018 10:43:54 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specific clock init in mach-davinci/da830.c
-using the new common clock framework drivers.
+Quoting Taniya Das (2018-05-08 09:57:36)
+> On 5/8/2018 5:58 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-05-07 03:48:06)
+> >> Will be okay, if I can the following?
+> >>
+> >> _probe...
+> >> {
+> >>          struct clk_rpmh_desc *hw_desc_data;
+> >>          ....
+> >>
+> >>          hw_desc_data =3D kmemdup(desc, sizeof(*desc), GFP_KERNEL);
+> >>
+> >>          ...
+> >>          ret =3D devm_of_clk_add_hw_provider(&pdev->dev,     of_clk_rp=
+mh_hw_get,
+> >> hw_desc_data);
+> >>           ....
+> >>
+> >> }
+> >>
+> >> And also I fix the "getter" function.
+> > =
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+> > I'd rather see the check for out of bounds number just go away, unless
+> > that's helping something. The kmemdup() doesn't look good.
+> > =
 
-Also clean up the #includes since we are adding some here.
+> =
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: David Lechner <david@lechnology.com>
----
+> I think it is better to copy the desc data to "clk_hw_onecell_data", as =
 
-v10 changes:
-- none
+> I would also have to fix the "getter" function to check for out of bound =
 
-v9 changes:
-- register PLL in da830_init_time() instead of as platform device so that we
-  get the correct timer0 clock for davinci_timer_init()
-
-v8 changes:
-- none
-
-v7 changes:
-- add clock platform device declarations
-- register platform devices instead of registering clocks directly
-- clkdev lookup is moved to drivers/clk
-- add davinci prefix to commit description
-
-v6 changes:
-- add blank lines between function calls
-- include da8xx_register_cfgchip()
+> numbers (idx >=3D num_clks).
+> =
 
 
- arch/arm/mach-davinci/board-da830-evm.c    |  2 +
- arch/arm/mach-davinci/da830.c              | 70 ++++++++++++++++++++--
- arch/arm/mach-davinci/include/mach/da8xx.h |  1 +
- 3 files changed, 67 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index 14a6fc061744..74df37821abe 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -557,6 +557,8 @@ static __init void da830_evm_init(void)
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 	int ret;
- 
-+	da830_register_clocks();
-+
- 	ret = da830_register_gpio();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 0b17e5a22e5e..8a79e245db1f 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -8,23 +8,27 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
-+#include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
--#include <linux/clk.h>
- #include <linux/platform_data/gpio-davinci.h>
- 
- #include <asm/mach/map.h>
- 
--#include "psc.h"
--#include <mach/irqs.h>
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
-+#include <mach/irqs.h>
-+#include <mach/time.h>
- 
--#include "clock.h"
- #include "mux.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
-+
- /* Offsets of the 8 compare registers on the da830 */
- #define DA830_CMP12_0		0x60
- #define DA830_CMP12_1		0x64
-@@ -37,6 +41,7 @@
- 
- #define DA830_REF_FREQ		24000000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll0_data = {
- 	.num		= 1,
- 	.phys_base	= DA8XX_PLL0_BASE,
-@@ -432,6 +437,7 @@ static struct clk_lookup da830_clks[] = {
- 	CLK(NULL,		"rmii",		&rmii_clk),
- 	CLK(NULL,		NULL,		NULL),
- };
-+#endif
- 
- /*
-  * Device specific mux setup
-@@ -1223,6 +1229,58 @@ void __init da830_init(void)
- 
- void __init da830_init_time(void)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll;
-+	struct clk *clk;
-+
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
-+
-+	pll = ioremap(DA8XX_PLL0_BASE, SZ_4K);
-+
-+	da830_pll_init(NULL, pll, NULL);
-+
-+	clk = clk_get(NULL, "timer0");
-+
-+	davinci_timer_init(clk);
-+#else
- 	davinci_clk_init(da830_clks);
- 	davinci_timer_init(&timerp64_0_clk);
-+#endif
-+}
-+
-+static struct resource da830_psc0_resources[] = {
-+	{
-+		.start	= DA8XX_PSC0_BASE,
-+		.end	= DA8XX_PSC0_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device da830_psc0_device = {
-+	.name		= "da830-psc0",
-+	.id		= -1,
-+	.resource	= da830_psc0_resources,
-+	.num_resources	= ARRAY_SIZE(da830_psc0_resources),
-+};
-+
-+static struct resource da830_psc1_resources[] = {
-+	{
-+		.start	= DA8XX_PSC1_BASE,
-+		.end	= DA8XX_PSC1_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device da830_psc1_device = {
-+	.name		= "da830-psc1",
-+	.id		= -1,
-+	.resource	= da830_psc1_resources,
-+	.num_resources	= ARRAY_SIZE(da830_psc1_resources),
-+};
-+
-+void __init da830_register_clocks(void)
-+{
-+	/* PLL is registered in da830_init_time() */
-+	platform_device_register(&da830_psc0_device);
-+	platform_device_register(&da830_psc1_device);
- }
-diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
-index 9fd6d0125762..64861ac6a9d4 100644
---- a/arch/arm/mach-davinci/include/mach/da8xx.h
-+++ b/arch/arm/mach-davinci/include/mach/da8xx.h
-@@ -89,6 +89,7 @@ extern unsigned int da850_max_speed;
- 
- void da830_init(void);
- void da830_init_time(void);
-+void da830_register_clocks(void);
- 
- void da850_init(void);
- void da850_init_time(void);
--- 
-2.17.0
+Hmm ok. It would be nicer if we didn't have to duplicate the pointers
+just because of const though. I'd rather have the cast away of const and
+a comment indicating we know what we're doing. Maybe in the future we
+can make the getter function take a const void pointer.
