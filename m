@@ -1,110 +1,158 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 24 May 2018 13:09:53 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com,
- robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
- miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
- krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180524105614.3c51736c@bbrezillon>
-References: <cover.1526990589.git.stefan@agner.ch>
- <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <20180523161810.0ed9fe80@bbrezillon>
- <2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
- <20180524105614.3c51736c@bbrezillon>
-Message-ID: <7b3cc3991fb054130fd54c6fdfec5097@agner.ch>
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525690220-26525-2-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
+References: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
+ <1525690220-26525-2-git-send-email-anischal@codeaurora.org>
+Message-ID: <152574189516.138124.5711696582182066656@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v7 1/3] clk: qcom: Configure the RCGs to a safe source as needed
+Date: Mon, 07 May 2018 18:11:35 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 24.05.2018 10:56, Boris Brezillon wrote:
-> On Thu, 24 May 2018 10:46:27 +0200
-> Stefan Agner <stefan@agner.ch> wrote:
-> 
->> Hi Boris,
->>
->> Thanks for the initial review! One small question below:
->>
->> On 23.05.2018 16:18, Boris Brezillon wrote:
->> > Hi Stefan,
->> >
->> > On Tue, 22 May 2018 14:07:06 +0200
->> > Stefan Agner <stefan@agner.ch> wrote:
->> >> +
->> >> +struct tegra_nand {
->> >> +	void __iomem *regs;
->> >> +	struct clk *clk;
->> >> +	struct gpio_desc *wp_gpio;
->> >> +
->> >> +	struct nand_chip chip;
->> >> +	struct device *dev;
->> >> +
->> >> +	struct completion command_complete;
->> >> +	struct completion dma_complete;
->> >> +	bool last_read_error;
->> >> +
->> >> +	dma_addr_t data_dma;
->> >> +	void *data_buf;
->> >> +	dma_addr_t oob_dma;
->> >> +	void *oob_buf;
->> >> +
->> >> +	int cur_chip;
->> >> +};
->> >
->> > This struct should be split in 2 structures: one representing the NAND
->> > controller and one representing the NAND chip:
->> >
->> > struct tegra_nand_controller {
->> > 	struct nand_hw_control base;
->> > 	void __iomem *regs;
->> > 	struct clk *clk;
->> > 	struct device *dev;
->> > 	struct completion command_complete;
->> > 	struct completion dma_complete;
->> > 	bool last_read_error;
->> > 	int cur_chip;
->> > };
->> >
->> > struct tegra_nand {
->> > 	struct nand_chip base;
->> > 	dma_addr_t data_dma;
->> > 	void *data_buf;
->> > 	dma_addr_t oob_dma;
->> > 	void *oob_buf;
->> > };
->>
->> Is there a particular reason why you would leave DMA buffers in the chip
->> structure? It seems that is more a controller thing...
-> 
-> The size of those buffers is likely to be device dependent, so if you
-> have several NANDs connected to the controller, you'll either have to
-> have one buffer at the controller level which is max(all-chip-buf-size)
-> or a buffer per device.
-> 
-> Also, do you really need these buffers? The core already provide some
-> which are suitable for DMA (chip->oob_poi and chip->data_buf).
-> 
+Quoting Amit Nischal (2018-05-07 03:50:18)
+> For some root clock generators, there could be child branches which are
+> controlled by an entity other than application processor subsystem. For
+> such RCGs, as per application processor subsystem clock driver, all of
+> its downstream clocks are disabled and RCG is in disabled state but in
+> reality downstream clocks can be left enabled before.
+> =
 
-Good question, I am not sure, that was existing code.
+> So in this scenario, when RCG is disabled as per clock driver's point of
+> view and when rate scaling request comes before downstream clock enable
+> request, then RCG fails to update its configuration because in reality
+> RCG is on and it expects its new source to already be in enable state but
+> in reality new source is off. In order to avoid having the RCG to go into
+> an invalid state, add support to update the CFG, M, N and D registers
+> during set_rate() without configuration update and defer the actual RCG
+> configuration update to be done during clk_enable() as at this point of
+> time, both its new parent and safe source will be already enabled and RCG
+> can safely switch to new parent.
+> =
 
-Are you sure data_buf it is DMA capable?
+> During clk_disable() request, configure it to safe source as both its
+> parents, safe source and current parent will be enabled and RCG can
+> safely execute a switch.
+> =
 
-nand_scan_tail allocates with kmalloc:
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
 
-chip->data_buf = kmalloc(mtd->writesize + mtd->oobsize, GFP_KERNEL);
+Applied to clk-next. I squashed some style fixups and logic
+simplifications in too.
 
---
-Stefan
 
->>
->> If I move them, then struct tegra_nand would be basically empty. Can I
->> just use struct nand_chip and have no driver specific chip abstraction?
-> 
-> Sure.
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 6827ab32c82c..e63911cbfef9 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -797,7 +797,6 @@ static int clk_rcg2_set_force_enable(struct clk_hw *hw)
+ 	const char *name =3D clk_hw_get_name(hw);
+ 	int ret, count;
+ =
+
+-	/* Force enable bit */
+ 	ret =3D regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
+ 				 CMD_ROOT_EN, CMD_ROOT_EN);
+ 	if (ret)
+@@ -808,12 +807,10 @@ static int clk_rcg2_set_force_enable(struct clk_hw *h=
+w)
+ 		if (clk_rcg2_is_enabled(hw))
+ 			return 0;
+ =
+
+-		/* Delay for 1usec and retry polling the status bit */
+ 		udelay(1);
+ 	}
+-	if (!count)
+-		pr_err("%s: RCG did not turn on\n", name);
+ =
+
++	pr_err("%s: RCG did not turn on\n", name);
+ 	return -ETIMEDOUT;
+ }
+ =
+
+@@ -821,7 +818,6 @@ static int clk_rcg2_clear_force_enable(struct clk_hw *h=
+w)
+ {
+ 	struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+ =
+
+-	/* Clear force enable bit */
+ 	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
+ 					CMD_ROOT_EN, 0);
+ }
+@@ -832,9 +828,6 @@ clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, c=
+onst struct freq_tbl *f)
+ 	struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+ 	int ret;
+ =
+
+-	if (!f)
+-		return -EINVAL;
+-
+ 	ret =3D clk_rcg2_set_force_enable(hw);
+ 	if (ret)
+ 		return ret;
+@@ -858,10 +851,9 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw,=
+ unsigned long rate,
+ =
+
+ 	/*
+ 	 * In case clock is disabled, update the CFG, M, N and D registers
+-	 * and do not hit the update bit of CMD register.
++	 * and don't hit the update bit of CMD register.
+ 	 */
+ 	if (!__clk_is_enabled(hw->clk))
+-		/* Skip the configuration update */
+ 		return __clk_rcg2_configure(rcg, f);
+ =
+
+ 	return clk_rcg2_shared_force_enable_clear(hw, f);
+@@ -879,8 +871,8 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+ 	int ret;
+ =
+
+ 	/*
+-	 * Set the update bit only.
+-	 * As required configuration has been already written in set_rate() op.
++	 * Set the update bit because required configuration has already
++	 * been written in set_rate() op.
+ 	 */
+ 	ret =3D clk_rcg2_set_force_enable(hw);
+ 	if (ret)
+@@ -899,8 +891,8 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ 	u32 cfg;
+ =
+
+ 	/*
+-	 * Store current configuration as switching to safe source
+-	 * would clear the SRC and DIV of CFG register.
++	 * Store current configuration as switching to safe source would clear
++	 * the SRC and DIV of CFG register.
+ 	 */
+ 	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
+ =
+
+@@ -915,7 +907,7 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ 	clk_rcg2_set_force_enable(hw);
+ =
+
+ 	regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
+-				rcg->safe_src_index << CFG_SRC_SEL_SHIFT);
++		     rcg->safe_src_index << CFG_SRC_SEL_SHIFT);
+ =
+
+ 	update_config(rcg);
+=20
