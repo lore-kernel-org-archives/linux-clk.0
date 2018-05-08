@@ -1,59 +1,54 @@
-Return-Path: <gilad@benyossef.com>
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
- <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
- <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
- <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Mon, 21 May 2018 16:43:42 +0300
-Message-ID: <CAOtvUMcf-fHduThORv3cbcN16wEm_Si27OjSjAmSc9g5eK4PJw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 4/4] ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+Date: Tue,  8 May 2018 19:26:07 +0300
+Message-Id: <20180508162607.3500-6-digetx@gmail.com>
+In-Reply-To: <20180508162607.3500-1-digetx@gmail.com>
+References: <20180508162607.3500-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
+Commit 4c9a27a6c66d ("ARM: tegra: Fix ULPI regression on Tegra20") changed
+"ulpi-link" clock from CDEV2 to PLL_P_OUT4. Turned out that PLL_P_OUT4 is
+the parent of CDEV2 clock and original clock setup of "ulpi-link" was
+correct. The reverted patch was fixing USB for one board and broke the
+other, now Tegra's clk driver correctly sets parent for the CDEV2 clock
+and hence patch could be reverted safely, restoring USB for all of the
+boards.
 
->
-> Indeed. From a quick glance, it looks like drivers/crypto/ccree/cc_driver.c
-> does not distinguish between the absence of the clock property, and an
-> actual error in getting the clock, and never considers any error a failure
-> (incl. -PROBE_DEFER).
->
-> As of_clk_get() returns -ENOENT for both a missing clock property and a
-> missing clock, you should use (devm_)clk_get() instead, and distinguish
-> between NULL (no clock property) and IS_ERR() (actual failure -> abort).
->
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Marc Dietrich <marvin24@gmx.de>
+---
+ arch/arm/boot/dts/tegra20.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I was trying to do as you suggested but I didn't quite get what is the
-dev_id (2nd) parameter to devm_clk_get parameter is supposed to be.
-
-I see what of_clk_get() is doing, so can replicate that but it seems
-an over kill.
-
-Any ideas?
-
-Thanks,
-Gilad
-
-
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 0a7136462a1a..983dd5c14794 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -741,7 +741,7 @@
+ 		phy_type = "ulpi";
+ 		clocks = <&tegra_car TEGRA20_CLK_USB2>,
+ 			 <&tegra_car TEGRA20_CLK_PLL_U>,
+-			 <&tegra_car TEGRA20_CLK_PLL_P_OUT4>;
++			 <&tegra_car TEGRA20_CLK_CDEV2>;
+ 		clock-names = "reg", "pll_u", "ulpi-link";
+ 		resets = <&tegra_car 58>, <&tegra_car 22>;
+ 		reset-names = "usb", "utmi-pads";
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+2.17.0
