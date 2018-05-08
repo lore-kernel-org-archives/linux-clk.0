@@ -1,41 +1,70 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Viresh Kumar <viresh.kumar@linaro.org>, Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org, amit.kucheria@linaro.org, nicolas.dechesne@linaro.org, celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-Date: Tue, 15 May 2018 11:28:48 +0200
-Message-ID: <2615751.ZtaStQGZr4@aspire.rjw.lan>
-In-Reply-To: <20180515091912.zhc2uo7js7ukjvl7@vireshk-i7>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-13-git-send-email-ilialin@codeaurora.org> <20180515091912.zhc2uo7js7ukjvl7@vireshk-i7>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:52394 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752461AbeEHMkz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 May 2018 08:40:55 -0400
+Date: Tue, 8 May 2018 13:40:33 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+        kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: Re: [PATCH v6 2/6] ARM: imx6: register pm_power_off handler if
+ "fsl,pmic-stby-poweroff" is set
+Message-ID: <20180508124033.GL16141@n2100.armlinux.org.uk>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180305102524.5905-3-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180305102524.5905-3-o.rempel@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, May 15, 2018 11:19:12 AM CEST Viresh Kumar wrote:
-> On 15-05-18, 12:13, Ilia Lin wrote:
-> > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-> > the CPU ferequencies subset and voltage value of each OPP varies
-> > based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-> > defines the voltage and frequency value based on the msm-id in SMEM
-> > and speedbin blown in the efuse combination.
-> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> > to provide the OPP framework with required information.
-> > This is used to determine the voltage and frequency value for each OPP of
-> > operating-points-v2 table when it is parsed by the OPP framework.
-> > 
-> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> > ---
-> >  drivers/cpufreq/Kconfig.arm          |  11 +++
-> >  drivers/cpufreq/Makefile             |   1 +
-> >  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
-> >  drivers/cpufreq/qcom-cpufreq-kryo.c  | 150 +++++++++++++++++++++++++++++++++++
-> >  4 files changed, 165 insertions(+)
-> >  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+On Mon, Mar 05, 2018 at 11:25:19AM +0100, Oleksij Rempel wrote:
+> One of the Freescale recommended sequences for power off with external
+> PMIC is the following:
+> ...
+> 3.  SoC is programming PMIC for power off when standby is asserted.
+> 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> See:
+> http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
+> page 5083
+> 
+> This patch implements step 4. of this sequence.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+> index ecdf071653d4..24689260a2a5 100644
+> --- a/arch/arm/mach-imx/pm-imx6.c
+> +++ b/arch/arm/mach-imx/pm-imx6.c
+> @@ -604,6 +604,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
+>  				   IMX6Q_GPR1_GINT);
+>  }
+>  
+> +static void imx6_pm_stby_poweroff(void)
+> +{
+> +	imx6_set_lpm(STOP_POWER_OFF);
+> +	cpu_suspend(0, imx6q_suspend_finish);
 
-OK, but I'm assuming that this will go in via arm-soc.
+Do you actually need to save the processor state etc here - the request
+is after all to power down the system and not to suspend.  Would calling
+imx6q_suspend_finish() directly work (and hence simplify the code) ?
 
-Thanks,
-Rafael
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
