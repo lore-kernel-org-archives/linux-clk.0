@@ -1,101 +1,87 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v2 0/4] Restore ULPI USB on Tegra20
-To: Marcel Ziswiler <marcel@ziswiler.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Linus Walleij <linus.walleij@linaro.org>, Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180503225537.20748-1-digetx@gmail.com>
- <1525440829.6296.22.camel@ziswiler.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ca6ec165-9d63-69cd-27a1-051c1be9f35a@gmail.com>
-Date: Sun, 6 May 2018 15:01:57 +0300
+Return-Path: <Akshu.Agrawal@amd.com>
+Subject: Re: [PATCH v4 1/2] clk: x86: Add ST oscout platform clock
+To: "Deucher, Alexander" <Alexander.Deucher@amd.com>
+Cc: "djkurtz@chromium.org" <djkurtz@chromium.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "Koenig, Christian" <Christian.Koenig@amd.com>,
+ "airlied@redhat.com" <airlied@redhat.com>, "Liu, Shaoyun"
+ <Shaoyun.Liu@amd.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "lenb@kernel.org"
+ <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+References: <1525688013-9928-1-git-send-email-akshu.agrawal@amd.com>
+ <1525688013-9928-2-git-send-email-akshu.agrawal@amd.com>
+ <BN6PR12MB1809A66A78024F2E519A1A34F79B0@BN6PR12MB1809.namprd12.prod.outlook.com>
+From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
+Message-ID: <82d294fc-d108-a32a-1ada-2763f40dac01@amd.com>
+Date: Tue, 8 May 2018 09:33:51 +0530
 MIME-Version: 1.0
-In-Reply-To: <1525440829.6296.22.camel@ziswiler.com>
+In-Reply-To: <BN6PR12MB1809A66A78024F2E519A1A34F79B0@BN6PR12MB1809.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
+Return-Path: Akshu.Agrawal@amd.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04.05.2018 16:33, Marcel Ziswiler wrote:
-> Hi Dmitry
+
+
+On 5/8/2018 3:14 AM, Deucher, Alexander wrote:
+>> -----Original Message-----
+>> From: Agrawal, Akshu
+>> Sent: Monday, May 7, 2018 6:14 AM
+>> Cc: djkurtz@chromium.org; Agrawal, Akshu <Akshu.Agrawal@amd.com>;
+>> Deucher, Alexander <Alexander.Deucher@amd.com>;
+>> mturquette@baylibre.com; sboyd@kernel.org; Koenig, Christian
+>> <Christian.Koenig@amd.com>; airlied@redhat.com; Liu, Shaoyun
+>> <Shaoyun.Liu@amd.com>; linux-kernel@vger.kernel.org; linux-
+>> clk@vger.kernel.org; rjw@rjwysocki.net; lenb@kernel.org; linux-
+>> acpi@vger.kernel.org
+>> Subject: [PATCH v4 1/2] clk: x86: Add ST oscout platform clock
+>>
+>> Stoney SoC provides oscout clock. This clock can support 25Mhz and 48Mhz
+>> of frequency.
+>> The clock is available for general system use.
+>>
+>> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+>> ---
+>> v2: config change, added SPDX tag and used clk_hw_register_.
+>> v3: Fix kbuild warning for checking of NULL pointer
+>> v4: unregister clk_hw in driver remove, add .suppress_bind_attrs
+>>  drivers/clk/x86/Makefile             |  3 +-
+>>  drivers/clk/x86/clk-st.c             | 85
+>> ++++++++++++++++++++++++++++++++++++
+>>  include/linux/platform_data/clk-st.h | 17 ++++++++
+>>  3 files changed, 104 insertions(+), 1 deletion(-)  create mode 100644
+>> drivers/clk/x86/clk-st.c  create mode 100644
+>> include/linux/platform_data/clk-st.h
+>>
+>> diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile index
+>> 1367afb..00303bc 100644
+>> --- a/drivers/clk/x86/Makefile
+>> +++ b/drivers/clk/x86/Makefile
+>> @@ -1,3 +1,4 @@
+>> +obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
+>> +obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-st.o
+>>  clk-x86-lpss-objs		:= clk-lpt.o
+>>  obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
+>> -obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
+>> diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c new file mode
+>> 100644 index 0000000..8a7795c
+>> --- /dev/null
+>> +++ b/drivers/clk/x86/clk-st.c
+>> @@ -0,0 +1,85 @@
+>> +// SPDX-License-Identifier: GPL-2.0
 > 
-> On Fri, 2018-05-04 at 01:55 +0300, Dmitry Osipenko wrote:
->> Hello,
->>
->> This series of patches fixes ULPI USB on Tegra20. The original
->> problem
->> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
->> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
->> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
->> with the USB for the devices that have CDEV2 being enabled by
->> bootloader.
->> The patch got into the kernel and later Marc Dietrich found that USB
->> stopped working on the "paz00" Tegra20 board. After a bit of
->> discussion
->> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and
->> clock
->> driver was setting CDEV2's parent incorrectly. The parent clock is
->> actually
->> determined by the pinmuxing config of CDEV2 pingroup. This patchset
->> fixes
->> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock
->> provider,
->> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
->> suggestion), and then setting these clock muxes as parents for the
->> CDEV1/2
->> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted
->> since CDEV2
->> (aka MCLK2) is the actual clock source for "ulpi-link".
->>
->> Changelog:
->>
->> v2:
->> 	- Added new patch "Add quirk for getting CDEV1/2 clocks",
->> assuring
->> 	  that clk user won't get CDEV1/2 clocks until parent clk muxes
->> 	  are available, i.e. resolves potential issue with CDEV-user
->> driver
->> 	  vs pinctrl driver probe order.
->>
->> 	- Factored out "pinctrl" patch from the patchset as was
->> requested by
->> 	  Linus Walleij.
->>
->> 	- Addressed v1 review comments: fixed swapped DEV1/2 clk div
->> bits,
->> 	  made DEV1/2 divs read-only, etc minor changes.
->>
->> Dmitry Osipenko (4):
->>   clk: tegra20: Add DEV1/DEV2 OSC dividers
->>   clk: tegra20: Correct parents of CDEV1/2 clocks
->>   clk: tegra: Add quirk for getting CDEV1/2 clocks
->>   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
->>
->>  arch/arm/boot/dts/tegra20.dtsi  |  2 +-
->>  drivers/clk/tegra/clk-tegra20.c | 20 +++++++++++++++----
->>  drivers/clk/tegra/clk.c         | 34
->> ++++++++++++++++++++++++++++++++-
->>  3 files changed, 50 insertions(+), 6 deletions(-)
+> Should this be MIT?  The original license was MIT.
 > 
-> Beautiful (;-p).
-> 
-> root@colibri-t20:~# cat /sys/kernel/debug/clk/clk_summary | grep -E
-> 'pll_p_out4|cdev2'
->           pll_p_out4_div              1        1        0    24000000  
->         0 0  
->              pll_p_out4               2        2        0    24000000  
->         0 0  
->                 cdev2_mux             1        1        0    24000000  
->         0 0  
->                    cdev2              1        1        0    24000000  
->         0 0  
-> 
-> You may add my reviewed and tested bys to the remaining patches as
-> well.
-> 
-> Thanks!
-Awesome, thank you!
+> Alex
+>
+
+We are adding SPDX tag, while license remains same GPL-2.0
+
+What I have read is this is "to provide license identifiers inside the
+source code that could be easily parsed by machines and would allow
+checking for license compliance of an open source project easier."
+
+Thanks,
+Akshu
