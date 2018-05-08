@@ -1,40 +1,36 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
-Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
- Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
- <1524063005-1716-2-git-send-email-geert+renesas@glider.be>
-Message-ID: <152527551948.138124.11345269390915156871@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
-Date: Wed, 02 May 2018 08:38:39 -0700
+In-Reply-To: <1525690220-26525-4-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
+References: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
+ <1525690220-26525-4-git-send-email-anischal@codeaurora.org>
+Message-ID: <152574208368.138124.673130853127341411@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v7 3/3] clk: qcom: Add Global Clock controller (GCC) driver for
+ SDM845
+Date: Mon, 07 May 2018 18:14:43 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
-> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
-> limited to clock providers.
+Quoting Amit Nischal (2018-05-07 03:50:20)
+> From: Taniya Das <tdas@codeaurora.org>
 > =
 
-> Hence move these helpers into their own header file, so callers that are
-> not clock providers no longer have to include <linux/clk-provider.h>.
+> Add support for the global clock controller found on SDM845
+> based devices. This should allow most non-multimedia device
+> drivers to probe and control their clocks.
 > =
 
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 > ---
 
 Applied to clk-next
