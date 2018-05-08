@@ -1,73 +1,83 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Thu, 24 May 2018 14:19:18 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Benjamin Lindqvist <benjamin.lindqvist@endian.se>, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
- mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com,
- richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, Mirza
- Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180524135335.6aa0b7a4@bbrezillon>
-References: <cover.1526990589.git.stefan@agner.ch>
- <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
- <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
- <CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
- <20180524135335.6aa0b7a4@bbrezillon>
-Message-ID: <146a3abbbff4dcef30ad662a0fb85ff1@agner.ch>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <a926924f-2033-acd6-67cb-210a5e487ebb@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1525428158-29147-1-git-send-email-tdas@codeaurora.org>
+ <1525428158-29147-2-git-send-email-tdas@codeaurora.org>
+ <152545267793.138124.15345698220033125655@swboyd.mtv.corp.google.com>
+ <a926924f-2033-acd6-67cb-210a5e487ebb@codeaurora.org>
+Message-ID: <152573930157.138124.12994299541712205183@swboyd.mtv.corp.google.com>
+Subject: Re: [v8] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Mon, 07 May 2018 17:28:21 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 24.05.2018 13:53, Boris Brezillon wrote:
-> Hi Benjamin,
-> 
-> On Thu, 24 May 2018 13:30:14 +0200
-> Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
-> 
->> Hi Stefan,
->>
->> It seems to me that a probe similar to what the BootROM does shouldn't
->> be awfully complicated to implement - just cycle through the switch
->> cases in case of an ECC error. But I guess that's more of an idea for
->> further improvements rather than a comment to the patch set under
->> review.
-> 
-> Nope, not really an option, because you're not guaranteed that the NAND
-> will be used as a boot media, and the first page or first set of pages
-> might just be erased.
-> 
+Quoting Taniya Das (2018-05-07 03:48:06)
+> Hello Stephen,
+> =
 
-Yeah I did not meant probing like the Boot ROM does.
+> Could you please let me know your comments on the below.
+> =
 
-What I meant was using only the ECC modes which are supported by the
-Boot ROM when the driver tries to choose a viable mode. So that would
-be:
-- RS t=4
-- BCH t=8
-- BCH t=16
+> On 5/4/2018 10:21 PM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-05-04 03:02:38)
+> >> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> >> new file mode 100644
+> >> index 0000000..944fe04
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/clk-rpmh.c
+> >> @@ -0,0 +1,334 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> >> + */
+> >> +
+> >> +};
+> >> +
+> >> +struct clk_rpmh_desc {
+> >> +       struct clk_hw **clks;
+> >> +       size_t num_clks;
+> >> +};
+> > =
 
-Maybe we could add a property to enable that behavior:
+> > This could be replaced with the clk_hw_onecell_data struct and then the
+> > only problem becomes the const part which seems pretty impossible to fix
+> > at this point. One "workaround" is to memdup the structure. Ugh.
+> > =
 
-tegra,use-bootable-ecc-only;
+> =
 
->>
->> However, I think that allowing for an override of the oobsize
->> inference would be a good idea before merging, no? This could just be
->> a trivial #ifdef (at least temporarily). If you agree but don't feel
->> like doing it yourself, I'd be happy to pitch in. Let me know.
-> 
-> That's why we have nand-ecc-xxx properties in the DT.
-> 
+> Will be okay, if I can the following?
+> =
 
-Yes, nand-ecc-strength is the first thing I plan to implement, that way
-strength can be defined in dt.
+> _probe...
+> {
+>         struct clk_rpmh_desc *hw_desc_data;
+>         ....
+> =
 
---
-Stefan
+>         hw_desc_data =3D kmemdup(desc, sizeof(*desc), GFP_KERNEL);
+> =
+
+>         ...
+>         ret =3D devm_of_clk_add_hw_provider(&pdev->dev,     of_clk_rpmh_h=
+w_get, =
+
+> hw_desc_data);
+>          ....
+> =
+
+> }
+> =
+
+> And also I fix the "getter" function.
+
+I'd rather see the check for out of bounds number just go away, unless
+that's helping something. The kmemdup() doesn't look good.
