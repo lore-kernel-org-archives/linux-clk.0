@@ -1,185 +1,137 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH 9/9] clk: davinci: Fix link errors when not all SoCs are
- enabled
-To: David Lechner <david@lechnology.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Kevin
- Hilman <khilman@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180525181150.17873-1-david@lechnology.com>
- <20180525181150.17873-10-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <a1b62396-534c-bc68-63a4-ac493690a3e7@ti.com>
-Date: Mon, 28 May 2018 19:13:01 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180525181150.17873-10-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v10 15/27] ARM: davinci: switch to common clock framework
+Date: Wed,  9 May 2018 12:25:54 -0500
+Message-Id: <20180509172606.29387-16-david@lechnology.com>
+In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
+References: <20180509172606.29387-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 25 May 2018 11:41 PM, David Lechner wrote:
-> This fixes linker errors due to undefined symbols when one or more of
-> the TI DaVinci SoCs is not enabled in the kernel config.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->  drivers/clk/davinci/pll.c   | 16 ++++++++++++++++
->  drivers/clk/davinci/pll.h   | 11 ++++++++---
->  drivers/clk/davinci/psc.c   | 14 ++++++++++++++
->  drivers/clk/davinci/psc.h   | 12 ++++++++++++
->  include/linux/clk/davinci.h | 19 +++++++++++++++----
->  5 files changed, 65 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-> index 84a343060bc8..65abd371692d 100644
-> --- a/drivers/clk/davinci/pll.c
-> +++ b/drivers/clk/davinci/pll.c
-> @@ -860,25 +860,41 @@ static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *de
->  }
->  
->  /* needed in early boot for clocksource/clockevent */
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  CLK_OF_DECLARE(da850_pll0, "ti,da850-pll0", of_da850_pll0_init);
-> +#endif
->  
->  static const struct of_device_id davinci_pll_of_match[] = {
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  	{ .compatible = "ti,da850-pll1", .data = of_da850_pll1_init },
-> +#endif
->  	{ }
->  };
->  
->  static const struct platform_device_id davinci_pll_id_table[] = {
-> +#ifdef CONFIG_ARCH_DAVINCI_DA830
->  	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  	{ .name = "da850-pll0",  .driver_data = (kernel_ulong_t)da850_pll0_init  },
->  	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM355
->  	{ .name = "dm355-pll1",  .driver_data = (kernel_ulong_t)dm355_pll1_init  },
->  	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM365
->  	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
->  	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM644x
->  	{ .name = "dm644x-pll1", .driver_data = (kernel_ulong_t)dm644x_pll1_init },
->  	{ .name = "dm644x-pll2", .driver_data = (kernel_ulong_t)dm644x_pll2_init },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM646x
->  	{ .name = "dm646x-pll1", .driver_data = (kernel_ulong_t)dm646x_pll1_init },
->  	{ .name = "dm646x-pll2", .driver_data = (kernel_ulong_t)dm646x_pll2_init },
-> +#endif
->  	{ }
->  };
->  
-> diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-> index b2e5c4496645..7cc354dd29e2 100644
-> --- a/drivers/clk/davinci/pll.h
-> +++ b/drivers/clk/davinci/pll.h
-> @@ -122,14 +122,19 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
->  
->  /* Platform-specific callbacks */
->  
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  int da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
->  void of_da850_pll0_init(struct device_node *node);
->  int of_da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-> -
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM355
->  int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-> -
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM644x
->  int dm644x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-> -
-> +#endif
+This switches ARCH_DAVINCI to use the common clock framework. The legacy
+clock code in arch/arm/mach-davinci/ is no longer used. New drivers in
+drivers/clk/davinci/ are used instead.
 
-The traditional way of dealing with this for functions is to provide a
-static inline stub when CONFIG_ARCH_DAVINCI_DM644x is not defined. Can
-we use that? That helps in avoiding ifdefs elsewhere.
+A few macros had to be moved to prevent compilation errors.
 
-> +#ifdef CONFIG_ARCH_DAVINCI_DM646x
->  int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-> +#endif
->  
->  #endif /* __CLK_DAVINCI_PLL_H___ */
-> diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-> index 6326ba1fe3cc..fffbed5e263b 100644
-> --- a/drivers/clk/davinci/psc.c
-> +++ b/drivers/clk/davinci/psc.c
-> @@ -513,20 +513,34 @@ int of_davinci_psc_clk_init(struct device *dev,
->  }
->  
->  static const struct of_device_id davinci_psc_of_match[] = {
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  	{ .compatible = "ti,da850-psc0", .data = &of_da850_psc0_init_data },
->  	{ .compatible = "ti,da850-psc1", .data = &of_da850_psc1_init_data },
-> +#endif
->  	{ }
->  };
->  
->  static const struct platform_device_id davinci_psc_id_table[] = {
-> +#ifdef CONFIG_ARCH_DAVINCI_DA830
->  	{ .name = "da830-psc0", .driver_data = (kernel_ulong_t)&da830_psc0_init_data },
->  	{ .name = "da830-psc1", .driver_data = (kernel_ulong_t)&da830_psc1_init_data },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  	{ .name = "da850-psc0", .driver_data = (kernel_ulong_t)&da850_psc0_init_data },
->  	{ .name = "da850-psc1", .driver_data = (kernel_ulong_t)&da850_psc1_init_data },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM355
->  	{ .name = "dm355-psc",  .driver_data = (kernel_ulong_t)&dm355_psc_init_data  },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM365
->  	{ .name = "dm365-psc",  .driver_data = (kernel_ulong_t)&dm365_psc_init_data  },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM644x
->  	{ .name = "dm644x-psc", .driver_data = (kernel_ulong_t)&dm644x_psc_init_data },
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM646x
->  	{ .name = "dm646x-psc", .driver_data = (kernel_ulong_t)&dm646x_psc_init_data },
-> +#endif
->  	{ }
->  };
->  
-> diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
-> index c2a7df6413fe..6a42529d31a9 100644
-> --- a/drivers/clk/davinci/psc.h
-> +++ b/drivers/clk/davinci/psc.h
-> @@ -94,15 +94,27 @@ struct davinci_psc_init_data {
->  	int (*psc_init)(struct device *dev, void __iomem *base);
->  };
->  
-> +#ifdef CONFIG_ARCH_DAVINCI_DA830
->  extern const struct davinci_psc_init_data da830_psc0_init_data;
->  extern const struct davinci_psc_init_data da830_psc1_init_data;
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DA850
->  extern const struct davinci_psc_init_data da850_psc0_init_data;
->  extern const struct davinci_psc_init_data da850_psc1_init_data;
->  extern const struct davinci_psc_init_data of_da850_psc0_init_data;
->  extern const struct davinci_psc_init_data of_da850_psc1_init_data;
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM355
->  extern const struct davinci_psc_init_data dm355_psc_init_data;
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM356
->  extern const struct davinci_psc_init_data dm365_psc_init_data;
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM644x
->  extern const struct davinci_psc_init_data dm644x_psc_init_data;
-> +#endif
-> +#ifdef CONFIG_ARCH_DAVINCI_DM646x
->  extern const struct davinci_psc_init_data dm646x_psc_init_data;
-> +#endif
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-ifdefs around these extern declarations are not needed.
+v10 changes:
+- none
 
-Thanks,
-Sekhar
+v9 changes:
+- none
+
+v8 changes:
+- none
+
+v7 changes:
+- s/compile/compilation and space instead of tab
+- add PM_GENERIC_DOMAINS dependencies
+
+v6 changes:
+- clean up indent on Common objects section
+
+
+ arch/arm/Kconfig                | 5 ++++-
+ arch/arm/mach-davinci/Makefile  | 4 ++--
+ arch/arm/mach-davinci/clock.h   | 4 ----
+ arch/arm/mach-davinci/davinci.h | 4 ++++
+ arch/arm/mach-davinci/psc.h     | 2 --
+ 5 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a7f8e7f4b88f..a57ad13810c8 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -609,13 +609,16 @@ config ARCH_S3C24XX
+ config ARCH_DAVINCI
+ 	bool "TI DaVinci"
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+-	select CLKDEV_LOOKUP
++	select COMMON_CLK
+ 	select CPU_ARM926T
+ 	select GENERIC_ALLOCATOR
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_IRQ_CHIP
+ 	select GPIOLIB
+ 	select HAVE_IDE
++	select PM_GENERIC_DOMAINS if PM
++	select PM_GENERIC_DOMAINS_OF if PM && OF
++	select RESET_CONTROLLER
+ 	select USE_OF
+ 	select ZONE_DMA
+ 	help
+diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
+index 4e8178050027..8725d8bea567 100644
+--- a/arch/arm/mach-davinci/Makefile
++++ b/arch/arm/mach-davinci/Makefile
+@@ -5,8 +5,8 @@
+ #
+ 
+ # Common objects
+-obj-y 			:= time.o clock.o serial.o psc.o \
+-			   usb.o common.o sram.o aemif.o
++obj-y 					:= time.o serial.o usb.o \
++					   common.o sram.o aemif.o
+ 
+ obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
+ 
+diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
+index d7894d5aaa25..2d058568e004 100644
+--- a/arch/arm/mach-davinci/clock.h
++++ b/arch/arm/mach-davinci/clock.h
+@@ -12,10 +12,6 @@
+ #ifndef __ARCH_ARM_DAVINCI_CLOCK_H
+ #define __ARCH_ARM_DAVINCI_CLOCK_H
+ 
+-#define DAVINCI_PLL1_BASE 0x01c40800
+-#define DAVINCI_PLL2_BASE 0x01c40c00
+-#define MAX_PLL 2
+-
+ /* PLL/Reset register offsets */
+ #define PLLCTL          0x100
+ #define PLLCTL_PLLEN    BIT(0)
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index fa99197d36f9..db4c95ef4d5c 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -35,6 +35,10 @@
+ #include <media/davinci/vpbe.h>
+ #include <media/davinci/vpbe_osd.h>
+ 
++#define DAVINCI_PLL1_BASE		0x01c40800
++#define DAVINCI_PLL2_BASE		0x01c40c00
++#define DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01c41000
++
+ #define DAVINCI_SYSTEM_MODULE_BASE	0x01c40000
+ #define SYSMOD_VDAC_CONFIG		0x2c
+ #define SYSMOD_VIDCLKCTL		0x38
+diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
+index 8af9f09fc10c..b58707cf7033 100644
+--- a/arch/arm/mach-davinci/psc.h
++++ b/arch/arm/mach-davinci/psc.h
+@@ -27,8 +27,6 @@
+ #ifndef __ASM_ARCH_PSC_H
+ #define __ASM_ARCH_PSC_H
+ 
+-#define	DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01C41000
+-
+ /* Power and Sleep Controller (PSC) Domains */
+ #define DAVINCI_GPSC_ARMDOMAIN		0
+ #define DAVINCI_GPSC_DSPDOMAIN		1
+-- 
+2.17.0
