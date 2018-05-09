@@ -1,140 +1,112 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20180501161227.2110-1-wens@csie.org>
-References: <20180501161227.2110-1-wens@csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 2 May 2018 00:33:45 +0800
-Message-ID: <CAGb2v67HFb6eLBS4_9s_wJ5uWFeQdUtwn_NMJnm59UUDFBDJUA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 00/15] ARM: sun8i: r40: Add Ethernet support
-To: Maxime Ripard <maxime.ripard@bootlin.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	netdev <netdev@vger.kernel.org>, Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v10 25/27] ARM: davinci: add device tree support to timer
+Date: Wed,  9 May 2018 12:26:04 -0500
+Message-Id: <20180509172606.29387-26-david@lechnology.com>
+In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
+References: <20180509172606.29387-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 2, 2018 at 12:12 AM, Chen-Yu Tsai <wens@csie.org> wrote:
-> Hi everyone,
->
-> This is v2 of my R40 Ethernet support series.
->
-> Changes since v1:
->
->   - Default to fetching regmap from device pointed to by syscon phandle,
->     and falling back to syscon API if that fails.
->
->   - Dropped .syscon_from_dev field in device data as a result of the
->     previous change.
->
->   - Added a large comment block explaining the first change.
->
->   - Simplified description of syscon property in sun8i-dwmac binding.
->
->   - Regmap now only exposes the EMAC/GMAC register, but retains the
->     offset within its address space.
->
->   - Added patches for A64, which reuse the same sun8i-dwmac changes.
->
-> This series adds support for the DWMAC based Ethernet controller found
-> on the Allwinner R40 SoC. The controller is either a DWMAC clone or
-> DWMAC core with its registers rearranged. This is already supported by
-> the dwmac-sun8i driver. The glue layer control registers, unlike other
-> sun8i family SoCs, is not in the system controller region, but in the
-> clock control unit, like with the older A20 and A31 SoCs.
->
-> While we reuse the bindings for dwmac-sun8i using a syscon phandle
-> reference, we need some custom plumbing for the clock driver to export
-> a regmap that only allows access to the GMAC register to the dwmac-sun8i
-> driver. An alternative would be to allow drivers to register custom
-> syscon devices with their own regmap and locking.
->
-> Patch 1 converts the CLK_OF_DECLARE style clock driver to a platform
-> one, so the regmap introduced later has a struct device to tie to.
->
-> Patch 2 adds a regmap that is exported by the clock driver for the
-> dwmac-sun8i driver to use.
->
-> Patches 3, 4, and 5 clean up the dwmac-sun8i binding.
->
-> Patch 6 adds device tree binding for Allwinner R40's Ethernet
-> controller.
->
-> Patch 7 converts regmap access of the syscon region in the dwmac-sun8i
-> driver to regmap_field, in anticipation of different field widths on
-> the R40.
->
-> Patch 8 introduces custom plumbing in the dwmac-sun8i driver to fetch
-> a regmap from another device, by looking up said device via a phandle,
-> then getting the regmap associated with that device.
->
-> Patch 9 adds support for different or absent TX/RX delay chain ranges
-> to the dwmac-sun8i driver.
->
-> Patch 10 adds support for the R40's ethernet controller.
+This adds device tree support to the davinci timer so that when clocks
+are moved to device tree, the timer will still work.
 
-I should've mentioned that patches 3 ~ 10, and only these, should go
-through net-next. sunxi will handle the remaining clk, device tree, and
-soc driver patches.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-Thanks
-ChenYu
+v10 changes:
+- change compatible to "ti,da830-timer"
+- remove comment clocks as platform devices
 
-> Patch 11 cleans up the Bananapi M2 Ultra device tree file.
->
-> Patch 12 adds a GMAC device node and RGMII mode pinmux setting for the
-> R40.
->
-> Patch 13 enables Ethernet on the Bananapi M2 Ultra.
->
-> Patches 14 and 15 are for the A64. They convert the existing syscon
-> device to an SRAM controller device that exports a regmap. The needed
-> driver changes are in patch 14, and the device tree changes are in
-> patch 15.
->
->
-> Please have a look.
->
-> Regards
-> ChenYu
->
-> Chen-Yu Tsai (11):
->   dt-bindings: net: dwmac-sun8i: Clean up clock delay chain descriptions
->   dt-bindings: net: dwmac-sun8i: Sort syscon compatibles by alphabetical
->     order
->   dt-bindings: net: dwmac-sun8i: simplify description of syscon property
->   dt-bindings: net: dwmac-sun8i: Add binding for GMAC on Allwinner R40
->     SoC
->   net: stmmac: dwmac-sun8i: Use regmap_field for syscon register access
->   net: stmmac: dwmac-sun8i: Allow getting syscon regmap from external
->     device
->   net: stmmac: dwmac-sun8i: Support different ranges for TX/RX delay
->     chains
->   net: stmmac: dwmac-sun8i: Add support for GMAC on Allwinner R40 SoC
->   ARM: dts: sun8i: r40: bananapi-m2-ultra: Sort device node dereferences
->   ARM: dts: sun8i: r40: Add device node and RGMII pinmux node for GMAC
->   ARM: dts: sun8i: r40: bananapi-m2-ultra: Enable GMAC ethernet
->     controller
->
-> Icenowy Zheng (4):
->   clk: sunxi-ng: r40: rewrite init code to a platform driver
->   clk: sunxi-ng: r40: export a regmap to access the GMAC register
->   soc: sunxi: export a regmap for EMAC clock reg on A64
->   arm64: dts: allwinner: a64: add SRAM controller device tree node
->
->  .../devicetree/bindings/net/dwmac-sun8i.txt   |  21 +--
->  .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  99 ++++++++-----
->  arch/arm/boot/dts/sun8i-r40.dtsi              |  34 +++++
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  23 ++-
->  drivers/clk/sunxi-ng/ccu-sun8i-r40.c          |  72 +++++++--
->  .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 139 +++++++++++++++---
->  drivers/soc/sunxi/sunxi_sram.c                |  57 ++++++-
->  7 files changed, 364 insertions(+), 81 deletions(-)
->
-> --
-> 2.17.0
->
+v9 changes:
+- none (there were supposed to be changed, but apparently they got squashed
+  into the next commit - will fix on the next round)
+
+v8 changes:
+- none
+
+v7 changes:
+- rebased
+- add davinci prefix to commit message
+
+v6 changes:
+- rebased
+
+
+ arch/arm/mach-davinci/Kconfig |  1 +
+ arch/arm/mach-davinci/time.c  | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
+
+diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
+index ba9912b4dfab..da8a039d65f9 100644
+--- a/arch/arm/mach-davinci/Kconfig
++++ b/arch/arm/mach-davinci/Kconfig
+@@ -59,6 +59,7 @@ config MACH_DA8XX_DT
+ 	default y
+ 	depends on ARCH_DAVINCI_DA850
+ 	select PINCTRL
++	select TIMER_OF
+ 	help
+ 	  Say y here to include support for TI DaVinci DA850 based using
+ 	  Flattened Device Tree. More information at Documentation/devicetree
+diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
+index 7ea3db0ff062..184e72922cc1 100644
+--- a/arch/arm/mach-davinci/time.c
++++ b/arch/arm/mach-davinci/time.c
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
+ #include <linux/clk.h>
+ #include <linux/err.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/sched_clock.h>
+ 
+@@ -397,3 +398,34 @@ void __init davinci_timer_init(struct clk *timer_clk)
+ 	for (i=0; i< ARRAY_SIZE(timers); i++)
+ 		timer32_config(&timers[i]);
+ }
++
++static int __init of_davinci_timer_init(struct device_node *np)
++{
++	struct clk *clk;
++
++	clk = of_clk_get(np, 0);
++	if (IS_ERR(clk)) {
++		struct of_phandle_args clkspec;
++
++		/*
++		 * Fall back to using ref_clk if the actual clock is not
++		 * available. There will be problems later if the real clock
++		 * source is disabled.
++		 */
++
++		pr_warn("%s: falling back to ref_clk\n", __func__);
++
++		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
++		if (IS_ERR(clkspec.np)) {
++			pr_err("%s: No clock available for timer!\n", __func__);
++			return PTR_ERR(clkspec.np);
++		}
++		clk = of_clk_get_from_provider(&clkspec);
++		of_node_put(clkspec.np);
++	}
++
++	davinci_timer_init(clk);
++
++	return 0;
++}
++TIMER_OF_DECLARE(davinci_timer, "ti,da830-timer", of_davinci_timer_init);
+-- 
+2.17.0
