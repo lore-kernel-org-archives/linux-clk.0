@@ -1,124 +1,143 @@
-Return-Path: <o.rempel@pengutronix.de>
-Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
- Mark Brown <broonie@kernel.org>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-4-o.rempel@pengutronix.de>
- <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
- <1937901.oyadCYFYNo@aspire.rjw.lan>
- <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
-Message-ID: <091ccf85-ae4c-f6fd-0455-1a70e973c85c@pengutronix.de>
-Date: Mon, 14 May 2018 07:10:42 +0200
+Return-Path: <parri.andrea@gmail.com>
+Return-Path: <parri.andrea@gmail.com>
+Date: Wed, 9 May 2018 23:27:28 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Mauro Carvalho Chehab <mchehab@infradead.org>,
+	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Harry Wei <harryxiyou@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michal Simek <monstr@monstr.eu>,
+	Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+	Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org, Chris Zankel <chris@zankel.net>,
+	Max Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+	David Howells <dhowells@redhat.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Sean Paul <seanpaul@chromium.org>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+	Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Malcolm Priestley <tvboxspy@gmail.com>,
+	Antoine Jacquet <royale@zerezo.com>,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Juergen Gross <jgross@suse.com>, Li Zefan <lizefan@huawei.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <sds@tycho.nsa.gov>,
+	Eric Paris <eparis@parisplace.org>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@zh-kernel.org,
+	user-mode-linux-devel@lists.sourceforge.net,
+	user-mode-linux-user@lists.sourceforge.net,
+	linux-xtensa@linux-xtensa.org, linux-block@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	patches@opensource.cirrus.com, linux-bcache@vger.kernel.org,
+	linux-usb@vger.kernel.org, devel@driverdev.osuosl.org,
+	xen-devel@lists.xenproject.org, cgroups@vger.kernel.org,
+	selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
+	alsa-devel@alsa-project.org
+Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
+Message-ID: <20180509212728.GA4178@andrea>
+References: <20180509152045.722f0c51@vento.lan>
+ <Pine.LNX.4.44L0.1805091509100.1391-100000@iolanthe.rowland.org>
+ <20180509164153.5b9ab9db@vento.lan>
 MIME-Version: 1.0
-In-Reply-To: <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180509164153.5b9ab9db@vento.lan>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P
-Content-Type: multipart/mixed; boundary="CRLiw7b3SfKPy3MVyt35HefVydl0PKi0x";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
- Mark Brown <broonie@kernel.org>
-Message-ID: <091ccf85-ae4c-f6fd-0455-1a70e973c85c@pengutronix.de>
-Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-4-o.rempel@pengutronix.de>
- <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
- <1937901.oyadCYFYNo@aspire.rjw.lan>
- <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
-In-Reply-To: <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
+On Wed, May 09, 2018 at 04:41:53PM -0300, Mauro Carvalho Chehab wrote:
+> Em Wed, 9 May 2018 15:11:07 -0400 (EDT)
+> Alan Stern <stern@rowland.harvard.edu> escreveu:
+> 
+> > On Wed, 9 May 2018, Mauro Carvalho Chehab wrote:
+> > 
+> > > Em Wed, 9 May 2018 19:15:01 +0200
+> > > Andrea Parri <parri.andrea@gmail.com> escreveu:  
+> > 
+> > > > >  tools/memory-model/README                     | 10 +++++-----    
+> > > > 
+> > > > As mentioned in the previous thread, I am for keeping the current
+> > > > references: the REAMDE is listing the doc files, as well as other
+> > > > files in tools/memory-model/, relatively to that directory.  
+> > > 
+> > > Yeah, at least this hunk deserves some rework, as now some
+> > > references are Documentation/.../foo, while others are just
+> > > bar.
+> > > 
+> > > As on (almost) all other places (except for tools/memory-model/README),
+> > > the references are always from the main directory, I would make all
+> > > patches there also relative to main dir. If you're afraid of
+> > > not being too clearer, we could prefix all of them with something
+> > > like:
+> > > 
+> > > 	${LINUX}/tools/memory-model/...
+> > > 
+> > > just like some DT binding files do:
+> > > 
+> > > 	Documentation/devicetree/bindings/sound/audio-graph-card.txt:see ${LINUX}/Documentation/devicetree/bindings/graph.txt
+> > > 
+> > > A bonus of doing that is that the broken reference detect script can
+> > > keep parsing it without changes (well, it wouldn't be hard to make
+> > > it also accept a relative file, but doing that just due to 
+> > > tools/memory-model/README seems overkill).
+> > > 
+> > > Another advantage is that it would allow to easily add references
+> > > there from the main kernel Documentation, if needed in the future,
+> > > without messing with local x non-local relative namespace.  
+> > 
+> > How about changing the relative references so that something like
+> > Documentation/recipes.txt becomes ./Documentation/recipes.txt?
+> 
+> Sounds a good idea to me. Andrea?
 
---CRLiw7b3SfKPy3MVyt35HefVydl0PKi0x
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Counterintuitive ;-)  Documentation/abc.txt vs. ./Documentation/abc.txt
+But let me sleep over this ;-)  for the time being, I renew my vote for
+"just don't commit these changes (and keep checking automated changes)".
 
-
-
-On 14.05.2018 06:33, Oleksij Rempel wrote:
->=20
->=20
-> On 12.05.2018 13:13, Rafael J. Wysocki wrote:
->> On Friday, May 4, 2018 8:50:52 PM CEST Oleksij Rempel wrote:
->>> Hallo Andrew,
->>> I need your ACK or NACK for this patch.
->>>
->>> This function is used to configure external PMIC to interpret
->>> signal which will be triggered by pm_power_off as power off.
->>> Since same signal can be used for stand by, I linked PMIC configurati=
-on
->>> with pm_power_off_prepare to avoid possible conflicts.
->>>
->>> On Mon, Mar 05, 2018 at 11:25:20AM +0100, Oleksij Rempel wrote:
->>>> Export pm_power_off_prepare. It is needed to implement power off on
->>>> Freescale/NXP iMX6 based boards with external power management
->>>> integrated circuit (PMIC).
->>>>
->>>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->>>> ---
->>>>  kernel/reboot.c | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/kernel/reboot.c b/kernel/reboot.c
->>>> index e4ced883d8de..350be6baa60d 100644
->>>> --- a/kernel/reboot.c
->>>> +++ b/kernel/reboot.c
->>>> @@ -49,6 +49,7 @@ int reboot_force;
->>>>   */
->>>> =20
->>>>  void (*pm_power_off_prepare)(void);
->>>> +EXPORT_SYMBOL(pm_power_off_prepare);
->>
->> Why not EXPORT_SYMBOL_GPL() ?
->=20
-> No special reason. Fixed.
-> Any other comments?
->=20
-
-Or with other words, will it be enough to get your Signed-of-by for this
-patch?
+  Andrea
 
 
---CRLiw7b3SfKPy3MVyt35HefVydl0PKi0x--
-
---RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlr5GlIACgkQdQOiSHVI
-77Rh4wgAwEu/IcL9h9DDgNxT7+bLULmv3Idsqw2YuCkCPyoqdzZMba4+xNxfzyzt
-fP7Mm0m1yYFfM0ZJ8xYJeSlhcb0Y991+YCRBPWv00zQplUPONo6Z8E5hmnmvqHav
-jmaBw+jLhosfgbdyzRlheDr/HQKgojWe8M2SkFyVnkwgk9tWvV/nEwgxtef177bB
-cDFVV48p8mpEPMcdn7OaAlDrHD2sLC8YmLYdM4PqUdwzrWTuAaOuuNkPOsgrNI29
-C+IHaIB/jG/JvWCTIbU7O0G7wGhAuhFhFqU4NwWjnZIrTfLpCgqMo7zW6E/ktmcy
-Kfqp7JlWNFroTiGOoHzBRbET/uIK1w==
-=Usu/
------END PGP SIGNATURE-----
-
---RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P--
+> 
+> Thanks,
+> Mauro
