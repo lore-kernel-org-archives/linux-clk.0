@@ -1,60 +1,190 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:39587 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751904AbeEPIao (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 May 2018 04:30:44 -0400
-Received: by mail-wr0-f195.google.com with SMTP id q3-v6so2838530wrj.6
-        for <linux-clk@vger.kernel.org>; Wed, 16 May 2018 01:30:43 -0700 (PDT)
-Message-ID: <1526459441.2897.54.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson: use SPDX license identifiers consistently
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Wed, 16 May 2018 10:30:41 +0200
-In-Reply-To: <152640711006.34267.13271626390751114709@swboyd.mtv.corp.google.com>
-References: <20180515164229.4606-1-jbrunet@baylibre.com>
-         <152640711006.34267.13271626390751114709@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mchehab+samsung@kernel.org>
+Date: Wed, 9 May 2018 15:20:45 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho
+ Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan
+ Corbet <corbet@lwn.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob
+ Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Ananth N Mavinakayanahalli
+ <ananth@linux.vnet.ibm.com>, Anil S Keshavamurthy
+ <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Poirier
+ <mathieu.poirier@linaro.org>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Harry Wei <harryxiyou@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michal Simek
+ <monstr@monstr.eu>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger
+ <richard@nod.at>, Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
+ <hpa@zytor.com>, x86@kernel.org, Chris Zankel <chris@zankel.net>, Max
+ Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>, David Howells
+ <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie
+ <airlied@linux.ie>, Gustavo Padovan <gustavo@padovan.org>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul
+ <seanpaul@chromium.org>, Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
+ Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>, Kent
+ Overstreet <kent.overstreet@gmail.com>, Malcolm Priestley
+ <tvboxspy@gmail.com>, Antoine Jacquet <royale@zerezo.com>, Sudip Mukherjee
+ <sudipm.mukherjee@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, "Paul
+ E. McKenney" <paulmck@linux.vnet.ibm.com>, Josh Triplett
+ <josh@joshtriplett.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross
+ <jgross@suse.com>, Li Zefan <lizefan@huawei.com>, Paul Moore
+ <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris
+ <eparis@parisplace.org>, James Morris <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+ <tiwai@suse.com>, Alan Stern <stern@rowland.harvard.edu>, Peter Zijlstra
+ <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin
+ <npiggin@gmail.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget
+ <luc.maranget@inria.fr>, Akira Yokosawa <akiyks@gmail.com>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@redhat.com>, Namhyung
+ Kim <namhyung@kernel.org>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@zh-kernel.org,
+ user-mode-linux-devel@lists.sourceforge.net,
+ user-mode-linux-user@lists.sourceforge.net, linux-xtensa@linux-xtensa.org,
+ linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, patches@opensource.cirrus.com,
+ linux-bcache@vger.kernel.org, linux-usb@vger.kernel.org,
+ devel@driverdev.osuosl.org, xen-devel@lists.xenproject.org,
+ cgroups@vger.kernel.org, selinux@tycho.nsa.gov,
+ linux-security-module@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
+Message-ID: <20180509152045.722f0c51@vento.lan>
+In-Reply-To: <20180509171501.GA17405@andrea>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+	<e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
+	<20180509171501.GA17405@andrea>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-05-15 at 10:58 -0700, Stephen Boyd wrote:
-> Quoting Jerome Brunet (2018-05-15 09:42:29)
-> > diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
-> > index f7ab5b1db342..ac0743cd0f2f 100644
-> > --- a/drivers/clk/meson/clk-audio-divider.c
-> > +++ b/drivers/clk/meson/clk-audio-divider.c
-> > @@ -1,18 +1,7 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> 
-> This is GPL2 or later.
-> 
-> >  /*
-> >   * Copyright (c) 2017 AmLogic, Inc.
-> >   * Author: Jerome Brunet <jbrunet@baylibre.com>
-> > - *
-> > - * This program is free software; you can redistribute it and/or modify it
-> > - * under the terms and conditions of the GNU General Public License,
-> > - * version 2, as published by the Free Software Foundation.
-> > - *
-> > - * This program is distributed in the hope it will be useful, but WITHOUT
-> > - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> > - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> > - * more details.
-> > - *
-> > - * You should have received a copy of the GNU General Public License along with
-> > - * this program.  If not, see <http://www.gnu.org/licenses/>.
-> 
-> But this looks like GPL2 only because there isn't an "or later" part of
-> the text. Is it intentional to relicense to GPL2+ instead of GPL2 only?
+Em Wed, 9 May 2018 19:15:01 +0200
+Andrea Parri <parri.andrea@gmail.com> escreveu:
 
-Nope, no re-licensing intended. Thanks a lot for the explanation.
-I'll recheck the rest of the patch for this error.
-
-> If so, please add that into the commit text.
+> On Wed, May 09, 2018 at 10:18:52AM -0300, Mauro Carvalho Chehab wrote:
+> > As we move stuff around, some doc references are broken. Fix some of
+> > them via this script:
+> > 	./scripts/documentation-file-ref-check --fix-rst
+> > 
+> > Manually checked if the produced result is valid, removing a few
+> > false-positives.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
 > 
+> Thank you again for doing this,
+> 
+> 
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         |  4 ++--
+> >  .../bindings/input/rotary-encoder.txt         |  2 +-
+> >  Documentation/driver-api/gpio/consumer.rst    |  2 +-
+> >  Documentation/kprobes.txt                     |  4 ++--
+> >  Documentation/trace/coresight.txt             |  2 +-
+> >  Documentation/trace/events.rst                |  2 +-
+> >  Documentation/trace/ftrace-uses.rst           |  2 +-
+> >  Documentation/trace/histogram.txt             |  2 +-
+> >  Documentation/trace/intel_th.rst              |  2 +-
+> >  Documentation/trace/tracepoint-analysis.rst   |  6 +++---
+> >  Documentation/translations/ja_JP/howto.rst    |  4 ++--
+> >  .../translations/zh_CN/magic-number.txt       |  4 ++--
+> >  .../zh_CN/video4linux/omap3isp.txt            |  4 ++--
+> >  MAINTAINERS                                   | 20 +++++++++----------
+> >  arch/Kconfig                                  |  2 +-
+> >  arch/arm/include/asm/cacheflush.h             |  2 +-
+> >  arch/arm64/include/asm/cacheflush.h           |  2 +-
+> >  arch/microblaze/include/asm/cacheflush.h      |  2 +-
+> >  arch/um/Kconfig.um                            |  2 +-
+> >  arch/unicore32/include/asm/cacheflush.h       |  2 +-
+> >  arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
+> >  arch/xtensa/include/asm/cacheflush.h          |  4 ++--
+> >  block/Kconfig                                 |  2 +-
+> >  certs/Kconfig                                 |  2 +-
+> >  crypto/asymmetric_keys/asymmetric_type.c      |  2 +-
+> >  crypto/asymmetric_keys/signature.c            |  2 +-
+> >  drivers/char/Kconfig                          |  2 +-
+> >  drivers/clk/clk.c                             |  4 ++--
+> >  drivers/clk/ingenic/cgu.h                     |  2 +-
+> >  drivers/gpu/vga/Kconfig                       |  2 +-
+> >  drivers/gpu/vga/vgaarb.c                      |  2 +-
+> >  drivers/input/joystick/Kconfig                | 10 +++++-----
+> >  drivers/input/joystick/iforce/Kconfig         |  2 +-
+> >  drivers/input/joystick/walkera0701.c          |  2 +-
+> >  drivers/input/misc/Kconfig                    |  4 ++--
+> >  drivers/input/misc/rotary_encoder.c           |  2 +-
+> >  drivers/input/mouse/Kconfig                   |  6 +++---
+> >  drivers/input/mouse/alps.c                    |  2 +-
+> >  drivers/input/touchscreen/wm97xx-core.c       |  2 +-
+> >  drivers/lightnvm/pblk-rb.c                    |  2 +-
+> >  drivers/md/bcache/Kconfig                     |  2 +-
+> >  drivers/md/bcache/btree.c                     |  2 +-
+> >  drivers/md/bcache/extents.c                   |  2 +-
+> >  drivers/media/dvb-core/dvb_ringbuffer.c       |  2 +-
+> >  drivers/media/pci/meye/Kconfig                |  2 +-
+> >  drivers/media/platform/pxa_camera.c           |  4 ++--
+> >  .../soc_camera/sh_mobile_ceu_camera.c         |  2 +-
+> >  drivers/media/radio/Kconfig                   |  2 +-
+> >  drivers/media/radio/si470x/Kconfig            |  2 +-
+> >  drivers/media/usb/dvb-usb-v2/lmedm04.c        |  2 +-
+> >  drivers/media/usb/zr364xx/Kconfig             |  2 +-
+> >  drivers/parport/Kconfig                       |  6 +++---
+> >  drivers/staging/media/bcm2048/TODO            |  2 +-
+> >  include/keys/asymmetric-subtype.h             |  2 +-
+> >  include/keys/asymmetric-type.h                |  2 +-
+> >  include/linux/assoc_array.h                   |  2 +-
+> >  include/linux/assoc_array_priv.h              |  2 +-
+> >  include/linux/circ_buf.h                      |  2 +-
+> >  include/linux/ftrace.h                        |  2 +-
+> >  include/linux/rculist_nulls.h                 |  2 +-
+> >  include/uapi/linux/prctl.h                    |  2 +-
+> >  include/xen/interface/io/kbdif.h              |  2 +-
+> >  kernel/cgroup/cpuset.c                        |  2 +-
+> >  kernel/trace/Kconfig                          | 16 +++++++--------
+> >  lib/Kconfig                                   |  2 +-
+> >  security/selinux/hooks.c                      |  2 +-
+> >  sound/core/Kconfig                            |  4 ++--
+> >  sound/drivers/Kconfig                         |  4 ++--
+> >  sound/pci/Kconfig                             | 10 +++++-----
+> >  tools/include/uapi/linux/prctl.h              |  2 +-
+> >  tools/lib/api/fs/fs.c                         |  2 +-
 
+
+> >  tools/memory-model/README                     | 10 +++++-----  
+> 
+> As mentioned in the previous thread, I am for keeping the current
+> references: the REAMDE is listing the doc files, as well as other
+> files in tools/memory-model/, relatively to that directory.
+
+Yeah, at least this hunk deserves some rework, as now some
+references are Documentation/.../foo, while others are just
+bar.
+
+As on (almost) all other places (except for tools/memory-model/README),
+the references are always from the main directory, I would make all
+patches there also relative to main dir. If you're afraid of
+not being too clearer, we could prefix all of them with something
+like:
+
+	${LINUX}/tools/memory-model/...
+
+just like some DT binding files do:
+
+	Documentation/devicetree/bindings/sound/audio-graph-card.txt:see ${LINUX}/Documentation/devicetree/bindings/graph.txt
+
+A bonus of doing that is that the broken reference detect script can
+keep parsing it without changes (well, it wouldn't be hard to make
+it also accept a relative file, but doing that just due to 
+tools/memory-model/README seems overkill).
+
+Another advantage is that it would allow to easily add references
+there from the main kernel Documentation, if needed in the future,
+without messing with local x non-local relative namespace.
+
+Regards,
+Mauro
