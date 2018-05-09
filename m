@@ -1,88 +1,225 @@
-Return-Path: <ray.jui@broadcom.com>
-Return-Path: <ray.jui@broadcom.com>
-From: Ray Jui <ray.jui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH 1/3] dt-bindings: clk: Update Stingray binding doc
-Date: Fri, 25 May 2018 09:45:15 -0700
-Message-Id: <1527266717-8406-2-git-send-email-ray.jui@broadcom.com>
-In-Reply-To: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
-References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v10 09/27] ARM: davinci: dm644x: add new clock init using common clock framework
+Date: Wed,  9 May 2018 12:25:48 -0500
+Message-Id: <20180509172606.29387-10-david@lechnology.com>
+In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
+References: <20180509172606.29387-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update Stingray clock binding document to add additional clock entries
-with names matching the latest ASIC datasheet. Also modify a few existing
-entries to make their naming more consistent with the rest of the entries
+This adds the new board-specific clock init in mach-davinci/dm644x.c
+using the new common clock framework drivers.
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
+
+Also clean up the #includes since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- .../bindings/clock/brcm,iproc-clocks.txt           | 26 ++++++++++++----------
- 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index f8e4a93..ab730ea 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -276,36 +276,38 @@ These clock IDs are defined in:
-     clk_ts_500_ref	genpll2		2	BCM_SR_GENPLL2_TS_500_REF_CLK
-     clk_125_nitro	genpll2		3	BCM_SR_GENPLL2_125_NITRO_CLK
-     clk_chimp		genpll2		4	BCM_SR_GENPLL2_CHIMP_CLK
--    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH
-+    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH_CLK
-+    clk_fs		genpll2		6	BCM_SR_GENPLL2_FS_CLK
+v10 changes:
+- fix copy/paste error s/dm355/dm644x/
+
+v9 changes:
+- register PLL1 and PSC in dm644x_init_time() instead of as platform device so
+  that we get the correct timer0 clock for davinci_timer_init()
+- Fixed size of PLL memory block
+
+v8 changes:
+- none
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
+
+
+
+ arch/arm/mach-davinci/board-dm644x-evm.c  |  2 +
+ arch/arm/mach-davinci/board-neuros-osd2.c |  2 +
+ arch/arm/mach-davinci/board-sffsdr.c      |  2 +
+ arch/arm/mach-davinci/davinci.h           |  1 +
+ arch/arm/mach-davinci/dm644x.c            | 64 +++++++++++++++++++----
+ 5 files changed, 62 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 48436f74fd71..738e443ab15f 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -773,6 +773,8 @@ static __init void davinci_evm_init(void)
+ 	struct clk *aemif_clk;
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
  
-     genpll3		crystal		0	BCM_SR_GENPLL3
-     clk_hsls		genpll3		1	BCM_SR_GENPLL3_HSLS_CLK
-     clk_sdio		genpll3		2	BCM_SR_GENPLL3_SDIO_CLK
++	dm644x_register_clocks();
++
+ 	dm644x_init_devices();
  
-     genpll4		crystal		0	BCM_SR_GENPLL4
--    ccn			genpll4		1	BCM_SR_GENPLL4_CCN_CLK
-+    clk_ccn		genpll4		1	BCM_SR_GENPLL4_CCN_CLK
-     clk_tpiu_pll	genpll4		2	BCM_SR_GENPLL4_TPIU_PLL_CLK
--    noc_clk		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
-+    clk_noc		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
-     clk_chclk_fs4	genpll4		4	BCM_SR_GENPLL4_CHCLK_FS4_CLK
-     clk_bridge_fscpu	genpll4		5	BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK
+ 	ret = dm644x_gpio_register();
+diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
+index 25ad9b0612be..353f9e5a1454 100644
+--- a/arch/arm/mach-davinci/board-neuros-osd2.c
++++ b/arch/arm/mach-davinci/board-neuros-osd2.c
+@@ -175,6 +175,8 @@ static __init void davinci_ntosd2_init(void)
+ 	struct clk *aemif_clk;
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
  
--
-     genpll5		crystal		0	BCM_SR_GENPLL5
--    fs4_hf_clk		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
--    crypto_ae_clk	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
--    raid_ae_clk		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
-+    clk_fs4_hf		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
-+    clk_crypto_ae	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
-+    clk_raid_ae		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
++	dm644x_register_clocks();
++
+ 	dm644x_init_devices();
  
-     genpll6		crystal		0	BCM_SR_GENPLL6
--    48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
-+    clk_48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
+ 	ret = dm644x_gpio_register();
+diff --git a/arch/arm/mach-davinci/board-sffsdr.c b/arch/arm/mach-davinci/board-sffsdr.c
+index e7c1728b0833..792bb84d5011 100644
+--- a/arch/arm/mach-davinci/board-sffsdr.c
++++ b/arch/arm/mach-davinci/board-sffsdr.c
+@@ -134,6 +134,8 @@ static __init void davinci_sffsdr_init(void)
+ {
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
  
-     lcpll0		crystal		0	BCM_SR_LCPLL0
-     clk_sata_refp 	lcpll0		1	BCM_SR_LCPLL0_SATA_REFP_CLK
-     clk_sata_refn	lcpll0		2	BCM_SR_LCPLL0_SATA_REFN_CLK
--    clk_usb_ref		lcpll0		3	BCM_SR_LCPLL0_USB_REF_CLK
--    sata_refpn		lcpll0		3	BCM_SR_LCPLL0_SATA_REFPN_CLK
-+    clk_sata_350	lcpll0		3	BCM_SR_LCPLL0_SATA_350_CLK
-+    clk_sata_500	lcpll0		4	BCM_SR_LCPLL0_SATA_500_CLK
++	dm644x_register_clocks();
++
+ 	dm644x_init_devices();
  
-     lcpll1		crystal		0	BCM_SR_LCPLL1
--    wan 		lcpll1		1	BCM_SR_LCPLL0_WAN_CLK
-+    clk_wan		lcpll1		1	BCM_SR_LCPLL1_WAN_CLK
-+    clk_usb_ref		lcpll1		2	BCM_SR_LCPLL1_USB_REF_CLK
-+    clk_crmu_ts		lcpll1		3	BCM_SR_LCPLL1_CRMU_TS_CLK
+ 	platform_add_devices(davinci_sffsdr_devices,
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index a799b5266d4b..16aca5853ab2 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -108,6 +108,7 @@ int dm365_gpio_register(void);
+ void dm644x_init(void);
+ void dm644x_init_devices(void);
+ void dm644x_init_time(void);
++void dm644x_register_clocks(void);
+ void dm644x_init_asp(void);
+ int dm644x_init_video(struct vpfe_config *, struct vpbe_config *);
+ int dm644x_gpio_register(void);
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 708df0ed8554..c3cd27c6cd70 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -8,28 +8,34 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
+-#include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/serial_8250.h>
++
++#include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/dmaengine.h>
+-#include <linux/platform_device.h>
++#include <linux/init.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
  
-     lcpll_pcie		crystal		0	BCM_SR_LCPLL_PCIE
--    pcie_phy_ref 	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
-+    clk_pcie_phy_ref	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
+ #include <asm/mach/map.h>
+ 
++#include <mach/common.h>
+ #include <mach/cputype.h>
+ #include <mach/irqs.h>
+-#include "psc.h"
+ #include <mach/mux.h>
+-#include <mach/time.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
++
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ /*
+  * Device specific clocks
+@@ -43,6 +49,7 @@
+ #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
+ #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num       = 1,
+ 	.phys_base = DAVINCI_PLL1_BASE,
+@@ -326,6 +333,7 @@ static struct clk_lookup dm644x_clks[] = {
+ 	CLK("davinci-wdt", NULL, &timer2_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
++#endif
+ 
+ static struct emac_platform_data dm644x_emac_pdata = {
+ 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
+@@ -934,8 +942,46 @@ void __init dm644x_init(void)
+ 
+ void __init dm644x_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll1, *psc;
++	struct clk *clk;
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
++
++	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
++	dm644x_pll1_init(NULL, pll1, NULL);
++
++	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
++	dm644x_psc_init(NULL, psc);
++
++	clk = clk_get(NULL, "timer0");
++
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(dm644x_clks);
+ 	davinci_timer_init(&timer0_clk);
++#endif
++}
++
++static struct resource dm644x_pll2_resources[] = {
++	{
++		.start	= DAVINCI_PLL2_BASE,
++		.end	= DAVINCI_PLL2_BASE + SZ_1K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device dm644x_pll2_device = {
++	.name		= "dm644x-pll2",
++	.id		= -1,
++	.resource	= dm644x_pll2_resources,
++	.num_resources	= ARRAY_SIZE(dm644x_pll2_resources),
++};
++
++void __init dm644x_register_clocks(void)
++{
++	/* PLL1 and PSC are registered in dm644x_init_time() */
++	platform_device_register(&dm644x_pll2_device);
+ }
+ 
+ int __init dm644x_init_video(struct vpfe_config *vpfe_cfg,
 -- 
-2.1.4
+2.17.0
