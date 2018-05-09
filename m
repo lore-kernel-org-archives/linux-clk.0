@@ -1,122 +1,82 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:38426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755274AbeEaOVU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 31 May 2018 10:21:20 -0400
-MIME-Version: 1.0
-In-Reply-To: <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
- <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
- <20180531005827.GA17203@rob-hp-laptop> <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 31 May 2018 09:20:57 -0500
-Message-ID: <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
-To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Cc: "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mark Brown <broonie@kernel.org>, Cristian.Birsan@microchip.com
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [v9] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Wed,  9 May 2018 11:26:06 +0530
+Message-Id: <1525845367-22185-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 31, 2018 at 5:25 AM, Codrin Ciubotariu
-<codrin.ciubotariu@microchip.com> wrote:
-> On 31.05.2018 03:58, Rob Herring wrote:
->>
->> On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
->>>
->>> The I2S mux clock can be used to select the I2S input clock. The
->>> available parents are the peripheral and the generated clocks.
->>>
->>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
->>> ---
->>>   .../devicetree/bindings/clock/at91-clock.txt       | 34
->>> ++++++++++++++++++++++
->>>   1 file changed, 34 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt
->>> b/Documentation/devicetree/bindings/clock/at91-clock.txt
->>> index 51c259a..1c46b3c 100644
->>> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
->>> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
->>> @@ -90,6 +90,8 @@ Required properties:
->>>         "atmel,sama5d2-clk-audio-pll-pmc"
->>>                 at91 audio pll output on AUDIOPLLCLK that feeds the PMC
->>>                 and can be used by peripheral clock or generic clock
->>> +       "atmel,sama5d2-clk-i2s-mux":
->>> +               at91 I2S clock source selection
->>
->>
->> Is this boolean or takes some values. If latter, what are valid values?
->
->
-> This is the compatible string of the clock driver.
+ [v9]
+   * clean up recalc function to use integer division.
+   * Add back type casting the desc data passed to "getter" function and
+   added comment for the same.
 
-Ah, now I remember. AT91 uses fine grained clock nodes in DT. Is there
-still a plan to fix this?
+ [v8]
+   * cleanup code to remove of rpmh_client handle.
+   * pass the hw_clks array to the devm_of_clk_add_hw_provider getter function.
 
->>>     Required properties for SCKC node:
->>>   - reg : defines the IO memory reserved for the SCKC.
->>> @@ -507,3 +509,35 @@ For example:
->>>                         atmel,clk-output-range = <0 83000000>;
->>>                 };
->>>         };
->>> +
->>> +Required properties for I2S mux clocks:
->>> +- #size-cells : shall be 0 (reg is used to encode I2S bus id).
->>> +- #address-cells : shall be 1 (reg is used to encode I2S bus id).
->>> +- name: device tree node describing a specific mux clock.
->>> +       * #clock-cells : from common clock binding; shall be set to 0.
->>> +       * clocks : shall be the mux clock parent phandles; shall be 2
->>> phandles:
->>> +         peripheral and generated clock; the first phandle shall belong
->>> to the
->>> +         peripheral clock and the second one shall belong to the
->>> generated
->>> +         clock; "clock-indices" property can be user to specify
->>> +         the correct order.
->>> +       * reg: I2S bus id of the corresponding mux clock.
->>> +         e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
->>> +
->>> +For example:
->>> +       i2s_clkmux {
->>
->>
->> What is this a child of?
->
->
-> It is a child of PMC node, since both parent clocks are generated by PMC.
->
->>
->>> +               compatible = "atmel,sama5d2-clk-i2s-mux";
->>> +               #address-cells = <1>;
->>> +               #size-cells = <0>;
->>
->>
->> How do you address this block? My guess is you don't because it is just
->> part of some other block and you are just creating this node to
->> instantiate a driver. Just make the node for the actual h/w block a
->> clock provider and define the clock ids (0 and 1).
->
->
-> This block is not addressed, but its children are. The register we access in
-> this driver is not part of other block. It's a SFR register, accessed
-> through syscon and it has nothing to do with the I2S IP (see SAMA5D2 DS,
-> page 1256, fig. 44-1: I2SC Block Diagram) that is the consumer of this
-> clock. Adding a clock-id property in the I2S node would be just like v3 of
-> this series, with the difference that we use clock-id instead of alias id to
-> set the clock parent, which is not how you suggested back then.
+ [v7]
+   * Addressed comments from Stephen
+	- Keep only xo_board as clock parent.
+	- Associate divs from SoC specific clock listing to calculate
+	   the clock rate.
+	- Add back the recalc_rate clock ops to return the clock rate
+	   based on the parent rate and div associated with clock.
+	- void cast kept to avoid compiler warnings.
 
-I wasn't suggesting a clock-id property, but a clock specifier (i.e.
-make #clock-cells 1).
+ [v6]
+   * Addressed comments from Rob
+   * Addressed comments from Stephen
 
-But AT91 clocks are all a mess, so I don't know what to tell you.
+ [v5]
+   * Addressed comments from Stephen
+   * Introduced a new DT property to take clock divs
 
-Rob
+ [v4]
+  * Addressed comments from Stephen
+
+ [v3]
+  * Addressed documentation & code review comments from Bjorn
+  * Addressed bindings comments from Rob
+  * Updated the patch series order for bindings
+
+ [v2]
+  * Addressed comments from Stephen
+  * Addressed comments from Evan
+
+This patch series adds a driver and device tree documentation binding
+for the clock control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
+would send requests for the RPMh managed clock resources.
+
+The RPMh clock driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.
+
+Thanks,
+Taniya
+
+[1]: https://lkml.org/lkml/2018/3/9/979
+[2]: https://lkml.org/lkml/2018/3/14/787
+
+Taniya Das (1):
+  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+
+ drivers/clk/qcom/Kconfig    |   9 ++
+ drivers/clk/qcom/Makefile   |   1 +
+ drivers/clk/qcom/clk-rpmh.c | 333 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 343 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
