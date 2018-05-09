@@ -1,54 +1,126 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <8ac8a361a7dc69cce1e7498f1473bad8@codeaurora.org>
-References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
- <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
- <09ac2bd5eab25cfc70a1c5dc7b0f90ed@codeaurora.org> <20180507171121.GA22656@rob-hp-laptop>
- <8ac8a361a7dc69cce1e7498f1473bad8@codeaurora.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 8 May 2018 07:48:07 -0500
-Message-ID: <CAL_JsqL3wz_Y0Qp7Z8-JjkFGegKLFOUscJgGp+XO-Lm52iN2Vg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Add QCOM video clock controller driver
-To: Amit Nischal <anischal@codeaurora.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-	linux-clk-owner@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v10 12/27] ARM: davinci: da8xx: add new sata_refclk init using common clock framework
+Date: Wed,  9 May 2018 12:25:51 -0500
+Message-Id: <20180509172606.29387-13-david@lechnology.com>
+In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
+References: <20180509172606.29387-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 7, 2018 at 11:53 PM, Amit Nischal <anischal@codeaurora.org> wrote:
-> On 2018-05-07 22:41, Rob Herring wrote:
->>
->> On Mon, May 07, 2018 at 04:16:53PM +0530, Amit Nischal wrote:
->>>
->>> On 2018-05-04 22:01, Stephen Boyd wrote:
->>> > Quoting Amit Nischal (2018-05-03 05:35:23)
->>> > > Changes in v1:
->>> > >    https://lkml.org/lkml/2018/4/24/545
->>> > > Addressed below review comments given by Rob
->>> > > - Change the compatible property as per '<vendor>,<soc>-<block>'
->>> > > format.
->>> > > - Add header definitions for resets and power-domain cells.
->>> >
->>> > You didn't add any reset definitions though?
->>>
->>> We haven't added the reset definitions for videocc as there is no
->>> video reset client.
->>
->>
->> So? You don't know what resets there are?
->>
->
-> We know the resets, but video driver doesn't do any block resets
-> prior to accessing the video subsystem so that's the reason we do
-> not want to expose the resets in videocc driver.
+This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
+using the new common clock framework drivers.
 
-Bindings don't have to match what drivers currently use but should be
-complete as possible.
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-Rob
+Also, the #includes are sorted since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+---
+
+v10 changes:
+- none
+
+v9 changes:
+- none
+
+v8 changes:
+- none
+
+v7 changes:
+- none
+
+v6 changes:
+- none
+
+
+ arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 78390c64e6ca..73de449bbc68 100644
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -10,25 +10,30 @@
+  * the Free Software Foundation; either version 2 of the License, or
+  * (at your option) any later version.
+  */
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+-#include <linux/dma-contiguous.h>
+-#include <linux/serial_8250.h>
+ #include <linux/ahci_platform.h>
++#include <linux/clk-provider.h>
+ #include <linux/clk.h>
+-#include <linux/reboot.h>
++#include <linux/clkdev.h>
++#include <linux/dma-contiguous.h>
+ #include <linux/dmaengine.h>
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/reboot.h>
++#include <linux/serial_8250.h>
+ 
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
++#include <mach/cputype.h>
+ #include <mach/da8xx.h>
+-#include <mach/clock.h>
++#include <mach/time.h>
++
++#include "asp.h"
+ #include "cpuidle.h"
+ #include "sram.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include <mach/clock.h>
+ #include "clock.h"
+-#include "asp.h"
++#endif
+ 
+ #define DA8XX_TPCC_BASE			0x01c00000
+ #define DA8XX_TPTC0_BASE		0x01c08000
+@@ -1040,6 +1045,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
+ }
+ 
+ #ifdef CONFIG_ARCH_DAVINCI_DA850
++#ifndef CONFIG_COMMON_CLK
+ static struct clk sata_refclk = {
+ 	.name		= "sata_refclk",
+ 	.set_rate	= davinci_simple_set_rate,
+@@ -1061,6 +1067,18 @@ int __init da850_register_sata_refclk(int rate)
+ 
+ 	return 0;
+ }
++#else
++int __init da850_register_sata_refclk(int rate)
++{
++	struct clk *clk;
++
++	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	return clk_register_clkdev(clk, "refclk", "ahci_da850");
++}
++#endif
+ 
+ static struct resource da850_sata_resources[] = {
+ 	{
+-- 
+2.17.0
