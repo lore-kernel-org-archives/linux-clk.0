@@ -1,92 +1,56 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 04/15] dt-bindings: display: sunxi-drm: Add TCON TOP description
-Date: Mon, 21 May 2018 17:10:24 +0200
-Message-ID: <5513047.T4egid1SBs@jernej-laptop>
-In-Reply-To: <20180521080147.72esi2kwzcvzmetk@flea>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net> <20180519183127.2718-5-jernej.skrabec@siol.net> <20180521080147.72esi2kwzcvzmetk@flea>
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 09 May 2018 16:12:59 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Jacky Bai <ping.bai@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
+ mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+In-Reply-To: <HE1PR04MB3113135433766196E708685887990@HE1PR04MB3113.eurprd04.prod.outlook.com>
+References: <20180418124908.3079-1-stefan@agner.ch>
+ <20180502073807.GE3443@dragon> <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
+ <HE1PR04MB311395765D3DC03D5960DBA3879A0@HE1PR04MB3113.eurprd04.prod.outlook.com>
+ <4188ee25bd5179b57d09e4624dcfbfbb@agner.ch>
+ <152580354289.138124.13657232356773397650@swboyd.mtv.corp.google.com>
+ <HE1PR04MB3113135433766196E708685887990@HE1PR04MB3113.eurprd04.prod.outlook.com>
+Message-ID: <ae5b239a57bd7e3f3e62cc23a1c3788e@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-Dne ponedeljek, 21. maj 2018 ob 10:01:47 CEST je Maxime Ripard napisal(a):
-> Hi,
+On 09.05.2018 03:26, Jacky Bai wrote:
+>> Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+>>
+>> Quoting Stefan Agner (2018-05-08 06:20:03)
+>> > On 08.05.2018 09:32, Jacky Bai wrote:
+>> > >
+>> > > I have tried two 6ULL board, I don't meet such issue. System can
+>> > > boot up successfully with commit 6f9575e55632 included.
+>> > > Anyway, the change in this patch is ok for me. it is no harm to the
+>> > > BUS clock change flow.
+>> >
+>> > Hm, that is interesting, maybe it is because we use a different SKU?
+>> > Or maybe bootloader?
+>> >
+>> > I tested here with a 800 MHz clocked variant on a Colibri iMX6ULL
+>> > using U-Boot 2016.11.
+>> >
+>>
+>> I'll throw this into fixes today because it fixes something to be useful. It's still
+>> interesting to see what's different between the two setups though.
 > 
-> On Sat, May 19, 2018 at 08:31:16PM +0200, Jernej Skrabec wrote:
-> > TCON TOP main purpose is to configure whole display pipeline. It
-> > determines relationships between mixers and TCONs, selects source TCON
-> > for HDMI, muxes LCD and TV encoder GPIO output,
+> Thanks. 
 > 
-> I'm not sure you mean GPIO here, but rather pin?
-
-Right, I'll fix that.
-
+> I will find some 800MHz parts and have a try with different bootloader later.
+> Will let you know, when I have some results.
 > 
-> > selects TV encoder clock source and contains additional TV TCON and
-> > DSI gates.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  .../bindings/display/sunxi/sun4i-drm.txt      | 20 +++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
-> > 3346c1e2a7a0..a099957ab62a 100644
-> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > 
-> > @@ -187,6 +187,26 @@ And on the A23, A31, A31s and A33, you need one more 
-clock line:
-> >     - 'lvds-alt': An alternative clock source, separate from the TCON
-> >     channel 0
-> >     
-> >                   clock, that can be used to drive the LVDS clock
-> > 
-> > +TCON TOP
-> > +--------
-> > +
-> > +TCON TOPs main purpose is to configure whole display pipeline. It
-> > determines +relationships between mixers and TCONs, selects source TCON
-> > for HDMI, muxes +LCD and TV encoder GPIO output, selects TV encoder clock
-> > source and contains +additional TV TCON and DSI gates.
-> > +
-> > +Required properties:
-> > +  - compatible: value must be one of:
-> > +    * allwinner,sun8i-r40-tcon-top
-> > +  - reg: base address and size of the memory-mapped region.
-> > +  - clocks: phandle to the clocks feeding the TCON TOP
-> > +    * bus: TCON TOP interface clock
-> > +  - clock-names: clock name mentioned above
-> > +  - resets: phandle to the reset line driving the DRC
-> > +    * rst: TCON TOP reset line
-> > +  - reset-names: reset name mentioned above
-> > +  - #clock-cells : must contain 1
-> > +
-> 
-> I guess you should better describe the OF-graph endpoints, and the
-> clocks output. Just using the binding additions here doesn't allow to
-> get a clear idea of how the DT should look like.
 
-With my idea of implementation, OF graph is the same as before, so I didn't 
-mention anything about it.
+FWIW, I tried two SKUs here:
+MCIMX6Z2DVM05AA (528Mhz)
+MCIMX6Z2CVM08AA (800MHz)
 
-My idea of dependencies (you should view it in fixed width font):
-         TCON-TOP
-            ^
-            |
-mixer <-> TCON <-> HDMI
+Both run at 396MHz in U-Boot, and both freeze and the same location.
 
-I'll explain my design decision as response to other mail.
-
-Best regards,
-Jernej
+--
+Stefan
