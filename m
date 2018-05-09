@@ -1,202 +1,124 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 10/27] ARM: davinci: dm646x: add new clock init using common clock framework
-Date: Fri, 18 May 2018 11:48:12 -0500
-Message-Id: <20180518164829.27052-11-david@lechnology.com>
-In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
-References: <20180518164829.27052-1-david@lechnology.com>
+Return-Path: <djkurtz@google.com>
+MIME-Version: 1.0
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com> <1525859941-23654-3-git-send-email-akshu.agrawal@amd.com>
+In-Reply-To: <1525859941-23654-3-git-send-email-akshu.agrawal@amd.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Date: Wed, 09 May 2018 15:59:14 +0000
+Message-ID: <CAGS+omCy8B343pW-b26aEuRLyYHiQjMO2Rph4L6_x37uJ7r6vA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] ACPI: APD: Add AMD misc clock handler support
+To: Akshu Agrawal <akshu.agrawal@amd.com>
+Cc: Alexander.Deucher@amd.com, Mike Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	christian.koenig@amd.com, Dave Airlie <airlied@redhat.com>, Shaoyun.Liu@amd.com,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new board-specific clock init in mach-davinci/dm646x.c
-using the new common clock framework drivers.
+On Wed, May 9, 2018 at 4:01 AM Akshu Agrawal <akshu.agrawal@amd.com> wrote:
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+> AMD SoC exposes clock for general purpose use. The clock registration
+> is done in clk-st driver. The MMIO mapping are passed on to the
+> clock driver for accessing the registers.
+> The misc clock handler will create MMIO mappings to access the
+> clock registers and enable the clock driver to expose the clock
+> for use of drivers which will connect to it.
 
-Also clean up the #includes since we are adding some here.
+> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
 
-v11 changes:
-- none
+> ---
+> v2: Submitted with dependent patch, removed unneeded kfree for
+devm_kzalloc
+> v3: used devm_ioremap and fix coccinelle warning
+>   drivers/acpi/acpi_apd.c | 47
++++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 47 insertions(+)
 
-v10 changes:
-- none
+> diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
+> index d553b00..2664452 100644
+> --- a/drivers/acpi/acpi_apd.c
+> +++ b/drivers/acpi/acpi_apd.c
+> @@ -11,6 +11,7 @@
+>    */
 
-v9 changes:
-- register PLL1 and PSC in dm646x_init_time() instead of as platform device so
-  that we get the correct timer0 clock for davinci_timer_init()
-- Fixed size of PLL memory block
+>   #include <linux/clk-provider.h>
+> +#include <linux/platform_data/clk-st.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/pm_domain.h>
+>   #include <linux/clkdev.h>
+> @@ -72,6 +73,47 @@ static int acpi_apd_setup(struct apd_private_data
+*pdata)
+>   }
 
-v8 changes:
-- register clkdev lookup for ref_clk and aux_clkin
+>   #ifdef CONFIG_X86_AMD_PLATFORM_DEVICE
+> +
+> +static int misc_check_res(struct acpi_resource *ares, void *data)
+> +{
+> +       struct resource res;
+> +
+> +       return !acpi_dev_resource_memory(ares, &res);
+> +}
+> +
+> +static int st_misc_setup(struct apd_private_data *pdata)
+> +{
+> +       struct acpi_device *adev = pdata->adev;
+> +       struct platform_device *clkdev;
+> +       struct st_clk_data *clk_data;
+> +       struct resource_entry *rentry;
+> +       struct list_head resource_list;
+> +       int ret;
+> +
+> +       clk_data = devm_kzalloc(&adev->dev, sizeof(*clk_data),
+GFP_KERNEL);
+> +       if (!clk_data)
+> +               return -ENOMEM;
+> +
+> +       INIT_LIST_HEAD(&resource_list);
+> +       ret = acpi_dev_get_resources(adev, &resource_list, misc_check_res,
+> +                                    NULL);
+> +       if (ret < 0)
+> +               return -ENOENT;
+> +
+> +       list_for_each_entry(rentry, &resource_list, node) {
+> +               clk_data->base = devm_ioremap(&adev->dev,
+rentry->res->start,
+> +                                             resource_size(rentry->res));
+> +               break;
+> +       }
+> +
+> +       acpi_dev_free_resource_list(&resource_list);
+> +
+> +       clkdev = platform_device_register_data(&adev->dev, "clk-st",
+> +                                              PLATFORM_DEVID_NONE,
+clk_data,
+> +                                              sizeof(*clk_data));
+> +       return PTR_ERR_OR_ZERO(clkdev);
+> +}
+> +
+>   static const struct apd_device_desc cz_i2c_desc = {
+>          .setup = acpi_apd_setup,
+>          .fixed_clk_rate = 133000000,
+> @@ -94,6 +136,10 @@ static int acpi_apd_setup(struct apd_private_data
+*pdata)
+>          .fixed_clk_rate = 48000000,
+>          .properties = uart_properties,
+>   };
+> +
+> +static const struct apd_device_desc st_misc_desc = {
+> +       .setup = st_misc_setup,
+> +};
+>   #endif
 
-v7 changes:
-- add clock platform device declarations
-- register platform devices instead of registering clocks directly
-- add davinci prefix to commit description
-
-v6 changes:
-- add blank lines between function calls
-
-
- arch/arm/mach-davinci/board-dm646x-evm.c |  2 +
- arch/arm/mach-davinci/davinci.h          |  1 +
- arch/arm/mach-davinci/dm646x.c           | 63 +++++++++++++++++++++---
- 3 files changed, 58 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 584064fdabf5..867ab2fa6cfd 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -776,6 +776,8 @@ static __init void evm_init(void)
- 	int ret;
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 
-+	dm646x_register_clocks();
-+
- 	ret = dm646x_gpio_register();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index 16aca5853ab2..fa99197d36f9 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -116,6 +116,7 @@ int dm644x_gpio_register(void);
- /* DM646x function declarations */
- void dm646x_init(void);
- void dm646x_init_time(unsigned long ref_clk_rate, unsigned long aux_clkin_rate);
-+void dm646x_register_clocks(void);
- void dm646x_init_mcasp0(struct snd_platform_data *pdata);
- void dm646x_init_mcasp1(struct snd_platform_data *pdata);
- int dm646x_init_edma(struct edma_rsv_info *rsv);
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index 280b753702f3..f05090317469 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -8,29 +8,35 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
-+#include <linux/clkdev.h>
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
--#include <linux/clk.h>
--#include <linux/serial_8250.h>
--#include <linux/platform_device.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
-+#include <linux/platform_device.h>
-+#include <linux/serial_8250.h>
- 
- #include <asm/mach/map.h>
- 
-+#include <mach/common.h>
- #include <mach/cputype.h>
- #include <mach/irqs.h>
--#include "psc.h"
- #include <mach/mux.h>
--#include <mach/time.h>
- #include <mach/serial.h>
--#include <mach/common.h>
-+#include <mach/time.h>
- 
-+#include "asp.h"
- #include "davinci.h"
--#include "clock.h"
- #include "mux.h"
--#include "asp.h"
-+
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
- 
- #define DAVINCI_VPIF_BASE       (0x01C12000)
- 
-@@ -46,6 +52,7 @@
- #define DM646X_EMAC_CNTRL_RAM_OFFSET	0x2000
- #define DM646X_EMAC_CNTRL_RAM_SIZE	0x2000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll1_data = {
- 	.num       = 1,
- 	.phys_base = DAVINCI_PLL1_BASE,
-@@ -356,6 +363,7 @@ static struct clk_lookup dm646x_clks[] = {
- 	CLK(NULL, "vpif1", &vpif1_clk),
- 	CLK(NULL, NULL, NULL),
- };
-+#endif
- 
- static struct emac_platform_data dm646x_emac_pdata = {
- 	.ctrl_reg_offset	= DM646X_EMAC_CNTRL_OFFSET,
-@@ -954,10 +962,49 @@ void __init dm646x_init(void)
- void __init dm646x_init_time(unsigned long ref_clk_rate,
- 			     unsigned long aux_clkin_rate)
- {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll1, *psc;
-+	struct clk *clk;
-+
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, ref_clk_rate);
-+	clk_register_fixed_rate(NULL, "aux_clkin", NULL, 0, aux_clkin_rate);
-+
-+	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
-+	dm646x_pll1_init(NULL, pll1, NULL);
-+
-+	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-+	dm646x_psc_init(NULL, psc);
-+
-+	clk = clk_get(NULL, "timer0");
-+
-+	davinci_timer_init(clk);
-+#else
- 	ref_clk.rate = ref_clk_rate;
- 	aux_clkin.rate = aux_clkin_rate;
- 	davinci_clk_init(dm646x_clks);
- 	davinci_timer_init(&timer0_clk);
-+#endif
-+}
-+
-+static struct resource dm646x_pll2_resources[] = {
-+	{
-+		.start	= DAVINCI_PLL2_BASE,
-+		.end	= DAVINCI_PLL2_BASE + SZ_1K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device dm646x_pll2_device = {
-+	.name		= "dm646x-pll2",
-+	.id		= -1,
-+	.resource	= dm646x_pll2_resources,
-+	.num_resources	= ARRAY_SIZE(dm646x_pll2_resources),
-+};
-+
-+void __init dm646x_register_clocks(void)
-+{
-+	/* PLL1 and PSC are registered in dm646x_init_time() */
-+	platform_device_register(&dm646x_pll2_device);
- }
- 
- static int __init dm646x_init_devices(void)
--- 
-2.17.0
+>   #ifdef CONFIG_ARM64
+> @@ -179,6 +225,7 @@ static int acpi_apd_create_device(struct acpi_device
+*adev,
+>          { "AMD0020", APD_ADDR(cz_uart_desc) },
+>          { "AMDI0020", APD_ADDR(cz_uart_desc) },
+>          { "AMD0030", },
+> +       { "AMD0040", APD_ADDR(st_misc_desc)},
+>   #endif
+>   #ifdef CONFIG_ARM64
+>          { "APMC0D0F", APD_ADDR(xgene_i2c_desc) },
+> --
+> 1.9.1
