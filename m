@@ -1,181 +1,190 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/4] clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
-Date: Tue,  8 May 2018 19:26:06 +0300
-Message-Id: <20180508162607.3500-5-digetx@gmail.com>
-In-Reply-To: <20180508162607.3500-1-digetx@gmail.com>
-References: <20180508162607.3500-1-digetx@gmail.com>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	David Lechner <david@lechnology.com>
+Subject: [PATCH v10 08/27] ARM: davinci: dm365: add new clock init using common clock framework
+Date: Wed,  9 May 2018 12:25:47 -0500
+Message-Id: <20180509172606.29387-9-david@lechnology.com>
+In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
+References: <20180509172606.29387-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-CDEV1 and CDEV2 clocks are a bit special case, their parent clock is
-created by the pinctrl driver. It should be possible for clk user to
-request these clocks before pinctrl driver got probed and hence user will
-get an orphaned clock. That might be undesirable because user may expect
-parent clock to be enabled by the child, so let's return -EPROBE_DEFER
-till parent clock appears.
+This adds the new board-specific clock init in mach-davinci/dm365.c
+using the new common clock framework drivers.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
+
+Also clean up the #includes since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/tegra/clk-tegra114.c |  2 +-
- drivers/clk/tegra/clk-tegra124.c |  2 +-
- drivers/clk/tegra/clk-tegra20.c  | 32 +++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk-tegra210.c |  2 +-
- drivers/clk/tegra/clk-tegra30.c  |  2 +-
- drivers/clk/tegra/clk.c          |  5 +++--
- drivers/clk/tegra/clk.h          |  2 +-
- 7 files changed, 39 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 5d5a22d529f5..1824f014202b 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1367,7 +1367,7 @@ static void __init tegra114_clock_init(struct device_node *np)
- 	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
- 					&pll_x_params);
+v10 changes:
+- none
+
+v9 changes:
+- register PLL1 and PSC in dm365_init_time() instead of as platform device so
+  that we get the correct timer0 clock for davinci_timer_init()
+- Fixed size of PLL memory block
+
+v8 changes:
+- none
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
+
+
+ arch/arm/mach-davinci/board-dm365-evm.c |  2 +
+ arch/arm/mach-davinci/davinci.h         |  1 +
+ arch/arm/mach-davinci/dm365.c           | 56 +++++++++++++++++++------
+ 3 files changed, 47 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
+index 435f7ec7d9af..307e88d99dd3 100644
+--- a/arch/arm/mach-davinci/board-dm365-evm.c
++++ b/arch/arm/mach-davinci/board-dm365-evm.c
+@@ -742,6 +742,8 @@ static __init void dm365_evm_init(void)
+ {
+ 	int ret;
  
--	tegra_add_of_provider(np);
-+	tegra_add_of_provider(np, of_clk_src_onecell_get);
- 	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
++	dm365_register_clocks();
++
+ 	ret = dm365_gpio_register();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index c2c634b6578e..a799b5266d4b 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -94,6 +94,7 @@ int dm355_gpio_register(void);
+ /* DM365 function declarations */
+ void dm365_init(void);
+ void dm365_init_time(void);
++void dm365_register_clocks(void);
+ void dm365_init_asp(void);
+ void dm365_init_vc(void);
+ void dm365_init_ks(struct davinci_ks_platform_data *pdata);
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 871372a59da8..76de426a0e41 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -12,32 +12,38 @@
+  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-#include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/serial_8250.h>
+-#include <linux/platform_device.h>
++
++#include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+-#include <linux/spi/spi.h>
++#include <linux/init.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_data/keyscan-davinci.h>
+ #include <linux/platform_data/spi-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
++#include <linux/spi/spi.h>
  
- 	tegra_clk_apply_init_table = tegra114_clock_apply_init_table;
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 50088e976611..0c69c7970950 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1479,7 +1479,7 @@ static void __init tegra124_132_clock_init_post(struct device_node *np)
- 				  &pll_x_params);
- 	tegra_init_special_resets(1, tegra124_reset_assert,
- 				  tegra124_reset_deassert);
--	tegra_add_of_provider(np);
-+	tegra_add_of_provider(np, of_clk_src_onecell_get);
+ #include <asm/mach/map.h>
  
- 	clks[TEGRA124_CLK_EMC] = tegra_clk_register_emc(clk_base, np,
- 							&emc_lock);
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 636500a98561..cc857d4d4a86 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1089,6 +1089,36 @@ static const struct of_device_id pmc_match[] __initconst = {
- 	{ },
++#include <mach/common.h>
+ #include <mach/cputype.h>
+-#include "psc.h"
+-#include <mach/mux.h>
+ #include <mach/irqs.h>
+-#include <mach/time.h>
++#include <mach/mux.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
++
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
+ #define DM365_RTC_BASE			0x01c69000
+@@ -54,6 +60,7 @@
+ #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
+ #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num		= 1,
+ 	.phys_base	= DAVINCI_PLL1_BASE,
+@@ -485,7 +492,7 @@ static struct clk_lookup dm365_clks[] = {
+ 	CLK(NULL, "mjcp", &mjcp_clk),
+ 	CLK(NULL, NULL, NULL),
  };
+-
++#endif
+ /*----------------------------------------------------------------------*/
  
-+static struct clk *tegra20_clk_src_onecell_get(struct of_phandle_args *clkspec,
-+					       void *data)
-+{
-+	struct clk_hw *parent_hw;
-+	struct clk_hw *hw;
+ #define INTMUX		0x18
+@@ -1171,8 +1178,33 @@ void __init dm365_init(void)
+ 
+ void __init dm365_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll1, *pll2, *psc;
 +	struct clk *clk;
 +
-+	clk = of_clk_src_onecell_get(clkspec, data);
-+	if (IS_ERR(clk))
-+		return clk;
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM365_REF_FREQ);
 +
-+	/*
-+	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
-+	 * clock is created by the pinctrl driver. It is possible for clk user
-+	 * to request these clocks before pinctrl driver got probed and hence
-+	 * user will get an orphaned clock. That might be undesirable because
-+	 * user may expect parent clock to be enabled by the child.
-+	 */
-+	if (clkspec->args[0] == TEGRA20_CLK_CDEV1 ||
-+	    clkspec->args[0] == TEGRA20_CLK_CDEV2) {
-+		hw = __clk_get_hw(clk);
++	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
++	dm365_pll1_init(NULL, pll1, NULL);
 +
-+		parent_hw = clk_hw_get_parent(hw);
-+		if (!parent_hw)
-+			return ERR_PTR(-EPROBE_DEFER);
-+	}
++	pll2 = ioremap(DAVINCI_PLL2_BASE, SZ_1K);
++	dm365_pll2_init(NULL, pll2, NULL);
 +
-+	return clk;
++	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
++	dm365_psc_init(NULL, psc);
++
++	clk = clk_get(NULL, "timer0");
++
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(dm365_clks);
+ 	davinci_timer_init(&timer0_clk);
++#endif
 +}
 +
- static void __init tegra20_clock_init(struct device_node *np)
- {
- 	struct device_node *node;
-@@ -1127,7 +1157,7 @@ static void __init tegra20_clock_init(struct device_node *np)
++void __init dm365_register_clocks(void)
++{
++	/* all clocks are currently registered in dm365_init_time() */
+ }
  
- 	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA20_CLK_CLK_MAX);
- 
--	tegra_add_of_provider(np);
-+	tegra_add_of_provider(np, tegra20_clk_src_onecell_get);
- 	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
- 
- 	tegra_clk_apply_init_table = tegra20_clock_apply_init_table;
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 9fb5d51ccce4..5435d01c636a 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3567,7 +3567,7 @@ static void __init tegra210_clock_init(struct device_node *np)
- 	tegra_init_special_resets(2, tegra210_reset_assert,
- 				  tegra210_reset_deassert);
- 
--	tegra_add_of_provider(np);
-+	tegra_add_of_provider(np, of_clk_src_onecell_get);
- 	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
- 
- 	tegra210_mbist_clk_init();
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index b316dfb6f6c7..acfe661b2ae7 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1349,7 +1349,7 @@ static void __init tegra30_clock_init(struct device_node *np)
- 
- 	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA30_CLK_CLK_MAX);
- 
--	tegra_add_of_provider(np);
-+	tegra_add_of_provider(np, of_clk_src_onecell_get);
- 	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
- 
- 	tegra_clk_apply_init_table = tegra30_clock_apply_init_table;
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index ba923f0d5953..593d76a114f9 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -298,7 +298,8 @@ static struct reset_controller_dev rst_ctlr = {
- 	.of_reset_n_cells = 1,
- };
- 
--void __init tegra_add_of_provider(struct device_node *np)
-+void __init tegra_add_of_provider(struct device_node *np,
-+				  void *clk_src_onecell_get)
- {
- 	int i;
- 
-@@ -314,7 +315,7 @@ void __init tegra_add_of_provider(struct device_node *np)
- 
- 	clk_data.clks = clks;
- 	clk_data.clk_num = clk_num;
--	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-+	of_clk_add_provider(np, clk_src_onecell_get, &clk_data);
- 
- 	rst_ctlr.of_node = np;
- 	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index ba7e20e6a82b..e1f88463b600 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -763,7 +763,7 @@ struct clk **tegra_clk_init(void __iomem *clk_base, int num, int periph_banks);
- 
- struct clk **tegra_lookup_dt_id(int clk_id, struct tegra_clk *tegra_clk);
- 
--void tegra_add_of_provider(struct device_node *np);
-+void tegra_add_of_provider(struct device_node *np, void *clk_src_onecell_get);
- void tegra_register_devclks(struct tegra_devclk *dev_clks, int num);
- 
- void tegra_audio_clk_init(void __iomem *clk_base,
+ static struct resource dm365_vpss_resources[] = {
 -- 
 2.17.0
