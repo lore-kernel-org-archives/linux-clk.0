@@ -1,114 +1,54 @@
-Return-Path: <bgolaszewski@baylibre.com>
+Return-Path: <dan.carpenter@oracle.com>
+Date: Wed, 9 May 2018 17:01:35 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Paul Burton <paul.burton@mips.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-mips@linux-mips.org,
+        linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: boston: fix memory leak of 'onecell' on error
+ return paths
+Message-ID: <20180509140135.4dndt3baomtxups5@mwanda>
+References: <20180509134031.11611-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7xJt=tsc2zHWu+6y_2z=+kHdaovh3TD_MJ1+UeUbTdyj8w@mail.gmail.com>
-References: <20180509172606.29387-1-david@lechnology.com> <CAHCN7xJ6+vmyrTQGYH=pKz5GRf7rLT4otreNgu6TJi_3UAEX5w@mail.gmail.com>
- <CAMRc=MdO0EtzDHp3RF4ym3umWM_KfhvpWHV2+Y3270ygKz9iGw@mail.gmail.com> <CAHCN7xJt=tsc2zHWu+6y_2z=+kHdaovh3TD_MJ1+UeUbTdyj8w@mail.gmail.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Wed, 16 May 2018 09:47:20 +0200
-Message-ID: <CAMpxmJUKGS_wm1O+HJBt2yY=BQ4169ka1p0264O-PJFdGj5Fdg@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v10_00=2F27=5D_ARM=3A_davinci=3A_convert_to_commo?=
-	=?UTF-8?Q?n_clock_framework=E2=80=8B?=
-To: Adam Ford <aford173@gmail.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
-	arm-soc <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180509134031.11611-1-colin.king@canonical.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-05-16 0:44 GMT+02:00 Adam Ford <aford173@gmail.com>:
-> On Tue, May 15, 2018 at 4:25 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> 2018-05-14 2:40 GMT+02:00 Adam Ford <aford173@gmail.com>:
->>> On Wed, May 9, 2018 at 12:25 PM, David Lechner <david@lechnology.com> wrote:
->>>> This series converts mach-davinci to use the common clock framework.
->>>>
->>>> The series works like this, the first 3 patches fix some issues with the clock
->>>> drivers that have already been accepted into the mainline kernel.
->>>>
->>>> Then, starting with "ARM: davinci: pass clock as parameter to
->>>> davinci_timer_init()", we get the mach code ready for the switch by adding the
->>>> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
->>>> around the legacy clocks so that we can switch easily between the old and the
->>>> new.
->>>>
->>>> "ARM: davinci: switch to common clock framework" actually flips the switch
->>>> to start using the new clock drivers. Then the next 8 patches remove all
->>>> of the old clock code.
->>>>
->>>> The final four patches add device tree clock support to the one SoC that
->>>> supports it.
->>>>
->>>> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
->>>> board file).
->>>>
->>>
->>> I am not sure if I did something wrong, but I attempted to build and I
->>> wasn't able to boot the da850-evm.dtb your repo common-clk-v11,
->>> however the legacy board file boot was OK.
->>>
->>> make davinci_all_defconfig ARCH=arm
->>> make zImage modules da850-evm.dtb ARCH=arm CROSS_COMPILE=arm-linux- -j8
->>>
->>> 3140416 bytes read in 1464 ms (2 MiB/s)
->>> 20353 bytes read in 15 ms (1.3 MiB/s)
->>> ## Flattened Device Tree blob at c0600000
->>>    Booting using the fdt blob at 0xc0600000
->>>    Loading Device Tree to c7e57000, end c7e5ef80 ... OK
->>>
->>> Starting kernel ...
->>>
->>> Uncompressing Linux... done, booting the kernel.
->>>
->>> (and hang)
->>>
->>> If you have some suggestions, I am try them as I get time.
->>>
->>> adam
->>>
->>
->> Runs fine on da850-lcdk and dm365-evm. I'll test the da850-evm
->> tomorrow when I'll have access to it.
->
-> I set the bootargs to: bootargs=console=ttyS2,115200n8
-> clk_ignore_unused root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
->
-> I enabled DEBUG_LL and EARLY_PRINTK, yet when it loads, I only get:
->
-> ## Flattened Device Tree blob at c0600000
->    Booting using the fdt blob at 0xc0600000
->    Loading Device Tree to c7e57000, end c7e5ef35 ... OK
->
-> Starting kernel ...
->
-> Uncompressing Linux... done, booting the kernel.
->
->
-> I am doing this at my home, so I don't have a debugger for the
-> DA850-EVM.  I am using a SOM that is an AM1808, but I vaguely remember
-> something about enabling a DSP clock somewhere, but I cannot seem to
-> find the e-mail.  I know its counter intuitive that we'd need to
-> enable a clock that runs the DSP since it doesn't exist on the AM1808,
-> but I would have thought the clk_ignore_unused would have worked
-> around that issue.
->
-> If someone else has a DA850-EVM or suggestions, I'm willing to try
-> them as I have time.
->
-> adam
+On Wed, May 09, 2018 at 02:40:31PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are several error return paths that don't free up onecell
+> and hence we have some memory leaks. Add an error exit path that
+> kfree's onecell to fix the leaks.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/clk/imgtec/clk-boston.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+> index 15af423cc0c9..d6bc468ff551 100644
+> --- a/drivers/clk/imgtec/clk-boston.c
+> +++ b/drivers/clk/imgtec/clk-boston.c
+> @@ -73,27 +73,34 @@ static void __init clk_boston_setup(struct device_node *np)
+>  	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+>  	if (IS_ERR(hw)) {
+>  		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+> -		return;
+> +		goto error;
 
-Hi Adam,
+I hate vague label names like "error" and "out"...
 
-everything works fine for me both when booting the DTB and in legacy
-mode on da850-evm.
+There are a bunch of other resources that we should free if we decide
+it's worth freeing things.  Can this even boot without the clk?  When
+the label names says what is freed, then you mentally only have to keep
+track of the most recently allocated resource.  So if
 
-I'm using the following bootargs:
-    ip=dhcp console=ttyS2,115200n8 root=/dev/nfs rw nfsroot=<snip!>,v3
-nfsrootdebug
+	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
 
-Regular davinci_all_defconfig on David's common-clk-v11 branch.
+succeeds then the next goto is going to "goto free_clk_input;".
 
-Best regards,
-Bartosz Golaszewski
+regards,
+dan carpenter
