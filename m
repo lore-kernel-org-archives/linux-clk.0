@@ -1,132 +1,121 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Akshu.Agrawal@amd.com>
+From: Akshu Agrawal <akshu.agrawal@amd.com>
+To: 
+Cc: djkurtz@chromium.org,
+	akshu.agrawal@amd.com,
+	Alexander.Deucher@amd.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	christian.koenig@amd.com,
+	airlied@redhat.com,
+	Shaoyun.Liu@amd.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	rjw@rjwysocki.net,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH v3 2/2] ACPI: APD: Add AMD misc clock handler support
+Date: Wed,  9 May 2018 17:59:01 +0800
+Message-Id: <1525859941-23654-3-git-send-email-akshu.agrawal@amd.com>
+In-Reply-To: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Shawn Lin <shawn.lin@rock-chips.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525942205-111855-1-git-send-email-shawn.lin@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
- Shawn Lin <shawn.lin@rock-chips.com>
-References: <1525942205-111855-1-git-send-email-shawn.lin@rock-chips.com>
-Message-ID: <152645814090.210890.10037636681887493249@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: add clock panic dump in tree-view
-Date: Wed, 16 May 2018 01:09:00 -0700
+Content-Type: text/plain
+Return-Path: akshu.agrawal@amd.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Shawn Lin (2018-05-10 01:50:05)
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
-ion/admin-guide/kernel-parameters.txt
-> index 3487be7..7bbdb6f 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -519,6 +519,9 @@
->                         debug and development, but should not be needed o=
-n a
->                         platform with proper driver support.  For more
->                         information, see Documentation/clk.txt.
-> +       clk_panic_dump
-> +                       [CLK]
-> +                       Dump the whole clock tree-view upon panic.
+AMD SoC exposes clock for general purpose use. The clock registration
+is done in clk-st driver. The MMIO mapping are passed on to the
+clock driver for accessing the registers.
+The misc clock handler will create MMIO mappings to access the
+clock registers and enable the clock driver to expose the clock
+for use of drivers which will connect to it.
 
-Typically when the system panics it's because something has gone wrong.
-When a clk has gone wrong, typically the system hangs or crashes hard
-and printing out panic info just doesn't happen.
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+---
+v2: Submitted with dependent patch, removed unneeded kfree for devm_kzalloc
+v3: used devm_ioremap and fix coccinelle warning
+ drivers/acpi/acpi_apd.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-I'm not sure why clks are so special here that we need to dump the
-information about the clk tree at the point of a panic. Is this more of
-a debug patch to dump out clk tree info by calling panic() in certain
-places near where you get odd system hangs?
-
->  =
-
->         clock=3D          [BUGS=3DX86-32, HW] gettimeofday clocksource ov=
-erride.
->                         [Deprecated]
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 9ae92aa..adb5537 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2802,6 +2802,73 @@ static inline void clk_debug_unregister(struct clk=
-_core *core)
->  }
->  #endif
->  =
-
-> +static bool clk_pdump_enable;
-> +static int __init clk_pdump_setup(char *__unused)
-> +{
-> +       clk_pdump_enable  =3D true;
-> +       return 1;
-> +}
-> +__setup("clk_panic_dump", clk_pdump_setup);
-> +
-> +static void clk_pdump_show_one(struct clk_core *c, int level)
-> +{
-> +       if (!c)
-> +               return;
-> +
-> +       pr_err("%*s%-*s %11d %12d %11lu %10lu %-3d\n",
-> +               level * 3 + 1, "", 30 - level * 3, c->name,
-> +               c->enable_count, c->prepare_count, clk_core_get_rate(c),
-> +               clk_core_get_accuracy(c), clk_core_get_phase(c));
-> +}
-> +
-> +static void clk_pdump_show_subtree(struct clk_core *c, int level)
-> +{
-> +       struct clk_core *child;
-> +
-> +       if (!c)
-> +               return;
-> +
-> +       clk_pdump_show_one(c, level);
-> +
-> +       hlist_for_each_entry(child, &c->children, child_node)
-> +               clk_pdump_show_subtree(child, level + 1);
-> +}
-> +
-> +static int clk_panic_dump(struct notifier_block *this, unsigned long ev,
-> +                         void *ptr)
-> +{
-> +       struct clk_core *c;
-> +
-> +       if (!clk_pdump_enable)
-> +               return 0;
-
-Why register the notifier in late init if the commandline doesn't have
-the parameter set?
-
-> +
-> +       pr_err("clock panic dump:\n");
-> +       pr_err("   clock                         enable_cnt  prepare_cnt =
-       rate   accuracy   phase\n");
-> +       pr_err("---------------------------------------------------------=
--------------------------------\n");
-> +
-> +       clk_prepare_lock();
-
-Why are we taking locks in the panic path?
-
-> +
-> +       hlist_for_each_entry(c, &clk_root_list, child_node)
-> +               clk_pdump_show_subtree(c, 0);
-> +       hlist_for_each_entry(c, &clk_orphan_list, child_node)
-> +               clk_pdump_show_subtree(c, 0);
-> +
-> +       clk_prepare_unlock();
-> +
-> +       return 0;
-> +}
-> +
-> +static struct notifier_block clk_pdump_block =3D {
-> +       .notifier_call =3D clk_panic_dump,
-> +};
-> +
-> +static int clk_register_pdump(void)
-> +{
-> +       atomic_notifier_chain_register(&panic_notifier_list, &clk_pdump_b=
-lock);
-> +       return 0;
-> +}
-> +late_initcall_sync(clk_register_pdump);
-
-Why sync?
+diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
+index d553b00..2664452 100644
+--- a/drivers/acpi/acpi_apd.c
++++ b/drivers/acpi/acpi_apd.c
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/platform_data/clk-st.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/clkdev.h>
+@@ -72,6 +73,47 @@ static int acpi_apd_setup(struct apd_private_data *pdata)
+ }
+ 
+ #ifdef CONFIG_X86_AMD_PLATFORM_DEVICE
++
++static int misc_check_res(struct acpi_resource *ares, void *data)
++{
++	struct resource res;
++
++	return !acpi_dev_resource_memory(ares, &res);
++}
++
++static int st_misc_setup(struct apd_private_data *pdata)
++{
++	struct acpi_device *adev = pdata->adev;
++	struct platform_device *clkdev;
++	struct st_clk_data *clk_data;
++	struct resource_entry *rentry;
++	struct list_head resource_list;
++	int ret;
++
++	clk_data = devm_kzalloc(&adev->dev, sizeof(*clk_data), GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
++
++	INIT_LIST_HEAD(&resource_list);
++	ret = acpi_dev_get_resources(adev, &resource_list, misc_check_res,
++				     NULL);
++	if (ret < 0)
++		return -ENOENT;
++
++	list_for_each_entry(rentry, &resource_list, node) {
++		clk_data->base = devm_ioremap(&adev->dev, rentry->res->start,
++					      resource_size(rentry->res));
++		break;
++	}
++
++	acpi_dev_free_resource_list(&resource_list);
++
++	clkdev = platform_device_register_data(&adev->dev, "clk-st",
++					       PLATFORM_DEVID_NONE, clk_data,
++					       sizeof(*clk_data));
++	return PTR_ERR_OR_ZERO(clkdev);
++}
++
+ static const struct apd_device_desc cz_i2c_desc = {
+ 	.setup = acpi_apd_setup,
+ 	.fixed_clk_rate = 133000000,
+@@ -94,6 +136,10 @@ static int acpi_apd_setup(struct apd_private_data *pdata)
+ 	.fixed_clk_rate = 48000000,
+ 	.properties = uart_properties,
+ };
++
++static const struct apd_device_desc st_misc_desc = {
++	.setup = st_misc_setup,
++};
+ #endif
+ 
+ #ifdef CONFIG_ARM64
+@@ -179,6 +225,7 @@ static int acpi_apd_create_device(struct acpi_device *adev,
+ 	{ "AMD0020", APD_ADDR(cz_uart_desc) },
+ 	{ "AMDI0020", APD_ADDR(cz_uart_desc) },
+ 	{ "AMD0030", },
++	{ "AMD0040", APD_ADDR(st_misc_desc)},
+ #endif
+ #ifdef CONFIG_ARM64
+ 	{ "APMC0D0F", APD_ADDR(xgene_i2c_desc) },
+-- 
+1.9.1
