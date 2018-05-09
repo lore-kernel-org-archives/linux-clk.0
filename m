@@ -1,82 +1,72 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v9 24/27] dt-bindings: timer: new bindings for TI DaVinci
- timer
-To: Rob Herring <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>,
- Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-25-david@lechnology.com>
- <20180427140522.npmhjamhwxgp7y73@rob-hp-laptop>
-From: David Lechner <david@lechnology.com>
-Message-ID: <7cea07f1-e174-8496-a27a-01f0e3082054@lechnology.com>
-Date: Tue, 1 May 2018 20:52:18 -0500
+Return-Path: <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+To: Paul Burton <paul.burton@mips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: boston: fix memory leak of 'onecell' on error return paths
+Date: Wed,  9 May 2018 14:40:31 +0100
+Message-Id: <20180509134031.11611-1-colin.king@canonical.com>
 MIME-Version: 1.0
-In-Reply-To: <20180427140522.npmhjamhwxgp7y73@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Sekhar,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 04/27/2018 09:05 AM, Rob Herring wrote:
-> On Thu, Apr 26, 2018 at 07:17:42PM -0500, David Lechner wrote:
->> This adds new device tree bindings for the timer IP block of TI
->> DaVinci-like SoCs.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
->> ---
->>
->> v9 changes:
->> - new patch in v9
->>
->>
->>   .../bindings/timer/ti,davinci-timer.txt       | 24 +++++++++++++++++++
->>   1 file changed, 24 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
->>
->> diff --git a/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt b/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
->> new file mode 100644
->> index 000000000000..2091eca46981
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
->> @@ -0,0 +1,24 @@
->> +* Device tree bindings for Texas Instruments DaVinci timer
->> +
->> +This document provides bindings for the 64-bit timer in the DaVinci
->> +architecture devices. The timer can be configured as a general-purpose 64-bit
->> +timer, dual general-purpose 32-bit timers. When configured as dual 32-bit
->> +timers, each half can operate in conjunction (chain mode) or independently
->> +(unchained mode) of each other.
->> +
->> +It is global timer is a free running up-counter and can generate interrupt
-> 
-> Doesn't make sense, too many 'is'.
-> 
-> There's no interrupt property listed.
-> 
->> +when the counter reaches preset counter values.
->> +
->> +Required properties:
->> +
->> +- compatible : should be "ti,davinci-timer".
->> +- reg : specifies base physical address and count of the registers.
->> +- clocks : the clock feeding the timer clock.
->> +
->> +Example:
->> +
->> +	clocksource: timer@20000 {
->> +		compatible = "ti,davinci-timer";
->> +		reg = <0x20000 0x1000>;
->> +		clocks = <&pll0_auxclk>;
->> +	};
->> -- 
->> 2.17.0
->>
+There are several error return paths that don't free up onecell
+and hence we have some memory leaks. Add an error exit path that
+kfree's onecell to fix the leaks.
 
-What do you think about trying to reuse the keystone timer here instead of
-introducing our own binding? I assume it is basically the same since the
-watchdog timer is shared already between davinci and keystone.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/imgtec/clk-boston.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+index 15af423cc0c9..d6bc468ff551 100644
+--- a/drivers/clk/imgtec/clk-boston.c
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -73,27 +73,34 @@ static void __init clk_boston_setup(struct device_node *np)
+ 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_CPU] = hw;
+ 
+ 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
+-	if (err)
++	if (err) {
+ 		pr_err("failed to add DT provider: %d\n", err);
++		goto error;
++	}
++	return;
++
++error:
++	kfree(onecell);
++	return;
+ }
+ 
+ /*
+-- 
+2.17.0
