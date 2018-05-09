@@ -1,159 +1,179 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Mon, 28 May 2018 12:01:01 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v2 3/6] regulator: bd71837: Devicetree bindings for BD71837
- regulators
-Message-ID: <20180528090101.GD8778@localhost.localdomain>
+Return-Path: <parri.andrea@gmail.com>
+Return-Path: <parri.andrea@gmail.com>
+Date: Wed, 9 May 2018 19:15:01 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Mauro Carvalho Chehab <mchehab@infradead.org>,
+	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Harry Wei <harryxiyou@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Michal Simek <monstr@monstr.eu>,
+	Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+	Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org, Chris Zankel <chris@zankel.net>,
+	Max Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+	David Howells <dhowells@redhat.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Sean Paul <seanpaul@chromium.org>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+	Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Malcolm Priestley <tvboxspy@gmail.com>,
+	Antoine Jacquet <royale@zerezo.com>,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Juergen Gross <jgross@suse.com>, Li Zefan <lizefan@huawei.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <sds@tycho.nsa.gov>,
+	Eric Paris <eparis@parisplace.org>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@zh-kernel.org,
+	user-mode-linux-devel@lists.sourceforge.net,
+	user-mode-linux-user@lists.sourceforge.net,
+	linux-xtensa@linux-xtensa.org, linux-block@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	patches@opensource.cirrus.com, linux-bcache@vger.kernel.org,
+	linux-usb@vger.kernel.org, devel@driverdev.osuosl.org,
+	xen-devel@lists.xenproject.org, cgroups@vger.kernel.org,
+	selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
+	alsa-devel@alsa-project.org
+Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
+Message-ID: <20180509171501.GA17405@andrea>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+ <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC regulators.
+On Wed, May 09, 2018 at 10:18:52AM -0300, Mauro Carvalho Chehab wrote:
+> As we move stuff around, some doc references are broken. Fix some of
+> them via this script:
+> 	./scripts/documentation-file-ref-check --fix-rst
+> 
+> Manually checked if the produced result is valid, removing a few
+> false-positives.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../bindings/regulator/rohm,bd71837-regulator.txt  | 126 +++++++++++++++++++++
- 1 file changed, 126 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+Thank you again for doing this,
 
-diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-new file mode 100644
-index 000000000000..4edf3137d9f7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-@@ -0,0 +1,126 @@
-+ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bindings
-+
-+BD71837MWV is a programmable Power Management
-+IC (PMIC) for powering single-core, dual-core, and
-+quad-core SoC’s such as NXP-i.MX 8M. It is optimized
-+for low BOM cost and compact solution footprint. It
-+integrates 8 Buck regulators and 7 LDO’s to provide all
-+the power rails required by the SoC and the commonly
-+used peripherals.
-+
-+Required properties:
-+ - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7"
-+
-+List of regulators provided by this controller. BD71837 regulators node
-+should be sub node of the BD71837 MFD node. See BD71837 MFD bindings at
-+Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-+Regulator nodes should be named to BUCK_<number> and LDO_<number>. The
-+definition for each of these nodes is defined using the standard
-+binding for regulators at
-+Documentation/devicetree/bindings/regulator/regulator.txt.
-+Note that if BD71837 starts at RUN state you probably want to use
-+regulator-boot-on at least for BUCK6 and BUCK7 so that those are not
-+disabled by driver at startup. LDO5 and LDO6 are supplied by those and
-+if they are disabled at startup the voltage monitoring for LDO5/LDO6 will
-+cause PMIC to reset.
-+
-+The valid names for regulator nodes are:
-+BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, BUCK7, BUCK8
-+LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7
-+
-+Optional properties:
-+- Any optional property defined in bindings/regulator/regulator.txt
-+
-+Example:
-+regulators {
-+	buck1: BUCK1 {
-+		regulator-name = "buck1";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+		regulator-ramp-delay = <1250>;
-+	};
-+	buck2: BUCK2 {
-+		regulator-name = "buck2";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-ramp-delay = <1250>;
-+	};
-+	buck3: BUCK3 {
-+		regulator-name = "buck3";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+	};
-+	buck4: BUCK4 {
-+		regulator-name = "buck4";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+	};
-+	buck5: BUCK5 {
-+		regulator-name = "buck5";
-+		regulator-min-microvolt = <700000>;
-+		regulator-max-microvolt = <1350000>;
-+		regulator-boot-on;
-+	};
-+	buck6: BUCK6 {
-+		regulator-name = "buck6";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+	};
-+	buck7: BUCK7 {
-+		regulator-name = "buck7";
-+		regulator-min-microvolt = <1605000>;
-+		regulator-max-microvolt = <1995000>;
-+		regulator-boot-on;
-+	};
-+	buck8: BUCK8 {
-+		regulator-name = "buck8";
-+		regulator-min-microvolt = <800000>;
-+		regulator-max-microvolt = <1400000>;
-+	};
-+
-+	ldo1: LDO1 {
-+		regulator-name = "ldo1";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+	};
-+	ldo2: LDO2 {
-+		regulator-name = "ldo2";
-+		regulator-min-microvolt = <900000>;
-+		regulator-max-microvolt = <900000>;
-+		regulator-boot-on;
-+	};
-+	ldo3: LDO3 {
-+		regulator-name = "ldo3";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+	ldo4: LDO4 {
-+		regulator-name = "ldo4";
-+		regulator-min-microvolt = <900000>;
-+		regulator-max-microvolt = <1800000>;
-+	};
-+	ldo5: LDO5 {
-+		regulator-name = "ldo5";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+	ldo6: LDO6 {
-+		regulator-name = "ldo6";
-+		regulator-min-microvolt = <900000>;
-+		regulator-max-microvolt = <1800000>;
-+	};
-+	ldo7_reg: LDO7 {
-+		regulator-name = "ldo7";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+};
-+
-+
--- 
-2.14.3
+
+> ---
+>  .../admin-guide/kernel-parameters.txt         |  4 ++--
+>  .../bindings/input/rotary-encoder.txt         |  2 +-
+>  Documentation/driver-api/gpio/consumer.rst    |  2 +-
+>  Documentation/kprobes.txt                     |  4 ++--
+>  Documentation/trace/coresight.txt             |  2 +-
+>  Documentation/trace/events.rst                |  2 +-
+>  Documentation/trace/ftrace-uses.rst           |  2 +-
+>  Documentation/trace/histogram.txt             |  2 +-
+>  Documentation/trace/intel_th.rst              |  2 +-
+>  Documentation/trace/tracepoint-analysis.rst   |  6 +++---
+>  Documentation/translations/ja_JP/howto.rst    |  4 ++--
+>  .../translations/zh_CN/magic-number.txt       |  4 ++--
+>  .../zh_CN/video4linux/omap3isp.txt            |  4 ++--
+>  MAINTAINERS                                   | 20 +++++++++----------
+>  arch/Kconfig                                  |  2 +-
+>  arch/arm/include/asm/cacheflush.h             |  2 +-
+>  arch/arm64/include/asm/cacheflush.h           |  2 +-
+>  arch/microblaze/include/asm/cacheflush.h      |  2 +-
+>  arch/um/Kconfig.um                            |  2 +-
+>  arch/unicore32/include/asm/cacheflush.h       |  2 +-
+>  arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
+>  arch/xtensa/include/asm/cacheflush.h          |  4 ++--
+>  block/Kconfig                                 |  2 +-
+>  certs/Kconfig                                 |  2 +-
+>  crypto/asymmetric_keys/asymmetric_type.c      |  2 +-
+>  crypto/asymmetric_keys/signature.c            |  2 +-
+>  drivers/char/Kconfig                          |  2 +-
+>  drivers/clk/clk.c                             |  4 ++--
+>  drivers/clk/ingenic/cgu.h                     |  2 +-
+>  drivers/gpu/vga/Kconfig                       |  2 +-
+>  drivers/gpu/vga/vgaarb.c                      |  2 +-
+>  drivers/input/joystick/Kconfig                | 10 +++++-----
+>  drivers/input/joystick/iforce/Kconfig         |  2 +-
+>  drivers/input/joystick/walkera0701.c          |  2 +-
+>  drivers/input/misc/Kconfig                    |  4 ++--
+>  drivers/input/misc/rotary_encoder.c           |  2 +-
+>  drivers/input/mouse/Kconfig                   |  6 +++---
+>  drivers/input/mouse/alps.c                    |  2 +-
+>  drivers/input/touchscreen/wm97xx-core.c       |  2 +-
+>  drivers/lightnvm/pblk-rb.c                    |  2 +-
+>  drivers/md/bcache/Kconfig                     |  2 +-
+>  drivers/md/bcache/btree.c                     |  2 +-
+>  drivers/md/bcache/extents.c                   |  2 +-
+>  drivers/media/dvb-core/dvb_ringbuffer.c       |  2 +-
+>  drivers/media/pci/meye/Kconfig                |  2 +-
+>  drivers/media/platform/pxa_camera.c           |  4 ++--
+>  .../soc_camera/sh_mobile_ceu_camera.c         |  2 +-
+>  drivers/media/radio/Kconfig                   |  2 +-
+>  drivers/media/radio/si470x/Kconfig            |  2 +-
+>  drivers/media/usb/dvb-usb-v2/lmedm04.c        |  2 +-
+>  drivers/media/usb/zr364xx/Kconfig             |  2 +-
+>  drivers/parport/Kconfig                       |  6 +++---
+>  drivers/staging/media/bcm2048/TODO            |  2 +-
+>  include/keys/asymmetric-subtype.h             |  2 +-
+>  include/keys/asymmetric-type.h                |  2 +-
+>  include/linux/assoc_array.h                   |  2 +-
+>  include/linux/assoc_array_priv.h              |  2 +-
+>  include/linux/circ_buf.h                      |  2 +-
+>  include/linux/ftrace.h                        |  2 +-
+>  include/linux/rculist_nulls.h                 |  2 +-
+>  include/uapi/linux/prctl.h                    |  2 +-
+>  include/xen/interface/io/kbdif.h              |  2 +-
+>  kernel/cgroup/cpuset.c                        |  2 +-
+>  kernel/trace/Kconfig                          | 16 +++++++--------
+>  lib/Kconfig                                   |  2 +-
+>  security/selinux/hooks.c                      |  2 +-
+>  sound/core/Kconfig                            |  4 ++--
+>  sound/drivers/Kconfig                         |  4 ++--
+>  sound/pci/Kconfig                             | 10 +++++-----
+>  tools/include/uapi/linux/prctl.h              |  2 +-
+>  tools/lib/api/fs/fs.c                         |  2 +-
+>  tools/memory-model/README                     | 10 +++++-----
+
+As mentioned in the previous thread, I am for keeping the current
+references: the REAMDE is listing the doc files, as well as other
+files in tools/memory-model/, relatively to that directory.
+
+  Andrea
