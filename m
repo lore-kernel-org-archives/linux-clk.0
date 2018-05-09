@@ -1,68 +1,161 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:40101 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935212AbeE2PPF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 May 2018 11:15:05 -0400
+Return-Path: <Akshu.Agrawal@amd.com>
+From: Akshu Agrawal <akshu.agrawal@amd.com>
+To: 
+Cc: djkurtz@chromium.org,
+	akshu.agrawal@amd.com,
+	Alexander.Deucher@amd.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	christian.koenig@amd.com,
+	airlied@redhat.com,
+	Shaoyun.Liu@amd.com,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	rjw@rjwysocki.net,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
+Date: Wed,  9 May 2018 17:59:00 +0800
+Message-Id: <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
+In-Reply-To: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529150455.17300-4-peron.clem@gmail.com>
-References: <20180529150455.17300-1-peron.clem@gmail.com> <20180529150455.17300-4-peron.clem@gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 29 May 2018 12:15:04 -0300
-Message-ID: <CAOMZO5CPUcTVkRhLDbBoZ2_WHy0UBOPDvEWBvTDp4DcCEjo6pw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] Documentation: DT: add i.MX EPIT timer binding
-To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: akshu.agrawal@amd.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 29, 2018 at 12:04 PM, Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail=
-.com> wrote:
-> From: Cl=C3=A9ment Peron <clement.peron@devialet.com>
->
-> Add devicetree binding document for NXP's i.MX SoC specific
-> EPIT timer driver.
->
-> Signed-off-by: Cl=C3=A9ment Peron <clement.peron@devialet.com>
-> ---
->  .../devicetree/bindings/clock/imx6q,epit.txt  | 25 +++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.tx=
-t
->
-> diff --git a/Documentation/devicetree/bindings/clock/imx6q,epit.txt b/Doc=
-umentation/devicetree/bindings/clock/imx6q,epit.txt
-> new file mode 100644
-> index 000000000000..d54d455cebdc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
-> @@ -0,0 +1,25 @@
-> +Binding for the i.MX6 EPIT timer
-> +
-> +This binding uses the common clock binding[1].
-> +
-> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +Required properties:
-> +- compatible: should be "fsl,imx6q-epit"
-> +- reg: physical base address of the controller and length of memory mapp=
-ed
-> +  region.
-> +- interrupts: Should contain EPIT controller interrupt
-> +- clocks: list of clock specifiers, must contain an entry for each requi=
-red
-> +  entry in clock-names
-> +- clock-names : as described in the clock bindings
+Stoney SoC provides oscout clock. This clock can support 25Mhz and
+48Mhz of frequency.
+The clock is available for general system use.
 
-Please list the name of each required clock here.
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+---
+v2: config change, added SPDX tag and used clk_hw_register_.
+v3: Fix kbuild warning for checking of NULL pointer
+v4: unregister clk_hw in driver remove, add .suppress_bind_attrs
+v5: Fix license, used static array
+ drivers/clk/x86/Makefile             |  3 +-
+ drivers/clk/x86/clk-st.c             | 77 ++++++++++++++++++++++++++++++++++++
+ include/linux/platform_data/clk-st.h | 17 ++++++++
+ 3 files changed, 96 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/x86/clk-st.c
+ create mode 100644 include/linux/platform_data/clk-st.h
 
-I see that the driver does not request a "ckil" clock.
+diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
+index 1367afb..00303bc 100644
+--- a/drivers/clk/x86/Makefile
++++ b/drivers/clk/x86/Makefile
+@@ -1,3 +1,4 @@
++obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
++obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-st.o
+ clk-x86-lpss-objs		:= clk-lpt.o
+ obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
+-obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
+diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
+new file mode 100644
+index 0000000..fb62f39
+--- /dev/null
++++ b/drivers/clk/x86/clk-st.c
+@@ -0,0 +1,77 @@
++// SPDX-License-Identifier: MIT
++/*
++ * clock framework for AMD Stoney based clocks
++ *
++ * Copyright 2018 Advanced Micro Devices, Inc.
++ */
++
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/clk-provider.h>
++#include <linux/platform_data/clk-st.h>
++#include <linux/platform_device.h>
++
++/* Clock Driving Strength 2 register */
++#define CLKDRVSTR2	0x28
++/* Clock Control 1 register */
++#define MISCCLKCNTL1	0x40
++/* Auxiliary clock1 enable bit */
++#define OSCCLKENB	2
++/* 25Mhz auxiliary output clock freq bit */
++#define OSCOUT1CLK25MHZ	16
++
++#define ST_CLK_48M	0
++#define ST_CLK_25M	1
++#define ST_CLK_MUX	2
++#define ST_CLK_GATE	3
++#define ST_MAX_CLKS	4
++
++static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
++static struct clk_hw *hws[ST_MAX_CLKS];
++
++static int st_clk_probe(struct platform_device *pdev)
++{
++	struct st_clk_data *st_data;
++
++	st_data = dev_get_platdata(&pdev->dev);
++	if (!st_data || !st_data->base)
++		return -EINVAL;
++
++	hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
++						     48000000);
++	hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
++						     25000000);
++
++	hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
++		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
++		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
++
++	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
++
++	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
++		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
++		CLK_GATE_SET_TO_DISABLE, NULL);
++
++	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
++
++	return 0;
++}
++
++static int st_clk_remove(struct platform_device *pdev)
++{
++	int i;
++
++	for (i = 0; i < ST_MAX_CLKS; i++)
++		clk_hw_unregister(hws[i]);
++	return 0;
++}
++
++static struct platform_driver st_clk_driver = {
++	.driver = {
++		.name = "clk-st",
++		.suppress_bind_attrs = true,
++	},
++	.probe = st_clk_probe,
++	.remove = st_clk_remove,
++};
++builtin_platform_driver(st_clk_driver);
+diff --git a/include/linux/platform_data/clk-st.h b/include/linux/platform_data/clk-st.h
+new file mode 100644
+index 0000000..7cdb6a4
+--- /dev/null
++++ b/include/linux/platform_data/clk-st.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * clock framework for AMD Stoney based clock
++ *
++ * Copyright 2018 Advanced Micro Devices, Inc.
++ */
++
++#ifndef __CLK_ST_H
++#define __CLK_ST_H
++
++#include <linux/compiler.h>
++
++struct st_clk_data {
++	void __iomem *base;
++};
++
++#endif /* __CLK_ST_H */
+-- 
+1.9.1
