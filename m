@@ -1,124 +1,54 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
+Return-Path: <Akshu.Agrawal@amd.com>
+From: Akshu Agrawal <akshu.agrawal@amd.com>
+To: 
+Cc: djkurtz@chromium.org,
+	akshu.agrawal@amd.com,
+	Alexander.Deucher@amd.com,
+	mturquette@baylibre.com,
 	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	will.deacon@arm.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	christian.koenig@amd.com,
+	airlied@redhat.com,
+	Shaoyun.Liu@amd.com,
 	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	vireshk@kernel.org,
-	ilialin@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v12 6/8] clk: qcom: cpu-8996: Add support to switch to alternate PLL
-Date: Thu, 24 May 2018 10:50:16 +0300
-Message-Id: <1527148218-16540-7-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
-References: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
+	linux-clk@vger.kernel.org,
+	rjw@rjwysocki.net,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: [PATCH v3 0/2] Add support for general system clock on ST AMD platform
+Date: Wed,  9 May 2018 17:58:59 +0800
+Message-Id: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: akshu.agrawal@amd.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+AMD ST/CZ platform provides a general system clock which can be used
+by any driver. Registration of this clock will done in clk-st driver.
+While the ACPI misc device will create the required MMIO mappings
+and pass the same to the clk-st driver. The clk-st driver will
+use the address to enable/disable and set frequency.
 
-Each of the CPU clusters on msm8996 are powered via a primary
-PLL and a secondary PLL. The primary PLL is what drives the
-CPU clk, except for times when we are reprogramming the PLL
-itself, when we temporarily switch to an alternate PLL.
-Use clock rate change notifiers to support this.
+Changelog:
+v2:
+  clk: x86: Add ST oscout platform clock: v3->v4 unregister clk_hw
+  ACPI: APD: Add AMD misc clock handler support: No change (v2)
+v3:
+  clk: x86: Add ST oscout platform clock:
+		v4->v5 use static array, change license
+  ACPI: APD: Add AMD misc clock handler support:
+		v2->v3 use devm_ioremap, fix warning
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/qcom/clk-cpu-8996.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Akshu Agrawal (2):
+  clk: x86: Add ST oscout platform clock
+  ACPI: APD: Add AMD misc clock handler support
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index d92cad93..620fdc2 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -52,6 +52,7 @@
-  * detect voltage droops.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -178,10 +179,14 @@ struct clk_cpu_8996_mux {
- 	u32	reg;
- 	u8	shift;
- 	u8	width;
-+	struct notifier_block nb;
- 	struct clk_hw	*pll;
- 	struct clk_regmap clkr;
- };
- 
-+#define to_clk_cpu_8996_mux_nb(_nb) \
-+	container_of(_nb, struct clk_cpu_8996_mux, nb)
-+
- static inline
- struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
- {
-@@ -227,6 +232,26 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return 0;
- }
- 
-+int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			void *data)
-+{
-+	int ret;
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+
-+	switch (event) {
-+	case PRE_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
-+		break;
-+	case POST_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		break;
-+	default:
-+		ret = 0;
-+		break;
-+	}
-+
-+	return notifier_from_errno(ret);
-+};
- const struct clk_ops clk_cpu_8996_mux_ops = {
- 	.set_parent = clk_cpu_8996_mux_set_parent,
- 	.get_parent = clk_cpu_8996_mux_get_parent,
-@@ -270,6 +295,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
- 		.parent_names = (const char *[]){
-@@ -289,6 +315,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
- 		.parent_names = (const char *[]){
-@@ -347,6 +374,12 @@ struct clk_regmap *clks[] = {
- 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
- 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
- 
-+	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
-+
- 	return ret;
- }
- 
+ drivers/acpi/acpi_apd.c              | 50 ++++++++++++++++++++
+ drivers/clk/x86/Makefile             |  1 +
+ drivers/clk/x86/clk-st.c             | 88 ++++++++++++++++++++++++++++++++++++
+ include/linux/platform_data/clk-st.h | 35 ++++++++++++++
+ 4 files changed, 174 insertions(+)
+ create mode 100644 drivers/clk/x86/clk-st.c
+ create mode 100644 include/linux/platform_data/clk-st.h
+
 -- 
 1.9.1
