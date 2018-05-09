@@ -1,60 +1,81 @@
-Return-Path: <david@lechnology.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v11_00/27]_ARM:_davinci:_convert_to_common_clo?=
- =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-Path: <colin.king@canonical.com>
+Subject: Re: [PATCH] clk: boston: fix memory leak of 'onecell' on error return
+ paths
+To: Paul Burton <paul.burton@mips.com>,
+ Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <20180518164829.27052-1-david@lechnology.com>
- <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <9ca9d240-f556-cb4f-1a58-4a55c379a02f@lechnology.com>
-Date: Fri, 25 May 2018 13:21:12 -0500
+ Stephen Boyd <sboyd@kernel.org>, linux-mips@linux-mips.org,
+ linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180509134031.11611-1-colin.king@canonical.com>
+ <20180509140135.4dndt3baomtxups5@mwanda>
+ <20180509163311.alvyibwwuwkumyxf@pburton-laptop>
+From: Colin Ian King <colin.king@canonical.com>
+Message-ID: <3fbc876f-cf9d-6184-96c2-f372a4406ab8@canonical.com>
+Date: Wed, 9 May 2018 17:44:40 +0100
 MIME-Version: 1.0
-In-Reply-To: <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180509163311.alvyibwwuwkumyxf@pburton-laptop>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/22/2018 04:38 AM, Sekhar Nori wrote:
-> Hi David,
+On 09/05/18 17:33, Paul Burton wrote:
+> Hi Colin & Dan,
 > 
-> On Friday 18 May 2018 10:18 PM, David Lechner wrote:
->> This series converts mach-davinci to use the common clock framework.
+> On Wed, May 09, 2018 at 05:01:35PM +0300, Dan Carpenter wrote:
+>> On Wed, May 09, 2018 at 02:40:31PM +0100, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> There are several error return paths that don't free up onecell
+>>> and hence we have some memory leaks. Add an error exit path that
+>>> kfree's onecell to fix the leaks.
+>>>
+>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>> ---
+>>>  drivers/clk/imgtec/clk-boston.c | 15 +++++++++++----
+>>>  1 file changed, 11 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+>>> index 15af423cc0c9..d6bc468ff551 100644
+>>> --- a/drivers/clk/imgtec/clk-boston.c
+>>> +++ b/drivers/clk/imgtec/clk-boston.c
+>>> @@ -73,27 +73,34 @@ static void __init clk_boston_setup(struct device_node *np)
+>>>  	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+>>>  	if (IS_ERR(hw)) {
+>>>  		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+>>> -		return;
+>>> +		goto error;
 >>
->> The series works like this, the first 3 patches fix some issues with the clock
->> drivers that have already been accepted into the mainline kernel.
+>> I hate vague label names like "error" and "out"...
 >>
->> Then, starting with "ARM: davinci: pass clock as parameter to
->> davinci_timer_init()", we get the mach code ready for the switch by adding the
->> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
->> around the legacy clocks so that we can switch easily between the old and the
->> new.
->>
->> "ARM: davinci: switch to common clock framework" actually flips the switch
->> to start using the new clock drivers. Then the next 8 patches remove all
->> of the old clock code.
->>
->> The final four patches add device tree clock support to the one SoC that
->> supports it.
->>
->> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
->> board file).
+>> There are a bunch of other resources that we should free if we decide
+>> it's worth freeing things.
 > 
-> If you do end up sending a v12, you can leave out the mach-davinci
-> portions unless there are any changes you need to make. I will pick them
-> up from this series once the driver dependencies are merged.
+> Agreed - for example unregistering the clocks that we'd be discarding
+> references to by freeing onecell.
 > 
-> I do hope the drivers/clk/* changes can be merged from v4.18.
+>> Can this even boot without the clk?
 > 
+> Nope. If this clock setup fails then whether you free this memory or not
+> you're going to be unable to do anything useful with it.
+> 
+> I imagine this patch is the result of some static analysis rather than a
+> problem being observed at runtime?
 
-I have resent all of the clk patches (including all of the ones I listed as
-dependencies in addition to the three remaining in this series) under the
-cover "clk: davinci: outstanding fixes​".
+Indeed. I propose ignoring this then as it's fairly terminal if one
+can't get memory anyhow in the early boot.
 
-I also found that we need to add power-domains properties to the PWM nodes
-in "ARM: dts: da850: Add clocks". I probably should just take your advice
-and just globally added them even if they are not documented for some types
-ofnodes.
+Colin
+> 
+> Thanks,
+>     Paul
+> 
+>> When
+>> the label names says what is freed, then you mentally only have to keep
+>> track of the most recently allocated resource.  So if
+>>
+>> 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+>>
+>> succeeds then the next goto is going to "goto free_clk_input;".
+>>
+>> regards,
+>> dan carpenter
