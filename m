@@ -1,38 +1,69 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v11 03/27] clk: davinci: psc: allow for dev == NULL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180518164829.27052-1-david@lechnology.com>
- <20180518164829.27052-4-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <250d94db-c33f-51c9-99c1-3a4ddcd627fa@ti.com>
-Date: Tue, 22 May 2018 14:35:58 +0530
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, rajanv@xilinx.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Jolly Shah <jollys@xilinx.com>
+Subject: Re: [PATCH v6 04/11] firmware: xilinx: Add query data API
+To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
+ mingo@kernel.org, gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
+ hkallweit1@gmail.com, keescook@chromium.org, dmitry.torokhov@gmail.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, michal.simek@xilinx.com,
+ robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+ <1523389127-14243-5-git-send-email-jollys@xilinx.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <85f8f8c5-a177-dad8-e095-a9dd1c513e8d@arm.com>
+Date: Thu, 10 May 2018 15:12:18 +0100
 MIME-Version: 1.0
-In-Reply-To: <20180518164829.27052-4-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1523389127-14243-5-git-send-email-jollys@xilinx.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 18 May 2018 10:18 PM, David Lechner wrote:
-> On some davinci SoCs, we need to register the PSC clocks during early
-> boot because they are needed for clocksource/clockevent. These changes
-> allow for dev == NULL because in this case, we won't have a platform
-> device for the clocks.
-> 
-> Some function declarations are moved to a public header files so that they can
-> be called from mach init code.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-Thanks,
-Sekhar
+On 10/04/18 20:38, Jolly Shah wrote:
+> From: Rajan Vaja <rajanv@xilinx.com>
+> 
+> Add ZynqMP firmware query data API to query platform
+> specific information(clocks, pins) from firmware.
+> 
+> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> ---
+>  drivers/firmware/xilinx/zynqmp.c     | 14 ++++++++++++++
+>  include/linux/firmware/xlnx-zynqmp.h | 20 ++++++++++++++++++++
+>  2 files changed, 34 insertions(+)
+> 
+> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+> index 44b43fa..ef09c44 100644
+> --- a/drivers/firmware/xilinx/zynqmp.c
+> +++ b/drivers/firmware/xilinx/zynqmp.c
+> @@ -258,9 +258,23 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+>  				   arg1, arg2, out);
+>  }
+>  
+> +/**
+> + * zynqmp_pm_query_data() - Get query data from firmware
+> + * @qdata:	Variable to the zynqmp_pm_query_data structure
+> + * @out:	Returned output value
+> + *
+> + * Return: Returns status, either success or error+reason
+> + */
+> +static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
+> +{
+> +	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
+> +				   qdata.arg2, qdata.arg3, out);
+> +}
+> +
+>  static const struct zynqmp_eemi_ops eemi_ops = {
+>  	.get_api_version = zynqmp_pm_get_api_version,
+>  	.ioctl = zynqmp_pm_ioctl,
+> +	.query_data = zynqmp_pm_query_data,
+
+Can you give more insight into this ? How will be this used ?
+How this aligns with data we get from DT ? I am just trying to
+understand how is this information split between this API and DT for
+example.
+
+-- 
+Regards,
+Sudeep
