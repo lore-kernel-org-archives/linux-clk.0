@@ -1,82 +1,72 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Fri, 18 May 2018 17:26:51 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: Jagan Teki <jagan@amarulasolutions.com>, Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 12/26] drm/sun4i: Add support for multiple DW HDMI PHY
- clock parents
-Message-ID: <20180518152651.lfymc3kj7npj5tww@flea>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
- <20180518094536.17201-13-jagan@amarulasolutions.com>
- <20180518100116.4bf2qcffg7ekxa7u@flea>
- <4909574.Q3IFWM0xt6@jernej-laptop>
+Return-Path: <ping.bai@nxp.com>
+From: Jacky Bai <ping.bai@nxp.com>
+To: Stefan Agner <stefan@agner.ch>
+CC: Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam
+	<fabio.estevam@nxp.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+Date: Thu, 10 May 2018 01:53:10 +0000
+Message-ID: 
+ <HE1PR04MB311361C15FDC2EAE3AA1FE3587980@HE1PR04MB3113.eurprd04.prod.outlook.com>
+References: <20180418124908.3079-1-stefan@agner.ch>
+ <20180502073807.GE3443@dragon> <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
+ <HE1PR04MB311395765D3DC03D5960DBA3879A0@HE1PR04MB3113.eurprd04.prod.outlook.com>
+ <4188ee25bd5179b57d09e4624dcfbfbb@agner.ch>
+ <152580354289.138124.13657232356773397650@swboyd.mtv.corp.google.com>
+ <HE1PR04MB3113135433766196E708685887990@HE1PR04MB3113.eurprd04.prod.outlook.com>
+ <ae5b239a57bd7e3f3e62cc23a1c3788e@agner.ch>
+In-Reply-To: <ae5b239a57bd7e3f3e62cc23a1c3788e@agner.ch>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tvit4m5thudok37l"
-In-Reply-To: <4909574.Q3IFWM0xt6@jernej-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-
---tvit4m5thudok37l
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 18, 2018 at 04:46:41PM +0200, Jernej =C5=A0krabec wrote:
-> > And this is a bit sloppy, since if phy_clk_num =3D=3D 3, you won't try =
-to
-> > lookup pll-2 either.
+> Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
 >=20
-> It is highly unlikely this will be higher than 2, at least for this HDMI =
-PHY,=20
-> since it has only 1 bit reserved for parent selection. But since I have t=
-o fix=20
-> it, I'll add ">=3D 2"
+> On 09.05.2018 03:26, Jacky Bai wrote:
+> >> Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate
+> >> change
+> >>
+> >> Quoting Stefan Agner (2018-05-08 06:20:03)
+> >> > On 08.05.2018 09:32, Jacky Bai wrote:
+> >> > >
+> >> > > I have tried two 6ULL board, I don't meet such issue. System can
+> >> > > boot up successfully with commit 6f9575e55632 included.
+> >> > > Anyway, the change in this patch is ok for me. it is no harm to
+> >> > > the BUS clock change flow.
+> >> >
+> >> > Hm, that is interesting, maybe it is because we use a different SKU?
+> >> > Or maybe bootloader?
+> >> >
+> >> > I tested here with a 800 MHz clocked variant on a Colibri iMX6ULL
+> >> > using U-Boot 2016.11.
+> >> >
+> >>
+> >> I'll throw this into fixes today because it fixes something to be
+> >> useful. It's still interesting to see what's different between the two=
+ setups
+> though.
+> >
+> > Thanks.
+> >
+> > I will find some 800MHz parts and have a try with different bootloader =
+later.
+> > Will let you know, when I have some results.
+> >
+>=20
+> FWIW, I tried two SKUs here:
+> MCIMX6Z2DVM05AA (528Mhz)
+> MCIMX6Z2CVM08AA (800MHz)
+>=20
 
-If we're only going to have two parents at most, ever, why don't we
-had just a single other boolean. This would be less intrusive, and we
-wouldn't have to check for those corner cases.
+ MCIMX6Z or  MCIMX6Y ? I think i.MX6ULL should be 6Y.
 
-> BTW, I'll resend fixed version of this patch for my R40 HDMI series, sinc=
-e=20
-> there is nothing to hold it back, unlike for this.
+Jacky
 
-Awesome, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---tvit4m5thudok37l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr+8LoACgkQ0rTAlCFN
-r3RbhhAAiPiS0oBKrE4SXuEZWn62ARBw1jMOVxivZlxbDkKSK+fpfxr2hAVKYxtZ
-nIpt5ribBWn98C2K5oqbwIg/Xino6lGKP3AGTKm6468rtHviVT5YnyRk5xSP1PRi
-IDL9CdfCK+G5GMmC14Ht1OIxqenqQjPcT0UAkftjV+gkwPzipIVy7Tgff5Uz7BOk
-wRaiMpxrc2DAa2B/xDdrQkwP+wkuXLkYR52NYBJMsQsxl69v/qjwaKK1svb1ewKm
-qyi7Bebtfwh77scOWahjAIjCKInqqLn8uMYmoe/GqeH6TThyeDNBJTmyi8Eo3sxc
-8YY1yvNc1aSfQ6ds8H0bNweRLxI3aigqLeRaPczL6pILNMXQOZciVAezqhtZ3U7P
-b7wNfC4aoXdveVy60vLpTo2hWKQdgmixvV8VBILgvct4Zq1IJytet/7+mFvcL7Eh
-VXJOCYNXy+VOser93hcWdKSouvAj5oBSD+f9Nhoi6iv8ezKeQBhXsMeyhe/7rhDt
-fAIeLBPJtRyEoM8aMWYDmtCWj6jITYZ+ZOsbe0fCMVbJqsAHOQK7e8BSlcKceC81
-Iw5Vi9Cbz/ZE4fADrt/HxlJy9o4WCqswPJBroq4s43gRXz8SYC3bq72+GrLojGp1
-TX98j3eQKkYQDp3C3nVJS16JTF0TEb/907K2lSavyIhu4JmLl2M=
-=AUyt
------END PGP SIGNATURE-----
-
---tvit4m5thudok37l--
+> Both run at 396MHz in U-Boot, and both freeze and the same location.
+>=20
+> --
+> Stefan
