@@ -1,92 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:2687 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933238AbeEYMf1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 May 2018 08:35:27 -0400
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
-        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <broonie@kernel.org>
-CC: <Cristian.Birsan@microchip.com>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Subject: [PATCH v4 7/7] ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
-Date: Fri, 25 May 2018 15:34:28 +0300
-Message-ID: <1527251668-31396-8-git-send-email-codrin.ciubotariu@microchip.com>
-In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Evan Green <evgreen@chromium.org>,
+ Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-soc@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180413203336.134364-1-evgreen@chromium.org>
+Cc: Evan Green <evgreen@chromium.org>
+References: <20180413203336.134364-1-evgreen@chromium.org>
+Message-ID: <152597796114.138124.13981585478071012245@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: qcom: Base rcg parent rate off plan frequency
+Date: Thu, 10 May 2018 11:46:01 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Quoting Evan Green (2018-04-13 13:33:36)
+> _freq_tbl_determine_rate uses the pre_div found in the clock plan
+> multiplied by the requested rate from the caller to determine the
+> best parent rate to set. If the requested rate is not exactly equal
+> to the rate that was found in the clock plan, then using the requested
+> rate in parent rate calculations is incorrect. For instance, if 150MHz
+> was requested, but 200MHz was the match found, and that plan had a
+> pre_div of 3, then the parent should be set to 600MHz, not 450MHz.
+> =
 
-This patch sets the pin muxing for the I2S controllers
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+> ---
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-[codrin.ciubotariu@microchip.com: added pin muxing for the second
-controller]
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
- arch/arm/boot/dts/at91-sama5d2_xplained.dts | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Applied to clk-next
 
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-index e4bbb7e..0391731 100644
---- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -281,6 +281,11 @@
- 				status = "okay";
- 			};
- 
-+			i2s0: i2s@f8050000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2s0_default>;
-+			};
-+
- 			can0: can@f8054000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can0_default>;
-@@ -424,6 +429,24 @@
- 					bias-disable;
- 				};
- 
-+				pinctrl_i2s0_default: i2s0_default {
-+					pinmux = <PIN_PC1__I2SC0_CK>,
-+						 <PIN_PC2__I2SC0_MCK>,
-+						 <PIN_PC3__I2SC0_WS>,
-+						 <PIN_PC4__I2SC0_DI0>,
-+						 <PIN_PC5__I2SC0_DO0>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_i2s1_default: i2s1_default {
-+					pinmux = <PIN_PA15__I2SC1_CK>,
-+						 <PIN_PA14__I2SC1_MCK>,
-+						 <PIN_PA16__I2SC1_WS>,
-+						 <PIN_PA17__I2SC1_DI0>,
-+						 <PIN_PA18__I2SC1_DO0>;
-+					bias-disable;
-+				};
-+
- 				pinctrl_key_gpio_default: key_gpio_default {
- 					pinmux = <PIN_PB9__GPIO>;
- 					bias-pull-up;
-@@ -546,6 +569,11 @@
- 				status = "okay";
- 			};
- 
-+			i2s1: i2s@fc04c000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2s1_default>;
-+			};
-+
- 			can1: can@fc050000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can1_default>;
--- 
-2.7.4
-
+This problem is ancient so I tagged it with Fixes for all the stable
+trees.
