@@ -1,65 +1,82 @@
-Return-Path: <buserror@gmail.com>
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, rajanv@xilinx.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Jolly Shah <jollys@xilinx.com>
+Subject: Re: [PATCH v6 09/11] firmware: xilinx: Add debugfs for clock control
+ APIs
+To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
+ mingo@kernel.org, gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
+ hkallweit1@gmail.com, keescook@chromium.org, dmitry.torokhov@gmail.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, michal.simek@xilinx.com,
+ robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+ <1523389127-14243-10-git-send-email-jollys@xilinx.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <5bcc47f7-3352-f0e6-29c5-78d5be96c1d1@arm.com>
+Date: Thu, 10 May 2018 15:31:18 +0100
 MIME-Version: 1.0
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdXETt75rGyYRsNEK0O5CO3A-bG70g=-f23y6PO_uK6rWg@mail.gmail.com>
- <CAMMfpEw=6POaZBU9HduKBb8Wk2mH0oAXhCdQo7c+hQWgxka3vA@mail.gmail.com> <CAMuHMdXumeXLw_MAz5MVOKZYO3-F5samUGLSZN7bHSnmD6sfnQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXumeXLw_MAz5MVOKZYO3-F5samUGLSZN7bHSnmD6sfnQ@mail.gmail.com>
-From: M P <buserror@gmail.com>
-Date: Wed, 23 May 2018 12:53:36 +0100
-Message-ID: <CAMMfpEwyLh+1hxCE-Ka0f5hoCi8QfO5an9zvZ3nH6j0=aJ6K=A@mail.gmail.com>
-Subject: Re: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: michel.pollet@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>, Phil Edworthy <phil.edworthy@renesas.com>,
-	buserror+upstream@gmail.com, Magnus Damm <magnus.damm@gmail.com>, robh+dt@kernel.org,
-	mark.rutland@arm.com, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	geert+renesas@glider.be, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1523389127-14243-10-git-send-email-jollys@xilinx.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
 
-On Wed, 23 May 2018 at 12:18, Geert Uytterhoeven <geert@linux-m68k.org>
-wrote:
 
-> Hi Michel,
+On 10/04/18 20:38, Jolly Shah wrote:
+> From: Rajan Vaja <rajanv@xilinx.com>
+> 
+> Add debugfs file to control clocks using firmware APIs
+> through debugfs interface.
+> 
+> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> ---
+>  drivers/firmware/xilinx/zynqmp-debug.c | 48 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+> 
+> diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
+> index 1cb69f7..837fcd1 100644
+> --- a/drivers/firmware/xilinx/zynqmp-debug.c
+> +++ b/drivers/firmware/xilinx/zynqmp-debug.c
+> @@ -34,6 +34,15 @@ static struct pm_api_info pm_api_list[] = {
+>  	PM_API(PM_GET_API_VERSION),
+>  	PM_API(PM_IOCTL),
+>  	PM_API(PM_QUERY_DATA),
+> +	PM_API(PM_CLOCK_ENABLE),
+> +	PM_API(PM_CLOCK_DISABLE),
+> +	PM_API(PM_CLOCK_GETSTATE),
+> +	PM_API(PM_CLOCK_SETDIVIDER),
+> +	PM_API(PM_CLOCK_GETDIVIDER),
+> +	PM_API(PM_CLOCK_SETRATE),
+> +	PM_API(PM_CLOCK_GETRATE),
+> +	PM_API(PM_CLOCK_SETPARENT),
+> +	PM_API(PM_CLOCK_GETPARENT),
+>  };
+>  
+>  /**
+> @@ -87,6 +96,7 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
+>  	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
+>  	u32 pm_api_version;
+>  	int ret;
+> +	u64 rate;
+>  
+>  	if (!eemi_ops)
+>  		return -ENXIO;
+> @@ -132,6 +142,44 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
+>  				pm_api_ret[2], pm_api_ret[3]);
+>  		break;
+>  	}
+> +	case PM_CLOCK_ENABLE:
+> +		ret = eemi_ops->clock_enable(pm_api_arg[0]);
+> +		break;
 
-> On Wed, May 23, 2018 at 11:20 AM, M P <buserror@gmail.com> wrote:
-> > On Wed, 23 May 2018 at 10:12, Geert Uytterhoeven <geert@linux-m68k.org>
-> > wrote:
-> >> On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-> >> <michel.pollet@bp.renesas.com> wrote:
-> >> > +       #address-cells = <1>;
-> >> > +       #size-cells = <1>;
-> >> > +
-> >> > +       cpus {
-> >> > +               #address-cells = <1>;
-> >> > +               #size-cells = <0>;
-> >> > +               clocks = <&clock RZN1_DIV_CA7>;
-> >
-> >> I think the clocks property should be moved to the individual CPU
-nodes.
-> >
-> > Ah, I had a look around, and I found some instances that are in the cpu
-> > sub-node, and others that are not -- it seems that having it in the cpu
-> > sub-node would implies it's core specific... here if that clock is
-changed
-> > both cores would change speed...
+As I mentioned in earlier patch, I don't see the need for this debugfs
+interface. Clock lay has read-only interface in debugfs already. Also if
+you want to debug clocks, you can do so using the driver which uses
+these clocks. Do you really want to manage clocks in user-space ?
+The whole idea of EEMI kind of interface is to abstract and hide the
+fine details even from non-trusted rich OS like Linux kernel, but by
+providing this you are doing exactly opposite.
 
-> Assumed the driver code knows to look in the parent node, which I doubt
-> the cpufreq code does.
-
-> > Either way, it's not used by the kernel in any way at the moment -- I
-had
-> > hoped cpufreq or something would claim it, but it's not the case.
-
-> I guess you have to add your main SoC compatible value to the whitelist
-> in drivers/cpufreq/cpufreq-dt-platdev.c first.
-
-Most excellent tip here -- I'll add a further patch to enable this, after
-this series eventually gets merged...
-
-Cheers,
-Michel
+-- 
+Regards,
+Sudeep
