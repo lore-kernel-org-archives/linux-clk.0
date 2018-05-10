@@ -1,41 +1,90 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, rajanv@xilinx.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Jolly Shah <jollys@xilinx.com>
+Subject: Re: [PATCH v6 03/11] firmware: xilinx: Add zynqmp IOCTL API for
+ device control
+To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
+ mingo@kernel.org, gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
+ hkallweit1@gmail.com, keescook@chromium.org, dmitry.torokhov@gmail.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, michal.simek@xilinx.com,
+ robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+ <1523389127-14243-4-git-send-email-jollys@xilinx.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <c351b9a3-5f26-7202-7171-0dcc7adef7c0@arm.com>
+Date: Thu, 10 May 2018 15:09:12 +0100
 MIME-Version: 1.0
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180512143038.30447-1-heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
- Heiko Stuebner <heiko@sntech.de>
-References: <20180512143038.30447-1-heiko@sntech.de>
-Message-ID: <152640342836.34267.18008728966241252616@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: rockchip: remove deprecated gate-clk code and dt-binding
-Date: Tue, 15 May 2018 09:57:08 -0700
+In-Reply-To: <1523389127-14243-4-git-send-email-jollys@xilinx.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Heiko Stuebner (2018-05-12 07:30:38)
-> Initially we tried modeling clocks via the devicetree before switching
-> to clocks declared in the clock drivers and only exporting specific
-> ids to the devicetree.
-> =
 
-> As the old code was in the kernel for 1-2 releases when the new mode
-> of operation was added we kept it for backwards compatibility.
-> =
 
-> That deprecation notice is in the binding since july 2014, so nearly
-> 4 years now and I think it's time to drop the old cruft.
-> =
-
-> Especially as at the time using the mainline kernel on Rockchip devices
-> was not really possible, except for experiments on the really old socs of
-> the rk3066 + rk3188 line, so there shouldn't be any devicetrees still
-> around that rely on that code.
-> =
-
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On 10/04/18 20:38, Jolly Shah wrote:
+> From: Rajan Vaja <rajanv@xilinx.com>
+> 
+> Add ZynqMP firmware IOCTL API to control and configure
+> devices like PLLs, SD, Gem, etc.
+> 
+> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+> Signed-off-by: Jolly Shah <jollys@xilinx.com>
 > ---
+>  drivers/firmware/xilinx/zynqmp.c     | 20 ++++++++++++++++++++
+>  include/linux/firmware/xlnx-zynqmp.h |  2 ++
+>  2 files changed, 22 insertions(+)
+> 
+> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+> index 490561a..44b43fa 100644
+> --- a/drivers/firmware/xilinx/zynqmp.c
+> +++ b/drivers/firmware/xilinx/zynqmp.c
+> @@ -239,8 +239,28 @@ static int get_set_conduit_method(struct device_node *np)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * zynqmp_pm_ioctl() - PM IOCTL API for device control and configs
+> + * @node_id:	Node ID of the device
+> + * @ioctl_id:	ID of the requested IOCTL
+> + * @arg1:	Argument 1 to requested IOCTL call
+> + * @arg2:	Argument 2 to requested IOCTL call
+> + * @out:	Returned output value
+> + *
+> + * This function calls IOCTL to firmware for device control and configuration.
+> + *
+> + * Return: Returns status, either success or error+reason
+> + */
+> +static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+> +			   u32 *out)
+> +{
+> +	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id, ioctl_id,
+> +				   arg1, arg2, out);
+> +}
+> +
+>  static const struct zynqmp_eemi_ops eemi_ops = {
+>  	.get_api_version = zynqmp_pm_get_api_version,
+> +	.ioctl = zynqmp_pm_ioctl,
+>  };
+>  
+>  /**
+> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+> index cb63bed..2eec6e7 100644
+> --- a/include/linux/firmware/xlnx-zynqmp.h
+> +++ b/include/linux/firmware/xlnx-zynqmp.h
+> @@ -34,6 +34,7 @@
+>  
+>  enum pm_api_id {
+>  	PM_GET_API_VERSION = 1,
+> +	PM_IOCTL = 34,
 
-Alright, let's see how things go.
+I am not for this API. IIUC there are more fined grained well defined
+APIs(if I am not wrong from enum 2 upto 33). This is open ended API
+which allows user to do whatever setting it needs. And that defeats the
+purpose of other APIs.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+I will look through the series for the usage of this to understand this
+better, but I am guessing how it can be (ab)used.
+
+-- 
+Regards,
+Sudeep
