@@ -1,60 +1,74 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: David Lechner <david@lechnology.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/9] clk: davinci: pll-dm355: fix SYSCLKn parent names
-Date: Fri, 25 May 2018 13:11:43 -0500
-Message-Id: <20180525181150.17873-3-david@lechnology.com>
-In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
-References: <20180525181150.17873-1-david@lechnology.com>
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, rajanv@xilinx.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Jolly Shah <jollys@xilinx.com>
+Subject: Re: [PATCH v6 02/11] firmware: xilinx: Add Zynqmp firmware driver
+To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
+ mingo@kernel.org, gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
+ hkallweit1@gmail.com, keescook@chromium.org, dmitry.torokhov@gmail.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, michal.simek@xilinx.com,
+ robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+ <1523389127-14243-3-git-send-email-jollys@xilinx.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <9cbfb3cd-daa3-f145-c6f2-f15f61d1bea0@arm.com>
+Date: Thu, 10 May 2018 15:04:46 +0100
+MIME-Version: 1.0
+In-Reply-To: <1523389127-14243-3-git-send-email-jollys@xilinx.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This fixes the parent clock names of the SYSCLKn clocks for the DM355
-SoC in the TI DaVinici PLL clock driver.
 
-It appears that this name just didn't get updated to the correct name
-like the other SoCs during the driver's development.
 
-Reported-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: David Lechner <david@lechnology.com>
-Acked-by: Sekhar Nori <nsekhar@ti.com>
----
- drivers/clk/davinci/pll-dm355.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On 10/04/18 20:38, Jolly Shah wrote:
+> From: Rajan Vaja <rajanv@xilinx.com>
+> 
+> This patch is adding communication layer with firmware.
+> Firmware driver provides an interface to firmware APIs.
+> Interface APIs can be used by any driver to communicate to
+> PMUFW(Platform Management Unit). All requests go through ATF.
+> 
+> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> ---
 
-diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
-index 718d9bbbf30d..93f4a53d6b44 100644
---- a/drivers/clk/davinci/pll-dm355.c
-+++ b/drivers/clk/davinci/pll-dm355.c
-@@ -22,10 +22,10 @@ static const struct davinci_pll_clk_info dm355_pll1_info = {
- 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
- };
- 
--SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
--SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
--SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED);
--SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
- 
- int dm355_pll1_init(struct device *dev, void __iomem *base)
- {
-@@ -62,7 +62,7 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
- 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
- };
- 
--SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
- 
- int dm355_pll2_init(struct device *dev, void __iomem *base)
- {
+[...]
+
+> +
+> +/**
+> + * get_set_conduit_method() - Choose SMC or HVC based communication
+> + * @np:		Pointer to the device_node structure
+> + *
+> + * Use SMC or HVC-based functions to communicate with EL2/EL3.
+> + *
+> + * Return: Returns 0 on success or error code
+> + */
+> +static int get_set_conduit_method(struct device_node *np)
+> +{
+> +	const char *method;
+> +
+> +	if (of_property_read_string(np, "method", &method)) {
+> +		pr_warn("%s missing \"method\" property\n", __func__);
+> +		return -ENXIO;
+> +	}
+> +
+> +	if (!strcmp("hvc", method)) {
+> +		do_fw_call = do_fw_call_hvc;
+> +	} else if (!strcmp("smc", method)) {
+> +		do_fw_call = do_fw_call_smc;
+> +	} else {
+> +		pr_warn("%s Invalid \"method\" property: %s\n",
+> +			__func__, method);
+> +		return -EINVAL;
+> +	}
+> +
+
+Mark R did some cleanup around SMCCC conduits[1]. It makes sense to base
+this on top that. But if you manage to push this for v4.18, then you may
+need to wait for that to be merged and clean it up after v4.18
+
 -- 
-2.17.0
+Regards,
+Sudeep
+
+[1] https://www.spinics.net/lists/arm-kernel/msg650305.html
