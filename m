@@ -1,40 +1,34 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v1] clk: qcom: gdsc: Add support to poll CFG register to
- check GDSC state
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1525151013-28291-1-git-send-email-tdas@codeaurora.org>
- <152524425583.138124.2497854182982735033@swboyd.mtv.corp.google.com>
- <e1d6f7a1-9b2b-113a-4c21-4730c6514e9c@codeaurora.org>
- <152548867593.138124.17769741201119581476@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <aae43315-1506-983d-312c-e28f1cc46b71@codeaurora.org>
-Date: Sat, 5 May 2018 09:18:21 +0530
+Return-Path: <nsekhar@ti.com>
+From: Sekhar Nori <nsekhar@ti.com>
+To: David Lechner <david@lechnology.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: Linux clk Mailing List <linux-clk@vger.kernel.org>,
+        Linux ARM Mailing List
+	<linux-arm-kernel@lists.infradead.org>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin
+ Hilman <khilman@kernel.org>
+Subject: [PATCH 0/2] clk: davinci: some more fixes
+Date: Fri, 11 May 2018 19:40:35 +0530
+Message-ID: <20180511141037.25250-1-nsekhar@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <152548867593.138124.17769741201119581476@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Yeah sure Stephen.
+Hi,
 
-On 5/5/2018 8:21 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-05-03 02:09:57)
->> Hello Stephen,
->>
->> I have tested the below patch & didn't see any issues.
-> 
-> Alright. Thanks! Can I take that as a "Tested-by"?
-> 
+Some more fixes to make DM646x and DM365 EVMs boot after
+common clock framework conversion. With this, I have tested
+all DaVinci SoCs.
+
+Sekhar Nori (2):
+  clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always enabled
+  clk: davinci: psc-dm365: fix few clocks
+
+ drivers/clk/davinci/pll-dm646x.c | 2 +-
+ drivers/clk/davinci/psc-dm365.c  | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+2.16.2
