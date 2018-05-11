@@ -1,69 +1,44 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v2 1/2] clk: davinci: pll-dm355: fix SYSCLKn parent names
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org
-References: <20180507144307.32364-1-david@lechnology.com>
- <5805f462-0cb5-3024-f5af-941db8a46895@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <f41e762d-273a-9e8a-579a-f43e90260020@lechnology.com>
-Date: Mon, 7 May 2018 13:32:41 -0500
+Return-Path: <nsekhar@ti.com>
+From: Sekhar Nori <nsekhar@ti.com>
+To: David Lechner <david@lechnology.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: Linux clk Mailing List <linux-clk@vger.kernel.org>,
+        Linux ARM Mailing List
+	<linux-arm-kernel@lists.infradead.org>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin
+ Hilman <khilman@kernel.org>
+Subject: [PATCH 1/2] clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always enabled
+Date: Fri, 11 May 2018 19:40:36 +0530
+Message-ID: <20180511141037.25250-2-nsekhar@ti.com>
+In-Reply-To: <20180511141037.25250-1-nsekhar@ti.com>
+References: <20180511141037.25250-1-nsekhar@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <5805f462-0cb5-3024-f5af-941db8a46895@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+PLL2 SYSCLK1 on DM646x is connected to DDR2 PHY and cannot
+be disabled. Mark it so to prevent unused clock disable
+infrastructure from disabling it.
 
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+---
+ drivers/clk/davinci/pll-dm646x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 5/7/18 10:21 AM, Sekhar Nori wrote:
-> On Monday 07 May 2018 08:13 PM, David Lechner wrote:
->> This fixes the parent clock names of the SYSCLKn clocks for the DM355
->> SoC in the TI DaVinici PLL clock driver.
->>
->> It appears that this name just didn't get updated to the correct name
->> like the other SoCs during the driver's development.
->>
->> Reported-by: Sekhar Nori <nsekhar@ti.com>
->> Signed-off-by: David Lechner <david@lechnology.com>
->> ---
->>
->> v2 changes:
->> - add second patch to fix additional problems with DM355
->>
->>   drivers/clk/davinci/pll-dm355.c | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
->> index 5345f8286c50..1f746d2fc894 100644
->> --- a/drivers/clk/davinci/pll-dm355.c
->> +++ b/drivers/clk/davinci/pll-dm355.c
->> @@ -22,10 +22,10 @@ static const struct davinci_pll_clk_info dm355_pll1_info = {
->>   		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
->>   };
->>   
->> -SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
->> -SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
->> -SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED);
->> -SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED);
->> +SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
->> +SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
->> +SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
->> +SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
->>   
->>   int dm355_pll1_init(struct device *dev, void __iomem *base)
->>   {
->> @@ -62,8 +62,8 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
->>   		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
->>   };
->>   
->> -SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
->> -SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
->> +SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV);
->> +SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-> 
-> Good find with PLL2 SYSCLK2. Can you reverse the patch order so we are
-> not fixing up a non-existent clock?
-> 
-
-Sure. But it will take me a couple days to get back to it.
+diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
+index eb96dd72b6b7..5bdf1cb5fda8 100644
+--- a/drivers/clk/davinci/pll-dm646x.c
++++ b/drivers/clk/davinci/pll-dm646x.c
+@@ -72,7 +72,7 @@ static const struct davinci_pll_clk_info dm646x_pll2_info = {
+ 	.flags = 0,
+ };
+ 
+-SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
++SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, SYSCLK_ALWAYS_ENABLED);
+ 
+ int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-- 
+2.16.2
