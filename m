@@ -1,56 +1,50 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <nsekhar@ti.com>
+From: Sekhar Nori <nsekhar@ti.com>
+To: David Lechner <david@lechnology.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: Linux clk Mailing List <linux-clk@vger.kernel.org>,
+        Linux ARM Mailing List
+	<linux-arm-kernel@lists.infradead.org>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin
+ Hilman <khilman@kernel.org>
+Subject: [PATCH 2/2] clk: davinci: psc-dm365: fix few clocks
+Date: Fri, 11 May 2018 19:40:37 +0530
+Message-ID: <20180511141037.25250-3-nsekhar@ti.com>
+In-Reply-To: <20180511141037.25250-1-nsekhar@ti.com>
+References: <20180511141037.25250-1-nsekhar@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Wed, 09 May 2018 16:12:59 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
- mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
-In-Reply-To: <HE1PR04MB3113135433766196E708685887990@HE1PR04MB3113.eurprd04.prod.outlook.com>
-References: <20180418124908.3079-1-stefan@agner.ch>
- <20180502073807.GE3443@dragon> <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
- <HE1PR04MB311395765D3DC03D5960DBA3879A0@HE1PR04MB3113.eurprd04.prod.outlook.com>
- <4188ee25bd5179b57d09e4624dcfbfbb@agner.ch>
- <152580354289.138124.13657232356773397650@swboyd.mtv.corp.google.com>
- <HE1PR04MB3113135433766196E708685887990@HE1PR04MB3113.eurprd04.prod.outlook.com>
-Message-ID: <ae5b239a57bd7e3f3e62cc23a1c3788e@agner.ch>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On 09.05.2018 03:26, Jacky Bai wrote:
->> Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
->>
->> Quoting Stefan Agner (2018-05-08 06:20:03)
->> > On 08.05.2018 09:32, Jacky Bai wrote:
->> > >
->> > > I have tried two 6ULL board, I don't meet such issue. System can
->> > > boot up successfully with commit 6f9575e55632 included.
->> > > Anyway, the change in this patch is ok for me. it is no harm to the
->> > > BUS clock change flow.
->> >
->> > Hm, that is interesting, maybe it is because we use a different SKU?
->> > Or maybe bootloader?
->> >
->> > I tested here with a 800 MHz clocked variant on a Colibri iMX6ULL
->> > using U-Boot 2016.11.
->> >
->>
->> I'll throw this into fixes today because it fixes something to be useful. It's still
->> interesting to see what's different between the two setups though.
-> 
-> Thanks. 
-> 
-> I will find some 800MHz parts and have a try with different bootloader later.
-> Will let you know, when I have some results.
-> 
+Fix parent of emac and voice codec PSC clocks. This now matches
+existing implementation in arch/arm/mach-davinci/dm365.c
 
-FWIW, I tried two SKUs here:
-MCIMX6Z2DVM05AA (528Mhz)
-MCIMX6Z2CVM08AA (800MHz)
+Also, there is only one power domain on DM365. Fix the power
+domain of voice codec and vpss dac modules.
 
-Both run at 396MHz in U-Boot, and both freeze and the same location.
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+---
+ drivers/clk/davinci/psc-dm365.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---
-Stefan
+diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+index 5b5b55b0b59a..beeda10fd2f0 100644
+--- a/drivers/clk/davinci/psc-dm365.c
++++ b/drivers/clk/davinci/psc-dm365.c
+@@ -65,9 +65,9 @@ static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
+ 	LPSC(31, 0, arm,         pll2_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
+ 	LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
+ 	LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
+-	LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
+-	LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
+-	LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
++	LPSC(40, 0, emac,        pll1_sysclk4, emac_clkdev,        0),
++	LPSC(44, 0, voice_codec, pll2_sysclk4, voice_codec_clkdev, 0),
++	LPSC(46, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
+ 	LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
+ 	LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
+ 	{ }
+-- 
+2.16.2
