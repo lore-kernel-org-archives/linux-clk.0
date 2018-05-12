@@ -1,27 +1,44 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 1/2] clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always
+ enabled
+To: Sekhar Nori <nsekhar@ti.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Linux clk Mailing List <linux-clk@vger.kernel.org>,
+ Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+ Kevin Hilman <khilman@kernel.org>
+References: <20180511141037.25250-1-nsekhar@ti.com>
+ <20180511141037.25250-2-nsekhar@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <4dd5fe51-a8ec-507b-53c3-7cb17f538d74@lechnology.com>
+Date: Fri, 11 May 2018 20:01:47 -0500
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Taniya Das <tdas@codeaurora.org>
-References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
-Message-ID: <152527393566.138124.2905882207625331342@swboyd.mtv.corp.google.com>
-Subject: Re: [v6 0/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Wed, 02 May 2018 08:12:15 -0700
+In-Reply-To: <20180511141037.25250-2-nsekhar@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-05-02 03:51:15)
->  [v6]
->    * Addressed comments from Rob
->    * Addressed comments from Stephen
+On 05/11/2018 09:10 AM, Sekhar Nori wrote:
+> PLL2 SYSCLK1 on DM646x is connected to DDR2 PHY and cannot
+> be disabled. Mark it so to prevent unused clock disable
+> infrastructure from disabling it.
+> 
+> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> ---
+>   drivers/clk/davinci/pll-dm646x.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
+> index eb96dd72b6b7..5bdf1cb5fda8 100644
+> --- a/drivers/clk/davinci/pll-dm646x.c
+> +++ b/drivers/clk/davinci/pll-dm646x.c
+> @@ -72,7 +72,7 @@ static const struct davinci_pll_clk_info dm646x_pll2_info = {
+>   	.flags = 0,
+>   };
+>   
+> -SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
+> +SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, SYSCLK_ALWAYS_ENABLED);
+>   
+>   int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+>   {
+> 
 
-Please actually describe what you addressed. Nobody wants to look back
-at the old emails to figure out what comments you addressed.
+Reviewed-by: David Lechner <david@lechnology.com>
