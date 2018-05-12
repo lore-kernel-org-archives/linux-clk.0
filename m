@@ -1,78 +1,46 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
-To: Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>, <paul@pwsan.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-2-faiz_abbas@ti.com> <20180530145047.GC5705@atomide.com>
- <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
- <20180530152825.GG5705@atomide.com>
- <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
- <20180530155448.GH5705@atomide.com>
- <98c989ca-0694-5150-f74b-35f3e4bf20c0@ti.com>
- <20180531152623.GN5705@atomide.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <f74763ed-7e27-146b-6856-6be1b2ba630d@ti.com>
-Date: Thu, 31 May 2018 22:05:55 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180531152623.GN5705@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org
+Cc: David Lechner <david@lechnology.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: davinci: psc-dm355: fix ASP0/1 clkdev lookups
+Date: Sat, 12 May 2018 15:49:42 -0500
+Message-Id: <20180512204942.10090-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+The clkdev lookups for the ASP0/1 devices on TI DM355 were declared, but
+not assigned to any LPSC. This assigns the clkdev lookups to the
+correct LPSCs.
 
-On Thursday 31 May 2018 08:56 PM, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [180531 06:18]:
->> On 30/05/18 18:54, Tony Lindgren wrote:
->>> * Tero Kristo <t-kristo@ti.com> [180530 15:44]:
->>>> On 30/05/18 18:28, Tony Lindgren wrote:
->>>>> * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
->>>>>> For the OCP if part, I think that is still needed until we switch over to
->>>>>> full sysc driver. clkctrl_offs you probably also need because that is used
->>>>>> for mapping the omap_hwmod against a specific clkctrl clock. Those can be
->>>>>> only removed once we are done with hwmod (or figure out some other way to
->>>>>> assign the clkctrl clock to a hwmod.)
->>>>>
->>>>> Hmm might be worth testing. I thought your commit 70f05be32133
->>>>> ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
->>>>> already parses the clkctrl from dts?
->>>>
->>>> It maps the clkctrl clock to be used by hwmod, if those are available. We
->>>> didn't add any specific clock entries to DT for mapping the actual clkctrl
->>>> clock without the hwmod_data hints yet though, as that was deemed temporary
->>>> solution only due to transition to interconnect driver. I.e., you would need
->>>> something like this in DT for every device node:
->>>>
->>>> &uart3 {
->>>>    clocks = <l4per_clkctrl UART3_CLK 0>;
->>>>    clock-names = "clkctrl";
->>>> };
->>>>
->>>> ... which is currently not present.
->>>
->>> Hmm is that not the "fck" clkctrl clock we have already in
->>> the dts files for the interconnect target modules?
->>
->> Oh okay, yeah, we could parse that one, but currently it is not done, and is
->> not present for everything either I believe.
->>
->>> We can also use pdata callbacks to pass the clock node if
->>> needed. But I guess I don't quite still understand what we
->>> are missing :)
->>
->> So, what is missing is the glue logic only from the hwmod codebase. Right
->> now this is not supported but should be relatively trivial thing to add if
->> we really want to do this.
-> 
-> OK let's think about this a bit for v4.19 then.
-> 
+Reported-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/psc-dm355.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I am not sure what the conclusion is. Should I try removing the
-clkctrl_offsets, clkdm_name, and main_clk?
-
-Thanks,
-Faiz
+diff --git a/drivers/clk/davinci/psc-dm355.c b/drivers/clk/davinci/psc-dm355.c
+index 001288dfdfb1..fb71ad81bb9c 100644
+--- a/drivers/clk/davinci/psc-dm355.c
++++ b/drivers/clk/davinci/psc-dm355.c
+@@ -41,14 +41,14 @@ static const struct davinci_lpsc_clk_info dm355_psc_info[] = {
+ 	LPSC(5,  0, timer3,      pll1_auxclk,  NULL,               0),
+ 	LPSC(6,  0, spi1,        pll1_sysclk2, spi1_clkdev,        0),
+ 	LPSC(7,  0, mmcsd1,      pll1_sysclk2, mmcsd1_clkdev,      0),
+-	LPSC(8,  0, asp1,        pll1_sysclk2, NULL,               0),
++	LPSC(8,  0, asp1,        pll1_sysclk2, mcbsp1_clkdev,      0),
+ 	LPSC(9,  0, usb,         pll1_sysclk2, usb_clkdev,         0),
+ 	LPSC(10, 0, pwm3,        pll1_auxclk,  NULL,               0),
+ 	LPSC(11, 0, spi2,        pll1_sysclk2, spi2_clkdev,        0),
+ 	LPSC(12, 0, rto,         pll1_auxclk,  NULL,               0),
+ 	LPSC(14, 0, aemif,       pll1_sysclk2, aemif_clkdev,       0),
+ 	LPSC(15, 0, mmcsd0,      pll1_sysclk2, mmcsd0_clkdev,      0),
+-	LPSC(17, 0, asp0,        pll1_sysclk2, NULL,               0),
++	LPSC(17, 0, asp0,        pll1_sysclk2, mcbsp0_clkdev,      0),
+ 	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
+ 	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
+ 	LPSC(20, 0, uart1,       pll1_auxclk,  uart1_clkdev,       0),
+-- 
+2.17.0
