@@ -1,95 +1,240 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57775 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750764AbeEEHCK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 May 2018 03:02:10 -0400
-Date: Sat, 5 May 2018 09:01:47 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180505070147.epsrglnypm72jr5u@pengutronix.de>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-4-o.rempel@pengutronix.de>
- <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
- <20180504134956.36dc72a253d03e94a517a867@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d2dufsg5h4kwcp6r"
-In-Reply-To: <20180504134956.36dc72a253d03e94a517a867@linux-foundation.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH] clk: rockchip: remove deprecated gate-clk code and dt-binding
+Date: Sat, 12 May 2018 16:30:38 +0200
+Message-Id: <20180512143038.30447-1-heiko@sntech.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+Initially we tried modeling clocks via the devicetree before switching
+to clocks declared in the clock drivers and only exporting specific
+ids to the devicetree.
 
---d2dufsg5h4kwcp6r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As the old code was in the kernel for 1-2 releases when the new mode
+of operation was added we kept it for backwards compatibility.
 
-Moving Rafael from Cc to To.
+That deprecation notice is in the binding since july 2014, so nearly
+4 years now and I think it's time to drop the old cruft.
 
-Hi Rafael,
+Especially as at the time using the mainline kernel on Rockchip devices
+was not really possible, except for experiments on the really old socs of
+the rk3066 + rk3188 line, so there shouldn't be any devicetrees still
+around that rely on that code.
 
-can you please help here?
-I need your ACK or NACK for this patch.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ .../devicetree/bindings/clock/rockchip.txt    | 77 ---------------
+ drivers/clk/rockchip/Makefile                 |  1 -
+ drivers/clk/rockchip/clk-rockchip.c           | 98 -------------------
+ 3 files changed, 176 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip.txt
+ delete mode 100644 drivers/clk/rockchip/clk-rockchip.c
 
-On Fri, May 04, 2018 at 01:49:56PM -0700, Andrew Morton wrote:
-> On Fri, 4 May 2018 20:50:52 +0200 Oleksij Rempel <o.rempel@pengutronix.de=
-> wrote:
->=20
-> > Hallo Andrew,
-> > I need your ACK or NACK for this patch.
-> >=20
-> > This function is used to configure external PMIC to interpret
-> > signal which will be triggered by pm_power_off as power off.
-> > Since same signal can be used for stand by, I linked PMIC configuration
-> > with pm_power_off_prepare to avoid possible conflicts.
-> >=20
-> > ...
-> >
-> > > --- a/kernel/reboot.c
-> > > +++ b/kernel/reboot.c
-> > > @@ -49,6 +49,7 @@ int reboot_force;
-> > >   */
-> > > =20
-> > >  void (*pm_power_off_prepare)(void);
-> > > +EXPORT_SYMBOL(pm_power_off_prepare);
-> > > =20
->=20
-> OK by me, but it's more of a Rafael thing.
->=20
-
---=20
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---d2dufsg5h4kwcp6r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlrtVtgACgkQdQOiSHVI
-77QObwf/cJgr0HweQIkx/33FIMM9bFE7R39Zd40PxhnmAGb2n5Jwgu1QH5AEUyRc
-f1rIROhBmAh6hgX08WEb4axdAHGfERMpiOpak999lBC9VLCN5INt3jpLwfHPi/VM
-21fzxr4jvEd9i4S9l670JWKtUPxUCAw7BBmn273tJQv1qdkNsJblqyW7XOe5qO+l
-DIsp9ScgU2VOpt2vfk+tMEkdoNa4sCejrN6jt2umP0uQoJY+UQD7PAA5xAemfssW
-aYF3aqpRlPKzn++AMgtiBDr8r3kerCx8+Klgjzt9PedqGxY2azr+ieZ1tkmYEDfg
-4k+0ebsVUca+n9M8c7tmpQVqbnedQA==
-=cKqR
------END PGP SIGNATURE-----
-
---d2dufsg5h4kwcp6r--
+diff --git a/Documentation/devicetree/bindings/clock/rockchip.txt b/Documentation/devicetree/bindings/clock/rockchip.txt
+deleted file mode 100644
+index 22f6769e5d4a..000000000000
+--- a/Documentation/devicetree/bindings/clock/rockchip.txt
++++ /dev/null
+@@ -1,77 +0,0 @@
+-Device Tree Clock bindings for arch-rockchip
+-
+-This binding uses the common clock binding[1].
+-
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-== Gate clocks ==
+-
+-These bindings are deprecated!
+-Please use the soc specific CRU bindings instead.
+-
+-The gate registers form a continuos block which makes the dt node
+-structure a matter of taste, as either all gates can be put into
+-one gate clock spanning all registers or they can be divided into
+-the 10 individual gates containing 16 clocks each.
+-The code supports both approaches.
+-
+-Required properties:
+-- compatible : "rockchip,rk2928-gate-clk"
+-- reg : shall be the control register address(es) for the clock.
+-- #clock-cells : from common clock binding; shall be set to 1
+-- clock-output-names : the corresponding gate names that the clock controls
+-- clocks : should contain the parent clock for each individual gate,
+-  therefore the number of clocks elements should match the number of
+-  clock-output-names
+-
+-Example using multiple gate clocks:
+-
+-		clk_gates0: gate-clk@200000d0 {
+-			compatible = "rockchip,rk2928-gate-clk";
+-			reg = <0x200000d0 0x4>;
+-			clocks = <&dummy>, <&dummy>,
+-				 <&dummy>, <&dummy>,
+-				 <&dummy>, <&dummy>,
+-				 <&dummy>, <&dummy>,
+-				 <&dummy>, <&dummy>,
+-				 <&dummy>, <&dummy>,
+-				 <&dummy>, <&dummy>,
+-				 <&dummy>, <&dummy>;
+-
+-			clock-output-names =
+-				"gate_core_periph", "gate_cpu_gpll",
+-				"gate_ddrphy", "gate_aclk_cpu",
+-				"gate_hclk_cpu", "gate_pclk_cpu",
+-				"gate_atclk_cpu", "gate_i2s0",
+-				"gate_i2s0_frac", "gate_i2s1",
+-				"gate_i2s1_frac", "gate_i2s2",
+-				"gate_i2s2_frac", "gate_spdif",
+-				"gate_spdif_frac", "gate_testclk";
+-
+-			#clock-cells = <1>;
+-		};
+-
+-		clk_gates1: gate-clk@200000d4 {
+-			compatible = "rockchip,rk2928-gate-clk";
+-			reg = <0x200000d4 0x4>;
+-			clocks = <&xin24m>, <&xin24m>,
+-				 <&xin24m>, <&dummy>,
+-				 <&dummy>, <&xin24m>,
+-				 <&xin24m>, <&dummy>,
+-				 <&xin24m>, <&dummy>,
+-				 <&xin24m>, <&dummy>,
+-				 <&xin24m>, <&dummy>,
+-				 <&xin24m>, <&dummy>;
+-
+-			clock-output-names =
+-				"gate_timer0", "gate_timer1",
+-				"gate_timer2", "gate_jtag",
+-				"gate_aclk_lcdc1_src", "gate_otgphy0",
+-				"gate_otgphy1", "gate_ddr_gpll",
+-				"gate_uart0", "gate_frac_uart0",
+-				"gate_uart1", "gate_frac_uart1",
+-				"gate_uart2", "gate_frac_uart2",
+-				"gate_uart3", "gate_frac_uart3";
+-
+-			#clock-cells = <1>;
+-		};
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index 59b8d320960a..98e7b9429b83 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -3,7 +3,6 @@
+ # Rockchip Clock specific Makefile
+ #
+ 
+-obj-y	+= clk-rockchip.o
+ obj-y	+= clk.o
+ obj-y	+= clk-pll.o
+ obj-y	+= clk-cpu.o
+diff --git a/drivers/clk/rockchip/clk-rockchip.c b/drivers/clk/rockchip/clk-rockchip.c
+deleted file mode 100644
+index 2c9bb81144c9..000000000000
+--- a/drivers/clk/rockchip/clk-rockchip.c
++++ /dev/null
+@@ -1,98 +0,0 @@
+-/*
+- * Copyright (c) 2013 MundoReader S.L.
+- * Author: Heiko Stuebner <heiko@sntech.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
+-
+-#include <linux/clk-provider.h>
+-#include <linux/clkdev.h>
+-#include <linux/of.h>
+-#include <linux/of_address.h>
+-
+-static DEFINE_SPINLOCK(clk_lock);
+-
+-/*
+- * Gate clocks
+- */
+-
+-static void __init rk2928_gate_clk_init(struct device_node *node)
+-{
+-	struct clk_onecell_data *clk_data;
+-	const char *clk_parent;
+-	const char *clk_name;
+-	void __iomem *reg;
+-	void __iomem *reg_idx;
+-	int flags;
+-	int qty;
+-	int reg_bit;
+-	int clkflags = CLK_SET_RATE_PARENT;
+-	int i;
+-
+-	qty = of_property_count_strings(node, "clock-output-names");
+-	if (qty < 0) {
+-		pr_err("%s: error in clock-output-names %d\n", __func__, qty);
+-		return;
+-	}
+-
+-	if (qty == 0) {
+-		pr_info("%s: nothing to do\n", __func__);
+-		return;
+-	}
+-
+-	reg = of_iomap(node, 0);
+-	if (!reg)
+-		return;
+-
+-	clk_data = kzalloc(sizeof(struct clk_onecell_data), GFP_KERNEL);
+-	if (!clk_data) {
+-		iounmap(reg);
+-		return;
+-	}
+-
+-	clk_data->clks = kzalloc(qty * sizeof(struct clk *), GFP_KERNEL);
+-	if (!clk_data->clks) {
+-		kfree(clk_data);
+-		iounmap(reg);
+-		return;
+-	}
+-
+-	flags = CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE;
+-
+-	for (i = 0; i < qty; i++) {
+-		of_property_read_string_index(node, "clock-output-names",
+-					      i, &clk_name);
+-
+-		/* ignore empty slots */
+-		if (!strcmp("reserved", clk_name))
+-			continue;
+-
+-		clk_parent = of_clk_get_parent_name(node, i);
+-
+-		/* keep all gates untouched for now */
+-		clkflags |= CLK_IGNORE_UNUSED;
+-
+-		reg_idx = reg + (4 * (i / 16));
+-		reg_bit = (i % 16);
+-
+-		clk_data->clks[i] = clk_register_gate(NULL, clk_name,
+-						      clk_parent, clkflags,
+-						      reg_idx, reg_bit,
+-						      flags,
+-						      &clk_lock);
+-		WARN_ON(IS_ERR(clk_data->clks[i]));
+-	}
+-
+-	clk_data->clk_num = qty;
+-
+-	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+-}
+-CLK_OF_DECLARE(rk2928_gate, "rockchip,rk2928-gate-clk", rk2928_gate_clk_init);
+-- 
+2.17.0
