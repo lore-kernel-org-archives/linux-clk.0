@@ -1,106 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:57382 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755482AbeEaP5P (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 31 May 2018 11:57:15 -0400
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+Date: Sat, 12 May 2018 13:13:36 +0200
+Message-ID: <1937901.oyadCYFYNo@aspire.rjw.lan>
+In-Reply-To: <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de> <20180305102524.5905-4-o.rempel@pengutronix.de> <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <152778070837.144038.4555982304713569160@swboyd.mtv.corp.google.com>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
- <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
- <20180531005827.GA17203@rob-hp-laptop> <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
- <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com> <152778070837.144038.4555982304713569160@swboyd.mtv.corp.google.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 31 May 2018 10:56:53 -0500
-Message-ID: <CAL_JsqJu6=ORfutZ5tAyNp2q2rH6P+fgJMRKw750RyFy=ptjPw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        devicetree@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Mark Brown <broonie@kernel.org>, Cristian.Birsan@microchip.com,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 31, 2018 at 10:31 AM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Rob Herring (2018-05-31 07:20:57)
->> On Thu, May 31, 2018 at 5:25 AM, Codrin Ciubotariu
->> <codrin.ciubotariu@microchip.com> wrote:
->> > On 31.05.2018 03:58, Rob Herring wrote:
->> >>
->> >> On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
->> >>>
->> >>> The I2S mux clock can be used to select the I2S input clock. The
->> >>> available parents are the peripheral and the generated clocks.
->> >>>
->> >>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
->> >>> ---
->> >>>   .../devicetree/bindings/clock/at91-clock.txt       | 34
->> >>> ++++++++++++++++++++++
->> >>>   1 file changed, 34 insertions(+)
->> >>>
->> >>> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt
->> >>> b/Documentation/devicetree/bindings/clock/at91-clock.txt
->> >>> index 51c259a..1c46b3c 100644
->> >>> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
->> >>> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
->> >>> @@ -90,6 +90,8 @@ Required properties:
->> >>>         "atmel,sama5d2-clk-audio-pll-pmc"
->> >>>                 at91 audio pll output on AUDIOPLLCLK that feeds the PMC
->> >>>                 and can be used by peripheral clock or generic clock
->> >>> +       "atmel,sama5d2-clk-i2s-mux":
->> >>> +               at91 I2S clock source selection
->> >>
->> >>
->> >> Is this boolean or takes some values. If latter, what are valid values?
->> >
->> >
->> > This is the compatible string of the clock driver.
->>
->> Ah, now I remember. AT91 uses fine grained clock nodes in DT. Is there
->> still a plan to fix this?
->
-> I'm also interested in a plan.
->
->> >>
->> >>> +               compatible = "atmel,sama5d2-clk-i2s-mux";
->> >>> +               #address-cells = <1>;
->> >>> +               #size-cells = <0>;
->> >>
->> >>
->> >> How do you address this block? My guess is you don't because it is just
->> >> part of some other block and you are just creating this node to
->> >> instantiate a driver. Just make the node for the actual h/w block a
->> >> clock provider and define the clock ids (0 and 1).
->> >
->> >
->> > This block is not addressed, but its children are. The register we access in
->> > this driver is not part of other block. It's a SFR register, accessed
->> > through syscon and it has nothing to do with the I2S IP (see SAMA5D2 DS,
->> > page 1256, fig. 44-1: I2SC Block Diagram) that is the consumer of this
->> > clock. Adding a clock-id property in the I2S node would be just like v3 of
->> > this series, with the difference that we use clock-id instead of alias id to
->> > set the clock parent, which is not how you suggested back then.
->>
->> I wasn't suggesting a clock-id property, but a clock specifier (i.e.
->> make #clock-cells 1).
->>
->> But AT91 clocks are all a mess, so I don't know what to tell you.
->>
->
-> If #clock-cells of 1 works then we should go with that. It's still weird
-> that we need random nodes to add more clks, but I guess that's how it's
-> going to be for each at91 clk driver until it changes to be one big
-> provider node.
+On Friday, May 4, 2018 8:50:52 PM CEST Oleksij Rempel wrote:
+> Hallo Andrew,
+> I need your ACK or NACK for this patch.
+> 
+> This function is used to configure external PMIC to interpret
+> signal which will be triggered by pm_power_off as power off.
+> Since same signal can be used for stand by, I linked PMIC configuration
+> with pm_power_off_prepare to avoid possible conflicts.
+> 
+> On Mon, Mar 05, 2018 at 11:25:20AM +0100, Oleksij Rempel wrote:
+> > Export pm_power_off_prepare. It is needed to implement power off on
+> > Freescale/NXP iMX6 based boards with external power management
+> > integrated circuit (PMIC).
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> >  kernel/reboot.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/kernel/reboot.c b/kernel/reboot.c
+> > index e4ced883d8de..350be6baa60d 100644
+> > --- a/kernel/reboot.c
+> > +++ b/kernel/reboot.c
+> > @@ -49,6 +49,7 @@ int reboot_force;
+> >   */
+> >  
+> >  void (*pm_power_off_prepare)(void);
+> > +EXPORT_SYMBOL(pm_power_off_prepare);
 
-Seems to me that clock additions could use a new binding and we start
-with a new driver that handles these few clocks initially. But I
-haven't looked whether both can coexist.
+Why not EXPORT_SYMBOL_GPL() ?
 
-Rob
+> >  
+> >  /**
+> >   *	emergency_restart - reboot the system
+> 
+> 
