@@ -1,106 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42983 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752396AbeERKd1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 06:33:27 -0400
-Message-ID: <1526639598.3948.3.camel@pengutronix.de>
-Subject: Re: [PATCH v5 02/12] media: staging/imx7: add imx7 CSI subdev driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Rui Miguel Silva <rui.silva@linaro.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
-Date: Fri, 18 May 2018 12:33:18 +0200
-In-Reply-To: <20180518092806.3829-3-rui.silva@linaro.org>
-References: <20180518092806.3829-1-rui.silva@linaro.org>
-         <20180518092806.3829-3-rui.silva@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v10_00/27]_ARM:_davinci:_convert_to_common_clo?=
+ =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <20180509172606.29387-1-david@lechnology.com>
+ <45ce3129-4a9e-54d2-e594-49b451571842@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <0b62ac7b-aa02-6641-2a02-6cefb4076262@lechnology.com>
+Date: Sat, 12 May 2018 16:11:06 -0500
+MIME-Version: 1.0
+In-Reply-To: <45ce3129-4a9e-54d2-e594-49b451571842@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-05-18 at 10:27 +0100, Rui Miguel Silva wrote:
-> This add the media entity subdevice and control driver for the i.MX7
-> CMOS Sensor Interface.
+On 05/11/2018 10:26 AM, Sekhar Nori wrote:
+> Hi David,
 > 
-> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
-> ---
-[...]
-> +static int imx7_csi_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->of_node;
-> +	struct imx7_csi *csi;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	csi = devm_kzalloc(&pdev->dev, sizeof(*csi), GFP_KERNEL);
-> +	if (!csi)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, &csi->sd);
-> +	csi->dev = dev;
-> +
-> +	ret = imx7_csi_parse_dt(csi);
-> +	if (ret < 0)
-> +		return -ENODEV;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	csi->irq = platform_get_irq(pdev, 0);
-> +	if (!res || csi->irq < 0) {
-> +		dev_err(dev, "Missing platform resources data\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	csi->regbase = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(csi->regbase)) {
-> +		dev_err(dev, "Failed platform resources map\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	spin_lock_init(&csi->irqlock);
-> +	mutex_init(&csi->lock);
-> +
-> +	/* install interrupt handler */
-> +	ret = devm_request_irq(dev, csi->irq, imx7_csi_irq_handler, 0, "csi",
-> +			       (void *)csi);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Request CSI IRQ failed.\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	/* add media device */
-> +	csi->imxmd = imx_media_dev_init(dev, false);
-> +	if (IS_ERR(csi->imxmd))
-> +		return PTR_ERR(csi->imxmd);
-> +
-> +	ret = imx_media_of_add_csi(csi->imxmd, node);
-> +	if (ret < 0)
-> +		goto media_cleanup;
-> +
-> +	ret = imx_media_dev_notifier_register(csi->imxmd);
-> +	if (ret < 0)
-> +		goto media_cleanup;
-> +
-> +	v4l2_subdev_init(&csi->sd, &imx7_csi_subdev_ops);
-> +	v4l2_set_subdevdata(&csi->sd, csi);
-> +	csi->sd.internal_ops = &imx7_csi_internal_ops;
-> +	csi->sd.entity.ops = &imx7_csi_entity_ops;
-> +	csi->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
-> +	csi->sd.dev = &pdev->dev;
-> +	csi->sd.owner = THIS_MODULE;
-> +	csi->sd.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
-> +	csi->sd.grp_id = IMX_MEDIA_GRP_ID_CSI0;
+> On Wednesday 09 May 2018 10:55 PM, David Lechner wrote:
+>> This series converts mach-davinci to use the common clock framework.
+>>
+>> The series works like this, the first 3 patches fix some issues with the clock
+>> drivers that have already been accepted into the mainline kernel.
+> 
+> I have not yet looked at the patches, but I got a bunch of W=1 warnings
+> and some sparse warnings when building your branch. Please take a look
+> at these. Unfortunately the output is mixed between sparse and compiler.
+> The "expression using sizeof(void)" can be ignored as its a known issue
+> with sparse, I believe.
+> 
 
-See my comments on the first patch. Since grp_id specifies an IPU CSI0,
-it would be better to use a different id here to make clear this is a
-standalone CSI as opposed to an IPU CSI.
+I've started a common-clk-v11 branch on my GitHub that fixes most of these.
+Also submitted "clk: davinci: psc-dm355: fix ASP0/1 clkdev lookups" that
+fixes a couple more. I've purposely not fixed the davinci_clk_reset_* functions
+since there is already a patch that will remove those functions in the future.
 
-regards
-Philipp
+I'll wait a bit longer for DT review before re-sending v11 of this series.
