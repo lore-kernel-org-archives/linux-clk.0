@@ -1,214 +1,80 @@
-Return-Path: <ilialin@codeaurora.org>
-From: <ilialin@codeaurora.org>
-To: "'Sudeep Holla'" <sudeep.holla@arm.com>,
-	<mturquette@baylibre.com>,
-	<sboyd@kernel.org>,
-	<robh@kernel.org>,
-	<mark.rutland@arm.com>,
-	<viresh.kumar@linaro.org>,
-	<nm@ti.com>,
-	<lgirdwood@gmail.com>,
-	<broonie@kernel.org>,
-	<andy.gross@linaro.org>,
-	<david.brown@linaro.org>,
-	<catalin.marinas@arm.com>,
-	<will.deacon@arm.com>,
-	<rjw@rjwysocki.net>,
-	<linux-clk@vger.kernel.org>
-Cc: <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-soc@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<rnayak@codeaurora.org>,
-	<amit.kucheria@linaro.org>,
-	<nicolas.dechesne@linaro.org>,
-	<celster@codeaurora.org>,
-	<tfinkel@codeaurora.org>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <1526729701-8589-1-git-send-email-ilialin@codeaurora.org> <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com> <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org> <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com> 
-In-Reply-To: 
-Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Date: Tue, 22 May 2018 10:59:07 +0300
-Message-ID: <001401d3f1a2$c7328850$559798f0$@codeaurora.org>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 2/2] clk: davinci: psc-dm365: fix few clocks
+To: Sekhar Nori <nsekhar@ti.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Linux clk Mailing List <linux-clk@vger.kernel.org>,
+ Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+ Kevin Hilman <khilman@kernel.org>
+References: <20180511141037.25250-1-nsekhar@ti.com>
+ <20180511141037.25250-3-nsekhar@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <afdf0f39-1035-117e-a319-f615ac109902@lechnology.com>
+Date: Fri, 11 May 2018 20:42:36 -0500
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
+In-Reply-To: <20180511141037.25250-3-nsekhar@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-OK, I think I found out the way. Would this be correct?
--------------------------------------------------------------------------=
-----------------------
-extern struct cpu_topology cpu_topology[NR_CPUS];
+On 05/11/2018 09:10 AM, Sekhar Nori wrote:
+> Fix parent of emac and voice codec PSC clocks. This now matches
+> existing implementation in arch/arm/mach-davinci/dm365.c
+> 
+> Also, there is only one power domain on DM365. Fix the power
+> domain of voice codec and vpss dac modules.
+> 
+> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> ---
+>   drivers/clk/davinci/psc-dm365.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+> index 5b5b55b0b59a..beeda10fd2f0 100644
+> --- a/drivers/clk/davinci/psc-dm365.c
+> +++ b/drivers/clk/davinci/psc-dm365.c
+> @@ -65,9 +65,9 @@ static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
+>   	LPSC(31, 0, arm,         pll2_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
+>   	LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
+>   	LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
+> -	LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
+> -	LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
+> -	LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
+> +	LPSC(40, 0, emac,        pll1_sysclk4, emac_clkdev,        0),
+> +	LPSC(44, 0, voice_codec, pll2_sysclk4, voice_codec_clkdev, 0),
+> +	LPSC(46, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
+>   	LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
+>   	LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
+>   	{ }
+> 
 
-static struct device *qcom_cpufreq_kryo_get_cluster_lead(int cluster)
-{
-	unsigned cpu;
+Slightly off topic...
 
-	for_each_possible_cpu(cpu) {
-		if ((cluster =3D=3D cpu_topology[cpu].cluster_id) &&
-			(0 =3D=3D cpu_topology[cpu].core_id))
-			return get_cpu_device(cpu);
-	}
+Hmm... Looking at the TRM, I see that there are a bunch of mux clocks that we
+have not implemented for the DM365 (all of the clocks in the VPSS_CLK_CTRL and
+PERI_CLKCTL registers). I'm wondering if we should be creating drivers for
+those like the DA8XX CFGCHIP clock driver.
 
-	return NULL;
-}
--------------------------------------------------------------------------=
-----------------------
+Back on topic...
 
-> -----Original Message-----
-> From: ilialin@codeaurora.org <ilialin@codeaurora.org>
-> Sent: Tuesday, May 22, 2018 09:56
-> To: 'Sudeep Holla' <sudeep.holla@arm.com>; 'mturquette@baylibre.com'
-> <mturquette@baylibre.com>; 'sboyd@kernel.org' <sboyd@kernel.org>;
-> 'robh@kernel.org' <robh@kernel.org>; 'mark.rutland@arm.com'
-> <mark.rutland@arm.com>; 'viresh.kumar@linaro.org'
-> <viresh.kumar@linaro.org>; 'nm@ti.com' <nm@ti.com>;
-> 'lgirdwood@gmail.com' <lgirdwood@gmail.com>; 'broonie@kernel.org'
-> <broonie@kernel.org>; 'andy.gross@linaro.org' <andy.gross@linaro.org>;
-> 'david.brown@linaro.org' <david.brown@linaro.org>;
-> 'catalin.marinas@arm.com' <catalin.marinas@arm.com>;
-> 'will.deacon@arm.com' <will.deacon@arm.com>; 'rjw@rjwysocki.net'
-> <rjw@rjwysocki.net>; 'linux-clk@vger.kernel.org' <linux-
-> clk@vger.kernel.org>
-> Cc: 'devicetree@vger.kernel.org' <devicetree@vger.kernel.org>; 'linux-
-> kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>; 'linux-
-> pm@vger.kernel.org' <linux-pm@vger.kernel.org>; 'linux-arm-
-> msm@vger.kernel.org' <linux-arm-msm@vger.kernel.org>; 'linux-
-> soc@vger.kernel.org' <linux-soc@vger.kernel.org>; 'linux-arm-
-> kernel@lists.infradead.org' <linux-arm-kernel@lists.infradead.org>;
-> 'rnayak@codeaurora.org' <rnayak@codeaurora.org>;
-> 'amit.kucheria@linaro.org' <amit.kucheria@linaro.org>;
-> 'nicolas.dechesne@linaro.org' <nicolas.dechesne@linaro.org>;
-> 'celster@codeaurora.org' <celster@codeaurora.org>;
-> 'tfinkel@codeaurora.org' <tfinkel@codeaurora.org>
-> Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
->=20
->=20
->=20
-> > -----Original Message-----
-> > From: Sudeep Holla <sudeep.holla@arm.com>
-> > Sent: Monday, May 21, 2018 16:05
-> > To: ilialin@codeaurora.org; mturquette@baylibre.com; =
-sboyd@kernel.org;
-> > robh@kernel.org; mark.rutland@arm.com; viresh.kumar@linaro.org;
-> > nm@ti.com; lgirdwood@gmail.com; broonie@kernel.org;
-> > andy.gross@linaro.org; david.brown@linaro.org;
-> > catalin.marinas@arm.com; will.deacon@arm.com; rjw@rjwysocki.net;
-> > linux-clk@vger.kernel.org
-> > Cc: Sudeep Holla <sudeep.holla@arm.com>; devicetree@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; linux-pm@vger.kernel.org; linux-arm-
-> > msm@vger.kernel.org; linux-soc@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; rnayak@codeaurora.org;
-> > amit.kucheria@linaro.org; nicolas.dechesne@linaro.org;
-> > celster@codeaurora.org; tfinkel@codeaurora.org
-> > Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-> >
-> >
-> >
-> > On 21/05/18 13:57, ilialin@codeaurora.org wrote:
-> > >
-> > [...]
-> >
-> > >>> +#include <linux/cpu.h>
-> > >>> +#include <linux/err.h>
-> > >>> +#include <linux/init.h>
-> > >>> +#include <linux/kernel.h>
-> > >>> +#include <linux/module.h>
-> > >>> +#include <linux/nvmem-consumer.h> #include <linux/of.h> =
-#include
-> > >>> +<linux/platform_device.h> #include <linux/pm_opp.h> #include
-> > >>> +<linux/slab.h> #include <linux/soc/qcom/smem.h>
-> > >>> +
-> > >>> +#define MSM_ID_SMEM	137
-> > >>> +#define SILVER_LEAD	0
-> > >>> +#define GOLD_LEAD	2
-> > >>> +
-> > >>
-> > >> So I gather form other emails, that these are physical cpu
-> > >> number(not even unique identifier like MPIDR). Will this work on
-> > >> parts or platforms that need to boot in GOLD LEAD cpus.
-> > >
-> > > The driver is for Kryo CPU, which (and AFAIK all multicore MSMs)
-> > > always boots on the CPU0.
-> >
-> >
-> > That may be true and I am not that bothered about it. But assuming
-> > physical ordering from the logical cpu number is *incorrect* and =
-will
-> > break if kernel decides to change the allocation algorithm. Kernel
-> > provides no guarantee on that, so you need to depend on some =
-physical
-> > ID or may be DT to achieve what your want. But the current code as =
-it
-> stands is wrong.
->=20
-> Got your point. In fact CPUs are numbered 0-3 and ordered into 2 =
-clusters in
-> the DT:
->=20
-> cpus {
-> 	#address-cells =3D <2>;
-> 	#size-cells =3D <0>;
->=20
-> 	CPU0: cpu@0 {
-> 		...
-> 		reg =3D <0x0 0x0>;
-> 		...
-> 	};
->=20
-> 	CPU1: cpu@1 {
-> 		...
-> 		reg =3D <0x0 0x1>;
-> 		...
-> 	};
->=20
-> 	CPU2: cpu@100 {
-> 		...
-> 		reg =3D <0x0 0x100>;
-> 		...
-> 	};
->=20
-> 	CPU3: cpu@101 {
-> 		...
-> 		reg =3D <0x0 0x101>;
-> 		...
-> 	};
->=20
-> 	cpu-map {
-> 		cluster0 {
-> 			core0 {
-> 				cpu =3D <&CPU0>;
-> 			};
->=20
-> 			core1 {
-> 				cpu =3D <&CPU1>;
-> 			};
-> 		};
->=20
-> 		cluster1 {
-> 			core0 {
-> 				cpu =3D <&CPU2>;
-> 			};
->=20
-> 			core1 {
-> 				cpu =3D <&CPU3>;
-> 			};
-> 		};
-> 	};
-> };
->=20
-> As far, as I understand, they are probed in the same order. However, =
-to be
-> certain that the physical CPU is the one I intend to configure, I have =
-to fetch
-> the device structure pointer for the cpu-map -> clusterX -> core0 -> =
-cpu path.
-> Could you suggest a kernel API to do that?
->=20
->=20
->=20
-> >
-> > --
-> > Regards,
-> > Sudeep
+The emac fix here looks good.
+
+The TRM (sprufg5a.pdf) shows that there is a DIV2 clock (part of the
+PERI_CLKCTL register) between PLL2 SYSCLK4 and Voice Codec in Figure 5,
+It also shows PLL1 SYSCLK4 as a second parent clock to Voice Codec, however
+this dependency has probably gone unnoticed because so many other devices
+also use that same clock, it will pretty much always be on. In Figure 38,
+on the other hand, PLL1 SYSCLK4 is shown as the only parent of Voice Codec.
+
+So, I am thinking that pll1_sysclk4 is the correct parent for the
+voice_codec clock here since it is the only one listed in Figure 38
+(which is in the PSC section of the TRM). The pll2_sysclk4 clock should
+probably be used by the video codec device driver directly (well, the
+DIV2 clock really, but we don't have a driver for that yet).
+
+The vpss_dac clock in not very clear in the TRM. In Table 39, the name
+for LPSC 46, which we are calling "vpss_dac", is "VDAC CLK". In Figure
+37, however, there is not a node that matches exactly. There is "VIDEO
+DAC", which I take to be the same clock though. This has parent clocks
+of PLL1 SYSCLK6 and PLL1 AUXCLK. So, I am guessing that pll1_sysclk6
+should be the parent here rather than pll1_sysclk3. According to Figure
+5, PLL1 SYSCLK3 only feeds HDVPID and MJCP, which I don't think are the
+same as the video DAC since they are also listed separately in Figure 5.
