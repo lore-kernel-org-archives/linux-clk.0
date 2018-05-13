@@ -1,323 +1,105 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Mon, 28 May 2018 14:41:05 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
- mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com,
- krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180528001940.7f54caff@xps13>
-References: <20180527215442.14760-4-stefan@agner.ch>
- <20180528001940.7f54caff@xps13>
-Message-ID: <fc2900acfbcdeeef0a3a9c8339aedada@agner.ch>
+In-Reply-To: <20180502115437.zlu2rafrguufutvp@flea>
+References: <20180501161227.2110-1-wens@csie.org> <20180501161227.2110-16-wens@csie.org>
+ <20180502095118.rqnfwy576xh6ercm@flea> <CAGb2v67pvL58Pes1ZFDZtPu_nL2+m6dgf_XOOymG9nVAkXVpEw@mail.gmail.com>
+ <29E5670C-9D17-4EC1-AAAC-0CF33DD0534C@aosc.io> <20180502115437.zlu2rafrguufutvp@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 13 May 2018 12:37:49 -0700
+Message-ID: <CAGb2v64xTNqQQSppw2NZoLn+ViQNQLytn1EukLqw+HJzf1=5ig@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 15/15] arm64: dts: allwinner: a64: add SRAM
+ controller device tree node
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Icenowy Zheng <icenowy@aosc.io>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+	devicetree <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	netdev <netdev@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, Corentin Labbe <clabbe.montjoie@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28.05.2018 00:19, Miquel Raynal wrote:
-> Hi Stefan,
-> 
-> A few more comments here.
-> 
-> On Sun, 27 May 2018 23:54:39 +0200, Stefan Agner <stefan@agner.ch>
-> wrote:
-> 
->> Add support for the NAND flash controller found on NVIDIA
->> Tegra 2 SoCs. This implementation does not make use of the
->> command queue feature. Regular operations/data transfers are
->> done in PIO mode. Page read/writes with hardware ECC make
->> use of the DMA for data transfer.
+On Wed, May 2, 2018 at 4:54 AM, Maxime Ripard <maxime.ripard@bootlin.com> w=
+rote:
+> On Wed, May 02, 2018 at 06:19:51PM +0800, Icenowy Zheng wrote:
 >>
->> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  MAINTAINERS                       |   7 +
->>  drivers/mtd/nand/raw/Kconfig      |   6 +
->>  drivers/mtd/nand/raw/Makefile     |   1 +
->>  drivers/mtd/nand/raw/tegra_nand.c | 999 ++++++++++++++++++++++++++++++
->>  4 files changed, 1013 insertions(+)
->>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
 >>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 58b9861ccf99..8cbbb7111742 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -13844,6 +13844,13 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
->>  S:	Supported
->>  F:	drivers/input/keyboard/tegra-kbc.c
+>> =E4=BA=8E 2018=E5=B9=B45=E6=9C=882=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
+5:53:21, Chen-Yu Tsai <wens@csie.org> =E5=86=99=E5=88=B0:
+>> >On Wed, May 2, 2018 at 5:51 PM, Maxime Ripard
+>> ><maxime.ripard@bootlin.com> wrote:
+>> >> Hi,
+>> >>
+>> >> On Wed, May 02, 2018 at 12:12:27AM +0800, Chen-Yu Tsai wrote:
+>> >>> From: Icenowy Zheng <icenowy@aosc.io>
+>> >>>
+>> >>> Allwinner A64 has a SRAM controller, and in the device tree
+>> >currently
+>> >>> we have a syscon node to enable EMAC driver to access the EMAC clock
+>> >>> register. As SRAM controller driver can now export regmap for this
+>> >>> register, replace the syscon node to the SRAM controller device
+>> >node,
+>> >>> and let EMAC driver to acquire its EMAC clock regmap.
+>> >>>
+>> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> >>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> >>> ---
+>> >>>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 23
+>> >+++++++++++++++----
+>> >>>  1 file changed, 19 insertions(+), 4 deletions(-)
+>> >>>
+>> >>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> >b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> >>> index 1b2ef28c42bd..1c37659d9d41 100644
+>> >>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> >>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+>> >>> @@ -168,10 +168,25 @@
+>> >>>               #size-cells =3D <1>;
+>> >>>               ranges;
+>> >>>
+>> >>> -             syscon: syscon@1c00000 {
+>> >>> -                     compatible =3D
+>> >"allwinner,sun50i-a64-system-controller",
+>> >>> -                             "syscon";
+>> >>> +             sram_controller: sram-controller@1c00000 {
+>> >>> +                     compatible =3D
+>> >"allwinner,sun50i-a64-sram-controller";
+>> >>
+>> >> I don't think there's anything preventing us from keeping the
+>> >> -system-controller compatible. It's what was in the DT before, and
+>> >> it's how it's called in the datasheet.
+>> >
+>> >I actually meant to ask you about this. The -system-controller
+>> >compatible matches the datasheet better. Maybe we should just
+>> >switch to that one?
 >>
->> +TEGRA NAND DRIVER
->> +M:	Stefan Agner <stefan@agner.ch>
->> +M:	Lucas Stach <dev@lynxeye.de>
->> +S:	Maintained
->> +F:	Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> 
-> I think most MTD bindings use '-' instead of ','. I don't have a
-> preference, it's just for coherence.
-> 
+>> No, if we do the switch the system-controller compatible,
+>> the device will be probed on the same memory region with
+>> a syscon on old DTs.
+>
+> The device hasn't magically changed either. Maybe we just need to add
+> a check to make sure we don't have the syscon compatible in the SRAM
+> driver probe so that the double driver issue doesn't happen?
 
-Sure, will use a dash.
+The syscon interface (which is not even a full blown device driver)
+only looks at the "syscon" compatible. Either way we're removing that
+part from the device tree so things should be ok for new device trees.
+As Maxime mentioned we can do a check for the syscon compatible and
+either give a warning to the user asking them to update their device
+tree, or not register our custom regmap, or not probe the SRAM driver.
+Personally I prefer the first option. The system controller block is
+probed before any syscon users, so we should be fine, given the dwmac
+driver goes the custom regmap path first.
 
->> +F:	drivers/mtd/nand/raw/tegra_nand.c
->> +
->>  TEGRA PWM DRIVER
->>  M:	Thierry Reding <thierry.reding@gmail.com>
->>  S:	Supported
->> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
->> index 19a2b283fbbe..012c63c6ab47 100644
->> --- a/drivers/mtd/nand/raw/Kconfig
->> +++ b/drivers/mtd/nand/raw/Kconfig
->> @@ -534,4 +534,10 @@ config MTD_NAND_MTK
->>  	  Enables support for NAND controller on MTK SoCs.
->>  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
->>
->> +config MTD_NAND_TEGRA
->> +	tristate "Support for NAND on NVIDIA Tegra"
->> +	depends on ARCH_TEGRA || COMPILE_TEST
->> +	help
->> +	  Enables support for NAND flash on NVIDIA Tegra SoC based boards.
-> 
-> Please make the term "controller" appear because it's mostly a
-> controller driver that you're adding.
-> 
+BTW, I still might end up changing the compatible. The manual uses
+"system control", not "system controller", which I think makes sense,
+since it is just a bunch of register files, kind of like the GRF
+(General Register Files) block found in Rockchip SoCs [1], and not an
+actual "controller".
 
-Ok.
+ChenYu
 
->> +
->>  endif # MTD_NAND
->> diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
->> index 165b7ef9e9a1..d5a5f9832b88 100644
->> --- a/drivers/mtd/nand/raw/Makefile
->> +++ b/drivers/mtd/nand/raw/Makefile
->> @@ -56,6 +56,7 @@ obj-$(CONFIG_MTD_NAND_HISI504)	        += hisi504_nand.o
->>  obj-$(CONFIG_MTD_NAND_BRCMNAND)		+= brcmnand/
->>  obj-$(CONFIG_MTD_NAND_QCOM)		+= qcom_nandc.o
->>  obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
->> +obj-$(CONFIG_MTD_NAND_TEGRA)		+= tegra_nand.o
->>
->>  nand-objs := nand_base.o nand_bbt.o nand_timings.o nand_ids.o
->>  nand-objs += nand_amd.o
-> 
-> [...]
-> 
->> +static int tegra_nand_setup_data_interface(struct mtd_info *mtd, int csline,
->> +					   const struct nand_data_interface *conf)
->> +{
->> +	struct nand_chip *chip = mtd_to_nand(mtd);
->> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
->> +	const struct nand_sdr_timings *timings;
->> +
->> +	timings = nand_get_sdr_timings(conf);
->> +	if (IS_ERR(timings))
->> +		return PTR_ERR(timings);
->> +
->> +	if (csline == NAND_DATA_IFACE_CHECK_ONLY)
->> +		return 0;
->> +
->> +	tegra_nand_setup_timing(ctrl, timings);
-> 
-> Is this indirection really needed?
-> 
-
-This evolved due to historic reasons, will get rid of it.
-
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_chips_init(struct device *dev,
->> +				 struct tegra_nand_controller *ctrl)
->> +{
->> +	struct device_node *np = dev->of_node;
->> +	struct device_node *np_nand;
->> +	int nchips = of_get_child_count(np);
->> +	struct tegra_nand_chip *nand;
->> +	struct mtd_info *mtd;
->> +	struct nand_chip *chip;
->> +	unsigned long config, bch_config = 0;
->> +	int bits_per_step;
->> +	int err;
->> +
->> +	if (nchips != 1) {
->> +		dev_err(dev, "currently only one NAND chip supported\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	np_nand = of_get_next_child(np, NULL);
->> +
->> +	nand = devm_kzalloc(dev, sizeof(*nand), GFP_KERNEL);
->> +	if (!nand) {
->> +		dev_err(dev, "could not allocate chip structure\n");
->> +		return -ENOMEM;
->> +	}
->> +
->> +	nand->wp_gpio = devm_gpiod_get_optional(dev, "wp", GPIOD_OUT_LOW);
->> +
->> +	if (IS_ERR(nand->wp_gpio)) {
->> +		err = PTR_ERR(nand->wp_gpio);
->> +		dev_err(dev, "failed to request WP GPIO: %d\n", err);
->> +		return err;
->> +	}
->> +
->> +	chip = &nand->chip;
->> +	chip->controller = &ctrl->controller;
->> +	ctrl->chip = chip;
->> +
->> +	mtd = nand_to_mtd(chip);
->> +
->> +	mtd->dev.parent = dev;
->> +	mtd->name = "tegra_nand";
->> +	mtd->owner = THIS_MODULE;
->> +
->> +	nand_set_flash_node(chip, np_nand);
->> +
->> +	chip->options = NAND_NO_SUBPAGE_WRITE | NAND_USE_BOUNCE_BUFFER;
->> +	chip->exec_op = tegra_nand_exec_op;
->> +	chip->select_chip = tegra_nand_select_chip;
->> +	chip->setup_data_interface = tegra_nand_setup_data_interface;
->> +
->> +	err = nand_scan_ident(mtd, 1, NULL);
->> +	if (err)
->> +		return err;
->> +
->> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
->> +		chip->bbt_options |= NAND_BBT_NO_OOB;
->> +
->> +	chip->ecc.mode = NAND_ECC_HW;
->> +	if (!chip->ecc.size)
->> +		chip->ecc.size = 512;
->> +	if (chip->ecc.size != 512)
->> +		return -EINVAL;
-> 
-> This is useless. You can force ecc.size to 512 and forget about the DT
-> property (please update the DT bindings).
-> 
-
-Ok.
-
->> +
->> +	chip->ecc.read_page = tegra_nand_read_page_hwecc;
->> +	chip->ecc.write_page = tegra_nand_write_page_hwecc;
->> +	/* Not functional for unknown reason...
->> +	chip->ecc.read_page_raw = tegra_nand_read_page;
->> +	chip->ecc.write_page_raw = tegra_nand_write_page;
-> 
-> Please add the _raw suffix to these helpers.
-> 
-
-They are also used from tegra_nand_read_page_hwecc, that is why I was
-hesitant to add _raw...
-
->> +	*/
->> +	config = readl(ctrl->regs + CFG);
->> +	config |= CFG_PIPE_EN | CFG_SKIP_SPARE | CFG_SKIP_SPARE_SIZE_4;
->> +
->> +	if (chip->options & NAND_BUSWIDTH_16)
->> +		config |= CFG_BUS_WIDTH_16;
->> +
->> +	switch (chip->ecc.algo) {
->> +	case NAND_ECC_RS:
->> +		bits_per_step = BITS_PER_STEP_RS * chip->ecc.strength;
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_rs_ops);
->> +		switch (chip->ecc.strength) {
->> +		case 4:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_4;
->> +			break;
->> +		case 6:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_6;
->> +			break;
->> +		case 8:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_8;
->> +			break;
->> +		default:
->> +			dev_err(dev, "ECC strength %d not supported\n",
->> +				chip->ecc.strength);
->> +			return -EINVAL;
->> +		}
->> +		break;
->> +	case NAND_ECC_BCH:
->> +		bits_per_step = BITS_PER_STEP_BCH * chip->ecc.strength;
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_bch_ops);
->> +		switch (chip->ecc.strength) {
->> +		case 4:
->> +			bch_config = BCH_TVAL_4;
->> +			break;
->> +		case 8:
->> +			bch_config = BCH_TVAL_8;
->> +			break;
->> +		case 14:
->> +			bch_config = BCH_TVAL_14;
->> +			break;
->> +		case 16:
->> +			bch_config = BCH_TVAL_16;
->> +			break;
->> +		default:
->> +			dev_err(dev, "ECC strength %d not supported\n",
->> +				chip->ecc.strength);
->> +			return -EINVAL;
->> +		}
->> +		break;
->> +	default:
->> +		dev_err(dev, "ECC algorithm not supported\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	chip->ecc.bytes = DIV_ROUND_UP(bits_per_step, 8);
->> +
->> +	switch (mtd->writesize) {
->> +	case 256:
->> +		config |= CFG_PS_256;
->> +		break;
->> +	case 512:
->> +		config |= CFG_PS_512;
->> +		break;
->> +	case 1024:
->> +		config |= CFG_PS_1024;
->> +		break;
->> +	case 2048:
->> +		config |= CFG_PS_2048;
->> +		break;
->> +	case 4096:
->> +		config |= CFG_PS_4096;
->> +		break;
->> +	default:
->> +		dev_err(dev, "unhandled writesize %d\n", mtd->writesize);
->> +		return -ENODEV;
->> +	}
->> +
->> +	writel(config, ctrl->regs + CFG);
->> +	writel(bch_config, ctrl->regs + BCH_CONFIG);
->> +
->> +	err = nand_scan_tail(mtd);
->> +	if (err)
->> +		return err;
->> +
->> +	config |= CFG_TAG_BYTE_SIZE(mtd_ooblayout_count_freebytes(mtd) - 1);
->> +	writel(config, ctrl->regs + CFG);
->> +
->> +	err = mtd_device_register(mtd, NULL, 0);
->> +	if (err)
-> 
-> Missing nand_cleanup() in the error path.
-> 
-
-Ok.
-
---
-Stefan
-
-
->> +		return err;
->> +
->> +	return 0;
->> +}
->> +
-> 
-> [...]
+[1] https://www.kernel.org/doc/Documentation/devicetree/bindings/soc/rockch=
+ip/grf.txt
