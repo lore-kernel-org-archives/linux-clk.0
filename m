@@ -1,36 +1,60 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Tue, 15 May 2018 14:49:33 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v7 14/14] dt: qcom: Add qcom-cpufreq-kryo driver
- configuration
-Message-ID: <20180515091933.2psozeaamhl2coiz@vireshk-i7>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
- <1526375616-16904-15-git-send-email-ilialin@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526375616-16904-15-git-send-email-ilialin@codeaurora.org>
+Return-Path: <christophe.jaillet@wanadoo.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@st.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] clk: stm32mp1: Fix a memory leak in 'clk_stm32_register_gate_ops()'
+Date: Sun, 13 May 2018 13:17:04 +0200
+Message-Id: <20180513111704.31842-1-christophe.jaillet@wanadoo.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15-05-18, 12:13, Ilia Lin wrote:
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/apq8096-db820c.dts |   2 +-
->  arch/arm64/boot/dts/qcom/msm8996.dtsi       | 311 +++++++++++++++++++++++++++-
->  2 files changed, 310 insertions(+), 3 deletions(-)
+We allocate some memory which is neither used, nor referenced by anything.
+So axe it.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch as not been compile-tested, I don't have the corresponding arch
+and have not taken time to cross-compile it.
+---
+ drivers/clk/clk-stm32mp1.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index edd3cf451401..dfb9cb5bd0c4 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -579,14 +579,9 @@ clk_stm32_register_gate_ops(struct device *dev,
+ 			    spinlock_t *lock)
+ {
+ 	struct clk_init_data init = { NULL };
+-	struct clk_gate *gate;
+ 	struct clk_hw *hw;
+ 	int ret;
+ 
+-	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+-	if (!gate)
+-		return ERR_PTR(-ENOMEM);
+-
+ 	init.name = name;
+ 	init.parent_names = &parent_name;
+ 	init.num_parents = 1;
+@@ -604,10 +599,8 @@ clk_stm32_register_gate_ops(struct device *dev,
+ 	hw->init = &init;
+ 
+ 	ret = clk_hw_register(dev, hw);
+-	if (ret) {
+-		kfree(gate);
++	if (ret)
+ 		hw = ERR_PTR(ret);
+-	}
+ 
+ 	return hw;
+ }
 -- 
-viresh
+2.17.0
