@@ -1,109 +1,87 @@
-Return-Path: <ilialin@codeaurora.org>
-From: <ilialin@codeaurora.org>
-To: "'Viresh Kumar'" <viresh.kumar@linaro.org>,
-	"'Amit Kucheria'" <amit.kucheria@linaro.org>
-Cc: "'Michael Turquette'" <mturquette@baylibre.com>,
-	<sboyd@kernel.org>,
-	"'Rob Herring'" <robh@kernel.org>,
-	"'Mark Rutland'" <mark.rutland@arm.com>,
-	<nm@ti.com>,
-	<lgirdwood@gmail.com>,
-	<broonie@kernel.org>,
-	"'Andy Gross'" <andy.gross@linaro.org>,
-	"'David Brown'" <david.brown@linaro.org>,
-	<catalin.marinas@arm.com>,
-	<will.deacon@arm.com>,
-	"'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-	<linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	"'LKML'" <linux-kernel@vger.kernel.org>,
-	"'Linux PM list'" <linux-pm@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-soc@vger.kernel.org>,
-	"'lakml'" <linux-arm-kernel@lists.infradead.org>,
-	"'Rajendra Nayak'" <rnayak@codeaurora.org>,
-	<nicolas.dechesne@linaro.org>,
-	<celster@codeaurora.org>,
-	<tfinkel@codeaurora.org>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-13-git-send-email-ilialin@codeaurora.org> <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com> <20180516141132.aqjif7d5motmmnlo@vireshk-i7>
-In-Reply-To: <20180516141132.aqjif7d5motmmnlo@vireshk-i7>
-Subject: RE: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-Date: Thu, 17 May 2018 10:50:34 +0300
-Message-ID: <017601d3edb3$c0d96d40$428c47c0$@codeaurora.org>
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, "ard.biesheuvel@linaro.org"
+	<ard.biesheuvel@linaro.org>, "mingo@kernel.org" <mingo@kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "hkallweit1@gmail.com"
+	<hkallweit1@gmail.com>, "keescook@chromium.org" <keescook@chromium.org>,
+	"dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH v6 09/11] firmware: xilinx: Add debugfs for clock control
+ APIs
+Date: Mon, 14 May 2018 19:18:44 +0000
+Message-ID: <SN1PR02MB3758191654612CFC261A38BEB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+ <1523389127-14243-10-git-send-email-jollys@xilinx.com>
+ <5bcc47f7-3352-f0e6-29c5-78d5be96c1d1@arm.com>
+In-Reply-To: <5bcc47f7-3352-f0e6-29c5-78d5be96c1d1@arm.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-> -----Original Message-----
-> From: Viresh Kumar <viresh.kumar@linaro.org>
-> Sent: Wednesday, May 16, 2018 17:12
-> To: Amit Kucheria <amit.kucheria@linaro.org>
-> Cc: Ilia Lin <ilialin@codeaurora.org>; Michael Turquette
-> <mturquette@baylibre.com>; sboyd@kernel.org; Rob Herring
-> <robh@kernel.org>; Mark Rutland <mark.rutland@arm.com>; nm@ti.com;
-> lgirdwood@gmail.com; broonie@kernel.org; Andy Gross
-> <andy.gross@linaro.org>; David Brown <david.brown@linaro.org>;
-> catalin.marinas@arm.com; will.deacon@arm.com; Rafael J. Wysocki
-> <rjw@rjwysocki.net>; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; LKML <linux-kernel@vger.kernel.org>; Linux
-> PM list <linux-pm@vger.kernel.org>; linux-arm-msm@vger.kernel.org; linux-
-> soc@vger.kernel.org; lakml <linux-arm-kernel@lists.infradead.org>;
-> Rajendra Nayak <rnayak@codeaurora.org>; nicolas.dechesne@linaro.org;
-> celster@codeaurora.org; tfinkel@codeaurora.org
-> Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-> 
-> On 16-05-18, 16:12, Amit Kucheria wrote:
-> > > +       ret = PTR_ERR_OR_ZERO(opp_temp =
-> > > +
-> dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> > > +       if (0 > ret)
-> >
-> > Any particular reason to prefer this over (ret < 0) that is generally
-> > used? I've seen it used to avoid the == vs. = typos, but not for other
-> > comparisons.
-> >
-> > Suggest sticking to what is commonly used i.e. ret < 0.
-> >
-> > > +               goto free_opp;
-> > > +
-> > > +       cpu_dev = get_cpu_device(GOLD_LEAD);
-> >
-> > Error check cpu_dev here?
-> >
-> > > +       ret = PTR_ERR_OR_ZERO(opp_temp =
-> > > +
-> dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> > > +       if (0 > ret)
-> > > +               goto free_opp;
-> 
-> The goto here is wrong
-
-If we are here, then the first dev_pm_opp_set_supported_hw() succeeded. And
-should be deallocated before exit with error.
-
-> 
-> > > +
-> > > +
-> > > +       ret =
-> PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-dt",
-> > > +                                                             -1,
-> > > + NULL, 0));
-> > > +
-> > > +       if (0 == ret)
-> > > +               return 0;
-> > > +
-> > > +free_opp:
-> > > +       dev_pm_opp_put_supported_hw(opp_temp);
-> >
-> > This is not needed because dev_pm_opp_set_supported_hw will free
-> > memory in case of failure. This call in only needed in case of a
-> > successful get.
-> 
-> But this is still required for the case where platform device registration
-fails.
-> 
-> --
-> viresh
+SGkgU3VkZWVwLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1ZGVl
+cCBIb2xsYSBbbWFpbHRvOnN1ZGVlcC5ob2xsYUBhcm0uY29tXQ0KPiBTZW50OiBUaHVyc2RheSwg
+TWF5IDEwLCAyMDE4IDc6MzEgQU0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29t
+PjsgYXJkLmJpZXNoZXV2ZWxAbGluYXJvLm9yZzsNCj4gbWluZ29Aa2VybmVsLm9yZzsgZ3JlZ2to
+QGxpbnV4Zm91bmRhdGlvbi5vcmc7IG1hdHRAY29kZWJsdWVwcmludC5jby51azsNCj4gaGthbGx3
+ZWl0MUBnbWFpbC5jb207IGtlZXNjb29rQGNocm9taXVtLm9yZzsNCj4gZG1pdHJ5LnRvcm9raG92
+QGdtYWlsLmNvbTsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNib3lkQGNvZGVhdXJvcmEu
+b3JnOyBtaWNoYWwuc2ltZWtAeGlsaW54LmNvbTsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiBtYXJr
+LnJ1dGxhbmRAYXJtLmNvbTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZw0KPiBDYzogU3VkZWVw
+IEhvbGxhIDxzdWRlZXAuaG9sbGFAYXJtLmNvbT47IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbngu
+Y29tPjsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJu
+ZWxAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgSm9sbHkg
+U2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjYgMDkvMTFd
+IGZpcm13YXJlOiB4aWxpbng6IEFkZCBkZWJ1Z2ZzIGZvciBjbG9jayBjb250cm9sDQo+IEFQSXMN
+Cj4gDQo+IA0KPiANCj4gT24gMTAvMDQvMTggMjA6MzgsIEpvbGx5IFNoYWggd3JvdGU6DQo+ID4g
+RnJvbTogUmFqYW4gVmFqYSA8cmFqYW52QHhpbGlueC5jb20+DQo+ID4NCj4gPiBBZGQgZGVidWdm
+cyBmaWxlIHRvIGNvbnRyb2wgY2xvY2tzIHVzaW5nIGZpcm13YXJlIEFQSXMgdGhyb3VnaCBkZWJ1
+Z2ZzDQo+ID4gaW50ZXJmYWNlLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFqYW4gVmFqYSA8
+cmFqYW52QHhpbGlueC5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogSm9sbHkgU2hhaCA8am9sbHlz
+QHhpbGlueC5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvZmlybXdhcmUveGlsaW54L3p5bnFt
+cC1kZWJ1Zy5jIHwgNDgNCj4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+
+ID4gIDEgZmlsZSBjaGFuZ2VkLCA0OCBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9maXJtd2FyZS94aWxpbngvenlucW1wLWRlYnVnLmMNCj4gPiBiL2RyaXZlcnMv
+ZmlybXdhcmUveGlsaW54L3p5bnFtcC1kZWJ1Zy5jDQo+ID4gaW5kZXggMWNiNjlmNy4uODM3ZmNk
+MSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Zpcm13YXJlL3hpbGlueC96eW5xbXAtZGVidWcu
+Yw0KPiA+ICsrKyBiL2RyaXZlcnMvZmlybXdhcmUveGlsaW54L3p5bnFtcC1kZWJ1Zy5jDQo+ID4g
+QEAgLTM0LDYgKzM0LDE1IEBAIHN0YXRpYyBzdHJ1Y3QgcG1fYXBpX2luZm8gcG1fYXBpX2xpc3Rb
+XSA9IHsNCj4gPiAgCVBNX0FQSShQTV9HRVRfQVBJX1ZFUlNJT04pLA0KPiA+ICAJUE1fQVBJKFBN
+X0lPQ1RMKSwNCj4gPiAgCVBNX0FQSShQTV9RVUVSWV9EQVRBKSwNCj4gPiArCVBNX0FQSShQTV9D
+TE9DS19FTkFCTEUpLA0KPiA+ICsJUE1fQVBJKFBNX0NMT0NLX0RJU0FCTEUpLA0KPiA+ICsJUE1f
+QVBJKFBNX0NMT0NLX0dFVFNUQVRFKSwNCj4gPiArCVBNX0FQSShQTV9DTE9DS19TRVRESVZJREVS
+KSwNCj4gPiArCVBNX0FQSShQTV9DTE9DS19HRVRESVZJREVSKSwNCj4gPiArCVBNX0FQSShQTV9D
+TE9DS19TRVRSQVRFKSwNCj4gPiArCVBNX0FQSShQTV9DTE9DS19HRVRSQVRFKSwNCj4gPiArCVBN
+X0FQSShQTV9DTE9DS19TRVRQQVJFTlQpLA0KPiA+ICsJUE1fQVBJKFBNX0NMT0NLX0dFVFBBUkVO
+VCksDQo+ID4gIH07DQo+ID4NCj4gPiAgLyoqDQo+ID4gQEAgLTg3LDYgKzk2LDcgQEAgc3RhdGlj
+IGludCBwcm9jZXNzX2FwaV9yZXF1ZXN0KHUzMiBwbV9pZCwgdTY0DQo+ICpwbV9hcGlfYXJnLCB1
+MzIgKnBtX2FwaV9yZXQpDQo+ID4gIAljb25zdCBzdHJ1Y3QgenlucW1wX2VlbWlfb3BzICplZW1p
+X29wcyA9DQo+IHp5bnFtcF9wbV9nZXRfZWVtaV9vcHMoKTsNCj4gPiAgCXUzMiBwbV9hcGlfdmVy
+c2lvbjsNCj4gPiAgCWludCByZXQ7DQo+ID4gKwl1NjQgcmF0ZTsNCj4gPg0KPiA+ICAJaWYgKCFl
+ZW1pX29wcykNCj4gPiAgCQlyZXR1cm4gLUVOWElPOw0KPiA+IEBAIC0xMzIsNiArMTQyLDQ0IEBA
+IHN0YXRpYyBpbnQgcHJvY2Vzc19hcGlfcmVxdWVzdCh1MzIgcG1faWQsIHU2NA0KPiAqcG1fYXBp
+X2FyZywgdTMyICpwbV9hcGlfcmV0KQ0KPiA+ICAJCQkJcG1fYXBpX3JldFsyXSwgcG1fYXBpX3Jl
+dFszXSk7DQo+ID4gIAkJYnJlYWs7DQo+ID4gIAl9DQo+ID4gKwljYXNlIFBNX0NMT0NLX0VOQUJM
+RToNCj4gPiArCQlyZXQgPSBlZW1pX29wcy0+Y2xvY2tfZW5hYmxlKHBtX2FwaV9hcmdbMF0pOw0K
+PiA+ICsJCWJyZWFrOw0KPiANCj4gQXMgSSBtZW50aW9uZWQgaW4gZWFybGllciBwYXRjaCwgSSBk
+b24ndCBzZWUgdGhlIG5lZWQgZm9yIHRoaXMgZGVidWdmcyBpbnRlcmZhY2UuDQo+IENsb2NrIGxh
+eSBoYXMgcmVhZC1vbmx5IGludGVyZmFjZSBpbiBkZWJ1Z2ZzIGFscmVhZHkuIEFsc28gaWYgeW91
+IHdhbnQgdG8gZGVidWcNCj4gY2xvY2tzLCB5b3UgY2FuIGRvIHNvIHVzaW5nIHRoZSBkcml2ZXIg
+d2hpY2ggdXNlcyB0aGVzZSBjbG9ja3MuIERvIHlvdSByZWFsbHkNCj4gd2FudCB0byBtYW5hZ2Ug
+Y2xvY2tzIGluIHVzZXItc3BhY2UgPw0KPiBUaGUgd2hvbGUgaWRlYSBvZiBFRU1JIGtpbmQgb2Yg
+aW50ZXJmYWNlIGlzIHRvIGFic3RyYWN0IGFuZCBoaWRlIHRoZSBmaW5lIGRldGFpbHMNCj4gZXZl
+biBmcm9tIG5vbi10cnVzdGVkIHJpY2ggT1MgbGlrZSBMaW51eCBrZXJuZWwsIGJ1dCBieSBwcm92
+aWRpbmcgdGhpcyB5b3UgYXJlDQo+IGRvaW5nIGV4YWN0bHkgb3Bwb3NpdGUuDQo+IA0KPiAtLQ0K
+PiBSZWdhcmRzLA0KPiBTdWRlZXANCg0KTm8gd2UgZG9uJ3Qgd2FudCB0byBtYW5hZ2UgY2xvY2tz
+IGluIHVzZXItc3BhY2UuIFRoaXMgZGVidWdmcyBpcyBtZWFudCBmb3IgZGV2ZWxvcGVyIHdobyB3
+YW50cyB0byBkZWJ1ZyBBUElzIGJlaGF2aW9yIGluIGNhc2Ugc29tZXRoaW5nIGRvZXNuJ3Qgd29y
+ayBhcyBleHBlY3RlZC4gRGVidWdmcyBzaG91bGQgYmUgb2ZmIGJ5IGRlZmF1bHQgaW4gcHJvZHVj
+dGlvbiBpbWFnZXMuDQoNClRoYW5rcywNCkpvbGx5IFNoYWgNCg0K
