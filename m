@@ -1,288 +1,70 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	Anson.Huang@nxp.com,
-	ping.bai@nxp.com,
-	linux-imx@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH RESEND V4 4/9] clk: imx: add pfdv2 support
-Date: Fri, 25 May 2018 15:51:06 +0800
-Message-Id: <1527234671-31755-5-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
-References: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <david@lechnology.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v10_00/27]_ARM:_davinci:_convert_to_common_clo?=
+ =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+ arm-soc <linux-arm-kernel@lists.infradead.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180509172606.29387-1-david@lechnology.com>
+ <CAHCN7xJ6+vmyrTQGYH=pKz5GRf7rLT4otreNgu6TJi_3UAEX5w@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <ba7da252-20be-590b-74fb-0ca4a04beba7@lechnology.com>
+Date: Sun, 13 May 2018 20:50:04 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+In-Reply-To: <CAHCN7xJ6+vmyrTQGYH=pKz5GRf7rLT4otreNgu6TJi_3UAEX5w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The pfdv2 is designed for PLL Fractional Divide (PFD) observed in System
-Clock Generation (SCG) module in IMX ULP SoC series. e.g. i.MX7ULP.
+On 05/13/2018 07:40 PM, Adam Ford wrote:
+> On Wed, May 9, 2018 at 12:25 PM, David Lechner <david@lechnology.com> wrote:
+>> This series converts mach-davinci to use the common clock framework.
+>>
+>> The series works like this, the first 3 patches fix some issues with the clock
+>> drivers that have already been accepted into the mainline kernel.
+>>
+>> Then, starting with "ARM: davinci: pass clock as parameter to
+>> davinci_timer_init()", we get the mach code ready for the switch by adding the
+>> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+>> around the legacy clocks so that we can switch easily between the old and the
+>> new.
+>>
+>> "ARM: davinci: switch to common clock framework" actually flips the switch
+>> to start using the new clock drivers. Then the next 8 patches remove all
+>> of the old clock code.
+>>
+>> The final four patches add device tree clock support to the one SoC that
+>> supports it.
+>>
+>> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
+>> board file).
+>>
+> 
+> I am not sure if I did something wrong, but I attempted to build and I
+> wasn't able to boot the da850-evm.dtb your repo common-clk-v11,
+> however the legacy board file boot was OK.
+> 
+> make davinci_all_defconfig ARCH=arm
+> make zImage modules da850-evm.dtb ARCH=arm CROSS_COMPILE=arm-linux- -j8
+> 
+> 3140416 bytes read in 1464 ms (2 MiB/s)
+> 20353 bytes read in 15 ms (1.3 MiB/s)
+> ## Flattened Device Tree blob at c0600000
+>     Booting using the fdt blob at 0xc0600000
+>     Loading Device Tree to c7e57000, end c7e5ef80 ... OK
+> 
+> Starting kernel ...
+> 
+> Uncompressing Linux... done, booting the kernel.
+> 
+> (and hang)
+> 
+> If you have some suggestions, I am try them as I get time.
+> 
 
-NOTE pfdv2 can only be operated when clk is gated.
-
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
----
-ChangeLog:
-v2->v3:
- * no changes
-v1->v2:
- * change to readl_poll_timeout
- * add pfd lock to protect share reg access between rate and enable/disable
-   operations and multiple pfd instances.
- * use clk_hw_register
----
- drivers/clk/imx/Makefile    |   3 +-
- drivers/clk/imx/clk-pfdv2.c | 201 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h       |   3 +
- 3 files changed, 206 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
-
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index bfe31bf..e5b0d42 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -12,7 +12,8 @@ obj-y += \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
- 	clk-pllv4.o \
--	clk-pfd.o
-+	clk-pfd.o \
-+	clk-pfdv2.o
- 
- obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
- obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
-diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
-new file mode 100644
-index 0000000..afb2904
---- /dev/null
-+++ b/drivers/clk/imx/clk-pfdv2.c
-@@ -0,0 +1,201 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017~2018 NXP
-+ *
-+ * Author: Dong Aisheng <aisheng.dong@nxp.com>
-+ *
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/iopoll.h>
-+#include <linux/slab.h>
-+
-+/**
-+ * struct clk_pfdv2 - IMX PFD clock
-+ * @clk_hw:	clock source
-+ * @reg:	PFD register address
-+ * @gate_bit:	Gate bit offset
-+ * @vld_bit:	Valid bit offset
-+ * @frac_off:	PLL Fractional Divider offset
-+ */
-+
-+struct clk_pfdv2 {
-+	struct clk_hw	hw;
-+	void __iomem	*reg;
-+	u8		gate_bit;
-+	u8		vld_bit;
-+	u8		frac_off;
-+};
-+
-+#define to_clk_pfdv2(_hw) container_of(_hw, struct clk_pfdv2, hw)
-+
-+#define CLK_PFDV2_FRAC_MASK 0x3f
-+
-+#define LOCK_TIMEOUT_US		USEC_PER_MSEC
-+
-+static DEFINE_SPINLOCK(pfd_lock);
-+
-+static int clk_pfdv2_wait(struct clk_pfdv2 *pfd)
-+{
-+	u32 val;
-+
-+	return readl_poll_timeout(pfd->reg, val, val & pfd->vld_bit,
-+				  0, LOCK_TIMEOUT_US);
-+}
-+
-+static int clk_pfdv2_enable(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val &= ~pfd->gate_bit;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+
-+	return clk_pfdv2_wait(pfd);
-+}
-+
-+static void clk_pfdv2_disable(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val |= pfd->gate_bit;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+}
-+
-+static unsigned long clk_pfdv2_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	u64 tmp = parent_rate;
-+	u8 frac;
-+
-+	frac = (readl_relaxed(pfd->reg) >> pfd->frac_off)
-+		& CLK_PFDV2_FRAC_MASK;
-+
-+	if (!frac) {
-+		pr_debug("clk_pfdv2: %s invalid pfd frac value 0\n",
-+			 clk_hw_get_name(hw));
-+		return 0;
-+	}
-+
-+	tmp *= 18;
-+	do_div(tmp, frac);
-+
-+	return tmp;
-+}
-+
-+static long clk_pfdv2_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *prate)
-+{
-+	u64 tmp = *prate;
-+	u8 frac;
-+
-+	tmp = tmp * 18 + rate / 2;
-+	do_div(tmp, rate);
-+	frac = tmp;
-+
-+	if (frac < 12)
-+		frac = 12;
-+	else if (frac > 35)
-+		frac = 35;
-+
-+	tmp = *prate;
-+	tmp *= 18;
-+	do_div(tmp, frac);
-+
-+	return tmp;
-+}
-+
-+static int clk_pfdv2_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+
-+	if (readl_relaxed(pfd->reg) & pfd->gate_bit)
-+		return 0;
-+
-+	return 1;
-+}
-+
-+static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u64 tmp = parent_rate;
-+	u32 val;
-+	u8 frac;
-+
-+	tmp = tmp * 18 + rate / 2;
-+	do_div(tmp, rate);
-+	frac = tmp;
-+	if (frac < 12)
-+		frac = 12;
-+	else if (frac > 35)
-+		frac = 35;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val = readl_relaxed(pfd->reg);
-+	val &= ~(CLK_PFDV2_FRAC_MASK << pfd->frac_off);
-+	val |= frac << pfd->frac_off;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_pfdv2_ops = {
-+	.enable		= clk_pfdv2_enable,
-+	.disable	= clk_pfdv2_disable,
-+	.recalc_rate	= clk_pfdv2_recalc_rate,
-+	.round_rate	= clk_pfdv2_round_rate,
-+	.set_rate	= clk_pfdv2_set_rate,
-+	.is_enabled     = clk_pfdv2_is_enabled,
-+};
-+
-+struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
-+			     void __iomem *reg, u8 idx)
-+{
-+	struct clk_init_data init;
-+	struct clk_pfdv2 *pfd;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	WARN_ON(idx > 3);
-+
-+	pfd = kzalloc(sizeof(*pfd), GFP_KERNEL);
-+	if (!pfd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pfd->reg = reg;
-+	pfd->gate_bit = 1 << ((idx + 1) * 8 - 1);
-+	pfd->vld_bit = pfd->gate_bit - 1;
-+	pfd->frac_off = idx * 8;
-+
-+	init.name = name;
-+	init.ops = &clk_pfdv2_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = CLK_SET_RATE_GATE;
-+
-+	pfd->hw.init = &init;
-+
-+	hw = &pfd->hw;
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(pfd);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 2fb4f1d..a5a9374 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -60,6 +60,9 @@ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
- struct clk *imx_clk_pfd(const char *name, const char *parent_name,
- 		void __iomem *reg, u8 idx);
- 
-+struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
-+			     void __iomem *reg, u8 idx);
-+
- struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
- 				 void __iomem *reg, u8 shift, u8 width,
- 				 void __iomem *busy_reg, u8 busy_shift);
--- 
-2.7.4
+As with each revision of this series, I have included debugging tips
+in the cover letter, e.g. earlyprink and not disabling unused clocks.
