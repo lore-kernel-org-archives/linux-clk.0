@@ -1,74 +1,70 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Wed, 2 May 2018 13:34:13 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
-Message-ID: <20180502113413.vv2r3ubfoh7gm3ms@flea>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-10-jagan@amarulasolutions.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f179.google.com ([74.125.82.179]:36571 "EHLO
+        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752087AbeENVAg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 May 2018 17:00:36 -0400
+Received: by mail-ot0-f179.google.com with SMTP id m11-v6so15951464otf.3
+        for <linux-clk@vger.kernel.org>; Mon, 14 May 2018 14:00:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jipx7koxxx7erdq4"
-In-Reply-To: <20180430114058.5061-10-jagan@amarulasolutions.com>
+In-Reply-To: <1526292199.2897.7.camel@baylibre.com>
+References: <20180501214555.11476-1-martin.blumenstingl@googlemail.com>
+ <CAFBinCBz9ne9qeU3a6SQJpqRFm0ix0Dc0LYvmzWKmKJWVML_UQ@mail.gmail.com> <1526292199.2897.7.camel@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 14 May 2018 23:00:15 +0200
+Message-ID: <CAFBinCB6r5X6-714cBN=eftaA95j7F2RU3X5-kguBt1-5gQmkQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: meson8b: mark fclk_div gate clocks as CLK_IS_CRITICAL
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: yixun.lan@amlogic.com, linux-amlogic@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, May 14, 2018 at 12:03 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> On Tue, 2018-05-01 at 23:55 +0200, Martin Blumenstingl wrote:
+>> Hello Yixun,
+>>
+>> On Tue, May 1, 2018 at 11:45 PM, Martin Blumenstingl
+>> <martin.blumenstingl@googlemail.com> wrote:
+>> > Until commit 05f814402d6174 ("clk: meson: add fdiv clock gates") we
+>> > relied on the bootloader to enable the fclk_div clock gates. It turns
+>> > out that our clock tree is incomplete at least on Meson8b (tested with
+>> > an Odroid-C1, which uses an RGMII PHY) because after the mentioned
+>> > commit Ethernet is not working anymore (no RX/TX activity can be seen).
+>> > At the same time Ethernet was still working on Meson8m2 with a RMII PHY.
+>> >
+>> > It is currently not clear which of the fclk_div gates is required for
+>> > (RGMII) Ethernet operation on Meson8b and why. Mark the fclk_div gates
+>> > as CLK_IS_CRITICAL so the common clock framework keeps these gates
+>> > enabled for us until we know which clock is required for Ethernet on
+>> > Meson8b and which driver has to claim it.
+>>
+>> based on the public datasheet for Meson8b (S805) I cannot see which
+>> part of the SoC uses fclk_divX for (RGMII) Ethernet.
+>> I did some further tests and it seems that Ethernet is not working if
+>> fclk_div2 is disabled (the other fclk_divX don't seem to affect
+>> Ethernet operation)
+>>
+>> could you please check your internal datasheets and let us know how
+>> fclk_div2 is routed internally and how it can affect Ethernet data
+>> transfers?
+>
+> Hi Martin,
+>
+> As usual, thanks for your thorough work !
+>
+> Now that you know which of the fdiv is actually required, I would prefer if we
+> could mark only the required clock as critical.
+OK, I'll re-send the patch this weekend
 
---jipx7koxxx7erdq4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Also, could you please add a short FIXME comment in the code explaining why this
+> is necessary. This should a be temporary fix while we get the ethernet driver
+> sorted out. If the ethernet of the meson8b requires the fdiv2 it should claim it
+> (through other clock if necessary)
+I'll include the "FIXME" comment
+and I totally agree that this should only be a temporary workaround
 
-Hi,
 
-On Mon, Apr 30, 2018 at 05:10:46PM +0530, Jagan Teki wrote:
-> +		hdmi_phy: hdmi-phy@1ef0000 {
-> +			compatible =3D "allwinner,sun50i-a64-hdmi-phy",
-> +				     "allwinner,sun8i-h3-hdmi-phy";
-> +			reg =3D <0x01ef0000 0x10000>;
-> +			clocks =3D <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-> +				 <&ccu CLK_PLL_VIDEO1>;
-
-You were discussing that the PLL0 could also be used to clock the PHY,
-has that been figured out?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---jipx7koxxx7erdq4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrpojQACgkQ0rTAlCFN
-r3T+JQ//TxUuW9svfO940idbQAxF10oxginiBbDHcAPquDwd+/BxJz7Zn7ZmKML6
-CcNvzMf+PpDqBqpPjrjBGY/6qkcwqDnaoG2efocjCDTrrY23xca/7EUHA9rxg7pd
-2a7DMFWD2dAZycsDqhJNbZArtHxnu/aOFNU8TcFtvg0vuA+EvR0ceSS61K0FylxN
-q5QzHLWUQIGH34inNSLwaGilzLAvEx/xzK01tQDxT5uY+0EyIwbyYWFR7XKiJP32
-mYe2ByHUKgDnjDvVMoRNH8aPeosGwZTqD7bLmRcKOiG0H+dUQOfbND3R7ET/wipK
-nmxvSXZfM8dtlpKIfOzPcpwc4jkiEbJwUioR2/EEoMTVb6b9eug8qTX0FxdS4KOp
-a/lMfHsgQvVqOkJ1WoGaK5fP8iczWK0jmNeB18bYghot9fDmoGJ6RxoeNm6JvN8B
-qs4C/oFI0f5EZ34EyDHOdp91YmpLuvuPv+qEoTSeeZF5QhtGE0p7l/AdVDZLyPO3
-2Lur6tK6Z8vCIu5w2Ftdbn3I4X4dgpvfjcLy5QObvECi4bPMCqbigEdS2urBiciX
-mTukfaLxKp193uqrF6WJqL9GIleTQUaO9x58jUz+gOOxL/zB5ohlLK2ENI/uvQrX
-OVWI1oZSl/g7b59bdhNsXWKR1CiYgtLKw1tpshFNI0fJThYdamg=
-=VgEg
------END PGP SIGNATURE-----
-
---jipx7koxxx7erdq4--
+Regards
+Martin
