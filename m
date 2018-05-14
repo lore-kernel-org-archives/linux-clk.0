@@ -1,457 +1,307 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+Return-Path: <enric.balletbo@collabora.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 18/27] ARM: davinci: dm355: Remove legacy clock init
-Date: Fri, 18 May 2018 11:48:20 -0500
-Message-Id: <20180518164829.27052-19-david@lechnology.com>
-In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
-References: <20180518164829.27052-1-david@lechnology.com>
+	Will Deacon <will.deacon@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sandy Huang <hjc@rock-chips.com>,
+	David Airlie <airlied@linux.ie>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Derek Basehore <dbasehore@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	Lin Huang <hl@rock-chips.com>,
+	kernel@collabora.com,
+	Sean Paul <seanpaul@chromium.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 08/10] drm: rockchip: Add DDR devfreq support.
+Date: Mon, 14 May 2018 23:16:08 +0200
+Message-Id: <20180514211610.26618-9-enric.balletbo@collabora.com>
+In-Reply-To: <20180514211610.26618-1-enric.balletbo@collabora.com>
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy clock init code from
-arch/arm/mach-davinci/dm355.c.
+From: Sean Paul <seanpaul@chromium.org>
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Add support for devfreq to dynamically control the DDR frequency. It
+will activate when there is one CRTC active, and disable if more than
+one becomes active (to avoid flickering on one of the screens).
+
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
-v11 changes:
-- none
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 46 +++++++++++++++++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h |  9 ++++
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c  | 35 ++++++++++++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 34 +++++++++++++++
+ 4 files changed, 124 insertions(+)
 
-v10 changes:
-- none
-
-v9 changes:
-- rebased
-
-v8 changes:
-- none
-
-v7 changes:
-- rebased
-- add davinci prefix to commit message
-
-v6 changes:
-- rebased
-
-
- arch/arm/mach-davinci/dm355.c | 357 ----------------------------------
- 1 file changed, 357 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index 14014b942e8a..9f7d38d12c88 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -35,11 +35,6 @@
- #include "davinci.h"
- #include "mux.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include "clock.h"
--#include "psc.h"
--#endif
--
- #define DM355_UART2_BASE	(IO_PHYS + 0x206000)
- #define DM355_OSD_BASE		(IO_PHYS + 0x70200)
- #define DM355_VENC_BASE		(IO_PHYS + 0x70400)
-@@ -49,349 +44,6 @@
-  */
- #define DM355_REF_FREQ		24000000	/* 24 or 36 MHz */
- 
--#ifndef CONFIG_COMMON_CLK
--static struct pll_data pll1_data = {
--	.num       = 1,
--	.phys_base = DAVINCI_PLL1_BASE,
--	.flags     = PLL_HAS_PREDIV | PLL_HAS_POSTDIV,
--};
--
--static struct pll_data pll2_data = {
--	.num       = 2,
--	.phys_base = DAVINCI_PLL2_BASE,
--	.flags     = PLL_HAS_PREDIV,
--};
--
--static struct clk ref_clk = {
--	.name = "ref_clk",
--	/* FIXME -- crystal rate is board-specific */
--	.rate = DM355_REF_FREQ,
--};
--
--static struct clk pll1_clk = {
--	.name = "pll1",
--	.parent = &ref_clk,
--	.flags = CLK_PLL,
--	.pll_data = &pll1_data,
--};
--
--static struct clk pll1_aux_clk = {
--	.name = "pll1_aux_clk",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll1_sysclk1 = {
--	.name = "pll1_sysclk1",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV1,
--};
--
--static struct clk pll1_sysclk2 = {
--	.name = "pll1_sysclk2",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV2,
--};
--
--static struct clk pll1_sysclk3 = {
--	.name = "pll1_sysclk3",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV3,
--};
--
--static struct clk pll1_sysclk4 = {
--	.name = "pll1_sysclk4",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV4,
--};
--
--static struct clk pll1_sysclkbp = {
--	.name = "pll1_sysclkbp",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL | PRE_PLL,
--	.div_reg = BPDIV
--};
--
--static struct clk vpss_dac_clk = {
--	.name = "vpss_dac",
--	.parent = &pll1_sysclk3,
--	.lpsc = DM355_LPSC_VPSS_DAC,
--};
--
--static struct clk vpss_master_clk = {
--	.name = "vpss_master",
--	.parent = &pll1_sysclk4,
--	.lpsc = DAVINCI_LPSC_VPSSMSTR,
--	.flags = CLK_PSC,
--};
--
--static struct clk vpss_slave_clk = {
--	.name = "vpss_slave",
--	.parent = &pll1_sysclk4,
--	.lpsc = DAVINCI_LPSC_VPSSSLV,
--};
--
--static struct clk clkout1_clk = {
--	.name = "clkout1",
--	.parent = &pll1_aux_clk,
--	/* NOTE:  clkout1 can be externally gated by muxing GPIO-18 */
--};
--
--static struct clk clkout2_clk = {
--	.name = "clkout2",
--	.parent = &pll1_sysclkbp,
--};
--
--static struct clk pll2_clk = {
--	.name = "pll2",
--	.parent = &ref_clk,
--	.flags = CLK_PLL,
--	.pll_data = &pll2_data,
--};
--
--static struct clk pll2_sysclk1 = {
--	.name = "pll2_sysclk1",
--	.parent = &pll2_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV1,
--};
--
--static struct clk pll2_sysclkbp = {
--	.name = "pll2_sysclkbp",
--	.parent = &pll2_clk,
--	.flags = CLK_PLL | PRE_PLL,
--	.div_reg = BPDIV
--};
--
--static struct clk clkout3_clk = {
--	.name = "clkout3",
--	.parent = &pll2_sysclkbp,
--	/* NOTE:  clkout3 can be externally gated by muxing GPIO-16 */
--};
--
--static struct clk arm_clk = {
--	.name = "arm_clk",
--	.parent = &pll1_sysclk1,
--	.lpsc = DAVINCI_LPSC_ARM,
--	.flags = ALWAYS_ENABLED,
--};
--
--/*
-- * NOT LISTED below, and not touched by Linux
-- *   - in SyncReset state by default
-- *	.lpsc = DAVINCI_LPSC_TPCC,
-- *	.lpsc = DAVINCI_LPSC_TPTC0,
-- *	.lpsc = DAVINCI_LPSC_TPTC1,
-- *	.lpsc = DAVINCI_LPSC_DDR_EMIF, .parent = &sysclk2_clk,
-- *	.lpsc = DAVINCI_LPSC_MEMSTICK,
-- *   - in Enabled state by default
-- *	.lpsc = DAVINCI_LPSC_SYSTEM_SUBSYS,
-- *	.lpsc = DAVINCI_LPSC_SCR2,	// "bus"
-- *	.lpsc = DAVINCI_LPSC_SCR3,	// "bus"
-- *	.lpsc = DAVINCI_LPSC_SCR4,	// "bus"
-- *	.lpsc = DAVINCI_LPSC_CROSSBAR,	// "emulation"
-- *	.lpsc = DAVINCI_LPSC_CFG27,	// "test"
-- *	.lpsc = DAVINCI_LPSC_CFG3,	// "test"
-- *	.lpsc = DAVINCI_LPSC_CFG5,	// "test"
-- */
--
--static struct clk mjcp_clk = {
--	.name = "mjcp",
--	.parent = &pll1_sysclk1,
--	.lpsc = DAVINCI_LPSC_IMCOP,
--};
--
--static struct clk uart0_clk = {
--	.name = "uart0",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_UART0,
--};
--
--static struct clk uart1_clk = {
--	.name = "uart1",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_UART1,
--};
--
--static struct clk uart2_clk = {
--	.name = "uart2",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_UART2,
--};
--
--static struct clk i2c_clk = {
--	.name = "i2c",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_I2C,
--};
--
--static struct clk asp0_clk = {
--	.name = "asp0",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_McBSP,
--};
--
--static struct clk asp1_clk = {
--	.name = "asp1",
--	.parent = &pll1_sysclk2,
--	.lpsc = DM355_LPSC_McBSP1,
--};
--
--static struct clk mmcsd0_clk = {
--	.name = "mmcsd0",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_MMC_SD,
--};
--
--static struct clk mmcsd1_clk = {
--	.name = "mmcsd1",
--	.parent = &pll1_sysclk2,
--	.lpsc = DM355_LPSC_MMC_SD1,
--};
--
--static struct clk spi0_clk = {
--	.name = "spi0",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_SPI,
--};
--
--static struct clk spi1_clk = {
--	.name = "spi1",
--	.parent = &pll1_sysclk2,
--	.lpsc = DM355_LPSC_SPI1,
--};
--
--static struct clk spi2_clk = {
--	.name = "spi2",
--	.parent = &pll1_sysclk2,
--	.lpsc = DM355_LPSC_SPI2,
--};
--
--static struct clk gpio_clk = {
--	.name = "gpio",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_GPIO,
--};
--
--static struct clk aemif_clk = {
--	.name = "aemif",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_AEMIF,
--};
--
--static struct clk pwm0_clk = {
--	.name = "pwm0",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_PWM0,
--};
--
--static struct clk pwm1_clk = {
--	.name = "pwm1",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_PWM1,
--};
--
--static struct clk pwm2_clk = {
--	.name = "pwm2",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_PWM2,
--};
--
--static struct clk pwm3_clk = {
--	.name = "pwm3",
--	.parent = &pll1_aux_clk,
--	.lpsc = DM355_LPSC_PWM3,
--};
--
--static struct clk timer0_clk = {
--	.name = "timer0",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_TIMER0,
--};
--
--static struct clk timer1_clk = {
--	.name = "timer1",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_TIMER1,
--};
--
--static struct clk timer2_clk = {
--	.name = "timer2",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_TIMER2,
--	.usecount = 1,              /* REVISIT: why can't this be disabled? */
--};
--
--static struct clk timer3_clk = {
--	.name = "timer3",
--	.parent = &pll1_aux_clk,
--	.lpsc = DM355_LPSC_TIMER3,
--};
--
--static struct clk rto_clk = {
--	.name = "rto",
--	.parent = &pll1_aux_clk,
--	.lpsc = DM355_LPSC_RTO,
--};
--
--static struct clk usb_clk = {
--	.name = "usb",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_USB,
--};
--
--static struct clk_lookup dm355_clks[] = {
--	CLK(NULL, "ref", &ref_clk),
--	CLK(NULL, "pll1", &pll1_clk),
--	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
--	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
--	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
--	CLK(NULL, "pll1_sysclk4", &pll1_sysclk4),
--	CLK(NULL, "pll1_aux", &pll1_aux_clk),
--	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
--	CLK(NULL, "vpss_dac", &vpss_dac_clk),
--	CLK("vpss", "master", &vpss_master_clk),
--	CLK("vpss", "slave", &vpss_slave_clk),
--	CLK(NULL, "clkout1", &clkout1_clk),
--	CLK(NULL, "clkout2", &clkout2_clk),
--	CLK(NULL, "pll2", &pll2_clk),
--	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
--	CLK(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
--	CLK(NULL, "clkout3", &clkout3_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK(NULL, "mjcp", &mjcp_clk),
--	CLK("serial8250.0", NULL, &uart0_clk),
--	CLK("serial8250.1", NULL, &uart1_clk),
--	CLK("serial8250.2", NULL, &uart2_clk),
--	CLK("i2c_davinci.1", NULL, &i2c_clk),
--	CLK("davinci-mcbsp.0", NULL, &asp0_clk),
--	CLK("davinci-mcbsp.1", NULL, &asp1_clk),
--	CLK("dm6441-mmc.0", NULL, &mmcsd0_clk),
--	CLK("dm6441-mmc.1", NULL, &mmcsd1_clk),
--	CLK("spi_davinci.0", NULL, &spi0_clk),
--	CLK("spi_davinci.1", NULL, &spi1_clk),
--	CLK("spi_davinci.2", NULL, &spi2_clk),
--	CLK(NULL, "gpio", &gpio_clk),
--	CLK(NULL, "aemif", &aemif_clk),
--	CLK(NULL, "pwm0", &pwm0_clk),
--	CLK(NULL, "pwm1", &pwm1_clk),
--	CLK(NULL, "pwm2", &pwm2_clk),
--	CLK(NULL, "pwm3", &pwm3_clk),
--	CLK(NULL, "timer0", &timer0_clk),
--	CLK(NULL, "timer1", &timer1_clk),
--	CLK("davinci-wdt", NULL, &timer2_clk),
--	CLK(NULL, "timer3", &timer3_clk),
--	CLK(NULL, "rto", &rto_clk),
--	CLK(NULL, "usb", &usb_clk),
--	CLK(NULL, NULL, NULL),
--};
--#endif
--/*----------------------------------------------------------------------*/
--
- static u64 dm355_spi0_dma_mask = DMA_BIT_MASK(32);
- 
- static struct resource dm355_spi0_resources[] = {
-@@ -933,8 +585,6 @@ static struct davinci_id dm355_ids[] = {
- 	},
- };
- 
--static u32 dm355_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
--
- /*
-  * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
-  * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
-@@ -1019,8 +669,6 @@ static const struct davinci_soc_info davinci_soc_info_dm355 = {
- 	.jtag_id_reg		= 0x01c40028,
- 	.ids			= dm355_ids,
- 	.ids_num		= ARRAY_SIZE(dm355_ids),
--	.psc_bases		= dm355_psc_bases,
--	.psc_bases_num		= ARRAY_SIZE(dm355_psc_bases),
- 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
- 	.pinmux_pins		= dm355_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(dm355_pins),
-@@ -1053,7 +701,6 @@ void __init dm355_init(void)
- 
- void __init dm355_init_time(void)
- {
--#ifdef CONFIG_COMMON_CLK
- 	void __iomem *pll1, *psc;
- 	struct clk *clk;
- 
-@@ -1068,10 +715,6 @@ void __init dm355_init_time(void)
- 	clk = clk_get(NULL, "timer0");
- 
- 	davinci_timer_init(clk);
--#else
--	davinci_clk_init(dm355_clks);
--	davinci_timer_init(&timer0_clk);
--#endif
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+index f814d37b1db2..e774f3c7c325 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -19,6 +19,8 @@
+ #include <drm/drm_fb_helper.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_of.h>
++#include <linux/devfreq.h>
++#include <linux/devfreq-event.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dma-iommu.h>
+ #include <linux/pm_runtime.h>
+@@ -77,6 +79,46 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
+ 	iommu_detach_device(domain, dev);
  }
  
- static struct resource dm355_pll2_resources[] = {
++#if IS_ENABLED(CONFIG_ARM_RK3399_DMC_DEVFREQ)
++static int rockchip_drm_init_devfreq(struct device *dev,
++				     struct rockchip_drm_private *priv)
++{
++	struct devfreq *devfreq;
++	struct devfreq_event_dev *edev;
++	int ret;
++
++	devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
++	if (IS_ERR(devfreq)) {
++		ret = PTR_ERR(devfreq);
++		if (ret == -ENODEV) {
++			DRM_DEV_INFO(dev, "devfreq missing, skip\n");
++			return 0;
++		}
++		return ret;
++	}
++
++	edev = devfreq_event_get_edev_by_phandle(devfreq->dev.parent, 0);
++	if (IS_ERR(edev)) {
++		ret = PTR_ERR(edev);
++		if (ret == -ENODEV) {
++			DRM_DEV_INFO(dev, "devfreq edev missing, skip\n");
++			return 0;
++		}
++		return ret;
++	}
++
++	priv->devfreq = devfreq;
++	priv->devfreq_event_dev = edev;
++	return 0;
++}
++#else
++static int rockchip_drm_init_devfreq(struct device *dev,
++				     struct rockchip_drm_private *priv)
++{
++	return 0;
++}
++#endif
++
+ static int rockchip_drm_init_iommu(struct drm_device *drm_dev)
+ {
+ 	struct rockchip_drm_private *private = drm_dev->dev_private;
+@@ -136,6 +178,10 @@ static int rockchip_drm_bind(struct device *dev)
+ 	INIT_LIST_HEAD(&private->psr_list);
+ 	mutex_init(&private->psr_list_lock);
+ 
++	ret = rockchip_drm_init_devfreq(dev, private);
++	if (ret)
++		goto err_free;
++
+ 	ret = rockchip_drm_init_iommu(drm_dev);
+ 	if (ret)
+ 		goto err_free;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+index 3a6ebfc26036..cc13fac59644 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+@@ -57,6 +57,10 @@ struct rockchip_drm_private {
+ 	struct drm_mm mm;
+ 	struct list_head psr_list;
+ 	struct mutex psr_list_lock;
++
++	struct devfreq *devfreq;
++	struct devfreq_event_dev *devfreq_event_dev;
++	bool dmc_disable_flag;
+ };
+ 
+ int rockchip_drm_dma_attach_device(struct drm_device *drm_dev,
+@@ -65,6 +69,11 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
+ 				    struct device *dev);
+ int rockchip_drm_wait_vact_end(struct drm_crtc *crtc, unsigned int mstimeout);
+ 
++uint32_t rockchip_drm_get_vblank_ns(struct drm_display_mode *mode);
++
++void rockchip_drm_enable_dmc(struct rockchip_drm_private *priv);
++void rockchip_drm_disable_dmc(struct rockchip_drm_private *priv);
++
+ extern struct platform_driver cdn_dp_driver;
+ extern struct platform_driver dw_hdmi_rockchip_pltfm_driver;
+ extern struct platform_driver dw_mipi_dsi_driver;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+index d4f4118b482d..bf10f7982278 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+@@ -18,6 +18,7 @@
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_fb_helper.h>
+ #include <drm/drm_crtc_helper.h>
++#include <soc/rockchip/rk3399_dmc.h>
+ 
+ #include "rockchip_drm_drv.h"
+ #include "rockchip_drm_fb.h"
+@@ -185,6 +186,16 @@ rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
+ 		rockchip_drm_psr_inhibit_get(encoder);
+ }
+ 
++uint32_t rockchip_drm_get_vblank_ns(struct drm_display_mode *mode)
++{
++	uint64_t vblank_time = mode->vtotal - mode->vdisplay;
++
++	vblank_time *= (uint64_t)NSEC_PER_SEC * mode->htotal;
++	do_div(vblank_time, mode->clock * 1000);
++
++	return vblank_time;
++}
++
+ static void
+ rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
+ {
+@@ -207,9 +218,28 @@ static void
+ rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
+ {
+ 	struct drm_device *dev = old_state->dev;
++	struct rockchip_drm_private *priv = dev->dev_private;
++	struct drm_crtc *crtc;
++	struct drm_display_mode *mode;
++	bool force_dmc_off = false;
++
++	drm_for_each_crtc(crtc, dev) {
++		if (crtc->state->active) {
++			mode = &crtc->state->adjusted_mode;
++			if (rockchip_drm_get_vblank_ns(mode) <
++			    DMC_MIN_VBLANK_NS)
++				force_dmc_off = true;
++		}
++	}
+ 
+ 	rockchip_drm_psr_inhibit_get_state(old_state);
+ 
++	/* If disabling dmc, disable it before committing mode set changes. */
++	if (force_dmc_off && !priv->dmc_disable_flag) {
++		rockchip_dmcfreq_block(priv->devfreq);
++		priv->dmc_disable_flag = true;
++	}
++
+ 	drm_atomic_helper_commit_modeset_disables(dev, old_state);
+ 
+ 	drm_atomic_helper_commit_modeset_enables(dev, old_state);
+@@ -224,6 +254,11 @@ rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
+ 	drm_atomic_helper_wait_for_vblanks(dev, old_state);
+ 
+ 	drm_atomic_helper_cleanup_planes(dev, old_state);
++
++	if (!force_dmc_off && priv->dmc_disable_flag) {
++		rockchip_dmcfreq_unblock(priv->devfreq);
++		priv->dmc_disable_flag = false;
++	}
+ }
+ 
+ static const struct drm_mode_config_helper_funcs rockchip_mode_config_helpers = {
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index f14a10ca4792..32f052ee15b9 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -36,6 +36,8 @@
+ #include <linux/reset.h>
+ #include <linux/delay.h>
+ 
++#include <soc/rockchip/rk3399_dmc.h>
++
+ #include "rockchip_drm_drv.h"
+ #include "rockchip_drm_gem.h"
+ #include "rockchip_drm_fb.h"
+@@ -103,7 +105,9 @@ struct vop {
+ 	struct drm_flip_work fb_unref_work;
+ 	unsigned long pending;
+ 
++	ktime_t line_flag_timestamp;
+ 	struct completion line_flag_completion;
++	struct notifier_block dmc_nb;
+ 
+ 	const struct vop_data *data;
+ 
+@@ -569,10 +573,12 @@ static int vop_enable(struct drm_crtc *crtc)
+ static void vop_crtc_atomic_disable(struct drm_crtc *crtc,
+ 				    struct drm_crtc_state *old_state)
+ {
++	struct rockchip_drm_private *priv = crtc->dev->dev_private;
+ 	struct vop *vop = to_vop(crtc);
+ 
+ 	WARN_ON(vop->event);
+ 
++	rockchip_dmcfreq_unregister_clk_sync_nb(priv->devfreq, &vop->dmc_nb);
+ 	mutex_lock(&vop->vop_lock);
+ 	drm_crtc_vblank_off(crtc);
+ 
+@@ -861,6 +867,7 @@ static void vop_crtc_atomic_enable(struct drm_crtc *crtc,
+ 	const struct vop_data *vop_data = vop->data;
+ 	struct rockchip_crtc_state *s = to_rockchip_crtc_state(crtc->state);
+ 	struct drm_display_mode *adjusted_mode = &crtc->state->adjusted_mode;
++	struct rockchip_drm_private *priv = crtc->dev->dev_private;
+ 	u16 hsync_len = adjusted_mode->hsync_end - adjusted_mode->hsync_start;
+ 	u16 hdisplay = adjusted_mode->hdisplay;
+ 	u16 htotal = adjusted_mode->htotal;
+@@ -951,6 +958,31 @@ static void vop_crtc_atomic_enable(struct drm_crtc *crtc,
+ 
+ 	VOP_REG_SET(vop, common, standby, 0);
+ 	mutex_unlock(&vop->vop_lock);
++	rockchip_dmcfreq_register_clk_sync_nb(priv->devfreq, &vop->dmc_nb);
++}
++
++static int dmc_notify(struct notifier_block *nb,
++		      unsigned long action,
++		      void *data)
++{
++	struct vop *vop = container_of(nb, struct vop, dmc_nb);
++	struct drm_crtc *crtc = &vop->crtc;
++	ktime_t *timeout = data;
++	int ret;
++
++	if (WARN_ON(!vop->is_enabled))
++		return NOTIFY_BAD;
++
++	ret = rockchip_drm_wait_vact_end(crtc, 100);
++	*timeout = ktime_add_ns(vop->line_flag_timestamp,
++				rockchip_drm_get_vblank_ns(&crtc->mode));
++	if (ret) {
++		dev_err(vop->dev, "%s: Line flag interrupt did not arrive\n",
++			__func__);
++		return NOTIFY_BAD;
++	}
++
++	return NOTIFY_STOP;
+ }
+ 
+ static bool vop_fs_irq_is_pending(struct vop *vop)
+@@ -1190,6 +1222,7 @@ static irqreturn_t vop_isr(int irq, void *data)
+ 	}
+ 
+ 	if (active_irqs & LINE_FLAG_INTR) {
++		vop->line_flag_timestamp = ktime_get();
+ 		complete(&vop->line_flag_completion);
+ 		active_irqs &= ~LINE_FLAG_INTR;
+ 		ret = IRQ_HANDLED;
+@@ -1566,6 +1599,7 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+ 	spin_lock_init(&vop->reg_lock);
+ 	spin_lock_init(&vop->irq_lock);
+ 	mutex_init(&vop->vop_lock);
++	vop->dmc_nb.notifier_call = dmc_notify;
+ 
+ 	ret = vop_create_crtc(vop);
+ 	if (ret)
 -- 
 2.17.0
