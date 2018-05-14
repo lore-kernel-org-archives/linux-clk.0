@@ -1,203 +1,133 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AFA0B94.4000100@samsung.com>
-Date: Tue, 15 May 2018 07:20:04 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, MyungJoo Ham
-	<myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob
-	Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Heiko
-	Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>, David
-	Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Derek Basehore
-	<dbasehore@chromium.org>, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, Lin
-	Huang <hl@rock-chips.com>, kernel@collabora.com, Sean Paul
-	<seanpaul@chromium.org>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH 03/10] devfreq: rk3399_dmc: Pass ODT and auto power
- down parameters to TF-A.
-In-reply-to: <20180514211610.26618-4-enric.balletbo@collabora.com>
-References: <20180514211610.26618-1-enric.balletbo@collabora.com>
-	<CGME20180514211840epcas3p41708e430bc22d7e61e8b894b12a083f9@epcas3p4.samsung.com>
-	<20180514211610.26618-4-enric.balletbo@collabora.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 2/2] clk: davinci: psc-dm365: fix few clocks
+To: Sekhar Nori <nsekhar@ti.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Linux clk Mailing List <linux-clk@vger.kernel.org>,
+ Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+ Kevin Hilman <khilman@kernel.org>
+References: <20180511141037.25250-1-nsekhar@ti.com>
+ <20180511141037.25250-3-nsekhar@ti.com>
+ <afdf0f39-1035-117e-a319-f615ac109902@lechnology.com>
+ <7cd9d990-26d5-f7d4-291b-a4e4e905cabc@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <81dbbf4b-e3e4-976f-fc2a-63890d8a0fbe@lechnology.com>
+Date: Mon, 14 May 2018 10:19:46 -0500
+MIME-Version: 1.0
+In-Reply-To: <7cd9d990-26d5-f7d4-291b-a4e4e905cabc@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 2018년 05월 15일 06:16, Enric Balletbo i Serra wrote:
-> Trusted Firmware-A (TF-A) for rk3399 implements a SiP call to get the
-> on-die termination (ODT) and auto power down parameters from kernel,
-> this patch adds the functionality to do this. Also, if DDR clock
-> frequency is lower than the on-die termination (ODT) disable frequency
-> this driver should disable the DDR ODT.
-
-I have a question.
-'disable frequency' is the same meaning of 'disable the DDR ODT'?
-
+On 05/14/2018 04:49 AM, Sekhar Nori wrote:
+> Hi David,
 > 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
+> On Saturday 12 May 2018 07:12 AM, David Lechner wrote:
+>> On 05/11/2018 09:10 AM, Sekhar Nori wrote:
+>>> Fix parent of emac and voice codec PSC clocks. This now matches
+>>> existing implementation in arch/arm/mach-davinci/dm365.c
+>>>
+>>> Also, there is only one power domain on DM365. Fix the power
+>>> domain of voice codec and vpss dac modules.
+>>>
+>>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+>>> ---
+>>>    drivers/clk/davinci/psc-dm365.c | 6 +++---
+>>>    1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/davinci/psc-dm365.c
+>>> b/drivers/clk/davinci/psc-dm365.c
+>>> index 5b5b55b0b59a..beeda10fd2f0 100644
+>>> --- a/drivers/clk/davinci/psc-dm365.c
+>>> +++ b/drivers/clk/davinci/psc-dm365.c
+>>> @@ -65,9 +65,9 @@ static const struct davinci_lpsc_clk_info
+>>> dm365_psc_info[] = {
+>>>        LPSC(31, 0, arm,         pll2_sysclk2, NULL,
+>>> LPSC_ALWAYS_ENABLED),
+>>>        LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
+>>>        LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
+>>> -    LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
+>>> -    LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
+>>> -    LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
+>>> +    LPSC(40, 0, emac,        pll1_sysclk4, emac_clkdev,        0),
+>>> +    LPSC(44, 0, voice_codec, pll2_sysclk4, voice_codec_clkdev, 0),
+>>> +    LPSC(46, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
+>>>        LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
+>>>        LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
+>>>        { }
+>>>
+>>
+>> Slightly off topic...
+>>
+>> Hmm... Looking at the TRM, I see that there are a bunch of mux clocks
+>> that we
+>> have not implemented for the DM365 (all of the clocks in the
+>> VPSS_CLK_CTRL and
+>> PERI_CLKCTL registers). I'm wondering if we should be creating drivers for
+>> those like the DA8XX CFGCHIP clock driver.
 > 
->  drivers/devfreq/rk3399_dmc.c        | 50 ++++++++++++++++++++++++++++-
->  include/soc/rockchip/rockchip_sip.h |  1 +
->  2 files changed, 50 insertions(+), 1 deletion(-)
+> Yes, but lets leave that to after the current version is merged. That
+> way we have one kernel version which is just replacing the private clock
+> implementation and that will be good to bisect any regressions.
+> VPSS_CLK_CTRL for example is being set directly by the VPSS driver. That
+> driver will have to change too once we model the mux as a proper clock.
 > 
-> diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-> index d5c03e5abe13..cc1bbca3fb15 100644
-> --- a/drivers/devfreq/rk3399_dmc.c
-> +++ b/drivers/devfreq/rk3399_dmc.c
-> @@ -18,14 +18,17 @@
->  #include <linux/devfreq.h>
->  #include <linux/devfreq-event.h>
->  #include <linux/interrupt.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_opp.h>
-> +#include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/rwsem.h>
->  #include <linux/suspend.h>
->  
-> +#include <soc/rockchip/rk3399_grf.h>
->  #include <soc/rockchip/rockchip_sip.h>
->  
->  struct dram_timing {
-> @@ -69,8 +72,11 @@ struct rk3399_dmcfreq {
->  	struct mutex lock;
->  	struct dram_timing timing;
->  	struct regulator *vdd_center;
-> +	struct regmap *regmap_pmu;
->  	unsigned long rate, target_rate;
->  	unsigned long volt, target_volt;
-> +	unsigned int odt_dis_freq;
-> +	int odt_pd_arg0, odt_pd_arg1;
->  };
->  
->  static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
-> @@ -80,6 +86,8 @@ static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
->  	struct dev_pm_opp *opp;
->  	unsigned long old_clk_rate = dmcfreq->rate;
->  	unsigned long target_volt, target_rate;
-> +	struct arm_smccc_res res;
-> +	int dram_flag;
->  	int err;
->  
->  	opp = devfreq_recommended_opp(dev, freq, flags);
-> @@ -95,6 +103,15 @@ static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
->  
->  	mutex_lock(&dmcfreq->lock);
->  
-> +	dram_flag = 0;
-
-Also, if dram_flag is 0, it mean that disable ODT frequency?
-If it's right, you better to define the precise variables as following
-instead of just integer(0 or 1).
-For example,
-- ROCKCHIP_SIP_DRAM_FREQ_ENABLE
-- ROCKCHIP_SIP_DRAM_FREQ_DISABLE
-
-> +	if (target_rate >= dmcfreq->odt_dis_freq)
-> +		dram_flag = 1;
-> +
-> +	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, dmcfreq->odt_pd_arg0,
-> +		      dmcfreq->odt_pd_arg1,
-> +		      ROCKCHIP_SIP_CONFIG_DRAM_SET_ODT_PD,
-> +		      dram_flag, 0, 0, 0, &res);
-> +
-
-This operation is special for only rk3399_dmc. It is difficult
-to understand what to do. I recommend you better to add the detailed comment
-with code.
-
->  	/*
->  	 * If frequency scaling from low to high, adjust voltage first.
->  	 * If frequency scaling from high to low, adjust frequency first.
-> @@ -294,11 +311,13 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
->  {
->  	struct arm_smccc_res res;
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *np = pdev->dev.of_node;
-> +	struct device_node *np = pdev->dev.of_node, *node;
->  	struct rk3399_dmcfreq *data;
->  	int ret, index, size;
->  	uint32_t *timing;
->  	struct dev_pm_opp *opp;
-> +	u32 ddr_type;
-> +	u32 val;
->  
->  	data = devm_kzalloc(dev, sizeof(struct rk3399_dmcfreq), GFP_KERNEL);
->  	if (!data)
-> @@ -334,6 +353,29 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	/* Try to find the optional reference to the pmu syscon */
-> +	node = of_parse_phandle(np, "rockchip,pmu", 0);
-> +	if (node) {
-> +		data->regmap_pmu = syscon_node_to_regmap(node);
-> +		if (IS_ERR(data->regmap_pmu))
-> +			return PTR_ERR(data->regmap_pmu);
-> +	}
-> +
-> +	/* Get DDR type */
-> +	regmap_read(data->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
-> +	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
-> +		    RK3399_PMUGRF_DDRTYPE_MASK;
-> +
-> +	/* Get the odt_dis_freq parameter in function of the DDR type */
-> +	if (ddr_type == RK3399_PMUGRF_DDRTYPE_DDR3)
-> +		data->odt_dis_freq = data->timing.ddr3_odt_dis_freq;
-> +	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
-> +		data->odt_dis_freq = data->timing.lpddr3_odt_dis_freq;
-> +	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
-> +		data->odt_dis_freq = data->timing.lpddr4_odt_dis_freq;
-> +	else
-> +		return -EINVAL;
-> +
-
-how about using 'switch' statement?
-
->  	/*
->  	 * Get dram timing and pass it to arm trust firmware,
->  	 * the dram drvier in arm trust firmware will get these
-> @@ -358,6 +400,12 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
->  		      ROCKCHIP_SIP_CONFIG_DRAM_INIT,
->  		      0, 0, 0, 0, &res);
->  
-> +	data->odt_pd_arg0 = (data->timing.sr_idle & 0xff) |
-> +			    ((data->timing.sr_mc_gate_idle & 0xff) << 8) |
-> +			    ((data->timing.standby_idle & 0xffff) << 16);
-> +	data->odt_pd_arg1 = (data->timing.pd_idle & 0xfff) |
-> +			    ((data->timing.srpd_lite_idle & 0xfff) << 16);
-> +
-
-odt_pd_arg0 and odt_pd_arg1 might be used for disabling/enabling the ODT frequency.
-As I commented, it depend on only rk3399_dmc. You better to add detailed comment.
-
-And I prefer to define the XXX_SHIFT/XXX_MASK definition instead of
-using 8/16/0xff/0xffff for the readability.
-
->  	/*
->  	 * We add a devfreq driver to our parent since it has a device tree node
->  	 * with operating points.
-> diff --git a/include/soc/rockchip/rockchip_sip.h b/include/soc/rockchip/rockchip_sip.h
-> index 7e28092c4d3d..ad9482c56797 100644
-> --- a/include/soc/rockchip/rockchip_sip.h
-> +++ b/include/soc/rockchip/rockchip_sip.h
-> @@ -23,5 +23,6 @@
->  #define ROCKCHIP_SIP_CONFIG_DRAM_GET_RATE	0x05
->  #define ROCKCHIP_SIP_CONFIG_DRAM_CLR_IRQ	0x06
->  #define ROCKCHIP_SIP_CONFIG_DRAM_SET_PARAM	0x07
-> +#define ROCKCHIP_SIP_CONFIG_DRAM_SET_ODT_PD	0x08
->  
->  #endif
+>>
+>> Back on topic...
+>>
+>> The emac fix here looks good.
+> 
+> Okay.
+> 
+>>
+>> The TRM (sprufg5a.pdf) shows that there is a DIV2 clock (part of the
+>> PERI_CLKCTL register) between PLL2 SYSCLK4 and Voice Codec in Figure 5,
+>> It also shows PLL1 SYSCLK4 as a second parent clock to Voice Codec, however
+>> this dependency has probably gone unnoticed because so many other devices
+>> also use that same clock, it will pretty much always be on. In Figure 38,
+>> on the other hand, PLL1 SYSCLK4 is shown as the only parent of Voice Codec.
+>>
+>> So, I am thinking that pll1_sysclk4 is the correct parent for the
+>> voice_codec clock here since it is the only one listed in Figure 38
+>> (which is in the PSC section of the TRM). The pll2_sysclk4 clock should
+>> probably be used by the video codec device driver directly (well, the
+>> DIV2 clock really, but we don't have a driver for that yet).
+> 
+> Well the main thing I went with here is compatibility with existing code
+> which uses pll2_sysclk4. You are right that pll1_sysclk4 is probably a
+> better parent clock to model for the PSC. But, this will break existing
+> functionality as no one will be enabling pll2_sysclk4 then. And I
+> suspect that will break voice codec driver. The documentation for voice
+> codec does not seem to do a good job of explaining what the two clocks
+> are for. And without some thorough testing of voice codec (I have never
+> used it myself), I would just keep the functionality as-is.
+> 
+> I can add a comment on how the parent was arrived at though, so there is
+> some reference to when we look at this again.
+> 
+>>
+>> The vpss_dac clock in not very clear in the TRM. In Table 39, the name
+>> for LPSC 46, which we are calling "vpss_dac", is "VDAC CLK". In Figure
+>> 37, however, there is not a node that matches exactly. There is "VIDEO
+>> DAC", which I take to be the same clock though. This has parent clocks
+>> of PLL1 SYSCLK6 and PLL1 AUXCLK. So, I am guessing that pll1_sysclk6
+>> should be the parent here rather than pll1_sysclk3. According to Figure
+>> 5, PLL1 SYSCLK3 only feeds HDVPID and MJCP, which I don't think are the
+>> same as the video DAC since they are also listed separately in Figure 5.
+> 
+> The HDVICP is a subsystem in itself, so I am not so sure about that. The
+> problem here is compounded by the fact that some of these video
+> subsystems are not publicly documented. Here too, I think the safer
+> approach is to be compliant with existing code at least for one kernel
+> version. Otherwise, we run into the issue of too many things changing at
+> the same time making it tough to nail regressions.
+> 
+> we can add a comment here too on how the parent was arrived at (refer
+> back to existing code).
+> 
+> Thanks,
+> Sekhar
 > 
 
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Making it just match the existing clock code sounds like a good plan to
+me. And it would be nice to add the suggested comments since you will be
+doing a v2 for the other patch anyway.
