@@ -1,66 +1,259 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Stephen Boyd <sboyd@kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "hdegoede@redhat.com" <hdegoede@redhat.com>,
-	"b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, dl-linux-imx
-	<linux-imx@nxp.com>, Stephen Boyd <sboyd@codeaurora.org>, Russell King
-	<linux@arm.linux.org.uk>
-Subject: RE: [PATCH V2 1/4] clk: bulk: add of_clk_bulk_get()
-Date: Fri, 25 May 2018 09:48:48 +0000
-Message-ID: 
- <AM0PR04MB421192DFF5F41078B54FCC1A80690@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
- <1521602391-30356-2-git-send-email-aisheng.dong@nxp.com>
- <152182399342.178046.13139513462419815903@swboyd.mtv.corp.google.com>
-In-Reply-To: 
- <152182399342.178046.13139513462419815903@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <enric.balletbo@collabora.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Will Deacon <will.deacon@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sandy Huang <hjc@rock-chips.com>,
+	David Airlie <airlied@linux.ie>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Derek Basehore <dbasehore@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	Lin Huang <hl@rock-chips.com>,
+	kernel@collabora.com,
+	Sean Paul <seanpaul@chromium.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Yakir Yang <kuankuan.y@gmail.com>,
+	Mark Yao <markyao0591@gmail.com>,
+	Jacob Chen <jacob-chen@iotwrt.com>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Brian Norris <briannorris@chromium.org>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [RFC PATCH 09/10] arm64: dts: rk3399: Add dfi and dmc nodes.
+Date: Mon, 14 May 2018 23:16:09 +0200
+Message-Id: <20180514211610.26618-10-enric.balletbo@collabora.com>
+In-Reply-To: <20180514211610.26618-1-enric.balletbo@collabora.com>
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVw
-aGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiBTYXR1cmRheSwgTWFy
-Y2ggMjQsIDIwMTggMTI6NTMgQU0NCj4gVG86IEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54cC5j
-b20+OyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnDQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IG10dXJx
-dWV0dGVAYmF5bGlicmUuY29tOyBoZGVnb2VkZUByZWRoYXQuY29tOw0KPiBiLnpvbG5pZXJraWVA
-c2Ftc3VuZy5jb207IGxpbnV4QGFybWxpbnV4Lm9yZy51azsgbGludXgtDQo+IGZiZGV2QHZnZXIu
-a2VybmVsLm9yZzsgZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT47IEEucy4gRG9uZw0K
-PiA8YWlzaGVuZy5kb25nQG54cC5jb20+OyBTdGVwaGVuIEJveWQgPHNib3lkQGNvZGVhdXJvcmEu
-b3JnPjsgUnVzc2VsbA0KPiBLaW5nIDxsaW51eEBhcm0ubGludXgub3JnLnVrPg0KPiBTdWJqZWN0
-OiBSZTogW1BBVENIIFYyIDEvNF0gY2xrOiBidWxrOiBhZGQgb2ZfY2xrX2J1bGtfZ2V0KCkNCj4g
-DQo+IFF1b3RpbmcgRG9uZyBBaXNoZW5nICgyMDE4LTAzLTIwIDIwOjE5OjQ4KQ0KPiA+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2Nsay9jbGstYnVsay5jIGIvZHJpdmVycy9jbGsvY2xrLWJ1bGsuYyBp
-bmRleA0KPiA+IDRjMTA0NTYuLjRiMzU3YjIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsv
-Y2xrLWJ1bGsuYw0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1idWxrLmMNCj4gPiBAQCAtMTks
-NiArMTksMzggQEANCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KPiA+ICAjaW5jbHVkZSA8
-bGludXgvZGV2aWNlLmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9leHBvcnQuaD4NCj4gPiArI2lu
-Y2x1ZGUgPGxpbnV4L29mLmg+DQo+ID4gKw0KPiA+ICsjaWYgZGVmaW5lZChDT05GSUdfT0YpICYm
-IGRlZmluZWQoQ09ORklHX0NPTU1PTl9DTEspDQo+IA0KPiBEbyB3ZSBuZWVkIHRoZXNlIGRlZmlu
-ZXM/IG9mX2Nsa19nZXQoKSBpcyBhIHN0dWIgZnVuY3Rpb24gd2hlbiB0aGVzZQ0KPiBjb25maWdz
-IGFyZSBmYWxzZS4NCj4gDQoNCllvdSdyZSByaWdodC4gV2lsbCBkcm9wIGl0Lg0KDQo+ID4gK3N0
-YXRpYyBpbnQgX19tdXN0X2NoZWNrIG9mX2Nsa19idWxrX2dldChzdHJ1Y3QgZGV2aWNlX25vZGUg
-Km5wLCBpbnQNCj4gbnVtX2Nsa3MsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHN0cnVjdCBjbGtfYnVsa19kYXRhICpjbGtzKSB7DQo+ID4gKyAgICAgICBpbnQg
-cmV0Ow0KPiA+ICsgICAgICAgaW50IGk7DQo+ID4gKw0KPiA+ICsgICAgICAgZm9yIChpID0gMDsg
-aSA8IG51bV9jbGtzOyBpKyspDQo+ID4gKyAgICAgICAgICAgICAgIGNsa3NbaV0uY2xrID0gTlVM
-TDsNCj4gPiArDQo+ID4gKyAgICAgICBmb3IgKGkgPSAwOyBpIDwgbnVtX2Nsa3M7IGkrKykgew0K
-PiA+ICsgICAgICAgICAgICAgICBjbGtzW2ldLmNsayA9IG9mX2Nsa19nZXQobnAsIGkpOw0KPiA+
-ICsgICAgICAgICAgICAgICBpZiAoSVNfRVJSKGNsa3NbaV0uY2xrKSkgew0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIHJldCA9IFBUUl9FUlIoY2xrc1tpXS5jbGspOw0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIHByX2VycigiJXBPRjogRmFpbGVkIHRvIGdldCBjbGsgaW5kZXg6ICVk
-IHJldDogJWRcbiIsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5wLCBpLCBy
-ZXQpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGNsa3NbaV0uY2xrID0gTlVMTDsNCj4g
-PiArICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGVycjsNCj4gPiArICAgICAgICAgICAgICAg
-fQ0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiAwOw0KPiA+ICsNCj4g
-PiArZXJyOg0KPiA+ICsgICAgICAgY2xrX2J1bGtfcHV0KGksIGNsa3MpOw0KPiA+ICsNCj4gPiAr
-ICAgICAgIHJldHVybiByZXQ7DQo+ID4gK30NCj4gPiArRVhQT1JUX1NZTUJPTChvZl9jbGtfYnVs
-a19nZXQpOw0KPiANCj4gSXQncyBzdGF0aWMsIHNvIGRvbid0IGV4cG9ydCBpdC4NCg0KR290IGl0
-Lg0KU29ycnkgZm9yIHN1Y2ggbWlzdGFrZS4NCg0KV2lsbCBmaXggYW5kIHNlbnQgVjMuDQoNClJl
-Z2FyZHMNCkRvbmcgQWlzaGVuZw0K
+From: Lin Huang <hl@rock-chips.com>
+
+These are required to support DDR DVFS on rk3399 platform. The patch also
+introduces two new files (rk3399-dram.h and rk3399-dram-default-timing)
+with default DRAM settings.
+
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+
+ .../rockchip/rk3399-dram-default-timing.dtsi  | 38 ++++++++++
+ arch/arm64/boot/dts/rockchip/rk3399-dram.h    | 73 +++++++++++++++++++
+ .../boot/dts/rockchip/rk3399-op1-opp.dtsi     | 29 ++++++++
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      | 20 +++++
+ 4 files changed, 160 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-dram.h
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi
+new file mode 100644
+index 000000000000..4dfe3e1d8bdf
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR X11)
++/*
++ * Copyright (c) 2016-2018, Fuzhou Rockchip Electronics Co., Ltd
++ *
++ * Author: Lin Huang <hl@rock-chips.com>
++ */
++
++#include "rk3399-dram.h"
++
++rockchip,ddr3_speed_bin = <21>;
++rockchip,pd_idle = <0x40>;
++rockchip,sr_idle = <0x2>;
++rockchip,sr_mc_gate_idle = <0x3>;
++rockchip,srpd_lite_idle	= <0x4>;
++rockchip,standby_idle = <0x2000>;
++rockchip,dram_dll_dis_freq = <300000000>;
++rockchip,phy_dll_dis_freq = <125000000>;
++rockchip,auto_pd_dis_freq = <666000000>;
++rockchip,ddr3_odt_dis_freq = <333000000>;
++rockchip,ddr3_drv = <DDR3_DS_40ohm>;
++rockchip,ddr3_odt = <DDR3_ODT_120ohm>;
++rockchip,phy_ddr3_ca_drv = <PHY_DRV_ODT_40>;
++rockchip,phy_ddr3_dq_drv = <PHY_DRV_ODT_40>;
++rockchip,phy_ddr3_odt = <PHY_DRV_ODT_240>;
++rockchip,lpddr3_odt_dis_freq = <333000000>;
++rockchip,lpddr3_drv = <LP3_DS_34ohm>;
++rockchip,lpddr3_odt = <LP3_ODT_240ohm>;
++rockchip,phy_lpddr3_ca_drv = <PHY_DRV_ODT_40>;
++rockchip,phy_lpddr3_dq_drv = <PHY_DRV_ODT_40>;
++rockchip,phy_lpddr3_odt = <PHY_DRV_ODT_240>;
++rockchip,lpddr4_odt_dis_freq = <333000000>;
++rockchip,lpddr4_drv = <LP4_PDDS_60ohm>;
++rockchip,lpddr4_dq_odt = <LP4_DQ_ODT_40ohm>;
++rockchip,lpddr4_ca_odt = <LP4_CA_ODT_40ohm>;
++rockchip,phy_lpddr4_ca_drv = <PHY_DRV_ODT_40>;
++rockchip,phy_lpddr4_ck_cs_drv = <PHY_DRV_ODT_80>;
++rockchip,phy_lpddr4_dq_drv = <PHY_DRV_ODT_80>;
++rockchip,phy_lpddr4_odt = <PHY_DRV_ODT_60>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-dram.h b/arch/arm64/boot/dts/rockchip/rk3399-dram.h
+new file mode 100644
+index 000000000000..4b3d4a79923b
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3399-dram.h
+@@ -0,0 +1,73 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR X11) */
++/*
++ * Copyright (c) 2016-2018, Fuzhou Rockchip Electronics Co., Ltd
++ *
++ * Author: Lin Huang <hl@rock-chips.com>
++ */
++
++#ifndef _DTS_DRAM_ROCKCHIP_RK3399_H
++#define _DTS_DRAM_ROCKCHIP_RK3399_H
++
++#define DDR3_DS_34ohm		34
++#define DDR3_DS_40ohm		40
++
++#define DDR3_ODT_DIS		0
++#define DDR3_ODT_40ohm		40
++#define DDR3_ODT_60ohm		60
++#define DDR3_ODT_120ohm		120
++
++#define LP2_DS_34ohm		34
++#define LP2_DS_40ohm		40
++#define LP2_DS_48ohm		48
++#define LP2_DS_60ohm		60
++#define LP2_DS_68_6ohm		68	/* optional */
++#define LP2_DS_80ohm		80
++#define LP2_DS_120ohm		120	/* optional */
++
++#define LP3_DS_34ohm		34
++#define LP3_DS_40ohm		40
++#define LP3_DS_48ohm		48
++#define LP3_DS_60ohm		60
++#define LP3_DS_80ohm		80
++#define LP3_DS_34D_40U		3440
++#define LP3_DS_40D_48U		4048
++#define LP3_DS_34D_48U		3448
++
++#define LP3_ODT_DIS		0
++#define LP3_ODT_60ohm		60
++#define LP3_ODT_120ohm		120
++#define LP3_ODT_240ohm		240
++
++#define LP4_PDDS_40ohm		40
++#define LP4_PDDS_48ohm		48
++#define LP4_PDDS_60ohm		60
++#define LP4_PDDS_80ohm		80
++#define LP4_PDDS_120ohm		120
++#define LP4_PDDS_240ohm		240
++
++#define LP4_DQ_ODT_40ohm	40
++#define LP4_DQ_ODT_48ohm	48
++#define LP4_DQ_ODT_60ohm	60
++#define LP4_DQ_ODT_80ohm	80
++#define LP4_DQ_ODT_120ohm	120
++#define LP4_DQ_ODT_240ohm	240
++#define LP4_DQ_ODT_DIS		0
++
++#define LP4_CA_ODT_40ohm	40
++#define LP4_CA_ODT_48ohm	48
++#define LP4_CA_ODT_60ohm	60
++#define LP4_CA_ODT_80ohm	80
++#define LP4_CA_ODT_120ohm	120
++#define LP4_CA_ODT_240ohm	240
++#define LP4_CA_ODT_DIS		0
++
++#define PHY_DRV_ODT_Hi_Z	0
++#define PHY_DRV_ODT_240		240
++#define PHY_DRV_ODT_120		120
++#define PHY_DRV_ODT_80		80
++#define PHY_DRV_ODT_60		60
++#define PHY_DRV_ODT_48		48
++#define PHY_DRV_ODT_40		40
++#define PHY_DRV_ODT_34_3	34
++
++#endif /* _DTS_DRAM_ROCKCHIP_RK3399_H */
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
+index d8a120f945c8..4c634e58425d 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
+@@ -147,6 +147,31 @@
+ 			opp-microvolt = <1075000>;
+ 		};
+ 	};
++
++	dmc_opp_table: dmc_opp_table {
++		compatible = "operating-points-v2";
++
++		opp00 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <900000>;
++		};
++		opp01 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <900000>;
++		};
++		opp02 {
++			opp-hz = /bits/ 64 <666000000>;
++			opp-microvolt = <900000>;
++		};
++		opp03 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <900000>;
++		};
++		opp04 {
++			opp-hz = /bits/ 64 <928000000>;
++			opp-microvolt = <900000>;
++		};
++	};
+ };
+ 
+ &cpu_l0 {
+@@ -176,3 +201,7 @@
+ &gpu {
+ 	operating-points-v2 = <&gpu_opp_table>;
+ };
++
++&dmc {
++	operating-points-v2 = <&dmc_opp_table>;
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+index 4550c0f82be9..e012cc8ae3d4 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+@@ -1830,6 +1830,26 @@
+ 		status = "disabled";
+ 	};
+ 
++	dfi: dfi@ff630000 {
++		reg = <0x00 0xff630000 0x00 0x4000>;
++		compatible = "rockchip,rk3399-dfi";
++		rockchip,pmu = <&pmugrf>;
++		interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH 0>;
++		clocks = <&cru PCLK_DDR_MON>;
++		clock-names = "pclk_ddr_mon";
++		status = "disabled";
++	};
++
++	dmc: dmc {
++		compatible = "rockchip,rk3399-dmc";
++		rockchip,pmu = <&pmugrf>;
++		devfreq-events = <&dfi>;
++		clocks = <&cru SCLK_DDRC>;
++		clock-names = "dmc_clk";
++		#include "rk3399-dram-default-timing.dtsi"
++		status = "disabled";
++	};
++
+ 	pinctrl: pinctrl {
+ 		compatible = "rockchip,rk3399-pinctrl";
+ 		rockchip,grf = <&grf>;
+-- 
+2.17.0
