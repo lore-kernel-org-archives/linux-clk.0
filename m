@@ -1,55 +1,56 @@
-Return-Path: <boris.brezillon@bootlin.com>
-Date: Thu, 24 May 2018 13:07:31 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: Benjamin Lindqvist <benjamin.lindqvist@endian.se>, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
- mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com,
- richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, Mirza
- Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180524130731.0c00094d@bbrezillon>
-In-Reply-To: <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
-References: <cover.1526990589.git.stefan@agner.ch>
-	<86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-	<CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
-	<d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <enric.balletbo@collabora.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Will Deacon <will.deacon@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sandy Huang <hjc@rock-chips.com>,
+	David Airlie <airlied@linux.ie>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Derek Basehore <dbasehore@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	Lin Huang <hl@rock-chips.com>,
+	kernel@collabora.com,
+	Sean Paul <seanpaul@chromium.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [RFC PATCH 02/10] dt-bindings: devfreq: rk3399_dmc: Add rockchip,pmu phandle.
+Date: Mon, 14 May 2018 23:16:02 +0200
+Message-Id: <20180514211610.26618-3-enric.balletbo@collabora.com>
+In-Reply-To: <20180514211610.26618-1-enric.balletbo@collabora.com>
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 24 May 2018 13:00:41 +0200
-Stefan Agner <stefan@agner.ch> wrote:
+The Rockchip DMC (Dynamic Memory Interface) needs to access to the PMU
+general register files to know the DRAM type, so add a phandle to the
+syscon that manages these registers.
 
-> 
-> > 
-> > Note that we're in fact using this patch set in Linux today, but
-> > we had to remove the oobsize inference part. Currently we're
-> > simply hard coding it to CFG_TVAL_4, but maybe it would be
-> > cleaner to add ECC algo as a board config instead, e.g. in the
-> > .dts file or whatever. This seems to be done by other vendors
-> > already, see for example excerpt of
-> > Documentation/devicetree/bindings/mtd/gpmc-nand.txt below:
-> > 
-> >  - ti,nand-ecc-opt: A string setting the ECC layout to use. One of:
-> > "sw" 1-bit Hamming ecc code via software
-> > "hw" <deprecated> use "ham1" instead
-> > "hw-romcode" <deprecated> use "ham1" instead
-> > "ham1" 1-bit Hamming ecc code
-> > "bch4" 4-bit BCH ecc code
-> > "bch8" 8-bit BCH ecc code
-> > "bch16" 16-bit BCH ECC code
-> > Refer below "How to select correct ECC scheme for your device ?"
-> > 
-> > It seems as if this method would be equally applicable to Tegra NAND.  
-> 
-> Yeah, ideally we can reuse "nand-ecc-algo". Although, Reed-Solomon is
-> not yet in the list.  So using this property would require to extend
-> this standard property.
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-I'm okay with that ;-).
+ Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
+index 0ec68141f85a..951789c0cdd6 100644
+--- a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
++++ b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
+@@ -12,6 +12,8 @@ Required properties:
+ 			 for details.
+ - center-supply:	 DMC supply node.
+ - status:		 Marks the node enabled/disabled.
++- rockchip,pmu:		 Phandle to the syscon managing the "PMU general register
++			 files".
+ 
+ Optional properties:
+ - interrupts:		 The CPU interrupt number. The interrupt specifier
+-- 
+2.17.0
