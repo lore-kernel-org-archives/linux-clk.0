@@ -1,123 +1,74 @@
-Return-Path: <Akshu.Agrawal@amd.com>
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-To: 
-Cc: djkurtz@chromium.org,
-	akshu.agrawal@amd.com,
-	Alexander.Deucher@amd.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	christian.koenig@amd.com,
-	airlied@redhat.com,
-	Shaoyun.Liu@amd.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	rjw@rjwysocki.net,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH v2 2/2] ACPI: APD: Add AMD misc clock handler support
-Date: Sat,  5 May 2018 01:07:19 +0800
-Message-Id: <1525453639-30575-3-git-send-email-akshu.agrawal@amd.com>
-In-Reply-To: <1525453639-30575-1-git-send-email-akshu.agrawal@amd.com>
-References: <1525453639-30575-1-git-send-email-akshu.agrawal@amd.com>
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, "ard.biesheuvel@linaro.org"
+	<ard.biesheuvel@linaro.org>, "mingo@kernel.org" <mingo@kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "hkallweit1@gmail.com"
+	<hkallweit1@gmail.com>, "keescook@chromium.org" <keescook@chromium.org>,
+	"dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH v6 02/11] firmware: xilinx: Add Zynqmp firmware driver
+Date: Mon, 14 May 2018 19:06:19 +0000
+Message-ID: <SN1PR02MB37580153B7BD4C229AA0AAEFB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+ <1523389127-14243-3-git-send-email-jollys@xilinx.com>
+ <9cbfb3cd-daa3-f145-c6f2-f15f61d1bea0@arm.com>
+In-Reply-To: <9cbfb3cd-daa3-f145-c6f2-f15f61d1bea0@arm.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: akshu.agrawal@amd.com
 List-ID: <linux-clk.vger.kernel.org>
 
-AMD SoC exposes clock for general purpose use. The clock registration
-is done in clk-st driver. The MMIO mapping are passed on to the
-clock driver for accessing the registers.
-The misc clock handler will create MMIO mappings to access the
-clock registers and enable the clock driver to expose the clock
-for use of drivers which will connect to it.
-
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
----
-v2: Submitted with dependent patch, removed unneeded kfree for devm_kzalloc
- drivers/acpi/acpi_apd.c | 50 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
-
-diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
-index d553b00..88b8a3e 100644
---- a/drivers/acpi/acpi_apd.c
-+++ b/drivers/acpi/acpi_apd.c
-@@ -11,6 +11,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/platform_data/clk-st.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/clkdev.h>
-@@ -72,6 +73,50 @@ static int acpi_apd_setup(struct apd_private_data *pdata)
- }
- 
- #ifdef CONFIG_X86_AMD_PLATFORM_DEVICE
-+
-+static int misc_check_res(struct acpi_resource *ares, void *data)
-+{
-+	struct resource res;
-+
-+	return !acpi_dev_resource_memory(ares, &res);
-+}
-+
-+static int st_misc_setup(struct apd_private_data *pdata)
-+{
-+	struct acpi_device *adev = pdata->adev;
-+	struct platform_device *clkdev;
-+	struct st_clk_data *clk_data;
-+	struct resource_entry *rentry;
-+	struct list_head resource_list;
-+	int ret;
-+
-+	clk_data = devm_kzalloc(&adev->dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	INIT_LIST_HEAD(&resource_list);
-+	ret = acpi_dev_get_resources(adev, &resource_list, misc_check_res,
-+				     NULL);
-+	if (ret < 0)
-+		return -ENOMEM;
-+
-+	list_for_each_entry(rentry, &resource_list, node) {
-+		clk_data->base = ioremap(rentry->res->start,
-+					 resource_size(rentry->res));
-+		break;
-+	}
-+
-+	acpi_dev_free_resource_list(&resource_list);
-+
-+	clkdev = platform_device_register_data(&adev->dev, "clk-st",
-+					       PLATFORM_DEVID_NONE, clk_data,
-+					       sizeof(*clk_data));
-+	if (IS_ERR(clkdev))
-+		return PTR_ERR(clkdev);
-+
-+	return 0;
-+}
-+
- static const struct apd_device_desc cz_i2c_desc = {
- 	.setup = acpi_apd_setup,
- 	.fixed_clk_rate = 133000000,
-@@ -94,6 +139,10 @@ static int acpi_apd_setup(struct apd_private_data *pdata)
- 	.fixed_clk_rate = 48000000,
- 	.properties = uart_properties,
- };
-+
-+static const struct apd_device_desc st_misc_desc = {
-+	.setup = st_misc_setup,
-+};
- #endif
- 
- #ifdef CONFIG_ARM64
-@@ -179,6 +228,7 @@ static int acpi_apd_create_device(struct acpi_device *adev,
- 	{ "AMD0020", APD_ADDR(cz_uart_desc) },
- 	{ "AMDI0020", APD_ADDR(cz_uart_desc) },
- 	{ "AMD0030", },
-+	{ "AMD0040", APD_ADDR(st_misc_desc)},
- #endif
- #ifdef CONFIG_ARM64
- 	{ "APMC0D0F", APD_ADDR(xgene_i2c_desc) },
--- 
-1.9.1
+SGkgU3VkZWVwLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1ZGVl
+cCBIb2xsYSBbbWFpbHRvOnN1ZGVlcC5ob2xsYUBhcm0uY29tXQ0KPiBTZW50OiBUaHVyc2RheSwg
+TWF5IDEwLCAyMDE4IDc6MDUgQU0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29t
+PjsgYXJkLmJpZXNoZXV2ZWxAbGluYXJvLm9yZzsNCj4gbWluZ29Aa2VybmVsLm9yZzsgZ3JlZ2to
+QGxpbnV4Zm91bmRhdGlvbi5vcmc7IG1hdHRAY29kZWJsdWVwcmludC5jby51azsNCj4gaGthbGx3
+ZWl0MUBnbWFpbC5jb207IGtlZXNjb29rQGNocm9taXVtLm9yZzsNCj4gZG1pdHJ5LnRvcm9raG92
+QGdtYWlsLmNvbTsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNib3lkQGNvZGVhdXJvcmEu
+b3JnOyBtaWNoYWwuc2ltZWtAeGlsaW54LmNvbTsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiBtYXJr
+LnJ1dGxhbmRAYXJtLmNvbTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZw0KPiBDYzogU3VkZWVw
+IEhvbGxhIDxzdWRlZXAuaG9sbGFAYXJtLmNvbT47IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbngu
+Y29tPjsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJu
+ZWxAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgSm9sbHkg
+U2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjYgMDIvMTFd
+IGZpcm13YXJlOiB4aWxpbng6IEFkZCBaeW5xbXAgZmlybXdhcmUgZHJpdmVyDQo+IA0KPiANCj4g
+DQo+IE9uIDEwLzA0LzE4IDIwOjM4LCBKb2xseSBTaGFoIHdyb3RlOg0KPiA+IEZyb206IFJhamFu
+IFZhamEgPHJhamFudkB4aWxpbnguY29tPg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBpcyBhZGRpbmcg
+Y29tbXVuaWNhdGlvbiBsYXllciB3aXRoIGZpcm13YXJlLg0KPiA+IEZpcm13YXJlIGRyaXZlciBw
+cm92aWRlcyBhbiBpbnRlcmZhY2UgdG8gZmlybXdhcmUgQVBJcy4NCj4gPiBJbnRlcmZhY2UgQVBJ
+cyBjYW4gYmUgdXNlZCBieSBhbnkgZHJpdmVyIHRvIGNvbW11bmljYXRlIHRvDQo+ID4gUE1VRlco
+UGxhdGZvcm0gTWFuYWdlbWVudCBVbml0KS4gQWxsIHJlcXVlc3RzIGdvIHRocm91Z2ggQVRGLg0K
+PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFqYW4gVmFqYSA8cmFqYW52QHhpbGlueC5jb20+DQo+
+ID4gU2lnbmVkLW9mZi1ieTogSm9sbHkgU2hhaCA8am9sbHlzQHhpbGlueC5jb20+DQo+ID4gLS0t
+DQo+IA0KPiBbLi4uXQ0KPiANCj4gPiArDQo+ID4gKy8qKg0KPiA+ICsgKiBnZXRfc2V0X2NvbmR1
+aXRfbWV0aG9kKCkgLSBDaG9vc2UgU01DIG9yIEhWQyBiYXNlZCBjb21tdW5pY2F0aW9uDQo+ID4g
+KyAqIEBucDoJCVBvaW50ZXIgdG8gdGhlIGRldmljZV9ub2RlIHN0cnVjdHVyZQ0KPiA+ICsgKg0K
+PiA+ICsgKiBVc2UgU01DIG9yIEhWQy1iYXNlZCBmdW5jdGlvbnMgdG8gY29tbXVuaWNhdGUgd2l0
+aCBFTDIvRUwzLg0KPiA+ICsgKg0KPiA+ICsgKiBSZXR1cm46IFJldHVybnMgMCBvbiBzdWNjZXNz
+IG9yIGVycm9yIGNvZGUgICovIHN0YXRpYyBpbnQNCj4gPiArZ2V0X3NldF9jb25kdWl0X21ldGhv
+ZChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKSB7DQo+ID4gKwljb25zdCBjaGFyICptZXRob2Q7DQo+
+ID4gKw0KPiA+ICsJaWYgKG9mX3Byb3BlcnR5X3JlYWRfc3RyaW5nKG5wLCAibWV0aG9kIiwgJm1l
+dGhvZCkpIHsNCj4gPiArCQlwcl93YXJuKCIlcyBtaXNzaW5nIFwibWV0aG9kXCIgcHJvcGVydHlc
+biIsIF9fZnVuY19fKTsNCj4gPiArCQlyZXR1cm4gLUVOWElPOw0KPiA+ICsJfQ0KPiA+ICsNCj4g
+PiArCWlmICghc3RyY21wKCJodmMiLCBtZXRob2QpKSB7DQo+ID4gKwkJZG9fZndfY2FsbCA9IGRv
+X2Z3X2NhbGxfaHZjOw0KPiA+ICsJfSBlbHNlIGlmICghc3RyY21wKCJzbWMiLCBtZXRob2QpKSB7
+DQo+ID4gKwkJZG9fZndfY2FsbCA9IGRvX2Z3X2NhbGxfc21jOw0KPiA+ICsJfSBlbHNlIHsNCj4g
+PiArCQlwcl93YXJuKCIlcyBJbnZhbGlkIFwibWV0aG9kXCIgcHJvcGVydHk6ICVzXG4iLA0KPiA+
+ICsJCQlfX2Z1bmNfXywgbWV0aG9kKTsNCj4gPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gPiArCX0N
+Cj4gPiArDQo+IA0KPiBNYXJrIFIgZGlkIHNvbWUgY2xlYW51cCBhcm91bmQgU01DQ0MgY29uZHVp
+dHNbMV0uIEl0IG1ha2VzIHNlbnNlIHRvIGJhc2UgdGhpcw0KPiBvbiB0b3AgdGhhdC4gQnV0IGlm
+IHlvdSBtYW5hZ2UgdG8gcHVzaCB0aGlzIGZvciB2NC4xOCwgdGhlbiB5b3UgbWF5IG5lZWQgdG8g
+d2FpdA0KPiBmb3IgdGhhdCB0byBiZSBtZXJnZWQgYW5kIGNsZWFuIGl0IHVwIGFmdGVyIHY0LjE4
+DQo+IA0KPiAtLQ0KPiBSZWdhcmRzLA0KPiBTdWRlZXANCg0KTWFyayBSIGRpZCBjaGFuZ2UgZm9y
+IFNNQ0NDIGVudW1zIGFuZCB3ZSBhcmUgbm90IHVzaW5nIGFueSBTTUNDQyBlbnVtcyBzbyB3ZSBk
+b24ndCBoYXZlIGFueSBkZXBlbmRlbmN5IG9uIHRoYXQuDQoNClRoYW5rcywNCkpvbGx5IFNoYWgN
+Cg0KPiANCj4gWzFdIGh0dHBzOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2FybS1rZXJuZWwvbXNn
+NjUwMzA1Lmh0bWwNCg==
