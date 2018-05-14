@@ -1,60 +1,90 @@
-Return-Path: <daniel@zonque.org>
-Subject: Re: [PATCH] clk: Add driver for MAX9485
-To: Rob Herring <robh@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20180521085848.17192-1-daniel@zonque.org>
- <20180523183320.GA15306@rob-hp-laptop>
-From: Daniel Mack <daniel@zonque.org>
-Message-ID: <7ba472cb-114d-8412-16ea-12e7e29e8267@zonque.org>
-Date: Wed, 23 May 2018 21:48:59 +0200
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, "ard.biesheuvel@linaro.org"
+	<ard.biesheuvel@linaro.org>, "mingo@kernel.org" <mingo@kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "hkallweit1@gmail.com"
+	<hkallweit1@gmail.com>, "keescook@chromium.org" <keescook@chromium.org>,
+	"dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH v6 03/11] firmware: xilinx: Add zynqmp IOCTL API for
+ device control
+Date: Mon, 14 May 2018 19:11:56 +0000
+Message-ID: <SN1PR02MB3758F635BA420721B0EB8A2FB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+ <1523389127-14243-4-git-send-email-jollys@xilinx.com>
+ <c351b9a3-5f26-7202-7171-0dcc7adef7c0@arm.com>
+In-Reply-To: <c351b9a3-5f26-7202-7171-0dcc7adef7c0@arm.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180523183320.GA15306@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
-
-Thanks for the review!
-
-On Wednesday, May 23, 2018 08:33 PM, Rob Herring wrote:
-> On Mon, May 21, 2018 at 10:58:48AM +0200, Daniel Mack wrote:
->> From: Daniel Mack <zonque@gmail.com>
->>
->> This patch adds a driver for MAX9485, a programmable audio clock generator.
->>
->> The device requires a 27.000 MHz clock input. It can provide a gated
->> buffered output of its input clock and two gated outputs of a PLL that can
->> generate one out of 16 discrete frequencies. There is only one PLL however,
->> so the two gated outputs will always have the same frequency but they can
->> be switched individually.
->>
->> The driver for this device exposes 4 clocks in total:
->>
->> - MAX9485_MCLKOUT:      A gated, buffered output of the input clock
->> - MAX9485_CLKOUT:       A PLL that can be configured to 16 different
->> 			discrete frequencies
->> - MAX9485_CLKOUT[1,2]:  Two gated outputs for MAX9485_CLKOUT
->>
->> Some PLL output frequencies can be achieved with different register
->> settings. The driver will select the one with lowest jitter in such cases.
->>
->> Signed-off-by: Daniel Mack <daniel@zonque.org>
->> ---
->>   .../devicetree/bindings/clock/maxim,max9485.txt    |  59 ++++
->>   drivers/clk/Kconfig                                |   8 +
->>   drivers/clk/Makefile                               |   1 +
->>   drivers/clk/clk-max9485.c                          | 379 +++++++++++++++++++++
->>   include/dt-bindings/clock/maxim,max9485.h          |  19 ++
-> 
-> The 2 DT files should be a separate patch.
-
-Sure, I can do that. In order to keep the series bisectable however, 
-that would mean that the bindings come in first, and then the actual 
-implementation because that also depends on maxim,max9485.h. Is that okay?
-
-I agree with the rest of your comments.
-
-
-Thanks,
-Daniel
+SGkgU3VkZWVwLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1ZGVl
+cCBIb2xsYSBbbWFpbHRvOnN1ZGVlcC5ob2xsYUBhcm0uY29tXQ0KPiBTZW50OiBUaHVyc2RheSwg
+TWF5IDEwLCAyMDE4IDc6MDkgQU0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29t
+PjsgYXJkLmJpZXNoZXV2ZWxAbGluYXJvLm9yZzsNCj4gbWluZ29Aa2VybmVsLm9yZzsgZ3JlZ2to
+QGxpbnV4Zm91bmRhdGlvbi5vcmc7IG1hdHRAY29kZWJsdWVwcmludC5jby51azsNCj4gaGthbGx3
+ZWl0MUBnbWFpbC5jb207IGtlZXNjb29rQGNocm9taXVtLm9yZzsNCj4gZG1pdHJ5LnRvcm9raG92
+QGdtYWlsLmNvbTsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNib3lkQGNvZGVhdXJvcmEu
+b3JnOyBtaWNoYWwuc2ltZWtAeGlsaW54LmNvbTsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiBtYXJr
+LnJ1dGxhbmRAYXJtLmNvbTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZw0KPiBDYzogU3VkZWVw
+IEhvbGxhIDxzdWRlZXAuaG9sbGFAYXJtLmNvbT47IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbngu
+Y29tPjsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJu
+ZWxAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgSm9sbHkg
+U2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjYgMDMvMTFd
+IGZpcm13YXJlOiB4aWxpbng6IEFkZCB6eW5xbXAgSU9DVEwgQVBJIGZvciBkZXZpY2UNCj4gY29u
+dHJvbA0KPiANCj4gDQo+IA0KPiBPbiAxMC8wNC8xOCAyMDozOCwgSm9sbHkgU2hhaCB3cm90ZToN
+Cj4gPiBGcm9tOiBSYWphbiBWYWphIDxyYWphbnZAeGlsaW54LmNvbT4NCj4gPg0KPiA+IEFkZCBa
+eW5xTVAgZmlybXdhcmUgSU9DVEwgQVBJIHRvIGNvbnRyb2wgYW5kIGNvbmZpZ3VyZSBkZXZpY2Vz
+IGxpa2UNCj4gPiBQTExzLCBTRCwgR2VtLCBldGMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBS
+YWphbiBWYWphIDxyYWphbnZAeGlsaW54LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBKb2xseSBT
+aGFoIDxqb2xseXNAeGlsaW54LmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9maXJtd2FyZS94
+aWxpbngvenlucW1wLmMgICAgIHwgMjAgKysrKysrKysrKysrKysrKysrKysNCj4gPiAgaW5jbHVk
+ZS9saW51eC9maXJtd2FyZS94bG54LXp5bnFtcC5oIHwgIDIgKysNCj4gPiAgMiBmaWxlcyBjaGFu
+Z2VkLCAyMiBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9maXJt
+d2FyZS94aWxpbngvenlucW1wLmMNCj4gPiBiL2RyaXZlcnMvZmlybXdhcmUveGlsaW54L3p5bnFt
+cC5jDQo+ID4gaW5kZXggNDkwNTYxYS4uNDRiNDNmYSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJz
+L2Zpcm13YXJlL3hpbGlueC96eW5xbXAuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZmlybXdhcmUveGls
+aW54L3p5bnFtcC5jDQo+ID4gQEAgLTIzOSw4ICsyMzksMjggQEAgc3RhdGljIGludCBnZXRfc2V0
+X2NvbmR1aXRfbWV0aG9kKHN0cnVjdA0KPiBkZXZpY2Vfbm9kZSAqbnApDQo+ID4gIAlyZXR1cm4g
+MDsNCj4gPiAgfQ0KPiA+DQo+ID4gKy8qKg0KPiA+ICsgKiB6eW5xbXBfcG1faW9jdGwoKSAtIFBN
+IElPQ1RMIEFQSSBmb3IgZGV2aWNlIGNvbnRyb2wgYW5kIGNvbmZpZ3MNCj4gPiArICogQG5vZGVf
+aWQ6CU5vZGUgSUQgb2YgdGhlIGRldmljZQ0KPiA+ICsgKiBAaW9jdGxfaWQ6CUlEIG9mIHRoZSBy
+ZXF1ZXN0ZWQgSU9DVEwNCj4gPiArICogQGFyZzE6CUFyZ3VtZW50IDEgdG8gcmVxdWVzdGVkIElP
+Q1RMIGNhbGwNCj4gPiArICogQGFyZzI6CUFyZ3VtZW50IDIgdG8gcmVxdWVzdGVkIElPQ1RMIGNh
+bGwNCj4gPiArICogQG91dDoJUmV0dXJuZWQgb3V0cHV0IHZhbHVlDQo+ID4gKyAqDQo+ID4gKyAq
+IFRoaXMgZnVuY3Rpb24gY2FsbHMgSU9DVEwgdG8gZmlybXdhcmUgZm9yIGRldmljZSBjb250cm9s
+IGFuZCBjb25maWd1cmF0aW9uLg0KPiA+ICsgKg0KPiA+ICsgKiBSZXR1cm46IFJldHVybnMgc3Rh
+dHVzLCBlaXRoZXIgc3VjY2VzcyBvciBlcnJvcityZWFzb24gICovIHN0YXRpYw0KPiA+ICtpbnQg
+enlucW1wX3BtX2lvY3RsKHUzMiBub2RlX2lkLCB1MzIgaW9jdGxfaWQsIHUzMiBhcmcxLCB1MzIg
+YXJnMiwNCj4gPiArCQkJICAgdTMyICpvdXQpDQo+ID4gK3sNCj4gPiArCXJldHVybiB6eW5xbXBf
+cG1faW52b2tlX2ZuKFBNX0lPQ1RMLCBub2RlX2lkLCBpb2N0bF9pZCwNCj4gPiArCQkJCSAgIGFy
+ZzEsIGFyZzIsIG91dCk7DQo+ID4gK30NCj4gPiArDQo+ID4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
+enlucW1wX2VlbWlfb3BzIGVlbWlfb3BzID0gew0KPiA+ICAJLmdldF9hcGlfdmVyc2lvbiA9IHp5
+bnFtcF9wbV9nZXRfYXBpX3ZlcnNpb24sDQo+ID4gKwkuaW9jdGwgPSB6eW5xbXBfcG1faW9jdGws
+DQo+ID4gIH07DQo+ID4NCj4gPiAgLyoqDQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgv
+ZmlybXdhcmUveGxueC16eW5xbXAuaA0KPiA+IGIvaW5jbHVkZS9saW51eC9maXJtd2FyZS94bG54
+LXp5bnFtcC5oDQo+ID4gaW5kZXggY2I2M2JlZC4uMmVlYzZlNyAxMDA2NDQNCj4gPiAtLS0gYS9p
+bmNsdWRlL2xpbnV4L2Zpcm13YXJlL3hsbngtenlucW1wLmgNCj4gPiArKysgYi9pbmNsdWRlL2xp
+bnV4L2Zpcm13YXJlL3hsbngtenlucW1wLmgNCj4gPiBAQCAtMzQsNiArMzQsNyBAQA0KPiA+DQo+
+ID4gIGVudW0gcG1fYXBpX2lkIHsNCj4gPiAgCVBNX0dFVF9BUElfVkVSU0lPTiA9IDEsDQo+ID4g
+KwlQTV9JT0NUTCA9IDM0LA0KPiANCj4gSSBhbSBub3QgZm9yIHRoaXMgQVBJLiBJSVVDIHRoZXJl
+IGFyZSBtb3JlIGZpbmVkIGdyYWluZWQgd2VsbCBkZWZpbmVkIEFQSXMoaWYgSSBhbQ0KPiBub3Qg
+d3JvbmcgZnJvbSBlbnVtIDIgdXB0byAzMykuIFRoaXMgaXMgb3BlbiBlbmRlZCBBUEkgd2hpY2gg
+YWxsb3dzIHVzZXIgdG8gZG8NCj4gd2hhdGV2ZXIgc2V0dGluZyBpdCBuZWVkcy4gQW5kIHRoYXQg
+ZGVmZWF0cyB0aGUgcHVycG9zZSBvZiBvdGhlciBBUElzLg0KPiANCj4gSSB3aWxsIGxvb2sgdGhy
+b3VnaCB0aGUgc2VyaWVzIGZvciB0aGUgdXNhZ2Ugb2YgdGhpcyB0byB1bmRlcnN0YW5kIHRoaXMg
+YmV0dGVyLCBidXQgSQ0KPiBhbSBndWVzc2luZyBob3cgaXQgY2FuIGJlIChhYil1c2VkLg0KPiAN
+Cj4gLS0NCj4gUmVnYXJkcywNCj4gU3VkZWVwDQoNClRoZXJlIGFyZSB3ZWxsIGRlZmluZWQgQVBJ
+cyBmb3IgZ2VuZXJhbCBjbG9jayBjb250cm9scy4gSW9jdGwgaXMgZm9yIHNvbWUgc3BlY2lmaWMg
+b3BlcmF0aW9ucyB3aGljaCBtYXkgbm90IGFwcGx5IHRvIGFsbCBwbGF0Zm9ybXMuDQpGb3IgY2xv
+Y2sgZHJpdmVyLCBpb2N0bCBpcyB1c2VkIHRvIGdldC9zZXQgUGxsIGZyYWN0aW9uL2ludGVnZXIg
+bW9kZSBhbmQgZGF0YS4gDQoNClRoYW5rcywNCkpvbGx5IFNoYWgNCg==
