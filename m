@@ -4,112 +4,246 @@ To: mturquette@baylibre.com,
 	sboyd@kernel.org,
 	robh@kernel.org,
 	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
 	andy.gross@linaro.org,
 	david.brown@linaro.org,
-	will.deacon@arm.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	vireshk@kernel.org,
-	ilialin@codeaurora.org
-Subject: [PATCH v12 0/8] Clock for CPU scaling support for msm8996
-Date: Thu, 24 May 2018 10:50:10 +0300
-Message-Id: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v6 07/14] clk: qcom: Add ACD path to CPU clock driver for msm8996
+Date: Mon, 14 May 2018 16:11:53 +0300
+Message-Id: <1526303520-5843-8-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
+References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-[v12]
- * Addressed the kbuild fail on arm architecture
+The PMUX for each duplex allows for selection of ACD clock source.
+The DVM (Dynamic Variation Monitor) will flag an error
+when a voltage droop event is detected. This flagged error
+enables ACD to provide a div-by-2 clock, sourced from the primary PLL.
+The duplex will be provided the divided clock
+until a pre-programmed delay has expired.
 
-[v11]
- * Split the series into domains
+This change configures ACD during the probe and switches
+the PMUXes to the ACD clock source.
 
-[v9]
- * Addressed comments from Viresh and Russel about the error handling
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 75 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 65 insertions(+), 10 deletions(-)
 
-[v8]
- * Reordered the patch series into 4 groups
- * Addressed comments from Amit about the comments and commit messages
- * Addressed comments from Amit and Viresh about the resourses deallocation
-
-[v7]
- * Addressed comments from Viresh about resourses deallocation
-   and DT compatible
-
-[v6]
- * Addressed comments from Viresh about:
- ** Comments style
- ** Kconfig bool instead of tristate
- ** DT and documentation style
- ** Resourses deallocation on an error
- ** Typos
-
-[v5]
- * Rebased
- * Addressed comments from Bjorn about SPDX style,
-   functions and parameters naming
- * Addressed comments from Viresh DT properties and style, comments style,
-   resourses deallocation, documentation placement
- * Addressed comments from Sricharan about unnessesary include
- * Addressed comments from Nicolas
- * Addressed comments from Rob about the commit messages and acks
- * Addressed comments from Mark
-
-[v4]
- * Adressed all comments from Stephen
- * Added CPU regulator support
- * Added qcom-cpufreq-kryo driver
-
-[v3]
- * Rebased on top of the latest PLL driver changes
- * Addressed comment from Rob Herring for bindings
-
-[v2]
- * Addressed comments from Rob Herring for bindings
- * Addressed comments from Mark Rutland for memory barrier
- * Addressed comments from Julien Thierry for clock reenabling condition
- * Tuned the HW configuration for clock frequencies below 600MHz
-
-SOC (1/15):
-Extracts the kryo l2 accessors driver from the QCOM PMU driver
-
-Clocks (2/15-9/15):
-This series adds support for the CPU clocks on msm8996 devices.
-The driver uses the existing PLL drivers and is required to control
-the CPU frequency scaling on the MSM8996.
-
-Ilia Lin (6):
-  soc: qcom: Separate kryo l2 accessors from PMU driver
-  clk: Use devm_ in the register fixed factor clock
-  clk: qcom: Add CPU clock driver for msm8996
-  dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
-  clk: qcom: cpu-8996: Add support to switch below 600Mhz
-  clk: qcom: Add ACD path to CPU clock driver for msm8996
-
-Rajendra Nayak (2):
-  clk: qcom: Make clk_alpha_pll_configure available to modules
-  clk: qcom: cpu-8996: Add support to switch to alternate PLL
-
- .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
- drivers/clk/clk-fixed-factor.c                     |   2 +-
- drivers/clk/qcom/Kconfig                           |  10 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
- drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
- drivers/clk/qcom/clk-cpu-8996.c                    | 510 +++++++++++++++++++++
- drivers/perf/Kconfig                               |   1 +
- drivers/perf/qcom_l2_pmu.c                         |  90 +---
- drivers/soc/qcom/Kconfig                           |   3 +
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/kryo-l2-accessors.c               |  56 +++
- include/soc/qcom/kryo-l2-accessors.h               |  12 +
- 13 files changed, 643 insertions(+), 67 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
-
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 3ea0446..396285c 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -62,9 +62,11 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <soc/qcom/kryo-l2-accessors.h>
+ 
+ #include "clk-alpha-pll.h"
+ #include "clk-regmap.h"
+@@ -78,6 +80,11 @@ enum _pmux_input {
+ };
+ 
+ #define DIV_2_THRESHOLD		600000000
++#define PWRCL_REG_OFFSET 0x0
++#define PERFCL_REG_OFFSET 0x80000
++#define MUX_OFFSET	0x40
++#define ALT_PLL_OFFSET	0x100
++#define SSSCTL_OFFSET 0x160
+ 
+ static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
+        [PLL_OFF_L_VAL] = 0x04,
+@@ -116,7 +123,7 @@ enum _pmux_input {
+ };
+ 
+ static struct clk_alpha_pll perfcl_pll = {
+-	.offset = 0x80000,
++	.offset = PERFCL_REG_OFFSET,
+ 	.regs = prim_pll_regs,
+ 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
+ 	.clkr.hw.init = &(struct clk_init_data){
+@@ -128,7 +135,7 @@ enum _pmux_input {
+ };
+ 
+ static struct clk_alpha_pll pwrcl_pll = {
+-	.offset = 0x0,
++	.offset = PWRCL_REG_OFFSET,
+ 	.regs = prim_pll_regs,
+ 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
+ 	.clkr.hw.init = &(struct clk_init_data){
+@@ -158,7 +165,7 @@ enum _pmux_input {
+ };
+ 
+ static struct clk_alpha_pll perfcl_alt_pll = {
+-	.offset = 0x80100,
++	.offset = PERFCL_REG_OFFSET + ALT_PLL_OFFSET,
+ 	.regs = alt_pll_regs,
+ 	.vco_table = alt_pll_vco_modes,
+ 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
+@@ -172,7 +179,7 @@ enum _pmux_input {
+ };
+ 
+ static struct clk_alpha_pll pwrcl_alt_pll = {
+-	.offset = 0x100,
++	.offset = PWRCL_REG_OFFSET + ALT_PLL_OFFSET,
+ 	.regs = alt_pll_regs,
+ 	.vco_table = alt_pll_vco_modes,
+ 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
+@@ -185,6 +192,9 @@ enum _pmux_input {
+ 	},
+ };
+ 
++void __iomem *base;
++static void qcom_cpu_clk_msm8996_acd_init(void __iomem *base);
++
+ /* Mux'es */
+ 
+ struct clk_cpu_8996_mux {
+@@ -262,6 +272,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	switch (event) {
+ 	case PRE_RATE_CHANGE:
+ 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		qcom_cpu_clk_msm8996_acd_init(base);
+ 		break;
+ 	case POST_RATE_CHANGE:
+ 		if (cnd->new_rate < DIV_2_THRESHOLD)
+@@ -269,7 +280,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 							  DIV_2_INDEX);
+ 		else
+ 			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
+-							  PLL_INDEX);
++							  ACD_INDEX);
+ 		break;
+ 	default:
+ 		ret = 0;
+@@ -285,7 +296,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux pwrcl_smux = {
+-	.reg = 0x40,
++	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 2,
+ 	.width = 2,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+@@ -301,7 +312,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux perfcl_smux = {
+-	.reg = 0x80040,
++	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 2,
+ 	.width = 2,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+@@ -317,7 +328,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux pwrcl_pmux = {
+-	.reg = 0x40,
++	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
+@@ -338,7 +349,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux perfcl_pmux = {
+-	.reg = 0x80040,
++	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
+@@ -402,6 +413,10 @@ struct clk_regmap *clks[] = {
+ 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+ 
++	/* Enable alt PLLs */
++	clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
++	clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
++
+ 	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
+ 	if (ret)
+ 		return ret;
+@@ -411,10 +426,48 @@ struct clk_regmap *clks[] = {
+ 	return ret;
+ }
+ 
++#define CPU_AFINITY_MASK 0xFFF
++#define PWRCL_CPU_REG_MASK 0x3
++#define PERFCL_CPU_REG_MASK 0x103
++
++#define L2ACDCR_REG 0x580ULL
++#define L2ACDTD_REG 0x581ULL
++#define L2ACDDVMRC_REG 0x584ULL
++#define L2ACDSSCR_REG 0x589ULL
++
++static DEFINE_SPINLOCK(acd_lock);
++
++static void qcom_cpu_clk_msm8996_acd_init(void __iomem *base)
++{
++	u64 hwid;
++	unsigned long flags;
++
++	spin_lock_irqsave(&acd_lock, flags);
++
++	hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
++
++	kryo_l2_set_indirect_reg(L2ACDTD_REG, 0x00006A11);
++	kryo_l2_set_indirect_reg(L2ACDDVMRC_REG, 0x000E0F0F);
++	kryo_l2_set_indirect_reg(L2ACDSSCR_REG, 0x00000601);
++
++	if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
++		writel(0xF, base + PWRCL_REG_OFFSET + SSSCTL_OFFSET);
++		wmb();
++		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002C5FFD);
++	}
++
++	if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) {
++		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002C5FFD);
++		writel(0xF, base + PERFCL_REG_OFFSET + SSSCTL_OFFSET);
++		wmb();
++	}
++
++	spin_unlock_irqrestore(&acd_lock, flags);
++}
++
+ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+-	void __iomem *base;
+ 	struct resource *res;
+ 	struct regmap *regmap;
+ 	struct clk_hw_onecell_data *data;
+@@ -438,6 +491,8 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	qcom_cpu_clk_msm8996_acd_init(base);
++
+ 	data->hws[0] = &pwrcl_pmux.clkr.hw;
+ 	data->hws[1] = &perfcl_pmux.clkr.hw;
+ 	data->num = 2;
 -- 
 1.9.1
