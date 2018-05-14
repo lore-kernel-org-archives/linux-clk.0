@@ -1,50 +1,90 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
- amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
- celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-To: ilialin@codeaurora.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
- lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
- david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
- rjw@rjwysocki.net, linux-clk@vger.kernel.org
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
- <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com>
- <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org>
- <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com>
- <001401d3f1a2$c7328850$559798f0$@codeaurora.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <7690ea9d-0155-ecd1-8fb2-08d0bd61e081@arm.com>
-Date: Tue, 22 May 2018 10:18:15 +0100
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Mon, 14 May 2018 10:40:50 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
+Message-ID: <20180514084050.ix5corfuvx33gsyn@flea>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-10-jagan@amarulasolutions.com>
+ <20180502113413.vv2r3ubfoh7gm3ms@flea>
+ <CAMty3ZBheurXewQ8R53G_0gNLgv1jQkZbjAbaN30JQ6_ZVn7Eg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <001401d3f1a2$c7328850$559798f0$@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jyer2q7sajz2ea4p"
+In-Reply-To: <CAMty3ZBheurXewQ8R53G_0gNLgv1jQkZbjAbaN30JQ6_ZVn7Eg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--jyer2q7sajz2ea4p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 22/05/18 08:59, ilialin@codeaurora.org wrote:
-> OK, I think I found out the way. Would this be correct?
+On Mon, May 14, 2018 at 02:03:36PM +0530, Jagan Teki wrote:
+> On Wed, May 2, 2018 at 5:04 PM, Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
+> > Hi,
+> >
+> > On Mon, Apr 30, 2018 at 05:10:46PM +0530, Jagan Teki wrote:
+> >> +             hdmi_phy: hdmi-phy@1ef0000 {
+> >> +                     compatible =3D "allwinner,sun50i-a64-hdmi-phy",
+> >> +                                  "allwinner,sun8i-h3-hdmi-phy";
+> >> +                     reg =3D <0x01ef0000 0x10000>;
+> >> +                     clocks =3D <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_D=
+DC>,
+> >> +                              <&ccu CLK_PLL_VIDEO1>;
+> >
+> > You were discussing that the PLL0 could also be used to clock the PHY,
+> > has that been figured out?
+>=20
+> This is what I understand from Fig: 3-3. Module Clock Diagram, both
+> tcon0 and tcon1 are using HDMI. I'm thinking based on the tcon
+> configuration we need use proper PLL or some logic to get common PLL
+> don't know yet. Since this series adding tcon1 I've attached PLL1.
 
-No.
+You're not describing the TCON node here though, but the HDMI one, and
+the HDMI block is listed in both the PLL video 0 and 1.
 
-> -----------------------------------------------------------------------------------------------
-> extern struct cpu_topology cpu_topology[NR_CPUS];
-> 
-> static struct device *qcom_cpufreq_kryo_get_cluster_lead(int cluster)
-> {
-> 	unsigned cpu;
-> 
-> 	for_each_possible_cpu(cpu) {
-> 		if ((cluster == cpu_topology[cpu].cluster_id) &&
+Maxime
 
-cluster_id is going away soon, so avoid relying on that. IIUC there's a
-way already something like opp_of_get_shared_cpus.
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
--- 
-Regards,
-Sudeep
+--jyer2q7sajz2ea4p
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr5S5EACgkQ0rTAlCFN
+r3TYgQ/+KAHn/sA0FQekmjFHCfuz97cMX7MGe8M8digLqQtx4rpOXT4+BF2YKBkm
+1KwGxI93LcfUDrWn7a5uf80ucr/+ENS6fxDvCN4LEIJwe2yruQF4KArv2hScReH7
+ApO6a6iUuNAZSVbRqSkvgBCcqEJQd8o5FAsMxQBfUGUxljTzMwgz3BJQpnlyNGuf
+64VHEfMJLbqAoMOHOK+5Z+3dEqZtnNkF3tMy6LPLQ7ci6V+DMDaNQkJex6yYihQF
+BbyXmmBScXd2/daWLF5neDFAe22RZNyY7VRZgQUIyPFWxXhANE8mZ/LtaKch8BXN
+Dge8Ma/Gkvq4te+YzdvHCjasyqcAdRLxvqVSlHX3Z/oPEGSuSkfroCdlVg1wqpUe
+U+pkAz1mGLLzx6CF8yy/Uk61d5wWrQ1CV6IQ4tLqcan8+IYS4c3T9rwKDtSabtJv
+FyHyHd6BQYXwrPK/BL12ScBivFyMFmPLyu9BIg66emhG0A0iSM74G1qgWkIBZ1Zz
+DcG2psCWjpT0tQzpBkZxOkEKDbTX3Lqj+Nx1IhAZ8Gy/7VY12TB4xpx+z6Gn9eJG
+Trz89sPLDiYbL+3r6liO56LbwTs9UOXQkYvpyNE4KC82N5KDVbMQKWStGttwknMU
+a/Yg6tVkcaKdRORO0C3yaUk4GTPltvYiusq5a/UMOHjJctOildk=
+=rPJa
+-----END PGP SIGNATURE-----
+
+--jyer2q7sajz2ea4p--
