@@ -1,94 +1,124 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:58183 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751623AbeEDSvA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 May 2018 14:51:00 -0400
-Date: Fri, 4 May 2018 20:50:52 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-4-o.rempel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6e3ga3qhvjgmgc3v"
-In-Reply-To: <20180305102524.5905-4-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <enric.balletbo@collabora.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Will Deacon <will.deacon@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sandy Huang <hjc@rock-chips.com>,
+	David Airlie <airlied@linux.ie>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Derek Basehore <dbasehore@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	Lin Huang <hl@rock-chips.com>,
+	kernel@collabora.com,
+	Sean Paul <seanpaul@chromium.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 01/10] devfreq: rockchip-dfi: Move GRF definitions to a common place.
+Date: Mon, 14 May 2018 23:16:01 +0200
+Message-Id: <20180514211610.26618-2-enric.balletbo@collabora.com>
+In-Reply-To: <20180514211610.26618-1-enric.balletbo@collabora.com>
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Some rk3399 GRF (Generic Register Files) definitions can be used for
+different drivers. Move these definitions to a common include so we
+don't need to duplicate these definitions.
 
---6e3ga3qhvjgmgc3v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-Hallo Andrew,
-I need your ACK or NACK for this patch.
+ drivers/devfreq/event/rockchip-dfi.c | 23 +++++++----------------
+ include/soc/rockchip/rk3399_grf.h    | 21 +++++++++++++++++++++
+ 2 files changed, 28 insertions(+), 16 deletions(-)
+ create mode 100644 include/soc/rockchip/rk3399_grf.h
 
-This function is used to configure external PMIC to interpret
-signal which will be triggered by pm_power_off as power off.
-Since same signal can be used for stand by, I linked PMIC configuration
-with pm_power_off_prepare to avoid possible conflicts.
-
-On Mon, Mar 05, 2018 at 11:25:20AM +0100, Oleksij Rempel wrote:
-> Export pm_power_off_prepare. It is needed to implement power off on
-> Freescale/NXP iMX6 based boards with external power management
-> integrated circuit (PMIC).
->=20
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  kernel/reboot.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/kernel/reboot.c b/kernel/reboot.c
-> index e4ced883d8de..350be6baa60d 100644
-> --- a/kernel/reboot.c
-> +++ b/kernel/reboot.c
-> @@ -49,6 +49,7 @@ int reboot_force;
->   */
-> =20
->  void (*pm_power_off_prepare)(void);
-> +EXPORT_SYMBOL(pm_power_off_prepare);
-> =20
->  /**
->   *	emergency_restart - reboot the system
-> --=20
-> 2.16.1
->=20
->=20
-
---=20
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---6e3ga3qhvjgmgc3v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlrsq4YACgkQdQOiSHVI
-77RrrAf+NcAmX7I0v3A0RtYgJl4/U+SH3tfZ1+vLFOE2EL2V/xZyfRJzZofV94Rx
-tZTDI2PidntjBmtIqLTYPCl70RjmmHJlzmmGHU34QqiTir9tJ8OCam1FXlJ5iv1U
-zi/ET9pScJyf8NS9LghYbX8JAdZqcP9PtDKntT4a90KawVsJKlEEw+LDsncQ2AJa
-lsdwTe/QsvMhSs4cRLDVd4G0q9xGZ/W7pkC+eB+z8tXQWU2IxLQ1OlWPG03K1e1n
-xKs4loCLVWlfp2U73Nk6+F0A5Pek+mhhUDeqG/q64W6fTvD5MzZTk7uSuEs7rBwT
-x6bJbpce+s88+W9Uw/7/H3CIMXniug==
-=JJlX
------END PGP SIGNATURE-----
-
---6e3ga3qhvjgmgc3v--
+diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
+index 22b113363ffc..2fbbcbeb644f 100644
+--- a/drivers/devfreq/event/rockchip-dfi.c
++++ b/drivers/devfreq/event/rockchip-dfi.c
+@@ -26,6 +26,8 @@
+ #include <linux/list.h>
+ #include <linux/of.h>
+ 
++#include <soc/rockchip/rk3399_grf.h>
++
+ #define RK3399_DMC_NUM_CH	2
+ 
+ /* DDRMON_CTRL */
+@@ -43,18 +45,6 @@
+ #define DDRMON_CH1_COUNT_NUM		0x3c
+ #define DDRMON_CH1_DFI_ACCESS_NUM	0x40
+ 
+-/* pmu grf */
+-#define PMUGRF_OS_REG2	0x308
+-#define DDRTYPE_SHIFT	13
+-#define DDRTYPE_MASK	7
+-
+-enum {
+-	DDR3 = 3,
+-	LPDDR3 = 6,
+-	LPDDR4 = 7,
+-	UNUSED = 0xFF
+-};
+-
+ struct dmc_usage {
+ 	u32 access;
+ 	u32 total;
+@@ -83,16 +73,17 @@ static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
+ 	u32 ddr_type;
+ 
+ 	/* get ddr type */
+-	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
+-	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
++	regmap_read(info->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
++	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
++		    RK3399_PMUGRF_DDRTYPE_MASK;
+ 
+ 	/* clear DDRMON_CTRL setting */
+ 	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
+ 
+ 	/* set ddr type to dfi */
+-	if (ddr_type == LPDDR3)
++	if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
+ 		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
+-	else if (ddr_type == LPDDR4)
++	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
+ 		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
+ 
+ 	/* enable count, use software mode */
+diff --git a/include/soc/rockchip/rk3399_grf.h b/include/soc/rockchip/rk3399_grf.h
+new file mode 100644
+index 000000000000..0f94034e2e9a
+--- /dev/null
++++ b/include/soc/rockchip/rk3399_grf.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Rockchip Generic Register Files definitions
++ *
++ * Copyright (c) 2018, Collabora Ltd.
++ * Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
++ */
++
++#ifndef __SOC_RK3399_GRF_H
++#define __SOC_RK3399_GRF_H
++
++/* PMU GRF Registers */
++#define RK3399_PMUGRF_OS_REG2		0x308
++#define RK3399_PMUGRF_DDRTYPE_SHIFT	13
++#define RK3399_PMUGRF_DDRTYPE_MASK	7
++#define RK3399_PMUGRF_DDRTYPE_DDR3	3
++#define RK3399_PMUGRF_DDRTYPE_LPDDR2	5
++#define RK3399_PMUGRF_DDRTYPE_LPDDR3	6
++#define RK3399_PMUGRF_DDRTYPE_LPDDR4	7
++
++#endif
+-- 
+2.17.0
