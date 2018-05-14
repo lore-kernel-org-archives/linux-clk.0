@@ -1,54 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:39085 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753045AbeERJ2x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:28:53 -0400
-Received: by mail-wr0-f193.google.com with SMTP id w18-v6so4716041wrn.6
-        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 02:28:53 -0700 (PDT)
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
-Subject: [PATCH v5 12/12] media: staging/imx: add i.MX7 entries to TODO file
-Date: Fri, 18 May 2018 10:28:06 +0100
-Message-Id: <20180518092806.3829-13-rui.silva@linaro.org>
-In-Reply-To: <20180518092806.3829-1-rui.silva@linaro.org>
-References: <20180518092806.3829-1-rui.silva@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5AFA0BAD.1050005@samsung.com>
+Date: Tue, 15 May 2018 07:20:29 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, MyungJoo Ham
+	<myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob
+	Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Heiko
+	Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>, David
+	Airlie <airlied@linux.ie>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Derek Basehore
+	<dbasehore@chromium.org>, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, Lin
+	Huang <hl@rock-chips.com>, kernel@collabora.com, Sean Paul
+	<seanpaul@chromium.org>, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFC PATCH 02/10] dt-bindings: devfreq: rk3399_dmc: Add
+ rockchip,pmu phandle.
+In-reply-to: <20180514211610.26618-3-enric.balletbo@collabora.com>
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+	<CGME20180514211906epcas4p2a4f34ce55a219a102e11de32be23e511@epcas4p2.samsung.com>
+	<20180514211610.26618-3-enric.balletbo@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add some i.MX7 related entries to TODO file.
+Hi,
 
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
----
- drivers/staging/media/imx/TODO | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On 2018년 05월 15일 06:16, Enric Balletbo i Serra wrote:
+> The Rockchip DMC (Dynamic Memory Interface) needs to access to the PMU
+> general register files to know the DRAM type, so add a phandle to the
+> syscon that manages these registers.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> 
+>  Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
+> index 0ec68141f85a..951789c0cdd6 100644
+> --- a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
+> +++ b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
+> @@ -12,6 +12,8 @@ Required properties:
+>  			 for details.
+>  - center-supply:	 DMC supply node.
+>  - status:		 Marks the node enabled/disabled.
+> +- rockchip,pmu:		 Phandle to the syscon managing the "PMU general register
+> +			 files".
+>  
+>  Optional properties:
+>  - interrupts:		 The CPU interrupt number. The interrupt specifier
+> 
 
-diff --git a/drivers/staging/media/imx/TODO b/drivers/staging/media/imx/TODO
-index aeeb15494a49..6f29b5ca5324 100644
---- a/drivers/staging/media/imx/TODO
-+++ b/drivers/staging/media/imx/TODO
-@@ -45,3 +45,12 @@
- 
-      Which means a port must not contain mixed-use endpoints, they
-      must all refer to media links between V4L2 subdevices.
-+
-+- i.MX7: all of the above, since it uses the imx media core
-+
-+- i.MX7: use Frame Interval Monitor
-+
-+- i.MX7: runtime testing with parallel sensor, links setup and streaming
-+
-+- i.MX7: runtime testing with different formats, for the time only 10-bit bayer
-+  is tested
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.17.0
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
