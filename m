@@ -1,62 +1,64 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 30 May 2018 16:41:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
- driver
-Message-ID: <20180530154133.GP6920@sirena.org.uk>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180530090512.GC13528@localhost.localdomain>
- <20180530110000.GI6920@sirena.org.uk>
- <20180530125634.GE13528@localhost.localdomain>
+Return-Path: <jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="U+NfgObvpQT1Q9Yq"
-In-Reply-To: <20180530125634.GE13528@localhost.localdomain>
+In-Reply-To: <CAGb2v66MKooAAroCzYdsXZDY0Oh66Dydpy59xj80QfiY+5mz_A@mail.gmail.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-4-jagan@amarulasolutions.com> <CAGb2v66MKooAAroCzYdsXZDY0Oh66Dydpy59xj80QfiY+5mz_A@mail.gmail.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Mon, 14 May 2018 13:50:12 +0530
+Message-ID: <CAMty3ZAOVg6EZoMi=LRuKEcrnDM_tzYfK1WnBN-_d-pmjNS6Nw@mail.gmail.com>
+Subject: Re: [PATCH 03/21] clk: sunxi-ng: Enable DE2_CCU for Allwinner 64-bit SoCs
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, May 1, 2018 at 9:53 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Mon, Apr 30, 2018 at 7:40 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>> Allwinner 64-bit SoC like H5/A64 has DE2 CCU so enable them
+>> as default.
+>>
+>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> ---
+>>  drivers/clk/sunxi-ng/Kconfig | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+>> index 79dfd296c3d1..1fffd3bf6ff3 100644
+>> --- a/drivers/clk/sunxi-ng/Kconfig
+>> +++ b/drivers/clk/sunxi-ng/Kconfig
+>> @@ -58,6 +58,8 @@ config SUN8I_V3S_CCU
+>>
+>>  config SUN8I_DE2_CCU
+>>         bool "Support for the Allwinner SoCs DE2 CCU"
+>> +       default ARM64 && ARCH_SUNXI
+>> +       depends on (DRM_SUN4I && (ARM64 && ARCH_SUNXI)) || COMPILE_TEST
+>
+> There is no reason to depend on DRM_SUN4I. There is no compile dependency.
 
---U+NfgObvpQT1Q9Yq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Since this CCU is for DE2 I've make DRM_SUN4I for that matter, any problem?
 
-On Wed, May 30, 2018 at 03:56:34PM +0300, Matti Vaittinen wrote:
-> On Wed, May 30, 2018 at 12:00:00PM +0100, Mark Brown wrote:
+>
+> Also, this is needed on SUN8I as well, pretty much anything with DE 2.0.
+> So you shouldn't limit it to ARM64. That pretty much breaks things for
+> people with A83T's or H3's. In fact you should enable it by default for
+> these as well.
 
-> > The tradeoff with forced PWM mode is that the quality of regulation will
-> > be a lot better, especially if the load changes suddenly (as things like
-> > CPUs often do).  Most hardware that's at all current is able respond to
-> > changes in load and switch modes automatically when it's appropriate,
-> > except possibly in some very low power modes.
+True, I've skipped SUN8I since this series for A64.
 
-> Yes. The mode switching is automatic. But there is this control bit for
-> disabling automatic mode switching and forcing the PWM. Problem with
-> these 4 last bucks is just that if regulator is in PFM (and it may be
-> if not forced to PWM - due to this automatic switching) then the voltage
-> change is not behaving well.
+Jagan.
 
-That sounds like the mode switching just isn't very good and needs a bit
-of help so forcing the mode is probably going to do the right thing.
-
---U+NfgObvpQT1Q9Yq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOxiwACgkQJNaLcl1U
-h9DYswf9GhespdXdjovv3j9DD9wgImmLpLB7cFVie8Mls+Q5qYCisULfQ8RnqKuo
-XWBvT3Y/MUHvihjjZ+bDmuz9o2UvikmotCTROd/OE5Rn9E32iOn2F7MIKKjoJcbk
-Gs8VlJBTzjmCqbBRGGE7R/28X2onqeqzJl0ARtC/UB1qd4nw0L5OKy+IrYWmlkEY
-XTSX3H5Kgbs/71gGClNJ5ZPc4R0vwperFsKmJ3xQxEmgbgUb42ficiaYQqW7WrLH
-5rmN+7az3K+XJyN8zPQ8g00ABAwJm3RlLN3i0ZqKoSOazLn4pJhmtcbdatDrRY9g
-14agyXOkxwqNkVxTe1u2g8C3J/LpDQ==
-=95b5
------END PGP SIGNATURE-----
-
---U+NfgObvpQT1Q9Yq--
+-- 
+Jagan Teki
+Senior Linux Kernel Engineer | Amarula Solutions
+U-Boot, Linux | Upstream Maintainer
+Hyderabad, India.
