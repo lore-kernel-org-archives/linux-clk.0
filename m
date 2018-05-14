@@ -1,102 +1,105 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v8 0/5] clk: meson-axg: Add AO Cloclk and Reset driver
-Date: Thu, 3 May 2018 21:26:19 +0800
-Message-ID: <20180503132624.78453-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v6 04/14] clk: qcom: Add DT bindings for CPU clock driver for msm8996
+Date: Mon, 14 May 2018 16:11:50 +0300
+Message-Id: <1526303520-5843-5-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
+References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-  This patch try to add AO clock and Reset driver for Amlogic's
-Meson-AXG SoC.
+Each of the CPU clusters (Power and Perf) on msm8996 are
+clocked via 2 PLLs, a primary and alternate. There are also
+2 Mux'es, a primary and secondary all connected together
+as shown below
 
- patch 1: factor the common code into a dedicated file
- patch 2-4: add the aoclk driver for AXG SoC
- patch 5: drop unnecessary clock flags
+                             +-------+
+              XO             |       |
+          +------------------>0      |
+                             |       |
+                   PLL/2     | SMUX  +----+
+                     +------->1      |    |
+                     |       |       |    |
+                     |       +-------+    |    +-------+
+                     |                    +---->0      |
+                     |                         |       |
++---------------+    |             +----------->1      | CPU clk
+|Primary PLL    +----+ PLL_EARLY   |           |       +------>
+|               +------+-----------+    +------>2 PMUX |
++---------------+      |                |      |       |
+                       |   +------+     |   +-->3      |
+                       +--^+  ACD +-----+   |  +-------+
++---------------+          +------+         |
+|Alt PLL        |                           |
+|               +---------------------------+
++---------------+         PLL_EARLY
 
-changes since v7 at [8]: 
- - drop the 'drop CLK_IGNORE_UNUSED flag' patch
-   to avoid circle dependencies
- - fix Philip's Ack on patch 3
+The primary PLL is what drives the CPU clk, except for times
+when we are reprogramming the PLL itself (for rate changes) when
+we temporarily switch to an alternate PLL. A subsequent patch adds
+support to switch between primary and alternate PLL during rate
+changes.
 
-changes since v6 at [7]: 
- - fix over 80 chars chechpatch error
- - add Philip's Ack on patch 5
- - drop extra end of newline
+The primary PLL operates on a single VCO range, between 600MHz
+and 3GHz. However the CPUs do support OPPs with frequencies
+between 300MHz and 600MHz. In order to support running the CPUs
+at those frequencies we end up having to lock the PLL at twice
+the rate and drive the CPU clk via the PLL/2 output and SMUX.
 
-changes since v5 at [6]: 
- - drop unnecessary header files
- - add 'axg_aoclk' prefix to clk driver, make them more consistent
- - add missing end new line..
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
 
-changes since v4 at [5]: 
- - fix return err
- - introduce CONFIG_COMMON_CLK_MESON_AO
- - format/style minor fix
-
-changes since v3 at [4]: 
- - add 'const' contraint to the read-only data
- - switch to devm_of_clk_add_hw_provider API
- - check return value of devm_reset_controller_register
-
-changes since v2 at [2]: 
- - rework meson_aoclkc_probe() which leverage the of_match_data
- - merge patch 5-6 into this series
- - seperate DTS patch, will send to Kevin Hilman independently
- 
-changes since v1 at [0]: 
- - rebase to clk-meson's branch 'next/drivers' [1]
- - fix license, update to BSD-3-Clause
- - drop un-used include header file
-
-[0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
-[1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
-[2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
-[3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
-[4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
-[5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
-[6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
-[7] https://lkml.kernel.org/r/20180419135426.155794-1-yixun.lan@amlogic.com
-[8] https://lkml.kernel.org/r/20180426084437.192394-1-yixun.lan@amlogic.com
-
-
-Qiufang Dai (1):
-  clk: meson-axg: Add AO Clock and Reset controller driver
-
-Yixun Lan (4):
-  clk: meson: aoclk: refactor common code into dedicated file
-  dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
-  dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-  clk: meson: drop CLK_SET_RATE_PARENT flag
-
- .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
- drivers/clk/meson/Kconfig                     |   8 +
- drivers/clk/meson/Makefile                    |   3 +-
- drivers/clk/meson/axg-aoclk.c                 | 164 ++++++++++++++++++
- drivers/clk/meson/axg-aoclk.h                 |  29 ++++
- drivers/clk/meson/gxbb-aoclk.c                |  96 ++++------
- drivers/clk/meson/gxbb-aoclk.h                |   5 +
- drivers/clk/meson/meson-aoclk.c               |  81 +++++++++
- drivers/clk/meson/meson-aoclk.h               |  34 ++++
- include/dt-bindings/clock/axg-aoclkc.h        |  26 +++
- include/dt-bindings/reset/axg-aoclkc.h        |  20 +++
- 11 files changed, 403 insertions(+), 64 deletions(-)
- create mode 100644 drivers/clk/meson/axg-aoclk.c
- create mode 100644 drivers/clk/meson/axg-aoclk.h
- create mode 100644 drivers/clk/meson/meson-aoclk.c
- create mode 100644 drivers/clk/meson/meson-aoclk.h
- create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
- create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+new file mode 100644
+index 0000000..8458783
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+@@ -0,0 +1,17 @@
++Qualcomm CPUSS clock controller for Kryo CPUs
++----------------------------------------------------
++
++Required properties :
++- compatible : shall contain only one of the following:
++
++			"qcom,msm8996-apcc"
++
++- reg : shall contain base register location and length
++- #clock-cells : shall contain 1
++
++Example:
++	kryocc: clock-controller@6400000 {
++		compatible = "qcom,msm8996-apcc";
++		reg = <0x6400000 0x90000>;
++		#clock-cells = <1>;
++	};
 -- 
-2.17.0
+1.9.1
