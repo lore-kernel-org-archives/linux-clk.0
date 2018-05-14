@@ -1,49 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46897 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935380AbeE2PFG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 May 2018 11:05:06 -0400
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH v2 1/5] ARM: imx: remove inexistant EPIT timer init
-Date: Tue, 29 May 2018 17:04:51 +0200
-Message-Id: <20180529150455.17300-2-peron.clem@gmail.com>
-In-Reply-To: <20180529150455.17300-1-peron.clem@gmail.com>
-References: <20180529150455.17300-1-peron.clem@gmail.com>
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org"
+	<sboyd@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org"
+	<kernel-janitors@vger.kernel.org>
+Subject: Re: clk: stm32mp1: Fix a memory leak in
+ 'clk_stm32_register_gate_ops()'
+Date: Mon, 14 May 2018 08:50:48 +0000
+Message-ID: <3d149e1f-3290-8b6f-9b5b-1a1133461ed0@st.com>
+References: <20180513111704.31842-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20180513111704.31842-1-christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Clément Peron <clement.peron@devialet.com>
-
-i.MX EPIT timer has been removed but not the init function declaration.
-
-Signed-off-by: Clément Peron <clement.peron@devialet.com>
----
- arch/arm/mach-imx/common.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/arch/arm/mach-imx/common.h b/arch/arm/mach-imx/common.h
-index c8d68e918b2f..18aae76fa2da 100644
---- a/arch/arm/mach-imx/common.h
-+++ b/arch/arm/mach-imx/common.h
-@@ -38,7 +38,6 @@ void imx21_soc_init(void);
- void imx27_soc_init(void);
- void imx31_soc_init(void);
- void imx35_soc_init(void);
--void epit_timer_init(void __iomem *base, int irq);
- int mx21_clocks_init(unsigned long lref, unsigned long fref);
- int mx27_clocks_init(unsigned long fref);
- int mx31_clocks_init(unsigned long fref);
--- 
-2.17.0
-
+SGkgQ2hyaXN0b3BoZSwNCg0KTWFueSB0aGFua3MgIQ0KDQpBY2tlZC1ieTogR2FicmllbCBGZXJu
+YW5kZXogPGdhYnJpZWwuZmVybmFuZGV6QHN0LmNvbT4NCg0KDQpPbiAwNS8xMy8yMDE4IDAxOjE3
+IFBNLCBDaHJpc3RvcGhlIEphaWxsZXQgd3JvdGU6DQo+IFdlIGFsbG9jYXRlIHNvbWUgbWVtb3J5
+IHdoaWNoIGlzIG5laXRoZXIgdXNlZCwgbm9yIHJlZmVyZW5jZWQgYnkgYW55dGhpbmcuDQo+IFNv
+IGF4ZSBpdC4NCj4NCj4gU2lnbmVkLW9mZi1ieTogQ2hyaXN0b3BoZSBKQUlMTEVUIDxjaHJpc3Rv
+cGhlLmphaWxsZXRAd2FuYWRvby5mcj4NCj4gLS0tDQo+IFRoaXMgcGF0Y2ggYXMgbm90IGJlZW4g
+Y29tcGlsZS10ZXN0ZWQsIEkgZG9uJ3QgaGF2ZSB0aGUgY29ycmVzcG9uZGluZyBhcmNoDQo+IGFu
+ZCBoYXZlIG5vdCB0YWtlbiB0aW1lIHRvIGNyb3NzLWNvbXBpbGUgaXQuDQo+IC0tLQ0KPiAgIGRy
+aXZlcnMvY2xrL2Nsay1zdG0zMm1wMS5jIHwgOSArLS0tLS0tLS0NCj4gICAxIGZpbGUgY2hhbmdl
+ZCwgMSBpbnNlcnRpb24oKyksIDggZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2Nsay9jbGstc3RtMzJtcDEuYyBiL2RyaXZlcnMvY2xrL2Nsay1zdG0zMm1wMS5jDQo+IGlu
+ZGV4IGVkZDNjZjQ1MTQwMS4uZGZiOWNiNWJkMGM0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Ns
+ay9jbGstc3RtMzJtcDEuYw0KPiArKysgYi9kcml2ZXJzL2Nsay9jbGstc3RtMzJtcDEuYw0KPiBA
+QCAtNTc5LDE0ICs1NzksOSBAQCBjbGtfc3RtMzJfcmVnaXN0ZXJfZ2F0ZV9vcHMoc3RydWN0IGRl
+dmljZSAqZGV2LA0KPiAgIAkJCSAgICBzcGlubG9ja190ICpsb2NrKQ0KPiAgIHsNCj4gICAJc3Ry
+dWN0IGNsa19pbml0X2RhdGEgaW5pdCA9IHsgTlVMTCB9Ow0KPiAtCXN0cnVjdCBjbGtfZ2F0ZSAq
+Z2F0ZTsNCj4gICAJc3RydWN0IGNsa19odyAqaHc7DQo+ICAgCWludCByZXQ7DQo+ICAgDQo+IC0J
+Z2F0ZSA9IGt6YWxsb2Moc2l6ZW9mKCpnYXRlKSwgR0ZQX0tFUk5FTCk7DQo+IC0JaWYgKCFnYXRl
+KQ0KPiAtCQlyZXR1cm4gRVJSX1BUUigtRU5PTUVNKTsNCj4gLQ0KPiAgIAlpbml0Lm5hbWUgPSBu
+YW1lOw0KPiAgIAlpbml0LnBhcmVudF9uYW1lcyA9ICZwYXJlbnRfbmFtZTsNCj4gICAJaW5pdC5u
+dW1fcGFyZW50cyA9IDE7DQo+IEBAIC02MDQsMTAgKzU5OSw4IEBAIGNsa19zdG0zMl9yZWdpc3Rl
+cl9nYXRlX29wcyhzdHJ1Y3QgZGV2aWNlICpkZXYsDQo+ICAgCWh3LT5pbml0ID0gJmluaXQ7DQo+
+ICAgDQo+ICAgCXJldCA9IGNsa19od19yZWdpc3RlcihkZXYsIGh3KTsNCj4gLQlpZiAocmV0KSB7
+DQo+IC0JCWtmcmVlKGdhdGUpOw0KPiArCWlmIChyZXQpDQo+ICAgCQlodyA9IEVSUl9QVFIocmV0
+KTsNCj4gLQl9DQo+ICAgDQo+ICAgCXJldHVybiBodzsNCj4gICB9DQo=
