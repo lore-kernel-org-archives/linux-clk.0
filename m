@@ -1,52 +1,80 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 22 May 2018 10:55:29 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-	viresh.kumar@linaro.org, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v9 11/15] dt-bindings: cpufreq: Document
- operating-points-v2-kryo-cpu
-Message-ID: <20180522155529.GA30543@rob-hp-laptop>
-References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
- <1526901932-9514-12-git-send-email-ilialin@codeaurora.org>
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, "ard.biesheuvel@linaro.org"
+	<ard.biesheuvel@linaro.org>, "mingo@kernel.org" <mingo@kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "hkallweit1@gmail.com"
+	<hkallweit1@gmail.com>, "keescook@chromium.org" <keescook@chromium.org>,
+	"dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH v6 04/11] firmware: xilinx: Add query data API
+Date: Mon, 14 May 2018 19:16:10 +0000
+Message-ID: <SN1PR02MB37587E3AB2718E1DB510E35AB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+ <1523389127-14243-5-git-send-email-jollys@xilinx.com>
+ <85f8f8c5-a177-dad8-e095-a9dd1c513e8d@arm.com>
+In-Reply-To: <85f8f8c5-a177-dad8-e095-a9dd1c513e8d@arm.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526901932-9514-12-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 21, 2018 at 02:25:28PM +0300, Ilia Lin wrote:
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
-> 
-> This change adds documentation for the DT bindings.
-> The "operating-points-v2-kryo-cpu" DT extends the "operating-points-v2"
-> with following parameters:
-> - nvmem-cells (NVMEM area containig the speedbin information)
-> - opp-supported-hw: A single 32 bit bitmap value,
->   representing compatible HW:
-> 			0:	MSM8996 V3, speedbin 0
-> 			1:	MSM8996 V3, speedbin 1
-> 			2:	MSM8996 V3, speedbin 2
-> 			3:	unused
-> 			4:	MSM8996 SG, speedbin 0
-> 			5:	MSM8996 SG, speedbin 1
-> 			6:	MSM8996 SG, speedbin 2
-> 			7-31:	unused
-> 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Please add acks/reviewed-bys when posting new versions.
-
-Rob
+SEkgU3VkZWVwLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1ZGVl
+cCBIb2xsYSBbbWFpbHRvOnN1ZGVlcC5ob2xsYUBhcm0uY29tXQ0KPiBTZW50OiBUaHVyc2RheSwg
+TWF5IDEwLCAyMDE4IDc6MTIgQU0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29t
+PjsgYXJkLmJpZXNoZXV2ZWxAbGluYXJvLm9yZzsNCj4gbWluZ29Aa2VybmVsLm9yZzsgZ3JlZ2to
+QGxpbnV4Zm91bmRhdGlvbi5vcmc7IG1hdHRAY29kZWJsdWVwcmludC5jby51azsNCj4gaGthbGx3
+ZWl0MUBnbWFpbC5jb207IGtlZXNjb29rQGNocm9taXVtLm9yZzsNCj4gZG1pdHJ5LnRvcm9raG92
+QGdtYWlsLmNvbTsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNib3lkQGNvZGVhdXJvcmEu
+b3JnOyBtaWNoYWwuc2ltZWtAeGlsaW54LmNvbTsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiBtYXJr
+LnJ1dGxhbmRAYXJtLmNvbTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZw0KPiBDYzogU3VkZWVw
+IEhvbGxhIDxzdWRlZXAuaG9sbGFAYXJtLmNvbT47IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbngu
+Y29tPjsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJu
+ZWxAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgSm9sbHkg
+U2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjYgMDQvMTFd
+IGZpcm13YXJlOiB4aWxpbng6IEFkZCBxdWVyeSBkYXRhIEFQSQ0KPiANCj4gDQo+IA0KPiBPbiAx
+MC8wNC8xOCAyMDozOCwgSm9sbHkgU2hhaCB3cm90ZToNCj4gPiBGcm9tOiBSYWphbiBWYWphIDxy
+YWphbnZAeGlsaW54LmNvbT4NCj4gPg0KPiA+IEFkZCBaeW5xTVAgZmlybXdhcmUgcXVlcnkgZGF0
+YSBBUEkgdG8gcXVlcnkgcGxhdGZvcm0gc3BlY2lmaWMNCj4gPiBpbmZvcm1hdGlvbihjbG9ja3Ms
+IHBpbnMpIGZyb20gZmlybXdhcmUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBSYWphbiBWYWph
+IDxyYWphbnZAeGlsaW54LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBKb2xseSBTaGFoIDxqb2xs
+eXNAeGlsaW54LmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9maXJtd2FyZS94aWxpbngvenlu
+cW1wLmMgICAgIHwgMTQgKysrKysrKysrKysrKysNCj4gPiAgaW5jbHVkZS9saW51eC9maXJtd2Fy
+ZS94bG54LXp5bnFtcC5oIHwgMjAgKysrKysrKysrKysrKysrKysrKysNCj4gPiAgMiBmaWxlcyBj
+aGFuZ2VkLCAzNCBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9m
+aXJtd2FyZS94aWxpbngvenlucW1wLmMNCj4gPiBiL2RyaXZlcnMvZmlybXdhcmUveGlsaW54L3p5
+bnFtcC5jDQo+ID4gaW5kZXggNDRiNDNmYS4uZWYwOWM0NCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2
+ZXJzL2Zpcm13YXJlL3hpbGlueC96eW5xbXAuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZmlybXdhcmUv
+eGlsaW54L3p5bnFtcC5jDQo+ID4gQEAgLTI1OCw5ICsyNTgsMjMgQEAgc3RhdGljIGludCB6eW5x
+bXBfcG1faW9jdGwodTMyIG5vZGVfaWQsIHUzMg0KPiBpb2N0bF9pZCwgdTMyIGFyZzEsIHUzMiBh
+cmcyLA0KPiA+ICAJCQkJICAgYXJnMSwgYXJnMiwgb3V0KTsNCj4gPiAgfQ0KPiA+DQo+ID4gKy8q
+Kg0KPiA+ICsgKiB6eW5xbXBfcG1fcXVlcnlfZGF0YSgpIC0gR2V0IHF1ZXJ5IGRhdGEgZnJvbSBm
+aXJtd2FyZQ0KPiA+ICsgKiBAcWRhdGE6CVZhcmlhYmxlIHRvIHRoZSB6eW5xbXBfcG1fcXVlcnlf
+ZGF0YSBzdHJ1Y3R1cmUNCj4gPiArICogQG91dDoJUmV0dXJuZWQgb3V0cHV0IHZhbHVlDQo+ID4g
+KyAqDQo+ID4gKyAqIFJldHVybjogUmV0dXJucyBzdGF0dXMsIGVpdGhlciBzdWNjZXNzIG9yIGVy
+cm9yK3JlYXNvbiAgKi8gc3RhdGljDQo+ID4gK2ludCB6eW5xbXBfcG1fcXVlcnlfZGF0YShzdHJ1
+Y3QgenlucW1wX3BtX3F1ZXJ5X2RhdGEgcWRhdGEsIHUzMiAqb3V0KQ0KPiA+ICt7DQo+ID4gKwly
+ZXR1cm4genlucW1wX3BtX2ludm9rZV9mbihQTV9RVUVSWV9EQVRBLCBxZGF0YS5xaWQsDQo+IHFk
+YXRhLmFyZzEsDQo+ID4gKwkJCQkgICBxZGF0YS5hcmcyLCBxZGF0YS5hcmczLCBvdXQpOw0KPiA+
+ICt9DQo+ID4gKw0KPiA+ICBzdGF0aWMgY29uc3Qgc3RydWN0IHp5bnFtcF9lZW1pX29wcyBlZW1p
+X29wcyA9IHsNCj4gPiAgCS5nZXRfYXBpX3ZlcnNpb24gPSB6eW5xbXBfcG1fZ2V0X2FwaV92ZXJz
+aW9uLA0KPiA+ICAJLmlvY3RsID0genlucW1wX3BtX2lvY3RsLA0KPiA+ICsJLnF1ZXJ5X2RhdGEg
+PSB6eW5xbXBfcG1fcXVlcnlfZGF0YSwNCj4gDQo+IENhbiB5b3UgZ2l2ZSBtb3JlIGluc2lnaHQg
+aW50byB0aGlzID8gSG93IHdpbGwgYmUgdGhpcyB1c2VkID8NCj4gSG93IHRoaXMgYWxpZ25zIHdp
+dGggZGF0YSB3ZSBnZXQgZnJvbSBEVCA/IEkgYW0ganVzdCB0cnlpbmcgdG8gdW5kZXJzdGFuZCBo
+b3cgaXMNCj4gdGhpcyBpbmZvcm1hdGlvbiBzcGxpdCBiZXR3ZWVuIHRoaXMgQVBJIGFuZCBEVCBm
+b3IgZXhhbXBsZS4NCj4gDQo+IC0tDQo+IFJlZ2FyZHMsDQo+IFN1ZGVlcA0KDQpUaGlzIEFQSSBp
+cyB1c2VkIHRvIGdldCBjbG9jayBpbmZvcm1hdGlvbiBmcm9tIGZpcm13YXJlIGFuZCByZWdpc3Rl
+ciBjbG9ja3MgYWNjb3JkaW5nbHkgaW4gZHJpdmVyLiBJbiBvdXIgY2FzZSwgZmlybXdhcmUgbWFp
+bnRhaW5zIGRhdGFiYXNlIG9mIGFsbCBjbG9ja3MgYXZhaWxhYmxlIG9uIGNoaXAuIERUIHdpbGwg
+cHJvdmlkZSBpbmZvcm1hdGlvbiBmb3Igb2ZmIGNoaXAgcmVmZXJlbmNlIGNsb2NrcyBvbmx5Lg0K
+VGhpcyBpcyB0byBhdm9pZCBkdXBsaWNhdGlvbiBvZiBjbG9ja3MgZGF0YSBpbiBEVCBhbmQgZmly
+bXdhcmUgYm90aCBhcyBmaXJtd2FyZSBhbnl3YXlzIG5lZWQgY2xvY2sgZGF0YSB0byBtYW5hZ2Ug
+dGhlbS4NCg0KVGhhbmtzLA0KSm9sbHkgU2hhaA0KDQo=
