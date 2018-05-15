@@ -1,40 +1,66 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 7 May 2018 11:07:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-	rjw@rjwysocki.net, viresh.kumar@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v5 10/14] dt-bindings: qcom_spmi: Add support for SAW
- documentation
-Message-ID: <20180507160737.GA16495@rob-hp-laptop>
-References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
- <1525348355-25471-11-git-send-email-ilialin@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1525348355-25471-11-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] clk: meson: axg: let mpll clocks round closest
+Date: Tue, 15 May 2018 18:36:52 +0200
+Message-Id: <20180515163652.19980-3-jbrunet@baylibre.com>
+In-Reply-To: <20180515163652.19980-1-jbrunet@baylibre.com>
+References: <20180515163652.19980-1-jbrunet@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 03, 2018 at 02:52:31PM +0300, Ilia Lin wrote:
-> Add support for SAW controlled regulators.
-> The regulators defined as SAW controlled in the device tree
-> will be controlled through special CPU registers instead of direct
-> SPMI accesses.
-> This is required especially for CPU supply regulators to synchronize
-> with clock scaling and for Automatic Voltage Switching.
-> Document it.
-> 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
+Let the mpll dividers achieve the closest rate possible, even if
+it means rounding the requested rate up.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This is done to improve the accuracy of the rates provided by these
+plls to the audio subsystem
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 5f5d468c1efe..bd4dbc696b88 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -461,6 +461,7 @@ static struct clk_regmap axg_mpll0_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0_div",
+@@ -507,6 +508,7 @@ static struct clk_regmap axg_mpll1_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll1_div",
+@@ -553,6 +555,7 @@ static struct clk_regmap axg_mpll2_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll2_div",
+@@ -599,6 +602,7 @@ static struct clk_regmap axg_mpll3_div = {
+ 			.width	 = 1,
+ 		},
+ 		.lock = &meson_clk_lock,
++		.flags = CLK_MESON_MPLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll3_div",
+-- 
+2.14.3
