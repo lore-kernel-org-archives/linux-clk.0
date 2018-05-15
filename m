@@ -1,72 +1,187 @@
-Return-Path: <davem@davemloft.net>
-Date: Thu, 03 May 2018 14:40:42 -0400 (EDT)
-Message-Id: <20180503.144042.266645949281979304.davem@davemloft.net>
-To: maxime.ripard@bootlin.com
-Cc: wens@csie.org, mturquette@baylibre.com, sboyd@kernel.org,
- peppe.cavallaro@st.com, robh+dt@kernel.org, mark.rutland@arm.com,
- broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- netdev@vger.kernel.org, clabbe.montjoie@gmail.com, icenowy@aosc.io
-Subject: Re: [PATCH net-next v2 00/15] ARM: sun8i: r40: Add Ethernet support
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180503131257.rlqxetafejikmnji@flea>
-References: <CAGb2v67HFb6eLBS4_9s_wJ5uWFeQdUtwn_NMJnm59UUDFBDJUA@mail.gmail.com>
-	<20180502.110617.304411895589508709.davem@davemloft.net>
-	<20180503131257.rlqxetafejikmnji@flea>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 3/5] arm64: dts: hi3660: Add CPU frequency scaling support
+Date: Tue, 15 May 2018 10:53:13 +0800
+Message-Id: <1526352795-6991-4-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+References: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Thu, 3 May 2018 15:12:57 +0200
+Add two CPU OPP tables, one table is corresponding to one cluster,
+which allow CPU frequency scaling on hi3660 platforms.
 
-> Hi Dave,
-> 
-> On Wed, May 02, 2018 at 11:06:17AM -0400, David Miller wrote:
->> From: Chen-Yu Tsai <wens@csie.org>
->> Date: Wed, 2 May 2018 00:33:45 +0800
->> 
->> > I should've mentioned that patches 3 ~ 10, and only these, should go
->> > through net-next. sunxi will handle the remaining clk, device tree, and
->> > soc driver patches.
->> 
->> Ok, I just noticed this.
->> 
->> Why don't you just post those patches separately as a series on their
->> own then, in order to avoid confusion?
->> 
->> Then you can adjust the patch series header posting to explain the
->> non-net-next changes, where they got merged, and what they provide
->> in order to faciliate the net-next changes.
-> 
-> I now that we usually have some feedback from non-net maintainers that
-> they actually prefer seeing the full picture (and I also tend to
-> prefer that as well) and having all the patches relevant to enable a
-> particular feature, even if it means getting multiple maintainers
-> involved.
-> 
-> Just to make sure we understood you fully, do you want Chen-Yu to
-> resend his serie following your comments, or was that just a general
-> remark for next time?
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 86 +++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
 
-Yeah, good questions.
-
-I think it can be argued either way.  For review having the complete
-context is important.
-
-But from a maintainer's standpoint, when there is any ambiguity
-whatsoever about what patches go into this tree or that, it is really
-frowned upon and is quite error prone.
-
-Also, that header posting is _SO_ important.  It explains the series.
-But for these 'partial apply' situations the header posting refers
-to patches not in the series.
-
-This looks terrible in the logs, when, as I do, the header posting
-text is added to a marge commit for the series.  People will read it
-and say "where are all of these other changes mentioned in the text?
-was this series misapplied?"
-
-That's why, maybe after the review is successful, I want the actual
-patch series standalone with appropriately updated header posting
-text.
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index 3a3bcff..a39da09 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -62,6 +62,8 @@
+ 			next-level-cache = <&A53_L2>;
+ 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
+ 			capacity-dmips-mhz = <592>;
++			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -72,6 +74,8 @@
+ 			next-level-cache = <&A53_L2>;
+ 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
+ 			capacity-dmips-mhz = <592>;
++			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		cpu2: cpu@2 {
+@@ -82,6 +86,8 @@
+ 			next-level-cache = <&A53_L2>;
+ 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
+ 			capacity-dmips-mhz = <592>;
++			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		cpu3: cpu@3 {
+@@ -92,6 +98,8 @@
+ 			next-level-cache = <&A53_L2>;
+ 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
+ 			capacity-dmips-mhz = <592>;
++			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		cpu4: cpu@100 {
+@@ -102,6 +110,8 @@
+ 			next-level-cache = <&A73_L2>;
+ 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
+ 			capacity-dmips-mhz = <1024>;
++			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		cpu5: cpu@101 {
+@@ -112,6 +122,8 @@
+ 			next-level-cache = <&A73_L2>;
+ 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
+ 			capacity-dmips-mhz = <1024>;
++			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		cpu6: cpu@102 {
+@@ -122,6 +134,8 @@
+ 			next-level-cache = <&A73_L2>;
+ 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
+ 			capacity-dmips-mhz = <1024>;
++			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		cpu7: cpu@103 {
+@@ -132,6 +146,8 @@
+ 			next-level-cache = <&A73_L2>;
+ 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
+ 			capacity-dmips-mhz = <1024>;
++			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		idle-states {
+@@ -174,6 +190,76 @@
+ 		};
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp00 {
++			opp-hz = /bits/ 64 <533000000>;
++			opp-microvolt = <700000>;
++			clock-latency-ns = <300000>;
++		};
++
++		opp01 {
++			opp-hz = /bits/ 64 <999000000>;
++			opp-microvolt = <800000>;
++			clock-latency-ns = <300000>;
++		};
++
++		opp02 {
++			opp-hz = /bits/ 64 <1402000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++		};
++
++		opp03 {
++			opp-hz = /bits/ 64 <1709000000>;
++			opp-microvolt = <1000000>;
++			clock-latency-ns = <300000>;
++		};
++
++		opp04 {
++			opp-hz = /bits/ 64 <1844000000>;
++			opp-microvolt = <1100000>;
++			clock-latency-ns = <300000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp10 {
++			opp-hz = /bits/ 64 <903000000>;
++			opp-microvolt = <700000>;
++			clock-latency-ns = <300000>;
++		};
++
++		opp11 {
++			opp-hz = /bits/ 64 <1421000000>;
++			opp-microvolt = <800000>;
++			clock-latency-ns = <300000>;
++		};
++
++		opp12 {
++			opp-hz = /bits/ 64 <1805000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
++		};
++
++		opp13 {
++			opp-hz = /bits/ 64 <2112000000>;
++			opp-microvolt = <1000000>;
++			clock-latency-ns = <300000>;
++		};
++
++		opp14 {
++			opp-hz = /bits/ 64 <2362000000>;
++			opp-microvolt = <1100000>;
++			clock-latency-ns = <300000>;
++		};
++	};
++
+ 	gic: interrupt-controller@e82b0000 {
+ 		compatible = "arm,gic-400";
+ 		reg = <0x0 0xe82b1000 0 0x1000>, /* GICD */
+-- 
+1.9.1
