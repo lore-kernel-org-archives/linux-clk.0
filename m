@@ -1,137 +1,24 @@
-Return-Path: <horms@verge.net.au>
-Date: Wed, 23 May 2018 11:06:33 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
-Message-ID: <20180523090633.jiasuisfu55a3pw2@verge.net.au>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180409141303.14537-1-jbrunet@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180409141303.14537-1-jbrunet@baylibre.com>
+Message-ID: <152642258273.237094.2062983082213897659@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: bulk: silently error out on EPROBE_DEFER
+Date: Tue, 15 May 2018 15:16:22 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 22, 2018 at 11:01:24AM +0100, Michel Pollet wrote:
-> This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
-> bone support.
-> 
-> This currently only handles generic parts (gic, architected timer)
-> and a UART.
-> For simplicity sake, this also relies on the bootloader to set the
-> pinctrl and clocks.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Quoting Jerome Brunet (2018-04-09 07:13:03)
+> In clk_bulk_get(), if we fail to get the clock due to probe deferal, we
+> shouldn't print an error message. Just be silent in this case.
+> =
 
-I am marking this and the following patch as deferred
-pending acceptance of the bindings it uses.
-
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-> new file mode 100644
-> index 0000000..c7764c7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> @@ -0,0 +1,86 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/rzn1-clock.h>
-> +
-> +/ {
-> +	compatible = "renesas,r9a06g032", "renesas,rzn1";
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		clocks = <&clock RZN1_DIV_CA7>;
-> +
-> +		cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a7";
-> +			reg = <0>;
-> +		};
-> +
-> +		cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a7";
-> +			reg = <1>;
-> +		};
-> +	};
-> +
-> +	soc {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		interrupt-parent = <&gic>;
-> +		ranges;
-> +
-> +		clock: clocks@4000c000 {
-> +			compatible = "renesas,r9a06g032-clocks",
-> +					"renesas,rzn1-clocks";
-> +			reg = <0x4000c000 0x1000>;
-> +			status = "okay";
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		uart0: serial@40060000 {
-> +			compatible = "snps,dw-apb-uart";
-> +			reg = <0x40060000 0x400>;
-> +			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			clocks = <&clock RZN1_CLK_UART0>;
-> +			clock-names = "baudclk";
-> +			status = "disabled";
-> +		};
-> +
-> +		gic: gic@44101000 {
-> +			compatible = "arm,cortex-a7-gic", "arm,gic-400";
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
-> +			reg = <0x44101000 0x1000>, /* Distributer */
-> +			      <0x44102000 0x2000>, /* CPU interface */
-> +			      <0x44104000 0x2000>, /* Virt interface control */
-> +			      <0x44106000 0x2000>; /* Virt CPU interface */
-> +			interrupts =
-> +				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-> +		};
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,cortex-a7-timer",
-> +			     "arm,armv7-timer";
-> +		interrupt-parent = <&gic>;
-> +		arm,cpu-registers-not-fw-configured;
-> +		always-on;
-> +		interrupts =
-> +			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-> +	};
-> +};
-> -- 
-> 2.7.4
-> 
+
+Applied to clk-next
