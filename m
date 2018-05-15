@@ -1,83 +1,24 @@
-Return-Path: <boris.brezillon@bootlin.com>
-Date: Tue, 22 May 2018 19:52:30 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com,
- robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
- miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
- krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 1/5] mtd: rawnand: tegra: add devicetree binding
-Message-ID: <20180522195230.471a796e@bbrezillon>
-In-Reply-To: <8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
-References: <cover.1526990589.git.stefan@agner.ch>
-	<8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+To: Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525271313-24427-2-git-send-email-dinguyen@kernel.org>
+Cc: dinguyen@kernel.org, mturquette@baylibre.com, linux-kernel@vger.kernel.org
+References: <1525271313-24427-1-git-send-email-dinguyen@kernel.org>
+ <1525271313-24427-2-git-send-email-dinguyen@kernel.org>
+Message-ID: <152642120192.237094.12936695477697525600@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/2] clk: socfpga: stratix10: suppress unbinding platform's clock
+ driver
+Date: Tue, 15 May 2018 14:53:21 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stefan,
+Quoting Dinh Nguyen (2018-05-02 07:28:33)
+> The Stratix10 clock driver is essential to system operation, so their
+> removal should never happen.
+> =
 
-On Tue, 22 May 2018 14:07:05 +0200
-Stefan Agner <stefan@agner.ch> wrote:
-
-> From: Lucas Stach <dev@lynxeye.de>
-> 
-> This adds the devicetree binding for the Tegra 2 NAND flash
-> controller.
-> 
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
->  .../bindings/mtd/nvidia,tegra20-nand.txt      | 29 +++++++++++++++++++
->  1 file changed, 29 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> new file mode 100644
-> index 000000000000..522d442937a9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> @@ -0,0 +1,29 @@
-> +NVIDIA Tegra NAND Flash controller
-> +
-> +Required properties:
-> +- compatible: Must be one of:
-> +  - "nvidia,tegra20-nand"
-> +- reg: MMIO address range
-> +- interrupts: interrupt output of the NFC controller
-> +- clocks: Must contain an entry for each entry in clock-names.
-> +  See ../clocks/clock-bindings.txt for details.
-> +- clock-names: Must include the following entries:
-> +  - nand
-> +- resets: Must contain an entry for each entry in reset-names.
-> +  See ../reset/reset.txt for details.
-> +- reset-names: Must include the following entries:
-> +  - nand
-> +
-> +Optional properties:
-> +- nvidia,wp-gpios: GPIO used to disable write protection of the flash
-> +
-> +  Example:
-> +	nand@70008000 {
-> +		compatible = "nvidia,tegra20-nand";
-> +		reg = <0x70008000 0x100>;
-> +		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-> +		clock-names = "nand";
-> +		resets = <&tegra_car 13>;
-> +		reset-names = "nand";
-> +	};
 
-Can you represent the controller and NAND chip separately as
-recommended here [1].
-
-Thanks,
-
-Boris
-
-[1]https://elixir.bootlin.com/linux/v4.17-rc6/source/Documentation/devicetree/bindings/mtd/nand.txt#L56
+Applied to clk-next
