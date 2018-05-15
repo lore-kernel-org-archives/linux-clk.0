@@ -1,48 +1,118 @@
-Return-Path: <anischal@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Thu, 03 May 2018 16:06:01 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown
- <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Odelu
- Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: Add video clock controller driver for
- SDM845
-In-Reply-To: <152528682776.138124.2183943878215041610@swboyd.mtv.corp.google.com>
-References: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
- <1524576771-31096-3-git-send-email-anischal@codeaurora.org>
- <152521087780.138124.7623601052057968460@swboyd.mtv.corp.google.com>
- <d311e4d7-7ba8-0b26-93c7-5ee06db466ef@codeaurora.org>
- <152528682776.138124.2183943878215041610@swboyd.mtv.corp.google.com>
-Message-ID: <fef9e787926f4e72bcadb3d87ea888d2@codeaurora.org>
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v7 10/14] dt-bindings: qcom_spmi: Add support for SAW documentation
+Date: Tue, 15 May 2018 12:13:32 +0300
+Message-Id: <1526375616-16904-11-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018-05-03 00:17, Stephen Boyd wrote:
-> Quoting Nischal, Amit (2018-05-02 00:56:35)
->> 
->> 
->> Thanks for the review.
->> As of now, there are no resets defined for VIDEOCC. So I will move
->> the #reset-cells tooptional property in the dt-binding.
->> Same will be updated in the next patch series.
-> 
-> Please don't make it optional. It should be required in the binding,
-> because there are resets in the hardware. If you don't want to add them
-> into the driver, that's ok, but it isn't really that hard to add them 
-> so
-> why not add them?
+Add support for SAW controlled regulators.
+The regulators defined as SAW controlled in the device tree
+will be controlled through special CPU registers instead of direct
+SPMI accesses.
+This is required especially for CPU supply regulators to synchronize
+with clock scaling and for Automatic Voltage Switching.
+Document it.
 
-There is no reset client for VideoCC so that's why we have not
-added them in the driver file. However, I will make "#reset-cells"
-as required property in the dt-binding.
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+index 57d2c65..406f2e5 100644
+--- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+@@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
+ 	Definition: Reference to regulator supplying the input pin, as
+ 		    described in the data sheet.
+ 
++- qcom,saw-reg:
++	Usage: optional
++	Value type: <phandle>
++	Description: Reference to syscon node defining the SAW registers.
++
+ 
+ The regulator node houses sub-nodes for each regulator within the device. Each
+ sub-node is identified using the node's name, with valid values listed for each
+@@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
+ 			2 = 0.55 uA
+ 			3 = 0.75 uA
+ 
++- qcom,saw-slave:
++	Usage: optional
++	Value type: <boo>
++	Description: SAW controlled gang slave. Will not be configured.
++
++- qcom,saw-leader:
++	Usage: optional
++	Value type: <boo>
++	Description: SAW controlled gang leader. Will be configured as
++		     SAW regulator.
++
+ Example:
+ 
+ 	regulators {
+@@ -221,3 +237,32 @@ Example:
+ 
+ 		....
+ 	};
++
++Example 2:
++
++	saw3: syscon@9A10000 {
++		compatible = "syscon";
++		reg = <0x9A10000 0x1000>;
++	};
++
++	...
++
++	spm-regulators {
++		compatible = "qcom,pm8994-regulators";
++		qcom,saw-reg = <&saw3>;
++		s8 {
++			qcom,saw-slave;
++		};
++		s9 {
++			qcom,saw-slave;
++		};
++		s10 {
++			qcom,saw-slave;
++		};
++		pm8994_s11_saw: s11 {
++			qcom,saw-leader;
++			regulator-always-on;
++			regulator-min-microvolt = <900000>;
++			regulator-max-microvolt = <1140000>;
++		};
++	};
+-- 
+1.9.1
