@@ -1,42 +1,105 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v9 06/27] ARM: davinci: da850: add new clock init using
- common clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-7-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <525160f1-056b-69d1-2ce2-e5bdff8bffcc@ti.com>
-Date: Tue, 1 May 2018 19:47:01 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-7-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] clk: meson: mpll: add round closest support
+Date: Tue, 15 May 2018 18:36:51 +0200
+Message-Id: <20180515163652.19980-2-jbrunet@baylibre.com>
+In-Reply-To: <20180515163652.19980-1-jbrunet@baylibre.com>
+References: <20180515163652.19980-1-jbrunet@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 27 April 2018 05:47 AM, David Lechner wrote:
-> This adds the new board-specific clock init in mach-davinci/da850.c
-> using the new common clock framework drivers.
-> 
-> The #ifdefs are needed to prevent compile errors until the entire
-> ARCH_DAVINCI is converted.
-> 
-> Also clean up the #includes since we are adding some here.
-> 
-> Some CFGCHIP macros were removed because we are now including
-> linux/mfd/da8xx-cfgchip.h which defines the same values.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+Allow the mpll driver to round the requested rate up if
+CLK_MESON_MPLL_ROUND_CLOSEST is set and it provides a rate closer to the
+requested rate.
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/clk-mpll.c | 24 +++++++++++++++++++-----
+ drivers/clk/meson/clkc.h     |  3 +++
+ 2 files changed, 22 insertions(+), 5 deletions(-)
 
-Thanks,
-Sekhar
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index 0df1227b65b3..d233549de244 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -89,10 +89,23 @@ static long rate_from_params(unsigned long parent_rate,
+ static void params_from_rate(unsigned long requested_rate,
+ 			     unsigned long parent_rate,
+ 			     unsigned int *sdm,
+-			     unsigned int *n2)
++			     unsigned int *n2,
++			     u8 flags)
+ {
+ 	uint64_t div = parent_rate;
+-	unsigned long rem = do_div(div, requested_rate);
++	uint64_t frac = do_div(div, requested_rate);
++
++	frac *= SDM_DEN;
++
++	if (flags & CLK_MESON_MPLL_ROUND_CLOSEST)
++		*sdm = DIV_ROUND_CLOSEST_ULL(frac, requested_rate);
++	else
++		*sdm = DIV_ROUND_UP_ULL(frac, requested_rate);
++
++	if (*sdm == SDM_DEN) {
++		*sdm = 0;
++		div += 1;
++	}
+ 
+ 	if (div < N2_MIN) {
+ 		*n2 = N2_MIN;
+@@ -102,7 +115,6 @@ static void params_from_rate(unsigned long requested_rate,
+ 		*sdm = SDM_DEN - 1;
+ 	} else {
+ 		*n2 = div;
+-		*sdm = DIV_ROUND_UP_ULL((u64)rem * SDM_DEN, requested_rate);
+ 	}
+ }
+ 
+@@ -125,9 +137,11 @@ static long mpll_round_rate(struct clk_hw *hw,
+ 			    unsigned long rate,
+ 			    unsigned long *parent_rate)
+ {
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
+ 	unsigned int sdm, n2;
+ 
+-	params_from_rate(rate, *parent_rate, &sdm, &n2);
++	params_from_rate(rate, *parent_rate, &sdm, &n2, mpll->flags);
+ 	return rate_from_params(*parent_rate, sdm, n2);
+ }
+ 
+@@ -140,7 +154,7 @@ static int mpll_set_rate(struct clk_hw *hw,
+ 	unsigned int sdm, n2;
+ 	unsigned long flags = 0;
+ 
+-	params_from_rate(rate, parent_rate, &sdm, &n2);
++	params_from_rate(rate, parent_rate, &sdm, &n2, mpll->flags);
+ 
+ 	if (mpll->lock)
+ 		spin_lock_irqsave(mpll->lock, flags);
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 8fe73c4edca8..8cc265cd3d2b 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -97,8 +97,11 @@ struct meson_clk_mpll_data {
+ 	struct parm ssen;
+ 	struct parm misc;
+ 	spinlock_t *lock;
++	u8 flags;
+ };
+ 
++#define CLK_MESON_MPLL_ROUND_CLOSEST	BIT(0)
++
+ struct meson_clk_audio_div_data {
+ 	struct parm div;
+ 	u8 flags;
+-- 
+2.14.3
