@@ -1,57 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:25600 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752667AbeE3OK1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 May 2018 10:10:27 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH v2 0/6] Add MCAN Support for dra76x
-Date: Wed, 30 May 2018 19:41:27 +0530
-Message-ID: <20180530141133.3711-1-faiz_abbas@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 0/5] Hi3660: enable power management features
+Date: Tue, 15 May 2018 10:53:10 +0800
+Message-Id: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The following patches add dts, hwmod and sysconfig support
-for MCAN on TI's dra76 SOCs
+Since hi3660 drivers have been merged into Linux kernel (mailbox driver is in
+Linux-next branch and other drivers are existed in Linux mainline kernel), so
+this patch series is to enable power management features on hi3660.
 
-The patches depend on the following series:
-https://patchwork.kernel.org/patch/10221105/
+This patch series includes device tree binding for mailbox, stub clock and CPU
+OPPs, and has one patch to consolidate the Kconfigs for driver modules.
 
-Changes in v2:
- 1. Added Support for mcan in the ti-sysc driver
-    Also added the target-module node for the same
+This patch set have been tested on Hikey960 and also verified the patch 'hisi:
+Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX' for Hikey620.
 
- 2. Added clkctrl data for mcan clocks
+Changes from v1:
+* Changed patch subject from "dts: arm64: hi3660" to "arm64: dts: hi3660".
 
-Faiz Abbas (3):
-  clk: ti: dra7: Add clkctrl clock data for the mcan clocks
-  bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
-  ARM: dts: Add generic interconnect target module node for MCAN
 
-Franklin S Cooper Jr (1):
-  ARM: dts: dra76x: Add MCAN node
+Daniel Lezcano (1):
+  hisi: Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX
 
-Lokesh Vutla (2):
-  ARM: dra762: hwmod: Add MCAN support
-  ARM: dts: dra762: Add MCAN clock support
+Kaihua Zhong (2):
+  arm64: dts: hi3660: Add mailbox node
+  arm64: dts: hi3660: Add stub clock node
 
- .../devicetree/bindings/bus/ti-sysc.txt       |  1 +
- arch/arm/boot/dts/dra76-evm.dts               |  7 ++
- arch/arm/boot/dts/dra76x.dtsi                 | 67 +++++++++++++++++++
- arch/arm/mach-omap2/omap_hwmod_7xx_data.c     | 32 +++++++++
- drivers/bus/ti-sysc.c                         | 17 +++++
- drivers/clk/ti/clk-7xx.c                      |  1 +
- include/dt-bindings/bus/ti-sysc.h             |  2 +
- include/dt-bindings/clock/dra7.h              |  1 +
- include/linux/platform_data/ti-sysc.h         |  1 +
- 9 files changed, 129 insertions(+)
+Leo Yan (1):
+  arm64: dts: hi3660: Add CPU frequency scaling support
+
+Tao Wang (1):
+  arm64: dts: hi3660: Add thermal cooling management
+
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 145 ++++++++++++++++++++++++++++++
+ arch/arm64/configs/defconfig              |   1 -
+ drivers/clk/hisilicon/Kconfig             |  13 +--
+ drivers/mailbox/Kconfig                   |  12 ++-
+ 4 files changed, 161 insertions(+), 10 deletions(-)
 
 -- 
-2.17.0
-
+1.9.1
