@@ -1,64 +1,39 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Tue, 15 May 2018 09:34:39 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v6 11/14] dt: qcom: Add SAW regulator for 8x96 CPUs
+Message-ID: <20180515040439.3kt6dudim2uroumd@vireshk-i7>
+References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
+ <1526303520-5843-12-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-To: David Lechner <david@lechnology.com>, Stephen Boyd <sboyd@kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20180525181150.17873-5-david@lechnology.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20180525181150.17873-1-david@lechnology.com>
- <20180525181150.17873-5-david@lechnology.com>
-Message-ID: <20180530172239.982.48723@harbor.lan>
-Subject: Re: [PATCH 4/9] clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always enabled
-Date: Wed, 30 May 2018 10:22:39 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526303520-5843-12-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting David Lechner (2018-05-25 11:11:45)
-> From: Sekhar Nori <nsekhar@ti.com>
-> =
-
-> PLL2 SYSCLK1 on DM646x is connected to DDR2 PHY and cannot
-> be disabled. Mark it so to prevent unused clock disable
-> infrastructure from disabling it.
-> =
-
-> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
+On 14-05-18, 16:11, Ilia Lin wrote:
+> 1. Add syscon node for the SAW CPU registers
+> 2. Add SAW regulators gang definition for s8-s11
+> 3. Add voltages to the OPP tables
+> 4. Add the s11 SAW regulator as CPU regulator
+> 
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 > ---
->  drivers/clk/davinci/pll-dm646x.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> =
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 75 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 75 insertions(+)
 
-> diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-d=
-m646x.c
-> index a61cc3256418..0ae827e3ce80 100644
-> --- a/drivers/clk/davinci/pll-dm646x.c
-> +++ b/drivers/clk/davinci/pll-dm646x.c
-> @@ -72,7 +72,7 @@ static const struct davinci_pll_clk_info dm646x_pll2_in=
-fo =3D {
->         .flags =3D 0,
->  };
->  =
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-> -SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
-> +SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, SYSCLK_ALWAYS_ENABLED);
-
-Nitpick: I dislike setting a platform-specific flag that just sets a
-framework-specific flag during clk registration.
-
-I know there is some legacy here so I'll take this patch as-is, but
-perhaps cleaning this up to directly use CLK_IS_CRITICAL can be added to
-someone's todo list?
-
-Thanks,
-Mike
-
->  =
-
->  int dm646x_pll2_init(struct device *dev, void __iomem *base)
->  {
-> -- =
-
-> 2.17.0
->=20
+-- 
+viresh
