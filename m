@@ -1,75 +1,29 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Sat, 26 May 2018 21:45:31 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: kbuild-all@01.org, linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>, phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Michel Pollet <michel.pollet@bp.renesas.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 5/5] clk: renesas: Renesas R9A06G032 clock driver
-Message-ID: <201805261954.tlXfbMbi%fengguang.wu@intel.com>
-References: <1527154169-32380-6-git-send-email-michel.pollet@bp.renesas.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1527154169-32380-6-git-send-email-michel.pollet@bp.renesas.com>
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
+ Masahiro Yamada <yamada.masahiro@socionext.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180515021416.31760-1-suzuki.katsuhiro@socionext.com>
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+ Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
+ Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+References: <20180515021416.31760-1-suzuki.katsuhiro@socionext.com>
+Message-ID: <152641900347.237094.18265233819644553080@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH RESEND] clk: uniphier: add LD11/LD20 stream demux system clock
+Date: Tue, 15 May 2018 14:16:43 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+Quoting Katsuhiro Suzuki (2018-05-14 19:14:16)
+> Add clock for MPEG2 transport stream I/O and demux system (HSC) on
+> UniPhier LD11/LD20 SoCs.
+> =
 
-Thank you for the patch! Perhaps something to improve:
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-[auto build test WARNING on renesas-drivers/clk-renesas]
-[also build test WARNING on v4.17-rc6]
-[cannot apply to robh/for-next]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Michel-Pollet/dt-bindings-Add-the-r9a06g032-sysctrl-h-file/20180526-154235
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-renesas
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/clk/renesas/r9a06g032-clocks.c:430:22: sparse: cast removes address space of expression
->> drivers/clk/renesas/r9a06g032-clocks.c:431:30: sparse: incorrect type in argument 1 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
-   drivers/clk/renesas/r9a06g032-clocks.c:431:30:    expected unsigned int [noderef] [usertype] <asn:2>*reg
-   drivers/clk/renesas/r9a06g032-clocks.c:431:30:    got unsigned int [usertype] *reg
-   drivers/clk/renesas/r9a06g032-clocks.c:516:22: sparse: cast removes address space of expression
-   drivers/clk/renesas/r9a06g032-clocks.c:528:38: sparse: incorrect type in argument 2 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
-   drivers/clk/renesas/r9a06g032-clocks.c:528:38:    expected unsigned int [noderef] [usertype] <asn:2>*reg
-   drivers/clk/renesas/r9a06g032-clocks.c:528:38:    got unsigned int [usertype] *reg
-
-vim +430 drivers/clk/renesas/r9a06g032-clocks.c
-
-   421	
-   422	#define to_r9a06g032_divider(_hw) \
-   423			container_of(_hw, struct r9a06g032_clk_div, hw)
-   424	
-   425	static unsigned long r9a06g032_divider_recalc_rate(
-   426		struct clk_hw *hw,
-   427		unsigned long parent_rate)
-   428	{
-   429		struct r9a06g032_clk_div *clk = to_r9a06g032_divider(hw);
- > 430		u32 *reg = ((u32 *)clk->clocks->reg) + clk->reg;
- > 431		long div = clk_readl(reg);
-   432	
-   433		if (div < clk->min)
-   434			div = clk->min;
-   435		else if (div > clk->max)
-   436			div = clk->max;
-   437		return DIV_ROUND_UP(parent_rate, div);
-   438	}
-   439	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Applied to clk-next
