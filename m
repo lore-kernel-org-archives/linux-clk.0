@@ -1,70 +1,27 @@
-Return-Path: <michel.pollet@bp.renesas.com>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Michel Pollet <michel.pollet@bp.renesas.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-Date: Thu, 24 May 2018 10:28:40 +0100
-Message-Id: <1527154169-32380-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Joel Stanley <joel@jms.id.au>, Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180427025547.14115-1-joel@jms.id.au>
+Cc: Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, Ryan Chen <ryan_chen@aspeedtech.com>,
+ Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+References: <20180427025547.14115-1-joel@jms.id.au>
+Message-ID: <152642160316.237094.580656516961912710@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2] clk: aspeed: Support second reset register
+Date: Tue, 15 May 2018 15:00:03 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The Renesas R9A06G032 SYSCTRL node description.
+Quoting Joel Stanley (2018-04-26 19:55:47)
+> The ast2500 has an additional reset register that contains resets not
+> present in the ast2400. This enables support for this register, and adds
+> the one reset line that is controlled by it.
+> =
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-new file mode 100644
-index 0000000..63eb66cd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-@@ -0,0 +1,32 @@
-+* Renesas R9A06G032 SYSCTRL
-+
-+Required Properties:
-+
-+  - compatible: Must be:
-+    - "renesas,r9a06g032-sysctrl"
-+  - reg: Base address and length of the SYSCTRL IO block.
-+  - #clock-cells: Must be 1
-+
-+Examples
-+--------
-+
-+  - SYSCTRL node:
-+
-+	sysctrl: sysctrl@4000c000 {
-+		compatible = "renesas,r9a06g032-sysctrl";
-+		reg = <0x4000c000 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+  - Other nodes can use the clocks provided by SYSCTRL as in:
-+
-+	#include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+	uart0: serial@40060000 {
-+		compatible = "snps,dw-apb-uart";
-+		reg = <0x40060000 0x400>;
-+		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		clocks = <&sysctrl R9A06G032_CLK_UART0>;
-+		clock-names = "baudclk";
-+	};
--- 
-2.7.4
+Applied to clk-next
