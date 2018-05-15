@@ -1,439 +1,250 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Wed,  2 May 2018 16:21:17 +0530
-Message-Id: <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
-References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v7 09/14] regulator: qcom_spmi: Add support for SAW
+Date: Tue, 15 May 2018 12:13:31 +0300
+Message-Id: <1526375616-16904-10-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the RPMh clock driver to control the RPMh managed clock resources on
-some of the Qualcomm Technologies, Inc. SoCs.
+Add support for SAW controlled regulators.
+The regulators defined as SAW controlled in the device tree
+will be controlled through special CPU registers instead of direct
+SPMI accesses.
+This is required especially for CPU supply regulators to synchronize
+with clock scaling and for Automatic Voltage Switching.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
- drivers/clk/qcom/Kconfig    |   9 ++
- drivers/clk/qcom/Makefile   |   1 +
- drivers/clk/qcom/clk-rpmh.c | 366 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 376 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-rpmh.c
+ drivers/regulator/qcom_spmi-regulator.c | 133 +++++++++++++++++++++++++++++++-
+ 1 file changed, 130 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e42e1af..627e6e1 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -59,6 +59,15 @@ config QCOM_CLK_SMD_RPM
- 	  Say Y if you want to support the clocks exposed by the RPM on
- 	  platforms such as apq8016, apq8084, msm8974 etc.
-
-+config QCOM_CLK_RPMH
-+	tristate "RPMh Clock Driver"
-+	depends on COMMON_CLK_QCOM && QCOM_RPMH
-+	help
-+	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
-+	 SoCs. It accepts requests from other hardware subsystems via RSC.
-+	 Say Y if you want to support the clocks exposed by RPMh on
-+	 platforms such as SDM845.
-+
- config APQ_GCC_8084
- 	tristate "APQ8084 Global Clock Controller"
- 	select QCOM_GDSC
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 7c09ab1..246a721 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -37,5 +37,6 @@ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
-+obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-new file mode 100644
-index 0000000..21f9b9b
---- /dev/null
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -0,0 +1,366 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <soc/qcom/cmd-db.h>
-+#include <soc/qcom/rpmh.h>
-+
-+#include <dt-bindings/clock/qcom,rpmh.h>
-+
-+#define CLK_RPMH_ARC_EN_OFFSET		0
-+#define CLK_RPMH_VRM_EN_OFFSET		4
-+
-+/**
-+ * struct clk_rpmh - individual rpmh clock data structure
-+ * @hw:			handle between common and hardware-specific interfaces
-+ * @res_name:		resource name for the rpmh clock
-+ * @div:		clock divider to compute the clock rate
-+ * @res_addr:		base address of the rpmh resource within the RPMh
-+ * @res_on_val:		rpmh clock enable value
-+ * @state:		rpmh clock requested state
-+ * @aggr_state:		rpmh clock aggregated state
-+ * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
-+ * @valid_state_mask:	mask to determine the state of the rpmh clock
-+ * @rpmh_client:	handle used for rpmh communications
-+ * @dev:		device to which it is attached
-+ * @peer:		pointer to the clock rpmh sibling
-+ */
-+struct clk_rpmh {
-+	struct clk_hw hw;
-+	const char *res_name;
-+	u8  div;
-+	u32 res_addr;
-+	u32 res_on_val;
-+	u32 state;
-+	u32 aggr_state;
-+	u32 last_sent_aggr_state;
-+	u32 valid_state_mask;
-+	struct rpmh_client *rpmh_client;
-+	struct device *dev;
-+	struct clk_rpmh *peer;
+diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
+index 63c7a0c..9817f1a 100644
+--- a/drivers/regulator/qcom_spmi-regulator.c
++++ b/drivers/regulator/qcom_spmi-regulator.c
+@@ -25,6 +25,8 @@
+ #include <linux/regulator/driver.h>
+ #include <linux/regmap.h>
+ #include <linux/list.h>
++#include <linux/mfd/syscon.h>
++#include <linux/io.h>
+ 
+ /* Pin control enable input pins. */
+ #define SPMI_REGULATOR_PIN_CTRL_ENABLE_NONE		0x00
+@@ -181,6 +183,23 @@ enum spmi_boost_byp_registers {
+ 	SPMI_BOOST_BYP_REG_CURRENT_LIMIT	= 0x4b,
+ };
+ 
++enum spmi_saw3_registers {
++	SAW3_SECURE				= 0x00,
++	SAW3_ID					= 0x04,
++	SAW3_SPM_STS				= 0x0C,
++	SAW3_AVS_STS				= 0x10,
++	SAW3_PMIC_STS				= 0x14,
++	SAW3_RST				= 0x18,
++	SAW3_VCTL				= 0x1C,
++	SAW3_AVS_CTL				= 0x20,
++	SAW3_AVS_LIMIT				= 0x24,
++	SAW3_AVS_DLY				= 0x28,
++	SAW3_AVS_HYSTERESIS			= 0x2C,
++	SAW3_SPM_STS2				= 0x38,
++	SAW3_SPM_PMIC_DATA_3			= 0x4C,
++	SAW3_VERSION				= 0xFD0,
 +};
 +
-+struct clk_rpmh_desc {
-+	struct clk_hw **clks;
-+	size_t num_clks;
-+};
+ /* Used for indexing into ctrl_reg.  These are offets from 0x40 */
+ enum spmi_common_control_register_index {
+ 	SPMI_COMMON_IDX_VOLTAGE_RANGE		= 0,
+@@ -1035,6 +1054,89 @@ static irqreturn_t spmi_regulator_vs_ocp_isr(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++#define SAW3_VCTL_DATA_MASK	0xFF
++#define SAW3_VCTL_CLEAR_MASK	0x700FF
++#define SAW3_AVS_CTL_EN_MASK	0x1
++#define SAW3_AVS_CTL_TGGL_MASK	0x8000000
++#define SAW3_AVS_CTL_CLEAR_MASK	0x7efc00
 +
-+static DEFINE_MUTEX(rpmh_clk_lock);
++static struct regmap *saw_regmap = NULL;
 +
-+#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
-+			  _res_en_offset, _res_on)			\
-+	static struct clk_rpmh _platform##_##_name_active;		\
-+	static struct clk_rpmh _platform##_##_name = {			\
-+		.res_name = _res_name,					\
-+		.res_addr = _res_en_offset,				\
-+		.res_on_val = _res_on,					\
-+		.peer = &_platform##_##_name_active,			\
-+		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
-+				      BIT(RPMH_ACTIVE_ONLY_STATE) |	\
-+				      BIT(RPMH_SLEEP_STATE)),		\
-+		.hw.init = &(struct clk_init_data){			\
-+			.ops = &clk_rpmh_ops,				\
-+			.name = #_name,					\
-+			.parent_names = (const char *[]){ "xo_board",	\
-+						"xo_board_div" },	\
-+			.num_parents = 2,				\
-+		},							\
-+	};								\
-+	static struct clk_rpmh _platform##_##_name_active = {		\
-+		.res_name = _res_name,					\
-+		.res_addr = _res_en_offset,				\
-+		.res_on_val = _res_on,					\
-+		.peer = &_platform##_##_name,				\
-+		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
-+					BIT(RPMH_ACTIVE_ONLY_STATE)),	\
-+		.hw.init = &(struct clk_init_data){			\
-+			.ops = &clk_rpmh_ops,				\
-+			.name = #_name_active,				\
-+			.parent_names = (const char *[]){ "xo_board",	\
-+						"xo_board_div" },	\
-+			.num_parents = 2,				\
-+		},							\
++static void spmi_saw_set_vdd(void *data)
++{
++	u32 vctl, data3, avs_ctl, pmic_sts;
++	bool avs_enabled = false;
++	unsigned long timeout;
++	u8 voltage_sel = *(u8 *)data;
++
++	regmap_read(saw_regmap, SAW3_AVS_CTL, &avs_ctl);
++	regmap_read(saw_regmap, SAW3_VCTL, &vctl);
++	regmap_read(saw_regmap, SAW3_SPM_PMIC_DATA_3, &data3);
++
++	/* select the band */
++	vctl &= ~SAW3_VCTL_CLEAR_MASK;
++	vctl |= (u32)voltage_sel;
++
++	data3 &= ~SAW3_VCTL_CLEAR_MASK;
++	data3 |= (u32)voltage_sel;
++
++	/* If AVS is enabled, switch it off during the voltage change */
++	avs_enabled = SAW3_AVS_CTL_EN_MASK & avs_ctl;
++	if (avs_enabled) {
++		avs_ctl &= ~SAW3_AVS_CTL_TGGL_MASK;
++		regmap_write(saw_regmap, SAW3_AVS_CTL, avs_ctl);
 +	}
 +
-+#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name,	\
-+			    _res_on)					\
-+	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
-+			  CLK_RPMH_ARC_EN_OFFSET, _res_on)
++	regmap_write(saw_regmap, SAW3_RST, 1);
++	regmap_write(saw_regmap, SAW3_VCTL, vctl);
++	regmap_write(saw_regmap, SAW3_SPM_PMIC_DATA_3, data3);
 +
-+#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name)	\
-+	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
-+			  CLK_RPMH_VRM_EN_OFFSET, 1)
++	timeout = jiffies + usecs_to_jiffies(100);
++	do {
++		regmap_read(saw_regmap, SAW3_PMIC_STS, &pmic_sts);
++		pmic_sts &= SAW3_VCTL_DATA_MASK;
++		if (pmic_sts == (u32)voltage_sel)
++			break;
 +
-+static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
-+{
-+	return container_of(_hw, struct clk_rpmh, hw);
++		cpu_relax();
++
++	} while (time_before(jiffies, timeout));
++
++	/* After successful voltage change, switch the AVS back on */
++	if (avs_enabled) {
++		pmic_sts &= 0x3f;
++		avs_ctl &= ~SAW3_AVS_CTL_CLEAR_MASK;
++		avs_ctl |= ((pmic_sts - 4) << 10);
++		avs_ctl |= (pmic_sts << 17);
++		avs_ctl |= SAW3_AVS_CTL_TGGL_MASK;
++		regmap_write(saw_regmap, SAW3_AVS_CTL, avs_ctl);
++	}
 +}
 +
-+static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
++static int
++spmi_regulator_saw_set_voltage(struct regulator_dev *rdev, unsigned selector)
 +{
-+	return (c->last_sent_aggr_state & BIT(state))
-+		!= (c->aggr_state & BIT(state));
-+}
-+
-+static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
-+{
-+	struct tcs_cmd cmd = { 0 };
-+	u32 cmd_state, on_val;
-+	enum rpmh_state state = RPMH_SLEEP_STATE;
++	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
 +	int ret;
++	u8 range_sel, voltage_sel;
 +
-+	cmd.addr = c->res_addr;
-+	cmd_state = c->aggr_state;
-+	on_val = c->res_on_val;
-+
-+	for (; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
-+		if (has_state_changed(c, state)) {
-+			if (cmd_state & BIT(state))
-+				cmd.data = on_val;
-+
-+			ret = rpmh_write_async(c->rpmh_client, state,
-+						&cmd, 1);
-+			if (ret) {
-+				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
-+					!state ? "sleep" :
-+					state == RPMH_WAKE_ONLY_STATE	?
-+					"wake" : "active", c->res_name, ret);
-+				return ret;
-+			}
-+		}
-+	}
-+
-+	c->last_sent_aggr_state = c->aggr_state;
-+	c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Update state and aggregate state values based on enable value.
-+ */
-+static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
-+						bool enable)
-+{
-+	int ret;
-+
-+	/* Nothing required to be done if already off or on */
-+	if (enable == c->state)
-+		return 0;
-+
-+	c->state = enable ? c->valid_state_mask : 0;
-+	c->aggr_state = c->state | c->peer->state;
-+	c->peer->aggr_state = c->aggr_state;
-+
-+	ret = clk_rpmh_send_aggregate_command(c);
-+	if (!ret)
-+		return 0;
-+	if (ret && enable)
-+		c->state = 0;
-+	else if (ret)
-+		c->state = c->valid_state_mask;
-+
-+	WARN(1, "clk: %s failed to %s\n", c->res_name,
-+				enable ? "enable" : "disable");
-+	return ret;
-+}
-+
-+static int clk_rpmh_prepare(struct clk_hw *hw)
-+{
-+	struct clk_rpmh *c = to_clk_rpmh(hw);
-+	int ret = 0;
-+
-+	mutex_lock(&rpmh_clk_lock);
-+	ret = clk_rpmh_aggregate_state_send_command(c, true);
-+	mutex_unlock(&rpmh_clk_lock);
-+
-+	return ret;
-+};
-+
-+static void clk_rpmh_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_rpmh *c = to_clk_rpmh(hw);
-+
-+	mutex_lock(&rpmh_clk_lock);
-+	clk_rpmh_aggregate_state_send_command(c, false);
-+	mutex_unlock(&rpmh_clk_lock);
-+};
-+
-+static int clk_rpmh_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	return 0;
-+}
-+
-+static u8 clk_rpmh_get_parent(struct clk_hw *hw)
-+{
-+	/* Default parent at index 0 */
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_rpmh_ops = {
-+	.prepare	= clk_rpmh_prepare,
-+	.unprepare	= clk_rpmh_unprepare,
-+	.set_parent	= clk_rpmh_set_parent,
-+	.get_parent	= clk_rpmh_get_parent,
-+};
-+
-+/* Resource name must match resource id present in cmd-db. */
-+DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3);
-+DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2");
-+DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3");
-+DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1");
-+DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2");
-+DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3");
-+
-+static struct clk_hw *sdm845_rpmh_clocks[] = {
-+	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-+	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
-+	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
-+	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
-+	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
-+	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
-+	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
-+	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
-+	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
-+	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
-+	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
-+	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
-+};
-+
-+static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
-+	.clks = sdm845_rpmh_clocks,
-+	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
-+};
-+
-+static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
-+					     void *data)
-+{
-+	struct clk_rpmh_desc *rpmh = data;
-+	unsigned int idx = clkspec->args[0];
-+
-+	if (idx >= rpmh->num_clks) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return rpmh->clks[idx];
-+}
-+
-+static int clk_rpmh_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw **hw_clks;
-+	struct clk_rpmh *rpmh_clk;
-+	const struct clk_rpmh_desc *desc;
-+	struct rpmh_client *rpmh_client;
-+	int ret, i;
-+
-+	ret = cmd_db_ready();
-+	if (ret) {
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "Command DB not available (%d)\n",
-+									ret);
++	ret = spmi_sw_selector_to_hw(vreg, selector, &range_sel, &voltage_sel);
++	if (ret)
 +		return ret;
++
++	if (0 != range_sel) {
++		dev_dbg(&rdev->dev, "range_sel = %02X voltage_sel = %02X", \
++			range_sel, voltage_sel);
++		return -EINVAL;
 +	}
 +
-+	rpmh_client = rpmh_get_client(pdev);
-+	if (IS_ERR(rpmh_client)) {
-+		ret = PTR_ERR(rpmh_client);
-+		dev_err(&pdev->dev, "Failed to request RPMh client, ret=%d\n",
-+									ret);
-+		return ret;
++	/* Always do the SAW register writes on the first CPU */
++	return smp_call_function_single(0, spmi_saw_set_vdd, \
++					&voltage_sel, true);
++}
++
++static struct regulator_ops spmi_saw_ops = {};
++
+ static struct regulator_ops spmi_smps_ops = {
+ 	.enable			= regulator_enable_regmap,
+ 	.disable		= regulator_disable_regmap,
+@@ -1250,6 +1352,7 @@ static int spmi_regulator_match(struct spmi_regulator *vreg, u16 force_type)
+ 	}
+ 	dig_major_rev	= version[SPMI_COMMON_REG_DIG_MAJOR_REV
+ 					- SPMI_COMMON_REG_DIG_MAJOR_REV];
++
+ 	if (!force_type) {
+ 		type		= version[SPMI_COMMON_REG_TYPE -
+ 					  SPMI_COMMON_REG_DIG_MAJOR_REV];
+@@ -1648,7 +1751,9 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 	struct regmap *regmap;
+ 	const char *name;
+ 	struct device *dev = &pdev->dev;
+-	int ret;
++	struct device_node *node = pdev->dev.of_node;
++	struct device_node *syscon;
++	int ret, lenp;
+ 	struct list_head *vreg_list;
+ 
+ 	vreg_list = devm_kzalloc(dev, sizeof(*vreg_list), GFP_KERNEL);
+@@ -1665,7 +1770,22 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 	if (!match)
+ 		return -ENODEV;
+ 
++	if (of_find_property(node, "qcom,saw-reg", &lenp)) {
++		syscon = of_parse_phandle(node, "qcom,saw-reg", 0);
++		saw_regmap = syscon_node_to_regmap(syscon);
++		of_node_put(syscon);
++		if (IS_ERR(regmap))
++			dev_err(dev, "ERROR reading SAW regmap\n");
 +	}
 +
-+	desc = of_device_get_match_data(&pdev->dev);
-+	hw_clks = desc->clks;
+ 	for (reg = match->data; reg->name; reg++) {
 +
-+	for (i = 0; i < desc->num_clks; i++) {
-+		u32 res_addr;
-+
-+		rpmh_clk = to_clk_rpmh(hw_clks[i]);
-+		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
-+		if (!res_addr) {
-+			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
-+					rpmh_clk->res_name);
-+			ret = -ENODEV;
-+			goto err;
++		if (saw_regmap && \
++		    of_find_property(of_find_node_by_name(node, reg->name), \
++				     "qcom,saw-slave", &lenp)) {
++			continue;
 +		}
-+		rpmh_clk->res_addr += res_addr;
 +
-+		rpmh_clk->rpmh_client = rpmh_client;
-+
-+		ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to register %s\n",
-+					hw_clks[i]->init->name);
-+			goto err;
+ 		vreg = devm_kzalloc(dev, sizeof(*vreg), GFP_KERNEL);
+ 		if (!vreg)
+ 			return -ENOMEM;
+@@ -1673,7 +1793,6 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 		vreg->dev = dev;
+ 		vreg->base = reg->base;
+ 		vreg->regmap = regmap;
+-
+ 		if (reg->ocp) {
+ 			vreg->ocp_irq = platform_get_irq_byname(pdev, reg->ocp);
+ 			if (vreg->ocp_irq < 0) {
+@@ -1681,7 +1800,6 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 				goto err;
+ 			}
+ 		}
+-
+ 		vreg->desc.id = -1;
+ 		vreg->desc.owner = THIS_MODULE;
+ 		vreg->desc.type = REGULATOR_VOLTAGE;
+@@ -1698,6 +1816,15 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 		if (ret)
+ 			continue;
+ 
++		if (saw_regmap && \
++		    of_find_property(of_find_node_by_name(node, reg->name), \
++				     "qcom,saw-leader", &lenp)) {
++			spmi_saw_ops = *(vreg->desc.ops);
++			spmi_saw_ops.set_voltage_sel = \
++				spmi_regulator_saw_set_voltage;
++			vreg->desc.ops = &spmi_saw_ops;
 +		}
 +
-+		rpmh_clk->dev = &pdev->dev;
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_rpmh_hw_get,
-+				      (void *) desc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to add clock provider\n");
-+		goto err;
-+	}
-+
-+	dev_dbg(&pdev->dev, "Registered RPMh clocks\n");
-+
-+	return 0;
-+err:
-+	if (rpmh_client)
-+		rpmh_release(rpmh_client);
-+
-+	return ret;
-+}
-+
-+static int clk_rpmh_remove(struct platform_device *pdev)
-+{
-+	const struct clk_rpmh_desc *desc =
-+			of_device_get_match_data(&pdev->dev);
-+	struct clk_hw **hw_clks = desc->clks;
-+	struct clk_rpmh *rpmh_clk = to_clk_rpmh(hw_clks[0]);
-+
-+	rpmh_release(rpmh_clk->rpmh_client);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id clk_rpmh_match_table[] = {
-+	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
-+
-+static struct platform_driver clk_rpmh_driver = {
-+	.probe		= clk_rpmh_probe,
-+	.remove		= clk_rpmh_remove,
-+	.driver		= {
-+		.name	= "clk-rpmh",
-+		.of_match_table = clk_rpmh_match_table,
-+	},
-+};
-+
-+static int __init clk_rpmh_init(void)
-+{
-+	return platform_driver_register(&clk_rpmh_driver);
-+}
-+subsys_initcall(clk_rpmh_init);
-+
-+static void __exit clk_rpmh_exit(void)
-+{
-+	platform_driver_unregister(&clk_rpmh_driver);
-+}
-+module_exit(clk_rpmh_exit);
-+
-+MODULE_DESCRIPTION("QCOM RPMh Clock Driver");
-+MODULE_LICENSE("GPL v2");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+ 		config.dev = dev;
+ 		config.driver_data = vreg;
+ 		config.regmap = regmap;
+-- 
+1.9.1
