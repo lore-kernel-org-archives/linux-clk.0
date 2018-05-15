@@ -1,72 +1,34 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v10 25/27] ARM: davinci: add device tree support to timer
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <20180509172606.29387-1-david@lechnology.com>
- <20180509172606.29387-26-david@lechnology.com>
- <8fa98514-7651-58cb-595e-6c7f713540b8@ti.com>
- <1162de58-00bc-fdfa-eef1-48a094834ac3@lechnology.com>
- <c7064bee-d385-4496-c19e-1b72853b01f1@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <9bc3fb8f-ca03-9cfd-1e9d-51f8c9347da7@lechnology.com>
-Date: Fri, 18 May 2018 10:35:54 -0500
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Tue, 15 May 2018 09:34:10 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v6 08/14] dt: qcom: Add opp and thermal to the msm8996
+Message-ID: <20180515040410.jl537anxpksi2hel@vireshk-i7>
+References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
+ <1526303520-5843-9-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <c7064bee-d385-4496-c19e-1b72853b01f1@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526303520-5843-9-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/18/2018 01:05 AM, Sekhar Nori wrote:
-> On Thursday 17 May 2018 08:39 PM, David Lechner wrote:
->> On 05/17/2018 09:35 AM, Sekhar Nori wrote:
->>> Hi David,
->>>
->>> On Wednesday 09 May 2018 10:56 PM, David Lechner wrote:
->>>> This adds device tree support to the davinci timer so that when clocks
->>>> are moved to device tree, the timer will still work.
->>>>
->>>> Signed-off-by: David Lechner <david@lechnology.com>
->>>> ---
->>>
->>>> +static int __init of_davinci_timer_init(struct device_node *np)
->>>> +{
->>>> +    struct clk *clk;
->>>> +
->>>> +    clk = of_clk_get(np, 0);
->>>> +    if (IS_ERR(clk)) {
->>>> +        struct of_phandle_args clkspec;
->>>> +
->>>> +        /*
->>>> +         * Fall back to using ref_clk if the actual clock is not
->>>> +         * available. There will be problems later if the real clock
->>>> +         * source is disabled.
->>>> +         */
->>>> +
->>>> +        pr_warn("%s: falling back to ref_clk\n", __func__);
->>>> +
->>>> +        clkspec.np = of_find_node_by_name(NULL, "ref_clk");
->>>> +        if (IS_ERR(clkspec.np)) {
->>>> +            pr_err("%s: No clock available for timer!\n", __func__);
->>>> +            return PTR_ERR(clkspec.np);
->>>> +        }
->>>> +        clk = of_clk_get_from_provider(&clkspec);
->>>> +        of_node_put(clkspec.np);
->>>> +    }
->>>
->>> Do we need this error path now?
->>>
->>> Thanks,
->>> Sekhar
->>>
->>
->> No, not really.
-> 
-> Then lets just print an error and return the error number.
-> 
+On 14-05-18, 16:11, Ilia Lin wrote:
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 269 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 260 insertions(+), 9 deletions(-)
 
-OK. FYI, timer_probe() prints the error if we return and error, so
-I will just return the error.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
