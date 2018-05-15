@@ -1,127 +1,41 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Alexandre Torgue <alexandre.torgue@st.com>,
- Michael Turquette <mturquette@baylibre.com>, gabriel.fernandez@st.com
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- benjamin GAIGNARD <benjamin.gaignard@st.com>,
- Loic PALLARDY <loic.pallardy@st.com>
-References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
- <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
-Message-ID: <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
-Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
- default
-Date: Fri, 04 May 2018 19:45:30 -0700
+In-Reply-To: <20180512143038.30447-1-heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+ Heiko Stuebner <heiko@sntech.de>
+References: <20180512143038.30447-1-heiko@sntech.de>
+Message-ID: <152640342836.34267.18008728966241252616@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: rockchip: remove deprecated gate-clk code and dt-binding
+Date: Tue, 15 May 2018 09:57:08 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Alexandre Torgue (2018-05-04 00:54:16)
-> Stephen
+Quoting Heiko Stuebner (2018-05-12 07:30:38)
+> Initially we tried modeling clocks via the devicetree before switching
+> to clocks declared in the clock drivers and only exporting specific
+> ids to the devicetree.
 > =
 
-> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
-> > From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> > =
-
-> > Clock driver is mandatory if the machine is selected.
-> > Then don't use 'bool' and 'depends on' commands, but 'def_bool'
-> > with the machine(s).
-> > =
-
-> > Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of t=
-he stm32 drivers")
-> > =
-
+> As the old code was in the kernel for 1-2 releases when the new mode
+> of operation was added we kept it for backwards compatibility.
 > =
 
-> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
-
-Thanks for the bump. I missed this one. Of course, the user can still select
-the configs now, just it's annoying for upgrade path.
-
+> That deprecation notice is in the binding since july 2014, so nearly
+> 4 years now and I think it's time to drop the old cruft.
 > =
 
-> > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> > Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> > ---
-> >   drivers/clk/Kconfig | 6 ++----
-> >   1 file changed, 2 insertions(+), 4 deletions(-)
-> > =
+> Especially as at the time using the mainline kernel on Rockchip devices
+> was not really possible, except for experiments on the really old socs of
+> the rk3066 + rk3188 line, so there shouldn't be any devicetrees still
+> around that rely on that code.
+> =
 
-> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > index 24a5bc3..721572a 100644
-> > --- a/drivers/clk/Kconfig
-> > +++ b/drivers/clk/Kconfig
-> > @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
-> >         Support for stm32mp157 SoC family clocks
-> >   =
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-> >   config COMMON_CLK_STM32F
-> > -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
-> > -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-> > +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_=
-STM32F746)
+Alright, let's see how things go.
 
-But the point of the change this patch is fixing was to expose these to
-the user to turn off they wanted. You'll need to do something like that
-again here, instead of removing the prompt and replacing it with a
-def_bool.
-
-So this patch instead? It leaves it around for the whole arch, but
-limits the default to be the machines that matter. I suppose we could
-put an 'if EXPERT' on the bool part too if we don't even want to expose
-the options to normal users.
-
------8<-----
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
-Date: Thu, 3 May 2018 08:40:09 +0200
-Subject: [PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
- default
-Cc: <linux-kernel@vger.kernel.org>,
-    <linux-arm-kernel@lists.infradead.org>
-
-Clock driver is mandatory if the machine is selected. Add a default
-of the machines that need the clk driver, so that the user can turn it
-off if they want, but otherwise it's exposed on the SoCs the driver
-is for.
-
-Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the s=
-tm32 drivers")
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/Kconfig | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 41492e980ef4..ac3f0e2bc03f 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -267,15 +267,16 @@ config COMMON_CLK_STM32MP157
- =
-
- config COMMON_CLK_STM32F
- 	bool "Clock driver for stm32f4 and stm32f7 SoC families"
--	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-+	depends on ARCH_STM32
-+	default MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
- 	help
- 	---help---
- 	  Support for stm32f4 and stm32f7 SoC families clocks
- =
-
- config COMMON_CLK_STM32H7
- 	bool "Clock driver for stm32h7 SoC family"
--	depends on MACH_STM32H743
--	help
-+	depends on ARCH_STM32
-+	default MACH_STM32H743
- 	---help---
- 	  Support for stm32h7 SoC family clocks
- =
-
--- =
-
-Sent by a computer through tubes
+Acked-by: Stephen Boyd <sboyd@kernel.org>
