@@ -1,90 +1,130 @@
-Return-Path: <sean.wang@mediatek.com>
-Message-ID: <1527130342.4607.27.camel@mtkswgap22>
-Subject: Re: [v3 03/10] mfd: mtk-mmsys: Add mmsys driver
-From: Sean Wang <sean.wang@mediatek.com>
-To: Lee Jones <lee.jones@linaro.org>
-CC: <matthias.bgg@kernel.org>, <ulrich.hecht+renesas@gmail.com>,
-	<laurent.pinchart@ideasonboard.com>, <ck.hu@mediatek.com>,
-	<p.zabel@pengutronix.de>, <airlied@linux.ie>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<davem@davemloft.net>, <gregkh@linuxfoundation.org>, <mchehab@kernel.org>,
-	<rdunlap@infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux@armlinux.org.uk>, <matthias.bgg@gmail.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Matthias Brugger <mbrugger@suse.com>
-Date: Thu, 24 May 2018 10:52:22 +0800
-In-Reply-To: <20180430101826.GC5147@dell>
-References: <cover.1524820923.git.mbrugger@suse.com>
-	 <e0894c97775e46ce6d9a441dc05e2e2479a4b612.1524820923.git.mbrugger@suse.com>
-	 <20180430101826.GC5147@dell>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <robin.murphy@arm.com>
+Subject: Re: [RFC PATCH 01/10] devfreq: rockchip-dfi: Move GRF definitions to
+ a common place.
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+ Will Deacon <will.deacon@arm.com>, Heiko Stuebner <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+ David Airlie <airlied@linux.ie>
+Cc: Lin Huang <hl@rock-chips.com>, linux-pm@vger.kernel.org,
+ Derek Basehore <dbasehore@chromium.org>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+ Sean Paul <seanpaul@chromium.org>, kernel@collabora.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+ <20180514211610.26618-2-enric.balletbo@collabora.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <c217cf74-c5fe-4e4b-7b55-7672381b3eaf@arm.com>
+Date: Tue, 15 May 2018 12:23:28 +0100
 MIME-Version: 1.0
-Return-Path: sean.wang@mediatek.com
+In-Reply-To: <20180514211610.26618-2-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-04-30 at 11:18 +0100, Lee Jones wrote:
-> On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
+Hi Enric,
+
+On 14/05/18 22:16, Enric Balletbo i Serra wrote:
+> Some rk3399 GRF (Generic Register Files) definitions can be used for
+> different drivers. Move these definitions to a common include so we
+> don't need to duplicate these definitions.
 > 
-> > From: Matthias Brugger <mbrugger@suse.com>
-> > 
-> > The MMSYS subsystem includes clocks and drm components.
-> > This patch adds a MFD device to probe both drivers from the same
-> > device tree compatible.
-> > 
-> > Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> > ---
-> >  drivers/mfd/Kconfig     |  9 ++++++
-> >  drivers/mfd/Makefile    |  2 ++
-> >  drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
-
-[ ... ]
-
-> > +};
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
 > 
-> This driver is pretty pointless.  It doesn't actually do anything.
+>   drivers/devfreq/event/rockchip-dfi.c | 23 +++++++----------------
+>   include/soc/rockchip/rk3399_grf.h    | 21 +++++++++++++++++++++
+>   2 files changed, 28 insertions(+), 16 deletions(-)
+>   create mode 100644 include/soc/rockchip/rk3399_grf.h
 > 
-> I think you just want to use "simple-mfd" instead.
-> 
+> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
+> index 22b113363ffc..2fbbcbeb644f 100644
+> --- a/drivers/devfreq/event/rockchip-dfi.c
+> +++ b/drivers/devfreq/event/rockchip-dfi.c
+> @@ -26,6 +26,8 @@
+>   #include <linux/list.h>
+>   #include <linux/of.h>
+>   
+> +#include <soc/rockchip/rk3399_grf.h>
+> +
+>   #define RK3399_DMC_NUM_CH	2
+>   
+>   /* DDRMON_CTRL */
+> @@ -43,18 +45,6 @@
+>   #define DDRMON_CH1_COUNT_NUM		0x3c
+>   #define DDRMON_CH1_DFI_ACCESS_NUM	0x40
+>   
+> -/* pmu grf */
+> -#define PMUGRF_OS_REG2	0x308
+> -#define DDRTYPE_SHIFT	13
+> -#define DDRTYPE_MASK	7
+> -
+> -enum {
+> -	DDR3 = 3,
+> -	LPDDR3 = 6,
+> -	LPDDR4 = 7,
+> -	UNUSED = 0xFF
+> -};
+> -
+>   struct dmc_usage {
+>   	u32 access;
+>   	u32 total;
+> @@ -83,16 +73,17 @@ static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
+>   	u32 ddr_type;
+>   
+>   	/* get ddr type */
+> -	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
+> -	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
+> +	regmap_read(info->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
+> +	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
+> +		    RK3399_PMUGRF_DDRTYPE_MASK;
+>   
+>   	/* clear DDRMON_CTRL setting */
+>   	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
+>   
+>   	/* set ddr type to dfi */
+> -	if (ddr_type == LPDDR3)
+> +	if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
+>   		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
+> -	else if (ddr_type == LPDDR4)
+> +	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
+>   		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
+>   
+>   	/* enable count, use software mode */
+> diff --git a/include/soc/rockchip/rk3399_grf.h b/include/soc/rockchip/rk3399_grf.h
+> new file mode 100644
+> index 000000000000..0f94034e2e9a
+> --- /dev/null
+> +++ b/include/soc/rockchip/rk3399_grf.h
+> @@ -0,0 +1,21 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Rockchip Generic Register Files definitions
 
+Nit: s/Generic/General/
 
-Hi, Matthias
+(that's what the TRMs say)
 
-Why not embedded a platform_device_register_data call into existent
-MMSYS driver ?
+Robin.
 
-It looks elegant and makes sense that mmsys device is being as parent
-device for all its DRM components device and no need to create an
-additional node representing the same device with mmsys simply in order
-to probe its DRM components.
-
-I'm planing to send a bunch of HDMI, MIPI related to MMSYS nodes for
-MT7623 SoC when 4.18 rc1 comes out, so we should want to solve the
-dt-binding violation issue first.
-
-Though there are two same mmsys-compatible strings involving in dts
-though, it seems that hdmi still can work fine in my setup.
-
-	Sean
-
-
-> > +static const struct of_device_id of_match_mmsys[] = {
-> > +	{ .compatible = "mediatek,mt2701-mmsys",
-> > +	  .data = (void *) MMSYS_MT2701,
-> > +	},
-> > +	{ /* sentinel */ },
-> > +};
-> > +
-> > +static struct platform_driver mmsys_drv = {
-> > +	.probe = mmsys_probe,
-> > +	.driver = {
-> > +		.name = "mediatek-mmysys",
-> > +		.of_match_table = of_match_ptr(of_match_mmsys),
-> > +	},
-> > +};
-> > +
-> > +builtin_platform_driver(mmsys_drv);
-> > +
-> > +MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
-> > +MODULE_LICENSE("GPL");
+> + *
+> + * Copyright (c) 2018, Collabora Ltd.
+> + * Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> + */
+> +
+> +#ifndef __SOC_RK3399_GRF_H
+> +#define __SOC_RK3399_GRF_H
+> +
+> +/* PMU GRF Registers */
+> +#define RK3399_PMUGRF_OS_REG2		0x308
+> +#define RK3399_PMUGRF_DDRTYPE_SHIFT	13
+> +#define RK3399_PMUGRF_DDRTYPE_MASK	7
+> +#define RK3399_PMUGRF_DDRTYPE_DDR3	3
+> +#define RK3399_PMUGRF_DDRTYPE_LPDDR2	5
+> +#define RK3399_PMUGRF_DDRTYPE_LPDDR3	6
+> +#define RK3399_PMUGRF_DDRTYPE_LPDDR4	7
+> +
+> +#endif
 > 
