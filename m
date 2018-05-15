@@ -1,51 +1,37 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v2 4/4] ARM: dts: tegra20: Revert "Fix ULPI regression on
- Tegra20"
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180503225537.20748-1-digetx@gmail.com>
- <20180503225537.20748-6-digetx@gmail.com> <20180504104051.GL13459@ulmo>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <5013e8c6-a56a-38ad-2a25-d18bf0a1e014@gmail.com>
-Date: Fri, 4 May 2018 14:21:30 +0300
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180504104051.GL13459@ulmo>
-Content-Type: text/plain; charset=utf-8
+To: Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525271313-24427-1-git-send-email-dinguyen@kernel.org>
+Cc: dinguyen@kernel.org, mturquette@baylibre.com, linux-kernel@vger.kernel.org
+References: <1525271313-24427-1-git-send-email-dinguyen@kernel.org>
+Message-ID: <152642119396.237094.8796686281263472736@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/2] clk: socfpga: stratix10: use platform driver APIs
+Date: Tue, 15 May 2018 14:53:13 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04.05.2018 13:40, Thierry Reding wrote:
-> On Fri, May 04, 2018 at 01:55:37AM +0300, Dmitry Osipenko wrote:
->> Commit 4c9a27a6c66d ("ARM: tegra: Fix ULPI regression on Tegra20") changed
->> "ulpi-link" clock from CDEV2 to PLL_P_OUT4. Turned out that PLL_P_OUT4 is
->> the parent of CDEV2 clock and original clock setup of "ulpi-link" was
->> correct. The reverted patch was fixing USB for one board and broke the
->> other, now Tegra's clk driver correctly sets parent for the CDEV2 clock
->> and hence patch could be reverted safely, restoring USB for all of the
->> boards.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
->> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
->> Tested-by: Marc Dietrich <marvin24@gmx.de>
->> ---
->>  arch/arm/boot/dts/tegra20.dtsi | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Is it still true that this patch alone fixes the known regression? I'm
-> just asking because the remainder of the series, even though it sounds
-> to be the right thing to do, is fairly big for a fix against v4.17.
+Quoting Dinh Nguyen (2018-05-02 07:28:32)
+> +       struct resource *res;
+>         void __iomem *base;
+>  =
 
-Yes, Marcel says that reverting just this patch works for him now.
+> -       base =3D of_iomap(np, 0);
+> -       if (!base) {
+> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       base =3D devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(base)) {
+>                 pr_err("%s: failed to map clock registers\n", __func__);
+> -               goto err;
+> +               return ERR_CAST(base);
+>         }
+>  =
 
-> So if this alone fixes the regression I think it'd be best to queue it
-> up for v4.17 and get the rest of the patches into v4.18.
+> -       clk_data =3D kzalloc(sizeof(*clk_data), GFP_KERNEL);
+> +       clk_data =3D devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
+>         if (!clk_data)
+> -               goto err;
+> +               return ERR_CAST(clk_data);
 
-Sounds good.
+I had to make these ERR_PTR(-ENOMEM), but otherwise I applied this to
+clk-next.
