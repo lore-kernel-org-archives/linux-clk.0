@@ -1,39 +1,67 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Sun, 27 May 2018 16:28:22 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: kbuild-all@01.org, mturquette@baylibre.com, sboyd@kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org,
-	lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH 7/9] clk: bd71837: Build ROHM BD71837 PMIC clock driver
-Message-ID: <201805271456.NRwg0RUS%fengguang.wu@intel.com>
-References: <20180524055955.GH4249@localhost.localdomain>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180524055955.GH4249@localhost.localdomain>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1526387370-17142-4-git-send-email-gilad@benyossef.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com> <1526387370-17142-4-git-send-email-gilad@benyossef.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 May 2018 16:50:44 +0200
+Message-ID: <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Matti,
+Hi Gilad,
 
-Thank you for the patch! Perhaps something to improve:
+On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> Add bindings for CryptoCell instance in the SoC.
+>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-[auto build test WARNING on ljones-mfd/for-mfd-next]
-[also build test WARNING on v4.17-rc6]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Thanks for your patch!
 
-url:    https://github.com/0day-ci/linux/commits/Matti-Vaittinen/mfd-regulator-clk-bd71837-ROHM-BD71837-PMIC-driver/20180526-192351
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -528,6 +528,14 @@
+>                         status = "disabled";
+>                 };
+>
+> +               arm_cc630p: crypto@e6601000 {
+> +                       compatible = "arm,cryptocell-630p-ree";
+> +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+> +                       #interrupt-cells = <2>;
 
+I believe the #interrupt-cells property is not needed.
 
-coccinelle warnings: (new ones prefixed by >>)
+> +                       reg = <0x0 0xe6601000 0 0x1000>;
+> +                       clocks = <&cpg CPG_MOD 229>;
+> +               };
 
->> drivers/clk/clk-bd71837.c:145:6-11: No need to set .owner here. The core will do it.
+The rest looks good, but I cannot verify the register block.
 
-Please review and possibly fold the followup patch.
+> +
+>                 i2c3: i2c@e66d0000 {
+>                         #address-cells = <1>;
+>                         #size-cells = <0>;
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
