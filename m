@@ -1,72 +1,69 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Fri, 4 May 2018 06:09:45 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Akshu Agrawal <akshu.agrawal@amd.com>
-Cc: kbuild-all@01.org, djkurtz@chromium.org, akshu.agrawal@amd.com,
-	Alexander.Deucher@amd.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Shaoyun Liu <Shaoyun.Liu@amd.com>, Dave Airlie <airlied@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: x86: Add ST oscout platform clock
-Message-ID: <201805040610.d3xMxCsO%fengguang.wu@intel.com>
-References: <1525336264-29243-1-git-send-email-akshu.agrawal@amd.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v2 2/2] clk: davinci: psc-dm365: fix few clocks
+To: Sekhar Nori <nsekhar@ti.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Linux clk Mailing List <linux-clk@vger.kernel.org>,
+ Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+ Kevin Hilman <khilman@kernel.org>
+References: <20180515112224.30122-1-nsekhar@ti.com>
+ <20180515112224.30122-3-nsekhar@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <9bb03875-d1b8-43a3-b9a4-a06c5eecf603@lechnology.com>
+Date: Tue, 15 May 2018 10:36:58 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1525336264-29243-1-git-send-email-akshu.agrawal@amd.com>
+In-Reply-To: <20180515112224.30122-3-nsekhar@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Akshu,
+On 05/15/2018 06:22 AM, Sekhar Nori wrote:
+> Fix parent of EMAC and voice codec PSC clocks. Documentation is clear
+> on EMAC clock parent, but its not fully clear on parent of voice codec
+> clock. The implementation chosen is matches arch/arm/mach-davinci/dm365.c.
+> Add a comment explaining this for posterity.
+> 
+> There is only one power domain on DM365. Fix the power domain of voice
+> codec and vpss dac modules.
+> 
+> While at it, add a comment explaining how the parent of vpss dac clock was
+> derived. Note that this patch does not touch the parent of vpss dac clock.
+> 
+> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> ---
+> v2: add comments explaining parents of voice codec and vpss dac clocks
+> 
+>   drivers/clk/davinci/psc-dm365.c | 19 ++++++++++++++++---
+>   1 file changed, 16 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+> index 3ad915f37376..289af3913fb0 100644
+> --- a/drivers/clk/davinci/psc-dm365.c
+> +++ b/drivers/clk/davinci/psc-dm365.c
+> @@ -65,9 +65,22 @@ static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
+>   	LPSC(31, 0, arm,         pll2_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
+>   	LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
+>   	LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
+> -	LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
+> -	LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
+> -	LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
+> +	LPSC(40, 0, emac,        pll1_sysclk4, emac_clkdev,        0),
+> +	/*
+> +	 * The TRM (ARM Subsystem User's Guide) shows two clocks input into
+> +	 * voice codec module (PLL2 SYSCLK4 with a DIV2 and PLL1 SYSCLK4). Its
+> +	 * not fully clear from documentation which clock should be considered
+> +	 * as parent for PSC. The clock chosen here is to maintain
+> +	 * compatibility with existing code in arch/arm/mach-davinci/dm365.c
+> +	 */
+> +	LPSC(44, 0, voice_codec, pll2_sysclk4, voice_codec_clkdev, 0),
+> +	/*
+> +	 * Its not fully clear from TRM (ARM Subsystem User's Guide) as to what
+> +	 * the parent of VPSS DAC LPSC should actually be. PLL1 SYSCLK3 feeds
+> +	 * into HDVICP and MJCP. The clock chosen here is to remain compatible
+> +	 * with code existing in arch/arm/mach-davinci/dm365.c
+> +	 */
+> +	LPSC(46, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
+>   	LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
+>   	LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
+>   	{ }
+> 
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on v4.17-rc3 next-20180503]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Akshu-Agrawal/clk-x86-Add-ST-oscout-platform-clock/20180503-214044
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-
-smatch warnings:
-drivers/clk/x86/clk-st.c:60 st_clk_probe() error: potential null dereference 'hws'.  (kzalloc returns null)
-
-vim +/hws +60 drivers/clk/x86/clk-st.c
-
-    48	
-    49	static int st_clk_probe(struct platform_device *pdev)
-    50	{
-    51		struct st_clk_data *st_data;
-    52		struct clk_hw **hws;
-    53	
-    54		st_data = dev_get_platdata(&pdev->dev);
-    55		if (!st_data || !st_data->base)
-    56			return -EINVAL;
-    57	
-    58		hws = kzalloc(sizeof(*hws) * ST_MAX_CLKS, GFP_KERNEL);
-    59	
-  > 60		hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
-    61							     48000000);
-    62		hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
-    63							     25000000);
-    64	
-    65		hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
-    66			clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
-    67			0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
-    68	
-    69		clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
-    70	
-    71		hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
-    72			0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
-    73			CLK_GATE_SET_TO_DISABLE, NULL);
-    74	
-    75		clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
-    76	
-    77		return 0;
-    78	}
-    79	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Reviewed-by: David Lechner <david@lechnology.com>
