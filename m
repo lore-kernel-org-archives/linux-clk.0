@@ -1,140 +1,43 @@
-Return-Path: <ilialin@codeaurora.org>
-From: <ilialin@codeaurora.org>
-To: "'Viresh Kumar'" <viresh.kumar@linaro.org>,
-	"'Amit Kucheria'" <amit.kucheria@linaro.org>
-Cc: "'Michael Turquette'" <mturquette@baylibre.com>,
-	<sboyd@kernel.org>,
-	"'Rob Herring'" <robh@kernel.org>,
-	"'Mark Rutland'" <mark.rutland@arm.com>,
-	<nm@ti.com>,
-	<lgirdwood@gmail.com>,
-	<broonie@kernel.org>,
-	"'Andy Gross'" <andy.gross@linaro.org>,
-	"'David Brown'" <david.brown@linaro.org>,
-	<catalin.marinas@arm.com>,
-	<will.deacon@arm.com>,
-	"'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-	<linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	"'LKML'" <linux-kernel@vger.kernel.org>,
-	"'Linux PM list'" <linux-pm@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-soc@vger.kernel.org>,
-	"'lakml'" <linux-arm-kernel@lists.infradead.org>,
-	"'Rajendra Nayak'" <rnayak@codeaurora.org>,
-	<nicolas.dechesne@linaro.org>,
-	<celster@codeaurora.org>,
-	<tfinkel@codeaurora.org>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-13-git-send-email-ilialin@codeaurora.org> <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com> <20180516141132.aqjif7d5motmmnlo@vireshk-i7> 
-In-Reply-To: 
-Subject: RE: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-Date: Thu, 17 May 2018 11:20:24 +0300
-Message-ID: <017f01d3edb7$ec160320$c4420960$@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38347 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750810AbeEORCc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 May 2018 13:02:32 -0400
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
+In-Reply-To: <20180515164229.4606-1-jbrunet@baylibre.com>
+References: <20180515164229.4606-1-jbrunet@baylibre.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 15 May 2018 14:02:31 -0300
+Message-ID: <CAOMZO5A20PRCgajpc7FaaWdGEGi13dV+dO9Z9SLDZEhxfs94Mw@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: use SPDX license identifiers consistently
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        linux-amlogic@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, May 15, 2018 at 1:42 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
 
+> diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
+> index f7ab5b1db342..ac0743cd0f2f 100644
+> --- a/drivers/clk/meson/clk-audio-divider.c
+> +++ b/drivers/clk/meson/clk-audio-divider.c
+> @@ -1,18 +1,7 @@
+> +// SPDX-License-Identifier: GPL-2.0+
 
-> -----Original Message-----
-> From: ilialin@codeaurora.org <ilialin@codeaurora.org>
-> Sent: Thursday, May 17, 2018 10:51
-> To: 'Viresh Kumar' <viresh.kumar@linaro.org>; 'Amit Kucheria'
-> <amit.kucheria@linaro.org>
-> Cc: 'Michael Turquette' <mturquette@baylibre.com>; 'sboyd@kernel.org'
-> <sboyd@kernel.org>; 'Rob Herring' <robh@kernel.org>; 'Mark Rutland'
-> <mark.rutland@arm.com>; 'nm@ti.com' <nm@ti.com>;
-> 'lgirdwood@gmail.com' <lgirdwood@gmail.com>; 'broonie@kernel.org'
-> <broonie@kernel.org>; 'Andy Gross' <andy.gross@linaro.org>; 'David Brown'
-> <david.brown@linaro.org>; 'catalin.marinas@arm.com'
-> <catalin.marinas@arm.com>; 'will.deacon@arm.com'
-> <will.deacon@arm.com>; 'Rafael J. Wysocki' <rjw@rjwysocki.net>; 'linux-
-> clk@vger.kernel.org' <linux-clk@vger.kernel.org>;
-> 'devicetree@vger.kernel.org' <devicetree@vger.kernel.org>; 'LKML' <linux-
-> kernel@vger.kernel.org>; 'Linux PM list' <linux-pm@vger.kernel.org>;
-'linux-
-> arm-msm@vger.kernel.org' <linux-arm-msm@vger.kernel.org>; 'linux-
-> soc@vger.kernel.org' <linux-soc@vger.kernel.org>; 'lakml' <linux-arm-
-> kernel@lists.infradead.org>; 'Rajendra Nayak' <rnayak@codeaurora.org>;
-> 'nicolas.dechesne@linaro.org' <nicolas.dechesne@linaro.org>;
-> 'celster@codeaurora.org' <celster@codeaurora.org>;
-> 'tfinkel@codeaurora.org' <tfinkel@codeaurora.org>
-> Subject: RE: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-> 
-> 
-> 
-> > -----Original Message-----
-> > From: Viresh Kumar <viresh.kumar@linaro.org>
-> > Sent: Wednesday, May 16, 2018 17:12
-> > To: Amit Kucheria <amit.kucheria@linaro.org>
-> > Cc: Ilia Lin <ilialin@codeaurora.org>; Michael Turquette
-> > <mturquette@baylibre.com>; sboyd@kernel.org; Rob Herring
-> > <robh@kernel.org>; Mark Rutland <mark.rutland@arm.com>; nm@ti.com;
-> > lgirdwood@gmail.com; broonie@kernel.org; Andy Gross
-> > <andy.gross@linaro.org>; David Brown <david.brown@linaro.org>;
-> > catalin.marinas@arm.com; will.deacon@arm.com; Rafael J. Wysocki
-> > <rjw@rjwysocki.net>; linux-clk@vger.kernel.org;
-> > devicetree@vger.kernel.org; LKML <linux-kernel@vger.kernel.org>; Linux
-> > PM list <linux-pm@vger.kernel.org>; linux-arm-msm@vger.kernel.org;
-> > linux- soc@vger.kernel.org; lakml
-> > <linux-arm-kernel@lists.infradead.org>;
-> > Rajendra Nayak <rnayak@codeaurora.org>; nicolas.dechesne@linaro.org;
-> > celster@codeaurora.org; tfinkel@codeaurora.org
-> > Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-> >
-> > On 16-05-18, 16:12, Amit Kucheria wrote:
-> > > > +       ret = PTR_ERR_OR_ZERO(opp_temp =
-> > > > +
-> > dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> > > > +       if (0 > ret)
-> > >
-> > > Any particular reason to prefer this over (ret < 0) that is
-> > > generally used? I've seen it used to avoid the == vs. = typos, but
-> > > not for other comparisons.
-> > >
-> > > Suggest sticking to what is commonly used i.e. ret < 0.
-> > >
-> > > > +               goto free_opp;
-> > > > +
-> > > > +       cpu_dev = get_cpu_device(GOLD_LEAD);
-> > >
-> > > Error check cpu_dev here?
-> > >
-> > > > +       ret = PTR_ERR_OR_ZERO(opp_temp =
-> > > > +
-> > dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> > > > +       if (0 > ret)
-> > > > +               goto free_opp;
-> >
-> > The goto here is wrong
-> 
-> If we are here, then the first dev_pm_opp_set_supported_hw() succeeded.
-> And should be deallocated before exit with error.
+Here you put GPL2.0+, but it should be GPL2.0 instead
 
-My bad. Got you.
+>  /*
+>   * Copyright (c) 2017 AmLogic, Inc.
+>   * Author: Jerome Brunet <jbrunet@baylibre.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify it
+> - * under the terms and conditions of the GNU General Public License,
+> - * version 2, as published by the Free Software Foundation.
 
-> 
-> >
-> > > > +
-> > > > +
-> > > > +       ret =
-> > PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-dt",
-> > > > +                                                             -1,
-> > > > + NULL, 0));
-> > > > +
-> > > > +       if (0 == ret)
-> > > > +               return 0;
-> > > > +
-> > > > +free_opp:
-> > > > +       dev_pm_opp_put_supported_hw(opp_temp);
-> > >
-> > > This is not needed because dev_pm_opp_set_supported_hw will free
-> > > memory in case of failure. This call in only needed in case of a
-> > > successful get.
-> >
-> > But this is still required for the case where platform device
-registration fails.
-> >
-> > --
-> > viresh
+.... according to the original text.
