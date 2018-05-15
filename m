@@ -1,54 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:45396 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755042AbeEaNlN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 31 May 2018 09:41:13 -0400
-Date: Thu, 31 May 2018 06:41:09 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com
-Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
- node for MCAN
-Message-ID: <20180531134109.GJ5705@atomide.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-6-faiz_abbas@ti.com>
- <20180531040638.GA26751@rob-hp-laptop>
- <be0fd711-c44b-dbe2-648f-08aa88c7aec4@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <be0fd711-c44b-dbe2-648f-08aa88c7aec4@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Tao Wang <jean.wangtao@linaro.org>,
+	Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 4/5] arm64: dts: hi3660: Add thermal cooling management
+Date: Tue, 15 May 2018 10:53:14 +0800
+Message-Id: <1526352795-6991-5-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+References: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Faiz Abbas <faiz_abbas@ti.com> [180531 11:27]:
-> On Thursday 31 May 2018 09:36 AM, Rob Herring wrote:
-> > On Wed, May 30, 2018 at 07:41:32PM +0530, Faiz Abbas wrote:
-> >> --- a/arch/arm/boot/dts/dra76x.dtsi
-> >> +++ b/arch/arm/boot/dts/dra76x.dtsi
-> >> @@ -11,6 +11,25 @@
-> >>  / {
-> >>  	compatible = "ti,dra762", "ti,dra7";
-> >>  
-> >> +	ocp {
-> >> +
-> >> +		target-module@0x42c00000 {
-> > 
-> > Build your dtb with W=1 and fix warnings you add (drop '0x').
-> 
-> Sure, Will fix this.
-> > 
-> > This is a CAN bus controller? If so, then use 'can' for node name.
-> 
-> Yes but I am using m_can along the lines of dcan in other boards (For
-> example, see arch/arm/boot/dts/am33xx.dtsi:1046). Are you saying all CAN
-> controllers should only be called can?
+From: Tao Wang <jean.wangtao@linaro.org>
 
-The module should be target-module@42c00000 and the child(ren)
-can@1a00 or mcan@1a00 if mcan is different from can.
+Add nodes and properties for thermal cooling management support.
 
-Regards,
+Signed-off-by: Tao Wang <jean.wangtao@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 44 +++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-Tony
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index a39da09..e20edd9 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -7,6 +7,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/hi3660-clock.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ / {
+ 	compatible = "hisilicon,hi3660";
+@@ -64,6 +65,8 @@
+ 			capacity-dmips-mhz = <592>;
+ 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
++			dynamic-power-coefficient = <110>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -112,6 +115,8 @@
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
++			dynamic-power-coefficient = <550>;
+ 		};
+ 
+ 		cpu5: cpu@101 {
+@@ -1073,5 +1078,44 @@
+ 			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+ 			#thermal-sensor-cells = <1>;
+ 		};
++
++		thermal-zones {
++
++			cls0: cls0 {
++				polling-delay = <1000>;
++				polling-delay-passive = <100>;
++				sustainable-power = <4500>;
++
++				/* sensor ID */
++				thermal-sensors = <&tsensor 1>;
++
++				trips {
++					threshold: trip-point@0 {
++						temperature = <65000>;
++						hysteresis = <1000>;
++						type = "passive";
++					};
++
++					target: trip-point@1 {
++						temperature = <75000>;
++						hysteresis = <1000>;
++						type = "passive";
++					};
++				};
++
++				cooling-maps {
++					map0 {
++						trip = <&target>;
++						contribution = <1024>;
++						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++					};
++					map1 {
++						trip = <&target>;
++						contribution = <512>;
++						cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++					};
++				};
++			};
++		};
+ 	};
+ };
+-- 
+1.9.1
