@@ -1,44 +1,139 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
-	<carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v8 2/5] dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
-Date: Thu, 3 May 2018 21:26:21 +0800
-Message-ID: <20180503132624.78453-3-yixun.lan@amlogic.com>
-In-Reply-To: <20180503132624.78453-1-yixun.lan@amlogic.com>
-References: <20180503132624.78453-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v7 00/14] CPU scaling support for msm8996
+Date: Tue, 15 May 2018 12:13:22 +0300
+Message-Id: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update the dt-binding documentation to support new compatible string
-for the Amlogic's Meson-AXG SoC.
+[v7]
+ * Addressed comments from Viresh about resourses deallocation
+   and DT compatible
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt | 1 +
- 1 file changed, 1 insertion(+)
+[v6]
+ * Addressed comments from Viresh about:
+ ** Comments style
+ ** Kconfig bool instead of tristate
+ ** DT and documentation style
+ ** Resourses deallocation on an error
+ ** Typos
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-index 786dc39ca904..3a880528030e 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-@@ -9,6 +9,7 @@ Required Properties:
- 	- GXBB (S905) : "amlogic,meson-gxbb-aoclkc"
- 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
- 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
-+	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
- 	followed by the common "amlogic,meson-gx-aoclkc"
- 
- - #clock-cells: should be 1.
+[v5]
+ * Rebased
+ * Addressed comments from Bjorn about SPDX style,
+   functions and parameters naming
+ * Addressed comments from Viresh DT properties and style, comments style,
+   resourses deallocation, documentation placement
+ * Addressed comments from Sricharan about unnessesary include
+ * Addressed comments from Nicolas
+ * Addressed comments from Rob about the commit messages and acks
+ * Addressed comments from Mark
+
+[v4]
+ * Adressed all comments from Stephen
+ * Added CPU regulator support
+ * Added qcom-cpufreq-kryo driver
+
+[v3]
+ * Rebased on top of the latest PLL driver changes
+ * Addressed comment from Rob Herring for bindings
+
+[v2]
+ * Addressed comments from Rob Herring for bindings
+ * Addressed comments from Mark Rutland for memory barrier
+ * Addressed comments from Julien Thierry for clock reenabling condition
+ * Tuned the HW configuration for clock frequencies below 600MHz
+
+Clocks:
+This series adds support for the CPU clocks on msm8996 devices.
+The driver uses the existing PLL drivers and is required to control
+the CPU frequency scaling on the MSM8996.
+
+Regulators:
+Added SAW regulator support to the SPMI regulator driver. The SAW regulators
+will be controlled through special CPU registers instead of direct
+SPMI accesses.
+
+Cpufreq:
+The qcom-cpufreq-kryo driver is aimed to support different SOC versions.
+The driver reads eFuse information and chooses the required OPP subset
+by passing the OPP supported-hw parameter.
+
+A previous post of RFC can be found here:
+https://patchwork.kernel.org/patch/10398455/
+
+Ilia Lin (11):
+  soc: qcom: Separate kryo l2 accessors from PMU driver
+  clk: qcom: Add CPU clock driver for msm8996
+  clk: qcom: Add DT bindings for CPU clock driver for msm8996
+  clk: qcom: Add ACD path to CPU clock driver for msm8996
+  dt: qcom: Add opp and thermal to the msm8996
+  regulator: qcom_spmi: Add support for SAW
+  dt-bindings: qcom_spmi: Add support for SAW documentation
+  dt: qcom: Add SAW regulator for 8x96 CPUs
+  cpufreq: Add Kryo CPU scaling driver
+  dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
+  dt: qcom: Add qcom-cpufreq-kryo driver configuration
+
+Rajendra Nayak (3):
+  clk: qcom: Make clk_alpha_pll_configure available to modules
+  clk: qcom: cpu-8996: Add support to switch to alternate PLL
+  clk: qcom: cpu-8996: Add support to switch below 600Mhz
+
+ .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
+ .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
+ .../bindings/regulator/qcom,spmi-regulator.txt     |  45 ++
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 651 +++++++++++++++++++-
+ drivers/clk/clk-fixed-factor.c                     |   2 +-
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
+ drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
+ drivers/clk/qcom/clk-cpu-8996.c                    | 519 ++++++++++++++++
+ drivers/cpufreq/Kconfig.arm                        |  11 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+ drivers/cpufreq/qcom-cpufreq-kryo.c                | 150 +++++
+ drivers/perf/Kconfig                               |   1 +
+ drivers/perf/qcom_l2_pmu.c                         |  90 +--
+ drivers/regulator/qcom_spmi-regulator.c            | 133 +++-
+ drivers/soc/qcom/Kconfig                           |   3 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/kryo-l2-accessors.c               |  65 ++
+ include/soc/qcom/kryo-l2-accessors.h               |  21 +
+ 22 files changed, 2332 insertions(+), 80 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+ create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+ create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+ create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+ create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+
 -- 
-2.17.0
+1.9.1
