@@ -1,68 +1,135 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 1 May 2018 09:07:25 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [RFC 01/10] ARM: dts: exynos: Remove Exynos5440
-Message-ID: <20180501140725.GA25487@rob-hp-laptop>
-References: <20180424203239.21885-1-krzk@kernel.org>
- <20180424203239.21885-2-krzk@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60156 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752431AbeEOIXR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 15 May 2018 04:23:17 -0400
+Subject: Re: [PATCH v2 5/5] hisi: Consolidate the Kconfigs for the CLOCK_STUB
+ and the MAILBOX
+To: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        "Arnd Bergmann" <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+ <1526352795-6991-6-git-send-email-leo.yan@linaro.org>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5AFA98E7.9050609@hisilicon.com>
+Date: Tue, 15 May 2018 09:23:03 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180424203239.21885-2-krzk@kernel.org>
+In-Reply-To: <1526352795-6991-6-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 10:32:30PM +0200, Krzysztof Kozlowski wrote:
-> The Exynos5440 (quad-core A15 with GMAC, PCIe, SATA) was targeting
-> server platforms but it did not make it to the market really.  There are
-> no development boards with it and probably there are no real products
-> neither.  The development for Exynos5440 ended in 2013 and since then
-> the platform is in maintenance mode.
-> 
-> Remove all Device Tree sources for Exynos5440, as first step of removal
-> of the platform to simplify the code and drivers.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../bindings/arm/samsung/samsung-boards.txt        |   2 -
->  arch/arm/boot/dts/Makefile                         |   2 -
->  arch/arm/boot/dts/exynos5440-sd5v1.dts             |  42 ---
->  arch/arm/boot/dts/exynos5440-ssdk5440.dts          |  81 -----
->  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi  |  20 --
->  arch/arm/boot/dts/exynos5440-trip-points.dtsi      |  21 --
->  arch/arm/boot/dts/exynos5440.dtsi                  | 355 ---------------------
->  7 files changed, 523 deletions(-)
->  delete mode 100644 arch/arm/boot/dts/exynos5440-sd5v1.dts
->  delete mode 100644 arch/arm/boot/dts/exynos5440-ssdk5440.dts
->  delete mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
->  delete mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
->  delete mode 100644 arch/arm/boot/dts/exynos5440.dtsi
+Hi Leo, Daniel,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On 2018/5/15 3:53, Leo Yan wrote:
+> From: Daniel Lezcano <daniel.lezcano@linaro.org>
+> 
+> The current defconfig is inconsistent as it selects the mailbox and
+> the clock for the hi6220 and the hi3660 without having their Kconfigs
+> making sure the dependencies are correct. It ends up when selecting
+> different versions for the kernel (for example when git bisecting)
+> those options disappear and they don't get back, leading to unexpected
+> behaviors. In our case, the cpufreq driver does no longer work because
+> the clock fails to initialize due to the clock stub and the mailbox
+> missing.
+> 
+> In order to have the dependencies correctly set when defaulting, let's
+> do the same as commit 3a49afb84ca074e ("clk: enable hi655x common clk
+> automatically") where we select automatically the driver when the
+> parent driver is selected. With sensible defaults in place, we can leave
+> other choices for EXPERT.
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Acked-by: Jassi Brar <jaswinder.singh@linaro.org>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  arch/arm64/configs/defconfig  |  1 -
+>  drivers/clk/hisilicon/Kconfig | 13 ++++++++-----
+>  drivers/mailbox/Kconfig       | 12 ++++++++----
+>  3 files changed, 16 insertions(+), 10 deletions(-)
+
+Could you separate this patch into clk, mailbox and defconfig 3 parts?
+Thanks!
+
+Best Regards,
+Wei
+
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index ecf6137..1d9d8b9 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -549,7 +549,6 @@ CONFIG_HWSPINLOCK_QCOM=y
+>  CONFIG_ARM_MHU=y
+>  CONFIG_PLATFORM_MHU=y
+>  CONFIG_BCM2835_MBOX=y
+> -CONFIG_HI6220_MBOX=y
+>  CONFIG_QCOM_APCS_IPC=y
+>  CONFIG_ROCKCHIP_IOMMU=y
+>  CONFIG_TEGRA_IOMMU_SMMU=y
+> diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+> index 1bd4355..becdb1d 100644
+> --- a/drivers/clk/hisilicon/Kconfig
+> +++ b/drivers/clk/hisilicon/Kconfig
+> @@ -44,14 +44,17 @@ config RESET_HISI
+>  	  Build reset controller driver for HiSilicon device chipsets.
+>  
+>  config STUB_CLK_HI6220
+> -	bool "Hi6220 Stub Clock Driver"
+> -	depends on COMMON_CLK_HI6220 && MAILBOX
+> -	default ARCH_HISI
+> +	bool "Hi6220 Stub Clock Driver" if EXPERT
+> +	depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
+> +	depends on MAILBOX
+> +	default COMMON_CLK_HI6220
+>  	help
+>  	  Build the Hisilicon Hi6220 stub clock driver.
+>  
+>  config STUB_CLK_HI3660
+> -	bool "Hi3660 Stub Clock Driver"
+> -	depends on COMMON_CLK_HI3660 && MAILBOX
+> +	bool "Hi3660 Stub Clock Driver" if EXPERT
+> +	depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
+> +	depends on MAILBOX
+> +	default COMMON_CLK_HI3660
+>  	help
+>  	  Build the Hisilicon Hi3660 stub clock driver.
+> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> index a2bb274..567cd02 100644
+> --- a/drivers/mailbox/Kconfig
+> +++ b/drivers/mailbox/Kconfig
+> @@ -109,16 +109,20 @@ config TI_MESSAGE_MANAGER
+>  	  platform has support for the hardware block.
+>  
+>  config HI3660_MBOX
+> -	tristate "Hi3660 Mailbox"
+> -	depends on ARCH_HISI && OF
+> +	tristate "Hi3660 Mailbox" if EXPERT
+> +	depends on (ARCH_HISI || COMPILE_TEST)
+> +	depends on OF
+> +	default ARCH_HISI
+>  	help
+>  	  An implementation of the hi3660 mailbox. It is used to send message
+>  	  between application processors and other processors/MCU/DSP. Select
+>  	  Y here if you want to use Hi3660 mailbox controller.
+>  
+>  config HI6220_MBOX
+> -	tristate "Hi6220 Mailbox"
+> -	depends on ARCH_HISI
+> +	tristate "Hi6220 Mailbox" if EXPERT
+> +	depends on (ARCH_HISI || COMPILE_TEST)
+> +	depends on OF
+> +	default ARCH_HISI
+>  	help
+>  	  An implementation of the hi6220 mailbox. It is used to send message
+>  	  between application processors and MCU. Say Y here if you want to
+> 
+
