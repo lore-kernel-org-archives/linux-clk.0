@@ -1,69 +1,106 @@
-Return-Path: <anischal@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Wed, 09 May 2018 17:09:54 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1526395238.2897.45.camel@baylibre.com>
+Subject: Re: [PATCH v8 0/5] clk: meson-axg: Add AO Cloclk and Reset driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>
 Cc: Rob Herring <robh@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross
- <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rajendra
- Nayak <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
- Taniya Das <tdas@codeaurora.org>, linux-arm-msm
- <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT"
- <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] Add QCOM video clock controller driver
-In-Reply-To: <152581050735.138124.795656319855957213@swboyd.mtv.corp.google.com>
-References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
- <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
- <09ac2bd5eab25cfc70a1c5dc7b0f90ed@codeaurora.org>
- <20180507171121.GA22656@rob-hp-laptop>
- <8ac8a361a7dc69cce1e7498f1473bad8@codeaurora.org>
- <CAL_JsqL3wz_Y0Qp7Z8-JjkFGegKLFOUscJgGp+XO-Lm52iN2Vg@mail.gmail.com>
- <152581050735.138124.795656319855957213@swboyd.mtv.corp.google.com>
-Message-ID: <b82e7d0b1b56398672f2cba8dcdeb620@codeaurora.org>
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@codeaurora.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Qiufang Dai <qiufang.dai@amlogic.com>,
+ linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Date: Tue, 15 May 2018 16:40:38 +0200
+In-Reply-To: <20180503132624.78453-1-yixun.lan@amlogic.com>
+References: <20180503132624.78453-1-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018-05-09 01:45, Stephen Boyd wrote:
-> Quoting Rob Herring (2018-05-08 05:48:07)
->> On Mon, May 7, 2018 at 11:53 PM, Amit Nischal 
->> <anischal@codeaurora.org> wrote:
->> > On 2018-05-07 22:41, Rob Herring wrote:
->> >>
->> >> On Mon, May 07, 2018 at 04:16:53PM +0530, Amit Nischal wrote:
->> >>>
->> >>> On 2018-05-04 22:01, Stephen Boyd wrote:
->> >>> > Quoting Amit Nischal (2018-05-03 05:35:23)
->> >>> > > Changes in v1:
->> >>> > >    https://lkml.org/lkml/2018/4/24/545
->> >>> > > Addressed below review comments given by Rob
->> >>> > > - Change the compatible property as per '<vendor>,<soc>-<block>'
->> >>> > > format.
->> >>> > > - Add header definitions for resets and power-domain cells.
->> >>> >
->> >>> > You didn't add any reset definitions though?
->> >>>
->> >>> We haven't added the reset definitions for videocc as there is no
->> >>> video reset client.
->> >>
->> >>
->> >> So? You don't know what resets there are?
->> >>
->> >
->> > We know the resets, but video driver doesn't do any block resets
->> > prior to accessing the video subsystem so that's the reason we do
->> > not want to expose the resets in videocc driver.
->> 
->> Bindings don't have to match what drivers currently use but should be
->> complete as possible.
+On Thu, 2018-05-03 at 21:26 +0800, Yixun Lan wrote:
+>   This patch try to add AO clock and Reset driver for Amlogic's
+> Meson-AXG SoC.
 > 
-> Right. Please add the #defines in the header file for the resets. You
-> can leave them out of the driver if you really want to, but typically 
-> we
-> still add them and then rely on not touching them if they shouldn't be
-> used.
+>  patch 1: factor the common code into a dedicated file
+>  patch 2-4: add the aoclk driver for AXG SoC
+>  patch 5: drop unnecessary clock flags
+> 
+> changes since v7 at [8]: 
+>  - drop the 'drop CLK_IGNORE_UNUSED flag' patch
+>    to avoid circle dependencies
+>  - fix Philip's Ack on patch 3
+> 
+> changes since v6 at [7]: 
+>  - fix over 80 chars chechpatch error
+>  - add Philip's Ack on patch 5
+>  - drop extra end of newline
+> 
+> changes since v5 at [6]: 
+>  - drop unnecessary header files
+>  - add 'axg_aoclk' prefix to clk driver, make them more consistent
+>  - add missing end new line..
+> 
+> changes since v4 at [5]: 
+>  - fix return err
+>  - introduce CONFIG_COMMON_CLK_MESON_AO
+>  - format/style minor fix
+> 
+> changes since v3 at [4]: 
+>  - add 'const' contraint to the read-only data
+>  - switch to devm_of_clk_add_hw_provider API
+>  - check return value of devm_reset_controller_register
+> 
+> changes since v2 at [2]: 
+>  - rework meson_aoclkc_probe() which leverage the of_match_data
+>  - merge patch 5-6 into this series
+>  - seperate DTS patch, will send to Kevin Hilman independently
+>  
+> changes since v1 at [0]: 
+>  - rebase to clk-meson's branch 'next/drivers' [1]
+>  - fix license, update to BSD-3-Clause
+>  - drop un-used include header file
+> 
+> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
+> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
+> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
+> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
+> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
+> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
+> [7] https://lkml.kernel.org/r/20180419135426.155794-1-yixun.lan@amlogic.com
+> [8] https://lkml.kernel.org/r/20180426084437.192394-1-yixun.lan@amlogic.com
+> 
+> 
+> Qiufang Dai (1):
+>   clk: meson-axg: Add AO Clock and Reset controller driver
+> 
+> Yixun Lan (4):
+>   clk: meson: aoclk: refactor common code into dedicated file
+>   dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+>   dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+>   clk: meson: drop CLK_SET_RATE_PARENT flag
 
-Thanks for the suggestion.
-I will add the videocc resets in the header file.
+Applied
+
+> 
+>  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
+>  drivers/clk/meson/Kconfig                     |   8 +
+>  drivers/clk/meson/Makefile                    |   3 +-
+>  drivers/clk/meson/axg-aoclk.c                 | 164 ++++++++++++++++++
+>  drivers/clk/meson/axg-aoclk.h                 |  29 ++++
+>  drivers/clk/meson/gxbb-aoclk.c                |  96 ++++------
+>  drivers/clk/meson/gxbb-aoclk.h                |   5 +
+>  drivers/clk/meson/meson-aoclk.c               |  81 +++++++++
+>  drivers/clk/meson/meson-aoclk.h               |  34 ++++
+>  include/dt-bindings/clock/axg-aoclkc.h        |  26 +++
+>  include/dt-bindings/reset/axg-aoclkc.h        |  20 +++
+>  11 files changed, 403 insertions(+), 64 deletions(-)
+>  create mode 100644 drivers/clk/meson/axg-aoclk.c
+>  create mode 100644 drivers/clk/meson/axg-aoclk.h
+>  create mode 100644 drivers/clk/meson/meson-aoclk.c
+>  create mode 100644 drivers/clk/meson/meson-aoclk.h
+>  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+>  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+> 
