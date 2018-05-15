@@ -1,132 +1,52 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Fri, 4 May 2018 11:41:23 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, rjw@rjwysocki.net, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v5 13/14] dt-bindings: cpufreq: Document
- operating-points-v2-kryo-cpu
-Message-ID: <20180504061123.lf2ffpami23d3q72@vireshk-i7>
-References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
- <1525348355-25471-14-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1525348355-25471-14-git-send-email-ilialin@codeaurora.org>
+To: Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180515164229.4606-1-jbrunet@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180515164229.4606-1-jbrunet@baylibre.com>
+Message-ID: <152640711006.34267.13271626390751114709@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: meson: use SPDX license identifiers consistently
+Date: Tue, 15 May 2018 10:58:30 -0700
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 03-05-18, 14:52, Ilia Lin wrote:
-> In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
-> that have KRYO processors, the CPU ferequencies subset and voltage value
-> of each OPP varies based on the silicon variant in use.
-> Qualcomm Technologies, Inc. Process Voltage Scaling Tables
-> defines the voltage and frequency value based on the msm-id in SMEM
-> and speedbin blown in the efuse combination.
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
-> 
-> This change adds documentation.
-> 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  .../devicetree/bindings/opp/kryo-cpufreq.txt       | 693 +++++++++++++++++++++
->  1 file changed, 693 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
-> new file mode 100644
-> index 0000000..20cef9d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
-> @@ -0,0 +1,693 @@
-> +Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
-> +===================================
-> +
-> +In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
-> +that have KRYO processors, the CPU ferequencies subset and voltage value
-> +of each OPP varies based on the silicon variant in use.
-> +Qualcomm Technologies, Inc. Process Voltage Scaling Tables
-> +defines the voltage and frequency value based on the msm-id in SMEM
-> +and speedbin blown in the efuse combination.
-> +The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> +to provide the OPP framework with required information (existing HW bitmap).
-> +This is used to determine the voltage and frequency value for each OPP of
-> +operating-points-v2 table when it is parsed by the OPP framework.
-> +
-> +Required properties:
-> +--------------------
-> +In 'cpus' nodes:
-> +- operating-points-v2: Phandle to the operating-points-v2 table to use.
-> +
-> +In 'operating-points-v2' table:
-> +- compatible: Should be
-> +	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
-> +- nvmem-cells: A phandle pointing to a nvmem-cells node representing the
-> +		efuse registers that has information about the
-> +		speedbin that is used to select the right frequency/voltage
-> +		value pair.
-> +		Please refer the for nvmem-cells
-> +		bindings Documentation/devicetree/bindings/nvmem/nvmem.txt
-> +		and also examples below.
-> +
-> +In every OPP node:
-> +- opp-supported-hw: A single 32 bit bitmap value, representing compatible HW.
-> +		    Bitmap:
-> +			0:	MSM8996 V3, speedbin 0
-> +			1:	MSM8996 V3, speedbin 1
-> +			2:	MSM8996 V3, speedbin 2
-> +			3:	unused
-> +			4:	MSM8996 SG, speedbin 0
-> +			5:	MSM8996 SG, speedbin 1
-> +			6:	MSM8996 SG, speedbin 2
-> +			7-31:	unused
-> +
-> +Example 1:
-> +---------
-> +
-> +	cpus {
-> +		#address-cells = <2>;
-> +		#size-cells = <0>;
-> +
-> +		CPU0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "qcom,kryo";
-> +			reg = <0x0 0x0>;
-> +			enable-method = "psci";
-> +			clocks = <&kryocc 0>;
-> +			cpu-supply = <&pm8994_s11_saw>;
-> +			operating-points-v2 = <&cluster0_opp>;
-> +			/* cooling options */
-> +			cooling-min-level = <0>;
-> +			cooling-max-level = <15>;
+Quoting Jerome Brunet (2018-05-15 09:42:29)
+> diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/cl=
+k-audio-divider.c
+> index f7ab5b1db342..ac0743cd0f2f 100644
+> --- a/drivers/clk/meson/clk-audio-divider.c
+> +++ b/drivers/clk/meson/clk-audio-divider.c
+> @@ -1,18 +1,7 @@
+> +// SPDX-License-Identifier: GPL-2.0+
 
-cooling min/max aren't required anymore, as I told you in the previous
-version :)
+This is GPL2 or later.
 
-> +	cluster0_opp: opp_table0 {
-> +		compatible = "operating-points-v2-kryo-cpu";
-> +		nvmem-cells = <&speedbin_efuse>;
-> +		opp-shared;
-> +
-> +		opp-307200000 {
-> +			opp-hz = /bits/ 64 <  307200000 >;
+>  /*
+>   * Copyright (c) 2017 AmLogic, Inc.
+>   * Author: Jerome Brunet <jbrunet@baylibre.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify =
+it
+> - * under the terms and conditions of the GNU General Public License,
+> - * version 2, as published by the Free Software Foundation.
+> - *
+> - * This program is distributed in the hope it will be useful, but WITHOUT
+> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
+ for
+> - * more details.
+> - *
+> - * You should have received a copy of the GNU General Public License alo=
+ng with
+> - * this program.  If not, see <http://www.gnu.org/licenses/>.
 
-You fixed spacing around frequency values in the dts but not here.
-
-> +			opp-microvolt = <905000 905000 1140000>;
-> +			opp-supported-hw = <0x77>;
-> +			clock-latency-ns = <200000>;
-> +		};
-
--- 
-viresh
+But this looks like GPL2 only because there isn't an "or later" part of
+the text. Is it intentional to relicense to GPL2+ instead of GPL2 only?
+If so, please add that into the commit text.
