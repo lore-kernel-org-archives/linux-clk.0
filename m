@@ -1,102 +1,115 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33531 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751309AbeEOQpv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 May 2018 12:45:51 -0400
+Received: by mail-qt0-f196.google.com with SMTP id e8-v6so1149197qth.0
+        for <linux-clk@vger.kernel.org>; Tue, 15 May 2018 09:45:50 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] clk: meson: mpll: add round closest support
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180515163652.19980-1-jbrunet@baylibre.com>
+ <20180515163652.19980-2-jbrunet@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <5deb8162-fc88-5c9e-3d56-bd96794ed6e9@baylibre.com>
+Date: Tue, 15 May 2018 18:45:47 +0200
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAOtvUMee+cn+=bEuB5iBiU9yeSsCiDPDwej8Uw-_3wVP4fagpA@mail.gmail.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
- <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
- <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
- <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
- <CAOtvUMdVNX_vBRofpc5rNiVL-a1NvWMDyWSOaXKYPkm57wkR_A@mail.gmail.com>
- <CAMuHMdX5quhZzaPkcrtB4CuHWeaKsyF1SustjB9V0SWw_SzXVg@mail.gmail.com> <CAOtvUMee+cn+=bEuB5iBiU9yeSsCiDPDwej8Uw-_3wVP4fagpA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 May 2018 15:49:52 +0200
-Message-ID: <CAMuHMdVZF1chOm7D2r+pqRwHXpQNaDhO8q-p2riWPujFsjvZRA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180515163652.19980-2-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gilad,
+On 15/05/2018 18:36, Jerome Brunet wrote:
+> Allow the mpll driver to round the requested rate up if
+> CLK_MESON_MPLL_ROUND_CLOSEST is set and it provides a rate closer to the
+> requested rate.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/clk-mpll.c | 24 +++++++++++++++++++-----
+>  drivers/clk/meson/clkc.h     |  3 +++
+>  2 files changed, 22 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+> index 0df1227b65b3..d233549de244 100644
+> --- a/drivers/clk/meson/clk-mpll.c
+> +++ b/drivers/clk/meson/clk-mpll.c
+> @@ -89,10 +89,23 @@ static long rate_from_params(unsigned long parent_rate,
+>  static void params_from_rate(unsigned long requested_rate,
+>  			     unsigned long parent_rate,
+>  			     unsigned int *sdm,
+> -			     unsigned int *n2)
+> +			     unsigned int *n2,
+> +			     u8 flags)
+>  {
+>  	uint64_t div = parent_rate;
+> -	unsigned long rem = do_div(div, requested_rate);
+> +	uint64_t frac = do_div(div, requested_rate);
+> +
+> +	frac *= SDM_DEN;
+> +
+> +	if (flags & CLK_MESON_MPLL_ROUND_CLOSEST)
+> +		*sdm = DIV_ROUND_CLOSEST_ULL(frac, requested_rate);
+> +	else
+> +		*sdm = DIV_ROUND_UP_ULL(frac, requested_rate);
+> +
+> +	if (*sdm == SDM_DEN) {
+> +		*sdm = 0;
+> +		div += 1;
+> +	}
+>  
+>  	if (div < N2_MIN) {
+>  		*n2 = N2_MIN;
+> @@ -102,7 +115,6 @@ static void params_from_rate(unsigned long requested_rate,
+>  		*sdm = SDM_DEN - 1;
+>  	} else {
+>  		*n2 = div;
+> -		*sdm = DIV_ROUND_UP_ULL((u64)rem * SDM_DEN, requested_rate);
+>  	}
+>  }
+>  
+> @@ -125,9 +137,11 @@ static long mpll_round_rate(struct clk_hw *hw,
+>  			    unsigned long rate,
+>  			    unsigned long *parent_rate)
+>  {
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
+>  	unsigned int sdm, n2;
+>  
+> -	params_from_rate(rate, *parent_rate, &sdm, &n2);
+> +	params_from_rate(rate, *parent_rate, &sdm, &n2, mpll->flags);
+>  	return rate_from_params(*parent_rate, sdm, n2);
+>  }
+>  
+> @@ -140,7 +154,7 @@ static int mpll_set_rate(struct clk_hw *hw,
+>  	unsigned int sdm, n2;
+>  	unsigned long flags = 0;
+>  
+> -	params_from_rate(rate, parent_rate, &sdm, &n2);
+> +	params_from_rate(rate, parent_rate, &sdm, &n2, mpll->flags);
+>  
+>  	if (mpll->lock)
+>  		spin_lock_irqsave(mpll->lock, flags);
+> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+> index 8fe73c4edca8..8cc265cd3d2b 100644
+> --- a/drivers/clk/meson/clkc.h
+> +++ b/drivers/clk/meson/clkc.h
+> @@ -97,8 +97,11 @@ struct meson_clk_mpll_data {
+>  	struct parm ssen;
+>  	struct parm misc;
+>  	spinlock_t *lock;
+> +	u8 flags;
+>  };
+>  
+> +#define CLK_MESON_MPLL_ROUND_CLOSEST	BIT(0)
+> +
+>  struct meson_clk_audio_div_data {
+>  	struct parm div;
+>  	u8 flags;
+> 
 
-On Thu, May 17, 2018 at 3:41 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> On Thu, May 17, 2018 at 4:35 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Thu, May 17, 2018 at 3:09 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->>> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
->>> <geert@linux-m68k.org> wrote:
->>>> However, even with your clock patch, the signature checking fails for me,
->>>> on both R-Car H3 ES1.0 and ES2.0.
->>>> Does this need changes to the ARM Trusted Firmware, to allow Linux to
->>>> access the public SCEG module?
->>>
->>> Well, this is actually something different. If you look you will
->>> notice that my patch was part of a 3 part patch series,
->>> the first of which disabled this test.
->>
->> Sorry, I had completely forgotten about the first patch from the series.
->> With that applied, it continues:
->>
->>         ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version
->> 0x00000000, Driver version 4.0
->>         ccree e6601000.crypto: Cache params previous: 0x00000777
->>         ccree e6601000.crypto: Cache params current: 0x00000000
->> (expect: 0x00000000)
->>         alg: No test for cts1(cbc(aes)) (cts1-cbc-aes-ccree)
->>         alg: No test for authenc(xcbc(aes),cbc(aes))
->> (authenc-xcbc-aes-cbc-aes-ccree)
->>         alg: No test for authenc(xcbc(aes),rfc3686(ctr(aes)))
->> (authenc-xcbc-aes-rfc3686-ctr-aes-ccree)
->>         ccree e6601000.crypto: ARM ccree device initialized
->>
->> Is HW version 0x00000000 expected?
->
-> It's related to the problem with reading the wrong register I've
-> mentioned before.
-
-OK.
-
->>> If you take all the 3 patches, it will work.
->>
->> is there an easy way to test proper operation?
->
-> The lines of the form "  alg: No test for cts1(cbc(aes))
-> (cts1-cbc-aes-ccree)" indicates
-> you have the Crypto API testmgr enable (or rather not disabled would
-> be more accurate) so every
-> cryptographic algorithm except those specified in these messages was
-> tested with test
-> vectors from crypto/testmgr.c upon registration. If you don't seen
-> failure warnings, it works.
-
-OK.
-
-> You can also check /proc/crypto for all the algorithm with ccree
-> listed as their driver and check
-> that their test passed.
-
-OK, in that case everything works as expected, on both R-Car H3 ES1.0 and
-ES2.0.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
