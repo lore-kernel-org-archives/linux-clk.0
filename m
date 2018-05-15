@@ -1,74 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:43992 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750868AbeEaEGl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 May 2018 00:06:41 -0400
-Date: Wed, 30 May 2018 23:06:38 -0500
-From: Rob Herring <robh@kernel.org>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, bcousson@baylibre.com, tony@atomide.com,
-        paul@pwsan.com, t-kristo@ti.com
-Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
- node for MCAN
-Message-ID: <20180531040638.GA26751@rob-hp-laptop>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-6-faiz_abbas@ti.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180530141133.3711-6-faiz_abbas@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1526387370-17142-3-git-send-email-gilad@benyossef.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com> <1526387370-17142-3-git-send-email-gilad@benyossef.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 May 2018 16:47:12 +0200
+Message-ID: <CAMuHMdXWPwW_p=D56BhNF274m+JLe+mbD2fqQu8-we-uMW4b8Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: r8a7795: Add ccree clock
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 30, 2018 at 07:41:32PM +0530, Faiz Abbas wrote:
-> The ti-sysc driver provides support for manipulating the idlemodes
-> and interconnect level resets.
-> 
-> Add the generic interconnect target module node for MCAN to support
-> the same.
-> 
-> CC: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> ---
->  arch/arm/boot/dts/dra76x.dtsi | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
-> index bfc82636999c..57b8dc0fe719 100644
-> --- a/arch/arm/boot/dts/dra76x.dtsi
-> +++ b/arch/arm/boot/dts/dra76x.dtsi
-> @@ -11,6 +11,25 @@
->  / {
->  	compatible = "ti,dra762", "ti,dra7";
->  
-> +	ocp {
-> +
-> +		target-module@0x42c00000 {
+Hi Gilad,
 
-Build your dtb with W=1 and fix warnings you add (drop '0x').
+On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> This patch adds the clock used by the CryptoCell 630p instance in the SoC.
+>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-This is a CAN bus controller? If so, then use 'can' for node name.
+Thanks for your patch!
 
-> +			compatible = "ti,sysc-dra7-mcan";
-> +			ranges = <0x0 0x42c00000 0x2000>;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			reg = <0x42c01900 0x4>,
-> +			      <0x42c01904 0x4>,
-> +			      <0x42c01908 0x4>;
-> +			reg-names = "rev", "sysc", "syss";
-> +			ti,sysc-mask = <(SYSC_OMAP4_SOFTRESET |
-> +					 SYSC_DRA7_MCAN_ENAWAKEUP)>;
-> +			ti,syss-mask = <1>;
-> +			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
-> +			clock-names = "fck";
-> +		};
-> +	};
-> +
->  };
->  
->  /* MCAN interrupts are hard-wired to irqs 67, 68 */
-> -- 
-> 2.17.0
-> 
+> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -132,6 +132,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+>         DEF_MOD("sys-dmac2",             217,   R8A7795_CLK_S0D3),
+>         DEF_MOD("sys-dmac1",             218,   R8A7795_CLK_S0D3),
+>         DEF_MOD("sys-dmac0",             219,   R8A7795_CLK_S0D3),
+> +       DEF_MOD("ccree",                 229,   R8A7795_CLK_S3D2),
+
+I don't know if "ccree" is the proper name for this clock, as there
+may be multiple
+instances.
+I also can't verify the parent clock.
+
+>         DEF_MOD("cmt3",                  300,   R8A7795_CLK_R),
+>         DEF_MOD("cmt2",                  301,   R8A7795_CLK_R),
+>         DEF_MOD("cmt1",                  302,   R8A7795_CLK_R),
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
