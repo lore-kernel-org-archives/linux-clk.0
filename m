@@ -1,85 +1,56 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
+Return-Path: <leo.yan@linaro.org>
+Return-Path: <leo.yan@linaro.org>
+From: Leo Yan <leo.yan@linaro.org>
+To: Wei Xu <xuwei5@hisilicon.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 22/26] arm64: dts: allwinner: a64: nanopi-a64: Enable HDMI output
-Date: Fri, 18 May 2018 15:15:32 +0530
-Message-Id: <20180518094536.17201-23-jagan@amarulasolutions.com>
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+	linux-clk@vger.kernel.org
+Cc: Kaihua Zhong <zhongkaihua@huawei.com>,
+	Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 2/5] arm64: dts: hi3660: Add stub clock node
+Date: Tue, 15 May 2018 10:53:12 +0800
+Message-Id: <1526352795-6991-3-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+References: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable HDMI output on nanopi-a64 board.
+From: Kaihua Zhong <zhongkaihua@huawei.com>
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Add stub clock node for hi3660 platform.
+
+Reviewed-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Kaihua Zhong <zhongkaihua@huawei.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
-Changes for v2:
-- none
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
- .../boot/dts/allwinner/sun50i-a64-nanopi-a64.dts   | 26 ++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index e2dce48fa29a..19fe7eed45e9 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -57,6 +57,21 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index b9e7c91..3a3bcff 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -282,6 +282,13 @@
+ 			#mbox-cells = <3>;
+ 		};
+ 
++		stub_clock: stub_clock@e896b500 {
++			compatible = "hisilicon,hi3660-stub-clk";
++			reg = <0x0 0xe896b500 0x0 0x0100>;
++			#clock-cells = <1>;
++			mboxes = <&mailbox 13 3 0>;
 +		};
-+	};
-+};
 +
-+&de {
-+	status = "okay";
- };
- 
- &ehci0 {
-@@ -67,6 +82,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- /* i2c1 connected with gpio headers like pine64, bananapi */
- &i2c1 {
- 	pinctrl-names = "default";
+ 		dual_timer0: timer@fff14000 {
+ 			compatible = "arm,sp804", "arm,primecell";
+ 			reg = <0x0 0xfff14000 0x0 0x1000>;
 -- 
-2.14.3
+1.9.1
