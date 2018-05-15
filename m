@@ -1,54 +1,103 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Fri, 25 May 2018 08:08:25 +0300
-To: Mark Brown <broonie@kernel.org>
-Cc: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"lee.jones@linaro.org" <lee.jones@linaro.org>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
-	"Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
-Subject: Re: [PATCH 8/9] regulator: bd71837: BD71837 PMIC regulator driver
-Message-ID: <20180525050825.GA16888@localhost.localdomain>
-References: <20180524060036.GI4249@localhost.localdomain>
- <20180524141427.GU4828@sirena.org.uk>
- <042F8805D2046347BB8420BEAE397A4016C06B60@WILL-MAIL002.REu.RohmEu.com>
- <20180524175940.GC4828@sirena.org.uk>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Tue, 15 May 2018 13:19:38 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
+Message-ID: <20180515111938.ia6jttqijj2erxy4@flea>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-10-jagan@amarulasolutions.com>
+ <20180502113413.vv2r3ubfoh7gm3ms@flea>
+ <CAMty3ZBheurXewQ8R53G_0gNLgv1jQkZbjAbaN30JQ6_ZVn7Eg@mail.gmail.com>
+ <20180514084050.ix5corfuvx33gsyn@flea>
+ <CAMty3ZDCubM2sLBfNVar-kA9djZ8PJDQJOS0Jwi6wWNVeK9mCg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180524175940.GC4828@sirena.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="v7lac66a75aajndc"
+In-Reply-To: <CAMty3ZDCubM2sLBfNVar-kA9djZ8PJDQJOS0Jwi6wWNVeK9mCg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 24, 2018 at 06:59:40PM +0100, Mark Brown wrote:
-> On Thu, May 24, 2018 at 05:51:27PM +0000, Vaittinen, Matti wrote:
-> 
-> > > what is the lock doing and what is this wrapper function intended to do?
-> 
-> > This was the other spot which I was unsure how to handle. Datasheet for
-> > the chip says that if voltage is to be changed, the regulator must be
-> > disabled. Thus my voltage changing function checks if regulator is enabled
-> 
-> Ugh, this chip is not very good is it?
-I am not the correct guy to judge that as I don't have too wide
-experience on PMICs. (This is first PMIC I have been working with).
-Probably this chip has some other advantages and is thus used.
 
->  Don't bounce the supply to
-> change the voltage silently, that's clearly a bad idea - the devices
-> using the supply are going to get very upset when the power gets removed
-> just because they changed the voltage.  Instead implement a custom set
-> operation that returns an error if the user attempts to change the
-> voltage while the regualtor is enabled.
+--v7lac66a75aajndc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Makes perfect sense. I will change the operation to this.
+On Mon, May 14, 2018 at 04:01:15PM +0530, Jagan Teki wrote:
+> On Mon, May 14, 2018 at 2:10 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Mon, May 14, 2018 at 02:03:36PM +0530, Jagan Teki wrote:
+> >> On Wed, May 2, 2018 at 5:04 PM, Maxime Ripard <maxime.ripard@bootlin.c=
+om> wrote:
+> >> > Hi,
+> >> >
+> >> > On Mon, Apr 30, 2018 at 05:10:46PM +0530, Jagan Teki wrote:
+> >> >> +             hdmi_phy: hdmi-phy@1ef0000 {
+> >> >> +                     compatible =3D "allwinner,sun50i-a64-hdmi-phy=
+",
+> >> >> +                                  "allwinner,sun8i-h3-hdmi-phy";
+> >> >> +                     reg =3D <0x01ef0000 0x10000>;
+> >> >> +                     clocks =3D <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDM=
+I_DDC>,
+> >> >> +                              <&ccu CLK_PLL_VIDEO1>;
+> >> >
+> >> > You were discussing that the PLL0 could also be used to clock the PH=
+Y,
+> >> > has that been figured out?
+> >>
+> >> This is what I understand from Fig: 3-3. Module Clock Diagram, both
+> >> tcon0 and tcon1 are using HDMI. I'm thinking based on the tcon
+> >> configuration we need use proper PLL or some logic to get common PLL
+> >> don't know yet. Since this series adding tcon1 I've attached PLL1.
+> >
+> > You're not describing the TCON node here though, but the HDMI one, and
+> > the HDMI block is listed in both the PLL video 0 and 1.
+>=20
+> So how can we attach particular PLL with particular HDMI(PLL0 to HDMI0
+> and so-on) or do we need to attached both the PLL's any suggestion?
 
-Br,
-    Matti Vaittinen
+I'm not sure what your question is here, just add the possibility to
+have an extra PLL if that makes sense to the binding.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--v7lac66a75aajndc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr6wkkACgkQ0rTAlCFN
+r3Tqag//dbQV1Oc4D43SXUZCymqniRo2QM1sWnt+4qbax7rh2BKJcBnV/Ue0qn07
+OqfqRQ1OygMr92fmd8F9VbWqWvp5ehgi28/SWnGjoJvwwzuapeE5BhZKN/BLCMM6
+JCFLNivGVeyo3EgSc7p0rzx8gFRrV9OOXfk1RBnWCDM24ep7o/SamrzVYEvZONHS
+5ryhl5xMNo48qt62codvMpsSW5Yoymsq45rQRHVqfs08TaVKXbcGOgUSdMlZPpou
+ZT0irqRYa2H1Dl6L/p5K0SG2xZhwrd3dHgpeNquI/hRC5CHKKVeYRCiDQ8OfP5c1
+cYAk1dMVixaoKGFac/fqW7Tw9n7p1ARDeW047eyPhM05105ovUwIXiDA8sTpIkzS
+WYuvrKI1x1rvc8krGTcT8BW9RRes9X0YAoymyjpAFdKAqWiLGdr04sBA2Jx4bTOh
+bGH3Tao4Ze7/HyDUdw1VWAgwzw0NJei8wlKrIg68BKlPAGEu1kCNDk7LfVHq1J1V
+aaw7WFtTNxQdEedWQVEotOeS+AasRYWva7e3zjxU3MT7taJPsifSiEMZlvRtspRP
+CYR06sUect1a7gYb3DnvZusXtSkOaoqxwsdTIUQU0IBvW15mrGpH5vN4DgEbohgY
+JPZtUCvBmHLYBk0FgPgtqQhxfVBb+3qnuFQDWNMqC72gMsbakgY=
+=qgzn
+-----END PGP SIGNATURE-----
+
+--v7lac66a75aajndc--
