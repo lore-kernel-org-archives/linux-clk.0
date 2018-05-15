@@ -1,34 +1,49 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Anson Huang <Anson.Huang@nxp.com>, fabio.estevam@nxp.com,
- kernel@pengutronix.de, mark.rutland@arm.com, mturquette@baylibre.com,
- robh+dt@kernel.org, shawnguo@kernel.org, shengjiu.wang@nxp.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1524209891-14146-1-git-send-email-Anson.Huang@nxp.com>
-Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <1524209891-14146-1-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <152548903523.138124.11755955848234075756@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH V3 1/2] clk: imx6sx: add missing lvds2 clock to the clock tree
-Date: Fri, 04 May 2018 19:57:15 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35001 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751149AbeEOQg7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 May 2018 12:36:59 -0400
+Received: by mail-wr0-f193.google.com with SMTP id i14-v6so831996wre.2
+        for <linux-clk@vger.kernel.org>; Tue, 15 May 2018 09:36:58 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] clk: meson: mpll: add round closest support
+Date: Tue, 15 May 2018 18:36:50 +0200
+Message-Id: <20180515163652.19980-1-jbrunet@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Anson Huang (2018-04-20 00:38:10)
-> i.MX6SX has lvds2 (analog clock2), an I/O clock like lvds1.
-> And this lvds2, along with lvds1, can be used to provide
-> external clock source to the internal pll, such as pll4_audio
-> and pll5_video.
-> =
+ATM, the mpll driver can only round the requested rate down, even if
+rounding up would have provided a better approximation of the requested
+rate.
 
-> This patch mainly adds the lvds2 to the clock tree and fix its
-> relationship with pll accordingly.
-> =
+This patchset adds a flag to enable rounding to the closest rate possible,
+even if it means rounding up.
 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
+The flag is then enabled on the axg platform to improve the rates provided
+to the audio subsystem.
 
-Applied to clk-next
+Changes since v1: [0]
+ * Fix an error in calculation while rounding the rate down
+   (Thanks Martin for reporting it)
+
+[0]: https://lkml.kernel.org/r/20180420095603.29964-1-jbrunet@baylibre.com
+
+Jerome Brunet (2):
+  clk: meson: mpll: add round closest support
+  clk: meson: axg: let mpll clocks round closest
+
+ drivers/clk/meson/axg.c      |  4 ++++
+ drivers/clk/meson/clk-mpll.c | 24 +++++++++++++++++++-----
+ drivers/clk/meson/clkc.h     |  3 +++
+ 3 files changed, 26 insertions(+), 5 deletions(-)
+
+-- 
+2.14.3
+
