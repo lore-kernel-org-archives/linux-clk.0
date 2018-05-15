@@ -1,67 +1,60 @@
-Return-Path: <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 05/61] clk: samsung: simplify getting .drvdata
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Krzysztof
-	Kozlowski <krzk@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo
-	Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <93ee0d94-81aa-db81-2bff-87f5f91bc9d3@samsung.com>
-Date: Tue, 15 May 2018 11:32:12 +0200
-MIME-version: 1.0
-In-reply-to: <20180419140641.27926-6-wsa+renesas@sang-engineering.com>
-Content-type: text/plain; charset="utf-8"
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-	<20180419140641.27926-6-wsa+renesas@sang-engineering.com>
-	<CGME20180515093219epcas1p28a5fa4be53b9ea0fd85e4726cf92f804@epcas1p2.samsung.com>
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v7 02/14] clk: qcom: Make clk_alpha_pll_configure available to modules
+Date: Tue, 15 May 2018 12:13:24 +0300
+Message-Id: <1526375616-16904-3-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 04/19/2018 04:05 PM, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Allow clk_alpha_pll_configure to be called from loadable
+kernel modules.
 
-It seems to be the only clk/samsung patch in the v4.18 queue, please
-feel free to apply it directly.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> index 077df3e539a7..f41d89cef0f1 100644
-> --- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-> +++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-> @@ -219,8 +219,7 @@ static int s3c24xx_dclk1_div_notify(struct notifier_block *nb,
->  #ifdef CONFIG_PM_SLEEP
->  static int s3c24xx_dclk_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
-> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
->  
->  	s3c24xx_dclk->reg_save = readl_relaxed(s3c24xx_dclk->base);
->  	return 0;
-> @@ -228,8 +227,7 @@ static int s3c24xx_dclk_suspend(struct device *dev)
->  
->  static int s3c24xx_dclk_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct s3c24xx_dclk *s3c24xx_dclk = platform_get_drvdata(pdev);
-> +	struct s3c24xx_dclk *s3c24xx_dclk = dev_get_drvdata(dev);
->  
->  	writel_relaxed(s3c24xx_dclk->reg_save, s3c24xx_dclk->base);
->  	return 0;
-
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 9722b70..57f2084 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -228,6 +228,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	if (pll->flags & SUPPORTS_FSM_MODE)
+ 		qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
+ }
++EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
+ 
+ static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+ {
 -- 
-Regards,
-Sylwester
+1.9.1
