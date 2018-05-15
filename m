@@ -1,190 +1,346 @@
-Return-Path: <mchehab+samsung@kernel.org>
-Date: Wed, 9 May 2018 15:20:45 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho
- Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan
- Corbet <corbet@lwn.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob
- Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus
- Walleij <linus.walleij@linaro.org>, Ananth N Mavinakayanahalli
- <ananth@linux.vnet.ibm.com>, Anil S Keshavamurthy
- <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Poirier
- <mathieu.poirier@linaro.org>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Harry Wei <harryxiyou@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michal Simek
- <monstr@monstr.eu>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger
- <richard@nod.at>, Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
- <hpa@zytor.com>, x86@kernel.org, Chris Zankel <chris@zankel.net>, Max
- Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>, David Howells
- <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, Herbert Xu
- <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie
- <airlied@linux.ie>, Gustavo Padovan <gustavo@padovan.org>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul
- <seanpaul@chromium.org>, Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
- Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>, Kent
- Overstreet <kent.overstreet@gmail.com>, Malcolm Priestley
- <tvboxspy@gmail.com>, Antoine Jacquet <royale@zerezo.com>, Sudip Mukherjee
- <sudipm.mukherjee@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, "Paul
- E. McKenney" <paulmck@linux.vnet.ibm.com>, Josh Triplett
- <josh@joshtriplett.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross
- <jgross@suse.com>, Li Zefan <lizefan@huawei.com>, Paul Moore
- <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris
- <eparis@parisplace.org>, James Morris <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
- <tiwai@suse.com>, Alan Stern <stern@rowland.harvard.edu>, Peter Zijlstra
- <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin
- <npiggin@gmail.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget
- <luc.maranget@inria.fr>, Akira Yokosawa <akiyks@gmail.com>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@redhat.com>, Namhyung
- Kim <namhyung@kernel.org>, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@zh-kernel.org,
- user-mode-linux-devel@lists.sourceforge.net,
- user-mode-linux-user@lists.sourceforge.net, linux-xtensa@linux-xtensa.org,
- linux-block@vger.kernel.org, keyrings@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org, patches@opensource.cirrus.com,
- linux-bcache@vger.kernel.org, linux-usb@vger.kernel.org,
- devel@driverdev.osuosl.org, xen-devel@lists.xenproject.org,
- cgroups@vger.kernel.org, selinux@tycho.nsa.gov,
- linux-security-module@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
-Message-ID: <20180509152045.722f0c51@vento.lan>
-In-Reply-To: <20180509171501.GA17405@andrea>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
-	<e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-	<20180509171501.GA17405@andrea>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v7 11/14] dt: qcom: Add SAW regulator for 8x96 CPUs
+Date: Tue, 15 May 2018 12:13:33 +0300
+Message-Id: <1526375616-16904-12-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Em Wed, 9 May 2018 19:15:01 +0200
-Andrea Parri <parri.andrea@gmail.com> escreveu:
+1. Add syscon node for the SAW CPU registers
+2. Add SAW regulators gang definition for s8-s11
+3. Add voltages to the OPP tables
+4. Add the s11 SAW regulator as CPU regulator
 
-> On Wed, May 09, 2018 at 10:18:52AM -0300, Mauro Carvalho Chehab wrote:
-> > As we move stuff around, some doc references are broken. Fix some of
-> > them via this script:
-> > 	./scripts/documentation-file-ref-check --fix-rst
-> > 
-> > Manually checked if the produced result is valid, removing a few
-> > false-positives.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
-> 
-> Thank you again for doing this,
-> 
-> 
-> > ---
-> >  .../admin-guide/kernel-parameters.txt         |  4 ++--
-> >  .../bindings/input/rotary-encoder.txt         |  2 +-
-> >  Documentation/driver-api/gpio/consumer.rst    |  2 +-
-> >  Documentation/kprobes.txt                     |  4 ++--
-> >  Documentation/trace/coresight.txt             |  2 +-
-> >  Documentation/trace/events.rst                |  2 +-
-> >  Documentation/trace/ftrace-uses.rst           |  2 +-
-> >  Documentation/trace/histogram.txt             |  2 +-
-> >  Documentation/trace/intel_th.rst              |  2 +-
-> >  Documentation/trace/tracepoint-analysis.rst   |  6 +++---
-> >  Documentation/translations/ja_JP/howto.rst    |  4 ++--
-> >  .../translations/zh_CN/magic-number.txt       |  4 ++--
-> >  .../zh_CN/video4linux/omap3isp.txt            |  4 ++--
-> >  MAINTAINERS                                   | 20 +++++++++----------
-> >  arch/Kconfig                                  |  2 +-
-> >  arch/arm/include/asm/cacheflush.h             |  2 +-
-> >  arch/arm64/include/asm/cacheflush.h           |  2 +-
-> >  arch/microblaze/include/asm/cacheflush.h      |  2 +-
-> >  arch/um/Kconfig.um                            |  2 +-
-> >  arch/unicore32/include/asm/cacheflush.h       |  2 +-
-> >  arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
-> >  arch/xtensa/include/asm/cacheflush.h          |  4 ++--
-> >  block/Kconfig                                 |  2 +-
-> >  certs/Kconfig                                 |  2 +-
-> >  crypto/asymmetric_keys/asymmetric_type.c      |  2 +-
-> >  crypto/asymmetric_keys/signature.c            |  2 +-
-> >  drivers/char/Kconfig                          |  2 +-
-> >  drivers/clk/clk.c                             |  4 ++--
-> >  drivers/clk/ingenic/cgu.h                     |  2 +-
-> >  drivers/gpu/vga/Kconfig                       |  2 +-
-> >  drivers/gpu/vga/vgaarb.c                      |  2 +-
-> >  drivers/input/joystick/Kconfig                | 10 +++++-----
-> >  drivers/input/joystick/iforce/Kconfig         |  2 +-
-> >  drivers/input/joystick/walkera0701.c          |  2 +-
-> >  drivers/input/misc/Kconfig                    |  4 ++--
-> >  drivers/input/misc/rotary_encoder.c           |  2 +-
-> >  drivers/input/mouse/Kconfig                   |  6 +++---
-> >  drivers/input/mouse/alps.c                    |  2 +-
-> >  drivers/input/touchscreen/wm97xx-core.c       |  2 +-
-> >  drivers/lightnvm/pblk-rb.c                    |  2 +-
-> >  drivers/md/bcache/Kconfig                     |  2 +-
-> >  drivers/md/bcache/btree.c                     |  2 +-
-> >  drivers/md/bcache/extents.c                   |  2 +-
-> >  drivers/media/dvb-core/dvb_ringbuffer.c       |  2 +-
-> >  drivers/media/pci/meye/Kconfig                |  2 +-
-> >  drivers/media/platform/pxa_camera.c           |  4 ++--
-> >  .../soc_camera/sh_mobile_ceu_camera.c         |  2 +-
-> >  drivers/media/radio/Kconfig                   |  2 +-
-> >  drivers/media/radio/si470x/Kconfig            |  2 +-
-> >  drivers/media/usb/dvb-usb-v2/lmedm04.c        |  2 +-
-> >  drivers/media/usb/zr364xx/Kconfig             |  2 +-
-> >  drivers/parport/Kconfig                       |  6 +++---
-> >  drivers/staging/media/bcm2048/TODO            |  2 +-
-> >  include/keys/asymmetric-subtype.h             |  2 +-
-> >  include/keys/asymmetric-type.h                |  2 +-
-> >  include/linux/assoc_array.h                   |  2 +-
-> >  include/linux/assoc_array_priv.h              |  2 +-
-> >  include/linux/circ_buf.h                      |  2 +-
-> >  include/linux/ftrace.h                        |  2 +-
-> >  include/linux/rculist_nulls.h                 |  2 +-
-> >  include/uapi/linux/prctl.h                    |  2 +-
-> >  include/xen/interface/io/kbdif.h              |  2 +-
-> >  kernel/cgroup/cpuset.c                        |  2 +-
-> >  kernel/trace/Kconfig                          | 16 +++++++--------
-> >  lib/Kconfig                                   |  2 +-
-> >  security/selinux/hooks.c                      |  2 +-
-> >  sound/core/Kconfig                            |  4 ++--
-> >  sound/drivers/Kconfig                         |  4 ++--
-> >  sound/pci/Kconfig                             | 10 +++++-----
-> >  tools/include/uapi/linux/prctl.h              |  2 +-
-> >  tools/lib/api/fs/fs.c                         |  2 +-
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 75 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
-
-> >  tools/memory-model/README                     | 10 +++++-----  
-> 
-> As mentioned in the previous thread, I am for keeping the current
-> references: the REAMDE is listing the doc files, as well as other
-> files in tools/memory-model/, relatively to that directory.
-
-Yeah, at least this hunk deserves some rework, as now some
-references are Documentation/.../foo, while others are just
-bar.
-
-As on (almost) all other places (except for tools/memory-model/README),
-the references are always from the main directory, I would make all
-patches there also relative to main dir. If you're afraid of
-not being too clearer, we could prefix all of them with something
-like:
-
-	${LINUX}/tools/memory-model/...
-
-just like some DT binding files do:
-
-	Documentation/devicetree/bindings/sound/audio-graph-card.txt:see ${LINUX}/Documentation/devicetree/bindings/graph.txt
-
-A bonus of doing that is that the broken reference detect script can
-keep parsing it without changes (well, it wouldn't be hard to make
-it also accept a relative file, but doing that just due to 
-tools/memory-model/README seems overkill).
-
-Another advantage is that it would allow to easily add references
-there from the main kernel Documentation, if needed in the future,
-without messing with local x non-local relative namespace.
-
-Regards,
-Mauro
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index e6cf290..d7adef9 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -15,6 +15,7 @@
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/thermal/thermal.h>
++#include <dt-bindings/spmi/spmi.h>
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. MSM8996";
+@@ -99,6 +100,7 @@
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 0>;
++			cpu-supply = <&pm8994_s11_saw>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+@@ -114,6 +116,7 @@
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 0>;
++			cpu-supply = <&pm8994_s11_saw>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+@@ -125,6 +128,7 @@
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 1>;
++			cpu-supply = <&pm8994_s11_saw>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+@@ -140,6 +144,7 @@
+ 			reg = <0x0 0x101>;
+ 			enable-method = "psci";
+ 			clocks = <&kryocc 1>;
++			cpu-supply = <&pm8994_s11_saw>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+@@ -174,66 +179,82 @@
+ 
+ 		opp-307200000 {
+ 			opp-hz = /bits/ 64 <307200000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-422400000 {
+ 			opp-hz = /bits/ 64 <422400000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <480000000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <556800000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <652800000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <729600000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-844800000 {
+ 			opp-hz = /bits/ 64 <844800000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-960000000 {
+ 			opp-hz = /bits/ 64 <960000000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 <1036800000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 <1113600000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 <1190400000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1228800000 {
+ 			opp-hz = /bits/ 64 <1228800000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 <1324800000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 <1401600000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 <1478400000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1593600000 {
+ 			opp-hz = /bits/ 64 <1593600000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 	};
+@@ -244,102 +265,127 @@
+ 
+ 		opp-307200000 {
+ 			opp-hz = /bits/ 64 <307200000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-403200000 {
+ 			opp-hz = /bits/ 64 <403200000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <480000000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <556800000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <652800000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <729600000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-806400000 {
+ 			opp-hz = /bits/ 64 <806400000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-883200000 {
+ 			opp-hz = /bits/ 64 <883200000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-940800000 {
+ 			opp-hz = /bits/ 64 <940800000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 <1036800000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 <1113600000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 <1190400000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1248000000 {
+ 			opp-hz = /bits/ 64 <1248000000>;
++			opp-microvolt = <905000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 <1324800000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 <1401600000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 <1478400000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1555200000 {
+ 			opp-hz = /bits/ 64 <1555200000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1632000000 {
+ 			opp-hz = /bits/ 64 <1632000000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1708800000 {
+ 			opp-hz = /bits/ 64 <1708800000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1785600000 {
+ 			opp-hz = /bits/ 64 <1785600000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1824000000 {
+ 			opp-hz = /bits/ 64 <1824000000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1920000000 {
+ 			opp-hz = /bits/ 64 <1920000000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1996800000 {
+ 			opp-hz = /bits/ 64 <1996800000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-2073600000 {
+ 			opp-hz = /bits/ 64 <2073600000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-2150400000 {
+ 			opp-hz = /bits/ 64 <2150400000>;
++			opp-microvolt = <1140000 905000 1140000>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 	};
+@@ -656,6 +702,10 @@
+ 			#mbox-cells = <1>;
+ 		};
+ 
++		saw3: syscon@9A10000 {
++			compatible = "syscon";
++			reg = <0x9A10000 0x1000>;
++		};
+ 		gcc: clock-controller@300000 {
+ 			compatible = "qcom,gcc-msm8996";
+ 			#clock-cells = <1>;
+@@ -882,6 +932,31 @@
+ 			#size-cells = <0>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <4>;
++			pmic@1 {
++				compatible = "qcom,pm8994", "qcom,spmi-pmic";
++				reg = <0x1 SPMI_USID>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				spm-regulators {
++					compatible = "qcom,pm8994-regulators";
++					qcom,saw-reg = <&saw3>;
++					s8 {
++						qcom,saw-slave;
++					};
++					s9 {
++						qcom,saw-slave;
++					};
++					s10 {
++						qcom,saw-slave;
++					};
++					pm8994_s11_saw: s11 {
++						qcom,saw-leader;
++						regulator-always-on;
++						regulator-min-microvolt = <905000>;
++						regulator-max-microvolt = <1140000>;
++					};
++				};
++			};
+ 		};
+ 
+ 		mmcc: clock-controller@8c0000 {
+-- 
+1.9.1
