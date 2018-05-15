@@ -1,66 +1,61 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v2 1/2] clk: davinci: pll-dm355: fix SYSCLKn parent names
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-kernel@vger.kernel.org>
-References: <20180507144307.32364-1-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <5805f462-0cb5-3024-f5af-941db8a46895@ti.com>
-Date: Mon, 7 May 2018 20:51:14 +0530
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v10 02/27] clk: davinci: da850-pll: change PLL0 to
+ CLK_OF_DECLARE
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <20180509172606.29387-1-david@lechnology.com>
+ <20180509172606.29387-3-david@lechnology.com>
+ <9203489d-0a5a-103a-67ea-d3e89bb7ebc4@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <88dec9b1-5f4d-a1ac-2b63-b30ae7665851@lechnology.com>
+Date: Tue, 15 May 2018 10:42:54 -0500
 MIME-Version: 1.0
-In-Reply-To: <20180507144307.32364-1-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <9203489d-0a5a-103a-67ea-d3e89bb7ebc4@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 07 May 2018 08:13 PM, David Lechner wrote:
-> This fixes the parent clock names of the SYSCLKn clocks for the DM355
-> SoC in the TI DaVinici PLL clock driver.
-> 
-> It appears that this name just didn't get updated to the correct name
-> like the other SoCs during the driver's development.
-> 
-> Reported-by: Sekhar Nori <nsekhar@ti.com>
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
-> 
-> v2 changes:
-> - add second patch to fix additional problems with DM355
-> 
->  drivers/clk/davinci/pll-dm355.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
-> index 5345f8286c50..1f746d2fc894 100644
-> --- a/drivers/clk/davinci/pll-dm355.c
-> +++ b/drivers/clk/davinci/pll-dm355.c
-> @@ -22,10 +22,10 @@ static const struct davinci_pll_clk_info dm355_pll1_info = {
->  		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
->  };
->  
-> -SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-> -SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-> -SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED);
-> -SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED);
-> +SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-> +SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-> +SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-> +SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
->  
->  int dm355_pll1_init(struct device *dev, void __iomem *base)
->  {
-> @@ -62,8 +62,8 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
->  		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
->  };
->  
-> -SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
-> -SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-> +SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV);
-> +SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+On 05/15/2018 08:31 AM, Sekhar Nori wrote:
+> On Wednesday 09 May 2018 10:55 PM, David Lechner wrote:
+>> +void of_da850_pll0_init(struct device_node *node)
+>>   {
+>> -	return of_davinci_pll_init(dev, dev->of_node, &da850_pll0_info,
+>> -				   &da850_pll0_obsclk_info,
+>> -				   da850_pll0_sysclk_info, 7, base, cfgchip);
+>> +	void __iomem *base;
+>> +	struct regmap *cfgchip;
+>> +
+>> +	base = of_iomap(node, 0);
+>> +	if (!base) {
+>> +		pr_err("%s: ioremap failed\n", __func__);
+>> +		return;
+>> +	}
+>> +
+>> +	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
 
-Good find with PLL2 SYSCLK2. Can you reverse the patch order so we are
-not fixing up a non-existent clock?
+In your previous review, you pointed out that the error did not need to
+be handled here because it is handled later in davinci_pll_clk_register().
 
-Thanks,
-Sekhar
+We get a warning there because cfgchip is only needed for unlocking the
+PLL for CPU frequency scaling and is not critical for operation of the
+clocks.
+
+> 
+> It will be nice to handle the error case here.
+> 
+>> +
+>> +	of_davinci_pll_init(NULL, node, &da850_pll0_info,
+>> +			    &da850_pll0_obsclk_info,
+>> +			    da850_pll0_sysclk_info, 7, base, cfgchip);
+> 
+> Apart from that, it looks good to me.
+> 
+> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+> 
+> Thanks,
+> Sekhar
+> 
