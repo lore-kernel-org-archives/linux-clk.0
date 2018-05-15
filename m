@@ -1,56 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54891 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752374AbeEGQWh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 May 2018 12:22:37 -0400
-Received: by mail-wm0-f67.google.com with SMTP id f6so14342184wmc.4
-        for <linux-clk@vger.kernel.org>; Mon, 07 May 2018 09:22:37 -0700 (PDT)
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        Rui Miguel Silva <rui.silva@linaro.org>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v3 04/14] clk: imx7d: reset parent for mipi csi root
-Date: Mon,  7 May 2018 17:21:42 +0100
-Message-Id: <20180507162152.2545-5-rui.silva@linaro.org>
-In-Reply-To: <20180507162152.2545-1-rui.silva@linaro.org>
-References: <20180507162152.2545-1-rui.silva@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <suzuki.katsuhiro@socionext.com>
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+	Jassi Brar <jaswinder.singh@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH RESEND] clk: uniphier: add LD11/LD20 stream demux system clock
+Date: Tue, 15 May 2018 11:14:16 +0900
+Message-Id: <20180515021416.31760-1-suzuki.katsuhiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-To guarantee that we do not get Overflow in image FIFO the outer bandwidth has
-to be faster than inputer bandwidth. For that it must be possible to set a
-faster frequency clock. So set new parent to sys_pfd3 clock for the mipi csi
-block.
+Add clock for MPEG2 transport stream I/O and demux system (HSC) on
+UniPhier LD11/LD20 SoCs.
 
-Cc: linux-clk@vger.kernel.org
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/clk/imx/clk-imx7d.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/uniphier/clk-uniphier-sys.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index f7f4db2e6fa6..27877d05faa2 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -891,6 +891,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
- 	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
+diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+index ebc78ab2df05..4f5ff9fa11fd 100644
+--- a/drivers/clk/uniphier/clk-uniphier-sys.c
++++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+@@ -51,6 +51,9 @@
+ #define UNIPHIER_LD11_SYS_CLK_STDMAC(idx)				\
+ 	UNIPHIER_CLK_GATE("stdmac", (idx), NULL, 0x210c, 8)
  
-+	clk_set_parent(clks[IMX7D_MIPI_CSI_ROOT_SRC], clks[IMX7D_PLL_SYS_PFD3_CLK]);
++#define UNIPHIER_LD11_SYS_CLK_HSC(idx)					\
++	UNIPHIER_CLK_GATE("hsc", (idx), NULL, 0x210c, 9)
 +
- 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
- 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+ #define UNIPHIER_PRO4_SYS_CLK_GIO(idx)					\
+ 	UNIPHIER_CLK_GATE("gio", (idx), NULL, 0x2104, 6)
  
+@@ -182,6 +185,7 @@ const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
+ 	/* Index 5 reserved for eMMC PHY */
+ 	UNIPHIER_LD11_SYS_CLK_ETHER(6),
+ 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC, MIO */
++	UNIPHIER_LD11_SYS_CLK_HSC(9),
+ 	UNIPHIER_CLK_FACTOR("usb2", -1, "ref", 24, 25),
+ 	UNIPHIER_LD11_SYS_CLK_AIO(40),
+ 	UNIPHIER_LD11_SYS_CLK_EVEA(41),
+@@ -215,6 +219,7 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
+ 	UNIPHIER_LD20_SYS_CLK_SD,
+ 	UNIPHIER_LD11_SYS_CLK_ETHER(6),
+ 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC */
++	UNIPHIER_LD11_SYS_CLK_HSC(9),
+ 	/* GIO is always clock-enabled: no function for 0x210c bit5 */
+ 	/*
+ 	 * clock for USB Link is enabled by the logic "OR" of bit 14 and bit 15.
 -- 
 2.17.0
-
