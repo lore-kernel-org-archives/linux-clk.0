@@ -1,38 +1,44 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 13/33] clk: rockchip: use match_string() helper
-Date: Tue, 22 May 2018 15:56:01 +0200
-Message-ID: <3184431.yyZBj8V0y7@phil>
-In-Reply-To: <1526903890-35761-14-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-14-git-send-email-xieyisheng1@huawei.com>
+Return-Path: <Akshu.Agrawal@amd.com>
+Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com, mturquette@baylibre.com,
+ sboyd@kernel.org, christian.koenig@amd.com, airlied@redhat.com,
+ Shaoyun.Liu@amd.com, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+ <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
+ <20362702.FCbsg9xPKv@aspire.rjw.lan>
+From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
+Message-ID: <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com>
+Date: Tue, 15 May 2018 15:09:08 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20362702.FCbsg9xPKv@aspire.rjw.lan>
+Content-Type: text/plain; charset=utf-8
+Return-Path: Akshu.Agrawal@amd.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, 21. Mai 2018, 13:57:50 CEST schrieb Yisheng Xie:
-> match_string() returns the index of an array for a matching string,
-> which can be used intead of open coded variant.
+
+
+On 5/15/2018 3:02 PM, Rafael J. Wysocki wrote:
+> On Wednesday, May 9, 2018 11:59:00 AM CEST Akshu Agrawal wrote:
+>> Stoney SoC provides oscout clock. This clock can support 25Mhz and
+>> 48Mhz of frequency.
+>> The clock is available for general system use.
+>>
+>> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 > 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-rockchip@lists.infradead.org
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> I'm not sure if the Stephen Boyd's comments on one of the previous
+> versions of this patch have been addressed.  Have they?
+> 
+> In any case, if I'm expected to take this, I need an ACK from Stephen on it.
+> 
+> Thanks,
+> Rafael
+> 
 
-> @@ -312,6 +304,8 @@ static struct clk *rockchip_clk_register_frac_branch(
->  
->  		/* notifier on the fraction divider to catch rate changes */
->  		if (frac->mux_frac_idx >= 0) {
-> +			pr_debug("%s: find fractional parent in mux at pos %d\n",
-> +				 __func__, frac->mux_frac_idx);
+All comments of Stephen Boyd and Daniel Kurtz have been addressed.
 
-applied to my Rockchip clk branch for 4.18 after changing the "find" above
-to "found" again ;-) .
+Stephen, if you are Ok with this can you please ACK it.
 
-
-Thanks for the nice cleanup
-Heiko
+Thanks,
+Akshu
