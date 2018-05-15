@@ -1,54 +1,57 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 18 May 2018 09:26:39 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-	viresh.kumar@linaro.org, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v8 11/15] dt-bindings: cpufreq: Document
- operating-points-v2-kryo-cpu
-Message-ID: <20180518142639.GA3877@rob-hp-laptop>
-References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
- <1526555955-29960-12-git-send-email-ilialin@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526555955-29960-12-git-send-email-ilialin@codeaurora.org>
+To: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com>
+Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com, mturquette@baylibre.com,
+ christian.koenig@amd.com, airlied@redhat.com, Shaoyun.Liu@amd.com,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, lenb@kernel.org,
+ linux-acpi@vger.kernel.org
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+ <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
+ <20362702.FCbsg9xPKv@aspire.rjw.lan>
+ <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com>
+Message-ID: <152641886428.237094.9491189918943948420@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
+Date: Tue, 15 May 2018 14:14:24 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 17, 2018 at 02:19:11PM +0300, Ilia Lin wrote:
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
-> 
-> This change adds documentation for the DT bindings.
-> The "operating-points-v2-kryo-cpu" DT extends the "operating-points-v2"
-> with following parameters:
-> - nvmem-cells (NVMEM area containig the speedbin information)
-> - opp-supported-hw: A single 32 bit bitmap value,
->   representing compatible HW:
-> 			0:	MSM8996 V3, speedbin 0
-> 			1:	MSM8996 V3, speedbin 1
-> 			2:	MSM8996 V3, speedbin 2
-> 			3:	unused
-> 			4:	MSM8996 SG, speedbin 0
-> 			5:	MSM8996 SG, speedbin 1
-> 			6:	MSM8996 SG, speedbin 2
-> 			7-31:	unused
-> 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
->  1 file changed, 680 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+Quoting Agrawal, Akshu (2018-05-15 02:39:08)
+> =
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> =
+
+> On 5/15/2018 3:02 PM, Rafael J. Wysocki wrote:
+> > On Wednesday, May 9, 2018 11:59:00 AM CEST Akshu Agrawal wrote:
+> >> Stoney SoC provides oscout clock. This clock can support 25Mhz and
+> >> 48Mhz of frequency.
+> >> The clock is available for general system use.
+> >>
+> >> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+> > =
+
+> > I'm not sure if the Stephen Boyd's comments on one of the previous
+> > versions of this patch have been addressed.  Have they?
+> > =
+
+> > In any case, if I'm expected to take this, I need an ACK from Stephen o=
+n it.
+> > =
+
+> > Thanks,
+> > Rafael
+> > =
+
+> =
+
+> All comments of Stephen Boyd and Daniel Kurtz have been addressed.
+> =
+
+> Stephen, if you are Ok with this can you please ACK it.
+> =
+
+
+It could go via clk tree and meet up with the acpi patch in -next right?
+I'm fine with it going through acpi path though so whichever way works.
