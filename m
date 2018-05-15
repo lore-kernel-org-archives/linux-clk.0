@@ -1,375 +1,70 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v8 01/15] soc: qcom: Separate kryo l2 accessors from PMU driver
-Date: Thu, 17 May 2018 14:19:01 +0300
-Message-Id: <1526555955-29960-2-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
-References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <nsekhar@ti.com>
+From: Sekhar Nori <nsekhar@ti.com>
+To: David Lechner <david@lechnology.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: Linux clk Mailing List <linux-clk@vger.kernel.org>,
+        Linux ARM Mailing List
+	<linux-arm-kernel@lists.infradead.org>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin
+ Hilman <khilman@kernel.org>
+Subject: [PATCH v2 2/2] clk: davinci: psc-dm365: fix few clocks
+Date: Tue, 15 May 2018 16:52:24 +0530
+Message-ID: <20180515112224.30122-3-nsekhar@ti.com>
+In-Reply-To: <20180515112224.30122-1-nsekhar@ti.com>
+References: <20180515112224.30122-1-nsekhar@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver provides kernel level API for other drivers
-to access the MSM8996 L2 cache registers.
-Separating the L2 access code from the PMU driver and
-making it public to allow other drivers use it.
-The accesses must be separated with a single spinlock,
-maintained in this driver.
+Fix parent of EMAC and voice codec PSC clocks. Documentation is clear
+on EMAC clock parent, but its not fully clear on parent of voice codec
+clock. The implementation chosen is matches arch/arm/mach-davinci/dm365.c.
+Add a comment explaining this for posterity.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+There is only one power domain on DM365. Fix the power domain of voice
+codec and vpss dac modules.
+
+While at it, add a comment explaining how the parent of vpss dac clock was
+derived. Note that this patch does not touch the parent of vpss dac clock.
+
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 ---
- drivers/perf/Kconfig                 |  1 +
- drivers/perf/qcom_l2_pmu.c           | 90 ++++++++++--------------------------
- drivers/soc/qcom/Kconfig             |  3 ++
- drivers/soc/qcom/Makefile            |  1 +
- drivers/soc/qcom/kryo-l2-accessors.c | 56 ++++++++++++++++++++++
- include/soc/qcom/kryo-l2-accessors.h | 12 +++++
- 6 files changed, 97 insertions(+), 66 deletions(-)
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+v2: add comments explaining parents of voice codec and vpss dac clocks
 
-diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-index 28bb5a0..561252a 100644
---- a/drivers/perf/Kconfig
-+++ b/drivers/perf/Kconfig
-@@ -69,6 +69,7 @@ config HISI_PMU
- config QCOM_L2_PMU
- 	bool "Qualcomm Technologies L2-cache PMU"
- 	depends on ARCH_QCOM && ARM64 && ACPI
-+	select QCOM_KRYO_L2_ACCESSORS
- 	  help
- 	  Provides support for the L2 cache performance monitor unit (PMU)
- 	  in Qualcomm Technologies processors.
-diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-index 842135c..cc31f51 100644
---- a/drivers/perf/qcom_l2_pmu.c
-+++ b/drivers/perf/qcom_l2_pmu.c
-@@ -31,6 +31,7 @@
- #include <asm/barrier.h>
- #include <asm/local64.h>
- #include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
- 
- #define MAX_L2_CTRS             9
- 
-@@ -87,8 +88,6 @@
- #define L2_COUNTER_RELOAD       BIT_ULL(31)
- #define L2_CYCLE_COUNTER_RELOAD BIT_ULL(63)
- 
--#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
--#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
- 
- #define reg_idx(reg, i)         (((i) * IA_L2_REG_OFFSET) + reg##_BASE)
- 
-@@ -107,48 +106,7 @@
- #define L2_EVENT_STREX                     0x421
- #define L2_EVENT_CLREX                     0x422
- 
--static DEFINE_RAW_SPINLOCK(l2_access_lock);
- 
--/**
-- * set_l2_indirect_reg: write value to an L2 register
-- * @reg: Address of L2 register.
-- * @value: Value to be written to register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static void set_l2_indirect_reg(u64 reg, u64 val)
--{
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	write_sysreg_s(val, L2CPUSRDR_EL1);
--	isb();
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--}
--
--/**
-- * get_l2_indirect_reg: read an L2 register value
-- * @reg: Address of L2 register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static u64 get_l2_indirect_reg(u64 reg)
--{
--	u64 val;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	val = read_sysreg_s(L2CPUSRDR_EL1);
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--
--	return val;
--}
- 
- struct cluster_pmu;
- 
-@@ -219,28 +177,28 @@ static inline struct cluster_pmu *get_cluster_pmu(
- static void cluster_pmu_reset(void)
- {
- 	/* Reset all counters */
--	set_l2_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
--	set_l2_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
--	set_l2_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
--	set_l2_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
-+	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
-+	kryo_l2_set_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
-+	kryo_l2_set_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
-+	kryo_l2_set_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
- }
- 
- static inline void cluster_pmu_enable(void)
- {
--	set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
-+	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
- }
- 
- static inline void cluster_pmu_disable(void)
- {
--	set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
-+	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
- }
- 
- static inline void cluster_pmu_counter_set_value(u32 idx, u64 value)
- {
- 	if (idx == l2_cycle_ctr_idx)
--		set_l2_indirect_reg(L2PMCCNTR, value);
-+		kryo_l2_set_indirect_reg(L2PMCCNTR, value);
- 	else
--		set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
-+		kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
- }
- 
- static inline u64 cluster_pmu_counter_get_value(u32 idx)
-@@ -248,46 +206,46 @@ static inline u64 cluster_pmu_counter_get_value(u32 idx)
- 	u64 value;
- 
- 	if (idx == l2_cycle_ctr_idx)
--		value = get_l2_indirect_reg(L2PMCCNTR);
-+		value = kryo_l2_get_indirect_reg(L2PMCCNTR);
- 	else
--		value = get_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
-+		value = kryo_l2_get_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
- 
- 	return value;
- }
- 
- static inline void cluster_pmu_counter_enable(u32 idx)
- {
--	set_l2_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
-+	kryo_l2_set_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
- }
- 
- static inline void cluster_pmu_counter_disable(u32 idx)
- {
--	set_l2_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
-+	kryo_l2_set_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
- }
- 
- static inline void cluster_pmu_counter_enable_interrupt(u32 idx)
- {
--	set_l2_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
-+	kryo_l2_set_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
- }
- 
- static inline void cluster_pmu_counter_disable_interrupt(u32 idx)
- {
--	set_l2_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
-+	kryo_l2_set_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
- }
- 
- static inline void cluster_pmu_set_evccntcr(u32 val)
- {
--	set_l2_indirect_reg(L2PMCCNTCR, val);
-+	kryo_l2_set_indirect_reg(L2PMCCNTCR, val);
- }
- 
- static inline void cluster_pmu_set_evcntcr(u32 ctr, u32 val)
- {
--	set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
-+	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
- }
- 
- static inline void cluster_pmu_set_evtyper(u32 ctr, u32 val)
- {
--	set_l2_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
-+	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
- }
- 
- static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
-@@ -303,11 +261,11 @@ static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
- 
- 	spin_lock_irqsave(&cluster->pmu_lock, flags);
- 
--	resr_val = get_l2_indirect_reg(L2PMRESR);
-+	resr_val = kryo_l2_get_indirect_reg(L2PMRESR);
- 	resr_val &= ~(L2PMRESR_GROUP_MASK << shift);
- 	resr_val |= field;
- 	resr_val |= L2PMRESR_EN;
--	set_l2_indirect_reg(L2PMRESR, resr_val);
-+	kryo_l2_set_indirect_reg(L2PMRESR, resr_val);
- 
- 	spin_unlock_irqrestore(&cluster->pmu_lock, flags);
- }
-@@ -323,14 +281,14 @@ static inline void cluster_pmu_set_evfilter_sys_mode(u32 ctr)
- 		   L2PMXEVFILTER_ORGFILTER_IDINDEP |
- 		   L2PMXEVFILTER_ORGFILTER_ALL;
- 
--	set_l2_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
-+	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
- }
- 
- static inline u32 cluster_pmu_getreset_ovsr(void)
- {
--	u32 result = get_l2_indirect_reg(L2PMOVSSET);
-+	u32 result = kryo_l2_get_indirect_reg(L2PMOVSSET);
- 
--	set_l2_indirect_reg(L2PMOVSCLR, result);
-+	kryo_l2_set_indirect_reg(L2PMOVSCLR, result);
- 	return result;
- }
- 
-@@ -783,7 +741,7 @@ static int get_num_counters(void)
- {
- 	int val;
- 
--	val = get_l2_indirect_reg(L2PMCR);
-+	val = kryo_l2_get_indirect_reg(L2PMCR);
- 
- 	/*
- 	 * Read number of counters from L2PMCR and add 1
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 7093fe7..0567dff 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -39,6 +39,9 @@ config QCOM_GSBI
-           functions for connecting the underlying serial UART, SPI, and I2C
-           devices to the output pins.
- 
-+config QCOM_KRYO_L2_ACCESSORS
-+       bool
-+
- config QCOM_MDT_LOADER
- 	tristate
- 	select QCOM_SCM
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index cbf414c..e4d3f5a 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -14,3 +14,4 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
- obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
- obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
- obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
-+obj-$(CONFIG_QCOM_KRYO_L2_ACCESSORS) +=	kryo-l2-accessors.o
-diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
-new file mode 100644
-index 0000000..75fd07a
---- /dev/null
-+++ b/drivers/soc/qcom/kryo-l2-accessors.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/spinlock.h>
-+#include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
-+
-+#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
-+#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
-+
-+static DEFINE_RAW_SPINLOCK(l2_access_lock);
-+
-+/**
-+ * kryo_l2_set_indirect_reg() - write value to an L2 register
-+ * @reg: Address of L2 register.
-+ * @value: Value to be written to register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+void kryo_l2_set_indirect_reg(u64 reg, u64 val)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	write_sysreg_s(val, L2CPUSRDR_EL1);
-+	isb();
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+}
-+EXPORT_SYMBOL(kryo_l2_set_indirect_reg);
-+
-+/**
-+ * kryo_l2_get_indirect_reg() - read an L2 register value
-+ * @reg: Address of L2 register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+u64 kryo_l2_get_indirect_reg(u64 reg)
-+{
-+	u64 val;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	val = read_sysreg_s(L2CPUSRDR_EL1);
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+
-+	return val;
-+}
-+EXPORT_SYMBOL(kryo_l2_get_indirect_reg);
-diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
-new file mode 100644
-index 0000000..673c534
---- /dev/null
-+++ b/include/soc/qcom/kryo-l2-accessors.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-+#define __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-+
-+void kryo_l2_set_indirect_reg(u64 reg, u64 val);
-+u64 kryo_l2_get_indirect_reg(u64 reg);
-+
-+#endif
+ drivers/clk/davinci/psc-dm365.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+index 3ad915f37376..289af3913fb0 100644
+--- a/drivers/clk/davinci/psc-dm365.c
++++ b/drivers/clk/davinci/psc-dm365.c
+@@ -65,9 +65,22 @@ static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
+ 	LPSC(31, 0, arm,         pll2_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
+ 	LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
+ 	LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
+-	LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
+-	LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
+-	LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
++	LPSC(40, 0, emac,        pll1_sysclk4, emac_clkdev,        0),
++	/*
++	 * The TRM (ARM Subsystem User's Guide) shows two clocks input into
++	 * voice codec module (PLL2 SYSCLK4 with a DIV2 and PLL1 SYSCLK4). Its
++	 * not fully clear from documentation which clock should be considered
++	 * as parent for PSC. The clock chosen here is to maintain
++	 * compatibility with existing code in arch/arm/mach-davinci/dm365.c
++	 */
++	LPSC(44, 0, voice_codec, pll2_sysclk4, voice_codec_clkdev, 0),
++	/*
++	 * Its not fully clear from TRM (ARM Subsystem User's Guide) as to what
++	 * the parent of VPSS DAC LPSC should actually be. PLL1 SYSCLK3 feeds
++	 * into HDVICP and MJCP. The clock chosen here is to remain compatible
++	 * with code existing in arch/arm/mach-davinci/dm365.c
++	 */
++	LPSC(46, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
+ 	LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
+ 	LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
+ 	{ }
 -- 
-1.9.1
+2.16.2
