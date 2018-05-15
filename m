@@ -1,85 +1,48 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 24 May 2018 18:57:21 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"lee.jones@linaro.org" <lee.jones@linaro.org>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
-	"Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
-Subject: Re: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
- regulators
-Message-ID: <20180524175721.GB4828@sirena.org.uk>
-References: <20180524055752.GE4249@localhost.localdomain>
- <20180524140118.GS4828@sirena.org.uk>
- <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="WxezjuMNsgvRf6mf"
-In-Reply-To: <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
+Return-Path: <gilad@benyossef.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH 2/3] clk: renesas: r8a7795: Add ccree clock
+Date: Tue, 15 May 2018 13:29:28 +0100
+Message-Id: <1526387370-17142-3-git-send-email-gilad@benyossef.com>
+In-Reply-To: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch adds the clock used by the CryptoCell 630p instance in the SoC.
 
---WxezjuMNsgvRf6mf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Thu, May 24, 2018 at 05:30:57PM +0000, Vaittinen, Matti wrote:
-> > > On Thu, May 24, 2018 at 08:57:52AM +0300, Matti Vaittinen wrote:
-> >
-> > > +Required properties:
-> > > + - compatible: should be "rohm,bd71837-pmic".
-> > > + - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., =
-"ldo7"
-> >
-> > The MFD is for a single device, there should be no need for compatibles
-> > on subfunctions.
->=20
-> I will check this. I must admit I am not sure what is the de-facto mechan=
-ism
-> for assigning the correct device-tree nodes to sub devices if compatibles
-> are not used? I think I saw device-tree node name being used for regulato=
-rs
-
-You can look at the regulators node within the parent device, you know
-that in Linux the parent device will be the MFD.  Having a compatible
-string within the device makes no difference here.  There's quite a few
-in tree examples of this.
-
-> Also, another thing I was wondering is how supply regulators should be
-> handled? In this case the LDO5 is supplied by BUCK6 and LDO6 by
-> BUCK7.=20
-
-> From generic regulator bindings
-> /Documentation/devicetree/bindings/regulator/regulator.txt
-> I found statement:
-
-> > - <name>-supply: phandle to the parent supply/regulator node
-
-None of that stuff uses compatible strings, just handle it as covered in
-the bindings.
-
---WxezjuMNsgvRf6mf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsG/QAACgkQJNaLcl1U
-h9AHrwf+I5QHGPl/Ix4blMQJui270VI4vajg2PzTVHSlND62fWGf2+K6hzxJuRIX
-0k4++LcNMX6Nxdww+O/TnXrnQKrHq/wtnihAnnXv3oOttOqMVIkFeV4k1cfl2SGV
-isvpM+6HA8ac0SqXMZLxyo42ETc04gEcSk9O5UZ+D09d9zVKUfh615qcM/oR6NTm
-ZFeDvuGad5rHqGxHgTJI/kNpCU1/x5ScJKzIDOm6c3QoWiDloZrYMsuXhz5LvEIW
-rUAB97nrVAubeC0Zgb7W2BuMRzI4/eU8iXeLbIyExC+JLisBjXH1GULAg3WQ0g8R
-l/7n1VK64rUqO/0EP2zMzC/0/chzmQ==
-=gwWb
------END PGP SIGNATURE-----
-
---WxezjuMNsgvRf6mf--
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index 775b0ce..642706a 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -132,6 +132,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+ 	DEF_MOD("sys-dmac2",		 217,	R8A7795_CLK_S0D3),
+ 	DEF_MOD("sys-dmac1",		 218,	R8A7795_CLK_S0D3),
+ 	DEF_MOD("sys-dmac0",		 219,	R8A7795_CLK_S0D3),
++	DEF_MOD("ccree",		 229,	R8A7795_CLK_S3D2),
+ 	DEF_MOD("cmt3",			 300,	R8A7795_CLK_R),
+ 	DEF_MOD("cmt2",			 301,	R8A7795_CLK_R),
+ 	DEF_MOD("cmt1",			 302,	R8A7795_CLK_R),
+-- 
+2.7.4
