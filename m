@@ -1,73 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39051 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753392AbeERJ2a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:28:30 -0400
-Received: by mail-wm0-f65.google.com with SMTP id f8-v6so13913437wmc.4
-        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 02:28:29 -0700 (PDT)
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
-Subject: [PATCH v5 03/12] clk: imx7d: fix mipi dphy div parent
-Date: Fri, 18 May 2018 10:27:57 +0100
-Message-Id: <20180518092806.3829-4-rui.silva@linaro.org>
-In-Reply-To: <20180518092806.3829-1-rui.silva@linaro.org>
-References: <20180518092806.3829-1-rui.silva@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1526388874.2897.44.camel@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+ Neil Armstrong <narmstrong@baylibre.com>
+References: <1526388874.2897.44.camel@baylibre.com>
+Message-ID: <152642473300.237094.3319917631211921228@swboyd.mtv.corp.google.com>
+Subject: Re: [GIT PULL]  clk: meson: updates for v4.18
+Date: Tue, 15 May 2018 15:52:13 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix the mipi dphy root divider to mipi_dphy_pre_div, this would remove a orphan
-clock and set the correct parent.
+Quoting Jerome Brunet (2018-05-15 05:54:34)
+> Dear clock maintainers,
+> =
 
-before:
-cat clk_orphan_summary
-                                 enable  prepare  protect
-   clock                          count    count    count        rate   accuracy   phase
-----------------------------------------------------------------------------------------
- mipi_dphy_post_div                   1        1        0           0          0 0
-    mipi_dphy_root_clk                1        1        0           0          0 0
+> Below is a request to pull amlogic clock updates for v4.18. Apart from th=
+e usual
+> clock additions, there was a rework of the AO clock controller found on t=
+he gxbb
+> SoC family. This has been done to improve code re-usability before introd=
+ucing a
+> very similar controller for the axg SoC family.
+> =
 
-cat clk_dump | grep mipi_dphy
-mipi_dphy_post_div                    1        1        0           0          0 0
-    mipi_dphy_root_clk                1        1        0           0          0 0
+> Cheers
+> Jerome
+> =
 
-after:
-cat clk_dump | grep mipi_dphy
-   mipi_dphy_src                     1        1        0    24000000          0 0
-       mipi_dphy_cg                  1        1        0    24000000          0 0
-          mipi_dphy_pre_div          1        1        0    24000000          0 0
-             mipi_dphy_post_div      1        1        0    24000000          0 0
-                mipi_dphy_root_clk   1        1        0    24000000          0 0
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a2433=
+38:
+> =
 
-Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
-Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
----
- drivers/clk/imx/clk-imx7d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> =
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 975a20d3cc94..f7f4db2e6fa6 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -729,7 +729,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_LCDIF_PIXEL_ROOT_DIV] = imx_clk_divider2("lcdif_pixel_post_div", "lcdif_pixel_pre_div", base + 0xa300, 0, 6);
- 	clks[IMX7D_MIPI_DSI_ROOT_DIV] = imx_clk_divider2("mipi_dsi_post_div", "mipi_dsi_pre_div", base + 0xa380, 0, 6);
- 	clks[IMX7D_MIPI_CSI_ROOT_DIV] = imx_clk_divider2("mipi_csi_post_div", "mipi_csi_pre_div", base + 0xa400, 0, 6);
--	clks[IMX7D_MIPI_DPHY_ROOT_DIV] = imx_clk_divider2("mipi_dphy_post_div", "mipi_csi_dphy_div", base + 0xa480, 0, 6);
-+	clks[IMX7D_MIPI_DPHY_ROOT_DIV] = imx_clk_divider2("mipi_dphy_post_div", "mipi_dphy_pre_div", base + 0xa480, 0, 6);
- 	clks[IMX7D_SAI1_ROOT_DIV] = imx_clk_divider2("sai1_post_div", "sai1_pre_div", base + 0xa500, 0, 6);
- 	clks[IMX7D_SAI2_ROOT_DIV] = imx_clk_divider2("sai2_post_div", "sai2_pre_div", base + 0xa580, 0, 6);
- 	clks[IMX7D_SAI3_ROOT_DIV] = imx_clk_divider2("sai3_post_div", "sai3_pre_div", base + 0xa600, 0, 6);
--- 
-2.17.0
+> are available in the Git repository at:
+> =
 
+>   git://github.com/BayLibre/clk-meson.git tags/meson-clk-4.18-1
+> =
+
+> for you to fetch changes up to 24a2e6796eb23d17d4e32a27f19336248666272c:
+> =
+
+>   clk: meson: drop CLK_SET_RATE_PARENT flag (2018-05-15 14:19:43 +0200)
+> =
+
+> ----------------------------------------------------------------
+> First round of update for meson clocks targeted at v4.18:
+> * Add meson8b nand clocks
+> * Add gxbb video decoder clocks
+> * Rework of gxbb AO clock controller code to allow code reuse
+> * Add axg AO clock controller
+
+Thanks. Pulled into clk-next.
