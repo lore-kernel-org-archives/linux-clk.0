@@ -1,42 +1,60 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 1 May 2018 11:17:23 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 04/21] bindings: display: Add compatible for A64 DE2
- pipeline
-Message-ID: <20180501161723.GA376@rob-hp-laptop>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-5-jagan@amarulasolutions.com>
+Return-Path: <xuwei5@huawei.com>
+Subject: Re: [PATCH v2 0/5] Hi3660: enable power management features
+To: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>, "Mark
+ Rutland" <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+	"Arnd Bergmann" <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+References: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5AFAF3CE.70601@hisilicon.com>
+Date: Tue, 15 May 2018 15:50:54 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180430114058.5061-5-jagan@amarulasolutions.com>
+In-Reply-To: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Apr 30, 2018 at 05:10:41PM +0530, Jagan Teki wrote:
-> Allwinner A64 has DE2 pipeline similar to other Allwinner
-> SOC's like A83T, H3/H5.
+Hi Leo,
 
-'dt-bindings: ' for the subject prefix.
-
+On 2018/5/15 3:53, Leo Yan wrote:
+> Since hi3660 drivers have been merged into Linux kernel (mailbox driver is in
+> Linux-next branch and other drivers are existed in Linux mainline kernel), so
+> this patch series is to enable power management features on hi3660.
 > 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
->  1 file changed, 1 insertion(+)
+> This patch series includes device tree binding for mailbox, stub clock and CPU
+> OPPs, and has one patch to consolidate the Kconfigs for driver modules.
+> 
+> This patch set have been tested on Hikey960 and also verified the patch 'hisi:
+> Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX' for Hikey620.
+> 
+> Changes from v1:
+> * Changed patch subject from "dts: arm64: hi3660" to "arm64: dts: hi3660".
+> 
+> 
+> Daniel Lezcano (1):
+>   hisi: Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX
+> 
+> Kaihua Zhong (2):
+>   arm64: dts: hi3660: Add mailbox node
+>   arm64: dts: hi3660: Add stub clock node
+> 
+> Leo Yan (1):
+>   arm64: dts: hi3660: Add CPU frequency scaling support
+> 
+> Tao Wang (1):
+>   arm64: dts: hi3660: Add thermal cooling management
+> 
+>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 145 ++++++++++++++++++++++++++++++
+>  arch/arm64/configs/defconfig              |   1 -
+>  drivers/clk/hisilicon/Kconfig             |  13 +--
+>  drivers/mailbox/Kconfig                   |  12 ++-
+>  4 files changed, 161 insertions(+), 10 deletions(-)
+> 
 
-Otherwise,
+Applied patch 1 to 4.
+Thanks!
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Best Regards,
+Wei
