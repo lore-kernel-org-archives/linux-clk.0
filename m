@@ -1,36 +1,92 @@
-Return-Path: <nsekhar@ti.com>
-From: Sekhar Nori <nsekhar@ti.com>
-To: David Lechner <david@lechnology.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: Linux clk Mailing List <linux-clk@vger.kernel.org>,
-        Linux ARM Mailing List
-	<linux-arm-kernel@lists.infradead.org>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin
- Hilman <khilman@kernel.org>
-Subject: [PATCH v2 0/2] clk: davinci: some more fixes
-Date: Tue, 15 May 2018 16:52:22 +0530
-Message-ID: <20180515112224.30122-1-nsekhar@ti.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+ Michael Turquette <mturquette@baylibre.com>, gabriel.fernandez@st.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin GAIGNARD <benjamin.gaignard@st.com>,
+ Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+ <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+ <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+ <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
+Message-ID: <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
+ default
+Date: Tue, 15 May 2018 14:48:36 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Quoting Alexandre Torgue (2018-05-14 05:45:57)
+> =
 
-Some more fixes to make DM646x and DM365 EVMs boot after
-common clock framework conversion. With this, I have tested
-all DaVinci SoCs.
+> =
 
-See individual patches for v2 changes.
+> On 05/05/2018 04:45 AM, Stephen Boyd wrote:
+> > Quoting Alexandre Torgue (2018-05-04 00:54:16)
+> >> Stephen
+> >>
+> >> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
+> >>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> >>>
+> >>> Clock driver is mandatory if the machine is selected.
+> >>> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
+> >>> with the machine(s).
+> >>>
+> >>> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of=
+ the stm32 drivers")
+> >>>
+> >>
+> >> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4=
+.17.
+> > =
 
-Sekhar Nori (2):
-  clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always enabled
-  clk: davinci: psc-dm365: fix few clocks
+> > Thanks for the bump. I missed this one. Of course, the user can still s=
+elect
+> > the configs now, just it's annoying for upgrade path.
+> > =
 
- drivers/clk/davinci/pll-dm646x.c |  2 +-
- drivers/clk/davinci/psc-dm365.c  | 19 ++++++++++++++++---
- 2 files changed, 17 insertions(+), 4 deletions(-)
+> >>
+> >>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> >>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+> >>> ---
+> >>>    drivers/clk/Kconfig | 6 ++----
+> >>>    1 file changed, 2 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> >>> index 24a5bc3..721572a 100644
+> >>> --- a/drivers/clk/Kconfig
+> >>> +++ b/drivers/clk/Kconfig
+> >>> @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
+> >>>          Support for stm32mp157 SoC family clocks
+> >>>    =
 
--- 
-2.16.2
+> >>>    config COMMON_CLK_STM32F
+> >>> -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
+> >>> -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+> >>> +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MAC=
+H_STM32F746)
+> > =
+
+> > But the point of the change this patch is fixing was to expose these to
+> > the user to turn off they wanted. You'll need to do something like that
+> > again here, instead of removing the prompt and replacing it with a
+> > def_bool.
+> > =
+
+> =
+
+> Sorry I don't understand. Clock driver is mandatory to boot each =
+
+> platform and depends on machine type. Do you see a use case where we =
+
+> could need to disable the clock driver? (it would impose to change =
+
+> devicetree to use fixed clocks and to have a booloader which configures =
+
+> all PLL and clocks).
+
+No. My understanding of the patch that introduced the options was to
+allow the user to disable these drivers if they wanted to. I'm just
+reiterating the spirit of that patch. That must be wrong?
