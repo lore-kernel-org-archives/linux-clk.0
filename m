@@ -1,57 +1,50 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 0/5] Hi3660: enable power management features
-Date: Tue, 15 May 2018 10:53:10 +0800
-Message-Id: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525884754-21253-1-git-send-email-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <1525884754-21253-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <152642400072.237094.5673745562388720173@swboyd.mtv.corp.google.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.18
+Date: Tue, 15 May 2018 15:40:00 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Since hi3660 drivers have been merged into Linux kernel (mailbox driver is in
-Linux-next branch and other drivers are existed in Linux mainline kernel), so
-this patch series is to enable power management features on hi3660.
+Quoting Geert Uytterhoeven (2018-05-09 09:52:34)
+>         Hi Mike, Stephen,
+> =
 
-This patch series includes device tree binding for mailbox, stub clock and CPU
-OPPs, and has one patch to consolidate the Kconfigs for driver modules.
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a2433=
+38:
+> =
 
-This patch set have been tested on Hikey960 and also verified the patch 'hisi:
-Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX' for Hikey620.
+>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> =
 
-Changes from v1:
-* Changed patch subject from "dts: arm64: hi3660" to "arm64: dts: hi3660".
+> are available in the git repository at:
+> =
 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v4.18-tag1
+> =
 
-Daniel Lezcano (1):
-  hisi: Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX
+> for you to fetch changes up to 3570a2af473789c5d5f5b9e04f72295102967824:
+> =
 
-Kaihua Zhong (2):
-  arm64: dts: hi3660: Add mailbox node
-  arm64: dts: hi3660: Add stub clock node
+>   clk: renesas: cpg-mssr: Add support for R-Car E3 (2018-05-09 18:43:57 +=
+0200)
+> =
 
-Leo Yan (1):
-  arm64: dts: hi3660: Add CPU frequency scaling support
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.18
+> =
 
-Tao Wang (1):
-  arm64: dts: hi3660: Add thermal cooling management
+>   - Add support for the MSIOF module clocks on R-Car M3-N,
+>   - Add support for the new RZ/G1C and R-Car E3 SoCs,
+>   - Small fixes and cleanups.
 
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 145 ++++++++++++++++++++++++++++++
- arch/arm64/configs/defconfig              |   1 -
- drivers/clk/hisilicon/Kconfig             |  13 +--
- drivers/mailbox/Kconfig                   |  12 ++-
- 4 files changed, 161 insertions(+), 10 deletions(-)
-
--- 
-1.9.1
+Thanks. Pulled into clk-next.
