@@ -1,85 +1,36 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Mon, 28 May 2018 12:00:45 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v2 2/6] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <20180528090045.GC8778@localhost.localdomain>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Tue, 15 May 2018 14:49:33 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v7 14/14] dt: qcom: Add qcom-cpufreq-kryo driver
+ configuration
+Message-ID: <20180515091933.2psozeaamhl2coiz@vireshk-i7>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+ <1526375616-16904-15-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526375616-16904-15-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
+On 15-05-18, 12:13, Ilia Lin wrote:
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/apq8096-db820c.dts |   2 +-
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi       | 311 +++++++++++++++++++++++++++-
+>  2 files changed, 310 insertions(+), 3 deletions(-)
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 52 ++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..bbc46d38b162
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,52 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDO’s to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - interrupt-controller	: Marks the device node as an interrupt controller.
-+ - #interrupt-cells	: The number of cells to describe an IRQ, should be 1 or 2.
-+			    The first cell is the IRQ number.
-+			    The second cell if present is the flags, encoded as trigger
-+			    masks from ../interrupt-controller/interrupts.txt.
-+ - regulators:		: List of child nodes that specify the regulators
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+ - clock:		: Please see ../clock/rohm,bd71837-clock.txt
-+
-+Example:
-+
-+	pmic: bd71837@4b {
-+		compatible = "rohm,bd71837";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#interrupt-cells = <1>;
-+		interrupt-controller;
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+			...
-+		};
-+		clk: bd71837-32k-out {
-+			compatible = "rohm,bd71837-clk";
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+			clock-output-names = "bd71837-32k-out";
-+		};
-+	};
 -- 
-2.14.3
+viresh
