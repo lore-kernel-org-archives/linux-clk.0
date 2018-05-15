@@ -1,101 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:45203 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750898AbeEBKUR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 May 2018 06:20:17 -0400
-Date: Wed, 02 May 2018 18:19:51 +0800
-In-Reply-To: <CAGb2v67pvL58Pes1ZFDZtPu_nL2+m6dgf_XOOymG9nVAkXVpEw@mail.gmail.com>
-References: <20180501161227.2110-1-wens@csie.org> <20180501161227.2110-16-wens@csie.org> <20180502095118.rqnfwy576xh6ercm@flea> <CAGb2v67pvL58Pes1ZFDZtPu_nL2+m6dgf_XOOymG9nVAkXVpEw@mail.gmail.com>
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Rajan Vaja <RAJANV@xilinx.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v6 04/11] firmware: xilinx: Add query data API
+To: Jolly Shah <JOLLYS@xilinx.com>,
+ "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+ "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+ "keescook@chromium.org" <keescook@chromium.org>,
+ "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+ "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+ "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
+ <1523389127-14243-5-git-send-email-jollys@xilinx.com>
+ <85f8f8c5-a177-dad8-e095-a9dd1c513e8d@arm.com>
+ <SN1PR02MB37587E3AB2718E1DB510E35AB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <ab9632f5-882d-462d-d830-0316cad56baf@arm.com>
+Date: Tue, 15 May 2018 10:34:18 +0100
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH net-next v2 15/15] arm64: dts: allwinner: a64: add SRAM controller device tree node
-To: linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-CC: Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <29E5670C-9D17-4EC1-AAAC-0CF33DD0534C@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <SN1PR02MB37587E3AB2718E1DB510E35AB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
 
 
-于 2018年5月2日 GMT+08:00 下午5:53:21, Chen-Yu Tsai <wens@csie.org> 写到:
->On Wed, May 2, 2018 at 5:51 PM, Maxime Ripard
-><maxime.ripard@bootlin.com> wrote:
->> Hi,
->>
->> On Wed, May 02, 2018 at 12:12:27AM +0800, Chen-Yu Tsai wrote:
->>> From: Icenowy Zheng <icenowy@aosc.io>
->>>
->>> Allwinner A64 has a SRAM controller, and in the device tree
->currently
->>> we have a syscon node to enable EMAC driver to access the EMAC clock
->>> register. As SRAM controller driver can now export regmap for this
->>> register, replace the syscon node to the SRAM controller device
->node,
->>> and let EMAC driver to acquire its EMAC clock regmap.
->>>
->>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>> ---
->>>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 23
->+++++++++++++++----
->>>  1 file changed, 19 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->>> index 1b2ef28c42bd..1c37659d9d41 100644
->>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
->>> @@ -168,10 +168,25 @@
->>>               #size-cells = <1>;
->>>               ranges;
->>>
->>> -             syscon: syscon@1c00000 {
->>> -                     compatible =
->"allwinner,sun50i-a64-system-controller",
->>> -                             "syscon";
->>> +             sram_controller: sram-controller@1c00000 {
->>> +                     compatible =
->"allwinner,sun50i-a64-sram-controller";
->>
->> I don't think there's anything preventing us from keeping the
->> -system-controller compatible. It's what was in the DT before, and
->> it's how it's called in the datasheet.
->
->I actually meant to ask you about this. The -system-controller
->compatible
->matches the datasheet better. Maybe we should just switch to that one?
+On 14/05/18 20:16, Jolly Shah wrote:
+> HI Sudeep,
+> 
 
-No, if we do the switch the system-controller compatible,
-the device will be probed on the same memory region with
-a syscon on old DTs.
+[...]
 
->
->ChenYu
->
->> Otherwise, the whole serie looks good to me:
->> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
->>
->> Maxime
->>
->> --
->> Maxime Ripard, Bootlin (formerly Free Electrons)
->> Embedded Linux and Kernel engineering
->> https://bootlin.com
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>> 
+>> Can you give more insight into this ? How will be this used ? How
+>> this aligns with data we get from DT ? I am just trying to
+>> understand how is this information split between this API and DT
+>> for example.
+>> 
+> 
+> This API is used to get clock information from firmware and register
+> clocks accordingly in driver. In our case, firmware maintains
+> database of all clocks available on chip. DT will provide information
+> for off chip reference clocks only. This is to avoid duplication of
+> clocks data in DT and firmware both as firmware anyways need clock
+> data to manage them.
+> 
+
+I wanted to understand the difference with example. What kind of
+information you get from DT and what you get from firmware ?
+
+-- 
+Regards,
+Sudeep
