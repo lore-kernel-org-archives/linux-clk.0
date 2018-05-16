@@ -1,25 +1,36 @@
-Return-Path: <sboyd@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:49420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752350AbeEPPDH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 May 2018 11:03:07 -0400
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
+To: Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525271313-24427-1-git-send-email-dinguyen@kernel.org>
-Cc: dinguyen@kernel.org, mturquette@baylibre.com, linux-kernel@vger.kernel.org
-References: <1525271313-24427-1-git-send-email-dinguyen@kernel.org>
-Message-ID: <152642133142.237094.1180384414857609098@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/2] clk: socfpga: stratix10: use platform driver APIs
-Date: Tue, 15 May 2018 14:55:31 -0700
+In-Reply-To: <20180516085040.6771-1-jbrunet@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
+References: <20180516085040.6771-1-jbrunet@baylibre.com>
+Message-ID: <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2] clk: meson: use SPDX license identifiers consistently
+Date: Wed, 16 May 2018 08:03:05 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dinh Nguyen (2018-05-02 07:28:32)
-> -static int s10_clkmgr_init(struct device_node *np)
-> +static int s10_clkmgr_init(struct platform_device *pdev)
->  {
->         struct stratix10_clock_data *clk_data;
->  =
+Quoting Jerome Brunet (2018-05-16 01:50:40)
+> Replace every license notices in drivers/clk/meson by SPDX license
+> identifiers, as described in license-rules.rst
+> =
 
-> -       clk_data =3D __socfpga_s10_clk_init(np, STRATIX10_NUM_CLKS);
-> +       clk_data =3D __socfpga_s10_clk_init(pdev, STRATIX10_NUM_CLKS);
->         if (!clk_data)
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
 
-And this needs to be updated to check for an error pointer, which I did.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+
+I take it this will come through a PR? Otherwise I can apply it to
+clk-meson branch.
