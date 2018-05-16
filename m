@@ -1,111 +1,89 @@
-Return-Path: <boris.brezillon@bootlin.com>
-Date: Thu, 24 May 2018 14:27:36 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com,
- robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
- miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
- krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180524142736.2ef157fe@bbrezillon>
-In-Reply-To: <7b3cc3991fb054130fd54c6fdfec5097@agner.ch>
-References: <cover.1526990589.git.stefan@agner.ch>
-	<86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-	<20180523161810.0ed9fe80@bbrezillon>
-	<2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
-	<20180524105614.3c51736c@bbrezillon>
-	<7b3cc3991fb054130fd54c6fdfec5097@agner.ch>
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not
+ compiled by default
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        <gabriel.fernandez@st.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        benjamin
+ GAIGNARD <benjamin.gaignard@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+ <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+ <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+ <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
+ <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <a49b89ee-2aee-274d-ccc0-3eaf7d9a3755@st.com>
+Date: Wed, 16 May 2018 09:34:21 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 24 May 2018 13:09:53 +0200
-Stefan Agner <stefan@agner.ch> wrote:
 
-> On 24.05.2018 10:56, Boris Brezillon wrote:
-> > On Thu, 24 May 2018 10:46:27 +0200
-> > Stefan Agner <stefan@agner.ch> wrote:
-> >   
-> >> Hi Boris,
-> >>
-> >> Thanks for the initial review! One small question below:
-> >>
-> >> On 23.05.2018 16:18, Boris Brezillon wrote:  
-> >> > Hi Stefan,
-> >> >
-> >> > On Tue, 22 May 2018 14:07:06 +0200
-> >> > Stefan Agner <stefan@agner.ch> wrote:  
-> >> >> +
-> >> >> +struct tegra_nand {
-> >> >> +	void __iomem *regs;
-> >> >> +	struct clk *clk;
-> >> >> +	struct gpio_desc *wp_gpio;
-> >> >> +
-> >> >> +	struct nand_chip chip;
-> >> >> +	struct device *dev;
-> >> >> +
-> >> >> +	struct completion command_complete;
-> >> >> +	struct completion dma_complete;
-> >> >> +	bool last_read_error;
-> >> >> +
-> >> >> +	dma_addr_t data_dma;
-> >> >> +	void *data_buf;
-> >> >> +	dma_addr_t oob_dma;
-> >> >> +	void *oob_buf;
-> >> >> +
-> >> >> +	int cur_chip;
-> >> >> +};  
-> >> >
-> >> > This struct should be split in 2 structures: one representing the NAND
-> >> > controller and one representing the NAND chip:
-> >> >
-> >> > struct tegra_nand_controller {
-> >> > 	struct nand_hw_control base;
-> >> > 	void __iomem *regs;
-> >> > 	struct clk *clk;
-> >> > 	struct device *dev;
-> >> > 	struct completion command_complete;
-> >> > 	struct completion dma_complete;
-> >> > 	bool last_read_error;
-> >> > 	int cur_chip;
-> >> > };
-> >> >
-> >> > struct tegra_nand {
-> >> > 	struct nand_chip base;
-> >> > 	dma_addr_t data_dma;
-> >> > 	void *data_buf;
-> >> > 	dma_addr_t oob_dma;
-> >> > 	void *oob_buf;
-> >> > };  
-> >>
-> >> Is there a particular reason why you would leave DMA buffers in the chip
-> >> structure? It seems that is more a controller thing...  
-> > 
-> > The size of those buffers is likely to be device dependent, so if you
-> > have several NANDs connected to the controller, you'll either have to
-> > have one buffer at the controller level which is max(all-chip-buf-size)
-> > or a buffer per device.
-> > 
-> > Also, do you really need these buffers? The core already provide some
-> > which are suitable for DMA (chip->oob_poi and chip->data_buf).
-> >   
-> 
-> Good question, I am not sure, that was existing code.
-> 
-> Are you sure data_buf it is DMA capable?
-> 
-> nand_scan_tail allocates with kmalloc:
-> 
-> chip->data_buf = kmalloc(mtd->writesize + mtd->oobsize, GFP_KERNEL);
 
-Also, you might want to set the NAND_USE_BOUNCE_BUFFER flag in
-chip->options, so that the core always pass DMA-able buffers to your
-->read/write_page[_raw] function.
-
-[1]https://elixir.bootlin.com/linux/v4.17-rc6/source/include/linux/mtd/rawnand.h#L202
+On 05/15/2018 11:48 PM, Stephen Boyd wrote:
+> Quoting Alexandre Torgue (2018-05-14 05:45:57)
+>>
+>>
+>> On 05/05/2018 04:45 AM, Stephen Boyd wrote:
+>>> Quoting Alexandre Torgue (2018-05-04 00:54:16)
+>>>> Stephen
+>>>>
+>>>> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
+>>>>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>>>>
+>>>>> Clock driver is mandatory if the machine is selected.
+>>>>> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
+>>>>> with the machine(s).
+>>>>>
+>>>>> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
+>>>>>
+>>>>
+>>>> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
+>>>
+>>> Thanks for the bump. I missed this one. Of course, the user can still select
+>>> the configs now, just it's annoying for upgrade path.
+>>>
+>>>>
+>>>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>>>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+>>>>> ---
+>>>>>     drivers/clk/Kconfig | 6 ++----
+>>>>>     1 file changed, 2 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+>>>>> index 24a5bc3..721572a 100644
+>>>>> --- a/drivers/clk/Kconfig
+>>>>> +++ b/drivers/clk/Kconfig
+>>>>> @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
+>>>>>           Support for stm32mp157 SoC family clocks
+>>>>>     
+>>>>>     config COMMON_CLK_STM32F
+>>>>> -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
+>>>>> -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+>>>>> +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
+>>>
+>>> But the point of the change this patch is fixing was to expose these to
+>>> the user to turn off they wanted. You'll need to do something like that
+>>> again here, instead of removing the prompt and replacing it with a
+>>> def_bool.
+>>>
+>>
+>> Sorry I don't understand. Clock driver is mandatory to boot each
+>> platform and depends on machine type. Do you see a use case where we
+>> could need to disable the clock driver? (it would impose to change
+>> devicetree to use fixed clocks and to have a booloader which configures
+>> all PLL and clocks).
+> 
+> No. My understanding of the patch that introduced the options was to
+> allow the user to disable these drivers if they wanted to. I'm just
+> reiterating the spirit of that patch. That must be wrong?
+> 
+Actually initial patch is a mistake. You can't boot STM32 platform 
+without clock driver. This patch fixes that, and offers the possibility 
+to not build the clock driver of the machine which are not used 
+(currently all machine are selected but to reduce memory footprint you 
+could disable not used machine in defconfig).
