@@ -1,102 +1,34 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <gabriel.fernandez@st.com>
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Alexandre TORGUE
+	<alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>,
+        Olivier BIDEAU <olivier.bideau@st.com>,
+        "Loic
+ PALLARDY" <loic.pallardy@st.com>,
+        Benjamin GAIGNARD
+	<benjamin.gaignard@st.com>
+Subject: Re: [PATCH] clk: stm32mp1: Add CLK_IGNORE_UNUSED to ck_sys_dbg clock
+Date: Wed, 16 May 2018 05:09:07 +0000
+Message-ID: <b72e8ecd-3e33-6f09-4730-eab15a7a5e19@st.com>
+References: <1524556723-26926-1-git-send-email-gabriel.fernandez@st.com>
+ <152640858418.34267.5971648282268914967@swboyd.mtv.corp.google.com>
+In-Reply-To: <152640858418.34267.5971648282268914967@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Tue, 22 May 2018 16:28:37 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
- mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
- marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <0a3c683c-15fd-d05c-4aa2-5fa109c892c6@gmail.com>
-References: <cover.1526990589.git.stefan@agner.ch>
- <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <2e858be88e00e26495fe47c6cd5cd70c@agner.ch>
- <0a3c683c-15fd-d05c-4aa2-5fa109c892c6@gmail.com>
-Message-ID: <7efc2975ed8c24a708d43dec06a48ceb@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22.05.2018 15:34, Dmitry Osipenko wrote:
-> On 22.05.2018 15:19, Stefan Agner wrote:
->> [review sent to my first patch sent off-ml, moving to ml thread]
->>
->> On 21.05.2018 16:05, Dmitry Osipenko wrote:
->>> Hello Stefan,
->>>
->>> I don't have expertise to review the actual NAND-related driver logic, so I only
->>> reviewed the basics. The driver code looks good to me, though I've couple minor
->>> comments.
->>>
->>> On 21.05.2018 03:16, Stefan Agner wrote:
->>>> Add support for the NAND flash controller found on NVIDIA
->>>> Tegra 2 SoCs. This implementation does not make use of the
->>>> command queue feature. Regular operations/data transfers are
->>>> done in PIO mode. Page read/writes with hardware ECC make
->>>> use of the DMA for data transfer.
->>>>
->>>> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>>> ---
-
-<snip>
-
->>>> +static int tegra_nand_read_page(struct mtd_info *mtd, struct nand_chip *chip,
->>>> +				uint8_t *buf, int oob_required, int page)
->>>> +{
->>>> +	struct tegra_nand *nand = to_tegra_nand(mtd);
->>>> +	u32 value, addrs;
->>>> +
->>>> +	writel(NAND_CMD_READ0, nand->regs + CMD_1);
->>>> +	writel(NAND_CMD_READSTART, nand->regs + CMD_2);
->>>> +
->>>> +	addrs = tegra_nand_fill_address(mtd, chip, page);
->>>> +
->>>> +	value = readl(nand->regs + CFG);
->>>> +	value |= CFG_HW_ECC | CFG_ERR_COR;
->>>> +	writel(value, nand->regs + CFG);
->>>> +
->>>> +	writel(mtd->writesize - 1, nand->regs + DMA_CFG_A);
->>>> +	writel(nand->data_dma, nand->regs + DATA_PTR);
->>>> +
->>>> +	if (oob_required) {
->>>> +		writel(mtd_ooblayout_count_freebytes(mtd) - 1,
->>>> +		       nand->regs + DMA_CFG_B);
->>>> +		writel(nand->oob_dma, nand->regs + TAG_PTR);
->>>> +	} else {
->>>> +		writel(0, nand->regs + DMA_CFG_B);
->>>> +		writel(0, nand->regs + TAG_PTR);
->>>> +	}
->>>> +
->>>> +	value = DMA_CTRL_GO | DMA_CTRL_IN | DMA_CTRL_PERF_EN |
->>>> +		DMA_CTRL_REUSE | DMA_CTRL_IE_DONE | DMA_CTRL_IS_DONE |
->>>> +		DMA_CTRL_BURST_8 | DMA_CTRL_EN_A;
->>>
->>> Wouldn't be more efficient to set DMA burst to 16 words? The writesize seems
->>> always aligned to at least 64 words.
->>>
->>
->> Hm, haven't tested 16 words, 8 was the setting Lucas used.
->>
->> Are you sure this is only about write size? Not sure, but isn't the ECC
->> area also DMA'd? On Colibri we use RS with t=8, hence 144 bytes parity,
->> so this would be properly aligned non the less...
->>
-> 
-> I don't know, that's up to you to figure out. Is RS stands for Reed-Solomon and
-> t=8 is the max number of redundant words?
-> 
-
-RS = Reed-Solomon
-t=8 maximum symbol errors
-
-Will do some testing and check whether it fails.
-
---
-Stefan
+VGhhbmtzIFN0ZXBoZW4NCg0KDQpPbiAwNS8xNS8yMDE4IDA4OjIzIFBNLCBTdGVwaGVuIEJveWQg
+d3JvdGU6DQo+IFF1b3RpbmcgZ2FicmllbC5mZXJuYW5kZXpAc3QuY29tICgyMDE4LTA0LTI0IDAw
+OjU4OjQzKQ0KPj4gRnJvbTogR2FicmllbCBGZXJuYW5kZXogPGdhYnJpZWwuZmVybmFuZGV6QHN0
+LmNvbT4NCj4+DQo+PiBEb24ndCBkaXNhYmxlIHRoZSBkYmcgY2xvY2sgaWYgd2FzIHNldCBieSBi
+b290bG9hZGVyLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEdhYnJpZWwgRmVybmFuZGV6IDxnYWJy
+aWVsLmZlcm5hbmRlekBzdC5jb20+DQo+PiAtLS0NCj4gQXBwbGllZCB0byBjbGstbmV4dA0KPg0K
