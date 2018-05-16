@@ -1,76 +1,41 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAOtvUMdVNX_vBRofpc5rNiVL-a1NvWMDyWSOaXKYPkm57wkR_A@mail.gmail.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
- <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
- <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
- <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com> <CAOtvUMdVNX_vBRofpc5rNiVL-a1NvWMDyWSOaXKYPkm57wkR_A@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 May 2018 15:35:07 +0200
-Message-ID: <CAMuHMdX5quhZzaPkcrtB4CuHWeaKsyF1SustjB9V0SWw_SzXVg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:37048 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750791AbeEPPOQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 May 2018 11:14:16 -0400
+Received: by mail-wr0-f193.google.com with SMTP id h5-v6so1825145wrm.4
+        for <linux-clk@vger.kernel.org>; Wed, 16 May 2018 08:14:15 -0700 (PDT)
+Message-ID: <1526483653.2897.62.camel@baylibre.com>
+Subject: Re: [PATCH v2] clk: meson: use SPDX license identifiers consistently
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
+Date: Wed, 16 May 2018 17:14:13 +0200
+In-Reply-To: <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
+References: <20180516085040.6771-1-jbrunet@baylibre.com>
+         <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gilad,
+On Wed, 2018-05-16 at 08:03 -0700, Stephen Boyd wrote:
+> Quoting Jerome Brunet (2018-05-16 01:50:40)
+> > Replace every license notices in drivers/clk/meson by SPDX license
+> > identifiers, as described in license-rules.rst
+> > 
+> > Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> 
+> I take it this will come through a PR? Otherwise I can apply it to
+> clk-meson branch.
 
-On Thu, May 17, 2018 at 3:09 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> However, even with your clock patch, the signature checking fails for me,
->> on both R-Car H3 ES1.0 and ES2.0.
->> Does this need changes to the ARM Trusted Firmware, to allow Linux to
->> access the public SCEG module?
->
-> Well, this is actually something different. If you look you will
-> notice that my patch was part of a 3 part patch series,
-> the first of which disabled this test.
+We may have a few other patches coming this week. I was planning on making
+another PR sometime next week, if this is OK with you.
 
-Sorry, I had completely forgotten about the first patch from the series.
-With that applied, it continues:
-
-        ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version
-0x00000000, Driver version 4.0
-        ccree e6601000.crypto: Cache params previous: 0x00000777
-        ccree e6601000.crypto: Cache params current: 0x00000000
-(expect: 0x00000000)
-        alg: No test for cts1(cbc(aes)) (cts1-cbc-aes-ccree)
-        alg: No test for authenc(xcbc(aes),cbc(aes))
-(authenc-xcbc-aes-cbc-aes-ccree)
-        alg: No test for authenc(xcbc(aes),rfc3686(ctr(aes)))
-(authenc-xcbc-aes-rfc3686-ctr-aes-ccree)
-        ccree e6601000.crypto: ARM ccree device initialized
-
-Is HW version 0x00000000 expected?
-
-> If you take all the 3 patches, it will work.
-
-is there an easy way to test proper operation?
-I enabled CONFIG_CRYPT_TEST, and did insmod tcrypt.ko, but I mostly see
-"Failed to load transform" messages.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
