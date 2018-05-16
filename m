@@ -1,96 +1,48 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH net-next v2 13/15] ARM: dts: sun8i: r40: bananapi-m2-ultra: Enable GMAC ethernet controller
-Date: Wed,  2 May 2018 00:12:25 +0800
-Message-Id: <20180501161227.2110-14-wens@csie.org>
-In-Reply-To: <20180501161227.2110-1-wens@csie.org>
-References: <20180501161227.2110-1-wens@csie.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+ Michael Turquette <mturquette@baylibre.com>, gabriel.fernandez@st.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <a49b89ee-2aee-274d-ccc0-3eaf7d9a3755@st.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin GAIGNARD <benjamin.gaignard@st.com>,
+ Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+ <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+ <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+ <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
+ <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
+ <a49b89ee-2aee-274d-ccc0-3eaf7d9a3755@st.com>
+Message-ID: <152645747055.210890.12866212092853247736@swboyd.mtv.corp.google.com>
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
+ default
+Date: Wed, 16 May 2018 00:57:50 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The Bananapi M2 Ultra has a Realtek RTL8211E RGMII PHY tied to the GMAC.
-The PMIC's DC1SW output provides power for the PHY, while the ALDO2
-output provides I/O voltages on both sides.
+Quoting Alexandre Torgue (2018-05-16 00:34:21)
+> >>
+> >> Sorry I don't understand. Clock driver is mandatory to boot each
+> >> platform and depends on machine type. Do you see a use case where we
+> >> could need to disable the clock driver? (it would impose to change
+> >> devicetree to use fixed clocks and to have a booloader which configures
+> >> all PLL and clocks).
+> > =
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+> > No. My understanding of the patch that introduced the options was to
+> > allow the user to disable these drivers if they wanted to. I'm just
+> > reiterating the spirit of that patch. That must be wrong?
+> > =
 
-diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-index c6da21e43572..25fb048c7df2 100644
---- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-+++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-@@ -51,6 +51,7 @@
- 	compatible = "sinovoip,bpi-m2-ultra", "allwinner,sun8i-r40";
- 
- 	aliases {
-+		ethernet0 = &gmac;
- 		serial0 = &uart0;
- 	};
- 
-@@ -101,6 +102,22 @@
- 	status = "okay";
- };
- 
-+&gmac {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&gmac_rgmii_pins>;
-+	phy-handle = <&phy1>;
-+	phy-mode = "rgmii";
-+	phy-supply = <&reg_dc1sw>;
-+	status = "okay";
-+};
-+
-+&gmac_mdio {
-+	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <1>;
-+	};
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-@@ -149,6 +166,13 @@
- 	status = "okay";
- };
- 
-+&reg_aldo2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <2500000>;
-+	regulator-max-microvolt = <2500000>;
-+	regulator-name = "vcc-pa";
-+};
-+
- &reg_aldo3 {
- 	regulator-always-on;
- 	regulator-min-microvolt = <2700000>;
-@@ -156,6 +180,12 @@
- 	regulator-name = "avcc";
- };
- 
-+&reg_dc1sw {
-+	regulator-min-microvolt = <3000000>;
-+	regulator-max-microvolt = <3000000>;
-+	regulator-name = "vcc-gmac-phy";
-+};
-+
- &reg_dcdc1 {
- 	regulator-always-on;
- 	regulator-min-microvolt = <3000000>;
--- 
-2.17.0
+> Actually initial patch is a mistake. You can't boot STM32 platform =
+
+> without clock driver. This patch fixes that, and offers the possibility =
+
+> to not build the clock driver of the machine which are not used =
+
+> (currently all machine are selected but to reduce memory footprint you =
+
+> could disable not used machine in defconfig).
+
+Ok I stuck the patch into clk-fixes. Will send off to Linus tomorrow or the
+next day.
