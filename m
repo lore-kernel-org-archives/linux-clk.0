@@ -1,65 +1,70 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <amit.kucheria@linaro.org>
 MIME-Version: 1.0
-To: Matti Vaittinen <mazziesaccount@gmail.com>, Rob Herring <robh@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030129.GA16122@rob-hp-laptop>
- <20180531071717.GG13528@localhost.localdomain>
- <20180531102315.GA5150@localhost.localdomain>
- <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
-Message-ID: <152777867392.144038.18188452389972834689@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-Date: Thu, 31 May 2018 07:57:53 -0700
+In-Reply-To: <20180516141132.aqjif7d5motmmnlo@vireshk-i7>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+ <1526375616-16904-13-git-send-email-ilialin@codeaurora.org>
+ <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com> <20180516141132.aqjif7d5motmmnlo@vireshk-i7>
+From: Amit Kucheria <amit.kucheria@linaro.org>
+Date: Wed, 16 May 2018 17:13:44 +0300
+Message-ID: <CAP245DVO8mG--ZvUitLkEwvUP_YkQe0cz2qmpXg+uyZD_cT9+g@mail.gmail.com>
+Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Ilia Lin <ilialin@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Menon, Nishanth" <nm@ti.com>,
+	lgirdwood@gmail.com, Mark Brown <broonie@kernel.org>,
+	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-clk@vger.kernel.org,
+	DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, lakml <linux-arm-kernel@lists.infradead.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rob Herring (2018-05-31 07:07:24)
-> On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
-> > On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
-> >> Hello Rob,
-> >>
-> >> Thanks for the review!
-> >>
-> >> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
-> >> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
-> >> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> >> > > + - interrupts            : The interrupt line the device is conne=
-cted to.
-> >> > > + - interrupt-controller  : Marks the device node as an interrupt =
-controller.
-> >> >
-> >> > What sub blocks have interrupts?
-> >>
-> >> The PMIC can generate interrupts from events which cause it to reset.
-> >> Eg, irq from watchdog line change, power button pushes, reset request
-> >> via register interface etc. I don't know any generic handling for these
-> >> interrupts. In "normal" use-case this PMIC is powering the processor
-> >> where driver is running and I do not see reasonable handling because
-> >> power-reset is going to follow the irq.
-> >>
-> >
-> > Oh, but when reading this I understand that the interrupt-controller
-> > property should at least be optional.
-> =
+On Wed, May 16, 2018 at 5:11 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 16-05-18, 16:12, Amit Kucheria wrote:
+>> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
+>> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+>> > +       if (0 > ret)
+>>
+>> Any particular reason to prefer this over (ret < 0) that is generally
+>> used? I've seen it used to avoid the == vs. = typos, but not for other
+>> comparisons.
+>>
+>> Suggest sticking to what is commonly used i.e. ret < 0.
+>>
+>> > +               goto free_opp;
+>> > +
+>> > +       cpu_dev = get_cpu_device(GOLD_LEAD);
+>>
+>> Error check cpu_dev here?
+>>
+>> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
+>> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+>> > +       if (0 > ret)
+>> > +               goto free_opp;
+>
+> The goto here is wrong
+>
+>> > +
+>> > +
+>> > +       ret = PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-dt",
+>> > +                                                             -1, NULL, 0));
+>> > +
+>> > +       if (0 == ret)
+>> > +               return 0;
+>> > +
+>> > +free_opp:
+>> > +       dev_pm_opp_put_supported_hw(opp_temp);
+>>
+>> This is not needed because dev_pm_opp_set_supported_hw will free
+>> memory in case of failure. This call in only needed in case of a
+>> successful get.
+>
+> But this is still required for the case where platform device
+> registration fails.
 
-> I don't think it should. The h/w either has an interrupt controller or
-> it doesn't. My concern is you added it but nothing uses it which tells
-> me your binding is incomplete. I'd rather see complete bindings even
-> if you don't have drivers. For example, as-is, there's not really any
-> need for the clocks child node. You can just make the parent a clock
-> provider. But we need a complete picture of the h/w to make that
-> determination.
-> =
-
-
-I don't see a reason to have the clk subnode either.
+Agreed. The overall error path needs to be re-written with proper
+check of return values.
