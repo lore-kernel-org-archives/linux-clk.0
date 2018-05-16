@@ -1,293 +1,120 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v7 2/3] clk: qcom: Add DT bindings for SDM845 gcc clock controller
-Date: Mon,  7 May 2018 16:20:19 +0530
-Message-Id: <1525690220-26525-3-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
-References: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <amit.kucheria@verdurent.com>
+MIME-Version: 1.0
+Sender: amit.kucheria@verdurent.com
+In-Reply-To: <1526375616-16904-11-git-send-email-ilialin@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-11-git-send-email-ilialin@codeaurora.org>
+From: Amit Kucheria <amit.kucheria@linaro.org>
+Date: Wed, 16 May 2018 16:12:52 +0300
+Message-ID: <CAHLCerOxcUMTztT75rdkS-rrQWqEEgoVQr45Ueh_JRPE7CCm7Q@mail.gmail.com>
+Subject: Re: [PATCH v7 10/14] dt-bindings: qcom_spmi: Add support for SAW documentation
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>, nm@ti.com, lgirdwood@gmail.com,
+	broonie@kernel.org, Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>, catalin.marinas@arm.com, will.deacon@arm.com,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	lakml <linux-arm-kernel@lists.infradead.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>, nicolas.dechesne@linaro.org, celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add compatible string and the include file for gcc clock
-controller for SDM845.
+On Tue, May 15, 2018 at 12:13 PM, Ilia Lin <ilialin@codeaurora.org> wrote:
+> Add support for SAW controlled regulators.
+> The regulators defined as SAW controlled in the device tree
+> will be controlled through special CPU registers instead of direct
+> SPMI accesses.
+> This is required especially for CPU supply regulators to synchronize
+> with clock scaling and for Automatic Voltage Switching.
+> Document it.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/qcom,gcc.txt         |   1 +
- include/dt-bindings/clock/qcom,gcc-sdm845.h        | 239 +++++++++++++++++++++
- 2 files changed, 240 insertions(+)
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+Replace this boiler plate with what this patch actual does. Besides
+changing the subject, it could be, for example,
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-index d1fb8b2..664ea1f 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-@@ -19,6 +19,7 @@ Required properties :
- 			"qcom,gcc-msm8996"
- 			"qcom,gcc-msm8998"
- 			"qcom,gcc-mdm9615"
-+			"qcom,gcc-sdm845"
+"Document the DT bindings for the SAW regulators.
 
- - reg : shall contain base register location and length
- - #clock-cells : shall contain 1
-diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-new file mode 100644
-index 0000000..aca6126
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-@@ -0,0 +1,239 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_SDM_GCC_SDM845_H
-+#define _DT_BINDINGS_CLK_SDM_GCC_SDM845_H
-+
-+/* GCC clock registers */
-+#define GCC_AGGRE_NOC_PCIE_TBU_CLK				0
-+#define GCC_AGGRE_UFS_CARD_AXI_CLK				1
-+#define GCC_AGGRE_UFS_PHY_AXI_CLK				2
-+#define GCC_AGGRE_USB3_PRIM_AXI_CLK				3
-+#define GCC_AGGRE_USB3_SEC_AXI_CLK				4
-+#define GCC_BOOT_ROM_AHB_CLK					5
-+#define GCC_CAMERA_AHB_CLK					6
-+#define GCC_CAMERA_AXI_CLK					7
-+#define GCC_CAMERA_XO_CLK					8
-+#define GCC_CE1_AHB_CLK						9
-+#define GCC_CE1_AXI_CLK						10
-+#define GCC_CE1_CLK						11
-+#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK				12
-+#define GCC_CFG_NOC_USB3_SEC_AXI_CLK				13
-+#define GCC_CPUSS_AHB_CLK					14
-+#define GCC_CPUSS_AHB_CLK_SRC					15
-+#define GCC_CPUSS_RBCPR_CLK					16
-+#define GCC_CPUSS_RBCPR_CLK_SRC					17
-+#define GCC_DDRSS_GPU_AXI_CLK					18
-+#define GCC_DISP_AHB_CLK					19
-+#define GCC_DISP_AXI_CLK					20
-+#define GCC_DISP_GPLL0_CLK_SRC					21
-+#define GCC_DISP_GPLL0_DIV_CLK_SRC				22
-+#define GCC_DISP_XO_CLK						23
-+#define GCC_GP1_CLK						24
-+#define GCC_GP1_CLK_SRC						25
-+#define GCC_GP2_CLK						26
-+#define GCC_GP2_CLK_SRC						27
-+#define GCC_GP3_CLK						28
-+#define GCC_GP3_CLK_SRC						29
-+#define GCC_GPU_CFG_AHB_CLK					30
-+#define GCC_GPU_GPLL0_CLK_SRC					31
-+#define GCC_GPU_GPLL0_DIV_CLK_SRC				32
-+#define GCC_GPU_MEMNOC_GFX_CLK					33
-+#define GCC_GPU_SNOC_DVM_GFX_CLK				34
-+#define GCC_MSS_AXIS2_CLK					35
-+#define GCC_MSS_CFG_AHB_CLK					36
-+#define GCC_MSS_GPLL0_DIV_CLK_SRC				37
-+#define GCC_MSS_MFAB_AXIS_CLK					38
-+#define GCC_MSS_Q6_MEMNOC_AXI_CLK				39
-+#define GCC_MSS_SNOC_AXI_CLK					40
-+#define GCC_PCIE_0_AUX_CLK					41
-+#define GCC_PCIE_0_AUX_CLK_SRC					42
-+#define GCC_PCIE_0_CFG_AHB_CLK					43
-+#define GCC_PCIE_0_CLKREF_CLK					44
-+#define GCC_PCIE_0_MSTR_AXI_CLK					45
-+#define GCC_PCIE_0_PIPE_CLK					46
-+#define GCC_PCIE_0_SLV_AXI_CLK					47
-+#define GCC_PCIE_0_SLV_Q2A_AXI_CLK				48
-+#define GCC_PCIE_1_AUX_CLK					49
-+#define GCC_PCIE_1_AUX_CLK_SRC					50
-+#define GCC_PCIE_1_CFG_AHB_CLK					51
-+#define GCC_PCIE_1_CLKREF_CLK					52
-+#define GCC_PCIE_1_MSTR_AXI_CLK					53
-+#define GCC_PCIE_1_PIPE_CLK					54
-+#define GCC_PCIE_1_SLV_AXI_CLK					55
-+#define GCC_PCIE_1_SLV_Q2A_AXI_CLK				56
-+#define GCC_PCIE_PHY_AUX_CLK					57
-+#define GCC_PCIE_PHY_REFGEN_CLK					58
-+#define GCC_PCIE_PHY_REFGEN_CLK_SRC				59
-+#define GCC_PDM2_CLK						60
-+#define GCC_PDM2_CLK_SRC					61
-+#define GCC_PDM_AHB_CLK						62
-+#define GCC_PDM_XO4_CLK						63
-+#define GCC_PRNG_AHB_CLK					64
-+#define GCC_QMIP_CAMERA_AHB_CLK					65
-+#define GCC_QMIP_DISP_AHB_CLK					66
-+#define GCC_QMIP_VIDEO_AHB_CLK					67
-+#define GCC_QUPV3_WRAP0_S0_CLK					68
-+#define GCC_QUPV3_WRAP0_S0_CLK_SRC				69
-+#define GCC_QUPV3_WRAP0_S1_CLK					70
-+#define GCC_QUPV3_WRAP0_S1_CLK_SRC				71
-+#define GCC_QUPV3_WRAP0_S2_CLK					72
-+#define GCC_QUPV3_WRAP0_S2_CLK_SRC				73
-+#define GCC_QUPV3_WRAP0_S3_CLK					74
-+#define GCC_QUPV3_WRAP0_S3_CLK_SRC				75
-+#define GCC_QUPV3_WRAP0_S4_CLK					76
-+#define GCC_QUPV3_WRAP0_S4_CLK_SRC				77
-+#define GCC_QUPV3_WRAP0_S5_CLK					78
-+#define GCC_QUPV3_WRAP0_S5_CLK_SRC				79
-+#define GCC_QUPV3_WRAP0_S6_CLK					80
-+#define GCC_QUPV3_WRAP0_S6_CLK_SRC				81
-+#define GCC_QUPV3_WRAP0_S7_CLK					82
-+#define GCC_QUPV3_WRAP0_S7_CLK_SRC				83
-+#define GCC_QUPV3_WRAP1_S0_CLK					84
-+#define GCC_QUPV3_WRAP1_S0_CLK_SRC				85
-+#define GCC_QUPV3_WRAP1_S1_CLK					86
-+#define GCC_QUPV3_WRAP1_S1_CLK_SRC				87
-+#define GCC_QUPV3_WRAP1_S2_CLK					88
-+#define GCC_QUPV3_WRAP1_S2_CLK_SRC				89
-+#define GCC_QUPV3_WRAP1_S3_CLK					90
-+#define GCC_QUPV3_WRAP1_S3_CLK_SRC				91
-+#define GCC_QUPV3_WRAP1_S4_CLK					92
-+#define GCC_QUPV3_WRAP1_S4_CLK_SRC				93
-+#define GCC_QUPV3_WRAP1_S5_CLK					94
-+#define GCC_QUPV3_WRAP1_S5_CLK_SRC				95
-+#define GCC_QUPV3_WRAP1_S6_CLK					96
-+#define GCC_QUPV3_WRAP1_S6_CLK_SRC				97
-+#define GCC_QUPV3_WRAP1_S7_CLK					98
-+#define GCC_QUPV3_WRAP1_S7_CLK_SRC				99
-+#define GCC_QUPV3_WRAP_0_M_AHB_CLK				100
-+#define GCC_QUPV3_WRAP_0_S_AHB_CLK				101
-+#define GCC_QUPV3_WRAP_1_M_AHB_CLK				102
-+#define GCC_QUPV3_WRAP_1_S_AHB_CLK				103
-+#define GCC_SDCC2_AHB_CLK					104
-+#define GCC_SDCC2_APPS_CLK					105
-+#define GCC_SDCC2_APPS_CLK_SRC					106
-+#define GCC_SDCC4_AHB_CLK					107
-+#define GCC_SDCC4_APPS_CLK					108
-+#define GCC_SDCC4_APPS_CLK_SRC					109
-+#define GCC_SYS_NOC_CPUSS_AHB_CLK				110
-+#define GCC_TSIF_AHB_CLK					111
-+#define GCC_TSIF_INACTIVITY_TIMERS_CLK				112
-+#define GCC_TSIF_REF_CLK					113
-+#define GCC_TSIF_REF_CLK_SRC					114
-+#define GCC_UFS_CARD_AHB_CLK					115
-+#define GCC_UFS_CARD_AXI_CLK					116
-+#define GCC_UFS_CARD_AXI_CLK_SRC				117
-+#define GCC_UFS_CARD_CLKREF_CLK					118
-+#define GCC_UFS_CARD_ICE_CORE_CLK				119
-+#define GCC_UFS_CARD_ICE_CORE_CLK_SRC				120
-+#define GCC_UFS_CARD_PHY_AUX_CLK				121
-+#define GCC_UFS_CARD_PHY_AUX_CLK_SRC				122
-+#define GCC_UFS_CARD_RX_SYMBOL_0_CLK				123
-+#define GCC_UFS_CARD_RX_SYMBOL_1_CLK				124
-+#define GCC_UFS_CARD_TX_SYMBOL_0_CLK				125
-+#define GCC_UFS_CARD_UNIPRO_CORE_CLK				126
-+#define GCC_UFS_CARD_UNIPRO_CORE_CLK_SRC			127
-+#define GCC_UFS_MEM_CLKREF_CLK					128
-+#define GCC_UFS_PHY_AHB_CLK					129
-+#define GCC_UFS_PHY_AXI_CLK					130
-+#define GCC_UFS_PHY_AXI_CLK_SRC					131
-+#define GCC_UFS_PHY_ICE_CORE_CLK				132
-+#define GCC_UFS_PHY_ICE_CORE_CLK_SRC				133
-+#define GCC_UFS_PHY_PHY_AUX_CLK					134
-+#define GCC_UFS_PHY_PHY_AUX_CLK_SRC				135
-+#define GCC_UFS_PHY_RX_SYMBOL_0_CLK				136
-+#define GCC_UFS_PHY_RX_SYMBOL_1_CLK				137
-+#define GCC_UFS_PHY_TX_SYMBOL_0_CLK				138
-+#define GCC_UFS_PHY_UNIPRO_CORE_CLK				139
-+#define GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC				140
-+#define GCC_USB30_PRIM_MASTER_CLK				141
-+#define GCC_USB30_PRIM_MASTER_CLK_SRC				142
-+#define GCC_USB30_PRIM_MOCK_UTMI_CLK				143
-+#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC			144
-+#define GCC_USB30_PRIM_SLEEP_CLK				145
-+#define GCC_USB30_SEC_MASTER_CLK				146
-+#define GCC_USB30_SEC_MASTER_CLK_SRC				147
-+#define GCC_USB30_SEC_MOCK_UTMI_CLK				148
-+#define GCC_USB30_SEC_MOCK_UTMI_CLK_SRC				149
-+#define GCC_USB30_SEC_SLEEP_CLK					150
-+#define GCC_USB3_PRIM_CLKREF_CLK				151
-+#define GCC_USB3_PRIM_PHY_AUX_CLK				152
-+#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC				153
-+#define GCC_USB3_PRIM_PHY_COM_AUX_CLK				154
-+#define GCC_USB3_PRIM_PHY_PIPE_CLK				155
-+#define GCC_USB3_SEC_CLKREF_CLK					156
-+#define GCC_USB3_SEC_PHY_AUX_CLK				157
-+#define GCC_USB3_SEC_PHY_AUX_CLK_SRC				158
-+#define GCC_USB3_SEC_PHY_PIPE_CLK				159
-+#define GCC_USB3_SEC_PHY_COM_AUX_CLK				160
-+#define GCC_USB_PHY_CFG_AHB2PHY_CLK				161
-+#define GCC_VIDEO_AHB_CLK					162
-+#define GCC_VIDEO_AXI_CLK					163
-+#define GCC_VIDEO_XO_CLK					164
-+#define GPLL0							165
-+#define GPLL0_OUT_EVEN						166
-+#define GPLL0_OUT_MAIN						167
-+#define GCC_GPU_IREF_CLK					168
-+#define GCC_SDCC1_AHB_CLK					169
-+#define GCC_SDCC1_APPS_CLK					170
-+#define GCC_SDCC1_ICE_CORE_CLK					171
-+#define GCC_SDCC1_APPS_CLK_SRC					172
-+#define GCC_SDCC1_ICE_CORE_CLK_SRC				173
-+#define GCC_APC_VS_CLK						174
-+#define GCC_GPU_VS_CLK						175
-+#define GCC_MSS_VS_CLK						176
-+#define GCC_VDDA_VS_CLK						177
-+#define GCC_VDDCX_VS_CLK					178
-+#define GCC_VDDMX_VS_CLK					179
-+#define GCC_VS_CTRL_AHB_CLK					180
-+#define GCC_VS_CTRL_CLK						181
-+#define GCC_VS_CTRL_CLK_SRC					182
-+#define GCC_VSENSOR_CLK_SRC					183
-+#define GPLL4							184
-+
-+/* GCC Resets */
-+#define GCC_MMSS_BCR						0
-+#define GCC_PCIE_0_BCR						1
-+#define GCC_PCIE_1_BCR						2
-+#define GCC_PCIE_PHY_BCR					3
-+#define GCC_PDM_BCR						4
-+#define GCC_PRNG_BCR						5
-+#define GCC_QUPV3_WRAPPER_0_BCR					6
-+#define GCC_QUPV3_WRAPPER_1_BCR					7
-+#define GCC_QUSB2PHY_PRIM_BCR					8
-+#define GCC_QUSB2PHY_SEC_BCR					9
-+#define GCC_SDCC2_BCR						10
-+#define GCC_SDCC4_BCR						11
-+#define GCC_TSIF_BCR						12
-+#define GCC_UFS_CARD_BCR					13
-+#define GCC_UFS_PHY_BCR						14
-+#define GCC_USB30_PRIM_BCR					15
-+#define GCC_USB30_SEC_BCR					16
-+#define GCC_USB3_PHY_PRIM_BCR					17
-+#define GCC_USB3PHY_PHY_PRIM_BCR				18
-+#define GCC_USB3_DP_PHY_PRIM_BCR				19
-+#define GCC_USB3_PHY_SEC_BCR					20
-+#define GCC_USB3PHY_PHY_SEC_BCR					21
-+#define GCC_USB3_DP_PHY_SEC_BCR					22
-+#define GCC_USB_PHY_CFG_AHB2PHY_BCR				23
-+#define GCC_PCIE_0_PHY_BCR					24
-+#define GCC_PCIE_1_PHY_BCR					25
-+
-+/* GCC GDSCRs */
-+#define PCIE_0_GDSC						0
-+#define PCIE_1_GDSC						1
-+#define UFS_CARD_GDSC						2
-+#define UFS_PHY_GDSC						3
-+#define USB30_PRIM_GDSC						4
-+#define USB30_SEC_GDSC						5
-+#define HLOS1_VOTE_AGGRE_NOC_MMU_AUDIO_TBU_GDSC			6
-+#define HLOS1_VOTE_AGGRE_NOC_MMU_PCIE_TBU_GDSC			7
-+#define HLOS1_VOTE_AGGRE_NOC_MMU_TBU1_GDSC			8
-+#define HLOS1_VOTE_AGGRE_NOC_MMU_TBU2_GDSC			9
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC			10
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC			11
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC			12
-+
-+#endif
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+The saw-slave property allows ganging (grouping) of several regulators
+so that their outputs can be combined... blah blah.
+
+The saw-leader is the only one that then is configurable in DT"
+
+
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> index 57d2c65..406f2e5 100644
+> --- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> +++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> @@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
+>         Definition: Reference to regulator supplying the input pin, as
+>                     described in the data sheet.
+>
+> +- qcom,saw-reg:
+> +       Usage: optional
+> +       Value type: <phandle>
+> +       Description: Reference to syscon node defining the SAW registers.
+> +
+>
+>  The regulator node houses sub-nodes for each regulator within the device. Each
+>  sub-node is identified using the node's name, with valid values listed for each
+> @@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
+>                         2 = 0.55 uA
+>                         3 = 0.75 uA
+>
+> +- qcom,saw-slave:
+> +       Usage: optional
+> +       Value type: <boo>
+> +       Description: SAW controlled gang slave. Will not be configured.
+> +
+> +- qcom,saw-leader:
+> +       Usage: optional
+> +       Value type: <boo>
+> +       Description: SAW controlled gang leader. Will be configured as
+> +                    SAW regulator.
+> +
+>  Example:
+>
+>         regulators {
+> @@ -221,3 +237,32 @@ Example:
+>
+>                 ....
+>         };
+> +
+> +Example 2:
+> +
+> +       saw3: syscon@9A10000 {
+> +               compatible = "syscon";
+> +               reg = <0x9A10000 0x1000>;
+> +       };
+> +
+> +       ...
+> +
+> +       spm-regulators {
+> +               compatible = "qcom,pm8994-regulators";
+> +               qcom,saw-reg = <&saw3>;
+> +               s8 {
+> +                       qcom,saw-slave;
+> +               };
+> +               s9 {
+> +                       qcom,saw-slave;
+> +               };
+> +               s10 {
+> +                       qcom,saw-slave;
+> +               };
+> +               pm8994_s11_saw: s11 {
+> +                       qcom,saw-leader;
+> +                       regulator-always-on;
+> +                       regulator-min-microvolt = <900000>;
+> +                       regulator-max-microvolt = <1140000>;
+> +               };
+> +       };
+> --
+> 1.9.1
+>
