@@ -1,115 +1,132 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: boris.brezillon@bootlin.com,
-	dwmw2@infradead.org,
-	computersforpeace@gmail.com,
-	marek.vasut@gmail.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	thierry.reding@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: dev@lynxeye.de,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	marcel@ziswiler.com,
-	krzk@kernel.org,
-	digetx@gmail.com,
-	benjamin.lindqvist@endian.se,
-	jonathanh@nvidia.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mirza.krak@gmail.com,
-	linux-mtd@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 2/6] mtd: rawnand: tegra: add devicetree binding
-Date: Sun, 27 May 2018 23:54:38 +0200
-Message-Id: <20180527215442.14760-3-stefan@agner.ch>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525942205-111855-1-git-send-email-shawn.lin@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+ Shawn Lin <shawn.lin@rock-chips.com>
+References: <1525942205-111855-1-git-send-email-shawn.lin@rock-chips.com>
+Message-ID: <152645814090.210890.10037636681887493249@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: add clock panic dump in tree-view
+Date: Wed, 16 May 2018 01:09:00 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lucas Stach <dev@lynxeye.de>
+Quoting Shawn Lin (2018-05-10 01:50:05)
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+> index 3487be7..7bbdb6f 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -519,6 +519,9 @@
+>                         debug and development, but should not be needed o=
+n a
+>                         platform with proper driver support.  For more
+>                         information, see Documentation/clk.txt.
+> +       clk_panic_dump
+> +                       [CLK]
+> +                       Dump the whole clock tree-view upon panic.
 
-This adds the devicetree binding for the Tegra 2 NAND flash
-controller.
+Typically when the system panics it's because something has gone wrong.
+When a clk has gone wrong, typically the system hangs or crashes hard
+and printing out panic info just doesn't happen.
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- .../bindings/mtd/nvidia,tegra20-nand.txt      | 62 +++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+I'm not sure why clks are so special here that we need to dump the
+information about the clk tree at the point of a panic. Is this more of
+a debug patch to dump out clk tree info by calling panic() in certain
+places near where you get odd system hangs?
 
-diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-new file mode 100644
-index 000000000000..49e472af1b39
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-@@ -0,0 +1,62 @@
-+NVIDIA Tegra NAND Flash controller
-+
-+Required properties:
-+- compatible: Must be one of:
-+  - "nvidia,tegra20-nand"
-+- reg: MMIO address range
-+- interrupts: interrupt output of the NFC controller
-+- clocks: Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: Must include the following entries:
-+  - nand
-+- resets: Must contain an entry for each entry in reset-names.
-+  See ../reset/reset.txt for details.
-+- reset-names: Must include the following entries:
-+  - nand
-+
-+Optional children nodes:
-+Individual NAND chips are children of the NAND controller node. Currently
-+only one NAND chip supported.
-+
-+Required children node properties:
-+- reg: An integer ranging from 1 to 6 representing the CS line to use.
-+
-+Optional children node properties:
-+- nand-ecc-mode: String, operation mode of the NAND ecc mode. "hw" by default
-+- nand-ecc-algo: string, algorithm of NAND ECC.
-+		 Supported values are: "rs", "bch".
-+- nand-bus-width : 8 or 16 bus width if not present 8
-+- nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
-+- nand-ecc-strength: integer representing the number of bits to correct
-+		     per ECC step. Supported strength using HW ECC modes are:
-+		     - RS: 4, 6, 8
-+		     - BCH: 4, 8, 14, 16
-+- nand-ecc-step-size: integer representing the number of data bytes
-+		      that are covered by a single ECC step. Must be 512.
-+- wp-gpios: GPIO specifier for the write protect pin.
-+
-+Optional child node of NAND chip nodes:
-+Partitions: see partition.txt
-+
-+  Example:
-+	nand@70008000 {
-+		compatible = "nvidia,tegra20-nand";
-+		reg = <0x70008000 0x100>;
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-+		clock-names = "nand";
-+		resets = <&tegra_car 13>;
-+		reset-names = "nand";
-+
-+		nand-chip@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			nand-bus-width = <8>;
-+			nand-on-flash-bbt;
-+			nand-ecc-algo = "bch";
-+			nand-ecc-step-size = <512>;
-+			nand-ecc-strength = <8>;
-+			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-+		};
-+	};
--- 
-2.17.0
+>  =
+
+>         clock=3D          [BUGS=3DX86-32, HW] gettimeofday clocksource ov=
+erride.
+>                         [Deprecated]
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 9ae92aa..adb5537 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2802,6 +2802,73 @@ static inline void clk_debug_unregister(struct clk=
+_core *core)
+>  }
+>  #endif
+>  =
+
+> +static bool clk_pdump_enable;
+> +static int __init clk_pdump_setup(char *__unused)
+> +{
+> +       clk_pdump_enable  =3D true;
+> +       return 1;
+> +}
+> +__setup("clk_panic_dump", clk_pdump_setup);
+> +
+> +static void clk_pdump_show_one(struct clk_core *c, int level)
+> +{
+> +       if (!c)
+> +               return;
+> +
+> +       pr_err("%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+> +               level * 3 + 1, "", 30 - level * 3, c->name,
+> +               c->enable_count, c->prepare_count, clk_core_get_rate(c),
+> +               clk_core_get_accuracy(c), clk_core_get_phase(c));
+> +}
+> +
+> +static void clk_pdump_show_subtree(struct clk_core *c, int level)
+> +{
+> +       struct clk_core *child;
+> +
+> +       if (!c)
+> +               return;
+> +
+> +       clk_pdump_show_one(c, level);
+> +
+> +       hlist_for_each_entry(child, &c->children, child_node)
+> +               clk_pdump_show_subtree(child, level + 1);
+> +}
+> +
+> +static int clk_panic_dump(struct notifier_block *this, unsigned long ev,
+> +                         void *ptr)
+> +{
+> +       struct clk_core *c;
+> +
+> +       if (!clk_pdump_enable)
+> +               return 0;
+
+Why register the notifier in late init if the commandline doesn't have
+the parameter set?
+
+> +
+> +       pr_err("clock panic dump:\n");
+> +       pr_err("   clock                         enable_cnt  prepare_cnt =
+       rate   accuracy   phase\n");
+> +       pr_err("---------------------------------------------------------=
+-------------------------------\n");
+> +
+> +       clk_prepare_lock();
+
+Why are we taking locks in the panic path?
+
+> +
+> +       hlist_for_each_entry(c, &clk_root_list, child_node)
+> +               clk_pdump_show_subtree(c, 0);
+> +       hlist_for_each_entry(c, &clk_orphan_list, child_node)
+> +               clk_pdump_show_subtree(c, 0);
+> +
+> +       clk_prepare_unlock();
+> +
+> +       return 0;
+> +}
+> +
+> +static struct notifier_block clk_pdump_block =3D {
+> +       .notifier_call =3D clk_panic_dump,
+> +};
+> +
+> +static int clk_register_pdump(void)
+> +{
+> +       atomic_notifier_chain_register(&panic_notifier_list, &clk_pdump_b=
+lock);
+> +       return 0;
+> +}
+> +late_initcall_sync(clk_register_pdump);
+
+Why sync?
