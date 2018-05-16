@@ -1,109 +1,67 @@
-Return-Path: <david@lechnology.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v10_00/27]_ARM:_davinci:_convert_to_common_clo?=
- =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
-To: Adam Ford <aford173@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
- devicetree <devicetree@vger.kernel.org>,
- arm-soc <linux-arm-kernel@lists.infradead.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180509172606.29387-1-david@lechnology.com>
- <CAHCN7xJ6+vmyrTQGYH=pKz5GRf7rLT4otreNgu6TJi_3UAEX5w@mail.gmail.com>
- <CAMRc=MdO0EtzDHp3RF4ym3umWM_KfhvpWHV2+Y3270ygKz9iGw@mail.gmail.com>
- <CAHCN7xJt=tsc2zHWu+6y_2z=+kHdaovh3TD_MJ1+UeUbTdyj8w@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <09e0edb3-70a1-a99f-7b06-05832c9aade1@lechnology.com>
-Date: Tue, 15 May 2018 19:31:41 -0500
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7xJt=tsc2zHWu+6y_2z=+kHdaovh3TD_MJ1+UeUbTdyj8w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAJZ5v0gKvMFSyZy3K11d1P8+5ZBNk2ecFAuRTrQ_3obYJM8iTw@mail.gmail.com>
+Cc: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Kurtz <djkurtz@chromium.org>,
+ Alex Deucher <Alexander.Deucher@amd.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Dave Airlie <airlied@redhat.com>, Shaoyun.Liu@amd.com,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>, Len Brown <lenb@kernel.org>,
+ ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+ <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
+ <20362702.FCbsg9xPKv@aspire.rjw.lan>
+ <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com>
+ <152641886428.237094.9491189918943948420@swboyd.mtv.corp.google.com>
+ <CAJZ5v0gKvMFSyZy3K11d1P8+5ZBNk2ecFAuRTrQ_3obYJM8iTw@mail.gmail.com>
+Message-ID: <152650550674.210890.11671394176812686200@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
+Date: Wed, 16 May 2018 14:18:26 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 5/15/18 5:44 PM, Adam Ford wrote:
-> On Tue, May 15, 2018 at 4:25 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> 2018-05-14 2:40 GMT+02:00 Adam Ford <aford173@gmail.com>:
->>> On Wed, May 9, 2018 at 12:25 PM, David Lechner <david@lechnology.com> wrote:
->>>> This series converts mach-davinci to use the common clock framework.
->>>>
->>>> The series works like this, the first 3 patches fix some issues with the clock
->>>> drivers that have already been accepted into the mainline kernel.
->>>>
->>>> Then, starting with "ARM: davinci: pass clock as parameter to
->>>> davinci_timer_init()", we get the mach code ready for the switch by adding the
->>>> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
->>>> around the legacy clocks so that we can switch easily between the old and the
->>>> new.
->>>>
->>>> "ARM: davinci: switch to common clock framework" actually flips the switch
->>>> to start using the new clock drivers. Then the next 8 patches remove all
->>>> of the old clock code.
->>>>
->>>> The final four patches add device tree clock support to the one SoC that
->>>> supports it.
->>>>
->>>> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
->>>> board file).
->>>>
->>>
->>> I am not sure if I did something wrong, but I attempted to build and I
->>> wasn't able to boot the da850-evm.dtb your repo common-clk-v11,
->>> however the legacy board file boot was OK.
->>>
->>> make davinci_all_defconfig ARCH=arm
->>> make zImage modules da850-evm.dtb ARCH=arm CROSS_COMPILE=arm-linux- -j8
->>>
->>> 3140416 bytes read in 1464 ms (2 MiB/s)
->>> 20353 bytes read in 15 ms (1.3 MiB/s)
->>> ## Flattened Device Tree blob at c0600000
->>>     Booting using the fdt blob at 0xc0600000
->>>     Loading Device Tree to c7e57000, end c7e5ef80 ... OK
->>>
->>> Starting kernel ...
->>>
->>> Uncompressing Linux... done, booting the kernel.
->>>
->>> (and hang)
->>>
->>> If you have some suggestions, I am try them as I get time.
->>>
->>> adam
->>>
->>
->> Runs fine on da850-lcdk and dm365-evm. I'll test the da850-evm
->> tomorrow when I'll have access to it.
-> 
-> I set the bootargs to: bootargs=console=ttyS2,115200n8
-> clk_ignore_unused root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
+Quoting Rafael J. Wysocki (2018-05-16 01:23:27)
+> On Tue, May 15, 2018 at 11:14 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Agrawal, Akshu (2018-05-15 02:39:08)
+> >>
+> >>
+> >> On 5/15/2018 3:02 PM, Rafael J. Wysocki wrote:
+> >> > On Wednesday, May 9, 2018 11:59:00 AM CEST Akshu Agrawal wrote:
+> >> >> Stoney SoC provides oscout clock. This clock can support 25Mhz and
+> >> >> 48Mhz of frequency.
+> >> >> The clock is available for general system use.
+> >> >>
+> >> >> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+> >> >
+> >> > I'm not sure if the Stephen Boyd's comments on one of the previous
+> >> > versions of this patch have been addressed.  Have they?
+> >> >
+> >> > In any case, if I'm expected to take this, I need an ACK from Stephe=
+n on it.
+> >> >
+> >> > Thanks,
+> >> > Rafael
+> >> >
+> >>
+> >> All comments of Stephen Boyd and Daniel Kurtz have been addressed.
+> >>
+> >> Stephen, if you are Ok with this can you please ACK it.
+> >>
+> >
+> > It could go via clk tree and meet up with the acpi patch in -next right?
+> > I'm fine with it going through acpi path though so whichever way works.
+> =
 
-It looks like you forgot earlyprintk in your bootargs.
+> It's better if it goes in as a series IMO and then if it goes via
+> ACPI, the clock dependency will be clear from the git history.
+> =
 
-> 
-> I enabled DEBUG_LL and EARLY_PRINTK, yet when it loads, I only get:
-> 
-> ## Flattened Device Tree blob at c0600000
->     Booting using the fdt blob at 0xc0600000
->     Loading Device Tree to c7e57000, end c7e5ef35 ... OK
-> 
-> Starting kernel ...
-> 
-> Uncompressing Linux... done, booting the kernel.
-> 
-> 
-> I am doing this at my home, so I don't have a debugger for the
-> DA850-EVM.  I am using a SOM that is an AM1808, but I vaguely remember
-> something about enabling a DSP clock somewhere, but I cannot seem to
-> find the e-mail.  I know its counter intuitive that we'd need to
-> enable a clock that runs the DSP since it doesn't exist on the AM1808,
-> but I would have thought the clk_ignore_unused would have worked
-> around that issue.
-> 
-> If someone else has a DA850-EVM or suggestions, I'm willing to try
-> them as I have time.
-> 
-> adam
->>
->> Bart
+> So if you don't mind, I'll queue this series up for 4.18.
+> =
+
+
+Ok
