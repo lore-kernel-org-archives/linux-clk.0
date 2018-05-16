@@ -1,30 +1,73 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v2 2/3] clk: qcom: Register the gdscs before the clocks
-To: Rajendra Nayak <rnayak@codeaurora.org>, sboyd@kernel.org,
- mturquette@baylibre.com
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
-References: <20180323082616.10142-1-rnayak@codeaurora.org>
- <20180323082616.10142-3-rnayak@codeaurora.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <b0f5df15-d312-166d-f7fe-43bf0c49df23@linaro.org>
-Date: Fri, 25 May 2018 19:20:55 +0100
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Wed, 16 May 2018 19:41:32 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Amit Kucheria <amit.kucheria@linaro.org>
+Cc: Ilia Lin <ilialin@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	nm@ti.com, lgirdwood@gmail.com, broonie@kernel.org,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>, catalin.marinas@arm.com,
+	will.deacon@arm.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux PM list <linux-pm@vger.kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	lakml <linux-arm-kernel@lists.infradead.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180516141132.aqjif7d5motmmnlo@vireshk-i7>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+ <1526375616-16904-13-git-send-email-ilialin@codeaurora.org>
+ <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180323082616.10142-3-rnayak@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 23/03/18 08:26, Rajendra Nayak wrote:
-> We have atleast some instances of ALWAYS_ON gdscs, which need to
-> be turned ON*before*  some clocks within the gdsc domain marked
-> with a CLK_IS_CRITICAL can be turned ON.
-> To facilitate this sequence, register the GDCSs (and hence handle
-> the ALWAYS_ON gdscs) before we register clocks (and handle the
-> clocks marked as CLK_IS_CRITICAL)
+On 16-05-18, 16:12, Amit Kucheria wrote:
+> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
+> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+> > +       if (0 > ret)
 > 
-> Signed-off-by: Rajendra Nayak<rnayak@codeaurora.org>
-> ---
-Tested-by: Srinivas Kandagatla<srinivas.kandagatla@linaro.org>
+> Any particular reason to prefer this over (ret < 0) that is generally
+> used? I've seen it used to avoid the == vs. = typos, but not for other
+> comparisons.
+> 
+> Suggest sticking to what is commonly used i.e. ret < 0.
+> 
+> > +               goto free_opp;
+> > +
+> > +       cpu_dev = get_cpu_device(GOLD_LEAD);
+> 
+> Error check cpu_dev here?
+> 
+> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
+> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+> > +       if (0 > ret)
+> > +               goto free_opp;
+
+The goto here is wrong
+
+> > +
+> > +
+> > +       ret = PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-dt",
+> > +                                                             -1, NULL, 0));
+> > +
+> > +       if (0 == ret)
+> > +               return 0;
+> > +
+> > +free_opp:
+> > +       dev_pm_opp_put_supported_hw(opp_temp);
+> 
+> This is not needed because dev_pm_opp_set_supported_hw will free
+> memory in case of failure. This call in only needed in case of a
+> successful get.
+
+But this is still required for the case where platform device
+registration fails.
+
+-- 
+viresh
