@@ -1,136 +1,53 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Fri, 18 May 2018 07:15:38 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180518014538.duphof6enscpm5vp@vireshk-i7>
-References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
- <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Marcin Ziemianowicz <marcin@ziemianowicz.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180429190111.14247-1-marcin@ziemianowicz.com>
+Cc: Marcin Ziemianowicz <marcin@ziemianowicz.com>, stable@vger.kernel.org,
+ Boris Brezillon <boris.brezillon@bootlin.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180429190111.14247-1-marcin@ziemianowicz.com>
+Message-ID: <152645278298.237094.13637070780064221668@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH V4] clk: at91: PLL recalc_rate() now using cached MUL and DIV
+ values
+Date: Tue, 15 May 2018 23:39:42 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17-05-18, 14:19, Ilia Lin wrote:
-> +static int __init qcom_cpufreq_kryo_driver_init(void)
-> +{
-> +	size_t len;
-> +	int ret = 0;
-> +	u32 versions;
-> +	enum _msm8996_version msm8996_version;
-> +	u8 *speedbin;
-> +	struct device *cpu_dev_silver, *cpu_dev_gold;
-> +	struct device_node *np;
-> +	struct nvmem_cell *speedbin_nvmem;
-> +	struct platform_device *pdev;
-> +	struct opp_table *opp_silver = NULL;
-> +	struct opp_table *opp_gold = NULL;
+Quoting Marcin Ziemianowicz (2018-04-29 12:01:11)
+> When a USB device is connected to the USB host port on the SAM9N12 then
+> you get "-62" error which seems to indicate USB replies from the device
+> are timing out. Based on a logic sniffer, I saw the USB bus was running
+> at half speed.
+> =
 
-No need to initialize them and you may want to arrange all above in
-decreasing order of their length.
+> The PLL code uses cached MUL and DIV values which get set in set_rate()
+> and applied in prepare(), but the recalc_rate() function instead
+> queries the hardware instead of using these cached values. Therefore,
+> if recalc_rate() is called between a set_rate() and prepare(), the
+> wrong frequency is calculated and later the USB clock divider for the
+> SAM9N12 SOC will be configured for an incorrect clock.
+> =
 
-> +
-> +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-> +	if (IS_ERR_OR_NULL(cpu_dev_silver))
-> +		return PTR_ERR(cpu_dev_silver);
-> +
-> +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-> +	if (IS_ERR_OR_NULL(cpu_dev_gold))
-> +		return PTR_ERR(cpu_dev_gold);
-> +
-> +	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-> +	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-> +		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
-> +		return -ENODEV;
-> +	}
-> +
-> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
-> +	if (IS_ERR_OR_NULL(np))
-> +		return PTR_ERR(np);
-> +
-> +	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-> +		ret = -ENOENT;
-> +		goto free_np;
-> +	}
-> +
-> +	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-> +	if (IS_ERR(speedbin_nvmem)) {
-> +		ret = PTR_ERR(speedbin_nvmem);
-> +		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
-> +		goto free_np;
-> +	}
-> +
-> +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-> +	nvmem_cell_put(speedbin_nvmem);
-> +
-> +	switch (msm8996_version) {
-> +	case MSM8996_V3:
-> +		versions = 1 << (unsigned int)(*speedbin);
-> +		break;
-> +	case MSM8996_SG:
-> +		versions = 1 << ((unsigned int)(*speedbin) + 4);
-> +		break;
-> +	default:
-> +		BUG();
-> +		break;
-> +	}
-> +
-> +	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-> +	if (IS_ERR_OR_NULL(opp_silver)) {
+> In my case, the PLL hardware was set to 96 Mhz before the OHCI
+> driver loads, and therefore the usb clock divider was being set
+> to /2 even though the OHCI driver set the PLL to 48 Mhz.
+> =
 
-This API doesn't return NULL and so IS_ERR() would be sufficient.
+> As an alternative explanation, I noticed this was fixed in the past by
+> 87e2ed338f1b ("clk: at91: fix recalc_rate implementation of PLL
+> driver") but the bug was later re-introduced by 1bdf02326b71 ("clk:
+> at91: make use of syscon/regmap internally").
+> =
 
-> +		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
-> +		ret = PTR_ERR(opp_silver);
-> +		goto free_np;
-> +	}
-> +
-> +	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-> +	if (IS_ERR_OR_NULL(opp_gold)) {
+> Fixes: 1bdf02326b71 ("clk: at91: make use of syscon/regmap internally)
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+> ---
 
-same here.
-
-> +		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
-> +		ret = PTR_ERR(opp_gold);
-> +		goto free_opp_silver;
-> +	}
-> +
-> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-> +	if (!IS_ERR_OR_NULL(pdev))
-> +		goto out;
-
-Simply return from here and remove the useless label out.
-
-> +
-> +	ret = PTR_ERR(pdev);
-> +	dev_err(cpu_dev_silver, "Failed to register platform device\n");
-> +	dev_pm_opp_put_supported_hw(opp_gold);
-> +
-> +free_opp_silver:
-> +	dev_pm_opp_put_supported_hw(opp_silver);
-> +
-> +free_np:
-> +	of_node_put(np);
-> +
-> +out:
-> +	return ret;
-> +}
-> +late_initcall(qcom_cpufreq_kryo_driver_init);
-
-Please resend only this patch now or just paste the new code in a mail
-here so that I can review it quickly and then you can resend the final
-version. Most of the patches aren't changing anyway.
-
--- 
-viresh
+Applied to clk-next
