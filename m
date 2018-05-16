@@ -1,53 +1,50 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 1 May 2018 09:08:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [RFC 02/10] ata: ahci-platform: Remove support for Exynos5440
-Message-ID: <20180501140801.GA27080@rob-hp-laptop>
-References: <20180424203239.21885-1-krzk@kernel.org>
- <20180424203239.21885-3-krzk@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:38662 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750806AbeEPRca (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 May 2018 13:32:30 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180424203239.21885-3-krzk@kernel.org>
+To: Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1526483653.2897.62.camel@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
+References: <20180516085040.6771-1-jbrunet@baylibre.com>
+ <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
+ <1526483653.2897.62.camel@baylibre.com>
+Message-ID: <152649194881.210890.1329258497783697194@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2] clk: meson: use SPDX license identifiers consistently
+Date: Wed, 16 May 2018 10:32:28 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 10:32:31PM +0200, Krzysztof Kozlowski wrote:
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  Documentation/devicetree/bindings/ata/ahci-platform.txt | 1 -
->  drivers/ata/ahci_platform.c                             | 1 -
->  2 files changed, 2 deletions(-)
+Quoting Jerome Brunet (2018-05-16 08:14:13)
+> On Wed, 2018-05-16 at 08:03 -0700, Stephen Boyd wrote:
+> > Quoting Jerome Brunet (2018-05-16 01:50:40)
+> > > Replace every license notices in drivers/clk/meson by SPDX license
+> > > identifiers, as described in license-rules.rst
+> > > =
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> > > Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > ---
+> > =
+
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > =
+
+> > I take it this will come through a PR? Otherwise I can apply it to
+> > clk-meson branch.
+> =
+
+> We may have a few other patches coming this week. I was planning on making
+> another PR sometime next week, if this is OK with you.
+> =
+
+
+Sounds fine. Thanks.
+
