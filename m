@@ -1,134 +1,57 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v6 05/14] clk: qcom: cpu-8996: Add support to switch to alternate PLL
-Date: Mon, 14 May 2018 16:11:51 +0300
-Message-Id: <1526303520-5843-6-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
-References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <rjwysocki@gmail.com>
+MIME-Version: 1.0
+Sender: rjwysocki@gmail.com
+In-Reply-To: <152641886428.237094.9491189918943948420@swboyd.mtv.corp.google.com>
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+ <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com> <20362702.FCbsg9xPKv@aspire.rjw.lan>
+ <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com> <152641886428.237094.9491189918943948420@swboyd.mtv.corp.google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 16 May 2018 10:23:27 +0200
+Message-ID: <CAJZ5v0gKvMFSyZy3K11d1P8+5ZBNk2ecFAuRTrQ_3obYJM8iTw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Daniel Kurtz <djkurtz@chromium.org>, Alex Deucher <Alexander.Deucher@amd.com>,
+	Michael Turquette <mturquette@baylibre.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+	Dave Airlie <airlied@redhat.com>, Shaoyun.Liu@amd.com,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Len Brown <lenb@kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+On Tue, May 15, 2018 at 11:14 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Agrawal, Akshu (2018-05-15 02:39:08)
+>>
+>>
+>> On 5/15/2018 3:02 PM, Rafael J. Wysocki wrote:
+>> > On Wednesday, May 9, 2018 11:59:00 AM CEST Akshu Agrawal wrote:
+>> >> Stoney SoC provides oscout clock. This clock can support 25Mhz and
+>> >> 48Mhz of frequency.
+>> >> The clock is available for general system use.
+>> >>
+>> >> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+>> >
+>> > I'm not sure if the Stephen Boyd's comments on one of the previous
+>> > versions of this patch have been addressed.  Have they?
+>> >
+>> > In any case, if I'm expected to take this, I need an ACK from Stephen on it.
+>> >
+>> > Thanks,
+>> > Rafael
+>> >
+>>
+>> All comments of Stephen Boyd and Daniel Kurtz have been addressed.
+>>
+>> Stephen, if you are Ok with this can you please ACK it.
+>>
+>
+> It could go via clk tree and meet up with the acpi patch in -next right?
+> I'm fine with it going through acpi path though so whichever way works.
 
-Each of the CPU clusters on msm8996 are powered via a primary
-PLL and a secondary PLL. The primary PLL is what drives the
-CPU clk, except for times when we are reprogramming the PLL
-itself, when we temporarily switch to an alternate PLL.
-Use clock rate change notifiers to support this.
+It's better if it goes in as a series IMO and then if it goes via
+ACPI, the clock dependency will be clear from the git history.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/qcom/clk-cpu-8996.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+So if you don't mind, I'll queue this series up for 4.18.
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index beb97eb..390b369 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -61,6 +61,7 @@
-  * detect voltage droops. We do not add support for ACD as yet.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -187,10 +188,14 @@ struct clk_cpu_8996_mux {
- 	u32	reg;
- 	u8	shift;
- 	u8	width;
-+	struct notifier_block nb;
- 	struct clk_hw	*pll;
- 	struct clk_regmap clkr;
- };
- 
-+#define to_clk_cpu_8996_mux_nb(_nb) \
-+	container_of(_nb, struct clk_cpu_8996_mux, nb)
-+
- static inline
- struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
- {
-@@ -236,6 +241,26 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return 0;
- }
- 
-+int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			void *data)
-+{
-+	int ret;
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+
-+	switch (event) {
-+	case PRE_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
-+		break;
-+	case POST_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		break;
-+	default:
-+		ret = 0;
-+		break;
-+	}
-+
-+	return notifier_from_errno(ret);
-+};
- const struct clk_ops clk_cpu_8996_mux_ops = {
- 	.set_parent = clk_cpu_8996_mux_set_parent,
- 	.get_parent = clk_cpu_8996_mux_get_parent,
-@@ -279,6 +304,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
- 		.parent_names = (const char *[]){
-@@ -298,6 +324,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
- 		.parent_names = (const char *[]){
-@@ -356,6 +383,12 @@ struct clk_regmap *clks[] = {
- 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
- 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
- 
-+	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
-+
- 	return ret;
- }
- 
--- 
-1.9.1
+Thanks,
+Rafael
