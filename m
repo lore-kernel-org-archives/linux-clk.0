@@ -1,71 +1,51 @@
-Return-Path: <daniel.lezcano@linaro.org>
-Return-Path: <daniel.lezcano@linaro.org>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: sboyd@kernel.org,
-	mturquette@baylibre.com
-Cc: leo.yan@linaro.org,
-	olof@lixom.net,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH V2] clk/driver/hisi: Consolidate the Kconfig for the CLOCK_STUB
-Date: Tue, 22 May 2018 22:45:28 +0200
-Message-Id: <1527021928-1243-1-git-send-email-daniel.lezcano@linaro.org>
-In-Reply-To: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
-References: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not
+ compiled by default
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        <gabriel.fernandez@st.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        benjamin
+ GAIGNARD <benjamin.gaignard@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+ <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+ <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+ <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
+ <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
+ <a49b89ee-2aee-274d-ccc0-3eaf7d9a3755@st.com>
+ <152645747055.210890.12866212092853247736@swboyd.mtv.corp.google.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <503ec7d8-e493-3458-e974-5fab5649aaf8@st.com>
+Date: Wed, 16 May 2018 10:01:56 +0200
+MIME-Version: 1.0
+In-Reply-To: <152645747055.210890.12866212092853247736@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-The current defconfig is inconsistent as it selects the mailbox and
-the clock for the hi6220 and the hi3660 without having their Kconfigs
-making sure the dependencies are correct. It ends up when selecting
-different versions for the kernel (for example when git bisecting)
-those options disappear and they don't get back, leading to unexpected
-behaviors. In our case, the cpufreq driver does no longer work because
-the clock fails to initialize due to the clock stub and the mailbox
-missing.
 
-In order to have the dependencies correctly set when defaulting, let's
-do the same as commit 3a49afb84ca074e ("clk: enable hi655x common clk
-automatically") where we select automatically the driver when the
-parent driver is selected. With sensible defaults in place, we can leave
-other choices for EXPERT.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
-
-Split the patch into the clk specific and resent as requested by Olof
-Johansson.
----
- drivers/clk/hisilicon/Kconfig | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
-index 1bd4355..becdb1d 100644
---- a/drivers/clk/hisilicon/Kconfig
-+++ b/drivers/clk/hisilicon/Kconfig
-@@ -44,14 +44,17 @@ config RESET_HISI
- 	  Build reset controller driver for HiSilicon device chipsets.
- 
- config STUB_CLK_HI6220
--	bool "Hi6220 Stub Clock Driver"
--	depends on COMMON_CLK_HI6220 && MAILBOX
--	default ARCH_HISI
-+	bool "Hi6220 Stub Clock Driver" if EXPERT
-+	depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
-+	depends on MAILBOX
-+	default COMMON_CLK_HI6220
- 	help
- 	  Build the Hisilicon Hi6220 stub clock driver.
- 
- config STUB_CLK_HI3660
--	bool "Hi3660 Stub Clock Driver"
--	depends on COMMON_CLK_HI3660 && MAILBOX
-+	bool "Hi3660 Stub Clock Driver" if EXPERT
-+	depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
-+	depends on MAILBOX
-+	default COMMON_CLK_HI3660
- 	help
- 	  Build the Hisilicon Hi3660 stub clock driver.
--- 
-2.7.4
+On 05/16/2018 09:57 AM, Stephen Boyd wrote:
+> Quoting Alexandre Torgue (2018-05-16 00:34:21)
+>>>>
+>>>> Sorry I don't understand. Clock driver is mandatory to boot each
+>>>> platform and depends on machine type. Do you see a use case where we
+>>>> could need to disable the clock driver? (it would impose to change
+>>>> devicetree to use fixed clocks and to have a booloader which configures
+>>>> all PLL and clocks).
+>>>
+>>> No. My understanding of the patch that introduced the options was to
+>>> allow the user to disable these drivers if they wanted to. I'm just
+>>> reiterating the spirit of that patch. That must be wrong?
+>>>
+>> Actually initial patch is a mistake. You can't boot STM32 platform
+>> without clock driver. This patch fixes that, and offers the possibility
+>> to not build the clock driver of the machine which are not used
+>> (currently all machine are selected but to reduce memory footprint you
+>> could disable not used machine in defconfig).
+> 
+> Ok I stuck the patch into clk-fixes. Will send off to Linus tomorrow or the
+> next day.
+> 
+Thanks Stephen
