@@ -1,456 +1,179 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37225 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751182AbeEPIvL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 May 2018 04:51:11 -0400
-Received: by mail-wm0-f66.google.com with SMTP id l1-v6so6031399wmb.2
-        for <linux-clk@vger.kernel.org>; Wed, 16 May 2018 01:51:10 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v2] clk: meson: use SPDX license identifiers consistently
-Date: Wed, 16 May 2018 10:50:40 +0200
-Message-Id: <20180516085040.6771-1-jbrunet@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ilialin@codeaurora.org>
+From: <ilialin@codeaurora.org>
+To: "'Amit Kucheria'" <amit.kucheria@linaro.org>
+Cc: "'Michael Turquette'" <mturquette@baylibre.com>,
+	<sboyd@kernel.org>,
+	"'Rob Herring'" <robh@kernel.org>,
+	"'Mark Rutland'" <mark.rutland@arm.com>,
+	"'Viresh Kumar'" <viresh.kumar@linaro.org>,
+	<nm@ti.com>,
+	<lgirdwood@gmail.com>,
+	<broonie@kernel.org>,
+	"'Andy Gross'" <andy.gross@linaro.org>,
+	"'David Brown'" <david.brown@linaro.org>,
+	<catalin.marinas@arm.com>,
+	<will.deacon@arm.com>,
+	"'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+	<linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	"'LKML'" <linux-kernel@vger.kernel.org>,
+	"'Linux PM list'" <linux-pm@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-soc@vger.kernel.org>,
+	"'lakml'" <linux-arm-kernel@lists.infradead.org>,
+	"'Rajendra Nayak'" <rnayak@codeaurora.org>,
+	<nicolas.dechesne@linaro.org>,
+	<celster@codeaurora.org>,
+	<tfinkel@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-11-git-send-email-ilialin@codeaurora.org> <CAHLCerOxcUMTztT75rdkS-rrQWqEEgoVQr45Ueh_JRPE7CCm7Q@mail.gmail.com>
+In-Reply-To: <CAHLCerOxcUMTztT75rdkS-rrQWqEEgoVQr45Ueh_JRPE7CCm7Q@mail.gmail.com>
+Subject: RE: [PATCH v7 10/14] dt-bindings: qcom_spmi: Add support for SAW documentation
+Date: Thu, 17 May 2018 10:24:05 +0300
+Message-ID: <017401d3edb0$0e3d6d10$2ab84730$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace every license notices in drivers/clk/meson by SPDX license
-identifiers, as described in license-rules.rst
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
 
-Changes since v1: [0]
- * GPL-2.0+ errors reported by Stephen and Fabio (Thx!)
+> -----Original Message-----
+> From: amit.kucheria@verdurent.com <amit.kucheria@verdurent.com> On
+> Behalf Of Amit Kucheria
+> Sent: Wednesday, May 16, 2018 16:13
+> To: Ilia Lin <ilialin@codeaurora.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>; sboyd@kernel.org; Rob
+> Herring <robh@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Viresh
+> Kumar <viresh.kumar@linaro.org>; nm@ti.com; lgirdwood@gmail.com;
+> broonie@kernel.org; Andy Gross <andy.gross@linaro.org>; David Brown
+> <david.brown@linaro.org>; catalin.marinas@arm.com;
+> will.deacon@arm.com; Rafael J. Wysocki <rjw@rjwysocki.net>; linux-
+> clk@vger.kernel.org; devicetree@vger.kernel.org; LKML <linux-
+> kernel@vger.kernel.org>; Linux PM list <linux-pm@vger.kernel.org>; =
+linux-
+> arm-msm@vger.kernel.org; linux-soc@vger.kernel.org; lakml <linux-arm-
+> kernel@lists.infradead.org>; Rajendra Nayak <rnayak@codeaurora.org>;
+> nicolas.dechesne@linaro.org; celster@codeaurora.org;
+> tfinkel@codeaurora.org
+> Subject: Re: [PATCH v7 10/14] dt-bindings: qcom_spmi: Add support for =
+SAW
+> documentation
+>=20
+> On Tue, May 15, 2018 at 12:13 PM, Ilia Lin <ilialin@codeaurora.org> =
+wrote:
+> > Add support for SAW controlled regulators.
+> > The regulators defined as SAW controlled in the device tree will be
+> > controlled through special CPU registers instead of direct SPMI
+> > accesses.
+> > This is required especially for CPU supply regulators to synchronize
+> > with clock scaling and for Automatic Voltage Switching.
+> > Document it.
+>=20
+> Replace this boiler plate with what this patch actual does. Besides =
+changing
+> the subject, it could be, for example,
+>=20
+> "Document the DT bindings for the SAW regulators.
+>=20
+> The saw-slave property allows ganging (grouping) of several regulators =
+so
+> that their outputs can be combined... blah blah.
+>=20
+> The saw-leader is the only one that then is configurable in DT"
 
-[0]: https://lkml.kernel.org/r/20180515164229.4606-1-jbrunet@baylibre.com
+Actually, I invested some fantasy to write this explanation. But I'll =
+try to revise it.
 
- drivers/clk/meson/clk-audio-divider.c | 13 +--------
- drivers/clk/meson/clk-mpll.c          | 52 +----------------------------------
- drivers/clk/meson/clk-pll.c           | 13 +--------
- drivers/clk/meson/clk-regmap.c        |  6 ++--
- drivers/clk/meson/clk-regmap.h        |  8 ++++--
- drivers/clk/meson/clkc.h              | 13 +--------
- drivers/clk/meson/gxbb-aoclk-32k.c    |  3 +-
- drivers/clk/meson/gxbb-aoclk.c        | 51 +---------------------------------
- drivers/clk/meson/gxbb-aoclk.h        |  3 +-
- drivers/clk/meson/gxbb.c              | 15 +---------
- drivers/clk/meson/gxbb.h              | 52 +----------------------------------
- drivers/clk/meson/meson8b.c           | 16 +----------
- drivers/clk/meson/meson8b.h           | 13 +--------
- 13 files changed, 20 insertions(+), 238 deletions(-)
-
-diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
-index f7ab5b1db342..58f546e04807 100644
---- a/drivers/clk/meson/clk-audio-divider.c
-+++ b/drivers/clk/meson/clk-audio-divider.c
-@@ -1,18 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2017 AmLogic, Inc.
-  * Author: Jerome Brunet <jbrunet@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- /*
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index d233549de244..650f75cc15a9 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -1,57 +1,7 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
- /*
-- * This file is provided under a dual BSD/GPLv2 license.  When using or
-- * redistributing this file, you may do so under either license.
-- *
-- * GPL LICENSE SUMMARY
-- *
-- * Copyright (c) 2016 AmLogic, Inc.
-- * Author: Michael Turquette <mturquette@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- * The full GNU General Public License is included in this distribution
-- * in the file called COPYING
-- *
-- * BSD LICENSE
-- *
-  * Copyright (c) 2016 AmLogic, Inc.
-  * Author: Michael Turquette <mturquette@baylibre.com>
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- *   * Redistributions of source code must retain the above copyright
-- *     notice, this list of conditions and the following disclaimer.
-- *   * Redistributions in binary form must reproduce the above copyright
-- *     notice, this list of conditions and the following disclaimer in
-- *     the documentation and/or other materials provided with the
-- *     distribution.
-- *   * Neither the name of Intel Corporation nor the names of its
-- *     contributors may be used to endorse or promote products derived
-- *     from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
- /*
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 65a7bd903551..3e04617ac47f 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -1,21 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-  *
-  * Copyright (c) 2018 Baylibre, SAS.
-  * Author: Jerome Brunet <jbrunet@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- /*
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-index 3645fdb62343..bd8dbcbdc73c 100644
---- a/drivers/clk/meson/clk-regmap.c
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
--// Copyright (c) 2018 BayLibre, SAS.
--// Author: Jerome Brunet <jbrunet@baylibre.com>
-+/*
-+ * Copyright (c) 2018 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
- 
- #include "clk-regmap.h"
- 
-diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
-index 627c888026d7..ed2d4348dbe2 100644
---- a/drivers/clk/meson/clk-regmap.h
-+++ b/drivers/clk/meson/clk-regmap.h
-@@ -1,6 +1,8 @@
--// SPDX-License-Identifier: GPL-2.0
--// Copyright (c) 2018 BayLibre, SAS.
--// Author: Jerome Brunet <jbrunet@baylibre.com>
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
- 
- #ifndef __CLK_REGMAP_H
- #define __CLK_REGMAP_H
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 8cc265cd3d2b..2fb084330ee9 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -1,18 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef __CLKC_H
-diff --git a/drivers/clk/meson/gxbb-aoclk-32k.c b/drivers/clk/meson/gxbb-aoclk-32k.c
-index 491634dbc985..680467141a1d 100644
---- a/drivers/clk/meson/gxbb-aoclk-32k.c
-+++ b/drivers/clk/meson/gxbb-aoclk-32k.c
-@@ -1,8 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Copyright (c) 2017 BayLibre, SAS.
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * SPDX-License-Identifier: GPL-2.0+
-  */
- 
- #include <linux/clk-provider.h>
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 408e3e2fca18..42ed61d3c3fb 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -1,56 +1,7 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
- /*
-- * This file is provided under a dual BSD/GPLv2 license.  When using or
-- * redistributing this file, you may do so under either license.
-- *
-- * GPL LICENSE SUMMARY
-- *
-  * Copyright (c) 2016 BayLibre, SAS.
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see <http://www.gnu.org/licenses/>.
-- * The full GNU General Public License is included in this distribution
-- * in the file called COPYING.
-- *
-- * BSD LICENSE
-- *
-- * Copyright (c) 2016 BayLibre, SAS.
-- * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- *   * Redistributions of source code must retain the above copyright
-- *     notice, this list of conditions and the following disclaimer.
-- *   * Redistributions in binary form must reproduce the above copyright
-- *     notice, this list of conditions and the following disclaimer in
-- *     the documentation and/or other materials provided with the
-- *     distribution.
-- *   * Neither the name of Intel Corporation nor the names of its
-- *     contributors may be used to endorse or promote products derived
-- *     from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- #include <linux/platform_device.h>
- #include <linux/mfd/syscon.h>
-diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
-index 65962fc9ecdc..3aa638d4ed21 100644
---- a/drivers/clk/meson/gxbb-aoclk.h
-+++ b/drivers/clk/meson/gxbb-aoclk.h
-@@ -1,8 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * Copyright (c) 2017 BayLibre, SAS
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * SPDX-License-Identifier: GPL-2.0+
-  */
- 
- #ifndef __GXBB_AOCLKC_H
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index a893b1edda22..240658404367 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1,20 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * AmLogic S905 / GXBB Clock Controller Driver
-- *
-  * Copyright (c) 2016 AmLogic, Inc.
-  * Michael Turquette <mturquette@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <linux/clk.h>
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index b3ef54f65a9d..ec1a812bf1fd 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -1,57 +1,7 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-- * This file is provided under a dual BSD/GPLv2 license.  When using or
-- * redistributing this file, you may do so under either license.
-- *
-- * GPL LICENSE SUMMARY
-- *
-  * Copyright (c) 2016 AmLogic, Inc.
-  * Author: Michael Turquette <mturquette@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- * The full GNU General Public License is included in this distribution
-- * in the file called COPYING
-- *
-- * BSD LICENSE
-- *
-- * Copyright (c) 2016 BayLibre, Inc.
-- * Author: Michael Turquette <mturquette@baylibre.com>
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- *   * Redistributions of source code must retain the above copyright
-- *     notice, this list of conditions and the following disclaimer.
-- *   * Redistributions in binary form must reproduce the above copyright
-- *     notice, this list of conditions and the following disclaimer in
-- *     the documentation and/or other materials provided with the
-- *     distribution.
-- *   * Neither the name of Intel Corporation nor the names of its
-- *     contributors may be used to endorse or promote products derived
-- *     from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
- #ifndef __GXBB_H
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index e6e9a9db1095..54dcb60f2dd5 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -1,24 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * AmLogic S802 (Meson8) / S805 (Meson8b) / S812 (Meson8m2) Clock Controller
-- * Driver
-- *
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-  *
-  * Copyright (c) 2016 BayLibre, Inc.
-  * Michael Turquette <mturquette@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <linux/clk.h>
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index a687dc60b6d0..5d09412b5084 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -1,21 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-  *
-  * Copyright (c) 2016 BayLibre, Inc.
-  * Michael Turquette <mturquette@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef __MESON8B_H
--- 
-2.14.3
-
+>=20
+>=20
+> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../bindings/regulator/qcom,spmi-regulator.txt     | 45
+> ++++++++++++++++++++++
+> >  1 file changed, 45 insertions(+)
+> >
+> > diff --git
+> > =
+a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> > =
+b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> > index 57d2c65..406f2e5 100644
+> > ---
+> > =
+a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> > +++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-
+> regulator.
+> > +++ txt
+> > @@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
+> >         Definition: Reference to regulator supplying the input pin, =
+as
+> >                     described in the data sheet.
+> >
+> > +- qcom,saw-reg:
+> > +       Usage: optional
+> > +       Value type: <phandle>
+> > +       Description: Reference to syscon node defining the SAW =
+registers.
+> > +
+> >
+> >  The regulator node houses sub-nodes for each regulator within the
+> > device. Each  sub-node is identified using the node's name, with =
+valid
+> > values listed for each @@ -201,6 +206,17 @@ see regulator.txt - with
+> additional custom properties described below:
+> >                         2 =3D 0.55 uA
+> >                         3 =3D 0.75 uA
+> >
+> > +- qcom,saw-slave:
+> > +       Usage: optional
+> > +       Value type: <boo>
+> > +       Description: SAW controlled gang slave. Will not be =
+configured.
+> > +
+> > +- qcom,saw-leader:
+> > +       Usage: optional
+> > +       Value type: <boo>
+> > +       Description: SAW controlled gang leader. Will be configured =
+as
+> > +                    SAW regulator.
+> > +
+> >  Example:
+> >
+> >         regulators {
+> > @@ -221,3 +237,32 @@ Example:
+> >
+> >                 ....
+> >         };
+> > +
+> > +Example 2:
+> > +
+> > +       saw3: syscon@9A10000 {
+> > +               compatible =3D "syscon";
+> > +               reg =3D <0x9A10000 0x1000>;
+> > +       };
+> > +
+> > +       ...
+> > +
+> > +       spm-regulators {
+> > +               compatible =3D "qcom,pm8994-regulators";
+> > +               qcom,saw-reg =3D <&saw3>;
+> > +               s8 {
+> > +                       qcom,saw-slave;
+> > +               };
+> > +               s9 {
+> > +                       qcom,saw-slave;
+> > +               };
+> > +               s10 {
+> > +                       qcom,saw-slave;
+> > +               };
+> > +               pm8994_s11_saw: s11 {
+> > +                       qcom,saw-leader;
+> > +                       regulator-always-on;
+> > +                       regulator-min-microvolt =3D <900000>;
+> > +                       regulator-max-microvolt =3D <1140000>;
+> > +               };
+> > +       };
+> > --
+> > 1.9.1
+> >
