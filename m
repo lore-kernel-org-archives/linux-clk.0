@@ -1,66 +1,64 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:45206 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751656AbeE3O53 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 May 2018 10:57:29 -0400
-Date: Wed, 30 May 2018 07:57:26 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com
-Subject: Re: [PATCH v2 4/6] bus: ti-sysc: Add support for using ti-sysc for
- MCAN on dra76x
-Message-ID: <20180530145726.GD5705@atomide.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-5-faiz_abbas@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180530141133.3711-5-faiz_abbas@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v7 6/6] ARM: dts: imx6: RIoTboard provide standby on power off option
+Date: Thu, 17 May 2018 07:50:14 +0200
+Message-Id: <20180517055014.6607-7-o.rempel@pengutronix.de>
+In-Reply-To: <20180517055014.6607-1-o.rempel@pengutronix.de>
+References: <20180517055014.6607-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
-> The dra76x MCAN generic interconnect module has a its own
-> format for the bits in the control registers.
-...
-> --- a/drivers/bus/ti-sysc.c
-> +++ b/drivers/bus/ti-sysc.c
-> @@ -1262,6 +1262,22 @@ static const struct sysc_capabilities sysc_omap4_usb_host_fs = {
->  	.regbits = &sysc_regbits_omap4_usb_host_fs,
->  };
->  
-> +static const struct sysc_regbits sysc_regbits_dra7_mcan = {
-> +	.dmadisable_shift = -ENODEV,
-> +	.midle_shift = -ENODEV,
-> +	.sidle_shift = -ENODEV,
-> +	.clkact_shift = -ENODEV,
-> +	.enwkup_shift = 4,
-> +	.srst_shift = 0,
-> +	.emufree_shift = -ENODEV,
-> +	.autoidle_shift = -ENODEV,
-> +};
-> +
-> +static const struct sysc_capabilities sysc_dra7_mcan = {
-> +	.type = TI_SYSC_DRA7_MCAN,
-> +	.regbits = &sysc_regbits_dra7_mcan,
-> +};
-> +
->  static int sysc_init_pdata(struct sysc *ddata)
->  {
->  	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
-> @@ -1441,6 +1457,7 @@ static const struct of_device_id sysc_match[] = {
->  	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
->  	{ .compatible = "ti,sysc-usb-host-fs",
->  	  .data = &sysc_omap4_usb_host_fs, },
-> +	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
->  	{  },
->  };
+This board, as well as some other boards with i.MX6 and a PMIC, uses a
+"PMIC_STBY_REQ" line to notify the PMIC about a state change.
+The PMIC is programmed for a specific state change before triggering the
+line.
+In this case, PMIC_STBY_REQ can be used for stand by, sleep
+and power off modes.
 
-Looks good to me. And presumably you checked that no other dra7 modules
-use sysconfig register bit layout like this?
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ arch/arm/boot/dts/imx6dl-riotboard.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Regards,
-
-Tony
+diff --git a/arch/arm/boot/dts/imx6dl-riotboard.dts b/arch/arm/boot/dts/imx6dl-riotboard.dts
+index 2e98c92adff7..a0e9753ee767 100644
+--- a/arch/arm/boot/dts/imx6dl-riotboard.dts
++++ b/arch/arm/boot/dts/imx6dl-riotboard.dts
+@@ -90,6 +90,10 @@
+ 	status = "okay";
+ };
+ 
++&clks {
++	fsl,pmic-stby-poweroff;
++};
++
+ &fec {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_enet>;
+@@ -170,6 +174,7 @@
+ 		reg = <0x08>;
+ 		interrupt-parent = <&gpio5>;
+ 		interrupts = <16 8>;
++		fsl,pmic-stby-poweroff;
+ 
+ 		regulators {
+ 			reg_vddcore: sw1ab {				/* VDDARM_IN */
+-- 
+2.17.0
