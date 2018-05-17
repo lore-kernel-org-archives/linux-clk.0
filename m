@@ -1,69 +1,60 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 6/7] arm64: allwinner: h6: add R_I2C controller
-Date: Fri,  4 May 2018 02:38:46 +0800
-Message-Id: <20180503183847.11046-7-icenowy@aosc.io>
-In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
-References: <20180503183847.11046-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v8 02/15] clk: qcom: Make clk_alpha_pll_configure available to modules
+Date: Thu, 17 May 2018 14:19:02 +0300
+Message-Id: <1526555955-29960-3-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H6 SoC has a R_I2C controller wired to the PL0/PL1 pins, which
-are used in the reference design to connect AXP805 PMIC.
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Add support for it.
+Allow clk_alpha_pll_configure to be called from loadable
+kernel modules.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/clk/qcom/clk-alpha-pll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index b0b342c8c189..37c2e11fca2e 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -5,7 +5,9 @@
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 9722b70..57f2084 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -228,6 +228,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	if (pll->flags & SUPPORTS_FSM_MODE)
+ 		qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
+ }
++EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/sun50i-h6-ccu.h>
-+#include <dt-bindings/clock/sun50i-h6-r-ccu.h>
- #include <dt-bindings/reset/sun50i-h6-ccu.h>
-+#include <dt-bindings/reset/sun50i-h6-r-ccu.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -204,6 +206,24 @@
- 			#gpio-cells = <3>;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-+
-+			r_i2c_pins: r-i2c {
-+				pins = "PL0", "PL1";
-+				function = "s_i2c";
-+			};
-+		};
-+
-+		r_i2c: i2c@7081400 {
-+			compatible = "allwinner,sun6i-a31-i2c";
-+			reg = <0x07081400 0x400>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&r_ccu CLK_R_APB2_I2C>;
-+			resets = <&r_ccu RST_R_APB2_I2C>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_i2c_pins>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
- 	};
- };
+ static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+ {
 -- 
-2.15.1
+1.9.1
