@@ -1,36 +1,62 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v10 25/27] ARM: davinci: add device tree support to timer
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <20180509172606.29387-1-david@lechnology.com>
+ <20180509172606.29387-26-david@lechnology.com>
+ <8fa98514-7651-58cb-595e-6c7f713540b8@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <1162de58-00bc-fdfa-eef1-48a094834ac3@lechnology.com>
+Date: Thu, 17 May 2018 10:09:34 -0500
 MIME-Version: 1.0
-To: Gabriel Fernandez <gabriel.fernandez@st.com>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alexandre TORGUE <alexandre.torgue@st.com>,
- benjamin GAIGNARD <benjamin.gaignard@st.com>,
- Loic PALLARDY <loic.pallardy@st.com>
-References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
-Message-ID: <152645748426.210890.16830780218653883415@swboyd.mtv.corp.google.com>
-Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
- default
-Date: Wed, 16 May 2018 00:58:04 -0700
+In-Reply-To: <8fa98514-7651-58cb-595e-6c7f713540b8@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting gabriel.fernandez@st.com (2018-05-02 23:40:09)
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> =
+On 05/17/2018 09:35 AM, Sekhar Nori wrote:
+> Hi David,
+> 
+> On Wednesday 09 May 2018 10:56 PM, David Lechner wrote:
+>> This adds device tree support to the davinci timer so that when clocks
+>> are moved to device tree, the timer will still work.
+>>
+>> Signed-off-by: David Lechner <david@lechnology.com>
+>> ---
+> 
+>> +static int __init of_davinci_timer_init(struct device_node *np)
+>> +{
+>> +	struct clk *clk;
+>> +
+>> +	clk = of_clk_get(np, 0);
+>> +	if (IS_ERR(clk)) {
+>> +		struct of_phandle_args clkspec;
+>> +
+>> +		/*
+>> +		 * Fall back to using ref_clk if the actual clock is not
+>> +		 * available. There will be problems later if the real clock
+>> +		 * source is disabled.
+>> +		 */
+>> +
+>> +		pr_warn("%s: falling back to ref_clk\n", __func__);
+>> +
+>> +		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
+>> +		if (IS_ERR(clkspec.np)) {
+>> +			pr_err("%s: No clock available for timer!\n", __func__);
+>> +			return PTR_ERR(clkspec.np);
+>> +		}
+>> +		clk = of_clk_get_from_provider(&clkspec);
+>> +		of_node_put(clkspec.np);
+>> +	}
+> 
+> Do we need this error path now?
+> 
+> Thanks,
+> Sekhar
+> 
 
-> Clock driver is mandatory if the machine is selected.
-> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
-> with the machine(s).
-> =
-
-> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the=
- stm32 drivers")
-> =
-
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> ---
-
-Applied to clk-fixes
+No, not really.
