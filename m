@@ -1,46 +1,61 @@
-Return-Path: <andy.shevchenko@gmail.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v10 25/27] ARM: davinci: add device tree support to timer
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180509172606.29387-1-david@lechnology.com>
+ <20180509172606.29387-26-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <8fa98514-7651-58cb-595e-6c7f713540b8@ti.com>
+Date: Thu, 17 May 2018 20:05:52 +0530
 MIME-Version: 1.0
-In-Reply-To: <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 22 May 2018 00:50:23 +0300
-Message-ID: <CAHp75Vf6rDpFQCt+qG3DSWKZm36F1hkAVPtGzr6NHPuQg4vhXQ@mail.gmail.com>
-Subject: Re: [PATCH 12/33] clk: bcm2835: use match_string() helper
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180509172606.29387-26-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
-> match_string() returns the index of an array for a matching string,
-> which can be used intead of open coded variant.
->
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Eric Anholt <eric@anholt.net>
-> Cc: Stefan Wahren <stefan.wahren@i2se.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-rpi-kernel@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Hi David,
 
-> -       size_t i, j;
-> -       int ret;
-> +       int i, ret;
+On Wednesday 09 May 2018 10:56 PM, David Lechner wrote:
+> This adds device tree support to the davinci timer so that when clocks
+> are moved to device tree, the timer will still work.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
 
-I do not see any need to change type for i.
+> +static int __init of_davinci_timer_init(struct device_node *np)
+> +{
+> +	struct clk *clk;
+> +
+> +	clk = of_clk_get(np, 0);
+> +	if (IS_ERR(clk)) {
+> +		struct of_phandle_args clkspec;
+> +
+> +		/*
+> +		 * Fall back to using ref_clk if the actual clock is not
+> +		 * available. There will be problems later if the real clock
+> +		 * source is disabled.
+> +		 */
+> +
+> +		pr_warn("%s: falling back to ref_clk\n", __func__);
+> +
+> +		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
+> +		if (IS_ERR(clkspec.np)) {
+> +			pr_err("%s: No clock available for timer!\n", __func__);
+> +			return PTR_ERR(clkspec.np);
+> +		}
+> +		clk = of_clk_get_from_provider(&clkspec);
+> +		of_node_put(clkspec.np);
+> +	}
 
-> +               ret = match_string(cprman_parent_names,
-> +                                  ARRAY_SIZE(cprman_parent_names),
-> +                                  parents[i]);
-> +               if (ret >= 0)
-> +                       parents[i] = cprman->real_parent_names[ret];
+Do we need this error path now?
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
+Sekhar
