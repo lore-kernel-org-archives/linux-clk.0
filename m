@@ -1,64 +1,80 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAMMfpEw=6POaZBU9HduKBb8Wk2mH0oAXhCdQo7c+hQWgxka3vA@mail.gmail.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdXETt75rGyYRsNEK0O5CO3A-bG70g=-f23y6PO_uK6rWg@mail.gmail.com> <CAMMfpEw=6POaZBU9HduKBb8Wk2mH0oAXhCdQo7c+hQWgxka3vA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 May 2018 13:18:38 +0200
-Message-ID: <CAMuHMdXumeXLw_MAz5MVOKZYO3-F5samUGLSZN7bHSnmD6sfnQ@mail.gmail.com>
-Subject: Re: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
-To: M P <buserror@gmail.com>
-Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+Return-Path: <horms@verge.net.au>
+Date: Thu, 17 May 2018 11:04:38 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Ofir Drang <ofir.drang@arm.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
 	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+Message-ID: <20180517090438.pqggltzkcdhzktsp@verge.net.au>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-4-git-send-email-gilad@benyossef.com>
+ <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+ <20180516074333.i2672u435ymwffk3@verge.net.au>
+ <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+On Thu, May 17, 2018 at 11:01:57AM +0300, Gilad Ben-Yossef wrote:
+> On Wed, May 16, 2018 at 10:43 AM, Simon Horman <horms@verge.net.au> wrote:
+> > On Tue, May 15, 2018 at 04:50:44PM +0200, Geert Uytterhoeven wrote:
+> >> Hi Gilad,
+> >>
+> >> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> >> > Add bindings for CryptoCell instance in the SoC.
+> >> >
+> >> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> >>
+> >> Thanks for your patch!
+> >>
+> >> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> >> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> >> > @@ -528,6 +528,14 @@
+> >> >                         status = "disabled";
+> >> >                 };
+> >> >
+> >> > +               arm_cc630p: crypto@e6601000 {
+> >> > +                       compatible = "arm,cryptocell-630p-ree";
+> >> > +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+> >> > +                       #interrupt-cells = <2>;
+> >>
+> >> I believe the #interrupt-cells property is not needed.
+> >>
+> >> > +                       reg = <0x0 0xe6601000 0 0x1000>;
+> >> > +                       clocks = <&cpg CPG_MOD 229>;
+> >> > +               };
+> >>
+> >> The rest looks good, but I cannot verify the register block.
+> >>
+> >> > +
+> >> >                 i2c3: i2c@e66d0000 {
+> >> >                         #address-cells = <1>;
+> >> >                         #size-cells = <0>;
+> >
+> > Thanks, I have applied this after dropping the #interrupt-cells property.
+> 
+> Thanks you!
+> 
+> Alas, it will not work without the clk patch (the previous one in the
+> series) so they need to be
+> taken or dropped together.
 
-On Wed, May 23, 2018 at 11:20 AM, M P <buserror@gmail.com> wrote:
-> On Wed, 23 May 2018 at 10:12, Geert Uytterhoeven <geert@linux-m68k.org>
-> wrote:
->> On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
->> <michel.pollet@bp.renesas.com> wrote:
->> > +       #address-cells = <1>;
->> > +       #size-cells = <1>;
->> > +
->> > +       cpus {
->> > +               #address-cells = <1>;
->> > +               #size-cells = <0>;
->> > +               clocks = <&clock RZN1_DIV_CA7>;
->
->> I think the clocks property should be moved to the individual CPU nodes.
->
-> Ah, I had a look around, and I found some instances that are in the cpu
-> sub-node, and others that are not -- it seems that having it in the cpu
-> sub-node would implies it's core specific... here if that clock is changed
-> both cores would change speed...
-
-Assumed the driver code knows to look in the parent node, which I doubt
-the cpufreq code does.
-
-> Either way, it's not used by the kernel in any way at the moment -- I had
-> hoped cpufreq or something would claim it, but it's not the case.
-
-I guess you have to add your main SoC compatible value to the whitelist
-in drivers/cpufreq/cpufreq-dt-platdev.c first.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I think its fine if it does not yet work.
+But not if its causes things that previously worked to stop working.
