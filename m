@@ -1,45 +1,50 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: Linux-imx@nxp.com,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx6sl: correct ocram_podf clock type
-Date: Thu, 17 May 2018 13:00:48 +0800
-Message-Id: <1526533248-21990-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1526533248-21990-1-git-send-email-Anson.Huang@nxp.com>
-References: <1526533248-21990-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
+Date: Thu, 17 May 2018 07:50:11 +0200
+Message-Id: <20180517055014.6607-4-o.rempel@pengutronix.de>
+In-Reply-To: <20180517055014.6607-1-o.rempel@pengutronix.de>
+References: <20180517055014.6607-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-IMX6SL_CLK_OCRAM_PODF is a busy divider, its name in
-CCM_CDHIPR register of Reference Manual CCM chapter
-is axi_podf_busy, correct its clock type.
+Export pm_power_off_prepare. It is needed to implement power off on
+Freescale/NXP iMX6 based boards with external power management
+integrated circuit (PMIC).
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/clk/imx/clk-imx6sl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/reboot.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index 9642cdf..66b1dd1 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -330,7 +330,7 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SL_CLK_PERIPH2] = imx_clk_busy_mux("periph2", base + 0x14, 26,  1,   base + 0x48, 3,  periph2_sels, ARRAY_SIZE(periph2_sels));
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index e4ced883d8de..83810d726f3e 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -49,6 +49,7 @@ int reboot_force;
+  */
  
- 	/*                                                   name                 parent_name          reg       shift width */
--	clks[IMX6SL_CLK_OCRAM_PODF]        = imx_clk_divider("ocram_podf",        "ocram_sel",         base + 0x14, 16, 3);
-+	clks[IMX6SL_CLK_OCRAM_PODF]        = imx_clk_busy_divider("ocram_podf",   "ocram_sel",         base + 0x14, 16, 3, base + 0x48, 0);
- 	clks[IMX6SL_CLK_PERIPH_CLK2_PODF]  = imx_clk_divider("periph_clk2_podf",  "periph_clk2_sel",   base + 0x14, 27, 3);
- 	clks[IMX6SL_CLK_PERIPH2_CLK2_PODF] = imx_clk_divider("periph2_clk2_podf", "periph2_clk2_sel",  base + 0x14, 0,  3);
- 	clks[IMX6SL_CLK_IPG]               = imx_clk_divider("ipg",               "ahb",               base + 0x14, 8,  2);
+ void (*pm_power_off_prepare)(void);
++EXPORT_SYMBOL_GPL(pm_power_off_prepare);
+ 
+ /**
+  *	emergency_restart - reboot the system
 -- 
-2.7.4
+2.17.0
