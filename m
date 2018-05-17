@@ -1,112 +1,53 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <niklas.soderlund@ragnatech.se>
+Return-Path: <niklas.soderlund@ragnatech.se>
+Date: Thu, 17 May 2018 16:39:04 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Tao Wang <jean.wangtao@linaro.org>,
-	Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 4/5] arm64: dts: hi3660: Add thermal cooling management
-Date: Tue, 15 May 2018 10:53:14 +0800
-Message-Id: <1526352795-6991-5-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
-References: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+	Gilad Ben-Yossef <gilad@benyossef.com>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a7795: Add CR clock
+Message-ID: <20180517143904.GA24534@bigcity.dyn.berto.se>
+References: <1526552462-3476-1-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1526552462-3476-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Tao Wang <jean.wangtao@linaro.org>
+Hi Geert,
 
-Add nodes and properties for thermal cooling management support.
+Thanks for your patch.
 
-Signed-off-by: Tao Wang <jean.wangtao@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 44 +++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+On 2018-05-17 12:21:02 +0200, Geert Uytterhoeven wrote:
+> Add the CR core clock, which is used by the Secure Engine (SCEG).
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index a39da09..e20edd9 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -7,6 +7,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/hi3660-clock.h>
-+#include <dt-bindings/thermal/thermal.h>
- 
- / {
- 	compatible = "hisilicon,hi3660";
-@@ -64,6 +65,8 @@
- 			capacity-dmips-mhz = <592>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
-+			dynamic-power-coefficient = <110>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -112,6 +115,8 @@
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			#cooling-cells = <2>;
-+			dynamic-power-coefficient = <550>;
- 		};
- 
- 		cpu5: cpu@101 {
-@@ -1073,5 +1078,44 @@
- 			interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
- 			#thermal-sensor-cells = <1>;
- 		};
-+
-+		thermal-zones {
-+
-+			cls0: cls0 {
-+				polling-delay = <1000>;
-+				polling-delay-passive = <100>;
-+				sustainable-power = <4500>;
-+
-+				/* sensor ID */
-+				thermal-sensors = <&tsensor 1>;
-+
-+				trips {
-+					threshold: trip-point@0 {
-+						temperature = <65000>;
-+						hysteresis = <1000>;
-+						type = "passive";
-+					};
-+
-+					target: trip-point@1 {
-+						temperature = <75000>;
-+						hysteresis = <1000>;
-+						type = "passive";
-+					};
-+				};
-+
-+				cooling-maps {
-+					map0 {
-+						trip = <&target>;
-+						contribution = <1024>;
-+						cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					};
-+					map1 {
-+						trip = <&target>;
-+						contribution = <512>;
-+						cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					};
-+				};
-+			};
-+		};
- 	};
- };
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+> Pending successfull use of the SCEG.
+> 
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> index 775b0ceaa3378a83..e5b186566c097dd0 100644
+> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -103,6 +103,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+>  	DEF_GEN3_SD("sd3",      R8A7795_CLK_SD3,   CLK_SDSRC,     0x26c),
+>  
+>  	DEF_FIXED("cl",         R8A7795_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+> +	DEF_FIXED("cr",         R8A7795_CLK_CR,    CLK_PLL1_DIV4,  2, 1),
+>  	DEF_FIXED("cp",         R8A7795_CLK_CP,    CLK_EXTAL,      2, 1),
+>  
+>  	DEF_DIV6P1("canfd",     R8A7795_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
+> -- 
+> 2.7.4
+> 
+
 -- 
-1.9.1
+Regards,
+Niklas Söderlund
