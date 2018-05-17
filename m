@@ -1,80 +1,531 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Stephen Boyd <sboyd@kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "hdegoede@redhat.com" <hdegoede@redhat.com>,
-	"b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, dl-linux-imx
-	<linux-imx@nxp.com>, Stephen Boyd <sboyd@codeaurora.org>, Masahiro Yamada
-	<yamada.masahiro@socionext.com>
-Subject: RE: [PATCH V2 2/4] clk: add new APIs to operate on all available
- clocks
-Date: Fri, 25 May 2018 09:49:45 +0000
-Message-ID: 
- <AM0PR04MB42110066C43E037F2E0501CB80690@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
- <1521602391-30356-3-git-send-email-aisheng.dong@nxp.com>
- <152182421754.178046.7553203878044979411@swboyd.mtv.corp.google.com>
-In-Reply-To: 
- <152182421754.178046.7553203878044979411@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v8 12/15] dt: qcom: Add qcom-cpufreq-kryo driver configuration
+Date: Thu, 17 May 2018 14:19:12 +0300
+Message-Id: <1526555955-29960-13-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0
-bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiBTYXR1cmRheSwgTWFyY2ggMjQsIDIwMTggMTI6
-NTcgQU0NCj4gVG86IEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54cC5jb20+OyBsaW51eC1jbGtA
-dmdlci5rZXJuZWwub3JnDQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51
-eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IG10dXJxdWV0dGVAYmF5bGlicmUu
-Y29tOyBoZGVnb2VkZUByZWRoYXQuY29tOw0KPiBiLnpvbG5pZXJraWVAc2Ftc3VuZy5jb207IGxp
-bnV4QGFybWxpbnV4Lm9yZy51azsgbGludXgtDQo+IGZiZGV2QHZnZXIua2VybmVsLm9yZzsgZGwt
-bGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT47IEEucy4gRG9uZw0KPiA8YWlzaGVuZy5kb25n
-QG54cC5jb20+OyBTdGVwaGVuIEJveWQgPHNib3lkQGNvZGVhdXJvcmEub3JnPjsNCj4gTWFzYWhp
-cm8gWWFtYWRhIDx5YW1hZGEubWFzYWhpcm9Ac29jaW9uZXh0LmNvbT4NCj4gU3ViamVjdDogUmU6
-IFtQQVRDSCBWMiAyLzRdIGNsazogYWRkIG5ldyBBUElzIHRvIG9wZXJhdGUgb24gYWxsIGF2YWls
-YWJsZQ0KPiBjbG9ja3MNCj4gDQo+IFF1b3RpbmcgRG9uZyBBaXNoZW5nICgyMDE4LTAzLTIwIDIw
-OjE5OjQ5KQ0KPiA+IEBAIC01MCw2ICs1MiwzOCBAQCBzdGF0aWMgaW50IF9fbXVzdF9jaGVjayBv
-Zl9jbGtfYnVsa19nZXQoc3RydWN0DQo+IGRldmljZV9ub2RlICpucCwgaW50IG51bV9jbGtzLA0K
-PiA+ICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiAgfQ0KPiA+ICBFWFBPUlRfU1lNQk9MKG9mX2Ns
-a19idWxrX2dldCk7DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW50IF9fbXVzdF9jaGVjayBvZl9jbGtf
-YnVsa19nZXRfYWxsKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsDQo+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgY2xrX2J1bGtfZGF0YQ0KPiA+ICsq
-KmNsa3MpIHsNCj4gPiArICAgICAgIHN0cnVjdCBjbGtfYnVsa19kYXRhICpjbGtfYnVsazsNCj4g
-PiArICAgICAgIGludCBudW1fY2xrczsNCj4gPiArICAgICAgIGludCByZXQ7DQo+ID4gKw0KPiA+
-ICsgICAgICAgbnVtX2Nsa3MgPSBvZl9jbGtfZ2V0X3BhcmVudF9jb3VudChucCk7DQo+ID4gKyAg
-ICAgICBpZiAoIW51bV9jbGtzKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gMDsNCj4gPiAr
-DQo+ID4gKyAgICAgICBjbGtfYnVsayA9IGtjYWxsb2MobnVtX2Nsa3MsIHNpemVvZigqY2xrX2J1
-bGspLCBHRlBfS0VSTkVMKTsNCj4gDQo+IENhbiBiZSBrbWFsbG9jX2FycmF5PyBvZl9jbGtfYnVs
-a19nZXQoKSBhbHJlYWR5IGNsZWFycyB0aGluZ3Mgb3V0DQo+IGFwcHJvcHJpYXRlbHkuDQoNClll
-cywgaW5kZWVkLiBXaWxsIHVzZSBrbWFsbG9jX2FycmF5IGluc3RlYWQuDQoNCj4gDQo+ID4gKyAg
-ICAgICBpZiAoIWNsa19idWxrKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVOT01FTTsN
-Cj4gPiArDQo+ID4gKyAgICAgICByZXQgPSBvZl9jbGtfYnVsa19nZXQobnAsIG51bV9jbGtzLCBj
-bGtfYnVsayk7DQo+ID4gKyAgICAgICBpZiAocmV0KSB7DQo+ID4gKyAgICAgICAgICAgICAgIGtm
-cmVlKGNsa19idWxrKTsNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiArICAg
-ICAgIH0NCj4gPiArDQo+ID4gKyAgICAgICAqY2xrcyA9IGNsa19idWxrOw0KPiA+ICsNCj4gPiAr
-ICAgICAgIHJldHVybiBudW1fY2xrczsNCj4gPiArfQ0KPiA+ICsjZWxzZQ0KPiA+ICtzdGF0aWMg
-aW50IF9fbXVzdF9jaGVjayBvZl9jbGtfYnVsa19nZXRfYWxsKHN0cnVjdCBkZXZpY2Vfbm9kZSAq
-bnAsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1
-Y3QgY2xrX2J1bGtfZGF0YQ0KPiA+ICsqKmNsa3MpIHsNCj4gPiArICAgICAgIHJldHVybiAtRU5P
-RU5UOw0KPiA+ICt9DQo+ID4gICNlbmRpZg0KPiANCj4gVGhpcyBlbHNlIGNhbiBwcm9iYWJseSBi
-ZSBkcm9wcGVkIHRvby4NCj4gDQoNClJpZ2h0Lg0KDQo+ID4NCj4gPiAgdm9pZCBjbGtfYnVsa19w
-dXQoaW50IG51bV9jbGtzLCBzdHJ1Y3QgY2xrX2J1bGtfZGF0YSAqY2xrcykgQEAgLTkwLDYNCj4g
-PiArMTI0LDI5IEBAIGludCBfX211c3RfY2hlY2sgY2xrX2J1bGtfZ2V0KHN0cnVjdCBkZXZpY2Ug
-KmRldiwgaW50DQo+ID4gbnVtX2Nsa3MsICB9ICBFWFBPUlRfU1lNQk9MKGNsa19idWxrX2dldCk7
-DQo+ID4NCj4gPiArdm9pZCBjbGtfYnVsa19wdXRfYWxsKGludCBudW1fY2xrcywgc3RydWN0IGNs
-a19idWxrX2RhdGEgKmNsa3MpIHsNCj4gPiArICAgICAgIGlmIChJU19FUlJfT1JfTlVMTChjbGtz
-KSkNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuOw0KPiA+ICsNCj4gPiArICAgICAgIGNsa19i
-dWxrX3B1dChudW1fY2xrcywgY2xrcyk7DQo+ID4gKw0KPiA+ICsgICAgICAga2ZyZWUoY2xrcyk7
-DQo+ID4gK30NCj4gPiArRVhQT1JUX1NZTUJPTChjbGtfYnVsa19wdXRfYWxsKTsNCj4gPiArDQo+
-ID4gK2ludCBfX211c3RfY2hlY2sgY2xrX2J1bGtfZ2V0X2FsbChzdHJ1Y3QgZGV2aWNlICpkZXYs
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBjbGtfYnVsa19k
-YXRhICoqY2xrcykgew0KPiA+ICsgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpucCA9IGRldl9v
-Zl9ub2RlKGRldik7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKCFucCkNCj4gPiArICAgICAgICAg
-ICAgICAgcmV0dXJuIDA7DQo+ID4gKw0KPiA+ICsgICAgICAgcmV0dXJuIG9mX2Nsa19idWxrX2dl
-dF9hbGwobnAsIGNsa3MpOyB9DQo+ID4gK0VYUE9SVF9TWU1CT0woY2xrX2J1bGtfZ2V0X2FsbCk7
-DQo+IA0KPiBMb29rcyBiZXR0ZXIhDQoNClRoYW5rcw0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcN
-Cg==
+1. Add NVMEM node for the speedbin
+2. Add definitions for all possible MSM8996 CPU OPPs.
+The qcom-cpufreq-kryo driver will select the appropriate subset.
+
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi       | 281 ++++++++++++++++++++++++++--
+ 2 files changed, 270 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+index 230e9c8..da23bda 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dts
+@@ -17,5 +17,5 @@
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. DB820c";
+-	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc";
++	compatible = "arrow,apq8096-db820c", "qcom,apq8096-sbc", "qcom,apq8096";
+ };
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index e6cf290..d96a112 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -1,13 +1,6 @@
+-/* Copyright (c) 2014-2015, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2014-2015, 2018 The Linux Foundation. All rights reserved.
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -169,177 +162,436 @@
+ 	};
+ 
+ 	cluster0_opp: opp_table0 {
+-		compatible = "operating-points-v2";
++		compatible = "operating-points-v2-kryo-cpu",
++					"operating-points-v2";
++		nvmem-cells = <&speedbin_efuse>;
+ 		opp-shared;
+ 
+ 		opp-307200000 {
+ 			opp-hz = /bits/ 64 <307200000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-384000000 {
++			opp-hz = /bits/ 64 <384000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-422400000 {
+ 			opp-hz = /bits/ 64 <422400000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-460800000 {
++			opp-hz = /bits/ 64 <460800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <480000000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-537600000 {
++			opp-hz = /bits/ 64 <537600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <556800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-614400000 {
++			opp-hz = /bits/ 64 <614400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <652800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-691200000 {
++			opp-hz = /bits/ 64 <691200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <729600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-768000000 {
++			opp-hz = /bits/ 64 <768000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-844800000 {
+ 			opp-hz = /bits/ 64 <844800000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-902400000 {
++			opp-hz = /bits/ 64 <902400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-960000000 {
+ 			opp-hz = /bits/ 64 <960000000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-979200000 {
++			opp-hz = /bits/ 64 <979200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 <1036800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1056000000 {
++			opp-hz = /bits/ 64 <1056000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 <1113600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1132800000 {
++			opp-hz = /bits/ 64 <1132800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 <1190400000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1209600000 {
++			opp-hz = /bits/ 64 <1209600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1228800000 {
+ 			opp-hz = /bits/ 64 <1228800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1286400000 {
++			opp-hz = /bits/ 64 <1286400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 <1324800000>;
++			opp-supported-hw = <0x5>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1363200000 {
++			opp-hz = /bits/ 64 <1363200000>;
++			opp-supported-hw = <0x72>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 <1401600000>;
++			opp-supported-hw = <0x5>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1440000000 {
++			opp-hz = /bits/ 64 <1440000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 <1478400000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1497600000 {
++			opp-hz = /bits/ 64 <1497600000>;
++			opp-supported-hw = <0x4>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1516800000 {
++			opp-hz = /bits/ 64 <1516800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1593600000 {
+ 			opp-hz = /bits/ 64 <1593600000>;
++			opp-supported-hw = <0x71>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 <1996800000>;
++			opp-supported-hw = <0x20>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2188800000 {
++			opp-hz = /bits/ 64 <2188800000>;
++			opp-supported-hw = <0x10>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 	};
+ 
+ 	cluster1_opp: opp_table1 {
+-		compatible = "operating-points-v2";
++		compatible = "operating-points-v2-kryo-cpu";
++		nvmem-cells = <&speedbin_efuse>;
+ 		opp-shared;
+ 
+ 		opp-307200000 {
+ 			opp-hz = /bits/ 64 <307200000>;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-384000000 {
++			opp-hz = /bits/ 64 <384000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-403200000 {
+ 			opp-hz = /bits/ 64 <403200000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-460800000 {
++			opp-hz = /bits/ 64 <460800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <480000000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-537600000 {
++			opp-hz = /bits/ 64 <537600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <556800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-614400000 {
++			opp-hz = /bits/ 64 <614400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <652800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-691200000 {
++			opp-hz = /bits/ 64 <691200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <729600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-748800000 {
++			opp-hz = /bits/ 64 <748800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-806400000 {
+ 			opp-hz = /bits/ 64 <806400000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-825600000 {
++			opp-hz = /bits/ 64 <825600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-883200000 {
+ 			opp-hz = /bits/ 64 <883200000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-902400000 {
++			opp-hz = /bits/ 64 <902400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-940800000 {
+ 			opp-hz = /bits/ 64 <940800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-979200000 {
++			opp-hz = /bits/ 64 <979200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 <1036800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1056000000 {
++			opp-hz = /bits/ 64 <1056000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 <1113600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1132800000 {
++			opp-hz = /bits/ 64 <1132800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 <1190400000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1209600000 {
++			opp-hz = /bits/ 64 <1209600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1248000000 {
+ 			opp-hz = /bits/ 64 <1248000000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1286400000 {
++			opp-hz = /bits/ 64 <1286400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 <1324800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1363200000 {
++			opp-hz = /bits/ 64 <1363200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 <1401600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1440000000 {
++			opp-hz = /bits/ 64 <1440000000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 <1478400000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1516800000 {
++			opp-hz = /bits/ 64 <1516800000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1555200000 {
+ 			opp-hz = /bits/ 64 <1555200000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 <1593600000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1632000000 {
+ 			opp-hz = /bits/ 64 <1632000000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1670400000 {
++			opp-hz = /bits/ 64 <1670400000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1708800000 {
+ 			opp-hz = /bits/ 64 <1708800000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1747200000 {
++			opp-hz = /bits/ 64 <1747200000>;
++			opp-supported-hw = <0x70>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1785600000 {
+ 			opp-hz = /bits/ 64 <1785600000>;
++			opp-supported-hw = <0x7>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1804800000 {
++			opp-hz = /bits/ 64 <1804800000>;
++			opp-supported-hw = <0x6>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1824000000 {
+ 			opp-hz = /bits/ 64 <1824000000>;
++			opp-supported-hw = <0x71>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1900800000 {
++			opp-hz = /bits/ 64 <1900800000>;
++			opp-supported-hw = <0x74>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1920000000 {
+ 			opp-hz = /bits/ 64 <1920000000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1977600000 {
++			opp-hz = /bits/ 64 <1977600000>;
++			opp-supported-hw = <0x30>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-1996800000 {
+ 			opp-hz = /bits/ 64 <1996800000>;
++			opp-supported-hw = <0x1>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2054400000 {
++			opp-hz = /bits/ 64 <2054400000>;
++			opp-supported-hw = <0x30>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-2073600000 {
+ 			opp-hz = /bits/ 64 <2073600000>;
++			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 		opp-2150400000 {
+ 			opp-hz = /bits/ 64 <2150400000>;
++			opp-supported-hw = <0x31>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2246400000 {
++			opp-hz = /bits/ 64 <2246400000>;
++			opp-supported-hw = <0x10>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2342400000 {
++			opp-hz = /bits/ 64 <2342400000>;
++			opp-supported-hw = <0x10>;
+ 			clock-latency-ns = <200000>;
+ 		};
+ 	};
+@@ -917,6 +1169,11 @@
+ 				reg = <0x24f 0x1>;
+ 				bits = <1 4>;
+ 			};
++
++			speedbin_efuse: speedbin@133 {
++				reg = <0x133 0x1>;
++				bits = <5 3>;
++			};
+ 		};
+ 
+ 		phy@34000 {
+-- 
+1.9.1
