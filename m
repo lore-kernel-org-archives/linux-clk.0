@@ -1,117 +1,149 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 22 May 2018 11:09:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-	phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document
- RZ/N1 clock driver
-Message-ID: <20180522160913.GA7755@rob-hp-laptop>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v8 00/15] CPU scaling support for msm8996
+Date: Thu, 17 May 2018 14:19:00 +0300
+Message-Id: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 22, 2018 at 11:01:23AM +0100, Michel Pollet wrote:
-> The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-> to provide the SoC clock infrastructure for Linux.
-> 
-> This documents the driver bindings.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> ---
->  .../bindings/clock/renesas,rzn1-clocks.txt         | 44 ++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-> new file mode 100644
-> index 0000000..0c41137
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-> @@ -0,0 +1,44 @@
-> +* Renesas RZ/N1 Clock Driver
-> +
-> +This driver provides the clock infrastructure used by all the other drivers.
+[v8]
+ * Reordered the patch series into 4 groups
+ * Addressed comments from Amit about the comments and commit messages
+ * Addressed comments from Amit and Viresh about the resourses deallocation
 
-Bindings document h/w not drivers.
+[v7]
+ * Addressed comments from Viresh about resourses deallocation
+   and DT compatible
 
-> +
-> +One of the 'special' feature of this infrastructure is that Linux doesn't
+[v6]
+ * Addressed comments from Viresh about:
+ ** Comments style
+ ** Kconfig bool instead of tristate
+ ** DT and documentation style
+ ** Resourses deallocation on an error
+ ** Typos
 
-Bindings are not just for Linux.
+[v5]
+ * Rebased
+ * Addressed comments from Bjorn about SPDX style,
+   functions and parameters naming
+ * Addressed comments from Viresh DT properties and style, comments style,
+   resourses deallocation, documentation placement
+ * Addressed comments from Sricharan about unnessesary include
+ * Addressed comments from Nicolas
+ * Addressed comments from Rob about the commit messages and acks
+ * Addressed comments from Mark
 
-> +necessary 'own' all the clocks on the SoC, some other OS runs on
-> +the Cortex-M3 core and that OS can access and claim it's own clocks.
+[v4]
+ * Adressed all comments from Stephen
+ * Added CPU regulator support
+ * Added qcom-cpufreq-kryo driver
 
-How is this relevant to the binding?
+[v3]
+ * Rebased on top of the latest PLL driver changes
+ * Addressed comment from Rob Herring for bindings
 
-> +
-> +Required Properties:
-> +
-> +  - compatible: Must be
-> +    - "renesas,r9a06g032-clocks" for the RZ/N1D
-> +    and "renesas,rzn1-clocks" as a fallback.
+[v2]
+ * Addressed comments from Rob Herring for bindings
+ * Addressed comments from Mark Rutland for memory barrier
+ * Addressed comments from Julien Thierry for clock reenabling condition
+ * Tuned the HW configuration for clock frequencies below 600MHz
 
-Is "clocks" how the chip reference manual refers to this block?
+The series contains 4 groups of patches, which can be merged in the chain order,
+while each group depends on all the previous groups.
+(However, Only SOC, or SOC and Clocks, or SOC and Clocks and Cpufreq will work)  
 
-> +  - reg: Base address and length of the memory resource used by the driver
-> +  - #clock-cells: Must be 1
-> +
-> +Examples
-> +--------
-> +
-> +  - Clock driver device node:
-> +
-> +	clock: clocks@4000c000 {
+SOC (1/15):
+Extracts the kryo l2 accessors driver from the QCOM PMU driver
 
-clock-controller@...
+Clocks (2/15-9/15):
+This series adds support for the CPU clocks on msm8996 devices.
+The driver uses the existing PLL drivers and is required to control
+the CPU frequency scaling on the MSM8996.
 
-> +		compatible = "renesas,r9a06g032-clocks",
-> +				"renesas,rzn1-clocks";
-> +		reg = <0x4000c000 0x1000>;
-> +		status = "okay";
+Cpufreq (10/15-12/15):
+The qcom-cpufreq-kryo driver is aimed to support different SOC versions.
+The driver reads eFuse information and chooses the required OPP subset
+by passing the OPP supported-hw parameter.
 
-Don't show status in examples. (Plus, I doubt you ever want to have this 
-disabled, so you don't need the property in your dts files either).
+Regulators (13/15-15/15):
+Added SAW regulator support to the SPMI regulator driver. The SAW regulators
+will be controlled through special CPU registers instead of direct
+SPMI accesses.
 
-> +		#clock-cells = <1>;
-> +	};
-> +
-> +
-> +  - Other drivers can use the clocks as in:
+Ilia Lin (13):
+  soc: qcom: Separate kryo l2 accessors from PMU driver
+  clk: Use devm_ in the register fixed factor clock
+  clk: qcom: Add CPU clock driver for msm8996
+  dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
+  clk: qcom: cpu-8996: Add support to switch below 600Mhz
+  clk: qcom: Add ACD path to CPU clock driver for msm8996
+  dt: qcom: Add opp and thermal to the msm8996
+  cpufreq: Add Kryo CPU scaling driver
+  dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
+  dt: qcom: Add qcom-cpufreq-kryo driver configuration
+  regulator: qcom_spmi: Add support for SAW
+  dt-bindings: qcom_spmi: Document SAW support
+  dt: qcom: Add SAW regulator for 8x96 CPUs
 
-s/drivers/nodes/
+Rajendra Nayak (2):
+  clk: qcom: Make clk_alpha_pll_configure available to modules
+  clk: qcom: cpu-8996: Add support to switch to alternate PLL
 
-> +
-> +	uart0: serial@40060000 {
-> +		compatible = "snps,dw-apb-uart";
-> +		reg = <0x40060000 0x400>;
-> +		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-> +		reg-shift = <2>;
-> +		reg-io-width = <4>;
-> +		clocks = <&clock RZN1_CLK_UART0>;
-> +		clock-names = "baudclk";
-> +	};
-> +    Note the use of RZN1_CLK_UART0 -- these constants are declared in
-> +    the rzn1-clocks.h header file. These are not hardware based constants
-> +    and are Linux specific.
+ .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
+ .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
+ .../bindings/regulator/qcom,spmi-regulator.txt     |  45 ++
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 665 +++++++++++++++++++-
+ drivers/clk/clk-fixed-factor.c                     |   2 +-
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
+ drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
+ drivers/clk/qcom/clk-cpu-8996.c                    | 510 ++++++++++++++++
+ drivers/cpufreq/Kconfig.arm                        |  10 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
+ drivers/cpufreq/qcom-cpufreq-kryo.c                | 166 +++++
+ drivers/perf/Kconfig                               |   1 +
+ drivers/perf/qcom_l2_pmu.c                         |  90 +--
+ drivers/regulator/qcom_spmi-regulator.c            | 133 +++-
+ drivers/soc/qcom/Kconfig                           |   3 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/kryo-l2-accessors.c               |  56 ++
+ include/soc/qcom/kryo-l2-accessors.h               |  12 +
+ 22 files changed, 2324 insertions(+), 90 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+ create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+ create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+ create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+ create mode 100644 include/soc/qcom/kryo-l2-accessors.h
 
-No, they are not Linux specific. They are part of the DT ABI. 
-
-While it is not a requirement to base them on some h/w numbering, it is 
-preferred if you can. That usually only works if you can base them on 
-bit positions or register offsets.
-
-Rob
+-- 
+1.9.1
