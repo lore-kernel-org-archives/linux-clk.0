@@ -1,167 +1,191 @@
-Return-Path: <Akshu.Agrawal@amd.com>
-Subject: Re: [PATCH v2] clk: x86: Add ST oscout platform clock
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com,
- Michael Turquette <mturquette@baylibre.com>,
- =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
- Shaoyun Liu <Shaoyun.Liu@amd.com>, Dave Airlie <airlied@redhat.com>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1525336264-29243-1-git-send-email-akshu.agrawal@amd.com>
- <152548720041.138124.2994178054788686137@swboyd.mtv.corp.google.com>
-From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
-Message-ID: <dc8e9d34-a3a6-b149-f885-f1f3ea35b93b@amd.com>
-Date: Mon, 7 May 2018 15:36:11 +0530
-MIME-Version: 1.0
-In-Reply-To: <152548720041.138124.2994178054788686137@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Return-Path: Akshu.Agrawal@amd.com
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v7 5/6] regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+Date: Thu, 17 May 2018 07:50:13 +0200
+Message-Id: <20180517055014.6607-6-o.rempel@pengutronix.de>
+In-Reply-To: <20180517055014.6607-1-o.rempel@pengutronix.de>
+References: <20180517055014.6607-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
+On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMIC
+about state changes. In this case internal state of PMIC must be
+preconfigured for upcomming state change.
+It works fine with the current regulator framework, except with the
+power-off case.
 
+This patch is providing an optional pm_power_off_prepare handler
+which will configure standby state of the PMIC to disable all power lines.
 
-On 5/5/2018 7:56 AM, Stephen Boyd wrote:
-> Quoting Akshu Agrawal (2018-05-03 01:30:26)
->> diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
->> index 1367afb..2aee002 100644
->> --- a/drivers/clk/x86/Makefile
->> +++ b/drivers/clk/x86/Makefile
->> @@ -1,3 +1,4 @@
->>  clk-x86-lpss-objs              := clk-lpt.o
->>  obj-$(CONFIG_X86_INTEL_LPSS)   += clk-x86-lpss.o
->>  obj-$(CONFIG_PMC_ATOM)         += clk-pmc-atom.o
->> +obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)  += clk-st.o
-> 
-> Ok. Can you sort this by kconfig? Or by file name?
-> 
+In my power consumption test on RIoTBoard, I got the following results:
+power off without this patch:	320 mA
+power off with this patch:	2   mA
+suspend to ram:			40  mA
 
-Accepted.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/regulator/pfuze100-regulator.c | 92 ++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
->> diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
->> new file mode 100644
->> index 0000000..d8c283c
->> --- /dev/null
->> +++ b/drivers/clk/x86/clk-st.c
->> @@ -0,0 +1,86 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * clock framework for AMD Stoney based clocks
->> + *
->> + * Copyright 2018 Advanced Micro Devices, Inc.
->> + *
->> + * Permission is hereby granted, free of charge, to any person obtaining a
->> + * copy of this software and associated documentation files (the "Software"),
->> + * to deal in the Software without restriction, including without limitation
->> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
->> + * and/or sell copies of the Software, and to permit persons to whom the
->> + * Software is furnished to do so, subject to the following conditions:
->> + *
->> + * The above copyright notice and this permission notice shall be included in
->> + * all copies or substantial portions of the Software.
->> + *
->> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
->> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
->> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
->> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
->> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
->> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->> + * OTHER DEALINGS IN THE SOFTWARE.
-> 
-> One point of SPDX is to avoid this boiler plate multi-line license
-> comments. Can you remove this and just leave the AMD copyright part?
-> 
-
-Accepted.
-
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clkdev.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/platform_data/clk-st.h>
->> +#include <linux/platform_device.h>
->> +
->> +/* Clock Driving Strength 2 register */
->> +#define CLKDRVSTR2     0x28
->> +/* Clock Control 1 register */
->> +#define MISCCLKCNTL1   0x40
->> +/* Auxiliary clock1 enable bit */
->> +#define OSCCLKENB      2
->> +/* 25Mhz auxiliary output clock freq bit */
->> +#define OSCOUT1CLK25MHZ        16
->> +
->> +#define ST_CLK_48M     0
->> +#define ST_CLK_25M     1
->> +#define ST_CLK_MUX     2
->> +#define ST_CLK_GATE    3
->> +#define ST_MAX_CLKS    4
->> +
->> +static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
->> +
->> +static int st_clk_probe(struct platform_device *pdev)
->> +{
->> +       struct st_clk_data *st_data;
->> +       struct clk_hw **hws;
->> +
->> +       st_data = dev_get_platdata(&pdev->dev);
->> +       if (!st_data || !st_data->base)
->> +               return -EINVAL;
->> +
->> +       hws = kzalloc(sizeof(*hws) * ST_MAX_CLKS, GFP_KERNEL);
-> 
-> Fix the kbuild robot errors please.
->
-
-Done in v3.
-
->> +
->> +       hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
->> +                                                    48000000);
->> +       hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
->> +                                                    25000000);
-> 
-> I'm not sure why we even keep these pointers around though. The driver
-> doesn't expose them as clks that clk_get() can find so they could just
-> be local variables and no heap allocation is needed.
-> 
-
-Respining the patch with change to unregister clk_hw in the remove callback.
-Will pass these pointers as drvdata to remove and use them to unregister.
-
->> +
->> +       hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
->> +               clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
->> +               0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
->> +
->> +       clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
->> +
->> +       hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
->> +               0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
->> +               CLK_GATE_SET_TO_DISABLE, NULL);
->> +
->> +       clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
-> 
-> Could use devm_*() here in case you want to drop this stuff on driver
-> removal?
-> 
-
-To achieve the same what you have suggested, I would be using remove as
-explained in above comment.
-
->> +
->> +       return 0;
->> +}
->> +
->> +static struct platform_driver st_clk_driver = {
->> +       .driver = {
->> +               .name = "clk-st",
->> +       },
->> +       .probe = st_clk_probe,
-> 
-> suppress attributes here to prevent unbinding from sysfs?
-> 
-
-Accepted.
-
-Thanks,
-Akshu
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index 63922a2167e5..f6c276ed91d8 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -28,6 +28,7 @@
+ #include <linux/regulator/pfuze100.h>
+ #include <linux/i2c.h>
+ #include <linux/slab.h>
++#include <linux/kallsyms.h>
+ #include <linux/regmap.h>
+ 
+ #define PFUZE_NUMREGS		128
+@@ -42,11 +43,17 @@
+ 
+ #define PFUZE100_COINVOL	0x1a
+ #define PFUZE100_SW1ABVOL	0x20
++#define PFUZE100_SW1ABMODE	0x23
+ #define PFUZE100_SW1CVOL	0x2e
++#define PFUZE100_SW1CMODE	0x31
+ #define PFUZE100_SW2VOL		0x35
++#define PFUZE100_SW2MODE	0x38
+ #define PFUZE100_SW3AVOL	0x3c
++#define PFUZE100_SW3AMODE	0x3f
+ #define PFUZE100_SW3BVOL	0x43
++#define PFUZE100_SW3BMODE	0x46
+ #define PFUZE100_SW4VOL		0x4a
++#define PFUZE100_SW4MODE	0x4d
+ #define PFUZE100_SWBSTCON1	0x66
+ #define PFUZE100_VREFDDRCON	0x6a
+ #define PFUZE100_VSNVSVOL	0x6b
+@@ -57,6 +64,13 @@
+ #define PFUZE100_VGEN5VOL	0x70
+ #define PFUZE100_VGEN6VOL	0x71
+ 
++#define PFUZE100_SWxMODE_MASK	0xf
++#define PFUZE100_SWxMODE_APS_APS	0x8
++#define PFUZE100_SWxMODE_APS_OFF	0x4
++
++#define PFUZE100_VGENxLPWR	BIT(6)
++#define PFUZE100_VGENxSTBY	BIT(5)
++
+ enum chips { PFUZE100, PFUZE200, PFUZE3000 = 3 };
+ 
+ struct pfuze_regulator {
+@@ -489,6 +503,69 @@ static inline struct device_node *match_of_node(int index)
+ }
+ #endif
+ 
++static struct pfuze_chip *syspm_pfuze_chip;
++
++static void pfuze_power_off_prepare(void)
++{
++	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off");
++
++	/* Switch from default mode: APS/APS to APS/Off */
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++}
++
++static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
++{
++	if (pfuze_chip->chip_id != PFUZE100) {
++		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler for not supported chip\n");
++		return -ENODEV;
++	}
++
++	if (pm_power_off_prepare) {
++		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registered.\n");
++		return -EBUSY;
++	}
++
++	if (syspm_pfuze_chip) {
++		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
++		return -EBUSY;
++	}
++
++	syspm_pfuze_chip = pfuze_chip;
++	pm_power_off_prepare = pfuze_power_off_prepare;
++
++	return 0;
++}
++
+ static int pfuze_identify(struct pfuze_chip *pfuze_chip)
+ {
+ 	unsigned int value;
+@@ -659,6 +736,20 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+ 		}
+ 	}
+ 
++	if (of_property_read_bool(client->dev.of_node,
++				  "fsl,pmic-stby-poweroff"))
++		return pfuze_power_off_prepare_init(pfuze_chip);
++
++	return 0;
++}
++
++static int pfuze100_regulator_remove(struct i2c_client *client)
++{
++	if (syspm_pfuze_chip) {
++		syspm_pfuze_chip = NULL;
++		pm_power_off_prepare = NULL;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -669,6 +760,7 @@ static struct i2c_driver pfuze_driver = {
+ 		.of_match_table = pfuze_dt_ids,
+ 	},
+ 	.probe = pfuze100_regulator_probe,
++	.remove = pfuze100_regulator_remove,
+ };
+ module_i2c_driver(pfuze_driver);
+ 
+-- 
+2.17.0
