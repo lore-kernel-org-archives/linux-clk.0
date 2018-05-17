@@ -1,66 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 21 May 2018 13:11:41 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: ilialin@codeaurora.org
-Cc: viresh.kumar@linaro.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180521121140.GO17671@n2100.armlinux.org.uk>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
- <20180521105428.GM17671@n2100.armlinux.org.uk>
- <000b01d3f0f3$aa961cc0$ffc25640$@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <000b01d3f0f3$aa961cc0$ffc25640$@codeaurora.org>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v7 1/6] ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff property
+Date: Thu, 17 May 2018 07:50:09 +0200
+Message-Id: <20180517055014.6607-2-o.rempel@pengutronix.de>
+In-Reply-To: <20180517055014.6607-1-o.rempel@pengutronix.de>
+References: <20180517055014.6607-1-o.rempel@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 21, 2018 at 02:05:41PM +0300, ilialin@codeaurora.org wrote:
-> You are right.
-> cpu_dev_silver != cpu_dev_gold, and I found this with my tests as well.
-> Thank you.
-> 
-> > -----Original Message-----
-> > From: Russell King - ARM Linux <linux@armlinux.org.uk>
-> > Sent: Monday, May 21, 2018 13:54
-> > To: Ilia Lin <ilialin@codeaurora.org>
-> > Cc: viresh.kumar@linaro.org; devicetree@vger.kernel.org; linux-
-> > pm@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; linux-soc@vger.kernel.org; linux-
-> > clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-> > 
-> > On Mon, May 21, 2018 at 01:31:30PM +0300, Ilia Lin wrote:
-> > > +#define SILVER_LEAD	0
-> > > +#define GOLD_LEAD	2
-> > 
-> > Okay, two different values here, but "GOLD_LEAD" appears unused.
-> > 
-> > > +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-> > > +	if (NULL == cpu_dev_silver)
-> > > +		return -ENODEV;
-> > > +
-> > > +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-> > > +	if (NULL == cpu_dev_gold)
-> > > +		return -ENODEV;
-> > 
-> > get_cpu_device() takes the logical CPU number.  So the above gets CPU 0
-> > each time, and so cpu_dev_silver == cpu_dev_gold here.  So what's the
-> > point of the second get_cpu_device() ?  If it's supposed to be:
-> > 
-> > 	cpu_dev_gold = get_cpu_device(GOLD_LEAD);
-> > 
-> > That would get CPU 2, but in terms of these defines, it doesn't make that
-> > much sense.  What exactly does "silver lead" and "gold lead" refer to in
-> these
-> > definitions?
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I think you still need to explain this.
-
+diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+index a45ca67a9d5f..e1308346e00d 100644
+--- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+@@ -6,6 +6,14 @@ Required properties:
+ - interrupts: Should contain CCM interrupt
+ - #clock-cells: Should be <1>
+ 
++Optional properties:
++- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signal
++  on power off.
++  Use this property if the SoC should be powered off by external power
++  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
++  Boards that are designed to initiate poweroff on PMIC_ON_REQ signal should
++  be using "syscon-poweroff" driver instead.
++
+ The clock consumer should specify the desired clock by having the clock
+ ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
+ for the full list of i.MX6 Quad and DualLite clock IDs.
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+2.17.0
