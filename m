@@ -1,47 +1,47 @@
-Return-Path: <gilad@benyossef.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx6sx: disable unnecessary clocks during clock initialization
+Date: Thu, 17 May 2018 13:00:47 +0800
+Message-Id: <1526533248-21990-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20180529161936.prhp4oikzamr6u3n@verge.net.au>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
- <1527171551-21979-6-git-send-email-gilad@benyossef.com> <20180529161936.prhp4oikzamr6u3n@verge.net.au>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 31 May 2018 14:55:06 +0300
-Message-ID: <CAOtvUMeBCH+23c3FDWncMwPPe5N=7yjRKzhyLmFXrYazgGbcJw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: r8a7795: add ccree binding
-To: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
-	Ofir Drang <ofir.drang@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux kernel mailing list <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 29, 2018 at 7:19 PM, Simon Horman <horms@verge.net.au> wrote:
-> On Thu, May 24, 2018 at 03:19:10PM +0100, Gilad Ben-Yossef wrote:
->> Add bindings for CryptoCell instance in the SoC.
->>
->> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->
-> In so far as I can review the details of this (which is not much) this
-> looks fine to me. I am, however, a little unclear in when it should be
-> accepted.
+Disable those unnecessary clocks during kernel boot up to save power,
+those modules clock should be managed by modules driver in runtime.
 
-Since Herbert Xu ACKed the driver changes, I would say the only gating
-commit is Geert's CR clock patch.
-If that one is in, than I would say this one should go in as well.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx6sx.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Thanks,
-Gilad
-
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index 0178ee2..10c771b 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -97,12 +97,7 @@ static int const clks_init_on[] __initconst = {
+ 	IMX6SX_CLK_IPMUX1, IMX6SX_CLK_IPMUX2, IMX6SX_CLK_IPMUX3,
+ 	IMX6SX_CLK_WAKEUP, IMX6SX_CLK_MMDC_P0_FAST, IMX6SX_CLK_MMDC_P0_IPG,
+ 	IMX6SX_CLK_ROM, IMX6SX_CLK_ARM, IMX6SX_CLK_IPG, IMX6SX_CLK_OCRAM,
+-	IMX6SX_CLK_PER2_MAIN, IMX6SX_CLK_PERCLK, IMX6SX_CLK_M4,
+-	IMX6SX_CLK_QSPI1, IMX6SX_CLK_QSPI2, IMX6SX_CLK_UART_IPG,
+-	IMX6SX_CLK_UART_SERIAL, IMX6SX_CLK_I2C3, IMX6SX_CLK_ECSPI5,
+-	IMX6SX_CLK_CAN1_IPG, IMX6SX_CLK_CAN1_SERIAL, IMX6SX_CLK_CAN2_IPG,
+-	IMX6SX_CLK_CAN2_SERIAL, IMX6SX_CLK_CANFD, IMX6SX_CLK_EPIT1,
+-	IMX6SX_CLK_EPIT2,
++	IMX6SX_CLK_PER2_MAIN, IMX6SX_CLK_PERCLK, IMX6SX_CLK_TZASC1,
+ };
+ 
+ static const struct clk_div_table clk_enet_ref_table[] = {
 -- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+2.7.4
