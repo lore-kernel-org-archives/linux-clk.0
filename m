@@ -1,132 +1,77 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Fri, 25 May 2018 00:56:23 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com,
- robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
- miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
- krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <20180524144134.41a71063@bbrezillon>
-References: <cover.1526990589.git.stefan@agner.ch>
- <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
- <20180523161810.0ed9fe80@bbrezillon>
- <2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
- <20180524105614.3c51736c@bbrezillon>
- <7b3cc3991fb054130fd54c6fdfec5097@agner.ch>
- <20180524142356.0fc68797@bbrezillon> <20180524144134.41a71063@bbrezillon>
-Message-ID: <78b7b43b4284e73cd6a3255e4e5075ed@agner.ch>
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAOtvUMf0pnX1+MOz0KkB5LxqL5HTmLRYjVZTUrAx-eCvm26+LA@mail.gmail.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-3-git-send-email-gilad@benyossef.com> <CAMuHMdXWPwW_p=D56BhNF274m+JLe+mbD2fqQu8-we-uMW4b8Q@mail.gmail.com>
+ <CAOtvUMf0pnX1+MOz0KkB5LxqL5HTmLRYjVZTUrAx-eCvm26+LA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 May 2018 10:41:46 +0200
+Message-ID: <CAMuHMdWxfZO+a0+tcd+4juNTVwB_nnJi0_SFD2C3OLCF1nSbKw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: r8a7795: Add ccree clock
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 24.05.2018 14:41, Boris Brezillon wrote:
-> On Thu, 24 May 2018 14:23:56 +0200
-> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> 
->> On Thu, 24 May 2018 13:09:53 +0200
->> Stefan Agner <stefan@agner.ch> wrote:
+Hi Gilad,
+
+On Thu, May 17, 2018 at 10:00 AM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Tue, May 15, 2018 at 5:47 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>>> This patch adds the clock used by the CryptoCell 630p instance in the SoC.
+>>>
+>>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 >>
->> > On 24.05.2018 10:56, Boris Brezillon wrote:
->> > > On Thu, 24 May 2018 10:46:27 +0200
->> > > Stefan Agner <stefan@agner.ch> wrote:
->> > >
->> > >> Hi Boris,
->> > >>
->> > >> Thanks for the initial review! One small question below:
->> > >>
->> > >> On 23.05.2018 16:18, Boris Brezillon wrote:
->> > >> > Hi Stefan,
->> > >> >
->> > >> > On Tue, 22 May 2018 14:07:06 +0200
->> > >> > Stefan Agner <stefan@agner.ch> wrote:
->> > >> >> +
->> > >> >> +struct tegra_nand {
->> > >> >> +	void __iomem *regs;
->> > >> >> +	struct clk *clk;
->> > >> >> +	struct gpio_desc *wp_gpio;
->> > >> >> +
->> > >> >> +	struct nand_chip chip;
->> > >> >> +	struct device *dev;
->> > >> >> +
->> > >> >> +	struct completion command_complete;
->> > >> >> +	struct completion dma_complete;
->> > >> >> +	bool last_read_error;
->> > >> >> +
->> > >> >> +	dma_addr_t data_dma;
->> > >> >> +	void *data_buf;
->> > >> >> +	dma_addr_t oob_dma;
->> > >> >> +	void *oob_buf;
->> > >> >> +
->> > >> >> +	int cur_chip;
->> > >> >> +};
->> > >> >
->> > >> > This struct should be split in 2 structures: one representing the NAND
->> > >> > controller and one representing the NAND chip:
->> > >> >
->> > >> > struct tegra_nand_controller {
->> > >> > 	struct nand_hw_control base;
->> > >> > 	void __iomem *regs;
->> > >> > 	struct clk *clk;
->> > >> > 	struct device *dev;
->> > >> > 	struct completion command_complete;
->> > >> > 	struct completion dma_complete;
->> > >> > 	bool last_read_error;
->> > >> > 	int cur_chip;
->> > >> > };
->> > >> >
->> > >> > struct tegra_nand {
->> > >> > 	struct nand_chip base;
->> > >> > 	dma_addr_t data_dma;
->> > >> > 	void *data_buf;
->> > >> > 	dma_addr_t oob_dma;
->> > >> > 	void *oob_buf;
->> > >> > };
->> > >>
->> > >> Is there a particular reason why you would leave DMA buffers in the chip
->> > >> structure? It seems that is more a controller thing...
->> > >
->> > > The size of those buffers is likely to be device dependent, so if you
->> > > have several NANDs connected to the controller, you'll either have to
->> > > have one buffer at the controller level which is max(all-chip-buf-size)
->> > > or a buffer per device.
->> > >
->> > > Also, do you really need these buffers? The core already provide some
->> > > which are suitable for DMA (chip->oob_poi and chip->data_buf).
->> > >
->> >
->> > Good question, I am not sure, that was existing code.
->> >
->> > Are you sure data_buf it is DMA capable?
->> >
->> > nand_scan_tail allocates with kmalloc:
->> >
->> > chip->data_buf = kmalloc(mtd->writesize + mtd->oobsize, GFP_KERNEL);
+>> Thanks for your patch!
 >>
->> Yes, kmalloc() allocates DMA-able buffers, so those are DMA-safe.
-> 
-> Hm, that's not exactly true. It depends on the dma_mask attached to the
-> device.
+>>> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+>>> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+>>> @@ -132,6 +132,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+>>>         DEF_MOD("sys-dmac2",             217,   R8A7795_CLK_S0D3),
+>>>         DEF_MOD("sys-dmac1",             218,   R8A7795_CLK_S0D3),
+>>>         DEF_MOD("sys-dmac0",             219,   R8A7795_CLK_S0D3),
+>>> +       DEF_MOD("ccree",                 229,   R8A7795_CLK_S3D2),
+>>
+>> I don't know if "ccree" is the proper name for this clock, as there
+>> may be multiple
+>> instances.
+>
+> I'd be happy to rename it to anything else. Suggestions?
 
-It seems to work (tm).
+I believe it should be called "sceg-pub".
 
-I am not sure how to deal with the OOB buffer. I now use the given
-pointer also for oob (offset writesize). I think mtk_nand does the same
-thing.
+>> I also can't verify the parent clock.
+>
+> I'm afraid I can't really help. This is based on code snippet from
+> Renesas. I verified it works but
+> I am not an expert on the clock settings :-(
 
-dma_len = mtd->writesize + (oob_required ? mtd->oobsize : 0);        
-dma_addr = dma_map_single(ctrl->dev, buf, dma_len, DMA_FROM_DEVICE);
+As your driver doesn't care about the clock rate, only about
+enabling/disabling the clock, the actual parent doesn't matter much.
 
-...
+After some deeper diving into the datasheet, I believe the correct parent is
+the CR clock, which is unfortunately not yet supported by the R-Car H3 clock
+driver. I'll send a patch...
 
-Is there a test which allows to test my (read|write)_page implementation
-with oob_required set?
+Gr{oetje,eeting}s,
 
---
-Stefan
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
