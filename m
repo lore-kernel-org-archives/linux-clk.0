@@ -1,71 +1,102 @@
-Return-Path: <benjamin.lindqvist@endian.se>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-References: <cover.1526990589.git.stefan@agner.ch> <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-From: Benjamin Lindqvist <benjamin.lindqvist@endian.se>
-Date: Thu, 24 May 2018 09:45:35 +0200
-Message-ID: <CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-To: Stefan Agner <stefan@agner.ch>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
-	computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-	mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
-	sboyd@kernel.org, Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com,
-	richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-	jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-	Mirza Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
-	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAOtvUMee+cn+=bEuB5iBiU9yeSsCiDPDwej8Uw-_3wVP4fagpA@mail.gmail.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+ <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
+ <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
+ <CAOtvUMdVNX_vBRofpc5rNiVL-a1NvWMDyWSOaXKYPkm57wkR_A@mail.gmail.com>
+ <CAMuHMdX5quhZzaPkcrtB4CuHWeaKsyF1SustjB9V0SWw_SzXVg@mail.gmail.com> <CAOtvUMee+cn+=bEuB5iBiU9yeSsCiDPDwej8Uw-_3wVP4fagpA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 May 2018 15:49:52 +0200
+Message-ID: <CAMuHMdVZF1chOm7D2r+pqRwHXpQNaDhO8q-p2riWPujFsjvZRA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stefan (and all),
+Hi Gilad,
 
-First off, I apoloigize in advance if I'm deviating from common
-kernel mailing list courtesy -- this is my first time responding.
-I just have a comment on the NAND driver that I'd like to bring
-to the public.
+On Thu, May 17, 2018 at 3:41 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Thu, May 17, 2018 at 4:35 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Thu, May 17, 2018 at 3:09 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>>> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
+>>> <geert@linux-m68k.org> wrote:
+>>>> However, even with your clock patch, the signature checking fails for me,
+>>>> on both R-Car H3 ES1.0 and ES2.0.
+>>>> Does this need changes to the ARM Trusted Firmware, to allow Linux to
+>>>> access the public SCEG module?
+>>>
+>>> Well, this is actually something different. If you look you will
+>>> notice that my patch was part of a 3 part patch series,
+>>> the first of which disabled this test.
+>>
+>> Sorry, I had completely forgotten about the first patch from the series.
+>> With that applied, it continues:
+>>
+>>         ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version
+>> 0x00000000, Driver version 4.0
+>>         ccree e6601000.crypto: Cache params previous: 0x00000777
+>>         ccree e6601000.crypto: Cache params current: 0x00000000
+>> (expect: 0x00000000)
+>>         alg: No test for cts1(cbc(aes)) (cts1-cbc-aes-ccree)
+>>         alg: No test for authenc(xcbc(aes),cbc(aes))
+>> (authenc-xcbc-aes-cbc-aes-ccree)
+>>         alg: No test for authenc(xcbc(aes),rfc3686(ctr(aes)))
+>> (authenc-xcbc-aes-rfc3686-ctr-aes-ccree)
+>>         ccree e6601000.crypto: ARM ccree device initialized
+>>
+>> Is HW version 0x00000000 expected?
+>
+> It's related to the problem with reading the wrong register I've
+> mentioned before.
 
-> +       switch (mtd->oobsize) {
-> ...
-> +       case 224:
-> +               mtd_set_ooblayout(mtd, &tegra_nand_oob_224_ops);
-> +               chip->ecc.strength = 8;
-> +               chip->ecc.bytes = 18;
-> +               value |= CFG_ECC_SEL | CFG_TVAL_8;
-> +               break; +       case 224:
+OK.
 
-I am not sure how you arrived at this oobsize-based inference. I
-have not seen any explicit relation between oob size and ECC
-algorithm used in the reference manual. Indeed, the U-Boot I was
-working on (a fork of the Toradex 2015.04 U-Boot) always has
-oobsize == 224 but used either BCH[t=16] or RS[t=4]. In fact, we
-tried choosing RS[t=8] in U-Boot but we failed to make the
-BootROM decode this at all. So we had to use RS[t=4]. But
-changing the algorithm did not automatically change the oobsize,
-at least it didn't for us. So maybe you should consider if this
-is really the way to go about deciding which algorithm is used.
+>>> If you take all the 3 patches, it will work.
+>>
+>> is there an easy way to test proper operation?
+>
+> The lines of the form "  alg: No test for cts1(cbc(aes))
+> (cts1-cbc-aes-ccree)" indicates
+> you have the Crypto API testmgr enable (or rather not disabled would
+> be more accurate) so every
+> cryptographic algorithm except those specified in these messages was
+> tested with test
+> vectors from crypto/testmgr.c upon registration. If you don't seen
+> failure warnings, it works.
 
-Note that we're in fact using this patch set in Linux today, but
-we had to remove the oobsize inference part. Currently we're
-simply hard coding it to CFG_TVAL_4, but maybe it would be
-cleaner to add ECC algo as a board config instead, e.g. in the
-.dts file or whatever. This seems to be done by other vendors
-already, see for example excerpt of
-Documentation/devicetree/bindings/mtd/gpmc-nand.txt below:
+OK.
 
- - ti,nand-ecc-opt: A string setting the ECC layout to use. One of:
-"sw" 1-bit Hamming ecc code via software
-"hw" <deprecated> use "ham1" instead
-"hw-romcode" <deprecated> use "ham1" instead
-"ham1" 1-bit Hamming ecc code
-"bch4" 4-bit BCH ecc code
-"bch8" 8-bit BCH ecc code
-"bch16" 16-bit BCH ECC code
-Refer below "How to select correct ECC scheme for your device ?"
+> You can also check /proc/crypto for all the algorithm with ccree
+> listed as their driver and check
+> that their test passed.
 
-It seems as if this method would be equally applicable to Tegra NAND.
+OK, in that case everything works as expected, on both R-Car H3 ES1.0 and
+ES2.0.
 
-Best regards,
-Benjamin
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
