@@ -1,149 +1,156 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v8 00/15] CPU scaling support for msm8996
-Date: Thu, 17 May 2018 14:19:00 +0300
-Message-Id: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.134]:37188 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751375AbeEQCcm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 May 2018 22:32:42 -0400
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: add clock panic dump in tree-view
+To: Stephen Boyd <sboyd@kernel.org>
+References: <1525942205-111855-1-git-send-email-shawn.lin@rock-chips.com>
+ <152645814090.210890.10037636681887493249@swboyd.mtv.corp.google.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <25a9c183-af5b-3310-521f-caaa5810c8e8@rock-chips.com>
+Date: Thu, 17 May 2018 10:32:50 +0800
+MIME-Version: 1.0
+In-Reply-To: <152645814090.210890.10037636681887493249@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-[v8]
- * Reordered the patch series into 4 groups
- * Addressed comments from Amit about the comments and commit messages
- * Addressed comments from Amit and Viresh about the resourses deallocation
+Hi Stephen,
 
-[v7]
- * Addressed comments from Viresh about resourses deallocation
-   and DT compatible
+On 2018/5/16 16:09, Stephen Boyd wrote:
+> Quoting Shawn Lin (2018-05-10 01:50:05)
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index 3487be7..7bbdb6f 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -519,6 +519,9 @@
+>>                          debug and development, but should not be needed on a
+>>                          platform with proper driver support.  For more
+>>                          information, see Documentation/clk.txt.
+>> +       clk_panic_dump
+>> +                       [CLK]
+>> +                       Dump the whole clock tree-view upon panic.
+> 
+> Typically when the system panics it's because something has gone wrong.
+> When a clk has gone wrong, typically the system hangs or crashes hard
+> and printing out panic info just doesn't happen.
+> 
+> I'm not sure why clks are so special here that we need to dump the
+> information about the clk tree at the point of a panic. Is this more of
+> a debug patch to dump out clk tree info by calling panic() in certain
+> places near where you get odd system hangs?
 
-[v6]
- * Addressed comments from Viresh about:
- ** Comments style
- ** Kconfig bool instead of tristate
- ** DT and documentation style
- ** Resourses deallocation on an error
- ** Typos
+Yes, it's a debug patch when system in a odd hangds/hard locked. If it
+crashes seriously, anything wrt. panic info is unusable, but if the
+system still has a chance to dump panic info, for instance stack trace,
+it would also be able to dump the clk tree.
 
-[v5]
- * Rebased
- * Addressed comments from Bjorn about SPDX style,
-   functions and parameters naming
- * Addressed comments from Viresh DT properties and style, comments style,
-   resourses deallocation, documentation placement
- * Addressed comments from Sricharan about unnessesary include
- * Addressed comments from Nicolas
- * Addressed comments from Rob about the commit messages and acks
- * Addressed comments from Mark
+Btw, I should marked this patch as RFC but forgot it. So if this patch
+is acceptable from your point, if I address the your comment about the
+code?
 
-[v4]
- * Adressed all comments from Stephen
- * Added CPU regulator support
- * Added qcom-cpufreq-kryo driver
+> 
+>>   
+>>          clock=          [BUGS=X86-32, HW] gettimeofday clocksource override.
+>>                          [Deprecated]
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index 9ae92aa..adb5537 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -2802,6 +2802,73 @@ static inline void clk_debug_unregister(struct clk_core *core)
+>>   }
+>>   #endif
+>>   
+>> +static bool clk_pdump_enable;
+>> +static int __init clk_pdump_setup(char *__unused)
+>> +{
+>> +       clk_pdump_enable  = true;
+>> +       return 1;
+>> +}
+>> +__setup("clk_panic_dump", clk_pdump_setup);
+>> +
+>> +static void clk_pdump_show_one(struct clk_core *c, int level)
+>> +{
+>> +       if (!c)
+>> +               return;
+>> +
+>> +       pr_err("%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+>> +               level * 3 + 1, "", 30 - level * 3, c->name,
+>> +               c->enable_count, c->prepare_count, clk_core_get_rate(c),
+>> +               clk_core_get_accuracy(c), clk_core_get_phase(c));
+>> +}
+>> +
+>> +static void clk_pdump_show_subtree(struct clk_core *c, int level)
+>> +{
+>> +       struct clk_core *child;
+>> +
+>> +       if (!c)
+>> +               return;
+>> +
+>> +       clk_pdump_show_one(c, level);
+>> +
+>> +       hlist_for_each_entry(child, &c->children, child_node)
+>> +               clk_pdump_show_subtree(child, level + 1);
+>> +}
+>> +
+>> +static int clk_panic_dump(struct notifier_block *this, unsigned long ev,
+>> +                         void *ptr)
+>> +{
+>> +       struct clk_core *c;
+>> +
+>> +       if (!clk_pdump_enable)
+>> +               return 0;
+> 
+> Why register the notifier in late init if the commandline doesn't have
+> the parameter set?
+> 
 
-[v3]
- * Rebased on top of the latest PLL driver changes
- * Addressed comment from Rob Herring for bindings
+Ok, will fix.
 
-[v2]
- * Addressed comments from Rob Herring for bindings
- * Addressed comments from Mark Rutland for memory barrier
- * Addressed comments from Julien Thierry for clock reenabling condition
- * Tuned the HW configuration for clock frequencies below 600MHz
+>> +
+>> +       pr_err("clock panic dump:\n");
+>> +       pr_err("   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase\n");
+>> +       pr_err("----------------------------------------------------------------------------------------\n");
+>> +
+>> +       clk_prepare_lock();
+> 
+> Why are we taking locks in the panic path?
 
-The series contains 4 groups of patches, which can be merged in the chain order,
-while each group depends on all the previous groups.
-(However, Only SOC, or SOC and Clocks, or SOC and Clocks and Cpufreq will work)  
+ok, it's unnecessary in the special path indeed.
 
-SOC (1/15):
-Extracts the kryo l2 accessors driver from the QCOM PMU driver
+> 
+>> +
+>> +       hlist_for_each_entry(c, &clk_root_list, child_node)
+>> +               clk_pdump_show_subtree(c, 0);
+>> +       hlist_for_each_entry(c, &clk_orphan_list, child_node)
+>> +               clk_pdump_show_subtree(c, 0);
+>> +
+>> +       clk_prepare_unlock();
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static struct notifier_block clk_pdump_block = {
+>> +       .notifier_call = clk_panic_dump,
+>> +};
+>> +
+>> +static int clk_register_pdump(void)
+>> +{
+>> +       atomic_notifier_chain_register(&panic_notifier_list, &clk_pdump_block);
+>> +       return 0;
+>> +}
+>> +late_initcall_sync(clk_register_pdump);
+> 
+> Why sync?
 
-Clocks (2/15-9/15):
-This series adds support for the CPU clocks on msm8996 devices.
-The driver uses the existing PLL drivers and is required to control
-the CPU frequency scaling on the MSM8996.
+Oh, sync is no needed.
 
-Cpufreq (10/15-12/15):
-The qcom-cpufreq-kryo driver is aimed to support different SOC versions.
-The driver reads eFuse information and chooses the required OPP subset
-by passing the OPP supported-hw parameter.
+> 
+> 
+> 
+> 
 
-Regulators (13/15-15/15):
-Added SAW regulator support to the SPMI regulator driver. The SAW regulators
-will be controlled through special CPU registers instead of direct
-SPMI accesses.
-
-Ilia Lin (13):
-  soc: qcom: Separate kryo l2 accessors from PMU driver
-  clk: Use devm_ in the register fixed factor clock
-  clk: qcom: Add CPU clock driver for msm8996
-  dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
-  clk: qcom: cpu-8996: Add support to switch below 600Mhz
-  clk: qcom: Add ACD path to CPU clock driver for msm8996
-  dt: qcom: Add opp and thermal to the msm8996
-  cpufreq: Add Kryo CPU scaling driver
-  dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
-  dt: qcom: Add qcom-cpufreq-kryo driver configuration
-  regulator: qcom_spmi: Add support for SAW
-  dt-bindings: qcom_spmi: Document SAW support
-  dt: qcom: Add SAW regulator for 8x96 CPUs
-
-Rajendra Nayak (2):
-  clk: qcom: Make clk_alpha_pll_configure available to modules
-  clk: qcom: cpu-8996: Add support to switch to alternate PLL
-
- .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
- .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
- .../bindings/regulator/qcom,spmi-regulator.txt     |  45 ++
- arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 665 +++++++++++++++++++-
- drivers/clk/clk-fixed-factor.c                     |   2 +-
- drivers/clk/qcom/Kconfig                           |   9 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
- drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
- drivers/clk/qcom/clk-cpu-8996.c                    | 510 ++++++++++++++++
- drivers/cpufreq/Kconfig.arm                        |  10 +
- drivers/cpufreq/Makefile                           |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c                | 166 +++++
- drivers/perf/Kconfig                               |   1 +
- drivers/perf/qcom_l2_pmu.c                         |  90 +--
- drivers/regulator/qcom_spmi-regulator.c            | 133 +++-
- drivers/soc/qcom/Kconfig                           |   3 +
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/kryo-l2-accessors.c               |  56 ++
- include/soc/qcom/kryo-l2-accessors.h               |  12 +
- 22 files changed, 2324 insertions(+), 90 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
- create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
-
--- 
-1.9.1
