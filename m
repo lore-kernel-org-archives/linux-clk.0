@@ -1,90 +1,140 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <ilialin@codeaurora.org>
+From: <ilialin@codeaurora.org>
+To: "'Viresh Kumar'" <viresh.kumar@linaro.org>,
+	"'Amit Kucheria'" <amit.kucheria@linaro.org>
+Cc: "'Michael Turquette'" <mturquette@baylibre.com>,
+	<sboyd@kernel.org>,
+	"'Rob Herring'" <robh@kernel.org>,
+	"'Mark Rutland'" <mark.rutland@arm.com>,
+	<nm@ti.com>,
+	<lgirdwood@gmail.com>,
+	<broonie@kernel.org>,
+	"'Andy Gross'" <andy.gross@linaro.org>,
+	"'David Brown'" <david.brown@linaro.org>,
+	<catalin.marinas@arm.com>,
+	<will.deacon@arm.com>,
+	"'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+	<linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	"'LKML'" <linux-kernel@vger.kernel.org>,
+	"'Linux PM list'" <linux-pm@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-soc@vger.kernel.org>,
+	"'lakml'" <linux-arm-kernel@lists.infradead.org>,
+	"'Rajendra Nayak'" <rnayak@codeaurora.org>,
+	<nicolas.dechesne@linaro.org>,
+	<celster@codeaurora.org>,
+	<tfinkel@codeaurora.org>
+References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-13-git-send-email-ilialin@codeaurora.org> <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com> <20180516141132.aqjif7d5motmmnlo@vireshk-i7> 
+In-Reply-To: 
+Subject: RE: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
+Date: Thu, 17 May 2018 11:20:24 +0300
+Message-ID: <017f01d3edb7$ec160320$c4420960$@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1524258004-28717-1-git-send-email-michael@amarulasolutions.com>
-References: <1524258004-28717-1-git-send-email-michael@amarulasolutions.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sun, 6 May 2018 10:39:25 -0300
-Message-ID: <CAOMZO5BO_FgPCkJJQf64jyYguqFGaDTDje3=_KTm4sXhwxb0WA@mail.gmail.com>
-Subject: Re: [PATCH V2] clk: imx: Add new clo01 and clo2 controlled by CCOSR
-To: Michael Trimarchi <michael@amarulasolutions.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Matteo Lisi <matteo.lisi@engicam.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Apr 20, 2018 at 6:00 PM, Michael Trimarchi
-<michael@amarulasolutions.com> wrote:
-> osc->cko2_sel->cko2_podf->clk_cko2->clk_cko
->
-> Example of usage to provide clock to the sgtl5000
->
-> codec: sgtl5000@0a {
->         compatible = "fsl,sgtl5000";
->         reg = <0x0a>;
->         clocks = <&clks IMX6UL_CLK_OSC>;
->         #sound-dai-cells = <0>;
->         clocks = <&clks IMX6UL_CLK_CKO>;
->         assigned-clocks = <&clks IMX6UL_CLK_CKO2_SEL>,
->                           <&clks IMX6UL_CLK_CKO2_PODF>,
->                           <&clks IMX6UL_CLK_CKO2>,
->                           <&clks IMX6UL_CLK_CKO>;
->         assigned-clock-parents = <&clks IMX6UL_CLK_OSC>,
->                                  <&clks IMX6UL_CLK_CKO2_SEL>,
->                                  <&clks IMX6UL_CLK_CKO2_PODF>,
->                                  <&clks IMX6UL_CLK_CKO2>;
->         clock-names = "mclk";
->         wlf,shared-lrclk;
->
-> Signed-off-by: Matteo Lisi <matteo.lisi@engicam.com>
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> Tested-by: Michael Trimarchi <michael@amarulasolutions.com>
 
-Looks good. Only a minor comment.
 
-> diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
-> index ee9f1a5..9564597 100644
-> --- a/include/dt-bindings/clock/imx6ul-clock.h
-> +++ b/include/dt-bindings/clock/imx6ul-clock.h
-> @@ -235,20 +235,27 @@
->  #define IMX6UL_CLK_CSI_PODF            222
->  #define IMX6UL_CLK_PLL3_120M           223
->  #define IMX6UL_CLK_KPP                 224
-> +#define IMX6UL_CLK_CKO1_SEL            225
-> +#define IMX6UL_CLK_CKO1_PODF           226
-> +#define IMX6UL_CLK_CKO1                        227
-> +#define IMX6UL_CLK_CKO2_SEL            228
-> +#define IMX6UL_CLK_CKO2_PODF           229
-> +#define IMX6UL_CLK_CKO2                        230
-> +#define IMX6UL_CLK_CKO                 231
->
->  /* For i.MX6ULL */
-> -#define IMX6ULL_CLK_ESAI_PRED          225
-> -#define IMX6ULL_CLK_ESAI_PODF          226
-> -#define IMX6ULL_CLK_ESAI_EXTAL         227
-> -#define IMX6ULL_CLK_ESAI_MEM           228
-> -#define IMX6ULL_CLK_ESAI_IPG           229
-> -#define IMX6ULL_CLK_DCP_CLK            230
-> -#define IMX6ULL_CLK_EPDC_PRE_SEL       231
-> -#define IMX6ULL_CLK_EPDC_SEL           232
-> -#define IMX6ULL_CLK_EPDC_PODF          233
-> -#define IMX6ULL_CLK_EPDC_ACLK          234
-> -#define IMX6ULL_CLK_EPDC_PIX           235
-> -#define IMX6ULL_CLK_ESAI_SEL           236
-> -#define IMX6UL_CLK_END                 237
-> +#define IMX6ULL_CLK_ESAI_PRED          232
-> +#define IMX6ULL_CLK_ESAI_PODF          233
-> +#define IMX6ULL_CLK_ESAI_EXTAL         234
-> +#define IMX6ULL_CLK_ESAI_MEM           235
-> +#define IMX6ULL_CLK_ESAI_IPG           236
-> +#define IMX6ULL_CLK_DCP_CLK            237
-> +#define IMX6ULL_CLK_EPDC_PRE_SEL       238
-> +#define IMX6ULL_CLK_EPDC_SEL           239
-> +#define IMX6ULL_CLK_EPDC_PODF          240
-> +#define IMX6ULL_CLK_EPDC_ACLK          241
-> +#define IMX6ULL_CLK_EPDC_PIX           242
-> +#define IMX6ULL_CLK_ESAI_SEL           243
-> +#define IMX6UL_CLK_END                 244
+> -----Original Message-----
+> From: ilialin@codeaurora.org <ilialin@codeaurora.org>
+> Sent: Thursday, May 17, 2018 10:51
+> To: 'Viresh Kumar' <viresh.kumar@linaro.org>; 'Amit Kucheria'
+> <amit.kucheria@linaro.org>
+> Cc: 'Michael Turquette' <mturquette@baylibre.com>; 'sboyd@kernel.org'
+> <sboyd@kernel.org>; 'Rob Herring' <robh@kernel.org>; 'Mark Rutland'
+> <mark.rutland@arm.com>; 'nm@ti.com' <nm@ti.com>;
+> 'lgirdwood@gmail.com' <lgirdwood@gmail.com>; 'broonie@kernel.org'
+> <broonie@kernel.org>; 'Andy Gross' <andy.gross@linaro.org>; 'David Brown'
+> <david.brown@linaro.org>; 'catalin.marinas@arm.com'
+> <catalin.marinas@arm.com>; 'will.deacon@arm.com'
+> <will.deacon@arm.com>; 'Rafael J. Wysocki' <rjw@rjwysocki.net>; 'linux-
+> clk@vger.kernel.org' <linux-clk@vger.kernel.org>;
+> 'devicetree@vger.kernel.org' <devicetree@vger.kernel.org>; 'LKML' <linux-
+> kernel@vger.kernel.org>; 'Linux PM list' <linux-pm@vger.kernel.org>;
+'linux-
+> arm-msm@vger.kernel.org' <linux-arm-msm@vger.kernel.org>; 'linux-
+> soc@vger.kernel.org' <linux-soc@vger.kernel.org>; 'lakml' <linux-arm-
+> kernel@lists.infradead.org>; 'Rajendra Nayak' <rnayak@codeaurora.org>;
+> 'nicolas.dechesne@linaro.org' <nicolas.dechesne@linaro.org>;
+> 'celster@codeaurora.org' <celster@codeaurora.org>;
+> 'tfinkel@codeaurora.org' <tfinkel@codeaurora.org>
+> Subject: RE: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
+> 
+> 
+> 
+> > -----Original Message-----
+> > From: Viresh Kumar <viresh.kumar@linaro.org>
+> > Sent: Wednesday, May 16, 2018 17:12
+> > To: Amit Kucheria <amit.kucheria@linaro.org>
+> > Cc: Ilia Lin <ilialin@codeaurora.org>; Michael Turquette
+> > <mturquette@baylibre.com>; sboyd@kernel.org; Rob Herring
+> > <robh@kernel.org>; Mark Rutland <mark.rutland@arm.com>; nm@ti.com;
+> > lgirdwood@gmail.com; broonie@kernel.org; Andy Gross
+> > <andy.gross@linaro.org>; David Brown <david.brown@linaro.org>;
+> > catalin.marinas@arm.com; will.deacon@arm.com; Rafael J. Wysocki
+> > <rjw@rjwysocki.net>; linux-clk@vger.kernel.org;
+> > devicetree@vger.kernel.org; LKML <linux-kernel@vger.kernel.org>; Linux
+> > PM list <linux-pm@vger.kernel.org>; linux-arm-msm@vger.kernel.org;
+> > linux- soc@vger.kernel.org; lakml
+> > <linux-arm-kernel@lists.infradead.org>;
+> > Rajendra Nayak <rnayak@codeaurora.org>; nicolas.dechesne@linaro.org;
+> > celster@codeaurora.org; tfinkel@codeaurora.org
+> > Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
+> >
+> > On 16-05-18, 16:12, Amit Kucheria wrote:
+> > > > +       ret = PTR_ERR_OR_ZERO(opp_temp =
+> > > > +
+> > dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+> > > > +       if (0 > ret)
+> > >
+> > > Any particular reason to prefer this over (ret < 0) that is
+> > > generally used? I've seen it used to avoid the == vs. = typos, but
+> > > not for other comparisons.
+> > >
+> > > Suggest sticking to what is commonly used i.e. ret < 0.
+> > >
+> > > > +               goto free_opp;
+> > > > +
+> > > > +       cpu_dev = get_cpu_device(GOLD_LEAD);
+> > >
+> > > Error check cpu_dev here?
+> > >
+> > > > +       ret = PTR_ERR_OR_ZERO(opp_temp =
+> > > > +
+> > dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
+> > > > +       if (0 > ret)
+> > > > +               goto free_opp;
+> >
+> > The goto here is wrong
+> 
+> If we are here, then the first dev_pm_opp_set_supported_hw() succeeded.
+> And should be deallocated before exit with error.
 
-It would be cleaner if you only add the new clocks to end of the list.
+My bad. Got you.
+
+> 
+> >
+> > > > +
+> > > > +
+> > > > +       ret =
+> > PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-dt",
+> > > > +                                                             -1,
+> > > > + NULL, 0));
+> > > > +
+> > > > +       if (0 == ret)
+> > > > +               return 0;
+> > > > +
+> > > > +free_opp:
+> > > > +       dev_pm_opp_put_supported_hw(opp_temp);
+> > >
+> > > This is not needed because dev_pm_opp_set_supported_hw will free
+> > > memory in case of failure. This call in only needed in case of a
+> > > successful get.
+> >
+> > But this is still required for the case where platform device
+registration fails.
+> >
+> > --
+> > viresh
