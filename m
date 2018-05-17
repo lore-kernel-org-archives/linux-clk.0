@@ -1,441 +1,101 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: meson: use SPDX license identifiers consistently
-Date: Tue, 15 May 2018 18:42:29 +0200
-Message-Id: <20180515164229.4606-1-jbrunet@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v7 0/6] provide power off support for iMX6 with external PMIC
+Date: Thu, 17 May 2018 07:50:08 +0200
+Message-Id: <20180517055014.6607-1-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace every license notices in drivers/clk/meson by SPDX license
-identifiers, as described in license-rules.rst
+2018.05.17:
+update patches to version v7
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/clk-audio-divider.c | 13 +--------
- drivers/clk/meson/clk-mpll.c          | 52 +----------------------------------
- drivers/clk/meson/clk-pll.c           | 13 +--------
- drivers/clk/meson/clk-regmap.c        |  6 ++--
- drivers/clk/meson/clk-regmap.h        |  8 ++++--
- drivers/clk/meson/clkc.h              | 13 +--------
- drivers/clk/meson/gxbb-aoclk-32k.c    |  3 +-
- drivers/clk/meson/gxbb-aoclk.c        | 51 +---------------------------------
- drivers/clk/meson/gxbb-aoclk.h        |  3 +-
- drivers/clk/meson/gxbb.c              | 15 +---------
- drivers/clk/meson/gxbb.h              | 52 +----------------------------------
- drivers/clk/meson/meson8b.c           | 16 +----------
- drivers/clk/meson/meson8b.h           | 13 +--------
- 13 files changed, 20 insertions(+), 238 deletions(-)
 
-diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
-index f7ab5b1db342..ac0743cd0f2f 100644
---- a/drivers/clk/meson/clk-audio-divider.c
-+++ b/drivers/clk/meson/clk-audio-divider.c
-@@ -1,18 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Copyright (c) 2017 AmLogic, Inc.
-  * Author: Jerome Brunet <jbrunet@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- /*
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index d233549de244..a8027bfd052c 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -1,57 +1,7 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-- * This file is provided under a dual BSD/GPLv2 license.  When using or
-- * redistributing this file, you may do so under either license.
-- *
-- * GPL LICENSE SUMMARY
-- *
-- * Copyright (c) 2016 AmLogic, Inc.
-- * Author: Michael Turquette <mturquette@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- * The full GNU General Public License is included in this distribution
-- * in the file called COPYING
-- *
-- * BSD LICENSE
-- *
-  * Copyright (c) 2016 AmLogic, Inc.
-  * Author: Michael Turquette <mturquette@baylibre.com>
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- *   * Redistributions of source code must retain the above copyright
-- *     notice, this list of conditions and the following disclaimer.
-- *   * Redistributions in binary form must reproduce the above copyright
-- *     notice, this list of conditions and the following disclaimer in
-- *     the documentation and/or other materials provided with the
-- *     distribution.
-- *   * Neither the name of Intel Corporation nor the names of its
-- *     contributors may be used to endorse or promote products derived
-- *     from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
- /*
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 65a7bd903551..c645a99680d5 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -1,21 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-  *
-  * Copyright (c) 2018 Baylibre, SAS.
-  * Author: Jerome Brunet <jbrunet@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- /*
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-index 3645fdb62343..bd8dbcbdc73c 100644
---- a/drivers/clk/meson/clk-regmap.c
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
--// Copyright (c) 2018 BayLibre, SAS.
--// Author: Jerome Brunet <jbrunet@baylibre.com>
-+/*
-+ * Copyright (c) 2018 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
- 
- #include "clk-regmap.h"
- 
-diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
-index 627c888026d7..ed2d4348dbe2 100644
---- a/drivers/clk/meson/clk-regmap.h
-+++ b/drivers/clk/meson/clk-regmap.h
-@@ -1,6 +1,8 @@
--// SPDX-License-Identifier: GPL-2.0
--// Copyright (c) 2018 BayLibre, SAS.
--// Author: Jerome Brunet <jbrunet@baylibre.com>
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
- 
- #ifndef __CLK_REGMAP_H
- #define __CLK_REGMAP_H
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 8cc265cd3d2b..22a3d9905d4e 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -1,18 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef __CLKC_H
-diff --git a/drivers/clk/meson/gxbb-aoclk-32k.c b/drivers/clk/meson/gxbb-aoclk-32k.c
-index 491634dbc985..680467141a1d 100644
---- a/drivers/clk/meson/gxbb-aoclk-32k.c
-+++ b/drivers/clk/meson/gxbb-aoclk-32k.c
-@@ -1,8 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Copyright (c) 2017 BayLibre, SAS.
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * SPDX-License-Identifier: GPL-2.0+
-  */
- 
- #include <linux/clk-provider.h>
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 408e3e2fca18..49ccf82e8c1b 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -1,56 +1,7 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-- * This file is provided under a dual BSD/GPLv2 license.  When using or
-- * redistributing this file, you may do so under either license.
-- *
-- * GPL LICENSE SUMMARY
-- *
-  * Copyright (c) 2016 BayLibre, SAS.
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see <http://www.gnu.org/licenses/>.
-- * The full GNU General Public License is included in this distribution
-- * in the file called COPYING.
-- *
-- * BSD LICENSE
-- *
-- * Copyright (c) 2016 BayLibre, SAS.
-- * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- *   * Redistributions of source code must retain the above copyright
-- *     notice, this list of conditions and the following disclaimer.
-- *   * Redistributions in binary form must reproduce the above copyright
-- *     notice, this list of conditions and the following disclaimer in
-- *     the documentation and/or other materials provided with the
-- *     distribution.
-- *   * Neither the name of Intel Corporation nor the names of its
-- *     contributors may be used to endorse or promote products derived
-- *     from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- #include <linux/platform_device.h>
- #include <linux/mfd/syscon.h>
-diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
-index 65962fc9ecdc..3aa638d4ed21 100644
---- a/drivers/clk/meson/gxbb-aoclk.h
-+++ b/drivers/clk/meson/gxbb-aoclk.h
-@@ -1,8 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * Copyright (c) 2017 BayLibre, SAS
-  * Author: Neil Armstrong <narmstrong@baylibre.com>
-- *
-- * SPDX-License-Identifier: GPL-2.0+
-  */
- 
- #ifndef __GXBB_AOCLKC_H
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index a893b1edda22..1d06e127f4f9 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1,20 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-- * AmLogic S905 / GXBB Clock Controller Driver
-- *
-  * Copyright (c) 2016 AmLogic, Inc.
-  * Michael Turquette <mturquette@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <linux/clk.h>
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index b3ef54f65a9d..cb3c381d8f42 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -1,57 +1,7 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
- /*
-- * This file is provided under a dual BSD/GPLv2 license.  When using or
-- * redistributing this file, you may do so under either license.
-- *
-- * GPL LICENSE SUMMARY
-- *
-  * Copyright (c) 2016 AmLogic, Inc.
-  * Author: Michael Turquette <mturquette@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of version 2 of the GNU General Public License as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
-- * The full GNU General Public License is included in this distribution
-- * in the file called COPYING
-- *
-- * BSD LICENSE
-- *
-- * Copyright (c) 2016 BayLibre, Inc.
-- * Author: Michael Turquette <mturquette@baylibre.com>
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- *   * Redistributions of source code must retain the above copyright
-- *     notice, this list of conditions and the following disclaimer.
-- *   * Redistributions in binary form must reproduce the above copyright
-- *     notice, this list of conditions and the following disclaimer in
-- *     the documentation and/or other materials provided with the
-- *     distribution.
-- *   * Neither the name of Intel Corporation nor the names of its
-- *     contributors may be used to endorse or promote products derived
-- *     from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
- #ifndef __GXBB_H
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index e6e9a9db1095..ed5d5258e3e3 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -1,24 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-- * AmLogic S802 (Meson8) / S805 (Meson8b) / S812 (Meson8m2) Clock Controller
-- * Driver
-- *
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-  *
-  * Copyright (c) 2016 BayLibre, Inc.
-  * Michael Turquette <mturquette@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <linux/clk.h>
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index a687dc60b6d0..c0aec324e3ff 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -1,21 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-  *
-  * Copyright (c) 2016 BayLibre, Inc.
-  * Michael Turquette <mturquette@baylibre.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef __MESON8B_H
+This patch series is providing power off support for Freescale/NXP iMX6 based
+boards with external power management integrated circuit (PMIC).
+As a first step the PMIC is configured to turn off the system if the
+standby pin is asserted. On second step we assert the standby pin.
+For this reason we need to use pm_power_off_prepare.
+
+Usage of stnadby pin for power off is described in official iMX6
+documentation.
+
+2018.03.05:
+As this patch set touches multiple subsystems I think it would make
+sense for Shawn Guo to take the all patch set.
+The only part which didn't receive an ACK is regulator stuff. So I would
+hope that Mark Brown can ACK it.
+
+Kind regards,
+Oleksij Rempel
+
+2017.12.06:
+Adding Linus. Probably there is no maintainer for this patch set.
+No changes are made, tested on v4.15-rc1.
+
+2017.10.27:
+Last version of this patch set was send at 20 Jun 2017, this is a rebase against
+kernel v4.14-rc6. Probably this set got lost. If I forgot to address some comments,
+please point me.
+
+changes:
+v7:
+ - use EXPORT_SYMBOL_GPL(pm_power_off_prepare) instead of EXPORT_SYMBOL
+ - call imx6q_suspend_finish() directly without cpu_suspend()
+
+v6:
+ - rename imx6_pm_poweroff to imx6_pm_stby_poweroff
+ - fix "MPIC_STBY_REQ" typo in the comment.
+
+v5:
+ - remove useless includes from pm-imx6.c patch
+ - add Acked-by to "regulator: pfuze100: add fsl,pmic-stby-poweroff property"
+   patch
+
+v4:
+ - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff ..."
+   patch
+ - add Acked-by to "ARM: imx6q: provide documentation for new ..."
+   patch
+
+v3:
+ - set pm_power_off_prepare = NULL on .remove.
+ - documentation and spelling fixes.
+ - use %pf instead of lookup_symbol_name.
+
+Oleksij Rempel (6):
+  ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
+    property
+  ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
+    is set
+  kernel/reboot.c: export pm_power_off_prepare
+  regulator: pfuze100: add fsl,pmic-stby-poweroff property
+  regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+  ARM: dts: imx6: RIoTboard provide standby on power off option
+
+ .../devicetree/bindings/clock/imx6q-clock.txt |  8 ++
+ .../bindings/regulator/pfuze100.txt           |  7 ++
+ arch/arm/boot/dts/imx6dl-riotboard.dts        |  5 +
+ arch/arm/mach-imx/pm-imx6.c                   | 25 +++++
+ drivers/regulator/pfuze100-regulator.c        | 92 +++++++++++++++++++
+ kernel/reboot.c                               |  1 +
+ 6 files changed, 138 insertions(+)
+
 -- 
-2.14.3
+2.17.0
