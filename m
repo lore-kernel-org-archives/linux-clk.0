@@ -1,112 +1,243 @@
-Return-Path: <amit.kucheria@verdurent.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Stefan Agner <stefan@agner.ch>
+CC: "shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, Adriana Reus <adriana.reus@nxp.com>,
+	"rui.silva@linaro.org" <rui.silva@linaro.org>, dl-linux-imx
+	<linux-imx@nxp.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 1/2] clk: imx7d: correct enet clock CCGR register offset
+Date: Fri, 18 May 2018 01:06:23 +0000
+Message-ID: 
+ <AM3PR04MB1315B94AD4563479BC9A35E1F5900@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1526546422-7431-1-git-send-email-Anson.Huang@nxp.com>
+ <96f2ab49e1a9c03ccd477346b8285c76@agner.ch>
+In-Reply-To: <96f2ab49e1a9c03ccd477346b8285c76@agner.ch>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
-References: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
-From: Amit Kucheria <amit.kucheria@verdurent.com>
-Date: Thu, 24 May 2018 14:25:10 +0300
-Message-ID: <CAHLCerM-F3joG=9YgvqMiGTFvw_CAv82R91ZP7v6mxTjykz9DA@mail.gmail.com>
-Subject: Re: [PATCH v12 0/8] Clock for CPU scaling support for msm8996
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, will.deacon@arm.com,
-	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, vireshk@kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	lakml <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 24, 2018 at 10:50 AM, Ilia Lin <ilialin@codeaurora.org> wrote:
-> [v12]
->  * Addressed the kbuild fail on arm architecture
->
-> [v11]
->  * Split the series into domains
->
-> [v9]
->  * Addressed comments from Viresh and Russel about the error handling
->
-> [v8]
->  * Reordered the patch series into 4 groups
->  * Addressed comments from Amit about the comments and commit messages
->  * Addressed comments from Amit and Viresh about the resourses deallocation
->
-> [v7]
->  * Addressed comments from Viresh about resourses deallocation
->    and DT compatible
->
-> [v6]
->  * Addressed comments from Viresh about:
->  ** Comments style
->  ** Kconfig bool instead of tristate
->  ** DT and documentation style
->  ** Resourses deallocation on an error
->  ** Typos
->
-> [v5]
->  * Rebased
->  * Addressed comments from Bjorn about SPDX style,
->    functions and parameters naming
->  * Addressed comments from Viresh DT properties and style, comments style,
->    resourses deallocation, documentation placement
->  * Addressed comments from Sricharan about unnessesary include
->  * Addressed comments from Nicolas
->  * Addressed comments from Rob about the commit messages and acks
->  * Addressed comments from Mark
->
-> [v4]
->  * Adressed all comments from Stephen
->  * Added CPU regulator support
->  * Added qcom-cpufreq-kryo driver
->
-> [v3]
->  * Rebased on top of the latest PLL driver changes
->  * Addressed comment from Rob Herring for bindings
->
-> [v2]
->  * Addressed comments from Rob Herring for bindings
->  * Addressed comments from Mark Rutland for memory barrier
->  * Addressed comments from Julien Thierry for clock reenabling condition
->  * Tuned the HW configuration for clock frequencies below 600MHz
->
-> SOC (1/15):
-> Extracts the kryo l2 accessors driver from the QCOM PMU driver
->
-> Clocks (2/15-9/15):
-> This series adds support for the CPU clocks on msm8996 devices.
-> The driver uses the existing PLL drivers and is required to control
-> the CPU frequency scaling on the MSM8996.
->
-> Ilia Lin (6):
->   soc: qcom: Separate kryo l2 accessors from PMU driver
->   clk: Use devm_ in the register fixed factor clock
->   clk: qcom: Add CPU clock driver for msm8996
->   dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
->   clk: qcom: cpu-8996: Add support to switch below 600Mhz
->   clk: qcom: Add ACD path to CPU clock driver for msm8996
->
-> Rajendra Nayak (2):
->   clk: qcom: Make clk_alpha_pll_configure available to modules
->   clk: qcom: cpu-8996: Add support to switch to alternate PLL
->
->  .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
->  drivers/clk/clk-fixed-factor.c                     |   2 +-
->  drivers/clk/qcom/Kconfig                           |  10 +
->  drivers/clk/qcom/Makefile                          |   1 +
->  drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
->  drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
->  drivers/clk/qcom/clk-cpu-8996.c                    | 510 +++++++++++++++++++++
+Hi, Stefan
+
+Anson Huang
+Best Regards!
 
 
->  drivers/perf/Kconfig                               |   1 +
->  drivers/perf/qcom_l2_pmu.c                         |  90 +---
->  drivers/soc/qcom/Kconfig                           |   3 +
->  drivers/soc/qcom/Makefile                          |   1 +
->  drivers/soc/qcom/kryo-l2-accessors.c               |  56 +++
->  include/soc/qcom/kryo-l2-accessors.h               |  12 +
+> -----Original Message-----
+> From: Stefan Agner [mailto:stefan@agner.ch]
+> Sent: Thursday, May 17, 2018 7:22 PM
+> To: Anson Huang <anson.huang@nxp.com>
+> Cc: shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
+> <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
+> mturquette@baylibre.com; sboyd@kernel.org; Adriana Reus
+> <adriana.reus@nxp.com>; rui.silva@linaro.org; dl-linux-imx
+> <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-clk@vger.kernel.org
+> Subject: Re: [PATCH 1/2] clk: imx7d: correct enet clock CCGR register off=
+set
+>=20
+> On 17.05.2018 10:40, Anson Huang wrote:
+> > Correct enet clock CCGR register offset.
+> >
+> > CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
+> > CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
+> > CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
+> >
+> > IMX7D_ENET_PHY_REF_ROOT_DIV supplies clock for PHY, no gate after this
+> > clock, its parent clock root has gate.
+> > IMX7D_ENET1_REF_ROOT_DIV/IMX7D_ENET2_REF_ROOT_DIV supplies
+> clocks for
+> > enet IPG_CLK_RMII, no gate after the clock, its parent clock root has
+> > gate.
+> >
+> > IMX7D_PLL_ENET_MAIN_125M_CLK (anatop pll) supplies clock for enet
+> > RGMII tx_clk.
+>=20
+> As far as I can tell there are two changes here in one patch:
+>=20
+> 1. The non existing IMX7D_ENET_PHY_REF_ROOT_CLK gate is removed
+>=20
+> 2. Shared clock gate for the enet time/ipg clock is taken into account.
+>=20
+>=20
+> I would rather prefer to have separate patches. The device tree change al=
+so
+> does two things, so this would lead to 4 patches total.
+>=20
+> We can avoid the device tree change for the PHY clk and even maintain
+> backward compatibility for that part by renaming
+> IMX7D_ENET_PHY_REF_ROOT_DIV to IMX7D_ENET_PHY_REF_ROOT_CLK.
+>=20
+>=20
+> So this would end up with the following first patch to address the PHY_RO=
+OT
+> clock issue:
+>=20
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -738,7 +738,7 @@ static void __init imx7d_clocks_init(struct device_no=
+de
+> *ccm_node)
+>         clks[IMX7D_ENET1_TIME_ROOT_DIV] =3D
+> imx_clk_divider2("enet1_time_post_div", "enet1_time_pre_div", base +
+> 0xa780, 0, 6);
+>         clks[IMX7D_ENET2_REF_ROOT_DIV] =3D
+> imx_clk_divider2("enet2_ref_post_div", "enet2_ref_pre_div", base + 0xa800=
+, 0,
+> 6);
+>         clks[IMX7D_ENET2_TIME_ROOT_DIV] =3D
+> imx_clk_divider2("enet2_time_post_div", "enet2_time_pre_div", base +
+> 0xa880, 0, 6);
+> -       clks[IMX7D_ENET_PHY_REF_ROOT_DIV] =3D
+> imx_clk_divider2("enet_phy_ref_post_div", "enet_phy_ref_pre_div", base +
+> 0xa900, 0, 6);
+> +       clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =3D
+> imx_clk_divider2("enet_phy_ref_root_clk", "enet_phy_ref_pre_div", base +
+> 0xa900, 0, 6);
+>         clks[IMX7D_EIM_ROOT_DIV] =3D imx_clk_divider2("eim_post_div",
+> "eim_pre_div", base + 0xa980, 0, 6);
+>         clks[IMX7D_NAND_ROOT_CLK] =3D imx_clk_divider2("nand_root_clk",
+> "nand_pre_div", base + 0xaa00, 0, 6);
+>         clks[IMX7D_QSPI_ROOT_DIV] =3D imx_clk_divider2("qspi_post_div",
+> "qspi_pre_div", base + 0xaa80, 0, 6); @@ -816,7 +816,6 @@ static void __i=
+nit
+> imx7d_clocks_init(struct device_node *ccm_node)
+>         clks[IMX7D_ENET1_TIME_ROOT_CLK] =3D
+> imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base + 0x44f0=
+,
+> 0);
+>         clks[IMX7D_ENET2_REF_ROOT_CLK] =3D
+> imx_clk_gate4("enet2_ref_root_clk", "enet2_ref_post_div", base + 0x4500, =
+0);
+>         clks[IMX7D_ENET2_TIME_ROOT_CLK] =3D
+> imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base + 0x4510=
+,
+> 0);
+> -       clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =3D
+> imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base +
+> 0x4520, 0);
+>         clks[IMX7D_EIM_ROOT_CLK] =3D imx_clk_gate4("eim_root_clk",
+> "eim_post_div", base + 0x4160, 0);
+>         clks[IMX7D_NAND_RAWNAND_CLK] =3D
+> imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base + 0x4140,
+> 0, &share_count_nand);
+>         clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =3D
+> imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk",
+> base + 0x4140, 0, &share_count_nand);
+>=20
+>=20
+> A second patch would then fix the clock gate issue and the third the
+> unavoidable device tree change for the ipg clock.
+>=20
+> --
+> Stefan
+=20
+I follow your suggestion and re-structure the patch set to 3 patches, pleas=
+e help review it, thanks!
 
-For the perf/l2-accessors part, Reviewed-by: Amit Kucheria
-<amit.kucheria@linaro.org>
+Anson.
 
-For the entire series, Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+
+>=20
+>=20
+> >
+> > Based on Andy Duan's patch from the NXP kernel tree.
+> >
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > ---
+> >  drivers/clk/imx/clk-imx7d.c             | 11 ++++++-----
+> >  include/dt-bindings/clock/imx7d-clock.h |  4 +++-
+> >  2 files changed, 9 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> > index 975a20d..485ab49 100644
+> > --- a/drivers/clk/imx/clk-imx7d.c
+> > +++ b/drivers/clk/imx/clk-imx7d.c
+> > @@ -26,6 +26,8 @@ static u32 share_count_sai1;  static u32
+> > share_count_sai2;  static u32 share_count_sai3;  static u32
+> > share_count_nand;
+> > +static u32 share_count_enet1;
+> > +static u32 share_count_enet2;
+> >
+> >  static const struct clk_div_table test_div_table[] =3D {
+> >  	{ .val =3D 3, .div =3D 1, },
+> > @@ -805,6 +807,10 @@ static void __init imx7d_clocks_init(struct
+> > device_node *ccm_node)
+> >  	clks[IMX7D_MIPI_DSI_ROOT_CLK] =3D imx_clk_gate4("mipi_dsi_root_clk",
+> > "mipi_dsi_post_div", base + 0x4650, 0);
+> >  	clks[IMX7D_MIPI_CSI_ROOT_CLK] =3D imx_clk_gate4("mipi_csi_root_clk",
+> > "mipi_csi_post_div", base + 0x4640, 0);
+> >  	clks[IMX7D_MIPI_DPHY_ROOT_CLK] =3D
+> imx_clk_gate4("mipi_dphy_root_clk",
+> > "mipi_dphy_post_div", base + 0x4660, 0);
+> > +	clks[IMX7D_ENET1_IPG_ROOT_CLK] =3D
+> > imx_clk_gate2_shared2("enet1_ipg_root_clk", "enet_axi_post_div", base
+> > + 0x4700, 0, &share_count_enet1);
+> > +	clks[IMX7D_ENET1_TIME_ROOT_CLK] =3D
+> > imx_clk_gate2_shared2("enet1_time_root_clk", "enet1_time_post_div",
+> > base + 0x4700, 0, &share_count_enet1);
+> > +	clks[IMX7D_ENET2_IPG_ROOT_CLK] =3D
+> > imx_clk_gate2_shared2("enet2_ipg_root_clk", "enet_axi_post_div", base
+> > + 0x4710, 0, &share_count_enet2);
+> > +	clks[IMX7D_ENET2_TIME_ROOT_CLK] =3D
+> > imx_clk_gate2_shared2("enet2_time_root_clk", "enet2_time_post_div",
+> > base + 0x4710, 0, &share_count_enet2);
+> >  	clks[IMX7D_SAI1_ROOT_CLK] =3D imx_clk_gate2_shared2("sai1_root_clk",
+> > "sai1_post_div", base + 0x48c0, 0, &share_count_sai1);
+> >  	clks[IMX7D_SAI1_IPG_CLK]  =3D imx_clk_gate2_shared2("sai1_ipg_clk",
+> > "ipg_root_clk",  base + 0x48c0, 0, &share_count_sai1);
+> >  	clks[IMX7D_SAI2_ROOT_CLK] =3D imx_clk_gate2_shared2("sai2_root_clk",
+> > "sai2_post_div", base + 0x48d0, 0, &share_count_sai2); @@ -812,11
+> > +818,6 @@ static void __init imx7d_clocks_init(struct device_node
+> > *ccm_node)
+> >  	clks[IMX7D_SAI3_ROOT_CLK] =3D imx_clk_gate2_shared2("sai3_root_clk",
+> > "sai3_post_div", base + 0x48e0, 0, &share_count_sai3);
+> >  	clks[IMX7D_SAI3_IPG_CLK]  =3D imx_clk_gate2_shared2("sai3_ipg_clk",
+> > "ipg_root_clk",  base + 0x48e0, 0, &share_count_sai3);
+> >  	clks[IMX7D_SPDIF_ROOT_CLK] =3D imx_clk_gate4("spdif_root_clk",
+> > "spdif_post_div", base + 0x44d0, 0);
+> > -	clks[IMX7D_ENET1_REF_ROOT_CLK] =3D
+> imx_clk_gate4("enet1_ref_root_clk",
+> > "enet1_ref_post_div", base + 0x44e0, 0);
+> > -	clks[IMX7D_ENET1_TIME_ROOT_CLK] =3D
+> > imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
+> > 0x44f0, 0);
+> > -	clks[IMX7D_ENET2_REF_ROOT_CLK] =3D
+> imx_clk_gate4("enet2_ref_root_clk",
+> > "enet2_ref_post_div", base + 0x4500, 0);
+> > -	clks[IMX7D_ENET2_TIME_ROOT_CLK] =3D
+> > imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
+> > 0x4510, 0);
+> > -	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] =3D
+> > imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base +
+> > 0x4520, 0);
+> >  	clks[IMX7D_EIM_ROOT_CLK] =3D imx_clk_gate4("eim_root_clk",
+> > "eim_post_div", base + 0x4160, 0);
+> >  	clks[IMX7D_NAND_RAWNAND_CLK] =3D
+> > imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
+> > 0x4140, 0, &share_count_nand);
+> >  	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =3D
+> > imx_clk_gate2_shared2("nand_usdhc_rawnand_clk",
+> "nand_usdhc_root_clk",
+> > base + 0x4140, 0, &share_count_nand); diff --git
+> > a/include/dt-bindings/clock/imx7d-clock.h
+> > b/include/dt-bindings/clock/imx7d-clock.h
+> > index b2325d3e2..fef0647 100644
+> > --- a/include/dt-bindings/clock/imx7d-clock.h
+> > +++ b/include/dt-bindings/clock/imx7d-clock.h
+> > @@ -455,5 +455,7 @@
+> >  #define IMX7D_SNVS_CLK			442
+> >  #define IMX7D_CAAM_CLK			443
+> >  #define IMX7D_KPP_ROOT_CLK		444
+> > -#define IMX7D_CLK_END			445
+> > +#define IMX7D_ENET1_IPG_ROOT_CLK        445
+> > +#define IMX7D_ENET2_IPG_ROOT_CLK        446
+> > +#define IMX7D_CLK_END			447
+> >  #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
