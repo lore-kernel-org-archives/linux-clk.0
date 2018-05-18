@@ -1,95 +1,73 @@
-Return-Path: <anischal@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Mon, 07 May 2018 16:12:49 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown
- <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Odelu
- Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] clk: qcom: Add Global Clock controller (GCC)
- driver for SDM845
-In-Reply-To: <152549007801.138124.1209193202019560634@swboyd.mtv.corp.google.com>
-References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
- <1525105210-8689-4-git-send-email-anischal@codeaurora.org>
- <152524580953.138124.2159165461856101134@swboyd.mtv.corp.google.com>
- <a56ffa424689ff354a63642bf2998088@codeaurora.org>
- <152549007801.138124.1209193202019560634@swboyd.mtv.corp.google.com>
-Message-ID: <3f3049ee7cc151ac619cb29c3d07142c@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39051 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753392AbeERJ2a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:28:30 -0400
+Received: by mail-wm0-f65.google.com with SMTP id f8-v6so13913437wmc.4
+        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 02:28:29 -0700 (PDT)
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+Subject: [PATCH v5 03/12] clk: imx7d: fix mipi dphy div parent
+Date: Fri, 18 May 2018 10:27:57 +0100
+Message-Id: <20180518092806.3829-4-rui.silva@linaro.org>
+In-Reply-To: <20180518092806.3829-1-rui.silva@linaro.org>
+References: <20180518092806.3829-1-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018-05-05 08:44, Stephen Boyd wrote:
-> Quoting Amit Nischal (2018-05-04 03:45:12)
->> On 2018-05-02 12:53, Stephen Boyd wrote:
->> > Quoting Amit Nischal (2018-04-30 09:20:10)
->> >> +
->> >> +static struct clk_branch gcc_disp_gpll0_clk_src = {
->> >> +       .halt_reg = 0x52004,
->> >> +       .halt_check = BRANCH_HALT_DELAY,
->> >
->> > What about this one? It's not a phy so I'm confused again why we're
->> > unable to check the halt bit. To be clear(er), I don't see why we ever
->> > want to have HALT_DELAY used. Hopefully we can remove that flag.
->> >
->> > From what I recall, the flag is there for clks that don't toggle their
->> > status bit at all, but that we know take a few cycles to ungate the
->> > upstream clk. So we threw a delay into the code to make sure that when
->> > clk_enable() returned, a driver wouldn't try to use hardware before the
->> > clk was actually on. But these cases should pretty much never happen,
->> > hence all the pushback against this flag.
->> >
->> 
->> For these "*gpll0_clk_src" and "*gpll0_div_clk" clocks, there is no 
->> halt
->> bit to check the status and it is required to have delay for few 
->> cycles
->> so that clock gets turned on before a client driver to use the 
->> hardware.
-> 
-> Ok.. but then why is there a 'halt_reg' configured for the clk?
+Fix the mipi dphy root divider to mipi_dphy_pre_div, this would remove a orphan
+clock and set the correct parent.
 
-Thanks for the review.
-I will remove the halt_reg for the clocks where we are using the 
-'HALT_DELAY'
-flag and there is no need to poll the status bit as we are returning 
-early
-from the 'clk_branch_wait()' function.
+before:
+cat clk_orphan_summary
+                                 enable  prepare  protect
+   clock                          count    count    count        rate   accuracy   phase
+----------------------------------------------------------------------------------------
+ mipi_dphy_post_div                   1        1        0           0          0 0
+    mipi_dphy_root_clk                1        1        0           0          0 0
 
-> 
->> >> +
->> >> +static struct clk_branch gcc_ufs_card_rx_symbol_0_clk = {
->> >> +       .halt_reg = 0x75018,
->> >> +       .halt_check = BRANCH_HALT_DELAY,
->> >
->> > There are still HALT_DELAY flags for UFS though? Why?
->> 
->> For ufs_card tx/rx symbol clocks, we don't poll the status bit as
->> per the recommendation from the HW team. We can change the halt_check
->> type to newly implemented flag "BRANCH_HALT_SKIP". Please update us 
->> with
->> your thoughts to change the flag to "BRANCH_HALT_SKIP".
-> 
-> Yes use HALT_SKIP please.
+cat clk_dump | grep mipi_dphy
+mipi_dphy_post_div                    1        1        0           0          0 0
+    mipi_dphy_root_clk                1        1        0           0          0 0
 
-Thanks for confirming. I will do the changes in the next patch series.
+after:
+cat clk_dump | grep mipi_dphy
+   mipi_dphy_src                     1        1        0    24000000          0 0
+       mipi_dphy_cg                  1        1        0    24000000          0 0
+          mipi_dphy_pre_div          1        1        0    24000000          0 0
+             mipi_dphy_post_div      1        1        0    24000000          0 0
+                mipi_dphy_root_clk   1        1        0    24000000          0 0
 
-> 
->> 
->> >
->> > Also, are you going to send DFS support for the QUP clks? I would like
->> > to see that code merged soon.
->> 
->> Taniya has sent the patches for DFS support for QUP clocks.
->> https://patchwork.kernel.org/patch/10376951/
->> 
-> 
-> I'll take a look.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
+Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+---
+ drivers/clk/imx/clk-imx7d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 975a20d3cc94..f7f4db2e6fa6 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -729,7 +729,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_LCDIF_PIXEL_ROOT_DIV] = imx_clk_divider2("lcdif_pixel_post_div", "lcdif_pixel_pre_div", base + 0xa300, 0, 6);
+ 	clks[IMX7D_MIPI_DSI_ROOT_DIV] = imx_clk_divider2("mipi_dsi_post_div", "mipi_dsi_pre_div", base + 0xa380, 0, 6);
+ 	clks[IMX7D_MIPI_CSI_ROOT_DIV] = imx_clk_divider2("mipi_csi_post_div", "mipi_csi_pre_div", base + 0xa400, 0, 6);
+-	clks[IMX7D_MIPI_DPHY_ROOT_DIV] = imx_clk_divider2("mipi_dphy_post_div", "mipi_csi_dphy_div", base + 0xa480, 0, 6);
++	clks[IMX7D_MIPI_DPHY_ROOT_DIV] = imx_clk_divider2("mipi_dphy_post_div", "mipi_dphy_pre_div", base + 0xa480, 0, 6);
+ 	clks[IMX7D_SAI1_ROOT_DIV] = imx_clk_divider2("sai1_post_div", "sai1_pre_div", base + 0xa500, 0, 6);
+ 	clks[IMX7D_SAI2_ROOT_DIV] = imx_clk_divider2("sai2_post_div", "sai2_pre_div", base + 0xa580, 0, 6);
+ 	clks[IMX7D_SAI3_ROOT_DIV] = imx_clk_divider2("sai3_post_div", "sai3_pre_div", base + 0xa600, 0, 6);
+-- 
+2.17.0
+
