@@ -1,435 +1,215 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [v5 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
- <1525164093-16645-3-git-send-email-tdas@codeaurora.org>
- <152521007133.138124.1057969694939363822@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <c7770af2-364a-8c92-65b9-7eb625c83629@codeaurora.org>
-Date: Wed, 2 May 2018 15:52:12 +0530
-MIME-Version: 1.0
-In-Reply-To: <152521007133.138124.1057969694939363822@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:37415 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753473AbeERJ2v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:28:51 -0400
+Received: by mail-wr0-f193.google.com with SMTP id h5-v6so8477925wrm.4
+        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 02:28:51 -0700 (PDT)
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+Subject: [PATCH v5 11/12] media: imx7.rst: add documentation for i.MX7 media driver
+Date: Fri, 18 May 2018 10:28:05 +0100
+Message-Id: <20180518092806.3829-12-rui.silva@linaro.org>
+In-Reply-To: <20180518092806.3829-1-rui.silva@linaro.org>
+References: <20180518092806.3829-1-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Thanks Stephen for the comments.
+Add rst document to describe the i.MX7 media driver and also a working
+example from the Warp7 board usage with a OV2680 sensor.
 
-On 5/2/2018 2:57 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-05-01 01:41:33)
->> Add the RPMh clock driver to control the RPMh managed clock resources on
->> some of the Qualcomm Technologies, Inc. SoCs.
->>
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> 
-> Drop Amit's signoff, or make it "Co-authored-by" please. First signoff
-> should be the author and there should be a "From:" line either from the
-> email header of the sender or explicitly here before the commit text
-> body to indicate the authorship.
-> 
-> Overall this is looking close. Maybe one more round.
-> 
->> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->> new file mode 100644
->> index 0000000..9cb7aa4
->> --- /dev/null
->> +++ b/drivers/clk/qcom/clk-rpmh.c
->> @@ -0,0 +1,387 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/err.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <soc/qcom/cmd-db.h>
->> +#include <soc/qcom/rpmh.h>
->> +
->> +#include <dt-bindings/clock/qcom,rpmh.h>
->> +
->> +#define CLK_RPMH_ARC_EN_OFFSET         0
->> +#define CLK_RPMH_VRM_EN_OFFSET         4
->> +
->> +/**
->> + * struct clk_rpmh - individual rpmh clock data structure
->> + * @hw:                        handle between common and hardware-specific interfaces
->> + * @res_name:          resource name for the rpmh clock
->> + * @div:               clock divider to compute the clock rate
->> + * @res_addr:          base address of the rpmh resource within the RPMh
->> + * @res_on_val:                rpmh clock enable value
->> + * @res_off_val:       rpmh clock disable value
-> 
-> It's still unused.
-> 
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+---
+ Documentation/media/v4l-drivers/imx7.rst  | 157 ++++++++++++++++++++++
+ Documentation/media/v4l-drivers/index.rst |   1 +
+ 2 files changed, 158 insertions(+)
+ create mode 100644 Documentation/media/v4l-drivers/imx7.rst
 
-It is unused as the currently the resource off value is '0'. I would 
-remove, will add it back if any different value is required.
-
->> + * @state:             rpmh clock requested state
->> + * @aggr_state:                rpmh clock aggregated state
->> + * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
->> + * @valid_state_mask:  mask to determine the state of the rpmh clock
->> + * @rpmh_client:       handle used for rpmh communications
->> + * @dev:               device to which it is attached
->> + * @peer:              pointer to the clock rpmh sibling
->> + */
->> +struct clk_rpmh {
->> +       struct clk_hw hw;
->> +       const char *res_name;
->> +       u8  div;
-> 
-> Weird space here.
-> 
-This is no longer required, removed.
-
->> +       u32 res_addr;
->> +       u32 res_on_val;
->> +       u32 res_off_val;
->> +       u32 state;
->> +       u32 aggr_state;
->> +       u32 last_sent_aggr_state;
->> +       u32 valid_state_mask;
->> +       struct rpmh_client *rpmh_client;
->> +       struct device *dev;
->> +       struct clk_rpmh *peer;
->> +};
->> +
->> +struct clk_rpmh_desc {
->> +       struct clk_hw **clks;
->> +       size_t num_clks;
->> +};
->> +
->> +static DEFINE_MUTEX(rpmh_clk_lock);
->> +
->> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,   \
->> +                         _res_en_offset, _res_on, _res_off)            \
->> +       static struct clk_rpmh _platform##_##_name_active;              \
->> +       static struct clk_rpmh _platform##_##_name = {                  \
->> +               .res_name = _res_name,                                  \
->> +               .res_addr = _res_en_offset,                             \
->> +               .res_on_val = _res_on,                                  \
->> +               .res_off_val = _res_off,                                \
->> +               .peer = &_platform##_##_name_active,                    \
->> +               .valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |        \
->> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) |     \
->> +                                     BIT(RPMH_SLEEP_STATE)),           \
->> +               .hw.init = &(struct clk_init_data){                     \
->> +                       .ops = &clk_rpmh_ops,                           \
->> +                       .name = #_name,                                 \
->> +                       .parent_names = (const char *[]){ "xo_board" }, \
-> 
-> This would be different for the xo_board and the xo_board / 2 clk names.
-> 
-
-Would add parents "xo_board" & "xo_board_div".
-
->> +                       .num_parents = 1,                               \
->> +               },                                                      \
->> +       };                                                              \
->> +       static struct clk_rpmh _platform##_##_name_active = {           \
->> +               .res_name = _res_name,                                  \
->> +               .res_addr = _res_en_offset,                             \
->> +               .res_on_val = _res_on,                                  \
->> +               .res_off_val = _res_off,                                \
->> +               .peer = &_platform##_##_name,                           \
->> +               .valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |        \
->> +                                       BIT(RPMH_ACTIVE_ONLY_STATE)),   \
->> +               .hw.init = &(struct clk_init_data){                     \
->> +                       .ops = &clk_rpmh_ops,                           \
->> +                       .name = #_name_active,                          \
->> +                       .parent_names = (const char *[]){ "xo_board" }, \
->> +                       .num_parents = 1,                               \
->> +               },                                                      \
->> +       }
->> +
->> +#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name, \
->> +                           _res_on, _res_off)                          \
->> +       __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
->> +                         CLK_RPMH_ARC_EN_OFFSET, _res_on, _res_off)
->> +
->> +#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name) \
->> +       __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
->> +                         CLK_RPMH_VRM_EN_OFFSET, true, false)
-> 
-> s/true, false/1, 0/ ?
-> 
-
-Would take care of this too.
-
->> +
->> +static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
->> +{
->> +       return container_of(_hw, struct clk_rpmh, hw);
->> +}
->> +
->> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
->> +{
->> +       return (c->last_sent_aggr_state & BIT(state))
->> +               != (c->aggr_state & BIT(state));
->> +}
->> +
->> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
->> +{
->> +       struct tcs_cmd cmd = { 0 };
->> +       u32 cmd_state, on_val;
->> +       enum rpmh_state state = RPMH_SLEEP_STATE;
->> +       int ret;
->> +
->> +       cmd.addr = c->res_addr;
->> +       cmd_state = c->aggr_state;
->> +       on_val = c->res_on_val;
->> +
->> +       for (; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
->> +               if (has_state_changed(c, state)) {
->> +                       cmd.data = (cmd_state & BIT(state)) ? on_val : 0;
-> 
-> Make this into an "if" please. Default is already 0 so just set bit if
-> cmd_state & BIT(state).
->
-
-Would take care of it.
-
->> +                       ret = rpmh_write_async(c->rpmh_client, state,
->> +                                               &cmd, 1);
->> +                       if (ret) {
->> +                               dev_err(c->dev, "set %s state of %s failed: (%d)\n",
->> +                                       !state ? "sleep" :
->> +                                       state == RPMH_WAKE_ONLY_STATE   ?
->> +                                       "wake" : "active", c->res_name, ret);
->> +                               return ret;
->> +                       }
->> +               }
->> +       }
->> +
->> +       c->last_sent_aggr_state = c->aggr_state;
->> +       c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
->> +
->> +       return 0;
->> +}
->> +
->> +/*
->> + * Update state and aggregate state values based on enable value.
->> + */
->> +static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
->> +                                               bool enable)
->> +{
->> +       int ret;
->> +
->> +       c->state = enable ? c->valid_state_mask : 0;
->> +       c->aggr_state = c->state | c->peer->state;
->> +       c->peer->aggr_state = c->aggr_state;
->> +
->> +       ret = clk_rpmh_send_aggregate_command(c);
->> +       if (ret && enable) {
->> +               c->state = 0;
-> 
-> Why don't we print a WARN if it fails to enable?
-> 
-I would add a WARN for enable failure too.
-
->> +       } else if (ret) {
->> +               c->state = c->valid_state_mask;
->> +               WARN(1, "clk: %s failed to disable\n", c->res_name);
->> +       }
->> +
->> +       return ret;
->> +}
->> +
->> +static int clk_rpmh_prepare(struct clk_hw *hw)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +       int ret = 0;
->> +
->> +       mutex_lock(&rpmh_clk_lock);
->> +
->> +       if (!c->state)
-> 
-> Can we push this into clk_rpmh_aggregate_state_send_command()? Something
-> like:
-> 
-> 	/* Nothing to do if already off or on */
-> 	if (enable == c->state)
-> 		return 0;
-> 
-
-Thanks, would add these changes.
-
->> +               ret = clk_rpmh_aggregate_state_send_command(c, true);
->> +
->> +       mutex_unlock(&rpmh_clk_lock);
->> +       return ret;
->> +};
->> +
->> +static void clk_rpmh_unprepare(struct clk_hw *hw)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +
->> +       mutex_lock(&rpmh_clk_lock);
->> +
->> +       if (c->state)
->> +               clk_rpmh_aggregate_state_send_command(c, false);
->> +
->> +       mutex_unlock(&rpmh_clk_lock);
->> +};
->> +
->> +static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
->> +                                               unsigned long prate)
->> +{
->> +       struct clk_rpmh *r = to_clk_rpmh(hw);
->> +       unsigned long rate;
->> +
->> +       /*
->> +        * RPMh clocks have a fixed rate.
->> +        */
->> +       rate =  prate;
->> +       do_div(rate, r->div);
->> +
->> +       return rate;
->> +}
-> 
-> You shouldn't need any recalc rate in this driver.
-> 
-
-Yes, these would be removed.
-
->> +
->> +static int clk_rpmh_probe(struct platform_device *pdev)
->> +{
->> +       struct clk *clk;
->> +       struct clk_hw_onecell_data *hw_data;
->> +       struct clk_hw **hw_clks;
->> +       struct clk_rpmh *rpmh_clk;
->> +       const struct clk_rpmh_desc *desc;
->> +       struct rpmh_client *rpmh_client;
->> +       struct device *dev;
->> +       size_t num_clks, i;
->> +       int ret;
->> +
->> +       dev = &pdev->dev;
-> 
-> Just do this when dev is defined please.
-> 
->> +
->> +       ret = cmd_db_ready();
->> +       if (ret) {
->> +               if (ret != -EPROBE_DEFER)
->> +                       dev_err(dev, "Command DB not available (%d)\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       rpmh_client = rpmh_get_client(pdev);
->> +       if (IS_ERR(rpmh_client)) {
->> +               ret = PTR_ERR(rpmh_client);
->> +               dev_err(dev, "Failed to request RPMh client, ret=%d\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       desc = of_device_get_match_data(&pdev->dev);
->> +       hw_clks = desc->clks;
->> +       num_clks = desc->num_clks;
->> +
->> +       hw_data = devm_kzalloc(dev,
->> +                       sizeof(*hw_data) + num_clks * sizeof(struct clk_hw *),
->> +                       GFP_KERNEL);
->> +       if (!hw_data)
->> +               return -ENOMEM;
->> +
->> +       hw_data->num = num_clks;
->> +
->> +       for (i = 0; i < num_clks; i++) {
->> +               const char *clk_name;
->> +               struct property *prop;
->> +               const __be32 *p;
->> +               u32 res_addr;
->> +               int div, j = 0;
->> +
->> +               rpmh_clk = to_clk_rpmh(hw_clks[i]);
->> +               res_addr = cmd_db_read_addr(rpmh_clk->res_name);
->> +               if (!res_addr) {
->> +                       dev_err(dev, "missing RPMh resource address for %s\n",
->> +                                       rpmh_clk->res_name);
->> +                       ret = -ENODEV;
->> +                       goto err;
->> +               }
->> +               rpmh_clk->res_addr += res_addr;
-> 
-> Thanks!
-> 
->> +
->> +               rpmh_clk->rpmh_client = rpmh_client;
->> +
->> +               /* default div for all clocks */
->> +               if (!rpmh_clk->div)
->> +                       rpmh_clk->div = 1;
->> +
->> +               of_property_for_each_u32(pdev->dev.of_node, "assigned-clk-divs",
->> +                                               prop, p, div) {
->> +                       of_property_read_string_index(pdev->dev.of_node,
->> +                                       "clk-output-names", j, &clk_name);
->> +                       if (!strcmp(clk_name, hw_clks[i]->init->name)) {
->> +                               rpmh_clk->div = div;
->> +                               rpmh_clk->peer->div = div;
->> +                       }
->> +                       j++;
->> +               }
->> +
->> +               clk = devm_clk_register(&pdev->dev, hw_clks[i]);
->> +               if (IS_ERR(clk)) {
->> +                       ret = PTR_ERR(clk);
->> +                       dev_err(dev, "failed to register %s\n",
->> +                                       hw_clks[i]->init->name);
->> +                       goto err;
->> +               }
->> +
->> +               rpmh_clk->dev = &pdev->dev;
->> +       }
->> +
->> +       ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> 
-> Why not roll your own "getter" function and then just index directly
-> into your array of rpmh clks for sdm845? Then we don't have to copy
-> things from one place to another.
-> 
-
-Added a new function.
-
->> +                                     hw_data);
->> +       if (ret) {
->> +               dev_err(dev, "Failed to add clock provider\n");
->> +               goto err;
->> +       }
->> +
->> +       dev_dbg(dev, "Registered RPMh clocks\n");
->> +
->> +       return 0;
->> +err:
->> +       if (rpmh_client)
->> +               rpmh_release(rpmh_client);
->> +
->> +       return ret;
->> +}
->> +
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
+diff --git a/Documentation/media/v4l-drivers/imx7.rst b/Documentation/media/v4l-drivers/imx7.rst
+new file mode 100644
+index 000000000000..cd1195d391c5
+--- /dev/null
++++ b/Documentation/media/v4l-drivers/imx7.rst
+@@ -0,0 +1,157 @@
++i.MX7 Video Capture Driver
++==========================
++
++Introduction
++------------
++
++The i.MX7 contrary to the i.MX5/6 family does not contain an Image Processing
++Unit (IPU); because of that the capabilities to perform operations or
++manipulation of the capture frames are less feature rich.
++
++For image capture the i.MX7 has three units:
++- CMOS Sensor Interface (CSI)
++- Video Multiplexer
++- MIPI CSI-2 Receiver
++
++::
++                                           |\
++   MIPI Camera Input ---> MIPI CSI-2 --- > | \
++                                           |  \
++                                           | M |
++                                           | U | ------>  CSI ---> Capture
++                                           | X |
++                                           |  /
++   Parallel Camera Input ----------------> | /
++                                           |/
++
++For additional information, please refer to the latest versions of the i.MX7
++reference manual [#f1]_.
++
++Entities
++--------
++
++imx7-mipi-csi2
++--------------
++
++This is the MIPI CSI-2 receiver entity. It has one sink pad to receive the pixel
++data from MIPI CSI-2 camera sensor. It has one source pad, corresponding to the
++virtual channel 0. This module is compliant to previous version of Samsung
++D-phy, and supports two D-PHY Rx Data lanes.
++
++csi_mux
++-------
++
++This is the video multiplexer. It has two sink pads to select from either camera
++sensor with a parallel interface or from MIPI CSI-2 virtual channel 0.  It has
++a single source pad that routes to the CSI.
++
++csi
++---
++
++The CSI enables the chip to connect directly to external CMOS image sensor. CSI
++can interface directly with Parallel and MIPI CSI-2 buses. It has 256 x 64 FIFO
++to store received image pixel data and embedded DMA controllers to transfer data
++from the FIFO through AHB bus.
++
++This entity has one sink pad that receives from the csi_mux entity and a single
++source pad that routes video frames directly to memory buffers. This pad is
++routed to a capture device node.
++
++Usage Notes
++-----------
++
++To aid in configuration and for backward compatibility with V4L2 applications
++that access controls only from video device nodes, the capture device interfaces
++inherit controls from the active entities in the current pipeline, so controls
++can be accessed either directly from the subdev or from the active capture
++device interface. For example, the sensor controls are available either from the
++sensor subdevs or from the active capture device.
++
++Warp7 with OV2680
++-----------------
++
++On this platform an OV2680 MIPI CSI-2 module is connected to the internal MIPI
++CSI-2 receiver. The following example configures a video capture pipeline with
++an output of 800x600, and BGGR 10 bit bayer format:
++
++.. code-block:: none
++   # Setup links
++   media-ctl -l "'ov2680 1-0036':0 -> 'imx7-mipi-csis.0':0[1]"
++   media-ctl -l "'imx7-mipi-csis.0':1 -> 'csi_mux':1[1]"
++   media-ctl -l "'csi_mux':2 -> 'csi':0[1]"
++   media-ctl -l "'csi':1 -> 'csi capture':0[1]"
++
++   # Configure pads for pipeline
++   media-ctl -V "'ov2680 1-0036':0 [fmt:SBGGR10_1X10/800x600 field:none]"
++   media-ctl -V "'csi_mux':1 [fmt:SBGGR10_1X10/800x600 field:none]"
++   media-ctl -V "'csi_mux':2 [fmt:SBGGR10_1X10/800x600 field:none]"
++   media-ctl -V "'imx7-mipi-csis.0':0 [fmt:SBGGR10_1X10/800x600 field:none]"
++   media-ctl -V "'csi':0 [fmt:SBGGR10_1X10/800x600 field:none]"
++
++After this streaming can start. The v4l2-ctl tool can be used to select any of
++the resolutions supported by the sensor.
++
++.. code-block:: none
++    root@imx7s-warp:~# media-ctl -p
++    Media controller API version 4.17.0
++
++    Media device information
++    ------------------------
++    driver          imx-media
++    model           imx-media
++    serial
++    bus info
++    hw revision     0x0
++    driver version  4.17.0
++
++    Device topology
++    - entity 1: csi (2 pads, 2 links)
++		type V4L2 subdev subtype Unknown flags 0
++		device node name /dev/v4l-subdev0
++	    pad0: Sink
++		    [fmt:SBGGR10_1X10/800x600 field:none]
++		    <- "csi_mux":2 [ENABLED]
++	    pad1: Source
++		    [fmt:SBGGR10_1X10/800x600 field:none]
++		    -> "csi capture":0 [ENABLED]
++
++    - entity 4: csi capture (1 pad, 1 link)
++		type Node subtype V4L flags 0
++		device node name /dev/video0
++	    pad0: Sink
++		    <- "csi":1 [ENABLED]
++
++    - entity 10: csi_mux (3 pads, 2 links)
++		type V4L2 subdev subtype Unknown flags 0
++		device node name /dev/v4l-subdev1
++	    pad0: Sink
++		    [fmt:unknown/0x0]
++	    pad1: Sink
++		    [fmt:unknown/800x600 field:none]
++		    <- "imx7-mipi-csis.0":1 [ENABLED]
++	    pad2: Source
++		    [fmt:unknown/800x600 field:none]
++		    -> "csi":0 [ENABLED]
++
++    - entity 14: imx7-mipi-csis.0 (2 pads, 2 links)
++		type V4L2 subdev subtype Unknown flags 0
++		device node name /dev/v4l-subdev2
++	    pad0: Sink
++		    [fmt:SBGGR10_1X10/800x600 field:none]
++		    <- "ov2680 1-0036":0 [ENABLED]
++	    pad1: Source
++		    [fmt:SBGGR10_1X10/800x600 field:none]
++		    -> "csi_mux":1 [ENABLED]
++
++    - entity 17: ov2680 1-0036 (1 pad, 1 link)
++		type V4L2 subdev subtype Sensor flags 0
++		device node name /dev/v4l-subdev3
++	    pad0: Source
++		    [fmt:SBGGR10_1X10/800x600 field:none]
++		    -> "imx7-mipi-csis.0":0 [ENABLED]
++
++
++References
++----------
++
++.. [#f1] https://www.nxp.com/docs/en/reference-manual/IMX7SRM.pdf
+diff --git a/Documentation/media/v4l-drivers/index.rst b/Documentation/media/v4l-drivers/index.rst
+index 679238e786a7..693295bbc53f 100644
+--- a/Documentation/media/v4l-drivers/index.rst
++++ b/Documentation/media/v4l-drivers/index.rst
+@@ -44,6 +44,7 @@ For more details see the file COPYING in the source distribution of Linux.
+ 	davinci-vpbe
+ 	fimc
+ 	imx
++	imx7
+ 	ivtv
+ 	max2175
+ 	meye
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.17.0
 
---
