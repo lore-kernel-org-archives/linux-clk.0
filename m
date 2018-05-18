@@ -1,70 +1,47 @@
-Return-Path: <amit.kucheria@linaro.org>
+Return-Path: <sboyd@kernel.org>
+From: sboyd@kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.17-rc5
+Date: Fri, 18 May 2018 16:02:09 -0700
+Message-Id: <20180518230209.260757-1-sboyd@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180516141132.aqjif7d5motmmnlo@vireshk-i7>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
- <1526375616-16904-13-git-send-email-ilialin@codeaurora.org>
- <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com> <20180516141132.aqjif7d5motmmnlo@vireshk-i7>
-From: Amit Kucheria <amit.kucheria@linaro.org>
-Date: Wed, 16 May 2018 17:13:44 +0300
-Message-ID: <CAP245DVO8mG--ZvUitLkEwvUP_YkQe0cz2qmpXg+uyZD_cT9+g@mail.gmail.com>
-Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Ilia Lin <ilialin@codeaurora.org>, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Menon, Nishanth" <nm@ti.com>,
-	lgirdwood@gmail.com, Mark Brown <broonie@kernel.org>,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-clk@vger.kernel.org,
-	DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Linux PM list <linux-pm@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, lakml <linux-arm-kernel@lists.infradead.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>, Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 16, 2018 at 5:11 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 16-05-18, 16:12, Amit Kucheria wrote:
->> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
->> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
->> > +       if (0 > ret)
->>
->> Any particular reason to prefer this over (ret < 0) that is generally
->> used? I've seen it used to avoid the == vs. = typos, but not for other
->> comparisons.
->>
->> Suggest sticking to what is commonly used i.e. ret < 0.
->>
->> > +               goto free_opp;
->> > +
->> > +       cpu_dev = get_cpu_device(GOLD_LEAD);
->>
->> Error check cpu_dev here?
->>
->> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
->> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
->> > +       if (0 > ret)
->> > +               goto free_opp;
->
-> The goto here is wrong
->
->> > +
->> > +
->> > +       ret = PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-dt",
->> > +                                                             -1, NULL, 0));
->> > +
->> > +       if (0 == ret)
->> > +               return 0;
->> > +
->> > +free_opp:
->> > +       dev_pm_opp_put_supported_hw(opp_temp);
->>
->> This is not needed because dev_pm_opp_set_supported_hw will free
->> memory in case of failure. This call in only needed in case of a
->> successful get.
->
-> But this is still required for the case where platform device
-> registration fails.
+From: Stephen Boyd <sboyd@kernel.org>
 
-Agreed. The overall error path needs to be re-written with proper
-check of return values.
+The following changes since commit c964cfc612b59910593fa10ee1c2673db274c9c7:
+
+  Merge tag 'meson-clk-fixes-4.17-1' of https://github.com/BayLibre/clk-meson into clk-fixes (2018-05-01 14:44:16 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 9a160601f3fb6ffa196b87d1b5643646be486405:
+
+  clk: stm32: fix: stm32 clock drivers are not compiled by default (2018-05-15 15:47:03 -0700)
+
+----------------------------------------------------------------
+A modified revert of a patch that made new choices come out for a couple
+stm32 clk drivers that really always need to be there when that
+particular machine is compiled in and boot fix on i.MX for Stefan who
+noticed odd behavior from the critical flag patch that came in during
+the merge window.
+
+----------------------------------------------------------------
+Gabriel Fernandez (1):
+      clk: stm32: fix: stm32 clock drivers are not compiled by default
+
+Stefan Agner (1):
+      clk: imx6ull: use OSC clock during AXI rate change
+
+ drivers/clk/Kconfig          | 6 ++----
+ drivers/clk/imx/clk-imx6ul.c | 2 +-
+ 2 files changed, 3 insertions(+), 5 deletions(-)
+
+-- 
+Sent by a computer through tubes
