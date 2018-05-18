@@ -1,60 +1,82 @@
-Return-Path: <xuwei5@huawei.com>
-Subject: Re: [PATCH v2 0/5] Hi3660: enable power management features
-To: Leo Yan <leo.yan@linaro.org>, Rob Herring <robh+dt@kernel.org>, "Mark
- Rutland" <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-	"Arnd Bergmann" <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Daniel
- Lezcano <daniel.lezcano@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-References: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
-From: Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5AFAF3CE.70601@hisilicon.com>
-Date: Tue, 15 May 2018 15:50:54 +0100
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Fri, 18 May 2018 17:26:51 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: Jagan Teki <jagan@amarulasolutions.com>, Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 12/26] drm/sun4i: Add support for multiple DW HDMI PHY
+ clock parents
+Message-ID: <20180518152651.lfymc3kj7npj5tww@flea>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+ <20180518094536.17201-13-jagan@amarulasolutions.com>
+ <20180518100116.4bf2qcffg7ekxa7u@flea>
+ <4909574.Q3IFWM0xt6@jernej-laptop>
 MIME-Version: 1.0
-In-Reply-To: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tvit4m5thudok37l"
+In-Reply-To: <4909574.Q3IFWM0xt6@jernej-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Leo,
 
-On 2018/5/15 3:53, Leo Yan wrote:
-> Since hi3660 drivers have been merged into Linux kernel (mailbox driver is in
-> Linux-next branch and other drivers are existed in Linux mainline kernel), so
-> this patch series is to enable power management features on hi3660.
-> 
-> This patch series includes device tree binding for mailbox, stub clock and CPU
-> OPPs, and has one patch to consolidate the Kconfigs for driver modules.
-> 
-> This patch set have been tested on Hikey960 and also verified the patch 'hisi:
-> Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX' for Hikey620.
-> 
-> Changes from v1:
-> * Changed patch subject from "dts: arm64: hi3660" to "arm64: dts: hi3660".
-> 
-> 
-> Daniel Lezcano (1):
->   hisi: Consolidate the Kconfigs for the CLOCK_STUB and the MAILBOX
-> 
-> Kaihua Zhong (2):
->   arm64: dts: hi3660: Add mailbox node
->   arm64: dts: hi3660: Add stub clock node
-> 
-> Leo Yan (1):
->   arm64: dts: hi3660: Add CPU frequency scaling support
-> 
-> Tao Wang (1):
->   arm64: dts: hi3660: Add thermal cooling management
-> 
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 145 ++++++++++++++++++++++++++++++
->  arch/arm64/configs/defconfig              |   1 -
->  drivers/clk/hisilicon/Kconfig             |  13 +--
->  drivers/mailbox/Kconfig                   |  12 ++-
->  4 files changed, 161 insertions(+), 10 deletions(-)
-> 
+--tvit4m5thudok37l
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied patch 1 to 4.
-Thanks!
+On Fri, May 18, 2018 at 04:46:41PM +0200, Jernej =C5=A0krabec wrote:
+> > And this is a bit sloppy, since if phy_clk_num =3D=3D 3, you won't try =
+to
+> > lookup pll-2 either.
+>=20
+> It is highly unlikely this will be higher than 2, at least for this HDMI =
+PHY,=20
+> since it has only 1 bit reserved for parent selection. But since I have t=
+o fix=20
+> it, I'll add ">=3D 2"
 
-Best Regards,
-Wei
+If we're only going to have two parents at most, ever, why don't we
+had just a single other boolean. This would be less intrusive, and we
+wouldn't have to check for those corner cases.
+
+> BTW, I'll resend fixed version of this patch for my R40 HDMI series, sinc=
+e=20
+> there is nothing to hold it back, unlike for this.
+
+Awesome, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--tvit4m5thudok37l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr+8LoACgkQ0rTAlCFN
+r3RbhhAAiPiS0oBKrE4SXuEZWn62ARBw1jMOVxivZlxbDkKSK+fpfxr2hAVKYxtZ
+nIpt5ribBWn98C2K5oqbwIg/Xino6lGKP3AGTKm6468rtHviVT5YnyRk5xSP1PRi
+IDL9CdfCK+G5GMmC14Ht1OIxqenqQjPcT0UAkftjV+gkwPzipIVy7Tgff5Uz7BOk
+wRaiMpxrc2DAa2B/xDdrQkwP+wkuXLkYR52NYBJMsQsxl69v/qjwaKK1svb1ewKm
+qyi7Bebtfwh77scOWahjAIjCKInqqLn8uMYmoe/GqeH6TThyeDNBJTmyi8Eo3sxc
+8YY1yvNc1aSfQ6ds8H0bNweRLxI3aigqLeRaPczL6pILNMXQOZciVAezqhtZ3U7P
+b7wNfC4aoXdveVy60vLpTo2hWKQdgmixvV8VBILgvct4Zq1IJytet/7+mFvcL7Eh
+VXJOCYNXy+VOser93hcWdKSouvAj5oBSD+f9Nhoi6iv8ezKeQBhXsMeyhe/7rhDt
+fAIeLBPJtRyEoM8aMWYDmtCWj6jITYZ+ZOsbe0fCMVbJqsAHOQK7e8BSlcKceC81
+Iw5Vi9Cbz/ZE4fADrt/HxlJy9o4WCqswPJBroq4s43gRXz8SYC3bq72+GrLojGp1
+TX98j3eQKkYQDp3C3nVJS16JTF0TEb/907K2lSavyIhu4JmLl2M=
+=AUyt
+-----END PGP SIGNATURE-----
+
+--tvit4m5thudok37l--
