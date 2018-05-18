@@ -1,43 +1,84 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Sekhar Nori <nsekhar@ti.com>,
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Kevin Hilman <khilman@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/9] clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always enabled
-Date: Fri, 25 May 2018 13:11:45 -0500
-Message-Id: <20180525181150.17873-5-david@lechnology.com>
-In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
-References: <20180525181150.17873-1-david@lechnology.com>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 24/26] arm64: dts: allwinner: a64: a64-olinuxino: Enable HDMI output
+Date: Fri, 18 May 2018 15:15:34 +0530
+Message-Id: <20180518094536.17201-25-jagan@amarulasolutions.com>
+In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Sekhar Nori <nsekhar@ti.com>
+Enable HDMI output on a64-olinuxino board.
 
-PLL2 SYSCLK1 on DM646x is connected to DDR2 PHY and cannot
-be disabled. Mark it so to prevent unused clock disable
-infrastructure from disabling it.
-
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/clk/davinci/pll-dm646x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes for v2:
+- none
 
-diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
-index a61cc3256418..0ae827e3ce80 100644
---- a/drivers/clk/davinci/pll-dm646x.c
-+++ b/drivers/clk/davinci/pll-dm646x.c
-@@ -72,7 +72,7 @@ static const struct davinci_pll_clk_info dm646x_pll2_info = {
- 	.flags = 0,
+ .../boot/dts/allwinner/sun50i-a64-olinuxino.dts    | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+index 3b3081b10ecb..83329c8fec4f 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+@@ -58,12 +58,38 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	wifi_pwrseq: wifi_pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
+ 	};
  };
  
--SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
-+SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, SYSCLK_ALWAYS_ENABLED);
- 
- int dm646x_pll2_init(struct device *dev, void __iomem *base)
- {
++&de {
++	status = "okay";
++};
++
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &mmc0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins>;
 -- 
-2.17.0
+2.14.3
