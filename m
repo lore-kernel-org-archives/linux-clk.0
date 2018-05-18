@@ -1,83 +1,79 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
- <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
- <152527500426.138124.18419525952886399750@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <d687230c-1178-41e4-d8e3-2c3957affb4a@codeaurora.org>
-Date: Thu, 3 May 2018 16:03:10 +0530
-MIME-Version: 1.0
-In-Reply-To: <152527500426.138124.18419525952886399750@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54485 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752240AbeERQJY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 12:09:24 -0400
+Message-ID: <1526659737.3948.19.camel@pengutronix.de>
+Subject: Re: [PATCH v5 06/12] media: dt-bindings: add bindings for i.MX7
+ media driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Rui Miguel Silva <rui.silva@linaro.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
+Date: Fri, 18 May 2018 18:08:57 +0200
+In-Reply-To: <20180518092806.3829-7-rui.silva@linaro.org>
+References: <20180518092806.3829-1-rui.silva@linaro.org>
+         <20180518092806.3829-7-rui.silva@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
-
-Thanks for review.
-
-On 5/2/2018 9:00 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-05-02 03:51:17)
->> +               ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
->> +               if (ret) {
->> +                       dev_err(&pdev->dev, "failed to register %s\n",
->> +                                       hw_clks[i]->init->name);
->> +                       goto err;
->> +               }
->> +
->> +               rpmh_clk->dev = &pdev->dev;
->> +       }
->> +
->> +       ret = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_rpmh_hw_get,
->> +                                     (void *) desc);
+On Fri, 2018-05-18 at 10:28 +0100, Rui Miguel Silva wrote:
+> Add bindings documentation for i.MX7 media drivers.
 > 
-> Drop the void cast.
+> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+> ---
+>  .../devicetree/bindings/media/imx7.txt        | 125 ++++++++++++++++++
+>  1 file changed, 125 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/imx7.txt
 > 
+> diff --git a/Documentation/devicetree/bindings/media/imx7.txt b/Documentation/devicetree/bindings/media/imx7.txt
+> new file mode 100644
+> index 000000000000..a26372630377
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/imx7.txt
+> @@ -0,0 +1,125 @@
+> +Freescale i.MX7 Media Video Device
+> +==================================
+> +
+> +mipi_csi2 node
+> +--------------
+> +
+> +This is the device node for the MIPI CSI-2 receiver core in i.MX7 SoC. It is
+> +compatible with previous version of Samsung D-phy.
+> +
+> +Required properties:
+> +
+> +- compatible    : "fsl,imx7-mipi-csi2";
+> +- reg           : base address and length of the register set for the device;
+> +- interrupts    : should contain MIPI CSIS interrupt;
+> +- clocks        : list of clock specifiers, see
+> +        Documentation/devicetree/bindings/clock/clock-bindings.txt for details;
+> +- clock-names   : must contain "pclk", "wrap" and "phy" entries, matching
+> +                  entries in the clock property;
+> +- power-domains : a phandle to the power domain, see
+> +          Documentation/devicetree/bindings/power/power_domain.txt for details.
+> +- reset-names   : should include following entry "mrst";
+> +- resets        : a list of phandle, should contain reset entry of
+> +                  reset-names;
+> +- phy-supply    : from the generic phy bindings, a phandle to a regulator that
+> +	          provides power to MIPI CSIS core;
+> +- bus-width     : maximum number of data lanes supported (SoC specific);
+> +
+> +Optional properties:
+> +
+> +- clock-frequency : The IP's main (system bus) clock frequency in Hz, default
+> +		    value when this property is not specified is 166 MHz;
 
-I see a compiler warning, that is the reason to keep the void cast.
-/include/linux/clk-provider.h:881:5: note: expected ‘void *’ but 
-argument is of type ‘const struct clk_rpmh_desc *’
+Could this be obtained from one of the clock inputs via clk_get_rate?
 
->> +       if (ret) {
->> +               dev_err(&pdev->dev, "Failed to add clock provider\n");
->> +               goto err;
->> +       }
->> +
->> +       dev_dbg(&pdev->dev, "Registered RPMh clocks\n");
->> +
->> +       return 0;
->> +err:
->> +       if (rpmh_client)
->> +               rpmh_release(rpmh_client);
->> +
->> +       return ret;
->> +}
->> +
->> +static int clk_rpmh_remove(struct platform_device *pdev)
->> +{
->> +       const struct clk_rpmh_desc *desc =
->> +                       of_device_get_match_data(&pdev->dev);
->> +       struct clk_hw **hw_clks = desc->clks;
->> +       struct clk_rpmh *rpmh_clk = to_clk_rpmh(hw_clks[0]);
->> +
->> +       rpmh_release(rpmh_clk->rpmh_client);
->> +
->> +       return 0;
->> +}
-> 
-> I'll review Lina's series again. Still hoping to drop the client thing.
-> 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+regards
+Philipp
