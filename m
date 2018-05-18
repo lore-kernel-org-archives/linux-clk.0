@@ -1,249 +1,202 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v9 08/15] clk: qcom: Add ACD path to CPU clock driver for msm8996
-Date: Mon, 21 May 2018 14:25:25 +0300
-Message-Id: <1526901932-9514-9-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
-References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v11 10/27] ARM: davinci: dm646x: add new clock init using common clock framework
+Date: Fri, 18 May 2018 11:48:12 -0500
+Message-Id: <20180518164829.27052-11-david@lechnology.com>
+In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
+References: <20180518164829.27052-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The PMUX for each duplex allows for selection of ACD clock source.
-The DVM (Dynamic Variation Monitor) will flag an error
-when a voltage droop event is detected. This flagged error
-enables ACD to provide a div-by-2 clock, sourced from the primary PLL.
-The duplex will be provided the divided clock
-until a pre-programmed delay has expired.
+This adds the new board-specific clock init in mach-davinci/dm646x.c
+using the new common clock framework drivers.
 
-This change configures ACD during the probe and switches
-the PMUXes to the ACD clock source.
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Also clean up the #includes since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/qcom/clk-cpu-8996.c | 75 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 65 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index ff5c0a5..0a908d8 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -53,9 +53,11 @@
-  */
+v11 changes:
+- none
+
+v10 changes:
+- none
+
+v9 changes:
+- register PLL1 and PSC in dm646x_init_time() instead of as platform device so
+  that we get the correct timer0 clock for davinci_timer_init()
+- Fixed size of PLL memory block
+
+v8 changes:
+- register clkdev lookup for ref_clk and aux_clkin
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
+
+
+ arch/arm/mach-davinci/board-dm646x-evm.c |  2 +
+ arch/arm/mach-davinci/davinci.h          |  1 +
+ arch/arm/mach-davinci/dm646x.c           | 63 +++++++++++++++++++++---
+ 3 files changed, 58 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
+index 584064fdabf5..867ab2fa6cfd 100644
+--- a/arch/arm/mach-davinci/board-dm646x-evm.c
++++ b/arch/arm/mach-davinci/board-dm646x-evm.c
+@@ -776,6 +776,8 @@ static __init void evm_init(void)
+ 	int ret;
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
  
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
- 
- #include "clk-alpha-pll.h"
- #include "clk-regmap.h"
-@@ -69,6 +71,11 @@ enum _pmux_input {
- };
- 
- #define DIV_2_THRESHOLD		600000000
-+#define PWRCL_REG_OFFSET 0x0
-+#define PERFCL_REG_OFFSET 0x80000
-+#define MUX_OFFSET	0x40
-+#define ALT_PLL_OFFSET	0x100
-+#define SSSCTL_OFFSET 0x160
- 
- static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-        [PLL_OFF_L_VAL] = 0x04,
-@@ -107,7 +114,7 @@ enum _pmux_input {
- };
- 
- static struct clk_alpha_pll perfcl_pll = {
--	.offset = 0x80000,
-+	.offset = PERFCL_REG_OFFSET,
- 	.regs = prim_pll_regs,
- 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
- 	.clkr.hw.init = &(struct clk_init_data){
-@@ -119,7 +126,7 @@ enum _pmux_input {
- };
- 
- static struct clk_alpha_pll pwrcl_pll = {
--	.offset = 0x0,
-+	.offset = PWRCL_REG_OFFSET,
- 	.regs = prim_pll_regs,
- 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
- 	.clkr.hw.init = &(struct clk_init_data){
-@@ -149,7 +156,7 @@ enum _pmux_input {
- };
- 
- static struct clk_alpha_pll perfcl_alt_pll = {
--	.offset = 0x80100,
-+	.offset = PERFCL_REG_OFFSET + ALT_PLL_OFFSET,
- 	.regs = alt_pll_regs,
- 	.vco_table = alt_pll_vco_modes,
- 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
-@@ -163,7 +170,7 @@ enum _pmux_input {
- };
- 
- static struct clk_alpha_pll pwrcl_alt_pll = {
--	.offset = 0x100,
-+	.offset = PWRCL_REG_OFFSET + ALT_PLL_OFFSET,
- 	.regs = alt_pll_regs,
- 	.vco_table = alt_pll_vco_modes,
- 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
-@@ -176,6 +183,9 @@ enum _pmux_input {
- 	},
- };
- 
-+void __iomem *base;
-+static void qcom_cpu_clk_msm8996_acd_init(void __iomem *base);
++	dm646x_register_clocks();
 +
- /* Mux'es */
- 
- struct clk_cpu_8996_mux {
-@@ -253,6 +263,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 	switch (event) {
- 	case PRE_RATE_CHANGE:
- 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
-+		qcom_cpu_clk_msm8996_acd_init(base);
- 		break;
- 	case POST_RATE_CHANGE:
- 		if (cnd->new_rate < DIV_2_THRESHOLD)
-@@ -260,7 +271,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- 							  DIV_2_INDEX);
- 		else
- 			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
--							  PLL_INDEX);
-+							  ACD_INDEX);
- 		break;
- 	default:
- 		ret = 0;
-@@ -276,7 +287,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- };
- 
- static struct clk_cpu_8996_mux pwrcl_smux = {
--	.reg = 0x40,
-+	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
- 	.shift = 2,
- 	.width = 2,
- 	.clkr.hw.init = &(struct clk_init_data) {
-@@ -292,7 +303,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- };
- 
- static struct clk_cpu_8996_mux perfcl_smux = {
--	.reg = 0x80040,
-+	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
- 	.shift = 2,
- 	.width = 2,
- 	.clkr.hw.init = &(struct clk_init_data) {
-@@ -308,7 +319,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- };
- 
- static struct clk_cpu_8996_mux pwrcl_pmux = {
--	.reg = 0x40,
-+	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-@@ -329,7 +340,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- };
- 
- static struct clk_cpu_8996_mux perfcl_pmux = {
--	.reg = 0x80040,
-+	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-@@ -393,6 +404,10 @@ struct clk_regmap *clks[] = {
- 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
- 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
- 
-+	/* Enable alt PLLs */
-+	clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
-+	clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
-+
- 	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
+ 	ret = dm646x_gpio_register();
  	if (ret)
- 		return ret;
-@@ -402,10 +417,48 @@ struct clk_regmap *clks[] = {
- 	return ret;
- }
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index 16aca5853ab2..fa99197d36f9 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -116,6 +116,7 @@ int dm644x_gpio_register(void);
+ /* DM646x function declarations */
+ void dm646x_init(void);
+ void dm646x_init_time(unsigned long ref_clk_rate, unsigned long aux_clkin_rate);
++void dm646x_register_clocks(void);
+ void dm646x_init_mcasp0(struct snd_platform_data *pdata);
+ void dm646x_init_mcasp1(struct snd_platform_data *pdata);
+ int dm646x_init_edma(struct edma_rsv_info *rsv);
+diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
+index 280b753702f3..f05090317469 100644
+--- a/arch/arm/mach-davinci/dm646x.c
++++ b/arch/arm/mach-davinci/dm646x.c
+@@ -8,29 +8,35 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
++
++#include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+ #include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/serial_8250.h>
+-#include <linux/platform_device.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
  
-+#define CPU_AFINITY_MASK 0xFFF
-+#define PWRCL_CPU_REG_MASK 0x3
-+#define PERFCL_CPU_REG_MASK 0x103
+ #include <asm/mach/map.h>
+ 
++#include <mach/common.h>
+ #include <mach/cputype.h>
+ #include <mach/irqs.h>
+-#include "psc.h"
+ #include <mach/mux.h>
+-#include <mach/time.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
 +
-+#define L2ACDCR_REG 0x580ULL
-+#define L2ACDTD_REG 0x581ULL
-+#define L2ACDDVMRC_REG 0x584ULL
-+#define L2ACDSSCR_REG 0x589ULL
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ #define DAVINCI_VPIF_BASE       (0x01C12000)
+ 
+@@ -46,6 +52,7 @@
+ #define DM646X_EMAC_CNTRL_RAM_OFFSET	0x2000
+ #define DM646X_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num       = 1,
+ 	.phys_base = DAVINCI_PLL1_BASE,
+@@ -356,6 +363,7 @@ static struct clk_lookup dm646x_clks[] = {
+ 	CLK(NULL, "vpif1", &vpif1_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
++#endif
+ 
+ static struct emac_platform_data dm646x_emac_pdata = {
+ 	.ctrl_reg_offset	= DM646X_EMAC_CNTRL_OFFSET,
+@@ -954,10 +962,49 @@ void __init dm646x_init(void)
+ void __init dm646x_init_time(unsigned long ref_clk_rate,
+ 			     unsigned long aux_clkin_rate)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll1, *psc;
++	struct clk *clk;
 +
-+static DEFINE_SPINLOCK(acd_lock);
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, ref_clk_rate);
++	clk_register_fixed_rate(NULL, "aux_clkin", NULL, 0, aux_clkin_rate);
 +
-+static void qcom_cpu_clk_msm8996_acd_init(void __iomem *base)
-+{
-+	u64 hwid;
-+	unsigned long flags;
++	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
++	dm646x_pll1_init(NULL, pll1, NULL);
 +
-+	spin_lock_irqsave(&acd_lock, flags);
++	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
++	dm646x_psc_init(NULL, psc);
 +
-+	hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
++	clk = clk_get(NULL, "timer0");
 +
-+	kryo_l2_set_indirect_reg(L2ACDTD_REG, 0x00006A11);
-+	kryo_l2_set_indirect_reg(L2ACDDVMRC_REG, 0x000E0F0F);
-+	kryo_l2_set_indirect_reg(L2ACDSSCR_REG, 0x00000601);
-+
-+	if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
-+		writel(0xF, base + PWRCL_REG_OFFSET + SSSCTL_OFFSET);
-+		wmb();
-+		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002C5FFD);
-+	}
-+
-+	if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) {
-+		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002C5FFD);
-+		writel(0xF, base + PERFCL_REG_OFFSET + SSSCTL_OFFSET);
-+		wmb();
-+	}
-+
-+	spin_unlock_irqrestore(&acd_lock, flags);
++	davinci_timer_init(clk);
++#else
+ 	ref_clk.rate = ref_clk_rate;
+ 	aux_clkin.rate = aux_clkin_rate;
+ 	davinci_clk_init(dm646x_clks);
+ 	davinci_timer_init(&timer0_clk);
++#endif
 +}
 +
- static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
- {
- 	int ret;
--	void __iomem *base;
- 	struct resource *res;
- 	struct regmap *regmap;
- 	struct clk_hw_onecell_data *data;
-@@ -429,6 +482,8 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	qcom_cpu_clk_msm8996_acd_init(base);
++static struct resource dm646x_pll2_resources[] = {
++	{
++		.start	= DAVINCI_PLL2_BASE,
++		.end	= DAVINCI_PLL2_BASE + SZ_1K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
 +
- 	data->hws[0] = &pwrcl_pmux.clkr.hw;
- 	data->hws[1] = &perfcl_pmux.clkr.hw;
- 	data->num = 2;
++static struct platform_device dm646x_pll2_device = {
++	.name		= "dm646x-pll2",
++	.id		= -1,
++	.resource	= dm646x_pll2_resources,
++	.num_resources	= ARRAY_SIZE(dm646x_pll2_resources),
++};
++
++void __init dm646x_register_clocks(void)
++{
++	/* PLL1 and PSC are registered in dm646x_init_time() */
++	platform_device_register(&dm646x_pll2_device);
+ }
+ 
+ static int __init dm646x_init_devices(void)
 -- 
-1.9.1
+2.17.0
