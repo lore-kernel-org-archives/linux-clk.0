@@ -1,98 +1,221 @@
-Return-Path: <dinguyen@kernel.org>
-From: Dinh Nguyen <dinguyen@kernel.org>
-To: linux-clk@vger.kernel.org
-Cc: dinguyen@kernel.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] clk: socfpga: stratix10: use platform driver APIs
-Date: Wed,  2 May 2018 09:28:32 -0500
-Message-Id: <1525271313-24427-1-git-send-email-dinguyen@kernel.org>
+Subject: [PATCH v11 07/27] ARM: davinci: dm355: add new clock init using common clock framework
+Date: Fri, 18 May 2018 11:48:09 -0500
+Message-Id: <20180518164829.27052-8-david@lechnology.com>
+In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
+References: <20180518164829.27052-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Use platform driver APIs to map memory so that it will automatically free
-the memory in case of errors.
+This adds the new board-specific clock init in mach-davinci/dm355.c
+using the new common clock framework drivers.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
+
+Also clean up the #includes since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/socfpga/clk-s10.c | 35 +++++++++++++++--------------------
- 1 file changed, 15 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
-index 3a11c38..c788997 100644
---- a/drivers/clk/socfpga/clk-s10.c
-+++ b/drivers/clk/socfpga/clk-s10.c
-@@ -260,44 +260,43 @@ static int s10_clk_register_pll(const struct stratix10_pll_clock *clks,
- 	return 0;
+v11 changes:
+- none
+
+v10 changes:
+- none (reported problems fixed in separate patch series [1])
+
+[1]: https://lkml.org/lkml/2018/5/9/626
+
+v9 changes:
+- register PLL1 and PSC in dm355_init_time() instead of as platform device so
+  that we get the correct timer0 clock for davinci_timer_init()
+- Fixed size of PLL memory block
+
+v8 changes:
+- none
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
+
+
+ arch/arm/mach-davinci/board-dm355-evm.c     |  2 +
+ arch/arm/mach-davinci/board-dm355-leopard.c |  2 +
+ arch/arm/mach-davinci/davinci.h             |  1 +
+ arch/arm/mach-davinci/dm355.c               | 69 +++++++++++++++++----
+ 4 files changed, 62 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-dm355-evm.c b/arch/arm/mach-davinci/board-dm355-evm.c
+index a3377f959444..f53a461a606f 100644
+--- a/arch/arm/mach-davinci/board-dm355-evm.c
++++ b/arch/arm/mach-davinci/board-dm355-evm.c
+@@ -394,6 +394,8 @@ static __init void dm355_evm_init(void)
+ 	struct clk *aemif;
+ 	int ret;
+ 
++	dm355_register_clocks();
++
+ 	ret = dm355_gpio_register();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/board-dm355-leopard.c b/arch/arm/mach-davinci/board-dm355-leopard.c
+index 8249a0bf69f0..0fdf1d03eb11 100644
+--- a/arch/arm/mach-davinci/board-dm355-leopard.c
++++ b/arch/arm/mach-davinci/board-dm355-leopard.c
+@@ -234,6 +234,8 @@ static __init void dm355_leopard_init(void)
+ 	struct clk *aemif;
+ 	int ret;
+ 
++	dm355_register_clocks();
++
+ 	ret = dm355_gpio_register();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index 376cdd51ce9d..c2c634b6578e 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -84,6 +84,7 @@ int davinci_init_wdt(void);
+ /* DM355 function declarations */
+ void dm355_init(void);
+ void dm355_init_time(void);
++void dm355_register_clocks(void);
+ void dm355_init_spi0(unsigned chipselect_mask,
+ 		const struct spi_board_info *info, unsigned len);
+ void dm355_init_asp1(u32 evt_enable);
+diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
+index 0da7516018ca..14014b942e8a 100644
+--- a/arch/arm/mach-davinci/dm355.c
++++ b/arch/arm/mach-davinci/dm355.c
+@@ -8,31 +8,37 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
+-#include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/serial_8250.h>
+-#include <linux/platform_device.h>
++
++#include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+-#include <linux/spi/spi.h>
++#include <linux/init.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_data/spi-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
++#include <linux/spi/spi.h>
+ 
+ #include <asm/mach/map.h>
+ 
++#include <mach/common.h>
+ #include <mach/cputype.h>
+-#include "psc.h"
+-#include <mach/mux.h>
+ #include <mach/irqs.h>
+-#include <mach/time.h>
++#include <mach/mux.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
++
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ #define DM355_UART2_BASE	(IO_PHYS + 0x206000)
+ #define DM355_OSD_BASE		(IO_PHYS + 0x70200)
+@@ -43,6 +49,7 @@
+  */
+ #define DM355_REF_FREQ		24000000	/* 24 or 36 MHz */
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num       = 1,
+ 	.phys_base = DAVINCI_PLL1_BASE,
+@@ -382,7 +389,7 @@ static struct clk_lookup dm355_clks[] = {
+ 	CLK(NULL, "usb", &usb_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
+-
++#endif
+ /*----------------------------------------------------------------------*/
+ 
+ static u64 dm355_spi0_dma_mask = DMA_BIT_MASK(32);
+@@ -1046,8 +1053,46 @@ void __init dm355_init(void)
+ 
+ void __init dm355_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll1, *psc;
++	struct clk *clk;
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM355_REF_FREQ);
++
++	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
++	dm355_pll1_init(NULL, pll1, NULL);
++
++	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
++	dm355_psc_init(NULL, psc);
++
++	clk = clk_get(NULL, "timer0");
++
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(dm355_clks);
+ 	davinci_timer_init(&timer0_clk);
++#endif
++}
++
++static struct resource dm355_pll2_resources[] = {
++	{
++		.start	= DAVINCI_PLL2_BASE,
++		.end	= DAVINCI_PLL2_BASE + SZ_1K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device dm355_pll2_device = {
++	.name		= "dm355-pll2",
++	.id		= -1,
++	.resource	= dm355_pll2_resources,
++	.num_resources	= ARRAY_SIZE(dm355_pll2_resources),
++};
++
++void __init dm355_register_clocks(void)
++{
++	/* PLL1 and PSC are registered in dm355_init_time() */
++	platform_device_register(&dm355_pll2_device);
  }
  
--static struct stratix10_clock_data *__socfpga_s10_clk_init(struct device_node *np,
-+static struct stratix10_clock_data *__socfpga_s10_clk_init(struct platform_device *pdev,
- 						    int nr_clks)
- {
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
- 	struct stratix10_clock_data *clk_data;
- 	struct clk **clk_table;
-+	struct resource *res;
- 	void __iomem *base;
- 
--	base = of_iomap(np, 0);
--	if (!base) {
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base)) {
- 		pr_err("%s: failed to map clock registers\n", __func__);
--		goto err;
-+		return ERR_CAST(base);
- 	}
- 
--	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
-+	clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
- 	if (!clk_data)
--		goto err;
-+		return ERR_CAST(clk_data);
- 
- 	clk_data->base = base;
--	clk_table = kcalloc(nr_clks, sizeof(*clk_table), GFP_KERNEL);
-+	clk_table = devm_kcalloc(dev, nr_clks, sizeof(*clk_table), GFP_KERNEL);
- 	if (!clk_table)
--		goto err_data;
-+		return ERR_CAST(clk_table);
- 
- 	clk_data->clk_data.clks = clk_table;
- 	clk_data->clk_data.clk_num = nr_clks;
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data->clk_data);
- 	return clk_data;
--
--err_data:
--	kfree(clk_data);
--err:
--	return NULL;
- }
- 
--static int s10_clkmgr_init(struct device_node *np)
-+static int s10_clkmgr_init(struct platform_device *pdev)
- {
- 	struct stratix10_clock_data *clk_data;
- 
--	clk_data = __socfpga_s10_clk_init(np, STRATIX10_NUM_CLKS);
-+	clk_data = __socfpga_s10_clk_init(pdev, STRATIX10_NUM_CLKS);
- 	if (!clk_data)
- 		return -ENOMEM;
- 
-@@ -317,11 +316,7 @@ static int s10_clkmgr_init(struct device_node *np)
- 
- static int s10_clkmgr_probe(struct platform_device *pdev)
- {
--	struct device_node *np = pdev->dev.of_node;
--
--	s10_clkmgr_init(np);
--
--	return 0;
-+	return	s10_clkmgr_init(pdev);
- }
- 
- static const struct of_device_id stratix10_clkmgr_match_table[] = {
+ int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
 -- 
-2.7.4
+2.17.0
