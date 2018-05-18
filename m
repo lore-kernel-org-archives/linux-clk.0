@@ -1,53 +1,172 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57217 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbeFAG6b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jun 2018 02:58:31 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v1 0/4] add mailbox support for i.MX7D
-Date: Fri,  1 Jun 2018 08:58:17 +0200
-Message-Id: <20180601065821.28234-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v11 26/27] ARM: davinci: da8xx-dt: switch to device tree clocks
+Date: Fri, 18 May 2018 11:48:28 -0500
+Message-Id: <20180518164829.27052-27-david@lechnology.com>
+In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
+References: <20180518164829.27052-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patches are providing support for mailbox (Messaging Unit)
-for i.MX7D.
-Functionality was tested on PHYTEC phyBOARD-Zeta i.MX7D with
-Linux running on all cores: ARM Cortex-A7 and ARM Cortex-M4.
+This removes all of the clock init code from da8xx-dt.c. This includes
+all of the OF_DEV_AUXDATA that was just used for looking up clocks.
 
-Both parts of i.MX messaging Unit are visible for all CPUs available
-on i.MX7D. Communication worked independent of MU side in combination
-with CPU. For example MU-A used on ARM Cortex-A7 and MU-B used on ARM Cortex-M4
-or other ways around.
+Signed-off-by: David Lechner <david@lechnology.com>
+---
 
-The question to NXP developers: are there are limitations or
-recommendations about MU vs CPU combination? The i.MX7D documentation
-talks about "Processor A" and "Processor B". It is not quite clear what
-processor it actually is (A7 or M4).
+v11 changes:
+- none
 
-Oleksij Rempel (4):
-  clk: imx7d: add IMX7D_MU_ROOT_CLK
-  dt-bindings: mailbox: provide imx-mailbox documentation
-  ARM: dts: imx7s: add i.MX7 messaging unit support
-  mailbox: Add support for i.MX7D messaging unit
+v10 changes:
+- removed unused header files
+- removed arch/arm/mach-davinci/time.c changes accidentally introduced in v9
 
- .../bindings/mailbox/imx-mailbox.txt          |  35 +++
- arch/arm/boot/dts/imx7s.dtsi                  |  18 ++
- drivers/clk/imx/clk-imx7d.c                   |   1 +
- drivers/mailbox/Kconfig                       |   6 +
- drivers/mailbox/Makefile                      |   2 +
- drivers/mailbox/imx-mailbox.c                 | 289 ++++++++++++++++++
- 6 files changed, 351 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
- create mode 100644 drivers/mailbox/imx-mailbox.c
+v9 changes:
+- changes to arch/arm/mach-davinci/time.c accidentally got squashed into this
+  commit. will drop this later.
 
+v8 changes:
+- none
+
+v7 changes:
+- rebased
+- drop of_platform_default_populate(NULL, NULL, NULL)
+- add change in pm_domain.c
+
+v6 changes:
+- removed misleading statement from commit message
+
+
+ arch/arm/mach-davinci/da8xx-dt.c  | 64 -------------------------------
+ arch/arm/mach-davinci/pm_domain.c |  5 +++
+ 2 files changed, 5 insertions(+), 64 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
+index 088bc5c0318b..beac80ec4037 100644
+--- a/arch/arm/mach-davinci/da8xx-dt.c
++++ b/arch/arm/mach-davinci/da8xx-dt.c
+@@ -7,79 +7,16 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
+-#include <linux/io.h>
+-#include <linux/of_irq.h>
+-#include <linux/of_platform.h>
+-#include <linux/irqdomain.h>
+-#include <linux/platform_data/ti-aemif.h>
+ 
+ #include <asm/mach/arch.h>
+ 
+ #include <mach/common.h>
+-#include "cp_intc.h"
+ #include <mach/da8xx.h>
+ 
+-static struct of_dev_auxdata da850_aemif_auxdata_lookup[] = {
+-	OF_DEV_AUXDATA("ti,davinci-nand", 0x62000000, "davinci-nand.0", NULL),
+-	{}
+-};
+-
+-static struct aemif_platform_data aemif_data = {
+-	.dev_lookup = da850_aemif_auxdata_lookup,
+-};
+-
+-static struct of_dev_auxdata da850_auxdata_lookup[] __initdata = {
+-	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01c22000, "i2c_davinci.1", NULL),
+-	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01e28000, "i2c_davinci.2", NULL),
+-	OF_DEV_AUXDATA("ti,davinci-wdt", 0x01c21000, "davinci-wdt", NULL),
+-	OF_DEV_AUXDATA("ti,da830-mmc", 0x01c40000, "da830-mmc.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f00000, "ehrpwm.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f02000, "ehrpwm.1", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f06000, "ecap.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f07000, "ecap.1", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f08000, "ecap.2", NULL),
+-	OF_DEV_AUXDATA("ti,da830-spi", 0x01c41000, "spi_davinci.0", NULL),
+-	OF_DEV_AUXDATA("ti,da830-spi", 0x01f0e000, "spi_davinci.1", NULL),
+-	OF_DEV_AUXDATA("ns16550a", 0x01c42000, "serial8250.0", NULL),
+-	OF_DEV_AUXDATA("ns16550a", 0x01d0c000, "serial8250.1", NULL),
+-	OF_DEV_AUXDATA("ns16550a", 0x01d0d000, "serial8250.2", NULL),
+-	OF_DEV_AUXDATA("ti,davinci_mdio", 0x01e24000, "davinci_mdio.0", NULL),
+-	OF_DEV_AUXDATA("ti,davinci-dm6467-emac", 0x01e20000, "davinci_emac.1",
+-		       NULL),
+-	OF_DEV_AUXDATA("ti,da830-mcasp-audio", 0x01d00000, "davinci-mcasp.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-aemif", 0x68000000, "ti-aemif", &aemif_data),
+-	OF_DEV_AUXDATA("ti,da850-tilcdc", 0x01e13000, "da8xx_lcdc.0", NULL),
+-	OF_DEV_AUXDATA("ti,da830-ohci", 0x01e25000, "ohci-da8xx", NULL),
+-	OF_DEV_AUXDATA("ti,da830-musb", 0x01e00000, "musb-da8xx", NULL),
+-	OF_DEV_AUXDATA("ti,da830-usb-phy", 0x01c1417c, "da8xx-usb-phy", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ahci", 0x01e18000, "ahci_da850", NULL),
+-	OF_DEV_AUXDATA("ti,da850-vpif", 0x01e17000, "vpif", NULL),
+-	OF_DEV_AUXDATA("ti,da850-dsp", 0x11800000, "davinci-rproc.0", NULL),
+-	{}
+-};
+-
+ #ifdef CONFIG_ARCH_DAVINCI_DA850
+ 
+ static void __init da850_init_machine(void)
+ {
+-	/* All existing boards use 100MHz SATA refclkpn */
+-	static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
+-
+-	int ret;
+-
+-	da850_register_clocks();
+-
+-	ret = da8xx_register_usb_phy_clocks();
+-	if (ret)
+-		pr_warn("%s: USB PHY CLK registration failed: %d\n",
+-			__func__, ret);
+-
+-	ret = da850_register_sata_refclk(sata_refclkpn);
+-	if (ret)
+-		pr_warn("%s: registering SATA REFCLK failed: %d",
+-			__func__, ret);
+-
+-	of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
+ 	davinci_pm_init();
+ 	pdata_quirks_init();
+ }
+@@ -94,7 +31,6 @@ static const char *const da850_boards_compat[] __initconst = {
+ 
+ DT_MACHINE_START(DA850_DT, "Generic DA850/OMAP-L138/AM18x")
+ 	.map_io		= da850_init,
+-	.init_time	= da850_init_time,
+ 	.init_machine	= da850_init_machine,
+ 	.dt_compat	= da850_boards_compat,
+ 	.init_late	= davinci_init_late,
+diff --git a/arch/arm/mach-davinci/pm_domain.c b/arch/arm/mach-davinci/pm_domain.c
+index 78eac2c0c146..e251fd593bfd 100644
+--- a/arch/arm/mach-davinci/pm_domain.c
++++ b/arch/arm/mach-davinci/pm_domain.c
+@@ -13,6 +13,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/pm_clock.h>
+ #include <linux/platform_device.h>
++#include <linux/of.h>
+ 
+ static struct dev_pm_domain davinci_pm_domain = {
+ 	.ops = {
+@@ -28,6 +29,10 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
+ 
+ static int __init davinci_pm_runtime_init(void)
+ {
++	if (of_have_populated_dt())
++		return 0;
++
++	/* Use pm_clk as fallback if we're not using genpd. */
+ 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
+ 
+ 	return 0;
 -- 
-2.17.1
-
+2.17.0
