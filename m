@@ -1,101 +1,192 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Tue, 29 May 2018 12:57:54 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v3 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC driver
-Message-ID: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v11 08/27] ARM: davinci: dm365: add new clock init using common clock framework
+Date: Fri, 18 May 2018 11:48:10 -0500
+Message-Id: <20180518164829.27052-9-david@lechnology.com>
+In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
+References: <20180518164829.27052-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Patch series adding support for ROHM BD71837 PMIC.
+This adds the new board-specific clock init in mach-davinci/dm365.c
+using the new common clock framework drivers.
 
-BD71837 is a programmable Power Management IC for powering single-core,
-dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-low BOM cost and compact solution footprint. It integrates 8 buck
-regulators and 7 LDO’s to provide all the power rails required by the
-SoC and the commonly used peripherals.
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-The driver aims to not limit the usage of PMIC. Thus the buck and LDO
-naming is generic and not tied to any specific purposes. However there
-is following limitations which make it mostly suitable for use cases
-where the processor where PMIC driver is running is powered by the PMIC:
+Also clean up the #includes since we are adding some here.
 
-- The PMIC is not re-initialized if it resets. PMIC may reset as a
-  result of voltage monitoring (over/under voltage) or due to reset
-  request. Driver is only initializing PMIC at probe. This is not
-  problem as long as processor controlling PMIC is powered by PMIC.
-
-- The PMIC internal state machine is ignored by driver. Driver assumes
-  the PMIC is wired so that it is always in "run" state when controlled
-  by the driver.
-
-Changelog v3
-- kill unused variable
-- kill unused definitions
-- use REGMAP_IRQ_REG
-
-Changelog v2
-Based on feedback from Mark Brown
-- Squashed code and buildfile changes to same patch
-- Fixed some styling issues
-- Changed SPDX comments to CPP style
-- Error out if voltage is changed when regulator is enabled instead of
-  Disabling the regulator for duration of change
-- Use devm_regulator_register
-- Remove compatible usage from regulators - use parent dev for config
-- Add a note about using regulator-boot-on for BUCK6 and 7
-- fixed warnings from kbuild test robot
-
-patch 1: 
-        MFD driver and definitions bringing interrupt support and
-        enabling clk and regulator subsystems.
-Patches 2, 3 and 4:
-        device tree binding documents.
-Patch 5:
-        clock subsystem and support for gated clock.
-Patch 6:
-        regulator driver supporting 8 bucks and 7 LDOs.
-
-This patch series is based on for-mfd-next
-
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
 
-Matti Vaittinen (6):
-  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  regulator: bd71837: Devicetree bindings for BD71837 regulators
-  clk: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  clk: bd71837: Add driver for BD71837 PMIC clock
-  regulator: bd71837: BD71837 PMIC regulator driver
+v11 changes:
+- none
 
- .../bindings/clock/rohm,bd71837-clock.txt          |  37 ++
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  52 ++
- .../bindings/regulator/rohm,bd71837-regulator.txt  | 126 ++++
- drivers/clk/Kconfig                                |   9 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-bd71837.c                          | 154 +++++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/bd71837.c                              | 224 +++++++
- drivers/regulator/Kconfig                          |  11 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/bd71837-regulator.c              | 677 +++++++++++++++++++++
- include/linux/mfd/bd71837.h                        | 288 +++++++++
- 13 files changed, 1594 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
- create mode 100644 drivers/clk/clk-bd71837.c
- create mode 100644 drivers/mfd/bd71837.c
- create mode 100644 drivers/regulator/bd71837-regulator.c
- create mode 100644 include/linux/mfd/bd71837.h
+v10 changes:
+- none
 
+v9 changes:
+- register PLL1 and PSC in dm365_init_time() instead of as platform device so
+  that we get the correct timer0 clock for davinci_timer_init()
+- Fixed size of PLL memory block
+
+v8 changes:
+- none
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
+
+ arch/arm/mach-davinci/board-dm365-evm.c |  2 +
+ arch/arm/mach-davinci/davinci.h         |  1 +
+ arch/arm/mach-davinci/dm365.c           | 56 +++++++++++++++++++------
+ 3 files changed, 47 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
+index 435f7ec7d9af..307e88d99dd3 100644
+--- a/arch/arm/mach-davinci/board-dm365-evm.c
++++ b/arch/arm/mach-davinci/board-dm365-evm.c
+@@ -742,6 +742,8 @@ static __init void dm365_evm_init(void)
+ {
+ 	int ret;
+ 
++	dm365_register_clocks();
++
+ 	ret = dm365_gpio_register();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
+index c2c634b6578e..a799b5266d4b 100644
+--- a/arch/arm/mach-davinci/davinci.h
++++ b/arch/arm/mach-davinci/davinci.h
+@@ -94,6 +94,7 @@ int dm355_gpio_register(void);
+ /* DM365 function declarations */
+ void dm365_init(void);
+ void dm365_init_time(void);
++void dm365_register_clocks(void);
+ void dm365_init_asp(void);
+ void dm365_init_vc(void);
+ void dm365_init_ks(struct davinci_ks_platform_data *pdata);
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 871372a59da8..76de426a0e41 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -12,32 +12,38 @@
+  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-#include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/serial_8250.h>
+-#include <linux/platform_device.h>
++
++#include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
++#include <linux/clkdev.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+-#include <linux/spi/spi.h>
++#include <linux/init.h>
+ #include <linux/platform_data/edma.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_data/keyscan-davinci.h>
+ #include <linux/platform_data/spi-davinci.h>
++#include <linux/platform_device.h>
++#include <linux/serial_8250.h>
++#include <linux/spi/spi.h>
+ 
+ #include <asm/mach/map.h>
+ 
++#include <mach/common.h>
+ #include <mach/cputype.h>
+-#include "psc.h"
+-#include <mach/mux.h>
+ #include <mach/irqs.h>
+-#include <mach/time.h>
++#include <mach/mux.h>
+ #include <mach/serial.h>
+-#include <mach/common.h>
++#include <mach/time.h>
+ 
++#include "asp.h"
+ #include "davinci.h"
+-#include "clock.h"
+ #include "mux.h"
+-#include "asp.h"
++
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
+ 
+ #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
+ #define DM365_RTC_BASE			0x01c69000
+@@ -54,6 +60,7 @@
+ #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
+ #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll1_data = {
+ 	.num		= 1,
+ 	.phys_base	= DAVINCI_PLL1_BASE,
+@@ -485,7 +492,7 @@ static struct clk_lookup dm365_clks[] = {
+ 	CLK(NULL, "mjcp", &mjcp_clk),
+ 	CLK(NULL, NULL, NULL),
+ };
+-
++#endif
+ /*----------------------------------------------------------------------*/
+ 
+ #define INTMUX		0x18
+@@ -1171,8 +1178,33 @@ void __init dm365_init(void)
+ 
+ void __init dm365_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll1, *pll2, *psc;
++	struct clk *clk;
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM365_REF_FREQ);
++
++	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
++	dm365_pll1_init(NULL, pll1, NULL);
++
++	pll2 = ioremap(DAVINCI_PLL2_BASE, SZ_1K);
++	dm365_pll2_init(NULL, pll2, NULL);
++
++	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
++	dm365_psc_init(NULL, psc);
++
++	clk = clk_get(NULL, "timer0");
++
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(dm365_clks);
+ 	davinci_timer_init(&timer0_clk);
++#endif
++}
++
++void __init dm365_register_clocks(void)
++{
++	/* all clocks are currently registered in dm365_init_time() */
+ }
+ 
+ static struct resource dm365_vpss_resources[] = {
 -- 
-2.14.3
+2.17.0
