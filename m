@@ -1,46 +1,61 @@
-Return-Path: <ray.jui@broadcom.com>
-Return-Path: <ray.jui@broadcom.com>
-Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
-To: Stephen Boyd <sboyd@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Pramod Kumar <pramod.kumar@broadcom.com>
-References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
- <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
- <152772366322.144038.12289577935853704907@swboyd.mtv.corp.google.com>
-From: Ray Jui <ray.jui@broadcom.com>
-Message-ID: <25bd1449-b0f6-aecb-b326-a00af1dc4e90@broadcom.com>
-Date: Wed, 30 May 2018 17:23:24 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:41455 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751221AbeERQuY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 12:50:24 -0400
+Date: Fri, 18 May 2018 11:50:22 -0500
+From: Rob Herring <robh@kernel.org>
+To: Rui Miguel Silva <rui.silva@linaro.org>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 07/12] ARM: dts: imx7s: add mipi phy power domain
+Message-ID: <20180518165022.GB21131@rob-hp-laptop>
+References: <20180518092806.3829-1-rui.silva@linaro.org>
+ <20180518092806.3829-8-rui.silva@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <152772366322.144038.12289577935853704907@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180518092806.3829-8-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-
-On 5/30/2018 4:41 PM, Stephen Boyd wrote:
-> Subject is missing an 's' on stringray?
->
-
-Yes, will fix this.
-
-
-> Quoting Ray Jui (2018-05-25 09:45:16)
->> Update and add Stingray clock definitions and tables so they match the
->> binding document and the latest ASIC datasheet
->>
->> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
->> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+On Fri, May 18, 2018 at 10:28:01AM +0100, Rui Miguel Silva wrote:
+> Add power domain index 0 related with mipi-phy to imx7s.
 > 
-> Otherwise it looks ok, but maybe Pramod should be the author?
+> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+> ---
+>  arch/arm/boot/dts/imx7s.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
+> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+> index 4d42335c0dee..67450ad89940 100644
+> --- a/arch/arm/boot/dts/imx7s.dtsi
+> +++ b/arch/arm/boot/dts/imx7s.dtsi
+> @@ -636,6 +636,12 @@
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+>  
+> +					pgc_mipi_phy: pgc-power-domain@0 {
 
-Will fix this for all commits in this series.
+power-domain@0
 
-I'll fix the above and send out v2.
+> +						#power-domain-cells = <0>;
+> +						reg = <0>;
+> +						power-supply = <&reg_1p0d>;
+> +					};
+> +
+>  					pgc_pcie_phy: pgc-power-domain@1 {
 
-Thanks,
+ditto.
 
-Ray
+>  						#power-domain-cells = <0>;
+>  						reg = <1>;
+> -- 
+> 2.17.0
+> 
