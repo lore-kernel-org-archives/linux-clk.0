@@ -1,56 +1,92 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH 1/2] clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always
- enabled
-To: David Lechner <david@lechnology.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: Linux clk Mailing List <linux-clk@vger.kernel.org>,
-        Linux ARM Mailing List
-	<linux-arm-kernel@lists.infradead.org>,
-        Kevin Hilman <khilman@kernel.org>
-References: <20180511141037.25250-1-nsekhar@ti.com>
- <20180511141037.25250-2-nsekhar@ti.com>
- <ea0d545c-90b5-bc2f-71cf-7ab6183b7ecd@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <7d060dec-562e-993c-7af4-c3524ba0b946@ti.com>
-Date: Mon, 14 May 2018 15:35:53 +0530
-MIME-Version: 1.0
-In-Reply-To: <ea0d545c-90b5-bc2f-71cf-7ab6183b7ecd@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 21/26] arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
+Date: Fri, 18 May 2018 15:15:31 +0530
+Message-Id: <20180518094536.17201-22-jagan@amarulasolutions.com>
+In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sunday 13 May 2018 02:50 AM, David Lechner wrote:
-> On 05/11/2018 09:10 AM, Sekhar Nori wrote:
->> PLL2 SYSCLK1 on DM646x is connected to DDR2 PHY and cannot
->> be disabled. Mark it so to prevent unused clock disable
->> infrastructure from disabling it.
->>
->> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
->> ---
->>   drivers/clk/davinci/pll-dm646x.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/davinci/pll-dm646x.c
->> b/drivers/clk/davinci/pll-dm646x.c
->> index eb96dd72b6b7..5bdf1cb5fda8 100644
->> --- a/drivers/clk/davinci/pll-dm646x.c
->> +++ b/drivers/clk/davinci/pll-dm646x.c
->> @@ -72,7 +72,7 @@ static const struct davinci_pll_clk_info
->> dm646x_pll2_info = {
->>       .flags = 0,
->>   };
->>   -SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
->> +SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, SYSCLK_ALWAYS_ENABLED);
->>     int dm646x_pll2_init(struct device *dev, void __iomem *base,
->> struct regmap *cfgchip)
->>   {
->>
-> 
-> FYI, this only applies on top of "clk: davinci: pll: allow dev == NULL".
-> Not sure if that was intentional.
+Enable HDMI output on Bananpi-m64 board.
 
-Not actually. I will resend the series as it applies to v4.17-rc1.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v2:
+- none
 
-Thanks,
-Sekhar
+ .../boot/dts/allwinner/sun50i-a64-bananapi-m64.dts | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index 0716b1441187..bbbf7b17b70b 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -60,6 +60,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -86,6 +97,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -103,6 +118,17 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c1_pins>;
+-- 
+2.14.3
