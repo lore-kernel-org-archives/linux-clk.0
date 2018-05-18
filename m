@@ -1,129 +1,190 @@
-Return-Path: <anischal@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Wed, 02 May 2018 13:15:12 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Michael Turquette
- <mturquette@baylibre.com>, Andy Gross <andy.gross@linaro.org>, David Brown
- <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Odelu
- Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM Video clock
- bindings
-In-Reply-To: <20180501135054.GA373@rob-hp-laptop>
-References: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
- <1524576771-31096-2-git-send-email-anischal@codeaurora.org>
- <20180501135054.GA373@rob-hp-laptop>
-Message-ID: <55ef90a4034f5c7e94274c1ea02d3af1@codeaurora.org>
+Return-Path: <cw00.choi@samsung.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Message-id: <5AFE3E04.6060801@samsung.com>
+Date: Fri, 18 May 2018 11:44:20 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, MyungJoo Ham
+	<myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob
+	Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Heiko
+	Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>, David
+	Airlie <airlied@linux.ie>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Derek Basehore
+	<dbasehore@chromium.org>, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, Lin
+	Huang <hl@rock-chips.com>, kernel@collabora.com, Sean Paul
+	<seanpaul@chromium.org>, linux-arm-kernel@lists.infradead.org, "Rafael J.
+ Wysocki" <rafael.j.wysocki@intel.com>, Elaine Zhang
+	<zhangqing@rock-chips.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: Re: [RFC PATCH 04/10] devfreq: rk3399_dmc / rockchip: pm_domains:
+ Register notify to DMC driver.
+In-reply-to: <20180514211610.26618-5-enric.balletbo@collabora.com>
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+	<CGME20180514211809epcas3p47e2f67ad346dc2fc35c46465381fbffa@epcas3p4.samsung.com>
+	<20180514211610.26618-5-enric.balletbo@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018-05-01 19:20, Rob Herring wrote:
-> On Tue, Apr 24, 2018 at 07:02:50PM +0530, Amit Nischal wrote:
->> Add device tree bindings for video clock controller for Qualcomm
->> Technology Inc's SoCs.
->> 
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
->> ---
->>  .../devicetree/bindings/clock/qcom,videocc.txt     | 18 
->> ++++++++++++++++
->>  include/dt-bindings/clock/qcom,videocc-sdm845.h    | 25 
->> ++++++++++++++++++++++
->>  2 files changed, 43 insertions(+)
->>  create mode 100644 
->> Documentation/devicetree/bindings/clock/qcom,videocc.txt
->>  create mode 100644 include/dt-bindings/clock/qcom,videocc-sdm845.h
->> 
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.txt 
->> b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
->> new file mode 100644
->> index 0000000..1c23b41
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
->> @@ -0,0 +1,18 @@
->> +Qualcomm Video Clock & Reset Controller Binding
->> +-----------------------------------------------
->> +
->> +Required properties :
->> +- compatible : shall contain "qcom,videocc-sdm845"
-> 
-> '<vendor>,<soc>-<block>' is the preferred order.
-> 
-> Every single QCom binding... Can someone spread the word in QCom.
+Hi,
 
-Thanks for the review. I will make the suggested change in the next
-series.
+As I already commented[1], I think that it is not proper in order to pass
+the devfreq instance to power_domain driver by separate defined function
+(rockchip_pm_register_dmcfreq_notifier()).
+[1] https://patchwork.kernel.org/patch/10349571/
 
-> 
->> +- reg : shall contain base register location and length
->> +- #clock-cells : shall contain 1
->> +- #reset-cells : shall contain 1
->> +- #power-domain-cells : shall contain 1
-> 
-> No header definitions for resets and power-domain? There's no
-> requirement to have headers, but the binding should be complete even if
-> you don't have a driver yet.
+Maybe, you could check the 'OF graph[1]' or 'device connection[2]'
+for the device connection. Unfortunately, I'm not sure what is
+best solution for this issue.
 
-Will do the required changes in the next patch series.
-> 
->> +
->> +Example:
->> +	videocc: qcom,videocc@ab00000 {
-> 
-> clock-controller@...
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/graph.txt
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f2d9b66d84f3ff5ea3aff111e6a403e04fa8bf37
 
-Will be fixed in the next patch series.
 
+On 2018년 05월 15일 06:16, Enric Balletbo i Serra wrote:
+> From: Lin Huang <hl@rock-chips.com>
 > 
->> +		compatible = "qcom,videocc-sdm845";
->> +		reg = <0xab00000 0x10000>;
->> +		#clock-cells = <1>;
->> +		#reset-cells = <1>;
->> +		#power-domain-cells = <1>;
->> +	};
->> diff --git a/include/dt-bindings/clock/qcom,videocc-sdm845.h 
->> b/include/dt-bindings/clock/qcom,videocc-sdm845.h
->> new file mode 100644
->> index 0000000..f5f7599
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/qcom,videocc-sdm845.h
->> @@ -0,0 +1,25 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/* Copyright (c) 2016-2018, The Linux Foundation. All rights 
->> reserved. */
->> +
->> +#ifndef _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
->> +#define _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
->> +
->> +#define VIDEO_CC_APB_CLK			0
->> +#define VIDEO_CC_AT_CLK				1
->> +#define VIDEO_CC_QDSS_TRIG_CLK			2
->> +#define VIDEO_CC_QDSS_TSCTR_DIV8_CLK		3
->> +#define VIDEO_CC_VCODEC0_AXI_CLK		4
->> +#define VIDEO_CC_VCODEC0_CORE_CLK		5
->> +#define VIDEO_CC_VCODEC1_AXI_CLK		6
->> +#define VIDEO_CC_VCODEC1_CORE_CLK		7
->> +#define VIDEO_CC_VENUS_AHB_CLK			8
->> +#define VIDEO_CC_VENUS_CLK_SRC			9
->> +#define VIDEO_CC_VENUS_CTL_AXI_CLK		10
->> +#define VIDEO_CC_VENUS_CTL_CORE_CLK		11
->> +#define VIDEO_PLL0				12
->> +
->> +#define VENUS_GDSC				0
->> +#define VCODEC0_GDSC				1
->> +#define VCODEC1_GDSC				2
->> +
->> +#endif
->> --
->> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
->> member
->> of Code Aurora Forum, hosted by The Linux Foundation
->> 
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree" 
->> in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> The DMC (Dynamic Memory Interface) controller does a SiP call to the
+> Trusted Firmware-A (TF-A) to change the DDR clock frequency. When this
+> happens the TF-A writes to the PMU bus idle request register
+> (PMU_BUS_IDLE_REQ) but at the same time it is possible that the Rockchip
+> power domain driver writes to the same register. So, add a notification
+> mechanism to ensure that the DMC and the PD driver does not access to this
+> register at the same time.
+> 
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> [rewrite commit message]
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> As I explained in the cover letter I have doubts regarding this patch
+> but I did not find another way to do it. So I will appreciate any
+> feedback on this.
+> 
+>  drivers/devfreq/rk3399_dmc.c      |  7 ++++++
+>  drivers/soc/rockchip/pm_domains.c | 36 +++++++++++++++++++++++++++++++
+>  include/soc/rockchip/rk3399_dmc.h | 14 ++++++++++++
+>  3 files changed, 57 insertions(+)
+>  create mode 100644 include/soc/rockchip/rk3399_dmc.h
+> 
+> diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
+> index cc1bbca3fb15..2c4985a501cb 100644
+> --- a/drivers/devfreq/rk3399_dmc.c
+> +++ b/drivers/devfreq/rk3399_dmc.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/rwsem.h>
+>  #include <linux/suspend.h>
+>  
+> +#include <soc/rockchip/rk3399_dmc.h>
+>  #include <soc/rockchip/rk3399_grf.h>
+>  #include <soc/rockchip/rockchip_sip.h>
+>  
+> @@ -443,6 +444,12 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+>  	data->dev = dev;
+>  	platform_set_drvdata(pdev, data);
+>  
+> +	rockchip_pm_register_dmcfreq_notifier(data->devfreq);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to register dmcfreq notifier\n");
+> +		return ret;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+> index 53efc386b1ad..b0e66f24b3e3 100644
+> --- a/drivers/soc/rockchip/pm_domains.c
+> +++ b/drivers/soc/rockchip/pm_domains.c
+> @@ -8,6 +8,7 @@
+>   * published by the Free Software Foundation.
+>   */
+>  
+> +#include <linux/devfreq.h>
+>  #include <linux/io.h>
+>  #include <linux/iopoll.h>
+>  #include <linux/err.h>
+> @@ -76,9 +77,13 @@ struct rockchip_pmu {
+>  	const struct rockchip_pmu_info *info;
+>  	struct mutex mutex; /* mutex lock for pmu */
+>  	struct genpd_onecell_data genpd_data;
+> +	struct devfreq *devfreq;
+> +	struct notifier_block dmc_nb;
+>  	struct generic_pm_domain *domains[];
+>  };
+>  
+> +static struct rockchip_pmu *dmc_pmu;
+> +
+>  #define to_rockchip_pd(gpd) container_of(gpd, struct rockchip_pm_domain, genpd)
+>  
+>  #define DOMAIN(pwr, status, req, idle, ack, wakeup)	\
+> @@ -601,6 +606,35 @@ static int rockchip_pm_add_subdomain(struct rockchip_pmu *pmu,
+>  	return error;
+>  }
+>  
+> +static int rk3399_dmcfreq_notify(struct notifier_block *nb,
+> +				 unsigned long event, void *data)
+> +{
+> +	if (event == DEVFREQ_PRECHANGE)
+> +		mutex_lock(&dmc_pmu->mutex);
+> +	else if (event == DEVFREQ_POSTCHANGE)
+> +		mutex_unlock(&dmc_pmu->mutex);
+> +
+> +	return NOTIFY_OK;
+> +}
+> +
+> +int rockchip_pm_register_dmcfreq_notifier(struct devfreq *devfreq)
+> +{
+> +	int ret;
+> +
+> +	if (!dmc_pmu)
+> +		return -EPROBE_DEFER;
+> +
+> +	dmc_pmu->devfreq = devfreq;
+> +	dmc_pmu->dmc_nb.notifier_call = rk3399_dmcfreq_notify;
+> +	ret = devm_devfreq_register_notifier(devfreq->dev.parent,
+> +					     dmc_pmu->devfreq,
+> +					     &dmc_pmu->dmc_nb,
+> +					     DEVFREQ_TRANSITION_NOTIFIER);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(rockchip_pm_register_dmcfreq_notifier);
+> +
+>  static int rockchip_pm_domain_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -694,6 +728,8 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
+>  		goto err_out;
+>  	}
+>  
+> +	dmc_pmu = pmu;
+> +
+>  	return 0;
+>  
+>  err_out:
+> diff --git a/include/soc/rockchip/rk3399_dmc.h b/include/soc/rockchip/rk3399_dmc.h
+> new file mode 100644
+> index 000000000000..031a62607f61
+> --- /dev/null
+> +++ b/include/soc/rockchip/rk3399_dmc.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2016-2018, Fuzhou Rockchip Electronics Co., Ltd
+> + * Author: Lin Huang <hl@rock-chips.com>
+> + */
+> +
+> +#ifndef __SOC_RK3399_DMC_H
+> +#define __SOC_RK3399_DMC_H
+> +
+> +#include <linux/devfreq.h>
+> +
+> +int rockchip_pm_register_dmcfreq_notifier(struct devfreq *devfreq);
+> +
+> +#endif
+> 
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
