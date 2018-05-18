@@ -1,54 +1,91 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 15/26] dt-bindings: display: Add compatible for A64 HDMI PHY
-Date: Fri, 18 May 2018 15:15:25 +0530
-Message-Id: <20180518094536.17201-16-jagan@amarulasolutions.com>
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55990 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753059AbeERIaQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 04:30:16 -0400
+Received: by mail-wm0-f66.google.com with SMTP id a8-v6so12687409wmg.5
+        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 01:30:16 -0700 (PDT)
+References: <20180517125033.18050-1-rui.silva@linaro.org> <20180517125033.18050-4-rui.silva@linaro.org> <152658031035.210890.12212209931570500982@swboyd.mtv.corp.google.com>
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        Rui Miguel Silva <rui.silva@linaro.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 03/12] clk: imx7d: fix mipi dphy div parent
+In-reply-to: <152658031035.210890.12212209931570500982@swboyd.mtv.corp.google.com>
+Date: Fri, 18 May 2018 09:30:12 +0100
+Message-ID: <m3sh6pxt63.fsf@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-HDMI PHY on Allwinner A64 has similar like H3/H5 but with
-two clock parents, so add separate compatible for A64.
+Hi Stephen,
+On Thu 17 May 2018 at 18:05, Stephen Boyd wrote:
+> Quoting Rui Miguel Silva (2018-05-17 05:50:24)
+>> Fix the mipi dphy root divider to mipi_dphy_pre_div, this would 
+>> remove a orphan
+>> clock and set the correct parent.
+>> 
+>> before:
+>> cat clk_orphan_summary
+>>                                  enable  prepare  protect
+>>    clock                          count    count    count 
+>>    rate   accuracy   phase
+>> ----------------------------------------------------------------------------------------
+>>  mipi_dphy_post_div                   1        1        0 
+>>  0          0 0
+>>     mipi_dphy_root_clk                1        1        0 
+>>     0          0 0
+>> 
+>> cat clk_dump | grep mipi_dphy
+>> mipi_dphy_post_div                    1        1        0 
+>> 0          0 0
+>>     mipi_dphy_root_clk                1        1        0 
+>>     0          0 0
+>> 
+>> after:
+>> cat clk_dump | grep mipi_dphy
+>>    mipi_dphy_src                     1        1        0 
+>>    24000000          0 0
+>>        mipi_dphy_cg                  1        1        0 
+>>        24000000          0 0
+>>           mipi_dphy_pre_div          1        1        0 
+>>           24000000          0 0
+>>              mipi_dphy_post_div      1        1        0 
+>>              24000000          0 0
+>>                 mipi_dphy_root_clk   1        1        0 
+>>                 24000000          0 0
+>> 
+>> Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
+>> 
+>> Cc: linux-clk@vger.kernel.org
+>> Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
+>> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+>> ---
+>
+> I only get two patches out of the 12 and I don't get a cover 
+> letter.
+> Did you want me to pick up these clk patches into clk-next? 
+> Where are
+> the other patches? Can you cc lkml on all your kernel emails so 
+> I can
+> easily find them?
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Yea, sorry, You are right, I will cc all patches to the lists. v5 
+is on
+the way and I will do that.
+
 ---
-Changes for v2:
-- Add separate compatible for A64
+Cheers,
+	Rui
 
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 1a5ff416dea4..4f7b9dca8ca0 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -104,6 +104,7 @@ Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-a83t-hdmi-phy
-     * allwinner,sun8i-h3-hdmi-phy
-+    * allwinner,sun50i-a64-hdmi-phy
-   - reg: base address and size of memory-mapped region
-   - clocks: phandles to the clocks feeding the HDMI PHY
-     * bus: the HDMI PHY interface clock
--- 
-2.14.3
