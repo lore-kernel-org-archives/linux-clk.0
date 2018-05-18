@@ -1,122 +1,85 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,  Antoine Tenart <antoine.tenart@bootlin.com>,  Maxime Chevallier <maxime.chevallier@bootlin.com>,  Nadav Haklai <nadavh@marvell.com>,  linux-clk@vger.kernel.org,  linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: mvebu: armada-37xx-periph: add suspend/resume support
-References: <20180421142344.25944-1-miquel.raynal@bootlin.com>
-	<20180421142344.25944-2-miquel.raynal@bootlin.com>
-Date: Wed, 02 May 2018 18:18:37 +0200
-In-Reply-To: <20180421142344.25944-2-miquel.raynal@bootlin.com> (Miquel
-	Raynal's message of "Sat, 21 Apr 2018 16:23:44 +0200")
-Message-ID: <87in868202.fsf@bootlin.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Fri, 18 May 2018 11:59:13 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 00/26] arm64: allwinner: Add A64 DE2 HDMI support
+Message-ID: <20180518095913.nzl3sr5wn6cg4ra5@flea>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lqbqmyz32rvoa32o"
+In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Miquel,
- 
- On sam., avril 21 2018, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-> Add suspend/resume hooks in Armada 37xx peripheral clocks driver to
-> handle S2RAM operations.
->
-> One can think that these hooks are useless by comparing the register
-> values before and after a suspend/resume cycle: they will look the same
-> anyway. This is because of some scripts executed by the Cortex-M3 core
-> during ATF operations to init both the clocks and the DDR. These values
-> could be modified by the BL33 stage or by Linux itself and should be
-> preserved.
->
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/clk/mvebu/armada-37xx-periph.c | 48 ++++++++++++++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
->
-> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-> index 723bb7f6cea1..cd560bdcb8a9 100644
-> --- a/drivers/clk/mvebu/armada-37xx-periph.c
-> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
-> @@ -59,6 +59,15 @@ struct clk_periph_driver_data {
->  	struct clk_hw_onecell_data *hw_data;
->  	spinlock_t lock;
->  	void __iomem *reg;
-> +#if defined(CONFIG_PM)
-> +	/* Storage registers for suspend/resume operations */
-> +	u32 tbg_sel;
-> +	u32 div_sel0;
-> +	u32 div_sel1;
-> +	u32 div_sel2;
-> +	u32 clk_sel;
-> +	u32 clk_dis;
-> +#endif /* CONFIG_PM */
->  };
->  
->  struct clk_double_div {
-> @@ -642,6 +651,42 @@ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
->  	return PTR_ERR_OR_ZERO(*hw);
->  }
->  
-> +#if defined(CONFIG_PM)
+--lqbqmyz32rvoa32o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think you could get rid of this conditional code. Have a look on what
-is done in others drivers around DEV_PM_OPS and __maybe_unused.
+On Fri, May 18, 2018 at 03:15:10PM +0530, Jagan Teki wrote:
+> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T=
+/H3/H5.
+>=20
+> A64 behaviour similar to Allwinner A83T where
+> Mixer0 =3D> TCON0 =3D> LVDS/RGB/MIPI-DSI
+> Mixer1 =3D> TCON1 =3D> HDMI
+> as per Display System Block DiagramAllwinner_A64_User_Manual_V1.1.pdf
+>=20
+> This is second patch-set followed with previous RFC[1] and first series[2]
+> and merely concentrated on HDMI pipeline through TCON1 and rest will add =
+eventually.
+>=20
+> This series fixed previous version comments
+> - about documenting fallback compatibles
+> - adding new compatible for mixer1
+> - support for multiple DW HDMI PHY clock parents (thanks, to Jernej)
+>=20
+> Note:
+> Pine64 boards are unable to get edid by default like other A64 boards,
+> but forcing 'video=3DHDMI-A-1:1920x1080@60D' kernel command line can
+> create edid with display on penel.
 
-Gregory
+There's no point in trying to push this without the SRAM issue being
+solved. It is required, and won't be merged unless this is addressed.
 
+Maxime
 
-> +static int armada_3700_periph_clock_suspend(struct device *dev)
-> +{
-> +	struct clk_periph_driver_data *data = dev_get_drvdata(dev);
-> +
-> +	data->tbg_sel = readl(data->reg + TBG_SEL);
-> +	data->div_sel0 = readl(data->reg + DIV_SEL0);
-> +	data->div_sel1 = readl(data->reg + DIV_SEL1);
-> +	data->div_sel2 = readl(data->reg + DIV_SEL2);
-> +	data->clk_sel = readl(data->reg + CLK_SEL);
-> +	data->clk_dis = readl(data->reg + CLK_DIS);
-> +
-> +	return 0;
-> +}
-> +
-> +static int armada_3700_periph_clock_resume(struct device *dev)
-> +{
-> +	struct clk_periph_driver_data *data = dev_get_drvdata(dev);
-> +
-> +	/* Follow the same order than what the Cortex-M3 does (ATF code) */
-> +	writel(data->clk_dis, data->reg + CLK_DIS);
-> +	writel(data->div_sel0, data->reg + DIV_SEL0);
-> +	writel(data->div_sel1, data->reg + DIV_SEL1);
-> +	writel(data->div_sel2, data->reg + DIV_SEL2);
-> +	writel(data->tbg_sel, data->reg + TBG_SEL);
-> +	writel(data->clk_sel, data->reg + CLK_SEL);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops armada_3700_periph_clock_pm_ops = {
-> +	.suspend        = armada_3700_periph_clock_suspend,
-> +	.resume         = armada_3700_periph_clock_resume,
-> +};
-> +#endif /* CONFIG_PM */
-> +
->  static int armada_3700_periph_clock_probe(struct platform_device *pdev)
->  {
->  	struct clk_periph_driver_data *driver_data;
-> @@ -716,6 +761,9 @@ static struct platform_driver armada_3700_periph_clock_driver = {
->  	.driver		= {
->  		.name	= "marvell-armada-3700-periph-clock",
->  		.of_match_table = armada_3700_periph_clock_of_match,
-> +#if defined(CONFIG_PM)
-> +		.pm	= &armada_3700_periph_clock_pm_ops,
-> +#endif /* CONFIG_PM */
->  	},
->  };
->  
-> -- 
-> 2.14.1
->
-
--- 
-Gregory Clement, Bootlin (formerly Free Electrons)
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
-http://bootlin.com
+https://bootlin.com
+
+--lqbqmyz32rvoa32o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr+o/AACgkQ0rTAlCFN
+r3Qsvw/+IYCEl9D8E5EokAzm6aRTGeD6yW8l6UcG9E1m/9qe8YqtTD4gZr7xbJVu
+Lqzxd2SZ8v2yE8S+0HWma2g3jx5Fn4sjGqiKQsq9ncazecWvfF8Pl5nknqtjm4IQ
+w4/6vStoe6tQ+Ur3dmY5DmQMLEHDJT9RwmHYwrRRMpXtPWz1FENq7+xFAvX/gjPa
+IEoepWgFkMK3wOCx6j/5ig+E3BCjL5ImqFTZt0LmTGnt+0j9kxSKQ9qJqKU12E7S
+tVGOOc5jDbyw+Bt4wG2nCagjB5XAEH+Nnghi4TvR8Vk4J4b/q/jfVQOhFubRLPmQ
+EdBfabw3Hr8Uojpc70etX8q7dlHOQNlhuKmp38GtHAU1EaeeyAbSIHhNIP6hGMY8
+6kqNg68TUuwraNMYbNSHUX0yOM/9AtQgIvUUa73DwrgQa2u3SHdwNrIoS5xDAnj/
++Dkc97P2l9torcdzNDBcUwJf6tQxB9bhyCRu92EaVhsafV+Fwpe+x3fDR7tem9lp
+MA/i0mx/7pBpmcVVbxo9cvKQBdsA5HjHf+KLrGjayITQf4GTPS488KM5IjoAppXw
+O5xnq/VniGUDj1vsGFj6ZFU2SJAz+A4FIrYHAEfgTzueyh0vQE0Mtvkbh4n+2/U1
+gpjukrLRgGVPUHnsQg67tcJ7VCLCn9SykiX4PAK9WowBHtLaKKs=
+=S4r8
+-----END PGP SIGNATURE-----
+
+--lqbqmyz32rvoa32o--
