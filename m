@@ -1,60 +1,85 @@
-Return-Path: <christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@st.com
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
 	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] clk: stm32mp1: Fix a memory leak in 'clk_stm32_register_gate_ops()'
-Date: Sun, 13 May 2018 13:17:04 +0200
-Message-Id: <20180513111704.31842-1-christophe.jaillet@wanadoo.fr>
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 22/26] arm64: dts: allwinner: a64: nanopi-a64: Enable HDMI output
+Date: Fri, 18 May 2018 15:15:32 +0530
+Message-Id: <20180518094536.17201-23-jagan@amarulasolutions.com>
+In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-We allocate some memory which is neither used, nor referenced by anything.
-So axe it.
+Enable HDMI output on nanopi-a64 board.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
-This patch as not been compile-tested, I don't have the corresponding arch
-and have not taken time to cross-compile it.
----
- drivers/clk/clk-stm32mp1.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+Changes for v2:
+- none
 
-diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-index edd3cf451401..dfb9cb5bd0c4 100644
---- a/drivers/clk/clk-stm32mp1.c
-+++ b/drivers/clk/clk-stm32mp1.c
-@@ -579,14 +579,9 @@ clk_stm32_register_gate_ops(struct device *dev,
- 			    spinlock_t *lock)
- {
- 	struct clk_init_data init = { NULL };
--	struct clk_gate *gate;
- 	struct clk_hw *hw;
- 	int ret;
+ .../boot/dts/allwinner/sun50i-a64-nanopi-a64.dts   | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+index e2dce48fa29a..19fe7eed45e9 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+@@ -57,6 +57,21 @@
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++};
++
++&de {
++	status = "okay";
+ };
  
--	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
--	if (!gate)
--		return ERR_PTR(-ENOMEM);
--
- 	init.name = name;
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
-@@ -604,10 +599,8 @@ clk_stm32_register_gate_ops(struct device *dev,
- 	hw->init = &init;
+ &ehci0 {
+@@ -67,6 +82,17 @@
+ 	status = "okay";
+ };
  
- 	ret = clk_hw_register(dev, hw);
--	if (ret) {
--		kfree(gate);
-+	if (ret)
- 		hw = ERR_PTR(ret);
--	}
- 
- 	return hw;
- }
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ /* i2c1 connected with gpio headers like pine64, bananapi */
+ &i2c1 {
+ 	pinctrl-names = "default";
 -- 
-2.17.0
+2.14.3
