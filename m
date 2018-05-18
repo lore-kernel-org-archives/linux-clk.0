@@ -1,187 +1,76 @@
-Return-Path: <leo.yan@linaro.org>
-Return-Path: <leo.yan@linaro.org>
-From: Leo Yan <leo.yan@linaro.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
 	linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 3/5] arm64: dts: hi3660: Add CPU frequency scaling support
-Date: Tue, 15 May 2018 10:53:13 +0800
-Message-Id: <1526352795-6991-4-git-send-email-leo.yan@linaro.org>
-In-Reply-To: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
-References: <1526352795-6991-1-git-send-email-leo.yan@linaro.org>
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 07/26] dt-bindings: display: Add compatible for A64 DE2 tcon1 blocks
+Date: Fri, 18 May 2018 15:15:17 +0530
+Message-Id: <20180518094536.17201-8-jagan@amarulasolutions.com>
+In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add two CPU OPP tables, one table is corresponding to one cluster,
-which allow CPU frequency scaling on hi3660 platforms.
+Allwinner A64 has DE2 pipeline with tcon0 and tcon1 block
+which is similar Allwinner A83T.
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+This patch adds dt-binding documentation for A64 DE2 tcon1 blocks.
+
+Mixer1 has different configuration for A64 so use separate compatible
+but tcon1 has similar behaviour with A83T so add fallback compatible.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 86 +++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+Changes for v2:
+- Add fallback compatible for tcon1
+- Add separate compatible for mixer1 
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index 3a3bcff..a39da09 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -62,6 +62,8 @@
- 			next-level-cache = <&A53_L2>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
-+			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 3346c1e2a7a0..863afad6a4df 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -148,6 +148,7 @@ Required properties:
+    * allwinner,sun8i-v3s-tcon
+    * allwinner,sun9i-a80-tcon-lcd
+    * allwinner,sun9i-a80-tcon-tv
++   * "allwinner,sun50i-a64-tcon-tv", "allwinner,sun8i-a83t-tcon-tv"
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+  - clocks: phandles to the clocks feeding the TCON.
+@@ -311,6 +312,7 @@ Required properties:
+     * allwinner,sun8i-a83t-de2-mixer-1
+     * allwinner,sun8i-h3-de2-mixer-0
+     * allwinner,sun8i-v3s-de2-mixer
++    * allwinner,sun50i-a64-de2-mixer-1"
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+     * bus: the mixer interface clock
+@@ -343,6 +345,7 @@ Required properties:
+     * allwinner,sun8i-h3-display-engine
+     * allwinner,sun8i-v3s-display-engine
+     * allwinner,sun9i-a80-display-engine
++    * allwinner,sun50i-a64-display-engine
  
- 		cpu1: cpu@1 {
-@@ -72,6 +74,8 @@
- 			next-level-cache = <&A53_L2>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
-+			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -82,6 +86,8 @@
- 			next-level-cache = <&A53_L2>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
-+			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -92,6 +98,8 @@
- 			next-level-cache = <&A53_L2>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
-+			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		cpu4: cpu@100 {
-@@ -102,6 +110,8 @@
- 			next-level-cache = <&A73_L2>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		cpu5: cpu@101 {
-@@ -112,6 +122,8 @@
- 			next-level-cache = <&A73_L2>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		cpu6: cpu@102 {
-@@ -122,6 +134,8 @@
- 			next-level-cache = <&A73_L2>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		cpu7: cpu@103 {
-@@ -132,6 +146,8 @@
- 			next-level-cache = <&A73_L2>;
- 			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
-+			operating-points-v2 = <&cluster1_opp>;
- 		};
- 
- 		idle-states {
-@@ -174,6 +190,76 @@
- 		};
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp00 {
-+			opp-hz = /bits/ 64 <533000000>;
-+			opp-microvolt = <700000>;
-+			clock-latency-ns = <300000>;
-+		};
-+
-+		opp01 {
-+			opp-hz = /bits/ 64 <999000000>;
-+			opp-microvolt = <800000>;
-+			clock-latency-ns = <300000>;
-+		};
-+
-+		opp02 {
-+			opp-hz = /bits/ 64 <1402000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <300000>;
-+		};
-+
-+		opp03 {
-+			opp-hz = /bits/ 64 <1709000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <300000>;
-+		};
-+
-+		opp04 {
-+			opp-hz = /bits/ 64 <1844000000>;
-+			opp-microvolt = <1100000>;
-+			clock-latency-ns = <300000>;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp10 {
-+			opp-hz = /bits/ 64 <903000000>;
-+			opp-microvolt = <700000>;
-+			clock-latency-ns = <300000>;
-+		};
-+
-+		opp11 {
-+			opp-hz = /bits/ 64 <1421000000>;
-+			opp-microvolt = <800000>;
-+			clock-latency-ns = <300000>;
-+		};
-+
-+		opp12 {
-+			opp-hz = /bits/ 64 <1805000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <300000>;
-+		};
-+
-+		opp13 {
-+			opp-hz = /bits/ 64 <2112000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <300000>;
-+		};
-+
-+		opp14 {
-+			opp-hz = /bits/ 64 <2362000000>;
-+			opp-microvolt = <1100000>;
-+			clock-latency-ns = <300000>;
-+		};
-+	};
-+
- 	gic: interrupt-controller@e82b0000 {
- 		compatible = "arm,gic-400";
- 		reg = <0x0 0xe82b1000 0 0x1000>, /* GICD */
+   - allwinner,pipelines: list of phandle to the display engine
+     frontends (DE 1.0) or mixers (DE 2.0) available.
 -- 
-1.9.1
+2.14.3
