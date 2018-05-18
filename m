@@ -1,63 +1,50 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 24 May 2018 18:59:40 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"lee.jones@linaro.org" <lee.jones@linaro.org>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
-	"Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
-Subject: Re: [PATCH 8/9] regulator: bd71837: BD71837 PMIC regulator driver
-Message-ID: <20180524175940.GC4828@sirena.org.uk>
-References: <20180524060036.GI4249@localhost.localdomain>
- <20180524141427.GU4828@sirena.org.uk>
- <042F8805D2046347BB8420BEAE397A4016C06B60@WILL-MAIL002.REu.RohmEu.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39144 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750841AbeEROTD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 10:19:03 -0400
+Received: by mail-wr0-f196.google.com with SMTP id w18-v6so5640432wrn.6
+        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 07:19:02 -0700 (PDT)
+References: <20180518092806.3829-1-rui.silva@linaro.org> <20180518092806.3829-2-rui.silva@linaro.org> <1526639561.3948.2.camel@pengutronix.de>
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Rui Miguel Silva <rui.silva@linaro.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 01/12] media: staging/imx: refactor imx media device probe
+In-reply-to: <1526639561.3948.2.camel@pengutronix.de>
+Date: Fri, 18 May 2018 15:18:57 +0100
+Message-ID: <m3k1s1rqr2.fsf@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GD+uNaHYxbVPHaQt"
-In-Reply-To: <042F8805D2046347BB8420BEAE397A4016C06B60@WILL-MAIL002.REu.RohmEu.com>
+Content-Type: text/plain; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Philipp,
+Thanks for the quick review.
 
---GD+uNaHYxbVPHaQt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri 18 May 2018 at 10:32, Philipp Zabel wrote:
+> Hi Rui,
+>
+> thank you for refactoring, I think this is much better than 
+> having the
+> pretend capture-subsytem device in the DT.
+>
+> I would like to get rid of the ipu_present flag, if it can be 
+> done
+> reasonably. For details, see below.
 
-On Thu, May 24, 2018 at 05:51:27PM +0000, Vaittinen, Matti wrote:
+Yes, I will try to come with something that will play along with 
+your
+comments. will be in v6.
 
-> > what is the lock doing and what is this wrapper function intended to do?
+---
+Cheers,
+	Rui
 
-> This was the other spot which I was unsure how to handle. Datasheet for
-> the chip says that if voltage is to be changed, the regulator must be
-> disabled. Thus my voltage changing function checks if regulator is enabled
-
-Ugh, this chip is not very good is it?  Don't bounce the supply to
-change the voltage silently, that's clearly a bad idea - the devices
-using the supply are going to get very upset when the power gets removed
-just because they changed the voltage.  Instead implement a custom set
-operation that returns an error if the user attempts to change the
-voltage while the regualtor is enabled.
-
---GD+uNaHYxbVPHaQt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsG/YwACgkQJNaLcl1U
-h9BXpQf/WYbuiSe8ThB/68hLWXcXe3R37BpLnhEleUsosoSpg1qIgd5EcyLZol1P
-4xry9Bl24RtomPJWJhsxaYEp9sRNJOr2CZ6UDoxvFzGN9EGFlDaDFyu2Zy4QmvCl
-f1OtoRzlLsB4iDPdpcG1Z9nPPWwS/FV7R8fN/f5sEj0GsL+6m6fo4KL0ZGl7Awln
-qgNLzK3U+QvstXEW7izC9C3KGi4rNDSrJL7geZDuwYcRp8nZnRRg3LPa4Zdad+gz
-w+yIxJEfxdqr0M0ZcDbihsfm2j76Mn8PI+4JgolZVDfyN6iaief0ANSH2R/6kI0x
-aT2Mc98aWauj7tVBmCeen3QNVSt1SQ==
-=unJ+
------END PGP SIGNATURE-----
-
---GD+uNaHYxbVPHaQt--
