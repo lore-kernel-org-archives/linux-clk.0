@@ -1,46 +1,128 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:41910 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeEUJSt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 May 2018 05:18:49 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180515163652.19980-2-jbrunet@baylibre.com>
-References: <20180515163652.19980-1-jbrunet@baylibre.com> <20180515163652.19980-2-jbrunet@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Mon, 21 May 2018 11:18:28 +0200
-Message-ID: <CAFBinCCdKgFOod=JimSnBVRvQ8Xmggpa0Uok3rgr3ixB7o+fnA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: meson: mpll: add round closest support
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v11 12/27] ARM: davinci: da8xx: add new sata_refclk init using common clock framework
+Date: Fri, 18 May 2018 11:48:14 -0500
+Message-Id: <20180518164829.27052-13-david@lechnology.com>
+In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
+References: <20180518164829.27052-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 15, 2018 at 6:36 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> Allow the mpll driver to round the requested rate up if
-> CLK_MESON_MPLL_ROUND_CLOSEST is set and it provides a rate closer to the
-> requested rate.
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Acked-by: Martin Blumenstingl<martin.blumenstingl@googlemail.com>
+This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
+using the new common clock framework drivers.
 
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-I gave it a quick spin on Odroid-C1 (which uses an RGMII Ethernet PHY
-and the RGMII TX clock is supplied by MPLL2). the clock tree looks
-fine and Ethernet is still working:
-          mpll2_div                   1        1        0   249999701
-        0 0
-            mpll2                    1        1        0   249999701
-       0 0
-               c9410000.ethernet#m250_sel       1        1        0
-249999701          0 0
-                  c9410000.ethernet#m250_div       1        1        0
-  249999701          0 0
-                     c9410000.ethernet#fixed_div2       1        1
-   0   124999850          0 0
-                        c9410000.ethernet#rgmii_tx_en       1        1
-       0   124999850          0 0
+Also, the #includes are sorted since we are adding some here.
+
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+---
+
+v10 changes:
+- none
+
+v10 changes:
+- none
+
+v9 changes:
+- none
+
+v8 changes:
+- none
+
+v7 changes:
+- none
+
+v6 changes:
+- none
+
+ arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 78390c64e6ca..73de449bbc68 100644
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -10,25 +10,30 @@
+  * the Free Software Foundation; either version 2 of the License, or
+  * (at your option) any later version.
+  */
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+-#include <linux/dma-contiguous.h>
+-#include <linux/serial_8250.h>
+ #include <linux/ahci_platform.h>
++#include <linux/clk-provider.h>
+ #include <linux/clk.h>
+-#include <linux/reboot.h>
++#include <linux/clkdev.h>
++#include <linux/dma-contiguous.h>
+ #include <linux/dmaengine.h>
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/reboot.h>
++#include <linux/serial_8250.h>
+ 
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
++#include <mach/cputype.h>
+ #include <mach/da8xx.h>
+-#include <mach/clock.h>
++#include <mach/time.h>
++
++#include "asp.h"
+ #include "cpuidle.h"
+ #include "sram.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include <mach/clock.h>
+ #include "clock.h"
+-#include "asp.h"
++#endif
+ 
+ #define DA8XX_TPCC_BASE			0x01c00000
+ #define DA8XX_TPTC0_BASE		0x01c08000
+@@ -1040,6 +1045,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
+ }
+ 
+ #ifdef CONFIG_ARCH_DAVINCI_DA850
++#ifndef CONFIG_COMMON_CLK
+ static struct clk sata_refclk = {
+ 	.name		= "sata_refclk",
+ 	.set_rate	= davinci_simple_set_rate,
+@@ -1061,6 +1067,18 @@ int __init da850_register_sata_refclk(int rate)
+ 
+ 	return 0;
+ }
++#else
++int __init da850_register_sata_refclk(int rate)
++{
++	struct clk *clk;
++
++	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	return clk_register_clkdev(clk, "refclk", "ahci_da850");
++}
++#endif
+ 
+ static struct resource da850_sata_resources[] = {
+ 	{
+-- 
+2.17.0
