@@ -1,70 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f179.google.com ([74.125.82.179]:36571 "EHLO
-        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752087AbeENVAg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 May 2018 17:00:36 -0400
-Received: by mail-ot0-f179.google.com with SMTP id m11-v6so15951464otf.3
-        for <linux-clk@vger.kernel.org>; Mon, 14 May 2018 14:00:36 -0700 (PDT)
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v10 25/27] ARM: davinci: add device tree support to timer
+To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+ Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
+References: <20180509172606.29387-1-david@lechnology.com>
+ <20180509172606.29387-26-david@lechnology.com>
+ <8fa98514-7651-58cb-595e-6c7f713540b8@ti.com>
+ <1162de58-00bc-fdfa-eef1-48a094834ac3@lechnology.com>
+ <c7064bee-d385-4496-c19e-1b72853b01f1@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <9bc3fb8f-ca03-9cfd-1e9d-51f8c9347da7@lechnology.com>
+Date: Fri, 18 May 2018 10:35:54 -0500
 MIME-Version: 1.0
-In-Reply-To: <1526292199.2897.7.camel@baylibre.com>
-References: <20180501214555.11476-1-martin.blumenstingl@googlemail.com>
- <CAFBinCBz9ne9qeU3a6SQJpqRFm0ix0Dc0LYvmzWKmKJWVML_UQ@mail.gmail.com> <1526292199.2897.7.camel@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Mon, 14 May 2018 23:00:15 +0200
-Message-ID: <CAFBinCB6r5X6-714cBN=eftaA95j7F2RU3X5-kguBt1-5gQmkQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: meson8b: mark fclk_div gate clocks as CLK_IS_CRITICAL
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: yixun.lan@amlogic.com, linux-amlogic@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <c7064bee-d385-4496-c19e-1b72853b01f1@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 14, 2018 at 12:03 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> On Tue, 2018-05-01 at 23:55 +0200, Martin Blumenstingl wrote:
->> Hello Yixun,
+On 05/18/2018 01:05 AM, Sekhar Nori wrote:
+> On Thursday 17 May 2018 08:39 PM, David Lechner wrote:
+>> On 05/17/2018 09:35 AM, Sekhar Nori wrote:
+>>> Hi David,
+>>>
+>>> On Wednesday 09 May 2018 10:56 PM, David Lechner wrote:
+>>>> This adds device tree support to the davinci timer so that when clocks
+>>>> are moved to device tree, the timer will still work.
+>>>>
+>>>> Signed-off-by: David Lechner <david@lechnology.com>
+>>>> ---
+>>>
+>>>> +static int __init of_davinci_timer_init(struct device_node *np)
+>>>> +{
+>>>> +    struct clk *clk;
+>>>> +
+>>>> +    clk = of_clk_get(np, 0);
+>>>> +    if (IS_ERR(clk)) {
+>>>> +        struct of_phandle_args clkspec;
+>>>> +
+>>>> +        /*
+>>>> +         * Fall back to using ref_clk if the actual clock is not
+>>>> +         * available. There will be problems later if the real clock
+>>>> +         * source is disabled.
+>>>> +         */
+>>>> +
+>>>> +        pr_warn("%s: falling back to ref_clk\n", __func__);
+>>>> +
+>>>> +        clkspec.np = of_find_node_by_name(NULL, "ref_clk");
+>>>> +        if (IS_ERR(clkspec.np)) {
+>>>> +            pr_err("%s: No clock available for timer!\n", __func__);
+>>>> +            return PTR_ERR(clkspec.np);
+>>>> +        }
+>>>> +        clk = of_clk_get_from_provider(&clkspec);
+>>>> +        of_node_put(clkspec.np);
+>>>> +    }
+>>>
+>>> Do we need this error path now?
+>>>
+>>> Thanks,
+>>> Sekhar
+>>>
 >>
->> On Tue, May 1, 2018 at 11:45 PM, Martin Blumenstingl
->> <martin.blumenstingl@googlemail.com> wrote:
->> > Until commit 05f814402d6174 ("clk: meson: add fdiv clock gates") we
->> > relied on the bootloader to enable the fclk_div clock gates. It turns
->> > out that our clock tree is incomplete at least on Meson8b (tested with
->> > an Odroid-C1, which uses an RGMII PHY) because after the mentioned
->> > commit Ethernet is not working anymore (no RX/TX activity can be seen).
->> > At the same time Ethernet was still working on Meson8m2 with a RMII PHY.
->> >
->> > It is currently not clear which of the fclk_div gates is required for
->> > (RGMII) Ethernet operation on Meson8b and why. Mark the fclk_div gates
->> > as CLK_IS_CRITICAL so the common clock framework keeps these gates
->> > enabled for us until we know which clock is required for Ethernet on
->> > Meson8b and which driver has to claim it.
->>
->> based on the public datasheet for Meson8b (S805) I cannot see which
->> part of the SoC uses fclk_divX for (RGMII) Ethernet.
->> I did some further tests and it seems that Ethernet is not working if
->> fclk_div2 is disabled (the other fclk_divX don't seem to affect
->> Ethernet operation)
->>
->> could you please check your internal datasheets and let us know how
->> fclk_div2 is routed internally and how it can affect Ethernet data
->> transfers?
->
-> Hi Martin,
->
-> As usual, thanks for your thorough work !
->
-> Now that you know which of the fdiv is actually required, I would prefer if we
-> could mark only the required clock as critical.
-OK, I'll re-send the patch this weekend
+>> No, not really.
+> 
+> Then lets just print an error and return the error number.
+> 
 
-> Also, could you please add a short FIXME comment in the code explaining why this
-> is necessary. This should a be temporary fix while we get the ethernet driver
-> sorted out. If the ethernet of the meson8b requires the fdiv2 it should claim it
-> (through other clock if necessary)
-I'll include the "FIXME" comment
-and I totally agree that this should only be a temporary workaround
-
-
-Regards
-Martin
+OK. FYI, timer_probe() prints the error if we return and error, so
+I will just return the error.
