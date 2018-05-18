@@ -1,60 +1,202 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v6 02/14] clk: qcom: Make clk_alpha_pll_configure available to modules
-Date: Mon, 14 May 2018 16:11:48 +0300
-Message-Id: <1526303520-5843-3-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
-References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v11 05/27] ARM: davinci: da830: add new clock init using common clock framework
+Date: Fri, 18 May 2018 11:48:07 -0500
+Message-Id: <20180518164829.27052-6-david@lechnology.com>
+In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
+References: <20180518164829.27052-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+This adds the new board-specific clock init in mach-davinci/da830.c
+using the new common clock framework drivers.
 
-Allow clk_alpha_pll_configure to be called from loadable
-kernel modules.
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Also clean up the #includes since we are adding some here.
+
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 9722b70..57f2084 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -228,6 +228,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 	if (pll->flags & SUPPORTS_FSM_MODE)
- 		qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
- }
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
+v11 changes:
+- none
+
+v10 changes:
+- none
+
+v9 changes:
+- register PLL in da830_init_time() instead of as platform device so that we
+  get the correct timer0 clock for davinci_timer_init()
+
+v8 changes:
+- none
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- clkdev lookup is moved to drivers/clk
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
+- include da8xx_register_cfgchip()
+
+ arch/arm/mach-davinci/board-da830-evm.c    |  2 +
+ arch/arm/mach-davinci/da830.c              | 70 ++++++++++++++++++++--
+ arch/arm/mach-davinci/include/mach/da8xx.h |  1 +
+ 3 files changed, 67 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index 14a6fc061744..74df37821abe 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -557,6 +557,8 @@ static __init void da830_evm_init(void)
+ 	struct davinci_soc_info *soc_info = &davinci_soc_info;
+ 	int ret;
  
- static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
++	da830_register_clocks();
++
+ 	ret = da830_register_gpio();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index 0b17e5a22e5e..8a79e245db1f 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -8,23 +8,27 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
++#include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+-#include <linux/clk.h>
+ #include <linux/platform_data/gpio-davinci.h>
+ 
+ #include <asm/mach/map.h>
+ 
+-#include "psc.h"
+-#include <mach/irqs.h>
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
++#include <mach/cputype.h>
+ #include <mach/da8xx.h>
++#include <mach/irqs.h>
++#include <mach/time.h>
+ 
+-#include "clock.h"
+ #include "mux.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
++
+ /* Offsets of the 8 compare registers on the da830 */
+ #define DA830_CMP12_0		0x60
+ #define DA830_CMP12_1		0x64
+@@ -37,6 +41,7 @@
+ 
+ #define DA830_REF_FREQ		24000000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct pll_data pll0_data = {
+ 	.num		= 1,
+ 	.phys_base	= DA8XX_PLL0_BASE,
+@@ -432,6 +437,7 @@ static struct clk_lookup da830_clks[] = {
+ 	CLK(NULL,		"rmii",		&rmii_clk),
+ 	CLK(NULL,		NULL,		NULL),
+ };
++#endif
+ 
+ /*
+  * Device specific mux setup
+@@ -1223,6 +1229,58 @@ void __init da830_init(void)
+ 
+ void __init da830_init_time(void)
  {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll;
++	struct clk *clk;
++
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
++
++	pll = ioremap(DA8XX_PLL0_BASE, SZ_4K);
++
++	da830_pll_init(NULL, pll, NULL);
++
++	clk = clk_get(NULL, "timer0");
++
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(da830_clks);
+ 	davinci_timer_init(&timerp64_0_clk);
++#endif
++}
++
++static struct resource da830_psc0_resources[] = {
++	{
++		.start	= DA8XX_PSC0_BASE,
++		.end	= DA8XX_PSC0_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device da830_psc0_device = {
++	.name		= "da830-psc0",
++	.id		= -1,
++	.resource	= da830_psc0_resources,
++	.num_resources	= ARRAY_SIZE(da830_psc0_resources),
++};
++
++static struct resource da830_psc1_resources[] = {
++	{
++		.start	= DA8XX_PSC1_BASE,
++		.end	= DA8XX_PSC1_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device da830_psc1_device = {
++	.name		= "da830-psc1",
++	.id		= -1,
++	.resource	= da830_psc1_resources,
++	.num_resources	= ARRAY_SIZE(da830_psc1_resources),
++};
++
++void __init da830_register_clocks(void)
++{
++	/* PLL is registered in da830_init_time() */
++	platform_device_register(&da830_psc0_device);
++	platform_device_register(&da830_psc1_device);
+ }
+diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
+index 9fd6d0125762..64861ac6a9d4 100644
+--- a/arch/arm/mach-davinci/include/mach/da8xx.h
++++ b/arch/arm/mach-davinci/include/mach/da8xx.h
+@@ -89,6 +89,7 @@ extern unsigned int da850_max_speed;
+ 
+ void da830_init(void);
+ void da830_init_time(void);
++void da830_register_clocks(void);
+ 
+ void da850_init(void);
+ void da850_init_time(void);
 -- 
-1.9.1
+2.17.0
