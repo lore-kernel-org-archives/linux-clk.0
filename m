@@ -1,1101 +1,944 @@
-Return-Path: <stefan@agner.ch>
-From: Stefan Agner <stefan@agner.ch>
-To: boris.brezillon@bootlin.com,
-	dwmw2@infradead.org,
-	computersforpeace@gmail.com,
-	marek.vasut@gmail.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	thierry.reding@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: dev@lynxeye.de,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	marcel@ziswiler.com,
-	krzk@kernel.org,
-	digetx@gmail.com,
-	benjamin.lindqvist@endian.se,
-	jonathanh@nvidia.com,
-	pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mirza.krak@gmail.com,
-	linux-mtd@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 3/6] mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
-Date: Sun, 27 May 2018 23:54:39 +0200
-Message-Id: <20180527215442.14760-4-stefan@agner.ch>
+	linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v11 01/27] clk: davinci: pll: allow dev == NULL
+Date: Fri, 18 May 2018 11:48:03 -0500
+Message-Id: <20180518164829.27052-2-david@lechnology.com>
+In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
+References: <20180518164829.27052-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the NAND flash controller found on NVIDIA
-Tegra 2 SoCs. This implementation does not make use of the
-command queue feature. Regular operations/data transfers are
-done in PIO mode. Page read/writes with hardware ECC make
-use of the DMA for data transfer.
+This modifies the TI Davinci PLL clock driver to allow for the case
+when dev == NULL. On some (most) SoCs that use this driver, the PLL
+clock needs to be registered during early boot because it is used
+for clocksource/clkevent and there will be no platform device available.
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Some function declarations are moved to a public header files so that they can
+be called from mach init code.
+
+Also fix some missing @dev doc comments that would have been touched in this
+patch anyway.
+
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- MAINTAINERS                       |   7 +
- drivers/mtd/nand/raw/Kconfig      |   6 +
- drivers/mtd/nand/raw/Makefile     |   1 +
- drivers/mtd/nand/raw/tegra_nand.c | 999 ++++++++++++++++++++++++++++++
- 4 files changed, 1013 insertions(+)
- create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 58b9861ccf99..8cbbb7111742 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13844,6 +13844,13 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
- S:	Supported
- F:	drivers/input/keyboard/tegra-kbc.c
+v11 changes:
+- proper unwinding on errors
+- add #include <linux/clk/davinci.h> to avoid W=1 warnings
+- fix more @dev in doc comments to avoid sparse warning
+
+v10 changes:
+- dropped helper functions that called devm_* versions of functions.
+- removed duplicate function declarations from pll.h
+
+v9 changes:
+- new patch in v9
+
+
+ drivers/clk/davinci/pll-da830.c  |   5 +-
+ drivers/clk/davinci/pll-da850.c  |  22 +--
+ drivers/clk/davinci/pll-dm355.c  |   9 +-
+ drivers/clk/davinci/pll-dm365.c  |   9 +-
+ drivers/clk/davinci/pll-dm644x.c |   9 +-
+ drivers/clk/davinci/pll-dm646x.c |   9 +-
+ drivers/clk/davinci/pll.c        | 275 +++++++++++++++++++++----------
+ drivers/clk/davinci/pll.h        |  30 ++--
+ include/linux/clk/davinci.h      |  24 +++
+ 9 files changed, 256 insertions(+), 136 deletions(-)
+ create mode 100644 include/linux/clk/davinci.h
+
+diff --git a/drivers/clk/davinci/pll-da830.c b/drivers/clk/davinci/pll-da830.c
+index 929a3d3a9adb..0a0d06fb25fd 100644
+--- a/drivers/clk/davinci/pll-da830.c
++++ b/drivers/clk/davinci/pll-da830.c
+@@ -6,6 +6,7 @@
+  */
  
-+TEGRA NAND DRIVER
-+M:	Stefan Agner <stefan@agner.ch>
-+M:	Lucas Stach <dev@lynxeye.de>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-+F:	drivers/mtd/nand/raw/tegra_nand.c
+ #include <linux/clkdev.h>
++#include <linux/clk/davinci.h>
+ #include <linux/bitops.h>
+ #include <linux/init.h>
+ #include <linux/types.h>
+@@ -36,11 +37,11 @@ SYSCLK(5, pll0_sysclk5, pll0_pllen, 5, 0);
+ SYSCLK(6, pll0_sysclk6, pll0_pllen, 5, SYSCLK_FIXED_DIV);
+ SYSCLK(7, pll0_sysclk7, pll0_pllen, 5, 0);
+ 
+-int da830_pll_init(struct device *dev, void __iomem *base)
++int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &da830_pll_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &da830_pll_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk2, base);
+ 	clk_register_clkdev(clk, "pll0_sysclk2", "da830-psc0");
+diff --git a/drivers/clk/davinci/pll-da850.c b/drivers/clk/davinci/pll-da850.c
+index 2a038b7908cc..59cc2e3733f9 100644
+--- a/drivers/clk/davinci/pll-da850.c
++++ b/drivers/clk/davinci/pll-da850.c
+@@ -7,7 +7,9 @@
+ 
+ #include <linux/bitops.h>
+ #include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
+ #include <linux/clkdev.h>
++#include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/da8xx-cfgchip.h>
+@@ -81,11 +83,11 @@ static const struct davinci_pll_obsclk_info da850_pll0_obsclk_info = {
+ 	.ocsrc_mask = GENMASK(4, 0),
+ };
+ 
+-int da850_pll0_init(struct device *dev, void __iomem *base)
++int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &da850_pll0_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &da850_pll0_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk1, base);
+ 	clk_register_clkdev(clk, "pll0_sysclk1", "da850-psc0");
+@@ -134,11 +136,11 @@ static const struct davinci_pll_sysclk_info *da850_pll0_sysclk_info[] = {
+ 	NULL
+ };
+ 
+-int of_da850_pll0_init(struct device *dev, void __iomem *base)
++int of_da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-	return of_davinci_pll_init(dev, &da850_pll0_info,
++	return of_davinci_pll_init(dev, dev->of_node, &da850_pll0_info,
+ 				   &da850_pll0_obsclk_info,
+-				   da850_pll0_sysclk_info, 7, base);
++				   da850_pll0_sysclk_info, 7, base, cfgchip);
+ }
+ 
+ static const struct davinci_pll_clk_info da850_pll1_info = {
+@@ -179,11 +181,11 @@ static const struct davinci_pll_obsclk_info da850_pll1_obsclk_info = {
+ 	.ocsrc_mask = GENMASK(4, 0),
+ };
+ 
+-int da850_pll1_init(struct device *dev, void __iomem *base)
++int da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &da850_pll1_info, "oscin", base);
++	davinci_pll_clk_register(dev, &da850_pll1_info, "oscin", base, cfgchip);
+ 
+ 	davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
+ 
+@@ -204,9 +206,9 @@ static const struct davinci_pll_sysclk_info *da850_pll1_sysclk_info[] = {
+ 	NULL
+ };
+ 
+-int of_da850_pll1_init(struct device *dev, void __iomem *base)
++int of_da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-	return of_davinci_pll_init(dev, &da850_pll1_info,
++	return of_davinci_pll_init(dev, dev->of_node, &da850_pll1_info,
+ 				   &da850_pll1_obsclk_info,
+-				   da850_pll1_sysclk_info, 3, base);
++				   da850_pll1_sysclk_info, 3, base, cfgchip);
+ }
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+index 93f4a53d6b44..505aed80be9a 100644
+--- a/drivers/clk/davinci/pll-dm355.c
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/bitops.h>
++#include <linux/clk/davinci.h>
+ #include <linux/clkdev.h>
+ #include <linux/init.h>
+ #include <linux/types.h>
+@@ -27,11 +28,11 @@ SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED)
+ SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
+ SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
+ 
+-int dm355_pll1_init(struct device *dev, void __iomem *base)
++int dm355_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &dm355_pll1_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &dm355_pll1_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
+ 	clk_register_clkdev(clk, "pll1_sysclk1", "dm355-psc");
+@@ -64,9 +65,9 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
+ 
+ SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+ 
+-int dm355_pll2_init(struct device *dev, void __iomem *base)
++int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-	davinci_pll_clk_register(dev, &dm355_pll2_info, "oscin", base);
++	davinci_pll_clk_register(dev, &dm355_pll2_info, "oscin", base, cfgchip);
+ 
+ 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
+ 
+diff --git a/drivers/clk/davinci/pll-dm365.c b/drivers/clk/davinci/pll-dm365.c
+index 5f8d9f42d0f3..2d29712753a3 100644
+--- a/drivers/clk/davinci/pll-dm365.c
++++ b/drivers/clk/davinci/pll-dm365.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/bitops.h>
+ #include <linux/clkdev.h>
++#include <linux/clk/davinci.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+@@ -56,11 +57,11 @@ static const struct davinci_pll_obsclk_info dm365_pll1_obsclk_info = {
+ 	.ocsrc_mask = BIT(4),
+ };
+ 
+-int dm365_pll1_init(struct device *dev, void __iomem *base)
++int dm365_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &dm365_pll1_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &dm365_pll1_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
+ 	clk_register_clkdev(clk, "pll1_sysclk1", "dm365-psc");
+@@ -119,11 +120,11 @@ static const struct davinci_pll_obsclk_info dm365_pll2_obsclk_info = {
+ 	.ocsrc_mask = BIT(4),
+ };
+ 
+-int dm365_pll2_init(struct device *dev, void __iomem *base)
++int dm365_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &dm365_pll2_info, "oscin", base);
++	davinci_pll_clk_register(dev, &dm365_pll2_info, "oscin", base, cfgchip);
+ 
+ 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
+ 
+diff --git a/drivers/clk/davinci/pll-dm644x.c b/drivers/clk/davinci/pll-dm644x.c
+index 69bf785377cf..7650fadfaac8 100644
+--- a/drivers/clk/davinci/pll-dm644x.c
++++ b/drivers/clk/davinci/pll-dm644x.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/bitops.h>
++#include <linux/clk/davinci.h>
+ #include <linux/clkdev.h>
+ #include <linux/init.h>
+ #include <linux/types.h>
+@@ -27,11 +28,11 @@ SYSCLK(2, pll1_sysclk2, pll1_pllen, 4, SYSCLK_FIXED_DIV);
+ SYSCLK(3, pll1_sysclk3, pll1_pllen, 4, SYSCLK_FIXED_DIV);
+ SYSCLK(5, pll1_sysclk5, pll1_pllen, 4, SYSCLK_FIXED_DIV);
+ 
+-int dm644x_pll1_init(struct device *dev, void __iomem *base)
++int dm644x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &dm644x_pll1_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &dm644x_pll1_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
+ 	clk_register_clkdev(clk, "pll1_sysclk1", "dm644x-psc");
+@@ -66,9 +67,9 @@ static const struct davinci_pll_clk_info dm644x_pll2_info = {
+ SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
+ SYSCLK(2, pll2_sysclk2, pll2_pllen, 4, 0);
+ 
+-int dm644x_pll2_init(struct device *dev, void __iomem *base)
++int dm644x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-	davinci_pll_clk_register(dev, &dm644x_pll2_info, "oscin", base);
++	davinci_pll_clk_register(dev, &dm644x_pll2_info, "oscin", base, cfgchip);
+ 
+ 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
+ 
+diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
+index 0ae827e3ce80..26982970df0e 100644
+--- a/drivers/clk/davinci/pll-dm646x.c
++++ b/drivers/clk/davinci/pll-dm646x.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
+ #include <linux/clkdev.h>
+ #include <linux/init.h>
+ #include <linux/types.h>
+@@ -29,11 +30,11 @@ SYSCLK(6, pll1_sysclk6, pll1_pllen, 4, 0);
+ SYSCLK(8, pll1_sysclk8, pll1_pllen, 4, 0);
+ SYSCLK(9, pll1_sysclk9, pll1_pllen, 4, 0);
+ 
+-int dm646x_pll1_init(struct device *dev, void __iomem *base)
++int dm646x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &dm646x_pll1_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &dm646x_pll1_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
+ 	clk_register_clkdev(clk, "pll1_sysclk1", "dm646x-psc");
+@@ -74,9 +75,9 @@ static const struct davinci_pll_clk_info dm646x_pll2_info = {
+ 
+ SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, SYSCLK_ALWAYS_ENABLED);
+ 
+-int dm646x_pll2_init(struct device *dev, void __iomem *base)
++int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-	davinci_pll_clk_register(dev, &dm646x_pll2_info, "oscin", base);
++	davinci_pll_clk_register(dev, &dm646x_pll2_info, "oscin", base, cfgchip);
+ 
+ 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
+ 
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 23a24c944f1d..ae5f966b503f 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/clk-provider.h>
+ #include <linux/clk.h>
++#include <linux/clk/davinci.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+@@ -223,6 +224,7 @@ static const struct clk_ops dm365_pll_ops = {
+ 
+ /**
+  * davinci_pll_div_register - common *DIV clock implementation
++ * @dev: The PLL platform device or NULL
+  * @name: the clock name
+  * @parent_name: the parent clock name
+  * @reg: the *DIV register
+@@ -240,17 +242,21 @@ static struct clk *davinci_pll_div_register(struct device *dev,
+ 	const struct clk_ops *divider_ops = &clk_divider_ops;
+ 	struct clk_gate *gate;
+ 	struct clk_divider *divider;
++	struct clk *clk;
++	int ret;
+ 
+-	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+ 	if (!gate)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	gate->reg = reg;
+ 	gate->bit_idx = DIV_ENABLE_SHIFT;
+ 
+-	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
+-	if (!divider)
+-		return ERR_PTR(-ENOMEM);
++	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
++	if (!divider) {
++		ret = -ENOMEM;
++		goto err_free_gate;
++	}
+ 
+ 	divider->reg = reg;
+ 	divider->shift = DIV_RATIO_SHIFT;
+@@ -261,9 +267,22 @@ static struct clk *davinci_pll_div_register(struct device *dev,
+ 		divider_ops = &clk_divider_ro_ops;
+ 	}
+ 
+-	return clk_register_composite(dev, name, parent_names, num_parents,
+-				      NULL, NULL, &divider->hw, divider_ops,
+-				      &gate->hw, &clk_gate_ops, flags);
++	clk = clk_register_composite(dev, name, parent_names, num_parents,
++				     NULL, NULL, &divider->hw, divider_ops,
++				     &gate->hw, &clk_gate_ops, flags);
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		goto err_free_divider;
++	}
 +
- TEGRA PWM DRIVER
- M:	Thierry Reding <thierry.reding@gmail.com>
- S:	Supported
-diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
-index 19a2b283fbbe..012c63c6ab47 100644
---- a/drivers/mtd/nand/raw/Kconfig
-+++ b/drivers/mtd/nand/raw/Kconfig
-@@ -534,4 +534,10 @@ config MTD_NAND_MTK
- 	  Enables support for NAND controller on MTK SoCs.
- 	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
- 
-+config MTD_NAND_TEGRA
-+	tristate "Support for NAND on NVIDIA Tegra"
-+	depends on ARCH_TEGRA || COMPILE_TEST
-+	help
-+	  Enables support for NAND flash on NVIDIA Tegra SoC based boards.
++	return clk;
 +
- endif # MTD_NAND
-diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
-index 165b7ef9e9a1..d5a5f9832b88 100644
---- a/drivers/mtd/nand/raw/Makefile
-+++ b/drivers/mtd/nand/raw/Makefile
-@@ -56,6 +56,7 @@ obj-$(CONFIG_MTD_NAND_HISI504)	        += hisi504_nand.o
- obj-$(CONFIG_MTD_NAND_BRCMNAND)		+= brcmnand/
- obj-$(CONFIG_MTD_NAND_QCOM)		+= qcom_nandc.o
- obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
-+obj-$(CONFIG_MTD_NAND_TEGRA)		+= tegra_nand.o
++err_free_divider:
++	kfree(divider);
++err_free_gate:
++	kfree(gate);
++
++	return ERR_PTR(ret);
+ }
  
- nand-objs := nand_base.o nand_bbt.o nand_timings.o nand_ids.o
- nand-objs += nand_amd.o
-diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
+ struct davinci_pllen_clk {
+@@ -321,36 +340,17 @@ static int davinci_pllen_rate_change(struct notifier_block *nb,
+ 	return NOTIFY_OK;
+ }
+ 
+-static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *dev)
+-{
+-	struct davinci_pll_platform_data *pdata = dev_get_platdata(dev);
+-
+-	/*
+-	 * Platform data is optional, so allocate a new struct if one was not
+-	 * provided. For device tree, this will always be the case.
+-	 */
+-	if (!pdata)
+-		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata)
+-		return NULL;
+-
+-	/* for device tree, we need to fill in the struct */
+-	if (dev->of_node)
+-		pdata->cfgchip =
+-			syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
+-
+-	return pdata;
+-}
+-
+ static struct notifier_block davinci_pllen_notifier = {
+ 	.notifier_call = davinci_pllen_rate_change,
+ };
+ 
+ /**
+  * davinci_pll_clk_register - Register a PLL clock
++ * @dev: The PLL platform device or NULL
+  * @info: The device-specific clock info
+  * @parent_name: The parent clock name
+  * @base: The PLL's memory region
++ * @cfgchip: CFGCHIP syscon regmap for info->unlock_reg or NULL
+  *
+  * This creates a series of clocks that represent the PLL.
+  *
+@@ -366,9 +366,9 @@ static struct notifier_block davinci_pllen_notifier = {
+ struct clk *davinci_pll_clk_register(struct device *dev,
+ 				     const struct davinci_pll_clk_info *info,
+ 				     const char *parent_name,
+-				     void __iomem *base)
++				     void __iomem *base,
++				     struct regmap *cfgchip)
+ {
+-	struct davinci_pll_platform_data *pdata;
+ 	char prediv_name[MAX_NAME_SIZE];
+ 	char pllout_name[MAX_NAME_SIZE];
+ 	char postdiv_name[MAX_NAME_SIZE];
+@@ -376,11 +376,12 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 	struct clk_init_data init;
+ 	struct davinci_pll_clk *pllout;
+ 	struct davinci_pllen_clk *pllen;
+-	struct clk *pllout_clk, *clk;
+-
+-	pdata = davinci_pll_get_pdata(dev);
+-	if (!pdata)
+-		return ERR_PTR(-ENOMEM);
++	struct clk *oscin_clk = NULL;
++	struct clk *prediv_clk = NULL;
++	struct clk *pllout_clk;
++	struct clk *postdiv_clk = NULL;
++	struct clk *pllen_clk;
++	int ret;
+ 
+ 	if (info->flags & PLL_HAS_CLKMODE) {
+ 		/*
+@@ -392,10 +393,10 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 		 * a number of different things. In this driver we use it to
+ 		 * mean the signal after the PLLCTL[CLKMODE] switch.
+ 		 */
+-		clk = clk_register_fixed_factor(dev, OSCIN_CLK_NAME,
+-						parent_name, 0, 1, 1);
+-		if (IS_ERR(clk))
+-			return clk;
++		oscin_clk = clk_register_fixed_factor(dev, OSCIN_CLK_NAME,
++						      parent_name, 0, 1, 1);
++		if (IS_ERR(oscin_clk))
++			return oscin_clk;
+ 
+ 		parent_name = OSCIN_CLK_NAME;
+ 	}
+@@ -411,30 +412,34 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 
+ 		/* Some? DM355 chips don't correctly report the PREDIV value */
+ 		if (info->flags & PLL_PREDIV_FIXED8)
+-			clk = clk_register_fixed_factor(dev, prediv_name,
+-						parent_name, flags, 1, 8);
++			prediv_clk = clk_register_fixed_factor(dev, prediv_name,
++							parent_name, flags, 1, 8);
+ 		else
+-			clk = davinci_pll_div_register(dev, prediv_name,
++			prediv_clk = davinci_pll_div_register(dev, prediv_name,
+ 				parent_name, base + PREDIV, fixed, flags);
+-		if (IS_ERR(clk))
+-			return clk;
++		if (IS_ERR(prediv_clk)) {
++			ret = PTR_ERR(prediv_clk);
++			goto err_unregister_oscin;
++		}
+ 
+ 		parent_name = prediv_name;
+ 	}
+ 
+ 	/* Unlock writing to PLL registers */
+ 	if (info->unlock_reg) {
+-		if (IS_ERR_OR_NULL(pdata->cfgchip))
++		if (IS_ERR_OR_NULL(cfgchip))
+ 			dev_warn(dev, "Failed to get CFGCHIP (%ld)\n",
+-				 PTR_ERR(pdata->cfgchip));
++				 PTR_ERR(cfgchip));
+ 		else
+-			regmap_write_bits(pdata->cfgchip, info->unlock_reg,
++			regmap_write_bits(cfgchip, info->unlock_reg,
+ 					  info->unlock_mask, 0);
+ 	}
+ 
+-	pllout = devm_kzalloc(dev, sizeof(*pllout), GFP_KERNEL);
+-	if (!pllout)
+-		return ERR_PTR(-ENOMEM);
++	pllout = kzalloc(sizeof(*pllout), GFP_KERNEL);
++	if (!pllout) {
++		ret = -ENOMEM;
++		goto err_unregister_prediv;
++	}
+ 
+ 	snprintf(pllout_name, MAX_NAME_SIZE, "%s_pllout", info->name);
+ 
+@@ -456,9 +461,11 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 	pllout->pllm_min = info->pllm_min;
+ 	pllout->pllm_max = info->pllm_max;
+ 
+-	pllout_clk = devm_clk_register(dev, &pllout->hw);
+-	if (IS_ERR(pllout_clk))
+-		return pllout_clk;
++	pllout_clk = clk_register(dev, &pllout->hw);
++	if (IS_ERR(pllout_clk)) {
++		ret = PTR_ERR(pllout_clk);
++		goto err_free_pllout;
++	}
+ 
+ 	clk_hw_set_rate_range(&pllout->hw, info->pllout_min_rate,
+ 			      info->pllout_max_rate);
+@@ -474,17 +481,21 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 		if (info->flags & PLL_POSTDIV_ALWAYS_ENABLED)
+ 			flags |= CLK_IS_CRITICAL;
+ 
+-		clk = davinci_pll_div_register(dev, postdiv_name, parent_name,
+-					       base + POSTDIV, fixed, flags);
+-		if (IS_ERR(clk))
+-			return clk;
++		postdiv_clk = davinci_pll_div_register(dev, postdiv_name,
++				parent_name, base + POSTDIV, fixed, flags);
++		if (IS_ERR(postdiv_clk)) {
++			ret = PTR_ERR(postdiv_clk);
++			goto err_unregister_pllout;
++		}
+ 
+ 		parent_name = postdiv_name;
+ 	}
+ 
+-	pllen = devm_kzalloc(dev, sizeof(*pllout), GFP_KERNEL);
+-	if (!pllen)
+-		return ERR_PTR(-ENOMEM);
++	pllen = kzalloc(sizeof(*pllout), GFP_KERNEL);
++	if (!pllen) {
++		ret = -ENOMEM;
++		goto err_unregister_postdiv;
++	}
+ 
+ 	snprintf(pllen_name, MAX_NAME_SIZE, "%s_pllen", info->name);
+ 
+@@ -497,17 +508,35 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 	pllen->hw.init = &init;
+ 	pllen->base = base;
+ 
+-	clk = devm_clk_register(dev, &pllen->hw);
+-	if (IS_ERR(clk))
+-		return clk;
++	pllen_clk = clk_register(dev, &pllen->hw);
++	if (IS_ERR(pllen_clk)) {
++		ret = PTR_ERR(pllen_clk);
++		goto err_free_pllen;
++	}
+ 
+-	clk_notifier_register(clk, &davinci_pllen_notifier);
++	clk_notifier_register(pllen_clk, &davinci_pllen_notifier);
+ 
+ 	return pllout_clk;
++
++err_free_pllen:
++	kfree(pllen);
++err_unregister_postdiv:
++	clk_unregister(postdiv_clk);
++err_unregister_pllout:
++	clk_unregister(pllout_clk);
++err_free_pllout:
++	kfree(pllout);
++err_unregister_prediv:
++	clk_unregister(prediv_clk);
++err_unregister_oscin:
++	clk_unregister(oscin_clk);
++
++	return ERR_PTR(ret);
+ }
+ 
+ /**
+  * davinci_pll_auxclk_register - Register bypass clock (AUXCLK)
++ * @dev: The PLL platform device or NULL
+  * @name: The clock name
+  * @base: The PLL memory region
+  */
+@@ -521,6 +550,7 @@ struct clk *davinci_pll_auxclk_register(struct device *dev,
+ 
+ /**
+  * davinci_pll_sysclkbp_clk_register - Register bypass divider clock (SYSCLKBP)
++ * @dev: The PLL platform device or NULL
+  * @name: The clock name
+  * @base: The PLL memory region
+  */
+@@ -535,6 +565,7 @@ struct clk *davinci_pll_sysclkbp_clk_register(struct device *dev,
+ 
+ /**
+  * davinci_pll_obsclk_register - Register oscillator divider clock (OBSCLK)
++ * @dev: The PLL platform device or NULL
+  * @info: The clock info
+  * @base: The PLL memory region
+  */
+@@ -546,9 +577,11 @@ davinci_pll_obsclk_register(struct device *dev,
+ 	struct clk_mux *mux;
+ 	struct clk_gate *gate;
+ 	struct clk_divider *divider;
++	struct clk *clk;
+ 	u32 oscdiv;
++	int ret;
+ 
+-	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+ 	if (!mux)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -556,16 +589,20 @@ davinci_pll_obsclk_register(struct device *dev,
+ 	mux->table = info->table;
+ 	mux->mask = info->ocsrc_mask;
+ 
+-	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
+-	if (!gate)
+-		return ERR_PTR(-ENOMEM);
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate) {
++		ret = -ENOMEM;
++		goto err_free_mux;
++	}
+ 
+ 	gate->reg = base + CKEN;
+ 	gate->bit_idx = CKEN_OBSCLK_SHIFT;
+ 
+-	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
+-	if (!divider)
+-		return ERR_PTR(-ENOMEM);
++	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
++	if (!divider) {
++		ret = -ENOMEM;
++		goto err_free_gate;
++	}
+ 
+ 	divider->reg = base + OSCDIV;
+ 	divider->shift = DIV_RATIO_SHIFT;
+@@ -576,11 +613,27 @@ davinci_pll_obsclk_register(struct device *dev,
+ 	oscdiv |= BIT(DIV_ENABLE_SHIFT);
+ 	writel(oscdiv, base + OSCDIV);
+ 
+-	return clk_register_composite(dev, info->name, info->parent_names,
+-				      info->num_parents,
+-				      &mux->hw, &clk_mux_ops,
+-				      &divider->hw, &clk_divider_ops,
+-				      &gate->hw, &clk_gate_ops, 0);
++	clk = clk_register_composite(dev, info->name, info->parent_names,
++				     info->num_parents,
++				     &mux->hw, &clk_mux_ops,
++				     &divider->hw, &clk_divider_ops,
++				     &gate->hw, &clk_gate_ops, 0);
++
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		goto err_free_divider;
++	}
++
++	return clk;
++
++err_free_divider:
++	kfree(divider);
++err_free_gate:
++	kfree(gate);
++err_free_mux:
++	kfree(mux);
++
++	return ERR_PTR(ret);
+ }
+ 
+ /* The PLL SYSCLKn clocks have a mechanism for synchronizing rate changes. */
+@@ -616,6 +669,7 @@ static struct notifier_block davinci_pll_sysclk_notifier = {
+ 
+ /**
+  * davinci_pll_sysclk_register - Register divider clocks (SYSCLKn)
++ * @dev: The PLL platform device or NULL
+  * @info: The clock info
+  * @base: The PLL memory region
+  */
+@@ -630,6 +684,7 @@ davinci_pll_sysclk_register(struct device *dev,
+ 	struct clk *clk;
+ 	u32 reg;
+ 	u32 flags = 0;
++	int ret;
+ 
+ 	/* PLLDIVn registers are not entirely consecutive */
+ 	if (info->id < 4)
+@@ -637,16 +692,18 @@ davinci_pll_sysclk_register(struct device *dev,
+ 	else
+ 		reg = PLLDIV4 + 4 * (info->id - 4);
+ 
+-	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+ 	if (!gate)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	gate->reg = base + reg;
+ 	gate->bit_idx = DIV_ENABLE_SHIFT;
+ 
+-	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
+-	if (!divider)
+-		return ERR_PTR(-ENOMEM);
++	divider = kzalloc(sizeof(*divider), GFP_KERNEL);
++	if (!divider) {
++		ret = -ENOMEM;
++		goto err_free_gate;
++	}
+ 
+ 	divider->reg = base + reg;
+ 	divider->shift = DIV_RATIO_SHIFT;
+@@ -668,22 +725,31 @@ davinci_pll_sysclk_register(struct device *dev,
+ 	clk = clk_register_composite(dev, info->name, &info->parent_name, 1,
+ 				     NULL, NULL, &divider->hw, divider_ops,
+ 				     &gate->hw, &clk_gate_ops, flags);
+-	if (IS_ERR(clk))
+-		return clk;
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		goto err_free_divider;
++	}
+ 
+ 	clk_notifier_register(clk, &davinci_pll_sysclk_notifier);
+ 
+ 	return clk;
++
++err_free_divider:
++	kfree(divider);
++err_free_gate:
++	kfree(gate);
++
++	return ERR_PTR(ret);
+ }
+ 
+-int of_davinci_pll_init(struct device *dev,
++int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 			const struct davinci_pll_clk_info *info,
+ 			const struct davinci_pll_obsclk_info *obsclk_info,
+ 			const struct davinci_pll_sysclk_info **div_info,
+ 			u8 max_sysclk_id,
+-			void __iomem *base)
++			void __iomem *base,
++			struct regmap *cfgchip)
+ {
+-	struct device_node *node = dev->of_node;
+ 	struct device_node *child;
+ 	const char *parent_name;
+ 	struct clk *clk;
+@@ -693,7 +759,7 @@ int of_davinci_pll_init(struct device *dev,
+ 	else
+ 		parent_name = OSCIN_CLK_NAME;
+ 
+-	clk = davinci_pll_clk_register(dev, info, parent_name, base);
++	clk = davinci_pll_clk_register(dev, info, parent_name, base, cfgchip);
+ 	if (IS_ERR(clk)) {
+ 		dev_err(dev, "failed to register %s\n", info->name);
+ 		return PTR_ERR(clk);
+@@ -711,11 +777,11 @@ int of_davinci_pll_init(struct device *dev,
+ 		int n_clks =  max_sysclk_id + 1;
+ 		int i;
+ 
+-		clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
++		clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
+ 		if (!clk_data)
+ 			return -ENOMEM;
+ 
+-		clks = devm_kmalloc_array(dev, n_clks, sizeof(*clks), GFP_KERNEL);
++		clks = kmalloc_array(n_clks, sizeof(*clks), GFP_KERNEL);
+ 		if (!clks)
+ 			return -ENOMEM;
+ 
+@@ -770,6 +836,27 @@ int of_davinci_pll_init(struct device *dev,
+ 	return 0;
+ }
+ 
++static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *dev)
++{
++	struct davinci_pll_platform_data *pdata = dev_get_platdata(dev);
++
++	/*
++	 * Platform data is optional, so allocate a new struct if one was not
++	 * provided. For device tree, this will always be the case.
++	 */
++	if (!pdata)
++		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return NULL;
++
++	/* for device tree, we need to fill in the struct */
++	if (dev->of_node)
++		pdata->cfgchip =
++			syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
++
++	return pdata;
++}
++
+ static const struct of_device_id davinci_pll_of_match[] = {
+ 	{ .compatible = "ti,da850-pll0", .data = of_da850_pll0_init },
+ 	{ .compatible = "ti,da850-pll1", .data = of_da850_pll1_init },
+@@ -791,11 +878,13 @@ static const struct platform_device_id davinci_pll_id_table[] = {
+ 	{ }
+ };
+ 
+-typedef int (*davinci_pll_init)(struct device *dev, void __iomem *base);
++typedef int (*davinci_pll_init)(struct device *dev, void __iomem *base,
++				struct regmap *cfgchip);
+ 
+ static int davinci_pll_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	struct davinci_pll_platform_data *pdata;
+ 	const struct of_device_id *of_id;
+ 	davinci_pll_init pll_init = NULL;
+ 	struct resource *res;
+@@ -812,12 +901,18 @@ static int davinci_pll_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	pdata = davinci_pll_get_pdata(dev);
++	if (!pdata) {
++		dev_err(dev, "missing platform data\n");
++		return -EINVAL;
++	}
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-	return pll_init(dev, base);
++	return pll_init(dev, base, pdata->cfgchip);
+ }
+ 
+ static struct platform_driver davinci_pll_driver = {
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index b1b6fb23f972..562652fc0759 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -11,6 +11,7 @@
+ #include <linux/bitops.h>
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
++#include <linux/regmap.h>
+ #include <linux/types.h>
+ 
+ #define PLL_HAS_CLKMODE			BIT(0) /* PLL has PLLCTL[CLKMODE] */
+@@ -94,7 +95,8 @@ struct davinci_pll_obsclk_info {
+ struct clk *davinci_pll_clk_register(struct device *dev,
+ 				     const struct davinci_pll_clk_info *info,
+ 				     const char *parent_name,
+-				     void __iomem *base);
++				     void __iomem *base,
++				     struct regmap *cfgchip);
+ struct clk *davinci_pll_auxclk_register(struct device *dev,
+ 					const char *name,
+ 					void __iomem *base);
+@@ -110,32 +112,24 @@ davinci_pll_sysclk_register(struct device *dev,
+ 			    const struct davinci_pll_sysclk_info *info,
+ 			    void __iomem *base);
+ 
+-int of_davinci_pll_init(struct device *dev,
++int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 			const struct davinci_pll_clk_info *info,
+ 			const struct davinci_pll_obsclk_info *obsclk_info,
+ 			const struct davinci_pll_sysclk_info **div_info,
+ 			u8 max_sysclk_id,
+-			void __iomem *base);
++			void __iomem *base,
++			struct regmap *cfgchip);
+ 
+ /* Platform-specific callbacks */
+ 
+-int da830_pll_init(struct device *dev, void __iomem *base);
++int da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int of_da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int of_da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+-int da850_pll0_init(struct device *dev, void __iomem *base);
+-int da850_pll1_init(struct device *dev, void __iomem *base);
+-int of_da850_pll0_init(struct device *dev, void __iomem *base);
+-int of_da850_pll1_init(struct device *dev, void __iomem *base);
++int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+-int dm355_pll1_init(struct device *dev, void __iomem *base);
+-int dm355_pll2_init(struct device *dev, void __iomem *base);
++int dm644x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+-int dm365_pll1_init(struct device *dev, void __iomem *base);
+-int dm365_pll2_init(struct device *dev, void __iomem *base);
+-
+-int dm644x_pll1_init(struct device *dev, void __iomem *base);
+-int dm644x_pll2_init(struct device *dev, void __iomem *base);
+-
+-int dm646x_pll1_init(struct device *dev, void __iomem *base);
+-int dm646x_pll2_init(struct device *dev, void __iomem *base);
++int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+ #endif /* __CLK_DAVINCI_PLL_H___ */
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
 new file mode 100644
-index 000000000000..1a0833d97472
+index 000000000000..ebdd9df1c0ef
 --- /dev/null
-+++ b/drivers/mtd/nand/raw/tegra_nand.c
-@@ -0,0 +1,999 @@
++++ b/include/linux/clk/davinci.h
+@@ -0,0 +1,24 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (C) 2018 Stefan Agner <stefan@agner.ch>
-+ * Copyright (C) 2014-2015 Lucas Stach <dev@lynxeye.de>
-+ * Copyright (C) 2012 Avionic Design GmbH
++ * Clock drivers for TI DaVinci PLL and PSC controllers
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/completion.h>
-+#include <linux/delay.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/err.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/mtd/partitions.h>
-+#include <linux/mtd/rawnand.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#define CMD					0x00
-+#define   CMD_GO				(1 << 31)
-+#define   CMD_CLE				(1 << 30)
-+#define   CMD_ALE				(1 << 29)
-+#define   CMD_PIO				(1 << 28)
-+#define   CMD_TX				(1 << 27)
-+#define   CMD_RX				(1 << 26)
-+#define   CMD_SEC_CMD				(1 << 25)
-+#define   CMD_AFT_DAT				(1 << 24)
-+#define   CMD_TRANS_SIZE(x)			(((x - 1) & 0xf) << 20)
-+#define   CMD_A_VALID				(1 << 19)
-+#define   CMD_B_VALID				(1 << 18)
-+#define   CMD_RD_STATUS_CHK			(1 << 17)
-+#define   CMD_RBSY_CHK				(1 << 16)
-+#define   CMD_CE(x)				(1 << (8 + ((x) & 0x7)))
-+#define   CMD_CLE_SIZE(x)			(((x - 1) & 0x3) << 4)
-+#define   CMD_ALE_SIZE(x)			(((x - 1) & 0xf) << 0)
-+
-+#define STATUS					0x04
-+
-+#define ISR					0x08
-+#define   ISR_CORRFAIL_ERR			(1 << 24)
-+#define   ISR_UND				(1 << 7)
-+#define   ISR_OVR				(1 << 6)
-+#define   ISR_CMD_DONE				(1 << 5)
-+#define   ISR_ECC_ERR				(1 << 4)
-+
-+#define IER					0x0c
-+#define   IER_ERR_TRIG_VAL(x)			(((x) & 0xf) << 16)
-+#define   IER_UND				(1 << 7)
-+#define   IER_OVR				(1 << 6)
-+#define   IER_CMD_DONE				(1 << 5)
-+#define   IER_ECC_ERR				(1 << 4)
-+#define   IER_GIE				(1 << 0)
-+
-+#define CFG					0x10
-+#define   CFG_HW_ECC				(1 << 31)
-+#define   CFG_ECC_SEL				(1 << 30)
-+#define   CFG_ERR_COR				(1 << 29)
-+#define   CFG_PIPE_EN				(1 << 28)
-+#define   CFG_TVAL_4				(0 << 24)
-+#define   CFG_TVAL_6				(1 << 24)
-+#define   CFG_TVAL_8				(2 << 24)
-+#define   CFG_SKIP_SPARE			(1 << 23)
-+#define   CFG_BUS_WIDTH_8			(0 << 21)
-+#define   CFG_BUS_WIDTH_16			(1 << 21)
-+#define   CFG_COM_BSY				(1 << 20)
-+#define   CFG_PS_256				(0 << 16)
-+#define   CFG_PS_512				(1 << 16)
-+#define   CFG_PS_1024				(2 << 16)
-+#define   CFG_PS_2048				(3 << 16)
-+#define   CFG_PS_4096				(4 << 16)
-+#define   CFG_SKIP_SPARE_SIZE_4			(0 << 14)
-+#define   CFG_SKIP_SPARE_SIZE_8			(1 << 14)
-+#define   CFG_SKIP_SPARE_SIZE_12		(2 << 14)
-+#define   CFG_SKIP_SPARE_SIZE_16		(3 << 14)
-+#define   CFG_TAG_BYTE_SIZE(x)			((x) & 0xff)
-+
-+#define TIMING_1				0x14
-+#define   TIMING_TRP_RESP(x)			(((x) & 0xf) << 28)
-+#define   TIMING_TWB(x)				(((x) & 0xf) << 24)
-+#define   TIMING_TCR_TAR_TRR(x)			(((x) & 0xf) << 20)
-+#define   TIMING_TWHR(x)			(((x) & 0xf) << 16)
-+#define   TIMING_TCS(x)				(((x) & 0x3) << 14)
-+#define   TIMING_TWH(x)				(((x) & 0x3) << 12)
-+#define   TIMING_TWP(x)				(((x) & 0xf) <<  8)
-+#define   TIMING_TRH(x)				(((x) & 0xf) <<  4)
-+#define   TIMING_TRP(x)				(((x) & 0xf) <<  0)
-+
-+#define RESP					0x18
-+
-+#define TIMING_2				0x1c
-+#define   TIMING_TADL(x)			((x) & 0xf)
-+
-+#define CMD_1					0x20
-+#define CMD_2					0x24
-+#define ADDR_1					0x28
-+#define ADDR_2					0x2c
-+
-+#define DMA_CTRL				0x30
-+#define   DMA_CTRL_GO				(1 << 31)
-+#define   DMA_CTRL_IN				(0 << 30)
-+#define   DMA_CTRL_OUT				(1 << 30)
-+#define   DMA_CTRL_PERF_EN			(1 << 29)
-+#define   DMA_CTRL_IE_DONE			(1 << 28)
-+#define   DMA_CTRL_REUSE			(1 << 27)
-+#define   DMA_CTRL_BURST_1			(2 << 24)
-+#define   DMA_CTRL_BURST_4			(3 << 24)
-+#define   DMA_CTRL_BURST_8			(4 << 24)
-+#define   DMA_CTRL_BURST_16			(5 << 24)
-+#define   DMA_CTRL_IS_DONE			(1 << 20)
-+#define   DMA_CTRL_EN_A				(1 <<  2)
-+#define   DMA_CTRL_EN_B				(1 <<  1)
-+
-+#define DMA_CFG_A				0x34
-+#define DMA_CFG_B				0x38
-+
-+#define FIFO_CTRL				0x3c
-+#define   FIFO_CTRL_CLR_ALL			(1 << 3)
-+
-+#define DATA_PTR				0x40
-+#define TAG_PTR					0x44
-+#define ECC_PTR					0x48
-+
-+#define DEC_STATUS				0x4c
-+#define   DEC_STATUS_A_ECC_FAIL			(1 << 1)
-+#define   DEC_STATUS_ERR_COUNT_MASK		0x00ff0000
-+#define   DEC_STATUS_ERR_COUNT_SHIFT		16
-+
-+#define HWSTATUS_CMD				0x50
-+#define HWSTATUS_MASK				0x54
-+#define   HWSTATUS_RDSTATUS_MASK(x)		(((x) & 0xff) << 24)
-+#define   HWSTATUS_RDSTATUS_VALUE(x)		(((x) & 0xff) << 16)
-+#define   HWSTATUS_RBSY_MASK(x)			(((x) & 0xff) << 8)
-+#define   HWSTATUS_RBSY_VALUE(x)		(((x) & 0xff) << 0)
-+
-+#define BCH_CONFIG				0xcc
-+#define   BCH_ENABLE				(1 << 0)
-+#define   BCH_TVAL_4				(0 << 4)
-+#define   BCH_TVAL_8				(1 << 4)
-+#define   BCH_TVAL_14				(2 << 4)
-+#define   BCH_TVAL_16				(3 << 4)
-+
-+#define DEC_STAT_RESULT				0xd0
-+#define DEC_STAT_BUF				0xd4
-+#define   DEC_STAT_BUF_FAIL_SEC_FLAG_MASK	0xff000000
-+#define   DEC_STAT_BUF_FAIL_SEC_FLAG_SHIFT	24
-+#define   DEC_STAT_BUF_CORR_SEC_FLAG_MASK	0x00ff0000
-+#define   DEC_STAT_BUF_CORR_SEC_FLAG_SHIFT	16
-+#define   DEC_STAT_BUF_MAX_CORR_CNT_MASK	0x00001f00
-+#define   DEC_STAT_BUF_MAX_CORR_CNT_SHIFT	8
-+
-+#define SKIP_SPARE_BYTES	4
-+#define BITS_PER_STEP_RS	18
-+#define BITS_PER_STEP_BCH	13
-+
-+struct tegra_nand_controller {
-+	struct nand_hw_control controller;
-+	void __iomem *regs;
-+	struct clk *clk;
-+	struct device *dev;
-+	struct completion command_complete;
-+	struct completion dma_complete;
-+	bool last_read_error;
-+	int cur_chip;
-+	struct nand_chip *chip;
-+};
-+
-+struct tegra_nand_chip {
-+	struct nand_chip chip;
-+	struct gpio_desc *wp_gpio;
-+};
-+
-+static inline struct tegra_nand_controller *to_tegra_ctrl(
-+						struct nand_hw_control *hw_ctrl)
-+{
-+	return container_of(hw_ctrl, struct tegra_nand_controller, controller);
-+}
-+
-+static int tegra_nand_ooblayout_rs_ecc(struct mtd_info *mtd, int section,
-+				       struct mtd_oob_region *oobregion)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+	int bytes_per_step = (BITS_PER_STEP_RS * chip->ecc.strength) / 8;
-+
-+	if (section > 0)
-+		return -ERANGE;
-+
-+	oobregion->offset = SKIP_SPARE_BYTES;
-+	oobregion->length = round_up(bytes_per_step * chip->ecc.steps, 4);
-+
-+	return 0;
-+}
-+
-+static int tegra_nand_ooblayout_rs_free(struct mtd_info *mtd, int section,
-+					struct mtd_oob_region *oobregion)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_RS * chip->ecc.strength, 8);
-+
-+	if (section > 0)
-+		return -ERANGE;
-+
-+	oobregion->offset = SKIP_SPARE_BYTES +
-+			    round_up(bytes_per_step * chip->ecc.steps, 4);
-+	oobregion->length = mtd->oobsize - oobregion->offset;
-+
-+	return 0;
-+}
-+
-+static const struct mtd_ooblayout_ops tegra_nand_oob_rs_ops = {
-+	.ecc = tegra_nand_ooblayout_rs_ecc,
-+	.free = tegra_nand_ooblayout_rs_free,
-+};
-+
-+static int tegra_nand_ooblayout_bch_ecc(struct mtd_info *mtd, int section,
-+				       struct mtd_oob_region *oobregion)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+	int bytes_per_step = DIV_ROUND_UP(BITS_PER_STEP_BCH * chip->ecc.strength, 8);
-+
-+	if (section > 0)
-+		return -ERANGE;
-+
-+	oobregion->offset = SKIP_SPARE_BYTES;
-+	oobregion->length = round_up(bytes_per_step * chip->ecc.steps, 4);
-+
-+	return 0;
-+}
-+
-+static int tegra_nand_ooblayout_bch_free(struct mtd_info *mtd, int section,
-+					struct mtd_oob_region *oobregion)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+	int bytes_per_step = (BITS_PER_STEP_BCH * chip->ecc.strength) / 8;
-+
-+	if (section > 0)
-+		return -ERANGE;
-+
-+	oobregion->offset = SKIP_SPARE_BYTES +
-+			    round_up(bytes_per_step * chip->ecc.steps, 4);
-+	oobregion->length = mtd->oobsize - oobregion->offset;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Layout with tag bytes is
-+ *
-+ * --------------------------------------------------------------------------
-+ * | main area                       | skip bytes | tag bytes | parity | .. |
-+ * --------------------------------------------------------------------------
-+ *
-+ * If not tag bytes are written, parity moves right after skip bytes!
-+ */
-+static const struct mtd_ooblayout_ops tegra_nand_oob_bch_ops = {
-+	.ecc = tegra_nand_ooblayout_bch_ecc,
-+	.free = tegra_nand_ooblayout_bch_free,
-+};
-+
-+static irqreturn_t tegra_nand_irq(int irq, void *data)
-+{
-+	struct tegra_nand_controller *ctrl = data;
-+	u32 isr, dma;
-+
-+	isr = readl_relaxed(ctrl->regs + ISR);
-+	dma = readl_relaxed(ctrl->regs + DMA_CTRL);
-+	dev_dbg(ctrl->dev, "isr %08x\n", isr);
-+
-+	if (!isr && !(dma & DMA_CTRL_IS_DONE))
-+		return IRQ_NONE;
-+
-+	if (isr & ISR_CORRFAIL_ERR)
-+		ctrl->last_read_error = true;
-+
-+	if (isr & ISR_CMD_DONE)
-+		complete(&ctrl->command_complete);
-+
-+	if (isr & ISR_UND)
-+		dev_dbg(ctrl->dev, "FIFO underrun\n");
-+
-+	if (isr & ISR_OVR)
-+		dev_dbg(ctrl->dev, "FIFO overrun\n");
-+
-+	/* handle DMA interrupts */
-+	if (dma & DMA_CTRL_IS_DONE) {
-+		writel(dma, ctrl->regs + DMA_CTRL);
-+		complete(&ctrl->dma_complete);
-+	}
-+
-+	/* clear interrupts */
-+	writel(isr, ctrl->regs + ISR);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int tegra_nand_cmd(struct nand_chip *chip,
-+			 const struct nand_subop *subop)
-+{
-+	const struct nand_op_instr *instr;
-+	const struct nand_op_instr *instr_data_in = NULL;
-+	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-+	unsigned int op_id = -1, trfr_in_sz = 0, trfr_out_sz = 0, offset = 0;
-+	bool first_cmd = true;
-+	u32 cmd = 0;
-+	u32 value;
-+
-+	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
-+		unsigned int naddrs, i;
-+		const u8 *addrs;
-+		u32 addr1 = 0, addr2 = 0;
-+
-+		instr = &subop->instrs[op_id];
-+
-+		switch (instr->type) {
-+		case NAND_OP_CMD_INSTR:
-+			if (first_cmd) {
-+				cmd |= CMD_CLE;
-+				writel(instr->ctx.cmd.opcode, ctrl->regs + CMD_1);
-+			} else {
-+				cmd |= CMD_SEC_CMD;
-+				writel(instr->ctx.cmd.opcode, ctrl->regs + CMD_2);
-+			}
-+			first_cmd = false;
-+			break;
-+		case NAND_OP_ADDR_INSTR:
-+			offset = nand_subop_get_addr_start_off(subop, op_id);
-+			naddrs = nand_subop_get_num_addr_cyc(subop, op_id);
-+			addrs = &instr->ctx.addr.addrs[offset];
-+
-+			cmd |= CMD_ALE | CMD_ALE_SIZE(naddrs);
-+			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
-+				addr1 |= *addrs++ << (8 * i);
-+			naddrs -= i;
-+			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
-+				addr2 |= *addrs++ << (8 * i);
-+			writel(addr1, ctrl->regs + ADDR_1);
-+			writel(addr2, ctrl->regs + ADDR_2);
-+			break;
-+
-+		case NAND_OP_DATA_IN_INSTR:
-+			trfr_in_sz = nand_subop_get_data_len(subop, op_id);
-+			offset = nand_subop_get_data_start_off(subop, op_id);
-+
-+			cmd |= CMD_TRANS_SIZE(trfr_in_sz) | CMD_PIO | CMD_RX | CMD_A_VALID;
-+
-+			instr_data_in = instr;
-+			break;
-+
-+		case NAND_OP_DATA_OUT_INSTR:
-+			trfr_out_sz = nand_subop_get_data_len(subop, op_id);
-+			offset = nand_subop_get_data_start_off(subop, op_id);
-+			trfr_out_sz = min_t(size_t, trfr_out_sz, 4);
-+
-+			cmd |= CMD_TRANS_SIZE(trfr_out_sz) | CMD_PIO | CMD_TX | CMD_A_VALID;
-+
-+			memcpy(&value, instr->ctx.data.buf.out + offset, trfr_out_sz);
-+			writel(value, ctrl->regs + RESP);
-+
-+			break;
-+		case NAND_OP_WAITRDY_INSTR:
-+			cmd |= CMD_RBSY_CHK;
-+			break;
-+
-+		}
-+	}
-+
-+
-+	cmd |= CMD_GO | CMD_CE(ctrl->cur_chip);
-+	writel(cmd, ctrl->regs + CMD);
-+	wait_for_completion(&ctrl->command_complete);
-+
-+	if (instr_data_in) {
-+		u32 value;
-+		size_t n = min_t(size_t, trfr_in_sz, 4);
-+
-+		value = readl(ctrl->regs + RESP);
-+		memcpy(instr_data_in->ctx.data.buf.in + offset, &value, n);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct nand_op_parser tegra_nand_op_parser = NAND_OP_PARSER(
-+	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
-+		NAND_OP_PARSER_PAT_CMD_ELEM(true),
-+		NAND_OP_PARSER_PAT_ADDR_ELEM(true, 8),
-+		NAND_OP_PARSER_PAT_CMD_ELEM(true),
-+		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true)),
-+	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
-+		NAND_OP_PARSER_PAT_DATA_OUT_ELEM(false, 4)),
-+	NAND_OP_PARSER_PATTERN(tegra_nand_cmd,
-+		NAND_OP_PARSER_PAT_CMD_ELEM(true),
-+		NAND_OP_PARSER_PAT_ADDR_ELEM(true, 8),
-+		NAND_OP_PARSER_PAT_CMD_ELEM(true),
-+		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true),
-+		NAND_OP_PARSER_PAT_DATA_IN_ELEM(true, 4)),
-+	);
-+
-+static int tegra_nand_exec_op(struct nand_chip *chip,
-+			     const struct nand_operation *op,
-+			     bool check_only)
-+{
-+	return nand_op_parser_exec_op(chip, &tegra_nand_op_parser, op,
-+				      check_only);
-+}
-+static void tegra_nand_select_chip(struct mtd_info *mtd, int chip_nr)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-+
-+	ctrl->cur_chip = chip_nr;
-+}
-+
-+static u32 tegra_nand_fill_address(struct tegra_nand_controller *ctrl,
-+				   struct nand_chip *chip, int page)
-+{
-+	/* Lower 16-bits are column, always 0 */
-+	writel(page << 16, ctrl->regs + ADDR_1);
-+
-+	if (chip->options & NAND_ROW_ADDR_3) {
-+		writel(page >> 16, ctrl->regs + ADDR_2);
-+		return 5;
-+	}
-+
-+	return 4;
-+}
-+
-+static void tegra_nand_hw_ecc(struct tegra_nand_controller *ctrl,
-+			      struct nand_chip *chip, bool enable)
-+{
-+	u32 value;
-+
-+	switch (chip->ecc.algo) {
-+	case NAND_ECC_RS:
-+		value = readl(ctrl->regs + CFG);
-+		if (enable)
-+			value |= CFG_HW_ECC | CFG_ERR_COR;
-+		else
-+			value &= ~(CFG_HW_ECC | CFG_ERR_COR);
-+		writel(value, ctrl->regs + CFG);
-+		break;
-+	case NAND_ECC_BCH:
-+		value = readl(ctrl->regs + BCH_CONFIG);
-+		if (enable)
-+			value |= BCH_ENABLE;
-+		else
-+			value &= ~BCH_ENABLE;
-+		writel(value, ctrl->regs + BCH_CONFIG);
-+		break;
-+	default:
-+		dev_err(ctrl->dev, "Unsupported hardware ECC algorithm\n");
-+		break;
-+	}
-+}
-+
-+static int tegra_nand_read_page(struct mtd_info *mtd, struct nand_chip *chip,
-+				uint8_t *buf, int oob_required, int page)
-+{
-+	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-+	dma_addr_t dma_addr;
-+	u32 value, addrs;
-+	int ret, dma_len;
-+
-+	writel(NAND_CMD_READ0, ctrl->regs + CMD_1);
-+	writel(NAND_CMD_READSTART, ctrl->regs + CMD_2);
-+
-+	addrs = tegra_nand_fill_address(ctrl, chip, page);
-+
-+	dma_len = mtd->writesize + (oob_required ? mtd->oobsize : 0);
-+	dma_addr = dma_map_single(ctrl->dev, buf, dma_len, DMA_FROM_DEVICE);
-+	ret = dma_mapping_error(ctrl->dev, dma_addr);
-+	if (ret) {
-+		dev_err(ctrl->dev, "dma mapping error\n");
-+		return -EINVAL;
-+	}
-+
-+	writel(mtd->writesize - 1, ctrl->regs + DMA_CFG_A);
-+	writel(dma_addr, ctrl->regs + DATA_PTR);
-+
-+	if (oob_required) {
-+		struct mtd_oob_region oobregion;
-+		dma_addr_t dma_addr_oob = dma_addr + mtd->writesize;
-+
-+		mtd_ooblayout_free(mtd, 0, &oobregion);
-+
-+		writel(oobregion.length - 1, ctrl->regs + DMA_CFG_B);
-+		writel(dma_addr_oob + oobregion.offset, ctrl->regs + TAG_PTR);
-+	} else {
-+		writel(0, ctrl->regs + DMA_CFG_B);
-+		writel(0, ctrl->regs + TAG_PTR);
-+	}
-+
-+	value = DMA_CTRL_GO | DMA_CTRL_IN | DMA_CTRL_PERF_EN |
-+		DMA_CTRL_REUSE | DMA_CTRL_IE_DONE | DMA_CTRL_IS_DONE |
-+		DMA_CTRL_BURST_16 | DMA_CTRL_EN_A;
-+	if (oob_required)
-+		value |= DMA_CTRL_EN_B;
-+	writel(value, ctrl->regs + DMA_CTRL);
-+
-+	value = CMD_CLE | CMD_ALE | CMD_ALE_SIZE(addrs) | CMD_SEC_CMD |
-+		CMD_RBSY_CHK | CMD_GO | CMD_RX | CMD_TRANS_SIZE(9) |
-+		CMD_A_VALID | CMD_CE(ctrl->cur_chip);
-+	if (oob_required)
-+		value |= CMD_B_VALID;
-+	writel(value, ctrl->regs + CMD);
-+
-+	wait_for_completion(&ctrl->command_complete);
-+	wait_for_completion(&ctrl->dma_complete);
-+
-+	dma_unmap_single(ctrl->dev, dma_addr, dma_len, DMA_FROM_DEVICE);
-+
-+	return 0;
-+}
-+
-+static int tegra_nand_read_page_hwecc(struct mtd_info *mtd,
-+				      struct nand_chip *chip,
-+				      uint8_t *buf, int oob_required, int page)
-+{
-+	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-+	u32 value;
-+	int ret;
-+
-+	tegra_nand_hw_ecc(ctrl, chip, true);
-+	ret = tegra_nand_read_page(mtd, chip, buf, oob_required, page);
-+	tegra_nand_hw_ecc(ctrl, chip, false);
-+	if (ret)
-+		return ret;
-+
-+	/* If no correctable or un-correctable errors occured we can return 0 */
-+	if (!ctrl->last_read_error)
-+		return 0;
-+
-+	/*
-+	 * Correctable or un-correctable errors did occure. NAND dec status
-+	 * contains information for all ECC selections
-+	 */
-+	ctrl->last_read_error = false;
-+	value = readl(ctrl->regs + DEC_STAT_BUF);
-+
-+	if (value & DEC_STAT_BUF_FAIL_SEC_FLAG_MASK) {
-+		/*
-+		 * The ECC isn't smart enough to figure out if a page is
-+		 * completely erased and flags an error in this case. So we
-+		 * check the read data here to figure out if it's a legitimate
-+		 * error or a false positive.
-+		 */
-+		int i, ret;
-+		int flips_threshold = chip->ecc.strength / 2;
-+		int max_bitflips = 0;
-+
-+		for (i = 0; i < chip->ecc.steps; i++) {
-+			u8 *data = buf + (chip->ecc.size * i);
-+
-+			ret = nand_check_erased_ecc_chunk(data, chip->ecc.size,
-+							  NULL, 0,
-+							  NULL, 0,
-+							  flips_threshold);
-+			if (ret < 0)
-+				mtd->ecc_stats.failed++;
-+			else
-+				max_bitflips = max(ret, max_bitflips);
-+		}
-+
-+		return max_bitflips;
-+	} else {
-+		int max_corr_cnt, corr_sec_flag;
-+
-+		corr_sec_flag = (value & DEC_STAT_BUF_CORR_SEC_FLAG_MASK) >>
-+				DEC_STAT_BUF_CORR_SEC_FLAG_SHIFT;
-+		max_corr_cnt = (value & DEC_STAT_BUF_MAX_CORR_CNT_MASK) >>
-+			       DEC_STAT_BUF_MAX_CORR_CNT_SHIFT;
-+
-+		/*
-+		 * The value returned in the register is the maximum of
-+		 * bitflips encountered in any of the ECC regions. As there is
-+		 * no way to get the number of bitflips in a specific regions
-+		 * we are not able to deliver correct stats but instead
-+		 * overestimate the number of corrected bitflips by assuming
-+		 * that all regions where errors have been corrected
-+		 * encountered the maximum number of bitflips.
-+		 */
-+		mtd->ecc_stats.corrected += max_corr_cnt * hweight8(corr_sec_flag);
-+
-+		return max_corr_cnt;
-+	}
-+
-+}
-+
-+static int tegra_nand_write_page(struct mtd_info *mtd, struct nand_chip *chip,
-+				 const uint8_t *buf, int oob_required, int page)
-+{
-+	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-+	dma_addr_t dma_addr;
-+	u32 value, addrs;
-+	int ret, dma_len;
-+
-+	writel(NAND_CMD_SEQIN, ctrl->regs + CMD_1);
-+	writel(NAND_CMD_PAGEPROG, ctrl->regs + CMD_2);
-+
-+	addrs = tegra_nand_fill_address(ctrl, chip, page);
-+
-+	dma_len = mtd->writesize + (oob_required ? mtd->oobsize : 0);
-+	dma_addr = dma_map_single(ctrl->dev, (void *)buf, dma_len, DMA_TO_DEVICE);
-+	ret = dma_mapping_error(ctrl->dev, dma_addr);
-+	if (ret) {
-+		dev_err(ctrl->dev, "dma mapping error\n");
-+		return -EINVAL;
-+	}
-+
-+	writel(mtd->writesize - 1, ctrl->regs + DMA_CFG_A);
-+	writel(dma_addr, ctrl->regs + DATA_PTR);
-+
-+	if (oob_required) {
-+		struct mtd_oob_region oobregion;
-+		dma_addr_t dma_addr_oob = dma_addr + mtd->writesize;
-+
-+		mtd_ooblayout_free(mtd, 0, &oobregion);
-+
-+		writel(oobregion.length - 1, ctrl->regs + DMA_CFG_B);
-+		writel(dma_addr_oob + oobregion.offset, ctrl->regs + TAG_PTR);
-+	} else {
-+		writel(0, ctrl->regs + DMA_CFG_B);
-+		writel(0, ctrl->regs + TAG_PTR);
-+	}
-+
-+	value = DMA_CTRL_GO | DMA_CTRL_OUT | DMA_CTRL_PERF_EN |
-+		DMA_CTRL_IE_DONE | DMA_CTRL_IS_DONE |
-+		DMA_CTRL_BURST_16 | DMA_CTRL_EN_A;
-+	if (oob_required)
-+		value |= DMA_CTRL_EN_B;
-+	writel(value, ctrl->regs + DMA_CTRL);
-+
-+	value = CMD_CLE | CMD_ALE | CMD_ALE_SIZE(addrs) | CMD_SEC_CMD |
-+		CMD_AFT_DAT | CMD_RBSY_CHK | CMD_GO | CMD_TX | CMD_A_VALID |
-+		CMD_TRANS_SIZE(9) | CMD_CE(ctrl->cur_chip);
-+	if (oob_required)
-+		value |= CMD_B_VALID;
-+	writel(value, ctrl->regs + CMD);
-+
-+	wait_for_completion(&ctrl->command_complete);
-+	wait_for_completion(&ctrl->dma_complete);
-+
-+
-+	dma_unmap_single(ctrl->dev, dma_addr, dma_len, DMA_TO_DEVICE);
-+
-+	return 0;
-+}
-+
-+static int tegra_nand_write_page_hwecc(struct mtd_info *mtd,
-+				       struct nand_chip *chip,
-+				       const uint8_t *buf, int oob_required,
-+				       int page)
-+{
-+	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-+	int ret;
-+
-+	tegra_nand_hw_ecc(ctrl, chip, true);
-+	ret = tegra_nand_write_page(mtd, chip, buf, oob_required, page);
-+	tegra_nand_hw_ecc(ctrl, chip, false);
-+
-+	return ret;
-+}
-+
-+static void tegra_nand_setup_timing(struct tegra_nand_controller *ctrl,
-+				    const struct nand_sdr_timings *timings)
-+{
-+	/*
-+	 * The period (and all other timings in this function) is in ps,
-+	 * so need to take care here to avoid integer overflows.
-+	 */
-+	unsigned int rate = clk_get_rate(ctrl->clk) / 1000000;
-+	unsigned int period = DIV_ROUND_UP(1000000, rate);
-+	u32 val, reg = 0;
-+
-+	val = DIV_ROUND_UP(max3(timings->tAR_min, timings->tRR_min,
-+				timings->tRC_min), period);
-+	if (val > 2)
-+		val -= 3;
-+	reg |= TIMING_TCR_TAR_TRR(val);
-+
-+	val = DIV_ROUND_UP(max(max(timings->tCS_min, timings->tCH_min),
-+				   max(timings->tALS_min, timings->tALH_min)),
-+			   period);
-+	if (val > 1)
-+		val -= 2;
-+	reg |= TIMING_TCS(val);
-+
-+	val = DIV_ROUND_UP(max(timings->tRP_min, timings->tREA_max) + 6000,
-+			   period);
-+	reg |= TIMING_TRP(val) | TIMING_TRP_RESP(val);
-+
-+	reg |= TIMING_TWB(DIV_ROUND_UP(timings->tWB_max, period));
-+	reg |= TIMING_TWHR(DIV_ROUND_UP(timings->tWHR_min, period));
-+	reg |= TIMING_TWH(DIV_ROUND_UP(timings->tWH_min, period));
-+	reg |= TIMING_TWP(DIV_ROUND_UP(timings->tWP_min, period));
-+	reg |= TIMING_TRH(DIV_ROUND_UP(timings->tRHW_min, period));
-+
-+	writel(reg, ctrl->regs + TIMING_1);
-+
-+	val = DIV_ROUND_UP(timings->tADL_min, period);
-+	if (val > 2)
-+		val -= 3;
-+	reg = TIMING_TADL(val);
-+
-+	writel(reg, ctrl->regs + TIMING_2);
-+}
-+
-+static int tegra_nand_setup_data_interface(struct mtd_info *mtd, int csline,
-+					   const struct nand_data_interface *conf)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-+	const struct nand_sdr_timings *timings;
-+
-+	timings = nand_get_sdr_timings(conf);
-+	if (IS_ERR(timings))
-+		return PTR_ERR(timings);
-+
-+	if (csline == NAND_DATA_IFACE_CHECK_ONLY)
-+		return 0;
-+
-+	tegra_nand_setup_timing(ctrl, timings);
-+
-+	return 0;
-+}
-+
-+static int tegra_nand_chips_init(struct device *dev,
-+				 struct tegra_nand_controller *ctrl)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct device_node *np_nand;
-+	int nchips = of_get_child_count(np);
-+	struct tegra_nand_chip *nand;
-+	struct mtd_info *mtd;
-+	struct nand_chip *chip;
-+	unsigned long config, bch_config = 0;
-+	int bits_per_step;
-+	int err;
-+
-+	if (nchips != 1) {
-+		dev_err(dev, "currently only one NAND chip supported\n");
-+		return -EINVAL;
-+	}
-+
-+	np_nand = of_get_next_child(np, NULL);
-+
-+	nand = devm_kzalloc(dev, sizeof(*nand), GFP_KERNEL);
-+	if (!nand) {
-+		dev_err(dev, "could not allocate chip structure\n");
-+		return -ENOMEM;
-+	}
-+
-+	nand->wp_gpio = devm_gpiod_get_optional(dev, "wp", GPIOD_OUT_LOW);
-+
-+	if (IS_ERR(nand->wp_gpio)) {
-+		err = PTR_ERR(nand->wp_gpio);
-+		dev_err(dev, "failed to request WP GPIO: %d\n", err);
-+		return err;
-+	}
-+
-+	chip = &nand->chip;
-+	chip->controller = &ctrl->controller;
-+	ctrl->chip = chip;
-+
-+	mtd = nand_to_mtd(chip);
-+
-+	mtd->dev.parent = dev;
-+	mtd->name = "tegra_nand";
-+	mtd->owner = THIS_MODULE;
-+
-+	nand_set_flash_node(chip, np_nand);
-+
-+	chip->options = NAND_NO_SUBPAGE_WRITE | NAND_USE_BOUNCE_BUFFER;
-+	chip->exec_op = tegra_nand_exec_op;
-+	chip->select_chip = tegra_nand_select_chip;
-+	chip->setup_data_interface = tegra_nand_setup_data_interface;
-+
-+	err = nand_scan_ident(mtd, 1, NULL);
-+	if (err)
-+		return err;
-+
-+	if (chip->bbt_options & NAND_BBT_USE_FLASH)
-+		chip->bbt_options |= NAND_BBT_NO_OOB;
-+
-+	chip->ecc.mode = NAND_ECC_HW;
-+	if (!chip->ecc.size)
-+		chip->ecc.size = 512;
-+	if (chip->ecc.size != 512)
-+		return -EINVAL;
-+
-+	chip->ecc.read_page = tegra_nand_read_page_hwecc;
-+	chip->ecc.write_page = tegra_nand_write_page_hwecc;
-+	/* Not functional for unknown reason...
-+	chip->ecc.read_page_raw = tegra_nand_read_page;
-+	chip->ecc.write_page_raw = tegra_nand_write_page;
-+	*/
-+	config = readl(ctrl->regs + CFG);
-+	config |= CFG_PIPE_EN | CFG_SKIP_SPARE | CFG_SKIP_SPARE_SIZE_4;
-+
-+	if (chip->options & NAND_BUSWIDTH_16)
-+		config |= CFG_BUS_WIDTH_16;
-+
-+	switch (chip->ecc.algo) {
-+	case NAND_ECC_RS:
-+		bits_per_step = BITS_PER_STEP_RS * chip->ecc.strength;
-+		mtd_set_ooblayout(mtd, &tegra_nand_oob_rs_ops);
-+		switch (chip->ecc.strength) {
-+		case 4:
-+			config |= CFG_ECC_SEL | CFG_TVAL_4;
-+			break;
-+		case 6:
-+			config |= CFG_ECC_SEL | CFG_TVAL_6;
-+			break;
-+		case 8:
-+			config |= CFG_ECC_SEL | CFG_TVAL_8;
-+			break;
-+		default:
-+			dev_err(dev, "ECC strength %d not supported\n",
-+				chip->ecc.strength);
-+			return -EINVAL;
-+		}
-+		break;
-+	case NAND_ECC_BCH:
-+		bits_per_step = BITS_PER_STEP_BCH * chip->ecc.strength;
-+		mtd_set_ooblayout(mtd, &tegra_nand_oob_bch_ops);
-+		switch (chip->ecc.strength) {
-+		case 4:
-+			bch_config = BCH_TVAL_4;
-+			break;
-+		case 8:
-+			bch_config = BCH_TVAL_8;
-+			break;
-+		case 14:
-+			bch_config = BCH_TVAL_14;
-+			break;
-+		case 16:
-+			bch_config = BCH_TVAL_16;
-+			break;
-+		default:
-+			dev_err(dev, "ECC strength %d not supported\n",
-+				chip->ecc.strength);
-+			return -EINVAL;
-+		}
-+		break;
-+	default:
-+		dev_err(dev, "ECC algorithm not supported\n");
-+		return -EINVAL;
-+	}
-+
-+	chip->ecc.bytes = DIV_ROUND_UP(bits_per_step, 8);
-+
-+	switch (mtd->writesize) {
-+	case 256:
-+		config |= CFG_PS_256;
-+		break;
-+	case 512:
-+		config |= CFG_PS_512;
-+		break;
-+	case 1024:
-+		config |= CFG_PS_1024;
-+		break;
-+	case 2048:
-+		config |= CFG_PS_2048;
-+		break;
-+	case 4096:
-+		config |= CFG_PS_4096;
-+		break;
-+	default:
-+		dev_err(dev, "unhandled writesize %d\n", mtd->writesize);
-+		return -ENODEV;
-+	}
-+
-+	writel(config, ctrl->regs + CFG);
-+	writel(bch_config, ctrl->regs + BCH_CONFIG);
-+
-+	err = nand_scan_tail(mtd);
-+	if (err)
-+		return err;
-+
-+	config |= CFG_TAG_BYTE_SIZE(mtd_ooblayout_count_freebytes(mtd) - 1);
-+	writel(config, ctrl->regs + CFG);
-+
-+	err = mtd_device_register(mtd, NULL, 0);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int tegra_nand_probe(struct platform_device *pdev)
-+{
-+	struct reset_control *rst;
-+	struct tegra_nand_controller *ctrl;
-+	struct resource *res;
-+	unsigned long value;
-+	int irq, err = 0;
-+
-+	ctrl = devm_kzalloc(&pdev->dev, sizeof(*ctrl), GFP_KERNEL);
-+	if (!ctrl)
-+		return -ENOMEM;
-+
-+	ctrl->dev = &pdev->dev;
-+	nand_hw_control_init(&ctrl->controller);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	ctrl->regs = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(ctrl->regs))
-+		return PTR_ERR(ctrl->regs);
-+
-+	rst = devm_reset_control_get(&pdev->dev, "nand");
-+	if (IS_ERR(rst))
-+		return PTR_ERR(rst);
-+
-+	ctrl->clk = devm_clk_get(&pdev->dev, "nand");
-+	if (IS_ERR(ctrl->clk))
-+		return PTR_ERR(ctrl->clk);
-+
-+	err = clk_prepare_enable(ctrl->clk);
-+	if (err)
-+		return err;
-+
-+	reset_control_reset(rst);
-+
-+	value = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0) |
-+		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
-+		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
-+	writel(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
-+	writel(value, ctrl->regs + HWSTATUS_MASK);
-+
-+	init_completion(&ctrl->command_complete);
-+	init_completion(&ctrl->dma_complete);
-+
-+	/* clear interrupts */
-+	value = readl(ctrl->regs + ISR);
-+	writel(value, ctrl->regs + ISR);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
-+			       dev_name(&pdev->dev), ctrl);
-+	if (err)
-+		goto err_disable_clk;
-+
-+	writel(DMA_CTRL_IS_DONE, ctrl->regs + DMA_CTRL);
-+
-+	/* enable interrupts */
-+	value = IER_UND | IER_OVR | IER_CMD_DONE | IER_ECC_ERR | IER_GIE;
-+	writel(value, ctrl->regs + IER);
-+
-+	/* reset config */
-+	writel(0, ctrl->regs + CFG);
-+
-+	err = tegra_nand_chips_init(ctrl->dev, ctrl);
-+	if (err)
-+		goto err_disable_clk;
-+
-+	platform_set_drvdata(pdev, ctrl);
-+
-+	return 0;
-+
-+err_disable_clk:
-+	clk_disable_unprepare(ctrl->clk);
-+	return err;
-+}
-+
-+static int tegra_nand_remove(struct platform_device *pdev)
-+{
-+	struct tegra_nand_controller *ctrl = platform_get_drvdata(pdev);
-+
-+	nand_release(nand_to_mtd(ctrl->chip));
-+
-+	clk_disable_unprepare(ctrl->clk);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tegra_nand_of_match[] = {
-+	{ .compatible = "nvidia,tegra20-nand" },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver tegra_nand_driver = {
-+	.driver = {
-+		.name = "tegra-nand",
-+		.of_match_table = tegra_nand_of_match,
-+	},
-+	.probe = tegra_nand_probe,
-+	.remove = tegra_nand_remove,
-+};
-+module_platform_driver(tegra_nand_driver);
-+
-+MODULE_DESCRIPTION("NVIDIA Tegra NAND driver");
-+MODULE_AUTHOR("Thierry Reding <thierry.reding@nvidia.com>");
-+MODULE_AUTHOR("Lucas Stach <dev@lynxeye.de>");
-+MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DEVICE_TABLE(of, tegra_nand_of_match);
++#ifndef __LINUX_CLK_DAVINCI_PLL_H___
++#define __LINUX_CLK_DAVINCI_PLL_H___
++
++#include <linux/device.h>
++#include <linux/regmap.h>
++
++/* function for registering clocks in early boot */
++
++int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm355_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm365_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm365_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm644x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm646x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++
++#endif /* __LINUX_CLK_DAVINCI_PLL_H___ */
 -- 
 2.17.0
