@@ -1,68 +1,50 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
- node for MCAN
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>, <paul@pwsan.com>, <t-kristo@ti.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-6-faiz_abbas@ti.com> <20180530150402.GE5705@atomide.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <2361da91-659d-1aaa-0ab8-d1473bc3a71a@ti.com>
-Date: Thu, 31 May 2018 15:51:04 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180530150402.GE5705@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38779 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751545AbeERKKh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 06:10:37 -0400
+Received: by mail-wr0-f193.google.com with SMTP id 94-v6so8602721wrf.5
+        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 03:10:37 -0700 (PDT)
+Message-ID: <1526638234.2897.74.camel@baylibre.com>
+Subject: Re: [PATCH v2] clk: meson: use SPDX license identifiers consistently
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
+Date: Fri, 18 May 2018 12:10:34 +0200
+In-Reply-To: <152649194881.210890.1329258497783697194@swboyd.mtv.corp.google.com>
+References: <20180516085040.6771-1-jbrunet@baylibre.com>
+         <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
+         <1526483653.2897.62.camel@baylibre.com>
+         <152649194881.210890.1329258497783697194@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On Wednesday 30 May 2018 08:34 PM, Tony Lindgren wrote:
-> * Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
->> The ti-sysc driver provides support for manipulating the idlemodes
->> and interconnect level resets.
-> ...
->> --- a/arch/arm/boot/dts/dra76x.dtsi
->> +++ b/arch/arm/boot/dts/dra76x.dtsi
->> @@ -11,6 +11,25 @@
->>  / {
->>  	compatible = "ti,dra762", "ti,dra7";
->>  
->> +	ocp {
->> +
->> +		target-module@0x42c00000 {
->> +			compatible = "ti,sysc-dra7-mcan";
->> +			ranges = <0x0 0x42c00000 0x2000>;
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			reg = <0x42c01900 0x4>,
->> +			      <0x42c01904 0x4>,
->> +			      <0x42c01908 0x4>;
->> +			reg-names = "rev", "sysc", "syss";
->> +			ti,sysc-mask = <(SYSC_OMAP4_SOFTRESET |
->> +					 SYSC_DRA7_MCAN_ENAWAKEUP)>;
->> +			ti,syss-mask = <1>;
->> +			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
->> +			clock-names = "fck";
->> +		};
->> +	};
->> +
->>  };
+On Wed, 2018-05-16 at 10:32 -0700, Stephen Boyd wrote:
+> Quoting Jerome Brunet (2018-05-16 08:14:13)
+> > On Wed, 2018-05-16 at 08:03 -0700, Stephen Boyd wrote:
+> > > Quoting Jerome Brunet (2018-05-16 01:50:40)
+> > > > Replace every license notices in drivers/clk/meson by SPDX license
+> > > > identifiers, as described in license-rules.rst
+> > > > 
+> > > > Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> > > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > > ---
+> > > 
+> > > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > > 
+> > > I take it this will come through a PR? Otherwise I can apply it to
+> > > clk-meson branch.
+> > 
+> > We may have a few other patches coming this week. I was planning on making
+> > another PR sometime next week, if this is OK with you.
+> > 
 > 
-> Looks good to me except I think the reset won't do anything currently
-> with ti-sysc.c unless you specfify also "ti,hwmods" for the module?
-> 
-> Can you please check? It might be worth adding the reset function to
-> ti-sysc.c for non "ti,hwmods" case and that just might remove the
-> need for any hwmod code for this module.
+> Sounds fine. Thanks.
 > 
 
-If I understand correctly, this involves adding a (*reset_module) in
-ti_sysc_platform_data and defining a ti_sysc_reset_module() in ti-sysc.c
-similar to ti_sysc_idle_module(). Right?
-
-Thanks,
-Faiz
+ Applied with Stephen's Ack
