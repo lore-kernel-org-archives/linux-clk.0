@@ -1,90 +1,54 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Sudeep Holla <sudeep.holla@arm.com>, "ard.biesheuvel@linaro.org"
-	<ard.biesheuvel@linaro.org>, "mingo@kernel.org" <mingo@kernel.org>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "hkallweit1@gmail.com"
-	<hkallweit1@gmail.com>, "keescook@chromium.org" <keescook@chromium.org>,
-	"dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: RE: [PATCH v6 03/11] firmware: xilinx: Add zynqmp IOCTL API for
- device control
-Date: Mon, 14 May 2018 19:11:56 +0000
-Message-ID: <SN1PR02MB3758F635BA420721B0EB8A2FB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
-References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
- <1523389127-14243-4-git-send-email-jollys@xilinx.com>
- <c351b9a3-5f26-7202-7171-0dcc7adef7c0@arm.com>
-In-Reply-To: <c351b9a3-5f26-7202-7171-0dcc7adef7c0@arm.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37370 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753404AbeERJ2c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:28:32 -0400
+Received: by mail-wr0-f194.google.com with SMTP id h5-v6so8476795wrm.4
+        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 02:28:32 -0700 (PDT)
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+Subject: [PATCH v5 04/12] clk: imx7d: reset parent for mipi csi root
+Date: Fri, 18 May 2018 10:27:58 +0100
+Message-Id: <20180518092806.3829-5-rui.silva@linaro.org>
+In-Reply-To: <20180518092806.3829-1-rui.silva@linaro.org>
+References: <20180518092806.3829-1-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3VkZWVwLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1ZGVl
-cCBIb2xsYSBbbWFpbHRvOnN1ZGVlcC5ob2xsYUBhcm0uY29tXQ0KPiBTZW50OiBUaHVyc2RheSwg
-TWF5IDEwLCAyMDE4IDc6MDkgQU0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29t
-PjsgYXJkLmJpZXNoZXV2ZWxAbGluYXJvLm9yZzsNCj4gbWluZ29Aa2VybmVsLm9yZzsgZ3JlZ2to
-QGxpbnV4Zm91bmRhdGlvbi5vcmc7IG1hdHRAY29kZWJsdWVwcmludC5jby51azsNCj4gaGthbGx3
-ZWl0MUBnbWFpbC5jb207IGtlZXNjb29rQGNocm9taXVtLm9yZzsNCj4gZG1pdHJ5LnRvcm9raG92
-QGdtYWlsLmNvbTsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNib3lkQGNvZGVhdXJvcmEu
-b3JnOyBtaWNoYWwuc2ltZWtAeGlsaW54LmNvbTsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiBtYXJr
-LnJ1dGxhbmRAYXJtLmNvbTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZw0KPiBDYzogU3VkZWVw
-IEhvbGxhIDxzdWRlZXAuaG9sbGFAYXJtLmNvbT47IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbngu
-Y29tPjsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJu
-ZWxAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgSm9sbHkg
-U2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjYgMDMvMTFd
-IGZpcm13YXJlOiB4aWxpbng6IEFkZCB6eW5xbXAgSU9DVEwgQVBJIGZvciBkZXZpY2UNCj4gY29u
-dHJvbA0KPiANCj4gDQo+IA0KPiBPbiAxMC8wNC8xOCAyMDozOCwgSm9sbHkgU2hhaCB3cm90ZToN
-Cj4gPiBGcm9tOiBSYWphbiBWYWphIDxyYWphbnZAeGlsaW54LmNvbT4NCj4gPg0KPiA+IEFkZCBa
-eW5xTVAgZmlybXdhcmUgSU9DVEwgQVBJIHRvIGNvbnRyb2wgYW5kIGNvbmZpZ3VyZSBkZXZpY2Vz
-IGxpa2UNCj4gPiBQTExzLCBTRCwgR2VtLCBldGMuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBS
-YWphbiBWYWphIDxyYWphbnZAeGlsaW54LmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBKb2xseSBT
-aGFoIDxqb2xseXNAeGlsaW54LmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9maXJtd2FyZS94
-aWxpbngvenlucW1wLmMgICAgIHwgMjAgKysrKysrKysrKysrKysrKysrKysNCj4gPiAgaW5jbHVk
-ZS9saW51eC9maXJtd2FyZS94bG54LXp5bnFtcC5oIHwgIDIgKysNCj4gPiAgMiBmaWxlcyBjaGFu
-Z2VkLCAyMiBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9maXJt
-d2FyZS94aWxpbngvenlucW1wLmMNCj4gPiBiL2RyaXZlcnMvZmlybXdhcmUveGlsaW54L3p5bnFt
-cC5jDQo+ID4gaW5kZXggNDkwNTYxYS4uNDRiNDNmYSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJz
-L2Zpcm13YXJlL3hpbGlueC96eW5xbXAuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZmlybXdhcmUveGls
-aW54L3p5bnFtcC5jDQo+ID4gQEAgLTIzOSw4ICsyMzksMjggQEAgc3RhdGljIGludCBnZXRfc2V0
-X2NvbmR1aXRfbWV0aG9kKHN0cnVjdA0KPiBkZXZpY2Vfbm9kZSAqbnApDQo+ID4gIAlyZXR1cm4g
-MDsNCj4gPiAgfQ0KPiA+DQo+ID4gKy8qKg0KPiA+ICsgKiB6eW5xbXBfcG1faW9jdGwoKSAtIFBN
-IElPQ1RMIEFQSSBmb3IgZGV2aWNlIGNvbnRyb2wgYW5kIGNvbmZpZ3MNCj4gPiArICogQG5vZGVf
-aWQ6CU5vZGUgSUQgb2YgdGhlIGRldmljZQ0KPiA+ICsgKiBAaW9jdGxfaWQ6CUlEIG9mIHRoZSBy
-ZXF1ZXN0ZWQgSU9DVEwNCj4gPiArICogQGFyZzE6CUFyZ3VtZW50IDEgdG8gcmVxdWVzdGVkIElP
-Q1RMIGNhbGwNCj4gPiArICogQGFyZzI6CUFyZ3VtZW50IDIgdG8gcmVxdWVzdGVkIElPQ1RMIGNh
-bGwNCj4gPiArICogQG91dDoJUmV0dXJuZWQgb3V0cHV0IHZhbHVlDQo+ID4gKyAqDQo+ID4gKyAq
-IFRoaXMgZnVuY3Rpb24gY2FsbHMgSU9DVEwgdG8gZmlybXdhcmUgZm9yIGRldmljZSBjb250cm9s
-IGFuZCBjb25maWd1cmF0aW9uLg0KPiA+ICsgKg0KPiA+ICsgKiBSZXR1cm46IFJldHVybnMgc3Rh
-dHVzLCBlaXRoZXIgc3VjY2VzcyBvciBlcnJvcityZWFzb24gICovIHN0YXRpYw0KPiA+ICtpbnQg
-enlucW1wX3BtX2lvY3RsKHUzMiBub2RlX2lkLCB1MzIgaW9jdGxfaWQsIHUzMiBhcmcxLCB1MzIg
-YXJnMiwNCj4gPiArCQkJICAgdTMyICpvdXQpDQo+ID4gK3sNCj4gPiArCXJldHVybiB6eW5xbXBf
-cG1faW52b2tlX2ZuKFBNX0lPQ1RMLCBub2RlX2lkLCBpb2N0bF9pZCwNCj4gPiArCQkJCSAgIGFy
-ZzEsIGFyZzIsIG91dCk7DQo+ID4gK30NCj4gPiArDQo+ID4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
-enlucW1wX2VlbWlfb3BzIGVlbWlfb3BzID0gew0KPiA+ICAJLmdldF9hcGlfdmVyc2lvbiA9IHp5
-bnFtcF9wbV9nZXRfYXBpX3ZlcnNpb24sDQo+ID4gKwkuaW9jdGwgPSB6eW5xbXBfcG1faW9jdGws
-DQo+ID4gIH07DQo+ID4NCj4gPiAgLyoqDQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgv
-ZmlybXdhcmUveGxueC16eW5xbXAuaA0KPiA+IGIvaW5jbHVkZS9saW51eC9maXJtd2FyZS94bG54
-LXp5bnFtcC5oDQo+ID4gaW5kZXggY2I2M2JlZC4uMmVlYzZlNyAxMDA2NDQNCj4gPiAtLS0gYS9p
-bmNsdWRlL2xpbnV4L2Zpcm13YXJlL3hsbngtenlucW1wLmgNCj4gPiArKysgYi9pbmNsdWRlL2xp
-bnV4L2Zpcm13YXJlL3hsbngtenlucW1wLmgNCj4gPiBAQCAtMzQsNiArMzQsNyBAQA0KPiA+DQo+
-ID4gIGVudW0gcG1fYXBpX2lkIHsNCj4gPiAgCVBNX0dFVF9BUElfVkVSU0lPTiA9IDEsDQo+ID4g
-KwlQTV9JT0NUTCA9IDM0LA0KPiANCj4gSSBhbSBub3QgZm9yIHRoaXMgQVBJLiBJSVVDIHRoZXJl
-IGFyZSBtb3JlIGZpbmVkIGdyYWluZWQgd2VsbCBkZWZpbmVkIEFQSXMoaWYgSSBhbQ0KPiBub3Qg
-d3JvbmcgZnJvbSBlbnVtIDIgdXB0byAzMykuIFRoaXMgaXMgb3BlbiBlbmRlZCBBUEkgd2hpY2gg
-YWxsb3dzIHVzZXIgdG8gZG8NCj4gd2hhdGV2ZXIgc2V0dGluZyBpdCBuZWVkcy4gQW5kIHRoYXQg
-ZGVmZWF0cyB0aGUgcHVycG9zZSBvZiBvdGhlciBBUElzLg0KPiANCj4gSSB3aWxsIGxvb2sgdGhy
-b3VnaCB0aGUgc2VyaWVzIGZvciB0aGUgdXNhZ2Ugb2YgdGhpcyB0byB1bmRlcnN0YW5kIHRoaXMg
-YmV0dGVyLCBidXQgSQ0KPiBhbSBndWVzc2luZyBob3cgaXQgY2FuIGJlIChhYil1c2VkLg0KPiAN
-Cj4gLS0NCj4gUmVnYXJkcywNCj4gU3VkZWVwDQoNClRoZXJlIGFyZSB3ZWxsIGRlZmluZWQgQVBJ
-cyBmb3IgZ2VuZXJhbCBjbG9jayBjb250cm9scy4gSW9jdGwgaXMgZm9yIHNvbWUgc3BlY2lmaWMg
-b3BlcmF0aW9ucyB3aGljaCBtYXkgbm90IGFwcGx5IHRvIGFsbCBwbGF0Zm9ybXMuDQpGb3IgY2xv
-Y2sgZHJpdmVyLCBpb2N0bCBpcyB1c2VkIHRvIGdldC9zZXQgUGxsIGZyYWN0aW9uL2ludGVnZXIg
-bW9kZSBhbmQgZGF0YS4gDQoNClRoYW5rcywNCkpvbGx5IFNoYWgNCg==
+To guarantee that we do not get Overflow in image FIFO the outer bandwidth has
+to be faster than inputer bandwidth. For that it must be possible to set a
+faster frequency clock. So set new parent to sys_pfd3 clock for the mipi csi
+block.
+
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+---
+ drivers/clk/imx/clk-imx7d.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index f7f4db2e6fa6..27877d05faa2 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -891,6 +891,8 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clk_set_parent(clks[IMX7D_PLL_AUDIO_MAIN_BYPASS], clks[IMX7D_PLL_AUDIO_MAIN]);
+ 	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
+ 
++	clk_set_parent(clks[IMX7D_MIPI_CSI_ROOT_SRC], clks[IMX7D_PLL_SYS_PFD3_CLK]);
++
+ 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter freq */
+ 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+ 
+-- 
+2.17.0
+
