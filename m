@@ -1,114 +1,136 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:47659 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750936AbeEBLwP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 May 2018 07:52:15 -0400
-Date: Wed, 02 May 2018 19:51:37 +0800
-In-Reply-To: <20180502114843.ou4qczp5eaigrdfo@flea>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com> <20180430114058.5061-16-jagan@amarulasolutions.com> <20180502114843.ou4qczp5eaigrdfo@flea>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Fri, 18 May 2018 07:15:38 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180518014538.duphof6enscpm5vp@vireshk-i7>
+References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+ <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH 15/21] drm: sun4i: add support for HVCC regulator for DWC HDMI glue
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-CC: Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <2E519B6E-D1BA-4C6F-9105-446E564FBBB6@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+On 17-05-18, 14:19, Ilia Lin wrote:
+> +static int __init qcom_cpufreq_kryo_driver_init(void)
+> +{
+> +	size_t len;
+> +	int ret = 0;
+> +	u32 versions;
+> +	enum _msm8996_version msm8996_version;
+> +	u8 *speedbin;
+> +	struct device *cpu_dev_silver, *cpu_dev_gold;
+> +	struct device_node *np;
+> +	struct nvmem_cell *speedbin_nvmem;
+> +	struct platform_device *pdev;
+> +	struct opp_table *opp_silver = NULL;
+> +	struct opp_table *opp_gold = NULL;
 
+No need to initialize them and you may want to arrange all above in
+decreasing order of their length.
 
-于 2018年5月2日 GMT+08:00 下午7:48:43, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Mon, Apr 30, 2018 at 05:10:52PM +0530, Jagan Teki wrote:
->> From: Icenowy Zheng <icenowy@aosc.io>
->> 
->> Allwinner SoCs with DWC HDMI controller have a "HVCC" power pin for
->the
->> HDMI part, and on some boards it's connected to a dedicated regulator
->> rather than the main 3.3v.
->> 
->> Add support for optional HVCC regulator. For boards that doesn't use
->a
->> dedicated regulator to power it, the default dummy regulator is used.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> ---
->>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 14 ++++++++++++++
->>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 ++
->>  2 files changed, 16 insertions(+)
->> 
->> diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
->b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
->> index 9f40a44b456b..7c33faff7ad4 100644
->> --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
->> +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
->> @@ -73,6 +73,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
->struct device *master,
->>  	if (encoder->possible_crtcs == 0)
->>  		return -EPROBE_DEFER;
->>  
->> +	hdmi->vcc_hdmi = devm_regulator_get(dev, "hvcc");
->> +	if (IS_ERR(hdmi->vcc_hdmi)) {
->> +		dev_err(dev, "Could not get HDMI power supply\n");
->> +		return PTR_ERR(hdmi->vcc_hdmi);
->> +	}
->> +
->
->You're not making it optional here, unlike what your commit log
->says. Not that I'm fine with both, but we need to be consistent :)
+> +
+> +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
+> +	if (IS_ERR_OR_NULL(cpu_dev_silver))
+> +		return PTR_ERR(cpu_dev_silver);
+> +
+> +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
+> +	if (IS_ERR_OR_NULL(cpu_dev_gold))
+> +		return PTR_ERR(cpu_dev_gold);
+> +
+> +	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+> +	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+> +		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
+> +		return -ENODEV;
+> +	}
+> +
+> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
+> +	if (IS_ERR_OR_NULL(np))
+> +		return PTR_ERR(np);
+> +
+> +	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
+> +		ret = -ENOENT;
+> +		goto free_np;
+> +	}
+> +
+> +	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
+> +	if (IS_ERR(speedbin_nvmem)) {
+> +		ret = PTR_ERR(speedbin_nvmem);
+> +		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
+> +		goto free_np;
+> +	}
+> +
+> +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
+> +	nvmem_cell_put(speedbin_nvmem);
+> +
+> +	switch (msm8996_version) {
+> +	case MSM8996_V3:
+> +		versions = 1 << (unsigned int)(*speedbin);
+> +		break;
+> +	case MSM8996_SG:
+> +		versions = 1 << ((unsigned int)(*speedbin) + 4);
+> +		break;
+> +	default:
+> +		BUG();
+> +		break;
+> +	}
+> +
+> +	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
+> +	if (IS_ERR_OR_NULL(opp_silver)) {
 
-If it's not set, regulator subsystem will generate a dummy
-regulator as a spaceholder, except using the exclusive variant
-of the function.
+This API doesn't return NULL and so IS_ERR() would be sufficient.
 
-The word "optional" is from DT perspectove, as it's possible that
-it's bound to some critical regulators.
+> +		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
+> +		ret = PTR_ERR(opp_silver);
+> +		goto free_np;
+> +	}
+> +
+> +	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
+> +	if (IS_ERR_OR_NULL(opp_gold)) {
 
->
->>  	hdmi->rst_ctrl = devm_reset_control_get(dev, "ctrl");
->>  	if (IS_ERR(hdmi->rst_ctrl)) {
->>  		dev_err(dev, "Could not get ctrl reset control\n");
->> @@ -91,6 +97,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
->struct device *master,
->>  		return ret;
->>  	}
->>  
->> +	ret = regulator_enable(hdmi->vcc_hdmi);
->> +	if (ret) {
->> +		dev_err(dev, "Cannot enable HDMI power supply\n");
->> +		goto err_disable_vcc;
->> +	}
->> +
->>  	ret = clk_prepare_enable(hdmi->clk_tmds);
->>  	if (ret) {
->>  		dev_err(dev, "Could not enable tmds clock\n");
->> @@ -143,6 +155,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
->struct device *master,
->>  	clk_disable_unprepare(hdmi->clk_tmds);
->>  err_assert_ctrl_reset:
->>  	reset_control_assert(hdmi->rst_ctrl);
->> +err_disable_vcc:
->> +	regulator_disable(hdmi->vcc_hdmi);
->
->
->The err_disable_vcc label will disable the regulator, but if there's
->an error in regulator_enable, it will disable it while it wasn't
->enabled in the first place, which is not really something we want to
->do.
->
->Maxime
+same here.
+
+> +		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
+> +		ret = PTR_ERR(opp_gold);
+> +		goto free_opp_silver;
+> +	}
+> +
+> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+> +	if (!IS_ERR_OR_NULL(pdev))
+> +		goto out;
+
+Simply return from here and remove the useless label out.
+
+> +
+> +	ret = PTR_ERR(pdev);
+> +	dev_err(cpu_dev_silver, "Failed to register platform device\n");
+> +	dev_pm_opp_put_supported_hw(opp_gold);
+> +
+> +free_opp_silver:
+> +	dev_pm_opp_put_supported_hw(opp_silver);
+> +
+> +free_np:
+> +	of_node_put(np);
+> +
+> +out:
+> +	return ret;
+> +}
+> +late_initcall(qcom_cpufreq_kryo_driver_init);
+
+Please resend only this patch now or just paste the new code in a mail
+here so that I can review it quickly and then you can resend the final
+version. Most of the patches aren't changing anyway.
+
+-- 
+viresh
