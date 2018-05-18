@@ -1,50 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:38662 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750806AbeEPRca (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 May 2018 13:32:30 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Carlo Caione <carlo@caione.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1526483653.2897.62.camel@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
-References: <20180516085040.6771-1-jbrunet@baylibre.com>
- <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
- <1526483653.2897.62.camel@baylibre.com>
-Message-ID: <152649194881.210890.1329258497783697194@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2] clk: meson: use SPDX license identifiers consistently
-Date: Wed, 16 May 2018 10:32:28 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clkdev: Remove duplicated negative index check from __of_clk_get()
+Date: Fri, 18 May 2018 12:58:40 +0200
+Message-Id: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2018-05-16 08:14:13)
-> On Wed, 2018-05-16 at 08:03 -0700, Stephen Boyd wrote:
-> > Quoting Jerome Brunet (2018-05-16 01:50:40)
-> > > Replace every license notices in drivers/clk/meson by SPDX license
-> > > identifiers, as described in license-rules.rst
-> > > =
+__of_clk_get() calls of_parse_phandle_with_args(), which rejects
+negative indices since commit bd69f73f2c81eed9 ("of: Create function for
+counting number of phandles in a property").
 
-> > > Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > > ---
-> > =
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Commit bd69f73f2c81eed9 is in v3.9.
+---
+ drivers/clk/clkdev.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > =
-
-> > I take it this will come through a PR? Otherwise I can apply it to
-> > clk-meson branch.
-> =
-
-> We may have a few other patches coming this week. I was planning on making
-> another PR sometime next week, if this is OK with you.
-> =
-
-
-Sounds fine. Thanks.
-
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 7513411140b693ec..02fcee2012e05250 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -35,9 +35,6 @@ static struct clk *__of_clk_get(struct device_node *np, int index,
+ 	struct clk *clk;
+ 	int rc;
+ 
+-	if (index < 0)
+-		return ERR_PTR(-EINVAL);
+-
+ 	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
+ 					&clkspec);
+ 	if (rc)
+-- 
+2.7.4
