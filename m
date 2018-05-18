@@ -1,107 +1,83 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1527173636.2822.66.camel@baylibre.com>
-Subject: Re: [PATCH v5 00/10] clk: implement clock rate protection mechanism
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	 <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King
- <linux@armlinux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Quentin
- Schulz <quentin.schulz@free-electrons.com>, Kevin Hilman
- <khilman@baylibre.com>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Date: Thu, 24 May 2018 16:53:56 +0200
-In-Reply-To: <20180423182136.43156.94025@harbor.lan>
-References: <20171201215200.23523-1-jbrunet@baylibre.com>
-	 <151373031022.33554.13905466641279532222@resonance>
-	 <20171222021520.GO7997@codeaurora.org>
-	 <1517217778.3153.1.camel@baylibre.com>
-	 <20180201174307.GC23162@codeaurora.org>
-	 <1517575828.3153.23.camel@baylibre.com>
-	 <20180423182136.43156.94025@harbor.lan>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 19/26] arm64: dts: allwinner: a64: Add HDMI pipeline
+Date: Fri, 18 May 2018 15:15:29 +0530
+Message-Id: <20180518094536.17201-20-jagan@amarulasolutions.com>
+In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-04-23 at 11:21 -0700, Michael Turquette wrote:
-> Quoting Jerome Brunet (2018-02-02 04:50:28)
-> > On Thu, 2018-02-01 at 09:43 -0800, Stephen Boyd wrote:
-> > > > > > Applied to clk-protect-rate, with the exception that I did not apply
-> > > > > > "clk: fix CLK_SET_RATE_GATE with clock rate protection" as it breaks
-> > > > > > qcom clk code.
-> > > > > > 
-> > > > > > Stephen, do you plan to fix up the qcom clock code so that the
-> > > > > > SET_RATE_GATE improvement can go in?
-> > > > > > 
-> > > > > 
-> > > > > I started working on it a while back. Let's see if I can finish
-> > > > > it off this weekend.
-> > > > > 
-> > > > 
-> > > > Hi Stephen,
-> > > > 
-> > > > Have you been able find something to fix the qcom code regarding this issue ?
-> > > > 
-> > > 
-> > > This is what I have. I'm unhappy with a few things. First, I made
-> > > a spinlock for each clk, which is overkill. Most likely, just a
-> > > single spinlock is needed per clk-controller device. Second, I
-> > > haven't finished off the branch/gate part, so gating/ungating of
-> > > branches needs to be locked as well to prevent branches from
-> > > turning on while rates change. And finally, the 'branches' list is
-> > > duplicating a bunch of information about the child clks of an
-> > > RCG, so it feels like we need a core framework API to enable and
-> > > disable clks forcibly while remembering what is enabled/disabled
-> > > or at least to walk the clk tree and call some function.
-> > 
-> > Looks similar to Mike's CCR idea ;)
-> 
-> Giving clk provider drivers more control over the clocks that they
-> provide is a similar concept, but the ancient ccr series dealt almost
-> exclusively with set_rate and set_parent ops. 
-> 
-> > 
-> > > 
-> > > The spinlock per clk-controller is duplicating the regmap lock we
-> > > already have, so we may want a regmap API to grab the lock, and
-> > > then another regmap API to do reads/writes without grabbing the
-> > > lock, and then finally release the lock with a regmap unlock API.
-> > 
-> > There is 'regsequence' for multiple write in a burst, but that's only if you do
-> > write only ... I suppose you are more in read/update/writeback mode, so it
-> > probably does not help much.
-> > 
-> > Maybe we could extend regmap's regsequence, to do a sequence of
-> > regmap_update_bits() ?
-> > 
-> > Another possibility could be to provide your own lock/unlock ops when
-> > registering the regmap. With this, you might be able to supply your own spinlock
-> > to regmap. This is already supported by regmap, would it help ?
-> 
-> Stephen, was there ever an update on your end? This patch has been
-> dangling for a while and I thought it was time to ping on it.
-> 
-> Regards,
-> Mike
+HDMI pipeline on Allwinner A64 has similar behavior like A83T
+where tcon1 is connected to HDMI.
 
-Mike, Stephen,
-The patch as been sitting on list for 6 months now and CLK_SET_RATE_GATE still
-does not really do what it should, at least not completely.
-How can we progress on this ?
+Setup the pipeline according to that.
 
-As explained in this mail [0] from March, I think there is a fairly simple way
-to deal with platforms relying on the broken implementation, such as qcom and
-the mmci driver.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v2:
+- none
 
-[0]: https://lkml.kernel.org/r/1522398050.3871.12.camel@baylibre.com
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Regards
-Jerome
-
-> 
-> > 
-> > > This part is mostly an optimization, but it would be nice to have
-> > > so that multiple writes could be done in sequence. This way, the
-> > > RCG code could do the special locking sequence and the branch
-> > > code could do the fire and forget single bit update.
-> 
->  
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 4ffd4787acd2..8ec6559d10cc 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -257,6 +257,10 @@
+ 					#size-cells = <0>;
+ 					reg = <1>;
+ 
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -719,6 +723,23 @@
+ 			phys = <&hdmi_phy>;
+ 			phy-names = "hdmi-phy";
+ 			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					reg = <0>;
++
++					hdmi_in_tcon1: endpoint {
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					reg = <1>;
++				};
++			};
+ 		};
+ 
+ 		hdmi_phy: hdmi-phy@1ef0000 {
+-- 
+2.14.3
