@@ -1,67 +1,54 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	stefan@agner.ch,
-	adriana.reus@nxp.com,
-	rui.silva@linaro.org
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH V2 3/3] ARM: dts: imx7: correct enet ipg clock
-Date: Fri, 18 May 2018 09:01:06 +0800
-Message-Id: <1526605266-18464-3-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
-References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39085 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753045AbeERJ2x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:28:53 -0400
+Received: by mail-wr0-f193.google.com with SMTP id w18-v6so4716041wrn.6
+        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 02:28:53 -0700 (PDT)
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+Subject: [PATCH v5 12/12] media: staging/imx: add i.MX7 entries to TODO file
+Date: Fri, 18 May 2018 10:28:06 +0100
+Message-Id: <20180518092806.3829-13-rui.silva@linaro.org>
+In-Reply-To: <20180518092806.3829-1-rui.silva@linaro.org>
+References: <20180518092806.3829-1-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-ENET "ipg" clock should be IMX7D_ENETx_IPG_ROOT_CLK
-rather than IMX7D_ENET_AXI_ROOT_CLK which is for ENET bus
-clock.
+Add some i.MX7 related entries to TODO file.
 
-Based on Andy Duan's patch from the NXP kernel tree.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
 ---
- arch/arm/boot/dts/imx7d.dtsi | 2 +-
- arch/arm/boot/dts/imx7s.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/media/imx/TODO | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx7d.dtsi b/arch/arm/boot/dts/imx7d.dtsi
-index 200714e..d74dd7f 100644
---- a/arch/arm/boot/dts/imx7d.dtsi
-+++ b/arch/arm/boot/dts/imx7d.dtsi
-@@ -120,7 +120,7 @@
- 			<GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
- 			<GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
- 			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&clks IMX7D_ENET_AXI_ROOT_CLK>,
-+		clocks = <&clks IMX7D_ENET2_IPG_ROOT_CLK>,
- 			<&clks IMX7D_ENET_AXI_ROOT_CLK>,
- 			<&clks IMX7D_ENET2_TIME_ROOT_CLK>,
- 			<&clks IMX7D_PLL_ENET_MAIN_125M_CLK>,
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index 4d42335..b90769d 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -1091,7 +1091,7 @@
- 					<GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
- 					<GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>,
- 					<GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_ENET_AXI_ROOT_CLK>,
-+				clocks = <&clks IMX7D_ENET1_IPG_ROOT_CLK>,
- 					<&clks IMX7D_ENET_AXI_ROOT_CLK>,
- 					<&clks IMX7D_ENET1_TIME_ROOT_CLK>,
- 					<&clks IMX7D_PLL_ENET_MAIN_125M_CLK>,
+diff --git a/drivers/staging/media/imx/TODO b/drivers/staging/media/imx/TODO
+index aeeb15494a49..6f29b5ca5324 100644
+--- a/drivers/staging/media/imx/TODO
++++ b/drivers/staging/media/imx/TODO
+@@ -45,3 +45,12 @@
+ 
+      Which means a port must not contain mixed-use endpoints, they
+      must all refer to media links between V4L2 subdevices.
++
++- i.MX7: all of the above, since it uses the imx media core
++
++- i.MX7: use Frame Interval Monitor
++
++- i.MX7: runtime testing with parallel sensor, links setup and streaming
++
++- i.MX7: runtime testing with different formats, for the time only 10-bit bayer
++  is tested
 -- 
-2.7.4
+2.17.0
+
