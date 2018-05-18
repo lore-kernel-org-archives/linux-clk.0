@@ -1,52 +1,103 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 24 May 2018 15:01:59 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH 9/9] regulator: bd71837: Build BD71837 regulator driver
-Message-ID: <20180524140159.GT4828@sirena.org.uk>
-References: <20180524060114.GJ4249@localhost.localdomain>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Fri, 18 May 2018 12:37:33 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Marcel Ziswiler <marcel@ziswiler.com>,
+	Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Restore ULPI USB on Tegra20
+Message-ID: <20180518103733.GE5312@ulmo>
+References: <20180508162607.3500-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8+OS07CeIgZ706fH"
-In-Reply-To: <20180524060114.GJ4249@localhost.localdomain>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="PGNNI9BzQDUtgA2J"
+In-Reply-To: <20180508162607.3500-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---8+OS07CeIgZ706fH
+--PGNNI9BzQDUtgA2J
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 24, 2018 at 09:01:14AM +0300, Matti Vaittinen wrote:
-> Configurations and Makefile for BD71837 regulator driver
+On Tue, May 08, 2018 at 07:26:02PM +0300, Dmitry Osipenko wrote:
+> Hello,
 >=20
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  drivers/regulator/Kconfig  | 11 +++++++++++
->  drivers/regulator/Makefile |  1 +
->  2 files changed, 12 insertions(+)
+> This series of patches fixes ULPI USB on Tegra20. The original problem
+> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+> with the USB for the devices that have CDEV2 being enabled by bootloader.
+> The patch got into the kernel and later Marc Dietrich found that USB
+> stopped working on the "paz00" Tegra20 board. After a bit of discussion
+> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+> driver was setting CDEV2's parent incorrectly. The parent clock is actual=
+ly
+> determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provid=
+er,
+> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+> suggestion), and then setting these clock muxes as parents for the CDEV1/2
+> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CD=
+EV2
+> (aka MCLK2) is the actual clock source for "ulpi-link".
+>=20
+> Changelog:
+>=20
+> v3:
+> 	- Use clk DT ID's instead of comparing clk names and make
+> 	  custom of_src_onecell_get specific to Tegra20 clk provider
+> 	  in the "Add quirk for getting CDEV1/2 clocks on Tegra20" patch
+> 	  as was suggested by Peter De Schrijver for v2.
+>=20
+> v2:
+> 	- Added new patch "Add quirk for getting CDEV1/2 clocks", assuring
+> 	  that clk user won't get CDEV1/2 clocks until parent clk muxes
+> 	  are available, i.e. resolves potential issue with CDEV-user driver
+> 	  vs pinctrl driver probe order.
+>=20
+> 	- Factored out "pinctrl" patch from the patchset as was requested by
+> 	  Linus Walleij.
+>=20
+> 	- Addressed v1 review comments: fixed swapped DEV1/2 clk div bits,
+> 	  made DEV1/2 divs read-only, etc minor changes.
+>=20
+> Dmitry Osipenko (4):
+>   clk: tegra20: Add DEV1/DEV2 OSC dividers
+>   clk: tegra20: Correct parents of CDEV1/2 clocks
+>   clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
+>   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
 
-Just squash this into the single patch adding the driver, it makes life
-easier.
+Patches 1-3 applied, thanks.
 
---8+OS07CeIgZ706fH
+Thierry
+
+--PGNNI9BzQDUtgA2J
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsGxdYACgkQJNaLcl1U
-h9ABiwf9HN+x1x1xOqtjg6KETg+ssfmw3CVV6U+YrkiO4jhM1ruOeXzUDgvDoF4n
-qqIhNFc+NSIYlcq+X47gr9XaTg+GeJBgFHxW44eGkfr8h+JFuc/KEYuLRPMKWUss
-xMqJzd8wYhBcrwM+k0/4qeLWlfNh3+2CcesD1nPNqEcs00buB66MYq9X4aH5ASyZ
-Hy7XIeYdzl4QWVUBw6X8Gwk1JJy/RvY9+lbTElQhbRPNDo8a1CFRGG+F0zd8YkME
-CA4OB0iBXgnrKH9arf+p+AZVRWqKbo32vRYp+BELwxuf9R84fRnHtX4/JoTJolrE
-/xDQmqYEeo3hbR2UveF9TeHcBCCadw==
-=bi1a
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+rO0ACgkQ3SOs138+
+s6H60RAAiCLfvdhXE4xAETzkyCF5yZp9N2b/3dMIC6gxAhvXoHZqS7Ko7cgEfJL0
+o+KxTf71EdOvIOZxNNvvLI/kiZBBrqdezvVUw0JkjTdrU2cRq1RPIC61Rvcpaq9F
+Mz0pURAsunOr5GxysB710BqFU6IyYWMctOpiyRLZc0o4W6UuMagSEvG0savopXMD
+MdWvEEmBA22TT4k1RtmB4vFgaCTya8pZYy0+Zq6DdcYUBNCT/tNazpFGjZ9Na4aM
+AfBwCb64Hp1YtAEhg6dAODjy6c0cetFeE2W/8mIb44+RqFjlu/wtDwpS4Uf8BYA6
+z7TUBWdfDD/HIbkdqh/rRCNu0vsNo36GpWGb0NqUWrNvkUfyyn42VLUHK3dd0LQM
+omnVup0NIsdk6Tfi+N0iMe4qVLNP4JbW6FPvr0+wpphee8TygPVJ2H7Ijk5qjG30
+5N165HgODS0Rr9KrjM5p1iqUVBpOx1AHxmTKazYPi5QI8OTAv9DWN3FWmZr9x50E
+XlVqJA05H7m078yy0mACNwmXvumzPaYRWwt498cxiLTUHQ4tBG9jyKx5AxSpSzog
+L3q+HKx70CPhBa/Ym31In2m9Zf94DIhwmGPz+8vP5fGLfJc1xKDASy+YybUTU+NS
+tlvQ8VSCePRcJv9EkBeUNqYDS/mNGABgiWgMhjSp1oo1CDuu8XY=
+=+hZo
 -----END PGP SIGNATURE-----
 
---8+OS07CeIgZ706fH--
+--PGNNI9BzQDUtgA2J--
