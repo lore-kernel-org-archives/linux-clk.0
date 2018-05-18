@@ -1,108 +1,169 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Wed, 30 May 2018 11:41:13 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v4 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC driver
-Message-ID: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54219 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752925AbeERJ2j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:28:39 -0400
+Received: by mail-wm0-f66.google.com with SMTP id a67-v6so12907887wmf.3
+        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 02:28:38 -0700 (PDT)
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+Subject: [PATCH v5 06/12] media: dt-bindings: add bindings for i.MX7 media driver
+Date: Fri, 18 May 2018 10:28:00 +0100
+Message-Id: <20180518092806.3829-7-rui.silva@linaro.org>
+In-Reply-To: <20180518092806.3829-1-rui.silva@linaro.org>
+References: <20180518092806.3829-1-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Patch series adding support for ROHM BD71837 PMIC.
+Add bindings documentation for i.MX7 media drivers.
 
-BD71837 is a programmable Power Management IC for powering single-core,
-dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-low BOM cost and compact solution footprint. It integrates 8 buck
-regulators and 7 LDO’s to provide all the power rails required by the
-SoC and the commonly used peripherals.
-
-The driver aims to not limit the usage of PMIC. Thus the buck and LDO
-naming is generic and not tied to any specific purposes. However there
-is following limitations which make it mostly suitable for use cases
-where the processor where PMIC driver is running is powered by the PMIC:
-
-- The PMIC is not re-initialized if it resets. PMIC may reset as a
-  result of voltage monitoring (over/under voltage) or due to reset
-  request. Driver is only initializing PMIC at probe. This is not
-  problem as long as processor controlling PMIC is powered by PMIC.
-
-- The PMIC internal state machine is ignored by driver. Driver assumes
-  the PMIC is wired so that it is always in "run" state when controlled
-  by the driver.
-
-Changelog v4
-- remove mutex from regulator state check as core prevents simultaneous
-  accesses
-- allow voltage change for bucks 1 to 4 when regulator is enabled
-- fix indentiation problems
-- properly correct SPDX comments
-
-Changelog v3
-- kill unused variable
-- kill unused definitions
-- use REGMAP_IRQ_REG
-
-Changelog v2
-Based on feedback from Mark Brown
-- Squashed code and buildfile changes to same patch
-- Fixed some styling issues
-- Changed SPDX comments to CPP style
-- Error out if voltage is changed when regulator is enabled instead of
-  Disabling the regulator for duration of change
-- Use devm_regulator_register
-- Remove compatible usage from regulators - use parent dev for config
-- Add a note about using regulator-boot-on for BUCK6 and 7
-- fixed warnings from kbuild test robot
-
-patch 1: 
-        MFD driver and definitions bringing interrupt support and
-        enabling clk and regulator subsystems.
-Patches 2, 3 and 4:
-        device tree binding documents.
-Patch 5:
-        clock subsystem and support for gated clock.
-Patch 6:
-        regulator driver supporting 8 bucks and 7 LDOs.
-
-This patch series is based on for-mfd-next
-
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
 ---
+ .../devicetree/bindings/media/imx7.txt        | 125 ++++++++++++++++++
+ 1 file changed, 125 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/imx7.txt
 
-Matti Vaittinen (6):
-  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  regulator: bd71837: Devicetree bindings for BD71837 regulators
-  clk: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  clk: bd71837: Add driver for BD71837 PMIC clock
-  regulator: bd71837: BD71837 PMIC regulator driver
-
- .../bindings/clock/rohm,bd71837-clock.txt          |  37 ++
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  52 ++
- .../bindings/regulator/rohm,bd71837-regulator.txt  | 126 ++++
- drivers/clk/Kconfig                                |   9 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-bd71837.c                          | 151 +++++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/bd71837.c                              | 222 +++++++
- drivers/regulator/Kconfig                          |  11 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/bd71837-regulator.c              | 640 +++++++++++++++++++++
- include/linux/mfd/bd71837.h                        | 288 ++++++++++
- 13 files changed, 1552 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
- create mode 100644 drivers/clk/clk-bd71837.c
- create mode 100644 drivers/mfd/bd71837.c
- create mode 100644 drivers/regulator/bd71837-regulator.c
- create mode 100644 include/linux/mfd/bd71837.h
-
+diff --git a/Documentation/devicetree/bindings/media/imx7.txt b/Documentation/devicetree/bindings/media/imx7.txt
+new file mode 100644
+index 000000000000..a26372630377
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/imx7.txt
+@@ -0,0 +1,125 @@
++Freescale i.MX7 Media Video Device
++==================================
++
++mipi_csi2 node
++--------------
++
++This is the device node for the MIPI CSI-2 receiver core in i.MX7 SoC. It is
++compatible with previous version of Samsung D-phy.
++
++Required properties:
++
++- compatible    : "fsl,imx7-mipi-csi2";
++- reg           : base address and length of the register set for the device;
++- interrupts    : should contain MIPI CSIS interrupt;
++- clocks        : list of clock specifiers, see
++        Documentation/devicetree/bindings/clock/clock-bindings.txt for details;
++- clock-names   : must contain "pclk", "wrap" and "phy" entries, matching
++                  entries in the clock property;
++- power-domains : a phandle to the power domain, see
++          Documentation/devicetree/bindings/power/power_domain.txt for details.
++- reset-names   : should include following entry "mrst";
++- resets        : a list of phandle, should contain reset entry of
++                  reset-names;
++- phy-supply    : from the generic phy bindings, a phandle to a regulator that
++	          provides power to MIPI CSIS core;
++- bus-width     : maximum number of data lanes supported (SoC specific);
++
++Optional properties:
++
++- clock-frequency : The IP's main (system bus) clock frequency in Hz, default
++		    value when this property is not specified is 166 MHz;
++
++port node
++---------
++
++- reg		  : (required) can take the values 0 or 1, where 0 is the
++                     related sink port and port 1 should be the source one;
++
++endpoint node
++-------------
++
++- data-lanes    : (required) an array specifying active physical MIPI-CSI2
++		    data input lanes and their mapping to logical lanes; the
++		    array's content is unused, only its length is meaningful;
++
++- fsl,csis-hs-settle : (optional) differential receiver (HS-RX) settle time;
++
++example:
++
++        mipi_csi: mipi-csi@30750000 {
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                compatible = "fsl,imx7-mipi-csi2";
++                reg = <0x30750000 0x10000>;
++                interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&clks IMX7D_IPG_ROOT_CLK>,
++                                <&clks IMX7D_MIPI_CSI_ROOT_CLK>,
++                                <&clks IMX7D_MIPI_DPHY_ROOT_CLK>;
++                clock-names = "pclk", "wrap", "phy";
++                clock-names = "mipi", "phy";
++                clock-frequency = <166000000>;
++                power-domains = <&pgc_mipi_phy>;
++                phy-supply = <&reg_1p0d>;
++                resets = <&src IMX7_RESET_MIPI_PHY_MRST>;
++                reset-names = "mrst";
++                bus-width = <4>;
++                fsl,csis-hs-settle = <3>;
++                fsl,csis-clk-settle = <0>;
++
++                port@0 {
++                        reg = <0>;
++
++                        mipi_from_sensor: endpoint {
++                                remote-endpoint = <&ov2680_to_mipi>;
++                                data-lanes = <1>;
++                        };
++                };
++
++                port@1 {
++                        reg = <1>;
++
++                        mipi_vc0_to_csi_mux: endpoint {
++                                remote-endpoint = <&csi_mux_from_mipi_vc0>;
++                        };
++                };
++        };
++
++
++csi node
++--------
++
++This is device node for the CMOS Sensor Interface (CSI) which enables the chip
++to connect directly to external CMOS image sensors.
++
++Required properties:
++
++- compatible    : "fsl,imx7-csi";
++- reg           : base address and length of the register set for the device;
++- interrupts    : should contain CSI interrupt;
++- clocks        : list of clock specifiers, see
++        Documentation/devicetree/bindings/clock/clock-bindings.txt for details;
++- clock-names   : must contain "axi", "mclk" and "dcic" entries, matching
++                 entries in the clock property;
++
++example:
++
++                csi: csi@30710000 {
++                        #address-cells = <1>;
++                        #size-cells = <0>;
++
++                        compatible = "fsl,imx7-csi";
++                        reg = <0x30710000 0x10000>;
++                        interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++                        clocks = <&clks IMX7D_CLK_DUMMY>,
++                                        <&clks IMX7D_CSI_MCLK_ROOT_CLK>,
++                                        <&clks IMX7D_CLK_DUMMY>;
++                        clock-names = "axi", "mclk", "dcic";
++
++                        port {
++                                csi_from_csi_mux: endpoint {
++                                        remote-endpoint = <&csi_mux_to_csi>;
++                                };
++                        };
++                };
 -- 
-2.14.3
+2.17.0
+
