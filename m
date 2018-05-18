@@ -1,105 +1,75 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] clk: meson: mpll: add round closest support
-Date: Tue, 15 May 2018 18:36:51 +0200
-Message-Id: <20180515163652.19980-2-jbrunet@baylibre.com>
-In-Reply-To: <20180515163652.19980-1-jbrunet@baylibre.com>
-References: <20180515163652.19980-1-jbrunet@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 06/26] drm/sun4i: Add support for A64 mixer1
+Date: Fri, 18 May 2018 15:15:16 +0530
+Message-Id: <20180518094536.17201-7-jagan@amarulasolutions.com>
+In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allow the mpll driver to round the requested rate up if
-CLK_MESON_MPLL_ROUND_CLOSEST is set and it provides a rate closer to the
-requested rate.
+Mixers in Allwinner have similar capabilities as others SoCs with DE2.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Mixer1 has 1 VI and 1 UI planes and supports HW scaling on all
+planes.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/clk/meson/clk-mpll.c | 24 +++++++++++++++++++-----
- drivers/clk/meson/clkc.h     |  3 +++
- 2 files changed, 22 insertions(+), 5 deletions(-)
+Changes for v2:
+- New patch
 
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index 0df1227b65b3..d233549de244 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -89,10 +89,23 @@ static long rate_from_params(unsigned long parent_rate,
- static void params_from_rate(unsigned long requested_rate,
- 			     unsigned long parent_rate,
- 			     unsigned int *sdm,
--			     unsigned int *n2)
-+			     unsigned int *n2,
-+			     u8 flags)
- {
- 	uint64_t div = parent_rate;
--	unsigned long rem = do_div(div, requested_rate);
-+	uint64_t frac = do_div(div, requested_rate);
-+
-+	frac *= SDM_DEN;
-+
-+	if (flags & CLK_MESON_MPLL_ROUND_CLOSEST)
-+		*sdm = DIV_ROUND_CLOSEST_ULL(frac, requested_rate);
-+	else
-+		*sdm = DIV_ROUND_UP_ULL(frac, requested_rate);
-+
-+	if (*sdm == SDM_DEN) {
-+		*sdm = 0;
-+		div += 1;
-+	}
- 
- 	if (div < N2_MIN) {
- 		*n2 = N2_MIN;
-@@ -102,7 +115,6 @@ static void params_from_rate(unsigned long requested_rate,
- 		*sdm = SDM_DEN - 1;
- 	} else {
- 		*n2 = div;
--		*sdm = DIV_ROUND_UP_ULL((u64)rem * SDM_DEN, requested_rate);
- 	}
- }
- 
-@@ -125,9 +137,11 @@ static long mpll_round_rate(struct clk_hw *hw,
- 			    unsigned long rate,
- 			    unsigned long *parent_rate)
- {
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
- 	unsigned int sdm, n2;
- 
--	params_from_rate(rate, *parent_rate, &sdm, &n2);
-+	params_from_rate(rate, *parent_rate, &sdm, &n2, mpll->flags);
- 	return rate_from_params(*parent_rate, sdm, n2);
- }
- 
-@@ -140,7 +154,7 @@ static int mpll_set_rate(struct clk_hw *hw,
- 	unsigned int sdm, n2;
- 	unsigned long flags = 0;
- 
--	params_from_rate(rate, parent_rate, &sdm, &n2);
-+	params_from_rate(rate, parent_rate, &sdm, &n2, mpll->flags);
- 
- 	if (mpll->lock)
- 		spin_lock_irqsave(mpll->lock, flags);
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 8fe73c4edca8..8cc265cd3d2b 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -97,8 +97,11 @@ struct meson_clk_mpll_data {
- 	struct parm ssen;
- 	struct parm misc;
- 	spinlock_t *lock;
-+	u8 flags;
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index 36d90c76317a..5b02c6ee2be6 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -508,6 +508,15 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+ 	.mod_rate = 150000000,
  };
  
-+#define CLK_MESON_MPLL_ROUND_CLOSEST	BIT(0)
++static const struct sun8i_mixer_cfg sun50i_a64_mixer1_cfg = {
++	.ccsc		= 1,
++	.index		= 1,
++	.mod_rate	= 297000000,
++	.scaler_mask	= 0x3,
++	.ui_num		= 1,
++	.vi_num		= 1,
++};
 +
- struct meson_clk_audio_div_data {
- 	struct parm div;
- 	u8 flags;
+ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 	{
+ 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
+@@ -525,6 +534,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
+ 		.data = &sun8i_v3s_mixer_cfg,
+ 	},
++	{
++		.compatible = "allwinner,sun50i-a64-de2-mixer-1",
++		.data = &sun50i_a64_mixer1_cfg,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun8i_mixer_of_table);
 -- 
 2.14.3
