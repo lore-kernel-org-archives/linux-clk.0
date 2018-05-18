@@ -1,183 +1,103 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [v4 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1524572599-5425-1-git-send-email-tdas@codeaurora.org>
- <1524572599-5425-3-git-send-email-tdas@codeaurora.org>
- <152478600630.46528.279344846112571167@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <a00ef872-56a1-df5d-86d1-b103b83961b8@codeaurora.org>
-Date: Tue, 1 May 2018 14:10:52 +0530
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	stefan@agner.ch,
+	adriana.reus@nxp.com,
+	rui.silva@linaro.org
+Cc: Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
+Date: Fri, 18 May 2018 09:01:05 +0800
+Message-Id: <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
+References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <152478600630.46528.279344846112571167@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+Correct enet clock gates as below:
 
-Thanks for the review comments.
+CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
+CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
+CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
 
-On 4/27/2018 5:10 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-04-24 05:23:19)
->> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->> new file mode 100644
->> index 0000000..907a73f
->> --- /dev/null
->> +++ b/drivers/clk/qcom/clk-rpmh.c
->> @@ -0,0 +1,364 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/err.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <soc/qcom/cmd-db.h>
->> +#include <soc/qcom/rpmh.h>
->> +
->> +#include <dt-bindings/clock/qcom,rpmh.h>
->> +
->> +#define CLK_RPMH_ARC_EN_OFFSET         0
->> +#define CLK_RPMH_VRM_EN_OFFSET         4
->> +
->> +/**
->> + * struct clk_rpmh - individual rpmh clock data structure
->> + * @hw:                        handle between common and hardware-specific interfaces
->> + * @res_name:          resource name for the rpmh clock
->> + * @res_addr:          base address of the rpmh resource within the RPMh
->> + * @res_en_offset:     clock resource enable offset corresponding to ARC or
->> + *                     VRM type clock
-> 
-> Can these be combined still? Just do a += on res_addr after we get the
-> base of it?
-> 
-I have taken care in the next patch.
+Just rename unused IMX7D_ENETx_REF_ROOT_CLK for
+IMX7D_ENETx_IPG_ROOT_CLK instead of adding new clocks.
 
->> + * @res_on_val:                rpmh clock enable value
->> + * @res_off_val:       rpmh clock disable value
->> + * @state:             rpmh clock requested state
->> + * @aggr_state:                rpmh clock aggregated state
->> + * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
->> + * @valid_state_mask:  mask to determine the state of the rpmh clock
->> + * @rpmh_client:       handle used for rpmh communications
->> + * @dev:               device to which it is attached
->> + * @peer:              pointer to the clock rpmh sibling
->> + * @rate:              rate of the rpmh clock
->> + */
->> +struct clk_rpmh {
->> +       struct clk_hw hw;
->> +       const char *res_name;
->> +       u32 res_addr;
->> +       u32 res_en_offset;
->> +       u32 res_on_val;
->> +       u32 res_off_val;
->> +       u32 state;
->> +       u32 aggr_state;
->> +       u32 last_sent_aggr_state;
->> +       u32 valid_state_mask;
->> +       struct rpmh_client *rpmh_client;
->> +       struct device *dev;
->> +       struct clk_rpmh *peer;
->> +       unsigned long rate;
->> +};
-> [...]
->> +
->> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
->> +{
->> +       return (c->last_sent_aggr_state & BIT(state))
->> +               != (c->aggr_state & BIT(state));
-> 
-> Please drop useless parenthesis.
-> 
+Based on Andy Duan's patch from the NXP kernel tree.
 
-I see a warning in case I remove the parenthesis.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c             | 10 ++++++----
+ include/dt-bindings/clock/imx7d-clock.h |  4 ++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-warning: suggest parentheses around comparison in operand of ‘&’ 
-[-Wparentheses]
-    != c->aggr_state & BIT(state));
-
->> +}
->> +
->> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
->> +{
->> +       struct tcs_cmd cmd = { 0 };
->> +       u32 cmd_state, on_val;
->> +       enum rpmh_state state = RPMH_SLEEP_STATE;
->> +       int ret;
->> +
->> +       cmd.addr = c->res_addr + c->res_en_offset;
->> +       cmd_state = c->aggr_state;
->> +       on_val = c->res_on_val;
->> +
->> +       for (; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
->> +               if (has_state_changed(c, state)) {
->> +                       cmd.data = (cmd_state & BIT(state)) ? on_val : 0;
->> +                       ret = rpmh_write_async(c->rpmh_client, state,
->> +                                               &cmd, 1);
->> +                       if (ret) {
->> +                               dev_err(c->dev, "set %s state of %s failed: (%d)\n",
->> +                                       (!state) ? "sleep" :
-> 
-> Drop parenthesis please.
-> 
-
-Dropped.
-
->> +                                       (state == RPMH_WAKE_ONLY_STATE) ?
-> 
-> Drop parenthesis please.
-> 
-
-Dropped.
-
->> +                                       "wake" : "active", c->res_name, ret);
->> +                               return ret;
->> +                       }
->> +               }
->> +       }
->> +
->> +       c->last_sent_aggr_state = c->aggr_state;
->> +       c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
->> +
->> +       return 0;
->> +}
-> [...]
->> +
->> +static const struct clk_ops clk_rpmh_ops = {
->> +       .prepare        = clk_rpmh_prepare,
->> +       .unprepare      = clk_rpmh_unprepare,
->> +       .recalc_rate    = clk_rpmh_recalc_rate,
->> +};
->> +
->> +/* Resource name must match resource id present in cmd-db. */
->> +DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 0x0, 19200000);
->> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 19200000);
->> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 19200000);
->> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 38400000);
->> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 38400000);
->> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 38400000);
-> 
-> These rates should come from DT and parents of these clks.
-> 
-
-Removed the rates from the above and instead I would take the clk-div 
-values from the DT for the clocks and compute the rates and parents are 
-fixed to "xo_board".
-
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 23d5090a..d4936b9 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -26,6 +26,8 @@ static u32 share_count_sai1;
+ static u32 share_count_sai2;
+ static u32 share_count_sai3;
+ static u32 share_count_nand;
++static u32 share_count_enet1;
++static u32 share_count_enet2;
+ 
+ static const struct clk_div_table test_div_table[] = {
+ 	{ .val = 3, .div = 1, },
+@@ -805,6 +807,10 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_MIPI_DSI_ROOT_CLK] = imx_clk_gate4("mipi_dsi_root_clk", "mipi_dsi_post_div", base + 0x4650, 0);
+ 	clks[IMX7D_MIPI_CSI_ROOT_CLK] = imx_clk_gate4("mipi_csi_root_clk", "mipi_csi_post_div", base + 0x4640, 0);
+ 	clks[IMX7D_MIPI_DPHY_ROOT_CLK] = imx_clk_gate4("mipi_dphy_root_clk", "mipi_dphy_post_div", base + 0x4660, 0);
++	clks[IMX7D_ENET1_IPG_ROOT_CLK] = imx_clk_gate2_shared2("enet1_ipg_root_clk", "enet_axi_post_div", base + 0x4700, 0, &share_count_enet1);
++	clks[IMX7D_ENET1_TIME_ROOT_CLK] = imx_clk_gate2_shared2("enet1_time_root_clk", "enet1_time_post_div", base + 0x4700, 0, &share_count_enet1);
++	clks[IMX7D_ENET2_IPG_ROOT_CLK] = imx_clk_gate2_shared2("enet2_ipg_root_clk", "enet_axi_post_div", base + 0x4710, 0, &share_count_enet2);
++	clks[IMX7D_ENET2_TIME_ROOT_CLK] = imx_clk_gate2_shared2("enet2_time_root_clk", "enet2_time_post_div", base + 0x4710, 0, &share_count_enet2);
+ 	clks[IMX7D_SAI1_ROOT_CLK] = imx_clk_gate2_shared2("sai1_root_clk", "sai1_post_div", base + 0x48c0, 0, &share_count_sai1);
+ 	clks[IMX7D_SAI1_IPG_CLK]  = imx_clk_gate2_shared2("sai1_ipg_clk",  "ipg_root_clk",  base + 0x48c0, 0, &share_count_sai1);
+ 	clks[IMX7D_SAI2_ROOT_CLK] = imx_clk_gate2_shared2("sai2_root_clk", "sai2_post_div", base + 0x48d0, 0, &share_count_sai2);
+@@ -812,10 +818,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_SAI3_ROOT_CLK] = imx_clk_gate2_shared2("sai3_root_clk", "sai3_post_div", base + 0x48e0, 0, &share_count_sai3);
+ 	clks[IMX7D_SAI3_IPG_CLK]  = imx_clk_gate2_shared2("sai3_ipg_clk",  "ipg_root_clk",  base + 0x48e0, 0, &share_count_sai3);
+ 	clks[IMX7D_SPDIF_ROOT_CLK] = imx_clk_gate4("spdif_root_clk", "spdif_post_div", base + 0x44d0, 0);
+-	clks[IMX7D_ENET1_REF_ROOT_CLK] = imx_clk_gate4("enet1_ref_root_clk", "enet1_ref_post_div", base + 0x44e0, 0);
+-	clks[IMX7D_ENET1_TIME_ROOT_CLK] = imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base + 0x44f0, 0);
+-	clks[IMX7D_ENET2_REF_ROOT_CLK] = imx_clk_gate4("enet2_ref_root_clk", "enet2_ref_post_div", base + 0x4500, 0);
+-	clks[IMX7D_ENET2_TIME_ROOT_CLK] = imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base + 0x4510, 0);
+ 	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk", "eim_post_div", base + 0x4160, 0);
+ 	clks[IMX7D_NAND_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base + 0x4140, 0, &share_count_nand);
+ 	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk", base + 0x4140, 0, &share_count_nand);
+diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+index b2325d3e2..0d67f53 100644
+--- a/include/dt-bindings/clock/imx7d-clock.h
++++ b/include/dt-bindings/clock/imx7d-clock.h
+@@ -168,7 +168,7 @@
+ #define IMX7D_SPDIF_ROOT_SRC		155
+ #define IMX7D_SPDIF_ROOT_CG		156
+ #define IMX7D_SPDIF_ROOT_DIV		157
+-#define IMX7D_ENET1_REF_ROOT_CLK	158
++#define IMX7D_ENET1_IPG_ROOT_CLK        158
+ #define IMX7D_ENET1_REF_ROOT_SRC	159
+ #define IMX7D_ENET1_REF_ROOT_CG		160
+ #define IMX7D_ENET1_REF_ROOT_DIV	161
+@@ -176,7 +176,7 @@
+ #define IMX7D_ENET1_TIME_ROOT_SRC	163
+ #define IMX7D_ENET1_TIME_ROOT_CG	164
+ #define IMX7D_ENET1_TIME_ROOT_DIV	165
+-#define IMX7D_ENET2_REF_ROOT_CLK	166
++#define IMX7D_ENET2_IPG_ROOT_CLK        166
+ #define IMX7D_ENET2_REF_ROOT_SRC	167
+ #define IMX7D_ENET2_REF_ROOT_CG		168
+ #define IMX7D_ENET2_REF_ROOT_DIV	169
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+2.7.4
