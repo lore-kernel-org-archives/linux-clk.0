@@ -1,575 +1,363 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v6 03/14] clk: qcom: Add CPU clock driver for msm8996
-Date: Mon, 14 May 2018 16:11:49 +0300
-Message-Id: <1526303520-5843-4-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
-References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+	Adam Ford <aford173@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v11 06/27] ARM: davinci: da850: add new clock init using common clock framework
+Date: Fri, 18 May 2018 11:48:08 -0500
+Message-Id: <20180518164829.27052-7-david@lechnology.com>
+In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
+References: <20180518164829.27052-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Each of the CPU clusters (Power and Perf) on msm8996 are
-clocked via 2 PLLs, a primary and alternate. There are also
-2 Mux'es, a primary and secondary all connected together
-as shown below
+This adds the new board-specific clock init in mach-davinci/da850.c
+using the new common clock framework drivers.
 
-                             +-------+
-              XO             |       |
-          +------------------>0      |
-                             |       |
-                   PLL/2     | SMUX  +----+
-                     +------->1      |    |
-                     |       |       |    |
-                     |       +-------+    |    +-------+
-                     |                    +---->0      |
-                     |                         |       |
-+---------------+    |             +----------->1      | CPU clk
-|Primary PLL    +----+ PLL_EARLY   |           |       +------>
-|               +------+-----------+    +------>2 PMUX |
-+---------------+      |                |      |       |
-                       |   +------+     |   +-->3      |
-                       +--^+  ACD +-----+   |  +-------+
-+---------------+          +------+         |
-|Alt PLL        |                           |
-|               +---------------------------+
-+---------------+         PLL_EARLY
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
-The primary PLL is what drives the CPU clk, except for times
-when we are reprogramming the PLL itself (for rate changes) when
-we temporarily switch to an alternate PLL. A subsequent patch adds
-support to switch between primary and alternate PLL during rate
-changes.
+Also clean up the #includes since we are adding some here.
 
-The primary PLL operates on a single VCO range, between 600MHz
-and 3GHz. However the CPUs do support OPPs with frequencies
-between 300MHz and 600MHz. In order to support running the CPUs
-at those frequencies we end up having to lock the PLL at twice
-the rate and drive the CPU clk via the PLL/2 output and SMUX.
+Some CFGCHIP macros were removed because we are now including
+linux/mfd/da8xx-cfgchip.h which defines the same values.
 
-So for frequencies above 600MHz we follow the following path
- Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-and for frequencies between 300MHz and 600MHz we follow
- Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
-Support for this is added in a subsequent patch as well.
-
-ACD stands for Adaptive Clock Distribution and is used to
-detect voltage droops. We do not add support for ACD as yet.
-
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/clk-fixed-factor.c   |   2 +-
- drivers/clk/qcom/Kconfig         |   9 +
- drivers/clk/qcom/Makefile        |   1 +
- drivers/clk/qcom/clk-alpha-pll.h |   6 +
- drivers/clk/qcom/clk-cpu-8996.c  | 412 +++++++++++++++++++++++++++++++++++++++
- 5 files changed, 429 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index a5d402d..8e39bda 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
- 	init.num_parents = 1;
+v11 changes:
+- none
+
+v10 changes:
+- none
+
+v9 changes:
+- register PLL in da850_init_time() instead of as platform device so that we
+  get the correct timer0 clock for davinci_timer_init()
+
+v8 changes:
+- add platform data for PLL clocks
+
+v7 changes:
+- add clock platform device declarations
+- register platform devices instead of registering clocks directly
+- clkdev lookup is moved to drivers/clk
+- add davinci prefix to commit description
+
+v6 changes:
+- add blank lines between function calls
+- include da8xx_register_cfgchip()
+- add async1 and async2 clock domains
+
+
+ arch/arm/mach-davinci/board-da850-evm.c     |   2 +
+ arch/arm/mach-davinci/board-mityomapl138.c  |   2 +
+ arch/arm/mach-davinci/board-omapl138-hawk.c |   2 +
+ arch/arm/mach-davinci/da850.c               | 155 ++++++++++++++++++--
+ arch/arm/mach-davinci/da8xx-dt.c            |   2 +
+ arch/arm/mach-davinci/include/mach/da8xx.h  |   1 +
+ 6 files changed, 151 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index e22fb40e34bc..442c16773f09 100644
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -1340,6 +1340,8 @@ static __init void da850_evm_init(void)
+ {
+ 	int ret;
  
- 	hw = &fix->hw;
--	ret = clk_hw_register(dev, hw);
-+	ret = devm_clk_hw_register(dev, hw);
- 	if (ret) {
- 		kfree(fix);
- 		hw = ERR_PTR(ret);
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e42e1af..866ce1f 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -33,6 +33,15 @@ config QCOM_CLK_APCS_MSM8916
- 	  Say Y if you want to support CPU frequency scaling on devices
- 	  such as msm8916.
++	da850_register_clocks();
++
+ 	ret = da850_register_gpio();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
+index 37b3e48a21d1..2cce0d7d2f2a 100644
+--- a/arch/arm/mach-davinci/board-mityomapl138.c
++++ b/arch/arm/mach-davinci/board-mityomapl138.c
+@@ -503,6 +503,8 @@ static void __init mityomapl138_init(void)
+ {
+ 	int ret;
  
-+config QCOM_CLK_APCC_MSM8996
-+	tristate "MSM8996 CPU Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	select QCOM_KRYO_L2_ACCESSORS
-+	help
-+	  Support for the CPU clock controller on msm8996 devices.
-+	  Say Y if you want to support CPU clock scaling using CPUfreq
-+	  drivers for dyanmic power management.
++	da850_register_clocks();
 +
- config QCOM_CLK_RPM
- 	tristate "RPM based Clock Controller"
- 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 7c09ab1..a822fc8 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
-+obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index f981b48..9ce2a32 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -50,6 +50,12 @@ struct pll_vco {
- 	u32 val;
- };
+ 	/* for now, no special EDMA channels are reserved */
+ 	ret = da850_register_edma(NULL);
+ 	if (ret)
+diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+index be8b892a6ea7..7653e9425d44 100644
+--- a/arch/arm/mach-davinci/board-omapl138-hawk.c
++++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+@@ -285,6 +285,8 @@ static __init void omapl138_hawk_init(void)
+ {
+ 	int ret;
  
-+#define VCO(a, b, c) { \
-+	.val = a,\
-+	.min_freq = b,\
-+	.max_freq = c,\
-+}
++	da850_register_clocks();
 +
- /**
-  * struct clk_alpha_pll - phase locked loop (PLL)
-  * @offset: base address of registers
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-new file mode 100644
-index 0000000..beb97eb
---- /dev/null
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -0,0 +1,412 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
+ 	ret = da850_register_gpio();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+index 1dbf01c4124b..9e00beb943c9 100644
+--- a/arch/arm/mach-davinci/da850.c
++++ b/arch/arm/mach-davinci/da850.c
+@@ -11,39 +11,45 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
+  */
 +
-+/*
-+ * Each of the CPU clusters (Power and Perf) on msm8996 are
-+ * clocked via 2 PLLs, a primary and alternate. There are also
-+ * 2 Mux'es, a primary and secondary all connected together
-+ * as shown below
-+ *
-+ *                              +-------+
-+ *               XO             |       |
-+ *           +------------------>0      |
-+ *                              |       |
-+ *                    PLL/2     | SMUX  +----+
-+ *                      +------->1      |    |
-+ *                      |       |       |    |
-+ *                      |       +-------+    |    +-------+
-+ *                      |                    +---->0      |
-+ *                      |                         |       |
-+ * +---------------+    |             +----------->1      | CPU clk
-+ * |Primary PLL    +----+ PLL_EARLY   |           |       +------>
-+ * |               +------+-----------+    +------>2 PMUX |
-+ * +---------------+      |                |      |       |
-+ *                        |   +------+     |   +-->3      |
-+ *                        +--^+  ACD +-----+   |  +-------+
-+ * +---------------+          +------+         |
-+ * |Alt PLL        |                           |
-+ * |               +---------------------------+
-+ * +---------------+         PLL_EARLY
-+ *
-+ * The primary PLL is what drives the CPU clk, except for times
-+ * when we are reprogramming the PLL itself (for rate changes) when
-+ * we temporarily switch to an alternate PLL. A subsequent patch adds
-+ * support to switch between primary and alternate PLL during rate
-+ * changes.
-+ *
-+ * The primary PLL operates on a single VCO range, between 600MHz
-+ * and 3GHz. However the CPUs do support OPPs with frequencies
-+ * between 300MHz and 600MHz. In order to support running the CPUs
-+ * at those frequencies we end up having to lock the PLL at twice
-+ * the rate and drive the CPU clk via the PLL/2 output and SMUX.
-+ *
-+ * So for frequencies above 600MHz we follow the following path
-+ *  Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-+ * and for frequencies between 300MHz and 600MHz we follow
-+ *  Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
-+ * Support for this is added in a subsequent patch as well.
-+ *
-+ * ACD stands for Adaptive Clock Distribution and is used to
-+ * detect voltage droops. We do not add support for ACD as yet.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
++#include <linux/clk-provider.h>
++#include <linux/clk/davinci.h>
+ #include <linux/clkdev.h>
++#include <linux/cpufreq.h>
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+-#include <linux/clk.h>
++#include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/platform_data/clk-da8xx-cfgchip.h>
++#include <linux/platform_data/clk-davinci-pll.h>
++#include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_device.h>
+-#include <linux/cpufreq.h>
 +#include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+-#include <linux/platform_data/gpio-davinci.h>
+ 
+ #include <asm/mach/map.h>
+ 
+-#include "psc.h"
+-#include <mach/irqs.h>
+-#include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/time.h>
+-#include <mach/da8xx.h>
+ #include <mach/cpufreq.h>
++#include <mach/cputype.h>
++#include <mach/da8xx.h>
++#include <mach/irqs.h>
+ #include <mach/pm.h>
++#include <mach/time.h>
+ 
+-#include "clock.h"
+ #include "mux.h"
+ 
++#ifndef CONFIG_COMMON_CLK
++#include "clock.h"
++#include "psc.h"
++#endif
 +
-+#include "clk-alpha-pll.h"
-+#include "clk-regmap.h"
+ #define DA850_PLL1_BASE		0x01e1a000
+ #define DA850_TIMER64P2_BASE	0x01f0c000
+ #define DA850_TIMER64P3_BASE	0x01f0d000
+ 
+ #define DA850_REF_FREQ		24000000
+ 
+-#define CFGCHIP3_ASYNC3_CLKSRC	BIT(4)
+-#define CFGCHIP3_PLL1_MASTER_LOCK	BIT(5)
+-#define CFGCHIP0_PLL_MASTER_LOCK	BIT(4)
+-
++#ifndef CONFIG_COMMON_CLK
+ static int da850_set_armrate(struct clk *clk, unsigned long rate);
+ static int da850_round_armrate(struct clk *clk, unsigned long rate);
+ static int da850_set_pll0rate(struct clk *clk, unsigned long armrate);
+@@ -583,6 +589,7 @@ static struct clk_lookup da850_clks[] = {
+ 	CLK("ecap.2",		"fck",		&ecap2_clk),
+ 	CLK(NULL,		NULL,		NULL),
+ };
++#endif
+ 
+ /*
+  * Device specific mux setup
+@@ -1170,6 +1177,7 @@ int da850_register_cpufreq(char *async_clk)
+ 	return platform_device_register(&da850_cpufreq_device);
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static int da850_round_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	int ret = 0, diff;
+@@ -1232,12 +1240,14 @@ static int da850_set_pll0rate(struct clk *clk, unsigned long rate)
+ 
+ 	return 0;
+ }
++#endif /* CONFIG_COMMON_CLK */
+ #else
+ int __init da850_register_cpufreq(char *async_clk)
+ {
+ 	return 0;
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static int da850_set_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	return -EINVAL;
+@@ -1252,6 +1262,7 @@ static int da850_round_armrate(struct clk *clk, unsigned long rate)
+ {
+ 	return clk->rate;
+ }
++#endif /* CONFIG_COMMON_CLK */
+ #endif
+ 
+ /* VPIF resource, platform data */
+@@ -1395,6 +1406,124 @@ void __init da850_init(void)
+ 
+ void __init da850_init_time(void)
+ {
++#ifdef CONFIG_COMMON_CLK
++	void __iomem *pll0;
++	struct regmap *cfgchip;
++	struct clk *clk;
 +
-+enum _pmux_input {
-+	DIV_2_INDEX = 0,
-+	PLL_INDEX,
-+	ACD_INDEX,
-+	ALT_INDEX,
-+	NUM_OF_PMUX_INPUTS
-+};
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
 +
-+static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-+       [PLL_OFF_L_VAL] = 0x04,
-+       [PLL_OFF_ALPHA_VAL] = 0x08,
-+       [PLL_OFF_USER_CTL] = 0x10,
-+       [PLL_OFF_CONFIG_CTL] = 0x18,
-+       [PLL_OFF_CONFIG_CTL_U] = 0x1c,
-+       [PLL_OFF_TEST_CTL] = 0x20,
-+       [PLL_OFF_TEST_CTL_U] = 0x24,
-+       [PLL_OFF_STATUS] = 0x28,
-+};
++	pll0 = ioremap(DA8XX_PLL0_BASE, SZ_4K);
++	cfgchip = da8xx_get_cfgchip();
 +
-+static const u8 alt_pll_regs[PLL_OFF_MAX_REGS] = {
-+       [PLL_OFF_L_VAL] = 0x04,
-+       [PLL_OFF_ALPHA_VAL] = 0x08,
-+       [PLL_OFF_ALPHA_VAL_U] = 0x0c,
-+       [PLL_OFF_USER_CTL] = 0x10,
-+       [PLL_OFF_USER_CTL_U] = 0x14,
-+       [PLL_OFF_CONFIG_CTL] = 0x18,
-+       [PLL_OFF_TEST_CTL] = 0x20,
-+       [PLL_OFF_TEST_CTL_U] = 0x24,
-+       [PLL_OFF_STATUS] = 0x28,
-+};
++	da850_pll0_init(NULL, pll0, cfgchip);
 +
-+/* PLLs */
++	clk = clk_get(NULL, "timer0");
 +
-+static const struct alpha_pll_config hfpll_config = {
-+	.l = 60,
-+	.config_ctl_val = 0x200d4828,
-+	.config_ctl_hi_val = 0x006,
-+	.pre_div_mask = BIT(12),
-+	.post_div_mask = 0x3 << 8,
-+	.main_output_mask = BIT(0),
-+	.early_output_mask = BIT(3),
-+};
-+
-+static struct clk_alpha_pll perfcl_pll = {
-+	.offset = 0x80000,
-+	.regs = prim_pll_regs,
-+	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "perfcl_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_huayra_ops,
-+	},
-+};
-+
-+static struct clk_alpha_pll pwrcl_pll = {
-+	.offset = 0x0,
-+	.regs = prim_pll_regs,
-+	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pwrcl_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_huayra_ops,
-+	},
-+};
-+
-+static const struct pll_vco alt_pll_vco_modes[] = {
-+	VCO(3,  250000000,  500000000),
-+	VCO(2,  500000000,  750000000),
-+	VCO(1,  750000000, 1000000000),
-+	VCO(0, 1000000000, 2150400000),
-+};
-+
-+static const struct alpha_pll_config altpll_config = {
-+	.l = 16,
-+	.vco_val = 0x3 << 20,
-+	.vco_mask = 0x3 << 20,
-+	.config_ctl_val = 0x4001051b,
-+	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1,
-+	.main_output_mask = BIT(0),
-+	.early_output_mask = BIT(3),
-+};
-+
-+static struct clk_alpha_pll perfcl_alt_pll = {
-+	.offset = 0x80100,
-+	.regs = alt_pll_regs,
-+	.vco_table = alt_pll_vco_modes,
-+	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
-+	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "perfcl_alt_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_hwfsm_ops,
-+	},
-+};
-+
-+static struct clk_alpha_pll pwrcl_alt_pll = {
-+	.offset = 0x100,
-+	.regs = alt_pll_regs,
-+	.vco_table = alt_pll_vco_modes,
-+	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
-+	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "pwrcl_alt_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_hwfsm_ops,
-+	},
-+};
-+
-+/* Mux'es */
-+
-+struct clk_cpu_8996_mux {
-+	u32	reg;
-+	u8	shift;
-+	u8	width;
-+	struct clk_hw	*pll;
-+	struct clk_regmap clkr;
-+};
-+
-+static inline
-+struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
-+{
-+	return container_of(to_clk_regmap(hw), struct clk_cpu_8996_mux, clkr);
++	davinci_timer_init(clk);
++#else
+ 	davinci_clk_init(da850_clks);
+ 	davinci_timer_init(&timerp64_0_clk);
++#endif
 +}
 +
-+static u8 clk_cpu_8996_mux_get_parent(struct clk_hw *hw)
-+{
-+	u32 val;
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-+	u32 mask = (u32)GENMASK(cpuclk->width - 1, 0);
-+
-+	regmap_read(clkr->regmap, cpuclk->reg, &val);
-+	val >>= (u32)(cpuclk->shift);
-+
-+	return (u8)(val & mask);
-+}
-+
-+static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	u32 val;
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-+	unsigned int mask = GENMASK(cpuclk->width + cpuclk->shift - 1,
-+				    cpuclk->shift);
-+
-+	val = (u32)index;
-+	val <<= (u32)(cpuclk->shift);
-+
-+	return regmap_update_bits(clkr->regmap, cpuclk->reg, mask, val);
-+}
-+
-+static int
-+clk_cpu_8996_mux_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-+{
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-+	struct clk_hw *parent = cpuclk->pll;
-+
-+	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
-+	req->best_parent_hw = parent;
-+
-+	return 0;
-+}
-+
-+const struct clk_ops clk_cpu_8996_mux_ops = {
-+	.set_parent = clk_cpu_8996_mux_set_parent,
-+	.get_parent = clk_cpu_8996_mux_get_parent,
-+	.determine_rate = clk_cpu_8996_mux_determine_rate,
-+};
-+
-+static struct clk_cpu_8996_mux pwrcl_smux = {
-+	.reg = 0x40,
-+	.shift = 2,
-+	.width = 2,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "pwrcl_smux",
-+		.parent_names = (const char *[]){
-+			"xo",
-+			"pwrcl_pll_main",
-+		},
-+		.num_parents = 2,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		.flags = CLK_SET_RATE_PARENT,
++static struct resource da850_pll1_resources[] = {
++	{
++		.start	= DA850_PLL1_BASE,
++		.end	= DA850_PLL1_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
 +	},
 +};
 +
-+static struct clk_cpu_8996_mux perfcl_smux = {
-+	.reg = 0x80040,
-+	.shift = 2,
-+	.width = 2,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "perfcl_smux",
-+		.parent_names = (const char *[]){
-+			"xo",
-+			"perfcl_pll_main",
-+		},
-+		.num_parents = 2,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		.flags = CLK_SET_RATE_PARENT,
++static struct davinci_pll_platform_data da850_pll1_pdata;
++
++static struct platform_device da850_pll1_device = {
++	.name		= "da850-pll1",
++	.id		= -1,
++	.resource	= da850_pll1_resources,
++	.num_resources	= ARRAY_SIZE(da850_pll1_resources),
++	.dev		= {
++		.platform_data	= &da850_pll1_pdata,
 +	},
 +};
 +
-+static struct clk_cpu_8996_mux pwrcl_pmux = {
-+	.reg = 0x40,
-+	.shift = 0,
-+	.width = 2,
-+	.pll = &pwrcl_pll.clkr.hw,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "pwrcl_pmux",
-+		.parent_names = (const char *[]){
-+			"pwrcl_smux",
-+			"pwrcl_pll",
-+			"pwrcl_pll_acd",
-+			"pwrcl_alt_pll",
-+		},
-+		.num_parents = 4,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++static struct resource da850_psc0_resources[] = {
++	{
++		.start	= DA8XX_PSC0_BASE,
++		.end	= DA8XX_PSC0_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
 +	},
 +};
 +
-+static struct clk_cpu_8996_mux perfcl_pmux = {
-+	.reg = 0x80040,
-+	.shift = 0,
-+	.width = 2,
-+	.pll = &perfcl_pll.clkr.hw,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "perfcl_pmux",
-+		.parent_names = (const char *[]){
-+			"perfcl_smux",
-+			"perfcl_pll",
-+			"perfcl_pll_acd",
-+			"perfcl_alt_pll",
-+		},
-+		.num_parents = 4,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++static struct platform_device da850_psc0_device = {
++	.name		= "da850-psc0",
++	.id		= -1,
++	.resource	= da850_psc0_resources,
++	.num_resources	= ARRAY_SIZE(da850_psc0_resources),
++};
++
++static struct resource da850_psc1_resources[] = {
++	{
++		.start	= DA8XX_PSC1_BASE,
++		.end	= DA8XX_PSC1_BASE + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
 +	},
 +};
 +
-+static const struct regmap_config cpu_msm8996_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x80210,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
++static struct platform_device da850_psc1_device = {
++	.name		= "da850-psc1",
++	.id		= -1,
++	.resource	= da850_psc1_resources,
++	.num_resources	= ARRAY_SIZE(da850_psc1_resources),
 +};
 +
-+struct clk_regmap *clks[] = {
-+	&perfcl_pll.clkr,
-+	&pwrcl_pll.clkr,
-+	&perfcl_alt_pll.clkr,
-+	&pwrcl_alt_pll.clkr,
-+	&perfcl_smux.clkr,
-+	&pwrcl_smux.clkr,
-+	&perfcl_pmux.clkr,
-+	&pwrcl_pmux.clkr,
++static struct da8xx_cfgchip_clk_platform_data da850_async1_pdata;
++
++static struct platform_device da850_async1_clksrc_device = {
++	.name		= "da850-async1-clksrc",
++	.id		= -1,
++	.dev		= {
++		.platform_data	= &da850_async1_pdata,
++	},
 +};
 +
-+static int
-+qcom_cpu_clk_msm8996_register_clks(struct device *dev, struct regmap *regmap)
++static struct da8xx_cfgchip_clk_platform_data da850_async3_pdata;
++
++static struct platform_device da850_async3_clksrc_device = {
++	.name		= "da850-async3-clksrc",
++	.id		= -1,
++	.dev		= {
++		.platform_data	= &da850_async3_pdata,
++	},
++};
++
++static struct da8xx_cfgchip_clk_platform_data da850_tbclksync_pdata;
++
++static struct platform_device da850_tbclksync_device = {
++	.name		= "da830-tbclksync",
++	.id		= -1,
++	.dev		= {
++		.platform_data	= &da850_tbclksync_pdata,
++	},
++};
++
++void __init da850_register_clocks(void)
 +{
-+	int i, ret;
++	/* PLL0 is registered in da850_init_time() */
 +
-+	perfcl_smux.pll = clk_hw_register_fixed_factor(dev, "perfcl_pll_main",
-+						       "perfcl_pll",
-+						   CLK_SET_RATE_PARENT, 1, 2);
++	da850_pll1_pdata.cfgchip = da8xx_get_cfgchip();
++	platform_device_register(&da850_pll1_device);
 +
-+	pwrcl_smux.pll = clk_hw_register_fixed_factor(dev, "pwrcl_pll_main",
-+						      "pwrcl_pll",
-+						   CLK_SET_RATE_PARENT, 1, 2);
++	da850_async1_pdata.cfgchip = da8xx_get_cfgchip();
++	platform_device_register(&da850_async1_clksrc_device);
 +
-+	for (i = 0; i < ARRAY_SIZE(clks); i++) {
-+		ret = devm_clk_register_regmap(dev, clks[i]);
-+		if (ret)
-+			return ret;
-+	}
++	da850_async3_pdata.cfgchip = da8xx_get_cfgchip();
++	platform_device_register(&da850_async3_clksrc_device);
 +
-+	clk_alpha_pll_configure(&perfcl_pll, regmap, &hfpll_config);
-+	clk_alpha_pll_configure(&pwrcl_pll, regmap, &hfpll_config);
-+	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
-+	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
++	platform_device_register(&da850_psc0_device);
 +
-+	return ret;
-+}
++	platform_device_register(&da850_psc1_device);
 +
-+static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+	void __iomem *base;
-+	struct resource *res;
-+	struct regmap *regmap;
-+	struct clk_hw_onecell_data *data;
-+	struct device *dev = &pdev->dev;
++	da850_tbclksync_pdata.cfgchip = da8xx_get_cfgchip();
++	platform_device_register(&da850_tbclksync_device);
+ }
+diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
+index ab199f4b9ce4..91dd9cb6d113 100644
+--- a/arch/arm/mach-davinci/da8xx-dt.c
++++ b/arch/arm/mach-davinci/da8xx-dt.c
+@@ -67,6 +67,8 @@ static void __init da850_init_machine(void)
+ 
+ 	int ret;
+ 
++	da850_register_clocks();
 +
-+	data = devm_kzalloc(dev, sizeof(*data) + 2 * sizeof(struct clk_hw *),
-+			    GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &cpu_msm8996_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	ret = qcom_cpu_clk_msm8996_register_clks(dev, regmap);
-+	if (ret)
-+		return ret;
-+
-+	data->hws[0] = &pwrcl_pmux.clkr.hw;
-+	data->hws[1] = &perfcl_pmux.clkr.hw;
-+	data->num = 2;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
-+}
-+
-+static const struct of_device_id qcom_cpu_clk_msm8996_match_table[] = {
-+	{ .compatible = "qcom,msm8996-apcc" },
-+	{}
-+};
-+
-+static struct platform_driver qcom_cpu_clk_msm8996_driver = {
-+	.probe = qcom_cpu_clk_msm8996_driver_probe,
-+	.driver = {
-+		.name = "qcom-msm8996-apcc",
-+		.of_match_table = qcom_cpu_clk_msm8996_match_table,
-+	},
-+};
-+module_platform_driver(qcom_cpu_clk_msm8996_driver);
-+
-+MODULE_ALIAS("platform:msm8996-apcc");
-+MODULE_DESCRIPTION("QCOM MSM8996 CPU Clock Driver");
-+MODULE_LICENSE("GPL v2");
+ 	ret = da8xx_register_usb20_phy_clk(false);
+ 	if (ret)
+ 		pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
+diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
+index 64861ac6a9d4..612e45437cec 100644
+--- a/arch/arm/mach-davinci/include/mach/da8xx.h
++++ b/arch/arm/mach-davinci/include/mach/da8xx.h
+@@ -93,6 +93,7 @@ void da830_register_clocks(void);
+ 
+ void da850_init(void);
+ void da850_init_time(void);
++void da850_register_clocks(void);
+ 
+ int da830_register_edma(struct edma_rsv_info *rsv);
+ int da850_register_edma(struct edma_rsv_info *rsv[2]);
 -- 
-1.9.1
+2.17.0
