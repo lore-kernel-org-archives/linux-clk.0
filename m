@@ -1,68 +1,80 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33628 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751693AbeERVyw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 17:54:52 -0400
+Received: by mail-wr0-f196.google.com with SMTP id a15-v6so3263432wrm.0
+        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 14:54:52 -0700 (PDT)
+References: <20180518092806.3829-1-rui.silva@linaro.org> <20180518092806.3829-9-rui.silva@linaro.org> <20180518165146.GC21131@rob-hp-laptop>
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Rui Miguel Silva <rui.silva@linaro.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 08/12] ARM: dts: imx7s: add multiplexer controls
+In-reply-to: <20180518165146.GC21131@rob-hp-laptop>
+Date: Fri, 18 May 2018 22:54:49 +0100
+Message-ID: <m3wow0d3yu.fsf@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMty3ZAOVg6EZoMi=LRuKEcrnDM_tzYfK1WnBN-_d-pmjNS6Nw@mail.gmail.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-4-jagan@amarulasolutions.com> <CAGb2v66MKooAAroCzYdsXZDY0Oh66Dydpy59xj80QfiY+5mz_A@mail.gmail.com>
- <CAMty3ZAOVg6EZoMi=LRuKEcrnDM_tzYfK1WnBN-_d-pmjNS6Nw@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 14 May 2018 09:43:51 -0700
-Message-ID: <CAGb2v64tGLyYTG63VvHiXfhif0wiDCNKoBKbjEs+Jm5-6CNxXw@mail.gmail.com>
-Subject: Re: [PATCH 03/21] clk: sunxi-ng: Enable DE2_CCU for Allwinner 64-bit SoCs
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 14, 2018 at 1:20 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
-> On Tue, May 1, 2018 at 9:53 PM, Chen-Yu Tsai <wens@csie.org> wrote:
->> On Mon, Apr 30, 2018 at 7:40 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
->>> Allwinner 64-bit SoC like H5/A64 has DE2 CCU so enable them
->>> as default.
->>>
->>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->>> ---
->>>  drivers/clk/sunxi-ng/Kconfig | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
->>> index 79dfd296c3d1..1fffd3bf6ff3 100644
->>> --- a/drivers/clk/sunxi-ng/Kconfig
->>> +++ b/drivers/clk/sunxi-ng/Kconfig
->>> @@ -58,6 +58,8 @@ config SUN8I_V3S_CCU
->>>
->>>  config SUN8I_DE2_CCU
->>>         bool "Support for the Allwinner SoCs DE2 CCU"
->>> +       default ARM64 && ARCH_SUNXI
->>> +       depends on (DRM_SUN4I && (ARM64 && ARCH_SUNXI)) || COMPILE_TEST
->>
->> There is no reason to depend on DRM_SUN4I. There is no compile dependency.
+Hi Rob,
+On Fri 18 May 2018 at 16:51, Rob Herring wrote:
+> On Fri, May 18, 2018 at 10:28:02AM +0100, Rui Miguel Silva 
+> wrote:
+>> The IOMUXC General Purpose Register has bitfield to control 
+>> video bus
+>> multiplexer to control the CSI input between the MIPI-CSI2 and 
+>> parallel
+>> interface. Add that register and mask.
+>> 
+>> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>> ---
+>>  arch/arm/boot/dts/imx7s.dtsi | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/arch/arm/boot/dts/imx7s.dtsi 
+>> b/arch/arm/boot/dts/imx7s.dtsi
+>> index 67450ad89940..3590dab529f9 100644
+>> --- a/arch/arm/boot/dts/imx7s.dtsi
+>> +++ b/arch/arm/boot/dts/imx7s.dtsi
+>> @@ -520,8 +520,14 @@
+>>  
+>>  			gpr: iomuxc-gpr@30340000 {
+>>  				compatible = 
+>>  "fsl,imx7d-iomuxc-gpr",
+>> -					"fsl,imx6q-iomuxc-gpr", 
+>> "syscon";
+>> +					"fsl,imx6q-iomuxc-gpr", 
+>> "syscon", "simple-mfd";
+>>  				reg = <0x30340000 0x10000>;
+>> +
+>> +				mux: mux-controller {
+>> +					compatible = "mmio-mux";
+>> +					#mux-control-cells = <1>;
+>> +					mux-reg-masks = <0x14 
+>> 0x00000010>;
 >
-> Since this CCU is for DE2 I've make DRM_SUN4I for that matter, any problem?
+> If 1 bit control, then #mux-control-cells can be 0.
 
-Users may very well be just using simplefb, but with all the clock drivers
-enabled. That is a valid, if very limited, use case. So again, you should
-not limit this driver based on DRM_SUN4I. There is no compile dependency.
+Ack.
 
 >
->>
->> Also, this is needed on SUN8I as well, pretty much anything with DE 2.0.
->> So you shouldn't limit it to ARM64. That pretty much breaks things for
->> people with A83T's or H3's. In fact you should enable it by default for
->> these as well.
->
-> True, I've skipped SUN8I since this series for A64.
+>> +				};
+>>  			};
+>>  
+>>  			ocotp: ocotp-ctrl@30350000 {
+>> -- 
+>> 2.17.0
+>> 
 
-And yet you are breaking existing users, which is a big no-no.
-
-ChenYu
