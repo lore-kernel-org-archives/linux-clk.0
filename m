@@ -1,28 +1,58 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1524649974.4026.51.camel@baylibre.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
- "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
- Neil Armstrong <narmstrong@baylibre.com>
-References: <1524649974.4026.51.camel@baylibre.com>
-Message-ID: <152521112283.138124.1915741890809375228@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL] Amlogic clock fixes for v4.17-rc
-Date: Tue, 01 May 2018 14:45:22 -0700
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 16/26] dt-bindings: clock: sun50i-a64-ccu: Add PLL_VIDEO[0-1] macros
+Date: Fri, 18 May 2018 15:15:26 +0530
+Message-Id: <20180518094536.17201-17-jagan@amarulasolutions.com>
+In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2018-04-25 02:52:54)
-> Dear clock maintainers,
-> =
+Allwinner A64 has two clock parents PLL_VIDEO0 and PLL_VIDEO1.
 
-> Below is a request to pull amlogic clock fixes for v4.17.
-> These changes fixes a few simple mistakes I did while reworking meson clo=
-ck
-> providers in the last cycle.
-> =
+Include these macros on dt-bindings so-that the same can be
+used while defining CCU clock phadles.
 
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v2:
+- new patch
 
-Thanks. Pulled into fixes.
+ include/dt-bindings/clock/sun50i-a64-ccu.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h b/include/dt-bindings/clock/sun50i-a64-ccu.h
+index d66432c6e675..d1d7d5b7d06a 100644
+--- a/include/dt-bindings/clock/sun50i-a64-ccu.h
++++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
+@@ -43,7 +43,9 @@
+ #ifndef _DT_BINDINGS_CLK_SUN50I_A64_H_
+ #define _DT_BINDINGS_CLK_SUN50I_A64_H_
+ 
++#define CLK_PLL_VIDEO0		7
+ #define CLK_PLL_PERIPH0		11
++#define CLK_PLL_VIDEO1		15
+ 
+ #define CLK_BUS_MIPI_DSI	28
+ #define CLK_BUS_CE		29
+-- 
+2.14.3
