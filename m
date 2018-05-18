@@ -1,113 +1,157 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Fri, 4 May 2018 17:03:08 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: David Miller <davem@davemloft.net>
-Cc: wens@csie.org, mturquette@baylibre.com, sboyd@kernel.org,
-	peppe.cavallaro@st.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, clabbe.montjoie@gmail.com, icenowy@aosc.io
-Subject: Re: [PATCH net-next v2 00/15] ARM: sun8i: r40: Add Ethernet support
-Message-ID: <20180504150307.sdtnksk2uslrl3o5@flea>
-References: <CAGb2v67HFb6eLBS4_9s_wJ5uWFeQdUtwn_NMJnm59UUDFBDJUA@mail.gmail.com>
- <20180502.110617.304411895589508709.davem@davemloft.net>
- <20180503131257.rlqxetafejikmnji@flea>
- <20180503.144042.266645949281979304.davem@davemloft.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rw3zvd3c5ysg6aw4"
-In-Reply-To: <20180503.144042.266645949281979304.davem@davemloft.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46137 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753436AbeERJ2q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:28:46 -0400
+Received: by mail-wr0-f195.google.com with SMTP id x9-v6so5600173wrl.13
+        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 02:28:45 -0700 (PDT)
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+Subject: [PATCH v5 09/12] ARM: dts: imx7: Add video mux, csi and mipi_csi and connections
+Date: Fri, 18 May 2018 10:28:03 +0100
+Message-Id: <20180518092806.3829-10-rui.silva@linaro.org>
+In-Reply-To: <20180518092806.3829-1-rui.silva@linaro.org>
+References: <20180518092806.3829-1-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch adds the device tree nodes for csi, video multiplexer and mipi-csi
+besides the graph connecting the necessary endpoints to make the media capture
+entities to work in imx7 Warp board.
 
---rw3zvd3c5ysg6aw4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Also add the pin control related with the mipi_csi in that board.
 
-On Thu, May 03, 2018 at 02:40:42PM -0400, David Miller wrote:
-> From: Maxime Ripard <maxime.ripard@bootlin.com>
-> Date: Thu, 3 May 2018 15:12:57 +0200
->=20
-> > Hi Dave,
-> >=20
-> > On Wed, May 02, 2018 at 11:06:17AM -0400, David Miller wrote:
-> >> From: Chen-Yu Tsai <wens@csie.org>
-> >> Date: Wed, 2 May 2018 00:33:45 +0800
-> >>=20
-> >> > I should've mentioned that patches 3 ~ 10, and only these, should go
-> >> > through net-next. sunxi will handle the remaining clk, device tree, =
-and
-> >> > soc driver patches.
-> >>=20
-> >> Ok, I just noticed this.
-> >>=20
-> >> Why don't you just post those patches separately as a series on their
-> >> own then, in order to avoid confusion?
-> >>=20
-> >> Then you can adjust the patch series header posting to explain the
-> >> non-net-next changes, where they got merged, and what they provide
-> >> in order to faciliate the net-next changes.
-> >=20
-> > I now that we usually have some feedback from non-net maintainers that
-> > they actually prefer seeing the full picture (and I also tend to
-> > prefer that as well) and having all the patches relevant to enable a
-> > particular feature, even if it means getting multiple maintainers
-> > involved.
-> >=20
-> > Just to make sure we understood you fully, do you want Chen-Yu to
-> > resend his serie following your comments, or was that just a general
-> > remark for next time?
->=20
-> Yeah, good questions.
->=20
-> I think it can be argued either way.  For review having the complete
-> context is important.
->=20
-> But from a maintainer's standpoint, when there is any ambiguity
-> whatsoever about what patches go into this tree or that, it is really
-> frowned upon and is quite error prone.
->=20
-> Also, that header posting is _SO_ important.  It explains the series.
-> But for these 'partial apply' situations the header posting refers
-> to patches not in the series.
->=20
-> This looks terrible in the logs, when, as I do, the header posting
-> text is added to a marge commit for the series.  People will read it
-> and say "where are all of these other changes mentioned in the text?
-> was this series misapplied?"
->=20
-> That's why, maybe after the review is successful, I want the actual
-> patch series standalone with appropriately updated header posting
-> text.
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+---
+ arch/arm/boot/dts/imx7s-warp.dts | 51 ++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/imx7s.dtsi     | 28 ++++++++++++++++++
+ 2 files changed, 79 insertions(+)
 
-Ok, thanks for the explanation, that makes sense :)
+diff --git a/arch/arm/boot/dts/imx7s-warp.dts b/arch/arm/boot/dts/imx7s-warp.dts
+index 8a30b148534d..cb175ee2fc9d 100644
+--- a/arch/arm/boot/dts/imx7s-warp.dts
++++ b/arch/arm/boot/dts/imx7s-warp.dts
+@@ -310,6 +310,57 @@
+ 	status = "okay";
+ };
+ 
++&gpr {
++	csi_mux {
++		compatible = "video-mux";
++		mux-controls = <&mux 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@1 {
++			reg = <1>;
++
++			csi_mux_from_mipi_vc0: endpoint {
++				remote-endpoint = <&mipi_vc0_to_csi_mux>;
++			};
++		};
++
++		port@2 {
++			reg = <2>;
++
++			csi_mux_to_csi: endpoint {
++				remote-endpoint = <&csi_from_csi_mux>;
++			};
++		};
++	};
++};
++
++&csi {
++	status = "okay";
++
++	port {
++		csi_from_csi_mux: endpoint {
++			remote-endpoint = <&csi_mux_to_csi>;
++		};
++	};
++};
++
++&mipi_csi {
++	clock-frequency = <166000000>;
++	status = "okay";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	fsl,csis-hs-settle = <3>;
++
++	port@1 {
++		reg = <1>;
++
++		mipi_vc0_to_csi_mux: endpoint {
++			remote-endpoint = <&csi_mux_from_mipi_vc0>;
++		};
++	};
++};
++
+ &wdog1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_wdog>;
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index 3590dab529f9..0bae41f2944c 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -46,6 +46,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/imx7-reset.h>
+ #include "imx7d-pinfunc.h"
+ 
+ / {
+@@ -738,6 +739,17 @@
+ 				status = "disabled";
+ 			};
+ 
++			csi: csi@30710000 {
++				compatible = "fsl,imx7-csi";
++				reg = <0x30710000 0x10000>;
++				interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX7D_CLK_DUMMY>,
++						<&clks IMX7D_CSI_MCLK_ROOT_CLK>,
++						<&clks IMX7D_CLK_DUMMY>;
++				clock-names = "axi", "mclk", "dcic";
++				status = "disabled";
++			};
++
+ 			lcdif: lcdif@30730000 {
+ 				compatible = "fsl,imx7d-lcdif", "fsl,imx28-lcdif";
+ 				reg = <0x30730000 0x10000>;
+@@ -747,6 +759,22 @@
+ 				clock-names = "pix", "axi";
+ 				status = "disabled";
+ 			};
++
++			mipi_csi: mipi-csi@30750000 {
++				compatible = "fsl,imx7-mipi-csi2";
++				reg = <0x30750000 0x10000>;
++				interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
++						<&clks IMX7D_MIPI_CSI_ROOT_CLK>,
++						<&clks IMX7D_MIPI_DPHY_ROOT_CLK>;
++				clock-names = "pclk", "wrap", "phy";
++				power-domains = <&pgc_mipi_phy>;
++				phy-supply = <&reg_1p0d>;
++				resets = <&src IMX7_RESET_MIPI_PHY_MRST>;
++				reset-names = "mrst";
++				bus-width = <2>;
++				status = "disabled";
++			};
+ 		};
+ 
+ 		aips3: aips-bus@30800000 {
+-- 
+2.17.0
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---rw3zvd3c5ysg6aw4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrsdisACgkQ0rTAlCFN
-r3TcSw//Yn3YcUYqjfIrkBfGBIDgFZdNlCr9B3RtR+DBTfLnOElMpbyFRWXeruB3
-r51Icr67gLgXolrxdOjR5oj1dqo6HVYNgqYyf+6Qx+PgdoqdXhNr7pyR4kc8Y8XF
-77OxUgZJIloy+Jrc2Do6Hnq8XzGPtHRPf2YFLHsKJ9HLljvqURkOpyv5zmI6KPq3
-moV2MOV690ZlsFaCCK4bcaqz6/rVDKdJ1v4czytc99SigTWfwegFgUiPJ/Nheycs
-W5G/dn3+9KearfX1ABaZHSsJiU7+fY5LOMCJoqdliA9ivxI+6DTgv/Zv9W/NyucM
-VPXosZywzKqpJ7AcpxUY7bvC5x0jtkof5xGLjJZ75ZZRSZHjJhsXC/91G+kc+blO
-VQtngohaP8xvZvKUTQzqBGQaVZ+nLj927UylXac27ECXhQkVx4fiC1E/E3WasGJf
-/BlRn4RRI43Zm3f4Qnq152zBuQh8RRFu5X0mZWv4KABmXsdARLlB5PU+XyexUA9K
-UuXjWX5WLYq7E1+e2dZGwtjgjQ6Cp+CUie30i+PguogUc+sV5/nfeL2CNTvdCXs7
-zH8lc/4+pzLPpfoTBj5pdaO8inDM4UEY608MDC/5OoL3R2nV8eNW0gAujenw/xle
-9b5NneDoGCRUrBoigoh+0i2cA3Nw3leY/YxcAVaDOchrVmJ1Ev0=
-=7MTH
------END PGP SIGNATURE-----
-
---rw3zvd3c5ysg6aw4--
