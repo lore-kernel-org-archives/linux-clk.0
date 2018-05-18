@@ -1,68 +1,140 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Thu, 31 May 2018 10:26:59 +0300
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	lgirdwood@gmail.com, broonie@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
- driver
-Message-ID: <20180531072659.GI13528@localhost.localdomain>
-References: <20180528090003.GA8778@localhost.localdomain>
- <20180529073958.GB4790@dell>
- <20180529083541.GA13528@localhost.localdomain>
- <20180530111649.GB8038@dell>
- <152769382760.144038.10609724773770264610@swboyd.mtv.corp.google.com>
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <152769382760.144038.10609724773770264610@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=US-ASCII
+Date: Fri, 18 May 2018 15:02:26 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
+ robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ sboyd@kernel.org, adriana.reus@nxp.com, rui.silva@linaro.org,
+ Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
+In-Reply-To: <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
+References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
+ <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <c42c4274cfd06297d1699c96d3253125@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 30, 2018 at 08:23:47AM -0700, Stephen Boyd wrote:
-> Quoting Lee Jones (2018-05-30 04:16:49)
-> > On Tue, 29 May 2018, Matti Vaittinen wrote:
-> > 
-> > > Hello,
-> > > 
-> > > On Tue, May 29, 2018 at 08:39:58AM +0100, Lee Jones wrote:
-> > > > On Mon, 28 May 2018, Matti Vaittinen wrote:
-> > > > 
-> > > > > Patch series adding support for ROHM BD71837 PMIC.
-> > > > FYI, this patch-set is going to be difficult to manage since it was
-> > > > not sent 'threaded'.
-> > > > 
-> > > > If/when you send a subsequent version, could you please ensure you
-> > > > send the set threaded so the patches keep in relation to one another
-> > > > as they are reviewed?
-> > > 
-> > > Thanks for the guidance. I have not sent so many patches to community so
-> > > I am grateful also from all the practical tips =) Just one slight problem.
-> > > I have only seen emails being threaded when one is replying to an email.
-> > > So how should I send my patches in same thread? Just send first one and
-> > > then send subsequent patches as replies?
-> > > 
-> > > I just killed some unused definitions and one unused variable from the
-> > > code so I am about to send new version. I'll try doing that as a threaded
-> > > series and resend all the patches as v3.
-> > 
-> > You don't need to do this manually.
-> > 
-> > Just use `git send-email` with the correct arguments.
-> > 
+On 18.05.2018 03:01, Anson Huang wrote:
+> Correct enet clock gates as below:
 > 
-> I usually send with 'git send-email *.patch' so that git can do the
-> threading for me. Looks like these patches were sent with Mutt though,
-> so perhaps 'git format-patch | git imap-send' was used without the
-> --thread option on format-patch.
+> CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
+> CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
+> CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
+> 
+> Just rename unused IMX7D_ENETx_REF_ROOT_CLK for
+> IMX7D_ENETx_IPG_ROOT_CLK instead of adding new clocks.
 
-Yep. I used git format-patch without the --thread and mutt -H for
-sending. Learned the --thread after Lee pointed out the threading and
-used it for further series. Thanks for the help!
+Are you sure that IMX7D_ENETx_REF_ROOT_CLK are not used?
 
-Br,
-    Matti Vaittinen
+I understand that the reference manual does not a gate at 0x44e0...
+
+But in a earlier revision of our Colibri iMX7 we actually used clock
+out, and referenced this clock to enable the reference clock (see also:
+https://patchwork.kernel.org/patch/9211371/).
+
+I guess if the gate really does not exist, then we should/would have to
+set IMX7D_ENET1_REF_ROOT_DIV to use the SoC provided ref clock.
+
+--
+Stefan
+
+> 
+> Based on Andy Duan's patch from the NXP kernel tree.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx7d.c             | 10 ++++++----
+>  include/dt-bindings/clock/imx7d-clock.h |  4 ++--
+>  2 files changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+> index 23d5090a..d4936b9 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -26,6 +26,8 @@ static u32 share_count_sai1;
+>  static u32 share_count_sai2;
+>  static u32 share_count_sai3;
+>  static u32 share_count_nand;
+> +static u32 share_count_enet1;
+> +static u32 share_count_enet2;
+>  
+>  static const struct clk_div_table test_div_table[] = {
+>  	{ .val = 3, .div = 1, },
+> @@ -805,6 +807,10 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+>  	clks[IMX7D_MIPI_DSI_ROOT_CLK] = imx_clk_gate4("mipi_dsi_root_clk",
+> "mipi_dsi_post_div", base + 0x4650, 0);
+>  	clks[IMX7D_MIPI_CSI_ROOT_CLK] = imx_clk_gate4("mipi_csi_root_clk",
+> "mipi_csi_post_div", base + 0x4640, 0);
+>  	clks[IMX7D_MIPI_DPHY_ROOT_CLK] = imx_clk_gate4("mipi_dphy_root_clk",
+> "mipi_dphy_post_div", base + 0x4660, 0);
+> +	clks[IMX7D_ENET1_IPG_ROOT_CLK] =
+> imx_clk_gate2_shared2("enet1_ipg_root_clk", "enet_axi_post_div", base
+> + 0x4700, 0, &share_count_enet1);
+> +	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
+> imx_clk_gate2_shared2("enet1_time_root_clk", "enet1_time_post_div",
+> base + 0x4700, 0, &share_count_enet1);
+> +	clks[IMX7D_ENET2_IPG_ROOT_CLK] =
+> imx_clk_gate2_shared2("enet2_ipg_root_clk", "enet_axi_post_div", base
+> + 0x4710, 0, &share_count_enet2);
+> +	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
+> imx_clk_gate2_shared2("enet2_time_root_clk", "enet2_time_post_div",
+> base + 0x4710, 0, &share_count_enet2);
+>  	clks[IMX7D_SAI1_ROOT_CLK] = imx_clk_gate2_shared2("sai1_root_clk",
+> "sai1_post_div", base + 0x48c0, 0, &share_count_sai1);
+>  	clks[IMX7D_SAI1_IPG_CLK]  = imx_clk_gate2_shared2("sai1_ipg_clk", 
+> "ipg_root_clk",  base + 0x48c0, 0, &share_count_sai1);
+>  	clks[IMX7D_SAI2_ROOT_CLK] = imx_clk_gate2_shared2("sai2_root_clk",
+> "sai2_post_div", base + 0x48d0, 0, &share_count_sai2);
+> @@ -812,10 +818,6 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+>  	clks[IMX7D_SAI3_ROOT_CLK] = imx_clk_gate2_shared2("sai3_root_clk",
+> "sai3_post_div", base + 0x48e0, 0, &share_count_sai3);
+>  	clks[IMX7D_SAI3_IPG_CLK]  = imx_clk_gate2_shared2("sai3_ipg_clk", 
+> "ipg_root_clk",  base + 0x48e0, 0, &share_count_sai3);
+>  	clks[IMX7D_SPDIF_ROOT_CLK] = imx_clk_gate4("spdif_root_clk",
+> "spdif_post_div", base + 0x44d0, 0);
+> -	clks[IMX7D_ENET1_REF_ROOT_CLK] = imx_clk_gate4("enet1_ref_root_clk",
+> "enet1_ref_post_div", base + 0x44e0, 0);
+> -	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
+> imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
+> 0x44f0, 0);
+> -	clks[IMX7D_ENET2_REF_ROOT_CLK] = imx_clk_gate4("enet2_ref_root_clk",
+> "enet2_ref_post_div", base + 0x4500, 0);
+> -	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
+> imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
+> 0x4510, 0);
+>  	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk",
+> "eim_post_div", base + 0x4160, 0);
+>  	clks[IMX7D_NAND_RAWNAND_CLK] =
+> imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
+> 0x4140, 0, &share_count_nand);
+>  	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =
+> imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk",
+> base + 0x4140, 0, &share_count_nand);
+> diff --git a/include/dt-bindings/clock/imx7d-clock.h
+> b/include/dt-bindings/clock/imx7d-clock.h
+> index b2325d3e2..0d67f53 100644
+> --- a/include/dt-bindings/clock/imx7d-clock.h
+> +++ b/include/dt-bindings/clock/imx7d-clock.h
+> @@ -168,7 +168,7 @@
+>  #define IMX7D_SPDIF_ROOT_SRC		155
+>  #define IMX7D_SPDIF_ROOT_CG		156
+>  #define IMX7D_SPDIF_ROOT_DIV		157
+> -#define IMX7D_ENET1_REF_ROOT_CLK	158
+> +#define IMX7D_ENET1_IPG_ROOT_CLK        158
+>  #define IMX7D_ENET1_REF_ROOT_SRC	159
+>  #define IMX7D_ENET1_REF_ROOT_CG		160
+>  #define IMX7D_ENET1_REF_ROOT_DIV	161
+> @@ -176,7 +176,7 @@
+>  #define IMX7D_ENET1_TIME_ROOT_SRC	163
+>  #define IMX7D_ENET1_TIME_ROOT_CG	164
+>  #define IMX7D_ENET1_TIME_ROOT_DIV	165
+> -#define IMX7D_ENET2_REF_ROOT_CLK	166
+> +#define IMX7D_ENET2_IPG_ROOT_CLK        166
+>  #define IMX7D_ENET2_REF_ROOT_SRC	167
+>  #define IMX7D_ENET2_REF_ROOT_CG		168
+>  #define IMX7D_ENET2_REF_ROOT_DIV	169
