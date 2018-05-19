@@ -1,111 +1,66 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 02/27] clk: davinci: da850-pll: change PLL0 to CLK_OF_DECLARE
-Date: Wed,  9 May 2018 12:25:41 -0500
-Message-Id: <20180509172606.29387-3-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 08/15] drm/sun4i: DE2 mixer: Add index quirk
+Date: Sat, 19 May 2018 20:31:20 +0200
+Message-Id: <20180519183127.2718-9-jernej.skrabec@siol.net>
+In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-PLL0 on davinci/da850-type device needs to be registered early in boot
-because it is needed for clocksource/clockevent. Change the driver
-to use CLK_OF_DECLARE for this special case.
+When TCON sets up TCON TOP, it needs to know mixer index. Here we do that
+by setting engine ID to number provided in mixer index quirk.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 4 ++--
+ drivers/gpu/drm/sun4i/sun8i_mixer.h | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-v10 changes:
-- removed duplicate warning message
-
-v9 changes:
-- new patch in v9
-
- drivers/clk/davinci/pll-da850.c | 21 +++++++++++++++++----
- drivers/clk/davinci/pll.c       |  4 +++-
- drivers/clk/davinci/pll.h       |  2 +-
- 3 files changed, 21 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/davinci/pll-da850.c b/drivers/clk/davinci/pll-da850.c
-index 00a6ece7b524..fde4642a993f 100644
---- a/drivers/clk/davinci/pll-da850.c
-+++ b/drivers/clk/davinci/pll-da850.c
-@@ -12,6 +12,8 @@
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/mfd/da8xx-cfgchip.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of_address.h>
- #include <linux/of.h>
- #include <linux/types.h>
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index 126899d6f0d3..36d90c76317a 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -353,13 +353,13 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+ 	dev_set_drvdata(dev, mixer);
+ 	mixer->engine.ops = &sun8i_engine_ops;
+ 	mixer->engine.node = dev->of_node;
+-	/* The ID of the mixer currently doesn't matter */
+-	mixer->engine.id = -1;
  
-@@ -135,11 +137,22 @@ static const struct davinci_pll_sysclk_info *da850_pll0_sysclk_info[] = {
- 	NULL
+ 	mixer->cfg = of_device_get_match_data(dev);
+ 	if (!mixer->cfg)
+ 		return -EINVAL;
+ 
++	mixer->engine.id = mixer->cfg->index;
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	regs = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(regs))
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+index f34e70c42adf..aeda6e9a7627 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+@@ -123,6 +123,7 @@ struct de2_fmt_info {
+  *	are invalid.
+  * @mod_rate: module clock rate that needs to be set in order to have
+  *	a functional block.
++ * @index: mixer index, needed to properly set TCON TOP
+  */
+ struct sun8i_mixer_cfg {
+ 	int		vi_num;
+@@ -130,6 +131,7 @@ struct sun8i_mixer_cfg {
+ 	int		scaler_mask;
+ 	int		ccsc;
+ 	unsigned long	mod_rate;
++	int		index;
  };
  
--int of_da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
-+void of_da850_pll0_init(struct device_node *node)
- {
--	return of_davinci_pll_init(dev, dev->of_node, &da850_pll0_info,
--				   &da850_pll0_obsclk_info,
--				   da850_pll0_sysclk_info, 7, base, cfgchip);
-+	void __iomem *base;
-+	struct regmap *cfgchip;
-+
-+	base = of_iomap(node, 0);
-+	if (!base) {
-+		pr_err("%s: ioremap failed\n", __func__);
-+		return;
-+	}
-+
-+	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
-+
-+	of_davinci_pll_init(NULL, node, &da850_pll0_info,
-+			    &da850_pll0_obsclk_info,
-+			    da850_pll0_sysclk_info, 7, base, cfgchip);
- }
- 
- static const struct davinci_pll_clk_info da850_pll1_info = {
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index f362f10d8459..dcfa780f828a 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -770,8 +770,10 @@ static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *de
- 	return pdata;
- }
- 
-+/* needed in early boot for clocksource/clockevent */
-+CLK_OF_DECLARE(da850_pll0, "ti,da850-pll0", of_da850_pll0_init);
-+
- static const struct of_device_id davinci_pll_of_match[] = {
--	{ .compatible = "ti,da850-pll0", .data = of_da850_pll0_init },
- 	{ .compatible = "ti,da850-pll1", .data = of_da850_pll1_init },
- 	{ }
- };
-diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-index 562652fc0759..b2e5c4496645 100644
---- a/drivers/clk/davinci/pll.h
-+++ b/drivers/clk/davinci/pll.h
-@@ -123,7 +123,7 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
- /* Platform-specific callbacks */
- 
- int da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
--int of_da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-+void of_da850_pll0_init(struct device_node *node);
- int of_da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
- 
- int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ struct sun8i_mixer {
 -- 
 2.17.0
