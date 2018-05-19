@@ -1,133 +1,71 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v5 05/14] clk: qcom: cpu-8996: Add support to switch to alternate PLL
-Date: Thu,  3 May 2018 14:52:26 +0300
-Message-Id: <1525348355-25471-6-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
-References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux+mturquette=baylibre.com@armlinux.org.uk>
+Date: Sat, 19 May 2018 12:54:41 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: ilialin@codeaurora.org
+Cc: 'Viresh Kumar' <viresh.kumar@linaro.org>, mark.rutland@arm.com,
+	nm@ti.com, catalin.marinas@arm.com, mturquette@baylibre.com,
+	will.deacon@arm.com, tfinkel@codeaurora.org,
+	linux-kernel@vger.kernel.org, david.brown@linaro.org,
+	nicolas.dechesne@linaro.org, linux-clk@vger.kernel.org,
+	robh@kernel.org, andy.gross@linaro.org, celster@codeaurora.org,
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, broonie@kernel.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org, sboyd@kernel.org, rjw@rjwysocki.net,
+	lgirdwood@gmail.com, amit.kucheria@linaro.org
+Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180519115441.GK17671@n2100.armlinux.org.uk>
+References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+ <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <20180518014538.duphof6enscpm5vp@vireshk-i7>
+ <018701d3ef61$dfd5e700$9f81b500$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <018701d3ef61$dfd5e700$9f81b500$@codeaurora.org>
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+On Sat, May 19, 2018 at 02:09:24PM +0300, ilialin@codeaurora.org wrote:
+> +static int __init qcom_cpufreq_kryo_driver_init(void)
+> +{
+> +       struct device *cpu_dev_silver, *cpu_dev_gold;
+> +       struct opp_table *opp_silver, *opp_gold;
+> +       enum _msm8996_version msm8996_version;
+> +       struct nvmem_cell *speedbin_nvmem;
+> +       struct platform_device *pdev;
+> +       struct device_node *np;
+> +       u8 *speedbin;
+> +       u32 versions;
+> +       size_t len;
+> +       int ret;
+> +
+> +       cpu_dev_silver = get_cpu_device(SILVER_LEAD);
+> +       if (IS_ERR_OR_NULL(cpu_dev_silver))
+> +               return PTR_ERR(cpu_dev_silver);
+> +
+> +       cpu_dev_gold = get_cpu_device(SILVER_LEAD);
+> +       if (IS_ERR_OR_NULL(cpu_dev_gold))
+> +               return PTR_ERR(cpu_dev_gold);
+> +
+> +       msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+> +       if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+> +               dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
+> +               return -ENODEV;
+> +       }
+> +
+> +       np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
+> +       if (IS_ERR_OR_NULL(np))
+> +               return PTR_ERR(np);
 
-Each of the CPU clusters on msm8996 are powered via a primary
-PLL and a secondary PLL. The primary PLL is what drives the
-CPU clk, except for times when we are reprogramming the PLL
-itself, when we temporarily switch to an alternate PLL.
-Use clock rate change notifiers to support this.
+This function (qcom_cpufreq_kryo_driver_init) returns zero on success.
+You are checking "np" here for being an error pointer, or NULL.
+What value do you think PTR_ERR() returns in the case of PTR_ERR(NULL)?
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/qcom/clk-cpu-8996.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+IS_ERR_OR_NULL() is considered by some (me included) as being _very_
+harmful because programmers generally fail to look at linux/err.h and
+consider what it means when used as above.
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index beb97eb..390b369 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -61,6 +61,7 @@
-  * detect voltage droops. We do not add support for ACD as yet.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -187,10 +188,14 @@ struct clk_cpu_8996_mux {
- 	u32	reg;
- 	u8	shift;
- 	u8	width;
-+	struct notifier_block nb;
- 	struct clk_hw	*pll;
- 	struct clk_regmap clkr;
- };
- 
-+#define to_clk_cpu_8996_mux_nb(_nb) \
-+	container_of(_nb, struct clk_cpu_8996_mux, nb)
-+
- static inline
- struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
- {
-@@ -236,6 +241,26 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return 0;
- }
- 
-+int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			void *data)
-+{
-+	int ret;
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+
-+	switch (event) {
-+	case PRE_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
-+		break;
-+	case POST_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		break;
-+	default:
-+		ret = 0;
-+		break;
-+	}
-+
-+	return notifier_from_errno(ret);
-+};
- const struct clk_ops clk_cpu_8996_mux_ops = {
- 	.set_parent = clk_cpu_8996_mux_set_parent,
- 	.get_parent = clk_cpu_8996_mux_get_parent,
-@@ -279,6 +304,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
- 		.parent_names = (const char *[]){
-@@ -298,6 +324,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
- 		.parent_names = (const char *[]){
-@@ -356,6 +383,12 @@ struct clk_regmap *clks[] = {
- 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
- 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
- 
-+	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
-+
- 	return ret;
- }
- 
 -- 
-1.9.1
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
