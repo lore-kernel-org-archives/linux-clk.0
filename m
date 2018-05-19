@@ -1,55 +1,74 @@
-Return-Path: <peron.clem@gmail.com>
-Return-Path: <peron.clem@gmail.com>
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Colin Didier <colin.dider@devialet.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH 0/5] Reintroduce i.MX EPIT Timer
-Date: Mon, 28 May 2018 19:34:07 +0200
-Message-Id: <20180528173412.10000-1-peron.clem@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 09/15] drm/sun4i: Add support for R40 mixers
+Date: Sat, 19 May 2018 20:31:21 +0200
+Message-Id: <20180519183127.2718-10-jernej.skrabec@siol.net>
+In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Clément Peron <clement.peron@devialet.com>
+Both mixers have similar capabilities as others SoCs with DE2.
 
-As suggested in the commit message we have added the device tree support,
-proper bindings and we moved the driver into the correct folder.
+First mixer has 1 VI and 3 UI planes and supports HW scaling on all
+planes.
 
-Moreover we made some changes like use of relaxed IO accesor,
-implement sched_clock, delay_timer and reduce the clockevents min_delta.
+Second mixer has 1 VI and 1 UI planes and also supports HW scaling on
+all planes.
 
-Signed-off-by: Clément Peron <clement.peron@devialet.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-Clément Peron (2):
-  ARM: imx: remove inexistant EPIT timer init
-  Documentation: DT: add i.MX EPIT timer binding
-
-Colin Didier (3):
-  ARM: clk-imx6q: add EPIT clock support
-  clocksource: add driver for i.MX EPIT timer
-  ARM: dts: imx6qdl: add missing compatible and clock properties for
-    EPIT
-
- .../devicetree/bindings/clock/imx6q,epit.txt  |  25 ++
- arch/arm/boot/dts/imx6qdl.dtsi                |  12 +
- arch/arm/mach-imx/common.h                    |   1 -
- drivers/clk/imx/clk-imx6q.c                   |   2 +
- drivers/clocksource/Kconfig                   |  12 +
- drivers/clocksource/Makefile                  |   1 +
- drivers/clocksource/timer-imx-epit.c          | 254 ++++++++++++++++++
- include/dt-bindings/clock/imx6qdl-clock.h     |   4 +-
- 8 files changed, 309 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.txt
- create mode 100644 drivers/clocksource/timer-imx-epit.c
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index 36d90c76317a..78aa878e305c 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -500,6 +500,24 @@ static const struct sun8i_mixer_cfg sun8i_h3_mixer0_cfg = {
+ 	.vi_num		= 1,
+ };
+ 
++static const struct sun8i_mixer_cfg sun8i_r40_mixer0_cfg = {
++	.ccsc		= 0,
++	.index		= 0,
++	.mod_rate	= 297000000,
++	.scaler_mask	= 0xf,
++	.ui_num		= 3,
++	.vi_num		= 1,
++};
++
++static const struct sun8i_mixer_cfg sun8i_r40_mixer1_cfg = {
++	.ccsc		= 1,
++	.index		= 1,
++	.mod_rate	= 297000000,
++	.scaler_mask	= 0x3,
++	.ui_num		= 1,
++	.vi_num		= 1,
++};
++
+ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+ 	.vi_num = 2,
+ 	.ui_num = 1,
+@@ -521,6 +539,14 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 		.compatible = "allwinner,sun8i-h3-de2-mixer-0",
+ 		.data = &sun8i_h3_mixer0_cfg,
+ 	},
++	{
++		.compatible = "allwinner,sun8i-r40-de2-mixer-0",
++		.data = &sun8i_r40_mixer0_cfg,
++	},
++	{
++		.compatible = "allwinner,sun8i-r40-de2-mixer-1",
++		.data = &sun8i_r40_mixer1_cfg,
++	},
+ 	{
+ 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
+ 		.data = &sun8i_v3s_mixer_cfg,
 -- 
 2.17.0
