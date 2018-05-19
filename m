@@ -1,127 +1,111 @@
-Return-Path: <michel.pollet@bp.renesas.com>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Michel Pollet <michel.pollet@bp.renesas.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-Date: Thu, 24 May 2018 10:28:41 +0100
-Message-Id: <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout7.siol.net ([213.250.19.134]:34810 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752674AbeESScz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 19 May 2018 14:32:55 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 11/15] drm/sun4i: DW HDMI PHY: Add support for second PLL
+Date: Sat, 19 May 2018 20:31:23 +0200
+Message-Id: <20180519183127.2718-12-jernej.skrabec@siol.net>
+In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the Renesas R9A06G032 bare bone support.
+Some DW HDMI PHYs like those found in A64 and R40 SoCs, can select
+between two clock parents.
 
-This currently only handles generic parts (gic, architected timer)
-and a UART.
+Add code which reads second PLL from DT.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  2 ++
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 22 ++++++++++++++++------
+ 2 files changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-new file mode 100644
-index 0000000..9534f1b
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 79154f0f674a..801a17222762 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -147,6 +147,7 @@ struct sun8i_hdmi_phy;
+ 
+ struct sun8i_hdmi_phy_variant {
+ 	bool has_phy_clk;
++	bool has_second_pll;
+ 	void (*phy_init)(struct sun8i_hdmi_phy *phy);
+ 	void (*phy_disable)(struct dw_hdmi *hdmi,
+ 			    struct sun8i_hdmi_phy *phy);
+@@ -160,6 +161,7 @@ struct sun8i_hdmi_phy {
+ 	struct clk			*clk_mod;
+ 	struct clk			*clk_phy;
+ 	struct clk			*clk_pll0;
++	struct clk			*clk_pll1;
+ 	unsigned int			rcal;
+ 	struct regmap			*regs;
+ 	struct reset_control		*rst_phy;
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 5a52fc489a9d..deba47ed69d8 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -472,10 +472,19 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 			goto err_put_clk_mod;
+ 		}
+ 
++		if (phy->variant->has_second_pll) {
++			phy->clk_pll1 = of_clk_get_by_name(node, "pll-1");
++			if (IS_ERR(phy->clk_pll1)) {
++				dev_err(dev, "Could not get pll-1 clock\n");
++				ret = PTR_ERR(phy->clk_pll1);
++				goto err_put_clk_pll0;
++			}
++		}
 +
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+
-+/ {
-+	compatible = "renesas,r9a06g032";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+			clocks = <&sysctrl R9A06G032_DIV_CA7>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+			clocks = <&sysctrl R9A06G032_DIV_CA7>;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		sysctrl: sysctrl@4000c000 {
-+			compatible = "renesas,r9a06g032-sysctrl";
-+			reg = <0x4000c000 0x1000>;
-+			status = "okay";
-+			#clock-cells = <1>;
-+		};
-+
-+		uart0: serial@40060000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x40060000 0x400>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&sysctrl R9A06G032_CLK_UART0>;
-+			clock-names = "baudclk";
-+			status = "disabled";
-+		};
-+
-+		gic: gic@44101000 {
-+			compatible = "arm,cortex-a7-gic", "arm,gic-400";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0x44101000 0x1000>, /* Distributer */
-+			      <0x44102000 0x2000>, /* CPU interface */
-+			      <0x44104000 0x2000>, /* Virt interface control */
-+			      <0x44106000 0x2000>; /* Virt CPU interface */
-+			interrupts =
-+				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,cortex-a7-timer",
-+			     "arm,armv7-timer";
-+		interrupt-parent = <&gic>;
-+		arm,cpu-registers-not-fw-configured;
-+		always-on;
-+		interrupts =
-+			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
+ 		ret = sun8i_phy_clk_create(phy, dev);
+ 		if (ret) {
+ 			dev_err(dev, "Couldn't create the PHY clock\n");
+-			goto err_put_clk_pll0;
++			goto err_put_clk_pll1;
+ 		}
+ 	}
+ 
+@@ -483,7 +492,7 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 	if (IS_ERR(phy->rst_phy)) {
+ 		dev_err(dev, "Could not get phy reset control\n");
+ 		ret = PTR_ERR(phy->rst_phy);
+-		goto err_put_clk_pll0;
++		goto err_put_clk_pll1;
+ 	}
+ 
+ 	ret = reset_control_deassert(phy->rst_phy);
+@@ -514,9 +523,10 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 	reset_control_assert(phy->rst_phy);
+ err_put_rst_phy:
+ 	reset_control_put(phy->rst_phy);
++err_put_clk_pll1:
++	clk_put(phy->clk_pll1);
+ err_put_clk_pll0:
+-	if (phy->variant->has_phy_clk)
+-		clk_put(phy->clk_pll0);
++	clk_put(phy->clk_pll0);
+ err_put_clk_mod:
+ 	clk_put(phy->clk_mod);
+ err_put_clk_bus:
+@@ -536,8 +546,8 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi)
+ 
+ 	reset_control_put(phy->rst_phy);
+ 
+-	if (phy->variant->has_phy_clk)
+-		clk_put(phy->clk_pll0);
++	clk_put(phy->clk_pll0);
++	clk_put(phy->clk_pll1);
+ 	clk_put(phy->clk_mod);
+ 	clk_put(phy->clk_bus);
+ }
 -- 
-2.7.4
+2.17.0
+
