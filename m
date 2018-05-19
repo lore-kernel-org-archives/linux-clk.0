@@ -1,73 +1,51 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Jagan Teki <jagan@amarulasolutions.com>, Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, Michael Trimarchi <michael@amarulasolutions.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 12/26] drm/sun4i: Add support for multiple DW HDMI PHY clock parents
+Date: Sat, 19 May 2018 09:11:15 +0200
+Message-ID: <1589389.XrQdaPTFv2@jernej-laptop>
+In-Reply-To: <20180518152651.lfymc3kj7npj5tww@flea>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com> <4909574.Q3IFWM0xt6@jernej-laptop> <20180518152651.lfymc3kj7npj5tww@flea>
 MIME-Version: 1.0
-In-Reply-To: <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-9-jagan@amarulasolutions.com> <20180501161909.GA1728@rob-hp-laptop>
- <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 2 May 2018 07:37:55 -0500
-Message-ID: <CAL_JsqK4rUB0M1Ta-HR9Yk+7-VzUhCodBbTfBFo3PcJWHFRVSg@mail.gmail.com>
-Subject: Re: [PATCH 08/21] bindings: display: Add compatible for A64 HDMI PHY
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>, Jernej Skrabec <jernej.skrabec@siol.net>,
-	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 2, 2018 at 1:27 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
-> Hi Rob,
->
-> On Tue, May 1, 2018 at 9:49 PM, Rob Herring <robh@kernel.org> wrote:
->>
->> On Mon, Apr 30, 2018 at 05:10:45PM +0530, Jagan Teki wrote:
->> > HDMI PHY on Allwinner A64 has similar like H3/H5.
->> >
->> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> > ---
->> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
->> >  1 file changed, 1 insertion(+)
->> >
->> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > index 9ea4353caadd..7dcd1d64dfe4 100644
->> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > @@ -104,6 +104,7 @@ Required properties:
->> >    - compatible: value must be one of:
->> >      * allwinner,sun8i-a83t-hdmi-phy
->> >      * allwinner,sun8i-h3-hdmi-phy
->> > +    * allwinner,sun50i-a64-hdmi-phy
->>
->> This should be one valid combination per line. The dts shows that the h3
->> string is a fallback which should be captured in the binding doc.
->
-> The fallback compatible "allwinner,sun8i-h3-hdmi-phy" is already
-> documented above, what we need to capture here? or did I miss anything
-> here?
+Hi,
 
-The documentation should make it clear which of these is valid in a dts:
+Dne petek, 18. maj 2018 ob 17:26:51 CEST je Maxime Ripard napisal(a):
+> On Fri, May 18, 2018 at 04:46:41PM +0200, Jernej =C5=A0krabec wrote:
+> > > And this is a bit sloppy, since if phy_clk_num =3D=3D 3, you won't tr=
+y to
+> > > lookup pll-2 either.
+> >=20
+> > It is highly unlikely this will be higher than 2, at least for this HDMI
+> > PHY, since it has only 1 bit reserved for parent selection. But since I
+> > have to fix it, I'll add ">=3D 2"
+>=20
+> If we're only going to have two parents at most, ever, why don't we
+> had just a single other boolean. This would be less intrusive, and we
+> wouldn't have to check for those corner cases.
 
-"allwinner,sun50i-a64-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
+It seems that usage of "bool" data type in structures is not wanted anymore=
+=20
+according to checkpatch and this: https://lkml.org/lkml/2017/11/21/384
 
-or:
+I guess I'll use "unsigned int" as recommended by Linus and named it=20
+"has_second_parent" to be unambigous that it's boolean in reality.
 
-"allwinner,sun50i-a64-hdmi-phy"
+Best regards,
+Jernej
 
-
-IOW, your list should look like this:
-
-* "allwinner,sun8i-a83t-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
-* "allwinner,sun50i-a64-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
-* "allwinner,sun8i-h3-hdmi-phy"
-
-Depending on whether the a83t is also compatible with h3.
-
-Rob
+>=20
+> > BTW, I'll resend fixed version of this patch for my R40 HDMI series, si=
+nce
+> > there is nothing to hold it back, unlike for this.
+>=20
+> Awesome, thanks!
+> Maxime
+>=20
+> --
+> Maxime Ripard, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
