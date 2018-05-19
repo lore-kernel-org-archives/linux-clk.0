@@ -1,137 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, maxime.ripard@bootlin.com
-Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH 12/15] drm/sun4i: Add support for second clock parent to DW HDMI PHY clk driver
-Date: Mon, 21 May 2018 17:02:23 +0200
-Message-ID: <4018914.loHx9iTxYh@jernej-laptop>
-In-Reply-To: <20180521081253.cmx2mvfbfybgmtlv@flea>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net> <20180519183127.2718-13-jernej.skrabec@siol.net> <20180521081253.cmx2mvfbfybgmtlv@flea>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 01/15] clk: sunxi-ng: r40: Add minimal rate for video PLLs
+Date: Sat, 19 May 2018 20:31:13 +0200
+Message-Id: <20180519183127.2718-2-jernej.skrabec@siol.net>
+In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+According to documentation and experience with other similar SoCs, video
+PLLs don't work stable if their output frequency is set below 192 MHz.
 
-Dne ponedeljek, 21. maj 2018 ob 10:12:53 CEST je Maxime Ripard napisal(a):
-> On Sat, May 19, 2018 at 08:31:24PM +0200, Jernej Skrabec wrote:
-> > Expand HDMI PHY clock driver to support second clock parent.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h      |  6 +-
-> >  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c     | 29 ++++++-
-> >  drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c | 90 ++++++++++++++++------
-> >  3 files changed, 98 insertions(+), 27 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h index 801a17222762..aadbe0a10b0c
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > @@ -98,7 +98,8 @@
-> > 
-> >  #define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
-> >  #define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
-> >  #define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
-> > 
-> > -#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
-> > +#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK	BIT(26)
-> > +#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT	26
-> > 
-> >  #define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
-> >  #define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
-> >  #define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
-> > 
-> > @@ -190,6 +191,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi
-> > *hdmi);
-> > 
-> >  void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy);
-> >  const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void);
-> > 
-> > -int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev);
-> > +int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
-> > +			 bool second_parent);
-> > 
-> >  #endif /* _SUN8I_DW_HDMI_H_ */
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c index deba47ed69d8..7a911f0a3ae3
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > @@ -183,7 +183,13 @@ static int sun8i_hdmi_phy_config_h3(struct dw_hdmi
-> > *hdmi,> 
-> >  	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
-> >  	
-> >  			   SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK, 0);
-> > 
-> > -	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, pll_cfg1_init);
-> > +	/*
-> > +	 * NOTE: We have to be careful not to overwrite PHY parent
-> > +	 * clock selection bit and clock divider.
-> > +	 */
-> > +	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
-> > +			   ~SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK,
-> > +			   pll_cfg1_init);
-> 
-> It feels like it belongs in a separate patch.
+Because of that, set minimal rate to both R40 video PLLs to 192 MHz.
 
-Why? clk_set_rate() on HDMI PHY clock is called before this function, so 
-SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL bit is already set to correct value. Original 
-code doesn't take this into account and sets it to 0 here in all cases, which 
-obviously is not right.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 46 +++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
 
-If you insist on splitting this in new patch, it has to be applied before 
-clock changes. It would also need to include "reset PLL clock configuration" 
-chunk (next change in this patch), otherwise other SoCs with only one parent 
-could get 1 there, which is obviously wrong. Note that I didn't really tested 
-if default value of this bit is 0 or 1, but I wouldn't really like to depend 
-on default values.
-
-> 
-> >  	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG,
-> >  	
-> >  			   (u32)~SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK,
-> >  			   pll_cfg2_init);
-> > 
-> > @@ -352,6 +358,10 @@ static void sun8i_hdmi_phy_init_h3(struct
-> > sun8i_hdmi_phy *phy)> 
-> >  			   SUN8I_HDMI_PHY_ANA_CFG3_SCLEN |
-> >  			   SUN8I_HDMI_PHY_ANA_CFG3_SDAEN);
-> > 
-> > +	/* reset PLL clock configuration */
-> > +	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, 0);
-> > +	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG, 0);
-> > +
-> 
-> Ditto,
-> 
-> > +
-> > +		/*
-> > +		 * Even though HDMI PHY clock doesn't have enable/disable
-> > +		 * handlers, we have to enable it. Otherwise it could happen
-> > +		 * that parent PLL is not enabled by clock framework in a
-> > +		 * highly unlikely event when parent PLL is used solely for
-> > +		 * HDMI PHY clock.
-> > +		 */
-> > +		clk_prepare_enable(phy->clk_phy);
-> 
-> The implementation of the clock doesn't really matter in our API
-> usage. If we're using a clock, we have to call
-> clk_prepare_enable. That's documented everywhere, and mentionning how
-> the clock is implemented is an abstraction leakage and it's
-> irrelevant. I'd simply remove the comment here.
-> 
-> And it should be in a separate patch as well.
-
-OK. Should I add Fixes tag, since current code obviously is not by the specs? 
-It could still get in 4.17...
-
-Best regards,
-Jernej
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index 933f2e68f42a..c16a62a7bdbd 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -65,17 +65,18 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+ 				   CLK_SET_RATE_UNGATE);
+ 
+ /* TODO: The result of N/M is required to be in [8, 25] range. */
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
+-					"osc24M", 0x0010,
+-					8, 7,		/* N */
+-					0, 4,		/* M */
+-					BIT(24),	/* frac enable */
+-					BIT(25),	/* frac select */
+-					270000000,	/* frac rate 0 */
+-					297000000,	/* frac rate 1 */
+-					BIT(31),	/* gate */
+-					BIT(28),	/* lock */
+-					CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
++					    "osc24M", 0x0010,
++					    192000000,	/* Minimum rate */
++					    8, 7,	/* N */
++					    0, 4,	/* M */
++					    BIT(24),	/* frac enable */
++					    BIT(25),	/* frac select */
++					    270000000,	/* frac rate 0 */
++					    297000000,	/* frac rate 1 */
++					    BIT(31),	/* gate */
++					    BIT(28),	/* lock */
++					    CLK_SET_RATE_UNGATE);
+ 
+ /* TODO: The result of N/M is required to be in [8, 25] range. */
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+@@ -151,17 +152,18 @@ static struct ccu_nk pll_periph1_clk = {
+ };
+ 
+ /* TODO: The result of N/M is required to be in [8, 25] range. */
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
+-					"osc24M", 0x030,
+-					8, 7,		/* N */
+-					0, 4,		/* M */
+-					BIT(24),	/* frac enable */
+-					BIT(25),	/* frac select */
+-					270000000,	/* frac rate 0 */
+-					297000000,	/* frac rate 1 */
+-					BIT(31),	/* gate */
+-					BIT(28),	/* lock */
+-					CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
++					    "osc24M", 0x030,
++					    192000000,	/* Minimum rate */
++					    8, 7,	/* N */
++					    0, 4,	/* M */
++					    BIT(24),	/* frac enable */
++					    BIT(25),	/* frac select */
++					    270000000,	/* frac rate 0 */
++					    297000000,	/* frac rate 1 */
++					    BIT(31),	/* gate */
++					    BIT(28),	/* lock */
++					    CLK_SET_RATE_UNGATE);
+ 
+ static struct ccu_nkm pll_sata_clk = {
+ 	.enable		= BIT(31),
+-- 
+2.17.0
