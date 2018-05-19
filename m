@@ -1,140 +1,97 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 15/27] ARM: davinci: switch to common clock framework
-Date: Fri, 18 May 2018 11:48:17 -0500
-Message-Id: <20180518164829.27052-16-david@lechnology.com>
-In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
-References: <20180518164829.27052-1-david@lechnology.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 07/15] dt-bindings: display: sun4i-drm: Add R40 HDMI pipeline
+Date: Sat, 19 May 2018 20:31:19 +0200
+Message-Id: <20180519183127.2718-8-jernej.skrabec@siol.net>
+In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This switches ARCH_DAVINCI to use the common clock framework. The legacy
-clock code in arch/arm/mach-davinci/ is no longer used. New drivers in
-drivers/clk/davinci/ are used instead.
+Missing compatibles and descriptions needed to implement R40 HDMI
+pipeline are added.
 
-A few macros had to be moved to prevent compilation errors.
+For mixers only compatibles are added.
 
-Signed-off-by: David Lechner <david@lechnology.com>
+TCON description is expanded with R40 TV TCON compatibles. If the SoC
+has TCON TOP unit, phandle to that unit has to be specified. Additional
+clock has to be specified if SoC has TCON TOP and TCON is TV TCON.
+
+New compatible is added for DWC HDMI PHY, which has additional clock
+specified.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
+ .../bindings/display/sunxi/sun4i-drm.txt         | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-v11 changes:
-- none
-
-v10 changes:
-- none
-
-v9 changes:
-- none
-
-v8 changes:
-- none
-
-v7 changes:
-- s/compile/compilation and space instead of tab
-- add PM_GENERIC_DOMAINS dependencies
-
-v6 changes:
-- clean up indent on Common objects section
-
-
- arch/arm/Kconfig                | 5 ++++-
- arch/arm/mach-davinci/Makefile  | 4 ++--
- arch/arm/mach-davinci/clock.h   | 4 ----
- arch/arm/mach-davinci/davinci.h | 4 ++++
- arch/arm/mach-davinci/psc.h     | 2 --
- 5 files changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index a7f8e7f4b88f..a57ad13810c8 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -609,13 +609,16 @@ config ARCH_S3C24XX
- config ARCH_DAVINCI
- 	bool "TI DaVinci"
- 	select ARCH_HAS_HOLES_MEMORYMODEL
--	select CLKDEV_LOOKUP
-+	select COMMON_CLK
- 	select CPU_ARM926T
- 	select GENERIC_ALLOCATOR
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_IRQ_CHIP
- 	select GPIOLIB
- 	select HAVE_IDE
-+	select PM_GENERIC_DOMAINS if PM
-+	select PM_GENERIC_DOMAINS_OF if PM && OF
-+	select RESET_CONTROLLER
- 	select USE_OF
- 	select ZONE_DMA
- 	help
-diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
-index 4e8178050027..8725d8bea567 100644
---- a/arch/arm/mach-davinci/Makefile
-+++ b/arch/arm/mach-davinci/Makefile
-@@ -5,8 +5,8 @@
- #
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index a099957ab62a..634276f713e8 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -101,6 +101,7 @@ DWC HDMI PHY
  
- # Common objects
--obj-y 			:= time.o clock.o serial.o psc.o \
--			   usb.o common.o sram.o aemif.o
-+obj-y 					:= time.o serial.o usb.o \
-+					   common.o sram.o aemif.o
+ Required properties:
+   - compatible: value must be one of:
++    * allwinner,sun50i-a64-hdmi-phy
+     * allwinner,sun8i-a83t-hdmi-phy
+     * allwinner,sun8i-h3-hdmi-phy
+   - reg: base address and size of memory-mapped region
+@@ -111,8 +112,9 @@ Required properties:
+   - resets: phandle to the reset controller driving the PHY
+   - reset-names: must be "phy"
  
- obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
+-H3 HDMI PHY requires additional clock:
++H3 and A64 HDMI PHY requires additional clocks:
+   - pll-0: parent of phy clock
++  - pll-1: second possible phy clock parent (A64 only)
  
-diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
-index d7894d5aaa25..2d058568e004 100644
---- a/arch/arm/mach-davinci/clock.h
-+++ b/arch/arm/mach-davinci/clock.h
-@@ -12,10 +12,6 @@
- #ifndef __ARCH_ARM_DAVINCI_CLOCK_H
- #define __ARCH_ARM_DAVINCI_CLOCK_H
+ TV Encoder
+ ----------
+@@ -145,6 +147,8 @@ Required properties:
+    * allwinner,sun8i-a33-tcon
+    * allwinner,sun8i-a83t-tcon-lcd
+    * allwinner,sun8i-a83t-tcon-tv
++   * allwinner,sun8i-r40-tcon-tv-0
++   * allwinner,sun8i-r40-tcon-tv-1
+    * allwinner,sun8i-v3s-tcon
+    * allwinner,sun9i-a80-tcon-lcd
+    * allwinner,sun9i-a80-tcon-tv
+@@ -179,7 +183,7 @@ For TCONs with channel 0, there is one more clock required:
+ For TCONs with channel 1, there is one more clock required:
+    - 'tcon-ch1': The clock driving the TCON channel 1
  
--#define DAVINCI_PLL1_BASE 0x01c40800
--#define DAVINCI_PLL2_BASE 0x01c40c00
--#define MAX_PLL 2
--
- /* PLL/Reset register offsets */
- #define PLLCTL          0x100
- #define PLLCTL_PLLEN    BIT(0)
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index fa99197d36f9..db4c95ef4d5c 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -35,6 +35,10 @@
- #include <media/davinci/vpbe.h>
- #include <media/davinci/vpbe_osd.h>
+-When TCON support LVDS (all TCONs except TV TCON on A83T and those found
++When TCON support LVDS (all TCONs except TV TCONs on A83T, R40 and those found
+ in A13, H3, H5 and V3s SoCs), you need one more reset line:
+    - 'lvds': The reset line driving the LVDS logic
  
-+#define DAVINCI_PLL1_BASE		0x01c40800
-+#define DAVINCI_PLL2_BASE		0x01c40c00
-+#define DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01c41000
+@@ -187,6 +191,12 @@ And on the A23, A31, A31s and A33, you need one more clock line:
+    - 'lvds-alt': An alternative clock source, separate from the TCON channel 0
+                  clock, that can be used to drive the LVDS clock
+ 
++If SoC has TCON TOP, like R40, TCON has to have phandle to TCON TOP:
++   - 'allwinner,tcon-top': Phandle to TCON TOP unit
 +
- #define DAVINCI_SYSTEM_MODULE_BASE	0x01c40000
- #define SYSMOD_VDAC_CONFIG		0x2c
- #define SYSMOD_VIDCLKCTL		0x38
-diff --git a/arch/arm/mach-davinci/psc.h b/arch/arm/mach-davinci/psc.h
-index 8af9f09fc10c..b58707cf7033 100644
---- a/arch/arm/mach-davinci/psc.h
-+++ b/arch/arm/mach-davinci/psc.h
-@@ -27,8 +27,6 @@
- #ifndef __ASM_ARCH_PSC_H
- #define __ASM_ARCH_PSC_H
++TV TCONs which have phandle to TCON TOP need one more clock:
++   - 'tcon-top': TV TCON gate found in TCON TOP unit
++
+ TCON TOP
+ --------
  
--#define	DAVINCI_PWR_SLEEP_CNTRL_BASE	0x01C41000
--
- /* Power and Sleep Controller (PSC) Domains */
- #define DAVINCI_GPSC_ARMDOMAIN		0
- #define DAVINCI_GPSC_DSPDOMAIN		1
+@@ -330,6 +340,8 @@ Required properties:
+     * allwinner,sun8i-a83t-de2-mixer-0
+     * allwinner,sun8i-a83t-de2-mixer-1
+     * allwinner,sun8i-h3-de2-mixer-0
++    * allwinner,sun8i-r40-de2-mixer-0
++    * allwinner,sun8i-r40-de2-mixer-1
+     * allwinner,sun8i-v3s-de2-mixer
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
 -- 
 2.17.0
