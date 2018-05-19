@@ -1,66 +1,114 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/6] clk: meson: axg: add audio clock controller support
-Date: Tue, 22 May 2018 18:34:51 +0200
-Message-Id: <20180522163457.13834-1-jbrunet@baylibre.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 15/15] ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
+Date: Sat, 19 May 2018 20:31:27 +0200
+Message-Id: <20180519183127.2718-16-jernej.skrabec@siol.net>
+In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The purpose of this patchset is to add support for the clock controller
-dedicated to the audio subsystem found on A113 based SoCs
+Since HDMI can be considered as main output, most capable mixer is
+connected to it (mixer0).
 
-The series depends on the CLK_MUX_ROUND_CLOSEST fixes [merged in clk-next]
-and the duty cycle support [1] making their way into CCF.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-First patch is a clean-up of the meson clk Kconfig.
-Then, there is 3 clock provider drivers for clocks found in the audio
-The last 3 are for the clock controller itself.
-
-Changes since v1: [2]
- * Rebase clk-meson's next/drivers
- * Correct typo in documentation and squash DT patches
-
-[1]: https://lkml.kernel.org/r/20180420211141.28929-1-jbrunet@baylibre.com
-[2]: https://lkml.kernel.org/r/20180425163304.10852-1-jbrunet@baylibre.com
-
-Jerome Brunet (6):
-  clk: meson: clean-up meson clock configuration
-  clk: meson: add clk-phase clock driver
-  clk: meson: add triple phase clock driver
-  clk: meson: add axg audio sclk divider driver
-  dt-bindings: clock: add meson axg audio clock controller bindings
-  clk: meson: axg: add the audio clock controller driver
-
- .../bindings/clock/amlogic,axg-audio-clkc.txt      |  56 ++
- drivers/clk/meson/Kconfig                          |  28 +-
- drivers/clk/meson/Makefile                         |   3 +
- drivers/clk/meson/axg-audio.c                      | 845 +++++++++++++++++++++
- drivers/clk/meson/axg-audio.h                      | 127 ++++
- drivers/clk/meson/clk-phase.c                      |  63 ++
- drivers/clk/meson/clk-triphase.c                   |  68 ++
- drivers/clk/meson/clkc-audio.h                     |  28 +
- drivers/clk/meson/clkc.h                           |   8 +
- drivers/clk/meson/sclk-div.c                       | 243 ++++++
- include/dt-bindings/clock/axg-audio-clkc.h         |  94 +++
- 11 files changed, 1554 insertions(+), 9 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
- create mode 100644 drivers/clk/meson/axg-audio.c
- create mode 100644 drivers/clk/meson/axg-audio.h
- create mode 100644 drivers/clk/meson/clk-phase.c
- create mode 100644 drivers/clk/meson/clk-triphase.c
- create mode 100644 drivers/clk/meson/clkc-audio.h
- create mode 100644 drivers/clk/meson/sclk-div.c
- create mode 100644 include/dt-bindings/clock/axg-audio-clkc.h
-
+diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+index 27d9ccd0ef2f..66b492ad5847 100644
+--- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
++++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+@@ -58,6 +58,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -93,6 +104,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci1 {
+ 	status = "okay";
+ };
+@@ -101,6 +116,22 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_in {
++	hdmi_in_tcon_tv0: endpoint {
++		remote-endpoint = <&tcon_tv0_out_hdmi>;
++	};
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+@@ -161,6 +192,12 @@
+ 	regulator-name = "vcc-wifi";
+ };
+ 
++&mixer0_out {
++	mixer0_out_tcon_tv0: endpoint {
++		remote-endpoint = <&tcon_tv0_in_mixer0>;
++	};
++};
++
+ &mmc0 {
+ 	vmmc-supply = <&reg_dcdc1>;
+ 	bus-width = <4>;
+@@ -195,6 +232,19 @@
+ 	status = "okay";
+ };
+ 
++&tcon_tv0_in {
++	tcon_tv0_in_mixer0: endpoint {
++		remote-endpoint = <&mixer0_out_tcon_tv0>;
++	};
++};
++
++&tcon_tv0_out {
++	tcon_tv0_out_hdmi: endpoint@1 {
++		reg = <1>;
++		remote-endpoint = <&hdmi_in_tcon_tv0>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pb_pins>;
 -- 
-2.14.3
+2.17.0
