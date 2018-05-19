@@ -1,37 +1,95 @@
-Return-Path: <gabriel.fernandez@st.com>
-From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-        Alexandre TORGUE
-	<alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        Olivier BIDEAU <olivier.bideau@st.com>,
-        "Loic
- PALLARDY" <loic.pallardy@st.com>,
-        Benjamin GAIGNARD
-	<benjamin.gaignard@st.com>
-Subject: Re: [PATCH] clk: stm32mp1: Add CLK_IGNORE_UNUSED to ck_sys_dbg clock
-Date: Wed, 2 May 2018 13:57:23 +0000
-Message-ID: <fc59c88c-b25a-8e6f-ec14-5e7abba07829@st.com>
-References: <1524556723-26926-1-git-send-email-gabriel.fernandez@st.com>
- <152521260300.138124.15551649788620481848@swboyd.mtv.corp.google.com>
-In-Reply-To: <152521260300.138124.15551649788620481848@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 10/15] drm/sun4i: Add support for R40 TV TCONs
+Date: Sat, 19 May 2018 20:31:22 +0200
+Message-Id: <20180519183127.2718-11-jernej.skrabec@siol.net>
+In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KVGhpcyBwYXRjaCBpcyBub3QgYSBjcml0aWNhbCBmaXggZm9yIHRoaXMg
-bWVyZ2Ugd2luZG93Lg0KDQpUaGFua3MNCg0KR2FicmllbA0KDQoNCk9uIDA1LzAyLzIwMTggMTI6
-MTAgQU0sIFN0ZXBoZW4gQm95ZCB3cm90ZToNCj4gUXVvdGluZyBnYWJyaWVsLmZlcm5hbmRlekBz
-dC5jb20gKDIwMTgtMDQtMjQgMDA6NTg6NDMpDQo+PiBGcm9tOiBHYWJyaWVsIEZlcm5hbmRleiA8
-Z2FicmllbC5mZXJuYW5kZXpAc3QuY29tPg0KPj4NCj4+IERvbid0IGRpc2FibGUgdGhlIGRiZyBj
-bG9jayBpZiB3YXMgc2V0IGJ5IGJvb3Rsb2FkZXIuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogR2Fi
-cmllbCBGZXJuYW5kZXogPGdhYnJpZWwuZmVybmFuZGV6QHN0LmNvbT4NCj4+IC0tLQ0KPiBJcyB0
-aGlzIGEgY3JpdGljYWwgZml4IGZvciB0aGlzIG1lcmdlIHdpbmRvdz8gUGxlYXNlIGFkZCAiRml4
-ZXM6IiB0YWcuDQo+DQo=
+R40 display pipeline has a lot of possible configurations. HDMI can be
+connected to 2 different TCONs (out of 4) and mixers can be connected to
+any TCON. All this must be configured in TCON TOP.
+
+Along with definition of TCON capabilities also add mux callback, which
+can configure this complex pipeline.
+
+For now, only TCON TV is supported.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 39 ++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index e0c562ce1c22..81b9551e4f78 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -1274,6 +1274,31 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
+ 	return 0;
+ }
+ 
++static int sun8i_r40_tcon_tv_set_mux(struct sun4i_tcon *tcon,
++				     const struct drm_encoder *encoder,
++				     int index)
++{
++	if (encoder->encoder_type == DRM_MODE_ENCODER_TMDS)
++		sun8i_tcon_top_set_hdmi_src(tcon->tcon_top, index);
++
++	sun8i_tcon_top_de_config(tcon->tcon_top, tcon->id,
++				 tcon_type_tv, index);
++
++	return 0;
++}
++
++static int sun8i_r40_tcon_tv_set_mux_0(struct sun4i_tcon *tcon,
++				       const struct drm_encoder *encoder)
++{
++	return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 0);
++}
++
++static int sun8i_r40_tcon_tv_set_mux_1(struct sun4i_tcon *tcon,
++				       const struct drm_encoder *encoder)
++{
++	return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 1);
++}
++
+ static const struct sun4i_tcon_quirks sun4i_a10_quirks = {
+ 	.has_channel_0		= true,
+ 	.has_channel_1		= true,
+@@ -1321,6 +1346,18 @@ static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks = {
+ 	.has_channel_1		= true,
+ };
+ 
++static const struct sun4i_tcon_quirks sun8i_r40_tv_0_quirks = {
++	.has_channel_1		= true,
++	.needs_tcon_top		= true,
++	.set_mux		= sun8i_r40_tcon_tv_set_mux_0,
++};
++
++static const struct sun4i_tcon_quirks sun8i_r40_tv_1_quirks = {
++	.has_channel_1		= true,
++	.needs_tcon_top		= true,
++	.set_mux		= sun8i_r40_tcon_tv_set_mux_1,
++};
++
+ static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
+ 	.has_channel_0		= true,
+ };
+@@ -1345,6 +1382,8 @@ const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
+ 	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data = &sun8i_a83t_lcd_quirks },
+ 	{ .compatible = "allwinner,sun8i-a83t-tcon-tv", .data = &sun8i_a83t_tv_quirks },
++	{ .compatible = "allwinner,sun8i-r40-tcon-tv-0", .data = &sun8i_r40_tv_0_quirks },
++	{ .compatible = "allwinner,sun8i-r40-tcon-tv-1", .data = &sun8i_r40_tv_1_quirks },
+ 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
+ 	{ .compatible = "allwinner,sun9i-a80-tcon-lcd", .data = &sun9i_a80_tcon_lcd_quirks },
+ 	{ .compatible = "allwinner,sun9i-a80-tcon-tv", .data = &sun9i_a80_tcon_tv_quirks },
+-- 
+2.17.0
