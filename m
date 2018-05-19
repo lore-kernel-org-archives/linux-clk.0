@@ -1,364 +1,234 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	will.deacon@arm.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	vireshk@kernel.org,
-	ilialin@codeaurora.org
-Subject: [PATCH v12 1/8] soc: qcom: Separate kryo l2 accessors from PMU driver
-Date: Thu, 24 May 2018 10:50:11 +0300
-Message-Id: <1527148218-16540-2-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
-References: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 14/15] ARM: dts: sun8i: r40: Add HDMI pipeline
+Date: Sat, 19 May 2018 20:31:26 +0200
+Message-Id: <20180519183127.2718-15-jernej.skrabec@siol.net>
+In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The driver provides kernel level API for other drivers
-to access the MSM8996 L2 cache registers.
-Separating the L2 access code from the PMU driver and
-making it public to allow other drivers use it.
-The accesses must be separated with a single spinlock,
-maintained in this driver.
+Add all entries needed for HDMI to function properly.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Since R40 has highly configurable pipeline, both mixers and both TCON
+TVs are added. Board specific DT should then connect them together to
+best fit the purpose of the board.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/perf/Kconfig                 |  1 +
- drivers/perf/qcom_l2_pmu.c           | 90 ++++++++++--------------------------
- drivers/soc/qcom/Kconfig             |  3 ++
- drivers/soc/qcom/Makefile            |  1 +
- drivers/soc/qcom/kryo-l2-accessors.c | 56 ++++++++++++++++++++++
- include/soc/qcom/kryo-l2-accessors.h | 12 +++++
- 6 files changed, 97 insertions(+), 66 deletions(-)
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+ arch/arm/boot/dts/sun8i-r40.dtsi | 166 +++++++++++++++++++++++++++++++
+ 1 file changed, 166 insertions(+)
 
-diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-index 28bb5a0..561252a 100644
---- a/drivers/perf/Kconfig
-+++ b/drivers/perf/Kconfig
-@@ -69,6 +69,7 @@ config HISI_PMU
- config QCOM_L2_PMU
- 	bool "Qualcomm Technologies L2-cache PMU"
- 	depends on ARCH_QCOM && ARM64 && ACPI
-+	select QCOM_KRYO_L2_ACCESSORS
- 	  help
- 	  Provides support for the L2 cache performance monitor unit (PMU)
- 	  in Qualcomm Technologies processors.
-diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-index 842135c..cc31f51 100644
---- a/drivers/perf/qcom_l2_pmu.c
-+++ b/drivers/perf/qcom_l2_pmu.c
-@@ -31,6 +31,7 @@
- #include <asm/barrier.h>
- #include <asm/local64.h>
- #include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
+diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
+index 173dcc1652d2..6d5407964997 100644
+--- a/arch/arm/boot/dts/sun8i-r40.dtsi
++++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+@@ -42,8 +42,11 @@
+  */
  
- #define MAX_L2_CTRS             9
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/sun8i-de2.h>
+ #include <dt-bindings/clock/sun8i-r40-ccu.h>
++#include <dt-bindings/clock/sun8i-tcon-top.h>
+ #include <dt-bindings/reset/sun8i-r40-ccu.h>
++#include <dt-bindings/reset/sun8i-de2.h>
  
-@@ -87,8 +88,6 @@
- #define L2_COUNTER_RELOAD       BIT_ULL(31)
- #define L2_CYCLE_COUNTER_RELOAD BIT_ULL(63)
+ / {
+ 	#address-cells = <1>;
+@@ -99,12 +102,70 @@
+ 		};
+ 	};
  
--#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
--#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
- 
- #define reg_idx(reg, i)         (((i) * IA_L2_REG_OFFSET) + reg##_BASE)
- 
-@@ -107,48 +106,7 @@
- #define L2_EVENT_STREX                     0x421
- #define L2_EVENT_CLREX                     0x422
- 
--static DEFINE_RAW_SPINLOCK(l2_access_lock);
- 
--/**
-- * set_l2_indirect_reg: write value to an L2 register
-- * @reg: Address of L2 register.
-- * @value: Value to be written to register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static void set_l2_indirect_reg(u64 reg, u64 val)
--{
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	write_sysreg_s(val, L2CPUSRDR_EL1);
--	isb();
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--}
--
--/**
-- * get_l2_indirect_reg: read an L2 register value
-- * @reg: Address of L2 register.
-- *
-- * Use architecturally required barriers for ordering between system register
-- * accesses
-- */
--static u64 get_l2_indirect_reg(u64 reg)
--{
--	u64 val;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&l2_access_lock, flags);
--	write_sysreg_s(reg, L2CPUSRSELR_EL1);
--	isb();
--	val = read_sysreg_s(L2CPUSRDR_EL1);
--	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
--
--	return val;
--}
- 
- struct cluster_pmu;
- 
-@@ -219,28 +177,28 @@ static inline struct cluster_pmu *get_cluster_pmu(
- static void cluster_pmu_reset(void)
- {
- 	/* Reset all counters */
--	set_l2_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
--	set_l2_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
--	set_l2_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
--	set_l2_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
-+	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
-+	kryo_l2_set_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
-+	kryo_l2_set_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
-+	kryo_l2_set_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
- }
- 
- static inline void cluster_pmu_enable(void)
- {
--	set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
-+	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
- }
- 
- static inline void cluster_pmu_disable(void)
- {
--	set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
-+	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
- }
- 
- static inline void cluster_pmu_counter_set_value(u32 idx, u64 value)
- {
- 	if (idx == l2_cycle_ctr_idx)
--		set_l2_indirect_reg(L2PMCCNTR, value);
-+		kryo_l2_set_indirect_reg(L2PMCCNTR, value);
- 	else
--		set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
-+		kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
- }
- 
- static inline u64 cluster_pmu_counter_get_value(u32 idx)
-@@ -248,46 +206,46 @@ static inline u64 cluster_pmu_counter_get_value(u32 idx)
- 	u64 value;
- 
- 	if (idx == l2_cycle_ctr_idx)
--		value = get_l2_indirect_reg(L2PMCCNTR);
-+		value = kryo_l2_get_indirect_reg(L2PMCCNTR);
- 	else
--		value = get_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
-+		value = kryo_l2_get_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
- 
- 	return value;
- }
- 
- static inline void cluster_pmu_counter_enable(u32 idx)
- {
--	set_l2_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
-+	kryo_l2_set_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
- }
- 
- static inline void cluster_pmu_counter_disable(u32 idx)
- {
--	set_l2_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
-+	kryo_l2_set_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
- }
- 
- static inline void cluster_pmu_counter_enable_interrupt(u32 idx)
- {
--	set_l2_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
-+	kryo_l2_set_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
- }
- 
- static inline void cluster_pmu_counter_disable_interrupt(u32 idx)
- {
--	set_l2_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
-+	kryo_l2_set_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
- }
- 
- static inline void cluster_pmu_set_evccntcr(u32 val)
- {
--	set_l2_indirect_reg(L2PMCCNTCR, val);
-+	kryo_l2_set_indirect_reg(L2PMCCNTCR, val);
- }
- 
- static inline void cluster_pmu_set_evcntcr(u32 ctr, u32 val)
- {
--	set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
-+	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
- }
- 
- static inline void cluster_pmu_set_evtyper(u32 ctr, u32 val)
- {
--	set_l2_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
-+	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
- }
- 
- static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
-@@ -303,11 +261,11 @@ static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
- 
- 	spin_lock_irqsave(&cluster->pmu_lock, flags);
- 
--	resr_val = get_l2_indirect_reg(L2PMRESR);
-+	resr_val = kryo_l2_get_indirect_reg(L2PMRESR);
- 	resr_val &= ~(L2PMRESR_GROUP_MASK << shift);
- 	resr_val |= field;
- 	resr_val |= L2PMRESR_EN;
--	set_l2_indirect_reg(L2PMRESR, resr_val);
-+	kryo_l2_set_indirect_reg(L2PMRESR, resr_val);
- 
- 	spin_unlock_irqrestore(&cluster->pmu_lock, flags);
- }
-@@ -323,14 +281,14 @@ static inline void cluster_pmu_set_evfilter_sys_mode(u32 ctr)
- 		   L2PMXEVFILTER_ORGFILTER_IDINDEP |
- 		   L2PMXEVFILTER_ORGFILTER_ALL;
- 
--	set_l2_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
-+	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
- }
- 
- static inline u32 cluster_pmu_getreset_ovsr(void)
- {
--	u32 result = get_l2_indirect_reg(L2PMOVSSET);
-+	u32 result = kryo_l2_get_indirect_reg(L2PMOVSSET);
- 
--	set_l2_indirect_reg(L2PMOVSCLR, result);
-+	kryo_l2_set_indirect_reg(L2PMOVSCLR, result);
- 	return result;
- }
- 
-@@ -783,7 +741,7 @@ static int get_num_counters(void)
- {
- 	int val;
- 
--	val = get_l2_indirect_reg(L2PMCR);
-+	val = kryo_l2_get_indirect_reg(L2PMCR);
- 
- 	/*
- 	 * Read number of counters from L2PMCR and add 1
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 7093fe7..0567dff 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -39,6 +39,9 @@ config QCOM_GSBI
-           functions for connecting the underlying serial UART, SPI, and I2C
-           devices to the output pins.
- 
-+config QCOM_KRYO_L2_ACCESSORS
-+       bool
++	de: display-engine {
++		compatible = "allwinner,sun8i-r40-display-engine",
++			     "allwinner,sun8i-h3-display-engine";
++		allwinner,pipelines = <&mixer0>, <&mixer1>;
++		status = "disabled";
++	};
 +
- config QCOM_MDT_LOADER
- 	tristate
- 	select QCOM_SCM
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index cbf414c..e4d3f5a 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -14,3 +14,4 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
- obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
- obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
- obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
-+obj-$(CONFIG_QCOM_KRYO_L2_ACCESSORS) +=	kryo-l2-accessors.o
-diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
-new file mode 100644
-index 0000000..75fd07a
---- /dev/null
-+++ b/drivers/soc/qcom/kryo-l2-accessors.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		display_clocks: clock@1000000 {
++			compatible = "allwinner,sun8i-r40-de2-clk",
++				     "allwinner,sun8i-h3-de2-clk";
++			reg = <0x01000000 0x100000>;
++			clocks = <&ccu CLK_DE>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
 +
-+#include <linux/spinlock.h>
-+#include <asm/sysreg.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
++		mixer0: mixer@1100000 {
++			compatible = "allwinner,sun8i-r40-de2-mixer-0";
++			reg = <0x01100000 0x100000>;
++			clocks = <&display_clocks CLK_BUS_MIXER0>,
++				 <&display_clocks CLK_MIXER0>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&display_clocks RST_MIXER0>;
 +
-+#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
-+#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+static DEFINE_RAW_SPINLOCK(l2_access_lock);
++				mixer0_out: port@1 {
++					reg = <1>;
++				};
++			};
++		};
 +
-+/**
-+ * kryo_l2_set_indirect_reg() - write value to an L2 register
-+ * @reg: Address of L2 register.
-+ * @value: Value to be written to register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+void kryo_l2_set_indirect_reg(u64 reg, u64 val)
-+{
-+	unsigned long flags;
++		mixer1: mixer@1200000 {
++			compatible = "allwinner,sun8i-r40-de2-mixer-1";
++			reg = <0x01200000 0x100000>;
++			clocks = <&display_clocks CLK_BUS_MIXER1>,
++				 <&display_clocks CLK_MIXER1>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&display_clocks RST_WB>;
 +
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	write_sysreg_s(val, L2CPUSRDR_EL1);
-+	isb();
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
-+}
-+EXPORT_SYMBOL(kryo_l2_set_indirect_reg);
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+/**
-+ * kryo_l2_get_indirect_reg() - read an L2 register value
-+ * @reg: Address of L2 register.
-+ *
-+ * Use architecturally required barriers for ordering between system register
-+ * accesses, and system registers with respect to device memory
-+ */
-+u64 kryo_l2_get_indirect_reg(u64 reg)
-+{
-+	u64 val;
-+	unsigned long flags;
++				mixer1_out: port@1 {
++					reg = <1>;
++				};
++			};
++		};
 +
-+	raw_spin_lock_irqsave(&l2_access_lock, flags);
-+	write_sysreg_s(reg, L2CPUSRSELR_EL1);
-+	isb();
-+	val = read_sysreg_s(L2CPUSRDR_EL1);
-+	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
+ 		nmi_intc: interrupt-controller@1c00030 {
+ 			compatible = "allwinner,sun7i-a20-sc-nmi";
+ 			interrupt-controller;
+@@ -451,6 +512,70 @@
+ 			#size-cells = <0>;
+ 		};
+ 
++		tcon_top: tcon-top@1c70000 {
++			compatible = "allwinner,sun8i-r40-tcon-top";
++			reg = <0x01c70000 0x1000>;
++			clocks = <&ccu CLK_BUS_TCON_TOP>;
++			clock-names = "bus";
++			resets = <&ccu RST_BUS_TCON_TOP>;
++			reset-names = "rst";
++			#clock-cells = <1>;
++		};
 +
-+	return val;
-+}
-+EXPORT_SYMBOL(kryo_l2_get_indirect_reg);
-diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
-new file mode 100644
-index 0000000..673c534
---- /dev/null
-+++ b/include/soc/qcom/kryo-l2-accessors.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
++		tcon_tv0: lcd-controller@1c73000 {
++			compatible = "allwinner,sun8i-r40-tcon-tv-0";
++			reg = <0x01c73000 0x1000>;
++			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON_TV0>, <&ccu CLK_TCON_TV0>,
++				 <&tcon_top 1>;
++			clock-names = "ahb", "tcon-ch1", "tcon-top";
++			resets = <&ccu RST_BUS_TCON_TV0>;
++			reset-names = "lcd";
++			allwinner,tcon-top = <&tcon_top>;
 +
-+#ifndef __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
-+#define __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
-+void kryo_l2_set_indirect_reg(u64 reg, u64 val);
-+u64 kryo_l2_get_indirect_reg(u64 reg);
++				tcon_tv0_in: port@0 {
++					reg = <0>;
++				};
 +
-+#endif
++				tcon_tv0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
++		tcon_tv1: lcd-controller@1c74000 {
++			compatible = "allwinner,sun8i-r40-tcon-tv-1";
++			reg = <0x01c74000 0x1000>;
++			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON_TV1>, <&ccu CLK_TCON_TV1>,
++				 <&tcon_top 2>;
++			clock-names = "ahb", "tcon-ch1", "tcon-top";
++			resets = <&ccu RST_BUS_TCON_TV1>;
++			reset-names = "lcd";
++			allwinner,tcon-top = <&tcon_top>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon_tv1_in: port@0 {
++					reg = <0>;
++				};
++
++				tcon_tv1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
+ 		gic: interrupt-controller@1c81000 {
+ 			compatible = "arm,gic-400";
+ 			reg = <0x01c81000 0x1000>,
+@@ -461,6 +586,47 @@
+ 			#interrupt-cells = <3>;
+ 			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
++
++		hdmi: hdmi@1ee0000 {
++			compatible = "allwinner,sun8i-r40-dw-hdmi",
++				     "allwinner,sun8i-a83t-dw-hdmi";
++			reg = <0x01ee0000 0x10000>;
++			reg-io-width = <1>;
++			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_HDMI0>, <&ccu CLK_HDMI_SLOW>,
++				 <&ccu CLK_HDMI>;
++			clock-names = "iahb", "isfr", "tmds";
++			resets = <&ccu RST_BUS_HDMI1>;
++			reset-names = "ctrl";
++			phys = <&hdmi_phy>;
++			phy-names = "hdmi-phy";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					reg = <0>;
++				};
++
++				hdmi_out: port@1 {
++					reg = <1>;
++				};
++			};
++		};
++
++		hdmi_phy: hdmi-phy@1ef0000 {
++			compatible = "allwinner,sun8i-r40-hdmi-phy",
++				     "allwinner,sun50i-a64-hdmi-phy";
++			reg = <0x01ef0000 0x10000>;
++			clocks = <&ccu CLK_BUS_HDMI1>, <&ccu CLK_HDMI_SLOW>,
++				 <&ccu 7>, <&ccu 16>;
++			clock-names = "bus", "mod", "pll-0", "pll-1";
++			resets = <&ccu RST_BUS_HDMI0>;
++			reset-names = "phy";
++			#phy-cells = <0>;
++		};
+ 	};
+ 
+ 	timer {
 -- 
-1.9.1
+2.17.0
