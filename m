@@ -1,40 +1,82 @@
-Return-Path: <horms@verge.net.au>
-Date: Wed, 2 May 2018 11:38:21 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das@bp.renesas.com>,
-	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-Subject: Re: [PATCH v5 14/26] ARM: shmobile: defconfig: Enable RENESAS_WDT_GEN
-Message-ID: <20180502093821.m276vxqixob47e4p@verge.net.au>
-References: <1518457475-4480-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1518457475-4480-15-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38904 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752188AbeETBur (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 May 2018 21:50:47 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1518457475-4480-15-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <20180519183127.2718-8-jernej.skrabec@siol.net>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net> <20180519183127.2718-8-jernej.skrabec@siol.net>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Sun, 20 May 2018 11:50:25 +1000
+Message-ID: <CAGRGNgU+PaygxkVkfcxUqMeV1TijJrZRkPkff7b4cxdVY6NQLA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 07/15] dt-bindings: display: sun4i-drm: Add
+ R40 HDMI pipeline
+To: jernej.skrabec@siol.net
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Feb 12, 2018 at 05:44:23PM +0000, Fabrizio Castro wrote:
-> R-Car Gen2 and RZ/G1 platforms come with a watchdog IP, therefore enable
-> its driver by default.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Signed-off-by: Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Jernej,
 
-Thanks, applied.
+On Sun, May 20, 2018 at 4:31 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> Missing compatibles and descriptions needed to implement R40 HDMI
+> pipeline are added.
+>
+> For mixers only compatibles are added.
+>
+> TCON description is expanded with R40 TV TCON compatibles. If the SoC
+> has TCON TOP unit, phandle to that unit has to be specified. Additional
+> clock has to be specified if SoC has TCON TOP and TCON is TV TCON.
+>
+> New compatible is added for DWC HDMI PHY, which has additional clock
+> specified.
+
+There's a bunch of A64 related stuff mixed in here, is the R40
+compatible with the A64's parts? If so, you should probably mention
+that in the commit log.
+
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  .../bindings/display/sunxi/sun4i-drm.txt         | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index a099957ab62a..634276f713e8 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -111,8 +112,9 @@ Required properties:
+>    - resets: phandle to the reset controller driving the PHY
+>    - reset-names: must be "phy"
+>
+> -H3 HDMI PHY requires additional clock:
+> +H3 and A64 HDMI PHY requires additional clocks:
+>    - pll-0: parent of phy clock
+> +  - pll-1: second possible phy clock parent (A64 only)
+
+Maybe split this into two:
+
+H3 HDMI PHY ...
+   - pll-0: ...
+
+A64 HDMI PHY ...
+   - pll-0: ...
+   - pll-1: ...
+
+At the moment a quick reading implies that H3 needs pll-1.
+
+Thanks,
+
+-- 
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
