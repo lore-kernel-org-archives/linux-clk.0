@@ -1,83 +1,24 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 20 May 2018 21:01:32 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx6sx: disable unnecessary clocks during clock
+ initialization
+Message-ID: <20180520130130.GA26863@dragon>
+References: <1526533248-21990-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <a926924f-2033-acd6-67cb-210a5e487ebb@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1525428158-29147-1-git-send-email-tdas@codeaurora.org>
- <1525428158-29147-2-git-send-email-tdas@codeaurora.org>
- <152545267793.138124.15345698220033125655@swboyd.mtv.corp.google.com>
- <a926924f-2033-acd6-67cb-210a5e487ebb@codeaurora.org>
-Message-ID: <152573930157.138124.12994299541712205183@swboyd.mtv.corp.google.com>
-Subject: Re: [v8] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Mon, 07 May 2018 17:28:21 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526533248-21990-1-git-send-email-Anson.Huang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-05-07 03:48:06)
-> Hello Stephen,
-> =
+On Thu, May 17, 2018 at 01:00:47PM +0800, Anson Huang wrote:
+> Disable those unnecessary clocks during kernel boot up to save power,
+> those modules clock should be managed by modules driver in runtime.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-> Could you please let me know your comments on the below.
-> =
-
-> On 5/4/2018 10:21 PM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-05-04 03:02:38)
-> >> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> >> new file mode 100644
-> >> index 0000000..944fe04
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/clk-rpmh.c
-> >> @@ -0,0 +1,334 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> >> + */
-> >> +
-> >> +};
-> >> +
-> >> +struct clk_rpmh_desc {
-> >> +       struct clk_hw **clks;
-> >> +       size_t num_clks;
-> >> +};
-> > =
-
-> > This could be replaced with the clk_hw_onecell_data struct and then the
-> > only problem becomes the const part which seems pretty impossible to fix
-> > at this point. One "workaround" is to memdup the structure. Ugh.
-> > =
-
-> =
-
-> Will be okay, if I can the following?
-> =
-
-> _probe...
-> {
->         struct clk_rpmh_desc *hw_desc_data;
->         ....
-> =
-
->         hw_desc_data =3D kmemdup(desc, sizeof(*desc), GFP_KERNEL);
-> =
-
->         ...
->         ret =3D devm_of_clk_add_hw_provider(&pdev->dev,     of_clk_rpmh_h=
-w_get, =
-
-> hw_desc_data);
->          ....
-> =
-
-> }
-> =
-
-> And also I fix the "getter" function.
-
-I'd rather see the check for out of bounds number just go away, unless
-that's helping something. The kmemdup() doesn't look good.
+Acked-by: Shawn Guo <shawnguo@kernel.org>
