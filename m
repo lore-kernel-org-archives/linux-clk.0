@@ -1,72 +1,104 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45507 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936821AbeE2RFP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 May 2018 13:05:15 -0400
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH v3 0/5] Reintroduce i.MX EPIT Timer
-Date: Tue, 29 May 2018 19:04:31 +0200
-Message-Id: <20180529170436.22711-1-peron.clem@gmail.com>
+Received: from mailout8.siol.net ([213.250.19.135]:48408 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750883AbeETHbF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 20 May 2018 03:31:05 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH 10/15] drm/sun4i: Add support for R40 TV TCONs
+Date: Sun, 20 May 2018 09:30:22 +0200
+Message-ID: <8079031.6V9S5xCcmc@jernej-laptop>
+In-Reply-To: <CAGRGNgXbKGhnern4=_W9W5dKM54H5B1dnAD7up-23rUAMWWCSw@mail.gmail.com>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net> <CAGRGNgWumzhiiwJenOXRuRN0i-_2uY=YR5L+9m70HW2ibF=C7w@mail.gmail.com> <CAGRGNgXbKGhnern4=_W9W5dKM54H5B1dnAD7up-23rUAMWWCSw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Clément Peron <clement.peron@devialet.com>
+Hi,
 
-As suggested in the commit message we have added the device tree support,
-proper bindings and we moved the driver into the correct folder.
+Dne nedelja, 20. maj 2018 ob 04:09:52 CEST je Julian Calaby napisal(a):
+> Hi Jernej,
+> 
+> On Sun, May 20, 2018 at 11:57 AM, Julian Calaby <julian.calaby@gmail.com> 
+wrote:
+> > Hi Jernej,
+> > 
+> > On Sun, May 20, 2018 at 4:31 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> >> R40 display pipeline has a lot of possible configurations. HDMI can be
+> >> connected to 2 different TCONs (out of 4) and mixers can be connected to
+> >> any TCON. All this must be configured in TCON TOP.
+> >> 
+> >> Along with definition of TCON capabilities also add mux callback, which
+> >> can configure this complex pipeline.
+> >> 
+> >> For now, only TCON TV is supported.
+> >> 
+> >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >> ---
+> >> 
+> >>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 39 ++++++++++++++++++++++++++++++
+> >>  1 file changed, 39 insertions(+)
+> >> 
+> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> b/drivers/gpu/drm/sun4i/sun4i_tcon.c index e0c562ce1c22..81b9551e4f78
+> >> 100644
+> >> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> @@ -1274,6 +1274,31 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon
+> >> *tcon,>> 
+> >>         return 0;
+> >>  
+> >>  }
+> >> 
+> >> +static int sun8i_r40_tcon_tv_set_mux(struct sun4i_tcon *tcon,
+> >> +                                    const struct drm_encoder *encoder,
+> >> +                                    int index)
+> >> +{
+> >> +       if (encoder->encoder_type == DRM_MODE_ENCODER_TMDS)
+> >> +               sun8i_tcon_top_set_hdmi_src(tcon->tcon_top, index);
+> >> +
+> >> +       sun8i_tcon_top_de_config(tcon->tcon_top, tcon->id,
+> >> +                                tcon_type_tv, index);
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >> +static int sun8i_r40_tcon_tv_set_mux_0(struct sun4i_tcon *tcon,
+> >> +                                      const struct drm_encoder *encoder)
+> >> +{
+> >> +       return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 0);
+> >> +}
+> >> +
+> >> +static int sun8i_r40_tcon_tv_set_mux_1(struct sun4i_tcon *tcon,
+> >> +                                      const struct drm_encoder *encoder)
+> >> +{
+> >> +       return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 1);
+> >> +}
+> > 
+> > Are TCON-TOPs going to be a common thing in new SoCs from Allwinner?
+> > If so, maybe we should add an index to the TCON quirks and have a
+> > common TCON-TOP set_mux function.
+> 
+> Actually, that only moves it up a level. Should it be a devicetree property?
+> 
 
-Moreover we made some changes like use of relaxed IO accesor,
-implement sched_clock, delay_timer and reduce the clockevents min_delta.
+TCON-TOP is besides R40 part of two newest Allwinner SoCs, H6 and A63. 
+However, they have only one TV TCON and one LCD TCON, so indexes are not 
+needed for them (always 0). This makes R40 somewhat special. I don't think it 
+makes sense to expand everything just for one SoC.
 
-Changes since v2 (Thanks Fabio Estevam):
-- Removed unused "ckil" clock
-- Add out_iounmap
-- Check and handle if clk_prepare_enable failed
-- Fix comment typo
+Best regards,
+Jernej
 
-Changes since v1 (Thanks Vladimir Zapolskiy):
-- Add OF dependency in Kconfig
-- Sort header
-- Use BIT macro
-- Remove useless comments
-- Fix incorrect indent
-- Fix memory leak
-- Add check and handle possible returned error
-
-Clément Peron (2):
-  ARM: imx: remove inexistant EPIT timer init
-  Documentation: DT: add i.MX EPIT timer binding
-
-Colin Didier (3):
-  clk: imx6: add EPIT clock support
-  clocksource: add driver for i.MX EPIT timer
-  ARM: dts: imx6qdl: add missing compatible and clock properties for
-    EPIT
-
- .../devicetree/bindings/clock/imx6q,epit.txt  |  24 ++
- arch/arm/boot/dts/imx6qdl.dtsi                |  10 +
- arch/arm/mach-imx/common.h                    |   1 -
- drivers/clk/imx/clk-imx6q.c                   |   2 +
- drivers/clocksource/Kconfig                   |  12 +
- drivers/clocksource/Makefile                  |   1 +
- drivers/clocksource/timer-imx-epit.c          | 283 ++++++++++++++++++
- include/dt-bindings/clock/imx6qdl-clock.h     |   4 +-
- 8 files changed, 335 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.txt
- create mode 100644 drivers/clocksource/timer-imx-epit.c
-
--- 
-2.17.0
 
