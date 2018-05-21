@@ -1,96 +1,51 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Mon, 28 May 2018 12:00:03 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:33459 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751722AbeEUKhj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 May 2018 06:37:39 -0400
+Received: by mail-pg0-f67.google.com with SMTP id e21-v6so1287261pgv.0
+        for <linux-clk@vger.kernel.org>; Mon, 21 May 2018 03:37:39 -0700 (PDT)
+Date: Mon, 21 May 2018 16:07:36 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC driver
-Message-ID: <20180528090003.GA8778@localhost.localdomain>
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180521103736.5bz7oulz5gpl24ea@vireshk-i7>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Patch series adding support for ROHM BD71837 PMIC.
+Would have been better if you would have updated the subject as:
 
-BD71837 is a programmable Power Management IC for powering single-core,
-dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-low BOM cost and compact solution footprint. It integrates 8 buck
-regulators and 7 LDO’s to provide all the power rails required by the
-SoC and the commonly used peripherals.
+[PATCH v10 10/15] cpufreq: Add Kryo CPU scaling driver
 
-The driver aims to not limit the usage of PMIC. Thus the buck and LDO
-naming is generic and not tied to any specific purposes. However there
-is following limitations which make it mostly suitable for use cases
-where the processor where PMIC driver is running is powered by the PMIC:
+On 21-05-18, 13:31, Ilia Lin wrote:
+> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+> the CPU frequency subset and voltage value of each OPP varies
+> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+> defines the voltage and frequency value based on the msm-id in SMEM
+> and speedbin blown in the efuse combination.
+> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> to provide the OPP framework with required information.
+> This is used to determine the voltage and frequency value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
+> 
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-- The PMIC is not re-initialized if it resets. PMIC may reset as a
-  result of voltage monitoring (over/under voltage) or due to reset
-  request. Driver is only initializing PMIC at probe. This is not
-  problem as long as processor controlling PMIC is powered by PMIC.
+Yes, I acked it earlier, but then comments came back. You should drop
+the tags in such cases normally.
 
-- The PMIC internal state machine is ignored by driver. Driver assumes
-  the PMIC is wired so that it is always in "run" state when controlled
-  by the driver.
+Anyway, the patch looks fine now.
 
-Changelog v2
-Based on feedback from Mark Brown
-- Squashed code and buildfile changes to same patch
-- Fixed some styling issues
-- Changed SPDX comments to CPP style
-- Error out if voltage is changed when regulator is enabled instead of
-  Disabling the regulator for duration of change
-- Use devm_regulator_register
-- Remove compatible usage from regulators - use parent dev for config
-- Add a note about using regulator-boot-on for BUCK6 and 7
-- fixed warnings from kbuild test robot
-
-patch 1: 
-        MFD driver and definitions bringing interrupt support and
-        enabling clk and regulator subsystems.
-Patches 2, 3 and 4:
-        device tree binding documents.
-Patch 5:
-        clock subsystem and support for gated clock.
-Patch 6:
-        regulator driver supporting 8 bucks and 7 LDOs.
-
-This patch series is based on for-mfd-next
-
----
-
-Matti Vaittinen (6):
-  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  regulator: bd71837: Devicetree bindings for BD71837 regulators
-  clk: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  clk: bd71837: Add driver for BD71837 PMIC clock
-  regulator: bd71837: BD71837 PMIC regulator driver
-
- .../bindings/clock/rohm,bd71837-clock.txt          |  37 ++
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  52 ++
- .../bindings/regulator/rohm,bd71837-regulator.txt  | 126 ++++
- drivers/clk/Kconfig                                |   9 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-bd71837.c                          | 154 +++++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/bd71837.c                              | 238 ++++++++
- drivers/regulator/Kconfig                          |  11 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/bd71837-regulator.c              | 678 +++++++++++++++++++++
- include/linux/mfd/bd71837.h                        | 316 ++++++++++
- 13 files changed, 1637 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
- create mode 100644 drivers/clk/clk-bd71837.c
- create mode 100644 drivers/mfd/bd71837.c
- create mode 100644 drivers/regulator/bd71837-regulator.c
- create mode 100644 include/linux/mfd/bd71837.h
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-2.14.3
+viresh
