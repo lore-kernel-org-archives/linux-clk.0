@@ -1,117 +1,54 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v8 14/15] dt-bindings: qcom_spmi: Document SAW support
-Date: Thu, 17 May 2018 14:19:14 +0300
-Message-Id: <1526555955-29960-15-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
-References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34575 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbeEUIrU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 May 2018 04:47:20 -0400
+Received: by mail-wr0-f193.google.com with SMTP id j1-v6so4194754wrm.1
+        for <linux-clk@vger.kernel.org>; Mon, 21 May 2018 01:47:19 -0700 (PDT)
+Message-ID: <1526892437.2822.2.camel@baylibre.com>
+Subject: Re: [PATCH v2] clk: meson: meson8b: mark fclk_div2 gate clocks as
+ CLK_IS_CRITICAL
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        narmstrong@baylibre.com, linux-amlogic@lists.infradead.org
+Cc: linux-clk@vger.kernel.org, khilman@baylibre.com
+Date: Mon, 21 May 2018 10:47:17 +0200
+In-Reply-To: <20180520171606.4430-1-martin.blumenstingl@googlemail.com>
+References: <20180520171606.4430-1-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the DT bindings for the SAW regulators.
+On Sun, 2018-05-20 at 19:16 +0200, Martin Blumenstingl wrote:
+> Until commit 05f814402d6174 ("clk: meson: add fdiv clock gates") we
+> relied on the bootloader to enable the fclk_div clock gates. It turns
+> out that our clock tree is incomplete at least on Meson8b (tested with
+> an Odroid-C1, which uses an RGMII PHY) because after the mentioned
+> commit Ethernet is not working anymore (no RX/TX activity can be seen).
+> At the same time Ethernet was still working on Meson8m2 with a RMII PHY.
+> 
+> Testing has shown that as soon as "fclk_div2" is disabled Ethernet stops
+> working on Odroid-C1. Unfortunately it's currently not clear what the
+> Ethernet controller IP block uses the fclk_div2 clock for. Mark the
+> clock as CLK_IS_CRITICAL to keep it enabled (as it's already enabled by
+> most bootloaders by default, which is why we didn't notice it before).
+> 
+> Fixes: 05f814402d6174 ("clk: meson: add fdiv clock gates")
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Tested-by: Kevin Hilman <khilman@baylibre.com>
+> ---
+> changes since v1 at [0]:
+> - only fclk_div2 has to be kept running (so the commit message and the
+>   patch itself are updated)
+> - added a FIXME comment to the code
+> 
+> [0] http://lists.infradead.org/pipermail/linux-amlogic/2018-May/007272.html
+> 
+>  drivers/clk/meson/meson8b.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
-The saw-leader is the only property that is configurable in DT.
+Added :
+Cc: stable@vger.kernel.org 
 
-The saw-slave property allows ganging (grouping) of
-several regulators so that their outputs can be combined.
-
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-index 57d2c65..406f2e5 100644
---- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-@@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
- 	Definition: Reference to regulator supplying the input pin, as
- 		    described in the data sheet.
- 
-+- qcom,saw-reg:
-+	Usage: optional
-+	Value type: <phandle>
-+	Description: Reference to syscon node defining the SAW registers.
-+
- 
- The regulator node houses sub-nodes for each regulator within the device. Each
- sub-node is identified using the node's name, with valid values listed for each
-@@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
- 			2 = 0.55 uA
- 			3 = 0.75 uA
- 
-+- qcom,saw-slave:
-+	Usage: optional
-+	Value type: <boo>
-+	Description: SAW controlled gang slave. Will not be configured.
-+
-+- qcom,saw-leader:
-+	Usage: optional
-+	Value type: <boo>
-+	Description: SAW controlled gang leader. Will be configured as
-+		     SAW regulator.
-+
- Example:
- 
- 	regulators {
-@@ -221,3 +237,32 @@ Example:
- 
- 		....
- 	};
-+
-+Example 2:
-+
-+	saw3: syscon@9A10000 {
-+		compatible = "syscon";
-+		reg = <0x9A10000 0x1000>;
-+	};
-+
-+	...
-+
-+	spm-regulators {
-+		compatible = "qcom,pm8994-regulators";
-+		qcom,saw-reg = <&saw3>;
-+		s8 {
-+			qcom,saw-slave;
-+		};
-+		s9 {
-+			qcom,saw-slave;
-+		};
-+		s10 {
-+			qcom,saw-slave;
-+		};
-+		pm8994_s11_saw: s11 {
-+			qcom,saw-leader;
-+			regulator-always-on;
-+			regulator-min-microvolt = <900000>;
-+			regulator-max-microvolt = <1140000>;
-+		};
-+	};
--- 
-1.9.1
+and applied. Thx Martin
