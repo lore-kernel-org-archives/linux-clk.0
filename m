@@ -1,50 +1,66 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v9 09/27] ARM: davinci: dm644x: add new clock init using
- common clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-10-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <cfce1685-296a-a669-bb7d-bf14d43004ed@ti.com>
-Date: Thu, 3 May 2018 18:48:20 +0530
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+ amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+ celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+To: ilialin@codeaurora.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
+ lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
+ david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+ rjw@rjwysocki.net, linux-clk@vger.kernel.org
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+ <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com>
+ <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com>
+Date: Mon, 21 May 2018 14:04:44 +0100
 MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-10-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 27 April 2018 05:47 AM, David Lechner wrote:
->  void __init dm644x_init_time(void)
->  {
-> +#ifdef CONFIG_COMMON_CLK
-> +	void __iomem *pll1, *psc;
-> +	struct clk *clk;
-> +
-> +	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
-> +
-> +	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
-> +	dm355_pll1_init(NULL, pll1, NULL);
 
-This should be dm644x_*()
 
-> +
-> +	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-> +	dm355_psc_init(NULL, psc);
+On 21/05/18 13:57, ilialin@codeaurora.org wrote:
+> 
+[...]
 
-This one should be dm644x_*()
+>>> +#include <linux/cpu.h>
+>>> +#include <linux/err.h>
+>>> +#include <linux/init.h>
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/nvmem-consumer.h>
+>>> +#include <linux/of.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/pm_opp.h>
+>>> +#include <linux/slab.h>
+>>> +#include <linux/soc/qcom/smem.h>
+>>> +
+>>> +#define MSM_ID_SMEM	137
+>>> +#define SILVER_LEAD	0
+>>> +#define GOLD_LEAD	2
+>>> +
+>>
+>> So I gather form other emails, that these are physical cpu number(not even
+>> unique identifier like MPIDR). Will this work on parts or platforms that need
+>> to boot in GOLD LEAD cpus.
+> 
+> The driver is for Kryo CPU, which (and AFAIK all multicore MSMs)
+> always boots on the CPU0.
 
-With those fixes, I was able to bootup on DM644x EVM and a visual
-inspection of clock debug dump shows it remains same before and after
-the conversion.
 
-Thanks,
-Sekhar
+That may be true and I am not that bothered about it. But assuming
+physical ordering from the logical cpu number is *incorrect* and will
+break if kernel decides to change the allocation algorithm. Kernel
+provides no guarantee on that, so you need to depend on some physical ID
+or may be DT to achieve what your want. But the current code as it
+stands is wrong.
+
+-- 
+Regards,
+Sudeep
