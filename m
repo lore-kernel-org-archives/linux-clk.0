@@ -1,305 +1,248 @@
-Return-Path: <ray.jui@broadcom.com>
-Return-Path: <ray.jui@broadcom.com>
-From: Ray Jui <ray.jui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH v2 2/3] clk: bcm: Update and add Stingray clock entries
-Date: Wed, 30 May 2018 17:36:19 -0700
-Message-Id: <1527726980-11723-3-git-send-email-ray.jui@broadcom.com>
-In-Reply-To: <1527726980-11723-1-git-send-email-ray.jui@broadcom.com>
-References: <1527726980-11723-1-git-send-email-ray.jui@broadcom.com>
+Return-Path: <ilialin@codeaurora.org>
+From: <ilialin@codeaurora.org>
+To: "'Viresh Kumar'" <viresh.kumar@linaro.org>
+Cc: <mturquette@baylibre.com>,
+	<sboyd@kernel.org>,
+	<robh@kernel.org>,
+	<mark.rutland@arm.com>,
+	<nm@ti.com>,
+	<lgirdwood@gmail.com>,
+	<broonie@kernel.org>,
+	<andy.gross@linaro.org>,
+	<david.brown@linaro.org>,
+	<catalin.marinas@arm.com>,
+	<will.deacon@arm.com>,
+	<rjw@rjwysocki.net>,
+	<linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<rnayak@codeaurora.org>,
+	<amit.kucheria@linaro.org>,
+	<nicolas.dechesne@linaro.org>,
+	<celster@codeaurora.org>,
+	<tfinkel@codeaurora.org>
+References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org> <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <20180518014538.duphof6enscpm5vp@vireshk-i7> <019201d3ef66$db97aed0$92c70c70$@codeaurora.org> <20180521044938.bnr2sdkmvdorfxqm@vireshk-i7>
+In-Reply-To: <20180521044938.bnr2sdkmvdorfxqm@vireshk-i7>
+Subject: RE: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
+Date: Mon, 21 May 2018 12:00:09 +0300
+Message-ID: <000501d3f0e2$23500c00$69f02400$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+Final version (addressing Russel's comment as well):
 
-Update and add Stingray clock definitions and tables so they match the
-binding document and the latest ASIC datasheet
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- drivers/clk/bcm/clk-sr.c           | 135 ++++++++++++++++++++++++++++++++-----
- include/dt-bindings/clock/bcm-sr.h |  24 +++++--
- 2 files changed, 137 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-sr.c b/drivers/clk/bcm/clk-sr.c
-index adc74f4..7b9efc0 100644
---- a/drivers/clk/bcm/clk-sr.c
-+++ b/drivers/clk/bcm/clk-sr.c
-@@ -56,8 +56,8 @@ static const struct iproc_pll_ctrl sr_genpll0 = {
- };
- 
- static const struct iproc_clk_ctrl sr_genpll0_clk[] = {
--	[BCM_SR_GENPLL0_SATA_CLK] = {
--		.channel = BCM_SR_GENPLL0_SATA_CLK,
-+	[BCM_SR_GENPLL0_125M_CLK] = {
-+		.channel = BCM_SR_GENPLL0_125M_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
- 		.mdiv = REG_VAL(0x18, 0, 9),
-@@ -102,6 +102,65 @@ static int sr_genpll0_clk_init(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct iproc_pll_ctrl sr_genpll2 = {
-+	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
-+		IPROC_CLK_PLL_NEEDS_SW_CFG,
-+	.aon = AON_VAL(0x0, 1, 13, 12),
-+	.reset = RESET_VAL(0x0, 12, 11),
-+	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
-+	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
-+	.ndiv_int = REG_VAL(0x10, 20, 10),
-+	.ndiv_frac = REG_VAL(0x10, 0, 20),
-+	.pdiv = REG_VAL(0x14, 0, 4),
-+	.status = REG_VAL(0x30, 12, 1),
-+};
-+
-+static const struct iproc_clk_ctrl sr_genpll2_clk[] = {
-+	[BCM_SR_GENPLL2_NIC_CLK] = {
-+		.channel = BCM_SR_GENPLL2_NIC_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+		.mdiv = REG_VAL(0x18, 0, 9),
-+	},
-+	[BCM_SR_GENPLL2_TS_500_CLK] = {
-+		.channel = BCM_SR_GENPLL2_TS_500_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 13),
-+		.mdiv = REG_VAL(0x18, 10, 9),
-+	},
-+	[BCM_SR_GENPLL2_125_NITRO_CLK] = {
-+		.channel = BCM_SR_GENPLL2_125_NITRO_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 8, 2, 14),
-+		.mdiv = REG_VAL(0x18, 20, 9),
-+	},
-+	[BCM_SR_GENPLL2_CHIMP_CLK] = {
-+		.channel = BCM_SR_GENPLL2_CHIMP_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 9, 3, 15),
-+		.mdiv = REG_VAL(0x1c, 0, 9),
-+	},
-+	[BCM_SR_GENPLL2_NIC_FLASH_CLK] = {
-+		.channel = BCM_SR_GENPLL2_NIC_FLASH_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 10, 4, 16),
-+		.mdiv = REG_VAL(0x1c, 10, 9),
-+	},
-+	[BCM_SR_GENPLL2_FS4_CLK] = {
-+		.channel = BCM_SR_GENPLL2_FS4_CLK,
-+		.enable = ENABLE_VAL(0x4, 11, 5, 17),
-+		.mdiv = REG_VAL(0x1c, 20, 9),
-+	},
-+};
-+
-+static int sr_genpll2_clk_init(struct platform_device *pdev)
-+{
-+	iproc_pll_clk_setup(pdev->dev.of_node,
-+			    &sr_genpll2, NULL, 0, sr_genpll2_clk,
-+			    ARRAY_SIZE(sr_genpll2_clk));
-+	return 0;
-+}
-+
- static const struct iproc_pll_ctrl sr_genpll3 = {
- 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
- 		IPROC_CLK_PLL_NEEDS_SW_CFG,
-@@ -157,6 +216,30 @@ static const struct iproc_clk_ctrl sr_genpll4_clk[] = {
- 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
- 		.mdiv = REG_VAL(0x18, 0, 9),
- 	},
-+	[BCM_SR_GENPLL4_TPIU_PLL_CLK] = {
-+		.channel = BCM_SR_GENPLL4_TPIU_PLL_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 13),
-+		.mdiv = REG_VAL(0x18, 10, 9),
-+	},
-+	[BCM_SR_GENPLL4_NOC_CLK] = {
-+		.channel = BCM_SR_GENPLL4_NOC_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 8, 2, 14),
-+		.mdiv = REG_VAL(0x18, 20, 9),
-+	},
-+	[BCM_SR_GENPLL4_CHCLK_FS4_CLK] = {
-+		.channel = BCM_SR_GENPLL4_CHCLK_FS4_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 9, 3, 15),
-+		.mdiv = REG_VAL(0x1c, 0, 9),
-+	},
-+	[BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK] = {
-+		.channel = BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x4, 10, 4, 16),
-+		.mdiv = REG_VAL(0x1c, 10, 9),
-+	},
- };
- 
- static int sr_genpll4_clk_init(struct platform_device *pdev)
-@@ -181,18 +264,21 @@ static const struct iproc_pll_ctrl sr_genpll5 = {
- };
- 
- static const struct iproc_clk_ctrl sr_genpll5_clk[] = {
--	[BCM_SR_GENPLL5_FS_CLK] = {
--		.channel = BCM_SR_GENPLL5_FS_CLK,
--		.flags = IPROC_CLK_AON,
-+	[BCM_SR_GENPLL5_FS4_HF_CLK] = {
-+		.channel = BCM_SR_GENPLL5_FS4_HF_CLK,
- 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
- 		.mdiv = REG_VAL(0x18, 0, 9),
- 	},
--	[BCM_SR_GENPLL5_SPU_CLK] = {
--		.channel = BCM_SR_GENPLL5_SPU_CLK,
--		.flags = IPROC_CLK_AON,
--		.enable = ENABLE_VAL(0x4, 6, 0, 12),
-+	[BCM_SR_GENPLL5_CRYPTO_AE_CLK] = {
-+		.channel = BCM_SR_GENPLL5_CRYPTO_AE_CLK,
-+		.enable = ENABLE_VAL(0x4, 7, 1, 12),
- 		.mdiv = REG_VAL(0x18, 10, 9),
- 	},
-+	[BCM_SR_GENPLL5_RAID_AE_CLK] = {
-+		.channel = BCM_SR_GENPLL5_RAID_AE_CLK,
-+		.enable = ENABLE_VAL(0x4, 8, 2, 14),
-+		.mdiv = REG_VAL(0x18, 20, 9),
-+	},
- };
- 
- static int sr_genpll5_clk_init(struct platform_device *pdev)
-@@ -214,24 +300,30 @@ static const struct iproc_pll_ctrl sr_lcpll0 = {
- };
- 
- static const struct iproc_clk_ctrl sr_lcpll0_clk[] = {
--	[BCM_SR_LCPLL0_SATA_REF_CLK] = {
--		.channel = BCM_SR_LCPLL0_SATA_REF_CLK,
-+	[BCM_SR_LCPLL0_SATA_REFP_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_REFP_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x0, 7, 1, 13),
- 		.mdiv = REG_VAL(0x14, 0, 9),
- 	},
--	[BCM_SR_LCPLL0_USB_REF_CLK] = {
--		.channel = BCM_SR_LCPLL0_USB_REF_CLK,
-+	[BCM_SR_LCPLL0_SATA_REFN_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_REFN_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x0, 8, 2, 14),
- 		.mdiv = REG_VAL(0x14, 10, 9),
- 	},
--	[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
--		.channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
-+	[BCM_SR_LCPLL0_SATA_350_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_350_CLK,
- 		.flags = IPROC_CLK_AON,
- 		.enable = ENABLE_VAL(0x0, 9, 3, 15),
- 		.mdiv = REG_VAL(0x14, 20, 9),
- 	},
-+	[BCM_SR_LCPLL0_SATA_500_CLK] = {
-+		.channel = BCM_SR_LCPLL0_SATA_500_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 10, 4, 16),
-+		.mdiv = REG_VAL(0x18, 0, 9),
-+	},
- };
- 
- static int sr_lcpll0_clk_init(struct platform_device *pdev)
-@@ -259,6 +351,18 @@ static const struct iproc_clk_ctrl sr_lcpll1_clk[] = {
- 		.enable = ENABLE_VAL(0x0, 7, 1, 13),
- 		.mdiv = REG_VAL(0x14, 0, 9),
- 	},
-+	[BCM_SR_LCPLL1_USB_REF_CLK] = {
-+		.channel = BCM_SR_LCPLL1_USB_REF_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 8, 2, 14),
-+		.mdiv = REG_VAL(0x14, 10, 9),
-+	},
-+	[BCM_SR_LCPLL1_CRMU_TS_CLK] = {
-+		.channel = BCM_SR_LCPLL1_CRMU_TS_CLK,
-+		.flags = IPROC_CLK_AON,
-+		.enable = ENABLE_VAL(0x0, 9, 3, 15),
-+		.mdiv = REG_VAL(0x14, 20, 9),
-+	},
- };
- 
- static int sr_lcpll1_clk_init(struct platform_device *pdev)
-@@ -298,6 +402,7 @@ static int sr_lcpll_pcie_clk_init(struct platform_device *pdev)
- 
- static const struct of_device_id sr_clk_dt_ids[] = {
- 	{ .compatible = "brcm,sr-genpll0", .data = sr_genpll0_clk_init },
-+	{ .compatible = "brcm,sr-genpll2", .data = sr_genpll2_clk_init },
- 	{ .compatible = "brcm,sr-genpll4", .data = sr_genpll4_clk_init },
- 	{ .compatible = "brcm,sr-genpll5", .data = sr_genpll5_clk_init },
- 	{ .compatible = "brcm,sr-lcpll0", .data = sr_lcpll0_clk_init },
-diff --git a/include/dt-bindings/clock/bcm-sr.h b/include/dt-bindings/clock/bcm-sr.h
-index cff6c6f..419011b 100644
---- a/include/dt-bindings/clock/bcm-sr.h
-+++ b/include/dt-bindings/clock/bcm-sr.h
-@@ -35,7 +35,7 @@
- 
- /* GENPLL 0 clock channel ID SCR HSLS FS PCIE */
- #define BCM_SR_GENPLL0			0
--#define BCM_SR_GENPLL0_SATA_CLK		1
-+#define BCM_SR_GENPLL0_125M_CLK		1
- #define BCM_SR_GENPLL0_SCR_CLK		2
- #define BCM_SR_GENPLL0_250M_CLK		3
- #define BCM_SR_GENPLL0_PCIE_AXI_CLK	4
-@@ -50,9 +50,11 @@
- /* GENPLL 2 clock channel ID NITRO MHB*/
- #define BCM_SR_GENPLL2			0
- #define BCM_SR_GENPLL2_NIC_CLK		1
--#define BCM_SR_GENPLL2_250_NITRO_CLK	2
-+#define BCM_SR_GENPLL2_TS_500_CLK	2
- #define BCM_SR_GENPLL2_125_NITRO_CLK	3
- #define BCM_SR_GENPLL2_CHIMP_CLK	4
-+#define BCM_SR_GENPLL2_NIC_FLASH_CLK	5
-+#define BCM_SR_GENPLL2_FS4_CLK		6
- 
- /* GENPLL 3 HSLS clock channel ID */
- #define BCM_SR_GENPLL3			0
-@@ -62,11 +64,16 @@
- /* GENPLL 4 SCR clock channel ID */
- #define BCM_SR_GENPLL4			0
- #define BCM_SR_GENPLL4_CCN_CLK		1
-+#define BCM_SR_GENPLL4_TPIU_PLL_CLK	2
-+#define BCM_SR_GENPLL4_NOC_CLK		3
-+#define BCM_SR_GENPLL4_CHCLK_FS4_CLK	4
-+#define BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK	5
- 
- /* GENPLL 5 FS4 clock channel ID */
- #define BCM_SR_GENPLL5			0
--#define BCM_SR_GENPLL5_FS_CLK		1
--#define BCM_SR_GENPLL5_SPU_CLK		2
-+#define BCM_SR_GENPLL5_FS4_HF_CLK	1
-+#define BCM_SR_GENPLL5_CRYPTO_AE_CLK	2
-+#define BCM_SR_GENPLL5_RAID_AE_CLK	3
- 
- /* GENPLL 6 NITRO clock channel ID */
- #define BCM_SR_GENPLL6			0
-@@ -74,13 +81,16 @@
- 
- /* LCPLL0  clock channel ID */
- #define BCM_SR_LCPLL0			0
--#define BCM_SR_LCPLL0_SATA_REF_CLK	1
--#define BCM_SR_LCPLL0_USB_REF_CLK	2
--#define BCM_SR_LCPLL0_SATA_REFPN_CLK	3
-+#define BCM_SR_LCPLL0_SATA_REFP_CLK	1
-+#define BCM_SR_LCPLL0_SATA_REFN_CLK	2
-+#define BCM_SR_LCPLL0_SATA_350_CLK	3
-+#define BCM_SR_LCPLL0_SATA_500_CLK	4
- 
- /* LCPLL1  clock channel ID */
- #define BCM_SR_LCPLL1			0
- #define BCM_SR_LCPLL1_WAN_CLK		1
-+#define BCM_SR_LCPLL1_USB_REF_CLK	2
-+#define BCM_SR_LCPLL1_CRMU_TS_CLK	3
- 
- /* LCPLL PCIE  clock channel ID */
- #define BCM_SR_LCPLL_PCIE		0
--- 
-2.1.4
+
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+ */
+
+/*
+ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+ * the CPU frequency subset and voltage value of each OPP varies
+ * based on the silicon variant in use. Qualcomm Process Voltage Scaling
+Tables
+ * defines the voltage and frequency value based on the msm-id in SMEM
+ * and speedbin blown in the efuse combination.
+ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
+SoC
+ * to provide the OPP framework with required information.
+ * This is used to determine the voltage and frequency value for each OPP of
+ * operating-points-v2 table when it is parsed by the OPP framework.
+ */
+
+#include <linux/cpu.h>
+#include <linux/err.h>
+#include <linux/init.h>
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/nvmem-consumer.h>
+#include <linux/of.h>
+#include <linux/platform_device.h>
+#include <linux/pm_opp.h>
+#include <linux/slab.h>
+#include <linux/soc/qcom/smem.h>
+
+#define MSM_ID_SMEM	137
+#define SILVER_LEAD	0
+#define GOLD_LEAD	2
+
+enum _msm_id {
+	MSM8996V3 = 0xF6ul,
+	APQ8096V3 = 0x123ul,
+	MSM8996SG = 0x131ul,
+	APQ8096SG = 0x138ul,
+};
+
+enum _msm8996_version {
+	MSM8996_V3,
+	MSM8996_SG,
+	NUM_OF_MSM8996_VERSIONS,
+};
+
+static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
+{
+	size_t len;
+	u32 *msm_id;
+	enum _msm8996_version version;
+
+	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
+	/* The first 4 bytes are format, next to them is the actual msm-id
+*/
+	msm_id++;
+
+	switch ((enum _msm_id)*msm_id) {
+	case MSM8996V3:
+	case APQ8096V3:
+		version = MSM8996_V3;
+		break;
+	case MSM8996SG:
+	case APQ8096SG:
+		version = MSM8996_SG;
+		break;
+	default:
+		version = NUM_OF_MSM8996_VERSIONS;
+	}
+
+	return version;
+}
+
+static int __init qcom_cpufreq_kryo_driver_init(void)
+{
+	struct device *cpu_dev_silver, *cpu_dev_gold;
+	struct opp_table *opp_silver, *opp_gold;
+	enum _msm8996_version msm8996_version;
+	struct nvmem_cell *speedbin_nvmem;
+	struct platform_device *pdev;
+	struct device_node *np;
+	u8 *speedbin;
+	u32 versions;
+	size_t len;
+	int ret;
+
+	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
+	if (NULL == cpu_dev_silver)
+		return -ENODEV;
+
+	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
+	if (NULL == cpu_dev_gold)
+		return -ENODEV;
+
+	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
+		return -ENODEV;
+	}
+
+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
+	if (IS_ERR(np))
+		return PTR_ERR(np);
+
+	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
+		ret = -ENOENT;
+		goto free_np;
+	}
+
+	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
+	if (IS_ERR(speedbin_nvmem)) {
+		ret = PTR_ERR(speedbin_nvmem);
+		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n",
+ret);
+		goto free_np;
+	}
+
+	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
+	nvmem_cell_put(speedbin_nvmem);
+
+	switch (msm8996_version) {
+	case MSM8996_V3:
+		versions = 1 << (unsigned int)(*speedbin);
+		break;
+	case MSM8996_SG:
+		versions = 1 << ((unsigned int)(*speedbin) + 4);
+		break;
+	default:
+		BUG();
+		break;
+	}
+
+	opp_silver =
+dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
+	if (IS_ERR(opp_silver)) {
+		dev_err(cpu_dev_silver, "Failed to set supported
+hardware\n");
+		ret = PTR_ERR(opp_silver);
+		goto free_np;
+	}
+
+	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
+	if (IS_ERR(opp_gold)) {
+		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
+		ret = PTR_ERR(opp_gold);
+		goto free_opp_silver;
+	}
+
+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+	if (!IS_ERR(pdev))
+		return 0;
+
+	ret = PTR_ERR(pdev);
+	dev_err(cpu_dev_silver, "Failed to register platform device\n");
+	dev_pm_opp_put_supported_hw(opp_gold);
+
+free_opp_silver:
+	dev_pm_opp_put_supported_hw(opp_silver);
+
+free_np:
+	of_node_put(np);
+
+	return ret;
+}
+late_initcall(qcom_cpufreq_kryo_driver_init);
+
+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
+MODULE_LICENSE("GPL v2");
+
+
+
+
+
+
+> -----Original Message-----
+> From: Viresh Kumar <viresh.kumar@linaro.org>
+> Sent: Monday, May 21, 2018 07:50
+> To: ilialin@codeaurora.org
+> Cc: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+> mark.rutland@arm.com; nm@ti.com; lgirdwood@gmail.com;
+> broonie@kernel.org; andy.gross@linaro.org; david.brown@linaro.org;
+> catalin.marinas@arm.com; will.deacon@arm.com; rjw@rjwysocki.net; linux-
+> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-pm@vger.kernel.org; linux-arm-
+> msm@vger.kernel.org; linux-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; rnayak@codeaurora.org;
+> amit.kucheria@linaro.org; nicolas.dechesne@linaro.org;
+> celster@codeaurora.org; tfinkel@codeaurora.org
+> Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
+> 
+> On 19-05-18, 14:45, ilialin@codeaurora.org wrote:
+> > Hi Viresh,
+> >
+> > If I send patches in reply, it will produce new patches, instead of
+> > answers in the thread. Please find below the file dump.
+> 
+> There is one email from you which appears to be just fine and appears to
+be
+> in reply to this thread only. Maybe its your email client that screwed it
+up for
+> you ? Things look good in mutt.
+> 
+> --
+> viresh
