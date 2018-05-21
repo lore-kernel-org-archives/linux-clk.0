@@ -1,41 +1,89 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:46106 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751702AbeEVQKu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 May 2018 12:10:50 -0400
-Date: Tue, 22 May 2018 11:10:48 -0500
-From: Rob Herring <robh@kernel.org>
-To: Rui Miguel Silva <rui.silva@linaro.org>
-Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 07/13] media: dt-bindings: add bindings for i.MX7
- media driver
-Message-ID: <20180522161048.GA17123@rob-hp-laptop>
-References: <20180522145245.3143-1-rui.silva@linaro.org>
- <20180522145245.3143-8-rui.silva@linaro.org>
+Return-Path: <eric@anholt.net>
+From: Eric Anholt <eric@anholt.net>
+To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
+Cc: Yisheng Xie <xieyisheng1@huawei.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Stefan Wahren <stefan.wahren@i2se.com>, linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 12/33] clk: bcm2835: use match_string() helper
+In-Reply-To: <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
+Date: Mon, 21 May 2018 10:48:58 -0700
+Message-ID: <874lj0ew6t.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180522145245.3143-8-rui.silva@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 22, 2018 at 03:52:39PM +0100, Rui Miguel Silva wrote:
-> Add bindings documentation for i.MX7 media drivers.
-> The imx7 MIPI CSI2 and imx7 CMOS Sensor Interface.
-> 
-> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
-> ---
->  .../devicetree/bindings/media/imx7-csi.txt    | 44 ++++++++++
->  .../bindings/media/imx7-mipi-csi2.txt         | 82 +++++++++++++++++++
->  2 files changed, 126 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/imx7-csi.txt
->  create mode 100644 Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Yisheng Xie <xieyisheng1@huawei.com> writes:
+
+> match_string() returns the index of an array for a matching string,
+> which can be used intead of open coded variant.
+>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Eric Anholt <eric@anholt.net>
+> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+>  drivers/clk/bcm/clk-bcm2835.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+> index fa0d5c8..a27c0d2 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -1395,8 +1395,7 @@ static struct clk_hw *bcm2835_register_clock(struct=
+ bcm2835_cprman *cprman,
+>  	struct bcm2835_clock *clock;
+>  	struct clk_init_data init;
+>  	const char *parents[1 << CM_SRC_BITS];
+> -	size_t i, j;
+> -	int ret;
+> +	int i, ret;
+>=20=20
+>  	/*
+>  	 * Replace our strings referencing parent clocks with the
+> @@ -1405,12 +1404,11 @@ static struct clk_hw *bcm2835_register_clock(stru=
+ct bcm2835_cprman *cprman,
+>  	for (i =3D 0; i < data->num_mux_parents; i++) {
+>  		parents[i] =3D data->parents[i];
+>=20=20
+> -		for (j =3D 0; j < ARRAY_SIZE(cprman_parent_names); j++) {
+> -			if (strcmp(parents[i], cprman_parent_names[j]) =3D=3D 0) {
+> -				parents[i] =3D cprman->real_parent_names[j];
+> -				break;
+> -			}
+> -		}
+> +		ret =3D match_string(cprman_parent_names,
+> +				   ARRAY_SIZE(cprman_parent_names),
+> +				   parents[i]);
+> +		if (ret >=3D 0)
+> +			parents[i] =3D cprman->real_parent_names[ret];
+
+Reviewed-by: Eric Anholt <eric@anholt.net>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlsDBooACgkQtdYpNtH8
+nug3LA//aZmSSf68qHXjBV33bop6na0WcGK0p+BArUD+EgndyLAliFCB+uEHQ0or
+RvMSkUcikTSaqurCLOBZpzOEYEDWtGTFY4HPgvqoKTbHm4+PKJfoCGdBgzb1BxJ6
+ctLeglj8+YsBBluR4+1Dn0MJBNYaG7fifk9JeLNXE5PLkFkb1SYHtGqlkXyL0w/1
+8jZM+WXmRjR637Xlxc7DReqx/x1pI03Ec5OAjkX4fX1a0inCr4Wm6hN9yEQlrZki
+1XTZsPFW87+XZyUFwm6IBkGr4FsPglreeyjYAEdRTj+ymMJUJaY6BI1yj8v+H4I5
+ZvLFJFXDuL7nbru0nMw/F5a1pewf5/UJMqDGH7AO3lBjnUMESQOtCjvaPbeIBpy8
+jyYgwNfjwdSU8SaY99aMgr3WQcy9Uzlcof2Nmd2pgDOPBD3dJR1nSWQUbRX7v1Rw
+vrlYo0r0+cZZoUmoztj5bpaSOHf+mLpC4SBY6y+5PEL8FeHW9UoWZe5Zug3ZM1ZJ
+Eehp/9S+dMsEt5y8lphBNaKz40MGa2PpSrywEOeAowVKnxIj58borW1lK4r4riG+
+GA84bDB904R/VUQetjdKxcAZvwN6k6VkEL9//M447m3WM+p4O/I7PfeDo9BhSqFf
+OS34GAVHTbp4GIV/Taq9MH0rEckYyr9FSPFy6jqMmLh1Fv2oNEw=
+=lr2s
+-----END PGP SIGNATURE-----
+--=-=-=--
