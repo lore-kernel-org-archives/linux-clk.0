@@ -1,82 +1,46 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, rajanv@xilinx.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Jolly Shah <jollys@xilinx.com>
-Subject: Re: [PATCH v6 09/11] firmware: xilinx: Add debugfs for clock control
- APIs
-To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
- mingo@kernel.org, gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
- hkallweit1@gmail.com, keescook@chromium.org, dmitry.torokhov@gmail.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, michal.simek@xilinx.com,
- robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org
-References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
- <1523389127-14243-10-git-send-email-jollys@xilinx.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <5bcc47f7-3352-f0e6-29c5-78d5be96c1d1@arm.com>
-Date: Thu, 10 May 2018 15:31:18 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:41910 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbeEUJSt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 May 2018 05:18:49 -0400
 MIME-Version: 1.0
-In-Reply-To: <1523389127-14243-10-git-send-email-jollys@xilinx.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180515163652.19980-2-jbrunet@baylibre.com>
+References: <20180515163652.19980-1-jbrunet@baylibre.com> <20180515163652.19980-2-jbrunet@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 21 May 2018 11:18:28 +0200
+Message-ID: <CAFBinCCdKgFOod=JimSnBVRvQ8Xmggpa0Uok3rgr3ixB7o+fnA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: meson: mpll: add round closest support
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, May 15, 2018 at 6:36 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+> Allow the mpll driver to round the requested rate up if
+> CLK_MESON_MPLL_ROUND_CLOSEST is set and it provides a rate closer to the
+> requested rate.
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Martin Blumenstingl<martin.blumenstingl@googlemail.com>
 
 
-On 10/04/18 20:38, Jolly Shah wrote:
-> From: Rajan Vaja <rajanv@xilinx.com>
-> 
-> Add debugfs file to control clocks using firmware APIs
-> through debugfs interface.
-> 
-> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> ---
->  drivers/firmware/xilinx/zynqmp-debug.c | 48 ++++++++++++++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
-> 
-> diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
-> index 1cb69f7..837fcd1 100644
-> --- a/drivers/firmware/xilinx/zynqmp-debug.c
-> +++ b/drivers/firmware/xilinx/zynqmp-debug.c
-> @@ -34,6 +34,15 @@ static struct pm_api_info pm_api_list[] = {
->  	PM_API(PM_GET_API_VERSION),
->  	PM_API(PM_IOCTL),
->  	PM_API(PM_QUERY_DATA),
-> +	PM_API(PM_CLOCK_ENABLE),
-> +	PM_API(PM_CLOCK_DISABLE),
-> +	PM_API(PM_CLOCK_GETSTATE),
-> +	PM_API(PM_CLOCK_SETDIVIDER),
-> +	PM_API(PM_CLOCK_GETDIVIDER),
-> +	PM_API(PM_CLOCK_SETRATE),
-> +	PM_API(PM_CLOCK_GETRATE),
-> +	PM_API(PM_CLOCK_SETPARENT),
-> +	PM_API(PM_CLOCK_GETPARENT),
->  };
->  
->  /**
-> @@ -87,6 +96,7 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
->  	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
->  	u32 pm_api_version;
->  	int ret;
-> +	u64 rate;
->  
->  	if (!eemi_ops)
->  		return -ENXIO;
-> @@ -132,6 +142,44 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
->  				pm_api_ret[2], pm_api_ret[3]);
->  		break;
->  	}
-> +	case PM_CLOCK_ENABLE:
-> +		ret = eemi_ops->clock_enable(pm_api_arg[0]);
-> +		break;
-
-As I mentioned in earlier patch, I don't see the need for this debugfs
-interface. Clock lay has read-only interface in debugfs already. Also if
-you want to debug clocks, you can do so using the driver which uses
-these clocks. Do you really want to manage clocks in user-space ?
-The whole idea of EEMI kind of interface is to abstract and hide the
-fine details even from non-trusted rich OS like Linux kernel, but by
-providing this you are doing exactly opposite.
-
--- 
-Regards,
-Sudeep
+I gave it a quick spin on Odroid-C1 (which uses an RGMII Ethernet PHY
+and the RGMII TX clock is supplied by MPLL2). the clock tree looks
+fine and Ethernet is still working:
+          mpll2_div                   1        1        0   249999701
+        0 0
+            mpll2                    1        1        0   249999701
+       0 0
+               c9410000.ethernet#m250_sel       1        1        0
+249999701          0 0
+                  c9410000.ethernet#m250_div       1        1        0
+  249999701          0 0
+                     c9410000.ethernet#fixed_div2       1        1
+   0   124999850          0 0
+                        c9410000.ethernet#rgmii_tx_en       1        1
+       0   124999850          0 0
