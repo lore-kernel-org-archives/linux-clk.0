@@ -1,64 +1,134 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 1 May 2018 09:45:16 -0500
-From: Rob Herring <robh@kernel.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH] thermal: samsung: Remove support for Exynos5440
-Message-ID: <20180501144516.GA519@rob-hp-laptop>
-References: <20180424203239.21885-1-krzk@kernel.org>
- <20180424203239.21885-7-krzk@kernel.org>
- <1951102.VLysaozMLK@amdc3058>
- <CGME20180426112113eucas1p1b5bf6f093442154e29f5541b4aba6b00@eucas1p1.samsung.com>
- <2734003.UHSMxVLybj@amdc3058>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <2734003.UHSMxVLybj@amdc3058>
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v9 06/15] clk: qcom: cpu-8996: Add support to switch to alternate PLL
+Date: Mon, 21 May 2018 14:25:23 +0300
+Message-Id: <1526901932-9514-7-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 01:21:12PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Subject: [PATCH] thermal: samsung: Remove support for Exynos5440
-> 
-> The Exynos5440 is not actively developed, there are no development
-> boards available and probably there are no real products with it.
-> Remove wide-tree support for Exynos5440.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> [b.zolnierkie: ported over driver changes]
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
-> Eduardo, here is a version which applies on top of pending Exynos
-> thermal changes (https://lkml.org/lkml/2018/4/16/256).
-> 
->  Documentation/devicetree/bindings/thermal/exynos-thermal.txt |   14 
->  drivers/thermal/samsung/exynos_tmu.c                         |  161 -----------
->  2 files changed, 4 insertions(+), 171 deletions(-)
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Each of the CPU clusters on msm8996 are powered via a primary
+PLL and a secondary PLL. The primary PLL is what drives the
+CPU clk, except for times when we are reprogramming the PLL
+itself, when we temporarily switch to an alternate PLL.
+Use clock rate change notifiers to support this.
+
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index d92cad93..620fdc2 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -52,6 +52,7 @@
+  * detect voltage droops.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+@@ -178,10 +179,14 @@ struct clk_cpu_8996_mux {
+ 	u32	reg;
+ 	u8	shift;
+ 	u8	width;
++	struct notifier_block nb;
+ 	struct clk_hw	*pll;
+ 	struct clk_regmap clkr;
+ };
+ 
++#define to_clk_cpu_8996_mux_nb(_nb) \
++	container_of(_nb, struct clk_cpu_8996_mux, nb)
++
+ static inline
+ struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
+ {
+@@ -227,6 +232,26 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	return 0;
+ }
+ 
++int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
++			void *data)
++{
++	int ret;
++	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		break;
++	case POST_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		break;
++	default:
++		ret = 0;
++		break;
++	}
++
++	return notifier_from_errno(ret);
++};
+ const struct clk_ops clk_cpu_8996_mux_ops = {
+ 	.set_parent = clk_cpu_8996_mux_set_parent,
+ 	.get_parent = clk_cpu_8996_mux_get_parent,
+@@ -270,6 +295,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -289,6 +315,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -347,6 +374,12 @@ struct clk_regmap *clks[] = {
+ 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+ 
++	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
++	if (ret)
++		return ret;
++
++	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
++
+ 	return ret;
+ }
+ 
+-- 
+1.9.1
