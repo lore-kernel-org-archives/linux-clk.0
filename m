@@ -1,91 +1,77 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 24 May 2018 15:14:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH 8/9] regulator: bd71837: BD71837 PMIC regulator driver
-Message-ID: <20180524141427.GU4828@sirena.org.uk>
-References: <20180524060036.GI4249@localhost.localdomain>
+Return-Path: <joel.stan@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LtN0I0gXzHUftVCi"
-In-Reply-To: <20180524060036.GI4249@localhost.localdomain>
+Sender: joel.stan@gmail.com
+In-Reply-To: <1526633822-17138-1-git-send-email-mine260309@gmail.com>
+References: <1526633822-17138-1-git-send-email-mine260309@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+Date: Mon, 21 May 2018 14:03:36 +0930
+Message-ID: <CACPK8XeBXZQVgjZw6AnkMLSBn40Qvv-TXCQiD=n4xouxU-HskA@mail.gmail.com>
+Subject: Re: [PATCH] clk: aspeed: Add 24MHz fixed clock
+To: Lei YU <mine260309@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-aspeed@lists.ozlabs.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On 18 May 2018 at 18:27, Lei YU <mine260309@gmail.com> wrote:
+> Add a 24MHz fixed clock.
+> This clock will be used for certain devices, e.g. pwm.
+>
+> Signed-off-by: Lei YU <mine260309@gmail.com>
 
---LtN0I0gXzHUftVCi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Joel Stanley <joel@jms.id.au>
 
-On Thu, May 24, 2018 at 09:00:36AM +0300, Matti Vaittinen wrote:
+Cheers,
 
-> @@ -0,0 +1,683 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (C) 2018 ROHM Semiconductors */
-> +/*
-> + * bd71837-regulator.c ROHM BD71837MWV regulator driver
-> + */
-> +#include <linux/kernel.h>
+Joel
 
-Make the entire comment block a C++ comment so it looks more intentional
-and add a blank line before the headers for legibility.
-
-> +static int bd71837_regulator_set_regmap(struct regulator_dev *rdev, int set)
-> +{
-> +	int ret = -EINVAL;
-> +	struct bd71837_pmic *pmic = rdev->reg_data;
+> ---
+>  drivers/clk/clk-aspeed.c                 | 9 ++++++++-
+>  include/dt-bindings/clock/aspeed-clock.h | 1 +
+>  2 files changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+> index 5eb50c3..4664088 100644
+> --- a/drivers/clk/clk-aspeed.c
+> +++ b/drivers/clk/clk-aspeed.c
+> @@ -14,7 +14,7 @@
+>
+>  #include <dt-bindings/clock/aspeed-clock.h>
+>
+> -#define ASPEED_NUM_CLKS                35
+> +#define ASPEED_NUM_CLKS                36
+>
+>  #define ASPEED_RESET_CTRL      0x04
+>  #define ASPEED_CLK_SELECTION   0x08
+> @@ -474,6 +474,13 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+>                 return PTR_ERR(hw);
+>         aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
+>
+> +       /* Fixed 24MHz clock */
+> +       hw = clk_hw_register_fixed_rate(NULL, "fixed-24m", "clkin",
+> +                                       0, 24000000);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +       aspeed_clk_data->hws[ASPEED_CLK_24M] = hw;
 > +
-> +	if (pmic) {
-> +		mutex_lock(&pmic->mtx);
-> +		if (!set)
-> +			ret = regulator_disable_regmap(rdev);
-> +		else
-> +			ret = regulator_enable_regmap(rdev);
-> +		mutex_unlock(&pmic->mtx);
-> +	}
-
-This looks very weird - why might we not have a parent PMIC, what is the
-lock doing and what is this wrapper function intended to do?  Similar
-issues apply to the voltage functions, if there's any need for this it
-needs to be better documented but it really doesn't look like a good
-idea.
-
-> +	err =
-> +	    regmap_update_bits(pmic->mfd->regmap, BD71837_REG_REGLOCK,
-> +			       (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
-> +	if (err) {
-> +		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
-> +		goto err;
-> +	} else
-> +		dev_dbg(&pmic->pdev->dev, "%s: Unlocked lock register 0x%x\n",
-> +			__func__, BD71837_REG_REGLOCK);
-
-There's loads of coding style problems with this code, please refer to
-the coding style - indentation is weird and if there's { } on one side
-of an else it should be on both.
-
-> +		rdev = regulator_register(desc, &config);
-> +		if (IS_ERR(rdev)) {
-
-devm_regulator_regster()
-
---LtN0I0gXzHUftVCi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsGyMIACgkQJNaLcl1U
-h9BVuQf/cxnvFEfK8b/tJjG1FFbjWQlAQDE04Ti6c9LSrNP5jc7u1pzkBpmbqYH7
-lk+4NUzecWbgrqSNvKBQbERCeE1U+CXC/jAP+9kRiAOZBz2tHptA5wfUZT0nhhFn
-YU2J/99hDSDYfpt7rTfjXBG5ljXUrymJ/eWrzRGnrbRVSvnav3ViST7TJBdG23mt
-6nnhcAo9CrEjYgKCfOJPFXXmiukU0+aWSpwQA2+ygOBXZKk5dG+FSLpbgTHpEzWt
-ucQTwHEFPkQaEr/NubKHEeIetZ8nOoow7bd22gCswE+Thrtu2H9WLLYDldGmWXvc
-DxS/F8D740F4NXZfRhv3HN0YEKHPIQ==
-=upsr
------END PGP SIGNATURE-----
-
---LtN0I0gXzHUftVCi--
+>         /*
+>          * TODO: There are a number of clocks that not included in this driver
+>          * as more information is required:
+> diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+> index d3558d8..ff29d8e 100644
+> --- a/include/dt-bindings/clock/aspeed-clock.h
+> +++ b/include/dt-bindings/clock/aspeed-clock.h
+> @@ -38,6 +38,7 @@
+>  #define ASPEED_CLK_MAC                 32
+>  #define ASPEED_CLK_BCLK                        33
+>  #define ASPEED_CLK_MPLL                        34
+> +#define ASPEED_CLK_24M                 35
+>
+>  #define ASPEED_RESET_XDMA              0
+>  #define ASPEED_RESET_MCTP              1
+> --
+> 2.7.4
+>
