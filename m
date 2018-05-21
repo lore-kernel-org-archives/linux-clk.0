@@ -1,57 +1,66 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v10 02/27] clk: davinci: da850-pll: change PLL0 to
- CLK_OF_DECLARE
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180509172606.29387-1-david@lechnology.com>
- <20180509172606.29387-3-david@lechnology.com>
- <9203489d-0a5a-103a-67ea-d3e89bb7ebc4@ti.com>
- <88dec9b1-5f4d-a1ac-2b63-b30ae7665851@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <665f5ea0-1865-0545-a1ef-7e971f3ba9d9@ti.com>
-Date: Wed, 16 May 2018 11:21:15 +0530
+Return-Path: <xieyisheng1@huawei.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Yisheng Xie <xieyisheng1@huawei.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Eric Anholt
+	<eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>,
+	<linux-clk@vger.kernel.org>, <linux-rpi-kernel@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 12/33] clk: bcm2835: use match_string() helper
+Date: Mon, 21 May 2018 19:57:49 +0800
+Message-ID: <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
+In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <88dec9b1-5f4d-a1ac-2b63-b30ae7665851@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday 15 May 2018 09:12 PM, David Lechner wrote:
-> On 05/15/2018 08:31 AM, Sekhar Nori wrote:
->> On Wednesday 09 May 2018 10:55 PM, David Lechner wrote:
->>> +void of_da850_pll0_init(struct device_node *node)
->>>   {
->>> -    return of_davinci_pll_init(dev, dev->of_node, &da850_pll0_info,
->>> -                   &da850_pll0_obsclk_info,
->>> -                   da850_pll0_sysclk_info, 7, base, cfgchip);
->>> +    void __iomem *base;
->>> +    struct regmap *cfgchip;
->>> +
->>> +    base = of_iomap(node, 0);
->>> +    if (!base) {
->>> +        pr_err("%s: ioremap failed\n", __func__);
->>> +        return;
->>> +    }
->>> +
->>> +    cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
-> 
-> In your previous review, you pointed out that the error did not need to
-> be handled here because it is handled later in davinci_pll_clk_register().>
-> We get a warning there because cfgchip is only needed for unlocking the
-> PLL for CPU frequency scaling and is not critical for operation of the
-> clocks.
+match_string() returns the index of an array for a matching string,
+which can be used intead of open coded variant.
 
-Oops, forgot about that :)
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Eric Anholt <eric@anholt.net>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
-Sekhar
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index fa0d5c8..a27c0d2 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1395,8 +1395,7 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	struct bcm2835_clock *clock;
+ 	struct clk_init_data init;
+ 	const char *parents[1 << CM_SRC_BITS];
+-	size_t i, j;
+-	int ret;
++	int i, ret;
+ 
+ 	/*
+ 	 * Replace our strings referencing parent clocks with the
+@@ -1405,12 +1404,11 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	for (i = 0; i < data->num_mux_parents; i++) {
+ 		parents[i] = data->parents[i];
+ 
+-		for (j = 0; j < ARRAY_SIZE(cprman_parent_names); j++) {
+-			if (strcmp(parents[i], cprman_parent_names[j]) == 0) {
+-				parents[i] = cprman->real_parent_names[j];
+-				break;
+-			}
+-		}
++		ret = match_string(cprman_parent_names,
++				   ARRAY_SIZE(cprman_parent_names),
++				   parents[i]);
++		if (ret >= 0)
++			parents[i] = cprman->real_parent_names[ret];
+ 	}
+ 
+ 	memset(&init, 0, sizeof(init));
+-- 
+1.7.12.4
