@@ -1,91 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55990 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753059AbeERIaQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 04:30:16 -0400
-Received: by mail-wm0-f66.google.com with SMTP id a8-v6so12687409wmg.5
-        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 01:30:16 -0700 (PDT)
-References: <20180517125033.18050-1-rui.silva@linaro.org> <20180517125033.18050-4-rui.silva@linaro.org> <152658031035.210890.12212209931570500982@swboyd.mtv.corp.google.com>
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        Rui Miguel Silva <rui.silva@linaro.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 03/12] clk: imx7d: fix mipi dphy div parent
-In-reply-to: <152658031035.210890.12212209931570500982@swboyd.mtv.corp.google.com>
-Date: Fri, 18 May 2018 09:30:12 +0100
-Message-ID: <m3sh6pxt63.fsf@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 21 May 2018 14:35:53 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: ilialin@codeaurora.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180521090553.6wervk335scgnko6@vireshk-i7>
+References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+ <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <20180518014538.duphof6enscpm5vp@vireshk-i7>
+ <019201d3ef66$db97aed0$92c70c70$@codeaurora.org>
+ <20180521044938.bnr2sdkmvdorfxqm@vireshk-i7>
+ <000501d3f0e2$23500c00$69f02400$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <000501d3f0e2$23500c00$69f02400$@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
-On Thu 17 May 2018 at 18:05, Stephen Boyd wrote:
-> Quoting Rui Miguel Silva (2018-05-17 05:50:24)
->> Fix the mipi dphy root divider to mipi_dphy_pre_div, this would 
->> remove a orphan
->> clock and set the correct parent.
->> 
->> before:
->> cat clk_orphan_summary
->>                                  enable  prepare  protect
->>    clock                          count    count    count 
->>    rate   accuracy   phase
->> ----------------------------------------------------------------------------------------
->>  mipi_dphy_post_div                   1        1        0 
->>  0          0 0
->>     mipi_dphy_root_clk                1        1        0 
->>     0          0 0
->> 
->> cat clk_dump | grep mipi_dphy
->> mipi_dphy_post_div                    1        1        0 
->> 0          0 0
->>     mipi_dphy_root_clk                1        1        0 
->>     0          0 0
->> 
->> after:
->> cat clk_dump | grep mipi_dphy
->>    mipi_dphy_src                     1        1        0 
->>    24000000          0 0
->>        mipi_dphy_cg                  1        1        0 
->>        24000000          0 0
->>           mipi_dphy_pre_div          1        1        0 
->>           24000000          0 0
->>              mipi_dphy_post_div      1        1        0 
->>              24000000          0 0
->>                 mipi_dphy_root_clk   1        1        0 
->>                 24000000          0 0
->> 
->> Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
->> 
->> Cc: linux-clk@vger.kernel.org
->> Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
->> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
->> ---
->
-> I only get two patches out of the 12 and I don't get a cover 
-> letter.
-> Did you want me to pick up these clk patches into clk-next? 
-> Where are
-> the other patches? Can you cc lkml on all your kernel emails so 
-> I can
-> easily find them?
+On 21-05-18, 12:00, ilialin@codeaurora.org wrote:
+> Final version (addressing Russel's comment as well):
 
-Yea, sorry, You are right, I will cc all patches to the lists. v5 
-is on
-the way and I will do that.
+Sorry, can't review it like this. At least you should be posting your
+diff here and you also need to do that from a sane email client like
+mutt, which wouldn't auto-fix/update the code. Doing it from gmail or
+thunderbird will ofcourse screw it.
 
----
-Cheers,
-	Rui
+Or a simple way is to send the patch again (alone) using in-reply-to
+field.
 
-
+-- 
+viresh
