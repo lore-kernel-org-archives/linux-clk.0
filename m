@@ -1,240 +1,130 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: =?UTF-8?q?=5BPATCH=20v10=2000/27=5D=20ARM=3A=20davinci=3A=20convert=20to=20common=20clock=20framework=E2=80=8B?=
-Date: Wed,  9 May 2018 12:25:39 -0500
-Message-Id: <20180509172606.29387-1-david@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:37995 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750965AbeEUIIL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 21 May 2018 04:08:11 -0400
+Date: Mon, 21 May 2018 10:07:59 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 06/15] drm/sun4i: tcon: Add support for tcon-top
+Message-ID: <20180521080759.rgviuva65ijcfm2e@flea>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+ <20180519183127.2718-7-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hpqwgjovcbtgqx7h"
+In-Reply-To: <20180519183127.2718-7-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series converts mach-davinci to use the common clock framework.
 
-The series works like this, the first 3 patches fix some issues with the clock
-drivers that have already been accepted into the mainline kernel.
+--hpqwgjovcbtgqx7h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Then, starting with "ARM: davinci: pass clock as parameter to
-davinci_timer_init()", we get the mach code ready for the switch by adding the
-code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
-around the legacy clocks so that we can switch easily between the old and the
-new.
+On Sat, May 19, 2018 at 08:31:18PM +0200, Jernej Skrabec wrote:
+> If SoC has TCON TOP unit, it has to be configured from TCON, since it
+> has all information needed. Additionally, if it is TCON TV, it must also
+> enable bus gate inside TCON TOP unit.
 
-"ARM: davinci: switch to common clock framework" actually flips the switch
-to start using the new clock drivers. Then the next 8 patches remove all
-of the old clock code.
+Why?
 
-The final four patches add device tree clock support to the one SoC that
-supports it.
+> Add support for such TCONs.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 28 ++++++++++++++++++++++++++++
+>  drivers/gpu/drm/sun4i/sun4i_tcon.h |  8 ++++++++
+>  2 files changed, 36 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
+un4i_tcon.c
+> index 08747fc3ee71..e0c562ce1c22 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+>  		dev_err(dev, "Couldn't get the TCON bus clock\n");
+>  		return PTR_ERR(tcon->clk);
+>  	}
+> +
+> +	if (tcon->quirks->needs_tcon_top && tcon->quirks->has_channel_1) {
+> +		tcon->top_clk =3D devm_clk_get(dev, "tcon-top");
+> +		if (IS_ERR(tcon->top_clk)) {
+> +			dev_err(dev, "Couldn't get the TCON TOP bus clock\n");
+> +			return PTR_ERR(tcon->top_clk);
+> +		}
+> +		clk_prepare_enable(tcon->top_clk);
+> +	}
+> +
+>  	clk_prepare_enable(tcon->clk);
+> =20
+>  	if (tcon->quirks->has_channel_0) {
+> @@ -712,6 +722,7 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+>  static void sun4i_tcon_free_clocks(struct sun4i_tcon *tcon)
+>  {
+>  	clk_disable_unprepare(tcon->clk);
+> +	clk_disable_unprepare(tcon->top_clk);
+>  }
+> =20
+>  static int sun4i_tcon_init_irq(struct device *dev,
+> @@ -980,6 +991,23 @@ static int sun4i_tcon_bind(struct device *dev, struc=
+t device *master,
+>  	tcon->id =3D engine->id;
+>  	tcon->quirks =3D of_device_get_match_data(dev);
+> =20
+> +	if (tcon->quirks->needs_tcon_top) {
+> +		struct device_node *np;
+> +
+> +		np =3D of_parse_phandle(dev->of_node, "allwinner,tcon-top", 0);
+> +		if (np) {
+> +			struct platform_device *pdev;
+> +
+> +			pdev =3D of_find_device_by_node(np);
+> +			if (pdev)
+> +				tcon->tcon_top =3D platform_get_drvdata(pdev);
+> +			of_node_put(np);
+> +
+> +			if (!tcon->tcon_top)
+> +				return -EPROBE_DEFER;
+> +		}
+> +	}
+> +
 
-This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
-board file).
+I might have missed it, but I've not seen the bindings additions for
+that property. This shouldn't really be done that way anyway, instead
+of using a direct phandle, you should be using the of-graph, with the
+TCON-top sitting where it belongs in the flow of data.
 
+Maxime
 
-Changes:
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-v10 changes (also see individual patches for details):
-- Reworked device tree bindings for DaVinci timer.
-- Dropped helper functions to conditionally call devm_* versions of functions
-- Fix some typos
-- Fix some rebasing issues introduced in v9
+--hpqwgjovcbtgqx7h
+Content-Type: application/pgp-signature; name="signature.asc"
 
-v9 changes (also see individual patches for details):
-- Rebased on linux-davnci/master (f5e3203bb775)
-- Dropped drivers/clk patches that landed in v4.17
-- New drivers/clk patches for early boot special case
-- New patch for ti,davinci-timer device tree bindings
-- Updated mach/davinci patches to register clocks in early boot when needed
+-----BEGIN PGP SIGNATURE-----
 
-v8 changes (also see individual patches for details):
-- Rebased on linux-davinci/master
-- Dropped use of __init and __initconst attributes in clk drivers
-- Add clkdev lookups for PLL SYSCLKs
-- Fix genpd clock reference counting issue
-- Fix PSC clock driver loading order issue
-- Fix typo in device tree and add more power-domains properties
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsCfl4ACgkQ0rTAlCFN
+r3S9AQ/+JPfhJ0iDva/Y/hg0a1JulJ5HlTQ5T5gFfD51q6wf0NGh1WCp6QEPOrea
+RgvO5QSwkZn2849ygj+ISHr2PbUmbaDqe2qEJntJFPRUhdwvho3/3oCRq68n+/E1
+P/SJvCvribHnQBILNbrBwP9SovDva0icOICJcCAboac4vrRhNhSr4CwNWOGJEtC3
+g7Rthf9Lk5axhgFQX2/u1M9Q1ocfD0uTCfednvlVGIjWx2By0HL4wkV3C81iWUoT
+NqnTIPVHo3ZwxWViOiFEp0zdvx3eDQ9v79y9aEKnd1A1GNT84izMACjngez0rkVz
+l4gY+rVfvka9W1Nw4EGrQhix4smH5p/Vb9y/5lc3fOS5AHTPuBUPLRuPfZZRUKjj
+T17XrusCGCYeSgk+nuXqS7AaSHKdHYLiYFlkOGcBsU4fRTrZXeYTFoYmKtE1zkqA
+Kj/YpP856mnHSRmNBXZLe1mrbP8SDAvuFXRS4Y+um69ACaZxInq0OEuNKGJZH7BM
+S8fwMnnbOr1XrFiDvjkklRf+mmAgo+m8xRO8YCX1qoN1lxEeyRBcatqj2S0HNaIY
+pvqIAcEhBedQAycsbRrGjwaq6Ewnsy/8v8PUkS/E9u3uYswQBh56z6wS6L46CLuk
+5HQL9CZmo8xMWtMzM5MkCqsiMTGd7diWx/e0yuUFhn4rA5iQkz8=
+=WmZF
+-----END PGP SIGNATURE-----
 
-v7 changes (also see individual patches for details):
-- Rebased on linux-davinci/master (v4.16-rc)
-- Convert clock drivers to platform devices
-- New patch "ARM: davinci: pass clock as parameter to davinci_timer_init()"
-- Fix issues with lcdk and aemif clock lookups and power domains
-- Fixed other minor issues brought up in v6 review
-
-v6 changes (also see individual patches for details):
-- All of the device tree bindings are changed
-- All of the clock drivers are changed significantly
-- Fixed issues brought up during review of v5
-- "ARM: davinci: move davinci_clk_init() to init_time" is removed from this
-  series and submitted separately
-
-v5 changes:
-- Basically, this is an entirely new series
-- Patches are broken up into bite-sized pieces
-- Converted PSC clock driver to use regmap
-- Restored "force" flag for certain DA850 clocks
-- Added device tree bindings
-- Moved more of the clock init to drivers/clk
-- Fixed frequency scaling (maybe*)
-
-* I have frequency scaling using cpufreq-dt, so I know the clocks are doing
-  what they need to do to make this work, but I haven't figured out how to
-  test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will be
-  sent separately after this series has landed.)
-
-
-Dependencies:
-
-There are still some outstanding fixes to get everything working correctly.
-These are all just runtime dependencies and only needed for certain platforms.
-
-- "drm/tilcdc: Fix setting clock divider for omap-l138"[1]
-- "clk: davinci: pll-dm355: fix SYSCLKn parent names"[2]
-- "remoteproc/davinci: common clock framework related fixes"[3]
-
-[1]: https://patchwork.freedesktop.org/patch/210696/
-[2]: https://lkml.org/lkml/2018/5/9/626
-[3]: https://lkml.org/lkml/2018/5/2/201
-
-You can find a working branch with everything included (plus a few extras, like
-cpufreq-dt) in the "common-clk-v10" branch of https://github.com/dlech/ev3dev-kernel.git.
-
-
-Testing/debugging for the uninitiated:
-
-I only have one device to test with, which is based on da850, so I will
-have to rely on others to do some testing here. Since we are dealing with
-clocks, if something isn't working, you most likely won't see output on
-the serial port. To figure out what is going on, you need to enable...
-
-	CONFIG_DEBUG_LL=y
-	CONFIG_EARLY_PRINTK=y
-
-and add "earlyprintk clk_ignore_unused" to the kernel command line options.
-You may need to select a different UART for this depending on your board. I
-think UART1 is the default in the kernel configuration.
-
-On da850 devices comment out the lines:
-
-	/* pll1_sysclk2 is not affected by CPU scaling, so use it for async3 */
-	parent = clk_hw_get_parent_by_index(&mux->hw, 1);
-	if (parent)
-		clk_set_parent(mux->hw.clk, parent->clk);
-	else
-		dev_warn(dev, "Failed to find async3 parent clock\n");
-
-in da8xx-cfgchip.c or, if using device tree, comment out the lines:
-
-	assigned-clocks = <&async3_clk>;
-	assigned-clock-parents = <&pll1_sysclk 2>;
-
-in da850.dtsi when doing earlyprintk, otherwise the UART1 and UART2 clock
-source will change during boot and cause garbled output after a point. 
-
-
-David Lechner (27):
-  clk: davinci: pll: allow dev == NULL
-  clk: davinci: da850-pll: change PLL0 to CLK_OF_DECLARE
-  clk: davinci: psc: allow for dev == NULL
-  ARM: davinci: pass clock as parameter to davinci_timer_init()
-  ARM: davinci: da830: add new clock init using common clock framework
-  ARM: davinci: da850: add new clock init using common clock framework
-  ARM: davinci: dm355: add new clock init using common clock framework
-  ARM: davinci: dm365: add new clock init using common clock framework
-  ARM: davinci: dm644x: add new clock init using common clock framework
-  ARM: davinci: dm646x: add new clock init using common clock framework
-  ARM: davinci: da8xx: add new USB PHY clock init using common clock
-    framework
-  ARM: davinci: da8xx: add new sata_refclk init using common clock
-    framework
-  ARM: davinci: remove CONFIG_DAVINCI_RESET_CLOCKS
-  ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
-  ARM: davinci: switch to common clock framework
-  ARM: davinci: da830: Remove legacy clock init
-  ARM: davinci: da850: Remove legacy clock init
-  ARM: davinci: dm355: Remove legacy clock init
-  ARM: davinci: dm365: Remove legacy clock init
-  ARM: davinci: dm644x: Remove legacy clock init
-  ARM: davinci: dm646x: Remove legacy clock init
-  ARM: davinci: da8xx: Remove legacy USB and SATA clock init
-  ARM: davinci: remove legacy clocks
-  dt-bindings: timer: new bindings for TI DaVinci timer
-  ARM: davinci: add device tree support to timer
-  ARM: davinci: da8xx-dt: switch to device tree clocks
-  ARM: dts: da850: Add clocks
-
- .../bindings/timer/ti,davinci-timer.txt       |  37 +
- arch/arm/Kconfig                              |   5 +-
- arch/arm/boot/dts/da850-enbw-cmc.dts          |   4 +
- arch/arm/boot/dts/da850-evm.dts               |   4 +
- arch/arm/boot/dts/da850-lcdk.dts              |   9 +
- arch/arm/boot/dts/da850-lego-ev3.dts          |   4 +
- arch/arm/boot/dts/da850.dtsi                  | 168 ++++
- arch/arm/configs/davinci_all_defconfig        |   1 -
- arch/arm/mach-davinci/Kconfig                 |  13 +-
- arch/arm/mach-davinci/Makefile                |   4 +-
- arch/arm/mach-davinci/board-da830-evm.c       |  12 +-
- arch/arm/mach-davinci/board-da850-evm.c       |   2 +
- arch/arm/mach-davinci/board-dm355-evm.c       |   2 +
- arch/arm/mach-davinci/board-dm355-leopard.c   |   2 +
- arch/arm/mach-davinci/board-dm365-evm.c       |   2 +
- arch/arm/mach-davinci/board-dm644x-evm.c      |   2 +
- arch/arm/mach-davinci/board-dm646x-evm.c      |   2 +
- arch/arm/mach-davinci/board-mityomapl138.c    |   2 +
- arch/arm/mach-davinci/board-neuros-osd2.c     |   2 +
- arch/arm/mach-davinci/board-omapl138-hawk.c   |  11 +-
- arch/arm/mach-davinci/board-sffsdr.c          |   2 +
- arch/arm/mach-davinci/clock.c                 | 745 -----------------
- arch/arm/mach-davinci/clock.h                 |  76 --
- arch/arm/mach-davinci/common.c                |   3 -
- arch/arm/mach-davinci/da830.c                 | 462 ++---------
- arch/arm/mach-davinci/da850.c                 | 778 +++---------------
- arch/arm/mach-davinci/da8xx-dt.c              |  66 --
- arch/arm/mach-davinci/davinci.h               |   8 +
- arch/arm/mach-davinci/devices-da8xx.c         |  43 +-
- arch/arm/mach-davinci/devices.c               |   1 -
- arch/arm/mach-davinci/dm355.c                 | 406 ++-------
- arch/arm/mach-davinci/dm365.c                 | 485 +----------
- arch/arm/mach-davinci/dm644x.c                | 344 +-------
- arch/arm/mach-davinci/dm646x.c                | 372 +--------
- arch/arm/mach-davinci/include/mach/clock.h    |   3 -
- arch/arm/mach-davinci/include/mach/common.h   |  11 +-
- arch/arm/mach-davinci/include/mach/da8xx.h    |   6 +-
- arch/arm/mach-davinci/pm_domain.c             |   5 +
- arch/arm/mach-davinci/psc.c                   | 137 ---
- arch/arm/mach-davinci/psc.h                   |  12 -
- arch/arm/mach-davinci/time.c                  |  39 +-
- arch/arm/mach-davinci/usb-da8xx.c             | 242 +-----
- drivers/clk/davinci/pll-da830.c               |   4 +-
- drivers/clk/davinci/pll-da850.c               |  36 +-
- drivers/clk/davinci/pll-dm355.c               |   8 +-
- drivers/clk/davinci/pll-dm365.c               |   8 +-
- drivers/clk/davinci/pll-dm644x.c              |   8 +-
- drivers/clk/davinci/pll-dm646x.c              |   8 +-
- drivers/clk/davinci/pll.c                     | 110 +--
- drivers/clk/davinci/pll.h                     |  30 +-
- drivers/clk/davinci/psc-dm355.c               |   2 +-
- drivers/clk/davinci/psc-dm365.c               |   2 +-
- drivers/clk/davinci/psc-dm644x.c              |   2 +-
- drivers/clk/davinci/psc-dm646x.c              |   2 +-
- drivers/clk/davinci/psc.c                     |  27 +-
- include/linux/clk/davinci.h                   |  29 +
- 56 files changed, 860 insertions(+), 3950 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
- delete mode 100644 arch/arm/mach-davinci/clock.c
- delete mode 100644 arch/arm/mach-davinci/psc.c
- create mode 100644 include/linux/clk/davinci.h
-
--- 
-2.17.0
+--hpqwgjovcbtgqx7h--
