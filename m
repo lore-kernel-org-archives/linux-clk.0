@@ -1,77 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:59091 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753243AbeE3OKa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 May 2018 10:10:30 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH v2 2/6] ARM: dts: dra762: Add MCAN clock support
-Date: Wed, 30 May 2018 19:41:29 +0530
-Message-ID: <20180530141133.3711-3-faiz_abbas@ti.com>
-In-Reply-To: <20180530141133.3711-1-faiz_abbas@ti.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Mon, 21 May 2018 10:19:38 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: ilialin@codeaurora.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180521044938.bnr2sdkmvdorfxqm@vireshk-i7>
+References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+ <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <20180518014538.duphof6enscpm5vp@vireshk-i7>
+ <019201d3ef66$db97aed0$92c70c70$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <019201d3ef66$db97aed0$92c70c70$@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lokesh Vutla <lokeshvutla@ti.com>
+On 19-05-18, 14:45, ilialin@codeaurora.org wrote:
+> Hi Viresh,
+> 
+> If I send patches in reply, it will produce new patches, instead of answers
+> in the thread. Please find below the file dump.
 
-MCAN is clocked by H14 divider of DPLL_GMAC. Unlike other
-DPLL dividers this DPLL_GMAC H14 divider is controlled by
-control module. Adding support for these clocks.
+There is one email from you which appears to be just fine and appears
+to be in reply to this thread only. Maybe its your email client that
+screwed it up for you ? Things look good in mutt.
 
-Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- arch/arm/boot/dts/dra76x.dtsi | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
-index 1c88c581ff18..bfc82636999c 100644
---- a/arch/arm/boot/dts/dra76x.dtsi
-+++ b/arch/arm/boot/dts/dra76x.dtsi
-@@ -17,3 +17,36 @@
- &crossbar_mpu {
- 	ti,irqs-skip = <10 67 68 133 139 140>;
- };
-+
-+&scm_conf_clocks {
-+	dpll_gmac_h14x2_ctrl_ck: dpll_gmac_h14x2_ctrl_ck@3fc {
-+		#clock-cells = <0>;
-+		compatible = "ti,divider-clock";
-+		clocks = <&dpll_gmac_x2_ck>;
-+		ti,max-div = <63>;
-+		reg = <0x03fc>;
-+		ti,bit-shift=<20>;
-+		ti,latch-bit=<26>;
-+		assigned-clocks = <&dpll_gmac_h14x2_ctrl_ck>;
-+		assigned-clock-rates = <80000000>;
-+	};
-+
-+	dpll_gmac_h14x2_ctrl_mux_ck: dpll_gmac_h14x2_ctrl_mux_ck@3fc {
-+		#clock-cells = <0>;
-+		compatible = "ti,mux-clock";
-+		clocks = <&dpll_gmac_ck>, <&dpll_gmac_h14x2_ctrl_ck>;
-+		reg = <0x3fc>;
-+		ti,bit-shift = <29>;
-+		ti,latch-bit=<26>;
-+		assigned-clocks = <&dpll_gmac_h14x2_ctrl_mux_ck>;
-+		assigned-clock-parents = <&dpll_gmac_h14x2_ctrl_ck>;
-+	};
-+
-+	mcan_clk: mcan_clk@3fc {
-+		#clock-cells = <0>;
-+		compatible = "ti,gate-clock";
-+		clocks = <&dpll_gmac_h14x2_ctrl_mux_ck>;
-+		ti,bit-shift = <27>;
-+		reg = <0x3fc>;
-+	};
-+};
 -- 
-2.17.0
-
+viresh
