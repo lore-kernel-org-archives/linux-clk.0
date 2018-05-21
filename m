@@ -1,81 +1,83 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Thu, 24 May 2018 08:17:06 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: kbuild-all@01.org, linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>, phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Michel Pollet <michel.pollet@bp.renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 6/6] clk: renesas: Renesas RZ/N1 clock driver
-Message-ID: <201805240746.iNt9qbSr%fengguang.wu@intel.com>
-References: <1526983321-41949-7-git-send-email-michel.pollet@bp.renesas.com>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: <ilialin@codeaurora.org>
+To: "'Russell King - ARM Linux'" <linux@armlinux.org.uk>
+Cc: <viresh.kumar@linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-soc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <1526898690-4018-1-git-send-email-ilialin@codeaurora.org> <20180521105428.GM17671@n2100.armlinux.org.uk> <000b01d3f0f3$aa961cc0$ffc25640$@codeaurora.org> <20180521121140.GO17671@n2100.armlinux.org.uk>
+In-Reply-To: <20180521121140.GO17671@n2100.armlinux.org.uk>
+Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Date: Mon, 21 May 2018 15:35:07 +0300
+Message-ID: <000d01d3f100$294247e0$7bc6d7a0$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526983321-41949-7-git-send-email-michel.pollet@bp.renesas.com>
+Content-Type: text/plain;
+        charset="us-ascii"
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+There are 2 CPU clusters in the Kryo, CPU 0 and 1 are called Silver Cluster
+and CPU 2 and 3 - Gold Cluster. Each cluster has single clock. The clusters
+differ in terms of speed capabilities, computing power and power
+consumption. Therefore, I define separate OPP table for each cluster, and my
+driver will choose the appropriate OPP subset for each cluster.
+Lead refers to first CPU in the cluster.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on next-20180517]
-[also build test WARNING on v4.17-rc6]
-[cannot apply to robh/for-next renesas-drivers/clk-renesas renesas/devel v4.17-rc6 v4.17-rc5 v4.17-rc4]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Michel-Pollet/arm-Base-support-for-Renesas-RZN1D-DB-Board/20180524-052042
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/clk/renesas/rzn1-clocks.c:270:22: sparse: cast removes address space of expression
->> drivers/clk/renesas/rzn1-clocks.c:271:29: sparse: incorrect type in argument 1 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
-   drivers/clk/renesas/rzn1-clocks.c:271:29:    expected unsigned int [noderef] [usertype] <asn:2>*reg
-   drivers/clk/renesas/rzn1-clocks.c:271:29:    got unsigned int [usertype] *reg
-   drivers/clk/renesas/rzn1-clocks.c:274:25: sparse: incorrect type in argument 2 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
-   drivers/clk/renesas/rzn1-clocks.c:274:25:    expected unsigned int [noderef] [usertype] <asn:2>*reg
-   drivers/clk/renesas/rzn1-clocks.c:274:25:    got unsigned int [usertype] *reg
-   drivers/clk/renesas/rzn1-clocks.c:281:22: sparse: cast removes address space of expression
-   drivers/clk/renesas/rzn1-clocks.c:282:29: sparse: incorrect type in argument 1 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
-   drivers/clk/renesas/rzn1-clocks.c:282:29:    expected unsigned int [noderef] [usertype] <asn:2>*reg
-   drivers/clk/renesas/rzn1-clocks.c:282:29:    got unsigned int [usertype] *reg
-   drivers/clk/renesas/rzn1-clocks.c:430:22: sparse: cast removes address space of expression
-   drivers/clk/renesas/rzn1-clocks.c:431:30: sparse: incorrect type in argument 1 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
-   drivers/clk/renesas/rzn1-clocks.c:431:30:    expected unsigned int [noderef] [usertype] <asn:2>*reg
-   drivers/clk/renesas/rzn1-clocks.c:431:30:    got unsigned int [usertype] *reg
-   drivers/clk/renesas/rzn1-clocks.c:516:22: sparse: cast removes address space of expression
-   drivers/clk/renesas/rzn1-clocks.c:528:38: sparse: incorrect type in argument 2 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
-   drivers/clk/renesas/rzn1-clocks.c:528:38:    expected unsigned int [noderef] [usertype] <asn:2>*reg
-   drivers/clk/renesas/rzn1-clocks.c:528:38:    got unsigned int [usertype] *reg
-
-vim +270 drivers/clk/renesas/rzn1-clocks.c
-
-   264	
-   265	/* register/bit pairs are encoded as an uint16_t */
-   266	static void clk_rdesc_set(
-   267		struct rzn1_priv *clocks,
-   268		uint16_t one, unsigned int on)
-   269	{
- > 270		u32 *reg = ((u32 *)clocks->reg) + (one >> 5);
- > 271		u32 val = clk_readl(reg);
-   272	
-   273		val = (val & ~(1U << (one & 0x1f))) | ((!!on) << (one & 0x1f));
-   274		clk_writel(val, reg);
-   275	}
-   276	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> -----Original Message-----
+> From: Russell King - ARM Linux <linux@armlinux.org.uk>
+> Sent: Monday, May 21, 2018 15:12
+> To: ilialin@codeaurora.org
+> Cc: viresh.kumar@linaro.org; devicetree@vger.kernel.org; linux-
+> pm@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-soc@vger.kernel.org; linux-
+> clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+> 
+> On Mon, May 21, 2018 at 02:05:41PM +0300, ilialin@codeaurora.org wrote:
+> > You are right.
+> > cpu_dev_silver != cpu_dev_gold, and I found this with my tests as well.
+> > Thank you.
+> >
+> > > -----Original Message-----
+> > > From: Russell King - ARM Linux <linux@armlinux.org.uk>
+> > > Sent: Monday, May 21, 2018 13:54
+> > > To: Ilia Lin <ilialin@codeaurora.org>
+> > > Cc: viresh.kumar@linaro.org; devicetree@vger.kernel.org; linux-
+> > > pm@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
+> > > kernel@vger.kernel.org; linux-soc@vger.kernel.org; linux-
+> > > clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> > > Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+> > >
+> > > On Mon, May 21, 2018 at 01:31:30PM +0300, Ilia Lin wrote:
+> > > > +#define SILVER_LEAD	0
+> > > > +#define GOLD_LEAD	2
+> > >
+> > > Okay, two different values here, but "GOLD_LEAD" appears unused.
+> > >
+> > > > +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
+> > > > +	if (NULL == cpu_dev_silver)
+> > > > +		return -ENODEV;
+> > > > +
+> > > > +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
+> > > > +	if (NULL == cpu_dev_gold)
+> > > > +		return -ENODEV;
+> > >
+> > > get_cpu_device() takes the logical CPU number.  So the above gets
+> > > CPU 0 each time, and so cpu_dev_silver == cpu_dev_gold here.  So
+> > > what's the point of the second get_cpu_device() ?  If it's supposed to
+be:
+> > >
+> > > 	cpu_dev_gold = get_cpu_device(GOLD_LEAD);
+> > >
+> > > That would get CPU 2, but in terms of these defines, it doesn't make
+> > > that much sense.  What exactly does "silver lead" and "gold lead"
+> > > refer to in
+> > these
+> > > definitions?
+> 
+> I think you still need to explain this.
+> 
+> --
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps
+> up According to speedtest.net: 8.21Mbps down 510kbps up
