@@ -1,55 +1,42 @@
-Return-Path: <nsekhar@ti.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v11_00/27]_ARM:_davinci:_convert_to_common_clo?=
- =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180518164829.27052-1-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
-Date: Tue, 22 May 2018 15:08:04 +0530
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:39388 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750999AbeEUMlq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 May 2018 08:41:46 -0400
+Date: Mon, 21 May 2018 13:41:36 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: ilialin@codeaurora.org
+Cc: viresh.kumar@linaro.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180521124136.GP17671@n2100.armlinux.org.uk>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
+ <20180521105428.GM17671@n2100.armlinux.org.uk>
+ <000b01d3f0f3$aa961cc0$ffc25640$@codeaurora.org>
+ <20180521121140.GO17671@n2100.armlinux.org.uk>
+ <000d01d3f100$294247e0$7bc6d7a0$@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <000d01d3f100$294247e0$7bc6d7a0$@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi David,
+On Mon, May 21, 2018 at 03:35:07PM +0300, ilialin@codeaurora.org wrote:
+> There are 2 CPU clusters in the Kryo, CPU 0 and 1 are called Silver Cluster
+> and CPU 2 and 3 - Gold Cluster. Each cluster has single clock. The clusters
+> differ in terms of speed capabilities, computing power and power
+> consumption. Therefore, I define separate OPP table for each cluster, and my
+> driver will choose the appropriate OPP subset for each cluster.
+> Lead refers to first CPU in the cluster.
 
-On Friday 18 May 2018 10:18 PM, David Lechner wrote:
-> This series converts mach-davinci to use the common clock framework.
-> 
-> The series works like this, the first 3 patches fix some issues with the clock
-> drivers that have already been accepted into the mainline kernel.
-> 
-> Then, starting with "ARM: davinci: pass clock as parameter to
-> davinci_timer_init()", we get the mach code ready for the switch by adding the
-> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
-> around the legacy clocks so that we can switch easily between the old and the
-> new.
-> 
-> "ARM: davinci: switch to common clock framework" actually flips the switch
-> to start using the new clock drivers. Then the next 8 patches remove all
-> of the old clock code.
-> 
-> The final four patches add device tree clock support to the one SoC that
-> supports it.
-> 
-> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
-> board file).
+Ah, that is really confusing.  Lead can means many things.  Maybe a
+little more verbosity with the names such as SILVER_CLUSTER_LEAD_CPU
+would help?
 
-If you do end up sending a v12, you can leave out the mach-davinci
-portions unless there are any changes you need to make. I will pick them
-up from this series once the driver dependencies are merged.
-
-I do hope the drivers/clk/* changes can be merged from v4.18.
-
-Thanks,
-Sekhar
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
