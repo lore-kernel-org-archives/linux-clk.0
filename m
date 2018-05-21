@@ -1,142 +1,259 @@
-Return-Path: <buserror@gmail.com>
-MIME-Version: 1.0
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com> <20180522160913.GA7755@rob-hp-laptop>
-In-Reply-To: <20180522160913.GA7755@rob-hp-laptop>
-From: M P <buserror@gmail.com>
-Date: Wed, 23 May 2018 07:52:45 +0100
-Message-ID: <CAMMfpEwn3+fCZZZ8ADNxjun+jzNSnH+8xPcA8OUS_jPUJ-o6LA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document
- RZ/N1 clock driver
-To: robh@kernel.org
-Cc: michel.pollet@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-	horms@verge.net.au, Phil Edworthy <phil.edworthy@renesas.com>, buserror+upstream@gmail.com,
-	magnus.damm@gmail.com, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@kernel.org, geert+renesas@glider.be, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:39832 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751025AbeEUKbf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 May 2018 06:31:35 -0400
+From: Ilia Lin <ilialin@codeaurora.org>
+To: viresh.kumar@linaro.org
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Date: Mon, 21 May 2018 13:31:30 +0300
+Message-Id: <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+the CPU frequency subset and voltage value of each OPP varies
+based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+defines the voltage and frequency value based on the msm-id in SMEM
+and speedbin blown in the efuse combination.
+The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+to provide the OPP framework with required information.
+This is used to determine the voltage and frequency value for each OPP of
+operating-points-v2 table when it is parsed by the OPP framework.
 
-On Tue, 22 May 2018 at 17:09, Rob Herring <robh@kernel.org> wrote:
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/cpufreq/Kconfig.arm          |  10 +++
+ drivers/cpufreq/Makefile             |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+ drivers/cpufreq/qcom-cpufreq-kryo.c  | 164 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 178 insertions(+)
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
 
-> On Tue, May 22, 2018 at 11:01:23AM +0100, Michel Pollet wrote:
-> > The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-> > to provide the SoC clock infrastructure for Linux.
-> >
-> > This documents the driver bindings.
-> >
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > ---
-> >  .../bindings/clock/renesas,rzn1-clocks.txt         | 44
-++++++++++++++++++++++
-> >  1 file changed, 44 insertions(+)
-> >  create mode 100644
-Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-> >
-> > diff --git
-a/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-> > new file mode 100644
-> > index 0000000..0c41137
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-> > @@ -0,0 +1,44 @@
-> > +* Renesas RZ/N1 Clock Driver
-> > +
-> > +This driver provides the clock infrastructure used by all the other
-drivers.
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index de55c7d..0bfd40e 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 	depends on ARCH_OMAP2PLUS
+ 	default ARCH_OMAP2PLUS
+ 
++config ARM_QCOM_CPUFREQ_KRYO
++	bool "Qualcomm Kryo based CPUFreq"
++	depends on QCOM_QFPROM
++	depends on QCOM_SMEM
++	select PM_OPP
++	help
++	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
++
++	  If in doubt, say N.
++
+ config ARM_S3C_CPUFREQ
+ 	bool
+ 	help
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 8d24ade..fb4a2ec 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 3b585e4..77d6ab8 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -118,6 +118,9 @@
+ 
+ 	{ .compatible = "nvidia,tegra124", },
+ 
++	{ .compatible = "qcom,apq8096", },
++	{ .compatible = "qcom,msm8996", },
++
+ 	{ .compatible = "st,stih407", },
+ 	{ .compatible = "st,stih410", },
+ 
+diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+new file mode 100644
+index 0000000..4e002d0b
+--- /dev/null
++++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++/*
++ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
++ * the CPU frequency subset and voltage value of each OPP varies
++ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
++ * defines the voltage and frequency value based on the msm-id in SMEM
++ * and speedbin blown in the efuse combination.
++ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
++ * to provide the OPP framework with required information.
++ * This is used to determine the voltage and frequency value for each OPP of
++ * operating-points-v2 table when it is parsed by the OPP framework.
++ */
++
++#include <linux/cpu.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/nvmem-consumer.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/slab.h>
++#include <linux/soc/qcom/smem.h>
++
++#define MSM_ID_SMEM	137
++#define SILVER_LEAD	0
++#define GOLD_LEAD	2
++
++enum _msm_id {
++	MSM8996V3 = 0xF6ul,
++	APQ8096V3 = 0x123ul,
++	MSM8996SG = 0x131ul,
++	APQ8096SG = 0x138ul,
++};
++
++enum _msm8996_version {
++	MSM8996_V3,
++	MSM8996_SG,
++	NUM_OF_MSM8996_VERSIONS,
++};
++
++static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
++{
++	size_t len;
++	u32 *msm_id;
++	enum _msm8996_version version;
++
++	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
++	/* The first 4 bytes are format, next to them is the actual msm-id */
++	msm_id++;
++
++	switch ((enum _msm_id)*msm_id) {
++	case MSM8996V3:
++	case APQ8096V3:
++		version = MSM8996_V3;
++		break;
++	case MSM8996SG:
++	case APQ8096SG:
++		version = MSM8996_SG;
++		break;
++	default:
++		version = NUM_OF_MSM8996_VERSIONS;
++	}
++
++	return version;
++}
++
++static int __init qcom_cpufreq_kryo_driver_init(void)
++{
++	struct device *cpu_dev_silver, *cpu_dev_gold;
++	struct opp_table *opp_silver, *opp_gold;
++	enum _msm8996_version msm8996_version;
++	struct nvmem_cell *speedbin_nvmem;
++	struct platform_device *pdev;
++	struct device_node *np;
++	u8 *speedbin;
++	u32 versions;
++	size_t len;
++	int ret;
++
++	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
++	if (NULL == cpu_dev_silver)
++		return -ENODEV;
++
++	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
++	if (NULL == cpu_dev_gold)
++		return -ENODEV;
++
++	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
++	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
++		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
++		return -ENODEV;
++	}
++
++	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
++	if (IS_ERR(np))
++		return PTR_ERR(np);
++
++	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
++		ret = -ENOENT;
++		goto free_np;
++	}
++
++	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
++	if (IS_ERR(speedbin_nvmem)) {
++		ret = PTR_ERR(speedbin_nvmem);
++		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
++		goto free_np;
++	}
++
++	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
++	nvmem_cell_put(speedbin_nvmem);
++
++	switch (msm8996_version) {
++	case MSM8996_V3:
++		versions = 1 << (unsigned int)(*speedbin);
++		break;
++	case MSM8996_SG:
++		versions = 1 << ((unsigned int)(*speedbin) + 4);
++		break;
++	default:
++		BUG();
++		break;
++	}
++
++	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
++	if (IS_ERR(opp_silver)) {
++		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
++		ret = PTR_ERR(opp_silver);
++		goto free_np;
++	}
++
++	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
++	if (IS_ERR(opp_gold)) {
++		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
++		ret = PTR_ERR(opp_gold);
++		goto free_opp_silver;
++	}
++
++	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
++	if (!IS_ERR(pdev))
++		return 0;
++
++	ret = PTR_ERR(pdev);
++	dev_err(cpu_dev_silver, "Failed to register platform device\n");
++	dev_pm_opp_put_supported_hw(opp_gold);
++
++free_opp_silver:
++	dev_pm_opp_put_supported_hw(opp_silver);
++
++free_np:
++	of_node_put(np);
++
++	return ret;
++}
++late_initcall(qcom_cpufreq_kryo_driver_init);
++
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
++MODULE_LICENSE("GPL v2");
+-- 
+1.9.1
 
-> Bindings document h/w not drivers.
-
-> > +
-> > +One of the 'special' feature of this infrastructure is that Linux
-doesn't
-
-> Bindings are not just for Linux.
-
-> > +necessary 'own' all the clocks on the SoC, some other OS runs on
-> > +the Cortex-M3 core and that OS can access and claim it's own clocks.
-
-> How is this relevant to the binding?
-
-Well you just said it, if the binding is not just for linux, it's probably
-a good idea to mention it somewhere since I can promise you it's *not*
-documented in the hardware manual. Whatever this binding is for, it's
-relevant to point out it is different from the other clock drivers in the
-same directory... ?
-
-
-> > +
-> > +Required Properties:
-> > +
-> > +  - compatible: Must be
-> > +    - "renesas,r9a06g032-clocks" for the RZ/N1D
-> > +    and "renesas,rzn1-clocks" as a fallback.
-
-> Is "clocks" how the chip reference manual refers to this block?
-
-No, the block is called 'sysctrl' and has tons of other stuff in there.
-I've tried multiple times to get a 'sysctrl' driver in the previous
-versions of the patch, in various shape or form, and I can't because I'd be
-supposed to 'document' binding for stuff that has no code, no purpose, no
-testing, and have all wildly different topics. So, after some more
-lengthily discussion with Geert, we've decided to make the 'primary'
-feature of that block (clocks) as a driver, and see from there onward.
-
-Thanks for all the other comments, all taken onboard for next version!
-Michel
-
-
-> > +  - reg: Base address and length of the memory resource used by the
-driver
-> > +  - #clock-cells: Must be 1
-> > +
-> > +Examples
-> > +--------
-> > +
-> > +  - Clock driver device node:
-> > +
-> > +     clock: clocks@4000c000 {
-
-> clock-controller@...
-
-> > +             compatible = "renesas,r9a06g032-clocks",
-> > +                             "renesas,rzn1-clocks";
-> > +             reg = <0x4000c000 0x1000>;
-> > +             status = "okay";
-
-> Don't show status in examples. (Plus, I doubt you ever want to have this
-> disabled, so you don't need the property in your dts files either).
-
-> > +             #clock-cells = <1>;
-> > +     };
-> > +
-> > +
-> > +  - Other drivers can use the clocks as in:
-
-> s/drivers/nodes/
-
-> > +
-> > +     uart0: serial@40060000 {
-> > +             compatible = "snps,dw-apb-uart";
-> > +             reg = <0x40060000 0x400>;
-> > +             interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-> > +             reg-shift = <2>;
-> > +             reg-io-width = <4>;
-> > +             clocks = <&clock RZN1_CLK_UART0>;
-> > +             clock-names = "baudclk";
-> > +     };
-> > +    Note the use of RZN1_CLK_UART0 -- these constants are declared in
-> > +    the rzn1-clocks.h header file. These are not hardware based
-constants
-> > +    and are Linux specific.
-
-> No, they are not Linux specific. They are part of the DT ABI.
-
-> While it is not a requirement to base them on some h/w numbering, it is
-> preferred if you can. That usually only works if you can base them on
-> bit positions or register offsets.
-
-> Rob
