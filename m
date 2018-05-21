@@ -1,45 +1,42 @@
-Return-Path: <mike.looijmans@topic.nl>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH] clk-si544: Properly round requested frequency to nearest match
-Date: Thu, 31 May 2018 16:03:55 +0200
-Message-Id: <1527775435-5017-1-git-send-email-mike.looijmans@topic.nl>
+Return-Path: <will.deacon@arm.com>
+Date: Mon, 21 May 2018 14:17:41 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
+	lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
+	david.brown@linaro.org, catalin.marinas@arm.com, rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	rnayak@codeaurora.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	amit.kucheria@linaro.org, tfinkel@codeaurora.org,
+	nicolas.dechesne@linaro.org, celster@codeaurora.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 01/15] soc: qcom: Separate kryo l2 accessors from PMU
+ driver
+Message-ID: <20180521131740.GI19713@arm.com>
+References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+ <1526901932-9514-2-git-send-email-ilialin@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526901932-9514-2-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The si544 driver had a rounding problem that using the result of clk_round_rate
-may set the clock to yet another rate, for example:
-clk_round_rate(195000000) = 194999999
-clk_round_rate(194999999) = 194999998
+On Mon, May 21, 2018 at 02:25:18PM +0300, Ilia Lin wrote:
+> The driver provides kernel level API for other drivers
+> to access the MSM8996 L2 cache registers.
+> Separating the L2 access code from the PMU driver and
+> making it public to allow other drivers use it.
+> The accesses must be separated with a single spinlock,
+> maintained in this driver.
+> 
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  drivers/perf/Kconfig                 |  1 +
+>  drivers/perf/qcom_l2_pmu.c           | 90 ++++++++++--------------------------
 
-Clients would expect that after clk_set_rate(clk, freq2=clk_round_rate(clk, freq)) the
-chip will be running at exactly freq2.
+I'm fine with the perf bits:
 
-The problem was in the calculation of the feedback divider, it was always rounded
-down instead of to the nearest possible VCO value.
+Acked-by: Will Deacon <will.deacon@arm.com>
 
-After this change, the following holds true for any supported frequency:
-actual_freq = clk_round_rate(clk, freq);
-clk_set_rate(clk, actual_freq);
-clk_round_rate(clk, actual_freq) == actual_freq && clk_get_rate(clk) == actual_freq
-
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
----
- drivers/clk/clk-si544.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
-index d437722..e972ffb 100644
---- a/drivers/clk/clk-si544.c
-+++ b/drivers/clk/clk-si544.c
-@@ -207,6 +207,7 @@ static int si544_calc_muldiv(struct clk_si544_muldiv *settings,
- 
- 	/* And the fractional bits using the remainder */
- 	vco = (u64)tmp << 32;
-+	vco += FXO / 2; /* Round to nearest multiple */
- 	do_div(vco, FXO);
- 	settings->fb_div_frac = vco;
- 
--- 
-1.9.1
+Will
