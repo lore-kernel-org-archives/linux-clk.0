@@ -1,108 +1,60 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 04/26] clk: sunxi-ng: a64: Add minimal rate for video PLLs
-Date: Fri, 18 May 2018 15:15:14 +0530
-Message-Id: <20180518094536.17201-5-jagan@amarulasolutions.com>
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v9 02/15] clk: qcom: Make clk_alpha_pll_configure available to modules
+Date: Mon, 21 May 2018 14:25:19 +0300
+Message-Id: <1526901932-9514-3-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to documentation and experience with other similar SoCs, video
-PLLs don't work stable if their output frequency is set below 192 MHz.
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Because of that, set minimal rate to both A64 video PLLs to 192 MHz.
+Allow clk_alpha_pll_configure to be called from loadable
+kernel modules.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
-Changes for v2:
-- New patch
+ drivers/clk/qcom/clk-alpha-pll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 46 ++++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index ee9c12cf3f08..d0e30192f0cf 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -64,17 +64,18 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				   BIT(28),	/* lock */
- 				   CLK_SET_RATE_UNGATE);
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 9722b70..57f2084 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -228,6 +228,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 	if (pll->flags & SUPPORTS_FSM_MODE)
+ 		qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
+ }
++EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
  
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
--					"osc24M", 0x010,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
-+					    "osc24M", 0x010,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,		/* N */
-+					    0, 4,		/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					"osc24M", 0x018,
-@@ -125,17 +126,18 @@ static struct ccu_nk pll_periph1_clk = {
- 	},
- };
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
--					"osc24M", 0x030,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
-+					    "osc24M", 0x030,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,		/* N */
-+					    0, 4,		/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
- 					"osc24M", 0x038,
+ static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
+ {
 -- 
-2.14.3
+1.9.1
