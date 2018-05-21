@@ -1,258 +1,147 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:47340 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751172AbeEVL3u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 May 2018 07:29:50 -0400
-From: Ilia Lin <ilialin@codeaurora.org>
-To: viresh.kumar@linaro.org
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Date: Tue, 22 May 2018 14:29:45 +0300
-Message-Id: <1526988585-21678-1-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
-References: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+Received: from mail.bootlin.com ([62.4.15.54]:38584 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750920AbeEUINY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 21 May 2018 04:13:24 -0400
+Date: Mon, 21 May 2018 10:12:53 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 12/15] drm/sun4i: Add support for second clock parent to
+ DW HDMI PHY clk driver
+Message-ID: <20180521081253.cmx2mvfbfybgmtlv@flea>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+ <20180519183127.2718-13-jernej.skrabec@siol.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5qhaxgfvy6rcsro3"
+In-Reply-To: <20180519183127.2718-13-jernej.skrabec@siol.net>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-the CPU frequency subset and voltage value of each OPP varies
-based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-defines the voltage and frequency value based on the msm-id in SMEM
-and speedbin blown in the efuse combination.
-The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-to provide the OPP framework with required information.
-This is used to determine the voltage and frequency value for each OPP of
-operating-points-v2 table when it is parsed by the OPP framework.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/Kconfig.arm          |  10 +++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c  | 163 +++++++++++++++++++++++++++++++++++
- 4 files changed, 177 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+--5qhaxgfvy6rcsro3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index de55c7d..0bfd40e 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
- 
-+config ARM_QCOM_CPUFREQ_KRYO
-+	bool "Qualcomm Kryo based CPUFreq"
-+	depends on QCOM_QFPROM
-+	depends on QCOM_SMEM
-+	select PM_OPP
-+	help
-+	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
-+
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 8d24ade..fb4a2ec 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..77d6ab8 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -118,6 +118,9 @@
- 
- 	{ .compatible = "nvidia,tegra124", },
- 
-+	{ .compatible = "qcom,apq8096", },
-+	{ .compatible = "qcom,msm8996", },
-+
- 	{ .compatible = "st,stih407", },
- 	{ .compatible = "st,stih410", },
- 
-diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-new file mode 100644
-index 0000000..c5bb070
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -0,0 +1,163 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+/*
-+ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-+ * the CPU frequency subset and voltage value of each OPP varies
-+ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-+ * defines the voltage and frequency value based on the msm-id in SMEM
-+ * and speedbin blown in the efuse combination.
-+ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-+ * to provide the OPP framework with required information.
-+ * This is used to determine the voltage and frequency value for each OPP of
-+ * operating-points-v2 table when it is parsed by the OPP framework.
-+ */
-+
-+#include <linux/cpu.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include <linux/soc/qcom/smem.h>
-+
-+#define MSM_ID_SMEM	137
-+
-+enum _msm_id {
-+	MSM8996V3 = 0xF6ul,
-+	APQ8096V3 = 0x123ul,
-+	MSM8996SG = 0x131ul,
-+	APQ8096SG = 0x138ul,
-+};
-+
-+enum _msm8996_version {
-+	MSM8996_V3,
-+	MSM8996_SG,
-+	NUM_OF_MSM8996_VERSIONS,
-+};
-+
-+static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-+{
-+	size_t len;
-+	u32 *msm_id;
-+	enum _msm8996_version version;
-+
-+	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
-+	/* The first 4 bytes are format, next to them is the actual msm-id */
-+	msm_id++;
-+
-+	switch ((enum _msm_id)*msm_id) {
-+	case MSM8996V3:
-+	case APQ8096V3:
-+		version = MSM8996_V3;
-+		break;
-+	case MSM8996SG:
-+	case APQ8096SG:
-+		version = MSM8996_SG;
-+		break;
-+	default:
-+		version = NUM_OF_MSM8996_VERSIONS;
-+	}
-+
-+	return version;
-+}
-+
-+static int __init qcom_cpufreq_kryo_driver_init(void)
-+{
-+	struct opp_table *opp_tables[NR_CPUS] = {0};
-+	enum _msm8996_version msm8996_version;
-+	struct nvmem_cell *speedbin_nvmem;
-+	struct platform_device *pdev;
-+	struct device_node *np;
-+	struct device *cpu_dev;
-+	unsigned cpu;
-+	u8 *speedbin;
-+	u32 versions;
-+	size_t len;
-+	int ret;
-+
-+	cpu_dev = get_cpu_device(0);
-+	if (NULL == cpu_dev)
-+		return -ENODEV;
-+
-+	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-+	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-+		dev_err(cpu_dev, "Not Snapdragon 820/821!");
-+		return -ENODEV;
-+	}
-+
-+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-+	if (IS_ERR(np))
-+		return PTR_ERR(np);
-+
-+	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-+		ret = -ENOENT;
-+		goto free_np;
-+	}
-+
-+	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-+	if (IS_ERR(speedbin_nvmem)) {
-+		ret = PTR_ERR(speedbin_nvmem);
-+		dev_err(cpu_dev, "Could not get nvmem cell: %d\n", ret);
-+		goto free_np;
-+	}
-+
-+	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-+	nvmem_cell_put(speedbin_nvmem);
-+
-+	switch (msm8996_version) {
-+	case MSM8996_V3:
-+		versions = 1 << (unsigned int)(*speedbin);
-+		break;
-+	case MSM8996_SG:
-+		versions = 1 << ((unsigned int)(*speedbin) + 4);
-+		break;
-+	default:
-+		BUG();
-+		break;
-+	}
-+
-+	for_each_possible_cpu(cpu) {
-+		cpu_dev = get_cpu_device(cpu);
-+		if (NULL == cpu_dev) {
-+			ret = -ENODEV;
-+			goto free_opp;
-+		}
-+
-+		opp_tables[cpu] = dev_pm_opp_set_supported_hw(cpu_dev,
-+							      &versions, 1);
-+		ret = PTR_ERR(opp_tables[cpu]);
-+		if (ret && ret != -EBUSY) {
-+			dev_err(cpu_dev, "Failed to set supported hardware\n");
-+			goto free_opp;
-+		}
-+	}
-+
-+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	if (!IS_ERR(pdev))
-+		return 0;
-+
-+	ret = PTR_ERR(pdev);
-+	dev_err(cpu_dev, "Failed to register platform device\n");
-+
-+free_opp:
-+	for_each_possible_cpu(cpu) {
-+		if (IS_ERR_OR_NULL(opp_tables[cpu]))
-+			break;
-+		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
-+	}
-+free_np:
-+	of_node_put(np);
-+
-+	return ret;
-+}
-+late_initcall(qcom_cpufreq_kryo_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
+On Sat, May 19, 2018 at 08:31:24PM +0200, Jernej Skrabec wrote:
+> Expand HDMI PHY clock driver to support second clock parent.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h      |  6 +-
+>  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c     | 29 ++++++-
+>  drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c | 90 ++++++++++++++++------
+>  3 files changed, 98 insertions(+), 27 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4=
+i/sun8i_dw_hdmi.h
+> index 801a17222762..aadbe0a10b0c 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+> +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+> @@ -98,7 +98,8 @@
+>  #define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
+>  #define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
+>  #define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
+> -#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
+> +#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK	BIT(26)
+> +#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT	26
+>  #define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
+>  #define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
+>  #define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
+> @@ -190,6 +191,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi=
+);
+>  void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy);
+>  const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void);
+> =20
+> -int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev);
+> +int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
+> +			 bool second_parent);
+> =20
+>  #endif /* _SUN8I_DW_HDMI_H_ */
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun=
+4i/sun8i_hdmi_phy.c
+> index deba47ed69d8..7a911f0a3ae3 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> @@ -183,7 +183,13 @@ static int sun8i_hdmi_phy_config_h3(struct dw_hdmi *=
+hdmi,
+>  	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
+>  			   SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK, 0);
+> =20
+> -	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, pll_cfg1_init);
+> +	/*
+> +	 * NOTE: We have to be careful not to overwrite PHY parent
+> +	 * clock selection bit and clock divider.
+> +	 */
+> +	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
+> +			   ~SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK,
+> +			   pll_cfg1_init);
 
+It feels like it belongs in a separate patch.
+
+>  	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG,
+>  			   (u32)~SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK,
+>  			   pll_cfg2_init);
+> @@ -352,6 +358,10 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi=
+_phy *phy)
+>  			   SUN8I_HDMI_PHY_ANA_CFG3_SCLEN |
+>  			   SUN8I_HDMI_PHY_ANA_CFG3_SDAEN);
+> =20
+> +	/* reset PLL clock configuration */
+> +	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, 0);
+> +	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG, 0);
+> +
+
+Ditto,
+
+> +
+> +		/*
+> +		 * Even though HDMI PHY clock doesn't have enable/disable
+> +		 * handlers, we have to enable it. Otherwise it could happen
+> +		 * that parent PLL is not enabled by clock framework in a
+> +		 * highly unlikely event when parent PLL is used solely for
+> +		 * HDMI PHY clock.
+> +		 */
+> +		clk_prepare_enable(phy->clk_phy);
+
+The implementation of the clock doesn't really matter in our API
+usage. If we're using a clock, we have to call
+clk_prepare_enable. That's documented everywhere, and mentionning how
+the clock is implemented is an abstraction leakage and it's
+irrelevant. I'd simply remove the comment here.
+
+And it should be in a separate patch as well.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--5qhaxgfvy6rcsro3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsCf4UACgkQ0rTAlCFN
+r3TDRA//XTvxU6pRWK7ZWc69x00PC5asUxqZmAY2fR4fSrmZyHIsV+mlyK/I1c8C
+cl/yvsRbuk5FAHdJQtJpsPjyT+wqUyy2LlX2bzj4cKR2Bignhh027eOtiko8onWe
+HDCkgcLLIeqT1DhFTzpS5xoQ7C5WDvKdf2xXQ3RGTbg3xnRlChkfAnYtDqfrXWZ5
+OTpEIJpWEBP7WJ50Xmri7utTbqy6ilxxURnr2p1XoSejb7K1/UwIXoMXzlLXOzUR
+bbHr625wiqoKWB3q0ukPlrOLX8miF20B/0/1caRuGzUcCG3SEfzTY3kzbIF8bsro
+YyAquTk+VczlKi4i1z1XwHgXscoNeOXiW+nXmMKTBn6mXdTks6yYQdcS+mtf7yWe
++YVau3E+eWy7VS0TSwY9t0OPFKl1b/Zaamr0ZKA1u6jeJmOTlVTVWjRLuLpIfyOC
+JQ6vvrQqGm3xMSCNytZ4+s4nSxC6K+Al9RbCiHgTJps1q9LYp07RhoIgFF82nPnj
+t91W4MbZHgc075PZTVf/3vg2R55NQnCGLWeH1fi/MtS9Ee4lLNQLydqyatjhMkt1
+keS+Ww2aNoa0R+D08U9XcfXx3r+PtuxXUaE8Jlv1YgbUgcDc0yTiyUPrtxzLeWyd
+Hb57WCJOE7JupKcwnShJHvLk4oeubb2QFsAKFGbCCf/bMWaDD4k=
+=KxEv
+-----END PGP SIGNATURE-----
+
+--5qhaxgfvy6rcsro3--
