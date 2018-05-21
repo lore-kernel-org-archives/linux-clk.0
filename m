@@ -1,147 +1,439 @@
-Return-Path: <Steve_Longerbeam@mentor.com>
-Subject: Re: [PATCH] clk: vc5: Fix div-by-0 when rounding a rate of zero
-To: Marek Vasut <marek.vasut@gmail.com>, Steve Longerbeam
-	<slongerbeam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Laurent
- Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Kieran Bingham
-	<kieran.bingham@ideasonboard.com>
-References: <1527791036-11251-1-git-send-email-steve_longerbeam@mentor.com>
- <1084deae-ca55-aba1-ec08-7e1d976de7b7@gmail.com>
- <e6d84bd1-5ad9-1a01-1cdf-0356fea82c16@gmail.com>
- <f7a05f4b-35c4-4900-24bd-44aab1c669cb@gmail.com>
-From: Steve Longerbeam <steve_longerbeam@mentor.com>
-Message-ID: <59591484-b76d-6764-73c3-637bb4e5178f@mentor.com>
-Date: Thu, 31 May 2018 11:52:26 -0700
-MIME-Version: 1.0
-In-Reply-To: <f7a05f4b-35c4-4900-24bd-44aab1c669cb@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v9 09/15] dt: qcom: Add opp and thermal to the msm8996
+Date: Mon, 21 May 2018 14:25:26 +0300
+Message-Id: <1526901932-9514-10-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 269 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 260 insertions(+), 9 deletions(-)
 
-
-On 05/31/2018 11:35 AM, Marek Vasut wrote:
-> On 05/31/2018 08:32 PM, Steve Longerbeam wrote:
->> Hi Marek,
->>
->>
->> On 05/31/2018 11:25 AM, Marek Vasut wrote:
->>> On 05/31/2018 08:23 PM, Steve Longerbeam wrote:
->>>> Just return zero for a rounded rate if requested rate is zero.
->>>>
->>>> This was caught by CONFIG_UBSAN:
->>>>
->>>> [  192.266748] UBSAN: Undefined behaviour in
->>>> drivers/clk/clk-versaclock5.c:513:17
->>>> [  192.274050] division by zero
->>>> [  192.276976] CPU: 0 PID: 2579 Comm: vsp-unit-test-0 Tainted: G
->>>> B   WC      4.14.17-02752-g13fb96f #1
->>>> [  192.286378] Hardware name: Renesas Salvator-X board based on
->>>> r8a7795 ES2.0+ (DT)
->>>> [  192.293852] Call trace:
->>>> [  192.296343] [<ffff2000080900dc>] dump_backtrace+0x0/0x390
->>>> [  192.301807] [<ffff200008090480>] show_stack+0x14/0x1c
->>>> [  192.306920] [<ffff200008f66574>] dump_stack+0x134/0x1a8
->>>> [  192.312213] [<ffff2000087aaa30>] ubsan_epilogue+0x14/0x60
->>>> [  192.317677] [<ffff2000087ab4d0>]
->>>> __ubsan_handle_divrem_overflow+0x11c/0x170
->>>> [  192.324720] [<ffff200008852120>] vc5_fod_round_rate+0x68/0x148
->>>> [  192.330620] [<ffff20000884567c>] clk_calc_new_rates+0x238/0x3fc
->>>> [  192.336607] [<ffff2000088456e0>] clk_calc_new_rates+0x29c/0x3fc
->>>> [  192.342595] [<ffff2000088483ac>] clk_core_set_rate_nolock+0x48/0x11c
->>>> [  192.349019] [<ffff2000088484b4>] clk_set_rate+0x34/0x4c
->>>> [  192.354307] [<ffff20000895e304>] rcar_du_pm_suspend+0x274/0x2f4
->>>> [  192.360297] [<ffff20000898feac>] platform_pm_suspend+0x78/0xb8
->>>> [  192.366198] [<ffff2000089a5604>] dpm_run_callback+0x584/0xa18
->>>> [  192.372010] [<ffff2000089a69e0>] __device_suspend+0x1a8/0x534
->>>> [  192.377822] [<ffff2000089adc48>] dpm_suspend+0x130/0xea0
->>>> [  192.383197] [<ffff2000089b0344>] dpm_suspend_start+0x130/0x138
->>>> [  192.389099] [<ffff20000817f584>]
->>>> suspend_devices_and_enter+0xf0/0x1778
->>>> [  192.395700] [<ffff200008183014>] pm_suspend+0x2408/0x245c
->>>> [  192.401162] [<ffff20000817c0a4>] state_store+0xf0/0x130
->>>> [  192.406451] [<ffff200008f6f19c>] kobj_attr_store+0x5c/0x6c
->>>> [  192.412002] [<ffff2000084f4c94>] sysfs_kf_write+0xe8/0xfc
->>>> [  192.417466] [<ffff2000084f30b0>] kernfs_fop_write+0x22c/0x2e4
->>>> [  192.423281] [<ffff2000083e46d4>] __vfs_write+0x104/0x34c
->>>> [  192.428656] [<ffff2000083e4cc4>] vfs_write+0x134/0x2d8
->>>> [  192.433857] [<ffff2000083e5150>] SyS_write+0xbc/0x12c
->>>> [  192.438967] Exception stack(0xffff8006cd1cfec0 to 0xffff8006cd1d0000)
->>>> [  192.445480] fec0: 0000000000000001 000000001e303f00
->>>> 0000000000000004 0000ffff959a5000
->>>> [  192.453397] fee0: 0000000000000000 0000000155510004
->>>> 0000000000000003 000000000000006d
->>>> [  192.461314] ff00: 0000000000000040 0000000000000000
->>>> 0000ffffcc304800 0000000000000020
->>>> [  192.469230] ff20: 0000000000000000 0000000000000000
->>>> 0000000000000001 0000000000000008
->>>> [  192.477148] ff40: 00000000004eb3b8 0000ffff958bb840
->>>> 000000000000003d 0000000000000001
->>>> [  192.485065] ff60: 000000001e303f00 0000ffff959a1508
->>>> 0000000000000004 000000001e303f00
->>>> [  192.492982] ff80: 0000000000000004 00000000004d4c68
->>>> 0000000000000001 0000000000000000
->>>> [  192.500899] ffa0: 000000001e30d5c0 0000ffffcc304820
->>>> 0000ffff958bec64 0000ffffcc304820
->>>> [  192.508816] ffc0: 0000ffff95912898 0000000020000000
->>>> 0000000000000001 0000000000000040
->>>> [  192.516733] ffe0: 0000000000000000 0000000000000000
->>>> 0000000000000000 0000000000000000
->>>> [  192.524650] [<ffff200008083ef0>] el0_svc_naked+0x24/0x28
->>>>
->>>> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
->>>> ---
->>>>    drivers/clk/clk-versaclock5.c | 4 ++++
->>>>    1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/clk-versaclock5.c
->>>> b/drivers/clk/clk-versaclock5.c
->>>> index decffb3..113523d 100644
->>>> --- a/drivers/clk/clk-versaclock5.c
->>>> +++ b/drivers/clk/clk-versaclock5.c
->>>> @@ -509,6 +509,10 @@ static long vc5_fod_round_rate(struct clk_hw
->>>> *hw, unsigned long rate,
->>>>        u32 div_int;
->>>>        u64 div_frc;
->>>>    +    /* prevent div-by-0 */
->>>> +    if (rate == 0)
->>>> +        return 0;
->>>> +
->>>>        /* Determine integer part, which is 12 bit wide */
->>>>        div_int = f_in / rate;
->>>>        /*
->>>>
->>> Can this actually happen ?
->> We caught this using the Renesas 3.6.0 BSP release, when performing
->> a suspend of rcar-du driver. The rcar_du_pm_suspend() in 3.6.0 BSP is
->> modified
->> from mainline version, including calling clk_set_rate() on the crtc
->> clocks with a
->> rate of zero. So this is not actually reproducible (yet) in mainline.
-> So it sets clock to 0 ?
-
-Yep, see
-
-https://kernel.googlesource.com/pub/scm/linux/kernel/git/horms/renesas-bsp/+/rcar-3.6.0/drivers/gpu/drm/rcar-du/rcar_du_drv.c#359
-
->   Anyway, this looks sane, although maybe the
-> whole driver could use a once-over to see if there could be more of this.
-
-Actually I do see more potential divide-by-zeros due to a passed rate
-of zero, including vc5_pfd_round_rate() and vc5_pfd_set_rate().
-
-I can resubmit this patch fixing all cases in clk-versaclock5.c if you
-like (and probably remove the misleading backtrace in the commit
-message since it is a Renesas 3.6.0 kernel backtrace not a mainline
-backtrace).
-
-Or perhaps just treat this as a heads-up, I'll leave it up to you.
-
->
-> Or should the clock framework even let us set clock to 0 Hz ?
-
-That is a good question, it might make sense for the core clock framework
-to not allow passing a rate of 0 on to the clock ops, and instead treat
-it generically.
-
-Steve
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 37b7152c..e6cf290 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -14,6 +14,7 @@
+ #include <dt-bindings/clock/qcom,gcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. MSM8996";
+@@ -97,6 +98,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x0>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 			L2_0: l2-cache {
+ 			      compatible = "cache";
+@@ -109,6 +113,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x1>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 		};
+ 
+@@ -117,6 +124,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x100>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 			L2_1: l2-cache {
+ 			      compatible = "cache";
+@@ -129,6 +139,9 @@
+ 			compatible = "qcom,kryo";
+ 			reg = <0x0 0x101>;
+ 			enable-method = "psci";
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 		};
+ 
+@@ -155,6 +168,182 @@
+ 		};
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <307200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-422400000 {
++			opp-hz = /bits/ 64 <422400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <480000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <556800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <652800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <729600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-844800000 {
++			opp-hz = /bits/ 64 <844800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-960000000 {
++			opp-hz = /bits/ 64 <960000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 <1036800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 <1113600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 <1190400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1228800000 {
++			opp-hz = /bits/ 64 <1228800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 <1324800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 <1401600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 <1478400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 <1593600000>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <307200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-403200000 {
++			opp-hz = /bits/ 64 <403200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <480000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <556800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <652800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <729600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-806400000 {
++			opp-hz = /bits/ 64 <806400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-883200000 {
++			opp-hz = /bits/ 64 <883200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-940800000 {
++			opp-hz = /bits/ 64 <940800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 <1036800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 <1113600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 <1190400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1248000000 {
++			opp-hz = /bits/ 64 <1248000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 <1324800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 <1401600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 <1478400000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1555200000 {
++			opp-hz = /bits/ 64 <1555200000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1632000000 {
++			opp-hz = /bits/ 64 <1632000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1708800000 {
++			opp-hz = /bits/ 64 <1708800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1785600000 {
++			opp-hz = /bits/ 64 <1785600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1824000000 {
++			opp-hz = /bits/ 64 <1824000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1920000000 {
++			opp-hz = /bits/ 64 <1920000000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 <1996800000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2073600000 {
++			opp-hz = /bits/ 64 <2073600000>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2150400000 {
++			opp-hz = /bits/ 64 <2150400000>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
+ 	thermal-zones {
+ 		cpu-thermal0 {
+ 			polling-delay-passive = <250>;
+@@ -163,18 +352,34 @@
+ 			thermal-sensors = <&tsens0 3>;
+ 
+ 			trips {
+-				cpu_alert0: trip0 {
++				cpu_alert0: cpu_alert0 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn0: cpu_warn0 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit0: trip1 {
++				cpu_crit0: cpu_crit0 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn0>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal1 {
+@@ -184,18 +389,34 @@
+ 			thermal-sensors = <&tsens0 5>;
+ 
+ 			trips {
+-				cpu_alert1: trip0 {
++				cpu_alert1: cpu_alert1 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn1: cpu_warn1 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit1: trip1 {
++				cpu_crit1: cpu_crit1 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert1>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn1>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal2 {
+@@ -205,18 +426,33 @@
+ 			thermal-sensors = <&tsens0 8>;
+ 
+ 			trips {
+-				cpu_alert2: trip0 {
++				cpu_alert2: cpu_alert2 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn2: cpu_warn2 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+-				cpu_crit2: trip1 {
++				cpu_crit2: cpu_crit2 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert2>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn2>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu-thermal3 {
+@@ -226,9 +462,14 @@
+ 			thermal-sensors = <&tsens0 10>;
+ 
+ 			trips {
+-				cpu_alert3: trip0 {
++				cpu_alert3: cpu_alert3 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn3: cpu_warn3 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+ 
+@@ -238,6 +479,16 @@
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert3>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn3>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 	};
+ 
+@@ -414,7 +665,7 @@
+ 		};
+ 
+ 		kryocc: clock-controller@6400000 {
+-			compatible = "qcom,apcc-msm8996";
++			compatible = "qcom,msm8996-apcc";
+ 			reg = <0x6400000 0x90000>;
+ 			#clock-cells = <1>;
+ 		};
+@@ -1001,7 +1252,7 @@
+ 
+ 				pinctrl-names = "default", "sleep";
+ 				pinctrl-0 = <&pcie2_clkreq_default &pcie2_perst_default &pcie2_wake_default>;
+-				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep >;
++				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep>;
+ 
+ 				vdda-supply = <&pm8994_l28>;
+ 
+-- 
+1.9.1
