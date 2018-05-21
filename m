@@ -1,62 +1,117 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <TY1PR01MB1769DFD4CD9803D10CE1CA4BF56C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdW-HUBRF4rLdfzixcyMUBg7+4XU+-3zayePoyeQiBZ8ZA@mail.gmail.com>
- <CAMMfpEyTORirKiE417AQzCLzxDTKmy83bwivpfJaHQsKUKMc_w@mail.gmail.com>
- <CAMuHMdWAU9wZkA+Z0BNAGrLV1WrCO3PgCTo2p=q3Mq9Tm6JBGA@mail.gmail.com>
- <CAMMfpEwKa90XHu_igCxRQLy_CSVHTkN8eD8f7o=wgtttSn=FqA@mail.gmail.com>
- <CAMuHMdWVde-DfbLVbvZT4rQfsVz1z7AMyQVgbO2DXrQKsEdVcw@mail.gmail.com> <TY1PR01MB1769DFD4CD9803D10CE1CA4BF56C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 30 May 2018 15:36:44 +0200
-Message-ID: <CAMuHMdV8Hey=L6jv7HFyTUbeKdcC8ygn7PFjW2akETHe44MjeQ@mail.gmail.com>
-Subject: Re: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: M P <buserror@gmail.com>, Michel Pollet <michel.pollet@bp.renesas.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Michel Pollet <buserror+upstream@gmail.com>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v9 14/15] dt-bindings: qcom_spmi: Document SAW support
+Date: Mon, 21 May 2018 14:25:31 +0300
+Message-Id: <1526901932-9514-15-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Phil,
+Document the DT bindings for the SAW regulators.
 
-On Wed, May 30, 2018 at 3:30 PM, Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> On 25 May 2018 10:13 Geert Uytterhoeven wrote:
->  [snip]
->
->> Now, given the clock definitions for RZ/N1[DSL] are the same (although some
->> don't exist on some variants), you could keep on using RZN1_CLK_FOO for
->> the names of the defines, and store them in a common file, included by the
->> soc-specific file. But please make clear the common file cannot be included
->> directly, so the filename does not become part of the DT ABI, and you are
->> shielded from future marketing silliness (e.g. next quarter's RZ/N1X being
->> totally different).
-> How does an include filename become part of the DT ABI?
-> I thought the dtb is the ABI, not the dts. Am I wrong?
+The saw-leader is the only property that is configurable in DT.
 
-You're right. In se the DT ABI applies to the DTB, not to the DTS.
+The saw-slave property allows ganging (grouping) of
+several regulators so that their outputs can be combined.
 
-The definitions inside the include file are part of the DT bindings,
-and thus cannot
-be changed.  Your DTS files get these definitions by including the header file,
-so the header filename is also part of the bindings, and thus can't be changed
-that easily.
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/regulator/qcom,spmi-regulator.txt     | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+index 57d2c65..406f2e5 100644
+--- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+@@ -110,6 +110,11 @@ Qualcomm SPMI Regulators
+ 	Definition: Reference to regulator supplying the input pin, as
+ 		    described in the data sheet.
+ 
++- qcom,saw-reg:
++	Usage: optional
++	Value type: <phandle>
++	Description: Reference to syscon node defining the SAW registers.
++
+ 
+ The regulator node houses sub-nodes for each regulator within the device. Each
+ sub-node is identified using the node's name, with valid values listed for each
+@@ -201,6 +206,17 @@ see regulator.txt - with additional custom properties described below:
+ 			2 = 0.55 uA
+ 			3 = 0.75 uA
+ 
++- qcom,saw-slave:
++	Usage: optional
++	Value type: <boo>
++	Description: SAW controlled gang slave. Will not be configured.
++
++- qcom,saw-leader:
++	Usage: optional
++	Value type: <boo>
++	Description: SAW controlled gang leader. Will be configured as
++		     SAW regulator.
++
+ Example:
+ 
+ 	regulators {
+@@ -221,3 +237,32 @@ Example:
+ 
+ 		....
+ 	};
++
++Example 2:
++
++	saw3: syscon@9A10000 {
++		compatible = "syscon";
++		reg = <0x9A10000 0x1000>;
++	};
++
++	...
++
++	spm-regulators {
++		compatible = "qcom,pm8994-regulators";
++		qcom,saw-reg = <&saw3>;
++		s8 {
++			qcom,saw-slave;
++		};
++		s9 {
++			qcom,saw-slave;
++		};
++		s10 {
++			qcom,saw-slave;
++		};
++		pm8994_s11_saw: s11 {
++			qcom,saw-leader;
++			regulator-always-on;
++			regulator-min-microvolt = <900000>;
++			regulator-max-microvolt = <1140000>;
++		};
++	};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+1.9.1
