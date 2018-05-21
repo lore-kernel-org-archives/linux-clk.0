@@ -1,93 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38349 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752188AbeETCKN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 May 2018 22:10:13 -0400
-MIME-Version: 1.0
-In-Reply-To: <CAGRGNgWumzhiiwJenOXRuRN0i-_2uY=YR5L+9m70HW2ibF=C7w@mail.gmail.com>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net>
- <20180519183127.2718-11-jernej.skrabec@siol.net> <CAGRGNgWumzhiiwJenOXRuRN0i-_2uY=YR5L+9m70HW2ibF=C7w@mail.gmail.com>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Sun, 20 May 2018 12:09:52 +1000
-Message-ID: <CAGRGNgXbKGhnern4=_W9W5dKM54H5B1dnAD7up-23rUAMWWCSw@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 10/15] drm/sun4i: Add support for R40 TV TCONs
-To: jernej.skrabec@siol.net
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	viresh.kumar@linaro.org,
+	nm@ti.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org,
+	ilialin@codeaurora.org,
+	amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org,
+	celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: [PATCH v9 03/15] clk: Use devm_ in the register fixed factor clock
+Date: Mon, 21 May 2018 14:25:20 +0300
+Message-Id: <1526901932-9514-4-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jernej,
+Use devm_clk_hw_register instead of clk_hw_register
+to simplify the usage of this API. This way drivers that call
+the clk_hw_register_fixed_factor won't need to maintain
+a data structure for further cleanup.
 
-On Sun, May 20, 2018 at 11:57 AM, Julian Calaby <julian.calaby@gmail.com> wrote:
-> Hi Jernej,
->
-> On Sun, May 20, 2018 at 4:31 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->> R40 display pipeline has a lot of possible configurations. HDMI can be
->> connected to 2 different TCONs (out of 4) and mixers can be connected to
->> any TCON. All this must be configured in TCON TOP.
->>
->> Along with definition of TCON capabilities also add mux callback, which
->> can configure this complex pipeline.
->>
->> For now, only TCON TV is supported.
->>
->> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> ---
->>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 39 ++++++++++++++++++++++++++++++
->>  1 file changed, 39 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> index e0c562ce1c22..81b9551e4f78 100644
->> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> @@ -1274,6 +1274,31 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
->>         return 0;
->>  }
->>
->> +static int sun8i_r40_tcon_tv_set_mux(struct sun4i_tcon *tcon,
->> +                                    const struct drm_encoder *encoder,
->> +                                    int index)
->> +{
->> +       if (encoder->encoder_type == DRM_MODE_ENCODER_TMDS)
->> +               sun8i_tcon_top_set_hdmi_src(tcon->tcon_top, index);
->> +
->> +       sun8i_tcon_top_de_config(tcon->tcon_top, tcon->id,
->> +                                tcon_type_tv, index);
->> +
->> +       return 0;
->> +}
->> +
->> +static int sun8i_r40_tcon_tv_set_mux_0(struct sun4i_tcon *tcon,
->> +                                      const struct drm_encoder *encoder)
->> +{
->> +       return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 0);
->> +}
->> +
->> +static int sun8i_r40_tcon_tv_set_mux_1(struct sun4i_tcon *tcon,
->> +                                      const struct drm_encoder *encoder)
->> +{
->> +       return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 1);
->> +}
->
-> Are TCON-TOPs going to be a common thing in new SoCs from Allwinner?
-> If so, maybe we should add an index to the TCON quirks and have a
-> common TCON-TOP set_mux function.
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/clk-fixed-factor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Actually, that only moves it up a level. Should it be a devicetree property?
-
-Thanks,
-
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index a5d402d..8e39bda 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 	init.num_parents = 1;
+ 
+ 	hw = &fix->hw;
+-	ret = clk_hw_register(dev, hw);
++	ret = devm_clk_hw_register(dev, hw);
+ 	if (ret) {
+ 		kfree(fix);
+ 		hw = ERR_PTR(ret);
 -- 
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+1.9.1
