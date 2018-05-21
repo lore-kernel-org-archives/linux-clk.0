@@ -1,46 +1,46 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Akshu Agrawal <akshu.agrawal@amd.com>
-Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com, mturquette@baylibre.com, sboyd@kernel.org, christian.koenig@amd.com, airlied@redhat.com, Shaoyun.Liu@amd.com, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] Add support for general system clock on ST AMD platform
-Date: Wed, 23 May 2018 13:32:06 +0200
-Message-ID: <1850531.osTZcrXkZF@aspire.rjw.lan>
-In-Reply-To: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
-References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+Return-Path: <andy.shevchenko@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 22 May 2018 00:50:23 +0300
+Message-ID: <CAHp75Vf6rDpFQCt+qG3DSWKZm36F1hkAVPtGzr6NHPuQg4vhXQ@mail.gmail.com>
+Subject: Re: [PATCH 12/33] clk: bcm2835: use match_string() helper
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, linux-clk@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday, May 9, 2018 11:58:59 AM CEST Akshu Agrawal wrote:
-> AMD ST/CZ platform provides a general system clock which can be used
-> by any driver. Registration of this clock will done in clk-st driver.
-> While the ACPI misc device will create the required MMIO mappings
-> and pass the same to the clk-st driver. The clk-st driver will
-> use the address to enable/disable and set frequency.
-> 
-> Changelog:
-> v2:
->   clk: x86: Add ST oscout platform clock: v3->v4 unregister clk_hw
->   ACPI: APD: Add AMD misc clock handler support: No change (v2)
-> v3:
->   clk: x86: Add ST oscout platform clock:
-> 		v4->v5 use static array, change license
->   ACPI: APD: Add AMD misc clock handler support:
-> 		v2->v3 use devm_ioremap, fix warning
-> 
-> Akshu Agrawal (2):
->   clk: x86: Add ST oscout platform clock
->   ACPI: APD: Add AMD misc clock handler support
-> 
->  drivers/acpi/acpi_apd.c              | 50 ++++++++++++++++++++
->  drivers/clk/x86/Makefile             |  1 +
->  drivers/clk/x86/clk-st.c             | 88 ++++++++++++++++++++++++++++++++++++
->  include/linux/platform_data/clk-st.h | 35 ++++++++++++++
->  4 files changed, 174 insertions(+)
->  create mode 100644 drivers/clk/x86/clk-st.c
->  create mode 100644 include/linux/platform_data/clk-st.h
-> 
-> 
+On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used intead of open coded variant.
+>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Eric Anholt <eric@anholt.net>
+> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 
-Both patches applied, thanks!
+> -       size_t i, j;
+> -       int ret;
+> +       int i, ret;
+
+I do not see any need to change type for i.
+
+> +               ret = match_string(cprman_parent_names,
+> +                                  ARRAY_SIZE(cprman_parent_names),
+> +                                  parents[i]);
+> +               if (ret >= 0)
+> +                       parents[i] = cprman->real_parent_names[ret];
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
