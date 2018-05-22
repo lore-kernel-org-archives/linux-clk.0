@@ -1,82 +1,54 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:54884 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751907AbeEQSFL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 17 May 2018 14:05:11 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Rui Miguel Silva <rui.silva@linaro.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180517125033.18050-4-rui.silva@linaro.org>
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38447 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751823AbeEVOxb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 May 2018 10:53:31 -0400
+Received: by mail-wr0-f194.google.com with SMTP id 94-v6so20721284wrf.5
+        for <linux-clk@vger.kernel.org>; Tue, 22 May 2018 07:53:31 -0700 (PDT)
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
 Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
         Shawn Guo <shawnguo@kernel.org>,
         Fabio Estevam <fabio.estevam@nxp.com>,
         devicetree@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ryan Harkin <ryan.harkin@linaro.org>,
-        Rui Miguel Silva <rui.silva@linaro.org>,
-        linux-clk@vger.kernel.org
-References: <20180517125033.18050-1-rui.silva@linaro.org>
- <20180517125033.18050-4-rui.silva@linaro.org>
-Message-ID: <152658031035.210890.12212209931570500982@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 03/12] clk: imx7d: fix mipi dphy div parent
-Date: Thu, 17 May 2018 11:05:10 -0700
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+Subject: [PATCH v6 13/13] media: staging/imx: add i.MX7 entries to TODO file
+Date: Tue, 22 May 2018 15:52:45 +0100
+Message-Id: <20180522145245.3143-14-rui.silva@linaro.org>
+In-Reply-To: <20180522145245.3143-1-rui.silva@linaro.org>
+References: <20180522145245.3143-1-rui.silva@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rui Miguel Silva (2018-05-17 05:50:24)
-> Fix the mipi dphy root divider to mipi_dphy_pre_div, this would remove a =
-orphan
-> clock and set the correct parent.
-> =
+Add some i.MX7 related entries to TODO file.
 
-> before:
-> cat clk_orphan_summary
->                                  enable  prepare  protect
->    clock                          count    count    count        rate   a=
-ccuracy   phase
-> -------------------------------------------------------------------------=
----------------
->  mipi_dphy_post_div                   1        1        0           0    =
-      0 0
->     mipi_dphy_root_clk                1        1        0           0    =
-      0 0
-> =
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+---
+ drivers/staging/media/imx/TODO | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> cat clk_dump | grep mipi_dphy
-> mipi_dphy_post_div                    1        1        0           0    =
-      0 0
->     mipi_dphy_root_clk                1        1        0           0    =
-      0 0
-> =
+diff --git a/drivers/staging/media/imx/TODO b/drivers/staging/media/imx/TODO
+index aeeb15494a49..6f29b5ca5324 100644
+--- a/drivers/staging/media/imx/TODO
++++ b/drivers/staging/media/imx/TODO
+@@ -45,3 +45,12 @@
+ 
+      Which means a port must not contain mixed-use endpoints, they
+      must all refer to media links between V4L2 subdevices.
++
++- i.MX7: all of the above, since it uses the imx media core
++
++- i.MX7: use Frame Interval Monitor
++
++- i.MX7: runtime testing with parallel sensor, links setup and streaming
++
++- i.MX7: runtime testing with different formats, for the time only 10-bit bayer
++  is tested
+-- 
+2.17.0
 
-> after:
-> cat clk_dump | grep mipi_dphy
->    mipi_dphy_src                     1        1        0    24000000     =
-     0 0
->        mipi_dphy_cg                  1        1        0    24000000     =
-     0 0
->           mipi_dphy_pre_div          1        1        0    24000000     =
-     0 0
->              mipi_dphy_post_div      1        1        0    24000000     =
-     0 0
->                 mipi_dphy_root_clk   1        1        0    24000000     =
-     0 0
-> =
-
-> Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
-> =
-
-> Cc: linux-clk@vger.kernel.org
-> Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
-> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
-> ---
-
-I only get two patches out of the 12 and I don't get a cover letter.
-Did you want me to pick up these clk patches into clk-next? Where are
-the other patches? Can you cc lkml on all your kernel emails so I can
-easily find them?
