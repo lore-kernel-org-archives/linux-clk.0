@@ -1,109 +1,82 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: sboyd@kernel.org,
+	mturquette@baylibre.com
+Cc: leo.yan@linaro.org,
+	olof@lixom.net,
 	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 20/26] drm: sun4i: add support for HVCC regulator for DWC HDMI glue
-Date: Fri, 18 May 2018 15:15:30 +0530
-Message-Id: <20180518094536.17201-21-jagan@amarulasolutions.com>
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk/driver/hisi: Consolidate the Kconfig for the CLOCK_STUB
+Date: Tue, 22 May 2018 22:30:18 +0200
+Message-Id: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.io>
+The current defconfig is inconsistent as it selects the mailbox and
+the clock for the hi6220 and the hi3660 without having their Kconfigs
+making sure the dependencies are correct. It ends up when selecting
+different versions for the kernel (for example when git bisecting)
+those options disappear and they don't get back, leading to unexpected
+behaviors. In our case, the cpufreq driver does no longer work because
+the clock fails to initialize due to the clock stub and the mailbox
+missing.
 
-Allwinner SoCs with DWC HDMI controller have a "HVCC" power pin for the
-HDMI part, and on some boards it's connected to a dedicated regulator
-rather than the main 3.3v.
+In order to have the dependencies correctly set when defaulting, let's
+do the same as commit 3a49afb84ca074e ("clk: enable hi655x common clk
+automatically") where we select automatically the driver when the
+parent driver is selected. With sensible defaults in place, we can leave
+other choices for EXPERT.
 
-Add support for optional HVCC regulator. For boards that doesn't use a
-dedicated regulator to power it, the default dummy regulator is used.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
-Changes for v2:
-- none
 
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 14 ++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 ++
- 2 files changed, 16 insertions(+)
+Split the patch into the clk specific and resent as requested by Olof
+Johansson.
+---
+ arch/arm64/configs/defconfig  |  1 -
+ drivers/clk/hisilicon/Kconfig | 13 ++++++++-----
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-index 9f40a44b456b..7c33faff7ad4 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-@@ -73,6 +73,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 	if (encoder->possible_crtcs == 0)
- 		return -EPROBE_DEFER;
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index ecf6137..1d9d8b9 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -549,7 +549,6 @@ CONFIG_HWSPINLOCK_QCOM=y
+ CONFIG_ARM_MHU=y
+ CONFIG_PLATFORM_MHU=y
+ CONFIG_BCM2835_MBOX=y
+-CONFIG_HI6220_MBOX=y
+ CONFIG_QCOM_APCS_IPC=y
+ CONFIG_ROCKCHIP_IOMMU=y
+ CONFIG_TEGRA_IOMMU_SMMU=y
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index 1bd4355..becdb1d 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -44,14 +44,17 @@ config RESET_HISI
+ 	  Build reset controller driver for HiSilicon device chipsets.
  
-+	hdmi->vcc_hdmi = devm_regulator_get(dev, "hvcc");
-+	if (IS_ERR(hdmi->vcc_hdmi)) {
-+		dev_err(dev, "Could not get HDMI power supply\n");
-+		return PTR_ERR(hdmi->vcc_hdmi);
-+	}
-+
- 	hdmi->rst_ctrl = devm_reset_control_get(dev, "ctrl");
- 	if (IS_ERR(hdmi->rst_ctrl)) {
- 		dev_err(dev, "Could not get ctrl reset control\n");
-@@ -91,6 +97,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 		return ret;
- 	}
+ config STUB_CLK_HI6220
+-	bool "Hi6220 Stub Clock Driver"
+-	depends on COMMON_CLK_HI6220 && MAILBOX
+-	default ARCH_HISI
++	bool "Hi6220 Stub Clock Driver" if EXPERT
++	depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
++	depends on MAILBOX
++	default COMMON_CLK_HI6220
+ 	help
+ 	  Build the Hisilicon Hi6220 stub clock driver.
  
-+	ret = regulator_enable(hdmi->vcc_hdmi);
-+	if (ret) {
-+		dev_err(dev, "Cannot enable HDMI power supply\n");
-+		goto err_disable_vcc;
-+	}
-+
- 	ret = clk_prepare_enable(hdmi->clk_tmds);
- 	if (ret) {
- 		dev_err(dev, "Could not enable tmds clock\n");
-@@ -143,6 +155,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 	clk_disable_unprepare(hdmi->clk_tmds);
- err_assert_ctrl_reset:
- 	reset_control_assert(hdmi->rst_ctrl);
-+err_disable_vcc:
-+	regulator_disable(hdmi->vcc_hdmi);
- 
- 	return ret;
- }
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index 303189d6602c..65366eeb38d8 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -10,6 +10,7 @@
- #include <drm/drm_encoder.h>
- #include <linux/clk.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/reset.h>
- 
- #define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
-@@ -175,6 +176,7 @@ struct sun8i_dw_hdmi {
- 	struct drm_encoder		encoder;
- 	struct sun8i_hdmi_phy		*phy;
- 	struct dw_hdmi_plat_data	plat_data;
-+	struct regulator		*vcc_hdmi;
- 	struct reset_control		*rst_ctrl;
- };
- 
+ config STUB_CLK_HI3660
+-	bool "Hi3660 Stub Clock Driver"
+-	depends on COMMON_CLK_HI3660 && MAILBOX
++	bool "Hi3660 Stub Clock Driver" if EXPERT
++	depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
++	depends on MAILBOX
++	default COMMON_CLK_HI3660
+ 	help
+ 	  Build the Hisilicon Hi3660 stub clock driver.
 -- 
-2.14.3
+2.7.4
