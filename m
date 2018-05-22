@@ -1,60 +1,41 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH] clk: davinci: psc-da830: fix USB0 48MHz PHY clock
- registration
-From: Sekhar Nori <nsekhar@ti.com>
-To: Stephen Boyd <sboyd@kernel.org>, David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>
-CC: Linux clk Mailing List <linux-clk@vger.kernel.org>,
-        Linux ARM Mailing List
-	<linux-arm-kernel@lists.infradead.org>
-References: <20180507113457.4716-1-nsekhar@ti.com>
- <152642368847.237094.1884631416189964435@swboyd.mtv.corp.google.com>
- <9f8a876b-6a66-687c-f83f-51b8d896c50a@ti.com>
-Message-ID: <4f289b8c-6dc2-a5e6-bda3-d3dc8e61ea1f@ti.com>
-Date: Fri, 18 May 2018 12:17:15 +0530
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Tue, 22 May 2018 19:55:56 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com,
+ robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
+ miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
+ krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
+ jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+ mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Message-ID: <20180522195556.06de8745@bbrezillon>
+In-Reply-To: <4e19315d0c44d3f9b7ffb63216f2c179@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+	<86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+	<4e19315d0c44d3f9b7ffb63216f2c179@agner.ch>
 MIME-Version: 1.0
-In-Reply-To: <9f8a876b-6a66-687c-f83f-51b8d896c50a@ti.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Hi Stefan,
 
-On Wednesday 16 May 2018 10:44 AM, Sekhar Nori wrote:
-> Hi Stephen,
+On Tue, 22 May 2018 16:53:46 +0200
+Stefan Agner <stefan@agner.ch> wrote:
+
+> Hi,
 > 
-> On Wednesday 16 May 2018 04:04 AM, Stephen Boyd wrote:
->> Quoting Sekhar Nori (2018-05-07 04:34:57)
->>> USB0 48MHz PHY clock registration fails on DA830 because the
->>> da8xx-cfgchip clock driver cannot get a reference to USB0
->>> LPSC clock.
->>>
->>> The USB0 LPSC needs to be enabled during PHY clock enable. Setup
->>> the clock lookup correctly to fix this.
->>>
->>> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
->>> ---
->>
->> Applied to clk-next
->>
->> Did this need a fixes tag? And should it go into 4.17 final? Or it's not
->> causing problems right now?
-> 
-> We have not switched DaVinci to use common clock framework still. So no,
-> this does not cause problems right now. All drivers/clk/davinci/*
-> patches can be included for v4.18.
+> I do have some questions for some areas I wanted to improve in the next
+> revision. But I would like to make sure that the way I would like to
+> implement aligns with the MTD subsystem.
 
-There are some more patches (fixes) to drivers/clk/davinci which have
-been reviewed and both David and I think are ready for merge[1].
+I won't have time to review the driver this week. Will try to have a
+look next week.
 
-Do you have them in your queue? Else, I can send a pull request for you
-to take a look and merge.
+Regards,
 
-Thanks,
-Sekhar
-
-[1]
-clk: davinci: psc-dm365: fix few clocks
-clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always enabled
-clk: davinci: psc-dm355: fix ASP0/1 clkdev lookups
-clk: davinci: pll-dm355: fix SYSCLKn parent names
-clk: davinci: pll-dm355: drop pll2_sysclk2
+Boris
