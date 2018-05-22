@@ -1,180 +1,61 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 04/27] ARM: davinci: pass clock as parameter to davinci_timer_init()
-Date: Fri, 18 May 2018 11:48:06 -0500
-Message-Id: <20180518164829.27052-5-david@lechnology.com>
-In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
-References: <20180518164829.27052-1-david@lechnology.com>
+Return-Path: <viresh.kumar@linaro.org>
+Return-Path: <viresh.kumar@linaro.org>
+Date: Tue, 22 May 2018 15:08:03 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: ilialin@codeaurora.org
+Cc: 'Sudeep Holla' <sudeep.holla@arm.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com, nm@ti.com,
+	lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
+	david.brown@linaro.org, catalin.marinas@arm.com,
+	will.deacon@arm.com, rjw@rjwysocki.net, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	rnayak@codeaurora.org, amit.kucheria@linaro.org,
+	nicolas.dechesne@linaro.org, celster@codeaurora.org,
+	tfinkel@codeaurora.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180522093803.kfmfktdskumxyqbx@vireshk-i7>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+ <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com>
+ <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org>
+ <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com>
+ <001401d3f1a2$c7328850$559798f0$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <001401d3f1a2$c7328850$559798f0$@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This changes davinci_timer_init() so that we pass the clock as a
-parameter instead of using clk_get(). This is done in preparation
-for converting to the common clock framework.
+On 22-05-18, 10:59, ilialin@codeaurora.org wrote:
+> OK, I think I found out the way. Would this be correct?
+> -----------------------------------------------------------------------------------------------
+> extern struct cpu_topology cpu_topology[NR_CPUS];
+> 
+> static struct device *qcom_cpufreq_kryo_get_cluster_lead(int cluster)
+> {
+> 	unsigned cpu;
+> 
+> 	for_each_possible_cpu(cpu) {
+> 		if ((cluster == cpu_topology[cpu].cluster_id) &&
+> 			(0 == cpu_topology[cpu].core_id))
+> 			return get_cpu_device(cpu);
+> 	}
+> 
+> 	return NULL;
+> }
 
-It removes the requirement that we have to have a clock with con_id
-of "timer0", which will be good for DT bindings since clock-names =
-"timer0" doesn't really make sense.
+Okay, this is what you should do IMHO.
 
-Also, drop use of extern in header file since we are touching the
-definition.
+for_each_possible_cpu(cpu) {
+        cpu_dev = xxx..
+        ret = dev_pm_opp_set_supported_hw(cpu_dev, xxx, xxx);
+        if (ret && ret != -EBUSY)
+                error-out.
+}
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: David Lechner <david@lechnology.com>
----
+This would require a trivial patch for the OPP core to not throw an
+error message with -EBUSY. I can do that separately.
 
-v11 changes:
-- none
-
-v10 changes:
-- none
-
-v9 changes:
-- drop comment about using ref_clk
-
-v8 changes:
-- none
-
-v7 changes:
-- new in v7
-
- arch/arm/mach-davinci/da830.c               | 2 +-
- arch/arm/mach-davinci/da850.c               | 2 +-
- arch/arm/mach-davinci/dm355.c               | 2 +-
- arch/arm/mach-davinci/dm365.c               | 2 +-
- arch/arm/mach-davinci/dm644x.c              | 2 +-
- arch/arm/mach-davinci/dm646x.c              | 2 +-
- arch/arm/mach-davinci/include/mach/common.h | 3 ++-
- arch/arm/mach-davinci/time.c                | 5 +----
- 8 files changed, 9 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 350d7673aa4d..0b17e5a22e5e 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -1224,5 +1224,5 @@ void __init da830_init(void)
- void __init da830_init_time(void)
- {
- 	davinci_clk_init(da830_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timerp64_0_clk);
- }
-diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index 34117e614e08..1dbf01c4124b 100644
---- a/arch/arm/mach-davinci/da850.c
-+++ b/arch/arm/mach-davinci/da850.c
-@@ -1396,5 +1396,5 @@ void __init da850_init(void)
- void __init da850_init_time(void)
- {
- 	davinci_clk_init(da850_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timerp64_0_clk);
- }
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index f29480495c18..0da7516018ca 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -1047,7 +1047,7 @@ void __init dm355_init(void)
- void __init dm355_init_time(void)
- {
- 	davinci_clk_init(dm355_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timer0_clk);
- }
- 
- int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 1e3df9df1e10..871372a59da8 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -1172,7 +1172,7 @@ void __init dm365_init(void)
- void __init dm365_init_time(void)
- {
- 	davinci_clk_init(dm365_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timer0_clk);
- }
- 
- static struct resource dm365_vpss_resources[] = {
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index a2e8586c8a6d..708df0ed8554 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -935,7 +935,7 @@ void __init dm644x_init(void)
- void __init dm644x_init_time(void)
- {
- 	davinci_clk_init(dm644x_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timer0_clk);
- }
- 
- int __init dm644x_init_video(struct vpfe_config *vpfe_cfg,
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index c32ca27ab343..280b753702f3 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -957,7 +957,7 @@ void __init dm646x_init_time(unsigned long ref_clk_rate,
- 	ref_clk.rate = ref_clk_rate;
- 	aux_clkin.rate = aux_clkin_rate;
- 	davinci_clk_init(dm646x_clks);
--	davinci_timer_init();
-+	davinci_timer_init(&timer0_clk);
- }
- 
- static int __init dm646x_init_devices(void)
-diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
-index f0d5e858f158..5f45d0ac66a8 100644
---- a/arch/arm/mach-davinci/include/mach/common.h
-+++ b/arch/arm/mach-davinci/include/mach/common.h
-@@ -12,11 +12,12 @@
- #ifndef __ARCH_ARM_MACH_DAVINCI_COMMON_H
- #define __ARCH_ARM_MACH_DAVINCI_COMMON_H
- 
-+#include <linux/clk.h>
- #include <linux/compiler.h>
- #include <linux/types.h>
- #include <linux/reboot.h>
- 
--extern void davinci_timer_init(void);
-+void davinci_timer_init(struct clk *clk);
- 
- extern void davinci_irq_init(void);
- extern void __iomem *davinci_intc_base;
-diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
-index 1bb991ad9c1e..486896f309c5 100644
---- a/arch/arm/mach-davinci/time.c
-+++ b/arch/arm/mach-davinci/time.c
-@@ -334,10 +334,8 @@ static struct clock_event_device clockevent_davinci = {
- 	.set_state_oneshot	= davinci_set_oneshot,
- };
- 
--
--void __init davinci_timer_init(void)
-+void __init davinci_timer_init(struct clk *timer_clk)
- {
--	struct clk *timer_clk;
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 	unsigned int clockevent_id;
- 	unsigned int clocksource_id;
-@@ -373,7 +371,6 @@ void __init davinci_timer_init(void)
- 		}
- 	}
- 
--	timer_clk = clk_get(NULL, "timer0");
- 	BUG_ON(IS_ERR(timer_clk));
- 	clk_prepare_enable(timer_clk);
- 
 -- 
-2.17.0
+viresh
