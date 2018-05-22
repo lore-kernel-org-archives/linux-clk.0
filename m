@@ -1,74 +1,57 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 31 May 2018 18:01:17 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Mark Brown <broonie@kernel.org>, Cristian.Birsan@microchip.com
-Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
-Message-ID: <20180531160117.GC2727@piout.net>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
- <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
- <20180531005827.GA17203@rob-hp-laptop>
- <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
- <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAOtvUMcf-fHduThORv3cbcN16wEm_Si27OjSjAmSc9g5eK4PJw@mail.gmail.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+ <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
+ <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com> <CAOtvUMcf-fHduThORv3cbcN16wEm_Si27OjSjAmSc9g5eK4PJw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 May 2018 09:48:06 +0200
+Message-ID: <CAMuHMdX-t8WfjRKpZ7UxXBbBNojsn-8z7_BM9grmLJcf=9Ks2Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 31/05/2018 09:20:57-0500, Rob Herring wrote:
-> On Thu, May 31, 2018 at 5:25 AM, Codrin Ciubotariu
-> <codrin.ciubotariu@microchip.com> wrote:
-> > On 31.05.2018 03:58, Rob Herring wrote:
-> >>
-> >> On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
-> >>>
-> >>> The I2S mux clock can be used to select the I2S input clock. The
-> >>> available parents are the peripheral and the generated clocks.
-> >>>
-> >>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> >>> ---
-> >>>   .../devicetree/bindings/clock/at91-clock.txt       | 34
-> >>> ++++++++++++++++++++++
-> >>>   1 file changed, 34 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt
-> >>> b/Documentation/devicetree/bindings/clock/at91-clock.txt
-> >>> index 51c259a..1c46b3c 100644
-> >>> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-> >>> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
-> >>> @@ -90,6 +90,8 @@ Required properties:
-> >>>         "atmel,sama5d2-clk-audio-pll-pmc"
-> >>>                 at91 audio pll output on AUDIOPLLCLK that feeds the PMC
-> >>>                 and can be used by peripheral clock or generic clock
-> >>> +       "atmel,sama5d2-clk-i2s-mux":
-> >>> +               at91 I2S clock source selection
-> >>
-> >>
-> >> Is this boolean or takes some values. If latter, what are valid values?
-> >
-> >
-> > This is the compatible string of the clock driver.
-> 
-> Ah, now I remember. AT91 uses fine grained clock nodes in DT. Is there
-> still a plan to fix this?
-> 
+Hi Gilad,
 
-There is still a plan to do that, hopefully soon (I'd like to aim for
-the next release or the one after).
+On Mon, May 21, 2018 at 3:43 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> Indeed. From a quick glance, it looks like drivers/crypto/ccree/cc_driver.c
+>> does not distinguish between the absence of the clock property, and an
+>> actual error in getting the clock, and never considers any error a failure
+>> (incl. -PROBE_DEFER).
+>>
+>> As of_clk_get() returns -ENOENT for both a missing clock property and a
+>> missing clock, you should use (devm_)clk_get() instead, and distinguish
+>> between NULL (no clock property) and IS_ERR() (actual failure -> abort).
+>
+> I was trying to do as you suggested but I didn't quite get what is the
+> dev_id (2nd) parameter to devm_clk_get parameter is supposed to be.
 
-I think this one should go in as-is so it can be fixed with all the
-other one at once.
+It's the (optional) name of the clock, helpful in case there is more than one.
+In your case, NULL is fine.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
