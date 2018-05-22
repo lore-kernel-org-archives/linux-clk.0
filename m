@@ -1,50 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38779 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751545AbeERKKh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 06:10:37 -0400
-Received: by mail-wr0-f193.google.com with SMTP id 94-v6so8602721wrf.5
-        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 03:10:37 -0700 (PDT)
-Message-ID: <1526638234.2897.74.camel@baylibre.com>
-Subject: Re: [PATCH v2] clk: meson: use SPDX license identifiers consistently
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
-Date: Fri, 18 May 2018 12:10:34 +0200
-In-Reply-To: <152649194881.210890.1329258497783697194@swboyd.mtv.corp.google.com>
-References: <20180516085040.6771-1-jbrunet@baylibre.com>
-         <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
-         <1526483653.2897.62.camel@baylibre.com>
-         <152649194881.210890.1329258497783697194@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: sboyd@kernel.org,
+	mturquette@baylibre.com
+Cc: leo.yan@linaro.org,
+	olof@lixom.net,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH V2] clk/driver/hisi: Consolidate the Kconfig for the CLOCK_STUB
+Date: Tue, 22 May 2018 22:45:28 +0200
+Message-Id: <1527021928-1243-1-git-send-email-daniel.lezcano@linaro.org>
+In-Reply-To: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
+References: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-05-16 at 10:32 -0700, Stephen Boyd wrote:
-> Quoting Jerome Brunet (2018-05-16 08:14:13)
-> > On Wed, 2018-05-16 at 08:03 -0700, Stephen Boyd wrote:
-> > > Quoting Jerome Brunet (2018-05-16 01:50:40)
-> > > > Replace every license notices in drivers/clk/meson by SPDX license
-> > > > identifiers, as described in license-rules.rst
-> > > > 
-> > > > Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> > > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > > > ---
-> > > 
-> > > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > > 
-> > > I take it this will come through a PR? Otherwise I can apply it to
-> > > clk-meson branch.
-> > 
-> > We may have a few other patches coming this week. I was planning on making
-> > another PR sometime next week, if this is OK with you.
-> > 
-> 
-> Sounds fine. Thanks.
-> 
+The current defconfig is inconsistent as it selects the mailbox and
+the clock for the hi6220 and the hi3660 without having their Kconfigs
+making sure the dependencies are correct. It ends up when selecting
+different versions for the kernel (for example when git bisecting)
+those options disappear and they don't get back, leading to unexpected
+behaviors. In our case, the cpufreq driver does no longer work because
+the clock fails to initialize due to the clock stub and the mailbox
+missing.
 
- Applied with Stephen's Ack
+In order to have the dependencies correctly set when defaulting, let's
+do the same as commit 3a49afb84ca074e ("clk: enable hi655x common clk
+automatically") where we select automatically the driver when the
+parent driver is selected. With sensible defaults in place, we can leave
+other choices for EXPERT.
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+
+Split the patch into the clk specific and resent as requested by Olof
+Johansson.
+---
+ drivers/clk/hisilicon/Kconfig | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index 1bd4355..becdb1d 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -44,14 +44,17 @@ config RESET_HISI
+ 	  Build reset controller driver for HiSilicon device chipsets.
+ 
+ config STUB_CLK_HI6220
+-	bool "Hi6220 Stub Clock Driver"
+-	depends on COMMON_CLK_HI6220 && MAILBOX
+-	default ARCH_HISI
++	bool "Hi6220 Stub Clock Driver" if EXPERT
++	depends on (COMMON_CLK_HI6220 || COMPILE_TEST)
++	depends on MAILBOX
++	default COMMON_CLK_HI6220
+ 	help
+ 	  Build the Hisilicon Hi6220 stub clock driver.
+ 
+ config STUB_CLK_HI3660
+-	bool "Hi3660 Stub Clock Driver"
+-	depends on COMMON_CLK_HI3660 && MAILBOX
++	bool "Hi3660 Stub Clock Driver" if EXPERT
++	depends on (COMMON_CLK_HI3660 || COMPILE_TEST)
++	depends on MAILBOX
++	default COMMON_CLK_HI3660
+ 	help
+ 	  Build the Hisilicon Hi3660 stub clock driver.
+-- 
+2.7.4
