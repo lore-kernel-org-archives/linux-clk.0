@@ -1,73 +1,41 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Wed, 16 May 2018 19:41:32 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Amit Kucheria <amit.kucheria@linaro.org>
-Cc: Ilia Lin <ilialin@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	nm@ti.com, lgirdwood@gmail.com, broonie@kernel.org,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>, catalin.marinas@arm.com,
-	will.deacon@arm.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	lakml <linux-arm-kernel@lists.infradead.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180516141132.aqjif7d5motmmnlo@vireshk-i7>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
- <1526375616-16904-13-git-send-email-ilialin@codeaurora.org>
- <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 22 May 2018 13:10:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 14/26] dt-bindings: display: Add compatible for A64
+ HDMI
+Message-ID: <20180522181025.GA20871@rob-hp-laptop>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+ <20180518094536.17201-15-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com>
+In-Reply-To: <20180518094536.17201-15-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 16-05-18, 16:12, Amit Kucheria wrote:
-> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
-> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> > +       if (0 > ret)
+On Fri, May 18, 2018 at 03:15:24PM +0530, Jagan Teki wrote:
+> HDMI on Allwinner A64 has similar like H3/H5/A83T.
 > 
-> Any particular reason to prefer this over (ret < 0) that is generally
-> used? I've seen it used to avoid the == vs. = typos, but not for other
-> comparisons.
+> Add compatible a64 and update A83T compatible as fallback.
 > 
-> Suggest sticking to what is commonly used i.e. ret < 0.
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes for v2:
+> - Add fallback compatible
 > 
-> > +               goto free_opp;
-> > +
-> > +       cpu_dev = get_cpu_device(GOLD_LEAD);
-> 
-> Error check cpu_dev here?
-> 
-> > +       ret = PTR_ERR_OR_ZERO(opp_temp =
-> > +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> > +       if (0 > ret)
-> > +               goto free_opp;
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-The goto here is wrong
-
-> > +
-> > +
-> > +       ret = PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-dt",
-> > +                                                             -1, NULL, 0));
-> > +
-> > +       if (0 == ret)
-> > +               return 0;
-> > +
-> > +free_opp:
-> > +       dev_pm_opp_put_supported_hw(opp_temp);
-> 
-> This is not needed because dev_pm_opp_set_supported_hw will free
-> memory in case of failure. This call in only needed in case of a
-> successful get.
-
-But this is still required for the case where platform device
-registration fails.
-
--- 
-viresh
+Reviewed-by: Rob Herring <robh@kernel.org>
