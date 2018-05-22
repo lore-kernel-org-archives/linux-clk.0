@@ -1,61 +1,115 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Tue, 22 May 2018 15:08:03 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: ilialin@codeaurora.org
-Cc: 'Sudeep Holla' <sudeep.holla@arm.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com, nm@ti.com,
-	lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
-	david.brown@linaro.org, catalin.marinas@arm.com,
-	will.deacon@arm.com, rjw@rjwysocki.net, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org, amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org, celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180522093803.kfmfktdskumxyqbx@vireshk-i7>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
- <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com>
- <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org>
- <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com>
- <001401d3f1a2$c7328850$559798f0$@codeaurora.org>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	michael@amarulasolutions.com,
+	matteo.lisi@engicam.com
+Cc: Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
+Date: Tue, 22 May 2018 11:25:59 +0800
+Message-Id: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <001401d3f1a2$c7328850$559798f0$@codeaurora.org>
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22-05-18, 10:59, ilialin@codeaurora.org wrote:
-> OK, I think I found out the way. Would this be correct?
-> -----------------------------------------------------------------------------------------------
-> extern struct cpu_topology cpu_topology[NR_CPUS];
-> 
-> static struct device *qcom_cpufreq_kryo_get_cluster_lead(int cluster)
-> {
-> 	unsigned cpu;
-> 
-> 	for_each_possible_cpu(cpu) {
-> 		if ((cluster == cpu_topology[cpu].cluster_id) &&
-> 			(0 == cpu_topology[cpu].core_id))
-> 			return get_cpu_device(cpu);
-> 	}
-> 
-> 	return NULL;
-> }
+i.MX6UL has GPIO clock gates in CCM CCGR, add
+them into clock tree for clock management.
 
-Okay, this is what you should do IMHO.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx6ul.c             |  5 +++++
+ include/dt-bindings/clock/imx6ul-clock.h | 31 ++++++++++++++++++-------------
+ 2 files changed, 23 insertions(+), 13 deletions(-)
 
-for_each_possible_cpu(cpu) {
-        cpu_dev = xxx..
-        ret = dev_pm_opp_set_supported_hw(cpu_dev, xxx, xxx);
-        if (ret && ret != -EBUSY)
-                error-out.
-}
-
-This would require a trivial patch for the OPP core to not throw an
-error message with -EBUSY. I can do that separately.
-
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index ba563ba..3ea2d97 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -360,6 +360,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
+ 	if (clk_on_imx6ull())
+ 		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		 base + 0x80,	18);
++	clks[IMX6UL_CLK_GPIO2]		= imx_clk_gate2("gpio2",	"ipg",		base + 0x68,	30);
+ 
+ 	/* CCGR1 */
+ 	clks[IMX6UL_CLK_ECSPI1]		= imx_clk_gate2("ecspi1",	"ecspi_podf",	base + 0x6c,	0);
+@@ -376,6 +377,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_GPT1_SERIAL]	= imx_clk_gate2("gpt1_serial",	"perclk",	base + 0x6c,	22);
+ 	clks[IMX6UL_CLK_UART4_IPG]	= imx_clk_gate2("uart4_ipg",	"ipg",		base + 0x6c,	24);
+ 	clks[IMX6UL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serial",	"uart_podf",	base + 0x6c,	24);
++	clks[IMX6UL_CLK_GPIO1]		= imx_clk_gate2("gpio1",	"ipg",		base + 0x6c,	26);
++	clks[IMX6UL_CLK_GPIO5]		= imx_clk_gate2("gpio5",	"ipg",		base + 0x6c,	30);
+ 
+ 	/* CCGR2 */
+ 	if (clk_on_imx6ull()) {
+@@ -389,6 +392,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_I2C3]		= imx_clk_gate2("i2c3",		"perclk",	base + 0x70,	10);
+ 	clks[IMX6UL_CLK_OCOTP]		= imx_clk_gate2("ocotp",	"ipg",		base + 0x70,	12);
+ 	clks[IMX6UL_CLK_IOMUXC]		= imx_clk_gate2("iomuxc",	"lcdif_podf",	base + 0x70,	14);
++	clks[IMX6UL_CLK_GPIO3]		= imx_clk_gate2("gpio3",	"ipg",		base + 0x70,	26);
+ 	clks[IMX6UL_CLK_LCDIF_APB]	= imx_clk_gate2("lcdif_apb",	"axi",		base + 0x70,	28);
+ 	clks[IMX6UL_CLK_PXP]		= imx_clk_gate2("pxp",		"axi",		base + 0x70,	30);
+ 
+@@ -405,6 +409,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_UART6_IPG]	= imx_clk_gate2("uart6_ipg",	"ipg",		base + 0x74,	6);
+ 	clks[IMX6UL_CLK_UART6_SERIAL]	= imx_clk_gate2("uart6_serial",	"uart_podf",	base + 0x74,	6);
+ 	clks[IMX6UL_CLK_LCDIF_PIX]	= imx_clk_gate2("lcdif_pix",	"lcdif_podf",	base + 0x74,	10);
++	clks[IMX6UL_CLK_GPIO4]		= imx_clk_gate2("gpio4",	"ipg",		base + 0x74,	12);
+ 	clks[IMX6UL_CLK_QSPI]		= imx_clk_gate2("qspi1",	"qspi1_podf",	base + 0x74,	14);
+ 	clks[IMX6UL_CLK_WDOG1]		= imx_clk_gate2("wdog1",	"ipg",		base + 0x74,	16);
+ 	clks[IMX6UL_CLK_MMDC_P0_FAST]	= imx_clk_gate("mmdc_p0_fast", "mmdc_podf", base + 0x74,	20);
+diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
+index 9564597..1291328 100644
+--- a/include/dt-bindings/clock/imx6ul-clock.h
++++ b/include/dt-bindings/clock/imx6ul-clock.h
+@@ -242,20 +242,25 @@
+ #define IMX6UL_CLK_CKO2_PODF		229
+ #define IMX6UL_CLK_CKO2			230
+ #define IMX6UL_CLK_CKO			231
++#define IMX6UL_CLK_GPIO1		232
++#define IMX6UL_CLK_GPIO2		233
++#define IMX6UL_CLK_GPIO3		234
++#define IMX6UL_CLK_GPIO4		235
++#define IMX6UL_CLK_GPIO5		236
+ 
+ /* For i.MX6ULL */
+-#define IMX6ULL_CLK_ESAI_PRED		232
+-#define IMX6ULL_CLK_ESAI_PODF		233
+-#define IMX6ULL_CLK_ESAI_EXTAL		234
+-#define IMX6ULL_CLK_ESAI_MEM		235
+-#define IMX6ULL_CLK_ESAI_IPG		236
+-#define IMX6ULL_CLK_DCP_CLK		237
+-#define IMX6ULL_CLK_EPDC_PRE_SEL	238
+-#define IMX6ULL_CLK_EPDC_SEL		239
+-#define IMX6ULL_CLK_EPDC_PODF		240
+-#define IMX6ULL_CLK_EPDC_ACLK		241
+-#define IMX6ULL_CLK_EPDC_PIX		242
+-#define IMX6ULL_CLK_ESAI_SEL		243
+-#define IMX6UL_CLK_END			244
++#define IMX6ULL_CLK_ESAI_PRED		237
++#define IMX6ULL_CLK_ESAI_PODF		238
++#define IMX6ULL_CLK_ESAI_EXTAL		239
++#define IMX6ULL_CLK_ESAI_MEM		240
++#define IMX6ULL_CLK_ESAI_IPG		241
++#define IMX6ULL_CLK_DCP_CLK		242
++#define IMX6ULL_CLK_EPDC_PRE_SEL	243
++#define IMX6ULL_CLK_EPDC_SEL		244
++#define IMX6ULL_CLK_EPDC_PODF		245
++#define IMX6ULL_CLK_EPDC_ACLK		246
++#define IMX6ULL_CLK_EPDC_PIX		247
++#define IMX6ULL_CLK_ESAI_SEL		248
++#define IMX6UL_CLK_END			249
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
 -- 
-viresh
+2.7.4
