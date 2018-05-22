@@ -1,58 +1,122 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Thu, 24 May 2018 08:59:55 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH 7/9] clk: bd71837: Build ROHM BD71837 PMIC clock driver
-Message-ID: <20180524055955.GH4249@localhost.localdomain>
+Return-Path: <stefan.wahren@i2se.com>
+Date: Tue, 22 May 2018 14:25:35 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: michael@amarulasolutions.com, robh+dt@kernel.org, fabio.estevam@nxp.com,
+	mark.rutland@arm.com, Anson Huang <Anson.Huang@nxp.com>,
+	matteo.lisi@engicam.com, shawnguo@kernel.org, kernel@pengutronix.de,
+	mturquette@baylibre.com, sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, Linux-imx@nxp.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Message-ID: <1439344955.9677.1526991935718@email.1und1.de>
+In-Reply-To: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com>
+References: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Configuration options and Makefile for BD71837 clock driver
+Hi Anson,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/Kconfig  | 9 +++++++++
- drivers/clk/Makefile | 1 +
- 2 files changed, 10 insertions(+)
+> Anson Huang <Anson.Huang@nxp.com> hat am 22. Mai 2018 um 05:25 geschrieben:
+> 
+> 
+> i.MX6UL has GPIO clock gates in CCM CCGR, add
+> them into clock tree for clock management.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx6ul.c             |  5 +++++
+>  include/dt-bindings/clock/imx6ul-clock.h | 31 ++++++++++++++++++-------------
+>  2 files changed, 23 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+> index ba563ba..3ea2d97 100644
+> --- a/drivers/clk/imx/clk-imx6ul.c
+> +++ b/drivers/clk/imx/clk-imx6ul.c
+> @@ -360,6 +360,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
+>  	if (clk_on_imx6ull())
+>  		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		 base + 0x80,	18);
+> +	clks[IMX6UL_CLK_GPIO2]		= imx_clk_gate2("gpio2",	"ipg",		base + 0x68,	30);
+>  
+>  	/* CCGR1 */
+>  	clks[IMX6UL_CLK_ECSPI1]		= imx_clk_gate2("ecspi1",	"ecspi_podf",	base + 0x6c,	0);
+> @@ -376,6 +377,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX6UL_CLK_GPT1_SERIAL]	= imx_clk_gate2("gpt1_serial",	"perclk",	base + 0x6c,	22);
+>  	clks[IMX6UL_CLK_UART4_IPG]	= imx_clk_gate2("uart4_ipg",	"ipg",		base + 0x6c,	24);
+>  	clks[IMX6UL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serial",	"uart_podf",	base + 0x6c,	24);
+> +	clks[IMX6UL_CLK_GPIO1]		= imx_clk_gate2("gpio1",	"ipg",		base + 0x6c,	26);
+> +	clks[IMX6UL_CLK_GPIO5]		= imx_clk_gate2("gpio5",	"ipg",		base + 0x6c,	30);
+>  
+>  	/* CCGR2 */
+>  	if (clk_on_imx6ull()) {
+> @@ -389,6 +392,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX6UL_CLK_I2C3]		= imx_clk_gate2("i2c3",		"perclk",	base + 0x70,	10);
+>  	clks[IMX6UL_CLK_OCOTP]		= imx_clk_gate2("ocotp",	"ipg",		base + 0x70,	12);
+>  	clks[IMX6UL_CLK_IOMUXC]		= imx_clk_gate2("iomuxc",	"lcdif_podf",	base + 0x70,	14);
+> +	clks[IMX6UL_CLK_GPIO3]		= imx_clk_gate2("gpio3",	"ipg",		base + 0x70,	26);
+>  	clks[IMX6UL_CLK_LCDIF_APB]	= imx_clk_gate2("lcdif_apb",	"axi",		base + 0x70,	28);
+>  	clks[IMX6UL_CLK_PXP]		= imx_clk_gate2("pxp",		"axi",		base + 0x70,	30);
+>  
+> @@ -405,6 +409,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+>  	clks[IMX6UL_CLK_UART6_IPG]	= imx_clk_gate2("uart6_ipg",	"ipg",		base + 0x74,	6);
+>  	clks[IMX6UL_CLK_UART6_SERIAL]	= imx_clk_gate2("uart6_serial",	"uart_podf",	base + 0x74,	6);
+>  	clks[IMX6UL_CLK_LCDIF_PIX]	= imx_clk_gate2("lcdif_pix",	"lcdif_podf",	base + 0x74,	10);
+> +	clks[IMX6UL_CLK_GPIO4]		= imx_clk_gate2("gpio4",	"ipg",		base + 0x74,	12);
+>  	clks[IMX6UL_CLK_QSPI]		= imx_clk_gate2("qspi1",	"qspi1_podf",	base + 0x74,	14);
+>  	clks[IMX6UL_CLK_WDOG1]		= imx_clk_gate2("wdog1",	"ipg",		base + 0x74,	16);
+>  	clks[IMX6UL_CLK_MMDC_P0_FAST]	= imx_clk_gate("mmdc_p0_fast", "mmdc_podf", base + 0x74,	20);
+> diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
+> index 9564597..1291328 100644
+> --- a/include/dt-bindings/clock/imx6ul-clock.h
+> +++ b/include/dt-bindings/clock/imx6ul-clock.h
+> @@ -242,20 +242,25 @@
+>  #define IMX6UL_CLK_CKO2_PODF		229
+>  #define IMX6UL_CLK_CKO2			230
+>  #define IMX6UL_CLK_CKO			231
+> +#define IMX6UL_CLK_GPIO1		232
+> +#define IMX6UL_CLK_GPIO2		233
+> +#define IMX6UL_CLK_GPIO3		234
+> +#define IMX6UL_CLK_GPIO4		235
+> +#define IMX6UL_CLK_GPIO5		236
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 41492e980ef4..4b045699bb5e 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -279,6 +279,15 @@ config COMMON_CLK_STM32H7
- 	---help---
- 	  Support for stm32h7 SoC family clocks
- 
-+config COMMON_CLK_BD71837
-+	tristate "Clock driver for ROHM BD71837 PMIC MFD"
-+	depends on MFD_BD71837
-+	depends on I2C=y
-+	depends on OF
-+	help
-+	  This driver supports ROHM BD71837 PMIC clock.
-+
-+
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index de6d06ac790b..8393c4af7d5a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -21,6 +21,7 @@ endif
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
-+obj-$(CONFIG_COMMON_CLK_BD71837)	+= clk-bd71837.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
--- 
-2.14.3
+this change looks like a breakage of devicetree ABI. You are changing the mean of the existing clock IDs on i.MX6ULL, which probably regress the combination of older DTBs with newer kernel.
+
+>  
+>  /* For i.MX6ULL */
+> -#define IMX6ULL_CLK_ESAI_PRED		232
+> -#define IMX6ULL_CLK_ESAI_PODF		233
+> -#define IMX6ULL_CLK_ESAI_EXTAL		234
+> -#define IMX6ULL_CLK_ESAI_MEM		235
+> -#define IMX6ULL_CLK_ESAI_IPG		236
+> -#define IMX6ULL_CLK_DCP_CLK		237
+> -#define IMX6ULL_CLK_EPDC_PRE_SEL	238
+> -#define IMX6ULL_CLK_EPDC_SEL		239
+> -#define IMX6ULL_CLK_EPDC_PODF		240
+> -#define IMX6ULL_CLK_EPDC_ACLK		241
+> -#define IMX6ULL_CLK_EPDC_PIX		242
+> -#define IMX6ULL_CLK_ESAI_SEL		243
+> -#define IMX6UL_CLK_END			244
+> +#define IMX6ULL_CLK_ESAI_PRED		237
+> +#define IMX6ULL_CLK_ESAI_PODF		238
+> +#define IMX6ULL_CLK_ESAI_EXTAL		239
+> +#define IMX6ULL_CLK_ESAI_MEM		240
+> +#define IMX6ULL_CLK_ESAI_IPG		241
+> +#define IMX6ULL_CLK_DCP_CLK		242
+> +#define IMX6ULL_CLK_EPDC_PRE_SEL	243
+> +#define IMX6ULL_CLK_EPDC_SEL		244
+> +#define IMX6ULL_CLK_EPDC_PODF		245
+> +#define IMX6ULL_CLK_EPDC_ACLK		246
+> +#define IMX6ULL_CLK_EPDC_PIX		247
+> +#define IMX6ULL_CLK_ESAI_SEL		248
+> +#define IMX6UL_CLK_END			249
+>  
+>  #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
+> -- 
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
