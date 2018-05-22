@@ -1,65 +1,179 @@
-Return-Path: <peron.clem@gmail.com>
-Return-Path: <peron.clem@gmail.com>
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Colin Didier <colin.dider@devialet.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Colin Didier <colin.didier@devialet.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH 5/5] ARM: dts: imx6qdl: add missing compatible and clock properties for EPIT
-Date: Mon, 28 May 2018 19:34:12 +0200
-Message-Id: <20180528173412.10000-6-peron.clem@gmail.com>
-In-Reply-To: <20180528173412.10000-1-peron.clem@gmail.com>
-References: <20180528173412.10000-1-peron.clem@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54923 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751429AbeEVOxQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 May 2018 10:53:16 -0400
+Received: by mail-wm0-f66.google.com with SMTP id f6-v6so539885wmc.4
+        for <linux-clk@vger.kernel.org>; Tue, 22 May 2018 07:53:16 -0700 (PDT)
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+Subject: [PATCH v6 07/13] media: dt-bindings: add bindings for i.MX7 media driver
+Date: Tue, 22 May 2018 15:52:39 +0100
+Message-Id: <20180522145245.3143-8-rui.silva@linaro.org>
+In-Reply-To: <20180522145245.3143-1-rui.silva@linaro.org>
+References: <20180522145245.3143-1-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Colin Didier <colin.didier@devialet.com>
+Add bindings documentation for i.MX7 media drivers.
+The imx7 MIPI CSI2 and imx7 CMOS Sensor Interface.
 
-Add missing compatible and clock properties for EPIT node.
-
-Signed-off-by: Colin Didier <colin.didier@devialet.com>
-Signed-off-by: Clément Peron <clement.peron@devialet.com>
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
 ---
- arch/arm/boot/dts/imx6qdl.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../devicetree/bindings/media/imx7-csi.txt    | 44 ++++++++++
+ .../bindings/media/imx7-mipi-csi2.txt         | 82 +++++++++++++++++++
+ 2 files changed, 126 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/imx7-csi.txt
+ create mode 100644 Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt
 
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index c003e62bf290..16fec147dcb8 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -844,13 +844,25 @@
- 			};
- 
- 			epit1: epit@20d0000 { /* EPIT1 */
-+				compatible = "fsl,imx6q-epit";
- 				reg = <0x020d0000 0x4000>;
- 				interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6QDL_CLK_EPIT1>,
-+					<&clks IMX6QDL_CLK_IPG_PER>,
-+					<&clks IMX6QDL_CLK_CKIL>;
-+				clock-names = "ipg", "per", "ckil";
-+				status = "disabled";
- 			};
- 
- 			epit2: epit@20d4000 { /* EPIT2 */
-+				compatible = "fsl,imx6q-epit";
- 				reg = <0x020d4000 0x4000>;
- 				interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6QDL_CLK_EPIT2>,
-+					<&clks IMX6QDL_CLK_IPG_PER>,
-+					<&clks IMX6QDL_CLK_CKIL>;
-+				clock-names = "ipg", "per", "ckil";
-+				status = "disabled";
- 			};
- 
- 			src: src@20d8000 {
+diff --git a/Documentation/devicetree/bindings/media/imx7-csi.txt b/Documentation/devicetree/bindings/media/imx7-csi.txt
+new file mode 100644
+index 000000000000..aab4f5d72390
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/imx7-csi.txt
+@@ -0,0 +1,44 @@
++Freescale i.MX7 CMOS Sensor Interface
++=====================================
++
++csi node
++--------
++
++This is device node for the CMOS Sensor Interface (CSI) which enables the chip
++to connect directly to external CMOS image sensors.
++
++Required properties:
++
++- compatible    : "fsl,imx7-csi";
++- reg           : base address and length of the register set for the device;
++- interrupts    : should contain CSI interrupt;
++- clocks        : list of clock specifiers, see
++        Documentation/devicetree/bindings/clock/clock-bindings.txt for details;
++- clock-names   : must contain "axi", "mclk" and "dcic" entries, matching
++                 entries in the clock property;
++
++The device node should contain one 'port' child node with one child 'endpoint'
++node, according to the bindings defined in Documentation/devicetree/bindings/
++media/video-interfaces.txt. In the following example a remote endpoint is a
++video multiplexer.
++
++example:
++
++                csi: csi@30710000 {
++                        #address-cells = <1>;
++                        #size-cells = <0>;
++
++                        compatible = "fsl,imx7-csi";
++                        reg = <0x30710000 0x10000>;
++                        interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++                        clocks = <&clks IMX7D_CLK_DUMMY>,
++                                        <&clks IMX7D_CSI_MCLK_ROOT_CLK>,
++                                        <&clks IMX7D_CLK_DUMMY>;
++                        clock-names = "axi", "mclk", "dcic";
++
++                        port {
++                                csi_from_csi_mux: endpoint {
++                                        remote-endpoint = <&csi_mux_to_csi>;
++                                };
++                        };
++                };
+diff --git a/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt b/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt
+new file mode 100644
+index 000000000000..7c5f20863724
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt
+@@ -0,0 +1,82 @@
++Freescale i.MX7 Mipi CSI2
++=========================
++
++mipi_csi2 node
++--------------
++
++This is the device node for the MIPI CSI-2 receiver core in i.MX7 SoC. It is
++compatible with previous version of Samsung D-phy.
++
++Required properties:
++
++- compatible    : "fsl,imx7-mipi-csi2";
++- reg           : base address and length of the register set for the device;
++- interrupts    : should contain MIPI CSIS interrupt;
++- clocks        : list of clock specifiers, see
++        Documentation/devicetree/bindings/clock/clock-bindings.txt for details;
++- clock-names   : must contain "pclk", "wrap" and "phy" entries, matching
++                  entries in the clock property;
++- power-domains : a phandle to the power domain, see
++          Documentation/devicetree/bindings/power/power_domain.txt for details.
++- reset-names   : should include following entry "mrst";
++- resets        : a list of phandle, should contain reset entry of
++                  reset-names;
++- phy-supply    : from the generic phy bindings, a phandle to a regulator that
++	          provides power to MIPI CSIS core;
++
++Optional properties:
++
++- clock-frequency : The IP's main (system bus) clock frequency in Hz, default
++		    value when this property is not specified is 166 MHz;
++- fsl,csis-hs-settle : differential receiver (HS-RX) settle time;
++
++port node
++---------
++
++- reg		  : (required) can take the values 0 or 1, where 0 is the
++                     related sink port and port 1 should be the source one;
++
++endpoint node
++-------------
++
++- data-lanes    : (required) an array specifying active physical MIPI-CSI2
++		    data input lanes and their mapping to logical lanes; the
++		    array's content is unused, only its length is meaningful;
++
++example:
++
++        mipi_csi: mipi-csi@30750000 {
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                compatible = "fsl,imx7-mipi-csi2";
++                reg = <0x30750000 0x10000>;
++                interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++                clocks = <&clks IMX7D_IPG_ROOT_CLK>,
++                                <&clks IMX7D_MIPI_CSI_ROOT_CLK>,
++                                <&clks IMX7D_MIPI_DPHY_ROOT_CLK>;
++                clock-names = "pclk", "wrap", "phy";
++                clock-frequency = <166000000>;
++                power-domains = <&pgc_mipi_phy>;
++                phy-supply = <&reg_1p0d>;
++                resets = <&src IMX7_RESET_MIPI_PHY_MRST>;
++                reset-names = "mrst";
++                fsl,csis-hs-settle = <3>;
++
++                port@0 {
++                        reg = <0>;
++
++                        mipi_from_sensor: endpoint {
++                                remote-endpoint = <&ov2680_to_mipi>;
++                                data-lanes = <1>;
++                        };
++                };
++
++                port@1 {
++                        reg = <1>;
++
++                        mipi_vc0_to_csi_mux: endpoint {
++                                remote-endpoint = <&csi_mux_from_mipi_vc0>;
++                        };
++                };
++        };
 -- 
 2.17.0
+
