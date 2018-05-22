@@ -1,50 +1,65 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525884754-21253-1-git-send-email-geert+renesas@glider.be>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1525884754-21253-1-git-send-email-geert+renesas@glider.be>
-Message-ID: <152642400072.237094.5673745562388720173@swboyd.mtv.corp.google.com>
-Subject: Re: [git pull] clk: renesas: Updates for v4.18
-Date: Tue, 15 May 2018 15:40:00 -0700
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: boris.brezillon@bootlin.com,
+	dwmw2@infradead.org,
+	computersforpeace@gmail.com,
+	marek.vasut@gmail.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	thierry.reding@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: dev@lynxeye.de,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	marcel@ziswiler.com,
+	krzk@kernel.org,
+	digetx@gmail.com,
+	benjamin.lindqvist@endian.se,
+	jonathanh@nvidia.com,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mirza.krak@gmail.com,
+	linux-mtd@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [RESEND PATCH 5/5] ARM: tegra: enable NAND flash on Colibri T20
+Date: Tue, 22 May 2018 14:07:09 +0200
+Message-Id: <7f2d12d5a82843a633ea3cd11ff67ea572fb51c3.1526990589.git.stefan@agner.ch>
+In-Reply-To: <cover.1526990589.git.stefan@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-05-09 09:52:34)
->         Hi Mike, Stephen,
-> =
+From: Lucas Stach <dev@lynxeye.de>
 
-> The following changes since commit 60cc43fc888428bb2f18f08997432d426a2433=
-38:
-> =
+This enables the on-module ONFI conformant NAND flash.
 
->   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> =
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> are available in the git repository at:
-> =
-
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/clk-renesas-for-v4.18-tag1
-> =
-
-> for you to fetch changes up to 3570a2af473789c5d5f5b9e04f72295102967824:
-> =
-
->   clk: renesas: cpg-mssr: Add support for R-Car E3 (2018-05-09 18:43:57 +=
-0200)
-> =
-
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v4.18
-> =
-
->   - Add support for the MSIOF module clocks on R-Car M3-N,
->   - Add support for the new RZ/G1C and R-Car E3 SoCs,
->   - Small fixes and cleanups.
-
-Thanks. Pulled into clk-next.
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 5c202b3e3bb1..6e5dd31c4036 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -462,6 +462,13 @@
+ 		};
+ 	};
+ 
++	nand@70008000 {
++		status = "okay";
++		nand-bus-width = <8>;
++		nand-on-flash-bbt;
++		wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_HIGH>;
++	};
++
+ 	usb@c5004000 {
+ 		status = "okay";
+ 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+-- 
+2.17.0
