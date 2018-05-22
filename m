@@ -1,112 +1,117 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v7 00/10] drivers: Introduce firmware dnd clock river for ZynqMP core
-Date: Wed, 30 May 2018 13:55:15 -0700
-Message-ID: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 22 May 2018 11:09:13 -0500
+From: Rob Herring <robh@kernel.org>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+	phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document
+ RZ/N1 clock driver
+Message-ID: <20180522160913.GA7755@rob-hp-laptop>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-v7:
- - Removed xilinx specific clock debugfs API support
- - Added reviewed-by tags for FW and clock bindings
- - Updated clock node name to clock-controller
+On Tue, May 22, 2018 at 11:01:23AM +0100, Michel Pollet wrote:
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
+> to provide the SoC clock infrastructure for Linux.
+> 
+> This documents the driver bindings.
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> ---
+>  .../bindings/clock/renesas,rzn1-clocks.txt         | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+> new file mode 100644
+> index 0000000..0c41137
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+> @@ -0,0 +1,44 @@
+> +* Renesas RZ/N1 Clock Driver
+> +
+> +This driver provides the clock infrastructure used by all the other drivers.
 
-v6:
- - Broke patch series to have base FW driver and Clock driver user
- - Incorporated code review comments from last FW and Clock driver patch series. Discussed below:
-	https://patchwork.kernel.org/patch/10230759/
-	https://patchwork.kernel.org/patch/10250047/
+Bindings document h/w not drivers.
 
-v5:
- - Added ATF version check support
- - Updated some functions to be static 
- - Minor function name corrections
+> +
+> +One of the 'special' feature of this infrastructure is that Linux doesn't
 
-v4:
- - Changed clock setrate/getrate API prototype to support 64 bit rate
- - Defined macros for get_node_status return values
- - Moved DT node as a child of firmware
- - Changed debugfs APIs to return data to debugfs buffer instead of dumping to kernel log
- - Minor changes to incorporate other review comments from v3 patch series
+Bindings are not just for Linux.
 
-v3:
- - added some fixes to firmware-ggs.c
- - updated pinmux get/set function argument names to specify function id instead of node id
- - added new pinctrl query macros
- - incorporated review comments from v2 patch series
+> +necessary 'own' all the clocks on the SoC, some other OS runs on
+> +the Cortex-M3 core and that OS can access and claim it's own clocks.
 
-v2:
- - change SPDX-License-Identifier license text style
- - split patch into multiple patches
- - Updated copyrights
- - Added ABI documentation
- - incorporated logical review comments from previuos patch. Discussed below:
-	https://patchwork.kernel.org/patch/10150665/
+How is this relevant to the binding?
 
+> +
+> +Required Properties:
+> +
+> +  - compatible: Must be
+> +    - "renesas,r9a06g032-clocks" for the RZ/N1D
+> +    and "renesas,rzn1-clocks" as a fallback.
 
-Jolly Shah (1):
-  drivers: clk: Add ZynqMP clock driver
+Is "clocks" how the chip reference manual refers to this block?
 
-Rajan Vaja (9):
-  dt-bindings: firmware: Add bindings for ZynqMP firmware
-  firmware: xilinx: Add Zynqmp firmware driver
-  firmware: xilinx: Add zynqmp IOCTL API for device control
-  firmware: xilinx: Add query data API
-  firmware: xilinx: Add clock APIs
-  firmware: xilinx: Add debugfs interface
-  firmware: xilinx: Add debugfs for IOCTL API
-  firmware: xilinx: Add debugfs for query data API
-  dt-bindings: clock: Add bindings for ZynqMP clock driver
+> +  - reg: Base address and length of the memory resource used by the driver
+> +  - #clock-cells: Must be 1
+> +
+> +Examples
+> +--------
+> +
+> +  - Clock driver device node:
+> +
+> +	clock: clocks@4000c000 {
 
- .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  82 +++
- arch/arm64/Kconfig.platforms                       |   1 +
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/zynqmp/Kconfig                         |  11 +
- drivers/clk/zynqmp/Makefile                        |   4 +
- drivers/clk/zynqmp/clk-gate-zynqmp.c               | 146 ++++
- drivers/clk/zynqmp/clk-mux-zynqmp.c                | 150 +++++
- drivers/clk/zynqmp/clk-zynqmp.h                    |  53 ++
- drivers/clk/zynqmp/clkc.c                          | 737 +++++++++++++++++++++
- drivers/clk/zynqmp/divider.c                       | 219 ++++++
- drivers/clk/zynqmp/pll.c                           | 345 ++++++++++
- drivers/firmware/Kconfig                           |   1 +
- drivers/firmware/Makefile                          |   1 +
- drivers/firmware/xilinx/Kconfig                    |  23 +
- drivers/firmware/xilinx/Makefile                   |   5 +
- drivers/firmware/xilinx/zynqmp-debug.c             | 249 +++++++
- drivers/firmware/xilinx/zynqmp-debug.h             |  22 +
- drivers/firmware/xilinx/zynqmp.c                   | 562 ++++++++++++++++
- include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 ++++
- include/linux/firmware/xlnx-zynqmp.h               | 115 ++++
- 21 files changed, 2844 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
- create mode 100644 drivers/clk/zynqmp/Kconfig
- create mode 100644 drivers/clk/zynqmp/Makefile
- create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
- create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
- create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
- create mode 100644 drivers/clk/zynqmp/clkc.c
- create mode 100644 drivers/clk/zynqmp/divider.c
- create mode 100644 drivers/clk/zynqmp/pll.c
- create mode 100644 drivers/firmware/xilinx/Kconfig
- create mode 100644 drivers/firmware/xilinx/Makefile
- create mode 100644 drivers/firmware/xilinx/zynqmp-debug.c
- create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
- create mode 100644 drivers/firmware/xilinx/zynqmp.c
- create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
- create mode 100644 include/linux/firmware/xlnx-zynqmp.h
+clock-controller@...
 
--- 
-2.7.4
+> +		compatible = "renesas,r9a06g032-clocks",
+> +				"renesas,rzn1-clocks";
+> +		reg = <0x4000c000 0x1000>;
+> +		status = "okay";
+
+Don't show status in examples. (Plus, I doubt you ever want to have this 
+disabled, so you don't need the property in your dts files either).
+
+> +		#clock-cells = <1>;
+> +	};
+> +
+> +
+> +  - Other drivers can use the clocks as in:
+
+s/drivers/nodes/
+
+> +
+> +	uart0: serial@40060000 {
+> +		compatible = "snps,dw-apb-uart";
+> +		reg = <0x40060000 0x400>;
+> +		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-shift = <2>;
+> +		reg-io-width = <4>;
+> +		clocks = <&clock RZN1_CLK_UART0>;
+> +		clock-names = "baudclk";
+> +	};
+> +    Note the use of RZN1_CLK_UART0 -- these constants are declared in
+> +    the rzn1-clocks.h header file. These are not hardware based constants
+> +    and are Linux specific.
+
+No, they are not Linux specific. They are part of the DT ABI. 
+
+While it is not a requirement to base them on some h/w numbering, it is 
+preferred if you can. That usually only works if you can base them on 
+bit positions or register offsets.
+
+Rob
