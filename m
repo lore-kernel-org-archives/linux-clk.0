@@ -1,269 +1,84 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525151013-28291-1-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-References: <1525151013-28291-1-git-send-email-tdas@codeaurora.org>
-Message-ID: <152524425583.138124.2497854182982735033@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v1] clk: qcom: gdsc: Add support to poll CFG register to check
- GDSC state
-Date: Tue, 01 May 2018 23:57:35 -0700
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: boris.brezillon@bootlin.com,
+	dwmw2@infradead.org,
+	computersforpeace@gmail.com,
+	marek.vasut@gmail.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	thierry.reding@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: dev@lynxeye.de,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	marcel@ziswiler.com,
+	krzk@kernel.org,
+	digetx@gmail.com,
+	benjamin.lindqvist@endian.se,
+	jonathanh@nvidia.com,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mirza.krak@gmail.com,
+	linux-mtd@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [RESEND PATCH 1/5] mtd: rawnand: tegra: add devicetree binding
+Date: Tue, 22 May 2018 14:07:05 +0200
+Message-Id: <8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
+In-Reply-To: <cover.1526990589.git.stefan@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-04-30 22:03:33)
-> @@ -45,15 +50,28 @@
-> =
+From: Lucas Stach <dev@lynxeye.de>
 
->  #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
-> =
+This adds the devicetree binding for the Tegra 2 NAND flash
+controller.
 
-> -static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
-> +static int gdsc_is_enabled(struct gdsc *sc, bool en)
->  {
-> +       unsigned int reg;
->         u32 val;
->         int ret;
-> =
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ .../bindings/mtd/nvidia,tegra20-nand.txt      | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
 
-> +       if (sc->flags & POLL_CFG_GDSCR)
-> +               reg =3D sc->gdscr + CFG_GDSCR_OFFSET;
-> +       else
-> +               reg =3D sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
-> +
->         ret =3D regmap_read(sc->regmap, reg, &val);
->         if (ret)
->                 return ret;
-> =
-
-> +       if (sc->flags & POLL_CFG_GDSCR) {
-> +               if (en)
-> +                       return !!(val & GDSC_POWER_UP_COMPLETE);
-> +               else
-> +                       return !(val & GDSC_POWER_DOWN_COMPLETE);
-
-This is confusing, but also is correct, because this function is
-returning if the gdsc is enabled or not, and that also happens to be
-false when the gdsc is not enabled and this bit is set.
-
-> +       }
-> +
->         return !!(val & PWR_ON_MASK);
->  }
-> =
-
-> @@ -64,17 +82,17 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
->         return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK,=
- val);
->  }
-> =
-
-> -static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
-> +static int gdsc_poll_status(struct gdsc *sc, bool en)
->  {
->         ktime_t start;
-> =
-
->         start =3D ktime_get();
->         do {
-> -               if (gdsc_is_enabled(sc, reg) =3D=3D en)
-> +               if (gdsc_is_enabled(sc, en) =3D=3D en)
-
-I still don't like this =3D=3D en logic. How about this patch on top? If you
-can test it out, I'll merge your patch and then my patch to make this
-all easier to read. Note that I changed the off case for
-POWER_DOWN_COMPLETE to be a double negation.
-
----8<---
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 2a6b0ff7d451..4696e241db89 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -50,7 +50,13 @@
- =
-
- #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
- =
-
--static int gdsc_is_enabled(struct gdsc *sc, bool en)
-+enum gdsc_status {
-+	GDSC_OFF,
-+	GDSC_ON
-+};
+diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+new file mode 100644
+index 000000000000..522d442937a9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+@@ -0,0 +1,29 @@
++NVIDIA Tegra NAND Flash controller
 +
-+/* Returns 1 if GDSC status is status, 0 if not, and < 0 on error */
-+static int gdsc_check_status(struct gdsc *sc, enum gdsc_status status)
- {
- 	unsigned int reg;
- 	u32 val;
-@@ -58,21 +64,32 @@ static int gdsc_is_enabled(struct gdsc *sc, bool en)
- =
-
- 	if (sc->flags & POLL_CFG_GDSCR)
- 		reg =3D sc->gdscr + CFG_GDSCR_OFFSET;
-+	else if (sc->gds_hw_ctrl)
-+		reg =3D sc->gds_hw_ctrl;
- 	else
--		reg =3D sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
-+		reg =3D sc->gdscr;
- =
-
- 	ret =3D regmap_read(sc->regmap, reg, &val);
- 	if (ret)
- 		return ret;
- =
-
- 	if (sc->flags & POLL_CFG_GDSCR) {
--		if (en)
-+		switch (status) {
-+		case GDSC_ON:
- 			return !!(val & GDSC_POWER_UP_COMPLETE);
--		else
--			return !(val & GDSC_POWER_DOWN_COMPLETE);
-+		case GDSC_OFF:
-+			return !!(val & GDSC_POWER_DOWN_COMPLETE);
-+		}
-+	}
++Required properties:
++- compatible: Must be one of:
++  - "nvidia,tegra20-nand"
++- reg: MMIO address range
++- interrupts: interrupt output of the NFC controller
++- clocks: Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names: Must include the following entries:
++  - nand
++- resets: Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names: Must include the following entries:
++  - nand
 +
-+	switch (status) {
-+	case GDSC_ON:
-+		return !!(val & PWR_ON_MASK);
-+	case GDSC_OFF:
-+		return !(val & PWR_ON_MASK);
- 	}
- =
-
--	return !!(val & PWR_ON_MASK);
-+	return -EINVAL;
- }
- =
-
- static int gdsc_hwctrl(struct gdsc *sc, bool en)
-@@ -82,33 +99,33 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
- 	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
- }
- =
-
--static int gdsc_poll_status(struct gdsc *sc, bool en)
-+static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
- {
- 	ktime_t start;
- =
-
- 	start =3D ktime_get();
- 	do {
--		if (gdsc_is_enabled(sc, en) =3D=3D en)
-+		if (gdsc_check_status(sc, status))
- 			return 0;
- 	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
- =
-
--	if (gdsc_is_enabled(sc, en) =3D=3D en)
-+	if (gdsc_check_status(sc, status))
- 		return 0;
- =
-
- 	return -ETIMEDOUT;
- }
- =
-
--static int gdsc_toggle_logic(struct gdsc *sc, bool en)
-+static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
- {
- 	int ret;
--	u32 val =3D en ? 0 : SW_COLLAPSE_MASK;
-+	u32 val =3D (status =3D=3D GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
- =
-
- 	ret =3D regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
- 	if (ret)
- 		return ret;
- =
-
- 	/* If disabling votable gdscs, don't poll on status */
--	if ((sc->flags & VOTABLE) && !en) {
-+	if ((sc->flags & VOTABLE) && status =3D=3D GDSC_OFF) {
- 		/*
- 		 * Add a short delay here to ensure that an enable
- 		 * right after it was disabled does not put it in an
-@@ -118,7 +135,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
- 		return 0;
- 	}
- =
-
--	if (sc->gds_hw_ctrl)
-+	if (sc->gds_hw_ctrl) {
- 		/*
- 		 * The gds hw controller asserts/de-asserts the status bit soon
- 		 * after it receives a power on/off request from a master.
-@@ -130,8 +147,9 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
- 		 * and polling the status bit.
- 		 */
- 		udelay(1);
-+	}
- =
-
--	return gdsc_poll_status(sc, en);
-+	return gdsc_poll_status(sc, status);
- }
- =
-
- static inline int gdsc_deassert_reset(struct gdsc *sc)
-@@ -210,7 +228,7 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 		gdsc_deassert_clamp_io(sc);
- 	}
- =
-
--	ret =3D gdsc_toggle_logic(sc, true);
-+	ret =3D gdsc_toggle_logic(sc, GDSC_ON);
- 	if (ret)
- 		return ret;
- =
-
-@@ -266,7 +284,7 @@ static int gdsc_disable(struct generic_pm_domain *domai=
-n)
- 		 */
- 		udelay(1);
- =
-
--		ret =3D gdsc_poll_status(sc, true);
-+		ret =3D gdsc_poll_status(sc, GDSC_ON);
- 		if (ret)
- 			return ret;
- 	}
-@@ -274,7 +292,7 @@ static int gdsc_disable(struct generic_pm_domain *domai=
-n)
- 	if (sc->pwrsts & PWRSTS_OFF)
- 		gdsc_clear_mem_on(sc);
- =
-
--	ret =3D gdsc_toggle_logic(sc, false);
-+	ret =3D gdsc_toggle_logic(sc, GDSC_OFF);
- 	if (ret)
- 		return ret;
- =
-
-@@ -303,12 +321,12 @@ static int gdsc_init(struct gdsc *sc)
- =
-
- 	/* Force gdsc ON if only ON state is supported */
- 	if (sc->pwrsts =3D=3D PWRSTS_ON) {
--		ret =3D gdsc_toggle_logic(sc, true);
-+		ret =3D gdsc_toggle_logic(sc, GDSC_ON);
- 		if (ret)
- 			return ret;
- 	}
- =
-
--	on =3D gdsc_is_enabled(sc, true);
-+	on =3D gdsc_check_status(sc, GDSC_ON);
- 	if (on < 0)
- 		return on;
-=20
++Optional properties:
++- nvidia,wp-gpios: GPIO used to disable write protection of the flash
++
++  Example:
++	nand@70008000 {
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++	};
+-- 
+2.17.0
