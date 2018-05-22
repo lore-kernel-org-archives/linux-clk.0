@@ -1,62 +1,71 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Taniya Das <tdas@codeaurora.org>
-References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
- <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
-Message-ID: <152527482828.138124.7114901348273696817@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Wed, 02 May 2018 08:27:08 -0700
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: boris.brezillon@bootlin.com,
+	dwmw2@infradead.org,
+	computersforpeace@gmail.com,
+	marek.vasut@gmail.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	thierry.reding@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: dev@lynxeye.de,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	marcel@ziswiler.com,
+	krzk@kernel.org,
+	digetx@gmail.com,
+	benjamin.lindqvist@endian.se,
+	jonathanh@nvidia.com,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mirza.krak@gmail.com,
+	linux-mtd@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [RESEND PATCH 0/5] mtd: rawnand: add NVIDIA Tegra NAND flash support
+Date: Tue, 22 May 2018 14:07:04 +0200
+Message-Id: <cover.1526990589.git.stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-05-02 03:51:17)
-> +
-> +static DEFINE_MUTEX(rpmh_clk_lock);
-> +
-> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,   \
-> +                         _res_en_offset, _res_on)                      \
-> +       static struct clk_rpmh _platform##_##_name_active;              \
-> +       static struct clk_rpmh _platform##_##_name =3D {                 =
- \
-> +               .res_name =3D _res_name,                                 =
- \
-> +               .res_addr =3D _res_en_offset,                            =
- \
-> +               .res_on_val =3D _res_on,                                 =
- \
-> +               .peer =3D &_platform##_##_name_active,                   =
- \
-> +               .valid_state_mask =3D (BIT(RPMH_WAKE_ONLY_STATE) |       =
- \
-> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) |     \
-> +                                     BIT(RPMH_SLEEP_STATE)),           \
-> +               .hw.init =3D &(struct clk_init_data){                    =
- \
-> +                       .ops =3D &clk_rpmh_ops,                          =
- \
-> +                       .name =3D #_name,                                =
- \
-> +                       .parent_names =3D (const char *[]){ "xo_board",  =
- \
-> +                                               "xo_board_div" },       \
+[resending, this time with mailing lists in cc]
 
-The rpmh clks that do a div 2 can have a recalc_rate function that
-returns the xo_board clk rate divided by 2 all the time. That may be
-easier to do. Keep xo_board as parent, but then specify if it does div-2
-or div-1 in the SoC specific listing. Then DT can only show 38.4 MHz.
-The div 2 part is inside the SoC anyway so this seems more accurate too.
+This picks up an older patchset written by Lucas Stach which
+adds raw NAND flash support for Tegra 2.
+http://lists.infradead.org/pipermail/linux-mtd/2015-November/063031.html
 
-> +                       .num_parents =3D 2,                              =
- \
-> +               },                                                      \
-> +       };                                                              \
+The driver has been reworked to implement the ->exec_op callback.
+Some smaller changes and bug fixes have been applied too, but I did
+not keep track of them. Since the original patchset has been posted
+some years back already, I guess review needs to be done from scratch
+anyway.
+
+--
+Stefan
+
+Lucas Stach (4):
+  mtd: rawnand: tegra: add devicetree binding
+  clk: tegra20: init NDFLASH clock to sensible rate
+  ARM: tegra: add Tegra20 NAND flash controller node
+  ARM: tegra: enable NAND flash on Colibri T20
+
+Stefan Agner (1):
+  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
+
+ .../bindings/mtd/nvidia,tegra20-nand.txt      |  29 +
+ MAINTAINERS                                   |   7 +
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   7 +
+ arch/arm/boot/dts/tegra20.dtsi                |  13 +
+ drivers/clk/tegra/clk-tegra20.c               |   1 +
+ drivers/mtd/nand/raw/Kconfig                  |   6 +
+ drivers/mtd/nand/raw/Makefile                 |   1 +
+ drivers/mtd/nand/raw/tegra_nand.c             | 915 ++++++++++++++++++
+ 8 files changed, 979 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+ create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+
+-- 
+2.17.0
