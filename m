@@ -1,98 +1,106 @@
-Return-Path: <ore@pengutronix.de>
-Date: Wed, 9 May 2018 07:06:28 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 2/6] ARM: imx6: register pm_power_off handler if
- "fsl,pmic-stby-poweroff" is set
-Message-ID: <20180509050628.csbusplowpvmmiwa@pengutronix.de>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-3-o.rempel@pengutronix.de>
- <20180508124033.GL16141@n2100.armlinux.org.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="soqpjcx3im3qprt5"
-In-Reply-To: <20180508124033.GL16141@n2100.armlinux.org.uk>
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v6 0/6] arm: Base support for Renesas RZN1D-DB Board
+Date: Tue, 22 May 2018 11:01:20 +0100
+Message-Id: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This series adds the plain basic support for booting a bare
+kernel on the RZ/N1D-DB Board. It's been trimmed to the strict
+minimum as a 'base', further patches that will add the
+rest of the support.
 
---soqpjcx3im3qprt5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Special note on the clock driver: Current usage of the clocks on Linux
+involves Linux 'claiming' all of them, disabling the one it doesn't
+need and so on.
+On *this* architecture it can't be done, there is at least one other
+OS running on the CM3 core that claims it's own clock; Linux can claim
+some others but definitely not start disabling stuff it isn't supposed to.
 
-On Tue, May 08, 2018 at 01:40:33PM +0100, Russell King - ARM Linux wrote:
-> On Mon, Mar 05, 2018 at 11:25:19AM +0100, Oleksij Rempel wrote:
-> > One of the Freescale recommended sequences for power off with external
-> > PMIC is the following:
-> > ...
-> > 3.  SoC is programming PMIC for power off when standby is asserted.
-> > 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
-> >=20
-> > See:
-> > http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.=
-pdf
-> > page 5083
-> >=20
-> > This patch implements step 4. of this sequence.
-> >=20
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> >  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
-> >  1 file changed, 25 insertions(+)
-> >=20
-> > diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-> > index ecdf071653d4..24689260a2a5 100644
-> > --- a/arch/arm/mach-imx/pm-imx6.c
-> > +++ b/arch/arm/mach-imx/pm-imx6.c
-> > @@ -604,6 +604,28 @@ static void __init imx6_pm_common_init(const struc=
-t imx6_pm_socdata
-> >  				   IMX6Q_GPR1_GINT);
-> >  }
-> > =20
-> > +static void imx6_pm_stby_poweroff(void)
-> > +{
-> > +	imx6_set_lpm(STOP_POWER_OFF);
-> > +	cpu_suspend(0, imx6q_suspend_finish);
->=20
-> Do you actually need to save the processor state etc here - the request
-> is after all to power down the system and not to suspend.  Would calling
-> imx6q_suspend_finish() directly work (and hence simplify the code) ?
+Thanks for the comments on the previous versions!
 
-yes you right. This will work as well.
-I'll send changed version after Rafaels feedback for kernel/reboot.c
-part.
-Russell, can I expect your Signed-off-by for changed patch?
+v6:
+ + Fix for suggestion by Geert Uytterhoeven
+ + Removed "renesas,rzn1" from the board bindings
+ + Removed patches already merged.
+ + Removed reboot driver
+ + Added a whole clock infrastructure.
+ + Rebased on next-20180517
+v5:
+ + Given the problems I have with getting in some structure around the
+   sysctrl block, I've removed the MFD, I've now attached the reboot
+   driver on it's  own pair of registers.
+ + Rebased on next-20180417
+v4:
+ + Fixes for suggestions by Simon Horman
+ + Fixes for suggestions by Jacopo Mondi
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Renamed the r9a06g0xx.dtsi file, given up on trying to get a family
+   common file in, so dropped potential RZ/N1S support and now only
+   focus on RZ/N1D for this patchset.
+ + Added 'always-on' to the architected timer node, because it is.
+ + Added ARCH_R9A06G032, to match others patterns like RCAR
+ + Sorted the .dts files, added empty lines as required.
+ + Fixed patch prefixes to match git-log for bindings&dts
+ + Merged board .dts & Makefile changes together
+ + Rebased on next-20180410
+v3:
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Removed SoC Specific renesas,r9a06g032-xxx, as it's not needed for now.
+ + Kept renesas,rzn1 as a family/generic for this family.
+ + Fixed a couple of the commit messages.
+ + Added Geert's Reviewed-By where appropriate.
+v2:
+ + Fixes for suggestions by Simon Horman
+ + Fixes for suggestions by Rob Herring
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Removed the mach file
+ + Added a MFD base for the sysctrl block
+ + Added a regmap based sub driver for the reboot handler
+ + Renamed the files to match shmobile conventions
+ + Adapted the compatible= strings to reflect 'family' vs 'part'
+   distinction.
+ + Removed the sysctrl.h file entirelly.
+ + Fixed every warnings from the DTC compiler on W=12 mode.
+ + Split the device-tree patches from the code.
 
---=20
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Michel Pollet (6):
+  dt-bindings: arm: Document the RZN1D-DB board
+  dt-bindings: Add the rzn1-clocks.h file
+  dt-bindings: clock: renesas,rzn1-clocks: document RZ/N1 clock driver
+  ARM: dts: Renesas RZ/N1 SoC base device tree file
+  ARM: dts: Renesas RZN1D-DB Board base file
+  clk: renesas: Renesas RZ/N1 clock driver
 
---soqpjcx3im3qprt5
-Content-Type: application/pgp-signature; name="signature.asc"
+ Documentation/devicetree/bindings/arm/shmobile.txt |   5 +-
+ .../bindings/clock/renesas,rzn1-clocks.txt         |  44 ++
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts        |  29 +
+ arch/arm/boot/dts/r9a06g032.dtsi                   |  86 +++
+ drivers/clk/renesas/Kconfig                        |   6 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/rzn1-clocks.c                  | 814 +++++++++++++++++++++
+ include/dt-bindings/clock/rzn1-clocks.h            | 187 +++++
+ 9 files changed, 1172 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+ create mode 100644 drivers/clk/renesas/rzn1-clocks.c
+ create mode 100644 include/dt-bindings/clock/rzn1-clocks.h
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlrygdAACgkQdQOiSHVI
-77R93Qf+K3DxiMZbVQizzjCvsHOT4tntdIwXjwTzgw8o/vU1QDCNU+NK+vbFnbFW
-D6BlSnJyU03IivY4Z1+5m/J3xzYvqWiXjyVwuOEVk9HRpbIgEQkZP7ClXvC7ZJo0
-chLpRlDSvejxp1M5dhyuvZqK60IMnRdqdqQnWy24neucvK1l301w8C1cY2ZIP6IN
-SxVDOw6Li+BDcS6eFxGlORVXpJcej6ulWYtsxLyWQtFM8VqPB+uK/GvUHG9ZQsd+
-Fx4Y2XwvVALPK33HNjgV2m/gkGc2tC2IOniIg6v16LXiqTV9d5jMS75jpAUnxWQH
-woku+n846M17jvaOU2uUe35+tpWY6g==
-=M5Xn
------END PGP SIGNATURE-----
-
---soqpjcx3im3qprt5--
+-- 
+2.7.4
