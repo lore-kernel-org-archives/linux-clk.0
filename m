@@ -1,124 +1,214 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <ilialin@codeaurora.org>
+From: <ilialin@codeaurora.org>
+To: "'Sudeep Holla'" <sudeep.holla@arm.com>,
+	<mturquette@baylibre.com>,
+	<sboyd@kernel.org>,
+	<robh@kernel.org>,
+	<mark.rutland@arm.com>,
+	<viresh.kumar@linaro.org>,
+	<nm@ti.com>,
+	<lgirdwood@gmail.com>,
+	<broonie@kernel.org>,
+	<andy.gross@linaro.org>,
+	<david.brown@linaro.org>,
+	<catalin.marinas@arm.com>,
+	<will.deacon@arm.com>,
+	<rjw@rjwysocki.net>,
+	<linux-clk@vger.kernel.org>
+Cc: <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<rnayak@codeaurora.org>,
+	<amit.kucheria@linaro.org>,
+	<nicolas.dechesne@linaro.org>,
+	<celster@codeaurora.org>,
+	<tfinkel@codeaurora.org>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <1526729701-8589-1-git-send-email-ilialin@codeaurora.org> <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com> <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org> <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com> 
+In-Reply-To: 
+Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Date: Tue, 22 May 2018 10:59:07 +0300
+Message-ID: <001401d3f1a2$c7328850$559798f0$@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMMfpEwn3+fCZZZ8ADNxjun+jzNSnH+8xPcA8OUS_jPUJ-o6LA@mail.gmail.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
- <20180522160913.GA7755@rob-hp-laptop> <CAMMfpEwn3+fCZZZ8ADNxjun+jzNSnH+8xPcA8OUS_jPUJ-o6LA@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 23 May 2018 10:42:10 -0500
-Message-ID: <CAL_JsqLqmwfGZcZseO6gB33BA04TLtwZ94VGKOL7TWp30bm44w@mail.gmail.com>
-Subject: Re: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document
- RZ/N1 clock driver
-To: M P <buserror@gmail.com>
-Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
-	"open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, devicetree@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 23, 2018 at 1:52 AM, M P <buserror@gmail.com> wrote:
-> Hi Rob,
->
-> On Tue, 22 May 2018 at 17:09, Rob Herring <robh@kernel.org> wrote:
->
->> On Tue, May 22, 2018 at 11:01:23AM +0100, Michel Pollet wrote:
->> > The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
->> > to provide the SoC clock infrastructure for Linux.
->> >
->> > This documents the driver bindings.
->> >
->> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
->> > ---
->> >  .../bindings/clock/renesas,rzn1-clocks.txt         | 44
-> ++++++++++++++++++++++
->> >  1 file changed, 44 insertions(+)
->> >  create mode 100644
-> Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
->> >
->> > diff --git
-> a/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
-> b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
->> > new file mode 100644
->> > index 0000000..0c41137
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
->> > @@ -0,0 +1,44 @@
->> > +* Renesas RZ/N1 Clock Driver
->> > +
->> > +This driver provides the clock infrastructure used by all the other
-> drivers.
->
->> Bindings document h/w not drivers.
->
->> > +
->> > +One of the 'special' feature of this infrastructure is that Linux
-> doesn't
->
->> Bindings are not just for Linux.
->
->> > +necessary 'own' all the clocks on the SoC, some other OS runs on
->> > +the Cortex-M3 core and that OS can access and claim it's own clocks.
->
->> How is this relevant to the binding?
->
-> Well you just said it, if the binding is not just for linux, it's probably
-> a good idea to mention it somewhere since I can promise you it's *not*
-> documented in the hardware manual. Whatever this binding is for, it's
-> relevant to point out it is different from the other clock drivers in the
-> same directory... ?
+OK, I think I found out the way. Would this be correct?
+-------------------------------------------------------------------------=
+----------------------
+extern struct cpu_topology cpu_topology[NR_CPUS];
 
-That's not an uncommon issue (sometimes it's secure world that owns
-the clocks, not even a different processor). I'm just not sure what I
-do with this information. It doesn't tell me which clocks are owned by
-the M3 or not.
-
->> > +
->> > +Required Properties:
->> > +
->> > +  - compatible: Must be
->> > +    - "renesas,r9a06g032-clocks" for the RZ/N1D
->> > +    and "renesas,rzn1-clocks" as a fallback.
->
->> Is "clocks" how the chip reference manual refers to this block?
->
-> No, the block is called 'sysctrl' and has tons of other stuff in there.
-> I've tried multiple times to get a 'sysctrl' driver in the previous
-> versions of the patch, in various shape or form, and I can't because I'd be
-> supposed to 'document' binding for stuff that has no code, no purpose, no
-> testing, and have all wildly different topics. So, after some more
-> lengthily discussion with Geert, we've decided to make the 'primary'
-> feature of that block (clocks) as a driver, and see from there onward.
-
-If you are referring to Geert's reply on v4, then this is not how I
-interpreted it. I understood it as make the clock driver bind to the
-sysctrl node and the clock driver can register other functions like
-reset. Then later if you need multiple drivers, you can make an MFD
-driver that binds to the sysctrl node and creates child devices to
-bind sub-drivers (like clocks) to. But the DT doesn't change in the
-process wrt clocks.
-
-You don't have to have a driver for everything, but the binding should
-be as complete as possible and done in an extendable way. The way you
-have done it now is not. I can already see that at some point you will
-want to break things and do something like this:
-
+static struct device *qcom_cpufreq_kryo_get_cluster_lead(int cluster)
 {
-  compatible = "renesas,r9a06g032-sysctrl";
-  ...
-  {
-    compatible = "renesas,r9a06g032-clocks";
-    ...
-  };
-};
+	unsigned cpu;
 
-Which is likely wrong because there's no need to have a child node
-like that. The parent node can be the clock provider (and any other
-provider). There are cases when child nodes do make sense, but we need
-a more complete binding to make that decision. Evolving it one feature
-at a time doesn't work.
+	for_each_possible_cpu(cpu) {
+		if ((cluster =3D=3D cpu_topology[cpu].cluster_id) &&
+			(0 =3D=3D cpu_topology[cpu].core_id))
+			return get_cpu_device(cpu);
+	}
 
-Rob
+	return NULL;
+}
+-------------------------------------------------------------------------=
+----------------------
+
+> -----Original Message-----
+> From: ilialin@codeaurora.org <ilialin@codeaurora.org>
+> Sent: Tuesday, May 22, 2018 09:56
+> To: 'Sudeep Holla' <sudeep.holla@arm.com>; 'mturquette@baylibre.com'
+> <mturquette@baylibre.com>; 'sboyd@kernel.org' <sboyd@kernel.org>;
+> 'robh@kernel.org' <robh@kernel.org>; 'mark.rutland@arm.com'
+> <mark.rutland@arm.com>; 'viresh.kumar@linaro.org'
+> <viresh.kumar@linaro.org>; 'nm@ti.com' <nm@ti.com>;
+> 'lgirdwood@gmail.com' <lgirdwood@gmail.com>; 'broonie@kernel.org'
+> <broonie@kernel.org>; 'andy.gross@linaro.org' <andy.gross@linaro.org>;
+> 'david.brown@linaro.org' <david.brown@linaro.org>;
+> 'catalin.marinas@arm.com' <catalin.marinas@arm.com>;
+> 'will.deacon@arm.com' <will.deacon@arm.com>; 'rjw@rjwysocki.net'
+> <rjw@rjwysocki.net>; 'linux-clk@vger.kernel.org' <linux-
+> clk@vger.kernel.org>
+> Cc: 'devicetree@vger.kernel.org' <devicetree@vger.kernel.org>; 'linux-
+> kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>; 'linux-
+> pm@vger.kernel.org' <linux-pm@vger.kernel.org>; 'linux-arm-
+> msm@vger.kernel.org' <linux-arm-msm@vger.kernel.org>; 'linux-
+> soc@vger.kernel.org' <linux-soc@vger.kernel.org>; 'linux-arm-
+> kernel@lists.infradead.org' <linux-arm-kernel@lists.infradead.org>;
+> 'rnayak@codeaurora.org' <rnayak@codeaurora.org>;
+> 'amit.kucheria@linaro.org' <amit.kucheria@linaro.org>;
+> 'nicolas.dechesne@linaro.org' <nicolas.dechesne@linaro.org>;
+> 'celster@codeaurora.org' <celster@codeaurora.org>;
+> 'tfinkel@codeaurora.org' <tfinkel@codeaurora.org>
+> Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
+>=20
+>=20
+>=20
+> > -----Original Message-----
+> > From: Sudeep Holla <sudeep.holla@arm.com>
+> > Sent: Monday, May 21, 2018 16:05
+> > To: ilialin@codeaurora.org; mturquette@baylibre.com; =
+sboyd@kernel.org;
+> > robh@kernel.org; mark.rutland@arm.com; viresh.kumar@linaro.org;
+> > nm@ti.com; lgirdwood@gmail.com; broonie@kernel.org;
+> > andy.gross@linaro.org; david.brown@linaro.org;
+> > catalin.marinas@arm.com; will.deacon@arm.com; rjw@rjwysocki.net;
+> > linux-clk@vger.kernel.org
+> > Cc: Sudeep Holla <sudeep.holla@arm.com>; devicetree@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; linux-pm@vger.kernel.org; linux-arm-
+> > msm@vger.kernel.org; linux-soc@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; rnayak@codeaurora.org;
+> > amit.kucheria@linaro.org; nicolas.dechesne@linaro.org;
+> > celster@codeaurora.org; tfinkel@codeaurora.org
+> > Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+> >
+> >
+> >
+> > On 21/05/18 13:57, ilialin@codeaurora.org wrote:
+> > >
+> > [...]
+> >
+> > >>> +#include <linux/cpu.h>
+> > >>> +#include <linux/err.h>
+> > >>> +#include <linux/init.h>
+> > >>> +#include <linux/kernel.h>
+> > >>> +#include <linux/module.h>
+> > >>> +#include <linux/nvmem-consumer.h> #include <linux/of.h> =
+#include
+> > >>> +<linux/platform_device.h> #include <linux/pm_opp.h> #include
+> > >>> +<linux/slab.h> #include <linux/soc/qcom/smem.h>
+> > >>> +
+> > >>> +#define MSM_ID_SMEM	137
+> > >>> +#define SILVER_LEAD	0
+> > >>> +#define GOLD_LEAD	2
+> > >>> +
+> > >>
+> > >> So I gather form other emails, that these are physical cpu
+> > >> number(not even unique identifier like MPIDR). Will this work on
+> > >> parts or platforms that need to boot in GOLD LEAD cpus.
+> > >
+> > > The driver is for Kryo CPU, which (and AFAIK all multicore MSMs)
+> > > always boots on the CPU0.
+> >
+> >
+> > That may be true and I am not that bothered about it. But assuming
+> > physical ordering from the logical cpu number is *incorrect* and =
+will
+> > break if kernel decides to change the allocation algorithm. Kernel
+> > provides no guarantee on that, so you need to depend on some =
+physical
+> > ID or may be DT to achieve what your want. But the current code as =
+it
+> stands is wrong.
+>=20
+> Got your point. In fact CPUs are numbered 0-3 and ordered into 2 =
+clusters in
+> the DT:
+>=20
+> cpus {
+> 	#address-cells =3D <2>;
+> 	#size-cells =3D <0>;
+>=20
+> 	CPU0: cpu@0 {
+> 		...
+> 		reg =3D <0x0 0x0>;
+> 		...
+> 	};
+>=20
+> 	CPU1: cpu@1 {
+> 		...
+> 		reg =3D <0x0 0x1>;
+> 		...
+> 	};
+>=20
+> 	CPU2: cpu@100 {
+> 		...
+> 		reg =3D <0x0 0x100>;
+> 		...
+> 	};
+>=20
+> 	CPU3: cpu@101 {
+> 		...
+> 		reg =3D <0x0 0x101>;
+> 		...
+> 	};
+>=20
+> 	cpu-map {
+> 		cluster0 {
+> 			core0 {
+> 				cpu =3D <&CPU0>;
+> 			};
+>=20
+> 			core1 {
+> 				cpu =3D <&CPU1>;
+> 			};
+> 		};
+>=20
+> 		cluster1 {
+> 			core0 {
+> 				cpu =3D <&CPU2>;
+> 			};
+>=20
+> 			core1 {
+> 				cpu =3D <&CPU3>;
+> 			};
+> 		};
+> 	};
+> };
+>=20
+> As far, as I understand, they are probed in the same order. However, =
+to be
+> certain that the physical CPU is the one I intend to configure, I have =
+to fetch
+> the device structure pointer for the cpu-map -> clusterX -> core0 -> =
+cpu path.
+> Could you suggest a kernel API to do that?
+>=20
+>=20
+>=20
+> >
+> > --
+> > Regards,
+> > Sudeep
