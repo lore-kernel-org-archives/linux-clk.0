@@ -1,98 +1,86 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Wed, 30 May 2018 10:42:25 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Stefan Agner <stefan@agner.ch>, <boris.brezillon@bootlin.com>,
-	<dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-	<marek.vasut@gmail.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-	<thierry.reding@gmail.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<dev@lynxeye.de>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
-	<marcel@ziswiler.com>, <krzk@kernel.org>, <benjamin.lindqvist@endian.se>,
-	<jonathanh@nvidia.com>, <pgaikwad@nvidia.com>, <mirza.krak@gmail.com>,
-	<linux-mtd@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
-Message-ID: <20180530074225.GC6708@tbergstrom-lnx.Nvidia.com>
-References: <20180527215442.14760-5-stefan@agner.ch>
- <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
- <5665b799f763daa82dced238fb494863@agner.ch>
- <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
- <90180dd9fc6e60175c54b9d70e50f0e5@agner.ch>
- <04cdfdf5-33c5-b569-9cd7-dda1b9ea0baf@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <04cdfdf5-33c5-b569-9cd7-dda1b9ea0baf@gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document RZ/N1 clock driver
+Date: Tue, 22 May 2018 11:01:23 +0100
+Message-Id: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 29, 2018 at 03:19:47PM +0300, Dmitry Osipenko wrote:
-> On 29.05.2018 15:12, Stefan Agner wrote:
-> > On 29.05.2018 09:48, Peter De Schrijver wrote:
-> >> On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
-> >>> On 28.05.2018 09:55, Peter De Schrijver wrote:
-> >>>> On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
-> >>>>> From: Lucas Stach <dev@lynxeye.de>
-> >>>>>
-> >>>>> Set up the NAND Flash controller clock to run at 150MHz
-> >>>>> instead of the rate set by the bootloader. This is a
-> >>>>> conservative rate which also yields good performance.
-> >>>>>
-> >>>>> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> >>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >>>>> ---
-> >>>>>  drivers/clk/tegra/clk-tegra20.c | 1 +
-> >>>>>  1 file changed, 1 insertion(+)
-> >>>>>
-> >>>>> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> >>>>> index 0ee56dd04cec..dff8c425cd28 100644
-> >>>>> --- a/drivers/clk/tegra/clk-tegra20.c
-> >>>>> +++ b/drivers/clk/tegra/clk-tegra20.c
-> >>>>> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
-> >>>>>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> >>>>>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> >>>>>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-> >>>>> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
-> >>>>>  	/* must be the last entry */
-> >>>>>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
-> >>>>>  };
-> >>>>> --
-> >>>>> 2.17.0
-> >>>>>
-> >>>>
-> >>>> Maybe better to specify this in the Tegra20 dtsi? See
-> >>>> "Assigned clock parents and rates" in
-> >>>> Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >>>
-> >>> assigned-clocks indeed works just fine for this case. Thanks for
-> >>> bringing this up, will drop this patch and add the device tree
-> >>> properties in v3.
-> >>>
-> >>> Hm, interesting that none of the Tegra device tree make use of the
-> >>> feature so far. I guess there would be other cases where this would be
-> >>> useful as well (the one just above, VDE?).
-> >>>
-> >>
-> >> Yes, historically this feature wasn't available, so we used these init tables.
-> >> Unfortunately it's not easy to get rid of them for parent and rate
-> >> configuration, because new kernels should also work with existing DTBs, so we
-> >> can't just add assigned-clock properties and remove the existing table
-> >> entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
-> >> are only enabled by the init table. For not yet merged blocks, this is
-> >> ofcourse not a concern.
-> > 
-> > Sure I understand.
-> > 
-> > Was just somewhat surprised that it isn't used at all yet (grep -r -e
-> > assigned-clock arch/arm/boot/dts/tegra* returns nothing). After all,
-> > assigned clocks bindings have been merged in 2014 :-)
-> > 
-> > At least "clk: tegra: Specify VDE clock rate" merged earlier this year
-> > would have been a candidate already.
-> 
-> I wasn't even aware of existence of the assigned-clock properties, probably just
-> like others.
+The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
+to provide the SoC clock infrastructure for Linux.
 
-This feature seems to be little used indeed. Not sure why.
+This documents the driver bindings.
 
-Peter.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ .../bindings/clock/renesas,rzn1-clocks.txt         | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+new file mode 100644
+index 0000000..0c41137
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+@@ -0,0 +1,44 @@
++* Renesas RZ/N1 Clock Driver
++
++This driver provides the clock infrastructure used by all the other drivers.
++
++One of the 'special' feature of this infrastructure is that Linux doesn't
++necessary 'own' all the clocks on the SoC, some other OS runs on
++the Cortex-M3 core and that OS can access and claim it's own clocks.
++
++Required Properties:
++
++  - compatible: Must be
++    - "renesas,r9a06g032-clocks" for the RZ/N1D
++    and "renesas,rzn1-clocks" as a fallback.
++  - reg: Base address and length of the memory resource used by the driver
++  - #clock-cells: Must be 1
++
++Examples
++--------
++
++  - Clock driver device node:
++
++	clock: clocks@4000c000 {
++		compatible = "renesas,r9a06g032-clocks",
++				"renesas,rzn1-clocks";
++		reg = <0x4000c000 0x1000>;
++		status = "okay";
++		#clock-cells = <1>;
++	};
++
++
++  - Other drivers can use the clocks as in:
++
++	uart0: serial@40060000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0x40060000 0x400>;
++		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		clocks = <&clock RZN1_CLK_UART0>;
++		clock-names = "baudclk";
++	};
++    Note the use of RZN1_CLK_UART0 -- these constants are declared in
++    the rzn1-clocks.h header file. These are not hardware based constants
++    and are Linux specific.
+-- 
+2.7.4
