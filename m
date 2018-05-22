@@ -1,298 +1,169 @@
-Return-Path: <miquel.raynal@bootlin.com>
-Date: Mon, 28 May 2018 00:19:40 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
- mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com,
- krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180528001940.7f54caff@xps13>
-In-Reply-To: <20180527215442.14760-4-stefan@agner.ch>
-References: <20180527215442.14760-4-stefan@agner.ch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/6] clk: meson: add triple phase clock driver
+Date: Tue, 22 May 2018 18:34:54 +0200
+Message-Id: <20180522163457.13834-4-jbrunet@baylibre.com>
+In-Reply-To: <20180522163457.13834-1-jbrunet@baylibre.com>
+References: <20180522163457.13834-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stefan,
+Add a driver to control the output of the sample clock generator found
+in the axg audio clock controller.
 
-A few more comments here.
+The goal of this driver is to coherently control the phase provided to
+the different element using the sample clock generator. This simplify
+the usage of the sample clock generator a lot, without comprising the
+ability of the SoC.
 
-On Sun, 27 May 2018 23:54:39 +0200, Stefan Agner <stefan@agner.ch>
-wrote:
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/Kconfig        |  5 +++
+ drivers/clk/meson/Makefile       |  1 +
+ drivers/clk/meson/clk-triphase.c | 68 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/clkc-audio.h   | 20 ++++++++++++
+ 4 files changed, 94 insertions(+)
+ create mode 100644 drivers/clk/meson/clk-triphase.c
+ create mode 100644 drivers/clk/meson/clkc-audio.h
 
-> Add support for the NAND flash controller found on NVIDIA
-> Tegra 2 SoCs. This implementation does not make use of the
-> command queue feature. Regular operations/data transfers are
-> done in PIO mode. Page read/writes with hardware ECC make
-> use of the DMA for data transfer.
-> 
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  MAINTAINERS                       |   7 +
->  drivers/mtd/nand/raw/Kconfig      |   6 +
->  drivers/mtd/nand/raw/Makefile     |   1 +
->  drivers/mtd/nand/raw/tegra_nand.c | 999 ++++++++++++++++++++++++++++++
->  4 files changed, 1013 insertions(+)
->  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 58b9861ccf99..8cbbb7111742 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13844,6 +13844,13 @@ M:	Laxman Dewangan <ldewangan@nvidia.com>
->  S:	Supported
->  F:	drivers/input/keyboard/tegra-kbc.c
->  
-> +TEGRA NAND DRIVER
-> +M:	Stefan Agner <stefan@agner.ch>
-> +M:	Lucas Stach <dev@lynxeye.de>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-
-I think most MTD bindings use '-' instead of ','. I don't have a
-preference, it's just for coherence.
-
-> +F:	drivers/mtd/nand/raw/tegra_nand.c
-> +
->  TEGRA PWM DRIVER
->  M:	Thierry Reding <thierry.reding@gmail.com>
->  S:	Supported
-> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
-> index 19a2b283fbbe..012c63c6ab47 100644
-> --- a/drivers/mtd/nand/raw/Kconfig
-> +++ b/drivers/mtd/nand/raw/Kconfig
-> @@ -534,4 +534,10 @@ config MTD_NAND_MTK
->  	  Enables support for NAND controller on MTK SoCs.
->  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
->  
-> +config MTD_NAND_TEGRA
-> +	tristate "Support for NAND on NVIDIA Tegra"
-> +	depends on ARCH_TEGRA || COMPILE_TEST
-> +	help
-> +	  Enables support for NAND flash on NVIDIA Tegra SoC based boards.
-
-Please make the term "controller" appear because it's mostly a
-controller driver that you're adding.
-
-> +
->  endif # MTD_NAND
-> diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
-> index 165b7ef9e9a1..d5a5f9832b88 100644
-> --- a/drivers/mtd/nand/raw/Makefile
-> +++ b/drivers/mtd/nand/raw/Makefile
-> @@ -56,6 +56,7 @@ obj-$(CONFIG_MTD_NAND_HISI504)	        += hisi504_nand.o
->  obj-$(CONFIG_MTD_NAND_BRCMNAND)		+= brcmnand/
->  obj-$(CONFIG_MTD_NAND_QCOM)		+= qcom_nandc.o
->  obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
-> +obj-$(CONFIG_MTD_NAND_TEGRA)		+= tegra_nand.o
->  
->  nand-objs := nand_base.o nand_bbt.o nand_timings.o nand_ids.o
->  nand-objs += nand_amd.o
-
-[...]
-
-> +static int tegra_nand_setup_data_interface(struct mtd_info *mtd, int csline,
-> +					   const struct nand_data_interface *conf)
-> +{
-> +	struct nand_chip *chip = mtd_to_nand(mtd);
-> +	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
-> +	const struct nand_sdr_timings *timings;
-> +
-> +	timings = nand_get_sdr_timings(conf);
-> +	if (IS_ERR(timings))
-> +		return PTR_ERR(timings);
-> +
-> +	if (csline == NAND_DATA_IFACE_CHECK_ONLY)
-> +		return 0;
-> +
-> +	tegra_nand_setup_timing(ctrl, timings);
-
-Is this indirection really needed?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_nand_chips_init(struct device *dev,
-> +				 struct tegra_nand_controller *ctrl)
-> +{
-> +	struct device_node *np = dev->of_node;
-> +	struct device_node *np_nand;
-> +	int nchips = of_get_child_count(np);
-> +	struct tegra_nand_chip *nand;
-> +	struct mtd_info *mtd;
-> +	struct nand_chip *chip;
-> +	unsigned long config, bch_config = 0;
-> +	int bits_per_step;
-> +	int err;
-> +
-> +	if (nchips != 1) {
-> +		dev_err(dev, "currently only one NAND chip supported\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	np_nand = of_get_next_child(np, NULL);
-> +
-> +	nand = devm_kzalloc(dev, sizeof(*nand), GFP_KERNEL);
-> +	if (!nand) {
-> +		dev_err(dev, "could not allocate chip structure\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	nand->wp_gpio = devm_gpiod_get_optional(dev, "wp", GPIOD_OUT_LOW);
-> +
-> +	if (IS_ERR(nand->wp_gpio)) {
-> +		err = PTR_ERR(nand->wp_gpio);
-> +		dev_err(dev, "failed to request WP GPIO: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	chip = &nand->chip;
-> +	chip->controller = &ctrl->controller;
-> +	ctrl->chip = chip;
-> +
-> +	mtd = nand_to_mtd(chip);
-> +
-> +	mtd->dev.parent = dev;
-> +	mtd->name = "tegra_nand";
-> +	mtd->owner = THIS_MODULE;
-> +
-> +	nand_set_flash_node(chip, np_nand);
-> +
-> +	chip->options = NAND_NO_SUBPAGE_WRITE | NAND_USE_BOUNCE_BUFFER;
-> +	chip->exec_op = tegra_nand_exec_op;
-> +	chip->select_chip = tegra_nand_select_chip;
-> +	chip->setup_data_interface = tegra_nand_setup_data_interface;
-> +
-> +	err = nand_scan_ident(mtd, 1, NULL);
-> +	if (err)
-> +		return err;
-> +
-> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
-> +		chip->bbt_options |= NAND_BBT_NO_OOB;
-> +
-> +	chip->ecc.mode = NAND_ECC_HW;
-> +	if (!chip->ecc.size)
-> +		chip->ecc.size = 512;
-> +	if (chip->ecc.size != 512)
-> +		return -EINVAL;
-
-This is useless. You can force ecc.size to 512 and forget about the DT
-property (please update the DT bindings).
-
-> +
-> +	chip->ecc.read_page = tegra_nand_read_page_hwecc;
-> +	chip->ecc.write_page = tegra_nand_write_page_hwecc;
-> +	/* Not functional for unknown reason...
-> +	chip->ecc.read_page_raw = tegra_nand_read_page;
-> +	chip->ecc.write_page_raw = tegra_nand_write_page;
-
-Please add the _raw suffix to these helpers.
-
-> +	*/
-> +	config = readl(ctrl->regs + CFG);
-> +	config |= CFG_PIPE_EN | CFG_SKIP_SPARE | CFG_SKIP_SPARE_SIZE_4;
-> +
-> +	if (chip->options & NAND_BUSWIDTH_16)
-> +		config |= CFG_BUS_WIDTH_16;
-> +
-> +	switch (chip->ecc.algo) {
-> +	case NAND_ECC_RS:
-> +		bits_per_step = BITS_PER_STEP_RS * chip->ecc.strength;
-> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_rs_ops);
-> +		switch (chip->ecc.strength) {
-> +		case 4:
-> +			config |= CFG_ECC_SEL | CFG_TVAL_4;
-> +			break;
-> +		case 6:
-> +			config |= CFG_ECC_SEL | CFG_TVAL_6;
-> +			break;
-> +		case 8:
-> +			config |= CFG_ECC_SEL | CFG_TVAL_8;
-> +			break;
-> +		default:
-> +			dev_err(dev, "ECC strength %d not supported\n",
-> +				chip->ecc.strength);
-> +			return -EINVAL;
-> +		}
-> +		break;
-> +	case NAND_ECC_BCH:
-> +		bits_per_step = BITS_PER_STEP_BCH * chip->ecc.strength;
-> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_bch_ops);
-> +		switch (chip->ecc.strength) {
-> +		case 4:
-> +			bch_config = BCH_TVAL_4;
-> +			break;
-> +		case 8:
-> +			bch_config = BCH_TVAL_8;
-> +			break;
-> +		case 14:
-> +			bch_config = BCH_TVAL_14;
-> +			break;
-> +		case 16:
-> +			bch_config = BCH_TVAL_16;
-> +			break;
-> +		default:
-> +			dev_err(dev, "ECC strength %d not supported\n",
-> +				chip->ecc.strength);
-> +			return -EINVAL;
-> +		}
-> +		break;
-> +	default:
-> +		dev_err(dev, "ECC algorithm not supported\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	chip->ecc.bytes = DIV_ROUND_UP(bits_per_step, 8);
-> +
-> +	switch (mtd->writesize) {
-> +	case 256:
-> +		config |= CFG_PS_256;
-> +		break;
-> +	case 512:
-> +		config |= CFG_PS_512;
-> +		break;
-> +	case 1024:
-> +		config |= CFG_PS_1024;
-> +		break;
-> +	case 2048:
-> +		config |= CFG_PS_2048;
-> +		break;
-> +	case 4096:
-> +		config |= CFG_PS_4096;
-> +		break;
-> +	default:
-> +		dev_err(dev, "unhandled writesize %d\n", mtd->writesize);
-> +		return -ENODEV;
-> +	}
-> +
-> +	writel(config, ctrl->regs + CFG);
-> +	writel(bch_config, ctrl->regs + BCH_CONFIG);
-> +
-> +	err = nand_scan_tail(mtd);
-> +	if (err)
-> +		return err;
-> +
-> +	config |= CFG_TAG_BYTE_SIZE(mtd_ooblayout_count_freebytes(mtd) - 1);
-> +	writel(config, ctrl->regs + CFG);
-> +
-> +	err = mtd_device_register(mtd, NULL, 0);
-> +	if (err)
-
-Missing nand_cleanup() in the error path.
-
-> +		return err;
-> +
-> +	return 0;
-> +}
-> +
-
-[...]
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 9d00809f07fc..9ad95966aa3d 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -3,6 +3,11 @@ config COMMON_CLK_AMLOGIC
+ 	depends on ARCH_MESON || COMPILE_TEST
+ 	select COMMON_CLK_REGMAP_MESON
+ 
++config COMMON_CLK_AMLOGIC_AUDIO
++	bool
++	depends on ARCH_MESON || COMPILE_TEST
++	select COMMON_CLK_AMLOGIC
++
+ config COMMON_CLK_MESON_AO
+ 	bool
+ 	depends on OF
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 162e4a6f5c55..74ec070b0974 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -4,6 +4,7 @@
+ 
+ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
+ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
++obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o
+ obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+ obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+diff --git a/drivers/clk/meson/clk-triphase.c b/drivers/clk/meson/clk-triphase.c
+new file mode 100644
+index 000000000000..4a59936251e5
+--- /dev/null
++++ b/drivers/clk/meson/clk-triphase.c
+@@ -0,0 +1,68 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (c) 2018 BayLibre, SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++#include <linux/clk-provider.h>
++#include "clkc-audio.h"
++
++/*
++ * This is a special clock for the audio controller.
++ * The phase of mst_sclk clock output can be controlled independently
++ * for the outside world (ph0), the tdmout (ph1) and tdmin (ph2).
++ * Controlling these 3 phases as just one makes things simpler and
++ * give the same clock view to all the element on the i2s bus.
++ * If necessary, we can still control the phase in the tdm block
++ * which makes these independent control redundant.
++ */
++static inline struct meson_clk_triphase_data *
++meson_clk_triphase_data(struct clk_regmap *clk)
++{
++	return (struct meson_clk_triphase_data *)clk->data;
++}
++
++static void meson_clk_triphase_sync(struct clk_hw *hw)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
++	unsigned int val;
++
++	/* Get phase 0 and sync it to phase 1 and 2 */
++	val = meson_parm_read(clk->map, &tph->ph0);
++	meson_parm_write(clk->map, &tph->ph1, val);
++	meson_parm_write(clk->map, &tph->ph2, val);
++}
++
++static int meson_clk_triphase_get_phase(struct clk_hw *hw)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
++	unsigned int val;
++
++	/* Phase are in sync, reading phase 0 is enough */
++	val = meson_parm_read(clk->map, &tph->ph0);
++
++	return meson_clk_degrees_from_val(val, tph->ph0.width);
++}
++
++static int meson_clk_triphase_set_phase(struct clk_hw *hw, int degrees)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
++	unsigned int val;
++
++	val = meson_clk_degrees_to_val(degrees, tph->ph0.width);
++	meson_parm_write(clk->map, &tph->ph0, val);
++	meson_parm_write(clk->map, &tph->ph1, val);
++	meson_parm_write(clk->map, &tph->ph2, val);
++
++	return 0;
++}
++
++const struct clk_ops meson_clk_triphase_ops = {
++	.init		= meson_clk_triphase_sync,
++	.get_phase	= meson_clk_triphase_get_phase,
++	.set_phase	= meson_clk_triphase_set_phase,
++};
++EXPORT_SYMBOL_GPL(meson_clk_triphase_ops);
+diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
+new file mode 100644
+index 000000000000..286ff1201258
+--- /dev/null
++++ b/drivers/clk/meson/clkc-audio.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018 BayLibre, SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ */
++
++#ifndef __MESON_CLKC_AUDIO_H
++#define __MESON_CLKC_AUDIO_H
++
++#include "clkc.h"
++
++struct meson_clk_triphase_data {
++	struct parm ph0;
++	struct parm ph1;
++	struct parm ph2;
++};
++
++extern const struct clk_ops meson_clk_triphase_ops;
++
++#endif /* __MESON_CLKC_AUDIO_H */
+-- 
+2.14.3
