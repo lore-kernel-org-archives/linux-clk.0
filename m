@@ -1,66 +1,46 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH 08/15] drm/sun4i: DE2 mixer: Add index quirk
-Date: Sat, 19 May 2018 20:31:20 +0200
-Message-Id: <20180519183127.2718-9-jernej.skrabec@siol.net>
-In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 22 May 2018 13:10:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 07/26] dt-bindings: display: Add compatible for A64
+ DE2 tcon1 blocks
+Message-ID: <20180522181000.GA19875@rob-hp-laptop>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+ <20180518094536.17201-8-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180518094536.17201-8-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When TCON sets up TCON TOP, it needs to know mixer index. Here we do that
-by setting engine ID to number provided in mixer index quirk.
+On Fri, May 18, 2018 at 03:15:17PM +0530, Jagan Teki wrote:
+> Allwinner A64 has DE2 pipeline with tcon0 and tcon1 block
+> which is similar Allwinner A83T.
+> 
+> This patch adds dt-binding documentation for A64 DE2 tcon1 blocks.
+> 
+> Mixer1 has different configuration for A64 so use separate compatible
+> but tcon1 has similar behaviour with A83T so add fallback compatible.
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes for v2:
+> - Add fallback compatible for tcon1
+> - Add separate compatible for mixer1 
+> 
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 4 ++--
- drivers/gpu/drm/sun4i/sun8i_mixer.h | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 126899d6f0d3..36d90c76317a 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -353,13 +353,13 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
- 	dev_set_drvdata(dev, mixer);
- 	mixer->engine.ops = &sun8i_engine_ops;
- 	mixer->engine.node = dev->of_node;
--	/* The ID of the mixer currently doesn't matter */
--	mixer->engine.id = -1;
- 
- 	mixer->cfg = of_device_get_match_data(dev);
- 	if (!mixer->cfg)
- 		return -EINVAL;
- 
-+	mixer->engine.id = mixer->cfg->index;
-+
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(regs))
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-index f34e70c42adf..aeda6e9a7627 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-@@ -123,6 +123,7 @@ struct de2_fmt_info {
-  *	are invalid.
-  * @mod_rate: module clock rate that needs to be set in order to have
-  *	a functional block.
-+ * @index: mixer index, needed to properly set TCON TOP
-  */
- struct sun8i_mixer_cfg {
- 	int		vi_num;
-@@ -130,6 +131,7 @@ struct sun8i_mixer_cfg {
- 	int		scaler_mask;
- 	int		ccsc;
- 	unsigned long	mod_rate;
-+	int		index;
- };
- 
- struct sun8i_mixer {
--- 
-2.17.0
+Reviewed-by: Rob Herring <robh@kernel.org>
