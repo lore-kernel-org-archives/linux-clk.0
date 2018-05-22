@@ -1,70 +1,38 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Fri, 25 May 2018 11:24:58 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"lee.jones@linaro.org" <lee.jones@linaro.org>,
-	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
-	"Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
-Subject: Re: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
- regulators
-Message-ID: <20180525102458.GJ4828@sirena.org.uk>
-References: <20180524055752.GE4249@localhost.localdomain>
- <20180524140118.GS4828@sirena.org.uk>
- <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
- <20180524175721.GB4828@sirena.org.uk>
- <20180525055430.GB16888@localhost.localdomain>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 13/33] clk: rockchip: use match_string() helper
+Date: Tue, 22 May 2018 15:56:01 +0200
+Message-ID: <3184431.yyZBj8V0y7@phil>
+In-Reply-To: <1526903890-35761-14-git-send-email-xieyisheng1@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com> <1526903890-35761-14-git-send-email-xieyisheng1@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jmkJtp15SxLq1SbD"
-In-Reply-To: <20180525055430.GB16888@localhost.localdomain>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
+Am Montag, 21. Mai 2018, 13:57:50 CEST schrieb Yisheng Xie:
+> match_string() returns the index of an array for a matching string,
+> which can be used intead of open coded variant.
+> 
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-rockchip@lists.infradead.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 
---jmkJtp15SxLq1SbD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> @@ -312,6 +304,8 @@ static struct clk *rockchip_clk_register_frac_branch(
+>  
+>  		/* notifier on the fraction divider to catch rate changes */
+>  		if (frac->mux_frac_idx >= 0) {
+> +			pr_debug("%s: find fractional parent in mux at pos %d\n",
+> +				 __func__, frac->mux_frac_idx);
 
-On Fri, May 25, 2018 at 08:54:30AM +0300, Matti Vaittinen wrote:
-> On Thu, May 24, 2018 at 06:57:21PM +0100, Mark Brown wrote:
+applied to my Rockchip clk branch for 4.18 after changing the "find" above
+to "found" again ;-) .
 
-> > You can look at the regulators node within the parent device, you know
-> > that in Linux the parent device will be the MFD.
 
-> So I should parse the device-tree in MFD my driver in order to locate
-> the regulators node? Isn't that somewhat like code dublication? If we
-> rely on compatibles we can avoid device-tree parsing in MFD driver,
-
-No, there's no need to do this - the child can just look at the of_node
-of the parent since it can never be instantiated otherwise.
-
-> right? An in-tree example of this is:
-
-There are some bad examples (and some where the same regulators can get
-used with multiple different parents) but that's no reason not to follow
-good practice.
-
---jmkJtp15SxLq1SbD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsH5HoACgkQJNaLcl1U
-h9Drrwf9H6otj10qIc8vXKx60U0IrSi0dtXfTKSeJMWeuElp1J7E6COsbouwImXE
-uh+FgmF2eC5HgXWrkELT7Sc+9FfzxOHmievxmnB+cz5oL3Q64FkLO1W3vV6embAk
-VF3Su3R+RPF+0jAFJm1cqOOVXWYKc1q9Dd8VTx3qCNXF93rCA9Q7V1XEBgIGlQqp
-wRWI6/1gWaVatWtwGYqOXD9YWxHwMGSZu9QbyxYGY607df0pohuTQH5kHGXAGaVC
-cNwyAH20E2i0YJuWhV4y7LDB9wi8+2dtQ57WlB+AT1A/jEQ41vrgMEt3YoubcCJf
-KVuH0O+wzznJSPbgEvlcV2+nMIhZOQ==
-=Ma5W
------END PGP SIGNATURE-----
-
---jmkJtp15SxLq1SbD--
+Thanks for the nice cleanup
+Heiko
