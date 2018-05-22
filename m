@@ -1,67 +1,55 @@
-Return-Path: <miquel.raynal@bootlin.com>
-Date: Thu, 31 May 2018 08:42:05 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Stefan Agner <stefan@agner.ch>, boris.brezillon@bootlin.com,
- dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com,
- mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com,
- krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/6] mtd: rawnand: tegra: add devicetree binding
-Message-ID: <20180531084205.38bfe90f@xps13>
-In-Reply-To: <20180531034523.GA5417@rob-hp-laptop>
-References: <20180527215442.14760-3-stefan@agner.ch>
-	<20180528002354.45025afd@xps13>
-	<20180531034523.GA5417@rob-hp-laptop>
+Return-Path: <nsekhar@ti.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v11_00/27]_ARM:_davinci:_convert_to_common_clo?=
+ =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180518164829.27052-1-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
+Date: Tue, 22 May 2018 15:08:04 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+Hi David,
 
-On Wed, 30 May 2018 22:45:23 -0500, Rob Herring <robh@kernel.org> wrote:
+On Friday 18 May 2018 10:18 PM, David Lechner wrote:
+> This series converts mach-davinci to use the common clock framework.
+> 
+> The series works like this, the first 3 patches fix some issues with the clock
+> drivers that have already been accepted into the mainline kernel.
+> 
+> Then, starting with "ARM: davinci: pass clock as parameter to
+> davinci_timer_init()", we get the mach code ready for the switch by adding the
+> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+> around the legacy clocks so that we can switch easily between the old and the
+> new.
+> 
+> "ARM: davinci: switch to common clock framework" actually flips the switch
+> to start using the new clock drivers. Then the next 8 patches remove all
+> of the old clock code.
+> 
+> The final four patches add device tree clock support to the one SoC that
+> supports it.
+> 
+> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
+> board file).
 
-> On Mon, May 28, 2018 at 12:23:54AM +0200, Miquel Raynal wrote:
-> > Hi Stefan,
-> >=20
-> > On Sun, 27 May 2018 23:54:38 +0200, Stefan Agner <stefan@agner.ch>
-> > wrote:
-> >  =20
-> > > From: Lucas Stach <dev@lynxeye.de>
-> > >=20
-> > > This adds the devicetree binding for the Tegra 2 NAND flash
-> > > controller.
-> > >=20
-> > > Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > > ---
-> > >  .../bindings/mtd/nvidia,tegra20-nand.txt      | 62 +++++++++++++++++=
-++
-> > >  1 file changed, 62 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegr=
-a20-nand.txt
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nan=
-d.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> > > new file mode 100644
-> > > index 000000000000..49e472af1b39
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-> > > @@ -0,0 +1,62 @@
-> > > +NVIDIA Tegra NAND Flash controller
-> > > +
-> > > +Required properties:
-> > > +- compatible: Must be one of: =20
-> >=20
-> > Nitpick: just put the compatible here as there is only one? =20
->=20
-> No, this is how I ask people to format it.
+If you do end up sending a v12, you can leave out the mach-davinci
+portions unless there are any changes you need to make. I will pick them
+up from this series once the driver dependencies are merged.
 
-Oh, ok, I'll remember it for my own DT patches then :)
+I do hope the drivers/clk/* changes can be merged from v4.18.
 
 Thanks,
-Miqu=C3=A8l
+Sekhar
