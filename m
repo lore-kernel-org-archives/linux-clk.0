@@ -1,95 +1,28 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH 10/15] drm/sun4i: Add support for R40 TV TCONs
-Date: Sat, 19 May 2018 20:31:22 +0200
-Message-Id: <20180519183127.2718-11-jernej.skrabec@siol.net>
-In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1526959560-6014-2-git-send-email-Anson.Huang@nxp.com>
+References: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com> <1526959560-6014-2-git-send-email-Anson.Huang@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 22 May 2018 08:26:14 -0300
+Message-ID: <CAOMZO5AenOJ7vvxwsEp7FkTKEgjjZqvnHZRsU2MC=oZhk4J01Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: imx6ul: add GPIO clocks
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Michael Trimarchi <michael@amarulasolutions.com>,
+	Matteo Lisi <matteo.lisi@engicam.com>, NXP Linux Team <Linux-imx@nxp.com>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-R40 display pipeline has a lot of possible configurations. HDMI can be
-connected to 2 different TCONs (out of 4) and mixers can be connected to
-any TCON. All this must be configured in TCON TOP.
+On Tue, May 22, 2018 at 12:26 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
+> i.MX6UL has GPIO clock gates in CCM CCGR, add
+> clock property for GPIO driver to make sure all
+> GPIO banks work as expected.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Along with definition of TCON capabilities also add mux callback, which
-can configure this complex pipeline.
-
-For now, only TCON TV is supported.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 39 ++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index e0c562ce1c22..81b9551e4f78 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -1274,6 +1274,31 @@ static int sun6i_tcon_set_mux(struct sun4i_tcon *tcon,
- 	return 0;
- }
- 
-+static int sun8i_r40_tcon_tv_set_mux(struct sun4i_tcon *tcon,
-+				     const struct drm_encoder *encoder,
-+				     int index)
-+{
-+	if (encoder->encoder_type == DRM_MODE_ENCODER_TMDS)
-+		sun8i_tcon_top_set_hdmi_src(tcon->tcon_top, index);
-+
-+	sun8i_tcon_top_de_config(tcon->tcon_top, tcon->id,
-+				 tcon_type_tv, index);
-+
-+	return 0;
-+}
-+
-+static int sun8i_r40_tcon_tv_set_mux_0(struct sun4i_tcon *tcon,
-+				       const struct drm_encoder *encoder)
-+{
-+	return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 0);
-+}
-+
-+static int sun8i_r40_tcon_tv_set_mux_1(struct sun4i_tcon *tcon,
-+				       const struct drm_encoder *encoder)
-+{
-+	return sun8i_r40_tcon_tv_set_mux(tcon, encoder, 1);
-+}
-+
- static const struct sun4i_tcon_quirks sun4i_a10_quirks = {
- 	.has_channel_0		= true,
- 	.has_channel_1		= true,
-@@ -1321,6 +1346,18 @@ static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks = {
- 	.has_channel_1		= true,
- };
- 
-+static const struct sun4i_tcon_quirks sun8i_r40_tv_0_quirks = {
-+	.has_channel_1		= true,
-+	.needs_tcon_top		= true,
-+	.set_mux		= sun8i_r40_tcon_tv_set_mux_0,
-+};
-+
-+static const struct sun4i_tcon_quirks sun8i_r40_tv_1_quirks = {
-+	.has_channel_1		= true,
-+	.needs_tcon_top		= true,
-+	.set_mux		= sun8i_r40_tcon_tv_set_mux_1,
-+};
-+
- static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
- 	.has_channel_0		= true,
- };
-@@ -1345,6 +1382,8 @@ const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
- 	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data = &sun8i_a83t_lcd_quirks },
- 	{ .compatible = "allwinner,sun8i-a83t-tcon-tv", .data = &sun8i_a83t_tv_quirks },
-+	{ .compatible = "allwinner,sun8i-r40-tcon-tv-0", .data = &sun8i_r40_tv_0_quirks },
-+	{ .compatible = "allwinner,sun8i-r40-tcon-tv-1", .data = &sun8i_r40_tv_1_quirks },
- 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
- 	{ .compatible = "allwinner,sun9i-a80-tcon-lcd", .data = &sun9i_a80_tcon_lcd_quirks },
- 	{ .compatible = "allwinner,sun9i-a80-tcon-tv", .data = &sun9i_a80_tcon_tv_quirks },
--- 
-2.17.0
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
