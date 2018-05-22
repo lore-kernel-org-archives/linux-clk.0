@@ -1,61 +1,83 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/4] clk: tegra20: Correct parents of CDEV1/2 clocks
-Date: Tue,  8 May 2018 19:26:05 +0300
-Message-Id: <20180508162607.3500-4-digetx@gmail.com>
-In-Reply-To: <20180508162607.3500-1-digetx@gmail.com>
-References: <20180508162607.3500-1-digetx@gmail.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v6 5/6] ARM: dts: Renesas RZN1D-DB Board base file
+Date: Tue, 22 May 2018 11:01:25 +0100
+Message-Id: <1526983321-41949-6-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Parents of CDEV1/2 clocks are determined by muxing of the corresponding
-pins. Pinctrl driver now provides the CDEV1/2 clock muxes and hence
-CDEV1/2 clocks could have correct parents. Set CDEV1/2 parents to the
-corresponding muxes to fix the parents.
+This adds a base device tree file for the RZN1-DB board, with only the
+basic support allowing the system to boot to a prompt. Only one UART is
+used, with only a single CPU running.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
-Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-Tested-by: Marc Dietrich <marvin24@gmx.de>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index ad5a7b5e3a39..636500a98561 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -846,14 +846,12 @@ static void __init tegra20_periph_clk_init(void)
- 			     NULL);
- 
- 	/* cdev1 */
--	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
--	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
-+	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_mux", 0,
- 				    clk_base, 0, 94, periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_CDEV1] = clk;
- 
- 	/* cdev2 */
--	clk = clk_register_fixed_rate(NULL, "cdev2_fixed", NULL, 0, 26000000);
--	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_fixed", 0,
-+	clk = tegra_clk_register_periph_gate("cdev2", "cdev2_mux", 0,
- 				    clk_base, 0, 93, periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_CDEV2] = clk;
- 
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index f4753b0..6157897 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -814,6 +814,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
++	r9a06g032-rzn1d400-db.dtb \
+ 	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-evb.dtb \
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+new file mode 100644
+index 0000000..5fc2c40
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+@@ -0,0 +1,29 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZN1D-DB Board
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++/dts-v1/;
++
++#include "r9a06g032.dtsi"
++
++/ {
++	model = "RZN1D-DB Board";
++	compatible = "renesas,rzn1d400-db",
++			"renesas,r9a06g032", "renesas,rzn1";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	aliases {
++		serial0 = &uart0;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
 -- 
-2.17.0
+2.7.4
