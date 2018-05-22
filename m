@@ -1,186 +1,52 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Fri, 11 May 2018 10:57:54 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
-	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd
-	<sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>, <linux-clk@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/4] clk: tegra: Add quirk for getting CDEV1/2 clocks
- on Tegra20
-Message-ID: <20180511075754.GW6835@tbergstrom-lnx.Nvidia.com>
-References: <20180508162607.3500-1-digetx@gmail.com>
- <20180508162607.3500-5-digetx@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 22 May 2018 10:55:29 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+	viresh.kumar@linaro.org, nm@ti.com, lgirdwood@gmail.com,
+	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+	celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v9 11/15] dt-bindings: cpufreq: Document
+ operating-points-v2-kryo-cpu
+Message-ID: <20180522155529.GA30543@rob-hp-laptop>
+References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+ <1526901932-9514-12-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180508162607.3500-5-digetx@gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526901932-9514-12-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 08, 2018 at 07:26:06PM +0300, Dmitry Osipenko wrote:
-> CDEV1 and CDEV2 clocks are a bit special case, their parent clock is
-> created by the pinctrl driver. It should be possible for clk user to
-> request these clocks before pinctrl driver got probed and hence user will
-> get an orphaned clock. That might be undesirable because user may expect
-> parent clock to be enabled by the child, so let's return -EPROBE_DEFER
-> till parent clock appears.
+On Mon, May 21, 2018 at 02:25:28PM +0300, Ilia Lin wrote:
+> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> to provide the OPP framework with required information.
+> This is used to determine the voltage and frequency value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>                                                                                                     
-
-
-> ---
->  drivers/clk/tegra/clk-tegra114.c |  2 +-
->  drivers/clk/tegra/clk-tegra124.c |  2 +-
->  drivers/clk/tegra/clk-tegra20.c  | 32 +++++++++++++++++++++++++++++++-
->  drivers/clk/tegra/clk-tegra210.c |  2 +-
->  drivers/clk/tegra/clk-tegra30.c  |  2 +-
->  drivers/clk/tegra/clk.c          |  5 +++--
->  drivers/clk/tegra/clk.h          |  2 +-
->  7 files changed, 39 insertions(+), 8 deletions(-)
+> This change adds documentation for the DT bindings.
+> The "operating-points-v2-kryo-cpu" DT extends the "operating-points-v2"
+> with following parameters:
+> - nvmem-cells (NVMEM area containig the speedbin information)
+> - opp-supported-hw: A single 32 bit bitmap value,
+>   representing compatible HW:
+> 			0:	MSM8996 V3, speedbin 0
+> 			1:	MSM8996 V3, speedbin 1
+> 			2:	MSM8996 V3, speedbin 2
+> 			3:	unused
+> 			4:	MSM8996 SG, speedbin 0
+> 			5:	MSM8996 SG, speedbin 1
+> 			6:	MSM8996 SG, speedbin 2
+> 			7-31:	unused
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-> index 5d5a22d529f5..1824f014202b 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -1367,7 +1367,7 @@ static void __init tegra114_clock_init(struct device_node *np)
->  	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
->  					&pll_x_params);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra_clk_apply_init_table = tegra114_clock_apply_init_table;
-> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-> index 50088e976611..0c69c7970950 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -1479,7 +1479,7 @@ static void __init tegra124_132_clock_init_post(struct device_node *np)
->  				  &pll_x_params);
->  	tegra_init_special_resets(1, tegra124_reset_assert,
->  				  tegra124_reset_deassert);
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  
->  	clks[TEGRA124_CLK_EMC] = tegra_clk_register_emc(clk_base, np,
->  							&emc_lock);
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index 636500a98561..cc857d4d4a86 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -1089,6 +1089,36 @@ static const struct of_device_id pmc_match[] __initconst = {
->  	{ },
->  };
->  
-> +static struct clk *tegra20_clk_src_onecell_get(struct of_phandle_args *clkspec,
-> +					       void *data)
-> +{
-> +	struct clk_hw *parent_hw;
-> +	struct clk_hw *hw;
-> +	struct clk *clk;
-> +
-> +	clk = of_clk_src_onecell_get(clkspec, data);
-> +	if (IS_ERR(clk))
-> +		return clk;
-> +
-> +	/*
-> +	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
-> +	 * clock is created by the pinctrl driver. It is possible for clk user
-> +	 * to request these clocks before pinctrl driver got probed and hence
-> +	 * user will get an orphaned clock. That might be undesirable because
-> +	 * user may expect parent clock to be enabled by the child.
-> +	 */
-> +	if (clkspec->args[0] == TEGRA20_CLK_CDEV1 ||
-> +	    clkspec->args[0] == TEGRA20_CLK_CDEV2) {
-> +		hw = __clk_get_hw(clk);
-> +
-> +		parent_hw = clk_hw_get_parent(hw);
-> +		if (!parent_hw)
-> +			return ERR_PTR(-EPROBE_DEFER);
-> +	}
-> +
-> +	return clk;
-> +}
-> +
->  static void __init tegra20_clock_init(struct device_node *np)
->  {
->  	struct device_node *node;
-> @@ -1127,7 +1157,7 @@ static void __init tegra20_clock_init(struct device_node *np)
->  
->  	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA20_CLK_CLK_MAX);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, tegra20_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra_clk_apply_init_table = tegra20_clock_apply_init_table;
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 9fb5d51ccce4..5435d01c636a 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -3567,7 +3567,7 @@ static void __init tegra210_clock_init(struct device_node *np)
->  	tegra_init_special_resets(2, tegra210_reset_assert,
->  				  tegra210_reset_deassert);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra210_mbist_clk_init();
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> index b316dfb6f6c7..acfe661b2ae7 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -1349,7 +1349,7 @@ static void __init tegra30_clock_init(struct device_node *np)
->  
->  	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA30_CLK_CLK_MAX);
->  
-> -	tegra_add_of_provider(np);
-> +	tegra_add_of_provider(np, of_clk_src_onecell_get);
->  	tegra_register_devclks(devclks, ARRAY_SIZE(devclks));
->  
->  	tegra_clk_apply_init_table = tegra30_clock_apply_init_table;
-> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> index ba923f0d5953..593d76a114f9 100644
-> --- a/drivers/clk/tegra/clk.c
-> +++ b/drivers/clk/tegra/clk.c
-> @@ -298,7 +298,8 @@ static struct reset_controller_dev rst_ctlr = {
->  	.of_reset_n_cells = 1,
->  };
->  
-> -void __init tegra_add_of_provider(struct device_node *np)
-> +void __init tegra_add_of_provider(struct device_node *np,
-> +				  void *clk_src_onecell_get)
->  {
->  	int i;
->  
-> @@ -314,7 +315,7 @@ void __init tegra_add_of_provider(struct device_node *np)
->  
->  	clk_data.clks = clks;
->  	clk_data.clk_num = clk_num;
-> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> +	of_clk_add_provider(np, clk_src_onecell_get, &clk_data);
->  
->  	rst_ctlr.of_node = np;
->  	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index ba7e20e6a82b..e1f88463b600 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -763,7 +763,7 @@ struct clk **tegra_clk_init(void __iomem *clk_base, int num, int periph_banks);
->  
->  struct clk **tegra_lookup_dt_id(int clk_id, struct tegra_clk *tegra_clk);
->  
-> -void tegra_add_of_provider(struct device_node *np);
-> +void tegra_add_of_provider(struct device_node *np, void *clk_src_onecell_get);
->  void tegra_register_devclks(struct tegra_devclk *dev_clks, int num);
->  
->  void tegra_audio_clk_init(void __iomem *clk_base,
-> -- 
-> 2.17.0
-> 
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+Please add acks/reviewed-bys when posting new versions.
+
+Rob
