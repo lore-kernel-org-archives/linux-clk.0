@@ -1,73 +1,104 @@
-Return-Path: <gilad@benyossef.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 22 May 2018 17:51:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Will Deacon <will.deacon@arm.com>, Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+	David Airlie <airlied@linux.ie>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Derek Basehore <dbasehore@chromium.org>, linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	Lin Huang <hl@rock-chips.com>, kernel@collabora.com,
+	Sean Paul <seanpaul@chromium.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	devicetree@vger.kernel.org, Yakir Yang <kuankuan.y@gmail.com>,
+	Mark Yao <markyao0591@gmail.com>,
+	Jacob Chen <jacob-chen@iotwrt.com>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Brian Norris <briannorris@chromium.org>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Caesar Wang <wxt@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFC PATCH 09/10] arm64: dts: rk3399: Add dfi and dmc nodes.
+Message-ID: <20180522225140.GA30149@rob-hp-laptop>
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+ <20180514211610.26618-10-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX-t8WfjRKpZ7UxXBbBNojsn-8z7_BM9grmLJcf=9Ks2Q@mail.gmail.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
- <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
- <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
- <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
- <CAOtvUMcf-fHduThORv3cbcN16wEm_Si27OjSjAmSc9g5eK4PJw@mail.gmail.com> <CAMuHMdX-t8WfjRKpZ7UxXBbBNojsn-8z7_BM9grmLJcf=9Ks2Q@mail.gmail.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 24 May 2018 16:20:33 +0300
-Message-ID: <CAOtvUMdCSoxYjpyb+fD36EE5+4sV4CjrxwK94RQ7bNKE5rajmQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180514211610.26618-10-enric.balletbo@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 22, 2018 at 10:48 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Hi Gilad,
->
-> On Mon, May 21, 2018 at 3:43 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
->> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
->> <geert@linux-m68k.org> wrote:
->>> Indeed. From a quick glance, it looks like drivers/crypto/ccree/cc_driver.c
->>> does not distinguish between the absence of the clock property, and an
->>> actual error in getting the clock, and never considers any error a failure
->>> (incl. -PROBE_DEFER).
->>>
->>> As of_clk_get() returns -ENOENT for both a missing clock property and a
->>> missing clock, you should use (devm_)clk_get() instead, and distinguish
->>> between NULL (no clock property) and IS_ERR() (actual failure -> abort).
->>
->> I was trying to do as you suggested but I didn't quite get what is the
->> dev_id (2nd) parameter to devm_clk_get parameter is supposed to be.
->
-> It's the (optional) name of the clock, helpful in case there is more than one.
-> In your case, NULL is fine.
->
+On Mon, May 14, 2018 at 11:16:09PM +0200, Enric Balletbo i Serra wrote:
+> From: Lin Huang <hl@rock-chips.com>
+> 
+> These are required to support DDR DVFS on rk3399 platform. The patch also
+> introduces two new files (rk3399-dram.h and rk3399-dram-default-timing)
+> with default DRAM settings.
+> 
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> 
+>  .../rockchip/rk3399-dram-default-timing.dtsi  | 38 ++++++++++
+>  arch/arm64/boot/dts/rockchip/rk3399-dram.h    | 73 +++++++++++++++++++
+>  .../boot/dts/rockchip/rk3399-op1-opp.dtsi     | 29 ++++++++
+>  arch/arm64/boot/dts/rockchip/rk3399.dtsi      | 20 +++++
+>  4 files changed, 160 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-dram.h
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi
+> new file mode 100644
+> index 000000000000..4dfe3e1d8bdf
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-dram-default-timing.dtsi
+> @@ -0,0 +1,38 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR X11)
+> +/*
+> + * Copyright (c) 2016-2018, Fuzhou Rockchip Electronics Co., Ltd
+> + *
+> + * Author: Lin Huang <hl@rock-chips.com>
+> + */
+> +
+> +#include "rk3399-dram.h"
+> +
+> +rockchip,ddr3_speed_bin = <21>;
+> +rockchip,pd_idle = <0x40>;
+> +rockchip,sr_idle = <0x2>;
 
-I have assumed as much and tried it, it did not work and so I assumed
-I am missing something and asked you.
-It turns out I was missing the fact I was using the wrong device tree
-file... :-(
+Don't do includes this way please. These should go under a node.
 
-So thanks, it works now :-)
-
-Having said that, while using devm)clk_get() is a better approach, it
-does not seems to distinguish
-between no "clocks" and a failure to clock information - it returns
-ENOENT in both cases as well.
-
-Thanks,
-Gilad
-
-
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+> +rockchip,sr_mc_gate_idle = <0x3>;
+> +rockchip,srpd_lite_idle	= <0x4>;
+> +rockchip,standby_idle = <0x2000>;
+> +rockchip,dram_dll_dis_freq = <300000000>;
+> +rockchip,phy_dll_dis_freq = <125000000>;
+> +rockchip,auto_pd_dis_freq = <666000000>;
+> +rockchip,ddr3_odt_dis_freq = <333000000>;
+> +rockchip,ddr3_drv = <DDR3_DS_40ohm>;
+> +rockchip,ddr3_odt = <DDR3_ODT_120ohm>;
+> +rockchip,phy_ddr3_ca_drv = <PHY_DRV_ODT_40>;
+> +rockchip,phy_ddr3_dq_drv = <PHY_DRV_ODT_40>;
+> +rockchip,phy_ddr3_odt = <PHY_DRV_ODT_240>;
+> +rockchip,lpddr3_odt_dis_freq = <333000000>;
+> +rockchip,lpddr3_drv = <LP3_DS_34ohm>;
+> +rockchip,lpddr3_odt = <LP3_ODT_240ohm>;
+> +rockchip,phy_lpddr3_ca_drv = <PHY_DRV_ODT_40>;
+> +rockchip,phy_lpddr3_dq_drv = <PHY_DRV_ODT_40>;
+> +rockchip,phy_lpddr3_odt = <PHY_DRV_ODT_240>;
+> +rockchip,lpddr4_odt_dis_freq = <333000000>;
+> +rockchip,lpddr4_drv = <LP4_PDDS_60ohm>;
+> +rockchip,lpddr4_dq_odt = <LP4_DQ_ODT_40ohm>;
+> +rockchip,lpddr4_ca_odt = <LP4_CA_ODT_40ohm>;
+> +rockchip,phy_lpddr4_ca_drv = <PHY_DRV_ODT_40>;
+> +rockchip,phy_lpddr4_ck_cs_drv = <PHY_DRV_ODT_80>;
+> +rockchip,phy_lpddr4_dq_drv = <PHY_DRV_ODT_80>;
+> +rockchip,phy_lpddr4_odt = <PHY_DRV_ODT_60>;
