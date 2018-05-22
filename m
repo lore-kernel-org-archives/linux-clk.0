@@ -1,43 +1,164 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 22 May 2018 17:33:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org,
-	linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH] clk: rockchip: remove deprecated gate-clk code and
- dt-binding
-Message-ID: <20180522223313.GA12580@rob-hp-laptop>
-References: <20180512143038.30447-1-heiko@sntech.de>
+Return-Path: <ilialin@codeaurora.org>
+From: <ilialin@codeaurora.org>
+To: "'Sudeep Holla'" <sudeep.holla@arm.com>,
+	<mturquette@baylibre.com>,
+	<sboyd@kernel.org>,
+	<robh@kernel.org>,
+	<mark.rutland@arm.com>,
+	<viresh.kumar@linaro.org>,
+	<nm@ti.com>,
+	<lgirdwood@gmail.com>,
+	<broonie@kernel.org>,
+	<andy.gross@linaro.org>,
+	<david.brown@linaro.org>,
+	<catalin.marinas@arm.com>,
+	<will.deacon@arm.com>,
+	<rjw@rjwysocki.net>,
+	<linux-clk@vger.kernel.org>
+Cc: <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-soc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<rnayak@codeaurora.org>,
+	<amit.kucheria@linaro.org>,
+	<nicolas.dechesne@linaro.org>,
+	<celster@codeaurora.org>,
+	<tfinkel@codeaurora.org>
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <1526729701-8589-1-git-send-email-ilialin@codeaurora.org> <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com> <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org> <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com>
+In-Reply-To: <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com>
+Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Date: Tue, 22 May 2018 09:56:19 +0300
+Message-ID: <001201d3f19a$0130a860$0391f920$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180512143038.30447-1-heiko@sntech.de>
+Content-Type: text/plain;
+	charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, May 12, 2018 at 04:30:38PM +0200, Heiko Stuebner wrote:
-> Initially we tried modeling clocks via the devicetree before switching
-> to clocks declared in the clock drivers and only exporting specific
-> ids to the devicetree.
-> 
-> As the old code was in the kernel for 1-2 releases when the new mode
-> of operation was added we kept it for backwards compatibility.
-> 
-> That deprecation notice is in the binding since july 2014, so nearly
-> 4 years now and I think it's time to drop the old cruft.
-> 
-> Especially as at the time using the mainline kernel on Rockchip devices
-> was not really possible, except for experiments on the really old socs of
-> the rk3066 + rk3188 line, so there shouldn't be any devicetrees still
-> around that rely on that code.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  .../devicetree/bindings/clock/rockchip.txt    | 77 ---------------
->  drivers/clk/rockchip/Makefile                 |  1 -
->  drivers/clk/rockchip/clk-rockchip.c           | 98 -------------------
->  3 files changed, 176 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/rockchip.txt
->  delete mode 100644 drivers/clk/rockchip/clk-rockchip.c
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+> -----Original Message-----
+> From: Sudeep Holla <sudeep.holla@arm.com>
+> Sent: Monday, May 21, 2018 16:05
+> To: ilialin@codeaurora.org; mturquette@baylibre.com; sboyd@kernel.org;
+> robh@kernel.org; mark.rutland@arm.com; viresh.kumar@linaro.org;
+> nm@ti.com; lgirdwood@gmail.com; broonie@kernel.org;
+> andy.gross@linaro.org; david.brown@linaro.org; =
+catalin.marinas@arm.com;
+> will.deacon@arm.com; rjw@rjwysocki.net; linux-clk@vger.kernel.org
+> Cc: Sudeep Holla <sudeep.holla@arm.com>; devicetree@vger.kernel.org;
+> linux-kernel@vger.kernel.org; linux-pm@vger.kernel.org; linux-arm-
+> msm@vger.kernel.org; linux-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; rnayak@codeaurora.org;
+> amit.kucheria@linaro.org; nicolas.dechesne@linaro.org;
+> celster@codeaurora.org; tfinkel@codeaurora.org
+> Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+>=20
+>=20
+>=20
+> On 21/05/18 13:57, ilialin@codeaurora.org wrote:
+> >
+> [...]
+>=20
+> >>> +#include <linux/cpu.h>
+> >>> +#include <linux/err.h>
+> >>> +#include <linux/init.h>
+> >>> +#include <linux/kernel.h>
+> >>> +#include <linux/module.h>
+> >>> +#include <linux/nvmem-consumer.h>
+> >>> +#include <linux/of.h>
+> >>> +#include <linux/platform_device.h>
+> >>> +#include <linux/pm_opp.h>
+> >>> +#include <linux/slab.h>
+> >>> +#include <linux/soc/qcom/smem.h>
+> >>> +
+> >>> +#define MSM_ID_SMEM	137
+> >>> +#define SILVER_LEAD	0
+> >>> +#define GOLD_LEAD	2
+> >>> +
+> >>
+> >> So I gather form other emails, that these are physical cpu =
+number(not
+> >> even unique identifier like MPIDR). Will this work on parts or
+> >> platforms that need to boot in GOLD LEAD cpus.
+> >
+> > The driver is for Kryo CPU, which (and AFAIK all multicore MSMs)
+> > always boots on the CPU0.
+>=20
+>=20
+> That may be true and I am not that bothered about it. But assuming =
+physical
+> ordering from the logical cpu number is *incorrect* and will break if =
+kernel
+> decides to change the allocation algorithm. Kernel provides no =
+guarantee on
+> that, so you need to depend on some physical ID or may be DT to =
+achieve
+> what your want. But the current code as it stands is wrong.
+
+Got your point. In fact CPUs are numbered 0-3 and ordered into 2 =
+clusters in the DT:
+
+cpus {
+	#address-cells =3D <2>;
+	#size-cells =3D <0>;
+
+	CPU0: cpu@0 {
+		...
+		reg =3D <0x0 0x0>;
+		...
+	};
+
+	CPU1: cpu@1 {
+		...
+		reg =3D <0x0 0x1>;
+		...
+	};
+
+	CPU2: cpu@100 {
+		...
+		reg =3D <0x0 0x100>;
+		...
+	};
+
+	CPU3: cpu@101 {
+		...
+		reg =3D <0x0 0x101>;
+		...
+	};
+
+	cpu-map {
+		cluster0 {
+			core0 {
+				cpu =3D <&CPU0>;
+			};
+
+			core1 {
+				cpu =3D <&CPU1>;
+			};
+		};
+
+		cluster1 {
+			core0 {
+				cpu =3D <&CPU2>;
+			};
+
+			core1 {
+				cpu =3D <&CPU3>;
+			};
+		};
+	};
+};
+
+As far, as I understand, they are probed in the same order. However, to =
+be certain that the physical CPU is the one I intend to configure, I =
+have to fetch the device structure pointer for the cpu-map -> clusterX =
+-> core0 -> cpu path. Could you suggest a kernel API to do that?
+
+
+
+>=20
+> --
+> Regards,
+> Sudeep
