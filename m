@@ -1,51 +1,83 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:33459 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751722AbeEUKhj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 May 2018 06:37:39 -0400
-Received: by mail-pg0-f67.google.com with SMTP id e21-v6so1287261pgv.0
-        for <linux-clk@vger.kernel.org>; Mon, 21 May 2018 03:37:39 -0700 (PDT)
-Date: Mon, 21 May 2018 16:07:36 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180521103736.5bz7oulz5gpl24ea@vireshk-i7>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Tue, 22 May 2018 19:52:30 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com,
+ robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
+ miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
+ krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
+ jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+ mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 1/5] mtd: rawnand: tegra: add devicetree binding
+Message-ID: <20180522195230.471a796e@bbrezillon>
+In-Reply-To: <8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+	<8bd0f80a9db9abc7af192d1c7d449887b1392ff7.1526990589.git.stefan@agner.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Would have been better if you would have updated the subject as:
+Hello Stefan,
 
-[PATCH v10 10/15] cpufreq: Add Kryo CPU scaling driver
+On Tue, 22 May 2018 14:07:05 +0200
+Stefan Agner <stefan@agner.ch> wrote:
 
-On 21-05-18, 13:31, Ilia Lin wrote:
-> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-> the CPU frequency subset and voltage value of each OPP varies
-> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-> defines the voltage and frequency value based on the msm-id in SMEM
-> and speedbin blown in the efuse combination.
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
+> From: Lucas Stach <dev@lynxeye.de>
 > 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> This adds the devicetree binding for the Tegra 2 NAND flash
+> controller.
+> 
+> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  .../bindings/mtd/nvidia,tegra20-nand.txt      | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+> new file mode 100644
+> index 000000000000..522d442937a9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+> @@ -0,0 +1,29 @@
+> +NVIDIA Tegra NAND Flash controller
+> +
+> +Required properties:
+> +- compatible: Must be one of:
+> +  - "nvidia,tegra20-nand"
+> +- reg: MMIO address range
+> +- interrupts: interrupt output of the NFC controller
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +  - nand
+> +- resets: Must contain an entry for each entry in reset-names.
+> +  See ../reset/reset.txt for details.
+> +- reset-names: Must include the following entries:
+> +  - nand
+> +
+> +Optional properties:
+> +- nvidia,wp-gpios: GPIO used to disable write protection of the flash
+> +
+> +  Example:
+> +	nand@70008000 {
+> +		compatible = "nvidia,tegra20-nand";
+> +		reg = <0x70008000 0x100>;
+> +		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
+> +		clock-names = "nand";
+> +		resets = <&tegra_car 13>;
+> +		reset-names = "nand";
+> +	};
 
-Yes, I acked it earlier, but then comments came back. You should drop
-the tags in such cases normally.
+Can you represent the controller and NAND chip separately as
+recommended here [1].
 
-Anyway, the patch looks fine now.
+Thanks,
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Boris
 
--- 
-viresh
+[1]https://elixir.bootlin.com/linux/v4.17-rc6/source/Documentation/devicetree/bindings/mtd/nand.txt#L56
