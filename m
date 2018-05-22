@@ -1,119 +1,72 @@
-Return-Path: <enric.balletbo@collabora.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	David Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Derek Basehore <dbasehore@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	Lin Huang <hl@rock-chips.com>,
-	kernel@collabora.com,
-	Sean Paul <seanpaul@chromium.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	Yakir Yang <kuankuan.y@gmail.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Yao <markyao0591@gmail.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Brian Norris <briannorris@chromium.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Matthias Kaehlcke <mka@chromium.org>,
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: boris.brezillon@bootlin.com,
+	dwmw2@infradead.org,
+	computersforpeace@gmail.com,
+	marek.vasut@gmail.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	thierry.reding@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: dev@lynxeye.de,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	marcel@ziswiler.com,
+	krzk@kernel.org,
+	digetx@gmail.com,
+	benjamin.lindqvist@endian.se,
+	jonathanh@nvidia.com,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mirza.krak@gmail.com,
+	linux-mtd@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Caesar Wang <wxt@rock-chips.com>,
-	Chris Zhong <zyw@rock-chips.com>,
-	Shunqian Zheng <zhengsq@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [RFC PATCH 10/10] arm64: dts: rockchip: Enable dmc and dfi nodes on gru.
-Date: Mon, 14 May 2018 23:16:10 +0200
-Message-Id: <20180514211610.26618-11-enric.balletbo@collabora.com>
-In-Reply-To: <20180514211610.26618-1-enric.balletbo@collabora.com>
-References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [RESEND PATCH 4/5] ARM: tegra: add Tegra20 NAND flash controller node
+Date: Tue, 22 May 2018 14:07:08 +0200
+Message-Id: <4eccff9a409d229c81e6b4cc453a7f4e29e94510.1526990589.git.stefan@agner.ch>
+In-Reply-To: <cover.1526990589.git.stefan@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lin Huang <hl@rock-chips.com>
+From: Lucas Stach <dev@lynxeye.de>
 
-Enable the DMC (Dynamic Memory Controller) and the DFI (DDR PHY Interface)
-nodes on gru/kevin boards so we can support DDR DVFS.
+Add basic controller description to be extended
+by individual boards.
 
-Signed-off-by: Lin Huang <hl@rock-chips.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
+ arch/arm/boot/dts/tegra20.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi | 21 ++++++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3399.dtsi     |  2 +-
- 2 files changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-index 18f546f2dfd1..ba2cfdd082b8 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-@@ -525,6 +525,12 @@
- 	extcon = <&usbc_extcon0>, <&usbc_extcon1>;
- };
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 0a7136462a1a..5772d0800ad7 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -425,6 +425,19 @@
+ 		status = "disabled";
+ 	};
  
-+&dmc_opp_table {
-+	opp04 {
-+		opp-suspend;
++	nand: nand@70008000 {
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++		status = "disabled";
++		#address-cells = <1>;
++		#size-cells = <1>;
 +	};
-+};
 +
- /*
-  * Set some suspend operating points to avoid OVP in suspend
-  *
-@@ -600,6 +606,10 @@
- 		<400000000>;
- };
- 
-+&display_subsystem {
-+	devfreq = <&dmc>;
-+};
-+
- &emmc_phy {
- 	status = "okay";
- };
-@@ -766,6 +776,17 @@ ap_i2c_audio: &i2c8 {
- 	status = "okay";
- };
- 
-+&dfi {
-+	status = "okay";
-+};
-+
-+&dmc {
-+	status = "okay";
-+	center-supply = <&ppvar_centerlogic>;
-+	upthreshold = <25>;
-+	downdifferential = <15>;
-+};
-+
- &sdhci {
- 	/*
- 	 * Signal integrity isn't great at 200 MHz and 150 MHz (DDR) gives the
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index e012cc8ae3d4..518c742293fc 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -160,7 +160,7 @@
- 		};
- 	};
- 
--	display-subsystem {
-+	display_subsystem: display-subsystem {
- 		compatible = "rockchip,display-subsystem";
- 		ports = <&vopl_out>, <&vopb_out>;
- 	};
+ 	pwm: pwm@7000a000 {
+ 		compatible = "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
 -- 
 2.17.0
