@@ -1,101 +1,120 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/4] clk: tegra20: Turn EMC clock gate into divider
-Date: Wed, 30 May 2018 18:06:45 +0300
-Message-Id: <20180530150646.19030-4-digetx@gmail.com>
-In-Reply-To: <20180530150646.19030-1-digetx@gmail.com>
-References: <20180530150646.19030-1-digetx@gmail.com>
+Return-Path: <sudeep.holla@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+ amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+ celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+To: ilialin@codeaurora.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
+ lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
+ david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+ rjw@rjwysocki.net, linux-clk@vger.kernel.org
+References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
+ <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+ <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com>
+ <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org>
+ <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com>
+ <001201d3f19a$0130a860$0391f920$@codeaurora.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <5b2eb27b-b852-97ff-b099-fe4c22b44937@arm.com>
+Date: Tue, 22 May 2018 10:12:34 +0100
+MIME-Version: 1.0
+In-Reply-To: <001201d3f19a$0130a860$0391f920$@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Kernel should never gate the EMC clock as it causes immediate lockup, so
-removing clk-gate functionality doesn't affect anything. Turning EMC clk
-gate into divider allows to implement glitch-less EMC scaling, avoiding
-reparenting to a backup clock.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra20.c | 39 ++++++++++++++++++++++++---------
- 1 file changed, 29 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index cc857d4d4a86..189dbc86ab71 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
- 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
- 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
--	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
- };
- 
- static unsigned long tegra20_clk_measure_input_freq(void)
-@@ -799,19 +798,18 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
- 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
- };
- 
--static void __init tegra20_periph_clk_init(void)
-+static void __init tegra20_emc_clk_init(void)
- {
--	struct tegra_periph_init_data *data;
-+	u32 emc_reg = readl_relaxed(clk_base + CLK_SOURCE_EMC);
-+	u32 use_pllm_ud = BIT(29);
- 	struct clk *clk;
--	unsigned int i;
- 
--	/* ac97 */
--	clk = tegra_clk_register_periph_gate("ac97", "pll_a_out0",
--				    TEGRA_PERIPH_ON_APB,
--				    clk_base, 0, 3, periph_clk_enb_refcnt);
--	clks[TEGRA20_CLK_AC97] = clk;
-+	if (emc_reg & use_pllm_ud) {
-+		pr_err("%s: un-divided PllM_out0 used as clock source\n",
-+		       __func__);
-+		return;
-+	}
- 
--	/* emc */
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
- 			       CLK_SET_RATE_NO_REPARENT,
-@@ -822,6 +820,27 @@ static void __init tegra20_periph_clk_init(void)
- 				    &emc_lock);
- 	clks[TEGRA20_CLK_MC] = clk;
- 
-+	clk = clk_register_divider(NULL, "emc", "emc_mux", CLK_IS_CRITICAL,
-+				   clk_base + CLK_SOURCE_EMC, 0, 7,
-+				   0, &emc_lock);
-+	clks[TEGRA20_CLK_EMC] = clk;
-+}
-+
-+static void __init tegra20_periph_clk_init(void)
-+{
-+	struct tegra_periph_init_data *data;
-+	struct clk *clk;
-+	unsigned int i;
-+
-+	/* ac97 */
-+	clk = tegra_clk_register_periph_gate("ac97", "pll_a_out0",
-+				    TEGRA_PERIPH_ON_APB,
-+				    clk_base, 0, 3, periph_clk_enb_refcnt);
-+	clks[TEGRA20_CLK_AC97] = clk;
-+
-+	/* emc */
-+	tegra20_emc_clk_init();
-+
- 	/* dsi */
- 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
- 				    48, periph_clk_enb_refcnt);
+On 22/05/18 07:56, ilialin@codeaurora.org wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Sudeep Holla <sudeep.holla@arm.com>
+>> Sent: Monday, May 21, 2018 16:05
+
+[...]
+
+>>
+>>
+>> That may be true and I am not that bothered about it. But assuming physical
+>> ordering from the logical cpu number is *incorrect* and will break if kernel
+>> decides to change the allocation algorithm. Kernel provides no guarantee on
+>> that, so you need to depend on some physical ID or may be DT to achieve
+>> what your want. But the current code as it stands is wrong.
+> 
+> Got your point. In fact CPUs are numbered 0-3 and ordered into 2 clusters in the DT:
+> 
+> cpus {
+> 	#address-cells = <2>;
+> 	#size-cells = <0>;
+> 
+> 	CPU0: cpu@0 {
+> 		...
+> 		reg = <0x0 0x0>;
+> 		...
+> 	};
+> 
+> 	CPU1: cpu@1 {
+> 		...
+> 		reg = <0x0 0x1>;
+> 		...
+> 	};
+> 
+> 	CPU2: cpu@100 {
+> 		...
+> 		reg = <0x0 0x100>;
+> 		...
+> 	};
+> 
+> 	CPU3: cpu@101 {
+> 		...
+> 		reg = <0x0 0x101>;
+> 		...
+> 	};
+> 
+> 	cpu-map {
+> 		cluster0 {
+> 			core0 {
+> 				cpu = <&CPU0>;
+> 			};
+> 
+> 			core1 {
+> 				cpu = <&CPU1>;
+> 			};
+> 		};
+> 
+> 		cluster1 {
+> 			core0 {
+> 				cpu = <&CPU2>;
+> 			};
+> 
+> 			core1 {
+> 				cpu = <&CPU3>;
+> 			};
+> 		};
+> 	};
+> };
+> 
+> As far, as I understand, they are probed in the same order. 
+
+Yes that's correct today, will that have to remain same for ever ?
+No it's not user ABI and kernel can decide to change the allocation
+order. What if for some reason one/more CPUs fails to boot or even
+configured not to boot ?
+
+> However, to be certain that the physical CPU is the one I intend to
+> configure, I have to fetch the device structure pointer for the cpu-map ->
+> clusterX -> core0 -> cpu path. Could you suggest a kernel API to do
+> that?
+> 
+
+Let's rewind a bit. Do you supply OPPs only on CPU0 and CPU2 ?
+If yes, that's again wrong. Simple solution is to parse all logical
+CPUs and skip if the share OPPs with some other CPUs. I think that
+logic already exists in OPP library IIRC.
+
 -- 
-2.17.0
+Regards,
+Sudeep
