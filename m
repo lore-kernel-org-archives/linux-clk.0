@@ -1,47 +1,60 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1527775435-5017-1-git-send-email-mike.looijmans@topic.nl>
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com,
- Mike Looijmans <mike.looijmans@topic.nl>
-References: <1527775435-5017-1-git-send-email-mike.looijmans@topic.nl>
-Message-ID: <152778087117.144038.3582001993053198941@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk-si544: Properly round requested frequency to nearest match
-Date: Thu, 31 May 2018 08:34:31 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33662 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751727AbeEVOxV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 May 2018 10:53:21 -0400
+Received: by mail-wm0-f67.google.com with SMTP id x12-v6so16881107wmc.0
+        for <linux-clk@vger.kernel.org>; Tue, 22 May 2018 07:53:21 -0700 (PDT)
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+Subject: [PATCH v6 09/13] ARM: dts: imx7s: add multiplexer controls
+Date: Tue, 22 May 2018 15:52:41 +0100
+Message-Id: <20180522145245.3143-10-rui.silva@linaro.org>
+In-Reply-To: <20180522145245.3143-1-rui.silva@linaro.org>
+References: <20180522145245.3143-1-rui.silva@linaro.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Mike Looijmans (2018-05-31 07:03:55)
-> The si544 driver had a rounding problem that using the result of clk_roun=
-d_rate
-> may set the clock to yet another rate, for example:
-> clk_round_rate(195000000) =3D 194999999
-> clk_round_rate(194999999) =3D 194999998
-> =
+The IOMUXC General Purpose Register has bitfield to control video bus
+multiplexer to control the CSI input between the MIPI-CSI2 and parallel
+interface. Add that register and mask.
 
-> Clients would expect that after clk_set_rate(clk, freq2=3Dclk_round_rate(=
-clk, freq)) the
-> chip will be running at exactly freq2.
-> =
+Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ arch/arm/boot/dts/imx7s.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> The problem was in the calculation of the feedback divider, it was always=
- rounded
-> down instead of to the nearest possible VCO value.
-> =
+diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
+index 5e6d2063b143..0b0b85438869 100644
+--- a/arch/arm/boot/dts/imx7s.dtsi
++++ b/arch/arm/boot/dts/imx7s.dtsi
+@@ -520,8 +520,14 @@
+ 
+ 			gpr: iomuxc-gpr@30340000 {
+ 				compatible = "fsl,imx7d-iomuxc-gpr",
+-					"fsl,imx6q-iomuxc-gpr", "syscon";
++					"fsl,imx6q-iomuxc-gpr", "syscon", "simple-mfd";
+ 				reg = <0x30340000 0x10000>;
++
++				mux: mux-controller {
++					compatible = "mmio-mux";
++					#mux-control-cells = <0>;
++					mux-reg-masks = <0x14 0x00000010>;
++				};
+ 			};
+ 
+ 			ocotp: ocotp-ctrl@30350000 {
+-- 
+2.17.0
 
-> After this change, the following holds true for any supported frequency:
-> actual_freq =3D clk_round_rate(clk, freq);
-> clk_set_rate(clk, actual_freq);
-> clk_round_rate(clk, actual_freq) =3D=3D actual_freq && clk_get_rate(clk) =
-=3D=3D actual_freq
-> =
-
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-
-Any fixes tag? I can slap =
-
-
-Fixes: 953cc3e81170 ("clk: Add driver for the si544 clock generator chip")
-
-on to the patch here.
