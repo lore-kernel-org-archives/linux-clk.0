@@ -1,52 +1,65 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: davinci: pll-dm355: drop pll2_sysclk2
-Date: Mon,  7 May 2018 09:43:07 -0500
-Message-Id: <20180507144307.32364-2-david@lechnology.com>
-In-Reply-To: <20180507144307.32364-1-david@lechnology.com>
-References: <20180507144307.32364-1-david@lechnology.com>
+Return-Path: <daniel.lezcano@linaro.org>
+Return-Path: <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] clk/driver/hisi: Consolidate the Kconfig for the
+ CLOCK_STUB
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: sboyd@kernel.org, mturquette@baylibre.com
+Cc: leo.yan@linaro.org, olof@lixom.net, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
+Message-ID: <8fd2b13f-bd72-20bf-1745-878dc23969ef@linaro.org>
+Date: Tue, 22 May 2018 22:46:38 +0200
+MIME-Version: 1.0
+In-Reply-To: <1527021018-31698-1-git-send-email-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes pll2_sysclk2 from the TI DM355 clock driver. This SoC
-doesn't have such a clock. Also, SYSCLK_ALWAYS_ENABLED is transferred
-to pll2_sysclk1 since it drives the DDR and doesn't have another
-mechanism to keep it on.
+On 22/05/2018 22:30, Daniel Lezcano wrote:
+> The current defconfig is inconsistent as it selects the mailbox and
+> the clock for the hi6220 and the hi3660 without having their Kconfigs
+> making sure the dependencies are correct. It ends up when selecting
+> different versions for the kernel (for example when git bisecting)
+> those options disappear and they don't get back, leading to unexpected
+> behaviors. In our case, the cpufreq driver does no longer work because
+> the clock fails to initialize due to the clock stub and the mailbox
+> missing.
+> 
+> In order to have the dependencies correctly set when defaulting, let's
+> do the same as commit 3a49afb84ca074e ("clk: enable hi655x common clk
+> automatically") where we select automatically the driver when the
+> parent driver is selected. With sensible defaults in place, we can leave
+> other choices for EXPERT.
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+> 
+> Split the patch into the clk specific and resent as requested by Olof
+> Johansson.
+> ---
+>  arch/arm64/configs/defconfig  |  1 -
+>  drivers/clk/hisilicon/Kconfig | 13 ++++++++-----
+>  2 files changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index ecf6137..1d9d8b9 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -549,7 +549,6 @@ CONFIG_HWSPINLOCK_QCOM=y
+>  CONFIG_ARM_MHU=y
+>  CONFIG_PLATFORM_MHU=y
+>  CONFIG_BCM2835_MBOX=y
+> -CONFIG_HI6220_MBOX=y
+>  CONFIG_QCOM_APCS_IPC=y
+>  CONFIG_ROCKCHIP_IOMMU=y
+>  CONFIG_TEGRA_IOMMU_SMMU=y
 
-Reported-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: David Lechner <david@lechnology.com>
----
- drivers/clk/davinci/pll-dm355.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Oups, sorry I missed to remove this change. Resending a V2.
 
-diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
-index 1f746d2fc894..93f4a53d6b44 100644
---- a/drivers/clk/davinci/pll-dm355.c
-+++ b/drivers/clk/davinci/pll-dm355.c
-@@ -62,8 +62,7 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
- 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
- };
- 
--SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV);
--SYSCLK(2, pll2_sysclk2, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
- 
- int dm355_pll2_init(struct device *dev, void __iomem *base)
- {
-@@ -71,8 +70,6 @@ int dm355_pll2_init(struct device *dev, void __iomem *base)
- 
- 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
- 
--	davinci_pll_sysclk_register(dev, &pll2_sysclk2, base);
--
- 	davinci_pll_sysclkbp_clk_register(dev, "pll2_sysclkbp", base);
- 
- 	return 0;
 -- 
-2.17.0
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
