@@ -1,132 +1,64 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1526307405.2897.29.camel@baylibre.com>
-Subject: Re: [PATCH 6/7] clk: meson: axg: document bindings for the audio
- clock controller
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Carlo Caione
- <carlo@caione.org>,  Kevin Hilman <khilman@baylibre.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Mon, 14 May 2018 16:16:45 +0200
-In-Reply-To: <20180501143715.GA20023@rob-hp-laptop>
-References: <20180425163304.10852-1-jbrunet@baylibre.com>
-	 <20180425163304.10852-7-jbrunet@baylibre.com>
-	 <20180501143715.GA20023@rob-hp-laptop>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-4-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 May 2018 20:42:46 +0200
+Message-ID: <CAMuHMdUW-tteZ26J4rd9=KsrHotjCs7BR_pjyjFQnfoOF5=oFQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/6] dt-bindings: clock: renesas,rzn1-clocks: document
+ RZ/N1 clock driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-05-01 at 09:37 -0500, Rob Herring wrote:
-> On Wed, Apr 25, 2018 at 06:33:03PM +0200, Jerome Brunet wrote:
-> > Add documentation for the device tree bindings of the audio clock
-> > controller of the A113 based SoCs
-> > 
-> 
-> The preferred subject prefix for bindings is 'dt/bindings: clock: ...'
+Hi Michel,
 
-Noted, I suppose meant 'dt-bindings: clocks: ..." which seems to used half of
-the times
-The rest use 'clk: {platform}: ...'
+On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
+> to provide the SoC clock infrastructure for Linux.
+>
+> This documents the driver bindings.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-> 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> >  .../bindings/clock/amlogic,axg-audio-clkc.txt      | 56 ++++++++++++++++++++++
-> >  1 file changed, 56 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-> > new file mode 100644
-> > index 000000000000..1b989ceda567
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-> > @@ -0,0 +1,56 @@
-> > +* Amlogic AXG Audio Clock Controllers
-> > +
-> > +The Amlogic AXG audio clock controller generates and supplies clock to the
-> > +other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
-> > +devices.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible	: should be "amlogic,axg-audio-clkc" for the A113X and A113D
-> > +- reg		: physical base address of the clock controller and length of
-> > +		  memory mapped region.
-> > +- clocks	: a list of phandle + clock-specifier pairs for the clocks listed
-> > +		  in clock-names.
-> > +- clock-names	: must contain the following:
-> > +		  * "pclk" - Main peripheral bus clock
-> > +		  may contain the following:
-> > +		  * "mst_in[0-7]" - 8 input plls to generate clock signals
-> 
-> Unless the sources don't exist, then you should always have the clocks. 
-> It should not be based on whether you are using them or not.
+Thanks for your patch!
 
-This is not really the point. The parent controller may or may not provide some
-of the PLL. This was the case during the development of the controller when the
-HIFI pll was not available simply because there was no driver for it.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rzn1-clocks.txt
+> @@ -0,0 +1,44 @@
+> +* Renesas RZ/N1 Clock Driver
+> +
+> +This driver provides the clock infrastructure used by all the other drivers.
+> +
+> +One of the 'special' feature of this infrastructure is that Linux doesn't
+> +necessary 'own' all the clocks on the SoC, some other OS runs on
+> +the Cortex-M3 core and that OS can access and claim it's own clocks.
+> +
+> +Required Properties:
+> +
+> +  - compatible: Must be
+> +    - "renesas,r9a06g032-clocks" for the RZ/N1D
+> +    and "renesas,rzn1-clocks" as a fallback.
 
-Whatever the reason for an input clock to be missing, this clock controller may
-continue to serve its purpose even if some input plls are not provided/available
-which is why these are not "mandatory"
+Why the fallback? I doubt all existing (and future) RZ/N1D SoCs provide the
+exact same clock hierarchy.
 
-> 
-> > +		  * "slv_sclk[0-9]" - 10 slave bit clocks provided by external
-> > +				      components.
-> > +		  * "slv_lrclk[0-9]" - 10 slave sample clocks provided by external
-> > +				       components.
-> 
-> I'm guessing these may come from pins that aren't connected, so being 
-> optional is fine.
-> 
-> > +- reset		: phandle of the internal reset line
-> 
-> resets
-> 
-> > +- #clock-cells	: should be 1.
-> > +
-> > +Each clock is assigned an identifier and client nodes can use this identifier
-> > +to specify the clock which they consume. All available clocks are defined as
-> > +preprocessor macros in the dt-bindings/clock/axg-audio-clkc.h header and can be
-> > +used in device tree sources.
-> > +
-> > +Example:
-> > +
-> > +clkc_audio: clock-controller {
-> 
-> Needs a unit address.
-> 
-> > +	compatible = "amlogic,axg-audio-clkc";
-> > +	reg = <0x0 0x0 0x0 0xb4>;
-> > +	#clock-cells = <1>;
-> > +
-> > +	clocks = <&clkc CLKID_AUDIO>,
-> > +		 <&clkc CLKID_MPLL0>,
-> > +		 <&clkc CLKID_MPLL1>,
-> > +		 <&clkc CLKID_MPLL2>,
-> > +		 <&clkc CLKID_MPLL3>,
-> > +		 <&clkc CLKID_HIFI_PLL>,
-> > +		 <&clkc CLKID_FCLK_DIV3>,
-> > +		 <&clkc CLKID_FCLK_DIV4>,
-> > +		 <&clkc CLKID_GP0_PLL>;
-> > +	clock-names = "pclk",
-> > +		      "mst_in0",
-> > +		      "mst_in1",
-> > +		      "mst_in2",
-> > +		      "mst_in3",
-> > +		      "mst_in4",
-> > +		      "mst_in5",
-> > +		      "mst_in6",
-> > +		      "mst_in7";
-> > +	resets = <&reset RESET_AUDIO>;
-> > +};
-> > -- 
-> > 2.14.3
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
