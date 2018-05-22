@@ -1,179 +1,226 @@
-Return-Path: <parri.andrea@gmail.com>
-Return-Path: <parri.andrea@gmail.com>
-Date: Wed, 9 May 2018 19:15:01 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Mauro Carvalho Chehab <mchehab@infradead.org>,
-	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Harry Wei <harryxiyou@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michal Simek <monstr@monstr.eu>,
-	Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-	Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	x86@kernel.org, Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	David Howells <dhowells@redhat.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Gustavo Padovan <gustavo@padovan.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Sean Paul <seanpaul@chromium.org>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-	Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Malcolm Priestley <tvboxspy@gmail.com>,
-	Antoine Jacquet <royale@zerezo.com>,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Juergen Gross <jgross@suse.com>, Li Zefan <lizefan@huawei.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <sds@tycho.nsa.gov>,
-	Eric Paris <eparis@parisplace.org>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@zh-kernel.org,
-	user-mode-linux-devel@lists.sourceforge.net,
-	user-mode-linux-user@lists.sourceforge.net,
-	linux-xtensa@linux-xtensa.org, linux-block@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	patches@opensource.cirrus.com, linux-bcache@vger.kernel.org,
-	linux-usb@vger.kernel.org, devel@driverdev.osuosl.org,
-	xen-devel@lists.xenproject.org, cgroups@vger.kernel.org,
-	selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
-	alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
-Message-ID: <20180509171501.GA17405@andrea>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
- <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
+Date: Tue, 22 May 2018 11:01:22 +0100
+Message-Id: <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 09, 2018 at 10:18:52AM -0300, Mauro Carvalho Chehab wrote:
-> As we move stuff around, some doc references are broken. Fix some of
-> them via this script:
-> 	./scripts/documentation-file-ref-check --fix-rst
-> 
-> Manually checked if the produced result is valid, removing a few
-> false-positives.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+This adds the constants necessary to use the renesas,rzn1-clocks driver.
 
-Thank you again for doing this,
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ include/dt-bindings/clock/rzn1-clocks.h | 187 ++++++++++++++++++++++++++++++++
+ 1 file changed, 187 insertions(+)
+ create mode 100644 include/dt-bindings/clock/rzn1-clocks.h
 
-
-> ---
->  .../admin-guide/kernel-parameters.txt         |  4 ++--
->  .../bindings/input/rotary-encoder.txt         |  2 +-
->  Documentation/driver-api/gpio/consumer.rst    |  2 +-
->  Documentation/kprobes.txt                     |  4 ++--
->  Documentation/trace/coresight.txt             |  2 +-
->  Documentation/trace/events.rst                |  2 +-
->  Documentation/trace/ftrace-uses.rst           |  2 +-
->  Documentation/trace/histogram.txt             |  2 +-
->  Documentation/trace/intel_th.rst              |  2 +-
->  Documentation/trace/tracepoint-analysis.rst   |  6 +++---
->  Documentation/translations/ja_JP/howto.rst    |  4 ++--
->  .../translations/zh_CN/magic-number.txt       |  4 ++--
->  .../zh_CN/video4linux/omap3isp.txt            |  4 ++--
->  MAINTAINERS                                   | 20 +++++++++----------
->  arch/Kconfig                                  |  2 +-
->  arch/arm/include/asm/cacheflush.h             |  2 +-
->  arch/arm64/include/asm/cacheflush.h           |  2 +-
->  arch/microblaze/include/asm/cacheflush.h      |  2 +-
->  arch/um/Kconfig.um                            |  2 +-
->  arch/unicore32/include/asm/cacheflush.h       |  2 +-
->  arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
->  arch/xtensa/include/asm/cacheflush.h          |  4 ++--
->  block/Kconfig                                 |  2 +-
->  certs/Kconfig                                 |  2 +-
->  crypto/asymmetric_keys/asymmetric_type.c      |  2 +-
->  crypto/asymmetric_keys/signature.c            |  2 +-
->  drivers/char/Kconfig                          |  2 +-
->  drivers/clk/clk.c                             |  4 ++--
->  drivers/clk/ingenic/cgu.h                     |  2 +-
->  drivers/gpu/vga/Kconfig                       |  2 +-
->  drivers/gpu/vga/vgaarb.c                      |  2 +-
->  drivers/input/joystick/Kconfig                | 10 +++++-----
->  drivers/input/joystick/iforce/Kconfig         |  2 +-
->  drivers/input/joystick/walkera0701.c          |  2 +-
->  drivers/input/misc/Kconfig                    |  4 ++--
->  drivers/input/misc/rotary_encoder.c           |  2 +-
->  drivers/input/mouse/Kconfig                   |  6 +++---
->  drivers/input/mouse/alps.c                    |  2 +-
->  drivers/input/touchscreen/wm97xx-core.c       |  2 +-
->  drivers/lightnvm/pblk-rb.c                    |  2 +-
->  drivers/md/bcache/Kconfig                     |  2 +-
->  drivers/md/bcache/btree.c                     |  2 +-
->  drivers/md/bcache/extents.c                   |  2 +-
->  drivers/media/dvb-core/dvb_ringbuffer.c       |  2 +-
->  drivers/media/pci/meye/Kconfig                |  2 +-
->  drivers/media/platform/pxa_camera.c           |  4 ++--
->  .../soc_camera/sh_mobile_ceu_camera.c         |  2 +-
->  drivers/media/radio/Kconfig                   |  2 +-
->  drivers/media/radio/si470x/Kconfig            |  2 +-
->  drivers/media/usb/dvb-usb-v2/lmedm04.c        |  2 +-
->  drivers/media/usb/zr364xx/Kconfig             |  2 +-
->  drivers/parport/Kconfig                       |  6 +++---
->  drivers/staging/media/bcm2048/TODO            |  2 +-
->  include/keys/asymmetric-subtype.h             |  2 +-
->  include/keys/asymmetric-type.h                |  2 +-
->  include/linux/assoc_array.h                   |  2 +-
->  include/linux/assoc_array_priv.h              |  2 +-
->  include/linux/circ_buf.h                      |  2 +-
->  include/linux/ftrace.h                        |  2 +-
->  include/linux/rculist_nulls.h                 |  2 +-
->  include/uapi/linux/prctl.h                    |  2 +-
->  include/xen/interface/io/kbdif.h              |  2 +-
->  kernel/cgroup/cpuset.c                        |  2 +-
->  kernel/trace/Kconfig                          | 16 +++++++--------
->  lib/Kconfig                                   |  2 +-
->  security/selinux/hooks.c                      |  2 +-
->  sound/core/Kconfig                            |  4 ++--
->  sound/drivers/Kconfig                         |  4 ++--
->  sound/pci/Kconfig                             | 10 +++++-----
->  tools/include/uapi/linux/prctl.h              |  2 +-
->  tools/lib/api/fs/fs.c                         |  2 +-
->  tools/memory-model/README                     | 10 +++++-----
-
-As mentioned in the previous thread, I am for keeping the current
-references: the REAMDE is listing the doc files, as well as other
-files in tools/memory-model/, relatively to that directory.
-
-  Andrea
+diff --git a/include/dt-bindings/clock/rzn1-clocks.h b/include/dt-bindings/clock/rzn1-clocks.h
+new file mode 100644
+index 0000000..8a73db2
+--- /dev/null
++++ b/include/dt-bindings/clock/rzn1-clocks.h
+@@ -0,0 +1,187 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * RZ/N1 clock IDs
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
++ * Derived from zx-reboot.c
++ */
++
++#ifndef __DT_BINDINGS_RZN1_CLOCK_H__
++#define __DT_BINDINGS_RZN1_CLOCK_H__
++
++#define RZN1_CLKOUT			0
++#define RZN1_CLK_PLL_USB		1
++#define RZN1_CLK_48			1	/* AKA CLK_PLL_USB */
++#define RZN1_CLKOUT_D10			2
++#define RZN1_CLKOUT_D16			3
++#define RZN1_MSEBIS_CLK			3	/* AKA CLKOUT_D16 */
++#define RZN1_MSEBIM_CLK			3	/* AKA CLKOUT_D16 */
++#define RZN1_CLKOUT_D160		4
++#define RZN1_CLKOUT_D1OR2		5
++#define RZN1_CLK_DDRPHY_PLLCLK		5	/* AKA CLKOUT_D1OR2 */
++#define RZN1_CLKOUT_D20			6
++#define RZN1_CLK50			6	/* AKA CLKOUT_D20 */
++#define RZN1_CLKOUT_D40			7
++#define RZN1_CLK25			7	/* AKA CLKOUT_D40 */
++#define RZN1_CLKOUT_D5			8
++#define RZN1_CLKOUT_D8			9
++#define RZN1_CLK125			9	/* AKA CLKOUT_D8 */
++#define RZN1_DIV_ADC			10
++#define RZN1_DIV_I2C			11
++#define RZN1_DIV_NAND			12
++#define RZN1_DIV_P1_PG			13
++#define RZN1_DIV_P2_PG			14
++#define RZN1_DIV_P3_PG			15
++#define RZN1_DIV_P4_PG			16
++#define RZN1_DIV_P5_PG			17
++#define RZN1_CLK_P5_PG1			17	/* AKA DIV_P5_PG */
++#define RZN1_DIV_P6_PG			18
++#define RZN1_DIV_QSPI0			19
++#define RZN1_DIV_QSPI1			20
++#define RZN1_DIV_REF_SYNC		21
++#define RZN1_CLK_REF_SYNC		21	/* AKA DIV_REF_SYNC */
++#define RZN1_DIV_SDIO0			22
++#define RZN1_DIV_SDIO1			23
++#define RZN1_DIV_SWITCH			24
++#define RZN1_DIV_UART			25
++#define RZN1_CLK_25_PG4			26
++#define RZN1_CLK_25_PG5			27
++#define RZN1_CLK_25_PG6			28
++#define RZN1_CLK_25_PG7			29
++#define RZN1_CLK_25_PG8			30
++#define RZN1_CLK_ADC			31
++#define RZN1_CLK_ECAT100		32
++#define RZN1_CLK_HSR100			33
++#define RZN1_CLK_I2C0			34
++#define RZN1_CLK_I2C1			35
++#define RZN1_CLK_MII_REF		36
++#define RZN1_CLK_NAND			37
++#define RZN1_CLK_NOUSBP2_PG6		38
++#define RZN1_CLK_P1_PG2			39
++#define RZN1_CLK_P1_PG3			40
++#define RZN1_CLK_P1_PG4			41
++#define RZN1_CLK_P4_PG3			42
++#define RZN1_CLK_P4_PG4			43
++#define RZN1_CLK_P6_PG1			44
++#define RZN1_CLK_P6_PG2			45
++#define RZN1_CLK_P6_PG3			46
++#define RZN1_CLK_P6_PG4			47
++#define RZN1_CLK_PCI_USB		48
++#define RZN1_CLK_QSPI0			49
++#define RZN1_CLK_QSPI1			50
++#define RZN1_CLK_RGMII_REF		51
++#define RZN1_CLK_RMII_REF		52
++#define RZN1_CLK_SDIO0			53
++#define RZN1_CLK_SDIO1			54
++#define RZN1_CLK_SERCOS100		55
++#define RZN1_CLK_SLCD			56
++#define RZN1_CLK_SPI0			57
++#define RZN1_CLK_SPI1			58
++#define RZN1_CLK_SPI2			59
++#define RZN1_CLK_SPI3			60
++#define RZN1_CLK_SPI4			61
++#define RZN1_CLK_SPI5			62
++#define RZN1_CLK_SWITCH			63
++#define RZN1_DIV_MOTOR			64
++#define RZN1_HCLK_ECAT125		65
++#define RZN1_HCLK_PINCONFIG		66
++#define RZN1_HCLK_SERCOS		67
++#define RZN1_HCLK_SGPIO2		68
++#define RZN1_HCLK_SGPIO3		69
++#define RZN1_HCLK_SGPIO4		70
++#define RZN1_HCLK_TIMER0		71
++#define RZN1_HCLK_TIMER1		72
++#define RZN1_HCLK_USBF			73
++#define RZN1_HCLK_USBH			74
++#define RZN1_HCLK_USBPM			75
++#define RZN1_CLK_48_PG_F		76
++#define RZN1_CLK_48_PG4			77
++#define RZN1_CLK_DDRPHY_PLLCLK_D4	78
++#define RZN1_CLK_ECAT100_D4		79
++#define RZN1_CLK_HSR100_D2		80
++#define RZN1_CLK_REF_SYNC_D4		81
++#define RZN1_CLK_DDRPHY_PCLK		81	/* AKA CLK_REF_SYNC_D4 */
++#define RZN1_CLK_FW			81	/* AKA CLK_REF_SYNC_D4 */
++#define RZN1_CLK_CRYPTO			81	/* AKA CLK_REF_SYNC_D4 */
++#define RZN1_CLK_REF_SYNC_D8		82
++#define RZN1_CLK_SERCOS100_D2		83
++#define RZN1_DIV_CA7			84
++#define RZN1_CLK_A7MP			84	/* AKA DIV_CA7 */
++#define RZN1_HCLK_CAN0			85
++#define RZN1_HCLK_CAN1			86
++#define RZN1_HCLK_DELTASIGMA		87
++#define RZN1_HCLK_PWMPTO		88
++#define RZN1_HCLK_RSV			89
++#define RZN1_HCLK_SGPIO0		90
++#define RZN1_HCLK_SGPIO1		91
++#define RZN1_RTOS_MDC			92
++#define RZN1_CLK_CM3			93
++#define RZN1_CLK_DDRC			94
++#define RZN1_CLK_ECAT25			95
++#define RZN1_CLK_HSR50			96
++#define RZN1_CLK_HW_RTOS		97
++#define RZN1_CLK_SERCOS50		98
++#define RZN1_HCLK_ADC			99
++#define RZN1_HCLK_CM3			100
++#define RZN1_HCLK_CRYPTO_EIP150		101
++#define RZN1_HCLK_CRYPTO_EIP93		102
++#define RZN1_HCLK_DDRC			103
++#define RZN1_HCLK_DMA0			104
++#define RZN1_HCLK_DMA1			105
++#define RZN1_HCLK_GMAC0			106
++#define RZN1_HCLK_GMAC1			107
++#define RZN1_HCLK_GPIO0			108
++#define RZN1_HCLK_GPIO1			109
++#define RZN1_HCLK_GPIO2			110
++#define RZN1_HCLK_HSR			111
++#define RZN1_HCLK_I2C0			112
++#define RZN1_HCLK_I2C1			113
++#define RZN1_HCLK_LCD			114
++#define RZN1_HCLK_MSEBI_M		115
++#define RZN1_HCLK_MSEBI_S		116
++#define RZN1_HCLK_NAND			117
++#define RZN1_HCLK_PG_I			118
++#define RZN1_HCLK_PG19			119
++#define RZN1_HCLK_PG20			120
++#define RZN1_HCLK_PG3			121
++#define RZN1_HCLK_PG4			122
++#define RZN1_HCLK_QSPI0			123
++#define RZN1_HCLK_QSPI1			124
++#define RZN1_HCLK_ROM			125
++#define RZN1_HCLK_RTC			126
++#define RZN1_HCLK_SDIO0			127
++#define RZN1_HCLK_SDIO1			128
++#define RZN1_HCLK_SEMAP			129
++#define RZN1_HCLK_SPI0			130
++#define RZN1_HCLK_SPI1			131
++#define RZN1_HCLK_SPI2			132
++#define RZN1_HCLK_SPI3			133
++#define RZN1_HCLK_SPI4			134
++#define RZN1_HCLK_SPI5			135
++#define RZN1_HCLK_SWITCH		136
++#define RZN1_HCLK_SWITCH_RG		137
++#define RZN1_HCLK_UART0			138
++#define RZN1_HCLK_UART1			139
++#define RZN1_HCLK_UART2			140
++#define RZN1_HCLK_UART3			141
++#define RZN1_HCLK_UART4			142
++#define RZN1_HCLK_UART5			143
++#define RZN1_HCLK_UART6			144
++#define RZN1_HCLK_UART7			145
++#define RZN1_CLK_UART0			146
++#define RZN1_CLK_UART1			147
++#define RZN1_CLK_UART2			148
++#define RZN1_CLK_UART3			149
++#define RZN1_CLK_UART4			150
++#define RZN1_CLK_UART5			151
++#define RZN1_CLK_UART6			152
++#define RZN1_CLK_UART7			153
++
++#define RZN1_UART_GROUP_012		154
++#define RZN1_UART_GROUP_34567		155
++
++#define RZN1_CLOCK_COUNT		(RZN1_UART_GROUP_34567 + 1)
++
++#endif /* __DT_BINDINGS_RZN1_CLOCK_H__ */
+-- 
+2.7.4
