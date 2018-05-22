@@ -1,70 +1,131 @@
-Return-Path: <nsekhar@ti.com>
-From: Sekhar Nori <nsekhar@ti.com>
-To: David Lechner <david@lechnology.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: Linux clk Mailing List <linux-clk@vger.kernel.org>,
-        Linux ARM Mailing List
-	<linux-arm-kernel@lists.infradead.org>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin
- Hilman <khilman@kernel.org>
-Subject: [PATCH v2 2/2] clk: davinci: psc-dm365: fix few clocks
-Date: Tue, 15 May 2018 16:52:24 +0530
-Message-ID: <20180515112224.30122-3-nsekhar@ti.com>
-In-Reply-To: <20180515112224.30122-1-nsekhar@ti.com>
-References: <20180515112224.30122-1-nsekhar@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
+Date: Tue, 22 May 2018 11:01:24 +0100
+Message-Id: <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Fix parent of EMAC and voice codec PSC clocks. Documentation is clear
-on EMAC clock parent, but its not fully clear on parent of voice codec
-clock. The implementation chosen is matches arch/arm/mach-davinci/dm365.c.
-Add a comment explaining this for posterity.
+This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
+bone support.
 
-There is only one power domain on DM365. Fix the power domain of voice
-codec and vpss dac modules.
+This currently only handles generic parts (gic, architected timer)
+and a UART.
+For simplicity sake, this also relies on the bootloader to set the
+pinctrl and clocks.
 
-While at it, add a comment explaining how the parent of vpss dac clock was
-derived. Note that this patch does not touch the parent of vpss dac clock.
-
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
-v2: add comments explaining parents of voice codec and vpss dac clocks
+ arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
 
- drivers/clk/davinci/psc-dm365.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
-index 3ad915f37376..289af3913fb0 100644
---- a/drivers/clk/davinci/psc-dm365.c
-+++ b/drivers/clk/davinci/psc-dm365.c
-@@ -65,9 +65,22 @@ static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
- 	LPSC(31, 0, arm,         pll2_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
- 	LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
- 	LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
--	LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
--	LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
--	LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
-+	LPSC(40, 0, emac,        pll1_sysclk4, emac_clkdev,        0),
-+	/*
-+	 * The TRM (ARM Subsystem User's Guide) shows two clocks input into
-+	 * voice codec module (PLL2 SYSCLK4 with a DIV2 and PLL1 SYSCLK4). Its
-+	 * not fully clear from documentation which clock should be considered
-+	 * as parent for PSC. The clock chosen here is to maintain
-+	 * compatibility with existing code in arch/arm/mach-davinci/dm365.c
-+	 */
-+	LPSC(44, 0, voice_codec, pll2_sysclk4, voice_codec_clkdev, 0),
-+	/*
-+	 * Its not fully clear from TRM (ARM Subsystem User's Guide) as to what
-+	 * the parent of VPSS DAC LPSC should actually be. PLL1 SYSCLK3 feeds
-+	 * into HDVICP and MJCP. The clock chosen here is to remain compatible
-+	 * with code existing in arch/arm/mach-davinci/dm365.c
-+	 */
-+	LPSC(46, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
- 	LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
- 	LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
- 	{ }
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+new file mode 100644
+index 0000000..c7764c7
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/rzn1-clock.h>
++
++/ {
++	compatible = "renesas,r9a06g032", "renesas,rzn1";
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&clock RZN1_DIV_CA7>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++		};
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		interrupt-parent = <&gic>;
++		ranges;
++
++		clock: clocks@4000c000 {
++			compatible = "renesas,r9a06g032-clocks",
++					"renesas,rzn1-clocks";
++			reg = <0x4000c000 0x1000>;
++			status = "okay";
++			#clock-cells = <1>;
++		};
++
++		uart0: serial@40060000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x40060000 0x400>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&clock RZN1_CLK_UART0>;
++			clock-names = "baudclk";
++			status = "disabled";
++		};
++
++		gic: gic@44101000 {
++			compatible = "arm,cortex-a7-gic", "arm,gic-400";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0x44101000 0x1000>, /* Distributer */
++			      <0x44102000 0x2000>, /* CPU interface */
++			      <0x44104000 0x2000>, /* Virt interface control */
++			      <0x44106000 0x2000>; /* Virt CPU interface */
++			interrupts =
++				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++	};
++
++	timer {
++		compatible = "arm,cortex-a7-timer",
++			     "arm,armv7-timer";
++		interrupt-parent = <&gic>;
++		arm,cpu-registers-not-fw-configured;
++		always-on;
++		interrupts =
++			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
 -- 
-2.16.2
+2.7.4
