@@ -1,53 +1,55 @@
-Return-Path: <sergey.senozhatsky.work@gmail.com>
-Return-Path: <sergey.senozhatsky.work@gmail.com>
-Date: Thu, 31 May 2018 18:45:08 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: bhelgaas@google.com, pmladek@suse.com, sergey.senozhatsky@gmail.com,
-	rostedt@goodmis.org, Al Viro <viro@zeniv.linux.org.uk>,
-	Greg KH <gregkh@linuxfoundation.org>, corbet@lwn.net,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: Can printk() sleep at runtime?
-Message-ID: <20180531094508.GC477@jagdpanzerIV>
-References: <ba98332d-7013-f5cb-7d49-645ee6f49156@gmail.com>
+Return-Path: <xieyisheng1@huawei.com>
+Subject: Re: [PATCH 12/33] clk: bcm2835: use match_string() helper
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+ <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
+ <CAHp75Vf6rDpFQCt+qG3DSWKZm36F1hkAVPtGzr6NHPuQg4vhXQ@mail.gmail.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Michael
+ Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Eric
+ Anholt" <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>,
+	<linux-clk@vger.kernel.org>, <linux-rpi-kernel@lists.infradead.org>,
+	linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <00acb90b-1c2c-a855-2a8f-f60a859a0f85@huawei.com>
+Date: Tue, 22 May 2018 11:42:55 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <ba98332d-7013-f5cb-7d49-645ee6f49156@gmail.com>
+In-Reply-To: <CAHp75Vf6rDpFQCt+qG3DSWKZm36F1hkAVPtGzr6NHPuQg4vhXQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Cc-ing CLK people.
+Hi Andy,
 
-On (05/31/18 17:08), Jia-Ju Bai wrote:
-> [FUNC] __might_sleep
-> kernel/locking/mutex.c: 747: __might_sleep in __mutex_lock_common
-> kernel/locking/mutex.c: 893: __mutex_lock_common in __mutex_lock
-> kernel/locking/mutex.c: 908: __mutex_lock in mutex_lock_nested
-> drivers/clk/clk.c, 123: mutex_lock_nested in clk_prepare_lock
-> drivers/clk/clk.c, 1369: clk_prepare_lock in clk_core_get_rate
-> drivers/clk/clk.c, 1393: clk_core_get_rate in clk_get_rate
-> lib/vsprintf.c, 1450: clk_get_rate in clock
-> lib/vsprintf.c, 1944: clock in pointer
-> lib/vsprintf.c, 2286: pointer in vsnprintf
-> lib/vsprintf.c, 2385: vsnprintf in vscnprintf
-> kernel/printk/printk.c, 1853: vscnprintf in vprintk_emit
-> kernel/printk/printk.c, 1947: vprintk_emit in vprintk_default
-> kernel/printk/printk_safe.c, 379: vprintk_default in vprintk_func
-> kernel/printk/printk.c, 1980: vprintk_func in printk
-> drivers/pci/pci.c, 5364: printk in pci_specified_resource_alignment
-> drivers/pci/pci.c, 5313: spin_lock in pci_specified_resource_alignment
+On 2018/5/22 5:50, Andy Shevchenko wrote:
+> On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+>> match_string() returns the index of an array for a matching string,
+>> which can be used intead of open coded variant.
+>>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Stephen Boyd <sboyd@kernel.org>
+>> Cc: Eric Anholt <eric@anholt.net>
+>> Cc: Stefan Wahren <stefan.wahren@i2se.com>
+>> Cc: linux-clk@vger.kernel.org
+>> Cc: linux-rpi-kernel@lists.infradead.org
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 > 
-> In fact, I suspect that my report is false, because I always have an
-> impression that printk() cannot sleep.
-> But according to the call path, I cannot find where I make the mistake...
+>> -       size_t i, j;
+>> -       int ret;
+>> +       int i, ret;
 > 
-> So could someone please help me to point the mistake?
+> I do not see any need to change type for i.
 
-I think you are right.
+Right, I just want to smaller the line of code, for unsinged int is also OK for i.
+Anyway, I can change it as your suggestion in next version.
 
-number(buf, end, clk_get_rate(clk), spec) indeed locks the `prepare_lock'
-mutex from atomic context.
+Thanks
+Yisheng
 
-	-ss
+> 
+>> +               ret = match_string(cprman_parent_names,
+>> +                                  ARRAY_SIZE(cprman_parent_names),
+>> +                                  parents[i]);
+>> +               if (ret >= 0)
+>> +                       parents[i] = cprman->real_parent_names[ret];
+> 
+> 
