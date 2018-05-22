@@ -1,73 +1,41 @@
-Return-Path: <dev@lynxeye.de>
-Message-ID: <040f1774efe7430a3802ac48f1980122ba5b1128.camel@lynxeye.de>
-Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
-From: Lucas Stach <dev@lynxeye.de>
-To: Stefan Agner <stefan@agner.ch>, Peter De Schrijver
- <pdeschrijver@nvidia.com>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
- mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
- marcel@ziswiler.com,  krzk@kernel.org, digetx@gmail.com,
- benjamin.lindqvist@endian.se,  jonathanh@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com,  linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org,  devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org
-Date: Mon, 28 May 2018 17:58:11 +0200
-In-Reply-To: <5665b799f763daa82dced238fb494863@agner.ch>
-References: <20180527215442.14760-5-stefan@agner.ch>
-	 <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
-	 <5665b799f763daa82dced238fb494863@agner.ch>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 22 May 2018 12:56:53 -0500
+From: Rob Herring <robh@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
+	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+	stefan@agner.ch, adriana.reus@nxp.com, rui.silva@linaro.org,
+	Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
+Message-ID: <20180522175652.GA4795@rob-hp-laptop>
+References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
+ <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Montag, den 28.05.2018, 17:53 +0200 schrieb Stefan Agner:
-> On 28.05.2018 09:55, Peter De Schrijver wrote:
-> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
-> > > From: Lucas Stach <dev@lynxeye.de>
-> > > 
-> > > Set up the NAND Flash controller clock to run at 150MHz
-> > > instead of the rate set by the bootloader. This is a
-> > > conservative rate which also yields good performance.
-> > > 
-> > > Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > > ---
-> > >  drivers/clk/tegra/clk-tegra20.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> > > index 0ee56dd04cec..dff8c425cd28 100644
-> > > --- a/drivers/clk/tegra/clk-tegra20.c
-> > > +++ b/drivers/clk/tegra/clk-tegra20.c
-> > > @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
-> > >  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> > >  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> > >  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-> > > +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
-> > >  	/* must be the last entry */
-> > >  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
-> > >  };
-> > > --
-> > > 2.17.0
-> > > 
-> > 
-> > Maybe better to specify this in the Tegra20 dtsi? See 
-> > "Assigned clock parents and rates" in
-> > Documentation/devicetree/bindings/clock/clock-bindings.txt
+On Fri, May 18, 2018 at 09:01:05AM +0800, Anson Huang wrote:
+> Correct enet clock gates as below:
 > 
-> assigned-clocks indeed works just fine for this case. Thanks for
-> bringing this up, will drop this patch and add the device tree
-> properties in v3.
+> CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
+> CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
+> CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
 > 
-> Hm, interesting that none of the Tegra device tree make use of the
-> feature so far. I guess there would be other cases where this would be
-> useful as well (the one just above, VDE?).
+> Just rename unused IMX7D_ENETx_REF_ROOT_CLK for
+> IMX7D_ENETx_IPG_ROOT_CLK instead of adding new clocks.
+> 
+> Based on Andy Duan's patch from the NXP kernel tree.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx7d.c             | 10 ++++++----
 
-Most of the Tegra clock init stuff (including this patch) was written
-before we had assigned-clocks as some common DT facility. But fully
-agree on dropping this patch.
+>  include/dt-bindings/clock/imx7d-clock.h |  4 ++--
 
-Regards,
-Lucas
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  2 files changed, 8 insertions(+), 6 deletions(-)
