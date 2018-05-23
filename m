@@ -1,122 +1,124 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Wed, 2 May 2018 13:54:37 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, netdev <netdev@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 15/15] arm64: dts: allwinner: a64: add SRAM
- controller device tree node
-Message-ID: <20180502115437.zlu2rafrguufutvp@flea>
-References: <20180501161227.2110-1-wens@csie.org>
- <20180501161227.2110-16-wens@csie.org>
- <20180502095118.rqnfwy576xh6ercm@flea>
- <CAGb2v67pvL58Pes1ZFDZtPu_nL2+m6dgf_XOOymG9nVAkXVpEw@mail.gmail.com>
- <29E5670C-9D17-4EC1-AAAC-0CF33DD0534C@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="psuzaxnmxte5uamb"
-In-Reply-To: <29E5670C-9D17-4EC1-AAAC-0CF33DD0534C@aosc.io>
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	will.deacon@arm.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	vireshk@kernel.org,
+	ilialin@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v11 6/8] clk: qcom: cpu-8996: Add support to switch to alternate PLL
+Date: Wed, 23 May 2018 15:52:59 +0300
+Message-Id: <1527079981-11179-7-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
+References: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
---psuzaxnmxte5uamb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Each of the CPU clusters on msm8996 are powered via a primary
+PLL and a secondary PLL. The primary PLL is what drives the
+CPU clk, except for times when we are reprogramming the PLL
+itself, when we temporarily switch to an alternate PLL.
+Use clock rate change notifiers to support this.
 
-On Wed, May 02, 2018 at 06:19:51PM +0800, Icenowy Zheng wrote:
->=20
->=20
-> =E4=BA=8E 2018=E5=B9=B45=E6=9C=882=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=885=
-:53:21, Chen-Yu Tsai <wens@csie.org> =E5=86=99=E5=88=B0:
-> >On Wed, May 2, 2018 at 5:51 PM, Maxime Ripard
-> ><maxime.ripard@bootlin.com> wrote:
-> >> Hi,
-> >>
-> >> On Wed, May 02, 2018 at 12:12:27AM +0800, Chen-Yu Tsai wrote:
-> >>> From: Icenowy Zheng <icenowy@aosc.io>
-> >>>
-> >>> Allwinner A64 has a SRAM controller, and in the device tree
-> >currently
-> >>> we have a syscon node to enable EMAC driver to access the EMAC clock
-> >>> register. As SRAM controller driver can now export regmap for this
-> >>> register, replace the syscon node to the SRAM controller device
-> >node,
-> >>> and let EMAC driver to acquire its EMAC clock regmap.
-> >>>
-> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> >>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> >>> ---
-> >>>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 23
-> >+++++++++++++++----
-> >>>  1 file changed, 19 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >>> index 1b2ef28c42bd..1c37659d9d41 100644
-> >>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >>> @@ -168,10 +168,25 @@
-> >>>               #size-cells =3D <1>;
-> >>>               ranges;
-> >>>
-> >>> -             syscon: syscon@1c00000 {
-> >>> -                     compatible =3D
-> >"allwinner,sun50i-a64-system-controller",
-> >>> -                             "syscon";
-> >>> +             sram_controller: sram-controller@1c00000 {
-> >>> +                     compatible =3D
-> >"allwinner,sun50i-a64-sram-controller";
-> >>
-> >> I don't think there's anything preventing us from keeping the
-> >> -system-controller compatible. It's what was in the DT before, and
-> >> it's how it's called in the datasheet.
-> >
-> >I actually meant to ask you about this. The -system-controller
-> >compatible matches the datasheet better. Maybe we should just
-> >switch to that one?
->=20
-> No, if we do the switch the system-controller compatible,
-> the device will be probed on the same memory region with
-> a syscon on old DTs.
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-The device hasn't magically changed either. Maybe we just need to add
-a check to make sure we don't have the syscon compatible in the SRAM
-driver probe so that the double driver issue doesn't happen?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---psuzaxnmxte5uamb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrppvwACgkQ0rTAlCFN
-r3QyzQ//S9u4EmsjmDeyVXJX1lMLvYsjPV3y2NdBHOFqBRpv5sNHoUsewYV/3P93
-HvGaGNuq8HOTx4kZLolVDxC+y+NSCEOf/TNyEhHBABrQQHaScZo+YJ499fWf8rCj
-26KFMksUY8QbaX6gJNdcpKLn53CnbtiZ2xj/aqbiBkNsTDBMvs5ss6z/3WqLlt6T
-2MZUEDU4uWaM/cMKwi+xf2ALg1tmP3NVFGvNN4Tlw5f/Lo8Aec9MVv2jlfMTwMIH
-5GvDz2nwE98KHfVqRh2ss+26jvxtFH9dmV1SJWy4IQyBp0OFNvMZrpTkCIaVkfrP
-8EBuXR4MU+fJekpdxI+KsrXWOkKYoVcAPdDZmKF0Nv9SP9ny67RhC+TsXx8RWzwu
-n1W2jr7raEBqsECvmOFDcUFl4Zo5ARsEpiqobuzF7EzCQO+4H5bJN5R3P7QM3Xoh
-kLyXUb1afZCETZ/bc9zhnTlgjTtwPOTjBybCqPEU/jYVqchoOL13yWapRL9peWiA
-1grfQwRF7PJ1BoBHrpKTjwpe2jCzSqdS98/Za6BRKa0aDWrpZKDuY4Qr1SUy4Ok3
-h6isrD0tL+pGB8UrZxpa64W3XdagnhOdAS/isCieNt6t9e5dZOymiPGnMdKYs2fk
-g/6zS2i1nFJ5U9pvDejL2OBBjUvcyAb/J8AspEbO1rSWjNl7eMA=
-=hbOZ
------END PGP SIGNATURE-----
-
---psuzaxnmxte5uamb--
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index d92cad93..620fdc2 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -52,6 +52,7 @@
+  * detect voltage droops.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+@@ -178,10 +179,14 @@ struct clk_cpu_8996_mux {
+ 	u32	reg;
+ 	u8	shift;
+ 	u8	width;
++	struct notifier_block nb;
+ 	struct clk_hw	*pll;
+ 	struct clk_regmap clkr;
+ };
+ 
++#define to_clk_cpu_8996_mux_nb(_nb) \
++	container_of(_nb, struct clk_cpu_8996_mux, nb)
++
+ static inline
+ struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
+ {
+@@ -227,6 +232,26 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	return 0;
+ }
+ 
++int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
++			void *data)
++{
++	int ret;
++	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		break;
++	case POST_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		break;
++	default:
++		ret = 0;
++		break;
++	}
++
++	return notifier_from_errno(ret);
++};
+ const struct clk_ops clk_cpu_8996_mux_ops = {
+ 	.set_parent = clk_cpu_8996_mux_set_parent,
+ 	.get_parent = clk_cpu_8996_mux_get_parent,
+@@ -270,6 +295,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -289,6 +315,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -347,6 +374,12 @@ struct clk_regmap *clks[] = {
+ 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+ 
++	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
++	if (ret)
++		return ret;
++
++	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
++
+ 	return ret;
+ }
+ 
+-- 
+1.9.1
