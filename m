@@ -1,36 +1,30 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:49420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752350AbeEPPDH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 May 2018 11:03:07 -0400
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 23 May 2018 12:00:12 -0500
+From: Rob Herring <robh@kernel.org>
+To: Lei YU <mine260309@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] clk: aspeed: Add 24MHz fixed clock
+Message-ID: <20180523170012.GA15670@rob-hp-laptop>
+References: <1526633822-17138-1-git-send-email-mine260309@gmail.com>
 MIME-Version: 1.0
-To: Carlo Caione <carlo@caione.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180516085040.6771-1-jbrunet@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
-References: <20180516085040.6771-1-jbrunet@baylibre.com>
-Message-ID: <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2] clk: meson: use SPDX license identifiers consistently
-Date: Wed, 16 May 2018 08:03:05 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526633822-17138-1-git-send-email-mine260309@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2018-05-16 01:50:40)
-> Replace every license notices in drivers/clk/meson by SPDX license
-> identifiers, as described in license-rules.rst
-> =
-
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On Fri, May 18, 2018 at 04:57:02PM +0800, Lei YU wrote:
+> Add a 24MHz fixed clock.
+> This clock will be used for certain devices, e.g. pwm.
+> 
+> Signed-off-by: Lei YU <mine260309@gmail.com>
 > ---
+>  drivers/clk/clk-aspeed.c                 | 9 ++++++++-
+>  include/dt-bindings/clock/aspeed-clock.h | 1 +
+>  2 files changed, 9 insertions(+), 1 deletion(-)
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-
-I take it this will come through a PR? Otherwise I can apply it to
-clk-meson branch.
+Acked-by: Rob Herring <robh@kernel.org>
