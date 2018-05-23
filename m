@@ -1,49 +1,34 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Tue, 15 May 2018 09:39:50 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v6 13/14] dt-bindings: cpufreq: Document
- operating-points-v2-kryo-cpu
-Message-ID: <20180515040950.otlennfyfvuujyfc@vireshk-i7>
-References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
- <1526303520-5843-14-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pg0-f46.google.com ([74.125.83.46]:41100 "EHLO
+        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754658AbeEWSUE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 May 2018 14:20:04 -0400
+Date: Wed, 23 May 2018 13:20:01 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: maxime.ripard@bootlin.com, wens@csie.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 03/15] clk: sunxi-ng: r40: Export video PLLs
+Message-ID: <20180523182001.GA4527@rob-hp-laptop>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+ <20180519183127.2718-4-jernej.skrabec@siol.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526303520-5843-14-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <20180519183127.2718-4-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14-05-18, 16:11, Ilia Lin wrote:
-> In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
-> that have KRYO processors, the CPU ferequencies subset and voltage value
-> of each OPP varies based on the silicon variant in use.
-> Qualcomm Technologies, Inc. Process Voltage Scaling Tables
-> defines the voltage and frequency value based on the msm-id in SMEM
-> and speedbin blown in the efuse combination.
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
+On Sat, May 19, 2018 at 08:31:15PM +0200, Jernej Skrabec wrote:
+> Video PLLs need to be referenced in R40 DT as possible HDMI PHY parent.
 > 
-> This change adds documentation.
+> Export them.
 > 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 > ---
->  .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
->  1 file changed, 680 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+>  drivers/clk/sunxi-ng/ccu-sun8i-r40.h      | 8 ++++++--
+>  include/dt-bindings/clock/sun8i-r40-ccu.h | 4 ++++
+>  2 files changed, 10 insertions(+), 2 deletions(-)
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+Reviewed-by: Rob Herring <robh@kernel.org>
