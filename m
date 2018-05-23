@@ -1,67 +1,49 @@
-Return-Path: <xieyisheng1@huawei.com>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Yisheng Xie <xieyisheng1@huawei.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner
-	<heiko@sntech.de>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>
-Subject: [PATCH 13/33] clk: rockchip: use match_string() helper
-Date: Mon, 21 May 2018 19:57:50 +0800
-Message-ID: <1526903890-35761-14-git-send-email-xieyisheng1@huawei.com>
-In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	will.deacon@arm.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	vireshk@kernel.org,
+	ilialin@codeaurora.org
+Subject: [PATCH v11 3/8] clk: Use devm_ in the register fixed factor clock
+Date: Wed, 23 May 2018 15:52:56 +0300
+Message-Id: <1527079981-11179-4-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
+References: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-match_string() returns the index of an array for a matching string,
-which can be used intead of open coded variant.
+Use devm_clk_hw_register instead of clk_hw_register
+to simplify the usage of this API. This way drivers that call
+the clk_hw_register_fixed_factor won't need to maintain
+a data structure for further cleanup.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
- drivers/clk/rockchip/clk.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ drivers/clk/clk-fixed-factor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 3cd8ad5..514032d 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -274,18 +274,10 @@ static struct clk *rockchip_clk_register_frac_branch(
- 		struct clk_mux *frac_mux = &frac->mux;
- 		struct clk_init_data init;
- 		struct clk *mux_clk;
--		int i, ret;
--
--		frac->mux_frac_idx = -1;
--		for (i = 0; i < child->num_parents; i++) {
--			if (!strcmp(name, child->parent_names[i])) {
--				pr_debug("%s: found fractional parent in mux at pos %d\n",
--					 __func__, i);
--				frac->mux_frac_idx = i;
--				break;
--			}
--		}
-+		int ret;
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index a5d402d..8e39bda 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 	init.num_parents = 1;
  
-+		frac->mux_frac_idx = match_string(child->parent_names,
-+						  child->num_parents, name);
- 		frac->mux_ops = &clk_mux_ops;
- 		frac->clk_nb.notifier_call = rockchip_clk_frac_notifier_cb;
- 
-@@ -312,6 +304,8 @@ static struct clk *rockchip_clk_register_frac_branch(
- 
- 		/* notifier on the fraction divider to catch rate changes */
- 		if (frac->mux_frac_idx >= 0) {
-+			pr_debug("%s: find fractional parent in mux at pos %d\n",
-+				 __func__, frac->mux_frac_idx);
- 			ret = clk_notifier_register(clk, &frac->clk_nb);
- 			if (ret)
- 				pr_err("%s: failed to register clock notifier for %s\n",
+ 	hw = &fix->hw;
+-	ret = clk_hw_register(dev, hw);
++	ret = devm_clk_hw_register(dev, hw);
+ 	if (ret) {
+ 		kfree(fix);
+ 		hw = ERR_PTR(ret);
 -- 
-1.7.12.4
+1.9.1
