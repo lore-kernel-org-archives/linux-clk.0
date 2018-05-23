@@ -1,50 +1,33 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	will.deacon@arm.com
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	vireshk@kernel.org,
-	ilialin@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v12 2/8] clk: qcom: Make clk_alpha_pll_configure available to modules
-Date: Thu, 24 May 2018 10:50:12 +0300
-Message-Id: <1527148218-16540-3-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
-References: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <horms@verge.net.au>
+Date: Wed, 23 May 2018 10:57:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 1/6] dt-bindings: arm: Document the RZN1D-DB board
+Message-ID: <20180523085723.yp6qc32cozaf7l2n@verge.net.au>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+On Tue, May 22, 2018 at 11:01:21AM +0100, Michel Pollet wrote:
+> This documents the RZ/N1 bindings for the RZN1D-DB board.
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Allow clk_alpha_pll_configure to be called from loadable
-kernel modules.
+This looks fine but I will wait to see if there are other reviews before
+applying.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 9722b70..57f2084 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -228,6 +228,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 	if (pll->flags & SUPPORTS_FSM_MODE)
- 		qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
- }
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
- 
- static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
- {
--- 
-1.9.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
