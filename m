@@ -1,61 +1,46 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v9 03/27] clk: davinci: psc: allow for dev == NULL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-4-david@lechnology.com>
- <8940259b-5811-ce9f-8262-17d39ca0a46f@ti.com>
- <94d4cfc5-0ea7-e642-c7e3-8d549bdef8ce@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <3cec9c1f-48fd-1c16-b642-eb93e41446fc@ti.com>
-Date: Wed, 2 May 2018 20:38:06 +0530
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Akshu Agrawal <akshu.agrawal@amd.com>
+Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com, mturquette@baylibre.com, sboyd@kernel.org, christian.koenig@amd.com, airlied@redhat.com, Shaoyun.Liu@amd.com, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] Add support for general system clock on ST AMD platform
+Date: Wed, 23 May 2018 13:32:06 +0200
+Message-ID: <1850531.osTZcrXkZF@aspire.rjw.lan>
+In-Reply-To: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <94d4cfc5-0ea7-e642-c7e3-8d549bdef8ce@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 02 May 2018 07:19 AM, David Lechner wrote:
-> On 05/01/2018 09:02 AM, Sekhar Nori wrote:
->> On Friday 27 April 2018 05:47 AM, David Lechner wrote:
->>> +static inline void *_devm_kzalloc(struct device *dev, size_t size,
->>> gfp_t flags)
->>> +{
->>> +    if (dev)
->>> +        return devm_kzalloc(dev, size, flags);
->>> +
->>> +    return kzalloc(size, flags);
->>> +}
->>
->> I have the same question on the utility of this. A memory allocation
->> error so early on is not going to result in a bootable system anyway.
->> So, I wonder if its better to just BUG() in such cases. That will
->> actually help faster debug than returning an error back. I know the push
->> back on using BUG(), but clock drivers are special, and I think thats
->> why its seems to be used quite a bit already.
->>
+On Wednesday, May 9, 2018 11:58:59 AM CEST Akshu Agrawal wrote:
+> AMD ST/CZ platform provides a general system clock which can be used
+> by any driver. Registration of this clock will done in clk-st driver.
+> While the ACPI misc device will create the required MMIO mappings
+> and pass the same to the clk-st driver. The clk-st driver will
+> use the address to enable/disable and set frequency.
 > 
-> Same reply here as well. On DA850/DA830, you might not get a console,
-> but you will "boot" even if one of the PSC devices fails though.
+> Changelog:
+> v2:
+>   clk: x86: Add ST oscout platform clock: v3->v4 unregister clk_hw
+>   ACPI: APD: Add AMD misc clock handler support: No change (v2)
+> v3:
+>   clk: x86: Add ST oscout platform clock:
+> 		v4->v5 use static array, change license
+>   ACPI: APD: Add AMD misc clock handler support:
+> 		v2->v3 use devm_ioremap, fix warning
+> 
+> Akshu Agrawal (2):
+>   clk: x86: Add ST oscout platform clock
+>   ACPI: APD: Add AMD misc clock handler support
+> 
+>  drivers/acpi/acpi_apd.c              | 50 ++++++++++++++++++++
+>  drivers/clk/x86/Makefile             |  1 +
+>  drivers/clk/x86/clk-st.c             | 88 ++++++++++++++++++++++++++++++++++++
+>  include/linux/platform_data/clk-st.h | 35 ++++++++++++++
+>  4 files changed, 174 insertions(+)
+>  create mode 100644 drivers/clk/x86/clk-st.c
+>  create mode 100644 include/linux/platform_data/clk-st.h
+> 
+> 
 
-Was not thinking of failure to boot due to clocks being disabled, but
-the fact that you are not able to allocate a small amount of memory so
-early in boot process. The chances of successful boot after memory
-allocation failures like that are close to zero.
-
-> WARN() is probably just as good as BUG() in this case too.
-
-Okay, but with WARN() you would continue to proceed to try to boot which
-is not going to be much fruitful (and might actually muddle the first
-failure). But up to you on this.
-
-Thanks,
-Sekhar
+Both patches applied, thanks!
