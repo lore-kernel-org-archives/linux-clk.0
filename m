@@ -1,115 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33531 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751309AbeEOQpv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 May 2018 12:45:51 -0400
-Received: by mail-qt0-f196.google.com with SMTP id e8-v6so1149197qth.0
-        for <linux-clk@vger.kernel.org>; Tue, 15 May 2018 09:45:50 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] clk: meson: mpll: add round closest support
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180515163652.19980-1-jbrunet@baylibre.com>
- <20180515163652.19980-2-jbrunet@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <5deb8162-fc88-5c9e-3d56-bd96794ed6e9@baylibre.com>
-Date: Tue, 15 May 2018 18:45:47 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180515163652.19980-2-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	will.deacon@arm.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	vireshk@kernel.org,
+	ilialin@codeaurora.org
+Subject: [PATCH v11 5/8] dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
+Date: Wed, 23 May 2018 15:52:58 +0300
+Message-Id: <1527079981-11179-6-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
+References: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 15/05/2018 18:36, Jerome Brunet wrote:
-> Allow the mpll driver to round the requested rate up if
-> CLK_MESON_MPLL_ROUND_CLOSEST is set and it provides a rate closer to the
-> requested rate.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/clk/meson/clk-mpll.c | 24 +++++++++++++++++++-----
->  drivers/clk/meson/clkc.h     |  3 +++
->  2 files changed, 22 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-> index 0df1227b65b3..d233549de244 100644
-> --- a/drivers/clk/meson/clk-mpll.c
-> +++ b/drivers/clk/meson/clk-mpll.c
-> @@ -89,10 +89,23 @@ static long rate_from_params(unsigned long parent_rate,
->  static void params_from_rate(unsigned long requested_rate,
->  			     unsigned long parent_rate,
->  			     unsigned int *sdm,
-> -			     unsigned int *n2)
-> +			     unsigned int *n2,
-> +			     u8 flags)
->  {
->  	uint64_t div = parent_rate;
-> -	unsigned long rem = do_div(div, requested_rate);
-> +	uint64_t frac = do_div(div, requested_rate);
-> +
-> +	frac *= SDM_DEN;
-> +
-> +	if (flags & CLK_MESON_MPLL_ROUND_CLOSEST)
-> +		*sdm = DIV_ROUND_CLOSEST_ULL(frac, requested_rate);
-> +	else
-> +		*sdm = DIV_ROUND_UP_ULL(frac, requested_rate);
-> +
-> +	if (*sdm == SDM_DEN) {
-> +		*sdm = 0;
-> +		div += 1;
-> +	}
->  
->  	if (div < N2_MIN) {
->  		*n2 = N2_MIN;
-> @@ -102,7 +115,6 @@ static void params_from_rate(unsigned long requested_rate,
->  		*sdm = SDM_DEN - 1;
->  	} else {
->  		*n2 = div;
-> -		*sdm = DIV_ROUND_UP_ULL((u64)rem * SDM_DEN, requested_rate);
->  	}
->  }
->  
-> @@ -125,9 +137,11 @@ static long mpll_round_rate(struct clk_hw *hw,
->  			    unsigned long rate,
->  			    unsigned long *parent_rate)
->  {
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
->  	unsigned int sdm, n2;
->  
-> -	params_from_rate(rate, *parent_rate, &sdm, &n2);
-> +	params_from_rate(rate, *parent_rate, &sdm, &n2, mpll->flags);
->  	return rate_from_params(*parent_rate, sdm, n2);
->  }
->  
-> @@ -140,7 +154,7 @@ static int mpll_set_rate(struct clk_hw *hw,
->  	unsigned int sdm, n2;
->  	unsigned long flags = 0;
->  
-> -	params_from_rate(rate, parent_rate, &sdm, &n2);
-> +	params_from_rate(rate, parent_rate, &sdm, &n2, mpll->flags);
->  
->  	if (mpll->lock)
->  		spin_lock_irqsave(mpll->lock, flags);
-> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> index 8fe73c4edca8..8cc265cd3d2b 100644
-> --- a/drivers/clk/meson/clkc.h
-> +++ b/drivers/clk/meson/clkc.h
-> @@ -97,8 +97,11 @@ struct meson_clk_mpll_data {
->  	struct parm ssen;
->  	struct parm misc;
->  	spinlock_t *lock;
-> +	u8 flags;
->  };
->  
-> +#define CLK_MESON_MPLL_ROUND_CLOSEST	BIT(0)
-> +
->  struct meson_clk_audio_div_data {
->  	struct parm div;
->  	u8 flags;
-> 
+Each of the CPU clusters (Power and Perf) on msm8996 are
+clocked via 2 PLLs, a primary and alternate. There are also
+2 Mux'es, a primary and secondary all connected together
+as shown below
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+                             +-------+
+              XO             |       |
+          +------------------>0      |
+                             |       |
+                   PLL/2     | SMUX  +----+
+                     +------->1      |    |
+                     |       |       |    |
+                     |       +-------+    |    +-------+
+                     |                    +---->0      |
+                     |                         |       |
++---------------+    |             +----------->1      | CPU clk
+|Primary PLL    +----+ PLL_EARLY   |           |       +------>
+|               +------+-----------+    +------>2 PMUX |
++---------------+      |                |      |       |
+                       |   +------+     |   +-->3      |
+                       +--^+  ACD +-----+   |  +-------+
++---------------+          +------+         |
+|Alt PLL        |                           |
+|               +---------------------------+
++---------------+         PLL_EARLY
+
+The primary PLL is what drives the CPU clk, except for times
+when we are reprogramming the PLL itself (for rate changes) when
+we temporarily switch to an alternate PLL. A subsequent patch adds
+support to switch between primary and alternate PLL during rate
+changes.
+
+The primary PLL operates on a single VCO range, between 600MHz
+and 3GHz. However the CPUs do support OPPs with frequencies
+between 300MHz and 600MHz. In order to support running the CPUs
+at those frequencies we end up having to lock the PLL at twice
+the rate and drive the CPU clk via the PLL/2 output and SMUX.
+
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+new file mode 100644
+index 0000000..8458783
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+@@ -0,0 +1,17 @@
++Qualcomm CPUSS clock controller for Kryo CPUs
++----------------------------------------------------
++
++Required properties :
++- compatible : shall contain only one of the following:
++
++			"qcom,msm8996-apcc"
++
++- reg : shall contain base register location and length
++- #clock-cells : shall contain 1
++
++Example:
++	kryocc: clock-controller@6400000 {
++		compatible = "qcom,msm8996-apcc";
++		reg = <0x6400000 0x90000>;
++		#clock-cells = <1>;
++	};
+-- 
+1.9.1
