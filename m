@@ -1,192 +1,238 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:23091 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932994AbeEYMfW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 May 2018 08:35:22 -0400
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
-        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <broonie@kernel.org>
-CC: <Cristian.Birsan@microchip.com>
-Subject: [PATCH v4 2/7] clk: at91: add I2S clock mux driver
-Date: Fri, 25 May 2018 15:34:23 +0300
-Message-ID: <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
-In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	will.deacon@arm.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	vireshk@kernel.org,
+	ilialin@codeaurora.org
+Subject: [PATCH v11 8/8] clk: qcom: Add ACD path to CPU clock driver for msm8996
+Date: Wed, 23 May 2018 15:53:01 +0300
+Message-Id: <1527079981-11179-9-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
+References: <1527079981-11179-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver is a simple muxing driver that controls the
-I2S's clock input by using syscon/regmap to change the parrent.
-The available inputs can be Peripheral clock and Generated clock.
+The PMUX for each duplex allows for selection of ACD clock source.
+The DVM (Dynamic Variation Monitor) will flag an error
+when a voltage droop event is detected. This flagged error
+enables ACD to provide a div-by-2 clock, sourced from the primary PLL.
+The duplex will be provided the divided clock
+until a pre-programmed delay has expired.
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+This change configures ACD during the probe and switches
+the PMUXes to the ACD clock source.
+
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
- arch/arm/mach-at91/Kconfig     |   4 ++
- drivers/clk/at91/Makefile      |   1 +
- drivers/clk/at91/clk-i2s-mux.c | 117 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 122 insertions(+)
- create mode 100644 drivers/clk/at91/clk-i2s-mux.c
+ drivers/clk/qcom/clk-cpu-8996.c | 75 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 65 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
-index 1254bf9..903f23c 100644
---- a/arch/arm/mach-at91/Kconfig
-+++ b/arch/arm/mach-at91/Kconfig
-@@ -27,6 +27,7 @@ config SOC_SAMA5D2
- 	select HAVE_AT91_H32MX
- 	select HAVE_AT91_GENERATED_CLK
- 	select HAVE_AT91_AUDIO_PLL
-+	select HAVE_AT91_I2S_MUX_CLK
- 	select PINCTRL_AT91PIO4
- 	help
- 	  Select this if ou are using one of Microchip's SAMA5D2 family SoC.
-@@ -129,6 +130,9 @@ config HAVE_AT91_GENERATED_CLK
- config HAVE_AT91_AUDIO_PLL
- 	bool
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index ff5c0a5..0a908d8 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -53,9 +53,11 @@
+  */
  
-+config HAVE_AT91_I2S_MUX_CLK
-+	bool
-+
- config SOC_SAM_V4_V5
- 	bool
- 
-diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
-index 082596f..facc169 100644
---- a/drivers/clk/at91/Makefile
-+++ b/drivers/clk/at91/Makefile
-@@ -13,3 +13,4 @@ obj-$(CONFIG_HAVE_AT91_USB_CLK)		+= clk-usb.o
- obj-$(CONFIG_HAVE_AT91_SMD)		+= clk-smd.o
- obj-$(CONFIG_HAVE_AT91_H32MX)		+= clk-h32mx.o
- obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)	+= clk-generated.o
-+obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
-diff --git a/drivers/clk/at91/clk-i2s-mux.c b/drivers/clk/at91/clk-i2s-mux.c
-new file mode 100644
-index 0000000..2d56ded
---- /dev/null
-+++ b/drivers/clk/at91/clk-i2s-mux.c
-@@ -0,0 +1,117 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ *  Copyright (C) 2018 Microchip Technology Inc,
-+ *                     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-+ *
-+ *
-+ */
-+
+ #include <linux/clk.h>
 +#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <soc/qcom/kryo-l2-accessors.h>
+ 
+ #include "clk-alpha-pll.h"
+ #include "clk-regmap.h"
+@@ -69,6 +71,11 @@ enum _pmux_input {
+ };
+ 
+ #define DIV_2_THRESHOLD		600000000
++#define PWRCL_REG_OFFSET 0x0
++#define PERFCL_REG_OFFSET 0x80000
++#define MUX_OFFSET	0x40
++#define ALT_PLL_OFFSET	0x100
++#define SSSCTL_OFFSET 0x160
+ 
+ static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
+        [PLL_OFF_L_VAL] = 0x04,
+@@ -107,7 +114,7 @@ enum _pmux_input {
+ };
+ 
+ static struct clk_alpha_pll perfcl_pll = {
+-	.offset = 0x80000,
++	.offset = PERFCL_REG_OFFSET,
+ 	.regs = prim_pll_regs,
+ 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
+ 	.clkr.hw.init = &(struct clk_init_data){
+@@ -119,7 +126,7 @@ enum _pmux_input {
+ };
+ 
+ static struct clk_alpha_pll pwrcl_pll = {
+-	.offset = 0x0,
++	.offset = PWRCL_REG_OFFSET,
+ 	.regs = prim_pll_regs,
+ 	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
+ 	.clkr.hw.init = &(struct clk_init_data){
+@@ -149,7 +156,7 @@ enum _pmux_input {
+ };
+ 
+ static struct clk_alpha_pll perfcl_alt_pll = {
+-	.offset = 0x80100,
++	.offset = PERFCL_REG_OFFSET + ALT_PLL_OFFSET,
+ 	.regs = alt_pll_regs,
+ 	.vco_table = alt_pll_vco_modes,
+ 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
+@@ -163,7 +170,7 @@ enum _pmux_input {
+ };
+ 
+ static struct clk_alpha_pll pwrcl_alt_pll = {
+-	.offset = 0x100,
++	.offset = PWRCL_REG_OFFSET + ALT_PLL_OFFSET,
+ 	.regs = alt_pll_regs,
+ 	.vco_table = alt_pll_vco_modes,
+ 	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
+@@ -176,6 +183,9 @@ enum _pmux_input {
+ 	},
+ };
+ 
++void __iomem *base;
++static void qcom_cpu_clk_msm8996_acd_init(void __iomem *base);
 +
-+#include <soc/at91/atmel-sfr.h>
+ /* Mux'es */
+ 
+ struct clk_cpu_8996_mux {
+@@ -253,6 +263,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	switch (event) {
+ 	case PRE_RATE_CHANGE:
+ 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		qcom_cpu_clk_msm8996_acd_init(base);
+ 		break;
+ 	case POST_RATE_CHANGE:
+ 		if (cnd->new_rate < DIV_2_THRESHOLD)
+@@ -260,7 +271,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 							  DIV_2_INDEX);
+ 		else
+ 			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
+-							  PLL_INDEX);
++							  ACD_INDEX);
+ 		break;
+ 	default:
+ 		ret = 0;
+@@ -276,7 +287,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux pwrcl_smux = {
+-	.reg = 0x40,
++	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 2,
+ 	.width = 2,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+@@ -292,7 +303,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux perfcl_smux = {
+-	.reg = 0x80040,
++	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 2,
+ 	.width = 2,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+@@ -308,7 +319,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux pwrcl_pmux = {
+-	.reg = 0x40,
++	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
+@@ -329,7 +340,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ };
+ 
+ static struct clk_cpu_8996_mux perfcl_pmux = {
+-	.reg = 0x80040,
++	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
+@@ -393,6 +404,10 @@ struct clk_regmap *clks[] = {
+ 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+ 
++	/* Enable alt PLLs */
++	clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
++	clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
 +
-+#define	I2S_BUS_NR	2
+ 	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
+ 	if (ret)
+ 		return ret;
+@@ -402,10 +417,48 @@ struct clk_regmap *clks[] = {
+ 	return ret;
+ }
+ 
++#define CPU_AFINITY_MASK 0xFFF
++#define PWRCL_CPU_REG_MASK 0x3
++#define PERFCL_CPU_REG_MASK 0x103
 +
-+struct clk_i2s_mux {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	u32 bus_id;
-+};
++#define L2ACDCR_REG 0x580ULL
++#define L2ACDTD_REG 0x581ULL
++#define L2ACDDVMRC_REG 0x584ULL
++#define L2ACDSSCR_REG 0x589ULL
 +
-+#define to_clk_i2s_mux(hw) container_of(hw, struct clk_i2s_mux, hw)
++static DEFINE_SPINLOCK(acd_lock);
 +
-+static u8 clk_i2s_mux_get_parent(struct clk_hw *hw)
++static void qcom_cpu_clk_msm8996_acd_init(void __iomem *base)
 +{
-+	struct clk_i2s_mux *mux = to_clk_i2s_mux(hw);
-+	u32 val;
++	u64 hwid;
++	unsigned long flags;
 +
-+	regmap_read(mux->regmap, AT91_SFR_I2SCLKSEL, &val);
++	spin_lock_irqsave(&acd_lock, flags);
 +
-+	return (val & BIT(mux->bus_id)) >> mux->bus_id;
-+}
++	hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
 +
-+static int clk_i2s_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_i2s_mux *mux = to_clk_i2s_mux(hw);
++	kryo_l2_set_indirect_reg(L2ACDTD_REG, 0x00006A11);
++	kryo_l2_set_indirect_reg(L2ACDDVMRC_REG, 0x000E0F0F);
++	kryo_l2_set_indirect_reg(L2ACDSSCR_REG, 0x00000601);
 +
-+	return regmap_update_bits(mux->regmap, AT91_SFR_I2SCLKSEL,
-+				  BIT(mux->bus_id), index << mux->bus_id);
-+}
-+
-+const struct clk_ops clk_i2s_mux_ops = {
-+	.get_parent = clk_i2s_mux_get_parent,
-+	.set_parent = clk_i2s_mux_set_parent,
-+	.determine_rate = __clk_mux_determine_rate,
-+};
-+
-+static struct clk_hw * __init
-+at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
-+			  const char * const *parent_names,
-+			  unsigned int num_parents, u32 bus_id)
-+{
-+	struct clk_init_data init = {};
-+	struct clk_i2s_mux *i2s_ck;
-+	int ret;
-+
-+	i2s_ck = kzalloc(sizeof(*i2s_ck), GFP_KERNEL);
-+	if (!i2s_ck)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &clk_i2s_mux_ops;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+	init.flags = CLK_IGNORE_UNUSED;
-+
-+	i2s_ck->hw.init = &init;
-+	i2s_ck->bus_id = bus_id;
-+	i2s_ck->regmap = regmap;
-+
-+	ret = clk_hw_register(NULL, &i2s_ck->hw);
-+	if (ret) {
-+		kfree(i2s_ck);
-+		return ERR_PTR(ret);
++	if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
++		writel(0xF, base + PWRCL_REG_OFFSET + SSSCTL_OFFSET);
++		wmb();
++		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002C5FFD);
 +	}
 +
-+	return &i2s_ck->hw;
-+}
-+
-+static void __init of_sama5d2_clk_i2s_mux_setup(struct device_node *np)
-+{
-+	struct regmap *regmap_sfr;
-+	u32 bus_id;
-+	const char *parent_names[2];
-+	struct device_node *i2s_mux_np;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d2-sfr");
-+	if (IS_ERR(regmap_sfr))
-+		return;
-+
-+	for_each_child_of_node(np, i2s_mux_np) {
-+		if (of_property_read_u32(i2s_mux_np, "reg", &bus_id))
-+			continue;
-+
-+		if (bus_id > I2S_BUS_NR)
-+			continue;
-+
-+		ret = of_clk_parent_fill(i2s_mux_np, parent_names, 2);
-+		if (ret != 2)
-+			continue;
-+
-+		hw = at91_clk_i2s_mux_register(regmap_sfr, i2s_mux_np->name,
-+					       parent_names, 2, bus_id);
-+		if (IS_ERR(hw))
-+			continue;
-+
-+		of_clk_add_hw_provider(i2s_mux_np, of_clk_hw_simple_get, hw);
++	if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) {
++		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002C5FFD);
++		writel(0xF, base + PERFCL_REG_OFFSET + SSSCTL_OFFSET);
++		wmb();
 +	}
++
++	spin_unlock_irqrestore(&acd_lock, flags);
 +}
 +
-+CLK_OF_DECLARE(sama5d2_clk_i2s_mux, "atmel,sama5d2-clk-i2s-mux",
-+	       of_sama5d2_clk_i2s_mux_setup);
+ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+-	void __iomem *base;
+ 	struct resource *res;
+ 	struct regmap *regmap;
+ 	struct clk_hw_onecell_data *data;
+@@ -429,6 +482,8 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	qcom_cpu_clk_msm8996_acd_init(base);
++
+ 	data->hws[0] = &pwrcl_pmux.clkr.hw;
+ 	data->hws[1] = &perfcl_pmux.clkr.hw;
+ 	data->num = 2;
 -- 
-2.7.4
-
+1.9.1
