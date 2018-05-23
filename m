@@ -1,81 +1,66 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v10 03/27] clk: davinci: psc: allow for dev == NULL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180509172606.29387-1-david@lechnology.com>
- <20180509172606.29387-4-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <2f1056b3-6d29-0651-1d7d-9c74cd50861c@ti.com>
-Date: Tue, 15 May 2018 19:12:35 +0530
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 23 May 2018 15:02:35 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: rjw@rjwysocki.net, sudeep.holla@arm.com, linux@armlinux.org.uk,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180523093235.k7xugnd7pfisazdx@vireshk-i7>
+References: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+ <1527066324-24726-1-git-send-email-ilialin@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180509172606.29387-4-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1527066324-24726-1-git-send-email-ilialin@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 09 May 2018 10:55 PM, David Lechner wrote:
-> @@ -261,10 +263,14 @@ davinci_lpsc_clk_register(struct device *dev, const char *name,
->  	lpsc->pd = pd;
->  	lpsc->flags = flags;
->  
-> -	ret = devm_clk_hw_register(dev, &lpsc->hw);
-> +	ret = clk_hw_register(dev, &lpsc->hw);
->  	if (ret < 0)
->  		return ERR_PTR(ret);
->  
-> +	/* for now, genpd is only registered when using device-tree */
-> +	if (!dev || !dev->of_node)
-> +		return lpsc;
-> +
->  	/* genpd attach needs a way to look up this clock */
->  	ret = clk_hw_register_clkdev(&lpsc->hw, name, best_dev_name(dev));
->  
-> @@ -378,11 +384,11 @@ __davinci_psc_register_clocks(struct device *dev,
->  	struct regmap *regmap;
->  	int i, ret;
->  
-> -	psc = devm_kzalloc(dev, sizeof(*psc), GFP_KERNEL);
-> +	psc = kzalloc(sizeof(*psc), GFP_KERNEL);
->  	if (!psc)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	clks = devm_kmalloc_array(dev, num_clks, sizeof(*clks), GFP_KERNEL);
-> +	clks = kmalloc_array(num_clks, sizeof(*clks), GFP_KERNEL);
->  	if (!clks)
->  		return ERR_PTR(-ENOMEM);
->  
-> @@ -396,14 +402,14 @@ __davinci_psc_register_clocks(struct device *dev,
->  	for (i = 0; i < num_clks; i++)
->  		clks[i] = ERR_PTR(-ENOENT);
->  
-> -	pm_domains = devm_kcalloc(dev, num_clks, sizeof(*pm_domains), GFP_KERNEL);
-> +	pm_domains = kcalloc(num_clks, sizeof(*pm_domains), GFP_KERNEL);
->  	if (!pm_domains)
->  		return ERR_PTR(-ENOMEM);
->  
->  	psc->pm_data.domains = pm_domains;
->  	psc->pm_data.num_domains = num_clks;
->  
-> -	regmap = devm_regmap_init_mmio(dev, base, &davinci_psc_regmap_config);
-> +	regmap = regmap_init_mmio(dev, base, &davinci_psc_regmap_config);
->  	if (IS_ERR(regmap))
->  		return ERR_CAST(regmap);
+On 23-05-18, 12:05, Ilia Lin wrote:
+> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+> the CPU frequency subset and voltage value of each OPP varies
+> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+> defines the voltage and frequency value based on the msm-id in SMEM
+> and speedbin blown in the efuse combination.
+> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> to provide the OPP framework with required information.
+> This is used to determine the voltage and frequency value for each OPP of
+> operating-points-v2 table when it is parsed by the OPP framework.
+> 
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |  10 +++
+>  drivers/cpufreq/Makefile             |   1 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
+>  drivers/cpufreq/qcom-cpufreq-kryo.c  | 163 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 177 insertions(+)
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
 
-Here and in the PLL driver, you have dropped the devm_* variants (like
-agreed upon), but not added any error path handling. For the clocks
-needed for boot, its probably fine, but the same code path is used for
-non-essential clocks too. Just from a code completeness perspective, it
-will be nice to see the error path correctly handled.
+Hi Ilia,
 
-Apart from that both 1/27 and 3/27 look good to me.
+So the patch looks good now. But I don't see how this series is going
+to get merged. You are touching all parts of the kernel and no single
+maintainer would be able to get these merged easily.
 
-Thanks,
-Sekhar
+What I would suggest is that you divided the series in at least 3
+parts.
+
+- Patch 10 and 11, just the cpufreq stuff. So that Rafael can apply
+  those independently. Also mention the dependency on my OPP patches
+  in the cover letter for those two patches.
+
+- All clk patches in another series, so that Stephen can apply them.
+
+- And finally everything else to go via ARM-Soc.
+
+Maybe things wouldn't be that simple, but that's what you would need
+to do to get things merged. And please add all Acked by tags you got
+to the patches.
+
+For this patch:
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+--
+viresh
