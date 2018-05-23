@@ -1,72 +1,38 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Tue, 29 May 2018 13:00:51 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v3 4/6] clk: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <ae6e4d5cb4c5fb49ea61e49c8958d5b14d676b34.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <horms@verge.net.au>
+Date: Wed, 23 May 2018 11:20:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v6 1/6] dt-bindings: arm: Document the RZN1D-DB board
+Message-ID: <20180523092023.uo3acbxutmvqodux@verge.net.au>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdXSGHg9P-MxCHr3h2NRTKAK79KSdf+cB+3a4+pQOvpmSQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <CAMuHMdXSGHg9P-MxCHr3h2NRTKAK79KSdf+cB+3a4+pQOvpmSQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC clock output.
+On Wed, May 23, 2018 at 11:03:56AM +0200, Geert Uytterhoeven wrote:
+> On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
+> <michel.pollet@bp.renesas.com> wrote:
+> > This documents the RZ/N1 bindings for the RZN1D-DB board.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../bindings/clock/rohm,bd71837-clock.txt          | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-new file mode 100644
-index 000000000000..9759fd145781
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-@@ -0,0 +1,37 @@
-+ROHM BD71837 Power Management Integrated Circuit clock bindings
-+
-+BD71837 clock node should be sub node of the BD71837 MFD node.
-+See BD71837 MFD bindings at
-+Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-+
-+Required properties:
-+- compatible		: Should be "rohm,bd71837-clk"
-+- clock-frequency	: Should be 32768
-+- #clock-cells		: Should be 0
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+  Name "bd71837-32k-out" is used if this is not given.
-+
-+
-+Example:
-+
-+pmic: bd71837@4b {
-+	compatible = "rohm,bd71837";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	reg = <0x4b>;
-+	interrupt-parent = <&gpio1>;
-+	interrupts = <29 GPIO_ACTIVE_LOW>;
-+	interrupt-names = "irq";
-+	#interrupt-cells = <1>;
-+	interrupt-controller;
-+
-+	/* Clock node */
-+	clk: bd71837-32k-out {
-+		compatible = "rohm,bd71837-clk";
-+		#clock-cells = <0>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "bd71837-32k-out";
-+	};
-+};
--- 
-2.14.3
+Thanks, applied.
