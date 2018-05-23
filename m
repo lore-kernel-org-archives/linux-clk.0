@@ -1,38 +1,60 @@
-Return-Path: <horms@verge.net.au>
-Date: Wed, 23 May 2018 11:20:24 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v6 1/6] dt-bindings: arm: Document the RZN1D-DB board
-Message-ID: <20180523092023.uo3acbxutmvqodux@verge.net.au>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
- <1526983321-41949-2-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdXSGHg9P-MxCHr3h2NRTKAK79KSdf+cB+3a4+pQOvpmSQ@mail.gmail.com>
+Return-Path: <daniel@zonque.org>
+Subject: Re: [PATCH] clk: Add driver for MAX9485
+To: Rob Herring <robh@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20180521085848.17192-1-daniel@zonque.org>
+ <20180523183320.GA15306@rob-hp-laptop>
+From: Daniel Mack <daniel@zonque.org>
+Message-ID: <7ba472cb-114d-8412-16ea-12e7e29e8267@zonque.org>
+Date: Wed, 23 May 2018 21:48:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdXSGHg9P-MxCHr3h2NRTKAK79KSdf+cB+3a4+pQOvpmSQ@mail.gmail.com>
+In-Reply-To: <20180523183320.GA15306@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 23, 2018 at 11:03:56AM +0200, Geert Uytterhoeven wrote:
-> On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-> <michel.pollet@bp.renesas.com> wrote:
-> > This documents the RZ/N1 bindings for the RZN1D-DB board.
-> >
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Rob,
 
-Thanks, applied.
+Thanks for the review!
+
+On Wednesday, May 23, 2018 08:33 PM, Rob Herring wrote:
+> On Mon, May 21, 2018 at 10:58:48AM +0200, Daniel Mack wrote:
+>> From: Daniel Mack <zonque@gmail.com>
+>>
+>> This patch adds a driver for MAX9485, a programmable audio clock generator.
+>>
+>> The device requires a 27.000 MHz clock input. It can provide a gated
+>> buffered output of its input clock and two gated outputs of a PLL that can
+>> generate one out of 16 discrete frequencies. There is only one PLL however,
+>> so the two gated outputs will always have the same frequency but they can
+>> be switched individually.
+>>
+>> The driver for this device exposes 4 clocks in total:
+>>
+>> - MAX9485_MCLKOUT:      A gated, buffered output of the input clock
+>> - MAX9485_CLKOUT:       A PLL that can be configured to 16 different
+>> 			discrete frequencies
+>> - MAX9485_CLKOUT[1,2]:  Two gated outputs for MAX9485_CLKOUT
+>>
+>> Some PLL output frequencies can be achieved with different register
+>> settings. The driver will select the one with lowest jitter in such cases.
+>>
+>> Signed-off-by: Daniel Mack <daniel@zonque.org>
+>> ---
+>>   .../devicetree/bindings/clock/maxim,max9485.txt    |  59 ++++
+>>   drivers/clk/Kconfig                                |   8 +
+>>   drivers/clk/Makefile                               |   1 +
+>>   drivers/clk/clk-max9485.c                          | 379 +++++++++++++++++++++
+>>   include/dt-bindings/clock/maxim,max9485.h          |  19 ++
+> 
+> The 2 DT files should be a separate patch.
+
+Sure, I can do that. In order to keep the series bisectable however, 
+that would mean that the bindings come in first, and then the actual 
+implementation because that also depends on maxim,max9485.h. Is that okay?
+
+I agree with the rest of your comments.
+
+
+Thanks,
+Daniel
