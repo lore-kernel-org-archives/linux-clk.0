@@ -1,70 +1,92 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:52394 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752461AbeEHMkz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 May 2018 08:40:55 -0400
-Date: Tue, 8 May 2018 13:40:33 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
-        kernel@pengutronix.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [PATCH v6 2/6] ARM: imx6: register pm_power_off handler if
- "fsl,pmic-stby-poweroff" is set
-Message-ID: <20180508124033.GL16141@n2100.armlinux.org.uk>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-3-o.rempel@pengutronix.de>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180305102524.5905-3-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 May 2018 11:12:07 +0200
+Message-ID: <CAMuHMdXETt75rGyYRsNEK0O5CO3A-bG70g=-f23y6PO_uK6rWg@mail.gmail.com>
+Subject: Re: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Mar 05, 2018 at 11:25:19AM +0100, Oleksij Rempel wrote:
-> One of the Freescale recommended sequences for power off with external
-> PMIC is the following:
-> ...
-> 3.  SoC is programming PMIC for power off when standby is asserted.
-> 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
-> 
-> See:
-> http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-> page 5083
-> 
-> This patch implements step 4. of this sequence.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-> index ecdf071653d4..24689260a2a5 100644
-> --- a/arch/arm/mach-imx/pm-imx6.c
-> +++ b/arch/arm/mach-imx/pm-imx6.c
-> @@ -604,6 +604,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
->  				   IMX6Q_GPR1_GINT);
->  }
->  
-> +static void imx6_pm_stby_poweroff(void)
-> +{
-> +	imx6_set_lpm(STOP_POWER_OFF);
-> +	cpu_suspend(0, imx6q_suspend_finish);
+Hi Michel,
 
-Do you actually need to save the processor state etc here - the request
-is after all to power down the system and not to suspend.  Would calling
-imx6q_suspend_finish() directly work (and hence simplify the code) ?
+On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
+> bone support.
+>
+> This currently only handles generic parts (gic, architected timer)
+> and a UART.
+> For simplicity sake, this also relies on the bootloader to set the
+> pinctrl and clocks.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -0,0 +1,86 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/rzn1-clock.h>
+> +
+> +/ {
+> +       compatible = "renesas,r9a06g032", "renesas,rzn1";
+
+Please drop the "renesas,rzn1".
+
+
+> +       #address-cells = <1>;
+> +       #size-cells = <1>;
+> +
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               clocks = <&clock RZN1_DIV_CA7>;
+
+I think the clocks property should be moved to the individual CPU nodes.
+
+> +
+> +               cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a7";
+> +                       reg = <0>;
+> +               };
+> +
+> +               cpu@1 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a7";
+> +                       reg = <1>;
+> +               };
+> +       };
+
+The rest looks OK to me (pending acceptance of the clock bindings).
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
