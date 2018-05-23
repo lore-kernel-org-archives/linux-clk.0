@@ -1,154 +1,73 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34387 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751733AbeEVOxY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 May 2018 10:53:24 -0400
-Received: by mail-wm0-f65.google.com with SMTP id a137-v6so16875529wme.1
-        for <linux-clk@vger.kernel.org>; Tue, 22 May 2018 07:53:23 -0700 (PDT)
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>,
-        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
-Subject: [PATCH v6 10/13] ARM: dts: imx7: Add video mux, csi and mipi_csi and connections
-Date: Tue, 22 May 2018 15:52:42 +0100
-Message-Id: <20180522145245.3143-11-rui.silva@linaro.org>
-In-Reply-To: <20180522145245.3143-1-rui.silva@linaro.org>
-References: <20180522145245.3143-1-rui.silva@linaro.org>
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36588 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753826AbeEWFoJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 May 2018 01:44:09 -0400
+Received: by mail-pl0-f68.google.com with SMTP id v24-v6so12316040plo.3
+        for <linux-clk@vger.kernel.org>; Tue, 22 May 2018 22:44:09 -0700 (PDT)
+Date: Wed, 23 May 2018 11:14:05 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Ilia Lin <ilialin@codeaurora.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
+Message-ID: <20180523054405.edj4svjdf5picno2@vireshk-i7>
+References: <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
+ <1526988585-21678-1-git-send-email-ilialin@codeaurora.org>
+ <20180522130704.GA31065@e107155-lin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180522130704.GA31065@e107155-lin>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the device tree nodes for csi, video multiplexer and mipi-csi
-besides the graph connecting the necessary endpoints to make the media capture
-entities to work in imx7 Warp board.
+On 22-05-18, 14:07, Sudeep Holla wrote:
+> On Tue, May 22, 2018 at 02:29:45PM +0300, Ilia Lin wrote:
+> > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
+> > the CPU frequency subset and voltage value of each OPP varies
+> > based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+> > defines the voltage and frequency value based on the msm-id in SMEM
+> > and speedbin blown in the efuse combination.
+> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
+> > to provide the OPP framework with required information.
+> > This is used to determine the voltage and frequency value for each OPP of
+> > operating-points-v2 table when it is parsed by the OPP framework.
+> > 
+> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> [...]
+> 
+> > +
+> > +	switch (msm8996_version) {
+> > +	case MSM8996_V3:
+> > +		versions = 1 << (unsigned int)(*speedbin);
+> > +		break;
+> > +	case MSM8996_SG:
+> > +		versions = 1 << ((unsigned int)(*speedbin) + 4);
+> > +		break;
+> > +	default:
+> > +		BUG();
+> > +		break;
+> > +	}
+> > +
+> > +	for_each_possible_cpu(cpu) {
+> > +		cpu_dev = get_cpu_device(cpu);
+> > +		if (NULL == cpu_dev) {
+> > +			ret = -ENODEV;
+> > +			goto free_opp;
+> > +		}
+> > +
+> > +		opp_tables[cpu] = dev_pm_opp_set_supported_hw(cpu_dev,
+> > +							      &versions, 1);
+> 
+> Will be not get NULL for all CPUs except 0 ?
 
-Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
----
- arch/arm/boot/dts/imx7s-warp.dts | 51 ++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/imx7s.dtsi     | 27 +++++++++++++++++
- 2 files changed, 78 insertions(+)
+With my patches, we will get the OPP table again with refcount
+incremented. And on failures, we need to call put-supported-hw helper
+only for the CPUs for which it passed previously.
 
-diff --git a/arch/arm/boot/dts/imx7s-warp.dts b/arch/arm/boot/dts/imx7s-warp.dts
-index 8a30b148534d..cb175ee2fc9d 100644
---- a/arch/arm/boot/dts/imx7s-warp.dts
-+++ b/arch/arm/boot/dts/imx7s-warp.dts
-@@ -310,6 +310,57 @@
- 	status = "okay";
- };
- 
-+&gpr {
-+	csi_mux {
-+		compatible = "video-mux";
-+		mux-controls = <&mux 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			csi_mux_from_mipi_vc0: endpoint {
-+				remote-endpoint = <&mipi_vc0_to_csi_mux>;
-+			};
-+		};
-+
-+		port@2 {
-+			reg = <2>;
-+
-+			csi_mux_to_csi: endpoint {
-+				remote-endpoint = <&csi_from_csi_mux>;
-+			};
-+		};
-+	};
-+};
-+
-+&csi {
-+	status = "okay";
-+
-+	port {
-+		csi_from_csi_mux: endpoint {
-+			remote-endpoint = <&csi_mux_to_csi>;
-+		};
-+	};
-+};
-+
-+&mipi_csi {
-+	clock-frequency = <166000000>;
-+	status = "okay";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	fsl,csis-hs-settle = <3>;
-+
-+	port@1 {
-+		reg = <1>;
-+
-+		mipi_vc0_to_csi_mux: endpoint {
-+			remote-endpoint = <&csi_mux_from_mipi_vc0>;
-+		};
-+	};
-+};
-+
- &wdog1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_wdog>;
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index 0b0b85438869..4fce2f46c766 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -46,6 +46,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/imx7-reset.h>
- #include "imx7d-pinfunc.h"
- 
- / {
-@@ -738,6 +739,17 @@
- 				status = "disabled";
- 			};
- 
-+			csi: csi@30710000 {
-+				compatible = "fsl,imx7-csi";
-+				reg = <0x30710000 0x10000>;
-+				interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX7D_CLK_DUMMY>,
-+						<&clks IMX7D_CSI_MCLK_ROOT_CLK>,
-+						<&clks IMX7D_CLK_DUMMY>;
-+				clock-names = "axi", "mclk", "dcic";
-+				status = "disabled";
-+			};
-+
- 			lcdif: lcdif@30730000 {
- 				compatible = "fsl,imx7d-lcdif", "fsl,imx28-lcdif";
- 				reg = <0x30730000 0x10000>;
-@@ -747,6 +759,21 @@
- 				clock-names = "pix", "axi";
- 				status = "disabled";
- 			};
-+
-+			mipi_csi: mipi-csi@30750000 {
-+				compatible = "fsl,imx7-mipi-csi2";
-+				reg = <0x30750000 0x10000>;
-+				interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX7D_IPG_ROOT_CLK>,
-+						<&clks IMX7D_MIPI_CSI_ROOT_CLK>,
-+						<&clks IMX7D_MIPI_DPHY_ROOT_CLK>;
-+				clock-names = "pclk", "wrap", "phy";
-+				power-domains = <&pgc_mipi_phy>;
-+				phy-supply = <&reg_1p0d>;
-+				resets = <&src IMX7_RESET_MIPI_PHY_MRST>;
-+				reset-names = "mrst";
-+				status = "disabled";
-+			};
- 		};
- 
- 		aips3: aips-bus@30800000 {
 -- 
-2.17.0
-
+viresh
