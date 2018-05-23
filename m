@@ -1,70 +1,32 @@
-Return-Path: <mine260309@gmail.com>
-Return-Path: <mine260309@gmail.com>
-From: Lei YU <mine260309@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lei YU <mine260309@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH] clk: aspeed: Add 24MHz fixed clock
-Date: Fri, 18 May 2018 16:57:02 +0800
-Message-Id: <1526633822-17138-1-git-send-email-mine260309@gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: mturquette@baylibre.com
+Cc: sboyd@kernel.org, linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH] clk: rockchip: remove deprecated gate-clk code and dt-binding
+Date: Wed, 23 May 2018 13:20:34 +0200
+Message-ID: <4588886.sEysoKttEW@diego>
+In-Reply-To: <20180512143038.30447-1-heiko@sntech.de>
+References: <20180512143038.30447-1-heiko@sntech.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a 24MHz fixed clock.
-This clock will be used for certain devices, e.g. pwm.
+Am Samstag, 12. Mai 2018, 16:30:38 CEST schrieb Heiko Stuebner:
+> Initially we tried modeling clocks via the devicetree before switching
+> to clocks declared in the clock drivers and only exporting specific
+> ids to the devicetree.
+> 
+> As the old code was in the kernel for 1-2 releases when the new mode
+> of operation was added we kept it for backwards compatibility.
+> 
+> That deprecation notice is in the binding since july 2014, so nearly
+> 4 years now and I think it's time to drop the old cruft.
+> 
+> Especially as at the time using the mainline kernel on Rockchip devices
+> was not really possible, except for experiments on the really old socs of
+> the rk3066 + rk3188 line, so there shouldn't be any devicetrees still
+> around that rely on that code.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 
-Signed-off-by: Lei YU <mine260309@gmail.com>
----
- drivers/clk/clk-aspeed.c                 | 9 ++++++++-
- include/dt-bindings/clock/aspeed-clock.h | 1 +
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 5eb50c3..4664088 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -14,7 +14,7 @@
- 
- #include <dt-bindings/clock/aspeed-clock.h>
- 
--#define ASPEED_NUM_CLKS		35
-+#define ASPEED_NUM_CLKS		36
- 
- #define ASPEED_RESET_CTRL	0x04
- #define ASPEED_CLK_SELECTION	0x08
-@@ -474,6 +474,13 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(hw);
- 	aspeed_clk_data->hws[ASPEED_CLK_BCLK] = hw;
- 
-+	/* Fixed 24MHz clock */
-+	hw = clk_hw_register_fixed_rate(NULL, "fixed-24m", "clkin",
-+					0, 24000000);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_24M] = hw;
-+
- 	/*
- 	 * TODO: There are a number of clocks that not included in this driver
- 	 * as more information is required:
-diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-index d3558d8..ff29d8e 100644
---- a/include/dt-bindings/clock/aspeed-clock.h
-+++ b/include/dt-bindings/clock/aspeed-clock.h
-@@ -38,6 +38,7 @@
- #define ASPEED_CLK_MAC			32
- #define ASPEED_CLK_BCLK			33
- #define ASPEED_CLK_MPLL			34
-+#define ASPEED_CLK_24M			35
- 
- #define ASPEED_RESET_XDMA		0
- #define ASPEED_RESET_MCTP		1
--- 
-2.7.4
+applied to my Rockchip clock-tree with the 2 received tags.
