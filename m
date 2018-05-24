@@ -1,57 +1,52 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com>
-Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com, mturquette@baylibre.com,
- christian.koenig@amd.com, airlied@redhat.com, Shaoyun.Liu@amd.com,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, lenb@kernel.org,
- linux-acpi@vger.kernel.org
-References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
- <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
- <20362702.FCbsg9xPKv@aspire.rjw.lan>
- <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com>
-Message-ID: <152641886428.237094.9491189918943948420@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
-Date: Tue, 15 May 2018 14:14:24 -0700
+Return-Path: <gilad@benyossef.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH v2 4/5] clk: renesas: r8a7795: add ccree clock bindings
+Date: Thu, 24 May 2018 15:19:09 +0100
+Message-Id: <1527171551-21979-5-git-send-email-gilad@benyossef.com>
+In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Agrawal, Akshu (2018-05-15 02:39:08)
-> =
+This patch adds the clock used by the CryptoCell 630p instance in the SoC.
 
-> =
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+---
 
-> On 5/15/2018 3:02 PM, Rafael J. Wysocki wrote:
-> > On Wednesday, May 9, 2018 11:59:00 AM CEST Akshu Agrawal wrote:
-> >> Stoney SoC provides oscout clock. This clock can support 25Mhz and
-> >> 48Mhz of frequency.
-> >> The clock is available for general system use.
-> >>
-> >> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
-> > =
+This patch depends upon the "clk: renesas: r8a7795: Add CR clock" patch
+from Geert Uytterhoeven.
 
-> > I'm not sure if the Stephen Boyd's comments on one of the previous
-> > versions of this patch have been addressed.  Have they?
-> > =
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > In any case, if I'm expected to take this, I need an ACK from Stephen o=
-n it.
-> > =
-
-> > Thanks,
-> > Rafael
-> > =
-
-> =
-
-> All comments of Stephen Boyd and Daniel Kurtz have been addressed.
-> =
-
-> Stephen, if you are Ok with this can you please ACK it.
-> =
-
-
-It could go via clk tree and meet up with the acpi patch in -next right?
-I'm fine with it going through acpi path though so whichever way works.
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index e5b1865..a85dd50 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -133,6 +133,7 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+ 	DEF_MOD("sys-dmac2",		 217,	R8A7795_CLK_S0D3),
+ 	DEF_MOD("sys-dmac1",		 218,	R8A7795_CLK_S0D3),
+ 	DEF_MOD("sys-dmac0",		 219,	R8A7795_CLK_S0D3),
++	DEF_MOD("sceg-pub",		 229,	R8A7795_CLK_CR),
+ 	DEF_MOD("cmt3",			 300,	R8A7795_CLK_R),
+ 	DEF_MOD("cmt2",			 301,	R8A7795_CLK_R),
+ 	DEF_MOD("cmt1",			 302,	R8A7795_CLK_R),
+-- 
+2.7.4
