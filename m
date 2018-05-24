@@ -1,58 +1,91 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 08/26] drm/sun4i: Add support for A64 display engine
-Date: Fri, 18 May 2018 15:15:18 +0530
-Message-Id: <20180518094536.17201-9-jagan@amarulasolutions.com>
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Thu, 24 May 2018 15:14:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH 8/9] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <20180524141427.GU4828@sirena.org.uk>
+References: <20180524060036.GI4249@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="LtN0I0gXzHUftVCi"
+In-Reply-To: <20180524060036.GI4249@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-Display Engine(DE2) in Allwinner A64 has two mixers and tcons.
 
-The routing for mixer0 is through tcon0 and connected to
-LVDS/RGB/MIPI-DSI controller.
+--LtN0I0gXzHUftVCi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The routing for mixer1 is through tcon1 and connected to HDMI.
+On Thu, May 24, 2018 at 09:00:36AM +0300, Matti Vaittinen wrote:
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v2:
-- none
+> @@ -0,0 +1,683 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (C) 2018 ROHM Semiconductors */
+> +/*
+> + * bd71837-regulator.c ROHM BD71837MWV regulator driver
+> + */
+> +#include <linux/kernel.h>
 
- drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+Make the entire comment block a C++ comment so it looks more intentional
+and add a blank line before the headers for legibility.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 50d19605c38f..c84102a750f8 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -368,6 +368,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun8i-h3-display-engine" },
- 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
- 	{ .compatible = "allwinner,sun9i-a80-display-engine" },
-+	{ .compatible = "allwinner,sun50i-a64-display-engine" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_drv_of_table);
--- 
-2.14.3
+> +static int bd71837_regulator_set_regmap(struct regulator_dev *rdev, int set)
+> +{
+> +	int ret = -EINVAL;
+> +	struct bd71837_pmic *pmic = rdev->reg_data;
+> +
+> +	if (pmic) {
+> +		mutex_lock(&pmic->mtx);
+> +		if (!set)
+> +			ret = regulator_disable_regmap(rdev);
+> +		else
+> +			ret = regulator_enable_regmap(rdev);
+> +		mutex_unlock(&pmic->mtx);
+> +	}
+
+This looks very weird - why might we not have a parent PMIC, what is the
+lock doing and what is this wrapper function intended to do?  Similar
+issues apply to the voltage functions, if there's any need for this it
+needs to be better documented but it really doesn't look like a good
+idea.
+
+> +	err =
+> +	    regmap_update_bits(pmic->mfd->regmap, BD71837_REG_REGLOCK,
+> +			       (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
+> +	if (err) {
+> +		dev_err(&pmic->pdev->dev, "Failed to unlock PMIC (%d)\n", err);
+> +		goto err;
+> +	} else
+> +		dev_dbg(&pmic->pdev->dev, "%s: Unlocked lock register 0x%x\n",
+> +			__func__, BD71837_REG_REGLOCK);
+
+There's loads of coding style problems with this code, please refer to
+the coding style - indentation is weird and if there's { } on one side
+of an else it should be on both.
+
+> +		rdev = regulator_register(desc, &config);
+> +		if (IS_ERR(rdev)) {
+
+devm_regulator_regster()
+
+--LtN0I0gXzHUftVCi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsGyMIACgkQJNaLcl1U
+h9BVuQf/cxnvFEfK8b/tJjG1FFbjWQlAQDE04Ti6c9LSrNP5jc7u1pzkBpmbqYH7
+lk+4NUzecWbgrqSNvKBQbERCeE1U+CXC/jAP+9kRiAOZBz2tHptA5wfUZT0nhhFn
+YU2J/99hDSDYfpt7rTfjXBG5ljXUrymJ/eWrzRGnrbRVSvnav3ViST7TJBdG23mt
+6nnhcAo9CrEjYgKCfOJPFXXmiukU0+aWSpwQA2+ygOBXZKk5dG+FSLpbgTHpEzWt
+ucQTwHEFPkQaEr/NubKHEeIetZ8nOoow7bd22gCswE+Thrtu2H9WLLYDldGmWXvc
+DxS/F8D740F4NXZfRhv3HN0YEKHPIQ==
+=upsr
+-----END PGP SIGNATURE-----
+
+--LtN0I0gXzHUftVCi--
