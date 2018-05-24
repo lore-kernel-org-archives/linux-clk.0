@@ -1,97 +1,82 @@
-Return-Path: <jae.hyun.yoo@linux.intel.com>
-Subject: Re: [PATCH] clk:aspeed: Fix reset bits for PCI/VGA and PECI
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@aj.id.au>, Mark Rutland <mark.rutland@arm.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, stable <stable@vger.kernel.org>
-References: <20180426172232.12535-1-jae.hyun.yoo@linux.intel.com>
- <20180501150236.GA15330@rob-hp-laptop>
-From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <5a449d93-eef0-4243-9889-bd13786edde1@linux.intel.com>
-Date: Tue, 1 May 2018 09:27:32 -0700
+Return-Path: <prvs=3682ee18e6=Matti.Vaittinen@fi.rohmeurope.com>
+From: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To: Mark Brown <broonie@kernel.org>
+CC: "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>, "lee.jones@linaro.org"
+	<lee.jones@linaro.org>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Mutanen,
+ Mikko" <Mikko.Mutanen@fi.rohmeurope.com>, "Haikola, Heikki"
+	<Heikki.Haikola@fi.rohmeurope.com>
+Subject: RE: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
+ regulators
+Date: Thu, 24 May 2018 17:30:57 +0000
+Message-ID: <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
+References: <20180524055752.GE4249@localhost.localdomain>,<20180524140118.GS4828@sirena.org.uk>
+In-Reply-To: <20180524140118.GS4828@sirena.org.uk>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <20180501150236.GA15330@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
-
-Thanks for your review. Please see my answers inline.
-
-On 5/1/2018 8:02 AM, Rob Herring wrote:
-> On Thu, Apr 26, 2018 at 10:22:32AM -0700, Jae Hyun Yoo wrote:
->> This commit fixes incorrect setting of reset bits for PCI/VGA and
->> PECI modules.
->>
->> 1. Reset bit for PCI/VGA is 8.
->> 2. PECI reset bit is missing so added bit 10 as its reset bit.
->>
->> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
->> Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
->> Cc: stable <stable@vger.kernel.org>
->> ---
->>   drivers/clk/clk-aspeed.c                 | 4 ++--
->>   include/dt-bindings/clock/aspeed-clock.h | 2 +-
->>   2 files changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
->> index 5eb50c31e455..2c23e7d7ba28 100644
->> --- a/drivers/clk/clk-aspeed.c
->> +++ b/drivers/clk/clk-aspeed.c
->> @@ -88,7 +88,7 @@ static const struct aspeed_gate_data aspeed_gates[] = {
->>   	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
->>   	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
->>   	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
->> -	[ASPEED_CLK_GATE_BCLK] =	{  4, 10, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
->> +	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
-
-This is the clk/reset combined setting for PCI/VGA and '8' is the reset
-bit for itself so no additional reset bit setting is needed. A reset
-will be triggered when BCLK is enabled.
-
->>   	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
->>   	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
->>   	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
->> @@ -297,7 +297,7 @@ static const u8 aspeed_resets[] = {
->>   	[ASPEED_RESET_JTAG_MASTER] = 22,
->>   	[ASPEED_RESET_MIC]	= 18,
->>   	[ASPEED_RESET_PWM]	=  9,
->> -	[ASPEED_RESET_PCIVGA]	=  8,
->> +	[ASPEED_RESET_PECI]	= 10,
->>   	[ASPEED_RESET_I2C]	=  2,
->>   	[ASPEED_RESET_AHB]	=  1,
->>   };
->> diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
->> index d3558d897a4d..8d69b9134bef 100644
->> --- a/include/dt-bindings/clock/aspeed-clock.h
->> +++ b/include/dt-bindings/clock/aspeed-clock.h
->> @@ -45,7 +45,7 @@
->>   #define ASPEED_RESET_JTAG_MASTER	3
->>   #define ASPEED_RESET_MIC		4
->>   #define ASPEED_RESET_PWM		5
->> -#define ASPEED_RESET_PCIVGA		6
->> +#define ASPEED_RESET_PECI		6
-> 
-> You can't really be changing these as they represent an ABI.
-> 
-> Is there no PCIVGA reset?
-> 
-
-This is a bug fixing. Previously, PCI/VGA used PECI reset bit so this
-patch corrects the reset bit for PCI/VGA from bit '10' to bit '8', and
-it adds PECI reset bit '10' here as it can't be combined with a clock
-gate bit.
-
-Thanks,
-
-Jae
-
->>   #define ASPEED_RESET_I2C		7
->>   #define ASPEED_RESET_AHB		8
->>   
->> -- 
->> 2.17.0
->>
+Hello Mark,=0A=
+=0A=
+First of all, thank you for taking your time to check the patches. I do=0A=
+appreciate it. I find reading patches hard myself.=0A=
+=0A=
+> From: Mark Brown [broonie@kernel.org]=0A=
+> Sent: Thursday, May 24, 2018 5:01 PM=0A=
+> =0A=
+> > On Thu, May 24, 2018 at 08:57:52AM +0300, Matti Vaittinen wrote:=0A=
+>=0A=
+> > +Required properties:=0A=
+> > + - compatible: should be "rohm,bd71837-pmic".=0A=
+> > + - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "l=
+do7"=0A=
+>=0A=
+> The MFD is for a single device, there should be no need for compatibles=
+=0A=
+> on subfunctions.=0A=
+=0A=
+I will check this. I must admit I am not sure what is the de-facto mechanis=
+m=0A=
+for assigning the correct device-tree nodes to sub devices if compatibles=
+=0A=
+are not used? I think I saw device-tree node name being used for regulators=
+=0A=
+but how is it done for example with clk? I would be grateful if anyone coul=
+d=0A=
+point me to right direction with this.=0A=
+=0A=
+Also, another thing I was wondering is how supply regulators should be=0A=
+handled? In this case the LDO5 is supplied by BUCK6 and LDO6 by=0A=
+BUCK7. =0A=
+=0A=
+>From generic regulator bindings=0A=
+/Documentation/devicetree/bindings/regulator/regulator.txt=0A=
+I found statement:=0A=
+=0A=
+> - <name>-supply: phandle to the parent supply/regulator node=0A=
+=0A=
+and=0A=
+=0A=
+> Regulator Consumers:=0A=
+> Consumer nodes can reference one or more of its supplies/=0A=
+> regulators using the below bindings.=0A=
+>=0A=
+> - <name>-supply: phandle to the regulator node=0A=
+>=0A=
+> These are the same bindings that a regulator in the above=0A=
+> example used to reference its own supply, in which case=0A=
+> ts just seen as a special case of a regulator being a=0A=
+> consumer itself.=0A=
+=0A=
+but I did not find handling for the supply properties from regulator core.=
+=0A=
+Thus I ended up hard coding the supply relation in driver. This means=0A=
+that buck6 name must be fixed.=0A=
+=0A=
+Br,=0A=
+    Matti Vaittinen=
