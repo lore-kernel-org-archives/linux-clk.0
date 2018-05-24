@@ -1,171 +1,196 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Wed, 16 May 2018 15:31:12 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Icenowy Zheng <icenowy@aosc.io>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, netdev <netdev@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Corentin Labbe <clabbe.montjoie@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 15/15] arm64: dts: allwinner: a64: add SRAM
- controller device tree node
-Message-ID: <20180516133112.67ewwsf2gfffnkbu@flea>
-References: <20180501161227.2110-1-wens@csie.org>
- <20180501161227.2110-16-wens@csie.org>
- <20180502095118.rqnfwy576xh6ercm@flea>
- <CAGb2v67pvL58Pes1ZFDZtPu_nL2+m6dgf_XOOymG9nVAkXVpEw@mail.gmail.com>
- <29E5670C-9D17-4EC1-AAAC-0CF33DD0534C@aosc.io>
- <20180502115437.zlu2rafrguufutvp@flea>
- <CAGb2v64xTNqQQSppw2NZoLn+ViQNQLytn1EukLqw+HJzf1=5ig@mail.gmail.com>
- <20180514080310.ngev5h6cqe4taedl@flea>
- <CAGb2v65uZeueE=2FfsxWen9zNvCtMsJ+b=KgMfSh-ZKmO+S=cQ@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:39021 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966688AbeEXWBd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 May 2018 18:01:33 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="c4us3nftgq5cn66c"
-In-Reply-To: <CAGb2v65uZeueE=2FfsxWen9zNvCtMsJ+b=KgMfSh-ZKmO+S=cQ@mail.gmail.com>
+In-Reply-To: <20180524085021.qto6266adjvpj6ai@flea>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+ <20180519183127.2718-7-jernej.skrabec@siol.net> <20180521080759.rgviuva65ijcfm2e@flea>
+ <218132669.UY7RKz0VPx@jernej-laptop> <20180524085021.qto6266adjvpj6ai@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 24 May 2018 15:01:09 -0700
+Message-ID: <CAGb2v65whE-qW++cg+gu_o2O1dDdCWkumQB41nt3Aqa75Wp3dg@mail.gmail.com>
+Subject: Re: [PATCH 06/15] drm/sun4i: tcon: Add support for tcon-top
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, May 24, 2018 at 1:50 AM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Mon, May 21, 2018 at 07:27:46PM +0200, Jernej Škrabec wrote:
+>> Hi,
+>>
+>> Dne ponedeljek, 21. maj 2018 ob 10:07:59 CEST je Maxime Ripard napisal(a):
+>> > On Sat, May 19, 2018 at 08:31:18PM +0200, Jernej Skrabec wrote:
+>> > > If SoC has TCON TOP unit, it has to be configured from TCON, since it
+>> > > has all information needed. Additionally, if it is TCON TV, it must also
+>> > > enable bus gate inside TCON TOP unit.
+>> >
+>> > Why?
+>>
+>> I'll explain my design decision below.
+>>
+>> >
+>> > > Add support for such TCONs.
+>> > >
+>> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> > > ---
+>> > >
+>> > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 28 ++++++++++++++++++++++++++++
+>> > >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  8 ++++++++
+>> > >  2 files changed, 36 insertions(+)
+>> > >
+>> > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..e0c562ce1c22
+>> > > 100644
+>> > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> > > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+>> > >
+>> > >           dev_err(dev, "Couldn't get the TCON bus clock\n");
+>> > >           return PTR_ERR(tcon->clk);
+>> > >
+>> > >   }
+>> > >
+>> > > +
+>> > > + if (tcon->quirks->needs_tcon_top && tcon->quirks->has_channel_1) {
+>> > > +         tcon->top_clk = devm_clk_get(dev, "tcon-top");
+>> > > +         if (IS_ERR(tcon->top_clk)) {
+>> > > +                 dev_err(dev, "Couldn't get the TCON TOP bus clock\n");
+>> > > +                 return PTR_ERR(tcon->top_clk);
+>> > > +         }
+>> > > +         clk_prepare_enable(tcon->top_clk);
+>> > > + }
+>> > > +
+>> > >
+>> > >   clk_prepare_enable(tcon->clk);
+>> > >
+>> > >   if (tcon->quirks->has_channel_0) {
+>> > >
+>> > > @@ -712,6 +722,7 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+>> > >
+>> > >  static void sun4i_tcon_free_clocks(struct sun4i_tcon *tcon)
+>> > >  {
+>> > >
+>> > >   clk_disable_unprepare(tcon->clk);
+>> > >
+>> > > + clk_disable_unprepare(tcon->top_clk);
+>> > >
+>> > >  }
+>> > >
+>> > >  static int sun4i_tcon_init_irq(struct device *dev,
+>> > >
+>> > > @@ -980,6 +991,23 @@ static int sun4i_tcon_bind(struct device *dev, struct
+>> > > device *master,>
+>> > >   tcon->id = engine->id;
+>> > >   tcon->quirks = of_device_get_match_data(dev);
+>> > >
+>> > > + if (tcon->quirks->needs_tcon_top) {
+>> > > +         struct device_node *np;
+>> > > +
+>> > > +         np = of_parse_phandle(dev->of_node, "allwinner,tcon-top", 0);
+>> > > +         if (np) {
+>> > > +                 struct platform_device *pdev;
+>> > > +
+>> > > +                 pdev = of_find_device_by_node(np);
+>> > > +                 if (pdev)
+>> > > +                         tcon->tcon_top = platform_get_drvdata(pdev);
+>> > > +                 of_node_put(np);
+>> > > +
+>> > > +                 if (!tcon->tcon_top)
+>> > > +                         return -EPROBE_DEFER;
+>> > > +         }
+>> > > + }
+>> > > +
+>> >
+>> > I might have missed it, but I've not seen the bindings additions for
+>> > that property. This shouldn't really be done that way anyway, instead
+>> > of using a direct phandle, you should be using the of-graph, with the
+>> > TCON-top sitting where it belongs in the flow of data.
+>>
+>> Just to answer to the first question, it did describe it in "[PATCH 07/15] dt-
+>> bindings: display: sun4i-drm: Add R40 HDMI pipeline".
+>>
+>> As why I designed it that way - HW representation could be described that way
+>> (ASCII art makes sense when fixed width font is used to view it):
+>>
+>>                             / LCD0/LVDS0
+>>                 / TCON-LCD0
+>>                 |           \ MIPI DSI
+>> mixer0          |
+>>        \        / TCON-LCD1 - LCD1/LVDS1
+>>         TCON-TOP
+>>        /        \ TCON-TV0 - TVE0/RGB
+>> mixer1          |          \
+>>                 |           TCON-TOP - HDMI
+>>                 |          /
+>>                 \ TCON-TV1 - TVE1/RGB
+>>
+>> This is a bit simplified, since there is also TVE-TOP, which is responsible
+>> for sharing 4 DACs between both TVE encoders. You can have two TV outs (PAL/
+>> NTSC) or TVE0 as TV out and TVE1 as RGB or vice versa. It even seems that you
+>> can arbitrarly choose which DAC is responsible for which signal, so there is a
+>> ton of possible end combinations, but I'm not 100% sure.
+>>
+>> Even though I wrote TCON-TOP twice, this is same unit in HW. R40 manual
+>> suggest more possibilities, although some of them seem wrong, like RGB feeding
+>> from LCD TCON. That is confirmed to be wrong when checking BSP code.
+>>
+>> Additionally, TCON-TOP comes in the middle of TVE0 and LCD0, TVE1 and LCD1 for
+>> pin muxing, although I'm not sure why is that needed at all, since according
+>> to R40 datasheet, TVE0 and TVE1 pins are dedicated and not on PORT D and PORT
+>> H, respectively, as TCON-TOP documentation suggest. However, HSYNC and PSYNC
+>> lines might be shared between TVE (when it works in RGB mode) and LCD. But
+>> that is just my guess since I'm not really familiar with RGB and LCD
+>> interfaces.
+>>
+>> I'm really not sure what would be the best representation in OF-graph. Can you
+>> suggest one?
+>
+> Rob might disagree on this one, but I don't see anything wrong with
+> having loops in the graph. If the TCON-TOP can be both the input and
+> output of the TCONs, then so be it, and have it described that way in
+> the graph.
+>
+> The code is already able to filter out nodes that have already been
+> added to the list of devices we need to wait for in the component
+> framework, so that should work as well.
+>
+> And we'd need to describe TVE-TOP as well, even though we don't have a
+> driver for it yet. That will simplify the backward compatibility later
+> on.
 
---c4us3nftgq5cn66c
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm getting the feeling that TCON-TOP / TVE-TOP is the glue layer that
+binds everything together, and provides signal routing, kind of like
+DE-TOP on A64. So the signal mux controls that were originally found
+in TCON0 and TVE0 were moved out.
 
-Hi,
+The driver needs to know about that, but the graph about doesn't make
+much sense directly. Without looking at the manual, I understand it to
+likely be one mux between the mixers and TCONs, and one between the
+TCON-TVs and HDMI. Would it make more sense to just have the graph
+connections between the muxed components, and remove TCON-TOP from
+it, like we had in the past? A phandle could be used to reference
+the TCON-TOP for mux controls, in addition to the clocks and resets.
 
-On Tue, May 15, 2018 at 11:47:16PM -0700, Chen-Yu Tsai wrote:
-> On Mon, May 14, 2018 at 1:03 AM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > 1;5201;0c
-> > On Sun, May 13, 2018 at 12:37:49PM -0700, Chen-Yu Tsai wrote:
-> >> On Wed, May 2, 2018 at 4:54 AM, Maxime Ripard <maxime.ripard@bootlin.c=
-om> wrote:
-> >> > On Wed, May 02, 2018 at 06:19:51PM +0800, Icenowy Zheng wrote:
-> >> >>
-> >> >>
-> >> >> =E4=BA=8E 2018=E5=B9=B45=E6=9C=882=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=
-=8D=885:53:21, Chen-Yu Tsai <wens@csie.org> =E5=86=99=E5=88=B0:
-> >> >> >On Wed, May 2, 2018 at 5:51 PM, Maxime Ripard
-> >> >> ><maxime.ripard@bootlin.com> wrote:
-> >> >> >> Hi,
-> >> >> >>
-> >> >> >> On Wed, May 02, 2018 at 12:12:27AM +0800, Chen-Yu Tsai wrote:
-> >> >> >>> From: Icenowy Zheng <icenowy@aosc.io>
-> >> >> >>>
-> >> >> >>> Allwinner A64 has a SRAM controller, and in the device tree
-> >> >> >currently
-> >> >> >>> we have a syscon node to enable EMAC driver to access the EMAC =
-clock
-> >> >> >>> register. As SRAM controller driver can now export regmap for t=
-his
-> >> >> >>> register, replace the syscon node to the SRAM controller device
-> >> >> >node,
-> >> >> >>> and let EMAC driver to acquire its EMAC clock regmap.
-> >> >> >>>
-> >> >> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> >> >> >>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> >> >> >>> ---
-> >> >> >>>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 23
-> >> >> >+++++++++++++++----
-> >> >> >>>  1 file changed, 19 insertions(+), 4 deletions(-)
-> >> >> >>>
-> >> >> >>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >> >> >b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >> >> >>> index 1b2ef28c42bd..1c37659d9d41 100644
-> >> >> >>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >> >> >>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> >> >> >>> @@ -168,10 +168,25 @@
-> >> >> >>>               #size-cells =3D <1>;
-> >> >> >>>               ranges;
-> >> >> >>>
-> >> >> >>> -             syscon: syscon@1c00000 {
-> >> >> >>> -                     compatible =3D
-> >> >> >"allwinner,sun50i-a64-system-controller",
-> >> >> >>> -                             "syscon";
-> >> >> >>> +             sram_controller: sram-controller@1c00000 {
-> >> >> >>> +                     compatible =3D
-> >> >> >"allwinner,sun50i-a64-sram-controller";
-> >> >> >>
-> >> >> >> I don't think there's anything preventing us from keeping the
-> >> >> >> -system-controller compatible. It's what was in the DT before, a=
-nd
-> >> >> >> it's how it's called in the datasheet.
-> >> >> >
-> >> >> >I actually meant to ask you about this. The -system-controller
-> >> >> >compatible matches the datasheet better. Maybe we should just
-> >> >> >switch to that one?
-> >> >>
-> >> >> No, if we do the switch the system-controller compatible,
-> >> >> the device will be probed on the same memory region with
-> >> >> a syscon on old DTs.
-> >> >
-> >> > The device hasn't magically changed either. Maybe we just need to add
-> >> > a check to make sure we don't have the syscon compatible in the SRAM
-> >> > driver probe so that the double driver issue doesn't happen?
-> >>
-> >> The syscon interface (which is not even a full blown device driver)
-> >> only looks at the "syscon" compatible. Either way we're removing that
-> >> part from the device tree so things should be ok for new device trees.
-> >> As Maxime mentioned we can do a check for the syscon compatible and
-> >> either give a warning to the user asking them to update their device
-> >> tree, or not register our custom regmap, or not probe the SRAM driver.
-> >> Personally I prefer the first option. The system controller block is
-> >> probed before any syscon users, so we should be fine, given the dwmac
-> >> driver goes the custom regmap path first.
-> >>
-> >> BTW, I still might end up changing the compatible. The manual uses
-> >> "system control", not "system controller", which I think makes sense,
-> >> since it is just a bunch of register files, kind of like the GRF
-> >> (General Register Files) block found in Rockchip SoCs [1], and not an
-> >> actual "controller".
-> >
-> > I'm not really fond of that, but we should at least make it consistent
-> > on the other patches Paul sent then.
->=20
-> For the A10s / A13 right?
+For TVE, we would need something to represent each of the output pins,
+so the device tree can actually describe what kind of signal, be it
+each component of RGB/YUV or composite video, is wanted on each pin,
+if any. This is also needed on the A20 for the Cubietruck, so we can
+describe which pins are tied to the VGA connector, and which one does
+R, G, or B.
 
-And A33, yep.
 
-> I think my naming is slightly better, but it's just a minor detail.
-
-Let's do this then.
-
-> While we're still debating this, can I merge the R40 stuff first?
-> The driver bits are already in.
-
-Yep, go ahead.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---c4us3nftgq5cn66c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr8Mp8ACgkQ0rTAlCFN
-r3R/TQ//WTbdmFDZwkdl+3xbU0ppD0bqxpL83E1lU93/plxpi3cE6VJG3tKhLxYe
-YPPFokTStJv0Qlr03uQfhDRxeKCa5UvO73Ka0GTpKKMps8gX0+Ly3cUPOpdMYyj/
-HsXdxEv0rp1HafIgh5hkhPTd38vPpoWepRlRv9lWWcg6URaRf5a5pnN3Jw/rRGCy
-yvUDmoEM14xYX94W3MeeoWK2uA02K/mX9bPRQGbEYPYiR0abCStdg0LEn4PJ09FM
-fXZxuweRRevSHNYWnzsptGtnWTRqbXFkoI1//6bVuTAZzbovlF3eZmFP+dCpOgzU
-g7DkYrybEegIHVExH8uBe8FiDeYAR38Fr/Cx83SAA/wNl0WRMIga8f7JVxlz2BgG
-b+cezgBQvXG+IigCL+LO6RH+n3WEcCIMk1fu9Koc0xDTB+VK6pPUz63wAneiqNi4
-DKMN3mtgTAFIzATS41yHTYn6JWjY/BCfWh83AIg3LjBmI+7VYlEtB6peZkPczf8z
-yj27EnCOCoIQL9JB5e73G4GsG9IZRRi2EU7Pk3o/miGWCeVPwh2id73sOB0xSWnA
-6bvn7dahrxoya4KnLJPwnSQnDG9hdE9G2F3pgtoucDFxT173pakUjG//Nxlg1MbM
-HkKjHFACTEy/3mWfEOxOlJEPZPyEyEefvvENjkV/WVMZJPyYdZg=
-=AyUe
------END PGP SIGNATURE-----
-
---c4us3nftgq5cn66c--
+Regards
+ChenYu
