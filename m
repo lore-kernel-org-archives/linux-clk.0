@@ -1,139 +1,220 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v7 00/14] CPU scaling support for msm8996
-Date: Tue, 15 May 2018 12:13:22 +0300
-Message-Id: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:44918 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965305AbeEXIud (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 24 May 2018 04:50:33 -0400
+Date: Thu, 24 May 2018 10:50:21 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 06/15] drm/sun4i: tcon: Add support for tcon-top
+Message-ID: <20180524085021.qto6266adjvpj6ai@flea>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+ <20180519183127.2718-7-jernej.skrabec@siol.net>
+ <20180521080759.rgviuva65ijcfm2e@flea>
+ <218132669.UY7RKz0VPx@jernej-laptop>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="65zcbqojrokwvtdf"
+In-Reply-To: <218132669.UY7RKz0VPx@jernej-laptop>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-[v7]
- * Addressed comments from Viresh about resourses deallocation
-   and DT compatible
 
-[v6]
- * Addressed comments from Viresh about:
- ** Comments style
- ** Kconfig bool instead of tristate
- ** DT and documentation style
- ** Resourses deallocation on an error
- ** Typos
+--65zcbqojrokwvtdf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[v5]
- * Rebased
- * Addressed comments from Bjorn about SPDX style,
-   functions and parameters naming
- * Addressed comments from Viresh DT properties and style, comments style,
-   resourses deallocation, documentation placement
- * Addressed comments from Sricharan about unnessesary include
- * Addressed comments from Nicolas
- * Addressed comments from Rob about the commit messages and acks
- * Addressed comments from Mark
+On Mon, May 21, 2018 at 07:27:46PM +0200, Jernej =C5=A0krabec wrote:
+> Hi,
+>=20
+> Dne ponedeljek, 21. maj 2018 ob 10:07:59 CEST je Maxime Ripard napisal(a):
+> > On Sat, May 19, 2018 at 08:31:18PM +0200, Jernej Skrabec wrote:
+> > > If SoC has TCON TOP unit, it has to be configured from TCON, since it
+> > > has all information needed. Additionally, if it is TCON TV, it must a=
+lso
+> > > enable bus gate inside TCON TOP unit.
+> >=20
+> > Why?
+>=20
+> I'll explain my design decision below.
+>=20
+> >=20
+> > > Add support for such TCONs.
+> > >=20
+> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > ---
+> > >=20
+> > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 28 ++++++++++++++++++++++++++++
+> > >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  8 ++++++++
+> > >  2 files changed, 36 insertions(+)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..e0c562ce1c22
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device =
+*dev,
+> > >=20
+> > >  		dev_err(dev, "Couldn't get the TCON bus clock\n");
+> > >  		return PTR_ERR(tcon->clk);
+> > >  =09
+> > >  	}
+> > >=20
+> > > +
+> > > +	if (tcon->quirks->needs_tcon_top && tcon->quirks->has_channel_1) {
+> > > +		tcon->top_clk =3D devm_clk_get(dev, "tcon-top");
+> > > +		if (IS_ERR(tcon->top_clk)) {
+> > > +			dev_err(dev, "Couldn't get the TCON TOP bus clock\n");
+> > > +			return PTR_ERR(tcon->top_clk);
+> > > +		}
+> > > +		clk_prepare_enable(tcon->top_clk);
+> > > +	}
+> > > +
+> > >=20
+> > >  	clk_prepare_enable(tcon->clk);
+> > >  =09
+> > >  	if (tcon->quirks->has_channel_0) {
+> > >=20
+> > > @@ -712,6 +722,7 @@ static int sun4i_tcon_init_clocks(struct device *=
+dev,
+> > >=20
+> > >  static void sun4i_tcon_free_clocks(struct sun4i_tcon *tcon)
+> > >  {
+> > > =20
+> > >  	clk_disable_unprepare(tcon->clk);
+> > >=20
+> > > +	clk_disable_unprepare(tcon->top_clk);
+> > >=20
+> > >  }
+> > > =20
+> > >  static int sun4i_tcon_init_irq(struct device *dev,
+> > >=20
+> > > @@ -980,6 +991,23 @@ static int sun4i_tcon_bind(struct device *dev, s=
+truct
+> > > device *master,>=20
+> > >  	tcon->id =3D engine->id;
+> > >  	tcon->quirks =3D of_device_get_match_data(dev);
+> > >=20
+> > > +	if (tcon->quirks->needs_tcon_top) {
+> > > +		struct device_node *np;
+> > > +
+> > > +		np =3D of_parse_phandle(dev->of_node, "allwinner,tcon-top", 0);
+> > > +		if (np) {
+> > > +			struct platform_device *pdev;
+> > > +
+> > > +			pdev =3D of_find_device_by_node(np);
+> > > +			if (pdev)
+> > > +				tcon->tcon_top =3D platform_get_drvdata(pdev);
+> > > +			of_node_put(np);
+> > > +
+> > > +			if (!tcon->tcon_top)
+> > > +				return -EPROBE_DEFER;
+> > > +		}
+> > > +	}
+> > > +
+> >=20
+> > I might have missed it, but I've not seen the bindings additions for
+> > that property. This shouldn't really be done that way anyway, instead
+> > of using a direct phandle, you should be using the of-graph, with the
+> > TCON-top sitting where it belongs in the flow of data.
+>=20
+> Just to answer to the first question, it did describe it in "[PATCH 07/15=
+] dt-
+> bindings: display: sun4i-drm: Add R40 HDMI pipeline".
+>=20
+> As why I designed it that way - HW representation could be described that=
+ way=20
+> (ASCII art makes sense when fixed width font is used to view it):
+>=20
+>                             / LCD0/LVDS0
+>                 / TCON-LCD0
+>                 |           \ MIPI DSI
+> mixer0          |
+>        \        / TCON-LCD1 - LCD1/LVDS1
+>         TCON-TOP
+>        /        \ TCON-TV0 - TVE0/RGB
+> mixer1          |          \
+>                 |           TCON-TOP - HDMI
+>                 |          /
+>                 \ TCON-TV1 - TVE1/RGB
+>=20
+> This is a bit simplified, since there is also TVE-TOP, which is responsib=
+le=20
+> for sharing 4 DACs between both TVE encoders. You can have two TV outs (P=
+AL/
+> NTSC) or TVE0 as TV out and TVE1 as RGB or vice versa. It even seems that=
+ you=20
+> can arbitrarly choose which DAC is responsible for which signal, so there=
+ is a=20
+> ton of possible end combinations, but I'm not 100% sure.
+>=20
+> Even though I wrote TCON-TOP twice, this is same unit in HW. R40 manual=
+=20
+> suggest more possibilities, although some of them seem wrong, like RGB fe=
+eding=20
+> from LCD TCON. That is confirmed to be wrong when checking BSP code.=20
+>=20
+> Additionally, TCON-TOP comes in the middle of TVE0 and LCD0, TVE1 and LCD=
+1 for=20
+> pin muxing, although I'm not sure why is that needed at all, since accord=
+ing=20
+> to R40 datasheet, TVE0 and TVE1 pins are dedicated and not on PORT D and =
+PORT=20
+> H, respectively, as TCON-TOP documentation suggest. However, HSYNC and PS=
+YNC=20
+> lines might be shared between TVE (when it works in RGB mode) and LCD. Bu=
+t=20
+> that is just my guess since I'm not really familiar with RGB and LCD=20
+> interfaces.
+>=20
+> I'm really not sure what would be the best representation in OF-graph. Ca=
+n you=20
+> suggest one?
 
-[v4]
- * Adressed all comments from Stephen
- * Added CPU regulator support
- * Added qcom-cpufreq-kryo driver
+Rob might disagree on this one, but I don't see anything wrong with
+having loops in the graph. If the TCON-TOP can be both the input and
+output of the TCONs, then so be it, and have it described that way in
+the graph.
 
-[v3]
- * Rebased on top of the latest PLL driver changes
- * Addressed comment from Rob Herring for bindings
+The code is already able to filter out nodes that have already been
+added to the list of devices we need to wait for in the component
+framework, so that should work as well.
 
-[v2]
- * Addressed comments from Rob Herring for bindings
- * Addressed comments from Mark Rutland for memory barrier
- * Addressed comments from Julien Thierry for clock reenabling condition
- * Tuned the HW configuration for clock frequencies below 600MHz
+And we'd need to describe TVE-TOP as well, even though we don't have a
+driver for it yet. That will simplify the backward compatibility later
+on.
 
-Clocks:
-This series adds support for the CPU clocks on msm8996 devices.
-The driver uses the existing PLL drivers and is required to control
-the CPU frequency scaling on the MSM8996.
+Maxime
 
-Regulators:
-Added SAW regulator support to the SPMI regulator driver. The SAW regulators
-will be controlled through special CPU registers instead of direct
-SPMI accesses.
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Cpufreq:
-The qcom-cpufreq-kryo driver is aimed to support different SOC versions.
-The driver reads eFuse information and chooses the required OPP subset
-by passing the OPP supported-hw parameter.
+--65zcbqojrokwvtdf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-A previous post of RFC can be found here:
-https://patchwork.kernel.org/patch/10398455/
+-----BEGIN PGP SIGNATURE-----
 
-Ilia Lin (11):
-  soc: qcom: Separate kryo l2 accessors from PMU driver
-  clk: qcom: Add CPU clock driver for msm8996
-  clk: qcom: Add DT bindings for CPU clock driver for msm8996
-  clk: qcom: Add ACD path to CPU clock driver for msm8996
-  dt: qcom: Add opp and thermal to the msm8996
-  regulator: qcom_spmi: Add support for SAW
-  dt-bindings: qcom_spmi: Add support for SAW documentation
-  dt: qcom: Add SAW regulator for 8x96 CPUs
-  cpufreq: Add Kryo CPU scaling driver
-  dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
-  dt: qcom: Add qcom-cpufreq-kryo driver configuration
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsGfMwACgkQ0rTAlCFN
+r3SCcA/8CrFi6idZRisCkZLb258tJDpQzRd1oo5Wy0aTxku/w2NmGTNK797oZzx+
+qQyOwZRI1e0feU8XAeavxRXaNg/EOvpYc/Rm9tJjgscZ0o6ePjFqSVRuK6ETgsjt
+WTdos3kTWqGaG3KCXb9P6iwxXEDzECEkK2b8zJ2B1UDWuSLHuplycAMSPFs2Jkxd
+L0f4eGbEsjBxnFMKScijtVZqKXQ/WiBr/5BMHnhwQ9ptbaZHn3FdWHOOI86cWWCX
+F2BaIfcPdvzBvX1kCEB5h6dUfwHG6dxTmMvGLYiISKh0u0vxU8oBGPJjyuamNxmF
+9w3QxDQYw7HwKdtwvN78DZ6zB0g/9JbkFQfm9JJwoNT/dflIx2E4xT2zFz1niz25
+Thwpl6EGjghldp0e8dC8XPiIjeqLTiAySH/kSjTkLjIFVMj4sSCc2JwrxKNHVQQz
+r1pv6pr9oPefjJQXC1nQUrUAYYdy1kQSD298/Tj/dfhGkj5dDcbq441UtCAi/onf
+iThVVZNy+Y/mNff4die55EomeIzM2ivTyKgu2ULLPSXphAaOTIyID73S3Ht3/3qt
+N15GlEm34Lt/gcXIRY5XzRzBCXMHwiwKa4pt7ll7JFFVQ82pwJbl+q8o51QB0TD0
+U5Th5Zh0r504/msIgfzk22XF/geGsitFgQNGeVZLYTRNBikkJps=
+=oltc
+-----END PGP SIGNATURE-----
 
-Rajendra Nayak (3):
-  clk: qcom: Make clk_alpha_pll_configure available to modules
-  clk: qcom: cpu-8996: Add support to switch to alternate PLL
-  clk: qcom: cpu-8996: Add support to switch below 600Mhz
-
- .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
- .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
- .../bindings/regulator/qcom,spmi-regulator.txt     |  45 ++
- arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 651 +++++++++++++++++++-
- drivers/clk/clk-fixed-factor.c                     |   2 +-
- drivers/clk/qcom/Kconfig                           |   9 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
- drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
- drivers/clk/qcom/clk-cpu-8996.c                    | 519 ++++++++++++++++
- drivers/cpufreq/Kconfig.arm                        |  11 +
- drivers/cpufreq/Makefile                           |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c                | 150 +++++
- drivers/perf/Kconfig                               |   1 +
- drivers/perf/qcom_l2_pmu.c                         |  90 +--
- drivers/regulator/qcom_spmi-regulator.c            | 133 +++-
- drivers/soc/qcom/Kconfig                           |   3 +
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/kryo-l2-accessors.c               |  65 ++
- include/soc/qcom/kryo-l2-accessors.h               |  21 +
- 22 files changed, 2332 insertions(+), 80 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
- create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
-
--- 
-1.9.1
+--65zcbqojrokwvtdf--
