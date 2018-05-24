@@ -1,59 +1,52 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: David Lechner <david@lechnology.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/9] clk: davinci: outstanding fixes
-Date: Fri, 25 May 2018 13:11:41 -0500
-Message-Id: <20180525181150.17873-1-david@lechnology.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Thu, 24 May 2018 15:01:59 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH 9/9] regulator: bd71837: Build BD71837 regulator driver
+Message-ID: <20180524140159.GT4828@sirena.org.uk>
+References: <20180524060114.GJ4249@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8+OS07CeIgZ706fH"
+In-Reply-To: <20180524060114.GJ4249@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a resend of all of the outstanding DaVinci clock patches plus one new
-patch. All of the patches (except the new one) have been reviewed and tested
-by someone other than me.
 
-The new patch ("clk: davinci: Fix link errors when not all SoCs are enabled")
-should be fairly trivial.
+--8+OS07CeIgZ706fH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am resending them all in one series to hopefully make it easier to get them
-picked up by having them in the correct order to avoid merge conflicts. This
-series is based on the clk/clk-davinci-psc-da830 branch.
+On Thu, May 24, 2018 at 09:01:14AM +0300, Matti Vaittinen wrote:
+> Configurations and Makefile for BD71837 regulator driver
+>=20
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  drivers/regulator/Kconfig  | 11 +++++++++++
+>  drivers/regulator/Makefile |  1 +
+>  2 files changed, 12 insertions(+)
 
-David Lechner (7):
-  clk: davinci: pll-dm355: drop pll2_sysclk2
-  clk: davinci: pll-dm355: fix SYSCLKn parent names
-  clk: davinci: psc-dm355: fix ASP0/1 clkdev lookups
-  clk: davinci: pll: allow dev == NULL
-  clk: davinci: da850-pll: change PLL0 to CLK_OF_DECLARE
-  clk: davinci: psc: allow for dev == NULL
-  clk: davinci: Fix link errors when not all SoCs are enabled
+Just squash this into the single patch adding the driver, it makes life
+easier.
 
-Sekhar Nori (2):
-  clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always enabled
-  clk: davinci: psc-dm365: fix few clocks
+--8+OS07CeIgZ706fH
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/clk/davinci/pll-da830.c  |   5 +-
- drivers/clk/davinci/pll-da850.c  |  37 ++--
- drivers/clk/davinci/pll-dm355.c  |  22 ++-
- drivers/clk/davinci/pll-dm365.c  |   9 +-
- drivers/clk/davinci/pll-dm644x.c |   9 +-
- drivers/clk/davinci/pll-dm646x.c |  11 +-
- drivers/clk/davinci/pll.c        | 299 +++++++++++++++++++++----------
- drivers/clk/davinci/pll.h        |  41 +++--
- drivers/clk/davinci/psc-dm355.c  |   7 +-
- drivers/clk/davinci/psc-dm365.c  |  22 ++-
- drivers/clk/davinci/psc-dm644x.c |   3 +-
- drivers/clk/davinci/psc-dm646x.c |   3 +-
- drivers/clk/davinci/psc.c        |  72 ++++++--
- drivers/clk/davinci/psc.h        |  12 ++
- include/linux/clk/davinci.h      |  40 +++++
- 15 files changed, 418 insertions(+), 174 deletions(-)
- create mode 100644 include/linux/clk/davinci.h
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.17.0
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsGxdYACgkQJNaLcl1U
+h9ABiwf9HN+x1x1xOqtjg6KETg+ssfmw3CVV6U+YrkiO4jhM1ruOeXzUDgvDoF4n
+qqIhNFc+NSIYlcq+X47gr9XaTg+GeJBgFHxW44eGkfr8h+JFuc/KEYuLRPMKWUss
+xMqJzd8wYhBcrwM+k0/4qeLWlfNh3+2CcesD1nPNqEcs00buB66MYq9X4aH5ASyZ
+Hy7XIeYdzl4QWVUBw6X8Gwk1JJy/RvY9+lbTElQhbRPNDo8a1CFRGG+F0zd8YkME
+CA4OB0iBXgnrKH9arf+p+AZVRWqKbo32vRYp+BELwxuf9R84fRnHtX4/JoTJolrE
+/xDQmqYEeo3hbR2UveF9TeHcBCCadw==
+=bi1a
+-----END PGP SIGNATURE-----
+
+--8+OS07CeIgZ706fH--
