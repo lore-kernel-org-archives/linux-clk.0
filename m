@@ -1,68 +1,59 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
-References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com> <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 25 May 2018 11:27:46 +0200
-Message-ID: <CAMuHMdW5VvZ-wbO7TuZC2z+KFPLq_PhBGe3WbAeES-nezb7tmQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <gilad@benyossef.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+To: Simon Horman <horms@verge.net.au>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH v2 3/5] crypto: ccree: silence debug prints
+Date: Thu, 24 May 2018 15:19:08 +0100
+Message-Id: <1527171551-21979-4-git-send-email-gilad@benyossef.com>
+In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+The cache parameter register configuration was being too verbose.
+Use dev_dbg() to only provide the information if needed.
 
-On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds the Renesas R9A06G032 bare bone support.
->
-> This currently only handles generic parts (gic, architected timer)
-> and a UART.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+---
+ drivers/crypto/ccree/cc_driver.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks for your patch!
-
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-
-> +       soc {
-> +               compatible = "simple-bus";
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               interrupt-parent = <&gic>;
-> +               ranges;
-> +
-> +               sysctrl: sysctrl@4000c000 {
-
-system-controller@
-
-> +                       compatible = "renesas,r9a06g032-sysctrl";
-> +                       reg = <0x4000c000 0x1000>;
-> +                       status = "okay";
-> +                       #clock-cells = <1>;
-> +               };
-
-With the minor nit above resolved, and pending acceptance of the
-sysctrl bindings:
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+index b266657..1e40e76 100644
+--- a/drivers/crypto/ccree/cc_driver.c
++++ b/drivers/crypto/ccree/cc_driver.c
+@@ -168,14 +168,14 @@ int init_cc_regs(struct cc_drvdata *drvdata, bool is_probe)
+ 	val = cc_ioread(drvdata, CC_REG(AXIM_CACHE_PARAMS));
+ 
+ 	if (is_probe)
+-		dev_info(dev, "Cache params previous: 0x%08X\n", val);
++		dev_dbg(dev, "Cache params previous: 0x%08X\n", val);
+ 
+ 	cc_iowrite(drvdata, CC_REG(AXIM_CACHE_PARAMS), cache_params);
+ 	val = cc_ioread(drvdata, CC_REG(AXIM_CACHE_PARAMS));
+ 
+ 	if (is_probe)
+-		dev_info(dev, "Cache params current: 0x%08X (expect: 0x%08X)\n",
+-			 val, cache_params);
++		dev_dbg(dev, "Cache params current: 0x%08X (expect: 0x%08X)\n",
++			val, cache_params);
+ 
+ 	return 0;
+ }
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
