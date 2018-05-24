@@ -1,140 +1,81 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <fengguang.wu@intel.com>
+Date: Thu, 24 May 2018 08:17:06 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: kbuild-all@01.org, linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>, phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 6/6] clk: renesas: Renesas RZ/N1 clock driver
+Message-ID: <201805240746.iNt9qbSr%fengguang.wu@intel.com>
+References: <1526983321-41949-7-git-send-email-michel.pollet@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Fri, 18 May 2018 15:02:26 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
- robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@kernel.org, adriana.reus@nxp.com, rui.silva@linaro.org,
- Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
-In-Reply-To: <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
-References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
- <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <c42c4274cfd06297d1699c96d3253125@agner.ch>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1526983321-41949-7-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18.05.2018 03:01, Anson Huang wrote:
-> Correct enet clock gates as below:
-> 
-> CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
-> CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
-> CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
-> 
-> Just rename unused IMX7D_ENETx_REF_ROOT_CLK for
-> IMX7D_ENETx_IPG_ROOT_CLK instead of adding new clocks.
+Hi Michel,
 
-Are you sure that IMX7D_ENETx_REF_ROOT_CLK are not used?
+Thank you for the patch! Perhaps something to improve:
 
-I understand that the reference manual does not a gate at 0x44e0...
+[auto build test WARNING on next-20180517]
+[also build test WARNING on v4.17-rc6]
+[cannot apply to robh/for-next renesas-drivers/clk-renesas renesas/devel v4.17-rc6 v4.17-rc5 v4.17-rc4]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-But in a earlier revision of our Colibri iMX7 we actually used clock
-out, and referenced this clock to enable the reference clock (see also:
-https://patchwork.kernel.org/patch/9211371/).
+url:    https://github.com/0day-ci/linux/commits/Michel-Pollet/arm-Base-support-for-Renesas-RZN1D-DB-Board/20180524-052042
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-I guess if the gate really does not exist, then we should/would have to
-set IMX7D_ENET1_REF_ROOT_DIV to use the SoC provided ref clock.
 
---
-Stefan
+sparse warnings: (new ones prefixed by >>)
 
-> 
-> Based on Andy Duan's patch from the NXP kernel tree.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx7d.c             | 10 ++++++----
->  include/dt-bindings/clock/imx7d-clock.h |  4 ++--
->  2 files changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-> index 23d5090a..d4936b9 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -26,6 +26,8 @@ static u32 share_count_sai1;
->  static u32 share_count_sai2;
->  static u32 share_count_sai3;
->  static u32 share_count_nand;
-> +static u32 share_count_enet1;
-> +static u32 share_count_enet2;
->  
->  static const struct clk_div_table test_div_table[] = {
->  	{ .val = 3, .div = 1, },
-> @@ -805,6 +807,10 @@ static void __init imx7d_clocks_init(struct
-> device_node *ccm_node)
->  	clks[IMX7D_MIPI_DSI_ROOT_CLK] = imx_clk_gate4("mipi_dsi_root_clk",
-> "mipi_dsi_post_div", base + 0x4650, 0);
->  	clks[IMX7D_MIPI_CSI_ROOT_CLK] = imx_clk_gate4("mipi_csi_root_clk",
-> "mipi_csi_post_div", base + 0x4640, 0);
->  	clks[IMX7D_MIPI_DPHY_ROOT_CLK] = imx_clk_gate4("mipi_dphy_root_clk",
-> "mipi_dphy_post_div", base + 0x4660, 0);
-> +	clks[IMX7D_ENET1_IPG_ROOT_CLK] =
-> imx_clk_gate2_shared2("enet1_ipg_root_clk", "enet_axi_post_div", base
-> + 0x4700, 0, &share_count_enet1);
-> +	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
-> imx_clk_gate2_shared2("enet1_time_root_clk", "enet1_time_post_div",
-> base + 0x4700, 0, &share_count_enet1);
-> +	clks[IMX7D_ENET2_IPG_ROOT_CLK] =
-> imx_clk_gate2_shared2("enet2_ipg_root_clk", "enet_axi_post_div", base
-> + 0x4710, 0, &share_count_enet2);
-> +	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
-> imx_clk_gate2_shared2("enet2_time_root_clk", "enet2_time_post_div",
-> base + 0x4710, 0, &share_count_enet2);
->  	clks[IMX7D_SAI1_ROOT_CLK] = imx_clk_gate2_shared2("sai1_root_clk",
-> "sai1_post_div", base + 0x48c0, 0, &share_count_sai1);
->  	clks[IMX7D_SAI1_IPG_CLK]  = imx_clk_gate2_shared2("sai1_ipg_clk", 
-> "ipg_root_clk",  base + 0x48c0, 0, &share_count_sai1);
->  	clks[IMX7D_SAI2_ROOT_CLK] = imx_clk_gate2_shared2("sai2_root_clk",
-> "sai2_post_div", base + 0x48d0, 0, &share_count_sai2);
-> @@ -812,10 +818,6 @@ static void __init imx7d_clocks_init(struct
-> device_node *ccm_node)
->  	clks[IMX7D_SAI3_ROOT_CLK] = imx_clk_gate2_shared2("sai3_root_clk",
-> "sai3_post_div", base + 0x48e0, 0, &share_count_sai3);
->  	clks[IMX7D_SAI3_IPG_CLK]  = imx_clk_gate2_shared2("sai3_ipg_clk", 
-> "ipg_root_clk",  base + 0x48e0, 0, &share_count_sai3);
->  	clks[IMX7D_SPDIF_ROOT_CLK] = imx_clk_gate4("spdif_root_clk",
-> "spdif_post_div", base + 0x44d0, 0);
-> -	clks[IMX7D_ENET1_REF_ROOT_CLK] = imx_clk_gate4("enet1_ref_root_clk",
-> "enet1_ref_post_div", base + 0x44e0, 0);
-> -	clks[IMX7D_ENET1_TIME_ROOT_CLK] =
-> imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base +
-> 0x44f0, 0);
-> -	clks[IMX7D_ENET2_REF_ROOT_CLK] = imx_clk_gate4("enet2_ref_root_clk",
-> "enet2_ref_post_div", base + 0x4500, 0);
-> -	clks[IMX7D_ENET2_TIME_ROOT_CLK] =
-> imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base +
-> 0x4510, 0);
->  	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk",
-> "eim_post_div", base + 0x4160, 0);
->  	clks[IMX7D_NAND_RAWNAND_CLK] =
-> imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base +
-> 0x4140, 0, &share_count_nand);
->  	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] =
-> imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk",
-> base + 0x4140, 0, &share_count_nand);
-> diff --git a/include/dt-bindings/clock/imx7d-clock.h
-> b/include/dt-bindings/clock/imx7d-clock.h
-> index b2325d3e2..0d67f53 100644
-> --- a/include/dt-bindings/clock/imx7d-clock.h
-> +++ b/include/dt-bindings/clock/imx7d-clock.h
-> @@ -168,7 +168,7 @@
->  #define IMX7D_SPDIF_ROOT_SRC		155
->  #define IMX7D_SPDIF_ROOT_CG		156
->  #define IMX7D_SPDIF_ROOT_DIV		157
-> -#define IMX7D_ENET1_REF_ROOT_CLK	158
-> +#define IMX7D_ENET1_IPG_ROOT_CLK        158
->  #define IMX7D_ENET1_REF_ROOT_SRC	159
->  #define IMX7D_ENET1_REF_ROOT_CG		160
->  #define IMX7D_ENET1_REF_ROOT_DIV	161
-> @@ -176,7 +176,7 @@
->  #define IMX7D_ENET1_TIME_ROOT_SRC	163
->  #define IMX7D_ENET1_TIME_ROOT_CG	164
->  #define IMX7D_ENET1_TIME_ROOT_DIV	165
-> -#define IMX7D_ENET2_REF_ROOT_CLK	166
-> +#define IMX7D_ENET2_IPG_ROOT_CLK        166
->  #define IMX7D_ENET2_REF_ROOT_SRC	167
->  #define IMX7D_ENET2_REF_ROOT_CG		168
->  #define IMX7D_ENET2_REF_ROOT_DIV	169
+>> drivers/clk/renesas/rzn1-clocks.c:270:22: sparse: cast removes address space of expression
+>> drivers/clk/renesas/rzn1-clocks.c:271:29: sparse: incorrect type in argument 1 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
+   drivers/clk/renesas/rzn1-clocks.c:271:29:    expected unsigned int [noderef] [usertype] <asn:2>*reg
+   drivers/clk/renesas/rzn1-clocks.c:271:29:    got unsigned int [usertype] *reg
+   drivers/clk/renesas/rzn1-clocks.c:274:25: sparse: incorrect type in argument 2 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
+   drivers/clk/renesas/rzn1-clocks.c:274:25:    expected unsigned int [noderef] [usertype] <asn:2>*reg
+   drivers/clk/renesas/rzn1-clocks.c:274:25:    got unsigned int [usertype] *reg
+   drivers/clk/renesas/rzn1-clocks.c:281:22: sparse: cast removes address space of expression
+   drivers/clk/renesas/rzn1-clocks.c:282:29: sparse: incorrect type in argument 1 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
+   drivers/clk/renesas/rzn1-clocks.c:282:29:    expected unsigned int [noderef] [usertype] <asn:2>*reg
+   drivers/clk/renesas/rzn1-clocks.c:282:29:    got unsigned int [usertype] *reg
+   drivers/clk/renesas/rzn1-clocks.c:430:22: sparse: cast removes address space of expression
+   drivers/clk/renesas/rzn1-clocks.c:431:30: sparse: incorrect type in argument 1 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
+   drivers/clk/renesas/rzn1-clocks.c:431:30:    expected unsigned int [noderef] [usertype] <asn:2>*reg
+   drivers/clk/renesas/rzn1-clocks.c:431:30:    got unsigned int [usertype] *reg
+   drivers/clk/renesas/rzn1-clocks.c:516:22: sparse: cast removes address space of expression
+   drivers/clk/renesas/rzn1-clocks.c:528:38: sparse: incorrect type in argument 2 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
+   drivers/clk/renesas/rzn1-clocks.c:528:38:    expected unsigned int [noderef] [usertype] <asn:2>*reg
+   drivers/clk/renesas/rzn1-clocks.c:528:38:    got unsigned int [usertype] *reg
+
+vim +270 drivers/clk/renesas/rzn1-clocks.c
+
+   264	
+   265	/* register/bit pairs are encoded as an uint16_t */
+   266	static void clk_rdesc_set(
+   267		struct rzn1_priv *clocks,
+   268		uint16_t one, unsigned int on)
+   269	{
+ > 270		u32 *reg = ((u32 *)clocks->reg) + (one >> 5);
+ > 271		u32 val = clk_readl(reg);
+   272	
+   273		val = (val & ~(1U << (one & 0x1f))) | ((!!on) << (one & 0x1f));
+   274		clk_writel(val, reg);
+   275	}
+   276	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
