@@ -1,49 +1,85 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 2 May 2018 15:40:28 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com
-Subject: Re: [PATCH] clk: imx6ul: fix periph clk2 clock mux selection
-Message-ID: <20180502074027.GF3443@dragon>
-References: <20180418125254.4397-1-stefan@agner.ch>
+Return-Path: <broonie@sirena.org.uk>
+Date: Thu, 24 May 2018 18:57:21 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"lee.jones@linaro.org" <lee.jones@linaro.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+	"Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
+Subject: Re: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
+ regulators
+Message-ID: <20180524175721.GB4828@sirena.org.uk>
+References: <20180524055752.GE4249@localhost.localdomain>
+ <20180524140118.GS4828@sirena.org.uk>
+ <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180418125254.4397-1-stefan@agner.ch>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WxezjuMNsgvRf6mf"
+In-Reply-To: <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add linux-imx list, in case NXP friends have a comment.
 
-On Wed, Apr 18, 2018 at 02:52:54PM +0200, Stefan Agner wrote:
-> According to the data sheet the 3rd choice is the bypass clock
-> of pll2. This should not have any effect in practice as this
-> selection is not used currently.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+--WxezjuMNsgvRf6mf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For me it looks good,
+On Thu, May 24, 2018 at 05:30:57PM +0000, Vaittinen, Matti wrote:
+> > > On Thu, May 24, 2018 at 08:57:52AM +0300, Matti Vaittinen wrote:
+> >
+> > > +Required properties:
+> > > + - compatible: should be "rohm,bd71837-pmic".
+> > > + - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., =
+"ldo7"
+> >
+> > The MFD is for a single device, there should be no need for compatibles
+> > on subfunctions.
+>=20
+> I will check this. I must admit I am not sure what is the de-facto mechan=
+ism
+> for assigning the correct device-tree nodes to sub devices if compatibles
+> are not used? I think I saw device-tree node name being used for regulato=
+rs
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+You can look at the regulators node within the parent device, you know
+that in Linux the parent device will be the MFD.  Having a compatible
+string within the device makes no difference here.  There's quite a few
+in tree examples of this.
 
-> ---
->  drivers/clk/imx/clk-imx6ul.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-> index 12320118f8de..2ed7dae39008 100644
-> --- a/drivers/clk/imx/clk-imx6ul.c
-> +++ b/drivers/clk/imx/clk-imx6ul.c
-> @@ -40,7 +40,7 @@ static const char *axi_alt_sels[] = { "pll2_pfd2_396m", "pll3_pfd1_540m", };
->  static const char *axi_sels[] = {"periph", "axi_alt_sel", };
->  static const char *periph_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll2_198m", };
->  static const char *periph2_pre_sels[] = { "pll2_bus", "pll2_pfd2_396m", "pll2_pfd0_352m", "pll4_audio_div", };
-> -static const char *periph_clk2_sels[] = { "pll3_usb_otg", "osc", "osc", };
-> +static const char *periph_clk2_sels[] = { "pll3_usb_otg", "osc", "pll2_bypass_src", };
->  static const char *periph2_clk2_sels[] = { "pll3_usb_otg", "osc", };
->  static const char *periph_sels[] = { "periph_pre", "periph_clk2", };
->  static const char *periph2_sels[] = { "periph2_pre", "periph2_clk2", };
-> -- 
-> 2.17.0
-> 
+> Also, another thing I was wondering is how supply regulators should be
+> handled? In this case the LDO5 is supplied by BUCK6 and LDO6 by
+> BUCK7.=20
+
+> From generic regulator bindings
+> /Documentation/devicetree/bindings/regulator/regulator.txt
+> I found statement:
+
+> > - <name>-supply: phandle to the parent supply/regulator node
+
+None of that stuff uses compatible strings, just handle it as covered in
+the bindings.
+
+--WxezjuMNsgvRf6mf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsG/QAACgkQJNaLcl1U
+h9AHrwf+I5QHGPl/Ix4blMQJui270VI4vajg2PzTVHSlND62fWGf2+K6hzxJuRIX
+0k4++LcNMX6Nxdww+O/TnXrnQKrHq/wtnihAnnXv3oOttOqMVIkFeV4k1cfl2SGV
+isvpM+6HA8ac0SqXMZLxyo42ETc04gEcSk9O5UZ+D09d9zVKUfh615qcM/oR6NTm
+ZFeDvuGad5rHqGxHgTJI/kNpCU1/x5ScJKzIDOm6c3QoWiDloZrYMsuXhz5LvEIW
+rUAB97nrVAubeC0Zgb7W2BuMRzI4/eU8iXeLbIyExC+JLisBjXH1GULAg3WQ0g8R
+l/7n1VK64rUqO/0EP2zMzC/0/chzmQ==
+=gwWb
+-----END PGP SIGNATURE-----
+
+--WxezjuMNsgvRf6mf--
